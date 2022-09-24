@@ -77,15 +77,15 @@ return [
             ]),
             'description' => __( 'Allow product unit price to be edited.' ),
         ], [
-            'name' => 'ns_pos_gross_price_used',
-            'value' => ns()->option->get( 'ns_pos_gross_price_used' ),
-            'label' => __( 'Use Gross Prices' ),
+            'name' => 'ns_pos_price_with_tax',
+            'value' => ns()->option->get( 'ns_pos_price_with_tax' ),
+            'label' => __( 'Show Price With Tax' ),
             'type' => 'switch',
             'options' => Helper::kvToJsOptions([
                 'yes' => __( 'Yes' ),
                 'no' => __( 'No' ),
             ]),
-            'description' => __( 'Will use gross prices for each products.' ),
+            'description' => __( 'Will display price with tax for each products.' ),
         ], [
             'name' => 'ns_pos_order_types',
             'value' => ns()->option->get( 'ns_pos_order_types' ),

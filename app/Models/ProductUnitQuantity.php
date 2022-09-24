@@ -21,18 +21,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property bool $stock_alert_enabled
  * @property float $sale_price
  * @property float $sale_price_edit
- * @property float $gross_sale_price
- * @property float $net_sale_price
+ * @property float $sale_price_without_tax
+ * @property float $sale_price_with_tax
  * @property float $sale_price_tax
  * @property float $wholesale_price
  * @property float $wholesale_price_edit
- * @property float $net_wholesale_price
- * @property float $gross_wholesale_price
+ * @property float $wholesale_price_with_tax
+ * @property float $wholesale_price_without_tax
  * @property float $wholesale_price_tax
  * @property float $custom_price
  * @property float $custom_price_edit
- * @property float $net_custom_price
- * @property float $gross_custom_price
+ * @property float $custom_price_with_tax
+ * @property float $custom_price_without_tax
+ * @property Product $product
  */
 class ProductUnitQuantity extends NsModel
 {
@@ -53,18 +54,18 @@ class ProductUnitQuantity extends NsModel
     protected $casts    =   [
         'sale_price' => FloatConvertCasting::class,
         'sale_price_edit' => FloatConvertCasting::class,
-        'gross_sale_price' => FloatConvertCasting::class,
-        'net_sale_price' => FloatConvertCasting::class,
+        'sale_price_without_tax' => FloatConvertCasting::class,
+        'sale_price_with_tax' => FloatConvertCasting::class,
         'sale_price_tax' => FloatConvertCasting::class,
         'wholesale_price' => FloatConvertCasting::class,
         'wholesale_price_edit' => FloatConvertCasting::class,
-        'net_wholesale_price' => FloatConvertCasting::class,
-        'gross_wholesale_price' => FloatConvertCasting::class,
+        'wholesale_price_with_tax' => FloatConvertCasting::class,
+        'wholesale_price_without_tax' => FloatConvertCasting::class,
         'wholesale_price_tax' => FloatConvertCasting::class,
         'custom_price' => FloatConvertCasting::class,
         'custom_price_edit' => FloatConvertCasting::class,
-        'net_custom_price' => FloatConvertCasting::class,
-        'gross_custom_price' => FloatConvertCasting::class,
+        'custom_price_with_tax' => FloatConvertCasting::class,
+        'custom_price_without_tax' => FloatConvertCasting::class,
         'quantity' => 'float',
         'low_quantity' => 'float'
     ];

@@ -19,26 +19,26 @@ class UpdateTablesColumnTypesNov4 extends Migration
                     'quantity',
                     'discount_percentage',
                     'discount',
-                    'gross_price',
+                    'price_with_tax',
                     'unit_price',
                     'tax_value',
-                    'net_price',
-                    'total_gross_price',
+                    'price_with_tax',
+                    'total_price_without_tax',
                     'total_price',
-                    'total_net_price',
+                    'total_price_with_tax',
                     'unit_id',
                     'unit_quantity_id',
                 ]) ) {
                     $table->float( 'quantity', 11, 5 )->change();
                     $table->float( 'discount_percentage', 11, 5 )->change();
                     $table->float( 'discount', 11, 5 )->change();
-                    $table->float( 'gross_price', 11, 5 )->change();
+                    $table->float( 'price_with_tax', 11, 5 )->change();
                     $table->float( 'unit_price', 11, 5 )->change();
                     $table->float( 'tax_value', 11, 5 )->change();
-                    $table->float( 'net_price', 11, 5 )->change();
-                    $table->float( 'total_gross_price', 11, 5 )->change();
+                    $table->float( 'price_with_tax', 11, 5 )->change();
+                    $table->float( 'total_price_without_tax', 11, 5 )->change();
                     $table->float( 'total_price', 11, 5 )->change();
-                    $table->float( 'total_net_price', 11, 5 )->change();
+                    $table->float( 'total_price_with_tax', 11, 5 )->change();
                     $table->float( 'unit_id', 11, 5 )->change();
                     $table->float( 'unit_quantity_id', 11, 5 )->change();
                 }

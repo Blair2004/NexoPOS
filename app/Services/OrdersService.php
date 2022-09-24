@@ -1859,7 +1859,7 @@ class OrdersService
      */
     public function computeOrderProduct( OrderProduct $orderProduct )
     {
-        $orderProduct = $this->taxService->computeNetAndGrossPrice( $orderProduct );
+        $orderProduct = $this->taxService->computeOrderProductTaxes( $orderProduct );
 
         OrderProductAfterComputedEvent::dispatch(
             $orderProduct,
@@ -2038,14 +2038,14 @@ class OrdersService
             return floatval( $product->quantity );
         })->sum();
 
-        $productGrossTotal = $products
+        $productPriceWithoutTax = $products
             ->map(function ($product) {
-                return floatval($product->total_gross_price);
+                return floatval($product->total_price_without_tax);
             })->sum();
 
-        $productsNetTotal = $products
+        $productPriceWithTax = $products
             ->map(function ($product) {
-                return floatval($product->total_net_price);
+                return floatval($product->total_price_with_tax);
             })->sum();
 
         $this->computeOrderTaxes( $order );
@@ -2058,8 +2058,8 @@ class OrdersService
          * let's refresh all the order values
          */
         $order->subtotal = Currency::raw( $productTotal );
-        $order->gross_total = $productGrossTotal;
-        $order->net_total = $productsNetTotal;
+        $order->gross_total = $productPriceWithoutTax;
+        $order->net_total = $productPriceWithTax;
         $order->discount = $this->computeOrderDiscount( $order );
         $order->total = Currency::fresh( $order->subtotal )
             ->additionateBy( $orderShipping )

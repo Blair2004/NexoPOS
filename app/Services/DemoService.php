@@ -137,7 +137,6 @@ class DemoService extends DemoCoreService
                     'barcode_type' => 'code128',
                     'category_id' => $createdCategory[ 'id' ],
                     'description' => __( 'generated' ),
-                    'product_type' => 'product',
                     'type' => 'dematerialized',
                     'status' => 'available',
                     'stock_management' => 'enabled', // Arr::random([ 'disabled', 'enabled' ]),

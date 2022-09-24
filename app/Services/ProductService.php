@@ -419,7 +419,7 @@ class ProductService
 
         if ( empty( $fields[ 'sku' ] ) ) {
             $category = ProductCategory::find( $fields[ 'category_id' ] );
-            $fields[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $fields[ 'name' ] ) . '--' . Str::random(5);
+            $fields[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $fields[ 'name' ] ) . '--' . strtolower( Str::random(5) );
         }
 
         /**
@@ -451,7 +451,8 @@ class ProductService
         $this->saveGallery( $product, $fields[ 'images' ] ?? [] );
 
         /**
-         * We'll now save all attached sub items
+         * We'll now save all attached sub items. That is only applicable
+         * if the product is set to be a grouped product.
          */
         if (  $product->type === Product::TYPE_GROUPED ) {
             $this->saveSubItems( $product, $fields[ 'groups' ] ?? [] );
@@ -698,7 +699,6 @@ class ProductService
                  * available on the group variable, that's why we define
                  * explicitely how everything is saved here.
                  */
-                $unitQuantity->sale_price = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
                 $unitQuantity->sale_price = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
                 $unitQuantity->sale_price_edit = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
                 $unitQuantity->wholesale_price_edit = $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();

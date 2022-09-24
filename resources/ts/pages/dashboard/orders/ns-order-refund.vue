@@ -31,8 +31,8 @@
                             <div class="flex flex-col">
                                 <p class="py-2">
                                     <span>{{ product.name }}</span>
-                                    <span v-if="product.condition === 'damaged'" class="rounded-full px-2 py-1 text-xs bg-error-primary mx-2 text-white">{{ __( 'Damaged' ) }}</span>
-                                    <span v-if="product.condition === 'unspoiled'" class="rounded-full px-2 py-1 text-xs bg-success-primary mx-2 text-white">{{ __( 'Unspoiled' ) }}</span>
+                                    <span v-if="product.condition === 'damaged'" class="rounded-full px-2 py-1 text-xs bg-error-tertiary mx-2 text-white">{{ __( 'Damaged' ) }}</span>
+                                    <span v-if="product.condition === 'unspoiled'" class="rounded-full px-2 py-1 text-xs bg-success-tertiary mx-2 text-white">{{ __( 'Unspoiled' ) }}</span>
                                 </p>
                                 <small>{{ product.unit.name }}</small>
                             </div>
@@ -199,7 +199,17 @@ export default {
                 .subscribe({
                     next:  (result) => {
                         this.isSubmitting   =   false;
+                        
                         this.$emit( 'changed', true );
+                        
+                        /**
+                         * if the order is fully refunded
+                         * we should ask the parent component to switch
+                         * the active tab to "details" which is the default main tab.
+                         */
+                        if ( result.data.order.payment_status === 'refunded' ) {
+                            this.$emit( 'loadTab', 'details' );
+                        }   
 
                         this.print.printOrder( result.data.orderRefund.id );
                         

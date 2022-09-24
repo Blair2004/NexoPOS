@@ -7,6 +7,7 @@ use App\Models\ProductGallery;
 use App\Models\ProductSubItem;
 use App\Models\ProductUnitQuantity;
 use App\Services\ProductService;
+use App\Services\TaxService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\NsMultiStore\Models\Store;
@@ -55,8 +56,29 @@ class ProductCommand extends Command
 
         match ( $this->argument( 'action' ) ) {
             'update' => $this->updateProducts(),
+            'compute-taxes' =>  $this->computeTaxes(),
             'refresh-barcode' => $this->refreshBarcodes()
         };
+    }
+
+    private function computeTaxes()
+    {
+        /**
+         * @var TaxService
+         */
+        $taxService     =   app()->make( TaxService::class );
+
+        $this->withProgressBar( ProductUnitQuantity::with( 'product.tax_group' )->get(), function( ProductUnitQuantity $productUnitQuantity ) use ( $taxService ) {           
+            $taxService->computeTax( 
+                product: $productUnitQuantity, 
+                tax_group_id: $productUnitQuantity->product->tax_group_id,
+                tax_type: $productUnitQuantity->product->tax_type
+            );
+        });
+
+        $this->newLine();
+
+        $this->info( __( 'The products taxes were computed successfully.' ) );
     }
 
     private function refreshBarcodes()

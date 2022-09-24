@@ -1312,7 +1312,7 @@ trait WithOrderTest
         }
     }
 
-    protected function attemptRefundOrder()
+    protected function attemptRefundOrder( $productQuantity, $refundQuantity, $paymentStatus, $message )
     {
         /**
          * @var CurrencyService
@@ -1330,7 +1330,7 @@ trait WithOrderTest
              * this is a sample product/service
              */
             [
-                'quantity' => 5,
+                'quantity' => $productQuantity,
                 'unit_price' => $product->unit_quantities[0]->sale_price,
                 'unit_quantity_id' => $product->unit_quantities[0]->id,
                 'unit_id' => $product->unit_quantities[0]->unit_id,
@@ -1341,7 +1341,7 @@ trait WithOrderTest
              */
             [
                 'product_id' => $product->id,
-                'quantity' => 5,
+                'quantity' => $productQuantity,
                 'unit_price' => $product->unit_quantities[0]->sale_price,
                 'unit_quantity_id' => $product->unit_quantities[0]->id,
                 'unit_id' => $product->unit_quantities[0]->unit_id,
@@ -1423,9 +1423,9 @@ trait WithOrderTest
          * We'll keep original products amounts and quantity
          * this means we're doing a full refund of price and quantities
          */
-        $responseData[ 'data' ][ 'order' ][ 'products' ] = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) {
+        $responseData[ 'data' ][ 'order' ][ 'products' ] = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) use ( $refundQuantity ) {
             $product[ 'condition' ] = OrderProductRefund::CONDITION_DAMAGED;
-            $product[ 'quantity' ] = 1;
+            $product[ 'quantity' ] = $refundQuantity;
             $product[ 'description' ] = __( 'Test : The product wasn\'t properly manufactured, causing external damage to the device during the shipment.' );
 
             return $product;
@@ -1442,6 +1442,14 @@ trait WithOrderTest
 
         $response->assertStatus(200);
         $responseData = json_decode( $response->getContent(), true );
+
+        /**
+         * We need to check if the order
+         * is correctly updated after a refund.
+         */
+        $order  =   Order::find( $responseData[ 'data' ][ 'order' ][ 'id' ] );
+
+        $this->assertTrue( $order->payment_status === $paymentStatus, $message );
 
         $thirdFetchCustomer = $secondFetchCustomer->fresh();
 

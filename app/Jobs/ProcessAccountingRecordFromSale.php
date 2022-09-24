@@ -32,8 +32,6 @@ class ProcessAccountingRecordFromSale implements ShouldQueue
      */
     public function handle( ExpenseService $expenseService )
     {
-        Auth::loginUsingId( $this->order->author );
-
         $expenseService->handleCreatedOrder( $this->order );
     }
 }

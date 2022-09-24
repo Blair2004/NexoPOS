@@ -321,26 +321,26 @@ export class POS {
     }
 
     public getSalePrice(item, original) {
-        if ( this.options.getValue().ns_pos_gross_price_used === 'no' ) {
-            return nsRawCurrency( item.net_sale_price );
+        if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
+            return nsRawCurrency( item.sale_price_with_tax );
         } else {
-            return nsRawCurrency( item.gross_sale_price );
+            return nsRawCurrency( item.sale_price_without_tax );
         }
     }
 
     public getCustomPrice(item, original) {
-        if ( this.options.getValue().ns_pos_gross_price_used === 'no' ) {
-            return nsRawCurrency( item.net_custom_price );
+        if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
+            return nsRawCurrency( item.custom_price_with_tax );
         } else {
-            return nsRawCurrency( item.gross_custom_price );
+            return nsRawCurrency( item.custom_price_without_tax );
         }
     }
 
     public getWholesalePrice(item, original) {
-        if ( this.options.getValue().ns_pos_gross_price_used === 'no' ) {
-            return nsRawCurrency( item.net_wholesale_price );
+        if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
+            return nsRawCurrency( item.wholesale_price_with_tax );
         } else {
-            return nsRawCurrency( item.gross_wholesale_price );
+            return nsRawCurrency( item.wholesale_price_without_tax );
         }
     }
 
@@ -493,7 +493,7 @@ export class POS {
         }
     }
 
-    getNetPrice(value, rate, type) {
+    getPriceWithoutTax(value, rate, type) {
         if (type === 'inclusive') {
             return (value / (rate + 100)) * 100;
         } else if (type === 'exclusive') {
@@ -501,7 +501,7 @@ export class POS {
         }
     }
 
-    getGrossPrice( value, rate, type ) {
+    getPriceWithTax( value, rate, type ) {
         if (type === 'inclusive') {
             return value;
         } else if (type === 'exclusive') {
@@ -511,9 +511,9 @@ export class POS {
 
     getVatValue(value, rate, type) {
         if (type === 'inclusive') {
-            return value - this.getNetPrice(value, rate, type);
+            return value - this.getPriceWithoutTax(value, rate, type);
         } else if (type === 'exclusive') {
-            return this.getGrossPrice(value, rate, type) - value;
+            return this.getPriceWithTax(value, rate, type) - value;
         }
     }
 
@@ -530,6 +530,7 @@ export class POS {
                     status: 'success'
                 });
             }
+
             const groups = order.tax_groups;
 
             /**
@@ -563,37 +564,11 @@ export class POS {
                 });
             }
             
-            console.log( order.tax_group_id );
-
             if (order.tax_group_id !== undefined && order.tax_group_id.toString().length > 0 ) {
                 nsHttpClient.get(`/api/nexopos/v4/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
-                            tax.taxes   =   tax.taxes.map(_tax => {
-                                return {
-                                    tax_id: _tax.id,
-                                    tax_name: _tax.name,
-                                    rate: parseFloat(_tax.rate),
-                                    tax_value: this.getVatValue(order.subtotal - order.discount, _tax.rate, order.tax_type)
-                                };
-                            });
-
-                            if ( tax.taxes.length === 0 ) {
-                                return nsSnackBar.error( __( 'The selected tax group doesn\'t have any assigned sub taxes. This might cause wrong figures.' ), __( 'Proceed' ), { duration: false })
-                                    .subscribe();
-                            }
-
-                            order.tax_groups = order.tax_groups || [];
-                            order.taxes = tax.taxes;
-    
-                            /**
-                             * this is set to cache the 
-                             * tax group to avoid subsequent request
-                             * to the server.
-                             */
-                            order.tax_groups[tax.id] = tax;
-    
-                            order       =   this.computeOrderTaxes( order );
+                            order   =   this.computeOrderTaxGroup( order, tax );
     
                             return resolve({
                                 status: 'success',
@@ -613,11 +588,43 @@ export class POS {
         })
     }
 
+    computeOrderTaxGroup( order, tax ) {
+
+        const posVat    =   this.options.getValue().ns_pos_vat;
+        const priceWithTax    =   this.options.getValue().ns_pos_price_with_tax === 'yes';
+
+        tax.taxes   =   tax.taxes.map(_tax => {
+            return {
+                tax_id: _tax.id,
+                tax_name: _tax.name,
+                rate: parseFloat(_tax.rate),
+                tax_value: this.getVatValue(order.subtotal - order.discount, _tax.rate, order.tax_type)
+            };
+        });
+
+        if ( tax.taxes.length === 0 ) {
+            return nsSnackBar.error( __( 'The selected tax group doesn\'t have any assigned sub taxes. This might cause wrong figures.' ), __( 'Proceed' ), { duration: false })
+                .subscribe();
+        }
+
+        order.tax_groups = order.tax_groups || [];
+        order.taxes = tax.taxes;
+
+        /**
+         * this is set to cache the 
+         * tax group to avoid subsequent request
+         * to the server.
+         */
+        order.tax_groups[tax.id] = tax;
+
+        return this.computeOrderTaxes( order );
+    }
+
     computeOrderTaxes( order: Order ) {
         const posVat        =   this.options.getValue().ns_pos_vat;
-        const grossPrice    =   this.options.getValue().ns_pos_gross_price_used === 'yes';
+        const priceWithTax    =   this.options.getValue().ns_pos_price_with_tax === 'yes';
 
-        if ([ 'flat_vat', 'variable_vat', 'products_variable_vat' ].includes(posVat) && order.taxes && order.taxes.length > 0) {
+        if ([ 'flat_vat', 'variable_vat', 'products_variable_vat', 'products_flat_vat' ].includes(posVat) && order.taxes && order.taxes.length > 0) {
             order.tax_value += order.taxes
                 .map(tax => tax.tax_value)
                 .reduce((before, after) => before + after);
@@ -625,13 +632,13 @@ export class POS {
 
         /**
          * By default, we'll use box computed tax and prodcuts tax value 
-         * when grossPrice is enabled.
+         * when priceWithTax is enabled.
          * However to avoid duplicate taxes, we'll only consider computed tax
-         * when grossPrice is disabled
+         * when priceWithTax is disabled
          */
         order.total_tax_value     =  order.tax_value;
 
-        if ( ! grossPrice ) {
+        if ([ 'products_variable_vat', 'products_flat_vat', 'products_vat' ].includes(posVat) && ! priceWithTax ) {
             order.total_tax_value     =  order.products_tax_value + order.tax_value;
         }
 
@@ -842,23 +849,23 @@ export class POS {
             const quantities    =   {
                 unit: unit[0] || {},
                 
-                net_sale_price: product.mode === 'normal' ? parseFloat( product.net_price ) : 0,
-                gross_sale_price: product.mode === 'normal' ? parseFloat( product.gross_price ) : 0,
+                sale_price_with_tax: product.mode === 'normal' ? parseFloat( product.price_with_tax ) : 0,
+                sale_price_without_tax: product.mode === 'normal' ? parseFloat( product.price_without_tax ) : 0,
                 sale_price: product.mode === 'normal' ? parseFloat( product.unit_price ) : 0,
                 sale_price_tax: product.mode === 'normal' ? product.tax_value : 0,
                 sale_price_edit: 0,
 
-                net_wholesale_price: product.mode === 'wholesale' ? parseFloat( product.net_price ) : 0,
-                gross_wholesale_price: product.mode === 'wholesale' ? parseFloat( product.gross_price ) : 0,
+                wholesale_price_with_tax: product.mode === 'wholesale' ? parseFloat( product.price_with_tax ) : 0,
+                wholesale_price_without_tax: product.mode === 'wholesale' ? parseFloat( product.price_without_tax ) : 0,
                 wholesale_price: product.mode === 'wholesale' ? parseFloat( product.unit_price ) : 0,
                 wholesale_price_tax: product.mode === 'wholesale' ? product.tax_value : 0,
                 wholesale_price_edit: 0,
 
-                net_custom_price: product.mode === 'custom' ? parseFloat( product.net_price ) : 0,
-                gross_custom_price: product.mode === 'custom' ? parseFloat( product.gross_price ) : 0,
+                custom_price_with_tax: product.mode === 'custom' ? parseFloat( product.price_with_tax ) : 0,
+                custom_price_without_tax: product.mode === 'custom' ? parseFloat( product.price_without_tax ) : 0,
                 custom_price: product.mode === 'custom' ? parseFloat( product.unit_price ) : 0,
                 custom_price_tax: product.mode === 'custom' ? product.tax_value : 0,
-                custom_price_edit: 0,
+                custom_price_edit: product.mode === 'custom' ? parseFloat( product.unit_price ) : 0,
             };
 
             let tax_group;
@@ -893,7 +900,7 @@ export class POS {
                     } else {
                         quantities.sale_price_tax       =   0;
                         quantities.wholesale_price_tax  =   0;
-                        quantities.gross_sale_price  =  product.unit_price;
+                        quantities.sale_price_without_tax  =  product.unit_price;
                         
                         return resolve( quantities );
                     }
@@ -957,7 +964,7 @@ export class POS {
                                     .unit_quantities
                                     .filter(unitQuantity => +unitQuantity.id === +orderProduct.unit_quantity_id || unitQuantity.id === undefined )[0];
 
-                                if ( orderProduct.mode === 'custom' && options.ns_pos_gross_price_used === 'yes' ) {
+                                if ( orderProduct.mode === 'custom' && options.ns_pos_price_with_tax === 'yes' ) {
                                     unitQuantity.custom_price_edit = orderProduct.unit_price;
                                 }
 
@@ -1226,11 +1233,11 @@ export class POS {
 
         const products  = this.products.getValue();
         let order       = this.order.getValue();
-        let grossPrice  =   this.options.getValue().ns_pos_gross_price_used;
+        let usePriceWithTax  =   this.options.getValue().ns_pos_price_with_tax;
 
         const productTotal = products
             .filter( product => product.product_type !== 'dynamic' )
-            .map(product => grossPrice === 'no' ? product.total_net_price : product.total_gross_price );
+            .map(product => usePriceWithTax === 'yes' ? product.total_price_with_tax : product.total_price_without_tax );
 
         if (productTotal.length > 0) {
             let productTotalValue       =   productTotal.reduce((b, a) => b + a);
@@ -1407,13 +1414,13 @@ export class POS {
             tax_value: 0, // is computed automatically using $original()
             unit_id: product.unit_id || 0,
             unit_price: product.unit_price || 0,
-            net_price: product.net_price || 0,
-            gross_price: product.gross_price || 0,
+            price_with_tax: product.price_with_tax || 0,
+            price_without_tax: product.price_without_tax || 0,
             unit_name: <string>(product.unit_name || ''),
             total_price: 0,
-            total_gross_price: 0,
-            total_net_price: 0,
-            mode: 'normal',
+            total_price_without_tax: 0,
+            total_price_with_tax: 0,
+            mode: product.mode || 'normal',
             $original: product.$original || (() => product),
             $quantities: product.$quantities || undefined
         };
@@ -1614,12 +1621,12 @@ export class POS {
 
             switch( originalProduct.tax_type ) {
                 case 'inclusive':
-                    price_without_tax   =   this.getNetPrice( price, summarizedRates, originalProduct.tax_type );
+                    price_without_tax   =   this.getPriceWithoutTax( price, summarizedRates, originalProduct.tax_type );
                     price_with_tax      =   price;
                 break;
                 case 'exclusive':
                     price_without_tax   =   price;
-                    price_with_tax      =   this.getGrossPrice( price, summarizedRates, originalProduct.tax_type );
+                    price_with_tax      =   this.getPriceWithTax( price, summarizedRates, originalProduct.tax_type );
                 break;
             }
 
@@ -1640,9 +1647,9 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
 
-        quantities.gross_custom_price       =   result.price_with_tax;
-        quantities.net_custom_price         =   result.price_without_tax;
-        quantities.custom_price_tax         =   result.tax_value;
+        quantities.custom_price_without_tax =   result.price_without_tax;
+        quantities.custom_price_with_tax =   result.price_with_tax;
+        quantities.custom_price_tax =   result.tax_value;
 
         product.$quantities     =   () => {
             return <ProductUnitQuantity>quantities
@@ -1656,8 +1663,8 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.sale_price_edit );
 
-        quantities.gross_sale_price         =   result.price_with_tax;
-        quantities.net_sale_price           =   result.price_without_tax;
+        quantities.sale_price_without_tax         =   result.price_without_tax;
+        quantities.sale_price_with_tax           =   result.price_with_tax;
         quantities.sale_price_tax           =   result.tax_value;
 
         product.$quantities     =   () => {
@@ -1672,8 +1679,8 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.wholesale_price_edit );
 
-        quantities.gross_wholesale_price        =   result.price_with_tax;
-        quantities.net_wholesale_price          =   result.price_without_tax;
+        quantities.wholesale_price_without_tax        =   result.price_without_tax;
+        quantities.wholesale_price_with_tax          =   result.price_with_tax;
         quantities.wholesale_price_tax          =   result.tax_value;
 
         product.$quantities     =   () => {
@@ -1685,9 +1692,9 @@ export class POS {
 
     getPrice( quantities, mode, type ) {
         switch( mode ) {
-            case 'normal': return quantities[ type + '_sale_price' ];
-            case 'wholesale': return quantities[ type + '_wholesale_price' ];
-            case 'custom': return quantities[ type + '_custom_price' ];
+            case 'normal': return quantities[ 'sale_price_' + type ];
+            case 'wholesale': return quantities[ 'wholesale_price_' + type ];
+            case 'custom': return quantities[ 'custom_price_' + type ];
         } 
     }
 
@@ -1711,26 +1718,27 @@ export class POS {
 
         /**
          * computing the discount when it's 
-         * based on a percentage
+         * based on a percentage. @todo While we believe discount
+         * shouldn't be calculated after taxes
          */
-        let gross_discount      =   0;
-        let net_discount        =   0;
-        let net_price           =   this.getPrice( product.$quantities(), product.mode, 'net' );
-        let gross_price         =   this.getPrice( product.$quantities(), product.mode, 'gross' );
+        let discount_without_tax    =   0;
+        let discount_with_tax       =   0;
+        let price_with_tax          =   this.getPrice( product.$quantities(), product.mode, 'with_tax' );
+        let price_without_tax       =   this.getPrice( product.$quantities(), product.mode, 'without_tax' );
 
         if (['flat', 'percentage'].includes(product.discount_type)) {
             if (product.discount_type === 'percentage') {
                 product.discount    =   ((product.unit_price * product.discount_percentage) / 100) * product.quantity;
-                gross_discount      =   ((gross_price * product.discount_percentage) / 100) * product.quantity;
-                net_discount        =   ((net_price * product.discount_percentage) / 100) * product.quantity;
+                discount_without_tax      =   ((price_without_tax * product.discount_percentage) / 100) * product.quantity;
+                discount_with_tax        =   ((price_with_tax * product.discount_percentage) / 100) * product.quantity;
             }
         }
 
-        product.net_price               =   net_price;
-        product.gross_price             =   gross_price;
-        product.total_price             =   ( product.unit_price * product.quantity ) - product.discount;
-        product.total_net_price         =   ( net_price * product.quantity ) - net_discount;
-        product.total_gross_price       =   ( gross_price * product.quantity ) - gross_discount;
+        product.price_with_tax              =   price_with_tax;
+        product.price_without_tax           =   price_without_tax;
+        product.total_price                 =   ( product.unit_price * product.quantity ) - product.discount;
+        product.total_price_with_tax        =   ( price_with_tax * product.quantity ) - discount_with_tax;
+        product.total_price_without_tax     =   ( price_without_tax * product.quantity ) - discount_without_tax;
 
         nsHooks.doAction('ns-after-product-computed', product);
     }

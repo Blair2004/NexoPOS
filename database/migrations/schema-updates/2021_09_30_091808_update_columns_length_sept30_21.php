@@ -195,14 +195,14 @@ class UpdateColumnsLengthSept3021 extends Migration
             $table->float( 'quantity', 18, 5 )->change(); // could be the base unit
             $table->float( 'discount', 18, 5 )->change();
             $table->float( 'discount_percentage', 18, 5 )->change();
-            $table->float( 'gross_price', 18, 5 )->change();
+            $table->float( 'price_without_tax', 18, 5 )->change();
             $table->float( 'unit_price', 18, 5 )->change();
             $table->float( 'tax_value', 18, 5 )->change();
-            $table->float( 'net_price', 18, 5 )->change();
-            $table->float( 'total_gross_price', 18, 5 )->change();
+            $table->float( 'price_with_tax', 18, 5 )->change();
+            $table->float( 'total_price_without_tax', 18, 5 )->change();
             $table->float( 'total_price', 18, 5 )->change();
             $table->float( 'total_purchase_price', 18, 5 )->change();
-            $table->float( 'total_net_price', 18, 5 )->change();
+            $table->float( 'total_price_with_tax', 18, 5 )->change();
         });
 
         Schema::table( 'nexopos_dashboard_days', function (Blueprint $table) {

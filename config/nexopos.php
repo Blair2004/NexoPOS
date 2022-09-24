@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'version' => '4.8.5',
+    'version' => '4.9.0',
     'languages' => [
         'en' => 'English',
         'fr' => 'Français',

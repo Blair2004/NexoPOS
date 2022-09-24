@@ -216,7 +216,7 @@ export default nsOrderPreviewPopup;
 
                 <!-- Refund -->
                 <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" :label="__( 'Refund & Return' )" identifier="refund" class="flex overflow-y-auto">
-                    <ns-order-refund @changed="refresh()" :order="order"></ns-order-refund>
+                    <ns-order-refund @loadTab="setActive( $event )" @changed="refresh()" :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
 

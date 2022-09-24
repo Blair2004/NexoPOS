@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property bool $searchable
  * @property int $author
  * @property string $uuid
+ * @property TaxGroup $tax_group
  */
 class Product extends NsModel
 {

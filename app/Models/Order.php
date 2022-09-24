@@ -236,10 +236,10 @@ class Order extends NsModel
                 $stringified = Hook::filter( 'ns-products-combinaison-identifier', $product_id . '-' . $order_id . '-' . $discount . '-' . $product_category_id . '-' . $status, $product );
                 $combinaisonAttributes = Hook::filter( 'ns-products-combinaison-attributes', [
                     'quantity',
-                    'total_gross_price',
+                    'total_price_without_tax',
                     'total_price',
                     'total_purchase_price',
-                    'total_net_price',
+                    'total_price_with_tax',
                     'discount',
                 ]);
 
