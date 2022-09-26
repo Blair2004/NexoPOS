@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\DateCast;
+use App\Casts\FloatConvertCasting;
 use App\Classes\Hook;
 use App\Services\DateService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -104,7 +105,21 @@ class Order extends NsModel
 
     public $casts = [
         'final_payment_date' => DateCast::class,
-        'support_instalments' => 'boolean'
+        'support_instalments' => 'boolean',
+        'discount' => FloatConvertCasting::class,
+        'discount_percentage' => FloatConvertCasting::class,
+        'shipping' => FloatConvertCasting::class,
+        'shipping_rate' => FloatConvertCasting::class,
+        'gross_total' => FloatConvertCasting::class,
+        'subtotal' => FloatConvertCasting::class,
+        'net_total' => FloatConvertCasting::class,
+        'total_coupons' => FloatConvertCasting::class,
+        'total' => FloatConvertCasting::class,
+        'tax_value' => FloatConvertCasting::class,
+        'products_tax_value' => FloatConvertCasting::class,
+        'total_tax_value' => FloatConvertCasting::class,
+        'tendered' => FloatConvertCasting::class,
+        'change' => FloatConvertCasting::class,
     ];
 
     public function products()
