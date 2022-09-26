@@ -523,6 +523,7 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
 
+        $response->dump();
         $response->assertStatus( 200 );
 
         $response = json_decode( $response->getContent(), true );
