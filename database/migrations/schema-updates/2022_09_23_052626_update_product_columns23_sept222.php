@@ -60,6 +60,16 @@ return new class extends Migration
                 $table->renameColumn( 'total_net_price', 'total_price_with_tax' );
             }
         });
+
+        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_orders', 'net_total' ) ) {
+                $table->renameColumn( 'net_total', 'total_with_tax' );
+            }
+            
+            if ( Schema::hasColumn( 'nexopos_orders', 'gross_total' ) ) {
+                $table->renameColumn( 'gross_total', 'total_without_tax' );
+            }
+        });
     }
 
     /**

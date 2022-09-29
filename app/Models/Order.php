@@ -23,9 +23,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float shipping
  * @property float shipping_rate
  * @property string shipping_type
- * @property float gross_total
+ * @property float total_without_tax
  * @property float subtotal
- * @property float net_total
+ * @property float total_with_tax
  * @property float total_coupons
  * @property float total
  * @property float tax_value
@@ -110,9 +110,9 @@ class Order extends NsModel
         'discount_percentage' => FloatConvertCasting::class,
         'shipping' => FloatConvertCasting::class,
         'shipping_rate' => FloatConvertCasting::class,
-        'gross_total' => FloatConvertCasting::class,
+        'total_without_tax' => FloatConvertCasting::class,
         'subtotal' => FloatConvertCasting::class,
-        'net_total' => FloatConvertCasting::class,
+        'total_with_tax' => FloatConvertCasting::class,
         'total_coupons' => FloatConvertCasting::class,
         'total' => FloatConvertCasting::class,
         'tax_value' => FloatConvertCasting::class,

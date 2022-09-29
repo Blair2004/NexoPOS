@@ -52,7 +52,7 @@ class UpdateTablesColumnTypesNov4 extends Migration
                     'discount_percentage',
                     'shipping',
                     'shipping_rate',
-                    'net_total',
+                    'total_with_tax',
                     'total',
                     'tendered',
                     'change',
@@ -63,7 +63,7 @@ class UpdateTablesColumnTypesNov4 extends Migration
                     $table->float( 'discount_percentage', 11, 5 )->change();
                     $table->float( 'shipping', 11, 5 )->change();
                     $table->float( 'shipping_rate', 11, 5 )->change();
-                    $table->float( 'net_total', 11, 5 )->change();
+                    $table->float( 'total_with_tax', 11, 5 )->change();
                     $table->float( 'total', 11, 5 )->change();
                     $table->float( 'tendered', 11, 5 )->change();
                     $table->float( 'change', 11, 5 )->change();

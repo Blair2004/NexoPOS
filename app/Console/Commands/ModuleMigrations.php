@@ -92,7 +92,7 @@ class ModuleMigrations extends Command
              * because we use the cache to prevent the system for overusing the
              * database with too many requests.
              */
-            Artisan::call( 'cache:clear', [ '--force' => true ] );
+            Artisan::call( 'cache:clear' );
 
             return false;
         } elseif ( ! empty( $this->option( 'forget' ) ) ) {
@@ -111,19 +111,28 @@ class ModuleMigrations extends Command
              * We'll make sure to clear the migration as
              * being executed on the system.
              */
-            ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )
+            $migration  =   ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )
                 ->where( 'file', $path )
-                ->delete();
+                ->get();
+            
+            if ( $migration->count() > 0 ) {
+                $migration->delete();
+                
+                $this->info( sprintf( 'The migration "%s" for the module %s has been forgotten.', $path, $this->module[ 'name' ] ) );
 
-            $this->info( sprintf( 'The migration "%s" for the module %s has been forgotten.', $path, $this->module[ 'name' ] ) );
+                /**
+                 * because we use the cache to prevent the system for overusing the
+                 * database with too many requests.
+                 */
+                Artisan::call( 'cache:clear' );
 
-            /**
-             * because we use the cache to prevent the system for overusing the
-             * database with too many requests.
-             */
-            Artisan::call( 'cache:clear', [ '--force' => true ] );
+                return true;
 
-            return false;
+            } else {
+                $this->info( sprintf( 'No migration found using the provided file path "%s" for the module "%s".', $path, $this->module[ 'name' ] ) );
+    
+                return false;
+            }
         }
 
         /**

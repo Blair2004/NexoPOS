@@ -261,9 +261,9 @@ class OrderCrud extends CrudService
                             'value' => $entry->discount_type ?? '',
                         ], [
                             'type' => 'text',
-                            'name' => 'gross_total',
-                            'label' => __( 'Gross Total' ),
-                            'value' => $entry->gross_total ?? '',
+                            'name' => 'total_without_tax',
+                            'label' => __( 'Tax Excluded' ),
+                            'value' => $entry->total_without_tax ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'id',
@@ -271,9 +271,9 @@ class OrderCrud extends CrudService
                             'value' => $entry->id ?? '',
                         ], [
                             'type' => 'text',
-                            'name' => 'net_total',
-                            'label' => __( 'Net Total' ),
-                            'value' => $entry->net_total ?? '',
+                            'name' => 'total_with_tax',
+                            'label' => __( 'Tax Included' ),
+                            'value' => $entry->total_with_tax ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'payment_status',

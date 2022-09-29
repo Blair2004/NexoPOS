@@ -127,6 +127,13 @@
                             <td width="200" class="border p-2">{{ __( 'Sub Total' ) }}</td>
                             <td width="200" class="border p-2 text-right">{{ order.subtotal | currency }}</td>
                         </tr>
+                        <tr v-if="order.coupons.length > 0">
+                            <td width="200" class="border p-2"></td>
+                            <td width="200" class="border p-2">
+                                <a @click="selectCoupon()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Coupons' ) }}</a>
+                            </td>
+                            <td width="200" class="border p-2 text-right">{{ summarizeCoupons() | currency }}</td>
+                        </tr>
                         <tr>
                             <td width="200" class="border p-2">
                                 <a @click="openOrderType()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Type' ) }}: {{ selectedType }}</a>
@@ -173,6 +180,13 @@
                                     <span>{{ order.subtotal | currency }}</span>
                                 </div>
                             </td>
+                        </tr>
+                        <tr v-if="order.coupons.length > 0">
+                            <td width="200" class="border p-2"></td>
+                            <td width="200" class="border p-2">
+                                <a @click="selectCoupon()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Coupons' ) }}</a>
+                            </td>
+                            <td width="200" class="border p-2 text-right">{{ summarizeCoupons() | currency }}</td>
                         </tr>
                         <tr>
                             <td width="200" class="border p-2">
@@ -294,7 +308,7 @@ export default {
             return this.order.customer ? this.order.customer.name : 'N/A';
         },
         couponName() {
-            return 'Apply Coupon'
+            return __( 'Apply Coupon' );
         }
     },
     mounted() {
@@ -405,6 +419,16 @@ export default {
             }).catch( _ => {
                 // ...
             })
+        },
+
+        summarizeCoupons() {
+            const coupons   =   this.order.coupons.map( coupon => coupon.value );
+
+            if ( coupons.length > 0 ) {
+                return coupons.reduce( ( before, after ) => before + after );
+            }
+
+            return 0;
         },
 
         async changeProductPrice( product ) {

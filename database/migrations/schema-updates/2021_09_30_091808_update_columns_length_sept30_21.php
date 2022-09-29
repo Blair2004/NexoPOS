@@ -181,9 +181,9 @@ class UpdateColumnsLengthSept3021 extends Migration
             $table->float( 'discount_percentage', 18, 5 )->change();
             $table->float( 'shipping', 18, 5 )->change(); // could be set manually or computed based on shipping_rate and shipping_type
             $table->float( 'shipping_rate', 18, 5 )->change();
-            $table->float( 'gross_total', 18, 5 )->change();
+            $table->float( 'total_without_tax', 18, 5 )->change();
             $table->float( 'subtotal', 18, 5 )->change();
-            $table->float( 'net_total', 18, 5 )->change();
+            $table->float( 'total_with_tax', 18, 5 )->change();
             $table->float( 'total_coupons', 18, 5 )->change();
             $table->float( 'total', 18, 5 )->change();
             $table->float( 'tax_value', 18, 5 )->change();

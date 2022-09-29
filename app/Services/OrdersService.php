@@ -1002,7 +1002,7 @@ class OrdersService
             )
             ->getRaw();
 
-        $order->gross_total = $order->total;
+        $order->total_with_tax = $order->total;
 
         /**
          * compute change
@@ -1012,9 +1012,9 @@ class OrdersService
             ->getRaw();
 
         /**
-         * compute gross total
+         * Compute total witht tax.
          */
-        $order->net_total = Currency::fresh( $order->subtotal )
+        $order->total_without_tax = Currency::fresh( $order->subtotal )
             ->subtractBy( $order->discount )
             ->subtractBy( $order->total_coupons )
             ->subtractBy( $order->tax_value )
@@ -2058,8 +2058,8 @@ class OrdersService
          * let's refresh all the order values
          */
         $order->subtotal = Currency::raw( $productTotal );
-        $order->gross_total = $productPriceWithoutTax;
-        $order->net_total = $productPriceWithTax;
+        $order->total_without_tax = $productPriceWithoutTax;
+        $order->total_with_tax = $productPriceWithTax;
         $order->discount = $this->computeOrderDiscount( $order );
         $order->total = Currency::fresh( $order->subtotal )
             ->additionateBy( $orderShipping )
