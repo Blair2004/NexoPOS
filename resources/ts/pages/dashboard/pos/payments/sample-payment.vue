@@ -119,6 +119,11 @@ export default {
             .whenVisible([ '.is-popup' ])
             .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
+    beforeDestroy() {
+        nsHotPress.destroy( 'numpad-keys' );
+        nsHotPress.destroy( 'numpad-backspace' );
+        nsHotPress.destroy( 'numpad-save' );
+    },
     destroyed() {
         this.orderSubscription.unsubscribe();
     },
