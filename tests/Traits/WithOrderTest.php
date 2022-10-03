@@ -246,7 +246,7 @@ trait WithOrderTest
 
         $this->assertEquals(
             ns()->currency->getRaw( $cashRegister->balance ),
-            ns()->currency->getRaw( $totalTransactions ),
+            $totalTransactions,
             __( 'The transaction aren\'t reflected on the register balance' )
         );
 
@@ -470,6 +470,7 @@ trait WithOrderTest
          * @var array $response
          * @var Register $cashRegister
          */
+        
         $order = Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
         $orderService->makeOrderSinglePayment([
             'identifier' => OrderPayment::PAYMENT_CASH,

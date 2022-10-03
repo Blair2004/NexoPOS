@@ -217,9 +217,17 @@ class CurrencyService
         return $this->getRaw( $this->value );
     }
 
+    /**
+     * return a raw value for the provided number
+     * @param float $value
+     * @return float
+     */
     public function getRaw( $value = null )
     {
-        return floatval( $value !== null ? (string) BigDecimal::of( $value ) : (string) $this->value );
+        $value = $value !== null ? (string) BigDecimal::of( $value )->dividedBy(1, $this->decimal_precision, RoundingMode::UP ) : null;
+        $main = $value === null ? (string) $this->value->dividedBy(1, $this->decimal_precision, RoundingMode::UP ) : 0;
+
+        return floatval( $value !== null ? $value : $main );
     }
 
     /**
