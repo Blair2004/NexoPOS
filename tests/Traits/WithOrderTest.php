@@ -127,7 +127,9 @@ trait WithOrderTest
          * let's fetch all order that was created on that cash register
          * from a specific moment
          */
-        $totalValue = RegisterHistory::where( 'register_id', $cashRegister->id )->where( 'created_at', '>', $specificMoment )->sum( 'value' );
+        $totalValue = ns()->currency->define( RegisterHistory::where( 'register_id', $cashRegister->id )
+            ->where( 'created_at', '>', $specificMoment )
+            ->sum( 'value' ) )->getRaw();
 
         /**
          * only if the order total is greater than 0
@@ -233,7 +235,14 @@ trait WithOrderTest
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_DELETE )->sum( 'value' );
 
-        $totalTransactions = ( $openingBalance + $totalCashing + $totalSales ) - ( $totalClosing + $totalRefunds + $totalCashOut + $totalDelete );
+        $totalTransactions = ns()->currency->define( $openingBalance )
+            ->additionateBy( $totalCashing )
+            ->additionateBy( $totalSales )
+            ->subtractBy( $totalClosing )
+            ->subtractBy( $totalRefunds )
+            ->subtractBy( $totalCashOut )
+            ->subtractBy( $totalDelete )
+            ->getRaw();
 
         $this->assertEquals(
             ns()->currency->getRaw( $cashRegister->balance ),
@@ -521,9 +530,8 @@ trait WithOrderTest
         ], $data ) );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+            ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
 
-        $response->dump();
         $response->assertStatus( 200 );
 
         $response = json_decode( $response->getContent(), true );
@@ -539,7 +547,9 @@ trait WithOrderTest
 
         $cashRegister->refresh();
 
-        $this->assertEquals( (float) $cashRegister->balance, (float) ( $previousValue - $response[ 'data' ][ 'order' ][ 'total' ] ), 'The balance wasn\'t updated after deleting the order.' );
+        $newAmount  =   ns()->currency->define( $previousValue )->subtractBy( $response[ 'data' ][ 'order' ][ 'total' ] )->getRaw();
+
+        $this->assertEquals( ( float ) $cashRegister->balance, ( float ) $newAmount, 'The balance wasn\'t updated after deleting the order.' );
 
         return $response;
     }

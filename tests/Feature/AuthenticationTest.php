@@ -167,7 +167,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect( route( 'ns.login', [
             'status' => 'success',
             'message' => $registration_validated === 'no' ?
-                __( 'Your Account has been successfully creaetd.' ) :
+                __( 'Your Account has been successfully created.' ) :
                 __( 'Your Account has been created but requires email validation.' ),
         ]) );
 

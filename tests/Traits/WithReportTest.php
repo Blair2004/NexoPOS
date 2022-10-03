@@ -53,8 +53,8 @@ trait WithReportTest
     {
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/reports/sale-report', [
-                'startDate' => now()->startOfDay()->toDateTimeString(),
-                'endDate' => now()->endOfDay()->toDateTimeString(),
+                'startDate' => ns()->date->startOfDay()->toDateTimeString(),
+                'endDate' => ns()->date->endOfDay()->toDateTimeString(),
                 'type' => 'categories_report'
             ]);
 
@@ -74,6 +74,7 @@ trait WithReportTest
         $this->useDiscount          =   false;
         $this->count                =   1;
         $this->shouldRefund         =   false;
+        $this->customDate           =   false;
         
         $responses  =   $this->attemptPostOrder( function( $response, $responseData ) {
             // ...

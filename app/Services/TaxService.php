@@ -543,9 +543,9 @@ class TaxService
     public function getVatValue( $type, float $rate, float $value )
     {
         if ( $type === 'inclusive' ) {
-            return $value - $this->getPriceWithoutTax( $type, $rate, $value );
+            return ns()->currency->define( $value )->subtractBy( $this->getPriceWithoutTax( $type, $rate, $value ) )->getRaw();
         } elseif ( $type === 'exclusive' ) {
-            return $this->getPriceWithoutTax( $type, $rate, $value ) - $value;
+            return ns()->currency->define( $this->getPriceWithoutTax( $type, $rate, $value ) )->subtractBy( $value )->getRaw();
         }
     }
 
