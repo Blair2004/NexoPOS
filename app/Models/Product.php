@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $type
  * @property string $accurate_tracking
  * @property string $status
- * @property string $stock_management Can either be "enabled" or "disabled". Use Product::STOCK_MANAGEMEND_ENABLED or Product::STOCK_MANAGEMENT_DISABLED for accessing those values.
+ * @property string $stock_management Can either be "enabled" or "disabled"
  * @property string $barcode
  * @property string $barcode_type
  * @property string $sku
@@ -68,7 +68,7 @@ class Product extends NsModel
             'local_index' => 'id',
             'local_name' => 'name',
             'foreign_index' => 'product_id',
-            'foreign_name' => 'name',
+            'foreign_name' => [ Order::class, 'order_id', 'id', 'code' ],
         ],
     ];
 

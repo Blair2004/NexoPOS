@@ -12,6 +12,15 @@ class UnitGroup extends NsModel
 
     protected $table = 'nexopos_units_groups';
 
+    protected $isDependencyFor = [
+        Unit::class => [
+            'local_name' => 'name',
+            'local_index' => 'id',
+            'foreign_name' => 'name',
+            'foreign_index' => 'group_id',
+        ],
+    ];
+
     public function units()
     {
         return $this->hasMany( Unit::class, 'group_id' );
