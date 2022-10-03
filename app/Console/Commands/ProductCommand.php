@@ -56,7 +56,7 @@ class ProductCommand extends Command
 
         match ( $this->argument( 'action' ) ) {
             'update' => $this->updateProducts(),
-            'compute-taxes' =>  $this->computeTaxes(),
+            'compute-taxes' => $this->computeTaxes(),
             'refresh-barcode' => $this->refreshBarcodes()
         };
     }
@@ -66,11 +66,11 @@ class ProductCommand extends Command
         /**
          * @var TaxService
          */
-        $taxService     =   app()->make( TaxService::class );
+        $taxService = app()->make( TaxService::class );
 
-        $this->withProgressBar( ProductUnitQuantity::with( 'product.tax_group' )->get(), function( ProductUnitQuantity $productUnitQuantity ) use ( $taxService ) {           
-            $taxService->computeTax( 
-                product: $productUnitQuantity, 
+        $this->withProgressBar( ProductUnitQuantity::with( 'product.tax_group' )->get(), function( ProductUnitQuantity $productUnitQuantity ) use ( $taxService ) {
+            $taxService->computeTax(
+                product: $productUnitQuantity,
                 tax_group_id: $productUnitQuantity->product->tax_group_id,
                 tax_type: $productUnitQuantity->product->tax_type
             );

@@ -3,13 +3,10 @@
 namespace Tests\Feature;
 
 use App\Services\DateService;
-use Exception;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 
-    class TestAllDateTimeOptions extends TestCase
+class TestAllDateTimeOptions extends TestCase
 {
     use WithAuthentication;
 
@@ -22,9 +19,9 @@ use Tests\Traits\WithAuthentication;
     {
         $this->attemptAuthenticate();
 
-        $timezones  =   config( 'nexopos.timezones' );
+        $timezones = config( 'nexopos.timezones' );
 
-        foreach( $timezones as $zone => $name ) {
+        foreach ( $timezones as $zone => $name ) {
             $this->assertTrue( new DateService( 'now', $zone ) instanceof DateService );
         }
     }

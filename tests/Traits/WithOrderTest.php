@@ -547,9 +547,9 @@ trait WithOrderTest
 
         $cashRegister->refresh();
 
-        $newAmount  =   ns()->currency->define( $previousValue )->subtractBy( $response[ 'data' ][ 'order' ][ 'total' ] )->getRaw();
+        $newAmount = ns()->currency->define( $previousValue )->subtractBy( $response[ 'data' ][ 'order' ][ 'total' ] )->getRaw();
 
-        $this->assertEquals( ( float ) $cashRegister->balance, ( float ) $newAmount, 'The balance wasn\'t updated after deleting the order.' );
+        $this->assertEquals( (float) $cashRegister->balance, (float) $newAmount, 'The balance wasn\'t updated after deleting the order.' );
 
         return $response;
     }
@@ -1458,7 +1458,7 @@ trait WithOrderTest
          * We need to check if the order
          * is correctly updated after a refund.
          */
-        $order  =   Order::find( $responseData[ 'data' ][ 'order' ][ 'id' ] );
+        $order = Order::find( $responseData[ 'data' ][ 'order' ][ 'id' ] );
 
         $this->assertTrue( $order->payment_status === $paymentStatus, $message );
 

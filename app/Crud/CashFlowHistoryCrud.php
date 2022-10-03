@@ -249,7 +249,8 @@ class CashFlowHistoryCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -363,19 +364,19 @@ class CashFlowHistoryCrud extends CrudService
         switch ( $entry->operation ) {
             case CashFlow::OPERATION_CREDIT:
                 $entry->{ '$cssClass' } = 'success border text-sm';
-            break;
+                break;
             case CashFlow::OPERATION_DEBIT:
                 $entry->{ '$cssClass' } = 'error border text-sm';
-            break;
+                break;
         }
 
         switch ( $entry->operation ) {
             case CashFlow::OPERATION_CREDIT:
                 $entry->operation = "<span class='bg-green-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Credit' ) . '</span>';
-            break;
+                break;
             case CashFlow::OPERATION_DEBIT:
                 $entry->operation = "<span class='bg-red-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Debit' ) . '</span>';
-            break;
+                break;
         }
 
         // you can make changes here
@@ -405,7 +406,6 @@ class CashFlowHistoryCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */

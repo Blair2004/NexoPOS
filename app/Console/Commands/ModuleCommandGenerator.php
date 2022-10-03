@@ -50,8 +50,8 @@ class ModuleCommandGenerator extends Command
             if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
                 Storage::disk( 'ns-modules' )->put(
                     $fileName . '.php', view( 'generate.modules.command', compact(
-                    'modules', 'module', 'name', 'namespace'
-                ) ) );
+                        'modules', 'module', 'name', 'namespace'
+                    ) ) );
 
                 return $this->info( sprintf(
                     __( 'The command has been created for the module "%s"!' ),

@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class CheckMathLibraryTest extends TestCase
@@ -19,7 +17,7 @@ class CheckMathLibraryTest extends TestCase
             ns()->currency->define(0.1)
                 ->additionateBy(0.2)
                 ->getRaw(),
-            ( float ) 0.3
+            (float) 0.3
         );
 
         $this->assertEquals(
@@ -27,14 +25,14 @@ class CheckMathLibraryTest extends TestCase
                 ->additionateBy(0.2)
                 ->multipliedBy(4)
                 ->getRaw(),
-            ( float ) 1.2
+            (float) 1.2
         );
 
         $this->assertEquals(
             ns()->currency->define(0.001)
                 ->subtractBy(0.00093)
                 ->getRaw(),
-            ( float ) 0.00007
+            (float) 0.00007
         );
     }
 }

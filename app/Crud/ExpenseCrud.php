@@ -309,7 +309,8 @@ class ExpenseCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -432,12 +433,18 @@ class ExpenseCrud extends CrudService
         $entry->recurring = (bool) $entry->recurring ? __( 'Yes' ) : __( 'No' );
 
         switch ( $entry->occurence ) {
-            case 'month_start' : $entry->occurence = __( 'Month Starts' ); break;
-            case 'month_mid' : $entry->occurence = __( 'Month Middle' ); break;
-            case 'month_end' : $entry->occurence = __( 'Month Ends' ); break;
-            case 'x_after_month_starts' : $entry->occurence = __( 'X Days Before Month Starts' ); break;
-            case 'x_before_month_ends' : $entry->occurence = __( 'X Days Before Month Ends' ); break;
-            default: $entry->occurence = __( 'Unknown Occurance' ); break;
+            case 'month_start' : $entry->occurence = __( 'Month Starts' );
+            break;
+            case 'month_mid' : $entry->occurence = __( 'Month Middle' );
+            break;
+            case 'month_end' : $entry->occurence = __( 'Month Ends' );
+            break;
+            case 'x_after_month_starts' : $entry->occurence = __( 'X Days Before Month Starts' );
+            break;
+            case 'x_before_month_ends' : $entry->occurence = __( 'X Days Before Month Ends' );
+            break;
+            default: $entry->occurence = __( 'Unknown Occurance' );
+            break;
         }
 
         // you can make changes here

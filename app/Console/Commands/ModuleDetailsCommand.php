@@ -28,8 +28,7 @@ class ModuleDetailsCommand extends Command
      */
     public function __construct(
         private ModulesService $modulesService
-    )
-    {
+    ) {
         parent::__construct();
     }
 

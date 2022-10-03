@@ -25,8 +25,8 @@ class Options
     public string $tableName;
 
     /**
-     * the option class can be constructed with the user id. 
-     * If the user is not provided, the general options are loaded instead. 
+     * the option class can be constructed with the user id.
+     * If the user is not provided, the general options are loaded instead.
      */
     public function __construct()
     {
@@ -110,13 +110,13 @@ class Options
                 switch ( $value ) {
                     case is_array( $value ) :
                         $option->value = json_encode( $value );
-                    break;
+                        break;
                     case empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) :
                         $option->value = '';
-                    break;
+                        break;
                     default:
                         $option->value = $value;
-                    break;
+                        break;
                 }
 
                 $option->expire_on = $expiration;
@@ -149,13 +149,13 @@ class Options
             switch ( $value ) {
                 case is_array( $value ) :
                     $option->value = json_encode( $value );
-                break;
+                    break;
                 case empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) :
                     $option->value = '';
-                break;
+                    break;
                 default:
                     $option->value = $value;
-                break;
+                    break;
             }
 
             $option->expire_on = $expiration;

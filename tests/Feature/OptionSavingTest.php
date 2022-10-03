@@ -53,10 +53,10 @@ class OptionSavingTest extends TestCase
         /**
          * Step: 2 Saving simple array
          */
-        $array  =   [ 'Hello', 'World', 'GoodMorning' ];
+        $array = [ 'Hello', 'World', 'GoodMorning' ];
         ns()->option->set( 'new_array', $array );
 
-        $retreived  =   ns()->option->get( 'new_array', []);
+        $retreived = ns()->option->get( 'new_array', []);
 
         $this->assertTrue( is_array( $retreived ), 'Saved option is not an array.' );
         $this->assertTrue( $retreived[0] === $array[0], 'Wrong saved value index.' );

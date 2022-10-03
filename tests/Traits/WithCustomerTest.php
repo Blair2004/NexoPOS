@@ -97,7 +97,7 @@ trait WithCustomerTest
     protected function attemptCreateCustomersWithSimilarEmail()
     {
         ns()->option->set( 'ns_customers_force_valid_email', 'yes' );
-        
+
         $faker = Factory::create();
         $group = CustomerGroup::first();
         $email = $faker->email;
@@ -161,9 +161,9 @@ trait WithCustomerTest
             /**
              * Creating a first customer
              */
-            $email  =   $faker->email;
-            $firstName =   $faker->firstName;
-            $lastName =   $faker->lastName;
+            $email = $faker->email;
+            $firstName = $faker->firstName;
+            $lastName = $faker->lastName;
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [

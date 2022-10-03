@@ -1,6 +1,5 @@
 <?php
 
-use App\Classes\Hook;
 use App\Http\Controllers\Dashboard\CashRegistersController;
 use Illuminate\Support\Facades\Route;
 

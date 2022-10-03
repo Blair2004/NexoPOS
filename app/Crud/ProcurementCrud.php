@@ -278,7 +278,8 @@ class ProcurementCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -445,10 +446,10 @@ class ProcurementCrud extends CrudService
             $entry->addAction( 'set_paid', [
                 'label' => __( 'Set Paid' ),
                 'type' => 'GET',
-                'url'   =>  ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/set-as-paid' ),
-                'confirm'   =>  [
-                    'message'   =>  __( 'Would you like to mark this procurement as paid?' )
-                ]
+                'url' => ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/set-as-paid' ),
+                'confirm' => [
+                    'message' => __( 'Would you like to mark this procurement as paid?' ),
+                ],
             ]);
         }
 
@@ -485,7 +486,6 @@ class ProcurementCrud extends CrudService
     public function bulkAction( Request $request )
     {
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */

@@ -704,43 +704,43 @@ class ReportService
                     'column' => 'quantity',
                     'direction' => 'asc',
                 ];
-            break;
+                break;
             case 'using_quantity_desc':
                 $sorting = [
                     'column' => 'quantity',
                     'direction' => 'desc',
                 ];
-            break;
+                break;
             case 'using_sales_asc':
                 $sorting = [
                     'column' => 'total_price',
                     'direction' => 'asc',
                 ];
-            break;
+                break;
             case 'using_sales_desc':
                 $sorting = [
                     'column' => 'total_price',
                     'direction' => 'desc',
                 ];
-            break;
+                break;
             case 'using_name_asc':
                 $sorting = [
                     'column' => 'name',
                     'direction' => 'asc',
                 ];
-            break;
+                break;
             case 'using_name_desc':
                 $sorting = [
                     'column' => 'name',
                     'direction' => 'desc',
                 ];
-            break;
+                break;
             default:
-            $sorting = [
-                'column' => 'total_price',
-                'direction' => 'desc',
-            ];
-            break;
+                $sorting = [
+                    'column' => 'total_price',
+                    'direction' => 'desc',
+                ];
+                break;
         }
 
         foreach ( $previousDates as $key => $report ) {
@@ -815,11 +815,11 @@ class ReportService
         switch ( $type ) {
             case 'products_report':
                 return $this->getProductsReports( $start, $end, $user_id );
-            break;
+                break;
             case 'categories_report':
             case 'categories_summary':
                 return $this->getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id );
-            break;
+                break;
         }
     }
 
@@ -915,22 +915,22 @@ class ReportService
          */
         $categories->each( function( $category ) use ( $products ) {
             $rawProducts = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
-            
-            $products   =   [];
+
+            $products = [];
 
             /**
              * this will merge similar products
              * to summarize them.
              */
             $rawProducts->each( function( $product ) use ( &$products ) {
-                if( isset( $products[ $product->product_id ] ) ) {
-                    $products[ $product->product_id ][ 'quantity' ]     +=  $product->quantity;
-                    $products[ $product->product_id ][ 'tax_value' ]     +=  $product->tax_value;
-                    $products[ $product->product_id ][ 'discount' ]     +=  $product->discount;
-                    $products[ $product->product_id ][ 'total_price' ]     +=  $product->total_price;
+                if ( isset( $products[ $product->product_id ] ) ) {
+                    $products[ $product->product_id ][ 'quantity' ] += $product->quantity;
+                    $products[ $product->product_id ][ 'tax_value' ] += $product->tax_value;
+                    $products[ $product->product_id ][ 'discount' ] += $product->discount;
+                    $products[ $product->product_id ][ 'total_price' ] += $product->total_price;
                 } else {
-                    $products[ $product->product_id ]   =   array_merge( $product->toArray(), [
-                        'quantity'  =>  $product->quantity,
+                    $products[ $product->product_id ] = array_merge( $product->toArray(), [
+                        'quantity' => $product->quantity,
                         'tax_value' => $product->tax_value,
                         'discount' => $product->discount,
                         'total_price' => $product->total_price,

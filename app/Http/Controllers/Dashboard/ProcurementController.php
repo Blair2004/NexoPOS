@@ -139,21 +139,21 @@ class ProcurementController extends DashboardController
             throw new NotAllowedException( __( 'You cannot change the status of an already paid procurement.' ) );
         }
 
-        $procurement->payment_status    =   $request->input( 'payment_status' );
+        $procurement->payment_status = $request->input( 'payment_status' );
         $procurement->save();
 
         event( new ProcurementAfterUpdateEvent( $procurement ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The procurement payment status has been changed successfully.' )
+            'status' => 'success',
+            'message' => __( 'The procurement payment status has been changed successfully.' ),
         ];
     }
 
     /**
      * Will change the payment status to
      * paid for a provided procurement.
-     * 
+     *
      * @param Procurement $procurement
      * @return array
      */
@@ -163,14 +163,14 @@ class ProcurementController extends DashboardController
             throw new NotAllowedException( __( 'You cannot change the status of an already paid procurement.' ) );
         }
 
-        $procurement->payment_status    =   Procurement::PAYMENT_PAID;
+        $procurement->payment_status = Procurement::PAYMENT_PAID;
         $procurement->save();
 
         event( new ProcurementAfterUpdateEvent( $procurement ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The procurement has been marked as paid.' )
+            'status' => 'success',
+            'message' => __( 'The procurement has been marked as paid.' ),
         ];
     }
 

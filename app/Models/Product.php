@@ -51,7 +51,7 @@ class Product extends NsModel
 
     const STATUS_AVAILABLE = 'available';
 
-    CONST STATUS_UNAVAILABLE = 'unavailable';
+    const STATUS_UNAVAILABLE = 'unavailable';
 
     protected $table = 'nexopos_' . 'products';
 
@@ -148,7 +148,7 @@ class Product extends NsModel
 
     /**
      * get products that are on sale.
-     * 
+     *
      * @param QueryBuilder
      * @return QueryBuilder
      */
@@ -159,7 +159,7 @@ class Product extends NsModel
 
     /**
      * get products that aren't on sale.
-     * 
+     *
      * @param QueryBuilder
      * @return QueryBuilder
      */

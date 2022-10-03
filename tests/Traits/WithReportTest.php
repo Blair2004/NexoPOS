@@ -51,36 +51,36 @@ trait WithReportTest
 
     private function getSaleReport()
     {
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/reports/sale-report', [
                 'startDate' => ns()->date->startOfDay()->toDateTimeString(),
                 'endDate' => ns()->date->endOfDay()->toDateTimeString(),
-                'type' => 'categories_report'
+                'type' => 'categories_report',
             ]);
 
-        $response->assertOk();        
+        $response->assertOk();
 
         return json_decode( $response->getContent() );
     }
 
     protected function attemptTestSaleReport()
     {
-        $report     =   $this->getSaleReport();
+        $report = $this->getSaleReport();
 
         /**
          * Step 1: attempt simple sale
          */
-        $this->totalDaysInterval    =   1;
-        $this->useDiscount          =   false;
-        $this->count                =   1;
-        $this->shouldRefund         =   false;
-        $this->customDate           =   false;
-        
-        $responses  =   $this->attemptPostOrder( function( $response, $responseData ) {
+        $this->totalDaysInterval = 1;
+        $this->useDiscount = false;
+        $this->count = 1;
+        $this->shouldRefund = false;
+        $this->customDate = false;
+
+        $responses = $this->attemptPostOrder( function( $response, $responseData ) {
             // ...
         });
 
-        $newReport  =   $this->getSaleReport();
+        $newReport = $this->getSaleReport();
 
         $this->assertEquals(
             ns()->currency->getRaw( $report->summary->total ),
@@ -109,12 +109,12 @@ trait WithReportTest
         /**
          * Step 1: attempt sale with taxes
          */
-        $this->totalDaysInterval    =   1;
-        $this->useDiscount          =   false;
-        $this->count                =   1;
-        $this->shouldRefund         =   false;
-        
-        $responses  =   $this->attemptPostOrder( function( $response, $responseData ) {
+        $this->totalDaysInterval = 1;
+        $this->useDiscount = false;
+        $this->count = 1;
+        $this->shouldRefund = false;
+
+        $responses = $this->attemptPostOrder( function( $response, $responseData ) {
             // ...
         });
     }

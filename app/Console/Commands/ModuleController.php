@@ -74,8 +74,8 @@ class ModuleController extends Command
                 if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
                     Storage::disk( 'ns-modules' )->put(
                         $fileName . '.php', view( 'generate.modules.controller', compact(
-                        'modules', 'module', 'name', 'namespace'
-                    ) ) );
+                            'modules', 'module', 'name', 'namespace'
+                        ) ) );
 
                     return $this->info( sprintf(
                         __( 'The controller has been created for the module "%s"!' ),

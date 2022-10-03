@@ -6,7 +6,6 @@ use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
-use Tests\Traits\WithOrderTest;
 use Tests\Traits\WithReportTest;
 
 class CanSeeReportsTest extends TestCase

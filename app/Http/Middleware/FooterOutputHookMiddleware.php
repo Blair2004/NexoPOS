@@ -19,18 +19,18 @@ class FooterOutputHookMiddleware
     public function handle(Request $request, Closure $next)
     {
         Hook::addAction( 'ns-dashboard-footer', function( Output $output ) {
-            $exploded   =   explode( '.', request()->route()->getName() );
+            $exploded = explode( '.', request()->route()->getName() );
 
             /**
              * a route might not have a name
              * if that happen, we'll ignore that.
              */
             if ( ! empty( $exploded ) ) {
-                $final = join( '-', $exploded ) . '-footer';
+                $final = implode( '-', $exploded ) . '-footer';
                 Hook::action( $final, $output );
             }
         }, 15 );
-        
+
         return $next($request);
     }
 }

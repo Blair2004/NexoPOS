@@ -33,7 +33,7 @@ class SettingsRequest extends BaseCrudRequest
 
         throw new Exception(
             sprintf( __( 'Unable to initialize the settings page. The identifier "%s" cannot be instantiated.' ),
-            $this->route( 'identifier' )
-        ) );
+                $this->route( 'identifier' )
+            ) );
     }
 }

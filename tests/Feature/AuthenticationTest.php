@@ -156,13 +156,13 @@ class AuthenticationTest extends TestCase
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
-            '/auth/sign-up', [
-                'username' => $this->faker->userName(),
-                'password' => $password,
-                'password_confirm' => $password,
-                'email' => $this->faker->email(),
-            ]
-        );
+                '/auth/sign-up', [
+                    'username' => $this->faker->userName(),
+                    'password' => $password,
+                    'password_confirm' => $password,
+                    'email' => $this->faker->email(),
+                ]
+            );
 
         $response->assertRedirect( route( 'ns.login', [
             'status' => 'success',
@@ -181,13 +181,13 @@ class AuthenticationTest extends TestCase
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
-            '/auth/sign-up', [
-                'username' => $this->faker->userName(),
-                'password' => $password,
-                'password_confirm' => $password . '122',
-                'email' => 'not-a-valid-email',
-            ]
-        );
+                '/auth/sign-up', [
+                    'username' => $this->faker->userName(),
+                    'password' => $password,
+                    'password_confirm' => $password . '122',
+                    'email' => 'not-a-valid-email',
+                ]
+            );
 
         $response->assertSee( 'Unable to proceed, the submitted form is not valid.' );
     }
@@ -291,11 +291,11 @@ class AuthenticationTest extends TestCase
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
-            'auth/new-password/' . $user->id . '/' . $user->activation_token, [
-                'password' => $password,
-                'password_confirm' => $password,
-            ]
-        );
+                'auth/new-password/' . $user->id . '/' . $user->activation_token, [
+                    'password' => $password,
+                    'password_confirm' => $password,
+                ]
+            );
 
         $response->assertJsonPath( 'data.redirectTo', route( 'ns.intermediate', [
             'route' => 'ns.login',
@@ -319,11 +319,11 @@ class AuthenticationTest extends TestCase
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
-            'auth/new-password/' . $user->id . '/' . $user->activation_token, [
-                'password' => $password,
-                'password_confirm' => $password,
-            ]
-        );
+                'auth/new-password/' . $user->id . '/' . $user->activation_token, [
+                    'password' => $password,
+                    'password_confirm' => $password,
+                ]
+            );
 
         $response->assertSee( 'The recovery has been explicitely disabled.' );
     }

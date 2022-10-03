@@ -332,7 +332,6 @@ class ProcurementService
             extract( $this->__procureForSingleUnit( compact( 'procurementProduct', 'storedUnitReference', 'itemsToSave', 'item' ) ) );
         } elseif ( $item->purchase_unit_type === 'unit-group' ) {
             if ( ! isset( $procurementProduct->unit_id ) ) {
-
                 /**
                  * this is made to ensure
                  * we have a self explanatory error,

@@ -391,7 +391,8 @@ class OrderCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -560,31 +561,31 @@ class OrderCrud extends CrudService
         switch ( $entry->payment_status ) {
             case Order::PAYMENT_PAID:
                 $entry->{ '$cssClass' } = 'success border text-sm';
-            break;
+                break;
             case Order::PAYMENT_UNPAID:
                 $entry->{ '$cssClass' } = 'danger border text-sm';
-            break;
+                break;
             case Order::PAYMENT_PARTIALLY:
                 $entry->{ '$cssClass' } = 'info border text-sm';
-            break;
+                break;
             case Order::PAYMENT_HOLD:
                 $entry->{ '$cssClass' } = 'danger border text-sm';
-            break;
+                break;
             case Order::PAYMENT_VOID:
                 $entry->{ '$cssClass' } = 'error border text-sm';
-            break;
+                break;
             case Order::PAYMENT_REFUNDED:
                 $entry->{ '$cssClass' } = 'default border text-sm';
-            break;
+                break;
             case Order::PAYMENT_PARTIALLY_REFUNDED:
                 $entry->{ '$cssClass' } = 'default border text-sm';
-            break;
+                break;
             case Order::PAYMENT_DUE:
                 $entry->{ '$cssClass' } = 'danger border text-sm';
-            break;
+                break;
             case Order::PAYMENT_PARTIALLY_DUE:
                 $entry->{ '$cssClass' } = 'danger border text-sm';
-            break;
+                break;
         }
 
         $entry->payment_status = ns()->order->getPaymentLabel( $entry->payment_status );

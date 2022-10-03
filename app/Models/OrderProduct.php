@@ -50,7 +50,7 @@ class OrderProduct extends NsModel
 
     protected $table = 'nexopos_' . 'orders_products';
 
-    protected $casts    =   [
+    protected $casts = [
         'id' => 'integer',
         'product_id' => 'integer',
         'product_category_id' => 'integer',

@@ -17,7 +17,7 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'net_sale_price' ) ) {
                 $table->renameColumn( 'net_sale_price', 'sale_price_with_tax' );
             }
-            
+
             if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'net_wholesale_price' ) ) {
                 $table->renameColumn( 'net_wholesale_price', 'wholesale_price_with_tax' );
             }
@@ -47,7 +47,7 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_orders_products', 'gross_price' ) ) {
                 $table->renameColumn( 'gross_price', 'price_without_tax' );
             }
-            
+
             if ( Schema::hasColumn( 'nexopos_orders_products', 'net_price' ) ) {
                 $table->renameColumn( 'net_price', 'price_with_tax' );
             }
@@ -65,7 +65,7 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_orders', 'net_total' ) ) {
                 $table->renameColumn( 'net_total', 'total_with_tax' );
             }
-            
+
             if ( Schema::hasColumn( 'nexopos_orders', 'gross_total' ) ) {
                 $table->renameColumn( 'gross_total', 'total_without_tax' );
             }

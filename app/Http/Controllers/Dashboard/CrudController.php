@@ -53,7 +53,6 @@ class CrudController extends DashboardController
         }
 
         if ( method_exists( $model, 'getDeclaredDependencies' ) ) {
-
             /**
              * Let's verify if the current model
              * is a dependency for other models.
@@ -68,15 +67,14 @@ class CrudController extends DashboardController
 
                 if ( $dependencyFound instanceof $class ) {
                     if ( isset( $model->{ $indexes[ 'local_name' ] } ) && ! empty( $indexes[ 'foreign_name' ] ) ) {
-
                         /**
                          * if the foreign name is an array
                          * we'll pull the first model set as linked
                          * to the item being deleted.
                          */
                         if ( is_array( $indexes[ 'foreign_name' ] ) ) {
-                            $relatedSubModel =   $indexes[ 'foreign_name' ][0]; // model name
-                            $localIndex =   $indexes[ 'foreign_name' ][1]; // local index on the dependency table $dependencyFound
+                            $relatedSubModel = $indexes[ 'foreign_name' ][0]; // model name
+                            $localIndex = $indexes[ 'foreign_name' ][1]; // local index on the dependency table $dependencyFound
                             $foreignIndex = $indexes[ 'foreign_name' ][2] ?? 'id'; // foreign index on the related table $model
                             $labelColumn = $indexes[ 'foreign_name' ][3] ?? 'name'; // foreign index on the related table $model
 
@@ -84,19 +82,18 @@ class CrudController extends DashboardController
                              * we'll find if we find the model
                              * for the provided details.
                              */
-                            $result     =   $relatedSubModel::where( $foreignIndex, $dependencyFound->$localIndex )->first();
-                            
+                            $result = $relatedSubModel::where( $foreignIndex, $dependencyFound->$localIndex )->first();
+
                             /**
                              * the model might exists. If that doesn't exists
                              * then probably it's not existing. There might be a misconfiguration
                              * on the relation.
                              */
                             if ( $result instanceof $relatedSubModel ) {
-                                $foreignName  =   $result->$labelColumn ?? __( 'Unidentified Item' );
+                                $foreignName = $result->$labelColumn ?? __( 'Unidentified Item' );
                             } else {
-                                $foreignName  =   $result->$labelColumn ?? __( 'Unexisting Item' );
+                                $foreignName = $result->$labelColumn ?? __( 'Unexisting Item' );
                             }
-
                         } else {
                             $foreignName = $dependencyFound->{ $indexes[ 'foreign_name' ] } ?? __( 'Unidentified Item' );
                         }
@@ -129,7 +126,6 @@ class CrudController extends DashboardController
          * Run the filter before deleting
          */
         if ( method_exists( $resource, 'beforeDelete' ) ) {
-
             /**
              * the callback should return an empty value to proceed.
              */

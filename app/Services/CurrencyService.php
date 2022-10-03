@@ -194,7 +194,7 @@ class CurrencyService
     {
         $currency = $this->prefered_currency === 'iso' ? $this->currency_iso : $this->currency_symbol;
         $final = sprintf( '%s ' . number_format(
-            floatval( ( string ) $this->value ),
+            floatval( (string) $this->value ),
             $this->decimal_precision,
             $this->decimal_separator,
             $this->thousand_separator
@@ -219,7 +219,7 @@ class CurrencyService
 
     public function getRaw( $value = null )
     {
-        return floatval( $value !== null ? ( string ) BigDecimal::of( $value ) : ( string ) $this->value );
+        return floatval( $value !== null ? (string) BigDecimal::of( $value ) : (string) $this->value );
     }
 
     /**
@@ -245,7 +245,7 @@ class CurrencyService
      */
     public function multipliedBy( $number )
     {
-        $this->value    =   $this->value->multipliedBy( $number );
+        $this->value = $this->value->multipliedBy( $number );
 
         return $this;
     }
@@ -271,7 +271,7 @@ class CurrencyService
      */
     public function dividedBy( $number )
     {
-        $this->value    =   $this->value->dividedBy( $number, $this->decimal_precision, RoundingMode::UP );
+        $this->value = $this->value->dividedBy( $number, $this->decimal_precision, RoundingMode::UP );
 
         return $this;
     }
@@ -297,7 +297,7 @@ class CurrencyService
      */
     public function subtractBy( $number )
     {
-        $this->value    =   $this->value->minus( $number );
+        $this->value = $this->value->minus( $number );
 
         return $this;
     }
@@ -311,13 +311,14 @@ class CurrencyService
      */
     public function additionateBy( $number )
     {
-        $this->value    =   $this->value->plus( $number );
+        $this->value = $this->value->plus( $number );
 
         return $this;
     }
 
     /**
      * @source https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers
+     *
      * @deprecated
      */
     public function bcceil( $number )
@@ -386,9 +387,9 @@ class CurrencyService
             ->dividedBy(100);
 
         if ( $operation === 'additionate' ) {
-            return ( float ) BigDecimal::of( $value )->plus( $percentage );
+            return (float) BigDecimal::of( $value )->plus( $percentage );
         } elseif ( $operation === 'subtract' ) {
-            return ( float ) BigDecimal::of( $value )->minus( $percentage );
+            return (float) BigDecimal::of( $value )->minus( $percentage );
         }
 
         return $value;

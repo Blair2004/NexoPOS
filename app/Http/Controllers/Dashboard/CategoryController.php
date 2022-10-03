@@ -61,7 +61,6 @@ class CategoryController extends DashboardController
         $category = ProductCategory::find( $id );
 
         if ( $category instanceof ProductCategory ) {
-
             /**
              * prevent deleting a category
              * which might have some categories

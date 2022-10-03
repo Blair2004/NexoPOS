@@ -250,7 +250,8 @@ class CustomerCouponCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -382,10 +383,10 @@ class CustomerCouponCrud extends CrudService
         switch ( $entry->coupon_type ) {
             case 'percentage_discount':
                 $entry->coupon_discount_value = $entry->coupon_discount_value . '%';
-            break;
+                break;
             case 'flat_discount':
                 $entry->coupon_discount_value = ns()->currency->define( $entry->coupon_discount_value );
-            break;
+                break;
         }
 
         $entry->coupon_type = $entry->coupon_type === 'percentage_discount' ? __( 'Percentage' ) : __( 'Flat' );
@@ -424,7 +425,6 @@ class CustomerCouponCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */

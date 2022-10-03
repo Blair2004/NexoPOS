@@ -41,9 +41,9 @@ class ProductUnitQuantity extends NsModel
 
     protected $table = 'nexopos_' . 'products_unit_quantities';
 
-    protected $dispatchesEvents     =   [
-        'created'   =>  ProductUnitQuantityAfterCreatedEvent::class,
-        'updated'   =>  ProductUnitQuantityAfterUpdatedEvent::class
+    protected $dispatchesEvents = [
+        'created' => ProductUnitQuantityAfterCreatedEvent::class,
+        'updated' => ProductUnitQuantityAfterUpdatedEvent::class,
     ];
 
     /**
@@ -51,7 +51,7 @@ class ProductUnitQuantity extends NsModel
      * might be useful to solve a common bug when the
      * database doesn't return the right type.
      */
-    protected $casts    =   [
+    protected $casts = [
         'sale_price' => FloatConvertCasting::class,
         'sale_price_edit' => FloatConvertCasting::class,
         'sale_price_without_tax' => FloatConvertCasting::class,
@@ -67,7 +67,7 @@ class ProductUnitQuantity extends NsModel
         'custom_price_with_tax' => FloatConvertCasting::class,
         'custom_price_without_tax' => FloatConvertCasting::class,
         'quantity' => 'float',
-        'low_quantity' => 'float'
+        'low_quantity' => 'float',
     ];
 
     /**

@@ -78,7 +78,7 @@ class DashboardController extends Controller
      * Will create a hook that will inject
      * Output object on the footer. Useful to create
      * custom output per page.
-     * 
+     *
      * @param string $name
      * @return void
      */

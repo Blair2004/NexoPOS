@@ -240,18 +240,15 @@ class CrudService
             );
 
             foreach ( $inputs as $name => $value ) {
-
                 /**
                  * If the fields where explicitely added
                  * on field that must be ignored we should skip that.
                  */
                 if ( ! in_array( $name, $resource->skippable ) ) {
-
                     /**
                      * If submitted field are part of fillable fields
                      */
                     if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
-
                         /**
                          * We might give the capacity to filter fields
                          * before storing. This can be used to apply specific formating to the field.
@@ -762,7 +759,7 @@ class CrudService
                                     $query->where( $key, '>=', Carbon::parse( $value[ 'startDate' ] )->toDateTimeString() );
                                     $query->where( $key, '<=', Carbon::parse( $value[ 'endDate' ] )->toDateTimeString() );
                                 }
-                            break;
+                                break;
                             default:
                                 /**
                                  * We would like to apply a specific operator
@@ -773,7 +770,7 @@ class CrudService
                                     $definition,
                                     compact( 'key', 'value' )
                                 );
-                            break;
+                                break;
                         }
                     } else {
                         $query->where( $key, $value );

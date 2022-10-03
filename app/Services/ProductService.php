@@ -342,13 +342,13 @@ class ProductService
         switch ( $data[ 'product_type' ] ) {
             case 'product':
                 return $this->updateSimpleProduct( $product, $data );
-            break;
+                break;
             case 'variable':
                 return $this->updateVariableProduct( $product, $data );
-            break;
+                break;
             default:
                 throw new Exception( sprintf( __( 'Unable to edit a product with an unknown type : %s' ), $data[ 'product_type' ] ) );
-            break;
+                break;
         }
     }
 
@@ -542,8 +542,8 @@ class ProductService
          * @todo should be tested
          */
         $manyPrimary = collect( $groups )->map( function( $fields ) {
-                return isset( $fields[ 'featured' ] ) && (int) $fields[ 'featured' ] === 1;
-            })
+            return isset( $fields[ 'featured' ] ) && (int) $fields[ 'featured' ] === 1;
+        })
             ->filter( fn( $result ) => $result === true )
             ->count() > 1;
 
@@ -774,7 +774,7 @@ class ProductService
         switch ( $operationType ) {
             case ProductHistory::ACTION_STOCKED:
                 $this->__saveProcurementHistory( $data );
-            break;
+                break;
         }
     }
 
@@ -1302,7 +1302,6 @@ class ProductService
                 $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
             }
         } else {
-
             /**
              * @var string status
              * @var string message

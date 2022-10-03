@@ -100,7 +100,7 @@ class DoctorService
         $this->command
             ->withProgressBar( Customer::with([ 'billing', 'shipping' ])->get(), function( $customer ) {
                 if ( ! $customer->billing instanceof CustomerBillingAddress ) {
-                    $billing =   new CustomerBillingAddress;
+                    $billing = new CustomerBillingAddress;
                     $billing->customer_id = $customer->id;
                     $billing->name = $customer->name;
                     $billing->surname = $customer->surname;
@@ -111,7 +111,7 @@ class DoctorService
                 }
 
                 if ( ! $customer->shipping instanceof CustomerShippingAddress ) {
-                    $shipping =   new CustomerShippingAddress;
+                    $shipping = new CustomerShippingAddress;
                     $shipping->customer_id = $customer->id;
                     $shipping->name = $customer->name;
                     $shipping->surname = $customer->surname;

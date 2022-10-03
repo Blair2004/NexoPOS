@@ -111,13 +111,13 @@ class ModuleMigrations extends Command
              * We'll make sure to clear the migration as
              * being executed on the system.
              */
-            $migration  =   ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )
+            $migration = ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )
                 ->where( 'file', $path )
                 ->get();
-            
+
             if ( $migration->count() > 0 ) {
                 $migration->delete();
-                
+
                 $this->info( sprintf( 'The migration "%s" for the module %s has been forgotten.', $path, $this->module[ 'name' ] ) );
 
                 /**
@@ -127,10 +127,9 @@ class ModuleMigrations extends Command
                 Artisan::call( 'cache:clear' );
 
                 return true;
-
             } else {
                 $this->info( sprintf( 'No migration found using the provided file path "%s" for the module "%s".', $path, $this->module[ 'name' ] ) );
-    
+
                 return false;
             }
         }
@@ -150,12 +149,12 @@ class ModuleMigrations extends Command
     {
         switch ( $content ) {
             case 'migration':
-            return view( 'generate.modules.migration', [
-                'module' => $this->module,
-                'migration' => $this->migration,
-                'table' => $this->table,
-                'schema' => $this->schema,
-            ]);
+                return view( 'generate.modules.migration', [
+                    'module' => $this->module,
+                    'migration' => $this->migration,
+                    'table' => $this->table,
+                    'schema' => $this->schema,
+                ]);
         }
     }
 
@@ -308,7 +307,6 @@ class ModuleMigrations extends Command
         $shouldIgnore = false;
         $details = explode( ' ', $migration );
         foreach ( $details as $detail ) {
-
             /**
              * while we've not looped the option, we assume the string
              * belong to the migration name

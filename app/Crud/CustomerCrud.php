@@ -435,7 +435,8 @@ class CustomerCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -624,9 +625,12 @@ class CustomerCrud extends CrudService
         $entry->email = $entry->email ?: __( 'Not Defined' );
 
         switch ( $entry->gender ) {
-            case 'male': $entry->gender = __( 'Male' ); break;
-            case 'female': $entry->gender = __( 'Female' ); break;
-            default: $entry->gender = __( 'Not Defined' ); break;
+            case 'male': $entry->gender = __( 'Male' );
+            break;
+            case 'female': $entry->gender = __( 'Female' );
+            break;
+            default: $entry->gender = __( 'Not Defined' );
+            break;
         }
 
         return $entry;

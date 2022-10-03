@@ -414,23 +414,23 @@ class TaxService
          */
         $taxGroup = TaxGroup::find( $orderProduct->tax_group_id );
 
-        $type   = $orderProduct->product instanceof Product ? $orderProduct->product->tax_type : ns()->option->get( 'ns_pos_tax_type' );
+        $type = $orderProduct->product instanceof Product ? $orderProduct->product->tax_type : ns()->option->get( 'ns_pos_tax_type' );
 
         /**
          * if the tax group is not defined,
          * then probably it's not assigned to the product.
          */
         if ( $taxGroup instanceof TaxGroup ) {
-            $orderProduct->price_with_tax = $this->getPriceWithTaxUsingGroup( 
-                type: $type, 
-                price: $orderProduct->unit_price - $discount, 
-                group: $taxGroup 
+            $orderProduct->price_with_tax = $this->getPriceWithTaxUsingGroup(
+                type: $type,
+                price: $orderProduct->unit_price - $discount,
+                group: $taxGroup
             );
 
-            $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup( 
+            $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
                 type: $type,
-                price: $orderProduct->unit_price - $discount, 
-                group: $taxGroup 
+                price: $orderProduct->unit_price - $discount,
+                group: $taxGroup
             );
 
             $orderProduct->tax_value = ( $orderProduct->price_without_tax - $orderProduct->price_with_tax ) * $orderProduct->quantity;
@@ -495,7 +495,8 @@ class TaxService
      * @param string $type
      * @param float $rate
      * @param float $value
-     * @return 
+     * @return
+     *
      * @todo rename
      */
     public function getPriceWithoutTax( $type, float $rate, float $value )
@@ -514,7 +515,8 @@ class TaxService
      * @param string $type
      * @param float $rate
      * @param float $value
-     * @return 
+     * @return
+     *
      * @todo rename
      */
     public function getPriceWithTax( $type, float $rate, float $value )

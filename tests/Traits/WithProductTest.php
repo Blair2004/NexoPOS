@@ -217,7 +217,7 @@ trait WithProductTest
                 ]);
 
             $result = json_decode( $response->getContent(), true );
-            $taxGroup   =   TaxGroup::find(1);
+            $taxGroup = TaxGroup::find(1);
 
             if ( $taxType === 'exclusive' ) {
                 $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );

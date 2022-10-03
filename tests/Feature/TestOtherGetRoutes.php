@@ -26,7 +26,6 @@ class TestOtherGetRoutes extends TestCase
             $uri = $route->uri();
 
             if ( in_array( 'GET', $route->methods() ) ) {
-
                 /**
                  * We'll test both known API and dashboard to see if
                  * there is any error thrown.
@@ -68,7 +67,6 @@ class TestOtherGetRoutes extends TestCase
             $uri = $route->uri();
 
             if ( in_array( 'GET', $route->methods() ) ) {
-
                 /**
                  * We'll test both known API and dashboard to see if
                  * there is any error thrown.

@@ -312,25 +312,25 @@ class CashRegistersService
         switch ( $label ) {
             case RegisterHistory::ACTION_CASHING:
                 return __( 'Cash In' );
-            break;
+                break;
             case RegisterHistory::ACTION_CASHOUT:
                 return __( 'Cash Out' );
-            break;
+                break;
             case RegisterHistory::ACTION_CLOSING:
                 return __( 'Closing' );
-            break;
+                break;
             case RegisterHistory::ACTION_OPENING:
                 return __( 'Opening' );
-            break;
+                break;
             case RegisterHistory::ACTION_REFUND:
                 return __( 'Refund' );
-            break;
+                break;
             case RegisterHistory::ACTION_SALE:
                 return __( 'Sale' );
-            break;
+                break;
             default:
                 return $label;
-            break;
+                break;
         }
     }
 
@@ -345,19 +345,19 @@ class CashRegistersService
         switch ( $label ) {
             case Register::STATUS_CLOSED:
                 return __( 'Closed' );
-            break;
+                break;
             case Register::STATUS_DISABLED:
                 return __( 'Disabled' );
-            break;
+                break;
             case Register::STATUS_INUSE:
                 return __( 'In Use' );
-            break;
+                break;
             case Register::STATUS_OPENED:
                 return __( 'Opened' );
-            break;
+                break;
             default:
                 return $label;
-            break;
+                break;
         }
     }
 
