@@ -33,13 +33,13 @@ const paymentLabels       =   <?php echo json_encode( Helper::kvToJsOptions( $or
 const systemOptions       =   <?php echo json_encode([
     'ns_pos_printing_document'      =>  ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
     'ns_pos_printing_gateway'       =>  ns()->option->get( 'ns_pos_printing_gateway', 'default' ),
+    'ns_pos_printing_enabled_for'   =>  ns()->option->get( 'ns_pos_printing_enabled_for', 'all_orders' ),
 ]);?>
 
 const systemSettings      =  <?php echo json_encode([
     'refund_printing_url'   =>  ns()->url( '/dashboard/orders/refund-receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
     'sale_printing_url'     =>  ns()->url( '/dashboard/orders/receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
     'payment_printing_url'  =>  ns()->url( '/dashboard/orders/receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
-
 ]);?>
 
 document.addEventListener( 'DOMContentLoaded', () => {

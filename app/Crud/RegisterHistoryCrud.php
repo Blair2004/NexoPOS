@@ -295,7 +295,8 @@ class RegisterHistoryCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -413,22 +414,22 @@ class RegisterHistoryCrud extends CrudService
         switch ( $entry->action ) {
             case RegisterHistory::ACTION_SALE:
                 $entry->{ '$cssClass' } = 'success border';
-            break;
+                break;
             case RegisterHistory::ACTION_CASHING:
                 $entry->{ '$cssClass' } = 'success border';
-            break;
+                break;
             case RegisterHistory::ACTION_OPENING:
                 $entry->{ '$cssClass' } = 'info border';
-            break;
+                break;
             case RegisterHistory::ACTION_CASHOUT:
                 $entry->{ '$cssClass' } = 'warning border';
-            break;
+                break;
             case RegisterHistory::ACTION_CASHOUT:
                 $entry->{ '$cssClass' } = 'warning border';
-            break;
+                break;
             case RegisterHistory::ACTION_CLOSING:
                 $entry->{ '$cssClass' } = 'warning border';
-            break;
+                break;
         }
 
         if ( $entry->action === RegisterHistory::ACTION_CLOSING && (float) $entry->balance_after != 0 ) {
@@ -448,10 +449,14 @@ class RegisterHistoryCrud extends CrudService
     public function getHumanTransactionType( $type )
     {
         switch ( $type ) {
-            case 'unchanged': return __( 'Unchanged' ); break;
-            case 'negative': return __( 'Missing Observed' ); break;
-            case 'positive': return __( 'Surplus Observed' ); break;
-            default: return __( 'N/A' ); break;
+            case 'unchanged': return __( 'Unchanged' );
+            break;
+            case 'negative': return __( 'Missing Observed' );
+            break;
+            case 'positive': return __( 'Surplus Observed' );
+            break;
+            default: return __( 'N/A' );
+            break;
         }
     }
 
@@ -468,7 +473,6 @@ class RegisterHistoryCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */

@@ -8,6 +8,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\Hook;
+use App\Classes\Output;
 use App\Models\Customer;
 use App\Models\DashboardDay;
 use App\Models\Order;
@@ -70,6 +72,21 @@ class DashboardController extends Controller
             ->orderBy( 'total_sales', 'desc' )
             ->limit(10)
             ->get();
+    }
+
+    /**
+     * Will create a hook that will inject
+     * Output object on the footer. Useful to create
+     * custom output per page.
+     *
+     * @param string $name
+     * @return void
+     */
+    public function hookOutput( $name )
+    {
+        Hook::addAction( 'ns-dashboard-footer', function( Output $output ) use ( $name ) {
+            Hook::action( $name, $output );
+        }, 15 );
     }
 
     public function getWeekReports()

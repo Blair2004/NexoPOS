@@ -49,6 +49,6 @@ trait App
     {
         return sprintf(
             Hook::filter( 'ns-page-title', __( '%s &mdash; NexoPOS 4' ) ),
-        $string );
+            $string );
     }
 }

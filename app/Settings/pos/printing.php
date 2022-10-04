@@ -25,7 +25,7 @@ return [
                 'disabled' => __( 'Disabled' ),
                 'all_orders' => __( 'All Orders' ),
                 'partially_paid_orders' => __( 'From Partially Paid Orders' ),
-                'only_paid_ordes' => __( 'Only Paid Orders' ),
+                'only_paid_orders' => __( 'Only Paid Orders' ),
             ]),
             'description' => __( 'Determine when the printing should be enabled.' ),
         ], [

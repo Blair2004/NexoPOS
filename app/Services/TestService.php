@@ -165,7 +165,7 @@ class TestService
                         ];
                     });
                 })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
-                    $quantity = $faker->numberBetween(50000, 90000);
+                    $quantity = $faker->numberBetween(1000, 9000);
 
                     return [
                         'product_id' => $data->product->id,

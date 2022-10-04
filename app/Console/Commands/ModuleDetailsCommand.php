@@ -12,7 +12,7 @@ class ModuleDetailsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'modules {identifier?}';
+    protected $signature = 'modules:list {identifier?}';
 
     /**
      * The console command description.
@@ -26,8 +26,9 @@ class ModuleDetailsCommand extends Command
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(
+        private ModulesService $modulesService
+    ) {
         parent::__construct();
     }
 
@@ -41,7 +42,7 @@ class ModuleDetailsCommand extends Command
             __( 'Enabled' ),
         ];
 
-        $modulesList = $this->modules->get();
+        $modulesList = $this->modulesService->get();
         $modulesTable = [];
 
         foreach ( $modulesList as $module ) {

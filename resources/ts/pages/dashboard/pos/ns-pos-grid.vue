@@ -78,14 +78,14 @@
                                 <div class="h-0 w-full">
                                     <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
                                         <h3 class="text-sm text-center w-full">{{ data.name }}</h3>
-                                        <template v-if="options.ns_pos_gross_price_used === 'yes'">
+                                        <template v-if="options.ns_pos_price_with_tax === 'no'">
                                             <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
-                                                {{ data.unit_quantities[0].gross_sale_price | currency }}
+                                                {{ data.unit_quantities[0].sale_price_without_tax | currency }}
                                             </span>
                                         </template>
-                                        <template v-if="options.ns_pos_gross_price_used === 'no'">
+                                        <template v-if="options.ns_pos_price_with_tax === 'yes'">
                                             <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
-                                                {{ data.unit_quantities[0].net_sale_price | currency }}
+                                                {{ data.unit_quantities[0].sale_price_with_tax | currency }}
                                             </span>
                                         </template>
                                     </div>

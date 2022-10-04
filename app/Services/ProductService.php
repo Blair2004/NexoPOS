@@ -342,13 +342,13 @@ class ProductService
         switch ( $data[ 'product_type' ] ) {
             case 'product':
                 return $this->updateSimpleProduct( $product, $data );
-            break;
+                break;
             case 'variable':
                 return $this->updateVariableProduct( $product, $data );
-            break;
+                break;
             default:
                 throw new Exception( sprintf( __( 'Unable to edit a product with an unknown type : %s' ), $data[ 'product_type' ] ) );
-            break;
+                break;
         }
     }
 
@@ -419,7 +419,7 @@ class ProductService
 
         if ( empty( $fields[ 'sku' ] ) ) {
             $category = ProductCategory::find( $fields[ 'category_id' ] );
-            $fields[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $fields[ 'name' ] ) . '--' . Str::random(5);
+            $fields[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $fields[ 'name' ] ) . '--' . strtolower( Str::random(5) );
         }
 
         /**
@@ -451,7 +451,8 @@ class ProductService
         $this->saveGallery( $product, $fields[ 'images' ] ?? [] );
 
         /**
-         * We'll now save all attached sub items
+         * We'll now save all attached sub items. That is only applicable
+         * if the product is set to be a grouped product.
          */
         if (  $product->type === Product::TYPE_GROUPED ) {
             $this->saveSubItems( $product, $fields[ 'groups' ] ?? [] );
@@ -541,8 +542,8 @@ class ProductService
          * @todo should be tested
          */
         $manyPrimary = collect( $groups )->map( function( $fields ) {
-                return isset( $fields[ 'featured' ] ) && (int) $fields[ 'featured' ] === 1;
-            })
+            return isset( $fields[ 'featured' ] ) && (int) $fields[ 'featured' ] === 1;
+        })
             ->filter( fn( $result ) => $result === true )
             ->count() > 1;
 
@@ -699,7 +700,6 @@ class ProductService
                  * explicitely how everything is saved here.
                  */
                 $unitQuantity->sale_price = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
-                $unitQuantity->sale_price = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
                 $unitQuantity->sale_price_edit = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
                 $unitQuantity->wholesale_price_edit = $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();
                 $unitQuantity->preview_url = $group[ 'preview_url' ] ?? '';
@@ -774,7 +774,7 @@ class ProductService
         switch ( $operationType ) {
             case ProductHistory::ACTION_STOCKED:
                 $this->__saveProcurementHistory( $data );
-            break;
+                break;
         }
     }
 
@@ -1302,7 +1302,6 @@ class ProductService
                 $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
             }
         } else {
-
             /**
              * @var string status
              * @var string message

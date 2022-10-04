@@ -53,27 +53,27 @@ class BarcodeService
             switch ( $code ) {
                 case self::TYPE_EAN8:
                     $barcode = $factory->ean8();
-                break;
+                    break;
                 case self::TYPE_EAN13:
                     $barcode = $factory->ean13();
-                break;
+                    break;
                 case self::TYPE_CODABAR:
                 case self::TYPE_CODE128:
                 case self::TYPE_CODE39:
                     $barcode = Str::random(10);
-                break;
+                    break;
                 case self::TYPE_CODE11:
                     $barcode = rand(1000000000, 999999999);
-                break;
+                    break;
                 case self::TYPE_UPCA:
                     $barcode = rand(10000000000, 99999999999);
-                break;
+                    break;
                 case self::TYPE_UPCA:
                     $barcode = rand(1000000, 9999999);
-                break;
+                    break;
                 default:
                     $barcode = $factory->isbn10();
-                break;
+                    break;
             }
 
             $product = Product::where( 'barcode', $barcode )->first();
@@ -94,15 +94,24 @@ class BarcodeService
         $generator = new BarcodeGeneratorPNG;
 
         switch ( $type ) {
-            case 'ean8': $realType = $generator::TYPE_EAN_8; break;
-            case 'ean13': $realType = $generator::TYPE_EAN_13; break;
-            case 'codabar': $realType = $generator::TYPE_CODABAR; break;
-            case 'code128': $realType = $generator::TYPE_CODE_128; break;
-            case 'code39': $realType = $generator::TYPE_CODE_39; break;
-            case 'code11': $realType = $generator::TYPE_CODE_11; break;
-            case 'upca': $realType = $generator::TYPE_UPC_A; break;
-            case 'upce': $realType = $generator::TYPE_UPC_E; break;
-            default: $realType = $generator::TYPE_EAN_8; break;
+            case 'ean8': $realType = $generator::TYPE_EAN_8;
+            break;
+            case 'ean13': $realType = $generator::TYPE_EAN_13;
+            break;
+            case 'codabar': $realType = $generator::TYPE_CODABAR;
+            break;
+            case 'code128': $realType = $generator::TYPE_CODE_128;
+            break;
+            case 'code39': $realType = $generator::TYPE_CODE_39;
+            break;
+            case 'code11': $realType = $generator::TYPE_CODE_11;
+            break;
+            case 'upca': $realType = $generator::TYPE_UPC_A;
+            break;
+            case 'upce': $realType = $generator::TYPE_UPC_E;
+            break;
+            default: $realType = $generator::TYPE_EAN_8;
+            break;
         }
 
         try {

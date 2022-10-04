@@ -23,6 +23,7 @@ use App\Models\Provider;
 use App\Models\Role;
 use App\Models\Unit;
 use Exception;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -331,7 +332,6 @@ class ProcurementService
             extract( $this->__procureForSingleUnit( compact( 'procurementProduct', 'storedUnitReference', 'itemsToSave', 'item' ) ) );
         } elseif ( $item->purchase_unit_type === 'unit-group' ) {
             if ( ! isset( $procurementProduct->unit_id ) ) {
-
                 /**
                  * this is made to ensure
                  * we have a self explanatory error,
@@ -812,9 +812,8 @@ class ProcurementService
      * Get the procurements product
      *
      * @param int procurement id
-     * @return array
      */
-    public function getProducts( $procurement_id )
+    public function getProducts( $procurement_id ): EloquentCollection
     {
         $procurement = $this->get( $procurement_id );
 

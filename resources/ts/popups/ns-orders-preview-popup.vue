@@ -26,6 +26,8 @@ const nsOrderPreviewPopup   =   {
             order: new Object,
             products: [],
             payments: [],
+            options: null,
+            settings: null,
         }
     },
     components: {
@@ -64,16 +66,38 @@ const nsOrderPreviewPopup   =   {
              * Withn the popup let's refresh the order
              * and display updated values.
              */
-            this.loadOrderDetails( this.$popupParams.order.id );
+            this.loadOrderDetails( this.order.id );
         },
         printOrder() {
-            const order     =   this.$popupParams.order;
-
-            nsHttpClient.get( `/api/nexopos/v4/orders/${order.id}/print/receipt` )
-                .subscribe( result => {
-                    nsSnackBar.success( result.message ).subscribe();
-                });
+            switch (this.options.ns_pos_printing_gateway) {
+                case 'default': this.processRegularPrinting( this.order.id ); break;
+                default: this.processCustomPrinting( this.order.id, this.options.ns_pos_printing_gateway, false ); break;
+            }
         },
+
+        async processCustomPrinting(order_id, gateway, silent = true ) {
+            const result = nsHooks.applyFilters( silent ? 'ns-order-custom-print' : 'ns-order-custom-print-aloud', { printed: false, order_id, gateway });
+
+            if ( result.printed === false ) {
+                nsSnackBar.error(__(`Unsupported print gateway.`)).subscribe();
+            }
+        },
+
+        processRegularPrinting(order_id) {
+            const item = document.querySelector('printing-section');
+
+            if (item) {
+                item.remove();
+            }
+
+            const printSection          = document.createElement('iframe');
+            printSection.id             = 'printing-section';
+            printSection.className      = 'hidden';
+            printSection.src            = this.settings.sale_printing_url.replace('{reference_id}', order_id);
+
+            document.body.appendChild(printSection);
+        },
+
         loadOrderDetails( orderId ) {
             forkJoin([
                 nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}` ),
@@ -92,7 +116,7 @@ const nsOrderPreviewPopup   =   {
                 message: __( 'Would you like to delete this order' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.delete( `/api/nexopos/v4/orders/${this.$popupParams.order.id}` )
+                        nsHttpClient.delete( `/api/nexopos/v4/orders/${this.order.id}` )
                             .subscribe({
                                 next: result => {
                                     nsSnackBar.success( result.message ).subscribe();
@@ -117,7 +141,7 @@ const nsOrderPreviewPopup   =   {
                         message: __( 'The current order will be void. This action will be recorded. Consider providing a reason for this operation' ),
                         onAction:  ( reason ) => {
                             if ( reason !== false ) {
-                                nsHttpClient.post( `/api/nexopos/v4/orders/${this.$popupParams.order.id}/void`, { reason })
+                                nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/void`, { reason })
                                     .subscribe({
                                         next: result => {
                                             nsSnackBar.success( result.message ).subscribe();
@@ -144,13 +168,15 @@ const nsOrderPreviewPopup   =   {
     watch: {
         active() {
             if ( this.active === 'details' ) {
-                this.loadOrderDetails( this.$popupParams.order.id );
+                this.loadOrderDetails( this.order.id );
             }
         }
     },
     mounted() {
-        this.loadOrderDetails( this.$popupParams.order.id );
-        
+        this.order      =   this.$popupParams.order;
+        this.options    =   systemOptions;
+        this.settings   =   systemSettings;
+        this.loadOrderDetails( this.order.id );
         this.popupCloser();
     }
 }
@@ -190,7 +216,7 @@ export default nsOrderPreviewPopup;
 
                 <!-- Refund -->
                 <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" :label="__( 'Refund & Return' )" identifier="refund" class="flex overflow-y-auto">
-                    <ns-order-refund @changed="refresh()" :order="order"></ns-order-refund>
+                    <ns-order-refund @loadTab="setActive( $event )" @changed="refresh()" :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
@@ -216,10 +242,10 @@ export default nsOrderPreviewPopup;
                 </ns-button>
             </div>
             <div>
-                <!-- <ns-button @click="printOrder()" type="info">
+                <ns-button @click="printOrder()" type="info">
                     <i class="las la-print"></i>
                     {{ __( 'Print' ) }}
-                </ns-button> -->
+                </ns-button>
             </div>
         </div>
     </div>

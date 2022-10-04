@@ -23,18 +23,18 @@ class ModuleSymlinkCommand extends Command
 
         if ( ! empty( $this->argument( 'namespace' ) ) ) {
             $module = $moduleService->get( $this->argument( 'namespace' ) );
-    
+
             if ( $module ) {
                 $moduleService->createSymLink( $this->argument( 'namespace' ) );
 
                 $this->newLine();
-        
+
                 return $this->info( sprintf( 'The symbolink directory has been created/refreshed for the module "%s".', $module[ 'name' ] ) );
             }
-    
+
             $this->error( sprintf( 'Unable to find the module "%s".', $this->argument( 'namespace' ) ) );
         } else {
-            $modules    =   $moduleService->get();
+            $modules = $moduleService->get();
 
             $this->withProgressBar( $modules, function( $module ) use ( $moduleService ) {
                 $moduleService->createSymLink( $module[ 'namespace' ] );

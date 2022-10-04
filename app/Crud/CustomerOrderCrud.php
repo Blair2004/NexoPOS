@@ -159,9 +159,9 @@ class CustomerOrderCrud extends OrderCrud
                             'value' => $entry->final_payment_date ?? '',
                         ], [
                             'type' => 'text',
-                            'name' => 'gross_total',
-                            'label' => __( 'Gross Total' ),
-                            'value' => $entry->gross_total ?? '',
+                            'name' => 'total_without_tax',
+                            'label' => __( 'Tax Excluded' ),
+                            'value' => $entry->total_without_tax ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'id',
@@ -169,9 +169,9 @@ class CustomerOrderCrud extends OrderCrud
                             'value' => $entry->id ?? '',
                         ], [
                             'type' => 'text',
-                            'name' => 'net_total',
-                            'label' => __( 'Net Total' ),
-                            'value' => $entry->net_total ?? '',
+                            'name' => 'total_with_tax',
+                            'label' => __( 'Tax Included' ),
+                            'value' => $entry->total_with_tax ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'payment_status',
@@ -313,7 +313,8 @@ class CustomerOrderCrud extends OrderCrud
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -385,7 +386,6 @@ class CustomerOrderCrud extends OrderCrud
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */

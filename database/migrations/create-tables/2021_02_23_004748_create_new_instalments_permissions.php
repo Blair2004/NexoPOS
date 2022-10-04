@@ -78,7 +78,7 @@ class CreateNewInstalmentsPermissions extends Migration
                 'nexopos.delete.orders-instalments',
             ])->each( function( $identifier ) {
                 $permission = Permission::where( 'namespace', $identifier
-                    )->first();
+                )->first();
 
                 $permission->removeFromRoles();
                 $permission->delete();

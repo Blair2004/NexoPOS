@@ -13,7 +13,7 @@
                     padding="p-2"
                     identifier="apply-coupon">
                     <div class="border-2 input-group info rounded flex">
-                        <input ref="coupon" v-model="couponCode" type="text" class="w-full text-primary p-2 outline-none" :placeholder="placeHolder">
+                        <input ref="coupon" @keyup.enter="loadCoupon()" v-model="couponCode" type="text" class="w-full text-primary p-2 outline-none" :placeholder="placeHolder">
                         <button @click="loadCoupon()" class="px-3 py-2">{{ __( 'Load' ) }}</button>
                     </div>
                     <div class="pt-2">
@@ -48,17 +48,18 @@
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Valid From' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.coupon.valid_hours_start }}</td>
+                                        <td class="p-2 w-1/2 border">{{ customerCoupon.coupon.valid_hours_start || __( 'N/A' ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Valid Till' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.coupon.valid_hours_end }}</td>
+                                        <td class="p-2 w-1/2 border">{{ customerCoupon.coupon.valid_hours_end || __( 'N/A' ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Categories' ) }}</td>
                                         <td class="p-2 w-1/2 border">
                                             <ul>
                                                 <li class="rounded-full px-3 py-1 border" :key="category.id" v-for="category of customerCoupon.coupon.categories">{{ category.category.name }}</li>
+                                                <li v-if="customerCoupon.coupon.categories.length === 0">{{ __( 'Not applicable' ) }}</li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -67,6 +68,7 @@
                                         <td class="p-2 w-1/2 border">
                                             <ul>
                                                 <li class="rounded-full px-3 py-1 border" :key="product.id" v-for="product of customerCoupon.coupon.products">{{ product.product.name }}</li>
+                                                <li v-if="customerCoupon.coupon.products.length === 0">{{ __( 'Not applicable' ) }}</li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -96,10 +98,10 @@
             </ns-tabs>
         </div>
         <div class="flex" v-if="customerCoupon">
-            <button @click="apply()" class="w-1/2 px-3 py-2 bg-success-primary text-white font-bold">
+            <button @click="apply()" class="w-1/2 px-3 py-2 bg-success-tertiary text-white font-bold">
                 {{ __( 'Apply' ) }}
             </button>
-            <button @click="cancel()" class="w-1/2 px-3 py-2 bg-error-primary text-white font-bold">
+            <button @click="cancel()" class="w-1/2 px-3 py-2 bg-error-tertiary text-white font-bold">
                 {{ __( 'Cancel' ) }}
             </button>
         </div>

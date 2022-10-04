@@ -142,16 +142,16 @@ class ProviderService
         switch ( $label ) {
             case Procurement::PENDING:
                 $label = __( 'Pending' );
-            break;
+                break;
             case Procurement::DELIVERED:
                 $label = __( 'Delivered' );
-            break;
+                break;
             case Procurement::STOCKED:
                 $label = __( 'Stocked' );
-            break;
+                break;
             default:
                 $label = Hook::filter( 'ns-delivery-status', $label );
-            break;
+                break;
         }
 
         return $label;
@@ -168,10 +168,10 @@ class ProviderService
         switch ( $label ) {
             case Procurement::PAYMENT_UNPAID:
                 $label = __( 'Unpaid' );
-            break;
+                break;
             case Procurement::PAYMENT_PAID:
                 $label = __( 'Paid' );
-            break;
+                break;
         }
 
         return $label;

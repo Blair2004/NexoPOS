@@ -47,13 +47,13 @@ class FormsProvider extends ServiceProvider
             switch ( $identifier ) {
                 case 'ns.user-profile':
                     return new UserProfileForm;
-                break;
+                    break;
                 case 'ns.procurement':
                     return new ProcurementForm;
-                break;
+                    break;
                 case 'ns.pos-addresses':
                     return new POSAddressesForm;
-                break;
+                    break;
             }
 
             return $class;
@@ -63,58 +63,58 @@ class FormsProvider extends ServiceProvider
             switch ( $class ) {
                 case 'ns.login' :
                     return new AuthLoginFields;
-                break;
+                    break;
                 case 'ns.password-lost' :
                     return new PasswordLostFields;
-                break;
+                    break;
                 case 'ns.new-password' :
                     return new NewPasswordFields;
-                break;
+                    break;
                 case 'ns.register' :
                     return new AuthRegisterFields;
-                break;
+                    break;
                 case 'ns.customers-account' :
                     return new CustomersAccountFields;
-                break;
+                    break;
                 case 'ns.layaway' :
                     return new LayawayFields;
-                break;
+                    break;
                 case 'ns.refund-product':
                     return new RefundProductFields;
-                break;
+                    break;
                 case 'ns.cash-registers-opening':
                     return new CashRegisterOpeningFields;
-                break;
+                    break;
                 case 'ns.cash-registers-closing':
                     return new CashRegisterClosingFields;
-                break;
+                    break;
                 case 'ns.cash-registers-cashing':
                     return new CashRegisterCashingFields;
-                break;
+                    break;
                 case 'ns.cash-registers-cashout':
                     return new CashRegisterCashoutFields;
-                break;
+                    break;
                 case 'ns.pos-order-settings':
                     return new PosOrderSettingsFields;
-                break;
+                    break;
                 case 'ns.order-payments':
                     return new OrderPaymentFields;
-                break;
+                    break;
                 case 'ns.procurement-fields':
                     return new ProcurementFields;
-                break;
+                    break;
                 case 'ns.reset':
                     return new ResetFields;
-                break;
+                    break;
                 case 'ns.unit-fields':
                     return new UnitsFields;
-                break;
+                    break;
                 case 'ns.unit-group-fields':
                     return new UnitsFields;
-                break;
+                    break;
                 default:
                     return $class;
-                break;
+                    break;
             }
         }, 10, 2 );
     }

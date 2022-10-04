@@ -419,19 +419,19 @@ class ExpenseService
                 switch ( $expense->occurence ) {
                     case 'month_starts':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth() );
-                    break;
+                        break;
                     case 'month_mid':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays(14) );
-                    break;
+                        break;
                     case 'month_ends':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth() );
-                    break;
+                        break;
                     case 'x_before_month_ends':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
-                    break;
+                        break;
                     case 'x_after_month_starts':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
-                    break;
+                        break;
                 }
 
                 /**
@@ -683,19 +683,26 @@ class ExpenseService
         $account = $this->accountTypes[ $type ] ?? false;
 
         if ( ! empty( $account ) ) {
-
             /**
              * This will define the label
              */
             switch ( $type ) {
-                case CashFlow::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' ); break;
-                case CashFlow::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' ); break;
-                case CashFlow::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' ); break;
-                case CashFlow::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' ); break;
-                case CashFlow::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' ); break;
-                case CashFlow::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' ); break;
-                case CashFlow::ACCOUNT_SALES: $label = __( 'Sales Account' ); break;
-                case CashFlow::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' ); break;
+                case CashFlow::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' );
+                break;
+                case CashFlow::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
+                break;
+                case CashFlow::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' );
+                break;
+                case CashFlow::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
+                break;
+                case CashFlow::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' );
+                break;
+                case CashFlow::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' );
+                break;
+                case CashFlow::ACCOUNT_SALES: $label = __( 'Sales Account' );
+                break;
+                case CashFlow::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' );
+                break;
             }
 
             return $this->getDefinedAccountType( $account[ 'option' ], [

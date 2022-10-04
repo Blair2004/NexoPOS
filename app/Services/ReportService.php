@@ -704,43 +704,43 @@ class ReportService
                     'column' => 'quantity',
                     'direction' => 'asc',
                 ];
-            break;
+                break;
             case 'using_quantity_desc':
                 $sorting = [
                     'column' => 'quantity',
                     'direction' => 'desc',
                 ];
-            break;
+                break;
             case 'using_sales_asc':
                 $sorting = [
                     'column' => 'total_price',
                     'direction' => 'asc',
                 ];
-            break;
+                break;
             case 'using_sales_desc':
                 $sorting = [
                     'column' => 'total_price',
                     'direction' => 'desc',
                 ];
-            break;
+                break;
             case 'using_name_asc':
                 $sorting = [
                     'column' => 'name',
                     'direction' => 'asc',
                 ];
-            break;
+                break;
             case 'using_name_desc':
                 $sorting = [
                     'column' => 'name',
                     'direction' => 'desc',
                 ];
-            break;
+                break;
             default:
-            $sorting = [
-                'column' => 'total_price',
-                'direction' => 'desc',
-            ];
-            break;
+                $sorting = [
+                    'column' => 'total_price',
+                    'direction' => 'desc',
+                ];
+                break;
         }
 
         foreach ( $previousDates as $key => $report ) {
@@ -815,33 +815,31 @@ class ReportService
         switch ( $type ) {
             case 'products_report':
                 return $this->getProductsReports( $start, $end, $user_id );
-            break;
+                break;
             case 'categories_report':
             case 'categories_summary':
                 return $this->getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id );
-            break;
+                break;
         }
     }
 
     private function getSalesSummary( $orders )
     {
         $allSales = $orders->map( function( $order ) {
-            $salesTaxes = $order->tax_value - $order->products->sum( 'tax_value' );
-
             return [
-                'sales_discounts' => $order->discount,
-                'sales_taxes' => $salesTaxes > 0 ? $salesTaxes : 0,
-                'producs_taxes' => $order->products->sum( 'tax_value' ),
-                'total' => $order->total - $order->products->sum( 'tax_value' ),
                 'subtotal' => $order->subtotal,
+                'sales_discounts' => $order->discount,
+                'sales_taxes' => $order->tax_value,
+                'shipping' => $order->shipping,
+                'total' => $order->total,
             ];
         });
 
         return [
             'sales_discounts' => Currency::define( $allSales->sum( 'sales_discounts' ) )->getRaw(),
-            'producs_taxes' => Currency::define( $allSales->sum( 'producs_taxes' ) )->getRaw(),
             'sales_taxes' => Currency::define( $allSales->sum( 'sales_taxes' ) )->getRaw(),
             'subtotal' => Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
+            'shipping' => Currency::define( $allSales->sum( 'shipping' ) )->getRaw(),
             'total' => Currency::define( $allSales->sum( 'total' ) )->getRaw(),
         ];
     }
@@ -870,7 +868,7 @@ class ReportService
                 $product = $products->where( 'product_id', $id )->first();
                 $filtredProdcuts = $products->where( 'product_id', $id )->all();
 
-                $summable = [ 'quantity', 'discount', 'wholesale_tax_value', 'sale_tax_value', 'tax_value', 'total_gross_price', 'total_price', 'total_net_price', 'total_purchase_price' ];
+                $summable = [ 'quantity', 'discount', 'wholesale_tax_value', 'sale_tax_value', 'tax_value', 'total_price_without_tax', 'total_price', 'total_price_with_tax', 'total_purchase_price' ];
                 foreach ( $summable as $key ) {
                     $product->$key = collect( $filtredProdcuts )->sum( $key );
                 }
@@ -916,7 +914,32 @@ class ReportService
          * That will sum all the total prices
          */
         $categories->each( function( $category ) use ( $products ) {
-            $category->products = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
+            $rawProducts = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
+
+            $products = [];
+
+            /**
+             * this will merge similar products
+             * to summarize them.
+             */
+            $rawProducts->each( function( $product ) use ( &$products ) {
+                if ( isset( $products[ $product->product_id ] ) ) {
+                    $products[ $product->product_id ][ 'quantity' ] += $product->quantity;
+                    $products[ $product->product_id ][ 'tax_value' ] += $product->tax_value;
+                    $products[ $product->product_id ][ 'discount' ] += $product->discount;
+                    $products[ $product->product_id ][ 'total_price' ] += $product->total_price;
+                } else {
+                    $products[ $product->product_id ] = array_merge( $product->toArray(), [
+                        'quantity' => $product->quantity,
+                        'tax_value' => $product->tax_value,
+                        'discount' => $product->discount,
+                        'total_price' => $product->total_price,
+                    ]);
+                }
+            });
+
+            $category->products = array_values( $products );
+
             $category->total_tax_value = collect( $category->products )->sum( 'tax_value' );
             $category->total_price = collect( $category->products )->sum( 'total_price' );
             $category->total_discount = collect( $category->products )->sum( 'discount' );

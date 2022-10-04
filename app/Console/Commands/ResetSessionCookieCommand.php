@@ -34,7 +34,7 @@ class ResetSessionCookieCommand extends Command
                 DotenvEditor::load();
                 DotenvEditor::setKey( 'SESSION_COOKIE', strtolower( 'nexopos_' . Str::random(5) ) );
                 DotenvEditor::save();
-            break;
+                break;
         }
     }
 }

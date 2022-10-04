@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'version' => '4.8.4',
+    'version' => '4.8.5',
     'languages' => [
         'en' => 'English',
         'fr' => 'Français',
@@ -62,7 +62,6 @@ return [
         'America/Tegucigalpa' => '(GMT-6:00) America/Tegucigalpa (Central Standard Time)',
         'America/Winnipeg' => '(GMT-6:00) America/Winnipeg (Central Standard Time)',
         'Canada/Central' => '(GMT-6:00) Canada/Central (Central Standard Time)',
-        'Canada/East-Saskatchewan' => '(GMT-6:00) Canada/East-Saskatchewan (Central Standard Time)',
         'Canada/Saskatchewan' => '(GMT-6:00) Canada/Saskatchewan (Central Standard Time)',
         'Chile/EasterIsland' => '(GMT-6:00) Chile/EasterIsland (Easter Is. Time)',
         'Mexico/General' => '(GMT-6:00) Mexico/General (Central Standard Time)',

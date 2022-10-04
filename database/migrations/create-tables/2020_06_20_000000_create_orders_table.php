@@ -33,9 +33,9 @@ class CreateOrdersTable extends Migration
                 $table->float( 'shipping', 18, 5 )->default(0); // could be set manually or computed based on shipping_rate and shipping_type
                 $table->float( 'shipping_rate', 18, 5 )->default(0);
                 $table->string( 'shipping_type' )->nullable(); // "flat" | "percentage" (based on the order total)
-                $table->float( 'gross_total', 18, 5 )->default(0);
+                $table->float( 'total_without_tax', 18, 5 )->default(0);
                 $table->float( 'subtotal', 18, 5 )->default(0);
-                $table->float( 'net_total', 18, 5 )->default(0);
+                $table->float( 'total_with_tax', 18, 5 )->default(0);
                 $table->float( 'total_coupons', 18, 5 )->default(0);
                 $table->float( 'total', 18, 5 )->default(0);
                 $table->float( 'tax_value', 18, 5 )->default(0);

@@ -457,17 +457,17 @@ class OrdersService
         switch ( ns()->option->get( 'ns_pos_vat' ) ) {
             case 'products_vat':
                 $order->products_tax_value = $this->getOrderProductsTaxes( $order );
-            break;
+                break;
             case 'flat_vat':
             case 'variable_vat':
                 $order->tax_value = Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
                 $order->products_tax_value = 0;
-            break;
+                break;
             case 'products_variable_vat':
             case 'products_flat_vat':
                 $order->tax_value = Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
                 $order->products_tax_value = $this->getOrderProductsTaxes( $order );
-            break;
+                break;
         }
 
         $order->total_tax_value = $order->tax_value + $order->products_tax_value;
@@ -573,7 +573,6 @@ class OrdersService
              * already affected the stock, we should make some adjustments.
              */
             $order->products->each( function( $orderProduct ) use ( $ids, $order ) {
-
                 /**
                  * if a product has the unit id changed
                  * the product he considered as new and the old is returned
@@ -697,7 +696,6 @@ class OrdersService
     private function __saveAddressInformations($order, $fields)
     {
         foreach (['shipping', 'billing'] as $type) {
-
             /**
              * if the id attribute is already provided
              * we should attempt to find the related addresses
@@ -878,8 +876,8 @@ class OrdersService
         })->sum() );
 
         $total = $this->currencyService->define(
-                $subtotal + $this->__getShippingFee($fields)
-            )
+            $subtotal + $this->__getShippingFee($fields)
+        )
             ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->getRaw();
@@ -892,7 +890,6 @@ class OrdersService
         if ( ! empty( $fields[ 'payments' ] ) ) {
             foreach ( $fields[ 'payments' ] as $payment) {
                 if (in_array($payment['identifier'], $allowedPaymentsGateways ) ) {
-
                     /**
                      * check if the customer account are enough for the account-payment
                      * when that payment is provided
@@ -937,9 +934,9 @@ class OrdersService
                 && $fields[ 'payment_status' ] !== Order::PAYMENT_HOLD
                 && (float) $customer->credit_limit_amount < (float) $customer->owed_amount + (float) $total ) {
                 throw new NotAllowedException( sprintf(
-                        __( 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: %s.' ),
-                        (string) ns()->currency->fresh( $customer->credit_limit_amount )
-                    ) );
+                    __( 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: %s.' ),
+                    (string) ns()->currency->fresh( $customer->credit_limit_amount )
+                ) );
             }
         }
 
@@ -1002,7 +999,7 @@ class OrdersService
             )
             ->getRaw();
 
-        $order->gross_total = $order->total;
+        $order->total_with_tax = $order->total;
 
         /**
          * compute change
@@ -1012,9 +1009,9 @@ class OrdersService
             ->getRaw();
 
         /**
-         * compute gross total
+         * Compute total witht tax.
          */
-        $order->net_total = Currency::fresh( $order->subtotal )
+        $order->total_without_tax = Currency::fresh( $order->subtotal )
             ->subtractBy( $order->discount )
             ->subtractBy( $order->total_coupons )
             ->subtractBy( $order->tax_value )
@@ -1035,7 +1032,6 @@ class OrdersService
         $gross = 0;
 
         $orderProducts = $products->map(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
-
             /**
              * if the product id is provided
              * then we can use that id as a reference.
@@ -1087,8 +1083,8 @@ class OrdersService
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price = $this->currencyService->define(
-                    $product[ 'total_purchase_price' ] ?? $this->productService->getLastPurchasePrice( $product[ 'product' ] )
-                )
+                $product[ 'total_purchase_price' ] ?? $this->productService->getLastPurchasePrice( $product[ 'product' ] )
+            )
                 ->getRaw();
 
             $this->computeOrderProduct( $orderProduct );
@@ -1133,7 +1129,6 @@ class OrdersService
     private function __buildOrderProducts( $products )
     {
         return collect( $products )->map( function( $orderProduct ) {
-
             /**
              * by default, we'll assume a quick
              * product is being created.
@@ -1180,7 +1175,6 @@ class OrdersService
          */
         $items = $items->map( function ( array $orderProduct ) use ( $session_identifier ) {
             if ( $orderProduct[ 'product' ] instanceof Product ) {
-
                 /**
                  * Checking inventory for the grouped products,
                  * by loading all the subitems and multiplying the quantity
@@ -1191,7 +1185,6 @@ class OrdersService
                     $orderProduct[ 'product' ]
                         ->sub_items
                         ->each( function( ProductSubItem $subitem ) use ( $session_identifier, $orderProduct ) {
-
                             /**
                              * Stock management should be enabled
                              * for the sub item.
@@ -1217,22 +1210,22 @@ class OrdersService
                                  * from the actual product inventory.
                                  */
                                 $quantity = $this->productService->computeSubItemQuantity(
-                                baseUnit: $baseUnit,
-                                currentUnit: $currentUnit,
-                                orderProductQuantity: $orderProduct[ 'quantity' ],
-                                subItemQuantity: (float) $subitem->quantity
-                            );
+                                    baseUnit: $baseUnit,
+                                    currentUnit: $currentUnit,
+                                    orderProductQuantity: $orderProduct[ 'quantity' ],
+                                    subItemQuantity: (float) $subitem->quantity
+                                );
 
                                 $newFakeOrderProduct = new OrderProduct;
                                 $newFakeOrderProduct->quantity = $quantity;
                                 $newFakeOrderProduct->unit_quantity_id = $subitem->unit_quantity_id;
 
                                 $this->checkQuantityAvailability(
-                                product: $subitem->product,
-                                productUnitQuantity: $subitem->unit_quantity,
-                                orderProduct: $newFakeOrderProduct->toArray(),
-                                session_identifier: $session_identifier
-                            );
+                                    product: $subitem->product,
+                                    productUnitQuantity: $subitem->unit_quantity,
+                                    orderProduct: $newFakeOrderProduct->toArray(),
+                                    session_identifier: $session_identifier
+                                );
                             }
                         });
                 } else {
@@ -1282,7 +1275,6 @@ class OrdersService
     public function checkQuantityAvailability( $product, $productUnitQuantity, $orderProduct, $session_identifier )
     {
         if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
-
             /**
              * What we're doing here
              * 1 - Get the unit assigned to the product being sold
@@ -1859,7 +1851,7 @@ class OrdersService
      */
     public function computeOrderProduct( OrderProduct $orderProduct )
     {
-        $orderProduct = $this->taxService->computeNetAndGrossPrice( $orderProduct );
+        $orderProduct = $this->taxService->computeOrderProductTaxes( $orderProduct );
 
         OrderProductAfterComputedEvent::dispatch(
             $orderProduct,
@@ -2038,14 +2030,14 @@ class OrdersService
             return floatval( $product->quantity );
         })->sum();
 
-        $productGrossTotal = $products
+        $productPriceWithoutTax = $products
             ->map(function ($product) {
-                return floatval($product->total_gross_price);
+                return floatval($product->total_price_without_tax);
             })->sum();
 
-        $productsNetTotal = $products
+        $productPriceWithTax = $products
             ->map(function ($product) {
-                return floatval($product->total_net_price);
+                return floatval($product->total_price_with_tax);
             })->sum();
 
         $this->computeOrderTaxes( $order );
@@ -2058,8 +2050,8 @@ class OrdersService
          * let's refresh all the order values
          */
         $order->subtotal = Currency::raw( $productTotal );
-        $order->gross_total = $productGrossTotal;
-        $order->net_total = $productsNetTotal;
+        $order->total_without_tax = $productPriceWithoutTax;
+        $order->total_with_tax = $productPriceWithTax;
         $order->discount = $this->computeOrderDiscount( $order );
         $order->total = Currency::fresh( $order->subtotal )
             ->additionateBy( $orderShipping )
@@ -2136,7 +2128,6 @@ class OrdersService
             ->products()
             ->get()
             ->each( function( OrderProduct $product) {
-
                 /**
                  * we do proceed by doing an initial return
                  * only if the product is not a quick product/service
@@ -2311,9 +2302,9 @@ class OrdersService
      */
     public function getTypeLabels()
     {
-        $types  =   Hook::filter( 'ns-order-types-labels', collect( $this->getTypeOptions() )->mapWithKeys( function( $option ) {
+        $types = Hook::filter( 'ns-order-types-labels', collect( $this->getTypeOptions() )->mapWithKeys( function( $option ) {
             return [
-                $option[ 'identifier' ] => $option[ 'label' ]
+                $option[ 'identifier' ] => $option[ 'label' ],
             ];
         })->toArray() );
 
@@ -2393,7 +2384,7 @@ class OrdersService
      */
     public function orderTemplateMapping( $option, Order $order )
     {
-        $template = ns()->option->get( $option );
+        $template = ns()->option->get( $option, '' );
         $availableTags = [
             'store_name' => ns()->option->get( 'ns_store_name' ),
             'store_email' => ns()->option->get( 'ns_store_email' ),
@@ -2429,7 +2420,7 @@ class OrdersService
         $availableTags = Hook::filter( 'ns-orders-template-mapping', $availableTags, $order );
 
         foreach ( $availableTags as $tag => $value ) {
-            $template = ( str_replace( '{' . $tag . '}', $value, $template ) );
+            $template = ( str_replace( '{' . $tag . '}', $value ?: '', $template ) );
         }
 
         return $template;
@@ -2446,7 +2437,6 @@ class OrdersService
         $orders = Order::paymentExpired()->get();
 
         if ( ! $orders->isEmpty() ) {
-
             /**
              * The status changes according to the fact
              * if some orders has received a payment.

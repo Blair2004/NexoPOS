@@ -10,6 +10,7 @@
       <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
       <directory suffix="ExceptionsTest.php">./tests/Feature</directory>
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
+      <directory suffix="TestAllDateTimeOptions.php">./tests/Feature</directory>
       <directory suffix="CrudTest.php">./tests/Feature</directory>
       <directory suffix="FieldsTest.php">./tests/Feature</directory>
       <directory suffix="UploadModuleTest.php">./tests/Feature</directory>

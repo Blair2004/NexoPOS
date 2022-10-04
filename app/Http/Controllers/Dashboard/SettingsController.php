@@ -36,19 +36,32 @@ class SettingsController extends DashboardController
         ns()->restrict([ 'manage.options' ]);
 
         switch ( $identifier ) {
-            case 'customers': return $this->customersSettings(); break;
-            case 'general': return $this->generalSettings(); break;
-            case 'invoices': return $this->invoiceSettings(); break;
-            case 'orders': return $this->ordersSettings(); break;
-            case 'pos': return $this->posSettings(); break;
-            case 'reports': return $this->reportsSettings(); break;
-            case 'invoice-settings': return $this->invoiceSettings(); break;
-            case 'expenses-settings': return $this->expenseSettings(); break;
-            case 'reset': return $this->resetSettings(); break;
-            case 'workers': return $this->workersSettings(); break;
-            case 'accounting': return $this->accountingSettings(); break;
-            case 'about': return $this->aboutSettings(); break;
-            default: return $this->handleDefaultSettings( $identifier ); break;
+            case 'customers': return $this->customersSettings();
+            break;
+            case 'general': return $this->generalSettings();
+            break;
+            case 'invoices': return $this->invoiceSettings();
+            break;
+            case 'orders': return $this->ordersSettings();
+            break;
+            case 'pos': return $this->posSettings();
+            break;
+            case 'reports': return $this->reportsSettings();
+            break;
+            case 'invoice-settings': return $this->invoiceSettings();
+            break;
+            case 'expenses-settings': return $this->expenseSettings();
+            break;
+            case 'reset': return $this->resetSettings();
+            break;
+            case 'workers': return $this->workersSettings();
+            break;
+            case 'accounting': return $this->accountingSettings();
+            break;
+            case 'about': return $this->aboutSettings();
+            break;
+            default: return $this->handleDefaultSettings( $identifier );
+            break;
         }
     }
 

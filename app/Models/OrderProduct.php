@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\FloatConvertCasting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -17,19 +18,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $discount_type
  * @property float $discount
  * @property float $discount_percentage
- * @property float $gross_price
+ * @property float $price_without_tax
  * @property float $unit_price
  * @property int $tax_group_id
  * @property string $tax_type
  * @property int $wholesale_tax_value
+ * @property string $mode
  * @property float $sale_tax_value
  * @property float $tax_value
- * @property float $net_price
- * @property string $mode
+ * @property float $price_with_tax
  * @property string $unit_name
- * @property float $total_gross_price
+ * @property float $total_price_without_tax
  * @property float $total_price
- * @property float $total_net_price
+ * @property float $total_price_with_tax
  * @property float $total_purchase_price
  * @property string $return_condition
  * @property string $return_observations
@@ -48,6 +49,29 @@ class OrderProduct extends NsModel
     const CONDITION_UNSPOILED = 'unspoiled';
 
     protected $table = 'nexopos_' . 'orders_products';
+
+    protected $casts = [
+        'id' => 'integer',
+        'product_id' => 'integer',
+        'product_category_id' => 'integer',
+        'procurement_product_id' => 'integer',
+        'unit_id' => 'integer',
+        'unit_quantity_id' => 'integer',
+        'order_id' => 'integer',
+        'tax_group_id' => 'integer',
+        'quantity' => FloatConvertCasting::class,
+        'discount' => FloatConvertCasting::class,
+        'discount_percentage' => FloatConvertCasting::class,
+        'price_without_tax' => FloatConvertCasting::class,
+        'unit_price' => FloatConvertCasting::class,
+        'sale_tax_value' => FloatConvertCasting::class,
+        'tax_value' => FloatConvertCasting::class,
+        'price_with_tax' => FloatConvertCasting::class,
+        'total_price_without_tax' => FloatConvertCasting::class,
+        'total_price' => FloatConvertCasting::class,
+        'total_price_with_tax' => FloatConvertCasting::class,
+        'total_purchase_price' => FloatConvertCasting::class,
+    ];
 
     public function unit()
     {
