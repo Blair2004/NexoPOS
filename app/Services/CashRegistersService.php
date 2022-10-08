@@ -235,7 +235,7 @@ class CashRegistersService
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
             $registerHistory->value = ns()->currency->define( $orderPayment->value )->getRaw();
-            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $orderPayment->value );
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $orderPayment->value )->getRaw();
             $registerHistory->register_id = $register->id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = $order->author;
@@ -267,7 +267,7 @@ class CashRegistersService
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
             $registerHistory->value = $order->total;
-            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total );
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
             $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = Auth::id();
@@ -292,7 +292,7 @@ class CashRegistersService
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
             $registerHistory->value = $order->total;
-            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total );
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
             $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = Auth::id();

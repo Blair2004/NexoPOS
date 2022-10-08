@@ -350,7 +350,7 @@ class UserCrud extends CrudService
      *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model )
+    public function beforeDelete( $namespace, int $id, $model )
     {
         if ( $namespace == 'ns.users' ) {
             $this->allowedTo( 'delete' );
