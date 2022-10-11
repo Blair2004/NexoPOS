@@ -891,7 +891,7 @@ class OrdersService
             foreach ( $fields[ 'payments' ] as $payment) {
                 if (in_array($payment['identifier'], $allowedPaymentsGateways ) ) {
                     /**
-                     * check if the customer account are enough for the account-payment
+                     * check if the customer account balance is enough for the account-payment
                      * when that payment is provided
                      */
                     if ( $payment[ 'identifier' ] === 'account-payment' && $customer->account_amount < floatval( $payment[ 'value' ] ) ) {

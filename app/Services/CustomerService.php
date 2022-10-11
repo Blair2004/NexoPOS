@@ -19,6 +19,7 @@ use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Models\RewardSystem;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerService
@@ -42,6 +43,20 @@ class CustomerService
                 throw new Exception( __( 'Unable to find the customer using the provided id.' ) );
             }
         }
+    }
+
+    /**
+     * Retrieve the recent active customers.
+     * @param int $limit
+     * @return Collection
+     */
+    public function getRecentlyActive( $limit = 30 )
+    {
+        return Customer::with( 'billing' )
+            ->with( 'shipping' )
+            ->where( 'group_id', '<>', null )
+            ->limit( $limit )
+            ->orderBy( 'updated_at', 'desc' )->get();  
     }
 
     /**
