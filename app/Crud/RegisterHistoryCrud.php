@@ -427,6 +427,9 @@ class RegisterHistoryCrud extends CrudService
             case RegisterHistory::ACTION_CASHOUT:
                 $entry->{ '$cssClass' } = 'warning border';
                 break;
+            case RegisterHistory::ACTION_CHANGE:
+                $entry->{ '$cssClass' } = 'warning border';
+                break;
             case RegisterHistory::ACTION_CLOSING:
                 $entry->{ '$cssClass' } = 'warning border';
                 break;

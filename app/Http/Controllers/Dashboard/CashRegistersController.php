@@ -21,16 +21,10 @@ use Illuminate\Support\Facades\Auth;
 
 class CashRegistersController extends DashboardController
 {
-    /**
-     * @var CashRegistersService
-     */
-    protected $registersService;
-
     public function __construct(
-        CashRegistersService $registersService
+        protected CashRegistersService $registersService
     ) {
         parent::__construct();
-        $this->registersService = $registersService;
     }
 
     public function listRegisters()
@@ -149,6 +143,9 @@ class CashRegistersController extends DashboardController
                             break;
                         case RegisterHistory::ACTION_CASHOUT:
                             $session->label = __( 'Cash Out' );
+                            break;
+                        case RegisterHistory::ACTION_CHANGE:
+                            $session->label = __( 'Give Change' );
                             break;
                         case RegisterHistory::ACTION_CLOSING:
                             $session->label = __( 'Closing' );

@@ -11,6 +11,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 
+/**
+ * @deprecated
+ */
 class ProcessCashRegisterHistoryFromPaymentJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
@@ -32,9 +35,6 @@ class ProcessCashRegisterHistoryFromPaymentJob implements ShouldQueue
      */
     public function handle( CashRegistersService $cashRegistersService )
     {
-        $cashRegistersService->increaseFromOrderPayment(
-            order: $this->order,
-            orderPayment: $this->orderPayment
-        );
+        // ...
     }
 }
