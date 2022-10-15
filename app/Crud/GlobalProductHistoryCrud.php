@@ -240,7 +240,8 @@ class GlobalProductHistoryCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -385,27 +386,41 @@ class GlobalProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_TRANSFER_IN :
             case ProductHistory::ACTION_VOID_RETURN :
                 $entry->{ '$cssClass' } = 'info border text-sm';
-            break;
+                break;
             default:
                 $entry->{ '$cssClass' } = 'success border text-sm';
-            break;
+                break;
         }
 
         switch ( $entry->operation_type ) {
-            case ProductHistory::ACTION_ADDED: $entry->operation_type = __( 'Added' ); break;
-            case ProductHistory::ACTION_ADJUSTMENT_RETURN: $entry->operation_type = __( 'Stock Return' ); break;
-            case ProductHistory::ACTION_ADJUSTMENT_SALE: $entry->operation_type = __( 'Sale Adjustment' ); break;
-            case ProductHistory::ACTION_DEFECTIVE: $entry->operation_type = __( 'Defective' ); break;
-            case ProductHistory::ACTION_DELETED: $entry->operation_type = __( 'Deleted' ); break;
-            case ProductHistory::ACTION_LOST: $entry->operation_type = __( 'Lost' ); break;
-            case ProductHistory::ACTION_REMOVED: $entry->operation_type = __( 'Removed' ); break;
-            case ProductHistory::ACTION_RETURNED: $entry->operation_type = __( 'Stock Return' ); break;
-            case ProductHistory::ACTION_SOLD: $entry->operation_type = __( 'Sold' ); break;
-            case ProductHistory::ACTION_STOCKED: $entry->operation_type = __( 'Stocked' ); break;
-            case ProductHistory::ACTION_TRANSFER_CANCELED: $entry->operation_type = __( 'Transfer Canceled' ); break;
-            case ProductHistory::ACTION_TRANSFER_IN: $entry->operation_type = __( 'Incoming Transfer' ); break;
-            case ProductHistory::ACTION_TRANSFER_OUT: $entry->operation_type = __( 'Outgoing Transfer' ); break;
-            case ProductHistory::ACTION_VOID_RETURN: $entry->operation_type = __( 'Void Return' ); break;
+            case ProductHistory::ACTION_ADDED: $entry->operation_type = __( 'Added' );
+            break;
+            case ProductHistory::ACTION_ADJUSTMENT_RETURN: $entry->operation_type = __( 'Stock Return' );
+            break;
+            case ProductHistory::ACTION_ADJUSTMENT_SALE: $entry->operation_type = __( 'Sale Adjustment' );
+            break;
+            case ProductHistory::ACTION_DEFECTIVE: $entry->operation_type = __( 'Defective' );
+            break;
+            case ProductHistory::ACTION_DELETED: $entry->operation_type = __( 'Deleted' );
+            break;
+            case ProductHistory::ACTION_LOST: $entry->operation_type = __( 'Lost' );
+            break;
+            case ProductHistory::ACTION_REMOVED: $entry->operation_type = __( 'Removed' );
+            break;
+            case ProductHistory::ACTION_RETURNED: $entry->operation_type = __( 'Stock Return' );
+            break;
+            case ProductHistory::ACTION_SOLD: $entry->operation_type = __( 'Sold' );
+            break;
+            case ProductHistory::ACTION_STOCKED: $entry->operation_type = __( 'Stocked' );
+            break;
+            case ProductHistory::ACTION_TRANSFER_CANCELED: $entry->operation_type = __( 'Transfer Canceled' );
+            break;
+            case ProductHistory::ACTION_TRANSFER_IN: $entry->operation_type = __( 'Incoming Transfer' );
+            break;
+            case ProductHistory::ACTION_TRANSFER_OUT: $entry->operation_type = __( 'Outgoing Transfer' );
+            break;
+            case ProductHistory::ACTION_VOID_RETURN: $entry->operation_type = __( 'Void Return' );
+            break;
         }
 
         // you can make changes here
@@ -440,7 +455,6 @@ class GlobalProductHistoryCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */

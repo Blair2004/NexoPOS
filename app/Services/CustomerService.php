@@ -645,11 +645,16 @@ class CustomerService
     public function getCustomerAccountOperationLabel( $label )
     {
         switch ( $label ) {
-            case CustomerAccountHistory::OPERATION_ADD: return __( 'Crediting' ); break;
-            case CustomerAccountHistory::OPERATION_DEDUCT: return __( 'Deducting' ); break;
-            case CustomerAccountHistory::OPERATION_PAYMENT: return __( 'Order Payment' ); break;
-            case CustomerAccountHistory::OPERATION_REFUND: return __( 'Order Refund' ); break;
-            default: return __( 'Unknown Operation' ); break;
+            case CustomerAccountHistory::OPERATION_ADD: return __( 'Crediting' );
+            break;
+            case CustomerAccountHistory::OPERATION_DEDUCT: return __( 'Deducting' );
+            break;
+            case CustomerAccountHistory::OPERATION_PAYMENT: return __( 'Order Payment' );
+            break;
+            case CustomerAccountHistory::OPERATION_REFUND: return __( 'Order Refund' );
+            break;
+            default: return __( 'Unknown Operation' );
+            break;
         }
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Models\Order;
+use App\Services\OrdersService;
 use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,7 +19,7 @@ class RefreshOrderJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( public Order $order )
     {
         $this->prepareSerialization();
     }
@@ -27,8 +29,8 @@ class RefreshOrderJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( OrdersService $ordersService )
     {
-        //
+        $ordersService->refreshOrder( $this->order );
     }
 }

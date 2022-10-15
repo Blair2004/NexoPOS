@@ -580,7 +580,6 @@ class ProductsController extends DashboardController
              */
             $product->procurement_product_id = $procurementProduct->id;
         } elseif ( $productUnitQuantity instanceof ProductUnitQuantity ) {
-
             /**
              * if a product unit quantity is loaded. Then we make sure to return the parent
              * product with the selected unit quantity.

@@ -20,36 +20,36 @@ class CreateOrdersProductsTable extends Migration
             Schema::createIfMissing( 'nexopos_orders_products', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
-                $table->integer( 'product_id' );
-                $table->integer( 'product_category_id' );
-                $table->integer( 'procurement_product_id' )->nullable();
-                $table->integer( 'unit_id' );
-                $table->integer( 'unit_quantity_id' );
-                $table->integer( 'order_id' );
-                $table->float( 'quantity', 18, 5 ); // could be the base unit
-                $table->string( 'discount_type' )->default( 'none' );
-                $table->float( 'discount', 18, 5 )->default(0);
-                $table->float( 'discount_percentage', 18, 5 )->default(0);
-                $table->float( 'gross_price', 18, 5 )->default(0);
-                $table->float( 'unit_price', 18, 5 )->default(0);
-                $table->integer( 'tax_group_id' )->default(0);
-                $table->string( 'tax_type' )->default(0);
-                $table->string( 'wholesale_tax_value' )->default(0);
-                $table->string( 'sale_tax_value' )->default(0);
-                $table->float( 'tax_value', 18, 5 )->default(0);
-                $table->float( 'net_price', 18, 5 )->default(0);
+                $table->string( 'unit_name' )->nullable();
                 $table->string( 'mode' )->default( 'normal' ); //
                 $table->string( 'product_type' )->default( 'product' ); // group
-                $table->float( 'rate' )->default(0);
-                $table->string( 'unit_name' )->nullable();
-                $table->float( 'total_gross_price', 18, 5 )->default(0);
-                $table->float( 'total_price', 18, 5 )->default(0);
-                $table->float( 'total_net_price', 18, 5 )->default(0);
-                $table->float( 'total_purchase_price', 18, 5 )->default(0);
-                $table->string( 'return_condition' )->nullable();
-                $table->text( 'return_observations' )->nullable();
+                $table->integer( 'product_id' );
+                $table->integer( 'order_id' );
+                $table->integer( 'unit_id' );
+                $table->integer( 'unit_quantity_id' );
+                $table->integer( 'product_category_id' );
+                $table->integer( 'procurement_product_id' )->nullable();
+                $table->integer( 'tax_group_id' )->default(0);
+                $table->string( 'tax_type' )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->string( 'status' )->default( 'sold' ); // sold, refunded
+                $table->text( 'return_observations' )->nullable();
+                $table->string( 'return_condition' )->nullable();
+                $table->string( 'discount_type' )->default( 'none' );
+                $table->float( 'discount', 18, 5 )->default(0);
+                $table->float( 'quantity', 18, 5 ); // could be the base unit
+                $table->float( 'discount_percentage', 18, 5 )->default(0);
+                $table->float( 'unit_price', 18, 5 )->default(0);
+                $table->float( 'price_with_tax', 18, 5 )->default(0);
+                $table->float( 'price_without_tax', 18, 5 )->default(0);
+                $table->float( 'wholesale_tax_value', 18, 5 )->default(0);
+                $table->float( 'sale_tax_value', 18, 5 )->default(0);
+                $table->float( 'tax_value', 18, 5 )->default(0);
+                $table->float( 'rate' )->default(0);
+                $table->float( 'total_price', 18, 5 )->default(0);
+                $table->float( 'total_price_with_tax', 18, 5 )->default(0);
+                $table->float( 'total_price_without_tax', 18, 5 )->default(0);
+                $table->float( 'total_purchase_price', 18, 5 )->default(0);
                 $table->timestamps();
             });
         }

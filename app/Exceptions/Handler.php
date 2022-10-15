@@ -91,7 +91,6 @@ class Handler extends ExceptionHandler
         }
 
         if ( env( 'NS_CUSTOM_ERROR_HANDLER', ! env( 'APP_DEBUG' ) ) ) {
-
             /**
              * Let's make a better verfication
              * to avoid repeating outself.

@@ -29,7 +29,7 @@ class CashRegistersService
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
         $registerHistory->value = $amount;
-        $registerHistory->balance_after = $register->balance + $amount;
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->getRaw();
         $registerHistory->save();
 
         $register->status = Register::STATUS_OPENED;
@@ -68,8 +68,8 @@ class CashRegistersService
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_CLOSING;
         $registerHistory->transaction_type = $diffType;
-        $registerHistory->balance_after = abs( $register->balance - (float) $amount );
-        $registerHistory->value = $amount;
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
+        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
         $registerHistory->balance_before = $register->balance;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
@@ -111,8 +111,8 @@ class CashRegistersService
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
-        $registerHistory->value = $amount;
-        $registerHistory->balance_after = $register->balance + $amount;
+        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->getRaw();
         $registerHistory->save();
 
         return [
@@ -143,8 +143,8 @@ class CashRegistersService
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
-        $registerHistory->value = $amount;
-        $registerHistory->balance_after = $register->balance - $amount;
+        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
         $registerHistory->save();
 
         return [
@@ -186,9 +186,9 @@ class CashRegistersService
         $registerHistory->action = RegisterHistory::ACTION_CASHOUT;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
-        $registerHistory->balance_before = $register->balance;
-        $registerHistory->value = $amount;
-        $registerHistory->balance_after = $register->balance - $amount;
+        $registerHistory->balance_before = ns()->currency->define( $register->balance )->getRaw();
+        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
         $registerHistory->save();
 
         return [
@@ -234,8 +234,8 @@ class CashRegistersService
 
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
-            $registerHistory->value = $orderPayment->value;
-            $registerHistory->balance_after = $register->balance + $orderPayment->value;
+            $registerHistory->value = ns()->currency->define( $orderPayment->value )->getRaw();
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $orderPayment->value );
             $registerHistory->register_id = $register->id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = $order->author;
@@ -267,7 +267,7 @@ class CashRegistersService
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
             $registerHistory->value = $order->total;
-            $registerHistory->balance_after = $register->balance + $order->total;
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total );
             $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = Auth::id();
@@ -292,7 +292,7 @@ class CashRegistersService
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
             $registerHistory->value = $order->total;
-            $registerHistory->balance_after = $register->balance + $order->total;
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total );
             $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = Auth::id();
@@ -312,25 +312,25 @@ class CashRegistersService
         switch ( $label ) {
             case RegisterHistory::ACTION_CASHING:
                 return __( 'Cash In' );
-            break;
+                break;
             case RegisterHistory::ACTION_CASHOUT:
                 return __( 'Cash Out' );
-            break;
+                break;
             case RegisterHistory::ACTION_CLOSING:
                 return __( 'Closing' );
-            break;
+                break;
             case RegisterHistory::ACTION_OPENING:
                 return __( 'Opening' );
-            break;
+                break;
             case RegisterHistory::ACTION_REFUND:
                 return __( 'Refund' );
-            break;
+                break;
             case RegisterHistory::ACTION_SALE:
                 return __( 'Sale' );
-            break;
+                break;
             default:
                 return $label;
-            break;
+                break;
         }
     }
 
@@ -345,19 +345,19 @@ class CashRegistersService
         switch ( $label ) {
             case Register::STATUS_CLOSED:
                 return __( 'Closed' );
-            break;
+                break;
             case Register::STATUS_DISABLED:
                 return __( 'Disabled' );
-            break;
+                break;
             case Register::STATUS_INUSE:
                 return __( 'In Use' );
-            break;
+                break;
             case Register::STATUS_OPENED:
                 return __( 'Opened' );
-            break;
+                break;
             default:
                 return $label;
-            break;
+                break;
         }
     }
 

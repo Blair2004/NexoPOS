@@ -73,7 +73,11 @@ class CustomersController extends DashboardController
      */
     public function get( $customer_id = null )
     {
-        $customer = Customer::with( 'group' )->find( $customer_id );
+        $customer = Customer::with([
+            'group',
+            'billing',
+            'shipping',
+        ])->find( $customer_id );
 
         if ( $customer_id !== null ) {
             if ( $customer instanceof Customer ) {
@@ -147,14 +151,22 @@ class CustomersController extends DashboardController
             ->get()
             ->map( function( Order $order ) {
                 switch ( $order->payment_status ) {
-                    case Order::PAYMENT_HOLD : $order->human_status = __( 'Hold' ); break;
-                    case Order::PAYMENT_PAID : $order->human_status = __( 'Paid' ); break;
-                    case Order::PAYMENT_PARTIALLY : $order->human_status = __( 'Partially Paid' ); break;
-                    case Order::PAYMENT_REFUNDED : $order->human_status = __( 'Refunded' ); break;
-                    case Order::PAYMENT_UNPAID : $order->human_status = __( 'Unpaid' ); break;
-                    case Order::PAYMENT_PARTIALLY_REFUNDED : $order->human_status = __( 'Partially Refunded' ); break;
-                    case Order::PAYMENT_VOID : $order->human_status = __( 'Void' ); break;
-                    default: $order->human_status = $order->payment_status; break;
+                    case Order::PAYMENT_HOLD : $order->human_status = __( 'Hold' );
+                    break;
+                    case Order::PAYMENT_PAID : $order->human_status = __( 'Paid' );
+                    break;
+                    case Order::PAYMENT_PARTIALLY : $order->human_status = __( 'Partially Paid' );
+                    break;
+                    case Order::PAYMENT_REFUNDED : $order->human_status = __( 'Refunded' );
+                    break;
+                    case Order::PAYMENT_UNPAID : $order->human_status = __( 'Unpaid' );
+                    break;
+                    case Order::PAYMENT_PARTIALLY_REFUNDED : $order->human_status = __( 'Partially Refunded' );
+                    break;
+                    case Order::PAYMENT_VOID : $order->human_status = __( 'Void' );
+                    break;
+                    default: $order->human_status = $order->payment_status;
+                    break;
                 }
 
                 $order->human_delivery_status = $this->ordersService->getDeliveryStatus( $order->delivery_status );

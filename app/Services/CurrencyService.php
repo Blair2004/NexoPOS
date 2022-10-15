@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
+
 class CurrencyService
 {
     private $value;
@@ -36,7 +39,7 @@ class CurrencyService
 
     public function __construct( $value, $config = [])
     {
-        $this->value = $value;
+        $this->value = BigDecimal::of( $value );
 
         extract( $config );
 
@@ -98,7 +101,7 @@ class CurrencyService
 
     public function value( $amount )
     {
-        $this->value = $amount;
+        $this->value = BigDecimal::of( $amount );
 
         return $this;
     }
@@ -119,8 +122,8 @@ class CurrencyService
     public static function multiply( $first, $second )
     {
         return self::__defineAmount(
-            bcmul( floatval( trim( $first ) ), floatval( trim( $second ) ) )
-        );
+            BigDecimal::of( trim( $first ) )
+        )->multipliedBy( trim( $second ) );
     }
 
     /**
@@ -134,8 +137,8 @@ class CurrencyService
     public static function divide( $first, $second )
     {
         return self::__defineAmount(
-            bcdiv( floatval( trim( $first ) ), floatval( trim( $second ) ), 10 )
-        );
+            BigDecimal::of( $first )
+        )->dividedBy( $second );
     }
 
     /**
@@ -148,8 +151,8 @@ class CurrencyService
     public static function additionate( $left_operand, $right_operand )
     {
         return self::__defineAmount(
-            bcadd( floatval( $left_operand ), floatval( $right_operand ), 10 )
-        );
+            BigDecimal::of( $left_operand )
+        )->additionateBy( $right_operand );
     }
 
     /**
@@ -162,9 +165,9 @@ class CurrencyService
      */
     public static function percent( $amount, $rate )
     {
-        return self::__defineAmount(
-            bcdiv( bcmul( floatval( $amount ), floatval( $rate ), intval( self::$_decimal_precision ) ), 100, intval( self::$_decimal_precision ) )
-        );
+        return self::__defineAmount( BigDecimal::of( $amount ) )
+            ->multipliedBy( $rate )
+            ->dividedBy(100);
     }
 
     /**
@@ -191,7 +194,7 @@ class CurrencyService
     {
         $currency = $this->prefered_currency === 'iso' ? $this->currency_iso : $this->currency_symbol;
         $final = sprintf( '%s ' . number_format(
-            (float) $this->value,
+            floatval( (string) $this->value ),
             $this->decimal_precision,
             $this->decimal_separator,
             $this->thousand_separator
@@ -214,22 +217,17 @@ class CurrencyService
         return $this->getRaw( $this->value );
     }
 
+    /**
+     * return a raw value for the provided number
+     * @param float $value
+     * @return float
+     */
     public function getRaw( $value = null )
     {
-        return (float) $this->bcround( ( $value === null ? $this->value : $value ), 10 );
-    }
+        $value = $value !== null ? (string) BigDecimal::of( $value )->dividedBy(1, $this->decimal_precision, RoundingMode::UP ) : null;
+        $main = $value === null ? (string) $this->value->dividedBy(1, $this->decimal_precision, RoundingMode::UP ) : 0;
 
-    /**
-     * Will return the full raw without
-     * rounding.
-     *
-     * @deprecated
-     *
-     * @return float $value
-     */
-    public function getFullRaw( $value = null )
-    {
-        return (float) ( $value === null ? $this->value : $value );
+        return floatval( $value !== null ? $value : $main );
     }
 
     /**
@@ -255,7 +253,7 @@ class CurrencyService
      */
     public function multipliedBy( $number )
     {
-        $this->value = bcmul( floatval( $this->value ), floatval( $number ), 10 );
+        $this->value = $this->value->multipliedBy( $number );
 
         return $this;
     }
@@ -281,7 +279,7 @@ class CurrencyService
      */
     public function dividedBy( $number )
     {
-        $this->value = bcdiv( floatval( $this->value ), floatval( $number ), 10 );
+        $this->value = $this->value->dividedBy( $number, $this->decimal_precision, RoundingMode::UP );
 
         return $this;
     }
@@ -307,7 +305,7 @@ class CurrencyService
      */
     public function subtractBy( $number )
     {
-        $this->value = bcsub( floatval( $this->value ), floatval( $number ), 10 );
+        $this->value = $this->value->minus( $number );
 
         return $this;
     }
@@ -321,13 +319,15 @@ class CurrencyService
      */
     public function additionateBy( $number )
     {
-        $this->value = bcadd( floatval( $this->value ), floatval( $number ), 10 );
+        $this->value = $this->value->plus( $number );
 
         return $this;
     }
 
     /**
      * @source https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers
+     *
+     * @deprecated
      */
     public function bcceil( $number )
     {
@@ -346,6 +346,9 @@ class CurrencyService
         return $number;
     }
 
+    /**
+     * @deprecated
+     */
     public function bcfloor( $number )
     {
         if ( strpos( $number, '.' ) !== false) {
@@ -363,6 +366,9 @@ class CurrencyService
         return $number;
     }
 
+    /**
+     * @deprecated
+     */
     public function bcround($number, $precision = 0)
     {
         if ( is_float( (float) $number ) ) {
@@ -389,9 +395,9 @@ class CurrencyService
             ->dividedBy(100);
 
         if ( $operation === 'additionate' ) {
-            return $value + $percentage;
+            return (float) BigDecimal::of( $value )->plus( $percentage );
         } elseif ( $operation === 'subtract' ) {
-            return $value - $percentage;
+            return (float) BigDecimal::of( $value )->minus( $percentage );
         }
 
         return $value;

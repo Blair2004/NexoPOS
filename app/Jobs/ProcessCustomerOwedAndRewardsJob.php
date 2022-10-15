@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Customer;
 use App\Models\Order;
 use App\Services\CustomerService;
 use App\Traits\NsSerialize;
@@ -33,8 +34,10 @@ class ProcessCustomerOwedAndRewardsJob implements ShouldQueue
     {
         $this->order->load( 'customer' );
 
-        $customerService->updateCustomerOwedAmount( $this->order->customer );
-        $customerService->computeReward( $this->order );
-        $customerService->increaseCustomerPurchase( $this->order );
+        if ( $this->order->customer instanceof Customer ) {
+            $customerService->updateCustomerOwedAmount( $this->order->customer );
+            $customerService->computeReward( $this->order );
+            $customerService->increaseCustomerPurchase( $this->order );
+        }
     }
 }

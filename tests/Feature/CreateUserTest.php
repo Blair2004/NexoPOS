@@ -172,7 +172,6 @@ class CreateUserTest extends TestCase
                 foreach ( $paramsModelBinding as $expression => $binding ) {
                     if ( preg_match( $expression, $uri ) ) {
                         if ( is_array( $binding ) ) {
-
                             /**
                              * We want to replace all argument
                              * on the uri by the matching binding collection
@@ -181,7 +180,6 @@ class CreateUserTest extends TestCase
                                 $uri = preg_replace( '/\{' . $parameter . '\}/', $value, $uri );
                             }
                         } elseif ( is_string( $binding ) ) {
-
                             /**
                              * This are URI with a single parameter
                              * that are replaced once the binding is resolved.

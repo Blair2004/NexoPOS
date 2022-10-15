@@ -78,15 +78,16 @@ trait WithProductTest
                 ]);
 
             $result = json_decode( $response->getContent(), true );
+            $taxGroup = TaxGroup::find(1);
 
             if ( $taxType === 'exclusive' ) {
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.net_sale_price' ), $taxService->getTaxGroupNetPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price' ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_with_tax' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_without_tax' ), $taxService->getPriceWithoutTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
             } else {
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.net_sale_price', 0 ), $taxService->getTaxGroupNetPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price', 0 ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_with_tax', 0 ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_without_tax', 0 ), $taxService->getPriceWithoutTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
             }
 
             $category->refresh();
@@ -216,15 +217,16 @@ trait WithProductTest
                 ]);
 
             $result = json_decode( $response->getContent(), true );
+            $taxGroup = TaxGroup::find(1);
 
             if ( $taxType === 'exclusive' ) {
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.net_sale_price' ), $taxService->getTaxGroupNetPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price' ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_with_tax' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_without_tax' ), $taxService->getPriceWithoutTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
             } else {
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.net_sale_price', 0 ), $taxService->getTaxGroupNetPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price', 0 ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_with_tax', 0 ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_without_tax', 0 ), $taxService->getPriceWithoutTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
             }
 
             /**

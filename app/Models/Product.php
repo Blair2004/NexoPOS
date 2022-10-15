@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $type
  * @property string $accurate_tracking
  * @property string $status
- * @property string $stock_management Can either be "enabled" or "disabled". Use Product::STOCK_MANAGEMEND_ENABLED or Product::STOCK_MANAGEMENT_DISABLED for accessing those values.
+ * @property string $stock_management Can either be "enabled" or "disabled"
  * @property string $barcode
  * @property string $barcode_type
  * @property string $sku
@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property bool $searchable
  * @property int $author
  * @property string $uuid
+ * @property TaxGroup $tax_group
  */
 class Product extends NsModel
 {
@@ -50,7 +51,7 @@ class Product extends NsModel
 
     const STATUS_AVAILABLE = 'available';
 
-    CONST STATUS_UNAVAILABLE = 'unavailable';
+    const STATUS_UNAVAILABLE = 'unavailable';
 
     protected $table = 'nexopos_' . 'products';
 
@@ -67,7 +68,7 @@ class Product extends NsModel
             'local_index' => 'id',
             'local_name' => 'name',
             'foreign_index' => 'product_id',
-            'foreign_name' => 'name',
+            'foreign_name' => [ Order::class, 'order_id', 'id', 'code' ],
         ],
     ];
 
@@ -147,7 +148,7 @@ class Product extends NsModel
 
     /**
      * get products that are on sale.
-     * 
+     *
      * @param QueryBuilder
      * @return QueryBuilder
      */
@@ -158,7 +159,7 @@ class Product extends NsModel
 
     /**
      * get products that aren't on sale.
-     * 
+     *
      * @param QueryBuilder
      * @return QueryBuilder
      */

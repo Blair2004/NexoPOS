@@ -97,7 +97,6 @@ class RouteServiceProvider extends ServiceProvider
         $Modules = app()->make( ModulesService::class );
 
         foreach ( $Modules->getEnabled() as $module ) {
-
             /**
              * We might check if the module is active
              */

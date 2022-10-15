@@ -46,42 +46,42 @@ class Setup
                         'message' => __( 'Unable to reach the host' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1045:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Unable to connect to the database using the credentials provided.' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1049:
                     $message = [
                         'name' => 'database_name',
                         'message' => __( 'Unable to select the database.' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1044:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Access denied for this user.' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1698:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Incorrect Authentication Plugin Provided.' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 default:
                     $message = [
                         'name' => 'hostname',
                         'message' => $e->getMessage(),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
             }
 
             return response()->json( $message, 403 );
@@ -253,42 +253,42 @@ class Setup
                         'message' => __( 'Unable to reach the host' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1045:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Unable to connect to the database using the credentials provided.' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1049:
                     $message = [
                         'name' => 'database_name',
                         'message' => __( 'Unable to select the database.' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1044:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Access denied for this user.' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1698:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Incorrect Authentication Plugin Provided.' ),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
                 default:
                     $message = [
                         'name' => 'hostname',
                         'message' => $e->getMessage(),
                         'status' => 'failed',
                     ];
-                break;
+                    break;
             }
 
             return response()->json( $message, 403 );

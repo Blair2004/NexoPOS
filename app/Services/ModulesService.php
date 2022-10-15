@@ -223,7 +223,6 @@ class ModulesService
                  * Service providers are registered when the module is enabled
                  */
                 if ( $config[ 'enabled' ] ) {
-
                     /**
                      * Load Module Config
                      */
@@ -328,7 +327,6 @@ class ModulesService
             if ( isset( $module[ 'requires' ] ) ) {
                 collect( $module[ 'requires' ] )->each( function( $dependency, $namespace ) use ( $module ) {
                     if ( $this->get( $namespace ) === null ) {
-
                         /**
                          * The dependency is missing
                          * let's disable the module
@@ -345,7 +343,6 @@ class ModulesService
                     }
 
                     if ( ! $this->get( $namespace )[ 'enabled' ] ) {
-
                         /**
                          * The dependency is missing
                          * let's disable the module
@@ -609,7 +606,6 @@ class ModulesService
             $zipArchive->addEmptyDir( ucwords( $namespace ) );
 
             foreach ( $files as $index => $file ) {
-
                 /**
                  * We should avoid to extract git stuff as well
                  */
@@ -702,7 +698,6 @@ class ModulesService
                 ! isset( $xml->name ) ||
                 $xml->getName() != 'module'
             ) {
-
                 /**
                  * the file send is not a valid module
                  */
@@ -723,7 +718,6 @@ class ModulesService
              */
             if ( $module = $this->get( $moduleNamespace ) ) {
                 if ( version_compare( $module[ 'version' ], $moduleVersion, '>=' ) ) {
-
                     /**
                      * We're dealing with old module
                      */
@@ -882,7 +876,6 @@ class ModulesService
         $module_version_key = strtolower( $moduleNamespace ) . '_last_migration';
 
         if ( $version = $this->options->get( $module_version_key ) != null ) {
-
             /**
              * the new options will be set after the migration
              */
@@ -894,7 +887,6 @@ class ModulesService
                 'action' => 'migration',
             ];
         } else {
-
             /**
              * Load module since it has'nt yet been added to the
              * runtime
@@ -916,7 +908,6 @@ class ModulesService
              */
             if ( $migrationFiles ) {
                 foreach ( $migrationFiles as $version => $files ) {
-
                     /**
                      * Looping each migration files
                      */
@@ -1081,7 +1072,6 @@ class ModulesService
         $className = 'Modules\\' . ucwords( $module[ 'namespace' ] ) . '\Migrations\\' . $className;
 
         if ( is_file( $filePath ) ) {
-
             /**
              * Include the migration class file
              * and checks if that class exists
@@ -1090,7 +1080,6 @@ class ModulesService
             include_once $filePath;
 
             if ( class_exists( $className ) ) {
-
                 /**
                  * Create Object
                  */
@@ -1163,14 +1152,13 @@ class ModulesService
             /**
              * Let's check if the main entry file doesn't have an error
              */
-            
             try {
                 $code = file_get_contents( $module[ 'index-file' ] );
                 $parser = ( new ParserFactory )->create( ParserFactory::PREFER_PHP7 );
-                $parser->parse( $code ); 
-                
-                foreach( $module[ 'providers' ] as $provider ) {
-                    $code   =   file_get_contents( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $provider );
+                $parser->parse( $code );
+
+                foreach ( $module[ 'providers' ] as $provider ) {
+                    $code = file_get_contents( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $provider );
                     $parser = ( new ParserFactory )->create( ParserFactory::PREFER_PHP7 );
                     $parser->parse( $code );
                 }
@@ -1193,7 +1181,6 @@ class ModulesService
                 $this->__boot( $module );
                 $this->triggerServiceProviders( $module, 'register', ServiceProvider::class );
                 $this->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
-
             } catch ( GlobalError $error ) {
                 return response()->json([
                     'status' => 'failed',
@@ -1357,7 +1344,6 @@ class ModulesService
         $unmigratedFiles = [];
 
         foreach ( $files as $file ) {
-
             /**
              * the last version should be lower than the looped versions
              * the current version should greather or equal to the looped versions
@@ -1609,21 +1595,21 @@ class ModulesService
     {
         switch ( $content ) {
             case 'main':
-            return view( 'generate.modules.main', [
-                'module' => $config,
-            ]);
-            break;
+                return view( 'generate.modules.main', [
+                    'module' => $config,
+                ]);
+                break;
             case 'config':
-            return view( 'generate.modules.config', [
-                'module' => $config,
-            ]);
-            break;
+                return view( 'generate.modules.config', [
+                    'module' => $config,
+                ]);
+                break;
             case 'event':
-            return view( 'generate.modules.event', [
-                'module' => $config,
-                'name' => $config[ 'namespace' ] . 'Event',
-            ]);
-            break;
+                return view( 'generate.modules.event', [
+                    'module' => $config,
+                    'name' => $config[ 'namespace' ] . 'Event',
+                ]);
+                break;
         }
     }
 }

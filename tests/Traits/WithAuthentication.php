@@ -19,6 +19,6 @@ trait WithAuthentication
 
     protected function attemptGetAnyUserFromRole( $name = 'admin' )
     {
-        return Role::namespace( 'admin' )->users->first();
+        return Role::namespace( 'admin' )->users->random();
     }
 }

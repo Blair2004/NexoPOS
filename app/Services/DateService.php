@@ -38,10 +38,10 @@ class DateService extends Carbon
         switch ( $mode ) {
             case 'short':
                 return $this->parse( $date )->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
-            break;
+                break;
             case 'full':
                 return $this->parse( $date )->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
-            break;
+                break;
         }
     }
 
@@ -67,10 +67,10 @@ class DateService extends Carbon
         switch ( $mode ) {
             case 'short':
                 return $this->now( $this->timezone )->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
-            break;
+                break;
             case 'full':
                 return $this->now( $this->timezone )->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
-            break;
+                break;
         }
     }
 

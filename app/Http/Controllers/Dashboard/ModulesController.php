@@ -68,13 +68,13 @@ class ModulesController extends DashboardController
         switch ( $argument ) {
             case '':
                 $list = $this->modules->get();
-            break;
+                break;
             case 'enabled':
                 $list = $this->modules->getEnabled();
-            break;
+                break;
             case 'disabled':
                 $list = $this->modules->getDisabled();
-            break;
+                break;
         }
 
         return [

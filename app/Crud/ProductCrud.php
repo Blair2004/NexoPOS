@@ -525,29 +525,6 @@ class ProductCrud extends CrudService
     }
 
     /**
-     * Will only calculate taxes
-     *
-     * @param array $fields
-     * @return array $fields
-     *
-     * @deprecated
-     */
-    private function calculateTaxes( $inputs, Product $product = null )
-    {
-        $inputs[ 'net_sale_price' ] = $inputs[ 'sale_price_edit' ];
-        $inputs[ 'gross_sale_price' ] = $inputs[ 'sale_price_edit' ];
-        $inputs[ 'sale_price' ] = $inputs[ 'sale_price_edit' ];
-
-        $inputs[ 'incl_tax_wholesale_price' ] = $inputs[ 'wholesale_price_edit' ];
-        $inputs[ 'excl_tax_wholesale_price' ] = $inputs[ 'wholesale_price_edit' ];
-        $inputs[ 'wholesale_price' ] = $inputs[ 'wholesale_price_edit' ];
-
-        $this->taxService->computeTax( $product, $inputs[ 'tax_id' ] );
-
-        return $inputs;
-    }
-
-    /**
      * Before saving a record
      *
      * @param  Request $request
@@ -581,7 +558,8 @@ class ProductCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 

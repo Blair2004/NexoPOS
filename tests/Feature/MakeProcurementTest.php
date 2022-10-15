@@ -20,4 +20,10 @@ class MakeProcurementTest extends TestCase
         $this->attemptAuthenticate();
         $this->attemptCreateProcurement();
     }
+
+    public function testCreateUnpaidProcurement()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateAnUnpaidProcurement();
+    }
 }

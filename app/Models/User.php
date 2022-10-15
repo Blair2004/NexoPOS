@@ -171,7 +171,6 @@ class User extends Authenticatable
 
             return in_array( $action, Auth::user()->storedPermissions );
         } else {
-
             /**
              * While looping, if one permission is not granted, exit the loop and return false
              */

@@ -29,7 +29,7 @@ class CreateProcurementsTable extends Migration
                 $table->datetime( 'delivery_time' )->nullable();
                 $table->datetime( 'invoice_date' )->nullable();
                 $table->string( 'payment_status' )->default( 'unpaid' ); // paid | unpaid
-                $table->string( 'delivery_status' )->default( 'unpaid' ); // paid | unpaid
+                $table->string( 'delivery_status' )->default( 'pending' ); // pending, delivered, stocked
                 $table->integer( 'total_items' )->default(0);
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );

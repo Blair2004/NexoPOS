@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\FloatConvertCasting;
 use App\Events\ProductUnitQuantityAfterCreatedEvent;
 use App\Events\ProductUnitQuantityAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,18 +21,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property bool $stock_alert_enabled
  * @property float $sale_price
  * @property float $sale_price_edit
- * @property float $gross_sale_price
- * @property float $net_sale_price
+ * @property float $sale_price_without_tax
+ * @property float $sale_price_with_tax
  * @property float $sale_price_tax
  * @property float $wholesale_price
  * @property float $wholesale_price_edit
- * @property float $net_wholesale_price
- * @property float $gross_wholesale_price
+ * @property float $wholesale_price_with_tax
+ * @property float $wholesale_price_without_tax
  * @property float $wholesale_price_tax
  * @property float $custom_price
  * @property float $custom_price_edit
- * @property float $net_custom_price
- * @property float $gross_custom_price
+ * @property float $custom_price_with_tax
+ * @property float $custom_price_without_tax
+ * @property Product $product
  */
 class ProductUnitQuantity extends NsModel
 {
@@ -39,9 +41,33 @@ class ProductUnitQuantity extends NsModel
 
     protected $table = 'nexopos_' . 'products_unit_quantities';
 
-    protected $dispatchesEvents     =   [
-        'created'   =>  ProductUnitQuantityAfterCreatedEvent::class,
-        'updated'   =>  ProductUnitQuantityAfterUpdatedEvent::class
+    protected $dispatchesEvents = [
+        'created' => ProductUnitQuantityAfterCreatedEvent::class,
+        'updated' => ProductUnitQuantityAfterUpdatedEvent::class,
+    ];
+
+    /**
+     * We want to enforce the property type
+     * might be useful to solve a common bug when the
+     * database doesn't return the right type.
+     */
+    protected $casts = [
+        'sale_price' => FloatConvertCasting::class,
+        'sale_price_edit' => FloatConvertCasting::class,
+        'sale_price_without_tax' => FloatConvertCasting::class,
+        'sale_price_with_tax' => FloatConvertCasting::class,
+        'sale_price_tax' => FloatConvertCasting::class,
+        'wholesale_price' => FloatConvertCasting::class,
+        'wholesale_price_edit' => FloatConvertCasting::class,
+        'wholesale_price_with_tax' => FloatConvertCasting::class,
+        'wholesale_price_without_tax' => FloatConvertCasting::class,
+        'wholesale_price_tax' => FloatConvertCasting::class,
+        'custom_price' => FloatConvertCasting::class,
+        'custom_price_edit' => FloatConvertCasting::class,
+        'custom_price_with_tax' => FloatConvertCasting::class,
+        'custom_price_without_tax' => FloatConvertCasting::class,
+        'quantity' => 'float',
+        'low_quantity' => 'float',
     ];
 
     /**

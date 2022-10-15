@@ -127,7 +127,9 @@ trait WithOrderTest
          * let's fetch all order that was created on that cash register
          * from a specific moment
          */
-        $totalValue = RegisterHistory::where( 'register_id', $cashRegister->id )->where( 'created_at', '>', $specificMoment )->sum( 'value' );
+        $totalValue = ns()->currency->define( RegisterHistory::where( 'register_id', $cashRegister->id )
+            ->where( 'created_at', '>', $specificMoment )
+            ->sum( 'value' ) )->getRaw();
 
         /**
          * only if the order total is greater than 0
@@ -233,11 +235,18 @@ trait WithOrderTest
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_DELETE )->sum( 'value' );
 
-        $totalTransactions = ( $openingBalance + $totalCashing + $totalSales ) - ( $totalClosing + $totalRefunds + $totalCashOut + $totalDelete );
+        $totalTransactions = ns()->currency->define( $openingBalance )
+            ->additionateBy( $totalCashing )
+            ->additionateBy( $totalSales )
+            ->subtractBy( $totalClosing )
+            ->subtractBy( $totalRefunds )
+            ->subtractBy( $totalCashOut )
+            ->subtractBy( $totalDelete )
+            ->getRaw();
 
         $this->assertEquals(
             ns()->currency->getRaw( $cashRegister->balance ),
-            ns()->currency->getRaw( $totalTransactions ),
+            $totalTransactions,
             __( 'The transaction aren\'t reflected on the register balance' )
         );
 
@@ -461,6 +470,7 @@ trait WithOrderTest
          * @var array $response
          * @var Register $cashRegister
          */
+        
         $order = Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
         $orderService->makeOrderSinglePayment([
             'identifier' => OrderPayment::PAYMENT_CASH,
@@ -521,7 +531,7 @@ trait WithOrderTest
         ], $data ) );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+            ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
 
         $response->assertStatus( 200 );
 
@@ -538,7 +548,9 @@ trait WithOrderTest
 
         $cashRegister->refresh();
 
-        $this->assertEquals( (float) $cashRegister->balance, (float) ( $previousValue - $response[ 'data' ][ 'order' ][ 'total' ] ), 'The balance wasn\'t updated after deleting the order.' );
+        $newAmount = ns()->currency->define( $previousValue )->subtractBy( $response[ 'data' ][ 'order' ][ 'total' ] )->getRaw();
+
+        $this->assertEquals( (float) $cashRegister->balance, (float) $newAmount, 'The balance wasn\'t updated after deleting the order.' );
 
         return $response;
     }
@@ -790,7 +802,7 @@ trait WithOrderTest
                 $quantity = $faker->numberBetween(1, 10);
                 $data = array_merge([
                     'name' => $product->name,
-                    'discount' => $taxService->getPercentageOf( $unitElement->sale_price, $discountRate ) * $quantity,
+                    'discount' => $taxService->getPercentageOf( $unitElement->sale_price * $quantity, $discountRate ),
                     'discount_percentage' => $discountRate,
                     'discount_type' => $faker->randomElement([ 'flat', 'percentage' ]),
                     'quantity' => $quantity,
@@ -856,8 +868,8 @@ trait WithOrderTest
             }
 
             $discount = [
-                'type' => $faker->randomElement([ 'percentage' ]),
-                'rate' => 5,
+                'type' => '',
+                'rate' => 0,
             ];
 
             $discountCoupons = 0;
@@ -1312,7 +1324,7 @@ trait WithOrderTest
         }
     }
 
-    protected function attemptRefundOrder()
+    protected function attemptRefundOrder( $productQuantity, $refundQuantity, $paymentStatus, $message )
     {
         /**
          * @var CurrencyService
@@ -1330,7 +1342,7 @@ trait WithOrderTest
              * this is a sample product/service
              */
             [
-                'quantity' => 5,
+                'quantity' => $productQuantity,
                 'unit_price' => $product->unit_quantities[0]->sale_price,
                 'unit_quantity_id' => $product->unit_quantities[0]->id,
                 'unit_id' => $product->unit_quantities[0]->unit_id,
@@ -1341,7 +1353,7 @@ trait WithOrderTest
              */
             [
                 'product_id' => $product->id,
-                'quantity' => 5,
+                'quantity' => $productQuantity,
                 'unit_price' => $product->unit_quantities[0]->sale_price,
                 'unit_quantity_id' => $product->unit_quantities[0]->id,
                 'unit_id' => $product->unit_quantities[0]->unit_id,
@@ -1423,9 +1435,9 @@ trait WithOrderTest
          * We'll keep original products amounts and quantity
          * this means we're doing a full refund of price and quantities
          */
-        $responseData[ 'data' ][ 'order' ][ 'products' ] = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) {
+        $responseData[ 'data' ][ 'order' ][ 'products' ] = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) use ( $refundQuantity ) {
             $product[ 'condition' ] = OrderProductRefund::CONDITION_DAMAGED;
-            $product[ 'quantity' ] = 1;
+            $product[ 'quantity' ] = $refundQuantity;
             $product[ 'description' ] = __( 'Test : The product wasn\'t properly manufactured, causing external damage to the device during the shipment.' );
 
             return $product;
@@ -1442,6 +1454,14 @@ trait WithOrderTest
 
         $response->assertStatus(200);
         $responseData = json_decode( $response->getContent(), true );
+
+        /**
+         * We need to check if the order
+         * is correctly updated after a refund.
+         */
+        $order = Order::find( $responseData[ 'data' ][ 'order' ][ 'id' ] );
+
+        $this->assertTrue( $order->payment_status === $paymentStatus, $message );
 
         $thirdFetchCustomer = $secondFetchCustomer->fresh();
 

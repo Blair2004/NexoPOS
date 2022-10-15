@@ -19,7 +19,7 @@ class CustomerGroupSeeder extends Seeder
     {
         return CustomerGroup::factory()
             ->count(10)
-            ->has( 
+            ->has(
                 Customer::factory()
                     ->count(3)
                     ->has(
@@ -27,7 +27,7 @@ class CustomerGroupSeeder extends Seeder
                     )
                     ->has(
                         CustomerBillingAddress::factory()->count(1), 'billing'
-                    ), 
+                    ),
                 'customers'
             )
             ->create();

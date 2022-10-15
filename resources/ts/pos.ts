@@ -3,7 +3,6 @@
  */
 import Vue from 'vue';
 import './shared/time';
-import './components/components';
 import * as baseComponents from './components/components';
 
 import VirtualCollection from 'vue-virtual-collection';

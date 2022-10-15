@@ -58,10 +58,10 @@ class UpdateCommand extends Command
         switch ( $this->argument( 'argument' ) ) {
             case 'dev':
                 $this->proceedDevPull();
-            break;
+                break;
             default:
                 $this->proceedTagUpdate( $this->argument( 'argument' ) );
-            break;
+                break;
         }
     }
 
