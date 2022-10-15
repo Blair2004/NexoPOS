@@ -117,7 +117,19 @@ export default {
         nsHotPress
             .create( 'numpad-save' )
             .whenVisible([ '.is-popup' ])
-            .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
+            .whenPressed( 'enter', () => {
+                /**
+                 * if the actual amount on the screen is "0",
+                 * and the key "enter" is pressed (we assume twice), we'll 
+                 * emit the event "submit" to speed up the process.
+                 */
+                if ( this.backValue === '' ) {
+                    this.$emit( 'submit' );
+                    this.backValue  =   0;
+                } else {
+                    this.inputValue({ identifier: 'next' });
+                }
+            })
     },
     beforeDestroy() {
         nsHotPress.destroy( 'numpad-keys' );
@@ -181,13 +193,6 @@ export default {
         },
 
         inputValue( key ) {
-            let number    =   parseInt(
-                1 + ( new Array( this.cursor ) )
-                .fill('')
-                .map( _ => 0 )
-                .join('')
-            );
-
             if ( key.identifier === 'next' ) {
                 POS.addPayment({
                     value: parseFloat( this.backValue / this.number ),
