@@ -3,27 +3,25 @@
 namespace App\Jobs;
 
 use App\Services\ReportService;
+use App\Traits\NsSerialize;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class RefreshReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public $event;
+    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( $event )
+    public function __construct( public $date )
     {
-        $this->event = $event;
+        $this->prepareSerialization();
     }
 
     /**
@@ -33,7 +31,7 @@ class RefreshReportJob implements ShouldQueue
      */
     public function handle( ReportService $reportService )
     {
-        $date = Carbon::parse( $this->event->cashFlow->created_at );
+        $date = Carbon::parse( $this->date );
 
         $reportService->computeDayReport(
             dateStart: $date->startOfDay()->toDateTimeString(),

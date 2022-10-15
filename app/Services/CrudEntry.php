@@ -30,6 +30,16 @@ class CrudEntry implements JsonSerializable
         $this->values[ $index ] = $value;
     }
 
+    public function __isset( $index )
+    {
+        return array_key_exists( $index, $this->values );
+    }
+
+    public function __unset( $index )
+    {
+        unset( $this->values[ $index ] );
+    }
+
     public function getOriginalValue( $index )
     {
         return $this->original[ $index ];
@@ -48,5 +58,10 @@ class CrudEntry implements JsonSerializable
     public function removeAction( $identifier )
     {
         unset( $this->values[ '$actions' ][ $identifier ] );
+    }
+
+    public function toArray()
+    {
+        return $this->values;
     }
 }

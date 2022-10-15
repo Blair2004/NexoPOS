@@ -122,7 +122,7 @@ class OrdersService
          * check delivery informations before
          * proceeding
          */
-        $this->__checkAddressesInformations( $fields );
+        $fields = $this->__checkAddressesInformations( $fields );
 
         /**
          * Check if instalments are provided and if they are all
@@ -203,8 +203,8 @@ class OrdersService
          * new order has been placed
          */
         $isNew ?
-            OrderAfterCreatedEvent::dispatch( $order, $fields ) :
-            OrderAfterUpdatedEvent::dispatch( $order, $fields );
+            event( new OrderAfterCreatedEvent( $order, $fields ) ) :
+            event( new OrderAfterUpdatedEvent( $order, $fields ) );
 
         return [
             'status' => 'success',
@@ -649,7 +649,7 @@ class OrdersService
      * and throw an error if a fields is not supported
      *
      * @param array fields
-     * @return void
+     * @return array $fields
      */
     private function __checkAddressesInformations($fields)
     {
@@ -673,14 +673,18 @@ class OrdersService
          */
         if ( ! empty( $fields[ 'addresses' ] ) ) {
             foreach (['shipping', 'billing'] as $type) {
-                $keys = array_keys($fields['addresses'][$type]);
-                foreach ($keys as $key) {
-                    if (! in_array($key, $allowedKeys)) {
-                        unset( $fields[ 'addresses' ][ $type ][ $key ] );
+                if ( isset( $fields['addresses'][$type] ) ) {
+                    $keys = array_keys($fields['addresses'][$type]);
+                    foreach ($keys as $key) {
+                        if (! in_array($key, $allowedKeys)) {
+                            unset( $fields[ 'addresses' ][ $type ][ $key ] );
+                        }
                     }
                 }
             }
         }
+
+        return $fields;
     }
 
     /**
@@ -747,7 +751,10 @@ class OrdersService
      */
     public function makeOrderSinglePayment( $payment, Order $order )
     {
-        if ( $order->instalments->count() > 0 ) {
+        /**
+         * We should check if the order allow instalments.
+         */
+        if ( $order->instalments->count() > 0 && $order->support_instalments ) {
             $paymentToday = $order->instalments()
                 ->where( 'paid', false )
                 ->where( 'date', '>=', ns()->date->copy()->startOfDay()->toDateTimeString() )
@@ -815,7 +822,7 @@ class OrdersService
         $orderPayment->author = $order->author ?? Auth::id();
         $orderPayment->save();
 
-        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
+        OrderAfterPaymentCreatedEvent::dispatch( $orderPayment, $order );
 
         return $orderPayment;
     }
@@ -877,12 +884,10 @@ class OrdersService
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->getRaw();
 
-        $allowedPaymentsGateways = Cache::remember( 'nexopos.pos.payments', 3600, function() {
-            return PaymentType::active()
-                ->get()
-                ->map( fn( $paymentType ) => $paymentType->identifier )
-                ->toArray();
-        });
+        $allowedPaymentsGateways = PaymentType::active()
+            ->get()
+            ->map( fn( $paymentType ) => $paymentType->identifier )
+            ->toArray();
 
         if ( ! empty( $fields[ 'payments' ] ) ) {
             foreach ( $fields[ 'payments' ] as $payment) {
@@ -1730,7 +1735,7 @@ class OrdersService
             );
         }
 
-        event( new OrderAfterRefundedEvent( $order, $orderRefund ) );
+        OrderAfterRefundedEvent::dispatch( $order, $orderRefund );
 
         return [
             'status' => 'success',
@@ -1931,7 +1936,7 @@ class OrdersService
                 ->with( 'coupons' )
                 ->with( 'products.unit' )
                 ->with( 'products.product.unit_quantities' )
-                ->with( 'customer' )
+                ->with( 'customer.billing', 'customer.shipping' )
                 ->first();
 
             if ( ! $order instanceof Order ) {
@@ -2115,7 +2120,7 @@ class OrdersService
      */
     public function deleteOrder(Order $order)
     {
-        $cachedOrder = json_encode( $order->load([
+        $cachedOrder = (object) $order->load([
             'user',
             'products',
             'payments',
@@ -2123,9 +2128,9 @@ class OrdersService
             'taxes',
             'coupons',
             'instalments',
-        ])->toArray() );
+        ])->toArray();
 
-        event( new OrderBeforeDeleteEvent( json_decode( $cachedOrder ) ) );
+        event( new OrderBeforeDeleteEvent( $cachedOrder ) );
 
         $order
             ->products()
@@ -2150,9 +2155,7 @@ class OrdersService
                 $product->delete();
             });
 
-        $order->payments->each( function( $payment ) {
-            $payment->delete();
-        });
+        OrderPayment::where( 'order_id', $order->id )->delete();
 
         /**
          * delete cash flow entries
@@ -2185,7 +2188,7 @@ class OrdersService
 
         $order->products->map(function ($product) use ( $product_id, &$hasDeleted, $order ) {
             if ($product->id === intval($product_id)) {
-                event( new OrderBeforeDeleteProductEvent( $order, $product));
+                event( new OrderBeforeDeleteProductEvent( $order, $product ) );
 
                 $product->delete();
                 $hasDeleted = true;
@@ -2308,10 +2311,30 @@ class OrdersService
      */
     public function getTypeLabels()
     {
-        return Hook::filter( 'ns-order-types', [
-            'delivery' => __( 'Delivery' ),
-            'takeaway' => __( 'Take Away' ),
-            'not-available' => __( 'Not Available' ),
+        $types  =   Hook::filter( 'ns-order-types-labels', collect( $this->getTypeOptions() )->mapWithKeys( function( $option ) {
+            return [
+                $option[ 'identifier' ] => $option[ 'label' ]
+            ];
+        })->toArray() );
+
+        return $types;
+    }
+
+    public function getTypeOptions()
+    {
+        return Hook::filter( 'ns-orders-types', [
+            'takeaway' => [
+                'identifier' => 'takeaway',
+                'label' => __( 'Take Away' ),
+                'icon' => '/images/groceries.png',
+                'selected' => false,
+            ],
+            'delivery' => [
+                'identifier' => 'delivery',
+                'label' => __( 'Delivery' ),
+                'icon' => '/images/delivery.png',
+                'selected' => false,
+            ],
         ]);
     }
 
@@ -2461,7 +2484,7 @@ class OrdersService
                 Role::namespace( 'nexopos.store.administrator' ),
             ]);
 
-            event( new DueOrdersEvent( $orders ) );
+            DueOrdersEvent::dispatch( $orders );
 
             return [
                 'status' => 'success',

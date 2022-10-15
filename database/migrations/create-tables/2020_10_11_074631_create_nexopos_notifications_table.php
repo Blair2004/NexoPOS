@@ -28,7 +28,7 @@ class CreateNexoposNotificationsTable extends Migration
                 $table->integer( 'user_id' );
                 $table->string( 'identifier' );
                 $table->string( 'title' );
-                $table->string( 'description' );
+                $table->text( 'description' );
                 $table->string( 'url' )->default( '#' );
                 $table->string( 'source' )->default( 'system' );
                 $table->boolean( 'dismissable' )->default( true );

@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Listeners;
+
+use App\Events\OrderRefundPaymentAfterCreatedEvent;
+
+class OrderRefundPaymentAfterCreatedEventListener
+{
+    /**
+     * Create the event listener.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the event.
+     *
+     * @param  object  $event
+     * @return void
+     */
+    public function handle( OrderRefundPaymentAfterCreatedEvent $event)
+    {
+        /**
+         * the refund can't always be made from the register the order
+         * has been created. We need to consider the fact refund can't lead
+         * to cash drawer disbursement.
+         */
+    }
+}

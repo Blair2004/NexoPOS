@@ -2,9 +2,7 @@
 
 namespace App\Services;
 
-use App\Events\CashFlowHistoryAfterCreatedEvent;
 use App\Events\ExpenseAfterCreateEvent;
-use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Models\AccountType;
@@ -55,7 +53,7 @@ class ExpenseService
         $expense->author = Auth::id();
         $expense->save();
 
-        event( new ExpenseAfterCreateEvent( $expense, request() ) );
+        event( new ExpenseAfterCreateEvent( $expense, request()->all() ) );
 
         return [
             'status' => 'success',
@@ -372,8 +370,6 @@ class ExpenseService
                     }
 
                     $history->save();
-
-                    event( new CashFlowHistoryAfterCreatedEvent( $history ) );
                 }
             });
         } else {
@@ -404,8 +400,6 @@ class ExpenseService
             }
 
             $history->save();
-
-            CashFlowHistoryAfterCreatedEvent::dispatch( $history );
         }
     }
 
@@ -543,7 +537,7 @@ class ExpenseService
         $expense->value = $orderProductRefund->total_price;
         $expense->active = true;
         $expense->operation = CashFlow::OPERATION_DEBIT;
-        $expense->author = Auth::id();
+        $expense->author = $orderProductRefund->author;
         $expense->order_id = $order->id;
         $expense->order_refund_id = $orderProductRefund->order_refund_id;
         $expense->name = sprintf( __( 'Refunding : %s' ), $orderProduct->name );
@@ -552,7 +546,7 @@ class ExpenseService
 
         $this->recordCashFlowHistory( $expense );
 
-        if ( OrderProductRefund::CONDITION_DAMAGED ) {
+        if ( $orderProductRefund->condition === OrderProductRefund::CONDITION_DAMAGED ) {
             /**
              * Only if the product is damaged we should
              * consider saving that as a waste.
@@ -590,7 +584,7 @@ class ExpenseService
         $expense->value = $order->total;
         $expense->active = true;
         $expense->operation = CashFlow::OPERATION_CREDIT;
-        $expense->author = Auth::id();
+        $expense->author = $order->author;
         $expense->order_id = $order->id;
         $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
         $expense->id = 0; // this is not assigned to an existing expense
@@ -633,33 +627,30 @@ class ExpenseService
     /**
      * Will compare order payment status
      * and if the previous and the new payment status are supported
-     * the transaction will be record to the cash flow
-     *
-     * @param OrderAfterPaymentStatusChangedEvent $event
-     * @return void
+     * the transaction will be record to the cash flow.
      */
-    public function handlePaymentStatus( OrderAfterPaymentStatusChangedEvent $event )
+    public function handlePaymentStatus( string $previous, string $new, Order $order )
     {
-        if ( in_array( $event->previous, [
+        if ( in_array( $previous, [
             Order::PAYMENT_HOLD,
             Order::PAYMENT_DUE,
             Order::PAYMENT_PARTIALLY,
             Order::PAYMENT_PARTIALLY_DUE,
             Order::PAYMENT_UNPAID,
         ]) && in_array(
-            $event->new, [
+            $new, [
                 Order::PAYMENT_PAID,
             ]
         )) {
             $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
 
             $expense = new Expense;
-            $expense->value = $event->order->total;
+            $expense->value = $order->total;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_CREDIT;
-            $expense->author = Auth::id();
-            $expense->order_id = $event->order->id;
-            $expense->name = sprintf( __( 'Sale : %s' ), $event->order->code );
+            $expense->author = $order->author;
+            $expense->order_id = $order->id;
+            $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
             $expense->id = 0; // this is not assigned to an existing expense
             $expense->category = $expenseCategory;
 
@@ -741,7 +732,7 @@ class ExpenseService
             $expense->value = $order->total;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_DEBIT;
-            $expense->author = Auth::id();
+            $expense->author = $order->author;
             $expense->customer_account_history_id = $order->id;
             $expense->name = sprintf( __( 'Refund : %s' ), $order->code );
             $expense->id = 0; // this is not assigned to an existing expense
@@ -777,7 +768,7 @@ class ExpenseService
             $expense->value = $order->total;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_CREDIT;
-            $expense->author = Auth::id();
+            $expense->author = $order->author;
             $expense->customer_account_history_id = $order->id;
             $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
             $expense->id = 0; // this is not assigned to an existing expense
@@ -827,7 +818,7 @@ class ExpenseService
     }
 
     /**
-     * Will trigger not recurring expense
+     * Will trigger not recurring expenses
      *
      * @return void
      */
@@ -878,7 +869,7 @@ class ExpenseService
             $expense->value = $customerHistory->amount;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_CREDIT;
-            $expense->author = Auth::id();
+            $expense->author = $customerHistory->author;
             $expense->customer_account_history_id = $customerHistory->id;
             $expense->name = sprintf( __( 'Customer Account Crediting : %s' ), $customerHistory->customer->name );
             $expense->id = 0; // this is not assigned to an existing expense
@@ -898,7 +889,7 @@ class ExpenseService
             $expense->value = $customerHistory->amount;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_DEBIT;
-            $expense->author = Auth::id();
+            $expense->author = $customerHistory->author;
             $expense->customer_account_history_id = $customerHistory->id;
             $expense->order_id = $customerHistory->order_id;
             $expense->name = sprintf( __( 'Customer Account Purchase : %s' ), $customerHistory->customer->name );
@@ -919,7 +910,7 @@ class ExpenseService
             $expense->value = $customerHistory->amount;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_DEBIT;
-            $expense->author = Auth::id();
+            $expense->author = $customerHistory->author;
             $expense->customer_account_history_id = $customerHistory->id;
             $expense->name = sprintf( __( 'Customer Account Deducting : %s' ), $customerHistory->customer->name );
             $expense->id = 0; // this is not assigned to an existing expense

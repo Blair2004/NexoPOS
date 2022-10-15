@@ -6,11 +6,13 @@ use App\Exceptions\MissingDependencyException;
 use App\Exceptions\ModuleVersionMismatchException;
 use App\Exceptions\NotAllowedException;
 use App\Models\ModuleMigration;
+use Error as GlobalError;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravie\Parser\Xml\Document;
 use Laravie\Parser\Xml\Reader;
@@ -733,13 +735,20 @@ class ModulesService
                         'module' => $module,
                     ];
                 }
+
+                /**
+                 * we need to delete the previous
+                 * folder if that folder exists
+                 * to avoid keeping unused files.
+                 */
+                Storage::disk( 'ns-modules' )->deleteDirectory( $moduleNamespace );
             }
 
             /**
              * @step 1 : creating host folder
              * No errors has been found, We\'ll install the module then
              */
-            Storage::disk( 'ns-modules' )->makeDirectory( $moduleNamespace );
+            Storage::disk( 'ns-modules' )->makeDirectory( $moduleNamespace, 0755, true );
 
             /**
              * @step 2 : move files
@@ -801,7 +810,7 @@ class ModulesService
         $this->checkManagementStatus();
 
         if ( ! is_dir( base_path( 'public/modules' ) ) ) {
-            Storage::disk( 'public' )->makeDirectory( 'modules' );
+            Storage::disk( 'public' )->makeDirectory( 'modules', 0755, true );
         }
 
         /**
@@ -1154,23 +1163,49 @@ class ModulesService
             /**
              * Let's check if the main entry file doesn't have an error
              */
-            $code = file_get_contents( $module[ 'index-file' ] );
-            $parser = ( new ParserFactory )->create( ParserFactory::PREFER_PHP7 );
-
+            
             try {
-                $attempt = $parser->parse( $code );
+                $code = file_get_contents( $module[ 'index-file' ] );
+                $parser = ( new ParserFactory )->create( ParserFactory::PREFER_PHP7 );
+                $parser->parse( $code ); 
+                
+                foreach( $module[ 'providers' ] as $provider ) {
+                    $code   =   file_get_contents( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $provider );
+                    $parser = ( new ParserFactory )->create( ParserFactory::PREFER_PHP7 );
+                    $parser->parse( $code );
+                }
             } catch ( Error $error ) {
-                return [
+                return response()->json([
                     'status' => 'failed',
-                    'message' => $error->getMessage(),
+                    'message' => sprintf(
+                        __( 'An Error Occured "%s": %s'),
+                        $module[ 'name' ],
+                        $error->getMessage(),
+                    ),
                     'module' => $module,
-                ];
+                ], 502 );
             }
 
-            /**
-             * We're now atempting to trigger the module.
-             */
-            $this->__boot( $module );
+            try {
+                /**
+                 * We're now atempting to trigger the module.
+                 */
+                $this->__boot( $module );
+                $this->triggerServiceProviders( $module, 'register', ServiceProvider::class );
+                $this->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
+
+            } catch ( GlobalError $error ) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => sprintf(
+                        __( 'An Error Occured "%s": %s'),
+                        $module[ 'name' ],
+                        $error->getMessage(),
+                        $error->getFile(),
+                    ),
+                    'module' => $module,
+                ], 502 );
+            }
 
             /**
              * We'll enable the module and make sure it's stored
@@ -1180,6 +1215,12 @@ class ModulesService
                 $enabledModules[] = $namespace;
                 $this->options->set( 'enabled_modules', $enabledModules );
             }
+
+            /**
+             * we might recreate the symlink directory
+             * for the module that is about to be enabled
+             */
+            $this->createSymLink( $namespace );
 
             return [
                 'status' => 'success',
@@ -1505,21 +1546,21 @@ class ModulesService
                 Storage::disk( 'ns-modules' )->deleteDirectory( $config[ 'namespace' ] );
             }
 
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ], 0755, true );
 
             /**
              * Geneate Internal Directories
              */
             foreach ([ 'Config', 'Crud', 'Events', 'Mails', 'Fields', 'Facades', 'Http', 'Migrations', 'Resources', 'Routes', 'Models', 'Providers', 'Services', 'Public' ] as $folder ) {
-                Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
+                Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder, 0755, true );
             }
 
             /**
              * Generate Sub Folders
              */
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' );
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' );
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'Views' );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers', 0755, true );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations', 0755, true );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'Views', 0755, true );
 
             /**
              * Generate Files
@@ -1536,7 +1577,7 @@ class ModulesService
             $target = base_path( 'modules/' . $config[ 'namespace' ] . '/Public' );
 
             if ( ! \windows_os() ) {
-                Storage::disk( 'public' )->makeDirectory( 'modules/' . $config[ 'namespace' ] );
+                Storage::disk( 'public' )->makeDirectory( 'modules/' . $config[ 'namespace' ], 0755, true );
 
                 $linkPath = public_path( '/modules/' . strtolower( $config[ 'namespace' ] ) );
 

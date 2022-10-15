@@ -9,13 +9,8 @@ class ProcurementBeforeUpdateProductEvent
 {
     use SerializesModels;
 
-    public $product;
-
-    public $fields;
-
-    public function __construct( ProcurementProduct $product, $fields )
+    public function __construct( public ProcurementProduct $product, public $fields )
     {
-        $this->product = $product;
-        $this->fields = $fields;
+        // ...
     }
 }

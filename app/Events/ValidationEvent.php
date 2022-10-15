@@ -9,11 +9,9 @@ use App\Services\Validation;
 
 class ValidationEvent
 {
-    protected $validation;
-
-    public function __construct( Validation $validation )
+    public function __construct( public Validation $validation )
     {
-        $this->validation = $validation;
+        // ...
     }
 
     /**

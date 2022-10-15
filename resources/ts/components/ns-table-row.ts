@@ -125,7 +125,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                         <div class="rounded-md shadow-xs">
                             <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <template v-for="action of row.$actions">
-                                    <a :href="action.url" v-if="action.type === 'GOTO'" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
+                                    <a :href="action.url" :target="action.target || ''" v-if="action.type === 'GOTO'" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                     <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                 </template>
                             </div>

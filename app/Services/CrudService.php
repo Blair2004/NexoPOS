@@ -935,7 +935,7 @@ class CrudService
      * Get crud instance
      *
      * @param string namespace
-     * @return Crud
+     * @return CrudService
      */
     public function getCrudInstance( $namespace )
     {

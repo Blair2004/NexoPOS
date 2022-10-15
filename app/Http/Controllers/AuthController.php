@@ -194,7 +194,7 @@ class AuthController extends Controller
 
         $intended = redirect()->intended()->getTargetUrl();
 
-        AfterSuccessfulLoginEvent::dispatch( Auth::user() );
+        event( new AfterSuccessfulLoginEvent( Auth::user() ) );
 
         $data = [
             'status' => 'success',

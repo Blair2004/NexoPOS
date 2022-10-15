@@ -6,15 +6,15 @@ use App\Events\LowStockProductsCountedEvent;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
 use App\Services\NotificationService;
+use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class DetectLowStockProductsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
 
     /**
      * Create a new job instance.
@@ -23,7 +23,7 @@ class DetectLowStockProductsJob implements ShouldQueue
      */
     public function __construct()
     {
-        //
+        $this->prepareSerialization();
     }
 
     /**

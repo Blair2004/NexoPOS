@@ -9,19 +9,15 @@ use App\Models\ProductUnitQuantity;
 use App\Models\TaxGroup;
 use App\Models\UnitGroup;
 use App\Services\CurrencyService;
+use App\Services\ProductService;
 use App\Services\TaxService;
 use Exception;
 use Illuminate\Support\Str;
 
 trait WithProductTest
 {
-    protected function attemptCreateProduct()
+    protected function attemptCreateProduct( $count = 5 )
     {
-        /**
-         * @var CurrencyService
-         */
-        $currency = app()->make( CurrencyService::class );
-
         $faker = \Faker\Factory::create();
 
         /**
@@ -33,11 +29,12 @@ trait WithProductTest
         $sale_price = $faker->numberBetween(5, 10);
         $categories = ProductCategory::where( 'parent_id', '>', 0 )
             ->orWhere( 'parent_id', null )
-            ->get()
-            ->map( fn( $cat ) => $cat->id )
-            ->toArray();
+            ->get();
 
-        for ( $i = 0; $i < 10; $i++ ) {
+        for ( $i = 0; $i < $count; $i++ ) {
+            $category = $faker->randomElement( $categories );
+            $categoryProductCount = $category->products()->count();
+
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/products/', [
@@ -53,7 +50,7 @@ trait WithProductTest
                                 'barcode' => $faker->ean13(),
                                 'barcode_type' => 'ean13',
                                 'searchable' => $faker->randomElement([ true, false ]),
-                                'category_id' => $faker->randomElement( $categories ),
+                                'category_id' => $category->id,
                                 'description' => __( 'Created via tests' ),
                                 'product_type' => 'product',
                                 'type' => $faker->randomElement([ Product::TYPE_MATERIALIZED, Product::TYPE_DEMATERIALIZED ]),
@@ -92,8 +89,42 @@ trait WithProductTest
                 $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price', 0 ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
             }
 
+            $category->refresh();
+
+            $this->assertEquals( $categoryProductCount + 1, $category->total_items, 'The category total items hasn\'t increased' );
+
             $response->assertStatus(200);
         }
+
+        return $response;
+    }
+
+    protected function attemptDeleteProducts()
+    {
+        $response = $this->attemptCreateProduct(1);
+        $result = json_decode( $response->getContent(), true );
+
+        /**
+         * We'll delete the last product and see
+         * if the unit quantities are deleted as well.
+         *
+         * @var ProductService
+         */
+        $productService = app()->make( ProductService::class );
+
+        $product = Product::find( $result[ 'data' ][ 'product' ][ 'id' ] );
+        $category = $product->category;
+        $totalItems = $category->total_items;
+
+        $this->assertTrue( $product->unit_quantities()->count() > 0, 'The created product is missing unit quantities.' );
+
+        $productService->deleteProduct( $product );
+
+        $category->refresh();
+
+        $this->assertTrue( ProductUnitQuantity::where( 'product_id', $product->id )->count() === 0, 'The product unit quantities wheren\'t deleted.' );
+        $this->assertTrue( ProductHistory::where( 'product_id', $product->id )->count() === 0, 'The product history wasn\'t deleted.' );
+        $this->assertTrue( $category->total_items === $totalItems - 1, 'The category total items wasn\'t updated after the deletion.' );
     }
 
     protected function attemptCreateGroupedProduct()

@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\CustomerCoupon;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -16,7 +17,7 @@ class CustomerRewardAfterCouponIssuedEvent
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( public CustomerCoupon $customerCoupon )
     {
         //
     }

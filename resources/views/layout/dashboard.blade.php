@@ -63,6 +63,8 @@ if ( Auth::check() ) {
         window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
             'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
         ]));?>
+
+        window.ns.cssFiles      =   <?php echo file_get_contents( base_path( 'public/css-manifest.json' ) );?>;
     </script>
     <script src="{{ asset( ns()->isProduction() ? 'js/lang-loader.min.js' : 'js/lang-loader.js' ) }}"></script>
 @include( 'common.header-socket' )

@@ -541,8 +541,8 @@ class ProductService
          * @todo should be tested
          */
         $manyPrimary = collect( $groups )->map( function( $fields ) {
-            return isset( $fields[ 'featured' ] ) && (int) $fields[ 'featured' ] === 1;
-        })
+                return isset( $fields[ 'featured' ] ) && (int) $fields[ 'featured' ] === 1;
+            })
             ->filter( fn( $result ) => $result === true )
             ->count() > 1;
 
@@ -900,13 +900,8 @@ class ProductService
 
     private function __resetProductRelatives( Product $product )
     {
-        $this->getProductHistory( $product->id )->each( function( $history ) {
-            $history->delete();
-        });
-
-        $this->getUnitQuantities( $product->id )->each( function( $unitQuantity ) {
-            $unitQuantity->delete();
-        });
+        ProductHistory::where( 'product_id', $product->id )->delete();
+        ProductUnitQuantity::where( 'product_id', $product->id )->delete();
 
         /**
          * dispatch an event to let everyone knows
@@ -1085,7 +1080,6 @@ class ProductService
          * @param int $product_id
          * @param float $unit_price
          * @param id $unit_id
-         * @param float $unit_price
          * @param float $total_price
          * @param int $procurement_product_id
          * @param OrderProduct $orderProduct

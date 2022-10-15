@@ -50,6 +50,7 @@ import { NsHotPress } from './libraries/ns-hotpress';
 
 const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ]; 
+const nsCssFiles            =   (<any>window)[ 'ns' ].cssFiles;
 const nsExtraComponents     =   (<any>window)[ 'nsExtraComponents' ];    
 
 const VueHtmlToPaperOptions     =   {
@@ -60,8 +61,10 @@ const VueHtmlToPaperOptions     =   {
       'scrollbars=yes'
     ],
     styles: [
-      '/css/app.css',
-      '/css/light.css'
+      `/css/${nsCssFiles[ 'app.css' ]}`,
+      `/css/${nsCssFiles[ 'light.css' ]}`,
+      `/css/${nsCssFiles[ 'grid.css' ]}`,
+      `/css/${nsCssFiles[ 'typography.css' ]}`,
     ]
 };
 

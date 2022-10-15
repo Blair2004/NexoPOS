@@ -14,22 +14,14 @@ class CustomerRewardAfterCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $reward;
-
-    public $customer;
-
-    public $customerReward;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( CustomerReward $customerReward, Customer $customer, RewardSystem $reward )
+    public function __construct( public CustomerReward $customerReward, public Customer $customer, public RewardSystem $reward )
     {
-        $this->customerReward = $customerReward;
-        $this->customer = $customer;
-        $this->reward = $reward;
+        // ...
     }
 
     /**
