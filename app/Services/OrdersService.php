@@ -891,7 +891,7 @@ class OrdersService
             foreach ( $fields[ 'payments' ] as $payment) {
                 if (in_array($payment['identifier'], $allowedPaymentsGateways ) ) {
                     /**
-                     * check if the customer account are enough for the account-payment
+                     * check if the customer account balance is enough for the account-payment
                      * when that payment is provided
                      */
                     if ( $payment[ 'identifier' ] === 'account-payment' && $customer->account_amount < floatval( $payment[ 'value' ] ) ) {
@@ -2127,23 +2127,25 @@ class OrdersService
         $order
             ->products()
             ->get()
-            ->each( function( OrderProduct $product) {
+            ->each( function( OrderProduct $orderProduct) {
+                $product    =   $orderProduct->load( 'product' );
                 /**
                  * we do proceed by doing an initial return
                  * only if the product is not a quick product/service
+                 * we'll also check if the linked product still exists.
                  */
-                if ( $product->product_id > 0 ) {
+                if ( $orderProduct->product_id > 0 && $product instanceof Product ) {
                     $this->productService->stockAdjustment( ProductHistory::ACTION_RETURNED, [
-                        'total_price' => $product->total_price,
-                        'product_id' => $product->product_id,
-                        'unit_id' => $product->unit_id,
-                        'orderProduct' => $product,
-                        'quantity' => $product->quantity,
-                        'unit_price' => $product->unit_price,
+                        'total_price' => $orderProduct->total_price,
+                        'product_id' => $orderProduct->product_id,
+                        'unit_id' => $orderProduct->unit_id,
+                        'orderProduct' => $orderProduct,
+                        'quantity' => $orderProduct->quantity,
+                        'unit_price' => $orderProduct->unit_price,
                     ]);
                 }
 
-                $product->delete();
+                $orderProduct->delete();
             });
 
         OrderPayment::where( 'order_id', $order->id )->delete();

@@ -24,6 +24,7 @@ use App\Models\Order;
 use App\Services\CustomerService;
 use App\Services\OrdersService;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -64,6 +65,16 @@ class CustomersController extends DashboardController
     public function listCustomers()
     {
         return CustomerCrud::table();
+    }
+
+    /**
+     * Retreive few customers ordered by
+     * their recent activity
+     * @return Collection
+     */
+    public function getRecentlyActive()
+    {
+        return $this->customerService->getRecentlyActive(10);
     }
 
     /**

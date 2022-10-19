@@ -15,7 +15,7 @@ class CreateExpenseTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateAllExpenses()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateExpenses();

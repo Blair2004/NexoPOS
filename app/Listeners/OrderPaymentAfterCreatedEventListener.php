@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\OrderAfterPaymentCreatedEvent;
-use App\Jobs\ComputeDayReportJob;
-use App\Jobs\ProcessCashRegisterHistoryFromPaymentJob;
 
 class OrderPaymentAfterCreatedEventListener
 {
@@ -23,7 +21,6 @@ class OrderPaymentAfterCreatedEventListener
      */
     public function handle( OrderAfterPaymentCreatedEvent $event )
     {
-        ComputeDayReportJob::dispatch();
-        ProcessCashRegisterHistoryFromPaymentJob::dispatch( $event->order, $event->orderPayment );
+        // ...
     }
 }

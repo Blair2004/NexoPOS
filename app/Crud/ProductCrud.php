@@ -704,7 +704,8 @@ class ProductCrud extends CrudService
         $entry->type = match ( $entry->type ) {
             'materialized' => __( 'Materialized' ),
             'dematerialized' => __( 'Dematerialized' ),
-            'grouped' => __( 'Grouped' )
+            'grouped' => __( 'Grouped' ),
+            default => sprintf( __( 'Unknown Type: %s' ), $entry->type ),
         };
 
         $entry->type = '<strong class="' . $class . ' ">' . $entry->type . '</strong>';

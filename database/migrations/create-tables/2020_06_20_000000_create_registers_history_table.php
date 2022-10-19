@@ -20,6 +20,9 @@ class CreateRegistersHistoryTable extends Migration
             Schema::createIfMissing( 'nexopos_registers_history', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'register_id' );
+                $table->integer( 'payment_id' )->nullable();
+                $table->integer( 'payment_type_id' )->default(0);
+                $table->integer( 'order_id' )->nullable();
                 $table->string( 'action' );
                 $table->integer( 'author' );
                 $table->float( 'value', 18, 5 )->default(0);

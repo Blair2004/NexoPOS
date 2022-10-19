@@ -157,14 +157,17 @@ export default {
         getRecentCustomers() {
             this.isLoading  =   true;
 
-            nsHttpClient.get( '/api/nexopos/v4/customers' )
-                .subscribe( customers => {
-                    this.isLoading  =   false;
-                    customers.forEach( customer => customer.selected = false );
-                    this.customers  =   customers;
-                }, ( error ) => {
-                    this.isLoading  =   false;
-                })
+            nsHttpClient.get( '/api/nexopos/v4/customers/recently-active' )
+                .subscribe({
+                    next: customers => {
+                        this.isLoading  =   false;
+                        customers.forEach( customer => customer.selected = false );
+                        this.customers  =   customers;
+                    },
+                    error: ( error ) => {
+                        this.isLoading  =   false;
+                    }
+                });
         }
     }
 }

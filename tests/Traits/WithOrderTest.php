@@ -89,6 +89,7 @@ trait WithOrderTest
         ]);
 
         $cashRegister = Register::first();
+
         $previousValue = $cashRegister->balance;
 
         /**
@@ -128,15 +129,25 @@ trait WithOrderTest
          * from a specific moment
          */
         $totalValue = ns()->currency->define( RegisterHistory::where( 'register_id', $cashRegister->id )
-            ->where( 'created_at', '>', $specificMoment )
+            ->whereIn( 'action', RegisterHistory::IN_ACTIONS )
             ->sum( 'value' ) )->getRaw();
+
+        /**
+         * We should also take into account the change that produce
+         * records on the cash register history
+         */
+        $rawTotalChangeValue   =   RegisterHistory::where( 'action', RegisterHistory::ACTION_CHANGE )
+            ->where( 'register_id', $cashRegister->id )
+            ->sum( 'value' );
+
+        $totalChangeValue       =   ns()->currency->define( $rawTotalChangeValue )->getRaw();
 
         /**
          * only if the order total is greater than 0
          */
         if ( (float) $response[ 'data' ][ 'order' ][ 'tendered' ] > 0 ) {
             $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
-            $this->assertEquals( (float) $cashRegister->balance, (float) ( $totalValue ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
+            $this->assertEquals( (float) $cashRegister->balance, (float) ( ns()->currency->define( $totalValue )->subtractBy( $totalChangeValue )->getRaw() ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
         }
 
         /**
@@ -144,6 +155,16 @@ trait WithOrderTest
          * accurate comparisons.
          */
         $previousValue = (float) $cashRegister->balance;
+
+        /**
+         * let's assert only one history has been created
+         * for the selected cash register.
+         */
+        $historyCount   =   RegisterHistory::where( 'register_id', $cashRegister->id )
+            ->where( 'action', RegisterHistory::ACTION_SALE )
+            ->count();
+
+        $this->assertTrue( $historyCount == count( $response[ 'data' ][ 'order' ][ 'payments' ] ), 'The cash register history is not accurate' );
 
         /**
          * Step 2: We'll try here to delete order
@@ -227,6 +248,10 @@ trait WithOrderTest
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_CASHOUT )->sum( 'value' );
 
+        $totalChange = RegisterHistory::register( $cashRegister )
+            ->from( $opening->created_at )
+            ->action( RegisterHistory::ACTION_CHANGE )->sum( 'value' );
+
         $totalRefunds = RegisterHistory::register( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_REFUND )->sum( 'value' );
@@ -239,6 +264,7 @@ trait WithOrderTest
             ->additionateBy( $totalCashing )
             ->additionateBy( $totalSales )
             ->subtractBy( $totalClosing )
+            ->subtractBy( $totalChange )
             ->subtractBy( $totalRefunds )
             ->subtractBy( $totalCashOut )
             ->subtractBy( $totalDelete )

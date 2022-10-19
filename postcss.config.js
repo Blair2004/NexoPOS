@@ -9,7 +9,7 @@ module.exports = (ctx) => {
 
   if ( ctx.file.basename ) {
     files.forEach( file => {
-      if ( file === ctx.file.basename ) {
+      if ( file.split( '.' )[0] === ctx.file.basename.split( '.' )[0] ) {
         if ( 
           ( wildcard( 'app.*.css', file ) || wildcard( 'app.css', file ) ) ||
           ( wildcard( 'dark.*.css', file ) || wildcard( 'dark.css', file ) ) ||

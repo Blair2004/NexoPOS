@@ -225,21 +225,86 @@ class CashRegistersService
      * to the right store
      *
      * @param Order $order
-     * @param OrderPayment $orderPayment.
+     * @return void
      */
-    public function increaseFromOrderPayment( Order $order, OrderPayment $orderPayment )
+    public function recordCashRegisterHistorySale( Order $order )
     {
         if ( $order->register_id !== null ) {
             $register = Register::find( $order->register_id );
 
-            $registerHistory = new RegisterHistory;
-            $registerHistory->balance_before = $register->balance;
-            $registerHistory->value = ns()->currency->define( $orderPayment->value )->getRaw();
-            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $orderPayment->value );
-            $registerHistory->register_id = $register->id;
-            $registerHistory->action = RegisterHistory::ACTION_SALE;
-            $registerHistory->author = $order->author;
-            $registerHistory->save();
+            /**
+             * The customer wallet shouldn't be counted as 
+             * a payment that goes into the cash register.
+             */
+            $payments    =   $order->payments()
+                ->with( 'type' )
+                ->where( 'identifier', '<>', OrderPayment::PAYMENT_ACCOUNT )
+                ->get();
+
+            /**
+             * We'll only track on that cash register
+             * payment that was recorded on the current register
+             */
+            $payments->each( function( OrderPayment $payment ) use ( $order, $register ) {
+                $isRecorded     =   RegisterHistory::where( 'order_id', $order->id )
+                    ->where( 'payment_id', $payment->id )
+                    ->where( 'register_id', $register->id )
+                    ->where( 'payment_type_id', $payment->type->id )
+                    ->where( 'order_id', $order->id )
+                    ->where( 'action', RegisterHistory::ACTION_SALE )
+                    ->first() instanceof RegisterHistory;
+
+                /**
+                 * if a similar transaction is not yet record
+                 * then we can record that on the register history.
+                 */
+                if ( ! $isRecorded ) {
+                    $registerHistory = new RegisterHistory;
+                    $registerHistory->balance_before = $register->balance;
+                    $registerHistory->value = ns()->currency->define( $payment->value )->getRaw();
+                    $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $payment->value )->getRaw();
+                    $registerHistory->register_id = $register->id;
+                    $registerHistory->payment_id = $payment->id;
+                    $registerHistory->payment_type_id = $payment->type->id;
+                    $registerHistory->order_id = $order->id;
+                    $registerHistory->action = RegisterHistory::ACTION_SALE;
+                    $registerHistory->author = $order->author;
+                    $registerHistory->save();
+                }
+            });
+
+            $register->refresh();
+
+            /**
+             * We'll check if there is a transaction that
+             * tracks the change on that order. If not we'll define it.
+             */
+            $changeHistory  =   RegisterHistory::where( 'order_id', $order->id )
+                ->where( 'register_id', $register->id )
+                ->where( 'action', RegisterHistory::ACTION_CHANGE )
+                ->first();
+
+            if ( ! $changeHistory instanceof RegisterHistory ) {
+                $changeHistory  =   new RegisterHistory;
+                $changeHistory->register_id =   $register->id;
+                $changeHistory->order_id    =   $order->id;
+                $changeHistory->author      =   $order->author;
+                $changeHistory->balance_before  =   $register->balance;
+                $changeHistory->value           =   $order->change;
+                $changeHistory->balance_after   =   ns()->currency->define( $register->balance )->subtractBy( $order->change )->getRaw();
+                $changeHistory->action          =   RegisterHistory::ACTION_CHANGE;
+            }
+            
+            /**
+             * If the transaction doesn't have any change, there is no need
+             * to keep an history for that. We'll check if the change history wasn't recently created
+             * and check if the change equal to 0 in order to delete the record.
+             */
+            if ( ! $changeHistory->wasRecentlyCreated && $order->change === 0 ) {
+                $changeHistory->delete();
+            } else {
+                $changeHistory->save();
+            }
         }
     }
 
@@ -267,7 +332,7 @@ class CashRegistersService
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
             $registerHistory->value = $order->total;
-            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total );
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
             $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = Auth::id();
@@ -292,7 +357,7 @@ class CashRegistersService
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
             $registerHistory->value = $order->total;
-            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total );
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
             $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = Auth::id();
