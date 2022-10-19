@@ -1,7 +1,7 @@
 {
     "/js/bootstrap.min/bootstrap.js": "/js/bootstrap.min/bootstrap.js?id=aa086571a118bce4d48aa13feafd5f88",
     "/js/lang-loader.min.js": "/js/lang-loader.min.js?id=c4a4bd023b75001d83886706c8ccc728",
-    "/js/app.min.js": "/js/app.min.js?id=197dde066647ac5bf90236e2447cd21b",
+    "/js/app.min.js": "/js/app.min.js?id=95d38d81467ae3c8f6296e7d4028c950",
     "/js/dashboard.min.js": "/js/dashboard.min.js?id=43105f65bb97ac2bd4f7c5ef23f79c5d",
     "/js/cashier.min.js": "/js/cashier.min.js?id=4c016a8c4dbb333eeddd1b93ac5e6d5b",
     "/js/update.min.js": "/js/update.min.js?id=bf8500f045bef05fab17d96f91bda0a2",
@@ -10,6 +10,6 @@
     "/js/auth.min.js": "/js/auth.min.js?id=fa952a95fc17ab2e5a91630aea896146",
     "/js/setup.min.js": "/js/setup.min.js?id=2eaea427153f3903c5bd4db26cde1297",
     "/js/popups.min.js": "/js/popups.min.js?id=4f87d4b4a5d77bca56475945e4a082b1",
-    "/js/manifest.js": "/js/manifest.js?id=e13dd82f0602cff877a40b99831792bb",
-    "/js/vendor.js": "/js/vendor.js?id=f31a511f96363008a2a2ad3641cb4545"
+    "/js/manifest.js": "/js/manifest.js?id=ac799a696a994a7fcbc6e65dd50f22a3",
+    "/js/vendor.js": "/js/vendor.js?id=88dd8812d77023d87379c04fcbee1d2d"
 }
