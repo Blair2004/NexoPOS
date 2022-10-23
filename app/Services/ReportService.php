@@ -83,9 +83,9 @@ class ReportService
         $this->clearUnassignedCashFlow( $this->dayStarts, $this->dayEnds );
 
         $todayReport = DashboardDay::firstOrCreate([
-            'range_starts'  =>  $this->dayStarts,
-            'range_ends'    =>  $this->dayEnds,
-            'day_of_year'   =>  Carbon::parse( $this->dayStarts )->dayOfYear,
+            'range_starts' => $this->dayStarts,
+            'range_ends' => $this->dayEnds,
+            'day_of_year' => Carbon::parse( $this->dayStarts )->dayOfYear,
         ]);
 
         $this->refreshFromDashboardDay( $todayReport );
@@ -190,8 +190,8 @@ class ReportService
                 $currentDay->save();
 
                 return [
-                    'status'    =>  'success',
-                    'message'   =>  __( 'The dashboard report has been updated.' ),
+                    'status' => 'success',
+                    'message' => __( 'The dashboard report has been updated.' ),
                 ];
             }
 
@@ -203,20 +203,20 @@ class ReportService
             $message = __( 'A stock operation has recently been detected, however the NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
             $notification = app()->make( NotificationService::class );
             $notification->create([
-                'title'         =>      __( 'Untracked Stock Operation' ),
-                'description'   =>      $message,
-                'url'           =>      'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
+                'title' => __( 'Untracked Stock Operation' ),
+                'description' => $message,
+                'url' => 'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
             ])->dispatchForGroup( Role::namespace( 'admin' ) );
 
             return [
-                'status'    =>  'failed',
-                'message'   =>  $message,
+                'status' => 'failed',
+                'message' => $message,
             ];
         }
 
         return [
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unsupported action' ),
+            'status' => 'failed',
+            'message' => __( 'Unsupported action' ),
         ];
     }
 
@@ -468,8 +468,8 @@ class ReportService
             }
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The expense has been correctly saved.' ),
+                'status' => 'success',
+                'message' => __( 'The expense has been correctly saved.' ),
             ];
         }
 
@@ -497,8 +497,8 @@ class ReportService
             }
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The expense has been correctly saved.' ),
+                'status' => 'success',
+                'message' => __( 'The expense has been correctly saved.' ),
             ];
         }
 
@@ -516,14 +516,14 @@ class ReportService
 
         $notification = app()->make( NotificationService::class );
         $notification->create([
-            'title'         =>      __( 'Untracked Stock Operation' ),
-            'description'   =>      $message,
-            'url'           =>      'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
+            'title' => __( 'Untracked Stock Operation' ),
+            'description' => $message,
+            'url' => 'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
         ])->dispatchForGroup( Role::namespace( 'admin' ) );
 
         return [
-            'status'    =>  'failed',
-            'message'   =>  $message,
+            'status' => 'failed',
+            'message' => $message,
         ];
     }
 
@@ -617,13 +617,13 @@ class ReportService
             }
 
             $previousDates = [
-                'previous'  =>  [
-                    'startDate' =>  $startCycle->toDateTimeString(),
-                    'endDate'   =>  $endCycle->toDateTimeString(),
+                'previous' => [
+                    'startDate' => $startCycle->toDateTimeString(),
+                    'endDate' => $endCycle->toDateTimeString(),
                 ],
-                'current'   =>  [
-                    'startDate' =>  $startDate->toDateTimeString(),
-                    'endDate'   =>  $endDate->toDateTimeString(),
+                'current' => [
+                    'startDate' => $startDate->toDateTimeString(),
+                    'endDate' => $endDate->toDateTimeString(),
                 ],
             ];
 
@@ -633,13 +633,13 @@ class ReportService
             $endCycle = Carbon::parse( $endDate )->subDay();
 
             $previousDates = [
-                'previous'      =>  [
-                    'startDate' =>  $startCycle->toDateTimeString(),
-                    'endDate'   =>  $endCycle->toDateTimeString(),
+                'previous' => [
+                    'startDate' => $startCycle->toDateTimeString(),
+                    'endDate' => $endCycle->toDateTimeString(),
                 ],
-                'current'       =>  [
-                    'startDate' =>  $startDate->toDateTimeString(),
-                    'endDate'   =>  $endDate->toDateTimeString(),
+                'current' => [
+                    'startDate' => $startDate->toDateTimeString(),
+                    'endDate' => $endDate->toDateTimeString(),
                 ],
             ];
 
@@ -701,46 +701,46 @@ class ReportService
         switch ( $sort ) {
             case 'using_quantity_asc':
                 $sorting = [
-                    'column'    =>  'quantity',
-                    'direction' =>  'asc',
+                    'column' => 'quantity',
+                    'direction' => 'asc',
                 ];
-            break;
+                break;
             case 'using_quantity_desc':
                 $sorting = [
-                    'column'    =>  'quantity',
-                    'direction' =>  'desc',
+                    'column' => 'quantity',
+                    'direction' => 'desc',
                 ];
-            break;
+                break;
             case 'using_sales_asc':
                 $sorting = [
-                    'column'    =>  'total_price',
-                    'direction' =>  'asc',
+                    'column' => 'total_price',
+                    'direction' => 'asc',
                 ];
-            break;
+                break;
             case 'using_sales_desc':
                 $sorting = [
-                    'column'    =>  'total_price',
-                    'direction' =>  'desc',
+                    'column' => 'total_price',
+                    'direction' => 'desc',
                 ];
-            break;
+                break;
             case 'using_name_asc':
                 $sorting = [
-                    'column'    =>  'name',
-                    'direction' =>  'asc',
+                    'column' => 'name',
+                    'direction' => 'asc',
                 ];
-            break;
+                break;
             case 'using_name_desc':
                 $sorting = [
-                    'column'    =>  'name',
-                    'direction' =>  'desc',
+                    'column' => 'name',
+                    'direction' => 'desc',
                 ];
-            break;
+                break;
             default:
-            $sorting = [
-                'column'    =>  'total_price',
-                'direction' =>  'desc',
-            ];
-            break;
+                $sorting = [
+                    'column' => 'total_price',
+                    'direction' => 'desc',
+                ];
+                break;
         }
 
         foreach ( $previousDates as $key => $report ) {
@@ -815,34 +815,32 @@ class ReportService
         switch ( $type ) {
             case 'products_report':
                 return $this->getProductsReports( $start, $end, $user_id );
-            break;
+                break;
             case 'categories_report':
             case 'categories_summary':
                 return $this->getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id );
-            break;
+                break;
         }
     }
 
     private function getSalesSummary( $orders )
     {
         $allSales = $orders->map( function( $order ) {
-            $salesTaxes = $order->tax_value - $order->products->sum( 'tax_value' );
-
             return [
-                'sales_discounts'   =>  $order->discount,
-                'sales_taxes'       =>  $salesTaxes > 0 ? $salesTaxes : 0,
-                'producs_taxes'     =>  $order->products->sum( 'tax_value' ),
-                'total'             =>  $order->total - $order->products->sum( 'tax_value' ),
-                'subtotal'          =>  $order->subtotal,
+                'subtotal' => $order->subtotal,
+                'sales_discounts' => $order->discount,
+                'sales_taxes' => $order->tax_value,
+                'shipping' => $order->shipping,
+                'total' => $order->total,
             ];
         });
 
         return [
-            'sales_discounts'   =>  Currency::define( $allSales->sum( 'sales_discounts' ) )->getRaw(),
-            'producs_taxes'     =>  Currency::define( $allSales->sum( 'producs_taxes' ) )->getRaw(),
-            'sales_taxes'       =>  Currency::define( $allSales->sum( 'sales_taxes' ) )->getRaw(),
-            'subtotal'          =>  Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
-            'total'             =>  Currency::define( $allSales->sum( 'total' ) )->getRaw(),
+            'sales_discounts' => Currency::define( $allSales->sum( 'sales_discounts' ) )->getRaw(),
+            'sales_taxes' => Currency::define( $allSales->sum( 'sales_taxes' ) )->getRaw(),
+            'subtotal' => Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
+            'shipping' => Currency::define( $allSales->sum( 'shipping' ) )->getRaw(),
+            'total' => Currency::define( $allSales->sum( 'total' ) )->getRaw(),
         ];
     }
 
@@ -866,18 +864,18 @@ class ReportService
         $productsIds = $products->map( fn( $product ) => $product->product_id )->unique();
 
         return [
-            'result'    =>  $productsIds->map( function( $id ) use ( $products ) {
+            'result' => $productsIds->map( function( $id ) use ( $products ) {
                 $product = $products->where( 'product_id', $id )->first();
                 $filtredProdcuts = $products->where( 'product_id', $id )->all();
 
-                $summable = [ 'quantity', 'discount', 'wholesale_tax_value', 'sale_tax_value', 'tax_value', 'total_gross_price', 'total_price', 'total_net_price', 'total_purchase_price' ];
+                $summable = [ 'quantity', 'discount', 'wholesale_tax_value', 'sale_tax_value', 'tax_value', 'total_price_without_tax', 'total_price', 'total_price_with_tax', 'total_purchase_price' ];
                 foreach ( $summable as $key ) {
                     $product->$key = collect( $filtredProdcuts )->sum( $key );
                 }
 
                 return $product;
             })->values(),
-            'summary'   =>  $summary,
+            'summary' => $summary,
         ];
     }
 
@@ -916,7 +914,32 @@ class ReportService
          * That will sum all the total prices
          */
         $categories->each( function( $category ) use ( $products ) {
-            $category->products = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
+            $rawProducts = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
+
+            $products = [];
+
+            /**
+             * this will merge similar products
+             * to summarize them.
+             */
+            $rawProducts->each( function( $product ) use ( &$products ) {
+                if ( isset( $products[ $product->product_id ] ) ) {
+                    $products[ $product->product_id ][ 'quantity' ] += $product->quantity;
+                    $products[ $product->product_id ][ 'tax_value' ] += $product->tax_value;
+                    $products[ $product->product_id ][ 'discount' ] += $product->discount;
+                    $products[ $product->product_id ][ 'total_price' ] += $product->total_price;
+                } else {
+                    $products[ $product->product_id ] = array_merge( $product->toArray(), [
+                        'quantity' => $product->quantity,
+                        'tax_value' => $product->tax_value,
+                        'discount' => $product->discount,
+                        'total_price' => $product->total_price,
+                    ]);
+                }
+            });
+
+            $category->products = array_values( $products );
+
             $category->total_tax_value = collect( $category->products )->sum( 'tax_value' );
             $category->total_price = collect( $category->products )->sum( 'total_price' );
             $category->total_discount = collect( $category->products )->sum( 'discount' );
@@ -924,8 +947,8 @@ class ReportService
         });
 
         return [
-            'result'    =>  $categories->toArray(),
-            'summary'   =>  $summary,
+            'result' => $categories->toArray(),
+            'summary' => $summary,
         ];
     }
 
@@ -991,25 +1014,25 @@ class ReportService
 
             if ( $module->getIfEnabled( 'NsCommissions' ) ) {
                 $config = [
-                    'today_commissions' =>  EarnedCommission::for( Auth::id() )
+                    'today_commissions' => EarnedCommission::for( Auth::id() )
                         ->where( 'created_at', '>=', ns()->date->getNow()->copy()->startOfDay()->toDateTimeString() )
                         ->where( 'created_at', '<=', ns()->date->getNow()->copy()->endOfDay()->toDateTimeString() )
                         ->sum( 'value' ),
-                    'total_commissions' =>  EarnedCommission::for( Auth::id() )
+                    'total_commissions' => EarnedCommission::for( Auth::id() )
                         ->sum( 'value' ),
                 ];
             }
 
             return array_merge([
-                'total_sales_count'     =>  $totalSales,
-                'today_sales_count'     =>  $todaySales,
-                'total_sales_amount'    =>  $totalSalesAmount,
-                'today_sales_amount'    =>  $todaySalesAmount,
-                'total_refunds_amount'  =>  $totalRefundsAmount,
-                'today_refunds_amount'  =>  $todayRefunds,
-                'total_customers'       =>  $totalCustomers,
-                'today_customers'       =>  $todayCustomers,
-                'today_orders'          =>  Order::where( 'created_at', '>=', $startDate )
+                'total_sales_count' => $totalSales,
+                'today_sales_count' => $todaySales,
+                'total_sales_amount' => $totalSalesAmount,
+                'today_sales_amount' => $todaySalesAmount,
+                'total_refunds_amount' => $totalRefundsAmount,
+                'today_refunds_amount' => $todayRefunds,
+                'total_customers' => $totalCustomers,
+                'today_customers' => $todayCustomers,
+                'today_orders' => Order::where( 'created_at', '>=', $startDate )
                     ->where( 'created_at', '<=', $endDate )
                     ->where( 'author', $cashier )
                     ->orderBy( 'id', 'desc' )
@@ -1035,8 +1058,8 @@ class ReportService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The report has been computed successfully.' ),
+            'status' => 'success',
+            'message' => __( 'The report has been computed successfully.' ),
         ];
     }
 
@@ -1098,17 +1121,17 @@ class ReportService
         $rangeEnds = Carbon::parse( $rangeEnds )->toDateTimeString();
 
         return [
-            'purchases_amount'      =>  $customer->purchases_amount,
-            'owed_amount'           =>  $customer->owed_amount,
-            'account_amount'        =>  $customer->account_amount,
-            'total_orders'          =>  $customer->orders()->count(),
-            'credit_limit_amount'   =>  $customer->credit_limit_amount,
-            'orders'                =>  Order::where( 'customer_id', $customer->id )
+            'purchases_amount' => $customer->purchases_amount,
+            'owed_amount' => $customer->owed_amount,
+            'account_amount' => $customer->account_amount,
+            'total_orders' => $customer->orders()->count(),
+            'credit_limit_amount' => $customer->credit_limit_amount,
+            'orders' => Order::where( 'customer_id', $customer->id )
                 ->paymentStatusIn([ Order::PAYMENT_PAID, Order::PAYMENT_UNPAID, Order::PAYMENT_REFUNDED, Order::PAYMENT_PARTIALLY ])
                 ->where( 'created_at', '>=', $rangeStarts )
                 ->where( 'created_at', '<=', $rangeEnds )
                 ->get(),
-            'wallet_transactions'   =>  CustomerAccountHistory::where( 'customer_id', $customer->id )
+            'wallet_transactions' => CustomerAccountHistory::where( 'customer_id', $customer->id )
                 ->where( 'created_at', '>=', $rangeStarts )
                 ->where( 'created_at', '<=', $rangeEnds )
                 ->get(),

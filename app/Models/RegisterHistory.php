@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string action
  * @property int author
  * @property float value
+ * @property integer payment_id
+ * @property integer payment_type_id
+ * @property integer order_id
  * @property string description
  * @property string uuid
  */
@@ -30,6 +33,10 @@ class RegisterHistory extends NsModel
 
     const ACTION_SALE = 'register-sale';
 
+    const ACTION_CHANGE = 'register-change';
+
+    const ACTION_DELETE = 'register-cash-delete';
+
     const ACTION_REFUND = 'register-refund';
 
     const IN_ACTIONS = [
@@ -42,10 +49,12 @@ class RegisterHistory extends NsModel
         self::ACTION_REFUND,
         self::ACTION_CLOSING,
         self::ACTION_CASHOUT,
+        self::ACTION_DELETE,
+        self::ACTION_CHANGE,
     ];
 
     protected $dispatchesEvents = [
-        'created'     =>      CashRegisterHistoryAfterCreatedEvent::class,
+        'created' => CashRegisterHistoryAfterCreatedEvent::class,
     ];
 
     public function scopeRegister( $query, Register $register )

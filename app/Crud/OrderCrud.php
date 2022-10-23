@@ -49,8 +49,8 @@ class OrderCrud extends CrudService
     ];
 
     public $pick = [
-        'nexopos_users'         =>  [ 'username' ],
-        'nexopos_customers'     =>  [ 'name', 'phone' ],
+        'nexopos_users' => [ 'username' ],
+        'nexopos_customers' => [ 'name', 'phone' ],
     ];
 
     public $queryFilters = [];
@@ -81,10 +81,10 @@ class OrderCrud extends CrudService
     public $fillable = [];
 
     protected $permissions = [
-        'create'    => 'nexopos.create.orders',
-        'read'      => 'nexopos.read.orders',
-        'update'    => 'nexopos.update.orders',
-        'delete'    => 'nexopos.delete.orders',
+        'create' => 'nexopos.create.orders',
+        'read' => 'nexopos.read.orders',
+        'update' => 'nexopos.update.orders',
+        'delete' => 'nexopos.delete.orders',
     ];
 
     /**
@@ -110,51 +110,51 @@ class OrderCrud extends CrudService
          */
         $this->queryFilters = [
             [
-                'type'  =>  'daterangepicker',
-                'name'  =>  'nexopos_orders.created_at',
-                'description'   =>  __( 'Restrict the orders by the creation date.' ),
-                'label' =>  __( 'Created Between' ),
+                'type' => 'daterangepicker',
+                'name' => 'nexopos_orders.created_at',
+                'description' => __( 'Restrict the orders by the creation date.' ),
+                'label' => __( 'Created Between' ),
             ], [
-                'type'      =>  'select',
-                'label'     =>  __( 'Payment Status' ),
-                'name'      =>  'payment_status',
-                'description'   =>  __( 'Restrict the orders by the payment status.' ),
-                'options'   =>  Helper::kvToJsOptions([
-                    Order::PAYMENT_PAID                 =>  __( 'Paid' ),
-                    Order::PAYMENT_HOLD                 =>  __( 'Hold' ),
-                    Order::PAYMENT_PARTIALLY            =>  __( 'Partially Paid' ),
-                    Order::PAYMENT_PARTIALLY_REFUNDED   =>  __( 'Partially Refunded' ),
-                    Order::PAYMENT_REFUNDED             =>  __( 'Refunded' ),
-                    Order::PAYMENT_UNPAID               =>  __( 'Unpaid' ),
-                    Order::PAYMENT_VOID                 =>  __( 'Voided' ),
-                    Order::PAYMENT_DUE                  =>  __( 'Due' ),
-                    Order::PAYMENT_PARTIALLY_DUE        =>  __( 'Due With Payment' ),
+                'type' => 'select',
+                'label' => __( 'Payment Status' ),
+                'name' => 'payment_status',
+                'description' => __( 'Restrict the orders by the payment status.' ),
+                'options' => Helper::kvToJsOptions([
+                    Order::PAYMENT_PAID => __( 'Paid' ),
+                    Order::PAYMENT_HOLD => __( 'Hold' ),
+                    Order::PAYMENT_PARTIALLY => __( 'Partially Paid' ),
+                    Order::PAYMENT_PARTIALLY_REFUNDED => __( 'Partially Refunded' ),
+                    Order::PAYMENT_REFUNDED => __( 'Refunded' ),
+                    Order::PAYMENT_UNPAID => __( 'Unpaid' ),
+                    Order::PAYMENT_VOID => __( 'Voided' ),
+                    Order::PAYMENT_DUE => __( 'Due' ),
+                    Order::PAYMENT_PARTIALLY_DUE => __( 'Due With Payment' ),
                 ]),
             ], [
-                'type'      =>  'select',
-                'label'     =>  __( 'Author' ),
-                'name'      =>  'nexopos_orders.author',
-                'description'   =>  __( 'Restrict the orders by the author.' ),
-                'options'   =>  Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ]),
+                'type' => 'select',
+                'label' => __( 'Author' ),
+                'name' => 'nexopos_orders.author',
+                'description' => __( 'Restrict the orders by the author.' ),
+                'options' => Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ]),
             ], [
-                'type'      =>  'select',
-                'label'     =>  __( 'Customer' ),
-                'name'      =>  'customer_id',
-                'description'   =>  __( 'Restrict the orders by the customer.' ),
-                'options'   =>  Helper::toJsOptions( Customer::get(), [ 'id', 'name' ]),
+                'type' => 'select',
+                'label' => __( 'Customer' ),
+                'name' => 'customer_id',
+                'description' => __( 'Restrict the orders by the customer.' ),
+                'options' => Helper::toJsOptions( Customer::get(), [ 'id', 'name' ]),
             ], [
-                'type'      =>  'text',
-                'label'     =>  __( 'Customer Phone' ),
-                'name'      =>  'phone',
-                'operator'  =>  'like',
-                'description'   =>  __( 'Restrict orders using the customer phone number.' ),
-                'options'   =>  Helper::toJsOptions( Customer::get(), [ 'id', 'phone' ]),
+                'type' => 'text',
+                'label' => __( 'Customer Phone' ),
+                'name' => 'phone',
+                'operator' => 'like',
+                'description' => __( 'Restrict orders using the customer phone number.' ),
+                'options' => Helper::toJsOptions( Customer::get(), [ 'id', 'phone' ]),
             ], [
-                'type'      =>  'select',
-                'label'     =>  __( 'Cash Register' ),
-                'name'      =>  'register_id',
-                'description'   =>  __( 'Restrict the orders to the cash registers.' ),
-                'options'   =>  Helper::toJsOptions( Register::get(), [ 'id', 'name' ]),
+                'type' => 'select',
+                'label' => __( 'Cash Register' ),
+                'name' => 'register_id',
+                'description' => __( 'Restrict the orders to the cash registers.' ),
+                'options' => Helper::toJsOptions( Register::get(), [ 'id', 'name' ]),
             ],
         ];
     }
@@ -168,15 +168,15 @@ class OrderCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Orders List' ),
-            'list_description'      =>  __( 'Display all orders.' ),
-            'no_entry'              =>  __( 'No orders has been registered' ),
-            'create_new'            =>  __( 'Add a new order' ),
-            'create_title'          =>  __( 'Create a new order' ),
-            'create_description'    =>  __( 'Register a new order and save it.' ),
-            'edit_title'            =>  __( 'Edit order' ),
-            'edit_description'      =>  __( 'Modify  Order.' ),
-            'back_to_list'          =>  __( 'Return to Orders' ),
+            'list_title' => __( 'Orders List' ),
+            'list_description' => __( 'Display all orders.' ),
+            'no_entry' => __( 'No orders has been registered' ),
+            'create_new' => __( 'Add a new order' ),
+            'create_title' => __( 'Create a new order' ),
+            'create_description' => __( 'Register a new order and save it.' ),
+            'edit_title' => __( 'Edit order' ),
+            'edit_description' => __( 'Modify  Order.' ),
+            'back_to_list' => __( 'Return to Orders' ),
         ];
     }
 
@@ -199,136 +199,136 @@ class OrderCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
+            'main' => [
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
+                            'type' => 'text',
+                            'name' => 'author',
+                            'label' => __( 'Author' ),
+                            'value' => $entry->author ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'change',
-                            'label' =>  __( 'Change' ),
-                            'value' =>  $entry->change ?? '',
+                            'type' => 'text',
+                            'name' => 'change',
+                            'label' => __( 'Change' ),
+                            'value' => $entry->change ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'code',
-                            'label' =>  __( 'Code' ),
-                            'value' =>  $entry->code ?? '',
+                            'type' => 'text',
+                            'name' => 'code',
+                            'label' => __( 'Code' ),
+                            'value' => $entry->code ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created At' ),
-                            'value' =>  $entry->created_at ?? '',
+                            'type' => 'text',
+                            'name' => 'created_at',
+                            'label' => __( 'Created At' ),
+                            'value' => $entry->created_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'customer_id',
-                            'label' =>  __( 'Customer Id' ),
-                            'value' =>  $entry->customer_id ?? '',
+                            'type' => 'text',
+                            'name' => 'customer_id',
+                            'label' => __( 'Customer Id' ),
+                            'value' => $entry->customer_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'delivery_status',
-                            'label' =>  __( 'Delivery Status' ),
-                            'value' =>  $entry->delivery_status ?? '',
+                            'type' => 'text',
+                            'name' => 'delivery_status',
+                            'label' => __( 'Delivery Status' ),
+                            'value' => $entry->delivery_status ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'text',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'value' => $entry->description ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'discount',
-                            'label' =>  __( 'Discount' ),
-                            'value' =>  $entry->discount ?? '',
+                            'type' => 'text',
+                            'name' => 'discount',
+                            'label' => __( 'Discount' ),
+                            'value' => $entry->discount ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'discount_rate',
-                            'label' =>  __( 'Discount Rate' ),
-                            'value' =>  $entry->discount_rate ?? '',
+                            'type' => 'text',
+                            'name' => 'discount_rate',
+                            'label' => __( 'Discount Rate' ),
+                            'value' => $entry->discount_rate ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'discount_type',
-                            'label' =>  __( 'Discount Type' ),
-                            'value' =>  $entry->discount_type ?? '',
+                            'type' => 'text',
+                            'name' => 'discount_type',
+                            'label' => __( 'Discount Type' ),
+                            'value' => $entry->discount_type ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'gross_total',
-                            'label' =>  __( 'Gross Total' ),
-                            'value' =>  $entry->gross_total ?? '',
+                            'type' => 'text',
+                            'name' => 'total_without_tax',
+                            'label' => __( 'Tax Excluded' ),
+                            'value' => $entry->total_without_tax ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
+                            'type' => 'text',
+                            'name' => 'id',
+                            'label' => __( 'Id' ),
+                            'value' => $entry->id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'net_total',
-                            'label' =>  __( 'Net Total' ),
-                            'value' =>  $entry->net_total ?? '',
+                            'type' => 'text',
+                            'name' => 'total_with_tax',
+                            'label' => __( 'Tax Included' ),
+                            'value' => $entry->total_with_tax ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'payment_status',
-                            'label' =>  __( 'Payment Status' ),
-                            'value' =>  $entry->payment_status ?? '',
+                            'type' => 'text',
+                            'name' => 'payment_status',
+                            'label' => __( 'Payment Status' ),
+                            'value' => $entry->payment_status ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'process_status',
-                            'label' =>  __( 'Process Status' ),
-                            'value' =>  $entry->process_status ?? '',
+                            'type' => 'text',
+                            'name' => 'process_status',
+                            'label' => __( 'Process Status' ),
+                            'value' => $entry->process_status ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'shipping',
-                            'label' =>  __( 'Shipping' ),
-                            'value' =>  $entry->shipping ?? '',
+                            'type' => 'text',
+                            'name' => 'shipping',
+                            'label' => __( 'Shipping' ),
+                            'value' => $entry->shipping ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'shipping_rate',
-                            'label' =>  __( 'Shipping Rate' ),
-                            'value' =>  $entry->shipping_rate ?? '',
+                            'type' => 'text',
+                            'name' => 'shipping_rate',
+                            'label' => __( 'Shipping Rate' ),
+                            'value' => $entry->shipping_rate ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'shipping_type',
-                            'label' =>  __( 'Shipping Type' ),
-                            'value' =>  $entry->shipping_type ?? '',
+                            'type' => 'text',
+                            'name' => 'shipping_type',
+                            'label' => __( 'Shipping Type' ),
+                            'value' => $entry->shipping_type ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'tendered',
-                            'label' =>  __( 'Tendered' ),
-                            'value' =>  $entry->tendered ?? '',
+                            'type' => 'text',
+                            'name' => 'tendered',
+                            'label' => __( 'Tendered' ),
+                            'value' => $entry->tendered ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'title',
-                            'label' =>  __( 'Title' ),
-                            'value' =>  $entry->title ?? '',
+                            'type' => 'text',
+                            'name' => 'title',
+                            'label' => __( 'Title' ),
+                            'value' => $entry->title ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'total',
-                            'label' =>  __( 'Total' ),
-                            'value' =>  $entry->total ?? '',
+                            'type' => 'text',
+                            'name' => 'total',
+                            'label' => __( 'Total' ),
+                            'value' => $entry->total ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'type',
-                            'label' =>  __( 'Type' ),
-                            'value' =>  $entry->type ?? '',
+                            'type' => 'text',
+                            'name' => 'type',
+                            'label' => __( 'Type' ),
+                            'value' => $entry->type ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated At' ),
-                            'value' =>  $entry->updated_at ?? '',
+                            'type' => 'text',
+                            'name' => 'updated_at',
+                            'label' => __( 'Updated At' ),
+                            'value' => $entry->updated_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
+                            'type' => 'text',
+                            'name' => 'uuid',
+                            'label' => __( 'Uuid' ),
+                            'value' => $entry->uuid ?? '',
                         ],                     ],
                 ],
             ],
@@ -391,7 +391,8 @@ class OrderCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -433,8 +434,8 @@ class OrderCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -458,8 +459,8 @@ class OrderCrud extends CrudService
             $orderService->deleteOrder( $model );
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The order and the attached products has been deleted.' ),
+                'status' => 'success',
+                'message' => __( 'The order and the attached products has been deleted.' ),
             ];
         }
     }
@@ -472,62 +473,62 @@ class OrderCrud extends CrudService
     public function getColumns()
     {
         return [
-            'code'  =>  [
-                'label'  =>  __( 'Code' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
-                'width'        =>  '120px',
+            'code' => [
+                'label' => __( 'Code' ),
+                '$direction' => '',
+                '$sort' => false,
+                'width' => '120px',
             ],
-            'nexopos_customers_name'  =>  [
-                'label'         =>  __( 'Customer' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
-                'width'        =>  '120px',
+            'nexopos_customers_name' => [
+                'label' => __( 'Customer' ),
+                '$direction' => '',
+                '$sort' => false,
+                'width' => '120px',
             ],
-            'nexopos_customers_phone'   =>  [
-                'label'         =>  __( 'Phone' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'nexopos_customers_phone' => [
+                'label' => __( 'Phone' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'discount'  =>  [
-                'label'  =>  __( 'Discount' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'discount' => [
+                'label' => __( 'Discount' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'delivery_status'  =>  [
-                'label'  =>  __( 'Delivery Status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'delivery_status' => [
+                'label' => __( 'Delivery Status' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'payment_status'  =>  [
-                'label'  =>  __( 'Payment Status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'payment_status' => [
+                'label' => __( 'Payment Status' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'process_status'  =>  [
-                'label'  =>  __( 'Process Status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'process_status' => [
+                'label' => __( 'Process Status' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'total'  =>  [
-                'label'  =>  __( 'Total' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'total' => [
+                'label' => __( 'Total' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'type'  =>  [
-                'label'  =>  __( 'Type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'type' => [
+                'label' => __( 'Type' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'nexopos_users_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'nexopos_users_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -560,41 +561,41 @@ class OrderCrud extends CrudService
         switch ( $entry->payment_status ) {
             case Order::PAYMENT_PAID:
                 $entry->{ '$cssClass' } = 'success border text-sm';
-            break;
+                break;
             case Order::PAYMENT_UNPAID:
                 $entry->{ '$cssClass' } = 'danger border text-sm';
-            break;
+                break;
             case Order::PAYMENT_PARTIALLY:
                 $entry->{ '$cssClass' } = 'info border text-sm';
-            break;
+                break;
             case Order::PAYMENT_HOLD:
                 $entry->{ '$cssClass' } = 'danger border text-sm';
-            break;
+                break;
             case Order::PAYMENT_VOID:
                 $entry->{ '$cssClass' } = 'error border text-sm';
-            break;
+                break;
             case Order::PAYMENT_REFUNDED:
                 $entry->{ '$cssClass' } = 'default border text-sm';
-            break;
+                break;
             case Order::PAYMENT_PARTIALLY_REFUNDED:
                 $entry->{ '$cssClass' } = 'default border text-sm';
-            break;
+                break;
             case Order::PAYMENT_DUE:
                 $entry->{ '$cssClass' } = 'danger border text-sm';
-            break;
+                break;
             case Order::PAYMENT_PARTIALLY_DUE:
                 $entry->{ '$cssClass' } = 'danger border text-sm';
-            break;
+                break;
         }
 
         $entry->payment_status = ns()->order->getPaymentLabel( $entry->payment_status );
 
         // you can make changes here
         $entry->addAction( 'ns.order-options', [
-            'label'         =>      '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
-            'namespace'     =>      'ns.order-options',
-            'type'          =>      'POPUP',
-            'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/edit/' . $entry->id ),
+            'label' => '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
+            'namespace' => 'ns.order-options',
+            'type' => 'POPUP',
+            'url' => ns()->url( '/dashboard/' . 'orders' . '/edit/' . $entry->id ),
         ]);
 
         /**
@@ -609,34 +610,34 @@ class OrderCrud extends CrudService
 
         if ( $hasRefunds ) {
             $entry->addAction( 'ns.order-refunds', [
-                'label'         =>  '<i class="mr-2 las la-receipt"></i> ' . __( 'Refund Receipt' ),
-                'type'          =>  'POPUP',
-                'namespace'     =>  'ns.order-refunds',
-                'url'           =>  ns()->url( '/dashboard/' . 'orders' . '/refund-receipt/' . $entry->id ),
+                'label' => '<i class="mr-2 las la-receipt"></i> ' . __( 'Refund Receipt' ),
+                'type' => 'POPUP',
+                'namespace' => 'ns.order-refunds',
+                'url' => ns()->url( '/dashboard/' . 'orders' . '/refund-receipt/' . $entry->id ),
             ]);
         }
 
         $entry->addAction( 'invoice', [
-            'label'         =>      '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
-            'namespace'     =>      'invoice',
-            'type'          =>      'GOTO',
-            'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id ),
+            'label' => '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
+            'namespace' => 'invoice',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id ),
         ]);
 
         $entry->addAction( 'receipt', [
-            'label'         =>      '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
-            'namespace'     =>      'receipt',
-            'type'          =>      'GOTO',
-            'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id ),
+            'label' => '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
+            'namespace' => 'receipt',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -658,15 +659,15 @@ class OrderCrud extends CrudService
         $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' ),
+                'status' => 'failed',
+                'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -693,9 +694,9 @@ class OrderCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  'ns.orders',
-            'create'    =>  ns()->route( 'ns.dashboard.pos' ),
-            'edit'      =>  'ns.orders/edit/#',
+            'list' => 'ns.orders',
+            'create' => ns()->route( 'ns.dashboard.pos' ),
+            'edit' => 'ns.orders/edit/#',
         ];
     }
 
@@ -708,10 +709,10 @@ class OrderCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

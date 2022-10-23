@@ -25,9 +25,8 @@ class Options
     public string $tableName;
 
     /**
-     * the option class can be constructed with the user id. If the user is not connected we
-     * would like to avoid getting general option. So even if the user is not connected
-     * we should treat null (when user is not connected) as if the
+     * the option class can be constructed with the user id.
+     * If the user is not provided, the general options are loaded instead.
      */
     public function __construct()
     {
@@ -46,9 +45,9 @@ class Options
         Option::truncate();
 
         $defaultOptions = [
-            'ns_registration_enabled'   =>  false,
-            'ns_store_name'             =>  'NexoPOS 4.x',
-            'ns_pos_order_types'        =>  [ 'takeaway', 'delivery' ],
+            'ns_registration_enabled' => false,
+            'ns_store_name' => 'NexoPOS 4.x',
+            'ns_pos_order_types' => [ 'takeaway', 'delivery' ],
         ];
 
         $options = array_merge( $defaultOptions, $options );
@@ -78,12 +77,12 @@ class Options
     {
         $this->options = [];
 
-        if ( Helper::installed() ) {
+        if ( Helper::installed() && empty( $this->rawOptions ) ) {
             $this->rawOptions = $this->option()
                 ->get()
                 ->mapWithKeys( function( $option ) {
                     return [
-                        $option->key    =>  $option,
+                        $option->key => $option,
                     ];
                 });
         }
@@ -105,19 +104,19 @@ class Options
          * the option object.
          */
         $foundOption = collect( $this->rawOptions )->map( function( $option, $index ) use ( $value, $key, $expiration ) {
-            if ( $key === $option->key ) {
+            if ( $key === $index ) {
                 $this->hasFound = true;
 
                 switch ( $value ) {
                     case is_array( $value ) :
                         $option->value = json_encode( $value );
-                    break;
+                        break;
                     case empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) :
                         $option->value = '';
-                    break;
+                        break;
                     default:
                         $option->value = $value;
-                    break;
+                        break;
                 }
 
                 $option->expire_on = $expiration;
@@ -142,7 +141,7 @@ class Options
          * it will create a new Option model
          * and store with, then save it on the option model
          */
-        if ( $foundOption->empty() ) {
+        if ( $foundOption->isEmpty() ) {
             $option = new Option;
             $option->key = trim( strtolower( $key ) );
             $option->array = false;
@@ -150,13 +149,13 @@ class Options
             switch ( $value ) {
                 case is_array( $value ) :
                     $option->value = json_encode( $value );
-                break;
+                    break;
                 case empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) :
                     $option->value = '';
-                break;
+                    break;
                 default:
                     $option->value = $value;
-                break;
+                    break;
             }
 
             $option->expire_on = $expiration;
@@ -223,9 +222,9 @@ class Options
                 } elseif ( ! is_array( $option->value ) ) {
                     $option->parsed = true;
                     $option->value = match ( $option->value ) {
-                        preg_match( '/[0-9]{1,}/', $option->value ) =>  (int) $option->value,
-                        preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) =>  (float) $option->value,
-                        default =>  $option->value,
+                        preg_match( '/[0-9]{1,}/', $option->value ) => (int) $option->value,
+                        preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) => (float) $option->value,
+                        default => $option->value,
                     };
                 }
             }
@@ -234,9 +233,9 @@ class Options
         });
 
         return match ( $options->count() ) {
-            0           => $default,
-            1           => $options->first()->value,
-            default     => $options->map( fn( $option ) => $option->value )->toArray()
+            0 => $default,
+            1 => $options->first()->value,
+            default => $options->map( fn( $option ) => $option->value )->toArray()
         };
     }
 
@@ -247,9 +246,10 @@ class Options
      **/
     public function delete( $key ): void
     {
-        $this->rawOptions   =   collect( $this->rawOptions )->filter( function( Option $option ) use ( $key ) {
+        $this->rawOptions = collect( $this->rawOptions )->filter( function( Option $option ) use ( $key ) {
             if ( $option->key === $key ) {
                 $option->delete();
+
                 return false;
             }
 

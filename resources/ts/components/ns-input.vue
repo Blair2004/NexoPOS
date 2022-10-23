@@ -30,6 +30,7 @@ export default {
         }
     },
     mounted() {
+        // ...
     },
     computed: {
         hasError() {

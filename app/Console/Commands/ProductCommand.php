@@ -7,6 +7,7 @@ use App\Models\ProductGallery;
 use App\Models\ProductSubItem;
 use App\Models\ProductUnitQuantity;
 use App\Services\ProductService;
+use App\Services\TaxService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\NsMultiStore\Models\Store;
@@ -54,9 +55,30 @@ class ProductCommand extends Command
         $this->productService = app()->make( ProductService::class );
 
         match ( $this->argument( 'action' ) ) {
-            'update'            =>  $this->updateProducts(),
-            'refresh-barcode'   =>  $this->refreshBarcodes()
+            'update' => $this->updateProducts(),
+            'compute-taxes' => $this->computeTaxes(),
+            'refresh-barcode' => $this->refreshBarcodes()
         };
+    }
+
+    private function computeTaxes()
+    {
+        /**
+         * @var TaxService
+         */
+        $taxService = app()->make( TaxService::class );
+
+        $this->withProgressBar( ProductUnitQuantity::with( 'product.tax_group' )->get(), function( ProductUnitQuantity $productUnitQuantity ) use ( $taxService ) {
+            $taxService->computeTax(
+                product: $productUnitQuantity,
+                tax_group_id: $productUnitQuantity->product->tax_group_id,
+                tax_type: $productUnitQuantity->product->tax_type
+            );
+        });
+
+        $this->newLine();
+
+        $this->info( __( 'The products taxes were computed successfully.' ) );
     }
 
     private function refreshBarcodes()
@@ -89,14 +111,14 @@ class ProductCommand extends Command
             $subItems = ProductSubItem::where( 'product_id', $product->id )->get();
 
             $this->productService->update( $product, array_merge( $product->toArray(), [
-                'units'     =>  [
-                    'unit_group'        =>  $product->unit_group,
-                    'accurate_tracking' =>  $product->accurate_tracking,
-                    'selling_group'     =>  $units->map( fn( $unitQuantity ) => $unitQuantity->toArray() )->toArray(),
+                'units' => [
+                    'unit_group' => $product->unit_group,
+                    'accurate_tracking' => $product->accurate_tracking,
+                    'selling_group' => $units->map( fn( $unitQuantity ) => $unitQuantity->toArray() )->toArray(),
                 ],
-                'images'                =>  $gallery->map( fn( $gallery ) => $gallery->toArray() )->toArray(),
-                'groups'                =>  [
-                    'product_subitems'      =>  $subItems->map( fn( $subItem ) => $subItem->toArray() )->toArray(),
+                'images' => $gallery->map( fn( $gallery ) => $gallery->toArray() )->toArray(),
+                'groups' => [
+                    'product_subitems' => $subItems->map( fn( $subItem ) => $subItem->toArray() )->toArray(),
                 ],
             ]) );
         });

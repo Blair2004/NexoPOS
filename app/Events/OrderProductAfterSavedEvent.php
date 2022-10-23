@@ -13,22 +13,14 @@ class OrderProductAfterSavedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $product;
-
-    public $postData;
-
-    public $order;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( OrderProduct $product, Order $order, array $postData )
+    public function __construct( public OrderProduct $product, public Order $order, public array $postData )
     {
-        $this->product = $product;
-        $this->postData = $postData;
-        $this->order = $order;
+        // ...
     }
 
     /**

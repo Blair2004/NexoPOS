@@ -19,6 +19,7 @@ use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Models\RewardSystem;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerService
@@ -42,6 +43,20 @@ class CustomerService
                 throw new Exception( __( 'Unable to find the customer using the provided id.' ) );
             }
         }
+    }
+
+    /**
+     * Retrieve the recent active customers.
+     * @param int $limit
+     * @return Collection
+     */
+    public function getRecentlyActive( $limit = 30 )
+    {
+        return Customer::with( 'billing' )
+            ->with( 'shipping' )
+            ->where( 'group_id', '<>', null )
+            ->limit( $limit )
+            ->orderBy( 'updated_at', 'desc' )->get();  
     }
 
     /**
@@ -69,9 +84,32 @@ class CustomerService
         CustomerAddress::where( 'customer_id', $id )->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The customer has been deleted.' ),
         ];
+    }
+
+    public function precheckCustomers( $fields, $id = null )
+    {
+        if ( $id === null ) {
+            /**
+             * Let's find if a similar customer exist with
+             * the provided email
+             */
+            $customer = Customer::byEmail( $fields[ 'email' ] )->first();
+        } else {
+            /**
+             * Let's find if a similar customer exist with
+             * the provided  and which is not the actula customer.
+             */
+            $customer = Customer::byEmail( $fields[ 'email' ] )
+                ->where( 'id', '<>', $id )
+                ->first();
+        }
+
+        if ( $customer instanceof Customer && ! empty( $fields[ 'email' ] ) && ns()->option->get( 'ns_customers_force_unique_phone' ) === 'yes' ) {
+            throw new NotAllowedException( sprintf( __( 'The email "%s" is already stored on another customer informations.' ), $fields[ 'email' ] ) );
+        }
     }
 
     /**
@@ -82,15 +120,7 @@ class CustomerService
      */
     public function create( $fields )
     {
-        /**
-         * Let's find if a similar customer exist with
-         * the provided email
-         */
-        $customer = Customer::byEmail( $fields[ 'email' ] )->first();
-
-        if ( $customer instanceof Customer ) {
-            throw new NotAllowedException( sprintf( __( 'The email "%s" is already stored on another customer informations.' ), $fields[ 'email' ] ) );
-        }
+        $this->precheckCustomers( $fields );
 
         /**
          * saving a customer
@@ -135,9 +165,9 @@ class CustomerService
         $customer->addresses;
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer has been created.' ),
-            'data'      =>  compact( 'customer' ),
+            'status' => 'success',
+            'message' => __( 'The customer has been created.' ),
+            'data' => compact( 'customer' ),
         ];
     }
 
@@ -156,6 +186,8 @@ class CustomerService
         if ( ! $customer instanceof Customer ) {
             throw new NotFoundException( __( 'Unable to find the customer using the provided ID.' ) );
         }
+
+        $this->precheckCustomers( $fields, $id );
 
         foreach ( $fields as $field => $value ) {
             if ( $field !== 'address' ) {
@@ -211,9 +243,9 @@ class CustomerService
         $customer->addresses;
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer has been edited.' ),
-            'data'      =>  compact( 'customer' ),
+            'status' => 'success',
+            'message' => __( 'The customer has been edited.' ),
+            'data' => compact( 'customer' ),
         ];
     }
 
@@ -249,8 +281,8 @@ class CustomerService
         $customer->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The customer has been deleted.' ),
         ];
     }
 
@@ -335,9 +367,9 @@ class CustomerService
         event( new AfterCustomerAccountHistoryCreatedEvent( $customerAccountHistory ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer account has been updated.' ),
-            'data'      =>  compact( 'customerAccountHistory' ),
+            'status' => 'success',
+            'message' => __( 'The customer account has been updated.' ),
+            'data' => compact( 'customerAccountHistory' ),
         ];
     }
 
@@ -358,12 +390,22 @@ class CustomerService
         $history->customer->save();
     }
 
-    public function increaseOrderPurchases( Customer $customer, $value )
+    public function increasePurchases( Customer $customer, $value )
     {
         $customer->purchases_amount += $value;
         $customer->save();
 
-        event( new CustomerAfterUpdatedEvent( $customer ) );
+        CustomerAfterUpdatedEvent::dispatch( $customer );
+
+        return $customer;
+    }
+
+    public function decreasePurchases( Customer $customer, $value )
+    {
+        $customer->purchases_amount -= $value;
+        $customer->save();
+
+        CustomerAfterUpdatedEvent::dispatch( $customer );
 
         return $customer;
     }
@@ -380,12 +422,11 @@ class CustomerService
      * and issue a coupon if necessary
      *
      * @param Order $order
-     * @param Customer $customer
      * @return void
      */
-    public function computeReward( Order $order, Customer $customer )
+    public function computeReward( Order $order )
     {
-        $reward = $customer->group->reward;
+        $reward = $order->customer->group->reward;
 
         if ( $reward instanceof RewardSystem ) {
             $points = 0;
@@ -396,12 +437,12 @@ class CustomerService
             });
 
             $currentReward = CustomerReward::where( 'reward_id', $reward->id )
-                ->where( 'customer_id', $customer->id )
+                ->where( 'customer_id', $order->customer->id )
                 ->first();
 
             if ( ! $currentReward instanceof CustomerReward ) {
                 $currentReward = new CustomerReward;
-                $currentReward->customer_id = $customer->id;
+                $currentReward->customer_id = $order->customer->id;
                 $currentReward->reward_id = $reward->id;
                 $currentReward->points = 0;
                 $currentReward->target = $reward->target;
@@ -411,7 +452,7 @@ class CustomerService
             $currentReward->points += $points;
             $currentReward->save();
 
-            event( new CustomerRewardAfterCreatedEvent( $currentReward, $customer, $reward ) );
+            CustomerRewardAfterCreatedEvent::dispatch( $currentReward, $order->customer, $reward );
         }
     }
 
@@ -439,20 +480,20 @@ class CustomerService
                 $customerReward->points = abs( $customerReward->points - $customerReward->target );
                 $customerReward->save();
 
-                event( new CustomerRewardAfterCouponIssuedEvent( $customerCoupon ) );
+                CustomerRewardAfterCouponIssuedEvent::dispatch( $customerCoupon );
             } else {
                 /**
                  * @var NotificationService
                  */
                 $notify = app()->make( NotificationService::class );
                 $notify->create([
-                    'title'         =>  __( 'Issuing Coupon Failed' ),
-                    'description'   =>  sprintf(
+                    'title' => __( 'Issuing Coupon Failed' ),
+                    'description' => sprintf(
                         __( 'Unable to apply a coupon attached to the reward "%s". It looks like the coupon no more exists.' ),
                         $reward->name
                     ),
-                    'identifier'    =>  'coupon-issuing-issue-' . $reward->id,
-                    'url'           =>  ns()->route( 'ns.dashboard.rewards-edit', [ 'reward' => $reward->id ]),
+                    'identifier' => 'coupon-issuing-issue-' . $reward->id,
+                    'url' => ns()->route( 'ns.dashboard.rewards-edit', [ 'reward' => $reward->id ]),
                 ])->dispatchForGroupNamespaces([ 'admin', 'nexopos.store.administrator' ]);
             }
         }
@@ -497,7 +538,7 @@ class CustomerService
     public function setCoupon( $fields, Coupon $coupon )
     {
         $customerCoupon = CustomerCoupon::where([
-            'coupon_id'     =>      $coupon->id,
+            'coupon_id' => $coupon->id,
         ])->get();
 
         if ( $customerCoupon->count() === 0 ) {
@@ -527,8 +568,8 @@ class CustomerService
         }
 
         return [
-            'status'    =>  'sucess',
-            'message'   =>  __( 'The coupon has been updated.' ),
+            'status' => 'sucess',
+            'message' => __( 'The coupon has been updated.' ),
         ];
     }
 
@@ -604,9 +645,9 @@ class CustomerService
         $group->save();
 
         return [
-            'status'    =>  'sucecss',
-            'message'   =>  __( 'The group has been created.' ),
-            'data'      =>  compact( 'group' ),
+            'status' => 'sucecss',
+            'message' => __( 'The group has been created.' ),
+            'data' => compact( 'group' ),
         ];
     }
 
@@ -619,11 +660,32 @@ class CustomerService
     public function getCustomerAccountOperationLabel( $label )
     {
         switch ( $label ) {
-            case CustomerAccountHistory::OPERATION_ADD: return __( 'Crediting' ); break;
-            case CustomerAccountHistory::OPERATION_DEDUCT: return __( 'Deducting' ); break;
-            case CustomerAccountHistory::OPERATION_PAYMENT: return __( 'Order Payment' ); break;
-            case CustomerAccountHistory::OPERATION_REFUND: return __( 'Order Refund' ); break;
-            default: return __( 'Unknown Operation' ); break;
+            case CustomerAccountHistory::OPERATION_ADD: return __( 'Crediting' );
+            break;
+            case CustomerAccountHistory::OPERATION_DEDUCT: return __( 'Deducting' );
+            break;
+            case CustomerAccountHistory::OPERATION_PAYMENT: return __( 'Order Payment' );
+            break;
+            case CustomerAccountHistory::OPERATION_REFUND: return __( 'Order Refund' );
+            break;
+            default: return __( 'Unknown Operation' );
+            break;
+        }
+    }
+
+    /**
+     * Will increase the customer purchase
+     * when an order is flagged as paid
+     */
+    public function increaseCustomerPurchase( Order $order )
+    {
+        if ( in_array( $order->payment_status, [
+            Order::PAYMENT_PAID,
+        ]) ) {
+            $this->increasePurchases(
+                $order->customer,
+                $order->total
+            );
         }
     }
 }

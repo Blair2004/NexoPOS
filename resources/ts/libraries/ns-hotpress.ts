@@ -98,7 +98,7 @@ export class NsHotPress
      * @return void
      */
     executeCallback({ event, callback, combinableKeys, key }) {
-        if ( event.key.toLowerCase() === key.toLowerCase() ) {
+        if ( event.key !== undefined && event.key.toLowerCase() === key.toLowerCase() ) {
             
             let canProceed  =   true;
 

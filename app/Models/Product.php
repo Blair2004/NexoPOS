@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $type
  * @property string $accurate_tracking
  * @property string $status
- * @property string $stock_management Can either be "enabled" or "disabled". Use Product::STOCK_MANAGEMEND_ENABLED or Product::STOCK_MANAGEMENT_DISABLED for accessing those values.
+ * @property string $stock_management Can either be "enabled" or "disabled"
  * @property string $barcode
  * @property string $barcode_type
  * @property string $sku
@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property bool $searchable
  * @property int $author
  * @property string $uuid
+ * @property TaxGroup $tax_group
  */
 class Product extends NsModel
 {
@@ -48,10 +49,14 @@ class Product extends NsModel
 
     const TYPE_GROUPED = 'grouped';
 
+    const STATUS_AVAILABLE = 'available';
+
+    const STATUS_UNAVAILABLE = 'unavailable';
+
     protected $table = 'nexopos_' . 'products';
 
     protected $cats = [
-        'accurate_tracking'     =>  'boolean',
+        'accurate_tracking' => 'boolean',
     ];
 
     /**
@@ -59,11 +64,11 @@ class Product extends NsModel
      * it's a dependency for specified models.
      */
     protected $isDependencyFor = [
-        OrderProduct::class     =>  [
-            'local_index'       =>  'id',
-            'local_name'        =>  'name',
-            'foreign_index'     =>  'product_id',
-            'foreign_name'      =>  'name',
+        OrderProduct::class => [
+            'local_index' => 'id',
+            'local_name' => 'name',
+            'foreign_index' => 'product_id',
+            'foreign_name' => [ Order::class, 'order_id', 'id', 'code' ],
         ],
     ];
 
@@ -139,6 +144,28 @@ class Product extends NsModel
     public function scopeSku( $query, $sku )
     {
         return $this->scopeFindUsingSKU( $query, $sku );
+    }
+
+    /**
+     * get products that are on sale.
+     *
+     * @param QueryBuilder
+     * @return QueryBuilder
+     */
+    public function scopeOnSale( $query )
+    {
+        return $query->where( 'status', self::STATUS_AVAILABLE );
+    }
+
+    /**
+     * get products that aren't on sale.
+     *
+     * @param QueryBuilder
+     * @return QueryBuilder
+     */
+    public function scopeHidden( $query )
+    {
+        return $query->where( 'status', self::STATUS_UNAVAILABLE );
     }
 
     /**

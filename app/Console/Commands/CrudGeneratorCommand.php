@@ -135,7 +135,7 @@ class CrudGeneratorCommand extends Command
         } elseif ( $name == 'Q' ) {
             return;
         }
-        $this->error( __( 'Please provide a valid value' ) );
+        $this->error( __( 'Please provide a valid value.' ) );
 
         return $this->askNamespace();
     }
@@ -246,7 +246,7 @@ class CrudGeneratorCommand extends Command
                     $fileName,
                     view( 'generate.crud', array_merge(
                         $this->crudDetails, [
-                            'module'    =>  $module,
+                            'module' => $module,
                         ]
                     ) )
                 );

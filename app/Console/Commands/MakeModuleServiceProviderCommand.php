@@ -68,8 +68,8 @@ class MakeModuleServiceProviderCommand extends Command
                         Storage::disk( 'ns-modules' )->put(
                             $filePath,
                             view( 'generate.modules.providers', [
-                                'module'    =>  $module,
-                                'className' =>  $fileName,
+                                'module' => $module,
+                                'className' => $fileName,
                             ])
                         );
 

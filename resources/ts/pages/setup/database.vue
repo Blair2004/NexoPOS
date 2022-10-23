@@ -3,14 +3,14 @@
         <div class="welcome-box border-b border-gray-300 p-3 text-gray-700">
             <div class="md:-mx-4 md:flex">
                 <div class="md:px-4 md:w-1/2 w-full">
-                    <ns-field v-for="( field, key ) of firstPartFields" v-bind:key="key" :field="field" 
+                    <ns-field v-for="( field, key ) of firstPartFields" v-bind:key="key" :field="field"
                         @change="form.validateField( field )">
                         <span>{{ field.label }}</span>
                         <slot name="description">{{ field.description }}</slot>
                     </ns-field>
                 </div>
                 <div class="md:px-4 md:w-1/2 w-full">
-                    <ns-field v-for="( field, key ) of secondPartFields" v-bind:key="key" :field="field" 
+                    <ns-field v-for="( field, key ) of secondPartFields" v-bind:key="key" :field="field"
                         @change="form.validateField( field )">
                         <span>{{ field.label }}</span>
                         <slot name="description">{{ field.description }}</slot>
@@ -37,7 +37,7 @@ export default {
     }),
     methods: {
         validate() {
-            if ( 
+            if (
                 this.form.validateFields( this.firstPartFields ) &&
                 this.form.validateFields( this.secondPartFields )
             ) {
@@ -54,18 +54,18 @@ export default {
 
                 const operation  =   this.checkDatabase( form );
 
-                operation.subscribe( 
+                operation.subscribe(
                     result => {
                         this.form.enableFields( this.firstPartFields );
                         this.form.enableFields( this.secondPartFields );
 
                         nsRouter.push( '/configuration' );
                         nsSnackBar.success( result.message, 'OKAY', { duration: 5000 }).subscribe();
-                    }, 
+                    },
                     error => {
                         this.form.enableFields( this.firstPartFields );
                         this.form.enableFields( this.secondPartFields );
-                        
+
                         nsSnackBar.error( error.message, 'OKAY' ).subscribe();
                     }
                 );
@@ -95,7 +95,7 @@ export default {
                     value: 'mysql',
                 }, {
                     label: 'Postgres',
-                    value: 'postgres',
+                    value: 'pgsql',
                 }, {
                     label: 'SQLite',
                     value: 'sqlite',

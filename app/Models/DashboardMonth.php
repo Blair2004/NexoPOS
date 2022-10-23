@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\DashboardMonthAfterCreatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DashboardMonth extends NsModel
@@ -13,8 +14,8 @@ class DashboardMonth extends NsModel
     protected $table = 'nexopos_' . 'dashboard_months';
 
     protected $dispatchEvents = [
-        'created'   =>  DashboardMonthAfterCreatedEvent::class,
-        'updated'   =>  DashboardMonthAfterCreatedEvent::class,
+        'created' => DashboardMonthAfterCreatedEvent::class,
+        'updated' => DashboardMonthAfterUpdatedEvent::class,
     ];
 
     public function scopeFrom( $query, $param )

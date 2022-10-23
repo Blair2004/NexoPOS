@@ -15,9 +15,9 @@ class TaxGroupFactory extends Factory
     public function definition()
     {
         return [
-            'name'          =>  $this->faker->word,
-            'description'   =>  $this->faker->sentence,
-            'author'        =>  $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+            'name' => $this->faker->word,
+            'description' => $this->faker->sentence,
+            'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
         ];
     }
 }

@@ -13,9 +13,9 @@ trait WithCashRegisterTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.registers', [
-                'name'                  =>  __( 'Test Cash Register' ),
-                'general'               =>  [
-                    'status'            =>  Register::STATUS_CLOSED,
+                'name' => __( 'Test Cash Register' ),
+                'general' => [
+                    'status' => Register::STATUS_CLOSED,
                 ],
             ]);
 
@@ -28,7 +28,7 @@ trait WithCashRegisterTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/cash-registers/open/' . $register->id, [
-                'amount'    =>  100,
+                'amount' => 100,
             ]);
 
         $response->assertStatus(200);
@@ -38,7 +38,7 @@ trait WithCashRegisterTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/cash-registers/' . RegisterHistory::ACTION_CASHING . '/' . $register->id, [
-                'amount'    =>  100,
+                'amount' => 100,
             ]);
 
         $response->assertStatus(200);
@@ -48,7 +48,7 @@ trait WithCashRegisterTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/cash-registers/' . RegisterHistory::ACTION_CASHOUT . '/' . $register->id, [
-                'amount'    =>  100,
+                'amount' => 100,
             ]);
 
         $response->assertStatus(200);
@@ -58,7 +58,7 @@ trait WithCashRegisterTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/cash-registers/' . RegisterHistory::ACTION_CLOSING . '/' . $register->id, [
-                'amount'    =>  100,
+                'amount' => 100,
             ]);
 
         $response->assertStatus(200);
@@ -68,14 +68,14 @@ trait WithCashRegisterTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.registers', [
-                'name'                  =>  __( 'Cash Register' ),
-                'general'               =>  [
-                    'status'            =>  Register::STATUS_CLOSED,
+                'name' => __( 'Cash Register' ),
+                'general' => [
+                    'status' => Register::STATUS_CLOSED,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $register = Register::orderBy( 'id', 'desc' )->first();
@@ -150,14 +150,14 @@ trait WithCashRegisterTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.registers', [
-                'name'                  =>  __( 'Register' ),
-                'general'               =>  [
-                    'status'            =>  Register::STATUS_CLOSED,
+                'name' => __( 'Register' ),
+                'general' => [
+                    'status' => Register::STATUS_CLOSED,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         global $argv;
@@ -171,14 +171,14 @@ trait WithCashRegisterTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'DELETE', 'api/nexopos/v4/crud/ns.registers/' . $argv[ 'entry' ][ 'id' ], [
-                'name'                  =>  __( 'Register' ),
-                'general'               =>  [
-                    'status'            =>  Register::STATUS_CLOSED,
+                'name' => __( 'Register' ),
+                'general' => [
+                    'status' => Register::STATUS_CLOSED,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
     }
 }

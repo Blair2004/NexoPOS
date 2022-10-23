@@ -63,12 +63,12 @@
                                 <h3 class="text-sm text-center w-full">{{ product.name }}</h3>
                                 <template v-if="options.ns_pos_gross_price_used === 'yes'">
                                     <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
-                                        {{ nsCurrency( product.unit_quantities[0].gross_sale_price ) }}
+                                        {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
                                     </span>
                                 </template>
                                 <template v-if="options.ns_pos_gross_price_used === 'no'">
                                     <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
-                                        {{ nsCurrency( product.unit_quantities[0].net_sale_price ) }}
+                                        {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
                                     </span>
                                 </template>
                             </div>
@@ -130,6 +130,15 @@ export default {
                 }
             },
             deep: true            
+        },
+        barcode() {
+            if ( this.options.ns_pos_force_autofocus ) {
+                clearTimeout( this.searchTimeout );
+            
+                this.searchTimeout  =   setTimeout( () => {
+                    this.submitSearch( this.barcode );
+                }, 200 );
+            }
         }
     },
     mounted() {

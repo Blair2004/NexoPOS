@@ -47,10 +47,10 @@ class RegisterHistoryCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false,
-        'read'      =>  true,
-        'update'    =>  false,
-        'delete'    =>  false,
+        'create' => false,
+        'read' => true,
+        'update' => false,
+        'delete' => false,
     ];
 
     /**
@@ -82,7 +82,7 @@ class RegisterHistoryCrud extends CrudService
      */
     public $pick = [
         // 'register'  =>  [ 'name' ],
-        'user'      =>  [ 'username' ],
+        'user' => [ 'username' ],
     ];
 
     /**
@@ -134,15 +134,15 @@ class RegisterHistoryCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Register History List' ),
-            'list_description'      =>  __( 'Display all register histories.' ),
-            'no_entry'              =>  __( 'No register histories has been registered' ),
-            'create_new'            =>  __( 'Add a new register history' ),
-            'create_title'          =>  __( 'Create a new register history' ),
-            'create_description'    =>  __( 'Register a new register history and save it.' ),
-            'edit_title'            =>  __( 'Edit register history' ),
-            'edit_description'      =>  __( 'Modify  Registerhistory.' ),
-            'back_to_list'          =>  __( 'Return to Register History' ),
+            'list_title' => __( 'Register History List' ),
+            'list_description' => __( 'Display all register histories.' ),
+            'no_entry' => __( 'No register histories has been registered' ),
+            'create_new' => __( 'Add a new register history' ),
+            'create_title' => __( 'Create a new register history' ),
+            'create_description' => __( 'Register a new register history and save it.' ),
+            'edit_title' => __( 'Edit register history' ),
+            'edit_description' => __( 'Modify  Registerhistory.' ),
+            'back_to_list' => __( 'Return to Register History' ),
         ];
     }
 
@@ -174,61 +174,61 @@ class RegisterHistoryCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
+            'main' => [
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
+                            'type' => 'text',
+                            'name' => 'id',
+                            'label' => __( 'Id' ),
+                            'value' => $entry->id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'register_id',
-                            'label' =>  __( 'Register Id' ),
-                            'value' =>  $entry->register_id ?? '',
+                            'type' => 'text',
+                            'name' => 'register_id',
+                            'label' => __( 'Register Id' ),
+                            'value' => $entry->register_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'action',
-                            'label' =>  __( 'Action' ),
-                            'value' =>  $entry->action ?? '',
+                            'type' => 'text',
+                            'name' => 'action',
+                            'label' => __( 'Action' ),
+                            'value' => $entry->action ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
+                            'type' => 'text',
+                            'name' => 'author',
+                            'label' => __( 'Author' ),
+                            'value' => $entry->author ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'value',
-                            'label' =>  __( 'Value' ),
-                            'value' =>  $entry->value ?? '',
+                            'type' => 'text',
+                            'name' => 'value',
+                            'label' => __( 'Value' ),
+                            'value' => $entry->value ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
+                            'type' => 'text',
+                            'name' => 'uuid',
+                            'label' => __( 'Uuid' ),
+                            'value' => $entry->uuid ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
+                            'type' => 'text',
+                            'name' => 'created_at',
+                            'label' => __( 'Created_at' ),
+                            'value' => $entry->created_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
+                            'type' => 'text',
+                            'name' => 'updated_at',
+                            'label' => __( 'Updated_at' ),
+                            'value' => $entry->updated_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'text',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'value' => $entry->description ?? '',
                         ],                     ],
                 ],
             ],
@@ -295,7 +295,8 @@ class RegisterHistoryCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -367,40 +368,40 @@ class RegisterHistoryCrud extends CrudService
             //     '$direction'    =>  '',
             //     '$sort'         =>  false
             // ],
-            'action'  =>  [
-                'label'  =>  __( 'Action' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'action' => [
+                'label' => __( 'Action' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'balance_before'  =>  [
-                'label'  =>  __( 'Initial Balance' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'balance_before' => [
+                'label' => __( 'Initial Balance' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'value'  =>  [
-                'label'  =>  __( 'Value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'value' => [
+                'label' => __( 'Value' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'balance_after'  =>  [
-                'label'  =>  __( 'New Balance' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'balance_after' => [
+                'label' => __( 'New Balance' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'transaction_type'  =>  [
-                'label'  =>  __( 'Transaction Type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'transaction_type' => [
+                'label' => __( 'Transaction Type' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Done At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Done At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -413,22 +414,25 @@ class RegisterHistoryCrud extends CrudService
         switch ( $entry->action ) {
             case RegisterHistory::ACTION_SALE:
                 $entry->{ '$cssClass' } = 'success border';
-            break;
+                break;
             case RegisterHistory::ACTION_CASHING:
                 $entry->{ '$cssClass' } = 'success border';
-            break;
+                break;
             case RegisterHistory::ACTION_OPENING:
                 $entry->{ '$cssClass' } = 'info border';
-            break;
+                break;
             case RegisterHistory::ACTION_CASHOUT:
                 $entry->{ '$cssClass' } = 'warning border';
-            break;
+                break;
             case RegisterHistory::ACTION_CASHOUT:
                 $entry->{ '$cssClass' } = 'warning border';
-            break;
+                break;
+            case RegisterHistory::ACTION_CHANGE:
+                $entry->{ '$cssClass' } = 'warning border';
+                break;
             case RegisterHistory::ACTION_CLOSING:
                 $entry->{ '$cssClass' } = 'warning border';
-            break;
+                break;
         }
 
         if ( $entry->action === RegisterHistory::ACTION_CLOSING && (float) $entry->balance_after != 0 ) {
@@ -448,10 +452,14 @@ class RegisterHistoryCrud extends CrudService
     public function getHumanTransactionType( $type )
     {
         switch ( $type ) {
-            case 'unchanged': return __( 'Unchanged' ); break;
-            case 'negative': return __( 'Missing Observed' ); break;
-            case 'positive': return __( 'Surplus Observed' ); break;
-            default: return __( 'N/A' ); break;
+            case 'unchanged': return __( 'Unchanged' );
+            break;
+            case 'negative': return __( 'Missing Observed' );
+            break;
+            case 'positive': return __( 'Surplus Observed' );
+            break;
+            default: return __( 'N/A' );
+            break;
         }
     }
 
@@ -468,7 +476,6 @@ class RegisterHistoryCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */
@@ -479,8 +486,8 @@ class RegisterHistoryCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -507,11 +514,11 @@ class RegisterHistoryCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'registers-history' ),
-            'create'    =>  false,
-            'edit'      =>  false,
-            'post'      =>  false,
-            'put'       =>  false,
+            'list' => ns()->url( 'dashboard/' . 'registers-history' ),
+            'create' => false,
+            'edit' => false,
+            'post' => false,
+            'put' => false,
         ];
     }
 
@@ -524,10 +531,10 @@ class RegisterHistoryCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

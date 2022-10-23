@@ -49,10 +49,10 @@ class TaxCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  true,
-        'read'      =>  true,
-        'update'    =>  true,
-        'delete'    =>  true,
+        'create' => true,
+        'read' => true,
+        'update' => true,
+        'delete' => true,
     ];
 
     public $relations = [
@@ -70,8 +70,8 @@ class TaxCrud extends CrudService
      * ]
      */
     protected $pick = [
-        'user'      =>  [ 'username' ],
-        'parent'    =>  [ 'name' ],
+        'user' => [ 'username' ],
+        'parent' => [ 'name' ],
     ];
 
     /**
@@ -122,15 +122,15 @@ class TaxCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Taxes List' ),
-            'list_description'      =>  __( 'Display all taxes.' ),
-            'no_entry'              =>  __( 'No taxes has been registered' ),
-            'create_new'            =>  __( 'Add a new tax' ),
-            'create_title'          =>  __( 'Create a new tax' ),
-            'create_description'    =>  __( 'Register a new tax and save it.' ),
-            'edit_title'            =>  __( 'Edit tax' ),
-            'edit_description'      =>  __( 'Modify  Tax.' ),
-            'back_to_list'          =>  __( 'Return to Taxes' ),
+            'list_title' => __( 'Taxes List' ),
+            'list_description' => __( 'Display all taxes.' ),
+            'no_entry' => __( 'No taxes has been registered' ),
+            'create_new' => __( 'Add a new tax' ),
+            'create_title' => __( 'Create a new tax' ),
+            'create_description' => __( 'Register a new tax and save it.' ),
+            'edit_title' => __( 'Edit tax' ),
+            'edit_description' => __( 'Modify  Tax.' ),
+            'back_to_list' => __( 'Return to Taxes' ),
         ];
     }
 
@@ -153,38 +153,38 @@ class TaxCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the tax.' ),
-                'validation'    => 'required',
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the tax.' ),
+                'validation' => 'required',
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'      =>  'select',
-                            'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
-                            'name'      =>  'tax_group_id',
-                            'label'     =>  __( 'Parent' ),
-                            'description'   =>  __( 'Assign the tax to a tax group.' ),
-                            'value'     =>  $entry->tax_group_id ?? '',
-                            'validation'    => 'required',
+                            'type' => 'select',
+                            'options' => Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
+                            'name' => 'tax_group_id',
+                            'label' => __( 'Parent' ),
+                            'description' => __( 'Assign the tax to a tax group.' ),
+                            'value' => $entry->tax_group_id ?? '',
+                            'validation' => 'required',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'rate',
-                            'label' =>  __( 'Rate' ),
-                            'description'   =>  __( 'Define the rate value for the tax.' ),
-                            'value' =>  $entry->rate ?? '',
-                            'validation'    => 'required',
+                            'type' => 'text',
+                            'name' => 'rate',
+                            'label' => __( 'Rate' ),
+                            'description' => __( 'Define the rate value for the tax.' ),
+                            'value' => $entry->rate ?? '',
+                            'validation' => 'required',
                         ], [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'description'   =>  __( 'Provide a description to the tax.' ),
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'description' => __( 'Provide a description to the tax.' ),
+                            'label' => __( 'Description' ),
+                            'value' => $entry->description ?? '',
                         ],
                     ],
                 ],
@@ -252,7 +252,8 @@ class TaxCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -319,30 +320,30 @@ class TaxCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'parent_name'  =>  [
-                'label'  =>  __( 'Parent' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'parent_name' => [
+                'label' => __( 'Parent' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'rate'  =>  [
-                'label'         =>  __( 'Rate' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'rate' => [
+                'label' => __( 'Rate' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'         =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'         =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -356,19 +357,19 @@ class TaxCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . 'taxes' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . 'taxes' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.taxes/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -388,7 +389,6 @@ class TaxCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */
@@ -399,8 +399,8 @@ class TaxCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -427,11 +427,11 @@ class TaxCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'taxes' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'taxes/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'taxes/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'taxes' ),
+            'create' => ns()->url( 'dashboard/' . 'taxes/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'taxes/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes/{id}' . '' ),
         ];
     }
 
@@ -444,10 +444,10 @@ class TaxCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

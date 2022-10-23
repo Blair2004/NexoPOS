@@ -2,7 +2,6 @@
  * will bootstrap time
  */
 import './shared/time';
-import './components/components';
 import * as baseComponents from './components/components';
 import { NsHotPress } from './libraries/ns-hotpress';
 import { createApp, defineAsyncComponent } from 'vue';

@@ -91,64 +91,63 @@ class Handler extends ExceptionHandler
         }
 
         if ( env( 'NS_CUSTOM_ERROR_HANDLER', ! env( 'APP_DEBUG' ) ) ) {
-
             /**
              * Let's make a better verfication
              * to avoid repeating outself.
              */
             $exceptions = collect([
-                ModuleVersionMismatchException::class   =>  [
-                    'use'           =>  ModuleVersionMismatchException::class,
-                    'safeMessage'   =>  null,
-                    'code'          =>  503,
+                ModuleVersionMismatchException::class => [
+                    'use' => ModuleVersionMismatchException::class,
+                    'safeMessage' => null,
+                    'code' => 503,
                 ],
 
-                QueryException::class   =>  [
-                    'use'           =>  ExceptionsQueryException::class,
-                    'safeMessage'   =>  __( 'A database error has occurred' ),
-                    'code'          =>  503,
+                QueryException::class => [
+                    'use' => ExceptionsQueryException::class,
+                    'safeMessage' => __( 'A database error has occurred' ),
+                    'code' => 503,
                 ],
 
-                NotFoundAssetsException::class   =>  [
-                    'use'           =>  NotFoundAssetsException::class,
-                    'safeMessage'   =>  __( 'An error occurred while loading the assets.' ),
-                    'code'          =>  503,
+                NotFoundAssetsException::class => [
+                    'use' => NotFoundAssetsException::class,
+                    'safeMessage' => __( 'An error occurred while loading the assets.' ),
+                    'code' => 503,
                 ],
 
-                MethodNotAllowedHttpException::class    =>  [
-                    'use'           =>  ExceptionsMethodNotAllowedHttpException::class,
-                    'safeMessage'   =>  __( 'Invalid method used for the current request.' ),
-                    'code'          =>  405,
+                MethodNotAllowedHttpException::class => [
+                    'use' => ExceptionsMethodNotAllowedHttpException::class,
+                    'safeMessage' => __( 'Invalid method used for the current request.' ),
+                    'code' => 405,
                 ],
 
-                CoreVersionMismatchException::class     =>  [
-                    'use'           =>  CoreVersionMismatchException::class,
-                    'safeMessage'   =>  null,
-                    'code'          =>  503,
+                CoreVersionMismatchException::class => [
+                    'use' => CoreVersionMismatchException::class,
+                    'safeMessage' => null,
+                    'code' => 503,
                 ],
 
-                ModuleVersionMismatchException::class     =>  [
-                    'use'           =>  ModuleVersionMismatchException::class,
-                    'safeMessage'   =>  null,
-                    'code'          =>  503,
+                ModuleVersionMismatchException::class => [
+                    'use' => ModuleVersionMismatchException::class,
+                    'safeMessage' => null,
+                    'code' => 503,
                 ],
 
-                InvalidArgumentException::class         =>  [
-                    'use'           =>  CoreException::class,
-                    'safeMessage'   =>  null,
-                    'code'          =>  503,
+                InvalidArgumentException::class => [
+                    'use' => CoreException::class,
+                    'safeMessage' => null,
+                    'code' => 503,
                 ],
 
-                ErrorException::class         =>  [
-                    'use'           =>  CoreException::class,
-                    'safeMessage'   =>  __( 'An unexpected error occurred while opening the app. See the log details or enable the debugging.' ),
-                    'code'          =>  503,
+                ErrorException::class => [
+                    'use' => CoreException::class,
+                    'safeMessage' => __( 'An unexpected error occurred while opening the app. See the log details or enable the debugging.' ),
+                    'code' => 503,
                 ],
 
-                ArgumentCountError::class         =>  [
-                    'use'           =>  CoreException::class,
-                    'safeMessage'   =>  __( 'An unexpected error occurred while opening the app. See the log details or enable the debugging.' ),
-                    'code'          =>  503,
+                ArgumentCountError::class => [
+                    'use' => CoreException::class,
+                    'safeMessage' => __( 'An unexpected error occurred while opening the app. See the log details or enable the debugging.' ),
+                    'code' => 503,
                 ],
             ]);
 

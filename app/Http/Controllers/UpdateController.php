@@ -28,10 +28,10 @@ class UpdateController extends Controller
 
     public function updateDatabase()
     {
-        return view( 'pages.database.update', [
-            'title'     =>  __( 'Database Update' ),
-            'redirect'  =>  session( 'after_update', ns()->route( 'ns.dashboard.home' ) ),
-            'modules'   =>  collect( $this->moduleService->getEnabled() )->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 )->toArray(),
+        return view( 'pages.database-update', [
+            'title' => __( 'Database Update' ),
+            'redirect' => session( 'after_update', ns()->route( 'ns.dashboard.home' ) ),
+            'modules' => collect( $this->moduleService->getEnabled() )->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 )->toArray(),
         ]);
     }
 
@@ -46,8 +46,8 @@ class UpdateController extends Controller
             );
 
             Artisan::call( 'migrate', [
-                '--path'    => $file,
-                '--force'   => true,
+                '--path' => $file,
+                '--force' => true,
             ]);
         }
 
@@ -59,13 +59,13 @@ class UpdateController extends Controller
             $module = $request->input( 'module' );
             foreach ( $module[ 'migrations' ] as $file ) {
                 $response = $this->moduleService->runMigration( $module[ 'namespace' ], $file );
-                event( new AfterMigrationExecutedEvent( $module, $response, $file ) );
+                AfterMigrationExecutedEvent::dispatch( $module, $response, $file );
             }
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The migration has successfully run.' ),
+            'status' => 'success',
+            'message' => __( 'The migration has successfully run.' ),
         ];
     }
 }

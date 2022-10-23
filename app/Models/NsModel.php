@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Classes\Hook;
+use App\Traits\NsDependable;
 use Illuminate\Notifications\Notifiable;
 
 abstract class NsModel extends NsRootModel
 {
-    use Notifiable;
+    use Notifiable, NsDependable;
 
     /**
      * if defined, the Crud component
@@ -17,11 +18,6 @@ abstract class NsModel extends NsRootModel
     protected $isDependencyFor = [
         // ...
     ];
-
-    public function getDeclaredDependencies()
-    {
-        return $this->isDependencyFor;
-    }
 
     public function __construct( $attributes = [] )
     {

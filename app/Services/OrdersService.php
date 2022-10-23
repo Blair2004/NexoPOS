@@ -122,7 +122,7 @@ class OrdersService
          * check delivery informations before
          * proceeding
          */
-        $this->__checkAddressesInformations( $fields );
+        $fields = $this->__checkAddressesInformations( $fields );
 
         /**
          * Check if instalments are provided and if they are all
@@ -203,13 +203,13 @@ class OrdersService
          * new order has been placed
          */
         $isNew ?
-            OrderAfterCreatedEvent::dispatch( $order, $fields ) :
-            OrderAfterUpdatedEvent::dispatch( $order, $fields );
+            event( new OrderAfterCreatedEvent( $order, $fields ) ) :
+            event( new OrderAfterUpdatedEvent( $order, $fields ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The order has been placed.' ),
-            'data'      =>  compact( 'order' ),
+            'status' => 'success',
+            'message' => __( 'The order has been placed.' ),
+            'data' => compact( 'order' ),
         ];
     }
 
@@ -280,7 +280,6 @@ class OrdersService
             ! in_array( $fields[ 'payment_status' ] ?? null, [ Order::PAYMENT_HOLD ] )
         ) {
             $instalments = collect( $fields[ 'instalments' ] );
-            $total = Currency::define( $instalments->sum( 'amount' ) )->getRaw();
             $customer = Customer::find( $fields[ 'customer_id' ] );
 
             if ( (float) $customer->group->minimal_credit_payment > 0 ) {
@@ -302,22 +301,6 @@ class OrdersService
                     );
                 }
             }
-
-            $instalments->each( function( $instalment ) {
-                if ( ns()->date->copy()->startOfDay()->greaterThan( Carbon::parse( $instalment[ 'date' ] ) ) ) {
-                    throw new NotAllowedException(
-                        sprintf( __( 'An instalment has an invalid date of %s, which shouldn\'t be prior the current day.' ), $instalment[ 'date' ] )
-                    );
-                }
-            });
-
-            $paidToday = $instalments->map( function( $instalment ) {
-                if ( ns()->date->copy()->isSameDay( Carbon::parse( $instalment[ 'date' ] ) ) ) {
-                    return (float) $instalment[ 'amount' ];
-                }
-
-                return 0;
-            });
         }
     }
 
@@ -474,17 +457,17 @@ class OrdersService
         switch ( ns()->option->get( 'ns_pos_vat' ) ) {
             case 'products_vat':
                 $order->products_tax_value = $this->getOrderProductsTaxes( $order );
-            break;
+                break;
             case 'flat_vat':
             case 'variable_vat':
                 $order->tax_value = Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
                 $order->products_tax_value = 0;
-            break;
+                break;
             case 'products_variable_vat':
             case 'products_flat_vat':
                 $order->tax_value = Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
                 $order->products_tax_value = $this->getOrderProductsTaxes( $order );
-            break;
+                break;
         }
 
         $order->total_tax_value = $order->tax_value + $order->products_tax_value;
@@ -513,7 +496,7 @@ class OrdersService
              * adjustment accordingly. In that case we'll use adjustment-return & sale.
              */
             if ( $order->payment_status !== Order::PAYMENT_HOLD ) {
-                $adjustments = $order->products->map( function( OrderProduct $product ) use ( $products ) {
+                $order->products->map( function( OrderProduct $product ) use ( $products ) {
                     $products = collect( $products )
                             ->mapWithKeys( fn( $product ) => [ $product[ 'id' ] => $product ] )
                             ->toArray();
@@ -521,19 +504,19 @@ class OrdersService
                     if ( in_array( $product->id, array_keys( $products ) ) ) {
                         if ( $product->quantity < $products[ $product->id ][ 'quantity' ] ) {
                             return [
-                                'operation'     =>      'add',
-                                'unit_price'    =>      $products[ $product->id ][ 'unit_price' ],
-                                'total_price'   =>      $products[ $product->id ][ 'total_price' ],
-                                'quantity'      =>      $products[ $product->id ][ 'quantity' ] - $product->quantity,
-                                'orderProduct'  =>      $product,
+                                'operation' => 'add',
+                                'unit_price' => $products[ $product->id ][ 'unit_price' ],
+                                'total_price' => $products[ $product->id ][ 'total_price' ],
+                                'quantity' => $products[ $product->id ][ 'quantity' ] - $product->quantity,
+                                'orderProduct' => $product,
                             ];
                         } elseif ( $product->quantity > $products[ $product->id ][ 'quantity' ] ) {
                             return [
-                                'operation'     =>      'remove',
-                                'unit_price'    =>      $products[ $product->id ][ 'unit_price' ],
-                                'total_price'   =>      $products[ $product->id ][ 'total_price' ],
-                                'quantity'      =>      $product->quantity - $products[ $product->id ][ 'quantity' ],
-                                'orderProduct'  =>      $product,
+                                'operation' => 'remove',
+                                'unit_price' => $products[ $product->id ][ 'unit_price' ],
+                                'total_price' => $products[ $product->id ][ 'total_price' ],
+                                'quantity' => $product->quantity - $products[ $product->id ][ 'quantity' ],
+                                'orderProduct' => $product,
                             ];
                         }
                     }
@@ -544,44 +527,44 @@ class OrdersService
                      */
                     return false;
                 })
-                    ->filter( fn( $adjustment ) => $adjustment !== false )
-                    ->each( function( $adjustment ) use ( $order ) {
-                        if ( $adjustment[ 'operation' ] === 'remove' ) {
-                            $adjustment[ 'orderProduct' ]->quantity -= $adjustment[ 'quantity' ];
+                ->filter( fn( $adjustment ) => $adjustment !== false )
+                ->each( function( $adjustment ) use ( $order ) {
+                    if ( $adjustment[ 'operation' ] === 'remove' ) {
+                        $adjustment[ 'orderProduct' ]->quantity -= $adjustment[ 'quantity' ];
 
-                            $this->productService->stockAdjustment(
-                                ProductHistory::ACTION_ADJUSTMENT_RETURN, [
-                                    'unit_id'       =>  $adjustment[ 'orderProduct' ]->unit_id,
-                                    'unit_price'    =>  $adjustment[ 'orderProduct' ]->unit_price,
-                                    'product_id'    =>  $adjustment[ 'orderProduct' ]->product_id,
-                                    'quantity'      =>  $adjustment[ 'quantity' ],
-                                    'orderProduct'  =>  $adjustment[ 'orderProduct' ],
-                                    'order_id'      =>  $order->id,
-                                ]
-                            );
-                        } else {
-                            $adjustment[ 'orderProduct' ]->quantity += $adjustment[ 'quantity' ];
+                        $this->productService->stockAdjustment(
+                            ProductHistory::ACTION_ADJUSTMENT_RETURN, [
+                                'unit_id' => $adjustment[ 'orderProduct' ]->unit_id,
+                                'unit_price' => $adjustment[ 'orderProduct' ]->unit_price,
+                                'product_id' => $adjustment[ 'orderProduct' ]->product_id,
+                                'quantity' => $adjustment[ 'quantity' ],
+                                'orderProduct' => $adjustment[ 'orderProduct' ],
+                                'order_id' => $order->id,
+                            ]
+                        );
+                    } else {
+                        $adjustment[ 'orderProduct' ]->quantity += $adjustment[ 'quantity' ];
 
-                            $this->productService->stockAdjustment(
-                                ProductHistory::ACTION_ADJUSTMENT_SALE, [
-                                    'unit_id'       =>  $adjustment[ 'orderProduct' ]->unit_id,
-                                    'unit_price'    =>  $adjustment[ 'orderProduct' ]->unit_price,
-                                    'product_id'    =>  $adjustment[ 'orderProduct' ]->product_id,
-                                    'orderProduct'  =>  $adjustment[ 'orderProduct' ],
-                                    'quantity'      =>  $adjustment[ 'quantity' ],
-                                    'order_id'      =>  $order->id,
-                                ]
-                            );
-                        }
+                        $this->productService->stockAdjustment(
+                            ProductHistory::ACTION_ADJUSTMENT_SALE, [
+                                'unit_id' => $adjustment[ 'orderProduct' ]->unit_id,
+                                'unit_price' => $adjustment[ 'orderProduct' ]->unit_price,
+                                'product_id' => $adjustment[ 'orderProduct' ]->product_id,
+                                'orderProduct' => $adjustment[ 'orderProduct' ],
+                                'quantity' => $adjustment[ 'quantity' ],
+                                'order_id' => $order->id,
+                            ]
+                        );
+                    }
 
-                        /**
-                         * for the product that was already tracked
-                         * we'll just update the price and quantity
-                         */
-                        $adjustment[ 'orderProduct' ]->unit_price = $adjustment[ 'unit_price' ];
-                        $adjustment[ 'orderProduct' ]->total_price = $adjustment[ 'total_price' ];
-                        $adjustment[ 'orderProduct' ]->save();
-                    });
+                    /**
+                     * for the product that was already tracked
+                     * we'll just update the price and quantity
+                     */
+                    $adjustment[ 'orderProduct' ]->unit_price = $adjustment[ 'unit_price' ];
+                    $adjustment[ 'orderProduct' ]->total_price = $adjustment[ 'total_price' ];
+                    $adjustment[ 'orderProduct' ]->save();
+                });
             }
 
             /**
@@ -590,7 +573,6 @@ class OrdersService
              * already affected the stock, we should make some adjustments.
              */
             $order->products->each( function( $orderProduct ) use ( $ids, $order ) {
-
                 /**
                  * if a product has the unit id changed
                  * the product he considered as new and the old is returned
@@ -608,12 +590,12 @@ class OrdersService
                     if ( $order->payment_status !== Order::PAYMENT_HOLD ) {
                         $this->productService->stockAdjustment(
                             ProductHistory::ACTION_ADJUSTMENT_RETURN, [
-                                'unit_id'       =>  $orderProduct->unit_id,
-                                'unit_price'    =>  $orderProduct->unit_price,
-                                'orderProduct'  =>  $orderProduct,
-                                'product_id'    =>  $orderProduct->product_id,
-                                'quantity'      =>  $orderProduct->quantity,
-                                'order_id'      =>  $order->id,
+                                'unit_id' => $orderProduct->unit_id,
+                                'unit_price' => $orderProduct->unit_price,
+                                'orderProduct' => $orderProduct,
+                                'product_id' => $orderProduct->product_id,
+                                'quantity' => $orderProduct->quantity,
+                                'order_id' => $order->id,
                             ]
                         );
                     }
@@ -666,7 +648,7 @@ class OrdersService
      * and throw an error if a fields is not supported
      *
      * @param array fields
-     * @return void
+     * @return array $fields
      */
     private function __checkAddressesInformations($fields)
     {
@@ -690,14 +672,18 @@ class OrdersService
          */
         if ( ! empty( $fields[ 'addresses' ] ) ) {
             foreach (['shipping', 'billing'] as $type) {
-                $keys = array_keys($fields['addresses'][$type]);
-                foreach ($keys as $key) {
-                    if (! in_array($key, $allowedKeys)) {
-                        unset( $fields[ 'addresses' ][ $type ][ $key ] );
+                if ( isset( $fields['addresses'][$type] ) ) {
+                    $keys = array_keys($fields['addresses'][$type]);
+                    foreach ($keys as $key) {
+                        if (! in_array($key, $allowedKeys)) {
+                            unset( $fields[ 'addresses' ][ $type ][ $key ] );
+                        }
                     }
                 }
             }
         }
+
+        return $fields;
     }
 
     /**
@@ -710,7 +696,6 @@ class OrdersService
     private function __saveAddressInformations($order, $fields)
     {
         foreach (['shipping', 'billing'] as $type) {
-
             /**
              * if the id attribute is already provided
              * we should attempt to find the related addresses
@@ -764,7 +749,10 @@ class OrdersService
      */
     public function makeOrderSinglePayment( $payment, Order $order )
     {
-        if ( $order->instalments->count() > 0 ) {
+        /**
+         * We should check if the order allow instalments.
+         */
+        if ( $order->instalments->count() > 0 && $order->support_instalments ) {
             $paymentToday = $order->instalments()
                 ->where( 'paid', false )
                 ->where( 'date', '>=', ns()->date->copy()->startOfDay()->toDateTimeString() )
@@ -787,9 +775,9 @@ class OrdersService
         $this->refreshOrder( $order );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The payment has been saved.' ),
-            'data'      =>  compact( 'payment' ),
+            'status' => 'success',
+            'message' => __( 'The payment has been saved.' ),
+            'data' => compact( 'payment' ),
         ];
     }
 
@@ -821,7 +809,7 @@ class OrdersService
                 CustomerAccountHistory::OPERATION_PAYMENT,
                 $payment[ 'value' ],
                 __( 'Order Payment' ), [
-                    'order_id'  =>  $order->id,
+                    'order_id' => $order->id,
                 ]
             );
         }
@@ -832,7 +820,7 @@ class OrdersService
         $orderPayment->author = $order->author ?? Auth::id();
         $orderPayment->save();
 
-        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
+        OrderAfterPaymentCreatedEvent::dispatch( $orderPayment, $order );
 
         return $orderPayment;
     }
@@ -888,25 +876,22 @@ class OrdersService
         })->sum() );
 
         $total = $this->currencyService->define(
-                $subtotal + $this->__getShippingFee($fields)
-            )
+            $subtotal + $this->__getShippingFee($fields)
+        )
             ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->getRaw();
 
-        $allowedPaymentsGateways = Cache::remember( 'nexopos.pos.payments', 3600, function() {
-            return PaymentType::active()
-                ->get()
-                ->map( fn( $paymentType ) => $paymentType->identifier )
-                ->toArray();
-        });
+        $allowedPaymentsGateways = PaymentType::active()
+            ->get()
+            ->map( fn( $paymentType ) => $paymentType->identifier )
+            ->toArray();
 
         if ( ! empty( $fields[ 'payments' ] ) ) {
             foreach ( $fields[ 'payments' ] as $payment) {
                 if (in_array($payment['identifier'], $allowedPaymentsGateways ) ) {
-
                     /**
-                     * check if the customer account are enough for the account-payment
+                     * check if the customer account balance is enough for the account-payment
                      * when that payment is provided
                      */
                     if ( $payment[ 'identifier' ] === 'account-payment' && $customer->account_amount < floatval( $payment[ 'value' ] ) ) {
@@ -949,9 +934,9 @@ class OrdersService
                 && $fields[ 'payment_status' ] !== Order::PAYMENT_HOLD
                 && (float) $customer->credit_limit_amount < (float) $customer->owed_amount + (float) $total ) {
                 throw new NotAllowedException( sprintf(
-                        __( 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: %s.' ),
-                        (string) ns()->currency->fresh( $customer->credit_limit_amount )
-                    ) );
+                    __( 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: %s.' ),
+                    (string) ns()->currency->fresh( $customer->credit_limit_amount )
+                ) );
             }
         }
 
@@ -974,10 +959,10 @@ class OrdersService
         }
 
         return [
-            'payments'          =>  $fields['payments'] ?? [],
-            'total'             =>  $total,
-            'totalPayments'     =>  $totalPayments,
-            'paymentStatus'     =>  $paymentStatus,
+            'payments' => $fields['payments'] ?? [],
+            'total' => $total,
+            'totalPayments' => $totalPayments,
+            'paymentStatus' => $paymentStatus,
         ];
     }
 
@@ -1014,7 +999,7 @@ class OrdersService
             )
             ->getRaw();
 
-        $order->gross_total = $order->total;
+        $order->total_with_tax = $order->total;
 
         /**
          * compute change
@@ -1024,9 +1009,9 @@ class OrdersService
             ->getRaw();
 
         /**
-         * compute gross total
+         * Compute total witht tax.
          */
-        $order->net_total = Currency::fresh( $order->subtotal )
+        $order->total_without_tax = Currency::fresh( $order->subtotal )
             ->subtractBy( $order->discount )
             ->subtractBy( $order->total_coupons )
             ->subtractBy( $order->tax_value )
@@ -1047,7 +1032,6 @@ class OrdersService
         $gross = 0;
 
         $orderProducts = $products->map(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
-
             /**
              * if the product id is provided
              * then we can use that id as a reference.
@@ -1098,7 +1082,9 @@ class OrdersService
             $orderProduct->discount_type = $product[ 'discount_type' ] ?? 'none';
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
-            $orderProduct->total_purchase_price = $this->currencyService->define( $product[ 'total_purchase_price' ] ?? 0 )
+            $orderProduct->total_purchase_price = $this->currencyService->define(
+                $product[ 'total_purchase_price' ] ?? $this->productService->getLastPurchasePrice( $product[ 'product' ] )
+            )
                 ->getRaw();
 
             $this->computeOrderProduct( $orderProduct );
@@ -1118,13 +1104,13 @@ class OrdersService
                  * history as a sale
                  */
                 $history = [
-                    'order_id'          =>  $order->id,
-                    'unit_id'           =>  $product[ 'unit_id' ],
-                    'product_id'        =>  $product[ 'product' ]->id,
-                    'quantity'          =>  $product[ 'quantity' ],
-                    'unit_price'        =>  $orderProduct->unit_price,
-                    'orderProduct'      =>  $orderProduct,
-                    'total_price'       =>  $orderProduct->total_price,
+                    'order_id' => $order->id,
+                    'unit_id' => $product[ 'unit_id' ],
+                    'product_id' => $product[ 'product' ]->id,
+                    'quantity' => $product[ 'quantity' ],
+                    'unit_price' => $orderProduct->unit_price,
+                    'orderProduct' => $orderProduct,
+                    'total_price' => $orderProduct->total_price,
                 ];
 
                 $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
@@ -1143,7 +1129,6 @@ class OrdersService
     private function __buildOrderProducts( $products )
     {
         return collect( $products )->map( function( $orderProduct ) {
-
             /**
              * by default, we'll assume a quick
              * product is being created.
@@ -1190,7 +1175,6 @@ class OrdersService
          */
         $items = $items->map( function ( array $orderProduct ) use ( $session_identifier ) {
             if ( $orderProduct[ 'product' ] instanceof Product ) {
-
                 /**
                  * Checking inventory for the grouped products,
                  * by loading all the subitems and multiplying the quantity
@@ -1201,7 +1185,6 @@ class OrdersService
                     $orderProduct[ 'product' ]
                         ->sub_items
                         ->each( function( ProductSubItem $subitem ) use ( $session_identifier, $orderProduct ) {
-
                             /**
                              * Stock management should be enabled
                              * for the sub item.
@@ -1227,22 +1210,22 @@ class OrdersService
                                  * from the actual product inventory.
                                  */
                                 $quantity = $this->productService->computeSubItemQuantity(
-                                baseUnit: $baseUnit,
-                                currentUnit: $currentUnit,
-                                orderProductQuantity: $orderProduct[ 'quantity' ],
-                                subItemQuantity: (float) $subitem->quantity
-                            );
+                                    baseUnit: $baseUnit,
+                                    currentUnit: $currentUnit,
+                                    orderProductQuantity: $orderProduct[ 'quantity' ],
+                                    subItemQuantity: (float) $subitem->quantity
+                                );
 
                                 $newFakeOrderProduct = new OrderProduct;
                                 $newFakeOrderProduct->quantity = $quantity;
                                 $newFakeOrderProduct->unit_quantity_id = $subitem->unit_quantity_id;
 
                                 $this->checkQuantityAvailability(
-                                product: $subitem->product,
-                                productUnitQuantity: $subitem->unit_quantity,
-                                orderProduct: $newFakeOrderProduct->toArray(),
-                                session_identifier: $session_identifier
-                            );
+                                    product: $subitem->product,
+                                    productUnitQuantity: $subitem->unit_quantity,
+                                    orderProduct: $newFakeOrderProduct->toArray(),
+                                    session_identifier: $session_identifier
+                                );
                             }
                         });
                 } else {
@@ -1292,7 +1275,6 @@ class OrdersService
     public function checkQuantityAvailability( $product, $productUnitQuantity, $orderProduct, $session_identifier )
     {
         if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
-
             /**
              * What we're doing here
              * 1 - Get the unit assigned to the product being sold
@@ -1403,8 +1385,8 @@ class OrdersService
             $count = 1;
             DB::table('nexopos_orders_count')
                 ->insert([
-                    'date'      =>  $today,
-                    'count'     =>  $count,
+                    'date' => $today,
+                    'count' => $count,
                 ]);
         }
 
@@ -1468,6 +1450,7 @@ class OrdersService
         $order->payment_status = $paymentStatus;
         $order->delivery_status = 'pending';
         $order->process_status = 'pending';
+        $order->support_instalments = $fields[ 'support_instalments' ] ?? true; // by default instalments are supported
         $order->author = $fields[ 'author' ] ?? Auth::id(); // the author can now be changed
         $order->title = $fields[ 'title' ] ?? null;
         $order->tax_value = $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 );
@@ -1739,17 +1722,17 @@ class OrdersService
                 CustomerAccountHistory::OPERATION_REFUND,
                 $fields[ 'total' ],
                 __( 'The current credit has been issued from a refund.' ), [
-                    'order_id'  =>  $order->id,
+                    'order_id' => $order->id,
                 ]
             );
         }
 
-        event( new OrderAfterRefundedEvent( $order, $orderRefund ) );
+        OrderAfterRefundedEvent::dispatch( $order, $orderRefund );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The order has been successfully refunded.' ),
-            'data'      =>  compact( 'results', 'order', 'orderRefund' ),
+            'status' => 'success',
+            'message' => __( 'The order has been successfully refunded.' ),
+            'data' => compact( 'results', 'order', 'orderRefund' ),
         ];
     }
 
@@ -1826,13 +1809,13 @@ class OrdersService
              * we do proceed by doing an initial return
              */
             $this->productService->stockAdjustment( ProductHistory::ACTION_RETURNED, [
-                'total_price'       =>  $productRefund->total_price,
-                'quantity'          =>  $productRefund->quantity,
-                'unit_price'        =>  $productRefund->unit_price,
-                'product_id'        =>  $productRefund->product_id,
-                'orderProduct'      =>  $orderProduct,
-                'unit_id'           =>  $productRefund->unit_id,
-                'order_id'          =>  $order->id,
+                'total_price' => $productRefund->total_price,
+                'quantity' => $productRefund->quantity,
+                'unit_price' => $productRefund->unit_price,
+                'product_id' => $productRefund->product_id,
+                'orderProduct' => $orderProduct,
+                'unit_id' => $productRefund->unit_id,
+                'order_id' => $order->id,
             ]);
 
             /**
@@ -1841,21 +1824,21 @@ class OrdersService
              */
             if ( $details[ 'condition' ] === OrderProductRefund::CONDITION_DAMAGED ) {
                 $this->productService->stockAdjustment( ProductHistory::ACTION_DEFECTIVE, [
-                    'total_price'       =>  $productRefund->total_price,
-                    'quantity'          =>  $productRefund->quantity,
-                    'unit_price'        =>  $productRefund->unit_price,
-                    'product_id'        =>  $productRefund->product_id,
-                    'orderProduct'      =>  $orderProduct,
-                    'unit_id'           =>  $productRefund->unit_id,
-                    'order_id'          =>  $order->id,
+                    'total_price' => $productRefund->total_price,
+                    'quantity' => $productRefund->quantity,
+                    'unit_price' => $productRefund->unit_price,
+                    'product_id' => $productRefund->product_id,
+                    'orderProduct' => $orderProduct,
+                    'unit_id' => $productRefund->unit_id,
+                    'order_id' => $order->id,
                 ]);
             }
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __('The product %s has been successfully refunded.'),
-            'data'      =>  compact( 'productRefund', 'orderProduct' ),
+            'status' => 'success',
+            'message' => __('The product %s has been successfully refunded.'),
+            'data' => compact( 'productRefund', 'orderProduct' ),
         ];
     }
 
@@ -1868,7 +1851,7 @@ class OrdersService
      */
     public function computeOrderProduct( OrderProduct $orderProduct )
     {
-        $orderProduct = $this->taxService->computeNetAndGrossPrice( $orderProduct );
+        $orderProduct = $this->taxService->computeOrderProductTaxes( $orderProduct );
 
         OrderProductAfterComputedEvent::dispatch(
             $orderProduct,
@@ -1886,7 +1869,7 @@ class OrdersService
     public function computeDiscountValues( $rate, $value )
     {
         if ( $rate > 0 ) {
-            return Currency::fresh( ( $value * $rate ) / 100 )->getFullRaw();
+            return Currency::fresh( ( $value * $rate ) / 100 )->getRaw();
         }
 
         return 0;
@@ -1945,7 +1928,7 @@ class OrdersService
                 ->with( 'coupons' )
                 ->with( 'products.unit' )
                 ->with( 'products.product.unit_quantities' )
-                ->with( 'customer' )
+                ->with( 'customer.billing', 'customer.shipping' )
                 ->first();
 
             if ( ! $order instanceof Order ) {
@@ -2013,9 +1996,9 @@ class OrdersService
         $this->refreshOrder($order);
 
         return [
-            'status'    =>  'success',
-            'data'      =>  compact( 'orderProducts', 'order' ),
-            'message'   =>  sprintf(
+            'status' => 'success',
+            'data' => compact( 'orderProducts', 'order' ),
+            'message' => sprintf(
                 __('The product has been added to the order "%s"'),
                 $order->code
             ),
@@ -2047,14 +2030,14 @@ class OrdersService
             return floatval( $product->quantity );
         })->sum();
 
-        $productGrossTotal = $products
+        $productPriceWithoutTax = $products
             ->map(function ($product) {
-                return floatval($product->total_gross_price);
+                return floatval($product->total_price_without_tax);
             })->sum();
 
-        $productsNetTotal = $products
+        $productPriceWithTax = $products
             ->map(function ($product) {
-                return floatval($product->total_net_price);
+                return floatval($product->total_price_with_tax);
             })->sum();
 
         $this->computeOrderTaxes( $order );
@@ -2067,8 +2050,8 @@ class OrdersService
          * let's refresh all the order values
          */
         $order->subtotal = Currency::raw( $productTotal );
-        $order->gross_total = $productGrossTotal;
-        $order->net_total = $productsNetTotal;
+        $order->total_without_tax = $productPriceWithoutTax;
+        $order->total_with_tax = $productPriceWithTax;
         $order->discount = $this->computeOrderDiscount( $order );
         $order->total = Currency::fresh( $order->subtotal )
             ->additionateBy( $orderShipping )
@@ -2109,12 +2092,14 @@ class OrdersService
 
         $order->save();
 
-        OrderAfterPaymentStatusChangedEvent::dispatch( $order, $previousPaymentStatus, $order->payment_status );
+        if ( $previousPaymentStatus !== $order->payment_status ) {
+            OrderAfterPaymentStatusChangedEvent::dispatch( $order, $previousPaymentStatus, $order->payment_status );
+        }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __('the order has been succesfully computed.'),
-            'data'      =>  compact('order'),
+            'status' => 'success',
+            'message' => __('the order has been succesfully computed.'),
+            'data' => compact('order'),
         ];
     }
 
@@ -2127,34 +2112,43 @@ class OrdersService
      */
     public function deleteOrder(Order $order)
     {
-        event( new OrderBeforeDeleteEvent( $order ) );
+        $cachedOrder = (object) $order->load([
+            'user',
+            'products',
+            'payments',
+            'customer',
+            'taxes',
+            'coupons',
+            'instalments',
+        ])->toArray();
+
+        event( new OrderBeforeDeleteEvent( $cachedOrder ) );
 
         $order
             ->products()
             ->get()
-            ->each( function( OrderProduct $product) {
-
+            ->each( function( OrderProduct $orderProduct) {
+                $product    =   $orderProduct->load( 'product' );
                 /**
                  * we do proceed by doing an initial return
                  * only if the product is not a quick product/service
+                 * we'll also check if the linked product still exists.
                  */
-                if ( $product->product_id > 0 ) {
+                if ( $orderProduct->product_id > 0 && $product instanceof Product ) {
                     $this->productService->stockAdjustment( ProductHistory::ACTION_RETURNED, [
-                        'total_price'       =>  $product->total_price,
-                        'product_id'        =>  $product->product_id,
-                        'unit_id'           =>  $product->unit_id,
-                        'orderProduct'      =>  $product,
-                        'quantity'          =>  $product->quantity,
-                        'unit_price'        =>  $product->unit_price,
+                        'total_price' => $orderProduct->total_price,
+                        'product_id' => $orderProduct->product_id,
+                        'unit_id' => $orderProduct->unit_id,
+                        'orderProduct' => $orderProduct,
+                        'quantity' => $orderProduct->quantity,
+                        'unit_price' => $orderProduct->unit_price,
                     ]);
                 }
 
-                $product->delete();
+                $orderProduct->delete();
             });
 
-        $order->payments->each( function( $payment ) {
-            $payment->delete();
-        });
+        OrderPayment::where( 'order_id', $order->id )->delete();
 
         /**
          * delete cash flow entries
@@ -2168,8 +2162,8 @@ class OrdersService
         event( new OrderAfterDeletedEvent( (object) $orderArray ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __('The order has been deleted.' ),
+            'status' => 'success',
+            'message' => __('The order has been deleted.' ),
         ];
     }
 
@@ -2187,7 +2181,7 @@ class OrdersService
 
         $order->products->map(function ($product) use ( $product_id, &$hasDeleted, $order ) {
             if ($product->id === intval($product_id)) {
-                event( new OrderBeforeDeleteProductEvent( $order, $product));
+                event( new OrderBeforeDeleteProductEvent( $order, $product ) );
 
                 $product->delete();
                 $hasDeleted = true;
@@ -2198,8 +2192,8 @@ class OrdersService
             $this->refreshOrder($order);
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __('The product has been successfully deleted from the order.'),
+                'status' => 'success',
+                'message' => __('The product has been successfully deleted from the order.'),
             ];
         }
 
@@ -2310,10 +2304,30 @@ class OrdersService
      */
     public function getTypeLabels()
     {
-        return Hook::filter( 'ns-order-types', [
-            'delivery'          =>  __( 'Delivery' ),
-            'takeaway'          =>  __( 'Take Away' ),
-            'not-available'     =>  __( 'Not Available' ),
+        $types = Hook::filter( 'ns-order-types-labels', collect( $this->getTypeOptions() )->mapWithKeys( function( $option ) {
+            return [
+                $option[ 'identifier' ] => $option[ 'label' ],
+            ];
+        })->toArray() );
+
+        return $types;
+    }
+
+    public function getTypeOptions()
+    {
+        return Hook::filter( 'ns-orders-types', [
+            'takeaway' => [
+                'identifier' => 'takeaway',
+                'label' => __( 'Take Away' ),
+                'icon' => '/images/groceries.png',
+                'selected' => false,
+            ],
+            'delivery' => [
+                'identifier' => 'delivery',
+                'label' => __( 'Delivery' ),
+                'icon' => '/images/delivery.png',
+                'selected' => false,
+            ],
         ]);
     }
 
@@ -2325,10 +2339,10 @@ class OrdersService
     public function getProcessStatuses()
     {
         return [
-            'pending'       =>  __( 'Pending' ),
-            'ongoing'       =>  __( 'Ongoing' ),
-            'ready'         =>  __( 'Ready' ),
-            'not-available' =>  __( 'Not Available' ),
+            'pending' => __( 'Pending' ),
+            'ongoing' => __( 'Ongoing' ),
+            'ready' => __( 'Ready' ),
+            'not-available' => __( 'Not Available' ),
         ];
     }
 
@@ -2354,11 +2368,11 @@ class OrdersService
     public function getDeliveryStatuses()
     {
         return [
-            'pending'       =>  __( 'Pending' ),
-            'ongoing'       =>  __( 'Ongoing' ),
-            'delivered'     =>  __( 'Delivered' ),
-            'failed'        =>  __( 'Failed' ),
-            'not-available' =>  __( 'Not Available' ),
+            'pending' => __( 'Pending' ),
+            'ongoing' => __( 'Ongoing' ),
+            'delivered' => __( 'Delivered' ),
+            'failed' => __( 'Failed' ),
+            'not-available' => __( 'Not Available' ),
         ];
     }
 
@@ -2372,43 +2386,43 @@ class OrdersService
      */
     public function orderTemplateMapping( $option, Order $order )
     {
-        $template = ns()->option->get( $option );
+        $template = ns()->option->get( $option, '' );
         $availableTags = [
-            'store_name'                =>  ns()->option->get( 'ns_store_name' ),
-            'store_email'               =>  ns()->option->get( 'ns_store_email' ),
-            'store_phone'               =>  ns()->option->get( 'ns_store_phone' ),
-            'cashier_name'              =>  $order->user->username,
-            'cashier_id'                =>  $order->author,
-            'order_code'                =>  $order->code,
-            'order_date'                =>  ns()->date->getFormatted( $order->created_at ),
-            'customer_name'             =>  $order->customer->name,
-            'customer_email'            =>  $order->customer->email,
-            'shipping_' . 'name'        =>  $order->shipping_address->name,
-            'shipping_' . 'surname'     =>  $order->shipping_address->surname,
-            'shipping_' . 'phone'       =>  $order->shipping_address->phone,
-            'shipping_' . 'address_1'   =>  $order->shipping_address->address_1,
-            'shipping_' . 'address_2'   =>  $order->shipping_address->address_2,
-            'shipping_' . 'country'     =>  $order->shipping_address->country,
-            'shipping_' . 'city'        =>  $order->shipping_address->city,
-            'shipping_' . 'pobox'       =>  $order->shipping_address->pobox,
-            'shipping_' . 'company'     =>  $order->shipping_address->company,
-            'shipping_' . 'email'       =>  $order->shipping_address->email,
-            'billing_' . 'name'         =>  $order->billing_address->name,
-            'billing_' . 'surname'      =>  $order->billing_address->surname,
-            'billing_' . 'phone'        =>  $order->billing_address->phone,
-            'billing_' . 'address_1'    =>  $order->billing_address->address_1,
-            'billing_' . 'address_2'    =>  $order->billing_address->address_2,
-            'billing_' . 'country'      =>  $order->billing_address->country,
-            'billing_' . 'city'         =>  $order->billing_address->city,
-            'billing_' . 'pobox'        =>  $order->billing_address->pobox,
-            'billing_' . 'company'      =>  $order->billing_address->company,
-            'billing_' . 'email'        =>  $order->billing_address->email,
+            'store_name' => ns()->option->get( 'ns_store_name' ),
+            'store_email' => ns()->option->get( 'ns_store_email' ),
+            'store_phone' => ns()->option->get( 'ns_store_phone' ),
+            'cashier_name' => $order->user->username,
+            'cashier_id' => $order->author,
+            'order_code' => $order->code,
+            'order_date' => ns()->date->getFormatted( $order->created_at ),
+            'customer_name' => $order->customer->name,
+            'customer_email' => $order->customer->email,
+            'shipping_' . 'name' => $order->shipping_address->name,
+            'shipping_' . 'surname' => $order->shipping_address->surname,
+            'shipping_' . 'phone' => $order->shipping_address->phone,
+            'shipping_' . 'address_1' => $order->shipping_address->address_1,
+            'shipping_' . 'address_2' => $order->shipping_address->address_2,
+            'shipping_' . 'country' => $order->shipping_address->country,
+            'shipping_' . 'city' => $order->shipping_address->city,
+            'shipping_' . 'pobox' => $order->shipping_address->pobox,
+            'shipping_' . 'company' => $order->shipping_address->company,
+            'shipping_' . 'email' => $order->shipping_address->email,
+            'billing_' . 'name' => $order->billing_address->name,
+            'billing_' . 'surname' => $order->billing_address->surname,
+            'billing_' . 'phone' => $order->billing_address->phone,
+            'billing_' . 'address_1' => $order->billing_address->address_1,
+            'billing_' . 'address_2' => $order->billing_address->address_2,
+            'billing_' . 'country' => $order->billing_address->country,
+            'billing_' . 'city' => $order->billing_address->city,
+            'billing_' . 'pobox' => $order->billing_address->pobox,
+            'billing_' . 'company' => $order->billing_address->company,
+            'billing_' . 'email' => $order->billing_address->email,
         ];
 
         $availableTags = Hook::filter( 'ns-orders-template-mapping', $availableTags, $order );
 
         foreach ( $availableTags as $tag => $value ) {
-            $template = ( str_replace( '{' . $tag . '}', $value, $template ) );
+            $template = ( str_replace( '{' . $tag . '}', $value ?: '', $template ) );
         }
 
         return $template;
@@ -2425,7 +2439,6 @@ class OrdersService
         $orders = Order::paymentExpired()->get();
 
         if ( ! $orders->isEmpty() ) {
-
             /**
              * The status changes according to the fact
              * if some orders has received a payment.
@@ -2454,26 +2467,26 @@ class OrdersService
             $notificationService = app()->make( NotificationService::class );
 
             $notificationService->create([
-                'title'         =>  __( 'Unpaid Orders Turned Due' ),
-                'identifier'    =>  $notificationID,
-                'url'           =>  ns()->route( 'ns.dashboard.orders' ),
-                'description'   =>  sprintf( __( '%s order(s) either unpaid or partially paid has turned due. This occurs if none has been completed before the expected payment date.' ), $orders->count() ),
+                'title' => __( 'Unpaid Orders Turned Due' ),
+                'identifier' => $notificationID,
+                'url' => ns()->route( 'ns.dashboard.orders' ),
+                'description' => sprintf( __( '%s order(s) either unpaid or partially paid has turned due. This occurs if none has been completed before the expected payment date.' ), $orders->count() ),
             ])->dispatchForGroup([
                 Role::namespace( 'admin' ),
                 Role::namespace( 'nexopos.store.administrator' ),
             ]);
 
-            event( new DueOrdersEvent( $orders ) );
+            DueOrdersEvent::dispatch( $orders );
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The operation was successful.' ),
+                'status' => 'success',
+                'message' => __( 'The operation was successful.' ),
             ];
         }
 
         return [
-            'status'    =>  'failed',
-            'message'   =>  __( 'No orders to handle for the moment.' ),
+            'status' => 'failed',
+            'message' => __( 'No orders to handle for the moment.' ),
         ];
     }
 
@@ -2492,12 +2505,12 @@ class OrdersService
              * we do proceed by doing an initial return
              */
             $this->productService->stockAdjustment( ProductHistory::ACTION_VOID_RETURN, [
-                'total_price'       =>  $product->total_price,
-                'product_id'        =>  $product->product_id,
-                'unit_id'           =>  $product->unit_id,
-                'orderProduct'      =>  $product,
-                'quantity'          =>  $product->quantity,
-                'unit_price'        =>  $product->unit_price,
+                'total_price' => $product->total_price,
+                'product_id' => $product->product_id,
+                'unit_id' => $product->unit_id,
+                'orderProduct' => $product,
+                'quantity' => $product->quantity,
+                'unit_price' => $product->unit_price,
             ]);
         });
 
@@ -2508,8 +2521,8 @@ class OrdersService
         event( new OrderVoidedEvent( $order ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The order has been correctly voided.' ),
+            'status' => 'success',
+            'message' => __( 'The order has been correctly voided.' ),
         ];
     }
 
@@ -2637,9 +2650,9 @@ class OrdersService
         $instalment->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The instalment has been saved.' ),
-            'data'      =>  compact( 'instalment' ),
+            'status' => 'success',
+            'message' => __( 'The instalment has been saved.' ),
+            'data' => compact( 'instalment' ),
         ];
     }
 
@@ -2657,10 +2670,10 @@ class OrdersService
         }
 
         $payment = [
-            'order_id'      =>   $order->id,
-            'identifier'    =>   $paymentType,
-            'author'        =>   Auth::id(),
-            'value'         =>   $instalment->amount,
+            'order_id' => $order->id,
+            'identifier' => $paymentType,
+            'author' => Auth::id(),
+            'value' => $instalment->amount,
         ];
 
         $result = $this->makeOrderSinglePayment( $payment, $order );
@@ -2673,9 +2686,9 @@ class OrdersService
         OrderAfterInstalmentPaidEvent::dispatch( $instalment, $order );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The instalment has been saved.' ),
-            'data'      =>  compact( 'instalment', 'payment' ),
+            'status' => 'success',
+            'message' => __( 'The instalment has been saved.' ),
+            'data' => compact( 'instalment', 'payment' ),
         ];
     }
 
@@ -2692,8 +2705,8 @@ class OrdersService
         $this->refreshInstalmentCount( $order );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The instalment has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The instalment has been deleted.' ),
         ];
     }
 
@@ -2733,10 +2746,10 @@ class OrdersService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The instalment has been created.' ),
-            'data'      =>  [
-                'instalment'    =>  $orderInstalment,
+            'status' => 'success',
+            'message' => __( 'The instalment has been created.' ),
+            'data' => [
+                'instalment' => $orderInstalment,
             ],
         ];
     }
@@ -2762,11 +2775,11 @@ class OrdersService
         $order->process_status = $status;
         $order->save();
 
-        event( new OrderAfterUpdatedEvent( $order ) );
+        OrderAfterUpdatedProcessStatus::dispatch( $order );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The order has been successfully updated.' ),
+            'status' => 'success',
+            'message' => __( 'The order has been successfully updated.' ),
         ];
     }
 
@@ -2792,13 +2805,11 @@ class OrdersService
         $order->delivery_status = $status;
         $order->save();
 
-        event( new OrderAfterUpdatedEvent( $order ) );
-
         OrderAfterUpdatedDeliveryStatus::dispatch( $order );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The order has been successfully updated.' ),
+            'status' => 'success',
+            'message' => __( 'The order has been successfully updated.' ),
         ];
     }
 
@@ -2815,19 +2826,19 @@ class OrdersService
         $total = $payments->map( fn( $payment ) => $payment->value )->sum();
 
         return [
-            'summary'   =>  $paymentTypes->map( function( $paymentType ) use ( $payments ) {
+            'summary' => $paymentTypes->map( function( $paymentType ) use ( $payments ) {
                 $total = $payments
                     ->filter( fn( $payment ) => $payment->identifier === $paymentType->identifier )
                     ->map( fn( $payment ) => $payment->value )
                     ->sum();
 
                 return [
-                    'label'     =>  $paymentType->label,
-                    'total'     =>  ns()->currency->getRaw( $total ),
+                    'label' => $paymentType->label,
+                    'total' => ns()->currency->getRaw( $total ),
                 ];
             }),
-            'total'     =>  ns()->currency->getRaw( $total ),
-            'entries'   =>  $payments,
+            'total' => ns()->currency->getRaw( $total ),
+            'entries' => $payments,
         ];
     }
 

@@ -132,13 +132,32 @@ export default {
                 });
                 this.toggleMenu();
             }
+        },
+
+        /**
+         * Will catch custom popup opening that define a component.
+         * @param action an object that defined the action
+         * @param row the object that has the actual row
+         * @returns {mixed}
+         */
+        triggerPopup( action, row ) {
+            const component     =   (window).nsExtraComponents[ action.component ];
+
+            /**
+             * it might be relaying on manual popups.
+             */
+            if ( action.component ) {
+                if ( component ) {
+                    return new Promise( ( resolve, reject ) => {
+                        Popup.show( component, { resolve, reject, row, action });
+                    });
+                } else {
+                    return nsSnackBar.error( __( `Unable to load the component "${action.component}". Make sure the component is registered to "nsExtraComponents".` ) ).subscribe();
+                }
+            } else {
+                this.triggerAsync( action );
+            }
         }
     },
 }
 </script>
-
-const nsTableRow    =   Vue.component( 'ns-table-row', {
-    
-})
-
-export { nsTableRow }

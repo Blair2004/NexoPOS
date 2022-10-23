@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\UserOptions;
+use App\Traits\NsDependable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -29,12 +30,22 @@ class User extends Authenticatable
 {
     use Notifiable,
         HasFactory,
-        HasApiTokens;
+        HasApiTokens,
+        NsDependable;
 
     protected $table = 'nexopos_users';
 
     protected $casts = [
-        'active'    =>  'boolean',
+        'active' => 'boolean',
+    ];
+
+    protected $isDependencyFor = [
+        Product::class => [
+            'local_name' => 'username',
+            'local_index' => 'id',
+            'foreign_name' => 'name',
+            'foreign_index' => 'author',
+        ],
     ];
 
     /**
@@ -79,6 +90,8 @@ class User extends Authenticatable
      */
     protected static $permissions = [];
 
+    private $storedPermissions = [];
+
     public function __construct( $attributes = [])
     {
         parent::__construct( $attributes );
@@ -108,6 +121,7 @@ class User extends Authenticatable
 
     /**
      * Relation with permissions
+     * this should be triggered once.
      *
      * @return array
      */
@@ -125,14 +139,12 @@ class User extends Authenticatable
             ->toArray();
 
         foreach ( $roles_id as $role_id ) {
-            if ( empty( @self::$permissions[ $role_id ] ) ) {
+            if ( empty( self::$permissions[ $role_id ] ) ) {
                 $rawPermissions = Role::find( $role_id )->permissions;
 
                 /**
                  * if the permissions hasn't yet been cached
                  */
-
-                // start caching the user permissions
                 self::$permissions[ $role_id ] = [];
 
                 /**
@@ -160,27 +172,16 @@ class User extends Authenticatable
     public static function allowedTo( $action, $type = 'all' )
     {
         if ( ! is_array( $action ) ) {
-            // check if there is a wildcard on the permission request
-            $partials = explode( '.', $action );
-
-            if ( $partials[0] == '*' ) {
-                /**
-                 * Getting all defined permission instead of hard-coding it
-                 */
-                $permissions = collect( self::permissions() )
-                    ->filter( function( $value, $key ) use ( $partials ) {
-                        return substr( $value, -strlen( $partials[1] ) ) === $partials[1];
-                    });
-
-                return self::allowedTo( $permissions->toArray() );
+            /**
+             * We'll check if any permission has been added
+             * to the user property, otherwise we'll get them.
+             */
+            if ( empty( Auth::user()->storedPermissions ) ) {
+                Auth::user()->storedPermissions = self::permissions();
             }
 
-            /**
-             * We assume the search is not an array but a string. We can then perform a search
-             */
-            return in_array( $action, self::permissions() );
+            return in_array( $action, Auth::user()->storedPermissions );
         } else {
-
             /**
              * While looping, if one permission is not granted, exit the loop and return false
              */

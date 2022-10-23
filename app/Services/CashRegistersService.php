@@ -2,14 +2,9 @@
 
 namespace App\Services;
 
-use App\Events\CashRegisterHistoryAfterCreatedEvent;
-use App\Events\OrderAfterCreatedEvent;
-use App\Events\OrderAfterPaymentCreatedEvent;
-use App\Events\OrderAfterPaymentStatusChangedEvent;
-use App\Events\OrderAfterUpdatedEvent;
-use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\Order;
+use App\Models\OrderPayment;
 use App\Models\Register;
 use App\Models\RegisterHistory;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +29,7 @@ class CashRegistersService
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
         $registerHistory->value = $amount;
-        $registerHistory->balance_after = $register->balance + $amount;
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->getRaw();
         $registerHistory->save();
 
         $register->status = Register::STATUS_OPENED;
@@ -43,11 +38,11 @@ class CashRegistersService
         $register->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The register has been successfully opened' ),
-            'data'      =>  [
-                'register'  =>  $register,
-                'history'   =>  $registerHistory,
+            'status' => 'success',
+            'message' => __( 'The register has been successfully opened' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
             ],
         ];
     }
@@ -73,8 +68,8 @@ class CashRegistersService
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_CLOSING;
         $registerHistory->transaction_type = $diffType;
-        $registerHistory->balance_after = abs( $register->balance - (float) $amount );
-        $registerHistory->value = $amount;
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
+        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
         $registerHistory->balance_before = $register->balance;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
@@ -86,11 +81,11 @@ class CashRegistersService
         $register->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The register has been successfully closed' ),
-            'data'      =>  [
-                'register'  =>  $register,
-                'history'   =>  $registerHistory,
+            'status' => 'success',
+            'message' => __( 'The register has been successfully closed' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
             ],
         ];
     }
@@ -116,16 +111,48 @@ class CashRegistersService
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
-        $registerHistory->value = $amount;
-        $registerHistory->balance_after = $register->balance + $amount;
+        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->getRaw();
         $registerHistory->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The cash has successfully been stored' ),
-            'data'      =>  [
-                'register'  =>  $register,
-                'history'   =>  $registerHistory,
+            'status' => 'success',
+            'message' => __( 'The cash has successfully been stored' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
+            ],
+        ];
+    }
+
+    public function saleDelete( Register $register, $amount, $description )
+    {
+        if ( $register->balance - $amount < 0 ) {
+            throw new NotAllowedException(
+                sprintf(
+                    __( 'Not enough fund to delete a sale from "%s". If funds were cashed-out or disbursed, consider adding some cash (%s) to the register.' ),
+                    $register->name,
+                    trim( (string) ns()->currency->define( $amount ) )
+                )
+            );
+        }
+
+        $registerHistory = new RegisterHistory;
+        $registerHistory->register_id = $register->id;
+        $registerHistory->action = RegisterHistory::ACTION_DELETE;
+        $registerHistory->author = Auth::id();
+        $registerHistory->description = $description;
+        $registerHistory->balance_before = $register->balance;
+        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
+        $registerHistory->save();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The cash has successfully been stored' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
             ],
         ];
     }
@@ -135,7 +162,7 @@ class CashRegistersService
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
                 sprintf(
-                    __( 'Unable to cashout on "%s" *, as it\'s not opened.' ),
+                    __( 'Unable to cashout on "%s", as it\'s not opened.' ),
                     $register->name
                 )
             );
@@ -159,36 +186,34 @@ class CashRegistersService
         $registerHistory->action = RegisterHistory::ACTION_CASHOUT;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
-        $registerHistory->balance_before = $register->balance;
-        $registerHistory->value = $amount;
-        $registerHistory->balance_after = $register->balance - $amount;
+        $registerHistory->balance_before = ns()->currency->define( $register->balance )->getRaw();
+        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
         $registerHistory->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The cash has successfully been disbursed.' ),
-            'data'      =>  [
-                'register'  =>  $register,
-                'history'   =>  $registerHistory,
+            'status' => 'success',
+            'message' => __( 'The cash has successfully been disbursed.' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
             ],
         ];
     }
 
     /**
-     * @todo it might be relevant to put this into
-     * a separate job
-     *
-     * @param CashRegisterHistoryAfterCreatedEvent $event
+     * Will update the cash register balance using the
+     * register history model.
      */
-    public function updateRegisterAmount( CashRegisterHistoryAfterCreatedEvent $event )
+    public function updateRegisterBalance( RegisterHistory $registerHistory )
     {
-        $register = Register::find( $event->registerHistory->register_id );
+        $register = Register::find( $registerHistory->register_id );
 
         if ( $register instanceof Register && $register->status === Register::STATUS_OPENED ) {
-            if ( in_array( $event->registerHistory->action, RegisterHistory::IN_ACTIONS ) ) {
-                $register->balance += $event->registerHistory->value;
-            } elseif ( in_array( $event->registerHistory->action, RegisterHistory::OUT_ACTIONS ) ) {
-                $register->balance -= $event->registerHistory->value;
+            if ( in_array( $registerHistory->action, RegisterHistory::IN_ACTIONS ) ) {
+                $register->balance += $registerHistory->value;
+            } elseif ( in_array( $registerHistory->action, RegisterHistory::OUT_ACTIONS ) ) {
+                $register->balance -= $registerHistory->value;
             }
 
             $register->save();
@@ -196,65 +221,122 @@ class CashRegistersService
     }
 
     /**
-     * @deprecated
+     * Will increase the register balance if it's assigned
+     * to the right store
+     *
+     * @param Order $order
+     * @return void
      */
-    public function increaseFromOrderPayment( OrderAfterPaymentCreatedEvent $event )
+    public function recordCashRegisterHistorySale( Order $order )
     {
-        if ( $event->order->register_id !== null ) {
-            $register = Register::find( $event->order->register_id );
-
-            $registerHistory = new RegisterHistory;
-            $registerHistory->balance_before = $register->balance;
-            $registerHistory->value = $event->orderPayment->value;
-            $registerHistory->balance_after = $register->balance + $event->orderPayment->value;
-            $registerHistory->register_id = $register->id;
-            $registerHistory->action = RegisterHistory::ACTION_SALE;
-            $registerHistory->author = Auth::id();
-            $registerHistory->saveQuietly();
+        if ( $order->register_id !== null ) {
+            $register = Register::find( $order->register_id );
 
             /**
-             * @todo : not really proud of this. :'(
+             * The customer wallet shouldn't be counted as 
+             * a payment that goes into the cash register.
              */
-            $event = new CashRegisterHistoryAfterCreatedEvent( $registerHistory );
+            $payments    =   $order->payments()
+                ->with( 'type' )
+                ->where( 'identifier', '<>', OrderPayment::PAYMENT_ACCOUNT )
+                ->get();
 
-            $this->updateRegisterAmount( $event );
+            /**
+             * We'll only track on that cash register
+             * payment that was recorded on the current register
+             */
+            $payments->each( function( OrderPayment $payment ) use ( $order, $register ) {
+                $isRecorded     =   RegisterHistory::where( 'order_id', $order->id )
+                    ->where( 'payment_id', $payment->id )
+                    ->where( 'register_id', $register->id )
+                    ->where( 'payment_type_id', $payment->type->id )
+                    ->where( 'order_id', $order->id )
+                    ->where( 'action', RegisterHistory::ACTION_SALE )
+                    ->first() instanceof RegisterHistory;
+
+                /**
+                 * if a similar transaction is not yet record
+                 * then we can record that on the register history.
+                 */
+                if ( ! $isRecorded ) {
+                    $registerHistory = new RegisterHistory;
+                    $registerHistory->balance_before = $register->balance;
+                    $registerHistory->value = ns()->currency->define( $payment->value )->getRaw();
+                    $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $payment->value )->getRaw();
+                    $registerHistory->register_id = $register->id;
+                    $registerHistory->payment_id = $payment->id;
+                    $registerHistory->payment_type_id = $payment->type->id;
+                    $registerHistory->order_id = $order->id;
+                    $registerHistory->action = RegisterHistory::ACTION_SALE;
+                    $registerHistory->author = $order->author;
+                    $registerHistory->save();
+                }
+            });
+
+            $register->refresh();
+
+            /**
+             * We'll check if there is a transaction that
+             * tracks the change on that order. If not we'll define it.
+             */
+            $changeHistory  =   RegisterHistory::where( 'order_id', $order->id )
+                ->where( 'register_id', $register->id )
+                ->where( 'action', RegisterHistory::ACTION_CHANGE )
+                ->first();
+
+            if ( ! $changeHistory instanceof RegisterHistory ) {
+                $changeHistory  =   new RegisterHistory;
+                $changeHistory->register_id =   $register->id;
+                $changeHistory->order_id    =   $order->id;
+                $changeHistory->author      =   $order->author;
+                $changeHistory->balance_before  =   $register->balance;
+                $changeHistory->value           =   $order->change;
+                $changeHistory->balance_after   =   ns()->currency->define( $register->balance )->subtractBy( $order->change )->getRaw();
+                $changeHistory->action          =   RegisterHistory::ACTION_CHANGE;
+            }
+            
+            /**
+             * If the transaction doesn't have any change, there is no need
+             * to keep an history for that. We'll check if the change history wasn't recently created
+             * and check if the change equal to 0 in order to delete the record.
+             */
+            if ( ! $changeHistory->wasRecentlyCreated && $order->change === 0 ) {
+                $changeHistory->delete();
+            } else {
+                $changeHistory->save();
+            }
         }
     }
 
     /**
-     * Listen for payment status changes event
+     * Listen for payment status changes
      * that only occurs if the order is updated
      * and will update the register history accordingly.
      *
-     * @param OrderAfterPaymentStatusChangedEvent $event
      * @return void
      */
-    public function increaseFromPaidOrder( OrderAfterPaymentStatusChangedEvent $event )
+    public function createRegisterHistoryUsingPaymentStatus( Order $order, string $previous, string $new  )
     {
         /**
          * If the payment status changed from
          * supported payment status to a "Paid" status.
          */
-        if ( $event->order->register_id !== null && in_array( $event->previous, [
+        if ( $order->register_id !== null && in_array( $previous, [
             Order::PAYMENT_DUE,
             Order::PAYMENT_HOLD,
             Order::PAYMENT_PARTIALLY,
             Order::PAYMENT_UNPAID,
-        ] ) && $event->new === Order::PAYMENT_PAID ) {
-            $register = Register::find( $event->order->register_id );
+        ] ) && $new === Order::PAYMENT_PAID ) {
+            $register = Register::find( $order->register_id );
 
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
-            $registerHistory->value = $event->order->total;
-            $registerHistory->balance_after = $register->balance + $event->order->total;
-            $registerHistory->register_id = $event->order->register_id;
+            $registerHistory->value = $order->total;
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
+            $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = Auth::id();
-            $registerHistory->saveQuietly();
-
-            $event = new CashRegisterHistoryAfterCreatedEvent( $registerHistory );
-
-            $this->updateRegisterAmount( $event );
+            $registerHistory->save();
         }
     }
 
@@ -262,41 +344,25 @@ class CashRegistersService
      * Listen to order created and
      * will update the cash register if any order
      * is marked as paid.
-     *
-     * @param OrderAfterCreatedEvent|OrderAfterUpdatedEvent $event
-     * @return void
      */
-    public function increaseFromOrderCreatedEvent( $event )
+    public function createRegisterHistoryFromPaidOrder( Order $order )
     {
         /**
          * If the payment status changed from
          * supported payment status to a "Paid" status.
          */
-        if ( $event->order->register_id !== null && $event->order->payment_status === Order::PAYMENT_PAID ) {
-            $register = Register::find( $event->order->register_id );
+        if ( $order->register_id !== null && $order->payment_status === Order::PAYMENT_PAID ) {
+            $register = Register::find( $order->register_id );
 
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
-            $registerHistory->value = $event->order->total;
-            $registerHistory->balance_after = $register->balance + $event->order->total;
-            $registerHistory->register_id = $event->order->register_id;
+            $registerHistory->value = $order->total;
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
+            $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = Auth::id();
-            $registerHistory->saveQuietly();
-
-            $event = new CashRegisterHistoryAfterCreatedEvent( $registerHistory );
-
-            $this->updateRegisterAmount( $event );
+            $registerHistory->save();
         }
-    }
-
-    public function afterOrderRefunded( OrderRefundPaymentAfterCreatedEvent $event )
-    {
-        /**
-         * the refund can't always be made from the register the order
-         * has been created. We need to consider the fact refund can't lead
-         * to cash drawer disbursement.
-         */
     }
 
     /**
@@ -311,25 +377,25 @@ class CashRegistersService
         switch ( $label ) {
             case RegisterHistory::ACTION_CASHING:
                 return __( 'Cash In' );
-            break;
+                break;
             case RegisterHistory::ACTION_CASHOUT:
                 return __( 'Cash Out' );
-            break;
+                break;
             case RegisterHistory::ACTION_CLOSING:
                 return __( 'Closing' );
-            break;
+                break;
             case RegisterHistory::ACTION_OPENING:
                 return __( 'Opening' );
-            break;
+                break;
             case RegisterHistory::ACTION_REFUND:
                 return __( 'Refund' );
-            break;
+                break;
             case RegisterHistory::ACTION_SALE:
                 return __( 'Sale' );
-            break;
+                break;
             default:
                 return $label;
-            break;
+                break;
         }
     }
 
@@ -344,19 +410,19 @@ class CashRegistersService
         switch ( $label ) {
             case Register::STATUS_CLOSED:
                 return __( 'Closed' );
-            break;
+                break;
             case Register::STATUS_DISABLED:
                 return __( 'Disabled' );
-            break;
+                break;
             case Register::STATUS_INUSE:
                 return __( 'In Use' );
-            break;
+                break;
             case Register::STATUS_OPENED:
                 return __( 'Opened' );
-            break;
+                break;
             default:
                 return $label;
-            break;
+                break;
         }
     }
 
@@ -386,23 +452,5 @@ class CashRegistersService
         }
 
         return $register;
-    }
-
-    /**
-     * Will save the order total amount to the
-     * register every time the order is completely paid.
-     *
-     * @param OrderAfterCreatedEvent|OrderAfterUpdatedEvent $event
-     * @return void
-     */
-    public function recordPaidOrderAmount( $event )
-    {
-        if ( $event->order->payment_status === Order::PAYMENT_PAID ) {
-            $register = Register::find( $event->order->register_id );
-
-            if ( $register instanceof Register ) {
-                $this->cashIn( $register, $event->order->total, __( 'Automatically recorded sale payment.' ) );
-            }
-        }
     }
 }

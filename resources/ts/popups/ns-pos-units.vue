@@ -120,11 +120,18 @@ export default {
          * @param Unit
          */
         selectUnit( unitQuantity ) {
+            if ( unitQuantity.unit === null ) {
+                nsSnackBar.error( __( 'The unit attached to this product is missing or not assigned. Please review the "Unit" tab for this product.' ) ).subscribe();
+
+                return this.$popup.close();
+            }
+
             this.$popupParams.resolve({
                 unit_quantity_id    :   unitQuantity.id,
                 unit_name           :   unitQuantity.unit.name,
                 $quantities         :   () => unitQuantity
             });
+
             this.$popup.close();
         }
     }

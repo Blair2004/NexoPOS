@@ -390,12 +390,12 @@ export default {
              */
             const images    =   this.form.variations.map( (v,i) => {
                 return v.tabs.images.groups.filter( fields => {
-                    return fields.filter( f => f.name === 'primary' && f.value === 1 ).length > 0;
+                    return fields.filter( f => f.name === 'featured' && f.value === 1 ).length > 0;
                 });
             })
 
             if ( images[0] && images[0].length > 1 ) {
-                return nsSnackBar.error( this.$slots[ 'error-multiple-primary' ] ? this.$slots[ 'error-multiple-primary' ][0].text : __( 'Unable to proceed, more than one product is set as primary' ) ).subscribe();
+                return nsSnackBar.error( this.$slots[ 'error-multiple-primary' ] ? this.$slots[ 'error-multiple-primary' ][0].text : __( 'Unable to proceed, more than one product is set as featured' ) ).subscribe();
             }
 
             const validation        =   [];

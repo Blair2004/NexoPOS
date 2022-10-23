@@ -2,9 +2,7 @@
 
 namespace App\Services;
 
-use App\Events\CashFlowHistoryAfterCreatedEvent;
 use App\Events\ExpenseAfterCreateEvent;
-use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Models\AccountType;
@@ -29,14 +27,14 @@ class ExpenseService
     protected $dateService;
 
     protected $accountTypes = [
-        CashFlow::ACCOUNT_SALES             =>  [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_sales_cashflow_account' ],
-        CashFlow::ACCOUNT_REFUNDS           =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_sales_refunds_account' ],
-        CashFlow::ACCOUNT_SPOILED           =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_stock_return_spoiled_account' ],
-        CashFlow::ACCOUNT_PROCUREMENTS      =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_procurement_cashflow_account' ],
-        CashFlow::ACCOUNT_REGISTER_CASHIN   =>  [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_cashregister_cashin_cashflow_account' ],
-        CashFlow::ACCOUNT_REGISTER_CASHOUT  =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_cashregister_cashout_cashflow_account' ],
-        CashFlow::ACCOUNT_CUSTOMER_CREDIT   =>  [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_customer_crediting_cashflow_account' ],
-        CashFlow::ACCOUNT_CUSTOMER_DEBIT    =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_customer_debitting_cashflow_account' ],
+        CashFlow::ACCOUNT_SALES => [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_sales_cashflow_account' ],
+        CashFlow::ACCOUNT_REFUNDS => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_sales_refunds_account' ],
+        CashFlow::ACCOUNT_SPOILED => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_stock_return_spoiled_account' ],
+        CashFlow::ACCOUNT_PROCUREMENTS => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_procurement_cashflow_account' ],
+        CashFlow::ACCOUNT_REGISTER_CASHIN => [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_cashregister_cashin_cashflow_account' ],
+        CashFlow::ACCOUNT_REGISTER_CASHOUT => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_cashregister_cashout_cashflow_account' ],
+        CashFlow::ACCOUNT_CUSTOMER_CREDIT => [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_customer_crediting_cashflow_account' ],
+        CashFlow::ACCOUNT_CUSTOMER_DEBIT => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_customer_debitting_cashflow_account' ],
     ];
 
     public function __construct( DateService $dateService )
@@ -55,12 +53,12 @@ class ExpenseService
         $expense->author = Auth::id();
         $expense->save();
 
-        event( new ExpenseAfterCreateEvent( $expense, request() ) );
+        event( new ExpenseAfterCreateEvent( $expense, request()->all() ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense has been successfully saved.' ),
-            'data'      =>  compact( 'expense' ),
+            'status' => 'success',
+            'message' => __( 'The expense has been successfully saved.' ),
+            'data' => compact( 'expense' ),
         ];
     }
 
@@ -77,9 +75,9 @@ class ExpenseService
             $expense->save();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The expense has been successfully updated.' ),
-                'data'      =>  compact( 'expense' ),
+                'status' => 'success',
+                'message' => __( 'The expense has been successfully updated.' ),
+                'data' => compact( 'expense' ),
             ];
         }
 
@@ -121,8 +119,8 @@ class ExpenseService
         $expense->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense has been correctly deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The expense has been correctly deleted.' ),
         ];
     }
 
@@ -186,8 +184,8 @@ class ExpenseService
         $accountType->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The account type has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The account type has been deleted.' ),
         ];
     }
 
@@ -218,8 +216,8 @@ class ExpenseService
         $accountType->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense category has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The expense category has been deleted.' ),
         ];
     }
 
@@ -262,9 +260,9 @@ class ExpenseService
         $category->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense category has been saved' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The expense category has been saved' ),
+            'data' => compact( 'category' ),
         ];
     }
 
@@ -286,9 +284,9 @@ class ExpenseService
         $category->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The account has been created.' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The account has been created.' ),
+            'data' => compact( 'category' ),
         ];
     }
 
@@ -312,9 +310,9 @@ class ExpenseService
         $category->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense category has been updated.' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The expense category has been updated.' ),
+            'data' => compact( 'category' ),
         ];
     }
 
@@ -372,8 +370,6 @@ class ExpenseService
                     }
 
                     $history->save();
-
-                    event( new CashFlowHistoryAfterCreatedEvent( $history ) );
                 }
             });
         } else {
@@ -404,8 +400,6 @@ class ExpenseService
             }
 
             $history->save();
-
-            CashFlowHistoryAfterCreatedEvent::dispatch( $history );
         }
     }
 
@@ -425,19 +419,19 @@ class ExpenseService
                 switch ( $expense->occurence ) {
                     case 'month_starts':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth() );
-                    break;
+                        break;
                     case 'month_mid':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays(14) );
-                    break;
+                        break;
                     case 'month_ends':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth() );
-                    break;
+                        break;
                     case 'x_before_month_ends':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
-                    break;
+                        break;
                     case 'x_after_month_starts':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
-                    break;
+                        break;
                 }
 
                 /**
@@ -449,29 +443,29 @@ class ExpenseService
                         $this->recordCashFlowHistory( $expense );
 
                         return [
-                            'status'    =>  'success',
-                            'message'   =>  sprintf( __( 'The expense "%s" has been processed.' ), $expense->name ),
+                            'status' => 'success',
+                            'message' => sprintf( __( 'The expense "%s" has been processed.' ), $expense->name ),
                         ];
                     }
 
                     return [
-                        'status'    =>  'failed',
-                        'message'   =>  sprintf( __( 'The expense "%s" has already been processed.' ), $expense->name ),
+                        'status' => 'failed',
+                        'message' => sprintf( __( 'The expense "%s" has already been processed.' ), $expense->name ),
                     ];
                 }
 
                 return [
-                    'status'    =>  'failed',
-                    'message'   =>  sprintf( __( 'The expenses "%s" hasn\'t been proceesed it\'s out of date.' ), $expense->name ),
+                    'status' => 'failed',
+                    'message' => sprintf( __( 'The expenses "%s" hasn\'t been proceesed it\'s out of date.' ), $expense->name ),
                 ];
             });
 
         $successFulProcesses = collect( $processStatus )->filter( fn( $process ) => $process[ 'status' ] === 'success' );
 
         return [
-            'status'    =>  'success',
-            'data'      =>  $processStatus->toArray(),
-            'message'   =>  $successFulProcesses->count() === $processStatus->count() ?
+            'status' => 'success',
+            'data' => $processStatus->toArray(),
+            'message' => $successFulProcesses->count() === $processStatus->count() ?
                 __( 'The process has been correctly executed and all expenses has been processed.' ) :
                     sprintf( __( 'The process has been executed with some failures. %s/%s process(es) has successed.' ), $successFulProcesses->count(), $processStatus->count() ),
         ];
@@ -543,7 +537,7 @@ class ExpenseService
         $expense->value = $orderProductRefund->total_price;
         $expense->active = true;
         $expense->operation = CashFlow::OPERATION_DEBIT;
-        $expense->author = Auth::id();
+        $expense->author = $orderProductRefund->author;
         $expense->order_id = $order->id;
         $expense->order_refund_id = $orderProductRefund->order_refund_id;
         $expense->name = sprintf( __( 'Refunding : %s' ), $orderProduct->name );
@@ -552,7 +546,7 @@ class ExpenseService
 
         $this->recordCashFlowHistory( $expense );
 
-        if ( OrderProductRefund::CONDITION_DAMAGED ) {
+        if ( $orderProductRefund->condition === OrderProductRefund::CONDITION_DAMAGED ) {
             /**
              * Only if the product is damaged we should
              * consider saving that as a waste.
@@ -590,7 +584,7 @@ class ExpenseService
         $expense->value = $order->total;
         $expense->active = true;
         $expense->operation = CashFlow::OPERATION_CREDIT;
-        $expense->author = Auth::id();
+        $expense->author = $order->author;
         $expense->order_id = $order->id;
         $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
         $expense->id = 0; // this is not assigned to an existing expense
@@ -633,33 +627,30 @@ class ExpenseService
     /**
      * Will compare order payment status
      * and if the previous and the new payment status are supported
-     * the transaction will be record to the cash flow
-     *
-     * @param OrderAfterPaymentStatusChangedEvent $event
-     * @return void
+     * the transaction will be record to the cash flow.
      */
-    public function handlePaymentStatus( OrderAfterPaymentStatusChangedEvent $event )
+    public function handlePaymentStatus( string $previous, string $new, Order $order )
     {
-        if ( in_array( $event->previous, [
+        if ( in_array( $previous, [
             Order::PAYMENT_HOLD,
             Order::PAYMENT_DUE,
             Order::PAYMENT_PARTIALLY,
             Order::PAYMENT_PARTIALLY_DUE,
             Order::PAYMENT_UNPAID,
         ]) && in_array(
-            $event->new, [
+            $new, [
                 Order::PAYMENT_PAID,
             ]
         )) {
             $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
 
             $expense = new Expense;
-            $expense->value = $event->order->total;
+            $expense->value = $order->total;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_CREDIT;
-            $expense->author = Auth::id();
-            $expense->order_id = $event->order->id;
-            $expense->name = sprintf( __( 'Sale : %s' ), $event->order->code );
+            $expense->author = $order->author;
+            $expense->order_id = $order->id;
+            $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
             $expense->id = 0; // this is not assigned to an existing expense
             $expense->category = $expenseCategory;
 
@@ -692,25 +683,32 @@ class ExpenseService
         $account = $this->accountTypes[ $type ] ?? false;
 
         if ( ! empty( $account ) ) {
-
             /**
              * This will define the label
              */
             switch ( $type ) {
-                case CashFlow::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' ); break;
-                case CashFlow::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' ); break;
-                case CashFlow::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' ); break;
-                case CashFlow::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' ); break;
-                case CashFlow::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' ); break;
-                case CashFlow::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' ); break;
-                case CashFlow::ACCOUNT_SALES: $label = __( 'Sales Account' ); break;
-                case CashFlow::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' ); break;
+                case CashFlow::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' );
+                break;
+                case CashFlow::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
+                break;
+                case CashFlow::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' );
+                break;
+                case CashFlow::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
+                break;
+                case CashFlow::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' );
+                break;
+                case CashFlow::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' );
+                break;
+                case CashFlow::ACCOUNT_SALES: $label = __( 'Sales Account' );
+                break;
+                case CashFlow::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' );
+                break;
             }
 
             return $this->getDefinedAccountType( $account[ 'option' ], [
-                'name'      =>  $label,
-                'operation' =>  $account[ 'operation' ],
-                'account'   =>  $type,
+                'name' => $label,
+                'operation' => $account[ 'operation' ],
+                'account' => $type,
             ]);
         }
 
@@ -741,7 +739,7 @@ class ExpenseService
             $expense->value = $order->total;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_DEBIT;
-            $expense->author = Auth::id();
+            $expense->author = $order->author;
             $expense->customer_account_history_id = $order->id;
             $expense->name = sprintf( __( 'Refund : %s' ), $order->code );
             $expense->id = 0; // this is not assigned to an existing expense
@@ -777,7 +775,7 @@ class ExpenseService
             $expense->value = $order->total;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_CREDIT;
-            $expense->author = Auth::id();
+            $expense->author = $order->author;
             $expense->customer_account_history_id = $order->id;
             $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
             $expense->id = 0; // this is not assigned to an existing expense
@@ -827,7 +825,7 @@ class ExpenseService
     }
 
     /**
-     * Will trigger not recurring expense
+     * Will trigger not recurring expenses
      *
      * @return void
      */
@@ -878,7 +876,7 @@ class ExpenseService
             $expense->value = $customerHistory->amount;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_CREDIT;
-            $expense->author = Auth::id();
+            $expense->author = $customerHistory->author;
             $expense->customer_account_history_id = $customerHistory->id;
             $expense->name = sprintf( __( 'Customer Account Crediting : %s' ), $customerHistory->customer->name );
             $expense->id = 0; // this is not assigned to an existing expense
@@ -898,7 +896,7 @@ class ExpenseService
             $expense->value = $customerHistory->amount;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_DEBIT;
-            $expense->author = Auth::id();
+            $expense->author = $customerHistory->author;
             $expense->customer_account_history_id = $customerHistory->id;
             $expense->order_id = $customerHistory->order_id;
             $expense->name = sprintf( __( 'Customer Account Purchase : %s' ), $customerHistory->customer->name );
@@ -919,7 +917,7 @@ class ExpenseService
             $expense->value = $customerHistory->amount;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_DEBIT;
-            $expense->author = Auth::id();
+            $expense->author = $customerHistory->author;
             $expense->customer_account_history_id = $customerHistory->id;
             $expense->name = sprintf( __( 'Customer Account Deducting : %s' ), $customerHistory->customer->name );
             $expense->id = 0; // this is not assigned to an existing expense

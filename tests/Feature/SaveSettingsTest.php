@@ -36,22 +36,23 @@ class SaveSettingsTest extends TestCase
 
                 $form = collect( $object->getForm()[ 'tabs' ] )->mapWithKeys( function( $value, $key ) {
                     return [
-                        $key    =>  collect( $value[ 'fields' ] )
+                        $key => collect( $value[ 'fields' ] )
                             ->mapWithKeys( function( $field ) {
                                 return [
-                                    $field[ 'name' ]    =>  match ( $field[ 'name' ] ) {
-                                        'ns_store_language'                 =>  'en',
-                                        'ns_currency_symbol'                =>  '$',
-                                        'ns_currency_iso'                   =>  'USD',
-                                        'ns_currency_thousand_separator'    =>  '.',
-                                        'ns_currency_decimal_separator'     =>  ',',
-                                        'ns_date_format'                    =>  'Y-m-d',
-                                        'ns_datetime_format'                =>  'Y-m-d H:i',
-                                        default                 =>  (
+                                    $field[ 'name' ] => match ( $field[ 'name' ] ) {
+                                        'ns_store_language' => 'en',
+                                        'ns_currency_symbol' => '$',
+                                        'ns_currency_iso' => 'USD',
+                                        'ns_currency_thousand_separator' => '.',
+                                        'ns_currency_decimal_separator' => ',',
+                                        'ns_date_format' => 'Y-m-d',
+                                        'ns_datetime_timezone' => 'Europe/London',
+                                        'ns_datetime_format' => 'Y-m-d H:i',
+                                        default => (
                                             match ( $field[ 'type' ] ) {
-                                                'text', 'textarea'      =>  strstr( $field[ 'name' ], 'email' ) ? $this->faker->email() : $this->faker->text(20),
-                                                'select'                =>  ! empty( $field[ 'options' ] ) ? collect( $field[ 'options' ] )->random()[ 'value' ] : '',
-                                                default                 =>  $field[ 'value' ]
+                                                'text', 'textarea' => strstr( $field[ 'name' ], 'email' ) ? $this->faker->email() : $this->faker->text(20),
+                                                'select' => ! empty( $field[ 'options' ] ) ? collect( $field[ 'options' ] )->random()[ 'value' ] : '',
+                                                default => $field[ 'value' ]
                                             }
                                         )
                                     },

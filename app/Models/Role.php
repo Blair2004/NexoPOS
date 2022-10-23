@@ -49,7 +49,7 @@ class Role extends NsRootModel
     const DASHID_DEFAULT = 'default';
 
     protected $cats = [
-        'locked'        =>  'boolean',
+        'locked' => 'boolean',
     ];
 
     protected $guarded = [ 'id' ];

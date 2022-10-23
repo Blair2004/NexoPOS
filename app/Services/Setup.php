@@ -22,18 +22,18 @@ class Setup
     public function saveDatabaseSettings( Request $request )
     {
         config([ 'database.connections.test' => [
-            'driver'         =>      $request->input( 'database_driver' ) ?: 'mysql',
-            'host'           =>      $request->input( 'hostname' ),
-            'port'           =>      $request->input( 'database_port' ) ?: env('DB_PORT', '3306'),
-            'database'       =>      $request->input( 'database_name' ) ?: database_path( 'database.sqlite' ),
-            'username'       =>      $request->input( 'username' ),
-            'password'       =>      $request->input( 'password' ),
-            'unix_socket'    =>      env('DB_SOCKET', ''),
-            'charset'        =>      'utf8',
-            'collation'      =>      'utf8_unicode_ci',
-            'prefix'         =>      $request->input( 'database_prefix' ),
-            'strict'         =>      true,
-            'engine'         =>      null,
+            'driver' => $request->input( 'database_driver' ) ?: 'mysql',
+            'host' => $request->input( 'hostname' ),
+            'port' => $request->input( 'database_port' ) ?: env('DB_PORT', '3306'),
+            'database' => $request->input( 'database_name' ) ?: database_path( 'database.sqlite' ),
+            'username' => $request->input( 'username' ),
+            'password' => $request->input( 'password' ),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => $request->input( 'database_prefix' ),
+            'strict' => true,
+            'engine' => null,
         ]]);
 
         try {
@@ -42,46 +42,46 @@ class Setup
             switch ( $e->getCode() ) {
                 case 2002:
                     $message = [
-                        'name'              =>   'hostname',
-                        'message'           =>  __( 'Unable to reach the host' ),
-                        'status'            =>  'failed',
+                        'name' => 'hostname',
+                        'message' => __( 'Unable to reach the host' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1045:
                     $message = [
-                        'name'      =>   'username',
-                        'message'   =>  __( 'Unable to connect to the database using the credentials provided.' ),
-                        'status'    =>  'failed',
+                        'name' => 'username',
+                        'message' => __( 'Unable to connect to the database using the credentials provided.' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1049:
                     $message = [
-                        'name'      => 'database_name',
-                        'message'   =>  __( 'Unable to select the database.' ),
-                        'status'    =>  'failed',
+                        'name' => 'database_name',
+                        'message' => __( 'Unable to select the database.' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1044:
                     $message = [
-                        'name'      => 'username',
-                        'message'   =>  __( 'Access denied for this user.' ),
-                        'status'    =>  'failed',
+                        'name' => 'username',
+                        'message' => __( 'Access denied for this user.' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1698:
                     $message = [
-                        'name'        => 'username',
-                        'message'      =>  __( 'Incorrect Authentication Plugin Provided.' ),
-                        'status'       =>  'failed',
+                        'name' => 'username',
+                        'message' => __( 'Incorrect Authentication Plugin Provided.' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 default:
                     $message = [
-                        'name'      => 'hostname',
-                        'message'   =>  $e->getMessage(),
-                        'status'    =>  'failed',
+                        'name' => 'hostname',
+                        'message' => $e->getMessage(),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
             }
 
             return response()->json( $message, 403 );
@@ -105,8 +105,8 @@ class Setup
         Artisan::call( 'storage:link', [ '--force' => true ] );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The connexion with the database was successful' ),
+            'status' => 'success',
+            'message' => __( 'The connexion with the database was successful' ),
         ];
     }
 
@@ -122,18 +122,18 @@ class Setup
          * Let's create the tables. The DB is supposed to be set
          */
         Artisan::call( 'migrate', [
-            '--force'   =>  true,
-            '--path'    =>  '/database/migrations/default',
+            '--force' => true,
+            '--path' => '/database/migrations/default',
         ]);
 
         Artisan::call( 'migrate', [
-            '--force'   => true,
-            '--path'    => '/database/migrations/create-tables',
+            '--force' => true,
+            '--path' => '/database/migrations/create-tables',
         ]);
 
         Artisan::call( 'vendor:publish', [
-            '--force'       => true,
-            '--provider'    =>  'Laravel\Sanctum\SanctumServiceProvider',
+            '--force' => true,
+            '--provider' => 'Laravel\Sanctum\SanctumServiceProvider',
         ]);
 
         Artisan::call( 'ns:translate', [
@@ -177,7 +177,7 @@ class Setup
          * define default user language
          */
         $user->attribute()->create([
-            'language'  =>  'en',
+            'language' => 'en',
         ]);
 
         $this->createDefaultPayment( $user );
@@ -203,8 +203,8 @@ class Setup
         $this->options->setDefault();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'NexoPOS has been successfuly installed.' ),
+            'status' => 'success',
+            'message' => __( 'NexoPOS has been successfuly installed.' ),
         ];
     }
 
@@ -242,53 +242,53 @@ class Setup
             $DB = DB::connection( env( 'DB_CONNECTION', 'mysql' ) )->getPdo();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'Database connexion was successful' ),
+                'status' => 'success',
+                'message' => __( 'Database connection was successful.' ),
             ];
         } catch (\Exception $e) {
             switch ( $e->getCode() ) {
                 case 2002:
                     $message = [
-                        'name'              =>   'hostname',
-                        'message'           =>  __( 'Unable to reach the host' ),
-                        'status'            =>  'failed',
+                        'name' => 'hostname',
+                        'message' => __( 'Unable to reach the host' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1045:
                     $message = [
-                        'name'              =>   'username',
-                        'message'           =>  __( 'Unable to connect to the database using the credentials provided.' ),
-                        'status'            =>  'failed',
+                        'name' => 'username',
+                        'message' => __( 'Unable to connect to the database using the credentials provided.' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1049:
                     $message = [
-                        'name'             => 'database_name',
-                        'message'          =>  __( 'Unable to select the database.' ),
-                        'status'           =>  'failed',
+                        'name' => 'database_name',
+                        'message' => __( 'Unable to select the database.' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1044:
                     $message = [
-                        'name'        => 'username',
-                        'message'      =>  __( 'Access denied for this user.' ),
-                        'status'       =>  'failed',
+                        'name' => 'username',
+                        'message' => __( 'Access denied for this user.' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 case 1698:
                     $message = [
-                        'name'        => 'username',
-                        'message'      =>  __( 'Incorrect Authentication Plugin Provided.' ),
-                        'status'       =>  'failed',
+                        'name' => 'username',
+                        'message' => __( 'Incorrect Authentication Plugin Provided.' ),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
                 default:
                     $message = [
-                        'name'        => 'hostname',
-                        'message'      =>  $e->getMessage(),
-                        'status'       =>  'failed',
+                        'name' => 'hostname',
+                        'message' => $e->getMessage(),
+                        'status' => 'failed',
                     ];
-                break;
+                    break;
             }
 
             return response()->json( $message, 403 );

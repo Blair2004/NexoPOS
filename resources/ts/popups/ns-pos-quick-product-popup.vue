@@ -43,17 +43,17 @@ export default {
         },
 
         async addProduct() {
-            const valid    =   this.validation.validateFields( this.fields );
+            
+            const extractedFields   =   this.validation.extractFields( this.fields );
+            const fields =   this.fields.filter( field => typeof field.show === 'undefined' || ( typeof field.show === 'function' && field.show( extractedFields ) ) );
+            const valid =   this.validation.validateFields( fields );
 
             if ( ! valid ) {
                 return nsSnackBar.error( __( 'Unable to proceed. The form is not valid.' ) ).subscribe();
             }
 
-            const product       =   this.validation.extractFields( this.fields );
-            const quantities    =   await POS.defineQuantities( product, this.units );
+            let product       =   this.validation.extractFields( fields );
             
-            product.$quantities     =   () => quantities;
-
             product.$original   =   () => {
                 return {
                     stock_management: 'disabled',
@@ -65,13 +65,27 @@ export default {
             }
 
             if ( product.product_type === 'product' ) {
-                product.unit_name   =   this.units.filter( unit => unit.id === product.unit_id )[0].name;
-                product.quantity    =   parseFloat( product.quantity );
+                product.unit_name           =   this.units.filter( unit => unit.id === product.unit_id )[0].name;
+                product.quantity            =   parseFloat( product.quantity );
+                product.unit_price          =   parseFloat( product.unit_price );
+                product.mode                =   'custom';
+                product.price_with_tax      =   product.unit_price;
+                product.price_without_tax   =   product.unit_price;
+                product.tax_value           =   0;
             } else {
                 product.unit_name   =   __( 'N/A' );
                 product.unit_price  =   0;
                 product.quantity    =   1; // it's always 1
             }
+
+            const quantities        =   await POS.defineQuantities( product, this.units );
+            product.$quantities     =   () => quantities;
+
+            /**
+             * we initially need to compute the product
+             * tax before adding that to the cart.
+             */
+            product     =   POS.computeProductTax( product );
             
             POS.addToCart( product );
 
@@ -147,8 +161,8 @@ export default {
                     type: 'select',
                     description: __( 'Define the product type.' ),
                     options: [{
-                        label: __( 'Regular' ),
-                        value: 'regular',
+                        label: __( 'Normal' ),
+                        value: 'product',
                     }, {
                         label: __( 'Dynamic' ),
                         value: 'dynamic',

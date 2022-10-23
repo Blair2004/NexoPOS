@@ -9,6 +9,7 @@
             </div>
         </div>
         <div class="flex-auto overflow-y-auto">
+            <p class="p-2 text-center text-sm bg-info-primary" v-if="description.length > 0">{{ description }}</p>
             <ul class="ns-vertical-menu">
                 <template v-if="type === 'select'">
                     <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
@@ -34,6 +35,7 @@ export default {
         return {
             value: [],
             options: [],
+            description: '',
             label: null,
             type: 'select'
         }
@@ -42,10 +44,11 @@ export default {
     },
     mounted() {
         this.popupCloser();
-        this.value      =   this.$popupParams.value  || [];
-        this.options    =   this.$popupParams.options;
-        this.label      =   this.$popupParams.label;
-        this.type       =   this.$popupParams.type || this.type;
+        this.value       =   this.$popupParams.value  || [];
+        this.options     =   this.$popupParams.options;
+        this.label       =   this.$popupParams.label;
+        this.description =   this.$popupParams.description || '';
+        this.type        =   this.$popupParams.type || this.type;
     },
     methods: {
         popupCloser,

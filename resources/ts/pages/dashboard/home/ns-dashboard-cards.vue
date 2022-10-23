@@ -80,7 +80,6 @@ export default {
     },
     mounted() {
         this.loadReport();
-        console.log( nsLanguage.getEntries() );
     },
     methods: {
         __,

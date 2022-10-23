@@ -11,19 +11,14 @@ class OrderAfterProductStockCheckedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $items;
-
-    public $session_identifier;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( $items, $session_identifier )
+    public function __construct( public $items, public $session_identifier )
     {
-        $this->items = $items;
-        $this->session_identifier = $session_identifier;
+        // ...
     }
 
     /**

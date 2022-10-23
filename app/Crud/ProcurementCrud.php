@@ -67,10 +67,10 @@ class ProcurementCrud extends CrudService
      * define permission
      */
     public $permissions = [
-        'create'    =>  'nexopos.create.procurements',
-        'read'      =>  'nexopos.read.procurements',
-        'update'    =>  false,
-        'delete'    =>  'nexopos.delete.procurements',
+        'create' => 'nexopos.create.procurements',
+        'read' => 'nexopos.read.procurements',
+        'update' => false,
+        'delete' => 'nexopos.delete.procurements',
     ];
 
     /**
@@ -101,15 +101,15 @@ class ProcurementCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Procurements List' ),
-            'list_description'      =>  __( 'Display all procurements.' ),
-            'no_entry'              =>  __( 'No procurements has been registered' ),
-            'create_new'            =>  __( 'Add a new procurement' ),
-            'create_title'          =>  __( 'Create a new procurement' ),
-            'create_description'    =>  __( 'Register a new procurement and save it.' ),
-            'edit_title'            =>  __( 'Edit procurement' ),
-            'edit_description'      =>  __( 'Modify  Procurement.' ),
-            'back_to_list'          =>  __( 'Return to Procurements' ),
+            'list_title' => __( 'Procurements List' ),
+            'list_description' => __( 'Display all procurements.' ),
+            'no_entry' => __( 'No procurements has been registered' ),
+            'create_new' => __( 'Add a new procurement' ),
+            'create_title' => __( 'Create a new procurement' ),
+            'create_description' => __( 'Register a new procurement and save it.' ),
+            'edit_title' => __( 'Edit procurement' ),
+            'edit_description' => __( 'Modify  Procurement.' ),
+            'back_to_list' => __( 'Return to Procurements' ),
         ];
     }
 
@@ -143,71 +143,71 @@ class ProcurementCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
+                            'type' => 'text',
+                            'name' => 'author',
+                            'label' => __( 'Author' ),
+                            'value' => $entry->author ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created At' ),
-                            'value' =>  $entry->created_at ?? '',
+                            'type' => 'text',
+                            'name' => 'created_at',
+                            'label' => __( 'Created At' ),
+                            'value' => $entry->created_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'text',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'value' => $entry->description ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
+                            'type' => 'text',
+                            'name' => 'id',
+                            'label' => __( 'Id' ),
+                            'value' => $entry->id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
+                            'type' => 'text',
+                            'name' => 'name',
+                            'label' => __( 'Name' ),
+                            'value' => $entry->name ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'provider_id',
-                            'label' =>  __( 'Provider Id' ),
-                            'value' =>  $entry->provider_id ?? '',
+                            'type' => 'text',
+                            'name' => 'provider_id',
+                            'label' => __( 'Provider Id' ),
+                            'value' => $entry->provider_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'status',
-                            'label' =>  __( 'Status' ),
-                            'value' =>  $entry->status ?? '',
+                            'type' => 'text',
+                            'name' => 'status',
+                            'label' => __( 'Status' ),
+                            'value' => $entry->status ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'total_items',
-                            'label' =>  __( 'Total Items' ),
-                            'value' =>  $entry->total_items ?? '',
+                            'type' => 'text',
+                            'name' => 'total_items',
+                            'label' => __( 'Total Items' ),
+                            'value' => $entry->total_items ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated At' ),
-                            'value' =>  $entry->updated_at ?? '',
+                            'type' => 'text',
+                            'name' => 'updated_at',
+                            'label' => __( 'Updated At' ),
+                            'value' => $entry->updated_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
+                            'type' => 'text',
+                            'name' => 'uuid',
+                            'label' => __( 'Uuid' ),
+                            'value' => $entry->uuid ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'value',
-                            'label' =>  __( 'Value' ),
-                            'value' =>  $entry->value ?? '',
+                            'type' => 'text',
+                            'name' => 'value',
+                            'label' => __( 'Value' ),
+                            'value' => $entry->value ?? '',
                         ],                     ],
                 ],
             ],
@@ -278,7 +278,8 @@ class ProcurementCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -320,8 +321,8 @@ class ProcurementCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -348,52 +349,52 @@ class ProcurementCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'providers_name'  =>  [
-                'label'  =>  __( 'Provider' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'providers_name' => [
+                'label' => __( 'Provider' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'delivery_status'  =>  [
-                'label'  =>  __( 'Delivery Status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'delivery_status' => [
+                'label' => __( 'Delivery Status' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'payment_status'  =>  [
-                'label'  =>  __( 'Payment Status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'payment_status' => [
+                'label' => __( 'Payment Status' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'invoice_date'  =>  [
-                'label'  =>  __( 'Invoice Date' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'invoice_date' => [
+                'label' => __( 'Invoice Date' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'value'  =>  [
-                'label'         =>  __( 'Sale Value' ),
-                '$direction'    =>  '',
-                'width'         =>  '150px',
-                '$sort'         =>  false,
+            'value' => [
+                'label' => __( 'Sale Value' ),
+                '$direction' => '',
+                'width' => '150px',
+                '$sort' => false,
             ],
-            'cost'  =>  [
-                'label'         =>  __( 'Purchase Value' ),
-                '$direction'    =>  '',
-                'width'         =>  '150px',
-                '$sort'         =>  false,
+            'cost' => [
+                'label' => __( 'Purchase Value' ),
+                '$direction' => '',
+                'width' => '150px',
+                '$sort' => false,
             ],
-            'tax_value'  =>  [
-                'label'         =>  __( 'Taxes' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'tax_value' => [
+                'label' => __( 'Taxes' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'users_username'    =>  [
-                'label'         =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'users_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -422,39 +423,54 @@ class ProcurementCrud extends CrudService
             ->format();
 
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'invoice', [
-            'label'         =>      __( 'Invoice' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' ),
+            'label' => __( 'Invoice' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' ),
         ]);
 
+        /**
+         * if the procurement payment status
+         * is not paid, we can display new option for making a payment
+         */
+        if ( $entry->payment_status !== Procurement::PAYMENT_PAID ) {
+            $entry->addAction( 'set_paid', [
+                'label' => __( 'Set Paid' ),
+                'type' => 'GET',
+                'url' => ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/set-as-paid' ),
+                'confirm' => [
+                    'message' => __( 'Would you like to mark this procurement as paid?' ),
+                ],
+            ]);
+        }
+
         $entry->addAction( 'refresh', [
-            'label'         =>      __( 'Refresh' ),
-            'namespace'     =>      'refresh',
-            'type'          =>      'GET',
-            'index'         =>      'id',
-            'url'           =>     ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/refresh' ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to refresh this ?' ),
+            'label' => __( 'Refresh' ),
+            'namespace' => 'refresh',
+            'type' => 'GET',
+            'index' => 'id',
+            'url' => ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/refresh' ),
+            'confirm' => [
+                'message' => __( 'Would you like to refresh this ?' ),
             ],
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -470,7 +486,6 @@ class ProcurementCrud extends CrudService
     public function bulkAction( Request $request )
     {
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */
@@ -481,8 +496,8 @@ class ProcurementCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -509,9 +524,9 @@ class ProcurementCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  'procurements',
-            'create'    =>  'procurements/create',
-            'edit'      =>  'procurements/edit',
+            'list' => 'procurements',
+            'create' => 'procurements/create',
+            'edit' => 'procurements/edit',
         ];
     }
 
@@ -524,10 +539,10 @@ class ProcurementCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

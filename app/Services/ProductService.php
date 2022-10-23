@@ -29,33 +29,14 @@ use Illuminate\Support\Str;
 
 class ProductService
 {
-    /** @param TaxService */
-    protected $taxService;
-
-    /** @param BarcodeService */
-    protected $barcodeService;
-
-    /** @param ProductCategoryService */
-    protected $categoryService;
-
-    /** @param CurrencyService */
-    protected $currency;
-
-    /** @param UnitService */
-    protected $unitService;
-
     public function __construct(
-        ProductCategoryService $category,
-        TaxService $tax,
-        CurrencyService $currency,
-        UnitService $unit,
-        BarcodeService $barcodeService
+        protected ProductCategoryService $categoryService,
+        protected TaxService $taxService,
+        protected CurrencyService $currency,
+        protected UnitService $unitService,
+        protected BarcodeService $barcodeService
     ) {
-        $this->categoryService = $category;
-        $this->taxService = $tax;
-        $this->unitService = $unit;
-        $this->currency = $currency;
-        $this->barcodeService = $barcodeService;
+        // ...
     }
 
     /**
@@ -243,9 +224,9 @@ class ProductService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The variable product has been created.' ),
-            'data'      =>  compact( 'parent' ),
+            'status' => 'success',
+            'message' => __( 'The variable product has been created.' ),
+            'data' => compact( 'parent' ),
         ];
     }
 
@@ -326,9 +307,9 @@ class ProductService
         $editUrl = ns()->route( 'ns.products-edit', [ 'product' => $product->id ]);
 
         return [
-            'status'    =>      'success',
-            'message'   =>      __( 'The product has been saved.' ),
-            'data'      =>      compact( 'product', 'editUrl' ),
+            'status' => 'success',
+            'message' => __( 'The product has been saved.' ),
+            'data' => compact( 'product', 'editUrl' ),
         ];
     }
 
@@ -361,13 +342,13 @@ class ProductService
         switch ( $data[ 'product_type' ] ) {
             case 'product':
                 return $this->updateSimpleProduct( $product, $data );
-            break;
+                break;
             case 'variable':
                 return $this->updateVariableProduct( $product, $data );
-            break;
+                break;
             default:
                 throw new Exception( sprintf( __( 'Unable to edit a product with an unknown type : %s' ), $data[ 'product_type' ] ) );
-            break;
+                break;
         }
     }
 
@@ -438,7 +419,7 @@ class ProductService
 
         if ( empty( $fields[ 'sku' ] ) ) {
             $category = ProductCategory::find( $fields[ 'category_id' ] );
-            $fields[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $fields[ 'name' ] ) . '--' . Str::random(5);
+            $fields[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $fields[ 'name' ] ) . '--' . strtolower( Str::random(5) );
         }
 
         /**
@@ -470,7 +451,8 @@ class ProductService
         $this->saveGallery( $product, $fields[ 'images' ] ?? [] );
 
         /**
-         * We'll now save all attached sub items
+         * We'll now save all attached sub items. That is only applicable
+         * if the product is set to be a grouped product.
          */
         if (  $product->type === Product::TYPE_GROUPED ) {
             $this->saveSubItems( $product, $fields[ 'groups' ] ?? [] );
@@ -481,9 +463,9 @@ class ProductService
         $editUrl = ns()->route( 'ns.products-edit', [ 'product' => $product->id ]);
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product has been udpated' ),
-            'data'      =>  compact( 'product', 'editUrl' ),
+            'status' => 'success',
+            'message' => __( 'The product has been udpated' ),
+            'data' => compact( 'product', 'editUrl' ),
         ];
     }
 
@@ -540,8 +522,8 @@ class ProductService
             ->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The subitem has been saved.' ),
+            'status' => 'success',
+            'message' => __( 'The subitem has been saved.' ),
         ];
     }
 
@@ -663,9 +645,9 @@ class ProductService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The variable product has been updated.' ),
-            'data'      =>  compact( 'parent' ),
+            'status' => 'success',
+            'message' => __( 'The variable product has been updated.' ),
+            'data' => compact( 'parent' ),
         ];
     }
 
@@ -717,7 +699,6 @@ class ProductService
                  * available on the group variable, that's why we define
                  * explicitely how everything is saved here.
                  */
-                $unitQuantity->sale_price = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
                 $unitQuantity->sale_price = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
                 $unitQuantity->sale_price_edit = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
                 $unitQuantity->wholesale_price_edit = $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();
@@ -793,7 +774,7 @@ class ProductService
         switch ( $operationType ) {
             case ProductHistory::ACTION_STOCKED:
                 $this->__saveProcurementHistory( $data );
-            break;
+                break;
         }
     }
 
@@ -866,9 +847,9 @@ class ProductService
         $unitQuantity->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product\'s unit quantity has been updated.' ),
-            'data'      =>  compact( 'unitQuantity' ),
+            'status' => 'success',
+            'message' => __( 'The product\'s unit quantity has been updated.' ),
+            'data' => compact( 'unitQuantity' ),
         ];
     }
 
@@ -902,15 +883,15 @@ class ProductService
 
             if ( count( $result ) === 0 ) {
                 return [
-                    'status'    =>  'info',
-                    'message'   =>  sprintf( __( 'Unable to reset this variable product "%s", since it doens\'t seems to have any variations' ), $product->name ),
+                    'status' => 'info',
+                    'message' => sprintf( __( 'Unable to reset this variable product "%s", since it doens\'t seems to have any variations' ), $product->name ),
                 ];
             }
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The product variations has been reset' ),
-                'data'      =>  compact( 'result' ),
+                'status' => 'success',
+                'message' => __( 'The product variations has been reset' ),
+                'data' => compact( 'result' ),
             ];
         } else {
             return $this->__resetProductRelatives( $product );
@@ -919,13 +900,8 @@ class ProductService
 
     private function __resetProductRelatives( Product $product )
     {
-        $this->getProductHistory( $product->id )->each( function( $history ) {
-            $history->delete();
-        });
-
-        $this->getUnitQuantities( $product->id )->each( function( $unitQuantity ) {
-            $unitQuantity->delete();
-        });
+        ProductHistory::where( 'product_id', $product->id )->delete();
+        ProductUnitQuantity::where( 'product_id', $product->id )->delete();
 
         /**
          * dispatch an event to let everyone knows
@@ -934,9 +910,9 @@ class ProductService
         event( new ProductResetEvent( $product ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product has been resetted.' ),
-            'data'      =>  compact( 'product' ),
+            'status' => 'success',
+            'message' => __( 'The product has been resetted.' ),
+            'data' => compact( 'product' ),
         ];
     }
 
@@ -971,8 +947,8 @@ class ProductService
         event( new ProductAfterDeleteEvent( $product ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf( __( 'The product "%s" has been successfully deleted' ), $name ),
+            'status' => 'success',
+            'message' => sprintf( __( 'The product "%s" has been successfully deleted' ), $name ),
         ];
     }
 
@@ -1072,20 +1048,20 @@ class ProductService
     public function procurementStockOuting( ProcurementProduct $oldProduct, $fields )
     {
         $history = $this->stockAdjustment( ProductHistory::ACTION_REMOVED, [
-            'unit_id'                   =>      $oldProduct->unit_id,
-            'product_id'                =>      $oldProduct->product_id,
-            'unit_price'                =>      $oldProduct->purchase_price,
-            'total_price'               =>      $oldProduct->total_price,
-            'procurement_id'            =>      $oldProduct->procurement_id,
-            'procurementProduct'        =>      $oldProduct,
-            'procurement_product_id'    =>      $oldProduct->id,
-            'quantity'                  =>      $fields[ 'quantity' ],
+            'unit_id' => $oldProduct->unit_id,
+            'product_id' => $oldProduct->product_id,
+            'unit_price' => $oldProduct->purchase_price,
+            'total_price' => $oldProduct->total_price,
+            'procurement_id' => $oldProduct->procurement_id,
+            'procurementProduct' => $oldProduct,
+            'procurement_product_id' => $oldProduct->id,
+            'quantity' => $fields[ 'quantity' ],
         ]);
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product stock has been updated.' ),
-            'compac'    =>  compact( 'history' ),
+            'status' => 'success',
+            'message' => __( 'The product stock has been updated.' ),
+            'compac' => compact( 'history' ),
         ];
     }
 
@@ -1104,7 +1080,6 @@ class ProductService
          * @param int $product_id
          * @param float $unit_price
          * @param id $unit_id
-         * @param float $unit_price
          * @param float $total_price
          * @param int $procurement_product_id
          * @param OrderProduct $orderProduct
@@ -1327,7 +1302,6 @@ class ProductService
                 $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
             }
         } else {
-
             /**
              * @var string status
              * @var string message
@@ -1451,9 +1425,9 @@ class ProductService
         );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product quantity has been updated.' ),
-            'data'      =>  compact( 'newQuantity', 'oldQuantity', 'quantity' ),
+            'status' => 'success',
+            'message' => __( 'The product quantity has been updated.' ),
+            'data' => compact( 'newQuantity', 'oldQuantity', 'quantity' ),
         ];
     }
 
@@ -1490,9 +1464,9 @@ class ProductService
         );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product quantity has been updated.' ),
-            'data'      =>  compact( 'newQuantity', 'oldQuantity', 'quantity' ),
+            'status' => 'success',
+            'message' => __( 'The product quantity has been updated.' ),
+            'data' => compact( 'newQuantity', 'oldQuantity', 'quantity' ),
         ];
     }
 
@@ -1506,20 +1480,20 @@ class ProductService
     public function procurementStockEntry( ProcurementProduct $product, $fields )
     {
         $history = $this->stockAdjustment( ProductHistory::ACTION_ADDED, [
-            'unit_id'                   =>      $product->unit_id,
-            'product_id'                =>      $product->product_id,
-            'unit_price'                =>      $product->purchase_price,
-            'total_price'               =>      $product->total_price,
-            'procurement_id'            =>      $product->procurement_id,
-            'procurementProduct'        =>      $product,
-            'procurement_product_id'    =>      $product->id,
-            'quantity'                  =>      $fields[ 'quantity' ],
+            'unit_id' => $product->unit_id,
+            'product_id' => $product->product_id,
+            'unit_price' => $product->purchase_price,
+            'total_price' => $product->total_price,
+            'procurement_id' => $product->procurement_id,
+            'procurementProduct' => $product,
+            'procurement_product_id' => $product->id,
+            'quantity' => $fields[ 'quantity' ],
         ]);
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product stock has been updated.' ),
-            'data'      =>  compact( 'history' ),
+            'status' => 'success',
+            'message' => __( 'The product stock has been updated.' ),
+            'data' => compact( 'history' ),
         ];
     }
 
@@ -1553,14 +1527,14 @@ class ProductService
 
         if ( $count === 0 ) {
             return [
-                'status'    =>  'info',
-                'message'   =>  __( 'There is no variations to delete.' ),
+                'status' => 'info',
+                'message' => __( 'There is no variations to delete.' ),
             ];
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf( __( '%s product(s) has been deleted.' ), $count ),
+            'status' => 'success',
+            'message' => sprintf( __( '%s product(s) has been deleted.' ), $count ),
         ];
     }
 
@@ -1577,16 +1551,38 @@ class ProductService
 
         if ( ! $result ) {
             return [
-                'status'    =>  'info',
-                'message'   =>  __( 'There is no products to delete.' ),
+                'status' => 'info',
+                'message' => __( 'There is no products to delete.' ),
             ];
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf( __( '%s products(s) has been deleted.' ), count( $result ) ),
-            'data'      =>  compact( 'result' ),
+            'status' => 'success',
+            'message' => sprintf( __( '%s products(s) has been deleted.' ), count( $result ) ),
+            'data' => compact( 'result' ),
         ];
+    }
+
+    /**
+     * Will return the last purchase price
+     * defined for the provided product
+     *
+     * @param Product $product
+     * @return float
+     */
+    public function getLastPurchasePrice( $product )
+    {
+        if ( $product instanceof Product ) {
+            $procurementProduct = ProcurementProduct::where( 'product_id', $product->id )
+                ->orderBy( 'id', 'desc' )
+                ->first();
+
+            if ( $procurementProduct instanceof ProcurementProduct ) {
+                return $procurementProduct->purchase_price;
+            }
+        }
+
+        return 0;
     }
 
     /**
@@ -1647,9 +1643,9 @@ class ProductService
         $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product variation has been succesfully created.' ),
-            'data'      =>  compact( 'product' ),
+            'status' => 'success',
+            'message' => __( 'The product variation has been succesfully created.' ),
+            'data' => compact( 'product' ),
         ];
     }
 
@@ -1689,9 +1685,9 @@ class ProductService
         $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product variation has been updated.' ),
-            'data'      =>  compact( 'product' ),
+            'status' => 'success',
+            'message' => __( 'The product variation has been updated.' ),
+            'data' => compact( 'product' ),
         ];
     }
 

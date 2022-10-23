@@ -47,10 +47,10 @@ class CustomerCouponCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false,
-        'read'      =>  'nexopos.read.coupons',
-        'update'    =>  'nexopos.update.coupons',
-        'delete'    =>  'nexopos.delete.coupons',
+        'create' => false,
+        'read' => 'nexopos.read.coupons',
+        'update' => 'nexopos.update.coupons',
+        'delete' => 'nexopos.delete.coupons',
     ];
 
     /**
@@ -60,7 +60,7 @@ class CustomerCouponCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        'leftJoin'  =>  [
+        'leftJoin' => [
             [ 'nexopos_users as user', 'user.id', '=', 'nexopos_customers_coupons.author' ],
         ],
         [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ],
@@ -85,9 +85,9 @@ class CustomerCouponCrud extends CrudService
      * ]
      */
     public $pick = [
-        'user'      =>  [ 'username' ],
-        'customer'  =>  [ 'name' ],
-        'coupon'    =>  [ 'type', 'discount_value' ],
+        'user' => [ 'username' ],
+        'customer' => [ 'name' ],
+        'coupon' => [ 'type', 'discount_value' ],
     ];
 
     /**
@@ -130,15 +130,15 @@ class CustomerCouponCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Customer Coupons List' ),
-            'list_description'      =>  __( 'Display all customer coupons.' ),
-            'no_entry'              =>  __( 'No customer coupons has been registered' ),
-            'create_new'            =>  __( 'Add a new customer coupon' ),
-            'create_title'          =>  __( 'Create a new customer coupon' ),
-            'create_description'    =>  __( 'Register a new customer coupon and save it.' ),
-            'edit_title'            =>  __( 'Edit customer coupon' ),
-            'edit_description'      =>  __( 'Modify  Customer Coupon.' ),
-            'back_to_list'          =>  __( 'Return to Customer Coupons' ),
+            'list_title' => __( 'Customer Coupons List' ),
+            'list_description' => __( 'Display all customer coupons.' ),
+            'no_entry' => __( 'No customer coupons has been registered' ),
+            'create_new' => __( 'Add a new customer coupon' ),
+            'create_title' => __( 'Create a new customer coupon' ),
+            'create_description' => __( 'Register a new customer coupon and save it.' ),
+            'edit_title' => __( 'Edit customer coupon' ),
+            'edit_description' => __( 'Modify  Customer Coupon.' ),
+            'back_to_list' => __( 'Return to Customer Coupons' ),
         ];
     }
 
@@ -161,28 +161,28 @@ class CustomerCouponCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'usage',
-                            'label' =>  __( 'Usage' ),
-                            'description'   =>  __( 'Define how many time the coupon has been used.' ),
-                            'value' =>  $entry->usage ?? '',
+                            'type' => 'text',
+                            'name' => 'usage',
+                            'label' => __( 'Usage' ),
+                            'description' => __( 'Define how many time the coupon has been used.' ),
+                            'value' => $entry->usage ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'limit_usage',
-                            'label' =>  __( 'Limit' ),
-                            'description'   =>  __( 'Define the maximum usage possible for this coupon.' ),
-                            'value' =>  $entry->limit_usage ?? '',
+                            'type' => 'text',
+                            'name' => 'limit_usage',
+                            'label' => __( 'Limit' ),
+                            'description' => __( 'Define the maximum usage possible for this coupon.' ),
+                            'value' => $entry->limit_usage ?? '',
                         ],
                     ],
                 ],
@@ -250,7 +250,8 @@ class CustomerCouponCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -324,50 +325,50 @@ class CustomerCouponCrud extends CrudService
     public function getColumns()
     {
         return [
-            'customer_name'  =>  [
-                'label'  =>  __( 'Customer' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'customer_name' => [
+                'label' => __( 'Customer' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'coupon_type'  =>  [
-                'label'         =>  __( 'Type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'coupon_type' => [
+                'label' => __( 'Type' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'code'  =>  [
-                'label'         =>  __( 'Code' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'code' => [
+                'label' => __( 'Code' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'coupon_discount_value'  =>  [
-                'label'         =>  __( 'Value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'coupon_discount_value' => [
+                'label' => __( 'Value' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'usage'  =>  [
-                'label'  =>  __( 'Usage' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'usage' => [
+                'label' => __( 'Usage' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'limit_usage'  =>  [
-                'label'  =>  __( 'Limit' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'limit_usage' => [
+                'label' => __( 'Limit' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Date' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Date' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -382,29 +383,29 @@ class CustomerCouponCrud extends CrudService
         switch ( $entry->coupon_type ) {
             case 'percentage_discount':
                 $entry->coupon_discount_value = $entry->coupon_discount_value . '%';
-            break;
+                break;
             case 'flat_discount':
                 $entry->coupon_discount_value = ns()->currency->define( $entry->coupon_discount_value );
-            break;
+                break;
         }
 
         $entry->coupon_type = $entry->coupon_type === 'percentage_discount' ? __( 'Percentage' ) : __( 'Flat' );
 
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.customers-coupons/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-coupons/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -424,7 +425,6 @@ class CustomerCouponCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */
@@ -435,8 +435,8 @@ class CustomerCouponCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -463,11 +463,11 @@ class CustomerCouponCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->route( 'ns.dashboard.customers-coupons-generated-list' ),
-            'create'    =>  '#', // ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/{id}' ),
+            'list' => ns()->route( 'ns.dashboard.customers-coupons-generated-list' ),
+            'create' => '#', // ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/{id}' ),
         ];
     }
 
@@ -480,10 +480,10 @@ class CustomerCouponCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

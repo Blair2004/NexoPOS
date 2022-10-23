@@ -12,8 +12,8 @@ return [
         'tr'        =>  'Türkçe',
         'vi'        =>  'Vietnamese',
     ],
-    'rtl-languages' =>  [ 'ar' ],
-    'timezones'      =>  [
+    'rtl-languages' => [ 'ar' ],
+    'timezones' => [
         'America/Adak' => '(GMT-10:00) America/Adak (Hawaii-Aleutian Standard Time)',
         'America/Atka' => '(GMT-10:00) America/Atka (Hawaii-Aleutian Standard Time)',
         'America/Anchorage' => '(GMT-9:00) America/Anchorage (Alaska Standard Time)',
@@ -62,7 +62,6 @@ return [
         'America/Tegucigalpa' => '(GMT-6:00) America/Tegucigalpa (Central Standard Time)',
         'America/Winnipeg' => '(GMT-6:00) America/Winnipeg (Central Standard Time)',
         'Canada/Central' => '(GMT-6:00) Canada/Central (Central Standard Time)',
-        'Canada/East-Saskatchewan' => '(GMT-6:00) Canada/East-Saskatchewan (Central Standard Time)',
         'Canada/Saskatchewan' => '(GMT-6:00) Canada/Saskatchewan (Central Standard Time)',
         'Chile/EasterIsland' => '(GMT-6:00) Chile/EasterIsland (Easter Is. Time)',
         'Mexico/General' => '(GMT-6:00) Mexico/General (Central Standard Time)',

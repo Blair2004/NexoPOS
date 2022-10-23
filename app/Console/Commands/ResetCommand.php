@@ -61,20 +61,20 @@ class ResetCommand extends Command
         switch ( $this->option( 'mode' ) ) {
             case 'soft':
                 return $this->softReset();
-            break;
+                break;
             case 'hard':
                 return $this->hardReset();
-            break;
+                break;
             case 'grocery':
                 $this->softReset();
                 $this->initializeRole();
                 $this->demoService->run([
-                    'mode'                  =>  'grocery',
-                    'create_sales'          =>  true,
-                    'create_procurements'   =>  true,
+                    'mode' => 'grocery',
+                    'create_sales' => true,
+                    'create_procurements' => true,
                 ]);
                 $this->info( __( 'The demo has been enabled.' ) );
-            break;
+                break;
         }
     }
 

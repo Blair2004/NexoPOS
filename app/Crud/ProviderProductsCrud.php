@@ -45,10 +45,10 @@ class ProviderProductsCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false,
-        'read'      =>  true,
-        'update'    =>  false,
-        'delete'    =>  false,
+        'create' => false,
+        'read' => true,
+        'update' => false,
+        'delete' => false,
     ];
 
     /**
@@ -79,7 +79,7 @@ class ProviderProductsCrud extends CrudService
      * ]
      */
     public $pick = [
-        'tax_group'     =>  [ 'name' ],
+        'tax_group' => [ 'name' ],
     ];
 
     /**
@@ -122,15 +122,15 @@ class ProviderProductsCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Provider Products List' ),
-            'list_description'      =>  __( 'Display all Provider Products.' ),
-            'no_entry'              =>  __( 'No Provider Products has been registered' ),
-            'create_new'            =>  __( 'Add a new Provider Product' ),
-            'create_title'          =>  __( 'Create a new Provider Product' ),
-            'create_description'    =>  __( 'Register a new Provider Product and save it.' ),
-            'edit_title'            =>  __( 'Edit Provider Product' ),
-            'edit_description'      =>  __( 'Modify Provider Product.' ),
-            'back_to_list'          =>  __( 'Return to Provider Products' ),
+            'list_title' => __( 'Provider Products List' ),
+            'list_description' => __( 'Display all Provider Products.' ),
+            'no_entry' => __( 'No Provider Products has been registered' ),
+            'create_new' => __( 'Add a new Provider Product' ),
+            'create_title' => __( 'Create a new Provider Product' ),
+            'create_description' => __( 'Register a new Provider Product and save it.' ),
+            'edit_title' => __( 'Edit Provider Product' ),
+            'edit_description' => __( 'Modify Provider Product.' ),
+            'back_to_list' => __( 'Return to Provider Products' ),
         ];
     }
 
@@ -153,16 +153,16 @@ class ProviderProductsCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
+            'main' => [
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         // ...
                     ],
                 ],
@@ -230,7 +230,8 @@ class ProviderProductsCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -297,58 +298,58 @@ class ProviderProductsCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'purchase_price'  =>  [
-                'label'  =>  __( 'Purchase Price' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'purchase_price' => [
+                'label' => __( 'Purchase Price' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'quantity'  =>  [
-                'label'  =>  __( 'Quantity' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'quantity' => [
+                'label' => __( 'Quantity' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'tax_group_name'  =>  [
-                'label'  =>  __( 'Tax Group' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'tax_group_name' => [
+                'label' => __( 'Tax Group' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'barcode'  =>  [
-                'label'  =>  __( 'Barcode' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'barcode' => [
+                'label' => __( 'Barcode' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'expiration_date'  =>  [
-                'label'  =>  __( 'Expiration Date' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'expiration_date' => [
+                'label' => __( 'Expiration Date' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'tax_type'  =>  [
-                'label'  =>  __( 'Tax Type' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'tax_type' => [
+                'label' => __( 'Tax Type' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'tax_value'  =>  [
-                'label'  =>  __( 'Tax Value' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'tax_value' => [
+                'label' => __( 'Tax Value' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'total_purchase_price'  =>  [
-                'label'  =>  __( 'Total Price' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'total_purchase_price' => [
+                'label' => __( 'Total Price' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
         ];
     }
@@ -365,19 +366,19 @@ class ProviderProductsCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.providers-products/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.providers-products/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -402,7 +403,6 @@ class ProviderProductsCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */
@@ -413,8 +413,8 @@ class ProviderProductsCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -441,11 +441,11 @@ class ProviderProductsCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . '/dashboard/providers' ),
-            'create'    =>  ns()->url( 'dashboard/' . '/dashboard/providers/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . '/dashboard/providers/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-products' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-products/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . '/dashboard/providers' ),
+            'create' => false,
+            'edit' => false,
+            'post' => false,
+            'put' => false,
         ];
     }
 
@@ -458,10 +458,10 @@ class ProviderProductsCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

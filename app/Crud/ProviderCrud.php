@@ -66,10 +66,10 @@ class ProviderCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  'nexopos.create.providers',
-        'read'      =>  'nexopos.read.providers',
-        'update'    =>  'nexopos.update.providers',
-        'delete'    =>  'nexopos.delete.providers',
+        'create' => 'nexopos.create.providers',
+        'read' => 'nexopos.read.providers',
+        'update' => 'nexopos.update.providers',
+        'delete' => 'nexopos.delete.providers',
     ];
 
     /**
@@ -93,15 +93,15 @@ class ProviderCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Providers List' ),
-            'list_description'      =>  __( 'Display all providers.' ),
-            'no_entry'              =>  __( 'No providers has been registered' ),
-            'create_new'            =>  __( 'Add a new provider' ),
-            'create_title'          =>  __( 'Create a new provider' ),
-            'create_description'    =>  __( 'Register a new provider and save it.' ),
-            'edit_title'            =>  __( 'Edit provider' ),
-            'edit_description'      =>  __( 'Modify  Provider.' ),
-            'back_to_list'          =>  __( 'Return to Providers' ),
+            'list_title' => __( 'Providers List' ),
+            'list_description' => __( 'Display all providers.' ),
+            'no_entry' => __( 'No providers has been registered' ),
+            'create_new' => __( 'Add a new provider' ),
+            'create_title' => __( 'Create a new provider' ),
+            'create_description' => __( 'Register a new provider and save it.' ),
+            'edit_title' => __( 'Edit provider' ),
+            'edit_description' => __( 'Modify  Provider.' ),
+            'back_to_list' => __( 'Return to Providers' ),
         ];
     }
 
@@ -124,53 +124,53 @@ class ProviderCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
-                'validation'    =>  'required',
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
+                'validation' => 'required',
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'email',
-                            'label' =>  __( 'Email' ),
-                            'description'   =>  __( 'Provide the provider email. Mightbe used to send automatted email.' ),
-                            'value' =>  $entry->email ?? '',
+                            'type' => 'text',
+                            'name' => 'email',
+                            'label' => __( 'Email' ),
+                            'description' => __( 'Provide the provider email. Mightbe used to send automatted email.' ),
+                            'value' => $entry->email ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'surname',
-                            'label' =>  __( 'Surname' ),
-                            'description'   =>  __( 'Provider surname if necessary.' ),
-                            'value' =>  $entry->surname ?? '',
+                            'type' => 'text',
+                            'name' => 'surname',
+                            'label' => __( 'Surname' ),
+                            'description' => __( 'Provider surname if necessary.' ),
+                            'value' => $entry->surname ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'phone',
-                            'label' =>  __( 'Phone' ),
-                            'description'   =>  __( 'Contact phone number for the provider. Might be used to send automatted SMS notifications.' ),
-                            'value' =>  $entry->phone ?? '',
+                            'type' => 'text',
+                            'name' => 'phone',
+                            'label' => __( 'Phone' ),
+                            'description' => __( 'Contact phone number for the provider. Might be used to send automatted SMS notifications.' ),
+                            'value' => $entry->phone ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'address_1',
-                            'label' =>  __( 'Address 1' ),
-                            'description'   =>  __( 'First address of the provider.' ),
-                            'value' =>  $entry->address_1 ?? '',
+                            'type' => 'text',
+                            'name' => 'address_1',
+                            'label' => __( 'Address 1' ),
+                            'description' => __( 'First address of the provider.' ),
+                            'value' => $entry->address_1 ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'address_2',
-                            'label' =>  __( 'Address 2' ),
-                            'description'   =>  __( 'Second address of the provider.' ),
-                            'value' =>  $entry->address_2 ?? '',
+                            'type' => 'text',
+                            'name' => 'address_2',
+                            'label' => __( 'Address 2' ),
+                            'description' => __( 'Second address of the provider.' ),
+                            'value' => $entry->address_2 ?? '',
                         ], [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'description'   =>  __( 'Further details about the provider' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'description' => __( 'Further details about the provider' ),
+                            'value' => $entry->description ?? '',
                         ],
                     ],
                 ],
@@ -234,7 +234,8 @@ class ProviderCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -276,8 +277,8 @@ class ProviderCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -304,40 +305,40 @@ class ProviderCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'email'  =>  [
-                'label'  =>  __( 'Email' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'email' => [
+                'label' => __( 'Email' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'phone'  =>  [
-                'label'  =>  __( 'Phone' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'phone' => [
+                'label' => __( 'Phone' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'amount_due'  =>  [
-                'label'  =>  __( 'Amount Due' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'amount_due' => [
+                'label' => __( 'Amount Due' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'amount_paid'  =>  [
-                'label'  =>  __( 'Amount Paid' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'amount_paid' => [
+                'label' => __( 'Amount Paid' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'nexopos_users_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'nexopos_users_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'         =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -354,36 +355,36 @@ class ProviderCrud extends CrudService
         $entry->amount_paid = ns()->currency->define( $entry->amount_paid )->format();
 
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'providers' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'providers' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'see-procurements', [
-            'label'         =>      __( 'See Procurements' ),
-            'namespace'     =>      'see-procurements',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id . '/procurements/' ),
+            'label' => __( 'See Procurements' ),
+            'namespace' => 'see-procurements',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'providers/' . $entry->id . '/procurements/' ),
         ]);
 
         $entry->addAction( 'see-products', [
-            'label'         =>      __( 'See Products' ),
-            'namespace'     =>      'see-products',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id . '/products/' ),
+            'label' => __( 'See Products' ),
+            'namespace' => 'see-products',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'providers/' . $entry->id . '/products/' ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.providers/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.providers/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -405,15 +406,15 @@ class ProviderCrud extends CrudService
         $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' ),
+                'status' => 'failed',
+                'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -440,11 +441,11 @@ class ProviderCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'providers' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'providers/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'providers/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'providers' ),
+            'create' => ns()->url( 'dashboard/' . 'providers/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'providers/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers/{id}' . '' ),
         ];
     }
 
@@ -457,10 +458,10 @@ class ProviderCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

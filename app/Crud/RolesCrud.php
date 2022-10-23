@@ -93,10 +93,10 @@ class RolesCrud extends CrudService
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
         $this->dashboardOptions = Hook::filter( 'ns-dashboard-identifiers', [
-            'none'      =>  __( 'No Dashboard' ),
-            'store'     =>  __( 'Store Dashboard' ),
-            'cashier'   =>  __( 'Cashier Dashboard' ),
-            'default'   =>  __( 'Default Dashboard' ),
+            'none' => __( 'No Dashboard' ),
+            'store' => __( 'Store Dashboard' ),
+            'cashier' => __( 'Cashier Dashboard' ),
+            'default' => __( 'Default Dashboard' ),
         ]);
     }
 
@@ -109,15 +109,15 @@ class RolesCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Roles List' ),
-            'list_description'      =>  __( 'Display all roles.' ),
-            'no_entry'              =>  __( 'No role has been registered.' ),
-            'create_new'            =>  __( 'Add a new role' ),
-            'create_title'          =>  __( 'Create a new role' ),
-            'create_description'    =>  __( 'Create a new role and save it.' ),
-            'edit_title'            =>  __( 'Edit role' ),
-            'edit_description'      =>  __( 'Modify  Role.' ),
-            'back_to_list'          =>  __( 'Return to Roles' ),
+            'list_title' => __( 'Roles List' ),
+            'list_description' => __( 'Display all roles.' ),
+            'no_entry' => __( 'No role has been registered.' ),
+            'create_new' => __( 'Add a new role' ),
+            'create_title' => __( 'Create a new role' ),
+            'create_description' => __( 'Create a new role and save it.' ),
+            'edit_title' => __( 'Edit role' ),
+            'edit_description' => __( 'Modify  Role.' ),
+            'back_to_list' => __( 'Return to Roles' ),
         ];
     }
 
@@ -140,40 +140,40 @@ class RolesCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the role.' ),
-                'validation'    => 'required',
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the role.' ),
+                'validation' => 'required',
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'namespace',
-                            'label' =>  __( 'Namespace' ),
-                            'validation'    =>  $entry === null ? 'unique:nexopos_roles,namespace' : [
+                            'type' => 'text',
+                            'name' => 'namespace',
+                            'label' => __( 'Namespace' ),
+                            'validation' => $entry === null ? 'unique:nexopos_roles,namespace' : [
                                 Rule::unique( 'nexopos_roles', 'namespace' )->ignore( $entry->id ),
                             ],
-                            'description'   =>  __( 'Should be a unique value with no spaces or special character' ),
-                            'value' =>  $entry->namespace ?? '',
+                            'description' => __( 'Should be a unique value with no spaces or special character' ),
+                            'value' => $entry->namespace ?? '',
                         ], [
-                            'type'  =>  'select',
-                            'name'  =>  'dashid',
-                            'label' =>  __( 'Dashboard Identifier' ),
-                            'validation'    =>  'required',
-                            'options'       =>  Helper::kvToJsOptions( $this->dashboardOptions ),
-                            'description'   =>  __( 'Define what should be the home page of the dashboard.' ),
-                            'value' =>  $entry->dashid ?? 'none',
+                            'type' => 'select',
+                            'name' => 'dashid',
+                            'label' => __( 'Dashboard Identifier' ),
+                            'validation' => 'required',
+                            'options' => Helper::kvToJsOptions( $this->dashboardOptions ),
+                            'description' => __( 'Define what should be the home page of the dashboard.' ),
+                            'value' => $entry->dashid ?? 'none',
                         ], [
-                            'type'          =>  'textarea',
-                            'name'          =>  'description',
-                            'label'         =>  __( 'Description' ),
-                            'description'   =>  __( 'Provide more details about what this role is about.' ),
-                            'value'         =>  $entry->description ?? '',
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'description' => __( 'Provide more details about what this role is about.' ),
+                            'value' => $entry->description ?? '',
                         ],
                     ],
                 ],
@@ -222,22 +222,18 @@ class RolesCrud extends CrudService
     public function filterPutInputs( $inputs, Role $entry )
     {
         /**
-         * the namespace can be automatted
+         * if the role is a locked role
+         * we should forbid editing the namespace.
          */
-        if ( empty( $inputs[ 'namespace' ] ) ) {
-            $inputs[ 'namespace' ] = Str::slug( $inputs[ 'name' ] );
+        if ( $entry->locked ) {
+            unset( $inputs[ 'namespace' ] );
         }
 
         /**
-         * the default role namespace can't be changed.
+         * the namespace can be automatted
          */
-        if ( ! in_array( $inputs[ 'namespace' ], [
-            Role::ADMIN,
-            Role::STOREADMIN,
-            Role::STORECASHIER,
-            Role::USER,
-        ] )) {
-            $inputs[ 'namespace' ] = Str::replace( ' ', '-', $inputs[ 'namespace' ] );
+        if ( empty( $inputs[ 'namespace' ] ) && ! $entry->locked ) {
+            $inputs[ 'namespace' ] = Str::slug( $inputs[ 'name' ] );
         }
 
         return $inputs;
@@ -277,7 +273,8 @@ class RolesCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -319,8 +316,8 @@ class RolesCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -351,25 +348,25 @@ class RolesCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'namespace'  =>  [
-                'label'  =>  __( 'Namespace' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'namespace' => [
+                'label' => __( 'Namespace' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'dashid'  =>  [
-                'label'  =>  __( 'Namespace' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'dashid' => [
+                'label' => __( 'Namespace' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -384,31 +381,31 @@ class RolesCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'clone', [
-            'label'         =>      __( 'Clone' ),
-            'namespace'     =>      'clone',
-            'type'          =>      'GET',
-            'confirm'       =>      [
-                'message'   =>  __( 'Would you like to clone this role ?' ),
+            'label' => __( 'Clone' ),
+            'namespace' => 'clone',
+            'type' => 'GET',
+            'confirm' => [
+                'message' => __( 'Would you like to clone this role ?' ),
             ],
-            'index'         =>      'id',
-            'url'           =>     ns()->url( '/api/nexopos/v4/' . 'users/roles/' . $entry->id . '/clone' ),
+            'index' => 'id',
+            'url' => ns()->url( '/api/nexopos/v4/' . 'users/roles/' . $entry->id . '/clone' ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.roles/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.roles/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -430,8 +427,8 @@ class RolesCrud extends CrudService
         $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' ),
+                'status' => 'failed',
+                'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
@@ -442,8 +439,8 @@ class RolesCrud extends CrudService
             );
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -478,11 +475,11 @@ class RolesCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'users/roles' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'users/roles/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'users/roles/edit/{id}' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'users/roles' ),
+            'create' => ns()->url( 'dashboard/' . 'users/roles/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'users/roles/edit/{id}' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles/{id}' . '' ),
         ];
     }
 
@@ -495,10 +492,10 @@ class RolesCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

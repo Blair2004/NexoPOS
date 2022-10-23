@@ -63,6 +63,8 @@ if ( Auth::check() ) {
         window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
             'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
         ]));?>
+
+        window.ns.cssFiles      =   <?php echo file_get_contents( base_path( 'public/css-manifest.json' ) );?>;
     </script>
     @if ( ns()->isProduction() )
     <!-- Something should be there -->

@@ -89,15 +89,15 @@ class ExpenseCategoryCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Accounts List' ),
-            'list_description'      =>  __( 'Display All Accounts.' ),
-            'no_entry'              =>  __( 'No Account has been registered' ),
-            'create_new'            =>  __( 'Add a new Account' ),
-            'create_title'          =>  __( 'Create a new Account' ),
-            'create_description'    =>  __( 'Register a new Account and save it.' ),
-            'edit_title'            =>  __( 'Edit Account' ),
-            'edit_description'      =>  __( 'Modify An Account.' ),
-            'back_to_list'          =>  __( 'Return to Accounts' ),
+            'list_title' => __( 'Accounts List' ),
+            'list_description' => __( 'Display All Accounts.' ),
+            'no_entry' => __( 'No Account has been registered' ),
+            'create_new' => __( 'Add a new Account' ),
+            'create_title' => __( 'Create a new Account' ),
+            'create_description' => __( 'Register a new Account and save it.' ),
+            'edit_title' => __( 'Edit Account' ),
+            'edit_description' => __( 'Modify An Account.' ),
+            'back_to_list' => __( 'Return to Accounts' ),
         ];
     }
 
@@ -120,40 +120,40 @@ class ExpenseCategoryCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
-                'validation'    => 'required',
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
+                'validation' => 'required',
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'select',
-                            'name'  =>  'operation',
-                            'label' =>  __( 'Operation' ),
-                            'description'   =>  __( 'All entities attached to this category will either produce a "credit" or "debit" to the cash flow history.' ),
-                            'validation'    => 'required',
-                            'options'   =>  Helper::kvToJsOptions([
-                                'credit'    =>  __( 'Credit' ),
-                                'debit'     =>  __( 'Debit' ),
+                            'type' => 'select',
+                            'name' => 'operation',
+                            'label' => __( 'Operation' ),
+                            'description' => __( 'All entities attached to this category will either produce a "credit" or "debit" to the cash flow history.' ),
+                            'validation' => 'required',
+                            'options' => Helper::kvToJsOptions([
+                                'credit' => __( 'Credit' ),
+                                'debit' => __( 'Debit' ),
                             ]),
-                            'value' =>  $entry->operation ?? '',
+                            'value' => $entry->operation ?? '',
                         ], [
-                            'type'          =>  'text',
-                            'name'          =>  'account',
-                            'label'         =>  __( 'Account' ),
-                            'description'   =>  __( 'Provide the accounting number for this category.' ),
-                            'value'         =>  $entry->account ?? '',
-                            'validation'    => 'required',
+                            'type' => 'text',
+                            'name' => 'account',
+                            'label' => __( 'Account' ),
+                            'description' => __( 'Provide the accounting number for this category.' ),
+                            'value' => $entry->account ?? '',
+                            'validation' => 'required',
                         ], [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'value' => $entry->description ?? '',
                         ],
                     ],
                 ],
@@ -217,7 +217,8 @@ class ExpenseCategoryCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -259,8 +260,8 @@ class ExpenseCategoryCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -287,30 +288,30 @@ class ExpenseCategoryCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'account'  =>  [
-                'label'  =>  __( 'Account' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'account' => [
+                'label' => __( 'Account' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'operation'  =>  [
-                'label'  =>  __( 'Operation' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'operation' => [
+                'label' => __( 'Operation' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'nexopos_users_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'nexopos_users_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -322,20 +323,20 @@ class ExpenseCategoryCrud extends CrudService
     {
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.accounting-accounts/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.accounting-accounts/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -357,15 +358,15 @@ class ExpenseCategoryCrud extends CrudService
         $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' ),
+                'status' => 'failed',
+                'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -392,11 +393,11 @@ class ExpenseCategoryCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      => ns()->url( 'dashboard/' . 'accounting/accounts' ),
-            'create'    => ns()->url( 'dashboard/' . 'accounting/accounts/create' ),
-            'edit'      => ns()->url( 'dashboard/' . 'accounting/accounts/edit/' ),
-            'post'      => ns()->url( 'api/nexopos/v4/crud/ns.accounting-accounts' ),
-            'put'       => ns()->url( 'api/nexopos/v4/crud/ns.accounting-accounts/{id}' ),
+            'list' => ns()->url( 'dashboard/' . 'accounting/accounts' ),
+            'create' => ns()->url( 'dashboard/' . 'accounting/accounts/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'accounting/accounts/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/ns.accounting-accounts' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/ns.accounting-accounts/{id}' ),
         ];
     }
 
@@ -409,10 +410,10 @@ class ExpenseCategoryCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

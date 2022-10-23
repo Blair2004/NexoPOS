@@ -173,9 +173,9 @@ class ProductsController extends DashboardController
         $this->productService->refreshPrices( $product );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product price has been refreshed.' ),
-            'data'      =>  compact( 'product' ),
+            'status' => 'success',
+            'message' => __( 'The product price has been refreshed.' ),
+            'data' => compact( 'product' ),
         ];
     }
 
@@ -320,11 +320,11 @@ class ProductsController extends DashboardController
         });
 
         return floatval( $opResult ) > 0 ? [
-            'status'        =>      'success',
-            'message'       =>      __( 'The single variation has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The single variation has been deleted.' ),
         ] : [
-            'status'        =>      'failed',
-            'message'       =>      sprintf( __( 'The the variation hasn\'t been deleted because it might not exist or is not assigned to the parent product "%s".' ), $product->name ),
+            'status' => 'failed',
+            'message' => sprintf( __( 'The the variation hasn\'t been deleted because it might not exist or is not assigned to the parent product "%s".' ), $product->name ),
         ];
     }
 
@@ -364,10 +364,10 @@ class ProductsController extends DashboardController
         });
 
         return $this->view( 'pages.dashboard.crud.table', [
-            'title'         =>      __( 'Products List' ),
-            'createUrl'     =>  ns()->url( '/dashboard/products/create' ),
-            'description'   =>  __( 'List all products available on the system' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products' ),
+            'title' => __( 'Products List' ),
+            'createUrl' => ns()->url( '/dashboard/products/create' ),
+            'description' => __( 'List all products available on the system' ),
+            'src' => ns()->url( '/api/nexopos/v4/crud/ns.products' ),
         ]);
     }
 
@@ -376,13 +376,13 @@ class ProductsController extends DashboardController
         ns()->restrict([ 'nexopos.update.products' ]);
 
         return $this->view( 'pages.dashboard.products.create', [
-            'title'         =>  __( 'Edit a product' ),
-            'description'   =>  __( 'Makes modifications to a product' ),
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/products/' . $product->id ),
-            'returnUrl'     =>  ns()->url( '/dashboard/products' ),
-            'unitsUrl'      =>  ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
-            'submitMethod'  =>  'PUT',
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products/form-config/' . $product->id ),
+            'title' => __( 'Edit a product' ),
+            'description' => __( 'Makes modifications to a product' ),
+            'submitUrl' => ns()->url( '/api/nexopos/v4/products/' . $product->id ),
+            'returnUrl' => ns()->url( '/dashboard/products' ),
+            'unitsUrl' => ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
+            'submitMethod' => 'PUT',
+            'src' => ns()->url( '/api/nexopos/v4/crud/ns.products/form-config/' . $product->id ),
         ]);
     }
 
@@ -391,12 +391,12 @@ class ProductsController extends DashboardController
         ns()->restrict([ 'nexopos.create.products' ]);
 
         return $this->view( 'pages.dashboard.products.create', [
-            'title'         =>  __( 'Create a product' ),
-            'description'   =>  __( 'Add a new product on the system' ),
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/products' ),
-            'returnUrl'     =>  ns()->url( '/dashboard/products' ),
-            'unitsUrl'      =>  ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products/form-config' ),
+            'title' => __( 'Create a product' ),
+            'description' => __( 'Add a new product on the system' ),
+            'submitUrl' => ns()->url( '/api/nexopos/v4/products' ),
+            'returnUrl' => ns()->url( '/dashboard/products' ),
+            'unitsUrl' => ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
+            'src' => ns()->url( '/api/nexopos/v4/crud/ns.products/form-config' ),
         ]);
     }
 
@@ -409,8 +409,8 @@ class ProductsController extends DashboardController
     public function productUnits( Product $product )
     {
         return ProductUnitQuantitiesCrud::table([
-            'queryParams'   =>  [
-                'product_id'    =>  $product->id,
+            'queryParams' => [
+                'product_id' => $product->id,
             ],
         ]);
     }
@@ -430,8 +430,8 @@ class ProductsController extends DashboardController
         }, 10, 2 );
 
         return ProductHistoryCrud::table([
-            'queryParams'    =>  [
-                'product_id'    =>  $identifier,
+            'queryParams' => [
+                'product_id' => $identifier,
             ],
         ]);
     }
@@ -439,13 +439,13 @@ class ProductsController extends DashboardController
     public function showStockAdjustment()
     {
         return $this->view( 'pages.dashboard.products.stock-adjustment', [
-            'title'     =>      __( 'Stock Adjustment' ),
-            'description'   =>  __( 'Adjust stock of existing products.' ),
-            'actions'       =>  Helper::kvToJsOptions([
-                ProductHistory::ACTION_ADDED        =>  __( 'Add' ),
-                ProductHistory::ACTION_DELETED      =>  __( 'Delete' ),
-                ProductHistory::ACTION_DEFECTIVE    =>  __( 'Defective' ),
-                ProductHistory::ACTION_LOST         =>  __( 'Lost' ),
+            'title' => __( 'Stock Adjustment' ),
+            'description' => __( 'Adjust stock of existing products.' ),
+            'actions' => Helper::kvToJsOptions([
+                ProductHistory::ACTION_ADDED => __( 'Add' ),
+                ProductHistory::ACTION_DELETED => __( 'Delete' ),
+                ProductHistory::ACTION_DEFECTIVE => __( 'Defective' ),
+                ProductHistory::ACTION_LOST => __( 'Lost' ),
             ]),
         ]);
     }
@@ -467,18 +467,18 @@ class ProductsController extends DashboardController
 
         if ( $unitQuantity->quantity > 0 ) {
             $this->productService->stockAdjustment( ProductHistory::ACTION_DELETED, [
-                'unit_price'    =>  $unitQuantity->sale_price,
-                'unit_id'       =>  $unitQuantity->unit_id,
-                'product_id'    =>  $unitQuantity->product_id,
-                'quantity'      =>  $unitQuantity->quantity,
+                'unit_price' => $unitQuantity->sale_price,
+                'unit_id' => $unitQuantity->unit_id,
+                'product_id' => $unitQuantity->product_id,
+                'quantity' => $unitQuantity->quantity,
             ]);
         }
 
         $unitQuantity->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product unit quantity has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The product unit quantity has been deleted.' ),
         ];
     }
 
@@ -487,7 +487,7 @@ class ProductsController extends DashboardController
         ns()->restrict([ 'nexopos.make.products-adjustments' ]);
 
         $validator = Validator::make( $request->all(), [
-            'products'  =>  'required',
+            'products' => 'required',
         ]);
 
         if ( $validator->fails() ) {
@@ -535,19 +535,19 @@ class ProductsController extends DashboardController
          */
         foreach ( $request->input( 'products' ) as $product ) {
             $results[] = $this->productService->stockAdjustment( $product[ 'adjust_action' ], [
-                'unit_price'                =>  $product[ 'adjust_unit' ][ 'sale_price' ],
-                'unit_id'                   =>  $product[ 'adjust_unit' ][ 'unit_id' ],
-                'procurement_product_id'    =>  $product[ 'procurement_product_id' ] ?? null,
-                'product_id'                =>  $product[ 'id' ],
-                'quantity'                  =>  $product[ 'adjust_quantity' ],
-                'description'               =>  $product[ 'adjust_reason' ] ?? '',
+                'unit_price' => $product[ 'adjust_unit' ][ 'sale_price' ],
+                'unit_id' => $product[ 'adjust_unit' ][ 'unit_id' ],
+                'procurement_product_id' => $product[ 'procurement_product_id' ] ?? null,
+                'product_id' => $product[ 'id' ],
+                'quantity' => $product[ 'adjust_quantity' ],
+                'description' => $product[ 'adjust_reason' ] ?? '',
             ]);
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The stock has been adjustment successfully.' ),
-            'data'      =>  $results,
+            'status' => 'success',
+            'message' => __( 'The stock has been adjustment successfully.' ),
+            'data' => $results,
         ];
     }
 
@@ -580,7 +580,6 @@ class ProductsController extends DashboardController
              */
             $product->procurement_product_id = $procurementProduct->id;
         } elseif ( $productUnitQuantity instanceof ProductUnitQuantity ) {
-
             /**
              * if a product unit quantity is loaded. Then we make sure to return the parent
              * product with the selected unit quantity.
@@ -600,8 +599,8 @@ class ProductsController extends DashboardController
 
         if ( $product instanceof Product ) {
             return [
-                'type'      =>  'product',
-                'product'   =>  $product,
+                'type' => 'product',
+                'product' => $product,
             ];
         }
 
@@ -611,8 +610,8 @@ class ProductsController extends DashboardController
     public function printLabels()
     {
         return $this->view( 'pages.dashboard.products.print-labels', [
-            'title'         =>  __( 'Print Labels' ),
-            'description'   =>  __( 'Customize and print products labels.' ),
+            'title' => __( 'Print Labels' ),
+            'description' => __( 'Customize and print products labels.' ),
         ]);
     }
 

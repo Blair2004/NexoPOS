@@ -47,13 +47,13 @@ class CreateUserTest extends TestCase
             $password = Hash::make( Str::random(20) );
 
             $configuration = [
-                'username'  =>  $this->faker->username(),
-                'general'   =>  [
-                    'email'     =>  $this->faker->email(),
-                    'password'  =>  $password,
-                    'password_confirm'  =>  $password,
-                    'roles'     =>  [ $role->id ],
-                    'active'    =>  1, // true
+                'username' => $this->faker->username(),
+                'general' => [
+                    'email' => $this->faker->email(),
+                    'password' => $password,
+                    'password_confirm' => $password,
+                    'roles' => [ $role->id ],
+                    'active' => 1, // true
                 ],
             ];
 
@@ -69,10 +69,10 @@ class CreateUserTest extends TestCase
              */
             try {
                 $this->users->setUser([
-                    'username'  =>  $configuration[ 'username' ],
-                    'email'     =>  $this->faker->email(),
-                    'roles'     =>  $configuration[ 'general' ][ 'roles' ],
-                    'active'    =>  true,
+                    'username' => $configuration[ 'username' ],
+                    'email' => $this->faker->email(),
+                    'roles' => $configuration[ 'general' ][ 'roles' ],
+                    'active' => true,
                 ]);
             } catch ( Exception $exception ) {
                 $this->assertTrue( strstr( $exception->getMessage(), 'username' ) !== false );
@@ -84,10 +84,10 @@ class CreateUserTest extends TestCase
              */
             try {
                 $this->users->setUser([
-                    'username'  =>  $this->faker->userName(),
-                    'email'     =>  $configuration[ 'general' ][ 'email' ],
-                    'roles'     =>  $configuration[ 'general' ][ 'roles' ],
-                    'active'    =>  true,
+                    'username' => $this->faker->userName(),
+                    'email' => $configuration[ 'general' ][ 'email' ],
+                    'roles' => $configuration[ 'general' ][ 'roles' ],
+                    'active' => true,
                 ]);
             } catch ( Exception $exception ) {
                 $this->assertTrue( strstr( $exception->getMessage(), 'email' ) !== false );
@@ -97,13 +97,13 @@ class CreateUserTest extends TestCase
              * Step 3: Update user from Crud component
              */
             $configuration = [
-                'username'  =>  $this->faker->username(),
-                'general'   =>  [
-                    'email'     =>  $this->faker->email(),
-                    'password'  =>  $password,
-                    'password_confirm'  =>  $password,
-                    'roles'     =>  [ $role->id ],
-                    'active'    =>  1, // true
+                'username' => $this->faker->username(),
+                'general' => [
+                    'email' => $this->faker->email(),
+                    'password' => $password,
+                    'password_confirm' => $password,
+                    'roles' => [ $role->id ],
+                    'active' => 1, // true
                 ],
             ];
 
@@ -117,6 +117,44 @@ class CreateUserTest extends TestCase
         });
     }
 
+    /**
+     * @depends test_created_users
+     */
+    public function test_delete_users()
+    {
+        Role::get()->map( function( Role $role ) {
+            $role->users()->get()->each( function( User $user ) {
+                $this->attemptAuthenticate( $user );
+    
+                /**
+                 * Step 1: attempt to delete himself
+                 */
+
+                $response = $this->withSession( $this->app[ 'session' ]->all() )
+                    ->json( 'delete', '/api/nexopos/v4/crud/ns.users/' . $user->id );
+
+                $response->assertStatus( 401 );
+            });
+        });
+
+        $user   =   Role::namespace( Role::ADMIN )->users()->first();
+
+        /**
+         * Step 2: try to delete a user who has some sales
+         */
+        $order  =   Order::where( 'author', '<>', $user->id )->first();
+
+        if ( $order instanceof Order ) {
+            $response = $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'delete', '/api/nexopos/v4/crud/ns.users/' . $order->author );
+
+            $response->assertStatus( 401 );
+        }
+    }
+
+    /**
+     * @depends test_create_users
+     */
     public function test_created_users()
     {
         $user = User::first();
@@ -125,31 +163,26 @@ class CreateUserTest extends TestCase
 
     private function attemptAllRoutes( $user )
     {
-        /**
-         * @var User $user
-         */
-        $user = User::findOrFail( $user->id );
-
         $paramsModelBinding = [
-            '/\{product\}/'                                 =>  Product::class,
-            '/\{provider\}/'                                =>  Provider::class,
-            '/\{procurement\}/'                             =>  Procurement::class,
-            '/\{expense\}/'                                 =>  Expense::class,
-            '/\{category\}/'                                =>  ProductCategory::class,
-            '/\{group\}/'                                   =>  UnitGroup::class,
-            '/\{unit\}/'                                    =>  Unit::class,
-            '/\{reward\}/'                                  =>  RewardSystem::class,
-            '/\{customer\}|\{customerAccountHistory\}/' =>  function() {
+            '/\{product\}/' => Product::class,
+            '/\{provider\}/' => Provider::class,
+            '/\{procurement\}/' => Procurement::class,
+            '/\{expense\}/' => Expense::class,
+            '/\{category\}/' => ProductCategory::class,
+            '/\{group\}/' => UnitGroup::class,
+            '/\{unit\}/' => Unit::class,
+            '/\{reward\}/' => RewardSystem::class,
+            '/\{customer\}|\{customerAccountHistory\}/' => function() {
                 $customerAccountHistory = CustomerAccountHistory::first()->id;
                 $customer = $customerAccountHistory->customer->id;
 
                 return compact( 'customerAccountHistory', 'customer' );
             },
-            '/\{paymentType\}/'                             =>  PaymentType::class,
-            '/\{user\}/'                                    =>  User::class,
-            '/\{order\}/'                                   =>  Order::class,
-            '/\{tax\}/'                                     =>  Tax::class,
-            '/\{cashFlow\}/'                                =>  CashFlow::class,
+            '/\{paymentType\}/' => PaymentType::class,
+            '/\{user\}/' => User::class,
+            '/\{order\}/' => Order::class,
+            '/\{tax\}/' => Tax::class,
+            '/\{cashFlow\}/' => CashFlow::class,
         ];
 
         /**
@@ -172,7 +205,6 @@ class CreateUserTest extends TestCase
                 foreach ( $paramsModelBinding as $expression => $binding ) {
                     if ( preg_match( $expression, $uri ) ) {
                         if ( is_array( $binding ) ) {
-
                             /**
                              * We want to replace all argument
                              * on the uri by the matching binding collection
@@ -181,7 +213,6 @@ class CreateUserTest extends TestCase
                                 $uri = preg_replace( '/\{' . $parameter . '\}/', $value, $uri );
                             }
                         } elseif ( is_string( $binding ) ) {
-
                             /**
                              * This are URI with a single parameter
                              * that are replaced once the binding is resolved.

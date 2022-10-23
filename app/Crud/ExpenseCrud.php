@@ -51,8 +51,8 @@ class ExpenseCrud extends CrudService
     ];
 
     protected $pick = [
-        'user'                  =>  [ 'username' ],
-        'expense_category'      =>  [ 'name' ],
+        'user' => [ 'username' ],
+        'expense_category' => [ 'name' ],
     ];
 
     protected $permissions = [
@@ -102,15 +102,15 @@ class ExpenseCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Expenses List' ),
-            'list_description'      =>  __( 'Display all expenses.' ),
-            'no_entry'              =>  __( 'No expenses has been registered' ),
-            'create_new'            =>  __( 'Add a new expense' ),
-            'create_title'          =>  __( 'Create a new expense' ),
-            'create_description'    =>  __( 'Register a new expense and save it.' ),
-            'edit_title'            =>  __( 'Edit expense' ),
-            'edit_description'      =>  __( 'Modify  Expense.' ),
-            'back_to_list'          =>  __( 'Return to Expenses' ),
+            'list_title' => __( 'Expenses List' ),
+            'list_description' => __( 'Display all expenses.' ),
+            'no_entry' => __( 'No expenses has been registered' ),
+            'create_new' => __( 'Add a new expense' ),
+            'create_title' => __( 'Create a new expense' ),
+            'create_description' => __( 'Register a new expense and save it.' ),
+            'edit_title' => __( 'Edit expense' ),
+            'edit_description' => __( 'Modify  Expense.' ),
+            'back_to_list' => __( 'Return to Expenses' ),
         ];
     }
 
@@ -133,110 +133,110 @@ class ExpenseCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
-                'validation'    =>  'required',
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
+                'validation' => 'required',
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'          =>  'switch',
-                            'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
-                            'name'          =>  'active',
-                            'label'         =>  __( 'Active' ),
-                            'description'   =>  __( 'determine if the expense is effective or not. Work for recurring and not reccuring expenses.' ),
-                            'validation'    =>  'required',
-                            'value'         =>  $entry->active ?? '',
+                            'type' => 'switch',
+                            'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'name' => 'active',
+                            'label' => __( 'Active' ),
+                            'description' => __( 'determine if the expense is effective or not. Work for recurring and not reccuring expenses.' ),
+                            'validation' => 'required',
+                            'value' => $entry->active ?? '',
                         ], [
-                            'type'  =>  'datetimepicker',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created At' ),
-                            'value' =>  $entry->created_at ?? '',
-                            'description'   =>  __( 'Will set when the expense should be active.' ),
+                            'type' => 'datetimepicker',
+                            'name' => 'created_at',
+                            'label' => __( 'Created At' ),
+                            'value' => $entry->created_at ?? '',
+                            'description' => __( 'Will set when the expense should be active.' ),
                         ], [
-                            'type'          =>  'select',
-                            'name'          =>  'group_id',
-                            'label'         =>  __( 'Users Group' ),
-                            'value'         =>  $entry->group_id ?? '',
-                            'description'   =>  __( 'Assign expense to users group. Expense will therefore be multiplied by the number of entity.' ),
-                            'options'       =>  [
+                            'type' => 'select',
+                            'name' => 'group_id',
+                            'label' => __( 'Users Group' ),
+                            'value' => $entry->group_id ?? '',
+                            'description' => __( 'Assign expense to users group. Expense will therefore be multiplied by the number of entity.' ),
+                            'options' => [
                                 [
-                                    'label' =>  __( 'None' ),
-                                    'value' =>  '0',
+                                    'label' => __( 'None' ),
+                                    'value' => '0',
                                 ],
                                 ...Helper::toJsOptions( Role::get(), [ 'id', 'name' ]),
                             ],
                         ], [
-                            'type'          =>  'select',
-                            'options'       =>  Helper::toJsOptions( AccountType::get(), [ 'id', 'name' ]),
-                            'name'          =>  'category_id',
-                            'label'         =>  __( 'Expense Category' ),
-                            'description'   =>  __( 'Assign the expense to a category' ),
-                            'validation'    =>  'required',
-                            'value'         =>  $entry->category_id ?? '',
+                            'type' => 'select',
+                            'options' => Helper::toJsOptions( AccountType::get(), [ 'id', 'name' ]),
+                            'name' => 'category_id',
+                            'label' => __( 'Expense Category' ),
+                            'description' => __( 'Assign the expense to a category' ),
+                            'validation' => 'required',
+                            'value' => $entry->category_id ?? '',
                         ], [
-                            'type'          =>  'text',
-                            'name'          =>  'value',
-                            'description'   =>  __( 'Is the value or the cost of the expense.' ),
-                            'label'         =>  __( 'Value' ),
-                            'value'         =>  $entry->value ?? '',
-                            'validation'    =>  'required',
+                            'type' => 'text',
+                            'name' => 'value',
+                            'description' => __( 'Is the value or the cost of the expense.' ),
+                            'label' => __( 'Value' ),
+                            'value' => $entry->value ?? '',
+                            'validation' => 'required',
                         ], [
-                            'type'          =>  'switch',
-                            'name'          =>  'recurring',
-                            'description'   =>  __( 'If set to Yes, the expense will trigger on defined occurence.' ),
-                            'label'         =>  __( 'Recurring' ),
-                            'validation'    =>  'required',
-                            'options'       =>  [
+                            'type' => 'switch',
+                            'name' => 'recurring',
+                            'description' => __( 'If set to Yes, the expense will trigger on defined occurence.' ),
+                            'label' => __( 'Recurring' ),
+                            'validation' => 'required',
+                            'options' => [
                                 [
-                                    'label' =>  __( 'Yes' ),
-                                    'value' =>  true,
+                                    'label' => __( 'Yes' ),
+                                    'value' => true,
                                 ], [
-                                    'label' =>  __( 'No' ),
-                                    'value' =>  false,
+                                    'label' => __( 'No' ),
+                                    'value' => false,
                                 ],
                             ],
-                            'value' =>  $entry->recurring ?? '',
+                            'value' => $entry->recurring ?? '',
                         ], [
-                            'type'          =>  'select',
-                            'options'       =>  [
+                            'type' => 'select',
+                            'options' => [
                                 [
-                                    'label' =>  __( 'Start of Month' ),
-                                    'value' =>  'month_starts',
+                                    'label' => __( 'Start of Month' ),
+                                    'value' => 'month_starts',
                                 ], [
-                                    'label' =>  __( 'Mid of Month' ),
-                                    'value' =>  'month_mids',
+                                    'label' => __( 'Mid of Month' ),
+                                    'value' => 'month_mids',
                                 ], [
-                                    'label' =>  __( 'End of Month' ),
-                                    'value' =>  'month_ends',
+                                    'label' => __( 'End of Month' ),
+                                    'value' => 'month_ends',
                                 ], [
-                                    'label' =>  __( 'X days Before Month Ends' ),
-                                    'value' =>  'x_before_month_ends',
+                                    'label' => __( 'X days Before Month Ends' ),
+                                    'value' => 'x_before_month_ends',
                                 ], [
-                                    'label' =>  __( 'X days After Month Starts' ),
-                                    'value' =>  'x_after_month_starts',
+                                    'label' => __( 'X days After Month Starts' ),
+                                    'value' => 'x_after_month_starts',
                                 ],
                             ],
-                            'name'          =>  'occurence',
-                            'label'         =>  __( 'Occurence' ),
-                            'description'   =>  __( 'Define how often this expenses occurs' ),
-                            'value'         =>  $entry->occurence ?? '',
+                            'name' => 'occurence',
+                            'label' => __( 'Occurence' ),
+                            'description' => __( 'Define how often this expenses occurs' ),
+                            'value' => $entry->occurence ?? '',
                         ], [
-                            'type'          =>  'text',
-                            'name'          =>  'occurence_value',
-                            'label'         =>  __( 'Occurence Value' ),
-                            'description'   =>  __( 'Must be used in case of X days after month starts and X days before month ends.' ),
-                            'value'         =>  $entry->occurence_value ?? '',
+                            'type' => 'text',
+                            'name' => 'occurence_value',
+                            'label' => __( 'Occurence Value' ),
+                            'description' => __( 'Must be used in case of X days after month starts and X days before month ends.' ),
+                            'value' => $entry->occurence_value ?? '',
                         ], [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'value' => $entry->description ?? '',
                         ],
                     ],
                 ],
@@ -276,7 +276,7 @@ class ExpenseCrud extends CrudService
     {
         $this->allowedTo( 'create' );
 
-        event( new ExpenseBeforeCreateEvent( $inputs ) );
+        ExpenseBeforeCreateEvent::dispatch( $inputs );
 
         return $inputs;
     }
@@ -290,7 +290,7 @@ class ExpenseCrud extends CrudService
      */
     public function afterPost( $inputs, Expense $entry )
     {
-        event( new ExpenseAfterCreateEvent( $entry, $inputs ) );
+        ExpenseAfterCreateEvent::dispatch( $entry, $inputs );
 
         return $inputs;
     }
@@ -309,7 +309,8 @@ class ExpenseCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -324,7 +325,7 @@ class ExpenseCrud extends CrudService
     {
         $this->allowedTo( 'update' );
 
-        event( new ExpenseBeforeUpdateEvent( $entry, $request ) );
+        ExpenseBeforeUpdateEvent::dispatch( $entry, $request );
 
         return $request;
     }
@@ -338,7 +339,7 @@ class ExpenseCrud extends CrudService
      */
     public function afterPut( $request, $entry )
     {
-        event( new ExpenseAfterUpdateEvent( $entry, $request ) );
+        ExpenseAfterUpdateEvent::dispatch( $entry, $request );
 
         return $request;
     }
@@ -355,8 +356,8 @@ class ExpenseCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -373,7 +374,7 @@ class ExpenseCrud extends CrudService
         if ( $namespace == 'ns.expenses' ) {
             $this->allowedTo( 'delete' );
 
-            event( new ExpenseBeforeDeleteEvent( $model ) );
+            ExpenseBeforeDeleteEvent::dispatch( $model );
         }
     }
 
@@ -385,40 +386,40 @@ class ExpenseCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'expense_category_name'  =>  [
-                'label'  =>  __( 'Category' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'expense_category_name' => [
+                'label' => __( 'Category' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'value'  =>  [
-                'label'  =>  __( 'Value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'value' => [
+                'label' => __( 'Value' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'recurring'  =>  [
-                'label'  =>  __( 'Recurring' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'recurring' => [
+                'label' => __( 'Recurring' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'occurence'  =>  [
-                'label'  =>  __( 'Occurence' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'occurence' => [
+                'label' => __( 'Occurence' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -432,30 +433,36 @@ class ExpenseCrud extends CrudService
         $entry->recurring = (bool) $entry->recurring ? __( 'Yes' ) : __( 'No' );
 
         switch ( $entry->occurence ) {
-            case 'month_start' : $entry->occurence = __( 'Month Starts' ); break;
-            case 'month_mid' : $entry->occurence = __( 'Month Middle' ); break;
-            case 'month_end' : $entry->occurence = __( 'Month Ends' ); break;
-            case 'x_after_month_starts' : $entry->occurence = __( 'X Days Before Month Starts' ); break;
-            case 'x_before_month_ends' : $entry->occurence = __( 'X Days Before Month Ends' ); break;
-            default: $entry->occurence = __( 'Unknown Occurance' ); break;
+            case 'month_start' : $entry->occurence = __( 'Month Starts' );
+            break;
+            case 'month_mid' : $entry->occurence = __( 'Month Middle' );
+            break;
+            case 'month_end' : $entry->occurence = __( 'Month Ends' );
+            break;
+            case 'x_after_month_starts' : $entry->occurence = __( 'X Days Before Month Starts' );
+            break;
+            case 'x_before_month_ends' : $entry->occurence = __( 'X Days Before Month Ends' );
+            break;
+            default: $entry->occurence = __( 'Unknown Occurance' );
+            break;
         }
 
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'expenses' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'expenses' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.expenses/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.expenses/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -477,15 +484,15 @@ class ExpenseCrud extends CrudService
         $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' ),
+                'status' => 'failed',
+                'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -512,11 +519,11 @@ class ExpenseCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      => ns()->url( 'dashboard/' . 'expenses' ),
-            'create'    => ns()->url( 'dashboard/' . 'expenses/create' ),
-            'edit'      => ns()->url( 'dashboard/' . 'expenses/edit/{id}' ),
-            'post'      => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses' ),
-            'put'       => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses/' . '{id}' ),
+            'list' => ns()->url( 'dashboard/' . 'expenses' ),
+            'create' => ns()->url( 'dashboard/' . 'expenses/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'expenses/edit/{id}' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses/' . '{id}' ),
         ];
     }
 
@@ -529,10 +536,10 @@ class ExpenseCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

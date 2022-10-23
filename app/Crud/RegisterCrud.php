@@ -48,10 +48,10 @@ class RegisterCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  'nexopos.create.registers',
-        'read'      =>  'nexopos.read.registers',
-        'update'    =>  'nexopos.update.registers',
-        'delete'    =>  'nexopos.delete.registers',
+        'create' => 'nexopos.create.registers',
+        'read' => 'nexopos.read.registers',
+        'update' => 'nexopos.update.registers',
+        'delete' => 'nexopos.delete.registers',
     ];
 
     /**
@@ -61,7 +61,7 @@ class RegisterCrud extends CrudService
      */
     public $relations = [
         [ 'nexopos_users as user', 'nexopos_registers.author', '=', 'user.id' ],
-        'leftJoin'  =>  [
+        'leftJoin' => [
             [ 'nexopos_users as cashier', 'nexopos_registers.used_by', '=', 'cashier.id' ],
         ],
     ];
@@ -84,8 +84,8 @@ class RegisterCrud extends CrudService
      * ]
      */
     public $pick = [
-        'user'      =>  [ 'username' ],
-        'cashier'   =>  [ 'username' ],
+        'user' => [ 'username' ],
+        'cashier' => [ 'username' ],
     ];
 
     /**
@@ -128,15 +128,15 @@ class RegisterCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Registers List' ),
-            'list_description'      =>  __( 'Display all registers.' ),
-            'no_entry'              =>  __( 'No registers has been registered' ),
-            'create_new'            =>  __( 'Add a new register' ),
-            'create_title'          =>  __( 'Create a new register' ),
-            'create_description'    =>  __( 'Register a new register and save it.' ),
-            'edit_title'            =>  __( 'Edit register' ),
-            'edit_description'      =>  __( 'Modify  Register.' ),
-            'back_to_list'          =>  __( 'Return to Registers' ),
+            'list_title' => __( 'Registers List' ),
+            'list_description' => __( 'Display all registers.' ),
+            'no_entry' => __( 'No registers has been registered' ),
+            'create_new' => __( 'Add a new register' ),
+            'create_title' => __( 'Create a new register' ),
+            'create_description' => __( 'Register a new register and save it.' ),
+            'edit_title' => __( 'Edit register' ),
+            'edit_description' => __( 'Modify  Register.' ),
+            'back_to_list' => __( 'Return to Registers' ),
         ];
     }
 
@@ -159,35 +159,35 @@ class RegisterCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
-                'validation'    => 'required',
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
+                'validation' => 'required',
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'select',
-                            'name'  =>  'status',
-                            'label' =>  __( 'Status' ),
-                            'options'   =>  Helper::kvToJsOptions([
-                                Register::STATUS_DISABLED     =>  __( 'Disabled' ),
-                                Register::STATUS_CLOSED     =>  __( 'Closed' ),
+                            'type' => 'select',
+                            'name' => 'status',
+                            'label' => __( 'Status' ),
+                            'options' => Helper::kvToJsOptions([
+                                Register::STATUS_DISABLED => __( 'Disabled' ),
+                                Register::STATUS_CLOSED => __( 'Closed' ),
                             ]),
-                            'description'   =>  __( 'Define what is the status of the register.' ),
-                            'value' =>  $entry->status ?? '',
-                            'validation'    => 'required',
+                            'description' => __( 'Define what is the status of the register.' ),
+                            'value' => $entry->status ?? '',
+                            'validation' => 'required',
                         ],
                         [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
-                            'description'   =>  __( 'Provide mode details about this cash register.' ),
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'value' => $entry->description ?? '',
+                            'description' => __( 'Provide mode details about this cash register.' ),
                         ],
                     ],
                 ],
@@ -255,7 +255,8 @@ class RegisterCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -326,35 +327,35 @@ class RegisterCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'status'  =>  [
-                'label'  =>  __( 'Status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'status' => [
+                'label' => __( 'Status' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'cashier_username'  =>  [
-                'label'  =>  __( 'Used By' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'cashier_username' => [
+                'label' => __( 'Used By' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'balance'  =>  [
-                'label'         =>  __( 'Balance' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'balance' => [
+                'label' => __( 'Balance' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -369,26 +370,26 @@ class RegisterCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'register-history', [
-            'label'         =>      __( 'Register History' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id ),
+            'label' => __( 'Register History' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.registers/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.registers/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -408,7 +409,6 @@ class RegisterCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */
@@ -419,8 +419,8 @@ class RegisterCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -447,11 +447,11 @@ class RegisterCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'cash-registers' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'cash-registers/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'cash-registers/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'cash-registers' ),
+            'create' => ns()->url( 'dashboard/' . 'cash-registers/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'cash-registers/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers/{id}' . '' ),
         ];
     }
 
@@ -464,10 +464,10 @@ class RegisterCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

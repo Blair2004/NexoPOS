@@ -2,7 +2,7 @@
     <div class="ns-box rounded shadow overflow-hidden transition-all duration-100">
         <div class="ns-box-body">
             <div class="p-3 -my-2">
-                <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0">
+                <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0" @keyup.enter="signIn()">
                     <ns-field :key="index" v-for="(field, index) of fields" :field="field"></ns-field>
                 </div>
             </div>
@@ -57,7 +57,7 @@ export default {
                  * when the component is mounted
                  */
                 setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
-            }, 
+            },
             error: ( error ) => {
                 nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), __( 'OK' ), { duration: 0 }).subscribe();
             }
@@ -66,7 +66,7 @@ export default {
     methods: {
         __,
         signIn() {
-            const isValid   =   this.validation.validateFields( this.fields );            
+            const isValid   =   this.validation.validateFields( this.fields );
 
             if ( ! isValid ) {
                 return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
@@ -84,17 +84,20 @@ export default {
                     headers: {
                         'X-XSRF-TOKEN'  : this.xXsrfToken
                     }
-                }).subscribe( (result) => {
-                    document.location   =   result.data.redirectTo;
-                }, ( error ) => {
-                    this.isSubitting    =   false;
-                    this.validation.enableFields( this.fields );
-                    
-                    if ( error.data ) {
-                        this.validation.triggerFieldsErrors( this.fields, error.data );
-                    }
+                }).subscribe({
+                    next: (result) => {
+                        document.location   =   result.data.redirectTo;
+                    },
+                    error: ( error ) => {
+                        this.isSubitting    =   false;
+                        this.validation.enableFields( this.fields );
+
+                        if ( error.data ) {
+                            this.validation.triggerFieldsErrors( this.fields, error.data );
+                        }
 
                     nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) ).subscribe();
+                    }
                 })
             }
         }

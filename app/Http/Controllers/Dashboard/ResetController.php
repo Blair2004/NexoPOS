@@ -58,23 +58,23 @@ class ResetController extends DashboardController
         switch ( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
                 $this->demoService->run( $request->all() );
-            break;
+                break;
             case 'wipe_plus_simple':
                 ( new FirstDemoSeeder )->run();
-            break;
+                break;
             case 'default':
                 ( new DefaultSeeder )->run();
-            break;
+                break;
             default:
                 $this->resetService->handleCustom(
                     $request->all()
                 );
-            break;
+                break;
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The database has been successfully seeded.' ),
+            'status' => 'success',
+            'message' => __( 'The database has been successfully seeded.' ),
         ];
     }
 }

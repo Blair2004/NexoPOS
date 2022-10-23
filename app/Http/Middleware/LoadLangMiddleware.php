@@ -43,7 +43,7 @@ class LoadLangMiddleware
          * we might dispatch an event that will load module
          * locale as well.
          */
-        LocaleDefinedEvent::dispatch( App::getLocale() );
+        event( new LocaleDefinedEvent( App::getLocale() ) );
 
         return $next($request);
     }

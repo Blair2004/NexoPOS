@@ -84,30 +84,30 @@ class TestNsRacksManagerTransferToInventory extends TestCase
          * Step 1 : make a procurement
          */
         $procurementService->create([
-            'name'                  =>  sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
-            'general'   =>  [
-                'provider_id'           =>  Provider::get()->random()->id,
-                'payment_status'        =>  Procurement::PAYMENT_PAID,
-                'delivery_status'       =>  Procurement::DELIVERED,
-                'automatic_approval'    =>  1,
+            'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
+            'general' => [
+                'provider_id' => Provider::get()->random()->id,
+                'payment_status' => Procurement::PAYMENT_PAID,
+                'delivery_status' => Procurement::DELIVERED,
+                'automatic_approval' => 1,
             ],
-            'products'  =>  Product::whereIn( 'id', [ $rackProduct->product_id ])
+            'products' => Product::whereIn( 'id', [ $rackProduct->product_id ])
                 ->with( 'unitGroup' )
                 ->get()
                 ->map( function( $product ) {
                     return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
                         return (object) [
-                            'unit'      =>  $unit,
-                            'unitQuantity'  =>  $product->unit_quantities->filter( fn( $q ) => $q->unit_id === $unit->id )->first(),
-                            'product'   =>  $product,
+                            'unit' => $unit,
+                            'unitQuantity' => $product->unit_quantities->filter( fn( $q ) => $q->unit_id === $unit->id )->first(),
+                            'product' => $product,
                         ];
                     });
                 })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker, $rack ) {
                     return [
-                        'product_id'            =>  $data->product->id,
-                        'gross_purchase_price'  =>  15,
-                        'net_purchase_price'    =>  16,
-                        'purchase_price'        =>  $taxService->getTaxGroupComputedValue(
+                        'product_id' => $data->product->id,
+                        'gross_purchase_price' => 15,
+                        'net_purchase_price' => 16,
+                        'purchase_price' => $taxService->getTaxGroupComputedValue(
                             $taxType,
                             $taxGroup,
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
@@ -115,11 +115,11 @@ class TestNsRacksManagerTransferToInventory extends TestCase
                                 $margin
                             )
                         ),
-                        'quantity'              =>  $faker->numberBetween(10, 50),
-                        'rack_id'               =>  $rack->id, // we've defined the rack id
-                        'tax_group_id'          =>  $taxGroup->id,
-                        'tax_type'              =>  $taxType,
-                        'tax_value'             =>  $taxService->getTaxGroupVatValue(
+                        'quantity' => $faker->numberBetween(10, 50),
+                        'rack_id' => $rack->id, // we've defined the rack id
+                        'tax_group_id' => $taxGroup->id,
+                        'tax_type' => $taxType,
+                        'tax_value' => $taxService->getTaxGroupVatValue(
                             $taxType,
                             $taxGroup,
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
@@ -127,7 +127,7 @@ class TestNsRacksManagerTransferToInventory extends TestCase
                                 $margin
                             )
                         ),
-                        'total_purchase_price'  =>  $taxService->getTaxGroupComputedValue(
+                        'total_purchase_price' => $taxService->getTaxGroupComputedValue(
                             $taxType,
                             $taxGroup,
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
@@ -135,7 +135,7 @@ class TestNsRacksManagerTransferToInventory extends TestCase
                                 $margin
                             )
                         ) * 250,
-                        'unit_id'               =>  $data->unit->id,
+                        'unit_id' => $data->unit->id,
                     ];
                 }),
         ]);

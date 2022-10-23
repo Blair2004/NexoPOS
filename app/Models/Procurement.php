@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\DateCast;
 use App\Events\ProcurementAfterCreateEvent;
 use App\Events\ProcurementAfterDeleteEvent;
 use App\Events\ProcurementAfterUpdateEvent;
@@ -16,11 +15,6 @@ class Procurement extends NsModel
     use HasFactory;
 
     protected $table = 'nexopos_' . 'procurements';
-
-    public $casts = [
-        'created_at'    =>  DateCast::class,
-        'updated_at'    =>  DateCast::class,
-    ];
 
     /**
      * this status mention when the procurement
@@ -66,12 +60,12 @@ class Procurement extends NsModel
     const PAYMENT_PAID = 'paid';
 
     protected $dispatchesEvents = [
-        'creating'      =>  ProcurementBeforeCreateEvent::class,
-        'created'       =>  ProcurementAfterCreateEvent::class,
-        'deleting'      =>  ProcurementBeforeDeleteEvent::class,
-        'updating'      =>  ProcurementBeforeUpdateEvent::class,
-        'updated'       =>  ProcurementAfterUpdateEvent::class,
-        'deleted'       =>  ProcurementAfterDeleteEvent::class,
+        'creating' => ProcurementBeforeCreateEvent::class,
+        'created' => ProcurementAfterCreateEvent::class,
+        'deleting' => ProcurementBeforeDeleteEvent::class,
+        'updating' => ProcurementBeforeUpdateEvent::class,
+        'updated' => ProcurementAfterUpdateEvent::class,
+        'deleted' => ProcurementAfterDeleteEvent::class,
     ];
 
     public function products()

@@ -10,7 +10,7 @@ class RefreshReportForPassDaysTest extends TestCase
 {
     use WithAuthentication, WithReportTest;
 
-    protected $totalDaysInterval = 40;
+    protected $totalDaysInterval = 1;
 
     /**
      * A basic feature test example.
@@ -19,6 +19,7 @@ class RefreshReportForPassDaysTest extends TestCase
      */
     public function testRefreshReportForPastDays()
     {
+        $this->totalDaysInterval = 40;
         $this->attemptAuthenticate();
         $this->attemptRefreshReportForPastDays();
     }

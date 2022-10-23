@@ -6,6 +6,7 @@ use App\Classes\Hook;
 use App\Classes\Schema;
 use App\Events\AfterHardResetEvent;
 use App\Events\BeforeHardResetEvent;
+use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
@@ -83,8 +84,8 @@ class ResetService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The table has been truncated.' ),
+            'status' => 'success',
+            'message' => __( 'The table has been truncated.' ),
         ];
     }
 
@@ -99,18 +100,18 @@ class ResetService
         BeforeHardResetEvent::dispatch();
 
         Artisan::call( 'migrate:reset', [
-            '--path'    => '/database/migrations/default',
-            '--force'   => true,
+            '--path' => '/database/migrations/default',
+            '--force' => true,
         ]);
 
         Artisan::call( 'migrate:reset', [
-            '--path'    => '/database/migrations/create-tables',
-            '--force'   => true,
+            '--path' => '/database/migrations/create-tables',
+            '--force' => true,
         ]);
 
         Artisan::call( 'migrate:reset', [
-            '--path'    => '/database/migrations/misc',
-            '--force'   => true,
+            '--path' => '/database/migrations/misc',
+            '--force' => true,
         ]);
 
         DotenvEditor::load();
@@ -121,13 +122,22 @@ class ResetService
         Artisan::call( 'key:generate', [ '--force' => true ] );
         Artisan::call( 'ns:cookie generate' );
 
+        /**
+         * It makes sense to truncate this
+         * only if that table exists.
+         * That will prevent unexpected error while testing.
+         */
+        if ( Schema::hasTable( 'migrations' ) ) {
+            Migration::truncate();
+        }
+
         exec( 'rm -rf public/storage' );
 
         AfterHardResetEvent::dispatch();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The database has been hard reset.' ),
+            'status' => 'success',
+            'message' => __( 'The database has been hard reset.' ),
         ];
     }
 
@@ -141,8 +151,8 @@ class ResetService
         extract( $data );
 
         return Hook::filter( 'ns-handle-custom-reset', [
-            'status'    =>  'failed',
-            'message'   =>  __( 'No custom handler for the reset "' . $mode . '"' ),
+            'status' => 'failed',
+            'message' => __( 'No custom handler for the reset "' . $mode . '"' ),
         ], $data );
     }
 }

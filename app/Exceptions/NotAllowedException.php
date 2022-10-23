@@ -15,13 +15,13 @@ class NotAllowedException extends Exception
     {
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-allowed', [
-                'title'         =>  __( 'Not Allowed Action' ),
-                'message'       =>  $this->getMessage(),
+                'title' => __( 'Not Allowed Action' ),
+                'message' => $this->getMessage(),
             ]);
         }
 
         return response()->json([
-            'status'  =>  'failed',
+            'status' => 'failed',
             'message' => $this->getMessage() ?: __('The action you tried to perform is not allowed.' ),
         ], 401);
     }

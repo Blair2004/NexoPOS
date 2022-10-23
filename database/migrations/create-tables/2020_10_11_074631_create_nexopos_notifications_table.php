@@ -4,6 +4,15 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
+/**
+ * @property int user_id
+ * @property string identifier
+ * @property int title
+ * @property string description
+ * @property string url
+ * @property int source
+ * @property bool dismissable
+ */
 class CreateNexoposNotificationsTable extends Migration
 {
     /**
@@ -19,7 +28,7 @@ class CreateNexoposNotificationsTable extends Migration
                 $table->integer( 'user_id' );
                 $table->string( 'identifier' );
                 $table->string( 'title' );
-                $table->string( 'description' );
+                $table->text( 'description' );
                 $table->string( 'url' )->default( '#' );
                 $table->string( 'source' )->default( 'system' );
                 $table->boolean( 'dismissable' )->default( true );

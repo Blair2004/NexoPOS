@@ -76,8 +76,8 @@ class CustomersGroupsController extends DashboardController
             $group->delete();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The customer group has been deleted.' ),
+                'status' => 'success',
+                'message' => __( 'The customer group has been deleted.' ),
             ];
         }
 
@@ -106,9 +106,9 @@ class CustomersGroupsController extends DashboardController
         $group->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer group has been successfully created.' ),
-            'data'      =>  compact( 'group' ),
+            'status' => 'success',
+            'message' => __( 'The customer group has been successfully created.' ),
+            'data' => compact( 'group' ),
         ];
     }
 
@@ -138,9 +138,9 @@ class CustomersGroupsController extends DashboardController
         $group->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer group has been successfully saved.' ),
-            'data'      =>  compact( 'group' ),
+            'status' => 'success',
+            'message' => __( 'The customer group has been successfully saved.' ),
+            'data' => compact( 'group' ),
         ];
     }
 
@@ -172,8 +172,8 @@ class CustomersGroupsController extends DashboardController
                 });
 
             return [
-                'status'    =>  'success',
-                'message'   =>  sprintf( __( 'All the customers has been transfered to the new group %s.' ), $toModel->name ),
+                'status' => 'success',
+                'message' => sprintf( __( 'All the customers has been transfered to the new group %s.' ), $toModel->name ),
             ];
         } elseif ( is_array( $customersID ) ) {
             /**
@@ -192,8 +192,8 @@ class CustomersGroupsController extends DashboardController
             }
 
             return [
-                'status'    =>  'success',
-                'message'   =>  sprintf( __( 'The categories has been transfered to the group %s.' ), $toModel->name ),
+                'status' => 'success',
+                'message' => sprintf( __( 'The categories has been transfered to the group %s.' ), $toModel->name ),
             ];
         }
 

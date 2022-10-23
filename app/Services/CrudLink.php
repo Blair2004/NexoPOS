@@ -18,9 +18,9 @@ class CrudLink implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'type'  =>  self::TYPE,
-            'href'  =>  $this->href,
-            'label' =>  $this->label,
+            'type' => self::TYPE,
+            'href' => $this->href,
+            'label' => $this->label,
         ];
     }
 }

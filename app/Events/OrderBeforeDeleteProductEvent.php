@@ -10,9 +10,8 @@ class OrderBeforeDeleteProductEvent
 {
     use SerializesModels;
 
-    public function __construct( Order $order, OrderProduct $orderProduct )
+    public function __construct( public Order $order, public OrderProduct $orderProduct )
     {
-        $this->order = $order;
-        $this->orderProduct = $orderProduct;
+        // ...
     }
 }

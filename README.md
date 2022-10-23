@@ -1,12 +1,13 @@
 [![Latest Stable Version](https://poser.pugx.org/blair2004/nexopos/v)](//packagist.org/packages/blair2004/nexopos) [![Total Downloads](https://poser.pugx.org/blair2004/nexopos/downloads)](//packagist.org/packages/blair2004/nexopos) [![Latest Unstable Version](https://poser.pugx.org/blair2004/nexopos/v/unstable)](//packagist.org/packages/blair2004/nexopos) [![License](https://poser.pugx.org/blair2004/nexopos/license)](//packagist.org/packages/blair2004/nexopos)
 
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS-4x/tree/v4.7.x&refcode=ebdb80cb0ec7)
-
 <p align="center">
   <img src="https://user-images.githubusercontent.com/5265663/162700085-40ed00ca-9154-42cb-850a-ccf1c2db2d5d.png" alt="NexoPOS"/>
 </p>
 
 NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS 4.x include a responsive and beautiful dashboard that ease the interaction either on a smartphone, tables or desktops.
+
+Read Review On:
+[![Laravel News](https://user-images.githubusercontent.com/5265663/186377311-c42ddd2c-bc84-465c-a3b6-94e6df8d68bc.jpg)](https://laravel-news.com/nexopos-point-of-sale-for-laravel?utm_source=github.com&utm_medium=readme&utm_campagin=nexopos)
 
 ## Demo
 - Regular : https://v4.nexopos.com
@@ -14,6 +15,8 @@ NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue a
 - Gastro 4.x : https://v4-gastro.nexopos.com
 - Username : demouser
 - Password : 123456
+
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS-4x/tree/v4.7.x&refcode=ebdb80cb0ec7)
 
 ## Documentation
 All the documentation for NexoPOS 4.x can be found on [My NexoPOS](https://my.nexopos.com/en/documentation). That includes : 
@@ -28,12 +31,13 @@ And for developpers, there are more technical tutorials that convers:
 - [Create a route](https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-routes-for-modules)
 
 We've also create video tutorial that will help you performing those easilly.
+
 [
 ![image](https://user-images.githubusercontent.com/5265663/163531524-408757a8-d5a8-40b1-8e8f-c4e59e778e05.png)
 ](https://www.youtube.com/watch?v=V80-hOJCywY)
 
-# How To Unlock Premium Features
-The premium version of NexoPOS 4.x is available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm-inventory-manager/31188619). While purchasing on CodeCanyon, you also get : 
+# Get More Using Modules
+NexoPOS 4x available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm-inventory-manager/31188619) gives access to premium modules marketplace. While purchasing on CodeCanyon, you get : 
 
 - $40 In credit to [My NexoPOS](https://my.nexopos.com/en/marketplace) balance.
 - Access to NexoPOS 4.x marketplace

@@ -101,7 +101,7 @@
                                         <a v-if="allowQuantityModification( product )" @click="openDiscountPopup( product, 'product' )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ nsCurrency( product.discount ) }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
-                                        <a v-if="allowQuantityModification( product )" @click="changeQuantity( product )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Quantity :' ) }} {{ product.quantity }}</a>
+                                        <a v-if="allowQuantityModification( product )" @click="changeQuantity( product )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Quantity' ) }}: {{ product.quantity }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
                                         <span class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Total :' ) }} {{ nsCurrency( product.total_price ) }}</span>
@@ -122,14 +122,21 @@
                     <table class="table ns-table w-full text-sm " v-if="visibleSection === 'both'">
                         <tr>
                             <td width="200" class="border p-2">
-                                <a @click="selectCustomer()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Customer :' ) }} {{ customerName }}</a>
+                                <a @click="selectCustomer()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Customer' ) }}: {{ customerName }}</a>
                             </td>
                             <td width="200" class="border p-2">{{ __( 'Sub Total' ) }}</td>
                             <td width="200" class="border p-2 text-right">{{ nsCurrency( order.subtotal ) }}</td>
                         </tr>
+                        <tr v-if="order.coupons.length > 0">
+                            <td width="200" class="border p-2"></td>
+                            <td width="200" class="border p-2">
+                                <a @click="selectCoupon()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Coupons' ) }}</a>
+                            </td>
+                            <td width="200" class="border p-2 text-right">{{ nsCurrency( summarizeCoupons() ) }}</td>
+                        </tr>
                         <tr>
                             <td width="200" class="border p-2">
-                                <a @click="openOrderType()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Type :' ) }} {{ selectedType }}</a>
+                                <a @click="openOrderType()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Type' ) }}: {{ selectedType }}</a>
                             </td>
                             <td width="200" class="border p-2">
                                 <span>{{ __( 'Discount' ) }}</span>
@@ -149,8 +156,14 @@
                         </tr>
                         <tr class="success">
                             <td width="200" class="border p-2">
-                                <a v-if="order && options.ns_pos_gross_price_used === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax :' ) }} {{ nsCurrency( order.total_tax_value ) }}</a>
-                                <a v-if="order && options.ns_pos_gross_price_used === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included :' ) }} {{ order.tax_value + nsCurrency( order.products_tax_value ) }}</a>
+                                <template v-if="order && options.ns_pos_tax_type === 'exclusive'">
+                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.total_tax_value + order.products_tax_value ) }}</a>
+                                    <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.total_tax_value ) }}</a>
+                                </template>
+                                <template v-else-if="order && options.ns_pos_tax_type === 'inclusive'">
+                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.total_tax_value + order.products_tax_value ) }}</a>
+                                    <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.total_tax_value ) }}</a>
+                                </template>
                             </td>
                             <td width="200" class="border p-2">{{ __( 'Total' ) }}</td>
                             <td width="200" class="border p-2 text-right">{{ nsCurrency( order.total ) }}</td>
@@ -159,7 +172,7 @@
                     <table class="table ns-table w-full text-sm" v-if="visibleSection === 'cart'">
                         <tr>
                             <td width="200" class="border p-2">
-                                <a @click="selectCustomer()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Customer :' ) }} {{ customerName }}</a>
+                                <a @click="selectCustomer()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Customer' ) }}: {{ customerName }}</a>
                             </td>
                             <td width="200" class="border p-2">
                                 <div class="flex justify-between">
@@ -168,9 +181,16 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr v-if="order.coupons.length > 0">
+                            <td width="200" class="border p-2"></td>
+                            <td width="200" class="border p-2">
+                                <a @click="selectCoupon()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Coupons' ) }}</a>
+                            </td>
+                            <td width="200" class="border p-2 text-right">{{ nsCurrency( summarizeCoupons() ) }}</td>
+                        </tr>
                         <tr>
                             <td width="200" class="border p-2">
-                                <a @click="openOrderType()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Type :' ) }} {{ selectedType }}</a>
+                                <a @click="openOrderType()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Type' ) }}: {{ selectedType }}</a>
                             </td>
                             <td width="200" class="border p-2">
                                 <div class="flex justify-between items-center">
@@ -192,8 +212,14 @@
                         </tr>
                         <tr class="success">
                             <td width="200" class="border p-2">
-                                <a v-if="order && options.ns_pos_gross_price_used === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax :' ) }} {{ nsCurrency( order.total_tax_value ) }}</a>
-                                <a v-if="order && options.ns_pos_gross_price_used === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included :' ) }} {{ order.tax_value + nsCurrency( order.products_tax_value ) }}</a>
+                                <template v-if="order && options.ns_pos_tax_type === 'exclusive'">
+                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.total_tax_value ) }}</a>
+                                    <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Inclusive' ) }}: {{ nsCurrency( order.total_tax_value + order.products_tax_value ) }}</a>
+                                </template>
+                                <template v-else-if="order && options.ns_pos_tax_type === 'inclusive'">
+                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.total_tax_value ) }}</a>
+                                    <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.total_tax_value + order.products_tax_value ) }}</a>
+                                </template>
                             </td>
                             <td width="200" class="border p-2">
                                 <div class="flex justify-between w-full">
@@ -284,7 +310,7 @@ export default {
             return this.order.customer ? this.order.customer.name : 'N/A';
         },
         couponName() {
-            return 'Apply Coupon'
+            return __( 'Apply Coupon' );
         }
     },
     mounted() {
@@ -398,6 +424,16 @@ export default {
             })
         },
 
+        summarizeCoupons() {
+            const coupons   =   this.order.coupons.map( coupon => coupon.value );
+
+            if ( coupons.length > 0 ) {
+                return coupons.reduce( ( before, after ) => before + after );
+            }
+
+            return 0;
+        },
+
         async changeProductPrice( product ) {
             if ( ! this.settings.edit_purchase_price ) {
                 return nsSnackBar.error( __( `You don't have the right to edit the purchase price.` ) ).subscribe();
@@ -439,9 +475,9 @@ export default {
                         throw exception;
                     }
                 }
+            } else {
+                return nsSnackBar.error( __( 'The editable price feature is disabled.' ) ).subscribe();
             }
-
-            return nsSnackBar.error( __( 'The editable price feature is disabled.' ) ).subscribe();
         },
 
         async selectCoupon() {

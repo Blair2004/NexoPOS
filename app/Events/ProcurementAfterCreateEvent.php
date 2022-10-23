@@ -11,15 +11,13 @@ class ProcurementAfterCreateEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $procurement;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Procurement $procurement )
+    public function __construct( public Procurement $procurement )
     {
-        $this->procurement = $procurement;
+        // ...
     }
 }

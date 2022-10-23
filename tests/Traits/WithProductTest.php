@@ -9,19 +9,15 @@ use App\Models\ProductUnitQuantity;
 use App\Models\TaxGroup;
 use App\Models\UnitGroup;
 use App\Services\CurrencyService;
+use App\Services\ProductService;
 use App\Services\TaxService;
 use Exception;
 use Illuminate\Support\Str;
 
 trait WithProductTest
 {
-    protected function attemptCreateProduct()
+    protected function attemptCreateProduct( $count = 5 )
     {
-        /**
-         * @var CurrencyService
-         */
-        $currency = app()->make( CurrencyService::class );
-
         $faker = \Faker\Factory::create();
 
         /**
@@ -33,67 +29,103 @@ trait WithProductTest
         $sale_price = $faker->numberBetween(5, 10);
         $categories = ProductCategory::where( 'parent_id', '>', 0 )
             ->orWhere( 'parent_id', null )
-            ->get()
-            ->map( fn( $cat ) => $cat->id )
-            ->toArray();
+            ->get();
 
-        for ( $i = 0; $i < 10; $i++ ) {
+        for ( $i = 0; $i < $count; $i++ ) {
+            $category = $faker->randomElement( $categories );
+            $categoryProductCount = $category->products()->count();
+
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/products/', [
-                    'name'          =>  $faker->word,
-                    'variations'    =>  [
+                    'name' => $faker->word,
+                    'variations' => [
                         [
-                            '$primary'  =>  true,
-                            'expiracy'  =>  [
-                                'expires'       =>  0,
-                                'on_expiration' =>  'prevent_sales',
+                            '$primary' => true,
+                            'expiracy' => [
+                                'expires' => 0,
+                                'on_expiration' => 'prevent_sales',
                             ],
-                            'identification'    =>  [
-                                'barcode'           =>  $faker->ean13(),
-                                'barcode_type'      =>  'ean13',
-                                'searchable'        =>  $faker->randomElement([ true, false ]),
-                                'category_id'       =>  $faker->randomElement( $categories ),
-                                'description'       =>  __( 'Created via tests' ),
-                                'product_type'      =>  'product',
-                                'type'              =>  $faker->randomElement([ Product::TYPE_MATERIALIZED, Product::TYPE_DEMATERIALIZED ]),
-                                'sku'               =>  Str::random(15) . '-sku',
-                                'status'            =>  'available',
-                                'stock_management'  =>  'enabled',
+                            'identification' => [
+                                'barcode' => $faker->ean13(),
+                                'barcode_type' => 'ean13',
+                                'searchable' => $faker->randomElement([ true, false ]),
+                                'category_id' => $category->id,
+                                'description' => __( 'Created via tests' ),
+                                'product_type' => 'product',
+                                'type' => $faker->randomElement([ Product::TYPE_MATERIALIZED, Product::TYPE_DEMATERIALIZED ]),
+                                'sku' => Str::random(15) . '-sku',
+                                'status' => 'available',
+                                'stock_management' => 'enabled',
                             ],
-                            'images'            =>  [],
-                            'taxes'             =>  [
-                                'tax_group_id'  =>  1,
-                                'tax_type'      =>  $taxType,
+                            'images' => [],
+                            'taxes' => [
+                                'tax_group_id' => 1,
+                                'tax_type' => $taxType,
                             ],
-                            'units'             =>  [
-                                'selling_group' =>  $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
+                            'units' => [
+                                'selling_group' => $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
                                     return [
-                                        'sale_price_edit'       =>  $sale_price,
-                                        'wholesale_price_edit'  =>  $faker->numberBetween(20, 25),
-                                        'unit_id'               =>  $unit->id,
+                                        'sale_price_edit' => $sale_price,
+                                        'wholesale_price_edit' => $faker->numberBetween(20, 25),
+                                        'unit_id' => $unit->id,
                                     ];
                                 }),
-                                'unit_group'    =>  $unitGroup->id,
+                                'unit_group' => $unitGroup->id,
                             ],
                         ],
                     ],
                 ]);
 
             $result = json_decode( $response->getContent(), true );
+            $taxGroup = TaxGroup::find(1);
 
             if ( $taxType === 'exclusive' ) {
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.net_sale_price' ), $taxService->getTaxGroupNetPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price' ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_with_tax' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_without_tax' ), $taxService->getPriceWithoutTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
             } else {
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.net_sale_price', 0 ), $taxService->getTaxGroupNetPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price', 0 ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_with_tax', 0 ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_without_tax', 0 ), $taxService->getPriceWithoutTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
             }
+
+            $category->refresh();
+
+            $this->assertEquals( $categoryProductCount + 1, $category->total_items, 'The category total items hasn\'t increased' );
 
             $response->assertStatus(200);
         }
+
+        return $response;
+    }
+
+    protected function attemptDeleteProducts()
+    {
+        $response = $this->attemptCreateProduct(1);
+        $result = json_decode( $response->getContent(), true );
+
+        /**
+         * We'll delete the last product and see
+         * if the unit quantities are deleted as well.
+         *
+         * @var ProductService
+         */
+        $productService = app()->make( ProductService::class );
+
+        $product = Product::find( $result[ 'data' ][ 'product' ][ 'id' ] );
+        $category = $product->category;
+        $totalItems = $category->total_items;
+
+        $this->assertTrue( $product->unit_quantities()->count() > 0, 'The created product is missing unit quantities.' );
+
+        $productService->deleteProduct( $product );
+
+        $category->refresh();
+
+        $this->assertTrue( ProductUnitQuantity::where( 'product_id', $product->id )->count() === 0, 'The product unit quantities wheren\'t deleted.' );
+        $this->assertTrue( ProductHistory::where( 'product_id', $product->id )->count() === 0, 'The product history wasn\'t deleted.' );
+        $this->assertTrue( $category->total_items === $totalItems - 1, 'The category total items wasn\'t updated after the deletion.' );
     }
 
     protected function attemptCreateGroupedProduct()
@@ -130,11 +162,11 @@ trait WithProductTest
                     $unitQuantityID = $unitQuantity->id;
 
                     return [
-                        'unit_quantity_id'  =>  $unitQuantityID,
-                        'product_id'        =>  $product->id,
-                        'unit_id'           =>  $unitQuantity->unit->id,
-                        'quantity'          =>  $faker->randomNumber(1),
-                        'sale_price'        =>  $unitQuantity->sale_price,
+                        'unit_quantity_id' => $unitQuantityID,
+                        'product_id' => $product->id,
+                        'unit_id' => $unitQuantity->unit->id,
+                        'quantity' => $faker->randomNumber(1),
+                        'sale_price' => $unitQuantity->sale_price,
                     ];
                 })
                 ->toArray();
@@ -142,58 +174,59 @@ trait WithProductTest
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/products/', [
-                    'name'          =>  $faker->word,
-                    'variations'    =>  [
+                    'name' => $faker->word,
+                    'variations' => [
                         [
-                            '$primary'  =>  true,
-                            'expiracy'  =>  [
-                                'expires'       =>  0,
-                                'on_expiration' =>  'prevent_sales',
+                            '$primary' => true,
+                            'expiracy' => [
+                                'expires' => 0,
+                                'on_expiration' => 'prevent_sales',
                             ],
-                            'identification'    =>  [
-                                'barcode'           =>  $faker->ean13(),
-                                'barcode_type'      =>  'ean13',
-                                'searchable'        =>  $faker->randomElement([ true, false ]),
-                                'category_id'       =>  $faker->randomElement( $categories ),
-                                'description'       =>  __( 'Created via tests' ),
-                                'product_type'      =>  'product',
-                                'type'              =>  Product::TYPE_GROUPED,
-                                'sku'               =>  Str::random(15) . '-sku',
-                                'status'            =>  'available',
-                                'stock_management'  =>  'enabled',
+                            'identification' => [
+                                'barcode' => $faker->ean13(),
+                                'barcode_type' => 'ean13',
+                                'searchable' => $faker->randomElement([ true, false ]),
+                                'category_id' => $faker->randomElement( $categories ),
+                                'description' => __( 'Created via tests' ),
+                                'product_type' => 'product',
+                                'type' => Product::TYPE_GROUPED,
+                                'sku' => Str::random(15) . '-sku',
+                                'status' => 'available',
+                                'stock_management' => 'enabled',
                             ],
-                            'groups'            =>  [
-                                'product_subitems'  =>  $products,
+                            'groups' => [
+                                'product_subitems' => $products,
                             ],
-                            'images'            =>  [],
-                            'taxes'             =>  [
-                                'tax_group_id'  =>  1,
-                                'tax_type'      =>  $taxType,
+                            'images' => [],
+                            'taxes' => [
+                                'tax_group_id' => 1,
+                                'tax_type' => $taxType,
                             ],
-                            'units'             =>  [
-                                'selling_group' =>  $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
+                            'units' => [
+                                'selling_group' => $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
                                     return [
-                                        'sale_price_edit'       =>  $sale_price,
-                                        'wholesale_price_edit'  =>  $faker->numberBetween(20, 25),
-                                        'unit_id'               =>  $unit->id,
+                                        'sale_price_edit' => $sale_price,
+                                        'wholesale_price_edit' => $faker->numberBetween(20, 25),
+                                        'unit_id' => $unit->id,
                                     ];
                                 }),
-                                'unit_group'    =>  $unitGroup->id,
+                                'unit_group' => $unitGroup->id,
                             ],
                         ],
                     ],
                 ]);
 
             $result = json_decode( $response->getContent(), true );
+            $taxGroup = TaxGroup::find(1);
 
             if ( $taxType === 'exclusive' ) {
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.net_sale_price' ), $taxService->getTaxGroupNetPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price' ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_with_tax' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_without_tax' ), $taxService->getPriceWithoutTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
             } else {
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.net_sale_price', 0 ), $taxService->getTaxGroupNetPrice( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price', 0 ), $taxService->getTaxGroupGrossPrice( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_with_tax', 0 ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
+                $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price_without_tax', 0 ), $taxService->getPriceWithoutTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
             }
 
             /**
@@ -229,14 +262,14 @@ trait WithProductTest
         $unitQuantity = $product->unit_quantities[0];
 
         $response = $this->json( 'POST', '/api/nexopos/v4/products/adjustments', [
-            'products'              =>  [
+            'products' => [
                 [
-                    'id'                =>  $product->id,
-                    'adjust_action'     =>  'deleted',
-                    'name'              =>  $product->name,
-                    'adjust_unit'       =>  $unitQuantity,
-                    'adjust_reason'     =>  __( 'Performing a test adjustment' ),
-                    'adjust_quantity'   =>  1,
+                    'id' => $product->id,
+                    'adjust_action' => 'deleted',
+                    'name' => $product->name,
+                    'adjust_unit' => $unitQuantity,
+                    'adjust_reason' => __( 'Performing a test adjustment' ),
+                    'adjust_quantity' => 1,
                 ],
             ],
         ]);
@@ -297,15 +330,15 @@ trait WithProductTest
         foreach ( ProductHistory::STOCK_REDUCE as $action ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/products/adjustments', [
-                    'products'  =>  [
+                    'products' => [
                         [
-                            'adjust_action'     =>  $action,
-                            'adjust_unit'       =>  [
-                                'sale_price'    =>  $productQuantity->sale_price,
-                                'unit_id'       =>  $productQuantity->unit_id,
+                            'adjust_action' => $action,
+                            'adjust_unit' => [
+                                'sale_price' => $productQuantity->sale_price,
+                                'unit_id' => $productQuantity->unit_id,
                             ],
-                            'id'                =>  $product->id,
-                            'adjust_quantity'   =>  1,
+                            'id' => $product->id,
+                            'adjust_quantity' => 1,
                         ],
                     ],
                 ]);
@@ -338,15 +371,15 @@ trait WithProductTest
         foreach ( ProductHistory::STOCK_INCREASE as $action ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/products/adjustments', [
-                    'products'  =>  [
+                    'products' => [
                         [
-                            'adjust_action'     =>  $action,
-                            'adjust_unit'       =>  [
-                                'sale_price'    =>  $productQuantity->sale_price,
-                                'unit_id'       =>  $productQuantity->unit_id,
+                            'adjust_action' => $action,
+                            'adjust_unit' => [
+                                'sale_price' => $productQuantity->sale_price,
+                                'unit_id' => $productQuantity->unit_id,
                             ],
-                            'id'                =>  $product->id,
-                            'adjust_quantity'   =>  10,
+                            'id' => $product->id,
+                            'adjust_quantity' => 10,
                         ],
                     ],
                 ]);

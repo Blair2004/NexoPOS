@@ -13,19 +13,16 @@ class OrderAfterRefundedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $order;
-
-    public $orderRefund;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Order $order, OrderRefund $orderRefund )
-    {
-        $this->order = $order;
-        $this->orderRefund = $orderRefund;
+    public function __construct(
+        public Order $order,
+        public OrderRefund $orderRefund
+    ) {
+        // ...
     }
 
     /**

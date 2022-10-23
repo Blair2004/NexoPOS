@@ -49,12 +49,12 @@ return new class extends Migration
             case CustomerAccountHistory::OPERATION_REFUND:
                 $history->previous_amount = $previousNextAmount;
                 $history->next_amount = $previousNextAmount + $history->amount;
-            break;
+                break;
             case CustomerAccountHistory::OPERATION_PAYMENT:
             case CustomerAccountHistory::OPERATION_DEDUCT:
                 $history->previous_amount = $previousNextAmount;
                 $history->next_amount = $previousNextAmount - $history->amount;
-            break;
+                break;
         }
 
         $history->save();

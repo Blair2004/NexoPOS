@@ -41,10 +41,10 @@ class ProductHistoryCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false,
-        'read'      =>  'nexopos.read.products-history',
-        'update'    =>  false,
-        'delete'    =>  false,
+        'create' => false,
+        'read' => 'nexopos.read.products-history',
+        'update' => false,
+        'delete' => false,
     ];
 
     /**
@@ -54,7 +54,7 @@ class ProductHistoryCrud extends CrudService
         [ 'nexopos_products as products', 'nexopos_products_histories.product_id', '=', 'products.id' ],
         [ 'nexopos_users as users', 'nexopos_products_histories.author', '=', 'users.id' ],
         [ 'nexopos_units as units', 'nexopos_products_histories.unit_id', '=', 'units.id' ],
-        'leftJoin'  =>  [
+        'leftJoin' => [
             [ 'nexopos_procurements as procurements', 'nexopos_products_histories.procurement_id', '=', 'procurements.id' ],
             [ 'nexopos_orders as orders', 'nexopos_products_histories.order_id', '=', 'orders.id' ],
         ],
@@ -70,11 +70,11 @@ class ProductHistoryCrud extends CrudService
      * ]
      */
     public $pick = [
-        'users'         =>  [ 'username' ],
-        'units'         =>  [ 'name' ],
-        'procurements'  =>  [ 'name' ],
-        'orders'        =>  [ 'code' ],
-        'products'      =>  [ 'name' ],
+        'users' => [ 'username' ],
+        'units' => [ 'name' ],
+        'procurements' => [ 'name' ],
+        'orders' => [ 'code' ],
+        'products' => [ 'name' ],
     ];
 
     /**
@@ -117,15 +117,15 @@ class ProductHistoryCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Product Histories' ),
-            'list_description'      =>  __( 'Display all product histories.' ),
-            'no_entry'              =>  __( 'No product histories has been registered' ),
-            'create_new'            =>  __( 'Add a new product history' ),
-            'create_title'          =>  __( 'Create a new product history' ),
-            'create_description'    =>  __( 'Register a new product history and save it.' ),
-            'edit_title'            =>  __( 'Edit product history' ),
-            'edit_description'      =>  __( 'Modify  Product History.' ),
-            'back_to_list'          =>  __( 'Return to Product Histories' ),
+            'list_title' => __( 'Product Histories' ),
+            'list_description' => __( 'Display all product histories.' ),
+            'no_entry' => __( 'No product histories has been registered' ),
+            'create_new' => __( 'Add a new product history' ),
+            'create_title' => __( 'Create a new product history' ),
+            'create_description' => __( 'Register a new product history and save it.' ),
+            'edit_title' => __( 'Edit product history' ),
+            'edit_description' => __( 'Modify  Product History.' ),
+            'back_to_list' => __( 'Return to Product Histories' ),
         ];
     }
 
@@ -148,96 +148,96 @@ class ProductHistoryCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
+            'main' => [
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'after_quantity',
-                            'label' =>  __( 'After Quantity' ),
-                            'value' =>  $entry->after_quantity ?? '',
+                            'type' => 'text',
+                            'name' => 'after_quantity',
+                            'label' => __( 'After Quantity' ),
+                            'value' => $entry->after_quantity ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
+                            'type' => 'text',
+                            'name' => 'author',
+                            'label' => __( 'Author' ),
+                            'value' => $entry->author ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'before_quantity',
-                            'label' =>  __( 'Before Quantity' ),
-                            'value' =>  $entry->before_quantity ?? '',
+                            'type' => 'text',
+                            'name' => 'before_quantity',
+                            'label' => __( 'Before Quantity' ),
+                            'value' => $entry->before_quantity ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created At' ),
-                            'value' =>  $entry->created_at ?? '',
+                            'type' => 'text',
+                            'name' => 'created_at',
+                            'label' => __( 'Created At' ),
+                            'value' => $entry->created_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
+                            'type' => 'text',
+                            'name' => 'id',
+                            'label' => __( 'Id' ),
+                            'value' => $entry->id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'operation_type',
-                            'label' =>  __( 'Operation Type' ),
-                            'value' =>  $entry->operation_type ?? '',
+                            'type' => 'text',
+                            'name' => 'operation_type',
+                            'label' => __( 'Operation Type' ),
+                            'value' => $entry->operation_type ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'order_id',
-                            'label' =>  __( 'Order id' ),
-                            'value' =>  $entry->order_id ?? '',
+                            'type' => 'text',
+                            'name' => 'order_id',
+                            'label' => __( 'Order id' ),
+                            'value' => $entry->order_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'procurement_id',
-                            'label' =>  __( 'Procurement Id' ),
-                            'value' =>  $entry->procurement_id ?? '',
+                            'type' => 'text',
+                            'name' => 'procurement_id',
+                            'label' => __( 'Procurement Id' ),
+                            'value' => $entry->procurement_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'procurement_product_id',
-                            'label' =>  __( 'Procurement Product Id' ),
-                            'value' =>  $entry->procurement_product_id ?? '',
+                            'type' => 'text',
+                            'name' => 'procurement_product_id',
+                            'label' => __( 'Procurement Product Id' ),
+                            'value' => $entry->procurement_product_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'product_id',
-                            'label' =>  __( 'Product Id' ),
-                            'value' =>  $entry->product_id ?? '',
+                            'type' => 'text',
+                            'name' => 'product_id',
+                            'label' => __( 'Product Id' ),
+                            'value' => $entry->product_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'quantity',
-                            'label' =>  __( 'Quantity' ),
-                            'value' =>  $entry->quantity ?? '',
+                            'type' => 'text',
+                            'name' => 'quantity',
+                            'label' => __( 'Quantity' ),
+                            'value' => $entry->quantity ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'total_price',
-                            'label' =>  __( 'Total Price' ),
-                            'value' =>  $entry->total_price ?? '',
+                            'type' => 'text',
+                            'name' => 'total_price',
+                            'label' => __( 'Total Price' ),
+                            'value' => $entry->total_price ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'unit_id',
-                            'label' =>  __( 'Unit Id' ),
-                            'value' =>  $entry->unit_id ?? '',
+                            'type' => 'text',
+                            'name' => 'unit_id',
+                            'label' => __( 'Unit Id' ),
+                            'value' => $entry->unit_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'unit_price',
-                            'label' =>  __( 'Unit Price' ),
-                            'value' =>  $entry->unit_price ?? '',
+                            'type' => 'text',
+                            'name' => 'unit_price',
+                            'label' => __( 'Unit Price' ),
+                            'value' => $entry->unit_price ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated At' ),
-                            'value' =>  $entry->updated_at ?? '',
+                            'type' => 'text',
+                            'name' => 'updated_at',
+                            'label' => __( 'Updated At' ),
+                            'value' => $entry->updated_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
+                            'type' => 'text',
+                            'name' => 'uuid',
+                            'label' => __( 'Uuid' ),
+                            'value' => $entry->uuid ?? '',
                         ],                     ],
                 ],
             ],
@@ -304,7 +304,8 @@ class ProductHistoryCrud extends CrudService
     public function get( $param )
     {
         switch ( $param ) {
-            case 'model': return $this->model; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -371,73 +372,73 @@ class ProductHistoryCrud extends CrudService
     public function getColumns()
     {
         return [
-            'products_name'  =>  [
-                'label'  =>  __( 'Product' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'products_name' => [
+                'label' => __( 'Product' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'operation_type'  =>  [
-                'label'  =>  __( 'Operation' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'operation_type' => [
+                'label' => __( 'Operation' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'before_quantity'  =>  [
-                'label'  =>  __( 'P. Quantity' ),
-                'width'         =>  '100px',
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'before_quantity' => [
+                'label' => __( 'P. Quantity' ),
+                'width' => '100px',
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'quantity'  =>  [
-                'label'  =>  __( 'Quantity' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'quantity' => [
+                'label' => __( 'Quantity' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'after_quantity'  =>  [
-                'label'         =>  __( 'N. Quantity' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'after_quantity' => [
+                'label' => __( 'N. Quantity' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'units_name'  =>  [
-                'label'         =>  __( 'Unit' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'units_name' => [
+                'label' => __( 'Unit' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'orders_code'  =>  [
-                'label'         =>  __( 'Order' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'orders_code' => [
+                'label' => __( 'Order' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'procurements_name'  =>  [
-                'label'         =>  __( 'Procurement' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'procurements_name' => [
+                'label' => __( 'Procurement' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'unit_price'  =>  [
-                'label'         =>  __( 'Unit Price' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'unit_price' => [
+                'label' => __( 'Unit Price' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'total_price'  =>  [
-                'label'         =>  __( 'Total Price' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'total_price' => [
+                'label' => __( 'Total Price' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'users_username'  =>  [
-                'label'         =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'users_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'         =>  __( 'Date' ),
-                'width'         =>  '100px',
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Date' ),
+                'width' => '100px',
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -462,49 +463,65 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_REMOVED:
             case ProductHistory::ACTION_VOID_RETURN:
                 $entry->{ '$cssClass' } = 'bg-red-100 border-red-200 border text-sm dark:text-slate-300 dark:bg-red-600 dark:border-red-700';
-            break;
+                break;
             case ProductHistory::ACTION_SOLD:
             case ProductHistory::ACTION_RETURNED:
             case ProductHistory::ACTION_ADDED:
             case ProductHistory::ACTION_STOCKED:
                 $entry->{ '$cssClass' } = 'bg-green-100 border-green-200 border text-sm dark:text-slate-300 dark:bg-green-700 dark:border-green-800';
-            break;
+                break;
             case ProductHistory::ACTION_TRANSFER_OUT:
             case ProductHistory::ACTION_TRANSFER_IN:
                 $entry->{ '$cssClass' } = 'bg-blue-100 border-blue-200 border text-sm dark:text-slate-300 dark:bg-blue-600 dark:border-blue-700';
-            break;
+                break;
             case ProductHistory::ACTION_ADJUSTMENT_RETURN:
             case ProductHistory::ACTION_TRANSFER_REJECTED:
             case ProductHistory::ACTION_TRANSFER_CANCELED:
             case ProductHistory::ACTION_ADJUSTMENT_SALE:
                 $entry->{ '$cssClass' } = 'bg-yellow-100 border-yellow-200 border text-sm dark:text-slate-300 dark:bg-yellow-600 dark:border-yellow-700';
-            break;
+                break;
         }
 
         switch ( $entry->operation_type ) {
-            case ProductHistory::ACTION_STOCKED :           $entry->operation_type = __( 'Stocked' ); break;
-            case ProductHistory::ACTION_DEFECTIVE :         $entry->operation_type = __( 'Defective' ); break;
-            case ProductHistory::ACTION_DELETED :           $entry->operation_type = __( 'Deleted' ); break;
-            case ProductHistory::ACTION_REMOVED :           $entry->operation_type = __( 'Removed' ); break;
-            case ProductHistory::ACTION_RETURNED :          $entry->operation_type = __( 'Returned' ); break;
-            case ProductHistory::ACTION_SOLD :              $entry->operation_type = __( 'Sold' ); break;
-            case ProductHistory::ACTION_LOST :              $entry->operation_type = __( 'Lost' ); break;
-            case ProductHistory::ACTION_ADDED :             $entry->operation_type = __( 'Added' ); break;
-            case ProductHistory::ACTION_TRANSFER_IN :       $entry->operation_type = __( 'Incoming Transfer' ); break;
-            case ProductHistory::ACTION_TRANSFER_OUT :      $entry->operation_type = __( 'Outgoing Transfer' ); break;
-            case ProductHistory::ACTION_TRANSFER_REJECTED : $entry->operation_type = __( 'Transfer Rejected' ); break;
-            case ProductHistory::ACTION_TRANSFER_CANCELED : $entry->operation_type = __( 'Transfer Canceled' ); break;
-            case ProductHistory::ACTION_VOID_RETURN :       $entry->operation_type = __( 'Void Return' ); break;
-            case ProductHistory::ACTION_ADJUSTMENT_RETURN : $entry->operation_type = __( 'Adjustment Return' ); break;
-            case ProductHistory::ACTION_ADJUSTMENT_SALE :   $entry->operation_type = __( 'Adjustment Sale' ); break;
-            default: Hook::filter( 'ns-products-history-operation', $entry->operation_type ); break;
+            case ProductHistory::ACTION_STOCKED :           $entry->operation_type = __( 'Stocked' );
+            break;
+            case ProductHistory::ACTION_DEFECTIVE :         $entry->operation_type = __( 'Defective' );
+            break;
+            case ProductHistory::ACTION_DELETED :           $entry->operation_type = __( 'Deleted' );
+            break;
+            case ProductHistory::ACTION_REMOVED :           $entry->operation_type = __( 'Removed' );
+            break;
+            case ProductHistory::ACTION_RETURNED :          $entry->operation_type = __( 'Returned' );
+            break;
+            case ProductHistory::ACTION_SOLD :              $entry->operation_type = __( 'Sold' );
+            break;
+            case ProductHistory::ACTION_LOST :              $entry->operation_type = __( 'Lost' );
+            break;
+            case ProductHistory::ACTION_ADDED :             $entry->operation_type = __( 'Added' );
+            break;
+            case ProductHistory::ACTION_TRANSFER_IN :       $entry->operation_type = __( 'Incoming Transfer' );
+            break;
+            case ProductHistory::ACTION_TRANSFER_OUT :      $entry->operation_type = __( 'Outgoing Transfer' );
+            break;
+            case ProductHistory::ACTION_TRANSFER_REJECTED : $entry->operation_type = __( 'Transfer Rejected' );
+            break;
+            case ProductHistory::ACTION_TRANSFER_CANCELED : $entry->operation_type = __( 'Transfer Canceled' );
+            break;
+            case ProductHistory::ACTION_VOID_RETURN :       $entry->operation_type = __( 'Void Return' );
+            break;
+            case ProductHistory::ACTION_ADJUSTMENT_RETURN : $entry->operation_type = __( 'Adjustment Return' );
+            break;
+            case ProductHistory::ACTION_ADJUSTMENT_SALE :   $entry->operation_type = __( 'Adjustment Sale' );
+            break;
+            default: Hook::filter( 'ns-products-history-operation', $entry->operation_type );
+            break;
         }
 
         // you can make changes here
         $entry->addAction( 'ns.description', [
-            'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Description' ),
-            'namespace'     =>      'ns.description',
-            'type'          =>      'POPUP',
+            'label' => '<i class="mr-2 las la-eye"></i> ' . __( 'Description' ),
+            'namespace' => 'ns.description',
+            'type' => 'POPUP',
         ]);
 
         return $entry;
@@ -523,7 +540,6 @@ class ProductHistoryCrud extends CrudService
          * and supervisor.
          */
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */
@@ -534,8 +550,8 @@ class ProductHistoryCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -575,11 +591,11 @@ class ProductHistoryCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      => ns()->url( 'dashboard/' . 'products/histories' ),
-            'create'    =>  false,
-            'edit'      =>  false,
-            'post'      =>  false,
-            'put'       =>  false,
+            'list' => ns()->url( 'dashboard/' . 'products/histories' ),
+            'create' => false,
+            'edit' => false,
+            'post' => false,
+            'put' => false,
         ];
     }
 
@@ -592,10 +608,10 @@ class ProductHistoryCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

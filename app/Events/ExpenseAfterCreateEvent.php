@@ -11,18 +11,13 @@ class ExpenseAfterCreateEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $expense;
-
-    public $inputs;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Expense $expense, array $inputs )
+    public function __construct( public Expense $expense, public array $inputs )
     {
-        $this->expense = $expense;
-        $this->inputs = $inputs;
+        // ...
     }
 }

@@ -90,15 +90,15 @@ class OrdersController extends DashboardController
         $orderPayment->load( 'order' );
 
         return $this->view( 'pages.dashboard.orders.templates.payment-receipt', [
-            'payment'           =>  $orderPayment,
-            'order'             =>  $order,
-            'paymentTypes'      =>  collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
+            'payment' => $orderPayment,
+            'order' => $order,
+            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
                 return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
             }),
-            'ordersService'     =>  app()->make( OrdersService::class ),
-            'billing'           =>  ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
-            'shipping'          =>  ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
-            'title'             =>  sprintf( __( 'Payment Receipt &mdash; %s' ), $order->code ),
+            'ordersService' => app()->make( OrdersService::class ),
+            'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
+            'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
+            'title' => sprintf( __( 'Payment Receipt &mdash; %s' ), $order->code ),
         ]);
     }
 
@@ -164,10 +164,6 @@ class OrdersController extends DashboardController
 
     public function showPOS()
     {
-        Hook::addAction( 'ns-dashboard-footer', function( Output $output ) {
-            Hook::action( 'ns-dashboard-pos-footer', $output );
-        }, 15 );
-
         /**
          * let's inject the necessary dependency
          * for being able to manage orders.
@@ -179,45 +175,49 @@ class OrdersController extends DashboardController
         );
 
         return $this->view( 'pages.dashboard.orders.pos', [
-            'title'             =>  __( 'POS &mdash; NexoPOS' ),
-            'orderTypes'        =>  collect( config( 'nexopos.orders.types' ) )->filter( function( $type, $label ) {
-                return in_array( $label, ns()->option->get( 'ns_pos_order_types' ) ?: [] );
-            }),
-            'options'           =>  Hook::filter( 'ns-pos-options', [
-                'ns_pos_printing_document'              =>  ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
-                'ns_orders_allow_partial'               =>  ns()->option->get( 'ns_orders_allow_partial', 'no' ),
-                'ns_orders_allow_unpaid'                =>  ns()->option->get( 'ns_orders_allow_unpaid', 'no' ),
-                'ns_pos_customers_creation_enabled'     =>  ns()->option->get( 'ns_pos_customers_creation_enabled', 'no' ),
-                'ns_pos_order_types'                    =>  ns()->option->get( 'ns_pos_order_types', []),
-                'ns_pos_order_sms'                      =>  ns()->option->get( 'ns_pos_order_sms', 'no'),
-                'ns_pos_sound_enabled'                  =>  ns()->option->get( 'ns_pos_sound_enabled', 'yes'),
-                'ns_pos_quick_product'                  =>  ns()->option->get( 'ns_pos_quick_product', 'no'),
-                'ns_pos_gross_price_used'               =>  ns()->option->get( 'ns_pos_gross_price_used', 'no'),
-                'ns_pos_unit_price_ediable'             =>  ns()->option->get( 'ns_pos_unit_price_ediable', 'no'),
-                'ns_pos_printing_enabled_for'           =>  ns()->option->get( 'ns_pos_printing_enabled_for', 'only_paid_ordes' ),
-                'ns_pos_registers_enabled'              =>  ns()->option->get( 'ns_pos_registers_enabled', 'no' ),
-                'ns_pos_idle_counter'                   =>  ns()->option->get( 'ns_pos_idle_counter', 0 ),
-                'ns_pos_disbursement'                   =>  ns()->option->get( 'ns_pos_disbursement', 'no' ),
-                'ns_customers_default'                  =>  ns()->option->get( 'ns_customers_default', false ),
-                'ns_pos_vat'                            =>  ns()->option->get( 'ns_pos_vat', 'disabled' ),
-                'ns_pos_tax_group'                      =>  ns()->option->get( 'ns_pos_tax_group', null ),
-                'ns_pos_tax_type'                       =>  ns()->option->get( 'ns_pos_tax_type', false ),
-                'ns_pos_printing_gateway'               =>  ns()->option->get( 'ns_pos_printing_gateway', 'default' ),
-                'ns_pos_show_quantity'                  =>  ns()->option->get( 'ns_pos_show_quantity', 'no' ) === 'no' ? false : true,
-                'ns_pos_new_item_audio'                 =>  ns()->option->get( 'ns_pos_new_item_audio', '' ),
-                'ns_pos_complete_sale_audio'            =>  ns()->option->get( 'ns_pos_complete_sale_audio', '' ),
-                'ns_pos_numpad'                         =>  ns()->option->get( 'ns_pos_numpad', 'default' ),
-                'ns_pos_allow_wholesale_price'          =>  ns()->option->get( 'ns_pos_allow_wholesale_price', 'no' ) === 'yes' ? true : false,
-                'ns_pos_allow_decimal_quantities'       =>  ns()->option->get( 'ns_pos_allow_decimal_quantities', 'no' ) === 'yes' ? true : false,
-                'ns_pos_force_autofocus'                =>  ns()->option->get( 'ns_pos_force_autofocus', 'no' ) === 'yes' ? true : false,
+            'title' => sprintf(
+                __( 'POS &mdash; %s' ),
+                ns()->option->get( 'ns_store_name', 'NexoPOS' )
+            ),
+            'orderTypes' => collect( $this->ordersService->getTypeOptions() )
+                ->filter( function( $type, $label ) {
+                    return in_array( $label, ns()->option->get( 'ns_pos_order_types' ) ?: [] );
+                }),
+            'options' => Hook::filter( 'ns-pos-options', [
+                'ns_pos_printing_document' => ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
+                'ns_orders_allow_partial' => ns()->option->get( 'ns_orders_allow_partial', 'no' ),
+                'ns_orders_allow_unpaid' => ns()->option->get( 'ns_orders_allow_unpaid', 'no' ),
+                'ns_pos_customers_creation_enabled' => ns()->option->get( 'ns_pos_customers_creation_enabled', 'no' ),
+                'ns_pos_order_types' => ns()->option->get( 'ns_pos_order_types', []),
+                'ns_pos_order_sms' => ns()->option->get( 'ns_pos_order_sms', 'no'),
+                'ns_pos_sound_enabled' => ns()->option->get( 'ns_pos_sound_enabled', 'yes'),
+                'ns_pos_quick_product' => ns()->option->get( 'ns_pos_quick_product', 'no'),
+                'ns_pos_price_with_tax' => ns()->option->get( 'ns_pos_price_with_tax', 'no'),
+                'ns_pos_unit_price_ediable' => ns()->option->get( 'ns_pos_unit_price_ediable', 'no'),
+                'ns_pos_printing_enabled_for' => ns()->option->get( 'ns_pos_printing_enabled_for', 'only_paid_orders' ),
+                'ns_pos_registers_enabled' => ns()->option->get( 'ns_pos_registers_enabled', 'no' ),
+                'ns_pos_idle_counter' => ns()->option->get( 'ns_pos_idle_counter', 0 ),
+                'ns_pos_disbursement' => ns()->option->get( 'ns_pos_disbursement', 'no' ),
+                'ns_customers_default' => ns()->option->get( 'ns_customers_default', false ),
+                'ns_pos_vat' => ns()->option->get( 'ns_pos_vat', 'disabled' ),
+                'ns_pos_tax_group' => ns()->option->get( 'ns_pos_tax_group', null ),
+                'ns_pos_tax_type' => ns()->option->get( 'ns_pos_tax_type', false ),
+                'ns_pos_printing_gateway' => ns()->option->get( 'ns_pos_printing_gateway', 'default' ),
+                'ns_pos_show_quantity' => ns()->option->get( 'ns_pos_show_quantity', 'no' ) === 'no' ? false : true,
+                'ns_pos_new_item_audio' => ns()->option->get( 'ns_pos_new_item_audio', '' ),
+                'ns_pos_complete_sale_audio' => ns()->option->get( 'ns_pos_complete_sale_audio', '' ),
+                'ns_pos_numpad' => ns()->option->get( 'ns_pos_numpad', 'default' ),
+                'ns_pos_allow_wholesale_price' => ns()->option->get( 'ns_pos_allow_wholesale_price', 'no' ) === 'yes' ? true : false,
+                'ns_pos_allow_decimal_quantities' => ns()->option->get( 'ns_pos_allow_decimal_quantities', 'no' ) === 'yes' ? true : false,
+                'ns_pos_force_autofocus' => ns()->option->get( 'ns_pos_force_autofocus', 'no' ) === 'yes' ? true : false,
             ]),
-            'urls'              =>  [
-                'sale_printing_url'     =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
-                'orders_url'            =>      ns()->route( 'ns.dashboard.orders' ),
-                'dashboard_url'         =>      ns()->route( 'ns.dashboard.home' ),
-                'registers_url'         =>      ns()->route( 'ns.dashboard.registers-create' ),
+            'urls' => [
+                'sale_printing_url' => Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
+                'orders_url' => ns()->route( 'ns.dashboard.orders' ),
+                'dashboard_url' => ns()->route( 'ns.dashboard.home' ),
+                'registers_url' => ns()->route( 'ns.dashboard.registers-create' ),
             ],
-            'paymentTypes'  =>  $this->paymentTypes,
+            'paymentTypes' => $this->paymentTypes,
         ]);
     }
 
@@ -234,11 +234,11 @@ class OrdersController extends DashboardController
         $order->products = Hook::filter( 'ns-receipt-products', $order->products );
 
         return $this->view( 'pages.dashboard.orders.templates.invoice', [
-            'order'     =>  $order,
-            'options'   =>  $optionsService->get(),
-            'billing'   =>  ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
-            'shipping'  =>  ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
-            'title'     =>  sprintf( __( 'Order Invoice &mdash; %s' ), $order->code ),
+            'order' => $order,
+            'options' => $optionsService->get(),
+            'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
+            'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
+            'title' => sprintf( __( 'Order Invoice &mdash; %s' ), $order->code ),
         ]);
     }
 
@@ -250,11 +250,11 @@ class OrdersController extends DashboardController
         $refund->refunded_products = Hook::filter( 'ns-refund-receipt-products', $refund->refunded_products );
 
         return $this->view( 'pages.dashboard.orders.templates.refund-receipt', [
-            'refund'            =>  $refund,
-            'ordersService'     =>  app()->make( OrdersService::class ),
-            'billing'           =>  ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
-            'shipping'          =>  ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
-            'title'             =>  sprintf( __( 'Order Refund Receipt &mdash; %s' ), $refund->order->code ),
+            'refund' => $refund,
+            'ordersService' => app()->make( OrdersService::class ),
+            'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
+            'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
+            'title' => sprintf( __( 'Order Refund Receipt &mdash; %s' ), $refund->order->code ),
         ]);
     }
 
@@ -267,11 +267,11 @@ class OrdersController extends DashboardController
         $order->load( 'user' );
 
         return $this->view( 'pages.dashboard.orders.templates.receipt', [
-            'order'             =>  $order,
-            'title'             =>  sprintf( __( 'Order Receipt &mdash; %s' ), $order->code ),
-            'optionsService'    =>  $this->optionsService,
-            'ordersService'     =>  $this->ordersService,
-            'paymentTypes'      =>  collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
+            'order' => $order,
+            'title' => sprintf( __( 'Order Receipt &mdash; %s' ), $order->code ),
+            'optionsService' => $this->optionsService,
+            'ordersService' => $this->ordersService,
+            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
                 return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
             }),
         ]);
@@ -302,8 +302,8 @@ class OrdersController extends DashboardController
     public function addPayment( Order $order, OrderPaymentRequest $request )
     {
         return $this->ordersService->makeOrderSinglePayment([
-            'identifier'    =>  $request->input( 'identifier' ),
-            'value'         =>  $request->input( 'value' ),
+            'identifier' => $request->input( 'identifier' ),
+            'value' => $request->input( 'value' ),
         ], $order );
     }
 
@@ -314,11 +314,11 @@ class OrdersController extends DashboardController
 
     public function printOrder( Order $order, $doc = 'receipt' )
     {
-        event( new OrderAfterPrintedEvent( $order, $doc ) );
+        OrderAfterPrintedEvent::dispatch( $order, $doc );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The printing event has been successfully dispatched.' ),
+            'status' => 'success',
+            'message' => __( 'The printing event has been successfully dispatched.' ),
         ];
     }
 

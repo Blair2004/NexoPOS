@@ -11,7 +11,16 @@ class Unit extends NsModel
     protected $table = 'nexopos_units';
 
     protected $casts = [
-        'base_unit'     =>  'boolean',
+        'base_unit' => 'boolean',
+    ];
+
+    protected $isDependencyFor = [
+        ProductUnitQuantity::class => [
+            'local_name' => 'name',
+            'local_index' => 'id',
+            'foreign_name' => [ Product::class, 'product_id', 'id', 'name' ],
+            'foreign_index' => 'unit_id',
+        ],
     ];
 
     protected $guarded = [];

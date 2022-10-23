@@ -196,9 +196,9 @@ class CreateUserCommand extends Command
             $this->email = $this->ask( 'New Account Email. [Q] Quit.' );
 
             $validator = Validator::make([
-                'email'     =>  $this->email,
+                'email' => $this->email,
             ], [
-                'email'     =>  'required|email',
+                'email' => 'required|email',
             ]);
 
             if ( $this->email === 'Q' ) {
@@ -223,9 +223,9 @@ class CreateUserCommand extends Command
             $this->username = $this->ask( 'New Account Username. [Q] Quit.' );
 
             $validator = Validator::make([
-                'username'     =>  $this->username,
+                'username' => $this->username,
             ], [
-                'username'     =>  'required|min:5',
+                'username' => 'required|min:5',
             ]);
 
             if ( $this->username === 'Q' ) {

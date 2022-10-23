@@ -20,14 +20,14 @@ trait WithCustomerTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.customers-groups', [
-                'name'  =>  __( 'Base Customers' ),
-                'general'   =>  [
-                    'reward_system_id'  =>  $this->faker->randomElement( RewardSystem::get()->map( fn( $reward ) => $reward->id )->toArray() ),
+                'name' => __( 'Base Customers' ),
+                'general' => [
+                    'reward_system_id' => $this->faker->randomElement( RewardSystem::get()->map( fn( $reward ) => $reward->id )->toArray() ),
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
     }
 
@@ -40,9 +40,9 @@ trait WithCustomerTest
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/customers/' . $customer->id . '/account-history', [
-                    'amount'        =>  500,
-                    'description'   =>  __( 'Test credit account' ),
-                    'operation'     =>  CustomerAccountHistory::OPERATION_DEDUCT,
+                    'amount' => 500,
+                    'description' => __( 'Test credit account' ),
+                    'operation' => CustomerAccountHistory::OPERATION_DEDUCT,
                 ]);
 
             return $response->assertJson([ 'status' => 'failed' ]);
@@ -60,15 +60,91 @@ trait WithCustomerTest
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/customers/' . $customer->id . '/account-history', [
-                    'amount'        =>  500,
-                    'description'   =>  __( 'Test credit account' ),
-                    'operation'     =>  CustomerAccountHistory::OPERATION_ADD,
+                    'amount' => 500,
+                    'description' => __( 'Test credit account' ),
+                    'operation' => CustomerAccountHistory::OPERATION_ADD,
                 ]);
 
-            return $response->assertJson([ 'status'    =>  'success' ]);
+            return $response->assertJson([ 'status' => 'success' ]);
         }
 
         throw new Exception( __( 'No customer with empty account to proceed the test.' ) );
+    }
+
+    protected function attemptCreateCustomerWithNoEmail()
+    {
+        $faker = Factory::create();
+        $group = CustomerGroup::first();
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
+                'name' => $faker->firstName,
+                'general' => [
+                    'group_id' => $group->id,
+                    'surname' => $faker->lastName,
+                ],
+                'shipping' => [
+                    'name' => $faker->firstName,
+                    'email' => $faker->email,
+                ],
+            ]);
+
+        $response->assertJson([
+            'status' => 'success',
+        ]);
+    }
+
+    protected function attemptCreateCustomersWithSimilarEmail()
+    {
+        ns()->option->set( 'ns_customers_force_valid_email', 'yes' );
+
+        $faker = Factory::create();
+        $group = CustomerGroup::first();
+        $email = $faker->email;
+
+        /**
+         * The first attempt should
+         * be successful.
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
+                'name' => $faker->firstName,
+                'general' => [
+                    'group_id' => $group->id,
+                    'surname' => $faker->lastName,
+                    'email' => $email,
+                ],
+                'shipping' => [
+                    'name' => $faker->firstName,
+                    'email' => $faker->email,
+                ],
+            ]);
+
+        $response->assertJson([
+            'status' => 'success',
+        ]);
+
+        /**
+         * The second should fail as we're
+         * using the exact same non-empty email
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
+                'name' => $faker->firstName,
+                'general' => [
+                    'group_id' => $group->id,
+                    'surname' => $faker->lastName,
+                    'email' => $email,
+                ],
+                'shipping' => [
+                    'name' => $faker->firstName,
+                    'email' => $faker->email,
+                ],
+            ]);
+
+        $response->assertJson([
+            'status' => 'failed',
+        ]);
     }
 
     protected function attemptCreateCustomer()
@@ -81,26 +157,36 @@ trait WithCustomerTest
         $customerService = app()->make( CustomerService::class );
         $group = CustomerGroup::first();
 
-        for ( $i = 0; $i < 20; $i++ ) {
+        for ( $i = 0; $i < 10; $i++ ) {
             /**
              * Creating a first customer
              */
+            $email = $faker->email;
+            $firstName = $faker->firstName;
+            $lastName = $faker->lastName;
+
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
-                    'name'  =>  $faker->firstName,
-                    'general'   =>  [
-                        'group_id'  =>  $group->id,
-                        'surname'   =>  $faker->lastName,
-                        'email'     =>  $faker->email,
+                    'name' => $firstName,
+                    'general' => [
+                        'group_id' => $group->id,
+                        'surname' => $faker->lastName,
+                        'email' => $email,
                     ],
-                    'shipping'  =>  [
-                        'name'  =>  $faker->firstName,
-                        'email' =>  $faker->email,
+                    'shipping' => [
+                        'name' => $firstName,
+                        'surname' => $lastName,
+                        'email' => $email,
+                    ],
+                    'billing' => [
+                        'name' => $firstName,
+                        'surname' => $lastName,
+                        'email' => $email,
                     ],
                 ]);
 
             $response->assertJson([
-                'status'    =>  'success',
+                'status' => 'success',
             ]);
 
             $lastCustomer = Customer::orderBy( 'id', 'desc' )->first();
@@ -159,24 +245,24 @@ trait WithCustomerTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'post', 'api/nexopos/v4/crud/ns.rewards-system', [
-                'name'          =>  __( 'Sample Reward System' ),
-                'general'       =>  [
-                    'coupon_id'         =>  $this->faker->randomElement( Coupon::get()->map( fn( $coupon ) => $coupon->id )->toArray() ),
-                    'target'            =>  $this->faker->randomElement([ 10, 20, 30 ]),
+                'name' => __( 'Sample Reward System' ),
+                'general' => [
+                    'coupon_id' => $this->faker->randomElement( Coupon::get()->map( fn( $coupon ) => $coupon->id )->toArray() ),
+                    'target' => $this->faker->randomElement([ 10, 20, 30 ]),
                 ],
-                'rules'         =>  [
+                'rules' => [
                     [
-                        'from'      =>  0,
-                        'to'        =>  10,
-                        'reward'    =>  1,
+                        'from' => 0,
+                        'to' => 10,
+                        'reward' => 1,
                     ], [
-                        'from'      =>  10,
-                        'to'        =>  50,
-                        'reward'    =>  3,
+                        'from' => 10,
+                        'to' => 50,
+                        'reward' => 3,
                     ], [
-                        'from'      =>  50,
-                        'to'        =>  100,
-                        'reward'    =>  5,
+                        'from' => 50,
+                        'to' => 100,
+                        'reward' => 5,
                     ],
                 ],
             ]);

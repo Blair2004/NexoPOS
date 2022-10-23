@@ -78,8 +78,8 @@
                                                     <td class="p-2 border text-right border-error-primary">@{{ summary.sales_taxes | currency }}</td>
                                                 </tr>
                                                 <tr class="">
-                                                    <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Products Taxes' ) }}</td>
-                                                    <td class="p-2 border text-right border-error-primary">@{{ summary.producs_taxes | currency }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left text-white">{{ __( 'Shipping' ) }}</td>
+                                                    <td class="p-2 border text-right border-success-primary">@{{ summary.shipping | currency }}</td>
                                                 </tr>
                                                 <tr class="">
                                                     <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-success-secondary text-white">{{ __( 'Total' ) }}</td>

@@ -3,20 +3,15 @@
 namespace App\Jobs;
 
 use App\Services\ReportService;
+use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class ComputeDayReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    /**
-     * @var ReportService
-     */
-    public $reportService;
+    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
 
     /**
      * Create a new job instance.
@@ -25,6 +20,7 @@ class ComputeDayReportJob implements ShouldQueue
      */
     public function __construct()
     {
+        $this->prepareSerialization();
     }
 
     /**
@@ -32,12 +28,8 @@ class ComputeDayReportJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( ReportService $reportService )
     {
-        /**
-         * @var ReportService
-         */
-        $this->reportService = app()->make( ReportService::class );
-        $this->reportService->computeDayReport();
+        $reportService->computeDayReport();
     }
 }

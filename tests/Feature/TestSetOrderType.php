@@ -21,5 +21,8 @@ class TestSetOrderType extends TestCase
         );
 
         ns()->option->set( 'ns_pos_order_types', [ 'takeaway', 'delivery' ]);
+
+        $this->assertEquals( ns()->option->get( 'ns_pos_order_types' )[0], 'takeaway' );
+        $this->assertEquals( ns()->option->get( 'ns_pos_order_types' )[1], 'delivery' );
     }
 }

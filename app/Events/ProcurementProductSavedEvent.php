@@ -9,10 +9,8 @@ class ProcurementProductSavedEvent
 {
     use SerializesModels;
 
-    public $product;
-
-    public function __construct( ProcurementProduct $product )
+    public function __construct( public ProcurementProduct $product )
     {
-        $this->product = $product;
+        // ...
     }
 }

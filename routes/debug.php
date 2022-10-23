@@ -8,10 +8,10 @@ if ( env( 'APP_DEBUG' ) ) {
     Route::get( '/routes', function() {
         $values = collect( array_values( (array) app( 'router' )->getRoutes() )[1] )->map( function( RoutingRoute $route ) {
             return [
-                'domain'    =>  $route->getDomain(),
-                'uri'       =>  $route->uri(),
-                'methods'   =>  collect( $route->methods() )->join( ', ' ),
-                'name'      =>  $route->getName(),
+                'domain' => $route->getDomain(),
+                'uri' => $route->uri(),
+                'methods' => collect( $route->methods() )->join( ', ' ),
+                'name' => $route->getName(),
             ];
         })->values();
 

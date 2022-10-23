@@ -92,7 +92,7 @@ class ModuleMigrations extends Command
              * because we use the cache to prevent the system for overusing the
              * database with too many requests.
              */
-            Artisan::call( 'cache:clear', [ '--force' => true ] );
+            Artisan::call( 'cache:clear' );
 
             return false;
         } elseif ( ! empty( $this->option( 'forget' ) ) ) {
@@ -111,19 +111,27 @@ class ModuleMigrations extends Command
              * We'll make sure to clear the migration as
              * being executed on the system.
              */
-            ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )
+            $migration = ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )
                 ->where( 'file', $path )
-                ->delete();
+                ->get();
 
-            $this->info( sprintf( 'The migration "%s" for the module %s has been forgotten.', $path, $this->module[ 'name' ] ) );
+            if ( $migration->count() > 0 ) {
+                $migration->delete();
 
-            /**
-             * because we use the cache to prevent the system for overusing the
-             * database with too many requests.
-             */
-            Artisan::call( 'cache:clear', [ '--force' => true ] );
+                $this->info( sprintf( 'The migration "%s" for the module %s has been forgotten.', $path, $this->module[ 'name' ] ) );
 
-            return false;
+                /**
+                 * because we use the cache to prevent the system for overusing the
+                 * database with too many requests.
+                 */
+                Artisan::call( 'cache:clear' );
+
+                return true;
+            } else {
+                $this->info( sprintf( 'No migration found using the provided file path "%s" for the module "%s".', $path, $this->module[ 'name' ] ) );
+
+                return false;
+            }
         }
 
         /**
@@ -141,12 +149,12 @@ class ModuleMigrations extends Command
     {
         switch ( $content ) {
             case 'migration':
-            return view( 'generate.modules.migration', [
-                'module'    =>  $this->module,
-                'migration' =>  $this->migration,
-                'table'     =>  $this->table,
-                'schema'    =>  $this->schema,
-            ]);
+                return view( 'generate.modules.migration', [
+                    'module' => $this->module,
+                    'migration' => $this->migration,
+                    'table' => $this->table,
+                    'schema' => $this->schema,
+                ]);
         }
     }
 
@@ -299,7 +307,6 @@ class ModuleMigrations extends Command
         $shouldIgnore = false;
         $details = explode( ' ', $migration );
         foreach ( $details as $detail ) {
-
             /**
              * while we've not looped the option, we assume the string
              * belong to the migration name

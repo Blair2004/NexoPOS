@@ -59,9 +59,9 @@ class ProductCategoryService
         ProductCategoryAfterCreatedEvent::dispatch( $category );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The category has been created' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The category has been created' ),
+            'data' => compact( 'category' ),
         ];
     }
 
@@ -122,5 +122,17 @@ class ProductCategoryService
         }
 
         throw new NotFoundException( __( 'The requested category doesn\'t exists' ) );
+    }
+
+    /**
+     * Will return all available
+     * category using only parent categories
+     * @return array
+     */
+    public function getAllCategoryChildrens()
+    {
+        $categories     =   ProductCategory::where( 'parent_id', null )->get();
+
+        return $categories->map( fn( $category ) => $this->getCategoryChildrens( $category->id ) )->flatten();
     }
 }

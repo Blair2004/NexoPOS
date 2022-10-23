@@ -12,6 +12,7 @@
     "require": {
         "php": "^8.0.0",
         "beyondcode/laravel-websockets": "^1.11",
+        "brick/math": "^0.10.2",
         "dekor/php-array-table": "^1.0",
         "doctrine/dbal": "^3.0",
         "fakerphp/faker": "^1.12",
@@ -20,10 +21,11 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "jackiedo/dotenv-editor": "^2.0",
         "laravel/framework": "^9.0",
-        "laravel/sanctum": "^2.14",
+        "laravel/sanctum": "^3.0",
         "laravel/telescope": "^4.0",
         "laravel/tinker": "^2.0",
         "laravie/parser": "^2.1",
+        "nikic/php-parser": "^4.14",
         "phpoffice/phpspreadsheet": "^1.17",
         "picqer/php-barcode-generator": "^2.1",
         "predis/predis": "^2.0",
@@ -34,7 +36,7 @@
         "tormjens/eventy": "^0.8"
     },
     "require-dev": {
-        "laravel/pint": "^0.2.0",
+        "laravel/pint": "^1.1.1",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^6.1",
         "phpunit/phpunit": "^9.2",

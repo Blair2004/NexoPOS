@@ -25,6 +25,14 @@
                         <div class="p-2 text-center text-primary" v-if="order.taxes.length === 0">{{ __( 'No tax is active' ) }}</div>
                     </div>
                 </ns-tabs-item>
+                <ns-tabs-item padding="0" :label="__( 'Product Taxes' )" identifier="product_taxes" :active="false">
+                    <div class="p-2" v-if="order">
+                        <div class="border shadow p-2 w-full flex justify-between items-center elevation-surface">
+                            <span>{{ __( 'Product Taxes' ) }}</span>
+                            <span>{{ order.products_tax_value | currency  }}</span>
+                        </div>
+                    </div>
+                </ns-tabs-item>
             </ns-tabs>
         </div>
     </div>

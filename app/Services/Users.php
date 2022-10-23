@@ -57,8 +57,8 @@ class Users
     public function setUser( $attributes, $user = null )
     {
         collect([
-            'username'  =>  fn() => User::where( 'username', $attributes[ 'username' ] ),
-            'email'  =>  fn() => User::where( 'email', $attributes[ 'email' ] ),
+            'username' => fn() => User::where( 'username', $attributes[ 'username' ] ),
+            'email' => fn() => User::where( 'email', $attributes[ 'email' ] ),
         ])->each( function( $callback, $key ) use ( $user ) {
             $query = $callback();
 
@@ -118,9 +118,9 @@ class Users
         $this->createAttribute( $user );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The user has been successfully created' ),
-            'data'      =>  compact( 'user' ),
+            'status' => 'success',
+            'message' => __( 'The user has been successfully created' ),
+            'data' => compact( 'user' ),
         ];
     }
 
@@ -187,8 +187,8 @@ class Users
         Hook::action( 'user.activated', $user );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The account has been successfully activated.' ),
+            'status' => 'success',
+            'message' => __( 'The account has been successfully activated.' ),
         ];
     }
 
@@ -249,8 +249,8 @@ class Users
         $newRole->addPermissions( $role->permissions );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The role has been cloned.' ),
+            'status' => 'success',
+            'message' => __( 'The role has been cloned.' ),
         ];
     }
 
