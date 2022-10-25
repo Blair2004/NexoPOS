@@ -5,6 +5,14 @@ declare const ns;
 declare const window;
 
 const precision     =   ( new Array( parseInt( ns.currency.ns_currency_precision ) ) ).fill('').map( _ => 0 ).join('');
+
+/**
+ * Convert a number into a currency format.
+ * @param value the value to convert
+ * @param format amount format
+ * @param locale locale
+ * @returns string
+ */
 const nsCurrency    =   ( value, format = 'full', locale = 'en' ) => {
     let numeralFormat, currencySymbol;
 
@@ -41,4 +49,13 @@ const nsRawCurrency     =   ( value ) => {
     return parseFloat( NumeralJS( value ).format( numeralFormat ) );
 }
 
-export { nsCurrency, nsRawCurrency };
+/**
+ * Will abbreviate an amount to return a short form.
+ * @param value amount to abbreviate
+ * @returns string
+ */
+const nsNumberAbbreviate    =   ( value ) => {
+    return NumeralJS( value ).format( '0a' );
+}
+
+export { nsCurrency, nsRawCurrency, nsNumberAbbreviate };

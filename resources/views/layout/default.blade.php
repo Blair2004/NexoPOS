@@ -10,7 +10,7 @@ $theme  =   ns()->option->get( 'ns_default_theme', 'light' );
     @vite([
         'resources/css/grid.css',
         'resources/css/fonts.css',
-        'resources/css/animations.css',
+        'resources/css/animations.scss',
         'resources/css/typography.css',
         'resources/css/app.css',
         'resources/css/' . $theme . '.css'

@@ -1,0 +1,16 @@
+.ns-floating-notice {
+    .ns-floating-notice-content {
+        @apply w-full flex flex-col;
+        h2 {
+            @apply pr-2 font-bold mb-1 text-xl;
+        }
+        p {
+            @apply text-justify;
+        }
+    }
+
+    &.info {
+        @apply border-info-tertiary bg-info-primary text-primary;
+        @apply md:rounded py-2 px-3 md:w-96 w-full z-10 md:mt-2 shadow-lg flex flex-col justify-between items-center border-t-2;
+    }
+}

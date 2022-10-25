@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import { createApp } from "vue";
 
 import { Popup } from "~/libraries/popup";
-import { EventEmitter, HttpClient, SnackBar, State } from "./libraries/libraries";
+import { EventEmitter, HttpClient, SnackBar, State, FloatingNotice } from "./libraries/libraries";
 import FormValidation from "./libraries/form-validation";
 import Url from "./libraries/url";
 import CrudHandler from "./libraries/crud-handler";
@@ -28,6 +28,7 @@ declare global {
         Axios: any,
         nsHooks: any,
         SnackBar: SnackBar,
+        FloatingNotice: FloatingNotice,
         __: any,
         __m: any,
         popupResolver: any,
@@ -48,6 +49,7 @@ window.Axios            =   Axios;
 window.__               =   __;
 window.__m              =   __m;
 window.SnackBar         =   <any>SnackBar;
+window.FloatingNotice   =   <any>FloatingNotice;
 window.nsHooks          =   createHooks();
 window.popupResolver    =   popupResolver,
 window.popupCloser      =   popupCloser,

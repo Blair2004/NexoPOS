@@ -7,7 +7,6 @@ import NumeralJS            from "numeral";
 import currency             from 'currency.js';
 import * as baseComponents  from './components/components';
 import { NsHotPress }       from './libraries/ns-hotpress';
-import { nsCurrency }       from './filters/declarations';
 
 /**
  * Will bootstrap time and 
@@ -16,7 +15,7 @@ import { nsCurrency }       from './filters/declarations';
 import './shared/time';
 import { copyFileSync } from 'fs';
 
-const nsRewardsSystem       =   defineAsyncComponent( () => import( './pages/dashboard/rewards-system.vue' ) );
+const nsRewardsSystem       =   defineAsyncComponent( () => import( '~/pages/dashboard/rewards-system.vue' ) );
 const nsCreateCoupons       =   defineAsyncComponent( () => import( './pages/dashboard/create-coupons.vue' ) );
 const nsSettings            =   defineAsyncComponent( () => import( './pages/dashboard/settings.vue' ) );
 const nsReset               =   defineAsyncComponent( () => import( './pages/dashboard/reset.vue' ) );

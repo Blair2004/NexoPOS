@@ -3,7 +3,7 @@
         <div id="notification-button" @click="visible = !visible" :class="visible ? 'panel-visible border-0 shadow-lg' : 'border panel-hidden'" class="hover:shadow-lg hover:border-opacity-0 rounded-full h-12 w-12 cursor-pointer font-bold text-2xl justify-center items-center flex">
             <div class="relative float-right" v-if="notifications.length > 0">
                 <div class="absolute -ml-6 -mt-8">
-                    <div class="bg-info-tertiary text-white w-8 h-8 rounded-full text-xs flex items-center justify-center">{{ nsCurrency( notifications.length, 'abbreviate' ) }}</div>
+                    <div class="bg-info-tertiary text-white w-8 h-8 rounded-full text-xs flex items-center justify-center">{{ nsNumberAbbreviate( notifications.length, 'abbreviate' ) }}</div>
                 </div>
             </div>
             <i class="las la-bell"></i>
@@ -44,7 +44,7 @@ import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import nsCloseButton from '~/components/ns-close-button.vue';
-import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+import { nsNumberAbbreviate } from '~/filters/currency';
 
 export default {
     name: 'ns-notifications',
@@ -82,8 +82,7 @@ export default {
     },
     methods: {
         __,
-        nsRawCurrency,
-        nsCurrency,
+        nsNumberAbbreviate,
         pushNotificationIfNew( notification ) {
             const exists     =   this.notifications.filter( _notification => _notification.id === notification.id ).length > 0;
 

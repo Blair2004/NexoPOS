@@ -1,6 +1,7 @@
 @import "light/_variables.css";
 @import "light/_box.css";
 @import "light/_notices.css";
+@import "light/_floating-notices.scss";
 @import 'light/_forms.css';
 @import 'light/_crud.css';
 @import 'light/_dashboard.css';

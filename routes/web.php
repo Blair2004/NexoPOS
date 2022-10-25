@@ -41,3 +41,10 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
 } else {
     include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'web-base.php';
 }
+
+/**
+ * this is made to redirect to
+ * vie server. For some reason we're unable to
+ * configure that correctly on vite.config.js
+ */
+Route::get( '__vite_ping', fn() => redirect( file_get_contents( base_path( 'public/hot' ) ) . '/__vite_ping' ) );

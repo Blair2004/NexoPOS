@@ -21,7 +21,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     @vite([
         'resources/css/grid.css',
         'resources/css/fonts.css',
-        'resources/css/animations.css',
+        'resources/css/animations.scss',
         'resources/css/typography.css',
         'resources/css/app.css',
         'resources/css/' . $theme . '.css'

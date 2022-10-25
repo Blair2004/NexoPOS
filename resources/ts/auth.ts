@@ -1,9 +1,6 @@
-import { nsHooks, nsSnackBar } from '~/bootstrap';
 import { defineAsyncComponent } from 'vue';
-import { createRouter, createWebHashHistory } from 'vue-router';
 import { createApp } from 'vue/dist/vue.esm-bundler';
 import * as components from './components/components';
-import FormValidation from './libraries/form-validation';
 
 declare let nsExtraComponents;
 declare const window;
