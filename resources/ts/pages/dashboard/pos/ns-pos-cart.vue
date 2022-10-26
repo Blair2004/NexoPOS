@@ -239,7 +239,7 @@
                         <i class="mr-2 text-2xl lg:text-xl las la-pause"></i> 
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Hold' ) }}</span>
                     </div>
-                    <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-box-edge hover:bg-indigo-100 flex-auto text-gray-700">
+                    <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center border-r border-box-edge hover:bg-indigo-100 flex-auto">
                         <i class="mr-2 text-2xl lg:text-xl las la-percent"></i> 
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Discount' ) }}</span>
                     </div>

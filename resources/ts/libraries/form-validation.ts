@@ -92,7 +92,7 @@ export default class FormValidation {
                     field.component.$field      =   field;
                     field.component.$fields     =   fields;
                 } else {
-                    throw `Failed to load a custom component. "${componentName}" is not provided as an extra component. More details here: https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-a-custom-vue-component`;
+                    throw `Failed to load a custom component. "${componentName}" is not provided as an extra component. More details here: "https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-a-custom-vue-component"`;
                 }
             }
             

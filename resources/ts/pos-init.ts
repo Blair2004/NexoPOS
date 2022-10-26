@@ -257,7 +257,7 @@ export class POS {
                                                 label: __( 'Read More' ),
                                                 onClick: ( instance ) => {
                                                     instance.close();
-                                                    document.location   =   'https://my.nexopos.com/en/documentation/no-default-customer'
+                                                    window.open( 'https://my.nexopos.com/en/documentation/troubleshooting/no-default-customer', '_blank' );
                                                 }
                                             }, 
                                             close: {
@@ -562,7 +562,7 @@ export class POS {
                 if ( groups[order.tax_group_id] !== undefined ) {
                     order.taxes = groups[order.tax_group_id].taxes.map(tax => {
                         /**
-                         * @todo tax should be computed 
+                         * tax is computed 
                          * on the discounted price
                          * should deduct "subtotal" with "discount"
                          */

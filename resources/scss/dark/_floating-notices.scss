@@ -17,4 +17,10 @@
             @apply text-white;
         }
     }
+    &.success {
+        @apply border-success-tertiary bg-green-900;
+        h2, p {
+            @apply text-white;
+        }
+    }
 }

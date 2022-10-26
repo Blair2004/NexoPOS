@@ -18,6 +18,7 @@ if ( Auth::check() ) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) !!}</title>
     @vite([
+        'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
         'resources/scss/grid.scss',
         'resources/scss/fonts.scss',
         'resources/scss/animations.scss',
@@ -25,7 +26,6 @@ if ( Auth::check() ) {
         'resources/scss/app.scss',
         'resources/scss/' . $theme . '.scss'
     ])
-    <link rel="stylesheet" href="{{ asset( 'css/line-awesome.css' ) }}">
     @yield( 'layout.dashboard.header' )
     <script>
         /**

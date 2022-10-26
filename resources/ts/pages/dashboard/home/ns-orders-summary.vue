@@ -40,7 +40,7 @@
                 <div>
                     <h2 
                         :class="order.payment_status === 'paid' ? 'paid-currency' : 'unpaid-currency'" 
-                        class="text-xl font-bold">{{ order.total | currency }}</h2>
+                        class="text-xl font-bold">{{ nsCurrency( order.total ) }}</h2>
                 </div>
             </div>
         </div>
@@ -48,6 +48,7 @@
 </template>
 <script>
 import { nsHttpClient } from '~/bootstrap';
+import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-orders-summary',
@@ -65,7 +66,7 @@ export default {
             this.orders     =   orders;
         });
     },
-    methods: { __ },
+    methods: { __, nsCurrency },
     destroyed() {
         this.subscription.unsubscribe();
     }

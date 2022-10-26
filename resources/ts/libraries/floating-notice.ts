@@ -39,6 +39,15 @@
 
         show( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'info' }) {
             const { floatingNotice }        =   this.__createSnack({ title, description, options });
+
+            /**
+             * We can't allow a notice that is permanently visible
+             * without any button actions.
+             */
+            if ( options.actions === undefined ) {
+                options.duration    =   3000;
+            }
+
             this.__startTimer( options.duration, floatingNotice );
         }
 
@@ -52,6 +61,10 @@
 
         info( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'info' }) {
             return this.show( title, description, {...options, ...{ type : 'info' } } );
+        }
+
+        warning( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'warning' }) {
+            return this.show( title, description, {...options, ...{ type : 'warning' } } );
         }
 
         /**
@@ -97,12 +110,16 @@
                     buttonThemeClass    =   '';
                     noticeThemeClass     =   'success';
                 break;
+                case 'warning': 
+                    buttonThemeClass    =   '';
+                    noticeThemeClass     =   'warning';
+                break;
             }
 
             
             if ( document.getElementById( 'floating-notice-wrapper' ) === null ) {
                 const parsed    =   (new DOMParser).parseFromString(`
-                <div id="floating-notice-wrapper" class="absolute bottom-0 w-full flex justify-between items-end p-2 flex-col">
+                <div id="floating-notice-wrapper" class="absolute bottom-0 right-0 flex justify-between items-end p-2 flex-col">
                 
                 </div>
                 `, 'text/html' );
@@ -126,7 +143,7 @@
             `, 'text/html' ).querySelector( '.ns-floating-notice' );
             
 
-            if ( Object.values( options.actions ).length > 0 ) {
+            if ( options.actions !== undefined && Object.values( options.actions ).length > 0 ) {
                 for( let key in options.actions ) {
                     const buttonsWrapper        =   floatingNotice.querySelector( '.buttons-wrapper' );
                     const buttonDom             =   ( new DOMParser ).parseFromString( `
@@ -143,7 +160,9 @@
                      if ( options.actions[ key ].onClick ) {
                         buttonDom
                             .querySelector( '.ns-button' )
-                            .addEventListener( 'click', () => options.actions[ key ].onClick( new FloatingAction( floatingNotice ) ) );
+                            .addEventListener( 'click', () => {
+                                options.actions[ key ].onClick( new FloatingAction( floatingNotice ) );
+                            });
                     } else {
                         buttonDom
                             .querySelector( '.ns-button' )
@@ -154,9 +173,7 @@
                         buttonDom.querySelector( '.ns-button' )
                     );
                 }
-            } 
-
-            console.log( floatingNotice );
+            }
             
             snackWrapper.appendChild( floatingNotice );
 
