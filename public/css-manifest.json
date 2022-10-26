@@ -13,5 +13,6 @@
   "typography.scss": "typography.5d798833a07dd150efa8.scss",
   "grid.scss": "grid.02de9031306c45f5b9f2.scss",
   "animations.scss": "animations.25df997084f590036f97.scss",
-  "fonts.scss": "fonts.f19d1892e0fd7c14cfeb.scss"
+  "fonts.scss": "fonts.f19d1892e0fd7c14cfeb.scss",
+  "line-awesome.scss": "line-awesome.a441b2cbaed939dfe291.scss"
 }

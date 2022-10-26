@@ -61,6 +61,7 @@ export default ({ mode }) => {
                     'resources/scss/animations.scss',
                     'resources/scss/typography.scss',
                     'resources/scss/fonts.scss',
+                    'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
                 ],
                 refresh: [ 'resources/views/**', 'resources/ts/**', 'resources/sass/**' ],
             }),
