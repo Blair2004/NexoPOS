@@ -64,7 +64,7 @@
     </div>
 </template>
 <script>
-import nsNumpad from "~/components/ns-numpad.vue    ";
+import nsNumpad from "~/components/ns-numpad.vue";
 import { nsSnackBar } from '~/bootstrap';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';

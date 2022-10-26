@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { createApp, shallowRef } from "vue";
+import { createApp } from "vue/dist/vue.esm-bundler";
 import popupInjector from "./popup-injector";
 
 declare const document;

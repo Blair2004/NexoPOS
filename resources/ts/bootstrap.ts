@@ -6,7 +6,7 @@ import * as ChartJS from "chart.js";
 import { fromEvent } from "rxjs";
 import * as RxJS from 'rxjs';
 import * as moment from 'moment';
-import { createApp } from "vue";
+import { createApp } from "vue/dist/vue.esm-bundler";
 
 import { Popup } from "~/libraries/popup";
 import { EventEmitter, HttpClient, SnackBar, State, FloatingNotice } from "./libraries/libraries";
@@ -75,6 +75,7 @@ if ( ns.websocket.enabled ) {
 const nsEvent           =   new EventEmitter;
 const nsHttpClient      =   new HttpClient;
 const nsSnackBar        =   new SnackBar;
+const nsNotice          =   new FloatingNotice;
 const nsUrl             =   new Url;
 const nsCrudHandler     =   new CrudHandler;
 const nsHooks           =   window.nsHooks;
@@ -125,6 +126,7 @@ nsHttpClient.defineClient( Axios );
 ( window as any ).nsEvent            =   nsEvent;
 ( window as any ).nsHttpClient       =   nsHttpClient;
 ( window as any ).nsSnackBar         =   nsSnackBar;
+( window as any ).nsNotice           =   nsNotice;
 ( window as any ).nsState            =   nsState;
 ( window as any ).nsUrl              =   nsUrl;
 ( window as any ).nsScreen           =   nsScreen;
@@ -135,4 +137,4 @@ nsHttpClient.defineClient( Axios );
 ( window as any ).FormValidation     =   FormValidation;
 ( window as any ).nsCrudHandler      =   nsCrudHandler;
 
-export { nsSnackBar, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };
+export { nsSnackBar, nsNotice, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

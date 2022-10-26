@@ -1,166 +1,165 @@
-import { Observable } from "rxjs";
+    import { Observable } from "rxjs";
 
-declare const window:any;
-
-/**
- * define a single notice action.
- */
-export interface FloatingNoticeSingleAction {
-    label: string
-    onClick: () => void
-}
-
-export interface FloatingNoticeOptions { duration: (number|boolean), type?: string, actions?: { [key:string] : FloatingNoticeSingleAction } };
-
-export class FloatingAction {
-    constructor( private instance: Element ) {
-        // ...
-    }
-
-    close() {
-        this.instance.classList.add( 'fade-out-exit' );
-        this.instance.classList.add( 'anim-duration-300' );
-        this.instance.classList.remove( 'zoom-in-entrance' );
-        setTimeout( () => {
-            this.instance.remove();
-        }, 250 );
-    }
-}
-
-export class FloatingNotice {
-    queue;
-
-    constructor() {
-        if ( window.floatingNotices === undefined ) {
-            window.floatingNotices    =   [];
-            this.queue              =   window.floatingNotices;
-        }
-    }
-
-    show( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'info' }) {
-        const { sampleSnack }        =   this.__createSnack({ title, description, options });
-        console.log( options );
-        this.__startTimer( options.duration, sampleSnack );
-    }
-
-    error( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'error' }) {
-        return this.show( title, description, { ...options, ...{ type : 'error' } } );
-    }
-
-    success( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'success' }) {
-        return this.show( title, description, {...options, ...{ type : 'success' } } );
-    }
-
-    info( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'info' }) {
-        return this.show( title, description, {...options, ...{ type : 'info' } } );
-    }
+    declare const window:any;
 
     /**
-     * 
-     * @param {number} duration 
-     * @param {HTMLDivElement} wrapper 
+     * define a single notice action.
      */
-    __startTimer( duration, wrapper ) {
-        let timeout;
-        const __startTimeOut    =   () => {
-            if ( duration > 0 && duration !== false ) {
-                timeout    =   setTimeout( () => {
-                    ( new FloatingAction( wrapper ) ).close();
-                }, duration );
-            }
-        };
-
-        wrapper.addEventListener( 'mouseenter', () => {
-            clearTimeout( timeout );
-        });
-
-        wrapper.addEventListener( 'mouseleave', () => {
-            __startTimeOut();
-        });
-
-        __startTimeOut();
+    export interface FloatingNoticeSingleAction {
+        label: string
+        onClick?: ( instance: FloatingAction ) => void
     }
 
-    __createSnack({ title, description, options }) {
-        const snackWrapper          =   document.getElementById( 'floating-wrapper' ) || document.createElement( 'div' );
-        const sampleSnack           =   document.createElement( 'div' );
-        const textContainer         =   document.createElement( 'div' );
-        const titleNode              =   document.createElement( 'h2' );
-        const buttonsWrapper        =   document.createElement( 'div' );     
-        const descriptionNode       =   document.createElement( 'p' );   
-        
-        let buttonThemeClass        =   '';
-        let snackThemeClass         =   '';
+    export interface FloatingNoticeOptions { duration?: (number|boolean), type?: string, actions?: { [key:string] : FloatingNoticeSingleAction } };
 
-        switch( options.type ) {
-            case 'info': 
-                buttonThemeClass    =   '';
-                snackThemeClass     =   'info';
-            break;
-            case 'error': 
-                buttonThemeClass    =   '';
-                snackThemeClass     =   'error';
-            break;
-            case 'success': 
-                buttonThemeClass    =   '';
-                snackThemeClass     =   'success';
-            break;
+    export class FloatingAction {
+        constructor( private instance: Element ) {
+            // ...
         }
 
-        textContainer.setAttribute( 'class', 'ns-floating-notice-content' );
-        
-        titleNode.textContent        =   title;
-        descriptionNode.textContent     =   description;
+        close() {
+            this.instance.classList.add( 'fade-out-exit' );
+            this.instance.classList.add( 'anim-duration-300' );
+            this.instance.classList.remove( 'zoom-in-entrance' );
+            setTimeout( () => {
+                this.instance.remove();
+            }, 250 );
+        }
+    }
+
+    export class FloatingNotice {
+        queue;
+
+        constructor() {
+            if ( window.floatingNotices === undefined ) {
+                window.floatingNotices    =   [];
+                this.queue              =   window.floatingNotices;
+            }
+        }
+
+        show( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'info' }) {
+            const { floatingNotice }        =   this.__createSnack({ title, description, options });
+            this.__startTimer( options.duration, floatingNotice );
+        }
+
+        error( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'error' }) {
+            return this.show( title, description, { ...options, ...{ type : 'error' } } );
+        }
+
+        success( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'success' }) {
+            return this.show( title, description, {...options, ...{ type : 'success' } } );
+        }
+
+        info( title, description, options: FloatingNoticeOptions = { duration: 3000, type : 'info' }) {
+            return this.show( title, description, {...options, ...{ type : 'info' } } );
+        }
 
         /**
-         * if there is not label
-         * on the button, it's useless to add it
+         * 
+         * @param {number} duration 
+         * @param {HTMLDivElement} wrapper 
          */
-        buttonsWrapper.setAttribute( 'class', `flex w-full justify-end` )
-
-        if ( Object.values( options.actions ).length > 0 ) {
-            for( let key in options.actions ) {
-                const buttonWrapper         =   document.createElement( 'div' );
-                buttonWrapper.setAttribute( 'class', 'ns-button default ml-2' );
-
-                const buttonNode            =   document.createElement( 'button' );
-                buttonNode.textContent      =   options.actions[ key ].label;
-                buttonNode.setAttribute( 'class', `px-3 py-2 shadow rounded uppercase ${buttonThemeClass}` );
-                
-                /**
-                 * if the button has a defined onClick method
-                 * we'll bind a click event to it, otherwiste it will close the popup
-                 */
-                if ( options.actions[ key ].onClick ) {
-                    buttonNode.addEventListener( 'click', () => options.actions[ key ].onClick( new FloatingAction( sampleSnack ) ) );
-                } else {
-                    buttonNode.addEventListener( 'click', () => ( new FloatingAction( sampleSnack ) ).close() );
+        __startTimer( duration, wrapper ) {
+            let timeout;
+            const __startTimeOut    =   () => {
+                if ( duration > 0 && duration !== false ) {
+                    timeout    =   setTimeout( () => {
+                        ( new FloatingAction( wrapper ) ).close();
+                    }, duration );
                 }
+            };
 
-                buttonWrapper.appendChild( buttonNode );
-                buttonsWrapper.appendChild( buttonWrapper );
+            wrapper.addEventListener( 'mouseenter', () => {
+                clearTimeout( timeout );
+            });
+
+            wrapper.addEventListener( 'mouseleave', () => {
+                __startTimeOut();
+            });
+
+            __startTimeOut();
+        }
+
+        __createSnack({ title, description, options }) {
+            let buttonThemeClass    =   '';
+            let noticeThemeClass    =   '';
+
+            switch( options.type ) {
+                case 'info': 
+                    buttonThemeClass    =   '';
+                    noticeThemeClass     =   'info';
+                break;
+                case 'error': 
+                    buttonThemeClass    =   '';
+                    noticeThemeClass     =   'error';
+                break;
+                case 'success': 
+                    buttonThemeClass    =   '';
+                    noticeThemeClass     =   'success';
+                break;
             }
+
+            
+            if ( document.getElementById( 'floating-notice-wrapper' ) === null ) {
+                const parsed    =   (new DOMParser).parseFromString(`
+                <div id="floating-notice-wrapper" class="absolute bottom-0 w-full flex justify-between items-end p-2 flex-col">
+                
+                </div>
+                `, 'text/html' );
+
+                document.body.appendChild( parsed.querySelector( '#floating-notice-wrapper' ) );
+            }
+
+            
+            const snackWrapper      =   document.getElementById( 'floating-notice-wrapper' ) || document.createElement( 'div' );
+
+            let floatingNotice   =   ( new DOMParser ).parseFromString(`
+            <div class="ns-floating-notice shadow-lg zoom-in-entrance anim-duration-300 p-2 border-t-4 mt-4 md:w-96 flex flex-col ${noticeThemeClass}">
+                <div class="ns-floating-notice-content">
+                    <h2 class="font-bold text-xl">${title}</h2>
+                    <p>${description}</p>
+                </div>
+                <div class="flex justify-end w-full buttons-wrapper mt-2">
+                    <!-- the button will be added here -->
+                </div>
+            </div>
+            `, 'text/html' ).querySelector( '.ns-floating-notice' );
+            
+
+            if ( Object.values( options.actions ).length > 0 ) {
+                for( let key in options.actions ) {
+                    const buttonsWrapper        =   floatingNotice.querySelector( '.buttons-wrapper' );
+                    const buttonDom             =   ( new DOMParser ).parseFromString( `
+                    <div class="ns-button default ml-2">
+                        <button class="px-2 py-1 shadow rounded uppercase ${buttonThemeClass}">${options.actions[ key ].label}</button>
+                    </div>
+                    `, 'text/html' ).firstElementChild;
+
+                    
+                    /**
+                     * if the button has a defined onClick method
+                     * we'll bind a click event to it, otherwiste it will close the popup
+                     */
+                     if ( options.actions[ key ].onClick ) {
+                        buttonDom
+                            .querySelector( '.ns-button' )
+                            .addEventListener( 'click', () => options.actions[ key ].onClick( new FloatingAction( floatingNotice ) ) );
+                    } else {
+                        buttonDom
+                            .querySelector( '.ns-button' )
+                            .addEventListener( 'click', () => ( new FloatingAction( floatingNotice ) ).close() );
+                    }
+
+                    buttonsWrapper.appendChild(
+                        buttonDom.querySelector( '.ns-button' )
+                    );
+                }
+            } 
+
+            console.log( floatingNotice );
+            
+            snackWrapper.appendChild( floatingNotice );
+
+            return { floatingNotice };
         }
-
-        /**
-         * Adding text node
-         */
-        textContainer.appendChild( titleNode );
-        textContainer.appendChild( descriptionNode );
-
-        sampleSnack.appendChild( textContainer );
-        sampleSnack.appendChild( buttonsWrapper );
-        sampleSnack.setAttribute( 'class', `zoom-in-entrance anim-duration-300 ns-floating-notice ${snackThemeClass}` );
-        
-        snackWrapper.appendChild( sampleSnack );
-
-        if ( document.getElementById( 'floating-wrapper' ) === null ) {
-            snackWrapper.setAttribute( 'id', 'floating-wrapper' );
-            snackWrapper.setAttribute( 'class', 'absolute bottom-0 w-full flex justify-between items-end p-2 flex-col')
-
-            document.body.appendChild( snackWrapper );
-        }
-
-        return { snackWrapper, sampleSnack, buttonsWrapper, textNode: titleNode };
     }
-}

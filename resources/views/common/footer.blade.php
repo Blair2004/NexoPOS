@@ -27,13 +27,7 @@ ns.currency         =   <?php echo json_encode( $json );?>;
 ns.authentication   =   <?php echo json_encode( $authentication );?>;
 ns.base_url         =   '{{ url( "/" ) }}';
 </script>
-
-@if ( ns()->isProduction() )
-    <!-- Something should be here -->
-@else
-    @vite([ 'resources/ts/bootstrap.ts' ])
-    @vite([ 'resources/ts/libraries/popup.ts' ])
-@endif
+@vite([ 'resources/ts/bootstrap.ts' ])
 <?php 
     $output     =   new Output;
     Hook::action( 'ns-dashboard-footer', $output );

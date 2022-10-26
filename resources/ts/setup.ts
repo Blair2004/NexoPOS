@@ -1,5 +1,5 @@
-import Vue, { createApp, defineAsyncComponent } from 'vue';
-import VueRouter from 'vue-router';
+import Vue, { createApp, defineAsyncComponent } from 'vue/dist/vue.esm-bundler';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import * as components from './components/components';
 
 const WelcomeComponent              =   defineAsyncComponent( () => import( './pages/setup/welcome.vue' ) );
@@ -12,7 +12,7 @@ const routes    =   [
     { path: '/configuration', component: SetupConfigurationComponent },
 ];
 
-const nsRouter      =   VueRouter.createRouter({ routes, history: VueRouter.createWebHashHistory() });
+const nsRouter      =   createRouter({ routes, history: createWebHashHistory() });
 const nsRouterApp   =   createApp({});
 
 nsRouterApp.use( nsRouter );

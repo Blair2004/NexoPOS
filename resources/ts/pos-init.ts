@@ -4,7 +4,7 @@ import { BehaviorSubject } from "rxjs";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
 import { Order } from "./interfaces/order";
-import { nsEvent, nsHooks, nsHttpClient, nsSnackBar } from "./bootstrap";
+import { nsEvent, nsHooks, nsHttpClient, nsNotice, nsSnackBar } from "./bootstrap";
 import { PaymentType } from "./interfaces/payment-type";
 import { Payment } from "./interfaces/payment";
 import { Responsive } from "./libraries/responsive";
@@ -247,9 +247,24 @@ export class POS {
                             });
                         },
                         error: (error) => {
-                            nsSnackBar
-                                .error( __( 'Unable to select the default customer. Looks like the customer no longer exists. Consider changing the default customer on the settings.' ), __( 'OKAY' ), { duration: 0 })
-                                .subscribe();
+                            nsNotice
+                                .error( 
+                                    __( 'An error has occured' ),
+                                    __( 'Unable to select the default customer. Looks like the customer no longer exists. Consider changing the default customer on the settings.' ),
+                                    {
+                                        actions: {
+                                            readMore: {
+                                                label: __( 'Read More' ),
+                                                onClick: ( instance ) => {
+                                                    instance.close();
+                                                    document.location   =   'https://my.nexopos.com/en/documentation/no-default-customer'
+                                                }
+                                            }, 
+                                            close: {
+                                                label: __( 'Close' ),
+                                            }
+                                        }
+                                    })
                             reject(error);
                         }
                     });

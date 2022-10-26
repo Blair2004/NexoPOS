@@ -15,5 +15,5 @@
 
 @section( 'layout.base.footer' )
     @parent
-    <script src="{{ asset( ns()->isProduction() ? 'js/setup.min.js' : 'js/setup.js' ) }}"></script>
+    @vite([ 'resources/ts/setup.ts' ])
 @endsection

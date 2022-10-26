@@ -24,11 +24,7 @@ use App\Models\User;
 
 @section( 'layout.base.footer' )
     @parent
-    @if ( ns()->isProduction() )
-        <!-- Something should be here -->
-    @else
-        @vite([ 'resources/ts/pos-init.ts' ])
-    @endif
+    @vite([ 'resources/ts/pos-init.ts' ])
     <script>
         const nsShortcuts   =   <?php echo json_encode([
             'ns_pos_keyboard_cancel_order'      =>  ns()->option->get( 'ns_pos_keyboard_cancel_order' ),
@@ -70,9 +66,5 @@ use App\Models\User;
      * working only when those component are loaded.
      */
     </script>
-    @if ( ns()->isProduction() )
-        <!-- Something should be here -->
-    @else
-        @vite([ 'resources/ts/pos.ts' ])
-    @endif
+    @vite([ 'resources/ts/pos.ts' ])
 @endsection

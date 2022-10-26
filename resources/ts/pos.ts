@@ -4,7 +4,7 @@
 import './shared/time';
 import * as baseComponents from './components/components';
 import { NsHotPress } from './libraries/ns-hotpress';
-import { createApp, defineAsyncComponent } from 'vue';
+import { createApp, defineAsyncComponent } from 'vue/dist/vue.esm-bundler';
 
 ( window as any ).nsComponents  =   { ...baseComponents };
 ( window as any ).nsHotPress    =   new NsHotPress;

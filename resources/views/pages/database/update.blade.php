@@ -14,9 +14,5 @@
             modules: @json( $modules )
         }
     </script>
-    @if ( ns()->isProduction() )
-    <!-- Something should be there -->
-    @else
-        @vite([ 'resources/ts/update.ts' ])
-    @endif
+    @vite([ 'resources/ts/update.ts' ])
 @endsection

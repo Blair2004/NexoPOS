@@ -6,5 +6,12 @@
   "light.css": "light.72bd805dac4d2a328b74.css",
   "dark.css": "dark.9857705da9beecc1bc09.css",
   "vue2-daterange-picker.css": "vue2-daterange-picker.fe9e4f57ad74c98c9324.css",
-  "grid.css": "grid.02de9031306c45f5b9f2.css"
+  "grid.css": "grid.02de9031306c45f5b9f2.css",
+  "app.scss": "app.ec596da3e37287871ea0.scss",
+  "light.scss": "light.bc20332f69617e5c2361.scss",
+  "dark.scss": "dark.74feba00f7d1f13a6c20.scss",
+  "typography.scss": "typography.5d798833a07dd150efa8.scss",
+  "grid.scss": "grid.02de9031306c45f5b9f2.scss",
+  "animations.scss": "animations.25df997084f590036f97.scss",
+  "fonts.scss": "fonts.f19d1892e0fd7c14cfeb.scss"
 }

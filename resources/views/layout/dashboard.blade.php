@@ -17,13 +17,15 @@ if ( Auth::check() ) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) !!}</title>
-    <link rel="stylesheet" href="{{ loadcss( 'grid.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( 'fonts.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( 'animations.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( 'typography.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( 'app.css' ) }}">
+    @vite([
+        'resources/scss/grid.scss',
+        'resources/scss/fonts.scss',
+        'resources/scss/animations.scss',
+        'resources/scss/typography.scss',
+        'resources/scss/app.scss',
+        'resources/scss/' . $theme . '.scss'
+    ])
     <link rel="stylesheet" href="{{ asset( 'css/line-awesome.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( $theme . '.css' ) }}">
     @yield( 'layout.dashboard.header' )
     <script>
         /**
@@ -66,11 +68,7 @@ if ( Auth::check() ) {
 
         window.ns.cssFiles      =   <?php echo file_get_contents( base_path( 'public/css-manifest.json' ) );?>;
     </script>
-    @if ( ns()->isProduction() )
-    <!-- Something should be there -->
-    @else
-        @vite([ 'resources/ts/lang-loader.ts' ])
-    @endif
+    @vite([ 'resources/ts/lang-loader.ts' ])
 @include( 'common.header-socket' )
 </head>
 <body <?php echo in_array( app()->getLocale(), config( 'nexopos.rtl-languages' ) ) ? 'dir="rtl"' : "";?>>
@@ -137,11 +135,7 @@ if ( Auth::check() ) {
     </div>
     @section( 'layout.dashboard.footer' )
         @include( '../common/footer' )
-        @if ( ns()->isProduction() )
-        <!-- Something should be there -->
-        @else
-            @vite([ 'resources/ts/app.ts' ])
-        @endif
+        @vite([ 'resources/ts/app.ts' ])
     @show
 </body>
 </html>

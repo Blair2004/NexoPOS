@@ -1,7 +1,7 @@
 import { 
     createApp, 
     defineAsyncComponent 
-}  from 'vue';
+}  from 'vue/dist/vue.esm-bundler';
 
 import NumeralJS            from "numeral";
 import currency             from 'currency.js';
@@ -53,20 +53,20 @@ const nsScreen              =   window[ 'nsScreen' ];
 const nsCssFiles            =   (<any>window)[ 'ns' ].cssFiles;
 const nsExtraComponents     =   (<any>window)[ 'nsExtraComponents' ];    
 
-const VueHtmlToPaperOptions     =   {
-    name: '_blank',
-    specs: [
-      'fullscreen=yes',
-      'titlebar=yes',
-      'scrollbars=yes'
-    ],
-    styles: [
-      `/css/${nsCssFiles[ 'app.css' ]}`,
-      `/css/${nsCssFiles[ 'light.css' ]}`,
-      `/css/${nsCssFiles[ 'grid.css' ]}`,
-      `/css/${nsCssFiles[ 'typography.css' ]}`,
-    ]
-};
+// const VueHtmlToPaperOptions     =   {
+//     name: '_blank',
+//     specs: [
+//       'fullscreen=yes',
+//       'titlebar=yes',
+//       'scrollbars=yes'
+//     ],
+//     styles: [
+//       `/css/${nsCssFiles[ 'app.css' ]}`,
+//       `/css/${nsCssFiles[ 'light.css' ]}`,
+//       `/css/${nsCssFiles[ 'grid.css' ]}`,
+//       `/css/${nsCssFiles[ 'typography.css' ]}`,
+//     ]
+// };
 
 window.nsHotPress            =   new NsHotPress;
 
@@ -122,7 +122,6 @@ window.nsDashboardAside     =   createApp({
     mounted() {
         nsState.behaviorState.subscribe(({ object }:any) => {
             this.sidebar    =   object.sidebar;
-            console.log( this.sidebar );
         });
     }
 });
@@ -186,81 +185,10 @@ window.nsDashboardContent   =   createApp({});
  * a valid name globally
  */
 for( let name in allComponents ) {
-    console.log( name, allComponents[ name ] );
     window.nsDashboardContent.component( name, allComponents[ name ] );
 }
 
-/**
- * we'll register filters
- */
-window.nsDashboardContent.config.globalProperties.$filters     =   {
-    currency: ( value, format = 'full', locale = 'en' ) => {
-        let numeralFormat, currencySymbol;
-    
-        switch( ns.currency.ns_currency_prefered ) {
-            case 'iso' :
-                currencySymbol  =   ns.currency.ns_currency_iso;
-            break;
-            case 'symbol' :
-                currencySymbol  =   ns.currency.ns_currency_symbol;
-            break;
-        }
-    
-        let newValue;
-    
-        if ( format === 'full' ) {
-            const config            =   {
-                decimal: ns.currency.ns_currency_decimal_separator,
-                separator: ns.currency.ns_currency_thousand_separator,
-                precision : parseInt( ns.currency.ns_currency_precision ),
-                symbol: ''
-            };
-        
-            newValue    =   currency( value, config ).format();
-        } else {
-            newValue    =   NumeralJS( value ).format( '0.0a' );
-        }
-    
-        return `${ns.currency.ns_currency_position === 'before' ? currencySymbol : '' }${ newValue }${ns.currency.ns_currency_position === 'after' ? currencySymbol : '' }`;
-    
-    },
-    abbreviate: ( value ) => {
-        var newValue = value;
-        if (value >= 1000) {
-            var suffixes = ["", "k", "m", "b","t"];
-            var suffixNum = Math.floor( (""+value).length/3 );
-            var shortValue;
-            for (var precision = 2; precision >= 1; precision--) {
-                shortValue = parseFloat( (suffixNum != 0 ? (value / Math.pow(1000,suffixNum) ) : value).toPrecision(precision));
-                var dotLessShortValue = (shortValue + '').replace(/[^a-zA-Z 0-9]+/g,'');
-                if (dotLessShortValue.length <= 2) { break; }
-            }
-            if (shortValue % 1 != 0)  shortValue = shortValue.toFixed(1);
-            newValue = shortValue+suffixes[suffixNum];
-        }
-        return newValue;
-    },
-    rawCurrency: ( value ) => {
-        const numeralFormat = `0.${precision}`;
-        return parseFloat( NumeralJS( value ).format( numeralFormat ) );
-    },
-    truncate: (value, length) => {
-        if ( !value ) {
-            return '';
-        } 
-        
-        value = value.toString();
-    
-        if( value.length > length ){
-            return value.substring(0, length) + "..."
-        } else {
-            return value
-        }
-    }
-}
-
 window.nsComponents          =   Object.assign( allComponents, baseComponents );
-
 window.nsDashboardAside.mount( '#dashboard-aside' );
 window.nsDashboardOverlay.mount( '#dashboard-overlay' );
 window.nsDashboardHeader.mount( '#dashboard-header' );

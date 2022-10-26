@@ -34,10 +34,5 @@ Hook::action( 'ns.after-login-fields', $afterForm );
 @section( 'layout.base.footer' )
     @parent
     {!! Hook::filter( 'ns-login-footer', new Output ) !!}
-    
-    @if ( ns()->isProduction() )
-    <!-- Something should be there -->
-    @else
-        @vite([ 'resources/ts/auth.ts' ])
-    @endif
+    @vite([ 'resources/ts/auth.ts' ])
 @endsection

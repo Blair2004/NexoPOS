@@ -10,9 +10,6 @@ nsExtraComponents.nsLogin           =   defineAsyncComponent( () => import( './p
 nsExtraComponents.nsPasswordLost    =   defineAsyncComponent( () => import( './pages/auth/ns-password-lost.vue' ) );
 nsExtraComponents.nsNewPassword     =   defineAsyncComponent( () => import( './pages/auth/ns-new-password.vue' ) );
 
-// const nsState               =   window[ 'nsState' ];
-// const nsScreen              =   window[ 'nsScreen' ];
-
 window.nsHttpClient                 =   nsHttpClient;
 window.authVueComponent             =   createApp({
     components: {

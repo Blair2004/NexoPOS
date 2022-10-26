@@ -2,12 +2,13 @@ import { defineConfig, loadEnv } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import path from 'path';
 import fs from 'fs';
-import vue from '@vitejs/plugin-vue';
+import vuePlugin from '@vitejs/plugin-vue';
 
 export default ({ mode }) => {
     process.env = {...process.env, ...loadEnv(mode, process.cwd())};
 
     return defineConfig({
+        base: './',
         server: {
             port: 3331,
             host: '127.0.0.1',
@@ -32,7 +33,7 @@ export default ({ mode }) => {
             ]
         },
         plugins: [
-            vue({
+            vuePlugin({
                 template: {
                     transformAssetUrls: {
                         base: null,
@@ -42,6 +43,7 @@ export default ({ mode }) => {
             }),
             laravel({
                 input: [
+                    'resources/ts/bootstrap.ts',
                     'resources/ts/app.ts',
                     'resources/ts/auth.ts',
                     'resources/ts/pos.ts',
@@ -49,10 +51,16 @@ export default ({ mode }) => {
                     'resources/ts/setup.ts',
                     'resources/ts/update.ts',
                     'resources/ts/dashboard.ts',
+                    'resources/ts/cashier.ts',
+                    'resources/ts/lang-loader.ts',
     
-                    'resources/css/app.css',
-                    'resources/css/light.css',
-                    'resources/css/dark.css',
+                    'resources/scss/app.scss',
+                    'resources/scss/light.scss',
+                    'resources/scss/dark.scss',
+                    'resources/scss/grid.scss',
+                    'resources/scss/animations.scss',
+                    'resources/scss/typography.scss',
+                    'resources/scss/fonts.scss',
                 ],
                 refresh: [ 'resources/views/**', 'resources/ts/**', 'resources/sass/**' ],
             }),

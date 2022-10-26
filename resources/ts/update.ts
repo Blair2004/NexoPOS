@@ -1,6 +1,6 @@
 declare const window;
 
-import Vue, { createApp } from 'vue';
+import { createApp } from 'vue/dist/vue.esm-bundler';
 import nsDatabaseUpdate from '~/pages/update/ns-database-update.vue';
 
 console.log( nsDatabaseUpdate );
