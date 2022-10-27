@@ -1,5 +1,206 @@
 <template>
-    
+    <div id="report-section" class="px-4">
+        <div class="flex -mx-2">
+            <div class="px-2">
+                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+            </div>
+            <div class="px-2">
+                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+            </div>
+            <div class="px-2">
+                <button @click="loadReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
+                    <i class="las la-sync-alt text-xl"></i>
+                    <span class="pl-2">{{ __( 'Load' ) }}</span>
+                </button>
+            </div>
+        </div>
+        <div class="flex -mx-2">
+            <div class="px-2">
+                <button @click="printSaleReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
+                    <i class="las la-print text-xl"></i>
+                    <span class="pl-2">{{ __( 'Print' ) }}</span>
+                </button>
+            </div>
+            <div class="px-2">
+                <button @click="openSettings()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
+                    <i class="las la-cogs text-xl"></i>
+                    <span class="pl-2">{{ __( 'Type' ) }} : {{ getType( reportType.value ) }}</span>
+                </button>
+            </div>
+            <div class="px-2">
+                <button @click="openUserFiltering()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
+                    <i class="las la-user text-xl"></i>
+                    <span class="pl-2">{{ __( 'Filter By User' ) }} : @{{ selectedUser || __( 'All Users' ) }}</span>
+                </button>
+            </div>
+        </div>
+        <div id="sale-report" class="anim-duration-500 fade-in-entrance">
+            <div class="flex w-full">
+                <div class="my-4 flex justify-between w-full">
+                    <div class="text-secondary">
+                        <ul>
+                            <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
+                            <li class="pb-1 border-b border-dashed">{{ __( 'Document : Sale Report' ) }}</li>
+                            <li class="pb-1 border-b border-dashed">{{ __( 'By : {user}' ).replace( '{user}', ns.user.username ) }}</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img class="w-72" src="" alt="">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="-mx-4 flex md:flex-row flex-col">
+                    <div class="w-full md:w-1/2 px-4">
+                        <div class="shadow rounded my-4 ns-box">
+                            <div class="border-b ns-box-body">
+                                <table class="table ns-table w-full">
+                                    <tbody class="text-primary">
+                                        <tr class="">
+                                            <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white">{{ __( 'Sub Total' ) }}</td>
+                                            <td class="p-2 border text-right border-info-primary">{{ nsCurrency( summary.subtotal ) }}</td>
+                                        </tr>
+                                        <tr class="">
+                                            <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Sales Discounts' ) }}</td>
+                                            <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.sales_discounts ) }}</td>
+                                        </tr>
+                                        <tr class="">
+                                            <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Sales Taxes' ) }}</td>
+                                            <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.sales_taxes ) }}</td>
+                                        </tr>
+                                        <tr class="">
+                                            <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white">{{ __( 'Shipping' ) }}</td>
+                                            <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.shipping ) }}</td>
+                                        </tr>
+                                        <tr class="">
+                                            <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-success-secondary text-white">{{ __( 'Total' ) }}</td>
+                                            <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.total ) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2 px-4">
+                    </div>
+                </div>
+            </div>
+            <div class="bg-box-background shadow rounded my-4" v-if="reportType.value === 'products_report'">
+                <div class="border-b border-box-edge">
+                    <table class="table ns-table w-full">
+                        <thead class="text-primary">
+                            <tr>
+                                <th class="border p-2 text-left">{{ __( 'Products' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Quantity' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Discounts' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Taxes' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Total' ) }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-primary">
+                            <tr v-for="product of result" :key="product.id">
+                                <td class="p-2 border">{{ product.name }}</td>
+                                <td class="p-2 border text-right">{{ product.quantity }}</td>
+                                <td class="p-2 border text-right">{{ nsCurrency( product.discount ) }}</td>
+                                <td class="p-2 border text-right">{{ nsCurrency( product.tax_value ) }}</td>
+                                <td class="p-2 border text-right">{{ nsCurrency( product.total_price ) }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="text-primary font-semibold">
+                            <tr>
+                                <td class="p-2 border text-primary"></td>
+                                <td class="p-2 border text-right text-primary">{{ computeTotal( result, 'quantity' ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'discount' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'tax_value' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="bg-box-background shadow rounded my-4" v-if="reportType.value === 'categories_report'">
+                <div class="border-b border-box-edge">
+                    <table class="table ns-table w-full">
+                        <thead class="text-primary">
+                            <tr>
+                                <th class="border p-2 text-left">{{ __( 'Category' ) }}</th>
+                                <th class="border p-2 text-left">{{ __( 'Product' ) }}</th>
+                                <th width="100" class="border p-2">{{ __( 'Quantity' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Discounts' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Taxes' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Total' ) }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-primary">
+                            <template v-for="(category, categoryIndex) of result" :key="categoryIndex">
+                                <template v-if="category.products.length > 0">
+                                    <tr v-for="(product) of category.products" :key="parseInt( category.id + '' + product.id )">
+                                        <td class="p-2 border">{{ category.name }}</td>
+                                        <td class="p-2 border">{{ product.name }}</td>
+                                        <td class="p-2 border text-right">{{ product.quantity }}</td>
+                                        <td class="p-2 border text-right">{{ nsCurrency( product.discount ) }}</td>
+                                        <td class="p-2 border text-right">{{ nsCurrency( product.tax_value ) }}</td>
+                                        <td class="p-2 border text-right">{{ nsCurrency( product.total_price ) }}</td>
+                                    </tr>
+                                </template>
+                                <tr class="bg-info-primary">
+                                    <td colspan="2" class="p-2 border border-info-secondary">{{ category.name }}</td>
+                                    <td class="p-2 border text-right border-info-secondary">{{ computeTotal( category.products, 'quantity' ) }}</td>
+                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'discount' ) ) }}</td>
+                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'tax_value' ) ) }}</td>
+                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'total_price' ) ) }}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                        <tfoot class="text-primary font-semibold">
+                            <tr>
+                                <td colspan="2" class="p-2 border text-primary"></td>
+                                <td class="p-2 border text-right text-primary">{{ computeTotal( result, 'total_sold_items' ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_discount' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_tax_value' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="bg-box-background shadow rounded my-4" v-if="reportType.value === 'categories_summary'">
+                <div class="border-b border-box-edge">
+                    <table class="table ns-table w-full">
+                        <thead class="text-primary">
+                            <tr>
+                                <th class="border p-2 text-left">{{ __( 'Category' ) }}</th>
+                                <th width="100" class="border p-2">{{ __( 'Quantity' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Discounts' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Taxes' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Total' ) }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-primary">
+                            <template v-for="(category, categoryIndex) of result" :key="categoryIndex">
+                                <tr class="">
+                                    <td class="p-2 border text-left border-info-primary">{{ category.name }}</td>
+                                    <td class="p-2 border text-right border-info-primary">{{ computeTotal( category.products, 'quantity' ) }}</td>
+                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( computeTotal( category.products, 'discount' ) ) }}</td>
+                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( computeTotal( category.products, 'tax_value' ) ) }}</td>
+                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( computeTotal( category.products, 'total_price' ) ) }}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                        <tfoot class="text-primary font-semibold">
+                            <tr>
+                                <td class="p-2 border text-primary"></td>
+                                <td class="p-2 border text-right text-primary">{{ computeTotal( result, 'total_sold_items' ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_discount' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_tax_value' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 <script>
 import moment from "moment";
@@ -8,15 +209,18 @@ import { default as nsDateTimePicker } from '~/components/ns-date-time-picker.vu
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-sale-report',
     data() {
         return {
+            saleReport: '',
             startDate: moment(),
             endDate: moment(),
             result: [],
             users: [],
+            ns: window.ns,
             summary: {},
             selectedUser: '',
             reportType: {
@@ -60,9 +264,11 @@ export default {
         nsDateTimePicker,
     },
     computed: {
-        // ..
+        // ...
     },
     methods: {
+        __,
+        nsCurrency,
         printSaleReport() {
             this.$htmlToPaper( 'sale-report' );
         },
@@ -186,6 +392,10 @@ export default {
         setEndDate( moment ) {
             this.endDate    =   moment.format();
         },
+    },
+    props: [ 'store-logo', 'store-name' ],
+    mounted() {
+        // ...
     }
 }
 </script>

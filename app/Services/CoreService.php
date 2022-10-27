@@ -190,4 +190,20 @@ class CoreService
     {
         return ! is_file( base_path( 'public/hot' ) );
     }
+
+    /**
+     * Simplify the manifest to return
+     * only the files to use.
+     */
+    public function simplifyManifest()
+    {
+        $manifest   =   json_decode( file_get_contents( base_path( 'public/build/manifest.json' ) ), true );
+
+        return collect( $manifest )
+            ->mapWithKeys( fn( $value, $key ) => [ $key => asset( 'build/' . $value[ 'file' ] ) ] )
+            ->filter( function( $element ) {
+                $info   =   pathinfo( $element );
+                return $info[ 'extension' ] === 'css';
+            });
+    }
 }

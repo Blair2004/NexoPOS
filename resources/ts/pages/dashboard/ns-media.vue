@@ -13,6 +13,8 @@ export default {
     },
     data() {
         return {
+            searchFieldDebounce: null,
+            searchField: '',
             pages: [{
                 label: __( 'Upload' ),
                 name: 'upload',
@@ -65,12 +67,21 @@ export default {
         this.select( gallery );
     },
     watch: {
-        files() {
-            /**
-             * as long as there are file that aren't 
-             * yet uploaded. We'll trigger the "active" status.
-             */
-            this.uploadFiles();
+        searchField() {
+            clearTimeout( this.searchFieldDebounce );
+            this.searchFieldDebounce    =   setTimeout( () => {
+                this.loadGallery(1);
+            }, 500 );
+        },
+        files: {
+            handler() {
+                /**
+                 * as long as there are file that aren't 
+                 * yet uploaded. We'll trigger the "active" status.
+                 */
+                this.uploadFiles();
+            },
+            deep: true
         }
     },
     computed: {
@@ -181,7 +192,6 @@ export default {
 
                 try {
                     fileData.progress       =   1;
-
                     const promise   =   await new Promise( ( resolve, reject ) => {
                         const formData      =   new FormData();
                         formData.append( 'file', fileData.file );
@@ -274,12 +284,27 @@ export default {
         loadGallery( page = null ) {
             page = page === null ? this.queryPage : page;
             this.queryPage  =   page;
-            nsHttpClient.get( `/api/nexopos/v4/medias?page=${page}&user_id=${this.user_id}` )
+            nsHttpClient.get( `/api/nexopos/v4/medias?page=${page}&user_id=${this.user_id}${this.searchField.length > 0 ? `&search=${this.searchField}` : `` }` )
                 .subscribe( result => {
                     // define default selection status
                     result.data.forEach( resource => resource.selected = false );
                     this.response  =   result;
                 })
+        },
+
+        submitChange( field, selectedResource ) {
+            nsHttpClient.put( `/api/nexopos/v4/medias/${selectedResource.id}`, {
+                name: field.srcElement.textContent
+            }).subscribe({
+                next: result => {
+                    selectedResource.fileEdit   =   false;
+                    nsSnackBar.success( result.message, 'OK' ).subscribe();
+                },
+                error: error => {
+                    selectedResource.fileEdit   =   false;
+                    nsSnackBar.success( error.message || __( 'An unexpected error occured.' ), 'OK' ).subscribe();
+                }
+            });
         },
 
         /**
@@ -311,6 +336,7 @@ export default {
                 });
             }
 
+            resource.fileEdit   =   false;
             resource.selected   =   ! resource.selected;
         },
     }
@@ -347,9 +373,17 @@ export default {
             </div>
             <div class="flex flex-auto overflow-hidden">
                 <div class="shadow ns-grid flex flex-auto flex-col overflow-y-auto ns-scrollbar">
+                    <div class="p-2 border-b border-box-background">
+                        <div class="ns-input border-2 rounded border-input-edge bg-input-background flex">
+                            <input id="search" type="text" v-model="searchField" :placeholder="__( 'Search Medias' )" class="px-4 block w-full sm:text-sm sm:leading-5 h-10">
+                            <div class="flex items-center justify-center w-20 p-1" v-if="searchField.length > 0">
+                                <button @click="searchField = ''" class="h-full w-full rounded-tr rounded-br overflow-hidden">{{ __( 'Cancel' ) }}</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="flex flex-auto">
                         <div class="p-2 overflow-x-auto">
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                                 <div v-for="(resource, index) of response.data" :key="index" class="">
                                     <div class="p-2">
                                         <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected ring-4' : ''" class="rounded-lg aspect-square bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
@@ -370,7 +404,8 @@ export default {
                     </div>
                     <div id="details" class="p-4 text-gray-700 text-sm" v-if="panelOpened">
                         <p class="flex flex-col mb-2">
-                            <strong class="font-bold block">{{ __( 'File Name' ) }}: </strong><span>{{ selectedResource.name }}</span>
+                            <strong class="font-bold block">{{ __( 'File Name' ) }}: </strong>
+                            <span class="p-2" @blur="submitChange( $event, selectedResource )" :contenteditable="selectedResource.fileEdit ? 'true' : 'false'" :class="selectedResource.fileEdit ? 'border-b border-input-edge bg-input-background' : ''" @click="selectedResource.fileEdit = true">{{ selectedResource.name }}</span>
                         </p>
                         <p class="flex flex-col mb-2">
                             <strong class="font-bold block">{{ __( 'Uploaded At' ) }}:</strong><span>{{ selectedResource.created_at }}</span>
@@ -383,29 +418,34 @@ export default {
             </div>
             <div class="p-2 flex ns-media-footer flex-shrink-0 justify-between">
                 <div class="flex -mx-2 flex-shrink-0">
-                    <div class="px-2 flex-shrink-0 flex">
-                        <div class="rounded shadow overflow-hidden flex text-sm">
-                            <div class="ns-button info" v-if="bulkSelect" >
-                                <button 
-                                    @click="cancelBulkSelect()" 
-                                    class="py-2 px-3">
-                                    <i class="las la-times"></i>
-                                </button>
-                            </div>
-                            <div class="ns-button info" v-if="hasOneSelected && ! bulkSelect">
-                                <button 
-                                    @click="bulkSelect = true"
-                                    class="py-2 px-3">
-                                    <i class="las la-check-circle"></i>                            
-                                </button>
-                            </div>
-                            <div class="ns-button error" v-if="hasOneSelected">
-                                <button 
-                                    @click="deleteSelected()"
-                                    class="py-2 px-3">
-                                    <i class="las la-trash"></i>
-                                </button>
-                            </div>
+                    <div class="px-2" v-if="bulkSelect">
+                        <div class="ns-button shadow rounded overflow-hidden info">
+                            <button 
+                                @click="cancelBulkSelect()" 
+                                class="py-2 px-3">
+                                <i class="las la-times"></i>
+                                {{ __( 'Cancel' ) }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="px-2"  v-if="hasOneSelected && ! bulkSelect">
+                        <div class="ns-button shadow rounded overflow-hidden info">
+                            <button 
+                                @click="bulkSelect = true"
+                                class="py-2 px-3">
+                                <i class="las la-check-circle"></i>    
+                                {{ __( 'Bulk Select' ) }}                        
+                            </button>
+                        </div>
+                    </div>
+                    <div class="px-2"  v-if="hasOneSelected">
+                        <div class="ns-button shadow rounded overflow-hidden warning">
+                            <button 
+                                @click="deleteSelected()"
+                                class="py-2 px-3">
+                                <i class="las la-trash"></i>
+                                {{ __( 'Delete' ) }}
+                            </button>
                         </div>
                     </div>
                 </div>

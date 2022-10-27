@@ -66,7 +66,9 @@ if ( Auth::check() ) {
             'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
         ]));?>
 
-        window.ns.cssFiles      =   <?php echo file_get_contents( base_path( 'public/css-manifest.json' ) );?>;
+        window.ns.user          =   <?php echo json_encode( Auth::user() );?>;
+
+        window.ns.cssFiles      =   <?php echo json_encode( ns()->simplifyManifest() );?>;
     </script>
     @vite([ 'resources/ts/lang-loader.ts' ])
 @include( 'common.header-socket' )

@@ -3,9 +3,8 @@ import {
     defineAsyncComponent 
 }  from 'vue/dist/vue.esm-bundler';
 
-import NumeralJS            from "numeral";
-import currency             from 'currency.js';
 import * as baseComponents  from './components/components';
+import VueHtmlToPaper from './libraries/html-printer';
 import { NsHotPress }       from './libraries/ns-hotpress';
 
 /**
@@ -13,7 +12,6 @@ import { NsHotPress }       from './libraries/ns-hotpress';
  * start counting
  */
 import './shared/time';
-import { copyFileSync } from 'fs';
 
 const nsRewardsSystem       =   defineAsyncComponent( () => import( '~/pages/dashboard/rewards-system.vue' ) );
 const nsCreateCoupons       =   defineAsyncComponent( () => import( './pages/dashboard/create-coupons.vue' ) );
@@ -43,35 +41,14 @@ const nsCashierDashboard    =   defineAsyncComponent( () => import( './pages/das
 const nsStockAdjustment     =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-stock-adjustment.vue' ) );
 const nsOrderInvoice        =   defineAsyncComponent( () => import( './pages/dashboard/orders/ns-order-invoice.vue' ) );
 
-// import RawVueApexCharts     from 'vue-apexcharts';
-// import VueHtmlToPaper       from 'vue-html-to-paper';
-
 declare const window;
 
 const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ]; 
-const nsCssFiles            =   (<any>window)[ 'ns' ].cssFiles;
 const nsExtraComponents     =   (<any>window)[ 'nsExtraComponents' ];    
 
-// const VueHtmlToPaperOptions     =   {
-//     name: '_blank',
-//     specs: [
-//       'fullscreen=yes',
-//       'titlebar=yes',
-//       'scrollbars=yes'
-//     ],
-//     styles: [
-//       `/css/${nsCssFiles[ 'app.css' ]}`,
-//       `/css/${nsCssFiles[ 'light.css' ]}`,
-//       `/css/${nsCssFiles[ 'grid.css' ]}`,
-//       `/css/${nsCssFiles[ 'typography.css' ]}`,
-//     ]
-// };
 
 window.nsHotPress            =   new NsHotPress;
-
-// Vue.use( VueHtmlToPaper, VueHtmlToPaperOptions );
-// const VueApexCharts     =   Vue.component( 'vue-apex-charts', RawVueApexCharts );
 
 const allComponents    =   Object.assign({
     nsModules,
@@ -103,11 +80,8 @@ const allComponents    =   Object.assign({
 
     nsStockAdjustment,
     nsOrderInvoice,
-    // VueApexCharts,
     ...baseComponents
 }, nsExtraComponents );
-
-const precision     =   ( new Array( parseInt( ns.currency.ns_currency_precision ) ) ).fill('').map( _ => 0 ).join('');
 
 window.nsDashboardAside     =   createApp({
     data() {
@@ -187,6 +161,14 @@ window.nsDashboardContent   =   createApp({});
 for( let name in allComponents ) {
     window.nsDashboardContent.component( name, allComponents[ name ] );
 }
+
+/**
+ * let's add the library
+ * to the body dashboard content
+ */
+window.nsDashboardContent.use( VueHtmlToPaper, {
+    styles: Object.values( window.ns.cssFiles )
+});
 
 window.nsComponents          =   Object.assign( allComponents, baseComponents );
 window.nsDashboardAside.mount( '#dashboard-aside' );

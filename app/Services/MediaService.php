@@ -217,6 +217,7 @@ class MediaService
     {
         $per_page = request()->query( 'per_page' ) ?? 20;
         $user_id = request()->query( 'user_id' );
+        $search = request()->query( 'search' ) ?? null;
 
         $mediaQuery = Media::with( 'user' )
             ->orderBy( 'updated_at', 'desc' );
@@ -227,6 +228,10 @@ class MediaService
          */
         if ( ! empty( $user_id ) ) {
             $mediaQuery->where( 'user_id', $user_id );
+        }
+
+        if ( ! empty( $search ) ) {
+            $mediaQuery->where( 'name', 'like', "%$search%" );
         }
 
         $medias = $mediaQuery->paginate($per_page);
