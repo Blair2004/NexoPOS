@@ -5,7 +5,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 
-class Nov12CreateOrderPermission extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -52,4 +52,4 @@ class Nov12CreateOrderPermission extends Migration
             $permission->removeFromRoles();
         }
     }
-}
+};

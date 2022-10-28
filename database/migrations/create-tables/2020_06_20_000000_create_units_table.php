@@ -7,7 +7,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateUnitsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -44,4 +44,4 @@ class CreateUnitsTable extends Migration
             Schema::dropIfExists( 'nexopos_units' );
         }
     }
-}
+};

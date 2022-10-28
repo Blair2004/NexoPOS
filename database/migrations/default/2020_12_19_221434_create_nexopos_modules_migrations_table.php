@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNexoposModulesMigrationsTable extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -23,11 +23,13 @@ class CreateNexoposModulesMigrationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('nexopos_modules_migrations', function (Blueprint $table) {
-            $table->id();
-            $table->string( 'namespace' );
-            $table->string( 'file' );
-        });
+        if ( ! Schema::hasTable( 'nexopos_modules_migrations' ) ) {
+            Schema::create('nexopos_modules_migrations', function (Blueprint $table) {
+                $table->id();
+                $table->string( 'namespace' );
+                $table->string( 'file' );
+            });
+        }
     }
 
     /**
@@ -39,4 +41,4 @@ class CreateNexoposModulesMigrationsTable extends Migration
     {
         Schema::dropIfExists( 'nexopos_modules_migrations' );
     }
-}
+};

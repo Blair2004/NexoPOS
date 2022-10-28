@@ -4,7 +4,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class UpdateNexoposUsersTableMarch18 extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -53,4 +53,4 @@ class UpdateNexoposUsersTableMarch18 extends Migration
             });
         }
     }
-}
+};

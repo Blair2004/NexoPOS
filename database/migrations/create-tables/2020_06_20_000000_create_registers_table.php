@@ -7,7 +7,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateRegistersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -42,4 +42,4 @@ class CreateRegistersTable extends Migration
             Schema::dropIfExists( 'nexopos_registers' );
         }
     }
-}
+};

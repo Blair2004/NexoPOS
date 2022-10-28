@@ -7,7 +7,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateCustomersMetasTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -39,4 +39,4 @@ class CreateCustomersMetasTable extends Migration
             Schema::drop( 'nexopos_customers_metas' );
         }
     }
-}
+};

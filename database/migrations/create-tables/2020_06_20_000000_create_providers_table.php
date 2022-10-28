@@ -7,7 +7,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateProvidersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -48,4 +48,4 @@ class CreateProvidersTable extends Migration
             Schema::dropIfExists( 'nexopos_providers' );
         }
     }
-}
+};

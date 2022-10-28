@@ -7,7 +7,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserRoleRelationsTable extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -58,4 +58,4 @@ class CreateUserRoleRelationsTable extends Migration
     {
         Schema::dropIfExists('nexopos_users_roles_relations');
     }
-}
+};

@@ -47,6 +47,7 @@ class CustomerService
 
     /**
      * Retrieve the recent active customers.
+     *
      * @param int $limit
      * @return Collection
      */
@@ -56,7 +57,7 @@ class CustomerService
             ->with( 'shipping' )
             ->where( 'group_id', '<>', null )
             ->limit( $limit )
-            ->orderBy( 'updated_at', 'desc' )->get();  
+            ->orderBy( 'updated_at', 'desc' )->get();
     }
 
     /**
@@ -661,15 +662,15 @@ class CustomerService
     {
         switch ( $label ) {
             case CustomerAccountHistory::OPERATION_ADD: return __( 'Crediting' );
-            break;
+                break;
             case CustomerAccountHistory::OPERATION_DEDUCT: return __( 'Deducting' );
-            break;
+                break;
             case CustomerAccountHistory::OPERATION_PAYMENT: return __( 'Order Payment' );
-            break;
+                break;
             case CustomerAccountHistory::OPERATION_REFUND: return __( 'Order Refund' );
-            break;
+                break;
             default: return __( 'Unknown Operation' );
-            break;
+                break;
         }
     }
 

@@ -13,7 +13,7 @@ use Illuminate\Database\Schema\Blueprint;
  * @property int source
  * @property bool dismissable
  */
-class CreateNexoposNotificationsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -46,4 +46,4 @@ class CreateNexoposNotificationsTable extends Migration
     {
         Schema::dropIfExists( 'nexopos_notifications' );
     }
-}
+};

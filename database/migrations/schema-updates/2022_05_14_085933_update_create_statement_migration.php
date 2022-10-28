@@ -16,7 +16,7 @@ return new class extends Migration
         $permission = Permission::namespace( 'nexopos.reports.customers-statement' );
 
         if ( ! $permission instanceof Permission ) {
-            $permission = new Permission;
+            $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.customers-statement' ]);
             $permission->name = __( 'See Customers Statement' );
             $permission->namespace = 'nexopos.reports.customers-statement';
             $permission->description = __( 'Allow the user to see the customers statement.' );

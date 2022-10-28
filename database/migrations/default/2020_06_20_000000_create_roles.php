@@ -7,7 +7,7 @@ use App\Models\Role;
 use App\Services\Options;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRoles extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -29,7 +29,7 @@ class CreateRoles extends Migration
         $this->options = app()->make( Options::class );
 
         // User Role
-        $user = new Role;
+        $user = Role::firstOrNew([ 'namespace' => 'user' ]);
         $user->name = __( 'User' );
         $user->namespace = 'user';
         $user->locked = true;
@@ -41,7 +41,7 @@ class CreateRoles extends Migration
         ]);
 
         // Master User
-        $admin = new Role;
+        $admin = Role::firstOrNew([ 'namespace' => 'admin' ]);
         $admin->name = __( 'Administrator' );
         $admin->namespace = 'admin';
         $admin->dashid = 'store';
@@ -94,7 +94,7 @@ class CreateRoles extends Migration
         /**
          * store administrator role
          */
-        $storeAdmin = new Role;
+        $storeAdmin = Role::firstOrNew([ 'namespace' => 'nexopos.store.administrator' ]);
         $storeAdmin->name = __( 'Store Administrator' );
         $storeAdmin->namespace = 'nexopos.store.administrator';
         $storeAdmin->locked = true;
@@ -130,7 +130,7 @@ class CreateRoles extends Migration
         /**
          * store administrator role
          */
-        $storeCashier = new Role;
+        $storeCashier = Role::firstOrNew([ 'namespace' => 'nexopos.store.cashier' ]);
         $storeCashier->name = __( 'Store Cashier' );
         $storeCashier->namespace = 'nexopos.store.cashier';
         $storeCashier->locked = true;
@@ -163,4 +163,4 @@ class CreateRoles extends Migration
             $role->delete();
         }
     }
-}
+};

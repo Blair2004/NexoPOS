@@ -7,7 +7,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateProductsMetasTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -40,4 +40,4 @@ class CreateProductsMetasTable extends Migration
             Schema::dropIfExists( 'nexopos_products_metas' );
         }
     }
-}
+};

@@ -6,7 +6,7 @@ use App\Models\Permission;
 use App\Services\Options;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePermissions extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -43,7 +43,7 @@ class CreatePermissions extends Migration
         foreach ( [ 'users', 'roles' ] as $permission ) {
             foreach ( [ 'create', 'read', 'update', 'delete' ] as $crud ) {
                 // Create User
-                $this->permission = new Permission;
+                $this->permission = Permission::firstOrNew([ 'namespace' => $crud . '.' . $permission ]);
                 $this->permission->name = ucwords( $crud ) . ' ' . ucwords( $permission );
                 $this->permission->namespace = $crud . '.' . $permission;
                 $this->permission->description = sprintf( __( 'Can %s %s' ), $crud, $permission );
@@ -52,35 +52,35 @@ class CreatePermissions extends Migration
         }
 
         // for core update
-        $this->permission = new Permission;
+        $this->permission = Permission::firstOrNew([ 'namespace' => 'update.core' ]);
         $this->permission->name = __( 'Update Core' );
         $this->permission->namespace = 'update.core';
         $this->permission->description = __( 'Can update core' );
         $this->permission->save();
 
         // for core permission
-        $this->permission = new Permission;
+        $this->permission = Permission::firstOrNew([ 'namespace' => 'manage.profile' ]);
         $this->permission->name = __( 'Manage Profile' );
         $this->permission->namespace = 'manage.profile';
         $this->permission->description = __( 'Can manage profile' );
         $this->permission->save();
 
         // for module migration
-        $this->permission = new Permission;
+        $this->permission = Permission::firstOrNew([ 'namespace' => 'manage.modules' ]);
         $this->permission->name = __( 'Manage Modules' );
         $this->permission->namespace = 'manage.modules';
         $this->permission->description = __( 'Can manage module : install, delete, update, migrate, enable, disable' );
         $this->permission->save();
 
         // for options
-        $this->permission = new Permission;
+        $this->permission = Permission::firstOrNew([ 'namespace' => 'manage.options' ]);
         $this->permission->name = __( 'Manage Options' );
         $this->permission->namespace = 'manage.options';
         $this->permission->description = __( 'Can manage options : read, update' );
         $this->permission->save();
 
         // for options
-        $this->permission = new Permission;
+        $this->permission = Permission::firstOrNew([ 'namespace' => 'read.dashboard' ]);
         $this->permission->name = __( 'View Dashboard' );
         $this->permission->namespace = 'read.dashboard';
         $this->permission->description = __( 'Can access the dashboard and see metrics' );
@@ -114,4 +114,4 @@ class CreatePermissions extends Migration
     {
         Permission::where( 'namespace', 'like', '%nexopos.%' )->delete();
     }
-}
+};

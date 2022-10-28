@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateColumnsLengthSept3021 extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -149,60 +149,150 @@ class UpdateColumnsLengthSept3021 extends Migration
         });
 
         Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
-            $table->float( 'quantity', 18, 5 )->change();
-            $table->float( 'sale_price', 18, 5 )->change();
-            $table->float( 'sale_price_edit', 18, 5 )->change();
-            $table->float( 'net_sale_price', 18, 5 )->change();
-            $table->float( 'gross_sale_price', 18, 5 )->change();
-            $table->float( 'sale_price_tax', 18, 5 )->change();
-            $table->float( 'wholesale_price', 18, 5 )->change();
-            $table->float( 'wholesale_price_edit', 18, 5 )->change();
-            $table->float( 'net_wholesale_price', 18, 5 )->change();
-            $table->float( 'gross_wholesale_price', 18, 5 )->change();
-            $table->float( 'wholesale_price_tax', 18, 5 )->change();
-            $table->float( 'custom_price', 18, 5 )->change();
-            $table->float( 'custom_price_edit', 18, 5 )->change();
-            $table->float( 'net_custom_price', 18, 5 )->change();
-            $table->float( 'gross_custom_price', 18, 5 )->change();
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'quantity' ) ) {
+                $table->float( 'quantity', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'sale_price' ) ) {
+                $table->float( 'sale_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'sale_price_edit' ) ) {
+                $table->float( 'sale_price_edit', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'net_sale_price' ) ) {
+                $table->float( 'net_sale_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'gross_sale_price' ) ) {
+                $table->float( 'gross_sale_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'sale_price_tax' ) ) {
+                $table->float( 'sale_price_tax', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'wholesale_price' ) ) {
+                $table->float( 'wholesale_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'wholesale_price_edit' ) ) {
+                $table->float( 'wholesale_price_edit', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'net_wholesale_price' ) ) {
+                $table->float( 'net_wholesale_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'gross_wholesale_price' ) ) {
+                $table->float( 'gross_wholesale_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'wholesale_price_tax' ) ) {
+                $table->float( 'wholesale_price_tax', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'custom_price' ) ) {
+                $table->float( 'custom_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'custom_price_edit' ) ) {
+                $table->float( 'custom_price_edit', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'net_custom_price' ) ) {
+                $table->float( 'net_custom_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'gross_custom_price' ) ) {
+                $table->float( 'gross_custom_price', 18, 5 )->change();
+            }
         });
 
         Schema::table( 'nexopos_procurements_products', function( Blueprint $table ) {
-            $table->float( 'gross_purchase_price', 18, 5 )->change();
-            $table->float( 'net_purchase_price', 18, 5 )->change();
-            $table->float( 'purchase_price', 18, 5 )->change();
-            $table->float( 'quantity', 18, 5 )->change();
-            $table->float( 'available_quantity', 18, 5 )->change();
-            $table->float( 'tax_value', 18, 5 )->change();
-            $table->float( 'total_purchase_price', 18, 5 )->change();
+            if ( Schema::hasColumn( 'nexopos_procurements_products', 'gross_purchase_price' ) ) {
+                $table->float( 'gross_purchase_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_procurements_products', 'net_purchase_price' ) ) {
+                $table->float( 'net_purchase_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_procurements_products', 'purchase_price' ) ) {
+                $table->float( 'purchase_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_procurements_products', 'quantity' ) ) {
+                $table->float( 'quantity', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_procurements_products', 'available_quantity' ) ) {
+                $table->float( 'available_quantity', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_procurements_products', 'tax_value' ) ) {
+                $table->float( 'tax_value', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_procurements_products', 'total_purchase_price' ) ) {
+                $table->float( 'total_purchase_price', 18, 5 )->change();
+            }
         });
 
         Schema::table( 'nexopos_orders', function( Blueprint $table ) {
-            $table->float( 'discount', 18, 5 )->change();
-            $table->float( 'discount_percentage', 18, 5 )->change();
-            $table->float( 'shipping', 18, 5 )->change(); // could be set manually or computed based on shipping_rate and shipping_type
-            $table->float( 'shipping_rate', 18, 5 )->change();
-            $table->float( 'total_without_tax', 18, 5 )->change();
-            $table->float( 'subtotal', 18, 5 )->change();
-            $table->float( 'total_with_tax', 18, 5 )->change();
-            $table->float( 'total_coupons', 18, 5 )->change();
-            $table->float( 'total', 18, 5 )->change();
-            $table->float( 'tax_value', 18, 5 )->change();
-            $table->float( 'tendered', 18, 5 )->change();
-            $table->float( 'change', 18, 5 )->change();
+            if ( Schema::hasColumn( 'nexopos_orders', 'discount' ) ) {
+                $table->float( 'discount', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'discount_percentage' ) ) {
+                $table->float( 'discount_percentage', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'shipping' ) ) {
+                $table->float( 'shipping', 18, 5 )->change(); // could be set manually or computed based on shipping_rate and shipping_type
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'shipping_rate' ) ) {
+                $table->float( 'shipping_rate', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'total_without_tax' ) ) {
+                $table->float( 'total_without_tax', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'subtotal' ) ) {
+                $table->float( 'subtotal', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'total_with_tax' ) ) {
+                $table->float( 'total_with_tax', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'total_coupons' ) ) {
+                $table->float( 'total_coupons', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'total' ) ) {
+                $table->float( 'total', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'tax_value' ) ) {
+                $table->float( 'tax_value', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'tendered' ) ) {
+                $table->float( 'tendered', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders', 'change' ) ) {
+                $table->float( 'change', 18, 5 )->change();
+            }
         });
 
         Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
-            $table->float( 'quantity', 18, 5 )->change(); // could be the base unit
-            $table->float( 'discount', 18, 5 )->change();
-            $table->float( 'discount_percentage', 18, 5 )->change();
-            $table->float( 'price_without_tax', 18, 5 )->change();
-            $table->float( 'unit_price', 18, 5 )->change();
-            $table->float( 'tax_value', 18, 5 )->change();
-            $table->float( 'price_with_tax', 18, 5 )->change();
-            $table->float( 'total_price_without_tax', 18, 5 )->change();
-            $table->float( 'total_price', 18, 5 )->change();
-            $table->float( 'total_purchase_price', 18, 5 )->change();
-            $table->float( 'total_price_with_tax', 18, 5 )->change();
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'quantity' ) ) {
+                $table->float( 'quantity', 18, 5 )->change(); // could be the base unit
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'discount' ) ) {
+                $table->float( 'discount', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'discount_percentage' ) ) {
+                $table->float( 'discount_percentage', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'price_without_tax' ) ) {
+                $table->float( 'price_without_tax', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'unit_price' ) ) {
+                $table->float( 'unit_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'tax_value' ) ) {
+                $table->float( 'tax_value', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'price_with_tax' ) ) {
+                $table->float( 'price_with_tax', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'total_price_without_tax' ) ) {
+                $table->float( 'total_price_without_tax', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'total_price' ) ) {
+                $table->float( 'total_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'total_purchase_price' ) ) {
+                $table->float( 'total_purchase_price', 18, 5 )->change();
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'total_price_with_tax' ) ) {
+                $table->float( 'total_price_with_tax', 18, 5 )->change();
+            }
         });
 
         Schema::table( 'nexopos_dashboard_days', function (Blueprint $table) {
@@ -259,4 +349,4 @@ class UpdateColumnsLengthSept3021 extends Migration
     {
         //
     }
-}
+};

@@ -7,7 +7,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateOrdersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -97,4 +97,4 @@ class CreateOrdersTable extends Migration
             Schema::dropIfExists( 'nexopos_orders_taxes' );
         }
     }
-}
+};

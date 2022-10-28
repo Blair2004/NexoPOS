@@ -3,7 +3,7 @@
 use App\Models\CashFlow;
 use Illuminate\Database\Migrations\Migration;
 
-class RemoveIgnoredCashFlowForPristineProducts extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class RemoveIgnoredCashFlowForPristineProducts extends Migration
     {
         //
     }
-}
+};

@@ -4,7 +4,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateNewPermissionsMarch9 extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -43,4 +43,4 @@ class CreateNewPermissionsMarch9 extends Migration
         $permission->removeFromRoles();
         $permission->delete();
     }
-}
+};

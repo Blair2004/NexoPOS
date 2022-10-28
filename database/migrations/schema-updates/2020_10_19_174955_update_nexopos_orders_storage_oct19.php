@@ -4,7 +4,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class UpdateNexoposOrdersStorageOct19 extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -49,4 +49,4 @@ class UpdateNexoposOrdersStorageOct19 extends Migration
             }
         }
     }
-}
+};

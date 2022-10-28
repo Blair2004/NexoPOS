@@ -4,7 +4,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class SetUsedByNullableRegistersJan7 extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -27,4 +27,4 @@ class SetUsedByNullableRegistersJan7 extends Migration
     {
         //
     }
-}
+};

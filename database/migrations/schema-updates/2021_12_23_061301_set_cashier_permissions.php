@@ -4,7 +4,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 
-class SetCashierPermissions extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -65,4 +65,4 @@ class SetCashierPermissions extends Migration
     {
         //
     }
-}
+};

@@ -6,7 +6,7 @@ use App\Models\RolePermission;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class AddNewCustomerPermissionJanv721 extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -26,7 +26,7 @@ class AddNewCustomerPermissionJanv721 extends Migration
     public function up()
     {
         if ( ! Permission::namespace( 'nexopos.customers.manage-account' ) instanceof Permission ) {
-            $permission = new Permission;
+            $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.customers.manage-account' ]);
             $permission->namespace = 'nexopos.customers.manage-account';
             $permission->name = __( 'Manage Customers Account' );
             $permission->description = __( 'Allow to manage customer virtual deposit account.' );
@@ -53,4 +53,4 @@ class AddNewCustomerPermissionJanv721 extends Migration
             }
         }
     }
-}
+};

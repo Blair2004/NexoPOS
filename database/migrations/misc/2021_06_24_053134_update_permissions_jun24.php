@@ -4,7 +4,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdatePermissionsJun24 extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -26,7 +26,7 @@ class UpdatePermissionsJun24 extends Migration
         $permission = Permission::namespace( 'nexopos.reports.products-report' );
 
         if ( ! $permission instanceof Permission ) {
-            $permission = new Permission;
+            $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.products-report' ]);
             $permission->name = __( 'See Products Report' );
             $permission->namespace = 'nexopos.reports.products-report';
             $permission->description = __( 'Let you see the Products report' );
@@ -46,4 +46,4 @@ class UpdatePermissionsJun24 extends Migration
     {
         //
     }
-}
+};

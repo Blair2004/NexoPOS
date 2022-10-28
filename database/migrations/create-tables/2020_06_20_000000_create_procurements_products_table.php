@@ -7,7 +7,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateProcurementsProductsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -52,4 +52,4 @@ class CreateProcurementsProductsTable extends Migration
             Schema::dropIfExists( 'nexopos_procurements_products' );
         }
     }
-}
+};

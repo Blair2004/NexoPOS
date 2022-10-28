@@ -4,7 +4,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class Nov17AddFieldsToNexoposOrdersProductsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -52,4 +52,4 @@ class Nov17AddFieldsToNexoposOrdersProductsTable extends Migration
         Schema::dropIfExists( 'nexopos_orders_products_refunds' );
         Schema::dropIfExists( 'nexopos_orders_refunds' );
     }
-}
+};

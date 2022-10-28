@@ -5,7 +5,7 @@ use App\Models\ProductUnitQuantity;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddBarcodeToNexoposProductsUnitQuantitiesMarch14 extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -40,4 +40,4 @@ class AddBarcodeToNexoposProductsUnitQuantitiesMarch14 extends Migration
             }
         });
     }
-}
+};

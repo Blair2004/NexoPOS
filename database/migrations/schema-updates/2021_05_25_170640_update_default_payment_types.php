@@ -4,7 +4,7 @@ use App\Models\PaymentType;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateDefaultPaymentTypes extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -56,4 +56,4 @@ class UpdateDefaultPaymentTypes extends Migration
     {
         //
     }
-}
+};

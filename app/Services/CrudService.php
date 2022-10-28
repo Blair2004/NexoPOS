@@ -1346,7 +1346,7 @@ class CrudService
      * Will check if the provided model
      * has dependencies declared and existing
      * to prevent any deletion.
-     * 
+     *
      * @param NsModel
      */
     public function handleDependencyForDeletion( $model )

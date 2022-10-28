@@ -4,7 +4,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class UpdateNexoPOSOrdersPayments220126 extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -33,4 +33,4 @@ class UpdateNexoPOSOrdersPayments220126 extends Migration
             }
         });
     }
-}
+};

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
-class DefineSanctumVariablesOct9 extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -41,4 +41,4 @@ class DefineSanctumVariablesOct9 extends Migration
         DotenvEditor::deleteKey( 'SESSION_DOMAIN' );
         DotenvEditor::save();
     }
-}
+};

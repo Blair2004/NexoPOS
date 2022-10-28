@@ -6,7 +6,7 @@ use App\Models\RolePermission;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateAddPaymentTypePermissions extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -28,7 +28,7 @@ class UpdateAddPaymentTypePermissions extends Migration
         $permission = Permission::namespace( 'nexopos.manage-payments-types' );
 
         if ( ! $permission instanceof Permission ) {
-            $permission = new Permission;
+            $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.manage-payments-types' ]);
             $permission->namespace = 'nexopos.manage-payments-types';
             $permission->name = __( 'Manage Order Payment Types' );
             $permission->description = __( 'Allow to create, update and delete payments type.' );
@@ -55,4 +55,4 @@ class UpdateAddPaymentTypePermissions extends Migration
             }
         }
     }
-}
+};

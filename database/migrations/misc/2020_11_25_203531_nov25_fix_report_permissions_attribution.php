@@ -4,7 +4,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 
-class Nov25FixReportPermissionsAttribution extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -48,4 +48,4 @@ class Nov25FixReportPermissionsAttribution extends Migration
     {
         //
     }
-}
+};

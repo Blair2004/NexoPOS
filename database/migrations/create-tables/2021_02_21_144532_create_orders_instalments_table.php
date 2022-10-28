@@ -4,7 +4,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateOrdersInstalmentsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -32,4 +32,4 @@ class CreateOrdersInstalmentsTable extends Migration
     {
         Schema::dropIfExists( 'nexopos_orders_instalments' );
     }
-}
+};

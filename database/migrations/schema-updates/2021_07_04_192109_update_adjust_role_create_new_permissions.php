@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateAdjustRoleCreateNewPermissions extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -82,4 +82,4 @@ class UpdateAdjustRoleCreateNewPermissions extends Migration
             }
         });
     }
-}
+};

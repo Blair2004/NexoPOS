@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePermissionsTable extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -23,13 +23,15 @@ class CreatePermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('nexopos_permissions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string( 'name' )->unique();
-            $table->string( 'namespace' )->unique();
-            $table->text( 'description' );
-            $table->timestamps();
-        });
+        if( ! Schema::hasTable( 'nexopos_permissions' ) ) {
+            Schema::create('nexopos_permissions', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string( 'name' )->unique();
+                $table->string( 'namespace' )->unique();
+                $table->text( 'description' );
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -41,4 +43,4 @@ class CreatePermissionsTable extends Migration
     {
         Schema::dropIfExists('nexopos_permissions');
     }
-}
+};

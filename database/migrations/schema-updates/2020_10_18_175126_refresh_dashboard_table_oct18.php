@@ -2,9 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-include_once dirname( __FILE__ ) . '/../create-tables/2020_10_10_224639_create_dashboard_table.php';
-
-class RefreshDashboardTableOct18 extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +11,8 @@ class RefreshDashboardTableOct18 extends Migration
      */
     public function up()
     {
-        ( new CreateDashboardTable )->up();
+        $object     =   include_once dirname( __FILE__ ) . '/../create-tables/2020_10_10_224639_create_dashboard_table.php';
+        $object->up();
     }
 
     /**
@@ -23,6 +22,7 @@ class RefreshDashboardTableOct18 extends Migration
      */
     public function down()
     {
-        ( new CreateDashboardTable )->down();
+        $object     =   include_once dirname( __FILE__ ) . '/../create-tables/2020_10_10_224639_create_dashboard_table.php';
+        $object->down();
     }
-}
+};

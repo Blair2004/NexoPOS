@@ -5,7 +5,7 @@ use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNewInstalmentsPermissions extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -85,4 +85,4 @@ class CreateNewInstalmentsPermissions extends Migration
             });
         }
     }
-}
+};

@@ -5,7 +5,7 @@ use App\Services\Users;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Artisan;
 
-class UpdateCreateUserAttributes17April22 extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -43,4 +43,4 @@ class UpdateCreateUserAttributes17April22 extends Migration
     {
         //
     }
-}
+};

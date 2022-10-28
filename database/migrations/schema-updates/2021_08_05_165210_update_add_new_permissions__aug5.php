@@ -4,7 +4,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateAddNewPermissionsAug5 extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -47,4 +47,4 @@ class UpdateAddNewPermissionsAug5 extends Migration
     {
         //
     }
-}
+};

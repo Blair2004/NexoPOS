@@ -14,27 +14,27 @@ return new class extends Migration
     public function up()
     {
         Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'net_sale_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'net_sale_price' ) && ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'sale_price_with_tax' ) ) {
                 $table->renameColumn( 'net_sale_price', 'sale_price_with_tax' );
             }
 
-            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'net_wholesale_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'net_wholesale_price' ) && ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'wholesale_price_with_tax' ) ) {
                 $table->renameColumn( 'net_wholesale_price', 'wholesale_price_with_tax' );
             }
 
-            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'net_custom_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'net_custom_price' ) && ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'custom_price_with_tax' ) ) {
                 $table->renameColumn( 'net_custom_price', 'custom_price_with_tax' );
             }
 
-            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'gross_sale_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'gross_sale_price' ) && ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'sale_price_without_tax' ) ) {
                 $table->renameColumn( 'gross_sale_price', 'sale_price_without_tax' );
             }
 
-            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'gross_wholesale_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'gross_wholesale_price' ) && ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'wholesale_price_without_tax' ) ) {
                 $table->renameColumn( 'gross_wholesale_price', 'wholesale_price_without_tax' );
             }
 
-            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'gross_custom_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'gross_custom_price' ) && ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'custom_price_without_tax' ) ) {
                 $table->renameColumn( 'gross_custom_price', 'custom_price_without_tax' );
             }
 
@@ -44,19 +44,19 @@ return new class extends Migration
         });
 
         Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_orders_products', 'gross_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'gross_price' ) && ! Schema::hasColumn( 'nexopos_orders_products', 'price_without_tax' ) ) {
                 $table->renameColumn( 'gross_price', 'price_without_tax' );
             }
 
-            if ( Schema::hasColumn( 'nexopos_orders_products', 'net_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'net_price' ) && ! Schema::hasColumn( 'nexopos_orders_products', 'price_with_tax' ) ) {
                 $table->renameColumn( 'net_price', 'price_with_tax' );
             }
 
-            if ( Schema::hasColumn( 'nexopos_orders_products', 'total_gross_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'total_gross_price' ) && ! Schema::hasColumn( 'nexopos_orders_products', 'total_price_without_tax' ) ) {
                 $table->renameColumn( 'total_gross_price', 'total_price_without_tax' );
             }
 
-            if ( Schema::hasColumn( 'nexopos_orders_products', 'total_net_price' ) ) {
+            if ( Schema::hasColumn( 'nexopos_orders_products', 'total_net_price' ) && ! Schema::hasColumn( 'nexopos_orders_products', 'total_price_with_tax' ) ) {
                 $table->renameColumn( 'total_net_price', 'total_price_with_tax' );
             }
         });

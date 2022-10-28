@@ -7,7 +7,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateCustomersGroupsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -41,4 +41,4 @@ class CreateCustomersGroupsTable extends Migration
             Schema::drop( 'nexopos_customers_groups' );
         }
     }
-}
+};

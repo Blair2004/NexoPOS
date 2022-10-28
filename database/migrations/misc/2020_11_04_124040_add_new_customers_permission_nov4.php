@@ -6,7 +6,7 @@ use App\Models\Role;
 use App\Models\RolePermission;
 use Illuminate\Database\Migrations\Migration;
 
-class AddNewCustomersPermissionNov4 extends Migration
+return new class extends Migration
 {
     /**
      * Determine wether the migration
@@ -58,4 +58,4 @@ class AddNewCustomersPermissionNov4 extends Migration
             }
         }
     }
-}
+};

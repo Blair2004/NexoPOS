@@ -5,7 +5,7 @@ use App\Models\CashFlow;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateNexoposExpensesHistoryTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -41,4 +41,4 @@ class CreateNexoposExpensesHistoryTable extends Migration
     {
         Schema::dropIfExists( 'nexopos_cash_flow' );
     }
-}
+};

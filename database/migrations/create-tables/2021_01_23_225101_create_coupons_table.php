@@ -4,7 +4,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateCouponsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -53,4 +53,4 @@ class CreateCouponsTable extends Migration
         Schema::dropIfExists('nexopos_coupons_products');
         Schema::dropIfExists('nexopos_coupons_categories');
     }
-}
+};

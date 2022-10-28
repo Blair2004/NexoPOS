@@ -1,8 +1,8 @@
 <?php
 
-use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_orders', 'total_coupons' ) ) {
-                $table->float( 'total_coupons' )->default(0);
+        Schema::table( 'migrations', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'migrations', 'type' ) ) {
+                $table->string( 'type' )->default( 'default' );
             }
         });
     }
