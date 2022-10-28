@@ -13,33 +13,37 @@ import { NsHotPress }       from './libraries/ns-hotpress';
  */
 import './shared/time';
 
-const nsRewardsSystem       =   defineAsyncComponent( () => import( '~/pages/dashboard/rewards-system.vue' ) );
-const nsCreateCoupons       =   defineAsyncComponent( () => import( './pages/dashboard/create-coupons.vue' ) );
-const nsSettings            =   defineAsyncComponent( () => import( './pages/dashboard/settings.vue' ) );
-const nsReset               =   defineAsyncComponent( () => import( './pages/dashboard/reset.vue' ) );
-const nsModules             =   defineAsyncComponent( () => import( './pages/dashboard/modules.vue' ) );
-const nsPermissions         =   defineAsyncComponent( () => import( './pages/dashboard/ns-permissions.vue' ) );
-const nsProcurement         =   defineAsyncComponent( () => import( './pages/dashboard/procurements/ns-procurement.vue' ) );
-const nsManageProducts      =   defineAsyncComponent( () => import( './pages/dashboard/procurements/manage-products.vue' ) );
-const nsProcurementInvoice  =   defineAsyncComponent( () => import( './pages/dashboard/procurements/ns-procurement-invoice.vue' ) );
-const nsNotifications       =   defineAsyncComponent( () => import( './pages/dashboard/ns-notifications.vue' ) );
-const nsMedia               =   defineAsyncComponent( () => import( './pages/dashboard/ns-media.vue' ) );
-const nsLowStockReport      =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-low-stock-report.vue' ) );
-const nsSaleReport          =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sale-report.vue' ) );
-const nsSoldStockReport     =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sold-stock-report.vue' ) );
-const nsProfitReport        =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-profit-report.vue' ) );
-const nsCashFlowReport      =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-cash-flow-report.vue' ) );
-const nsYearlyReport        =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-yearly-report.vue' ) );
-const nsBestProductsReport  =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-best-products-report.vue' ) );
-const nsPaymentTypesReport  =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-payment-types-report.vue' ) );
-const nsDashboardCards      =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-dashboard-cards.vue' ) );
-const nsBestCustomers       =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-best-customers.vue' ) );
-const nsBestCashiers        =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-best-cashiers.vue' ) );
-const nsOrdersSummary       =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-orders-summary.vue' ) );
-const nsOrdersChart         =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-orders-chart.vue' ) );
-const nsCashierDashboard    =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-cashier-dashboard.vue' ) );
-const nsStockAdjustment     =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-stock-adjustment.vue' ) );
-const nsOrderInvoice        =   defineAsyncComponent( () => import( './pages/dashboard/orders/ns-order-invoice.vue' ) );
+const nsRewardsSystem               =   defineAsyncComponent( () => import( '~/pages/dashboard/rewards-system.vue' ) );
+const nsCreateCoupons               =   defineAsyncComponent( () => import( './pages/dashboard/create-coupons.vue' ) );
+const nsSettings                    =   defineAsyncComponent( () => import( './pages/dashboard/settings.vue' ) );
+const nsReset                       =   defineAsyncComponent( () => import( './pages/dashboard/reset.vue' ) );
+const nsModules                     =   defineAsyncComponent( () => import( './pages/dashboard/modules.vue' ) );
+const nsPermissions                 =   defineAsyncComponent( () => import( './pages/dashboard/ns-permissions.vue' ) );
+const nsProcurement                 =   defineAsyncComponent( () => import( './pages/dashboard/procurements/ns-procurement.vue' ) );
+const nsManageProducts              =   defineAsyncComponent( () => import( './pages/dashboard/procurements/manage-products.vue' ) );
+const nsProcurementInvoice          =   defineAsyncComponent( () => import( './pages/dashboard/procurements/ns-procurement-invoice.vue' ) );
+const nsNotifications               =   defineAsyncComponent( () => import( './pages/dashboard/ns-notifications.vue' ) );
+const nsMedia                       =   defineAsyncComponent( () => import( './pages/dashboard/ns-media.vue' ) );
+
+const nsLowStockReport              =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-low-stock-report.vue' ) );
+const nsSaleReport                  =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sale-report.vue' ) );
+const nsSoldStockReport             =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sold-stock-report.vue' ) );
+const nsProfitReport                =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-profit-report.vue' ) );
+const nsCashFlowReport              =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-cash-flow-report.vue' ) );
+const nsYearlyReport                =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-yearly-report.vue' ) );
+const nsBestProductsReport          =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-best-products-report.vue' ) );
+const nsPaymentTypesReport          =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-payment-types-report.vue' ) );
+const nsCustomersStatementReport    =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-customers-statement-report.vue' ) );
+
+const nsDashboardCards              =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-dashboard-cards.vue' ) );
+const nsBestCustomers               =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-best-customers.vue' ) );
+const nsBestCashiers                =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-best-cashiers.vue' ) );
+const nsOrdersSummary               =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-orders-summary.vue' ) );
+const nsOrdersChart                 =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-orders-chart.vue' ) );
+const nsCashierDashboard            =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-cashier-dashboard.vue' ) );
+
+const nsStockAdjustment             =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-stock-adjustment.vue' ) );
+const nsOrderInvoice                =   defineAsyncComponent( () => import( './pages/dashboard/orders/ns-order-invoice.vue' ) );
 
 declare const window;
 
@@ -77,6 +81,7 @@ const allComponents    =   Object.assign({
     nsPaymentTypesReport,
     nsBestProductsReport,
     nsLowStockReport,
+    nsCustomersStatementReport,
 
     nsStockAdjustment,
     nsOrderInvoice,

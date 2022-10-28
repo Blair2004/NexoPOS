@@ -1,10 +1,10 @@
 <template>
     <div class="ns-search">
         <div class="input-group info border-2">
-            <input type="text" v-model="searchText" class="p-2 w-full" :placeholder="placeholder || __( 'Search...' )" id="">
+            <input type="text" v-model="searchText" class="p-2 w-full outline-none" :placeholder="placeholder || __( 'Search...' )" id="">
         </div>
         <div class="relative">
-            <div class="w-full absolute">
+            <div class="w-full absolute shadow-lg">
                 <ul class="ns-vertical-menu" v-if="results.length > 0 && searchText.length > 0">
                     <li class="border-b p-2 cursor-pointer" v-for="( result, index ) of results" @click="selectOption( result )" :key="index">{{ result[ label ] }}</li>
                 </ul>

@@ -45,7 +45,7 @@
                         </ul>
                     </div>
                     <div>
-                        <img class="w-72" src="" alt="">
+                        <img class="w-24" :src="storeLogo" :alt="storeName">
                     </div>
                 </div>
             </div>

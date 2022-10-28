@@ -7,7 +7,7 @@ import VueUpload from 'vue-upload-component';
 
 export default {
     name: 'ns-media',
-    props: [ 'popup' ],
+    props: [ '$popup' ],
     components: {
         VueUpload
     },
@@ -62,6 +62,8 @@ export default {
          */
         this.popupCloser();
 
+        console.log( this.$popup );
+
         const gallery   =   this.pages.filter( p => p.name === 'gallery' )[0];
 
         this.select( gallery );
@@ -108,6 +110,9 @@ export default {
         },
         panelOpened() {
             return ! this.bulkSelect && this.hasOneSelected;
+        },
+        popupInstance() {
+            return this.$popup;
         }
     },
     methods: {
@@ -346,11 +351,17 @@ export default {
     <div class="flex md:flex-row flex-col ns-box shadow-xl overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-6/7-screen' : 'w-full h-full'">
         <div class="sidebar w-48 md:h-full flex-shrink-0">
             <h3 class="text-xl font-bold my-4 text-center">{{ __( 'Medias Manager' ) }}</h3>
-            <ul class="sidebar-menus flex md:block">
+            <ul class="sidebar-menus flex md:block mt-8">
                 <li @click="select( page )" v-for="(page,index) of pages" class="py-2 px-3 cursor-pointer border-l-8" :class="page.selected ? 'active' : ''" :key="index">{{ page.label }}</li>
             </ul>
         </div>
-        <div class="content w-full overflow-hidden flex" v-if="currentPage.name === 'upload'">
+        <div class="content w-full flex-col overflow-hidden flex" v-if="currentPage.name === 'upload'">
+            <div class="p-2 flex bg-box-background flex-shrink-0 justify-between" v-if="isPopup">
+                <div></div>
+                <div>
+                    <ns-close-button @click="popupInstance.close()"></ns-close-button>
+                </div>
+            </div>
             <div id="dropping-zone" @click="triggerManualUpload()" :class="isDragging ? 'border-dashed border-2' : ''" class="flex flex-auto m-2 p-2 flex-col border-info-primary items-center justify-center">
                 <h3 class="text-lg md:text-xl font-bold text-center text-primary mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
                 <input style="display:none" type="file" name="" multiple ref="files" id="">
@@ -365,10 +376,10 @@ export default {
             </div>
         </div>
         <div class="content flex-col w-full overflow-hidden flex" v-if="currentPage.name === 'gallery'">
-            <div class="p-2 flex flex-shrink-0 justify-between" v-if="popup">
+            <div class="p-2 flex bg-box-background flex-shrink-0 justify-between" v-if="isPopup">
                 <div></div>
                 <div>
-                    <ns-close-button @click="popup.close()"></ns-close-button>
+                    <ns-close-button @click="popupInstance.close()"></ns-close-button>
                 </div>
             </div>
             <div class="flex flex-auto overflow-hidden">
@@ -461,7 +472,7 @@ export default {
                             </div>
                         </div>
                     </div>
-                    <div class="px-2" v-if="popup && hasOneSelected">
+                    <div class="px-2" v-if="isPopup && hasOneSelected">
                         <div class="ns-button info">
                             <button class="rounded shadow p-2 text-sm" @click="useSelectedEntries()">{{ __( 'Use Selected' ) }}</button>
                         </div>

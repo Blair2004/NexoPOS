@@ -257,6 +257,7 @@ class CustomersController extends DashboardController
             ->where( 'name', 'like', '%' . $search . '%' )
             ->orWhere( 'email', 'like', '%' . $search . '%' )
             ->orWhere( 'phone', 'like', '%' . $search . '%' )
+            ->limit(10)
             ->get();
 
         return $customers;

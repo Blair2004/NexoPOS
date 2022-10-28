@@ -7,7 +7,10 @@
         <div class="px-4">
             @include( '../common/dashboard/title' )
         </div>
-        <ns-sale-report store-name="{{ ns()->option->get( 'ns_store_name' ) }}" store-logo="{{ ns()->option->get( 'ns_store_rectangle_logo' ) }}" v-slot="{ saleReport }" v-cloak></ns-sale-report>
+        <ns-sale-report 
+            store-name="{{ ns()->option->get( 'ns_store_name' ) }}" 
+            store-logo="{{ ns()->option->get( 'ns_store_rectangle_logo' ) }}" 
+            v-cloak></ns-sale-report>
     </div>
 </div>
 @endsection
