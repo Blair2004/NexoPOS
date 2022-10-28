@@ -61,9 +61,7 @@ export default {
          * from a popup
          */
         this.popupCloser();
-
-        console.log( this.$popup );
-
+        
         const gallery   =   this.pages.filter( p => p.name === 'gallery' )[0];
 
         this.select( gallery );
