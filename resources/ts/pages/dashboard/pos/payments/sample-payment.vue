@@ -28,10 +28,10 @@
             <div class="-mx-2 flex flex-wrap">
                 <div class="pl-2 pr-1 flex-auto">
                     <div id="numpad" class="grid grid-flow-row grid-cols-3 gap-2 grid-rows-3" style="padding: 1px">
-                        <div 
+                        <div
                             @click="inputValue( key )"
-                            :key="index" 
-                            v-for="(key,index) of keys" 
+                            :key="index"
+                            v-for="(key,index) of keys"
                             style="margin:-1px;"
                             class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
                             <span v-if="key.value !== undefined">{{ key.value }}</span>
@@ -45,7 +45,7 @@
                 </div>
                 <div class="w-1/2 md:w-72 pr-2 pl-1">
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
-                        <div 
+                        <div
                             v-for="(amount, index) of amountShortcuts" :key="index"
                             @click="increaseBy({ value : amount })"
                             class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
@@ -68,11 +68,11 @@ export default {
     data() {
         return {
             backValue: '0',
-            number: parseInt( 
+            number: parseInt(
                 1 + ( new Array( parseInt( ns.currency.ns_currency_precision ) ) )
                 .fill('')
                 .map( _ => 0 )
-                .join('') 
+                .join('')
             ),
             order: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
@@ -98,6 +98,43 @@ export default {
         this.orderSubscription  =   POS.order.subscribe( order => {
             this.order  =   order;
         });
+
+        /**
+         * will bind keyboard event listening
+         */
+        const numbers   =   ( new Array(10) ).fill('').map( ( v,i ) => i );
+
+        nsHotPress
+            .create( 'numpad-keys' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( numbers, ( event, value ) => { this.inputValue({ value: value }); })
+
+        nsHotPress
+            .create( 'numpad-backspace' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'backspace', () => this.inputValue({ identifier: 'backspace' }))
+
+        nsHotPress
+            .create( 'numpad-save' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'enter', () => {
+                /**
+                 * if the actual amount on the screen is "0",
+                 * and the key "enter" is pressed (we assume twice), we'll 
+                 * emit the event "submit" to speed up the process.
+                 */
+                if ( this.backValue === '' ) {
+                    this.$emit( 'submit' );
+                    this.backValue  =   0;
+                } else {
+                    this.inputValue({ identifier: 'next' });
+                }
+            })
+    },
+    beforeDestroy() {
+        nsHotPress.destroy( 'numpad-keys' );
+        nsHotPress.destroy( 'numpad-backspace' );
+        nsHotPress.destroy( 'numpad-save' );
     },
     destroyed() {
         this.orderSubscription.unsubscribe();
@@ -105,7 +142,7 @@ export default {
     methods: {
         __,
         toggleDiscount() {
-            Popup.show( nsPosDiscountPopupVue, { 
+            Popup.show( nsPosDiscountPopupVue, {
                 reference : this.order,
                 type : 'cart',
                 onSubmit : ( response ) => {
@@ -144,11 +181,11 @@ export default {
             })
         },
         increaseBy( key ) {
-            let number    =   parseInt( 
+            let number    =   parseInt(
                 1 + ( new Array( this.cursor ) )
                 .fill('')
                 .map( _ => 0 )
-                .join('') 
+                .join('')
             );
 
             this.backValue      =   (( parseFloat( key.value ) * number ) + ( parseFloat( this.backValue ) || 0 ) ).toString();
@@ -156,13 +193,6 @@ export default {
         },
 
         inputValue( key ) {
-            let number    =   parseInt( 
-                1 + ( new Array( this.cursor ) )
-                .fill('')
-                .map( _ => 0 )
-                .join('') 
-            );
-
             if ( key.identifier === 'next' ) {
                 POS.addPayment({
                     value: parseFloat( this.backValue / this.number ),
@@ -190,7 +220,7 @@ export default {
                         this.backValue = this.backValue > 100 ? 100 : this.backValue;
                     }
                 }
-            } 
+            }
 
             if ( ( this.backValue ) === "0" ) {
                 this.backValue      =   '';
