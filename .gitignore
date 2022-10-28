@@ -45,3 +45,4 @@ tests/database.sqlite-journal
 tests/Post/*
 storage/snapshots/*.sql
 .idea
+public/hot

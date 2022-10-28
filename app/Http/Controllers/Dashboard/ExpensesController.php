@@ -53,12 +53,20 @@ class ExpensesController extends DashboardController
 
     public function createExpense()
     {
-        return ExpenseCrud::form();
+        return $this->view( 'pages.dashboard.expenses.create', [
+            'title' =>  __( 'Create New Expense' ),
+            'description'   =>  __( 'Helps creating direct, recurring and salary expenses.' )
+        ]);
     }
 
     public function editExpense( Expense $expense )
     {
         return ExpenseCrud::form( $expense );
+    }
+
+    public function getConfiguration()
+    {
+        return $this->expenseService->getConfiguration();
     }
 
     /**

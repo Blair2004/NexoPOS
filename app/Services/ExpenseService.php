@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Events\ExpenseAfterCreateEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
+use App\Fields\DirectExpenseFields;
 use App\Models\AccountType;
 use App\Models\CashFlow;
 use App\Models\Customer;
@@ -927,5 +929,16 @@ class ExpenseService
 
             $this->recordCashFlowHistory( $expense );
         }
+    }
+
+    public function getConfiguration()
+    {
+        $configuration  =   Hook::filter( 'ns-expenses-configurations', [
+            [
+                'identifier'    =>  'direct',
+                'label'         =>  __( 'Direct Expense' ),
+                'fields'        =>  ( new DirectExpenseFields )->get(),
+            ]
+        ]);
     }
 }
