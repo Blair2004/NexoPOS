@@ -62,6 +62,7 @@ import { Popup } from '@/libraries/popup';
 import nsPosDiscountPopupVue from '@/popups/ns-pos-discount-popup.vue';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 import { __ } from '@/libraries/lang';
+import { nsSnackBar } from '@/bootstrap';
 export default {
     name: 'sample-payment',
     props: [ 'label', 'identifier' ],
@@ -75,6 +76,8 @@ export default {
                 .join('')
             ),
             order: null,
+            settings: {},
+            settingsSubscription: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
             allSelected: true,
@@ -98,6 +101,10 @@ export default {
         this.orderSubscription  =   POS.order.subscribe( order => {
             this.order  =   order;
         });
+
+        this.settingsSubscription   =   POS.settings.subscribe( settings => {
+            this.settings   =   settings;
+        })
 
         /**
          * will bind keyboard event listening
@@ -142,13 +149,17 @@ export default {
     methods: {
         __,
         toggleDiscount() {
-            Popup.show( nsPosDiscountPopupVue, {
-                reference : this.order,
-                type : 'cart',
-                onSubmit : ( response ) => {
-                    POS.updateCart( this.order, response );
-                }
-            });
+            if ( this.settings.cart_discount !== undefined && this.settings.cart_discount === true ) {
+                Popup.show( nsPosDiscountPopupVue, {
+                    reference : this.order,
+                    type : 'cart',
+                    onSubmit : ( response ) => {
+                        POS.updateCart( this.order, response );
+                    }
+                });
+            } else {
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
+            }
         },
         makeFullPayment() {
             Popup.show( nsPosConfirmPopupVue, {
