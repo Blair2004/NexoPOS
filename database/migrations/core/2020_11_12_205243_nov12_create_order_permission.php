@@ -29,7 +29,7 @@ return new class extends Migration
         $permission = Permission::namespace( self::permissionName );
 
         if ( ! $permission instanceof Permission ) {
-            $permission = new Permission;
+            $permission = Permission::firstOrNew([ 'namespace' => self::permissionName ]);
             $permission->namespace = self::permissionName;
             $permission->name = __( 'Make Payment To Orders' );
             $permission->description = __( 'Allow the user to perform additional payment for a specific incomplete order.' );
