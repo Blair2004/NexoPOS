@@ -188,9 +188,7 @@ class Setup
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
         DotenvEditor::setKey( 'NS_AUTHORIZATION', Str::random(20) );
         DotenvEditor::setKey( 'NS_SOCKET_PORT', 6001 );
-        DotEnvEditor::setKey( 'SESSION_DOMAIN', $domain[ 'basename' ] );
         DotenvEditor::setKey( 'NS_SOCKET_DOMAIN', $domain[ 'basename' ] );
-        DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'basename' ] );
         DotenvEditor::setKey( 'NS_SOCKET_ENABLED', 'false' );
         DotenvEditor::setKey( 'NS_ENV', 'production' );
         DotenvEditor::save();
