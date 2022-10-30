@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table( 'migrations', function( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'migrations', 'type' ) ) {
-                $table->string( 'type' )->default( 'default' );
+                $table->string( 'type' )->nullable();
             }
         });
     }
