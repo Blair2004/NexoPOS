@@ -23,10 +23,6 @@ class HardResetTest extends TestCase
             '--store_name' => env( 'NS_RESET_APPNAME', 'NexoPOS 4.x' ),
         ]);
 
-        Artisan::call( 'migrate --path=database/migrations/default' );
-        Artisan::call( 'migrate --path=database/migrations/create-tables' );
-        Artisan::call( 'migrate --path=database/migrations/misc' );
-
         ns()->option->setDefault();
 
         return $this->assertTrue( true );
