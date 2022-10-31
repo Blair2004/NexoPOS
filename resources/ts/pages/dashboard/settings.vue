@@ -1,6 +1,6 @@
 <template>
     <div id="tabbed-card" class="ns-tab" v-if="formDefined">
-        <div id="card-header" class="flex flex-wrap">
+        <div id="card-header" class="flex flex-wrap ml-4">
             <div 
                 :class="tab.active ? 'active' : 'inactive'" 
                 @click="setActive( tab )" v-bind:key="key" 
@@ -10,21 +10,23 @@
                 <span v-if="tab.errors && tab.errors.length > 0" class="ml-2 rounded-full ns-inset-button error active text-sm h-6 w-6 flex items-center justify-center">{{ tab.errors.length }}</span>
             </div>
         </div>
-        <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg shadow">
-            <div class="-mx-4 flex flex-wrap p-2">
-                <template v-if="activeTab.fields">
-                    <div class="w-full px-4 md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of activeTab.fields">
-                        <div class="flex flex-col my-2">
-                            <ns-field :field="field"></ns-field>
+        <div class="card-body ns-tab-item">
+            <div class="shadow rounded">
+                <div class="-mx-4 flex flex-wrap p-2">
+                    <template v-if="activeTab.fields">
+                        <div class="w-full px-4 md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of activeTab.fields">
+                            <div class="flex flex-col my-2">
+                                <ns-field :field="field"></ns-field>
+                            </div>
                         </div>
+                    </template>
+                    <div class="w-full px-4" v-if="activeTab.component">
+                        <component v-bind:is="loadComponent( activeTab.component )"></component>
                     </div>
-                </template>
-                <div class="w-full px-4" v-if="activeTab.component">
-                    <component v-bind:is="loadComponent( activeTab.component )"></component>
                 </div>
-            </div>
-            <div v-if="activeTab.fields && activeTab.fields.length > 0" class="border-t border-gray-400 dark:border-slate-600 p-2 flex justify-end">
-                <ns-button @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
+                <div v-if="activeTab.fields && activeTab.fields.length > 0" class="border-t border-gray-400 dark:border-slate-600 p-2 flex justify-end">
+                    <ns-button @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
+                </div>
             </div>
         </div>
     </div>

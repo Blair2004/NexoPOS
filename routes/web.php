@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\BeforeStartWebRouteEvent;
+use App\Http\Controllers\DevController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,3 +49,9 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
  * configure that correctly on vite.config.js
  */
 Route::get( '__vite_ping', fn() => redirect( file_get_contents( base_path( 'public/hot' ) ) . '/__vite_ping' ) );
+
+/**
+ * for local Vue 3 components development
+ * those routes are registered.
+ */
+Route::get( '__dev__', [ DevController::class, 'index' ]);
