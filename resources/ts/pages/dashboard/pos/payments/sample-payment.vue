@@ -4,23 +4,23 @@
             <div class="grid grid-cols-2 gap-2">
                 <div id="details" class="h-16 flex justify-between items-center border elevation-surface info text-xl md:text-3xl p-2">
                     <span>{{ __( 'Total' ) }} : </span>
-                    <span>{{ order.total | currency }}</span>
+                    <span>{{ nsCurrency( order.total ) }}</span>
                 </div>
                 <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center border elevation-surface error text-xl md:text-3xl p-2">
                     <span>{{ __( 'Discount' ) }} : </span>
-                    <span>{{ order.discount | currency }}</span>
+                    <span>{{ nsCurrency( order.discount ) }}</span>
                 </div>
                 <div id="paid" class="h-16 flex justify-between items-center border elevation-surface success text-xl md:text-3xl p-2">
                     <span>{{ __( 'Paid' ) }} : </span>
-                    <span>{{ order.tendered | currency }}</span>
+                    <span>{{ nsCurrency( order.tendered ) }}</span>
                 </div>
                 <div id="change" class="h-16 flex justify-between items-center border elevation-surface warning text-xl md:text-3xl p-2">
                     <span>{{ __( 'Change' ) }} : </span>
-                    <span>{{ order.change | currency }}</span>
+                    <span>{{ nsCurrency( order.change ) }}</span>
                 </div>
                 <div id="change" class="col-span-2 h-16 flex justify-between items-center elevation-surface border text-xl md:text-3xl p-2">
                     <span>{{ __( 'Screen' ) }} : </span>
-                    <span>{{ backValue / number | currency }}</span>
+                    <span>{{ nsCurrency( backValue / number ) }}</span>
                 </div>
             </div>
         </div>
@@ -28,10 +28,10 @@
             <div class="-mx-2 flex flex-wrap">
                 <div class="pl-2 pr-1 flex-auto">
                     <div id="numpad" class="grid grid-flow-row grid-cols-3 gap-2 grid-rows-3" style="padding: 1px">
-                        <div 
+                        <div
                             @click="inputValue( key )"
-                            :key="index" 
-                            v-for="(key,index) of keys" 
+                            :key="index"
+                            v-for="(key,index) of keys"
                             style="margin:-1px;"
                             class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
                             <span v-if="key.value !== undefined">{{ key.value }}</span>
@@ -45,11 +45,11 @@
                 </div>
                 <div class="w-1/2 md:w-72 pr-2 pl-1">
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
-                        <div 
+                        <div
                             v-for="(amount, index) of amountShortcuts" :key="index"
                             @click="increaseBy({ value : amount })"
                             class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
-                            <span>{{ amount | currency }}</span>
+                            <span>{{ nsCurrency( amount ) }}</span>
                         </div>
                     </div>
                 </div>
@@ -62,19 +62,22 @@ import { Popup } from '~/libraries/popup';
 import nsPosDiscountPopupVue from '~/popups/ns-pos-discount-popup.vue';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';
+import { nsSnackBar } from '~/bootstrap';
 export default {
     name: 'sample-payment',
     props: [ 'label', 'identifier' ],
     data() {
         return {
             backValue: '0',
-            number: parseInt( 
+            number: parseInt(
                 1 + ( new Array( parseInt( ns.currency.ns_currency_precision ) ) )
                 .fill('')
                 .map( _ => 0 )
-                .join('') 
+                .join('')
             ),
             order: null,
+            settings: {},
+            settingsSubscription: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
             allSelected: true,
@@ -98,6 +101,47 @@ export default {
         this.orderSubscription  =   POS.order.subscribe( order => {
             this.order  =   order;
         });
+
+        this.settingsSubscription   =   POS.settings.subscribe( settings => {
+            this.settings   =   settings;
+        })
+
+        /**
+         * will bind keyboard event listening
+         */
+        const numbers   =   ( new Array(10) ).fill('').map( ( v,i ) => i );
+
+        nsHotPress
+            .create( 'numpad-keys' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( numbers, ( event, value ) => { this.inputValue({ value: value }); })
+
+        nsHotPress
+            .create( 'numpad-backspace' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'backspace', () => this.inputValue({ identifier: 'backspace' }))
+
+        nsHotPress
+            .create( 'numpad-save' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'enter', () => {
+                /**
+                 * if the actual amount on the screen is "0",
+                 * and the key "enter" is pressed (we assume twice), we'll 
+                 * emit the event "submit" to speed up the process.
+                 */
+                if ( this.backValue === '' ) {
+                    this.$emit( 'submit' );
+                    this.backValue  =   0;
+                } else {
+                    this.inputValue({ identifier: 'next' });
+                }
+            })
+    },
+    beforeDestroy() {
+        nsHotPress.destroy( 'numpad-keys' );
+        nsHotPress.destroy( 'numpad-backspace' );
+        nsHotPress.destroy( 'numpad-save' );
     },
     destroyed() {
         this.orderSubscription.unsubscribe();
@@ -105,13 +149,17 @@ export default {
     methods: {
         __,
         toggleDiscount() {
-            Popup.show( nsPosDiscountPopupVue, { 
-                reference : this.order,
-                type : 'cart',
-                onSubmit : ( response ) => {
-                    POS.updateCart( this.order, response );
-                }
-            });
+            if ( this.settings.cart_discount !== undefined && this.settings.cart_discount === true ) {
+                Popup.show( nsPosDiscountPopupVue, {
+                    reference : this.order,
+                    type : 'cart',
+                    onSubmit : ( response ) => {
+                        POS.updateCart( this.order, response );
+                    }
+                });
+            } else {
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
+            }
         },
         makeFullPayment() {
             Popup.show( nsPosConfirmPopupVue, {
@@ -144,11 +192,11 @@ export default {
             })
         },
         increaseBy( key ) {
-            let number    =   parseInt( 
+            let number    =   parseInt(
                 1 + ( new Array( this.cursor ) )
                 .fill('')
                 .map( _ => 0 )
-                .join('') 
+                .join('')
             );
 
             this.backValue      =   (( parseFloat( key.value ) * number ) + ( parseFloat( this.backValue ) || 0 ) ).toString();
@@ -156,13 +204,6 @@ export default {
         },
 
         inputValue( key ) {
-            let number    =   parseInt( 
-                1 + ( new Array( this.cursor ) )
-                .fill('')
-                .map( _ => 0 )
-                .join('') 
-            );
-
             if ( key.identifier === 'next' ) {
                 POS.addPayment({
                     value: parseFloat( this.backValue / this.number ),
@@ -190,7 +231,7 @@ export default {
                         this.backValue = this.backValue > 100 ? 100 : this.backValue;
                     }
                 }
-            } 
+            }
 
             if ( ( this.backValue ) === "0" ) {
                 this.backValue      =   '';

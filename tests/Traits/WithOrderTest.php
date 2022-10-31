@@ -136,11 +136,11 @@ trait WithOrderTest
          * We should also take into account the change that produce
          * records on the cash register history
          */
-        $rawTotalChangeValue   =   RegisterHistory::where( 'action', RegisterHistory::ACTION_CHANGE )
+        $rawTotalChangeValue = RegisterHistory::where( 'action', RegisterHistory::ACTION_CHANGE )
             ->where( 'register_id', $cashRegister->id )
             ->sum( 'value' );
 
-        $totalChangeValue       =   ns()->currency->define( $rawTotalChangeValue )->getRaw();
+        $totalChangeValue = ns()->currency->define( $rawTotalChangeValue )->getRaw();
 
         /**
          * only if the order total is greater than 0
@@ -160,7 +160,7 @@ trait WithOrderTest
          * let's assert only one history has been created
          * for the selected cash register.
          */
-        $historyCount   =   RegisterHistory::where( 'register_id', $cashRegister->id )
+        $historyCount = RegisterHistory::where( 'register_id', $cashRegister->id )
             ->where( 'action', RegisterHistory::ACTION_SALE )
             ->count();
 
@@ -496,7 +496,6 @@ trait WithOrderTest
          * @var array $response
          * @var Register $cashRegister
          */
-        
         $order = Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
         $orderService->makeOrderSinglePayment([
             'identifier' => OrderPayment::PAYMENT_CASH,

@@ -127,11 +127,12 @@ class ProductCategoryService
     /**
      * Will return all available
      * category using only parent categories
+     *
      * @return array
      */
     public function getAllCategoryChildrens()
     {
-        $categories     =   ProductCategory::where( 'parent_id', null )->get();
+        $categories = ProductCategory::where( 'parent_id', null )->get();
 
         return $categories->map( fn( $category ) => $this->getCategoryChildrens( $category->id ) )->flatten();
     }

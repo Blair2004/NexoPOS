@@ -125,11 +125,10 @@ class CreateUserTest extends TestCase
         Role::get()->map( function( Role $role ) {
             $role->users()->get()->each( function( User $user ) {
                 $this->attemptAuthenticate( $user );
-    
+
                 /**
                  * Step 1: attempt to delete himself
                  */
-
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
                     ->json( 'delete', '/api/nexopos/v4/crud/ns.users/' . $user->id );
 
@@ -137,12 +136,12 @@ class CreateUserTest extends TestCase
             });
         });
 
-        $user   =   Role::namespace( Role::ADMIN )->users()->first();
+        $user = Role::namespace( Role::ADMIN )->users()->first();
 
         /**
          * Step 2: try to delete a user who has some sales
          */
-        $order  =   Order::where( 'author', '<>', $user->id )->first();
+        $order = Order::where( 'author', '<>', $user->id )->first();
 
         if ( $order instanceof Order ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )

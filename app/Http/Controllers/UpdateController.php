@@ -10,20 +10,16 @@ namespace App\Http\Controllers;
 
 use App\Events\AfterMigrationExecutedEvent;
 use App\Services\ModulesService;
+use App\Services\UpdateService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 
 class UpdateController extends Controller
 {
-    /**
-     * @var ModulesService
-     */
-    protected $moduleService;
-
     public function __construct(
-        ModulesService $module
+        public ModulesService $modulesService,
+        public UpdateService $updateService
     ) {
-        $this->moduleService = $module;
+        // ...
     }
 
     public function updateDatabase()
@@ -31,7 +27,7 @@ class UpdateController extends Controller
         return view( 'pages.database.update', [
             'title' => __( 'Database Update' ),
             'redirect' => session( 'after_update', ns()->route( 'ns.dashboard.home' ) ),
-            'modules' => collect( $this->moduleService->getEnabled() )->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 )->toArray(),
+            'modules' => collect( $this->modulesService->getEnabled() )->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 )->toArray(),
         ]);
     }
 
@@ -45,10 +41,7 @@ class UpdateController extends Controller
                 $request->input( 'file' )
             );
 
-            Artisan::call( 'migrate', [
-                '--path' => $file,
-                '--force' => true,
-            ]);
+            $this->updateService->executeMigration( $file, 'up' );
         }
 
         /**
@@ -58,7 +51,7 @@ class UpdateController extends Controller
         if ( $request->input( 'module' ) ) {
             $module = $request->input( 'module' );
             foreach ( $module[ 'migrations' ] as $file ) {
-                $response = $this->moduleService->runMigration( $module[ 'namespace' ], $file );
+                $response = $this->modulesService->runMigration( $module[ 'namespace' ], $file );
                 AfterMigrationExecutedEvent::dispatch( $module, $response, $file );
             }
         }
