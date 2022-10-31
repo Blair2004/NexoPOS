@@ -296,7 +296,7 @@ class RegisterHistoryCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -453,13 +453,13 @@ class RegisterHistoryCrud extends CrudService
     {
         switch ( $type ) {
             case 'unchanged': return __( 'Unchanged' );
-            break;
+                break;
             case 'negative': return __( 'Missing Observed' );
-            break;
+                break;
             case 'positive': return __( 'Surplus Observed' );
-            break;
+                break;
             default: return __( 'N/A' );
-            break;
+                break;
         }
     }
 

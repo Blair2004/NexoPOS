@@ -100,17 +100,12 @@ class ResetService
         BeforeHardResetEvent::dispatch();
 
         Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/default',
+            '--path' => '/database/migrations/core',
             '--force' => true,
         ]);
 
         Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/create-tables',
-            '--force' => true,
-        ]);
-
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/misc',
+            '--path' => '/database/migrations/create',
             '--force' => true,
         ]);
 

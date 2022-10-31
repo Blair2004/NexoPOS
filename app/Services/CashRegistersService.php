@@ -233,10 +233,10 @@ class CashRegistersService
             $register = Register::find( $order->register_id );
 
             /**
-             * The customer wallet shouldn't be counted as 
+             * The customer wallet shouldn't be counted as
              * a payment that goes into the cash register.
              */
-            $payments    =   $order->payments()
+            $payments = $order->payments()
                 ->with( 'type' )
                 ->where( 'identifier', '<>', OrderPayment::PAYMENT_ACCOUNT )
                 ->get();
@@ -246,7 +246,7 @@ class CashRegistersService
              * payment that was recorded on the current register
              */
             $payments->each( function( OrderPayment $payment ) use ( $order, $register ) {
-                $isRecorded     =   RegisterHistory::where( 'order_id', $order->id )
+                $isRecorded = RegisterHistory::where( 'order_id', $order->id )
                     ->where( 'payment_id', $payment->id )
                     ->where( 'register_id', $register->id )
                     ->where( 'payment_type_id', $payment->type->id )
@@ -279,22 +279,22 @@ class CashRegistersService
              * We'll check if there is a transaction that
              * tracks the change on that order. If not we'll define it.
              */
-            $changeHistory  =   RegisterHistory::where( 'order_id', $order->id )
+            $changeHistory = RegisterHistory::where( 'order_id', $order->id )
                 ->where( 'register_id', $register->id )
                 ->where( 'action', RegisterHistory::ACTION_CHANGE )
                 ->first();
 
             if ( ! $changeHistory instanceof RegisterHistory ) {
-                $changeHistory  =   new RegisterHistory;
-                $changeHistory->register_id =   $register->id;
-                $changeHistory->order_id    =   $order->id;
-                $changeHistory->author      =   $order->author;
-                $changeHistory->balance_before  =   $register->balance;
-                $changeHistory->value           =   $order->change;
-                $changeHistory->balance_after   =   ns()->currency->define( $register->balance )->subtractBy( $order->change )->getRaw();
-                $changeHistory->action          =   RegisterHistory::ACTION_CHANGE;
+                $changeHistory = new RegisterHistory;
+                $changeHistory->register_id = $register->id;
+                $changeHistory->order_id = $order->id;
+                $changeHistory->author = $order->author;
+                $changeHistory->balance_before = $register->balance;
+                $changeHistory->value = $order->change;
+                $changeHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $order->change )->getRaw();
+                $changeHistory->action = RegisterHistory::ACTION_CHANGE;
             }
-            
+
             /**
              * If the transaction doesn't have any change, there is no need
              * to keep an history for that. We'll check if the change history wasn't recently created

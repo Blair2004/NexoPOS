@@ -436,7 +436,7 @@ class CustomerCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -626,11 +626,11 @@ class CustomerCrud extends CrudService
 
         switch ( $entry->gender ) {
             case 'male': $entry->gender = __( 'Male' );
-            break;
+                break;
             case 'female': $entry->gender = __( 'Female' );
-            break;
+                break;
             default: $entry->gender = __( 'Not Defined' );
-            break;
+                break;
         }
 
         return $entry;
@@ -662,7 +662,6 @@ class CustomerCrud extends CrudService
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity = $this->model::find( $id );
                 if ( $entity instanceof Customer ) {
-                    
                     /**
                      * We want to check if we're allowed to delete
                      * the selected customer by checking his dependencies.

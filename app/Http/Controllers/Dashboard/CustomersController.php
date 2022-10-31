@@ -70,6 +70,7 @@ class CustomersController extends DashboardController
     /**
      * Retreive few customers ordered by
      * their recent activity
+     *
      * @return Collection
      */
     public function getRecentlyActive()
@@ -163,21 +164,21 @@ class CustomersController extends DashboardController
             ->map( function( Order $order ) {
                 switch ( $order->payment_status ) {
                     case Order::PAYMENT_HOLD : $order->human_status = __( 'Hold' );
-                    break;
+                        break;
                     case Order::PAYMENT_PAID : $order->human_status = __( 'Paid' );
-                    break;
+                        break;
                     case Order::PAYMENT_PARTIALLY : $order->human_status = __( 'Partially Paid' );
-                    break;
+                        break;
                     case Order::PAYMENT_REFUNDED : $order->human_status = __( 'Refunded' );
-                    break;
+                        break;
                     case Order::PAYMENT_UNPAID : $order->human_status = __( 'Unpaid' );
-                    break;
+                        break;
                     case Order::PAYMENT_PARTIALLY_REFUNDED : $order->human_status = __( 'Partially Refunded' );
-                    break;
+                        break;
                     case Order::PAYMENT_VOID : $order->human_status = __( 'Void' );
-                    break;
+                        break;
                     default: $order->human_status = $order->payment_status;
-                    break;
+                        break;
                 }
 
                 $order->human_delivery_status = $this->ordersService->getDeliveryStatus( $order->delivery_status );

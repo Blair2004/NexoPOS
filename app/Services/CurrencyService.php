@@ -219,6 +219,7 @@ class CurrencyService
 
     /**
      * return a raw value for the provided number
+     *
      * @param float $value
      * @return float
      */

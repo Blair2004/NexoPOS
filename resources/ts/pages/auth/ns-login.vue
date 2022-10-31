@@ -84,17 +84,20 @@ export default {
                     headers: {
                         'X-XSRF-TOKEN'  : this.xXsrfToken
                     }
-                }).subscribe( (result) => {
-                    document.location   =   result.data.redirectTo;
-                }, ( error ) => {
-                    this.isSubitting    =   false;
-                    this.validation.enableFields( this.fields );
+                }).subscribe({
+                    next: (result) => {
+                        document.location   =   result.data.redirectTo;
+                    },
+                    error: ( error ) => {
+                        this.isSubitting    =   false;
+                        this.validation.enableFields( this.fields );
 
-                    if ( error.data ) {
-                        this.validation.triggerFieldsErrors( this.fields, error.data );
+                        if ( error.data ) {
+                            this.validation.triggerFieldsErrors( this.fields, error.data );
+                        }
+
+                        nsSnackBar.error( error.message ).subscribe();
                     }
-
-                    nsSnackBar.error( error.message ).subscribe();
                 })
             }
         }

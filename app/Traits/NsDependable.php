@@ -1,7 +1,8 @@
 <?php
+
 namespace App\Traits;
 
-trait NsDependable 
+trait NsDependable
 {
     public function getDeclaredDependencies()
     {

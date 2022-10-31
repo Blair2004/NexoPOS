@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Migration;
+use Exception;
+use Illuminate\Database\Migrations\Migration as MigrationsMigration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
@@ -46,5 +48,26 @@ class UpdateService
         });
 
         return $files[ $file ];
+    }
+
+    public function executeMigration( $file, $method = 'up' )
+    {
+        $pathinfo = pathinfo( $file );
+        $type = collect( explode( '/', $pathinfo[ 'dirname' ]) )->last();
+
+        $class = require base_path( $file );
+
+        if ( $class instanceof MigrationsMigration ) {
+            $class->$method();
+            $migration = new Migration;
+            $migration->migration = $pathinfo[ 'filename' ];
+            $migration->type = $type;
+            $migration->batch = 0;
+            $migration->save();
+
+            return $migration;
+        }
+
+        throw new Exception( 'Unsupported class provided for the migration.' );
     }
 }

@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Events\CrudAfterDeleteEvent;
 use App\Events\CrudBeforeExportEvent;
-use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\CrudPostRequest;

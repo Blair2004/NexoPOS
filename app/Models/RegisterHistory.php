@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string action
  * @property int author
  * @property float value
- * @property integer payment_id
- * @property integer payment_type_id
- * @property integer order_id
+ * @property int payment_id
+ * @property int payment_type_id
+ * @property int order_id
  * @property string description
  * @property string uuid
  */
