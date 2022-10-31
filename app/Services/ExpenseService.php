@@ -7,6 +7,8 @@ use App\Events\ExpenseAfterCreateEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Fields\DirectExpenseFields;
+use App\Fields\RecurringExpenseFields;
+use App\Fields\SalaryExpenseFields;
 use App\Models\AccountType;
 use App\Models\CashFlow;
 use App\Models\Customer;
@@ -931,14 +933,31 @@ class ExpenseService
         }
     }
 
-    public function getConfiguration()
+    public function getConfigurations()
     {
-        $configuration  =   Hook::filter( 'ns-expenses-configurations', [
+        $recurringFields    =   new RecurringExpenseFields;
+        $directFields   =   new DirectExpenseFields;
+        $salaryFields   =   new SalaryExpenseFields;
+
+        $configurations  =   Hook::filter( 'ns-expenses-configurations', [
             [
-                'identifier'    =>  'direct',
+                'identifier'    =>  $directFields->getIdentifier(),
                 'label'         =>  __( 'Direct Expense' ),
-                'fields'        =>  ( new DirectExpenseFields )->get(),
+                'icon'          =>  asset( 'images/budget.png' ),
+                'fields'        =>  $directFields->get(),
+            ], [
+                'identifier'    =>  $recurringFields->getIdentifier(),
+                'label'         =>  __( 'Recurring Expense' ),
+                'icon'          =>  asset( 'images/recurring.png' ),
+                'fields'        =>  $recurringFields->get(),
+            ], [
+                'identifier'    =>  $salaryFields->getIdentifier(),
+                'label'         =>  __( 'Salary Expense' ),
+                'icon'          =>  asset( 'images/salary.png' ),
+                'fields'        =>  $salaryFields->get(),
             ]
         ]);
+
+        return $configurations;
     }
 }

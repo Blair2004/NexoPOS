@@ -161,7 +161,7 @@ export default {
                         :disabled="form.main.disabled"
                         type="text" 
                         class="flex-auto text-primary outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled" @click="submit()" class="outline-none px-4 h-10 border-l border-tertia"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                    <button :disabled="form.main.disabled" @click="submit()" class="outline-none px-4 h-10"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
                 <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-tertiary" v-bind:key="index" v-for="(error, index) of form.main.errors">
@@ -176,14 +176,16 @@ export default {
                 </div>
                 <div class="px-4 w-full md:w-1/2">
                     <div id="tabbed-card">
-                        <div id="card-header" class="flex flex-wrap ns-tab">
+                        <div id="card-header" class="flex ml-4 flex-wrap ns-tab">
                             <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
                                 {{ tab.label }}
                             </div>
                         </div>
-                        <div class="ns-tab-item rounded-br-lg rounded-bl-lg shadow p-2">
-                            <div class="flex flex-col" v-bind:key="index" v-for="( field, index ) of activeValidTab.fields">
-                                <ns-field :field="field"></ns-field>
+                        <div class="ns-tab-item">
+                            <div class="shadow p-2 rounded">
+                                <div class="flex flex-col" v-bind:key="index" v-for="( field, index ) of activeValidTab.fields">
+                                    <ns-field :field="field"></ns-field>
+                                </div>
                             </div>
                         </div>
                     </div>

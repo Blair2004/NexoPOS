@@ -64,9 +64,9 @@ class ExpensesController extends DashboardController
         return ExpenseCrud::form( $expense );
     }
 
-    public function getConfiguration()
+    public function getConfigurations()
     {
-        return $this->expenseService->getConfiguration();
+        return $this->expenseService->getConfigurations();
     }
 
     /**

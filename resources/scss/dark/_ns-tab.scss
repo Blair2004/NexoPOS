@@ -10,6 +10,6 @@
         }
     }
 }
-.ns-tab-item {
+.ns-tab-item > div {
     @apply border-tab-active-border bg-tab-active;
 }

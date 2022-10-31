@@ -30,11 +30,11 @@
             <div id="form-container" class="-mx-4 flex flex-wrap mt-4">
                 <div class="px-4 w-full">
                     <div id="tabbed-card" class="mb-8" :key="variation_index" v-for="(variation, variation_index) of form.variations">
-                        <div id="card-header" class="flex flex-wrap justify-between ns-tab">
+                        <div id="card-header" class="flex flex-wrap justify-between ns-tab ml-4">
                             <div class="flex flex-wrap">
                                 <template v-for="( tab, index ) in variation.tabs">
                                     <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-if="tab.visible" v-bind:key="index" class="tab cursor-pointer text-primary px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
-                                        <span class="block mr-2">{{ tab.label }}</span>
+                                        <span class="block" :class="tab.errors && tab.errors.length > 0 ? 'mr-2' : ''">{{ tab.label }}</span>
                                         <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-error-secondary text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
                                     </div>
                                 </template>
@@ -57,80 +57,82 @@
                                 </div> -->
                             </div>
                         </div>
-                        <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg shadow p-2">
-                            <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units', 'groups' ].includes( getActiveTabKey( variation.tabs ) )">
-                                <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields" :key="index">
+                        <div class="card-body ns-tab-item">
+                            <div class="rounded shadow p-2">
+                                <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units', 'groups' ].includes( getActiveTabKey( variation.tabs ) )">
+                                    <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields" :key="index">
+                                        <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
+                                            <ns-field :field="field"></ns-field>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'images'">
                                     <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
-                                        <ns-field :field="field"></ns-field>
-                                    </div>
-                                </template>
-                            </div>
-                            <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'images'">
-                                <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
-                                    <div class="rounded border border-box-elevation-edge bg-box-elevation-background flex justify-between p-2 items-center">
-                                        <span>{{ __( 'Add Images' ) }}</span>
-                                        <button @click="addImage( variation )" class="outline-none rounded-full border flex items-center justify-center w-8 h-8 ns-inset-button info">
-                                            <i class="las la-plus-circle"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div
-                                    :key="index" 
-                                    v-for="( group, index ) of getActiveTab( variation.tabs ).groups" 
-                                    class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3 mb-4">
-                                    <div class="rounded border border-box-elevation-edge flex flex-col overflow-hidden">
-                                        <div class="p-2">
-                                            <ns-field :key="index" v-for="(field, index) of group" :field="field"></ns-field>
-                                        </div>
-                                        <div @click="removeImage( variation, group )" class="text-center py-2 border-t border-box-elevation-edge text-sm cursor-pointer">
-                                            {{ __( 'Remove Image' ) }}
+                                        <div class="rounded border border-box-elevation-edge bg-box-elevation-background flex justify-between p-2 items-center">
+                                            <span>{{ __( 'Add Images' ) }}</span>
+                                            <button @click="addImage( variation )" class="outline-none rounded-full border flex items-center justify-center w-8 h-8 ns-inset-button info">
+                                                <i class="las la-plus-circle"></i>
+                                            </button>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'groups'">
-                                <ns-product-group
-                                    @update="setProducts( $event, variation.tabs )"
-                                    @updateSalePrice="triggerRecompute( $event, variation.tabs )" 
-                                    :fields="getActiveTab( variation.tabs ).fields"></ns-product-group>
-                            </div>
-                            <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
-                                <div class="px-4 w-full md:w-1/2 lg:w-1/3">
-                                    <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[0]"></ns-field>
-                                    <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[1]"></ns-field>
-                                </div>
-                                <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
-                                    <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
-                                        <div class="mb-2">
-                                            <label class="font-medium text-primary">{{ field.label }}</label>
-                                            <p class="py-1 text-sm text-primary">{{ field.description }}</p>
-                                        </div>
-                                        <div class="mb-2">
-                                            <div @click="addUnitGroup( field )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-primary cursor-pointer rounded-lg">
-                                                <span class="rounded-full border-2 ns-inset-button info h-8 w-8 flex items-center justify-center">
-                                                    <i class="las la-plus-circle"></i>
-                                                </span>
-                                                <span>{{ __( 'New Group' ) }}</span>
+                                    <div
+                                        :key="index" 
+                                        v-for="( group, index ) of getActiveTab( variation.tabs ).groups" 
+                                        class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3 mb-4">
+                                        <div class="rounded border border-box-elevation-edge flex flex-col overflow-hidden">
+                                            <div class="p-2">
+                                                <ns-field :key="index" v-for="(field, index) of group" :field="field"></ns-field>
+                                            </div>
+                                            <div @click="removeImage( variation, group )" class="text-center py-2 border-t border-box-elevation-edge text-sm cursor-pointer">
+                                                {{ __( 'Remove Image' ) }}
                                             </div>
                                         </div>
-                                        <div class="-mx-4 flex flex-wrap">
-                                            <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
-                                                <div class="shadow rounded overflow-hidden bg-box-elevation-background text-primary">
-                                                    <div class="border-b text-sm p-2 flex justify-between text-primary border-box-elevation-edge">
-                                                        <span>{{ __( 'Available Quantity' ) }}</span>
-                                                        <span>{{ getUnitQuantity( group_fields ) }}</span>
-                                                    </div>
-                                                    <div class="p-2 mb-2">
-                                                        <ns-field :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
-                                                    </div>
-                                                    <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
-                                                        {{ __( 'Delete' ) }}
+                                    </div>
+                                </div>
+                                <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'groups'">
+                                    <ns-product-group
+                                        @update="setProducts( $event, variation.tabs )"
+                                        @updateSalePrice="triggerRecompute( $event, variation.tabs )" 
+                                        :fields="getActiveTab( variation.tabs ).fields"></ns-product-group>
+                                </div>
+                                <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
+                                    <div class="px-4 w-full md:w-1/2 lg:w-1/3">
+                                        <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[0]"></ns-field>
+                                        <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[1]"></ns-field>
+                                    </div>
+                                    <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
+                                        <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
+                                            <div class="mb-2">
+                                                <label class="font-medium text-primary">{{ field.label }}</label>
+                                                <p class="py-1 text-sm text-primary">{{ field.description }}</p>
+                                            </div>
+                                            <div class="mb-2">
+                                                <div @click="addUnitGroup( field )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-primary cursor-pointer rounded-lg">
+                                                    <span class="rounded-full border-2 ns-inset-button info h-8 w-8 flex items-center justify-center">
+                                                        <i class="las la-plus-circle"></i>
+                                                    </span>
+                                                    <span>{{ __( 'New Group' ) }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="-mx-4 flex flex-wrap">
+                                                <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
+                                                    <div class="shadow rounded overflow-hidden bg-box-elevation-background text-primary">
+                                                        <div class="border-b text-sm p-2 flex justify-between text-primary border-box-elevation-edge">
+                                                            <span>{{ __( 'Available Quantity' ) }}</span>
+                                                            <span>{{ getUnitQuantity( group_fields ) }}</span>
+                                                        </div>
+                                                        <div class="p-2 mb-2">
+                                                            <ns-field :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
+                                                        </div>
+                                                        <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
+                                                            {{ __( 'Delete' ) }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </template>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -168,7 +170,7 @@ export default {
                     if ( identification.type === 'grouped' )  {
                         for( let index in variation.tabs ) {
                             if ( ! [ 'identification', 'groups', 'taxes', 'units' ].includes( index ) ) {
-                                this.$set( variation.tabs[ index ], 'visible', false );
+                                variation.tabs[ index ][ 'visible' ]    =   false;
                             }
                         }
 
@@ -176,12 +178,12 @@ export default {
                          * explicitely enable the groups tab
                          */
                         if ( variation.tabs[ 'groups' ] ) {
-                            this.$set( variation.tabs[ 'groups' ], 'visible', true );
+                            variation.tabs[ 'groups' ].visible  = true;
                         }
                     } else {
                         for( let index in variation.tabs ) {
                             if ( ! [ 'identification', 'groups', 'taxes', 'units' ].includes( index ) ) {
-                                this.$set( variation.tabs[ index ], 'visible', true );
+                                variation.tabs[ index ].visible = true;
                             }
                         }
 
@@ -189,7 +191,7 @@ export default {
                          * explicitely disable the groups tab
                          */
                         if ( variation.tabs[ 'groups' ] ) {
-                            this.$set( variation.tabs[ 'groups' ], 'visible', false );
+                            variation.tabs[ 'groups' ].visible = false;
                         }
                     }
                 });

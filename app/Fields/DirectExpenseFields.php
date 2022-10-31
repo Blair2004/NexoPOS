@@ -9,7 +9,7 @@ use App\Services\Helper;
 
 class DirectExpenseFields extends FieldsService
 {
-    protected $identifier = 'ns.register';
+    protected $identifier = 'ns.direct-expenses';
 
     public function get()
     {
