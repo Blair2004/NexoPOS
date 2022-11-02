@@ -8,7 +8,7 @@ declare const ns;
 
 export default {
     name: 'ns-date-range-picker',
-    data: () => {
+    data() {
         return {
             dateRange: {
                 startDate: null,

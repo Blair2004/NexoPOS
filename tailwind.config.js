@@ -81,8 +81,9 @@ module.exports = {
         cyan: colors.cyan,
         
         typography: withOpacityValue('--typography'),
+        
         surface: withOpacityValue('--surface'),
-
+        'surface-soft': withOpacityValue('--surface-soft'),
         'popup-surface': withOpacityValue('--popup-surface'),
 
         'input-edge': withOpacityValue('--input-edge'),

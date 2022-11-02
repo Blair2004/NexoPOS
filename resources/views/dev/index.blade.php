@@ -4,9 +4,13 @@
 <div id="dev-app" class="h-full flex w-full">
     <div class="flex flex-auto">
         <div class="aside w-60 bg-surface">
-            <ns-menu label="Inputs">
-                <ns-submenu to="/inputs/datetime">Date Time Picker</ns-submenu>
+            <div class="py-8 flex items-center justify-center">
+                <h1 class="font-bold text-2xl">Components</h1>
+            </div>
+            <ns-menu label="Date Controls">
+                <ns-submenu to="/inputs/date">Date Picker</ns-submenu>
                 <ns-submenu to="/inputs/daterange">Date Range Picker</ns-submenu>
+                <ns-submenu to="/inputs/datetime">Date Time Picker</ns-submenu>
             </ns-menu>
         </div>
         <div class="body bg-surface w-full flex flex-col">
