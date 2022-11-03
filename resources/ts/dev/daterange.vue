@@ -14,10 +14,6 @@ export default {
                 label: 'Date',
                 name: 'range',
                 description: 'a date range picker',
-                value: {
-                    startDate: moment().clone().subtract( 1, 'week' ).format(),
-                    endDate: moment().format()
-                }
             }
         }
     }

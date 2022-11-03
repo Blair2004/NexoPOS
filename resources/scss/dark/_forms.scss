@@ -4,6 +4,9 @@
 .ns-switch {
     button.selected {
         @apply bg-input-button-active text-typography;
+        &:hover {
+            @apply bg-info-secondary;
+        }
     }
     button.unselected {
         @apply bg-slate-500 text-white;
@@ -147,6 +150,11 @@
 **/
 .form-input {
     @apply outline-0;
+
+    *[disabled] {
+        @apply bg-input-disabled;
+    }
+
     label {
         @apply text-primary;
     }
@@ -189,7 +197,7 @@
     @apply text-white;
 
     button, a {
-        @apply bg-input-button border-input-edge;
+        @apply bg-input-button;
     }
 
     &:hover {
@@ -315,6 +323,26 @@
     }
 }
 
+.ns-floating-panel {
+    .ns-inset-button {
+        @apply border-slate-700 text-primary;
+        &:hover, &.active {
+            @apply bg-input-button text-white border-transparent;
+        }
+        &.info:hover, &.info.active {
+            @apply bg-info-primary text-white border-transparent;
+        }
+        &.success:hover, &.success.active {
+            @apply bg-success-primary text-white border-transparent;
+        }
+        &.warning:hover, &.warning.active {
+            @apply bg-warning-primary text-white border-transparent;
+        }
+        &.error:hover, &.error.active  {
+            @apply bg-error-primary text-white border-transparent;
+        }
+    }
+}
 .ns-inset-button {
     @apply border-input-button text-primary;
     &:hover, &.active {
@@ -340,6 +368,6 @@
     }
 }
 
-.ns-date-range-picker .form-control.reportrange-text {
+.ns-daterange-picker .form-control.reportrange-text {
     @apply bg-input-background border-transparent;
 }

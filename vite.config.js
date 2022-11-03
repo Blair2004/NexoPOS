@@ -1,7 +1,8 @@
 import { defineConfig, loadEnv } from 'vite';
+
+import fs from 'fs';
 import laravel from 'laravel-vite-plugin';
 import path from 'path';
-import fs from 'fs';
 import vuePlugin from '@vitejs/plugin-vue';
 
 export default ({ mode }) => {
@@ -53,6 +54,7 @@ export default ({ mode }) => {
                     'resources/ts/dashboard.ts',
                     'resources/ts/cashier.ts',
                     'resources/ts/lang-loader.ts',
+                    'resources/ts/dev.ts',
     
                     'resources/scss/app.scss',
                     'resources/scss/light.scss',

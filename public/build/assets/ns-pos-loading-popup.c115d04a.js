@@ -1,0 +1,1 @@
+import{_ as n}from"./plugin-vue_export-helper.21dcd24c.js";import{o as s,E as e,C as p}from"./bootstrap.2e9dca7e.js";const r={name:"ns-pos-loading-popup"};function t(a,c,_,i,m,f){const o=p("ns-spinner");return s(),e(o)}var l=n(r,[["render",t]]);export{l as default};

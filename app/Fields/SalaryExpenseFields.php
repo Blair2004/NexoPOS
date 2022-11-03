@@ -4,6 +4,7 @@ namespace App\Fields;
 
 use App\Classes\Hook;
 use App\Models\AccountType;
+use App\Models\Role;
 use App\Services\FieldsService;
 use App\Services\Helper;
 
@@ -25,7 +26,7 @@ class SalaryExpenseFields extends FieldsService
                 'description'   =>  __( 'Assign the expense to a category.' ),
                 'validation'    =>  'required',
                 'name'      =>  'category_id',
-                'options'   =>  Helper::toOptions( AccountType::get(), [ 'id', 'name' ]),
+                'options'   =>  Helper::toJsOptions( AccountType::get(), [ 'id', 'name' ]),
                 'type'      =>  'select',
             ], [
                 'label' =>  __( 'Value' ),
@@ -33,6 +34,13 @@ class SalaryExpenseFields extends FieldsService
                 'validation'    =>  'required',
                 'name'      =>  'value',
                 'type'      =>  'number',
+            ], [
+                'label' =>  __( 'User Group' ),
+                'description'   =>  __( 'The expenses will be multipled by the number of user having that role.' ),
+                'validation'    =>  'required',
+                'name'      =>  'category_id',
+                'options'   =>  Helper::toJsOptions( Role::get(), [ 'id', 'name' ]),
+                'type'      =>  'select',
             ], [
                 'label' =>  __( 'Description' ),
                 'description'   =>  __( 'Further details on the expense.' ),

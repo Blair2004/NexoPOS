@@ -26,8 +26,8 @@
                     <button @click="openQueryFilter()" :class="withFilters ? 'table-filters-enabled' : 'table-filters-disabled'" class="ns-crud-button border rounded-full text-sm h-10 px-3 outline-none ">
                         <i v-if="! withFilters" class="las la-filter"></i>
                         <i v-if="withFilters" class="las la-check"></i>
-                        <span v-if="! withFilters">{{ __( 'Filters' ) }}</span>
-                        <span v-if="withFilters">{{ __( 'Has Filters' ) }}</span>
+                        <span class="ml-1" v-if="! withFilters">{{ __( 'Filters' ) }}</span>
+                        <span class="ml-1" v-if="withFilters">{{ __( 'Has Filters' ) }}</span>
                     </button>
                 </div>
             </div>

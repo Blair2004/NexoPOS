@@ -2,10 +2,10 @@
     <div class="picker mb-2">
         <label v-if="field" class="block leading-5 font-medium text-primary">{{ field.label }}</label>
         <div class="ns-button">
-            <button @click="visible = !visible" :class="field ? 'mt-1' : ''" class="shadow rounded cursor-pointer w-full px-1 py-1 flex items-center text-primary">
+            <button @click="visible = !visible" :class="field ? 'mt-1' : ''" class="border border-input-edge shadow rounded cursor-pointer w-full px-1 py-1 flex items-center text-primary">
                 <i class="las la-clock text-2xl"></i>
                 <span class="mx-1 text-sm" v-if="field">
-                    <span v-if="field.value !== null">{{ fieldDate.format( 'YYYY/MM/DD HH:mm' ) }}</span>
+                    <span v-if="field.value !== null">{{ fieldDate.format( 'YYYY-MM-DD HH:mm' ) }}</span>
                     <span v-if="field.value === null">N/A</span>
                 </span>
             </button>

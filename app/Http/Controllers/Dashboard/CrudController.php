@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Events\CrudAfterDeleteEvent;
 use App\Events\CrudBeforeExportEvent;
+use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\CrudPostRequest;
@@ -359,9 +360,17 @@ class CrudController extends DashboardController
         }
 
         $entries = $resource->getEntries( $config );
+        $totalColumns = 0;
+        
+        /**
+         * We can't export if there is 
+         * nothing to export, so we'll skip that.
+         */
+        if ( count( $entries[ 'data' ] ) === 0 ) {
+            throw new NotAllowedException( __( 'Unable to export if there is nothing to export.' ) );
+        }
 
         foreach ( $entries[ 'data' ] as $rowIndex => $entry ) {
-            $totalColumns = 0;
             foreach ( $columns as $columnName => $column ) {
                 $sheet->setCellValue( $sheetColumns[ $totalColumns ] . ( $rowIndex + 2 ), strip_tags( $entry->$columnName ) );
                 $totalColumns++;

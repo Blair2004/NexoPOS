@@ -40,7 +40,7 @@
         @apply border-crud-button-edge bg-white text-primary;
 
         &.table-filters-enabled {
-            @apply bg-info-tertiary text-primary;
+            @apply bg-info-tertiary text-white;
         }
     
         &.table-filters-disabled {

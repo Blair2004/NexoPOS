@@ -1,15 +1,17 @@
 <template>
     <div class="picker">
-        <div @click="visible = !visible" class="rounded cursor-pointer bg-input-background shadow px-1 py-1 flex items-center text-primary">
-            <i class="las la-clock text-2xl"></i>
-            <span class="mx-1 text-sm">
-                <span>{{ label || __( 'Date' ) }} : </span>
-                <span v-if="date">{{ formattedDate }}</span>
-                <span v-else>{{ __( 'N/A' ) }}</span>
-            </span>
+        <div class="ns-button">
+            <button @click="visible = !visible" class="rounded cursor-pointer border border-input-edge shadow w-full px-1 py-1 flex items-center text-primary">
+                <i class="las la-clock text-2xl"></i>
+                <span class="mx-1 text-sm">
+                    <span>{{ label || __( 'Date' ) }} : </span>
+                    <span v-if="date">{{ formattedDate }}</span>
+                    <span v-else>{{ __( 'N/A' ) }}</span>
+                </span>
+            </button>
         </div>
         <div class="relative h-0 w-0 -mb-2" v-if="visible">
-            <div class="w-72 mt-2 shadow anim-duration-300 zoom-in-entrance flex flex-col">
+            <div class="w-72 mt-2 shadow-lg anim-duration-300 zoom-in-entrance flex flex-col ns-floating-panel">
                 <ns-calendar :visible="visible" @onClickOut="visible = false" :date="date" @set="setDate( $event )"></ns-calendar>
             </div>
         </div>
@@ -28,7 +30,7 @@ export default {
     props: [ 'label', 'date', 'format' ],
     computed: {
         formattedDate() {
-            return moment( this.date ).format( this.format || 'YYYY-MM-DD HH:MM:ss' );
+            return moment( this.date ).format( this.format || 'YYYY-MM-DD HH:mm:ss' );
         }
     },
     data() {
@@ -42,7 +44,6 @@ export default {
     methods: {
         __,
         setDate( date ) {
-            console.log( date );
             this.$emit( 'set', date );
         }
     }

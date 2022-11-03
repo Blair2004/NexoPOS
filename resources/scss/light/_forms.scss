@@ -21,7 +21,7 @@
     button {
         @apply bg-input-disabled text-white outline-none;
         i, span {
-            @apply text-primary;
+            @apply text-white;
         }
         .disabled {
             @apply bg-input-edge;
@@ -194,10 +194,10 @@
  * Buttons
 **/
 .ns-button {
-    @apply text-primary border-input-edge;
+    @apply text-primary;
 
     button, a {
-        @apply bg-input-button shadow;
+        @apply bg-input-button;
     }
 
     &:hover {
@@ -323,6 +323,26 @@
     }
 }
 
+.ns-floating-panel {
+    .ns-inset-button {
+        @apply border-input-edge text-primary;
+        &:hover, &.active {
+            @apply bg-info-tertiary text-white border-transparent;
+        }
+        &.info:hover, &.info.active {
+            @apply bg-info-tertiary text-white border-transparent;
+        }
+        &.success:hover, &.success.active {
+            @apply bg-success-tertiary text-white border-transparent;
+        }
+        &.warning:hover, &.warning.active {
+            @apply bg-warning-tertiary text-white border-transparent;
+        }
+        &.error:hover, &.error.active  {
+            @apply bg-error-tertiary text-white border-transparent;
+        }
+    }
+}
 .ns-inset-button {
     @apply border-input-edge text-primary;
     &:hover, &.active {
@@ -348,6 +368,6 @@
     }
 }
 
-.ns-date-range-picker .form-control.reportrange-text {
+.ns-daterange-picker .form-control.reportrange-text {
     @apply bg-input-background border-transparent;
 }

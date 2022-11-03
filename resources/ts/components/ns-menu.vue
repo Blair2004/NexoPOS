@@ -1,13 +1,13 @@
 <template>
     <div>
         <template v-if="to && ! hasChildren">
-            <router-link :to="to" :class="defaultToggledState ? 'border-blue-800 bg-gray-800 dark:border-slate-700 dark:bg-slate-700' : 'border-transparent bg-gray-900 dark:bg-slate-900'" class="flex justify-between py-2 border-l-8 text-gray-200 dark:text-slate-300 dark:hover:bg-slate-700 px-3 font-bold  hover:bg-gray-700">
+            <a @click="goTo( to, $event )" :href="to" :class="defaultToggledState ? 'border-blue-800 bg-gray-800 dark:border-slate-700 dark:bg-slate-700' : 'border-transparent bg-gray-900 dark:bg-slate-900'" class="flex justify-between py-2 border-l-8 text-gray-200 dark:text-slate-300 dark:hover:bg-slate-700 px-3 font-bold  hover:bg-gray-700">
                 <span class="flex items-center">
                 <i class="las text-lg mr-2" :class="icon?.length > 0 ? icon : 'la-star'"></i>
                 {{ label }}
                 </span>
                 <span v-if="notification > 0" class="rounded-full bg-red-600 text-white dark:text-slate-300 font-bold w-6 h-6 text-xs justify-center items-center flex">{{ notification }}</span>
-            </router-link>
+            </a>
         </template>
         <template v-else>
             <a @click="toggleEmit()" :href="href || 'javascript:void(0)'" :class="defaultToggledState ? 'border-blue-800 bg-gray-800 dark:border-slate-700 dark:bg-slate-700' : 'border-transparent bg-gray-900 dark:bg-slate-900'" class="flex justify-between py-2 border-l-8 text-gray-200 dark:text-slate-300 dark:hover:bg-slate-700 px-3 font-bold  hover:bg-gray-700">
@@ -59,6 +59,11 @@ export default {
                     });
                 }
             })
+        },
+        goTo( url, event ) {
+            this.$router.push( url );
+            event.preventDefault();
+            return false;
         },
         toggle() {                                                                                                                                                                                                                                                                                                                                                                                                  
             return new Promise( ( resolve, reject ) => {

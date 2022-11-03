@@ -110,10 +110,10 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
-        <ns-date-range-picker @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateRangePicker">
+        <ns-daterange-picker @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateRangePicker">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
-        </ns-date-range-picker>
+        </ns-daterange-picker>
         <ns-select-audio @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isSelectAudio">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

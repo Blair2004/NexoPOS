@@ -25,7 +25,7 @@ class RecurringExpenseFields extends FieldsService
                 'description'   =>  __( 'Assign the expense to a category.' ),
                 'validation'    =>  'required',
                 'name'      =>  'category_id',
-                'options'   =>  Helper::toOptions( AccountType::get(), [ 'id', 'name' ]),
+                'options'   =>  Helper::toJsOptions( AccountType::get(), [ 'id', 'name' ]),
                 'type'      =>  'select',
             ], [
                 'label' =>  __( 'Value' ),

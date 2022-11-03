@@ -1,3 +1,4 @@
+import { createRouter, createWebHistory } from 'vue-router';
 import { 
     createApp, 
     defineAsyncComponent 
@@ -160,7 +161,7 @@ window.nsDashboardHeader    =   createApp({
 });
 
 window.nsDashboardContent   =   createApp({});
-
+window.nsDashboardContent.use( createRouter({ routes:[], history: createWebHistory() }) );
 /**
  * let's register the component that has
  * a valid name globally

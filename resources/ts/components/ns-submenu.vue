@@ -5,7 +5,16 @@ export default {
         }
     },
     props: [ 'href', 'label', 'active', 'to' ],
-    mounted() {},
+    mounted() {
+        // ...
+    },
+    methods: {
+        goTo( url, event ) {
+            this.$router.push( url );
+            event.preventDefault();
+            return false;
+        },
+    }
 }
 </script>
 <template>
@@ -17,9 +26,9 @@ export default {
                 </a>
             </template>
             <template v-else-if="to">
-                <router-link :class="active ? 'font-bold text-white dark:text-slate-300' : 'text-gray-100 dark:text-slate-200'" :to="to" class="py-2 border-l-8 border-blue-800 dark:border-slate-700 px-3 block bg-gray-800 dark:bg-slate-800 dark:hover:bg-slate-700 hover:bg-gray-700">
+                <a :class="active ? 'font-bold text-white dark:text-slate-300' : 'text-gray-100 dark:text-slate-200'" @click="goTo( to, $event )" :href="to" class="py-2 border-l-8 border-blue-800 dark:border-slate-700 px-3 block bg-gray-800 dark:bg-slate-800 dark:hover:bg-slate-700 hover:bg-gray-700">
                     <slot></slot>
-                </router-link>
+                </a>
             </template>
         </li>
     </div>
