@@ -958,6 +958,34 @@ class ExpenseService
             ]
         ]);
 
-        return $configurations;
+        $recurrence     =   Hook::filter( 'ns-expenses-recurrence', [
+            [
+                'type'  =>  'select',
+                'label' =>  __( 'Condition' ),
+                'name'  =>  'condition',
+                'options'   =>  Helper::kvToJsOptions([
+                    'first_day_of_month' =>  __( 'First Day Of Month' ),
+                    'last_day_of_month' =>  __( 'Last Day Of Month' ),
+                    'x_days_after_month_starts' =>  __( '{day} after month starts' ),
+                    'x_days_before_month_ends'  =>  __( '{day} before month ends' ),
+                    'on_specific_day' =>  __( 'Every {day} of the month' ),
+                ])
+            ], [
+                'type'  =>  'number',
+                'label' =>  __( 'Days' ),
+                'name'  =>  'days',
+                'value' =>  1,
+                'shows' =>  [
+                    'condition' =>  [
+                        'x_days_after_month_starts',
+                        'x_days_before_month_ends',
+                        'on_specific_day',
+                    ]
+                ],
+                'description'   =>  __( 'Make sure set a day that is likely to be executed' )
+            ]
+        ]);
+
+        return compact( 'recurrence', 'configurations' );
     }
 }

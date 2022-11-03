@@ -39,7 +39,10 @@ class SalaryExpenseFields extends FieldsService
                 'description'   =>  __( 'The expenses will be multipled by the number of user having that role.' ),
                 'validation'    =>  'required',
                 'name'      =>  'category_id',
-                'options'   =>  Helper::toJsOptions( Role::get(), [ 'id', 'name' ]),
+                'options'   =>  Helper::toJsOptions( Role::get()->map( function( $role ) {
+                    $role->name     .= ' (' . $role->users()->count() . ')';
+                    return $role;
+                }), [ 'id', 'name' ]),
                 'type'      =>  'select',
             ], [
                 'label' =>  __( 'Description' ),
