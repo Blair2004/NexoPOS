@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up()
     {
-        $object     =   include dirname( __FILE__ ) . '/../create/2020_10_10_224639_create_dashboard_table.php';
+        $object = include dirname( __FILE__ ) . '/../create/2020_10_10_224639_create_dashboard_table.php';
         $object->up();
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down()
     {
-        $object     =   include dirname( __FILE__ ) . '/../create/2020_10_10_224639_create_dashboard_table.php';
+        $object = include dirname( __FILE__ ) . '/../create/2020_10_10_224639_create_dashboard_table.php';
         $object->down();
     }
 };

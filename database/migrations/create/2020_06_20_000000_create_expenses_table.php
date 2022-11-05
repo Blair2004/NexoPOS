@@ -28,8 +28,8 @@ return new class extends Migration
                 $table->string( 'type' )->nullable(); // direct, recurring, salary
                 $table->boolean( 'active' )->default(false);
                 $table->integer( 'group_id' )->nullable();
-                $table->string( 'occurence' )->nullable(); // 1st 15th startOfMonth, endOfMonth
-                $table->string( 'occurence_value' )->nullable(); // 1st 15th startOfMonth, endOfMonth
+                $table->string( 'occurrence' )->nullable(); // 1st 15th startOfMonth, endOfMonth
+                $table->string( 'occurrence_value' )->nullable(); // 1,2,3...
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

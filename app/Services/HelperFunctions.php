@@ -1,6 +1,5 @@
 <?php
 
-use App\Exceptions\NotFoundException;
 use App\Services\CoreService;
 use illuminate\Support\Facades\Route;
 

@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Models\UserAttribute;
 use Exception;
 use Illuminate\Console\Command;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class DoctorService
 {

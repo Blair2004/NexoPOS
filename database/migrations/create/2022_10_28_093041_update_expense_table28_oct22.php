@@ -22,15 +22,15 @@ return new class extends Migration
 
         Expense::get()->each( function( $expense ) {
             if ( $expense->recurring ) {
-                $expense->type = 'recurring'; 
-            } else if ( $expense->group_id > 0 ) {
+                $expense->type = 'recurring';
+            } elseif ( $expense->group_id > 0 ) {
                 $expense->type = 'salary';
             } else {
                 $expense->type = 'direct';
             }
 
             $expense->save();
-        }); 
+        });
     }
 
     /**

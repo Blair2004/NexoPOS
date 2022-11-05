@@ -59,20 +59,20 @@ class MediasController extends DashboardController
      */
     public function updateMedia( Media $media, Request $request )
     {
-        $validation     =   Validator::make( $request->all(), [
-            'name'  =>  'required'
+        $validation = Validator::make( $request->all(), [
+            'name' => 'required',
         ]);
 
         if ( $validation->fails() ) {
             throw new NotAllowedException( 'An error occured while updating the media file.' );
         }
 
-        $media->name    =   $request->input( 'name' );
+        $media->name = $request->input( 'name' );
         $media->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The media name was successfully updated.' )
+            'status' => 'success',
+            'message' => __( 'The media name was successfully updated.' ),
         ];
     }
 

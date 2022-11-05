@@ -11,8 +11,8 @@ class Media extends NsModel
 
     protected $table = 'nexopos_medias';
 
-    protected $casts    =   [
-        'created_at'    =>  DateCast::class
+    protected $casts = [
+        'created_at' => DateCast::class,
     ];
 
     public function user()

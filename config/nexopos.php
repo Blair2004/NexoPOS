@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'version'       =>  '4.9.0',
-    'languages'     =>  [
-        'en'        =>  'English',
-        'fr'        =>  'Français',
-        'es'        =>  'Espanol',
-        'it'        =>  'Italian',
-        'ar'        =>  'Arabic',
-        'pt'        =>  'Portuguese',
-        'tr'        =>  'Türkçe',
-        'vi'        =>  'Vietnamese',
+    'version' => '4.9.0',
+    'languages' => [
+        'en' => 'English',
+        'fr' => 'Français',
+        'es' => 'Espanol',
+        'it' => 'Italian',
+        'ar' => 'Arabic',
+        'pt' => 'Portuguese',
+        'tr' => 'Türkçe',
+        'vi' => 'Vietnamese',
     ],
     'rtl-languages' => [ 'ar' ],
     'timezones' => [

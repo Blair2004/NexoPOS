@@ -361,9 +361,9 @@ class CrudController extends DashboardController
 
         $entries = $resource->getEntries( $config );
         $totalColumns = 0;
-        
+
         /**
-         * We can't export if there is 
+         * We can't export if there is
          * nothing to export, so we'll skip that.
          */
         if ( count( $entries[ 'data' ] ) === 0 ) {

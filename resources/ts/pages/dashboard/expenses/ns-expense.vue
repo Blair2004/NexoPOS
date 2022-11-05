@@ -5,7 +5,14 @@
     <div v-if="tabs.length > 0 && ! isLoading">
         <ns-tabs :active="activeTab" @active="setActiveTab( $event )">
             <template #extra>
-                <div class="ns-button"><button @click="confirmTypeChange()" class="py-1 px-2 text-sm rounded">{{ __( 'Change Type' ) }}</button></div>
+                <div class="md:flex hidden flex-col md:flex-row -mx-2">
+                    <div class="px-2">
+                        <div class="ns-button info"><button @click="confirmTypeChange()" class="py-1 px-2 text-sm rounded">{{ __( 'Change Type' ) }}</button></div>
+                    </div>
+                    <div class="px-2">
+                        <div class="ns-button success"><button @click="confirmBeforeSave()" class="py-1 px-2 text-sm rounded">{{ __( 'Save Expense' ) }}</button></div>
+                    </div>
+                </div>
             </template>
             <ns-tabs-item v-for="tab of tabs" :key="tab.identifier" :identifier="tab.identifier" :label="tab.label">
                 <template v-if="tab.fields">
@@ -13,7 +20,6 @@
                         <template #title>{{ __( 'Warning' ) }}</template>
                         <template #description>{{ __( 'While selecting salary expense, the amount defined will be multiplied by the total user assigned to the User group selected.' ) }}</template>
                     </ns-notice>
-                    <br>
                     <ns-field v-for="field of tab.fields" :key="field.name" :field="field"></ns-field>
                 </template>
                 <template v-if="tab.identifier === 'recurrence'">
@@ -22,10 +28,21 @@
                     </template>
                 </template>
             </ns-tabs-item>
+            <div class="my-3 md:hidden">
+                <div class="flex -mx-2">
+                    <div class="px-2">
+                        <div class="ns-button info"><button @click="confirmTypeChange()" class="py-1 px-2 text-sm rounded">{{ __( 'Change Type' ) }}</button></div>
+                    </div>
+                    <div class="px-2">
+                        <div class="ns-button success"><button @click="confirmBeforeSave()" class="py-1 px-2 text-sm rounded">{{ __( 'Save Expense' ) }}</button></div>
+                    </div>
+                </div>
+            </div>
         </ns-tabs>
     </div>
 </template>
 <script>
+import { nsSnackBar } from '~/bootstrap';
 import { nsConfirmPopup } from '~/components/components';
 import { nsCurrency } from '~/filters/currency';
 import FormValidation from '~/libraries/form-validation';
@@ -33,15 +50,15 @@ import { __ } from '~/libraries/lang';
 import nsExpenseSelectorVue from './ns-expense-selector.vue';
 
 export default {
-    props: [ 'expense' ],
+    props: [],
     data() {
         return {
-            handledExpense: { type: undefined },
             configurations: [],
             activeTab: 'create-customers',
             selectedConfiguration: {},
             isLoading: false,
             tabs: [],
+            expense: {},
             originalRecurrence: [],
             validation: new FormValidation,
             recurrence: []
@@ -51,6 +68,11 @@ export default {
         // ...
     },
     mounted() {
+        console.log( window.nsExpenseData );
+        if ( window.nsExpenseData !== undefined ) {
+            this.expense    =   window.nsExpenseData;
+        }
+
         this.init();
     },
     watch: {
@@ -59,6 +81,51 @@ export default {
     methods: {
         __,
         nsCurrency,
+        confirmBeforeSave() {
+            Popup.show( nsConfirmPopup, {
+                title: __( 'Confirm Your Action' ),
+                message: __( 'The expense is about to be saved. Would you like to confirm your action ?' ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        this.saveExpense();
+                    }
+                }
+            })
+        },
+        saveExpense() {
+            const verb              =   this.expense.id !== undefined ? 'put' : 'post';
+            const url               =   this.expense.id !== undefined ? `/api/nexopos/v4/expenses/${this.expense.id}` : `/api/nexopos/v4/expenses`;
+            const correctConfig     =   this.configurations.filter( config => config.identifier === this.selectedConfiguration.identifier );
+
+            /**
+             * not likely to occurs, but if it does, that means we've clicked
+             * on save button before choosing the configuration.
+             */
+            if ( correctConfig.length !== 1 ) {
+                return nsSnackBar.error( __( 'No configuration were choosen. Unable to proceed.' ) ).subscribe();
+            }
+
+            /**
+             * We'll proceed a form 
+             * validation here.
+             */
+            if ( ! this.validation.validateFields( correctConfig[0].fields ) ) {
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
+            }
+
+            const firstTabFields    =   this.validation.extractFields( correctConfig[0].fields );
+            const secondTabFields   =   this.validation.extractFields( this.recurrence );
+
+            nsHttpClient[ verb ]( url,  { ...firstTabFields, ...secondTabFields })
+                .subscribe({
+                    next: result => {
+                        nsSnackBar.success( result.message ).subscribe();
+                    },
+                    error: error => {
+                        nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) ).subscribe();
+                    }
+                });
+        },
         updateSelectLabel() {
             if ( this.recurrence.length > 0 ) {
                 this.recurrence[0].options  =   this.recurrence[0].options.map( (option, key) => {
@@ -77,6 +144,7 @@ export default {
         },
         setActiveTab( tab ) {
             this.activeTab  =   tab;
+            this.updateSelectLabel();
         },
         executeCondition( field, fields ) {
             if ( field.shows ) {
@@ -107,7 +175,7 @@ export default {
              */
             if ( [ 'ns.recurring-expenses', 'ns.salary-expenses' ].includes( this.selectedConfiguration.identifier ) ) {
                 tabs.push({
-                    label: __( 'Recurrence' ),
+                    label: __( 'Conditions' ),
                     identifier: 'recurrence'
                 })
             }
@@ -116,7 +184,6 @@ export default {
         },
         async init() {
             try {
-                this.handledExpense     =   { type: undefined };
                 this.isLoading  =   true;
                 const { configurations, recurrence } = await this.loadConfiguration();
 
@@ -124,38 +191,56 @@ export default {
                 this.recurrence             =   recurrence;
                 this.originalRecurrence     =   JSON.parse( JSON.stringify(recurrence) );
 
-                // we're probably submiting an expense to edit
-                if ( this.expense !== undefined ) {
-                    this.handledExpense     =   this.expense;
-                }
-        
-                if ( this.handledExpense.type === undefined ) {
+                if ( this.expense.type === undefined ) {
                     await this.selectExpenseType();
+                } else {
+                    const expenseConfiguration  =   this.configurations.filter( configuration => configuration.identifier === this.expense.type );
+                    this.processSelectedConfiguration( expenseConfiguration[0] );
                 }
                 
                 this.isLoading  =   false;
                 this.setTabs();
             } catch( exception ) {
-
+                console.log( exception );
             }
+        },
+        processSelectedConfiguration( result ) {
+            /**
+             * everytime, we'll rebuild the 
+             * form validation for the selected type.
+             */
+            result.fields   =   this.validation.createFields( result.fields );
+
+            /**
+             * let's define if the expense is recurring or not
+             */
+            result.fields.forEach( field => {
+                if ( field.name === 'reccuring' ) {
+                    if ([ 'ns.recurring-expenses', 'ns.salary-expenses' ].includes( result.identifier ) ) {
+                        field.value =   true;
+                    } else {
+                        field.value =   false;
+                    }
+                }
+
+                if ( field.name === 'type' ) {
+                    field.value     =   result.identifier;
+                }
+            });
+
+            /**
+             * we'll use the identifier of the configuration
+             * as a type for the expense.
+             */
+            this.selectedConfiguration  =   result;
         },
         async selectExpenseType() {
             try {
                 const result    =   await new Promise( ( resolve, reject ) => {
-                    Popup.show( nsExpenseSelectorVue, { resolve, reject, configurations: this.configurations, type: this.handledExpense.type });
+                    Popup.show( nsExpenseSelectorVue, { resolve, reject, configurations: this.configurations, type: this.expense.type });
                 });
 
-                /**
-                 * everytime, we'll rebuild the 
-                 * form validation for the selected type.
-                 */
-                result.fields   =   this.validation.createFields( result.fields );
-
-                /**
-                 * we'll use the identifier of the configuration
-                 * as a type for the expense.
-                 */
-                this.selectedConfiguration  =   result;
+                this.processSelectedConfiguration( result );
             } catch( exception ) {
                 console.log( exception );
             }
@@ -167,6 +252,7 @@ export default {
                 message: __( 'By proceeding the current for and all your entries will be cleared. Would you like to proceed?' ),
                 onAction: ( action ) => {
                     if ( action ) {
+                        delete this.expense.type;
                         this.init();
                     }
                 }
@@ -190,7 +276,7 @@ export default {
 
         loadConfiguration() {
             return new Promise( ( resolve, reject ) => {
-                nsHttpClient.get( `/api/nexopos/v4/expenses/configurations` )
+                nsHttpClient.get( `/api/nexopos/v4/expenses/configurations/${this.expense.id ? this.expense.id : ''}` )
                     .subscribe({
                         next: result => {
                             resolve( result );

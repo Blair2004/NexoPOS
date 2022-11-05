@@ -4,7 +4,7 @@ use App\Http\Controllers\Dashboard\ExpensesController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( 'expenses/{id?}', [ ExpensesController::class, 'get' ])->where( 'id', '[0-9]+');
-Route::get( 'expenses/configurations', [ ExpensesController::class, 'getConfigurations' ]);
+Route::get( 'expenses/configurations/{expense?}', [ ExpensesController::class, 'getConfigurations' ]);
 Route::get( 'expenses-categories/{id?}', [ ExpensesController::class, 'getExpensesCategories' ])->where('id', '[0-9]+');
 Route::get( 'expenses-categories/{id}/expenses', [ ExpensesController::class, 'getCategoryExpenses' ]);
 Route::post( 'expenses', [ ExpensesController::class, 'post' ]);

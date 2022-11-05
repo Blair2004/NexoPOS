@@ -9,7 +9,6 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\CashFlowHistoryCrud;
-use App\Crud\ExpenseCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Expense;
 use App\Services\ExpenseService;
@@ -54,19 +53,23 @@ class ExpensesController extends DashboardController
     public function createExpense()
     {
         return $this->view( 'pages.dashboard.expenses.create', [
-            'title' =>  __( 'Create New Expense' ),
-            'description'   =>  __( 'Helps creating direct, recurring and salary expenses.' )
+            'title' => __( 'Create New Expense' ),
+            'description' => __( 'Manage your direct, reccurring and salary expenses.' ),
         ]);
     }
 
     public function editExpense( Expense $expense )
     {
-        return ExpenseCrud::form( $expense );
+        return $this->view( 'pages.dashboard.expenses.update', [
+            'title' => __( 'Update Expense' ),
+            'expense' => $expense,
+            'description' => __( 'Manage your direct, reccurring and salary expenses.' ),
+        ]);
     }
 
-    public function getConfigurations()
+    public function getConfigurations( Expense $expense )
     {
-        return $this->expenseService->getConfigurations();
+        return $this->expenseService->getConfigurations( $expense );
     }
 
     /**
@@ -77,14 +80,31 @@ class ExpensesController extends DashboardController
      */
     public function post( Request $request ) // <= need to add a validation
     {
-        $fields = $request->only([ 'name', 'active', 'category_id', 'description', 'media_id', 'value' ]);
+        $fields = $request->only([
+            'name',
+            'active',
+            'category_id',
+            'description',
+            'media_id',
+            'value',
+            'recurring',
+            'type',
+            'group_id',
+            'occurrence',
+            'occurrence_value',
+        ]);
 
         return $this->expenseService->create( $fields );
     }
 
     public function putExpenseCategory( Request $request, $id )
     {
-        $fields = $request->only([ 'name', 'category_id', 'active', 'description', 'media_id', 'value' ]);
+        $fields = $request->only([
+            'name',
+            'operation',
+            'description',
+            'account',
+        ]);
 
         return $this->expenseService->editCategory( $id, $fields );
     }
@@ -99,7 +119,19 @@ class ExpensesController extends DashboardController
      */
     public function put( Request $request, $id )
     {
-        $fields = $request->only([ 'name', 'category_id', 'description', 'media_id', 'value' ]);
+        $fields = $request->only([
+            'name',
+            'active',
+            'category_id',
+            'description',
+            'media_id',
+            'value',
+            'recurring',
+            'type',
+            'group_id',
+            'occurrence',
+            'occurrence_value',
+        ]);
 
         return $this->expenseService->edit( $id, $fields );
     }
@@ -139,7 +171,12 @@ class ExpensesController extends DashboardController
      */
     public function postExpenseCategory( Request $request )
     {
-        $fields = $request->only([ 'name', 'description', 'account', 'operation' ]);
+        $fields = $request->only([
+            'name',
+            'operation',
+            'description',
+            'account',
+        ]);
 
         return $this->expenseService->createAccount( $fields );
     }

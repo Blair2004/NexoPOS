@@ -692,21 +692,21 @@ class ExpenseService
              */
             switch ( $type ) {
                 case CashFlow::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_SALES: $label = __( 'Sales Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' );
-                break;
+                    break;
             }
 
             return $this->getDefinedAccountType( $account[ 'option' ], [
@@ -933,57 +933,58 @@ class ExpenseService
         }
     }
 
-    public function getConfigurations()
+    public function getConfigurations( Expense $expense )
     {
-        $recurringFields    =   new RecurringExpenseFields;
-        $directFields   =   new DirectExpenseFields;
-        $salaryFields   =   new SalaryExpenseFields;
+        $recurringFields = new RecurringExpenseFields( $expense );
+        $directFields = new DirectExpenseFields( $expense );
+        $salaryFields = new SalaryExpenseFields( $expense );
 
-        $configurations  =   Hook::filter( 'ns-expenses-configurations', [
+        $configurations = Hook::filter( 'ns-expenses-configurations', [
             [
-                'identifier'    =>  $directFields->getIdentifier(),
-                'label'         =>  __( 'Direct Expense' ),
-                'icon'          =>  asset( 'images/budget.png' ),
-                'fields'        =>  $directFields->get(),
+                'identifier' => $directFields->getIdentifier(),
+                'label' => __( 'Direct Expense' ),
+                'icon' => asset( 'images/budget.png' ),
+                'fields' => $directFields->get(),
             ], [
-                'identifier'    =>  $recurringFields->getIdentifier(),
-                'label'         =>  __( 'Recurring Expense' ),
-                'icon'          =>  asset( 'images/recurring.png' ),
-                'fields'        =>  $recurringFields->get(),
+                'identifier' => $recurringFields->getIdentifier(),
+                'label' => __( 'Recurring Expense' ),
+                'icon' => asset( 'images/recurring.png' ),
+                'fields' => $recurringFields->get(),
             ], [
-                'identifier'    =>  $salaryFields->getIdentifier(),
-                'label'         =>  __( 'Salary Expense' ),
-                'icon'          =>  asset( 'images/salary.png' ),
-                'fields'        =>  $salaryFields->get(),
-            ]
+                'identifier' => $salaryFields->getIdentifier(),
+                'label' => __( 'Salary Expense' ),
+                'icon' => asset( 'images/salary.png' ),
+                'fields' => $salaryFields->get(),
+            ],
         ]);
 
-        $recurrence     =   Hook::filter( 'ns-expenses-recurrence', [
+        $recurrence = Hook::filter( 'ns-expenses-recurrence', [
             [
-                'type'  =>  'select',
-                'label' =>  __( 'Condition' ),
-                'name'  =>  'condition',
-                'options'   =>  Helper::kvToJsOptions([
-                    'first_day_of_month' =>  __( 'First Day Of Month' ),
-                    'last_day_of_month' =>  __( 'Last Day Of Month' ),
-                    'x_days_after_month_starts' =>  __( '{day} after month starts' ),
-                    'x_days_before_month_ends'  =>  __( '{day} before month ends' ),
-                    'on_specific_day' =>  __( 'Every {day} of the month' ),
-                ])
+                'type' => 'select',
+                'label' => __( 'Condition' ),
+                'name' => 'occurrence',
+                'value' => $expense->occurrence ?? 'first_day_of_month',
+                'options' => Helper::kvToJsOptions([
+                    'first_day_of_month' => __( 'First Day Of Month' ),
+                    'last_day_of_month' => __( 'Last Day Of Month' ),
+                    'x_days_after_month_starts' => __( '{day} after month starts' ),
+                    'x_days_before_month_ends' => __( '{day} before month ends' ),
+                    'on_specific_day' => __( 'Every {day} of the month' ),
+                ]),
             ], [
-                'type'  =>  'number',
-                'label' =>  __( 'Days' ),
-                'name'  =>  'days',
-                'value' =>  1,
-                'shows' =>  [
-                    'condition' =>  [
+                'type' => 'number',
+                'label' => __( 'Days' ),
+                'name' => 'occurrence_value',
+                'value' => $expense->occurrence_value ?? 1,
+                'shows' => [
+                    'occurrence' => [
                         'x_days_after_month_starts',
                         'x_days_before_month_ends',
                         'on_specific_day',
-                    ]
+                    ],
                 ],
-                'description'   =>  __( 'Make sure set a day that is likely to be executed' )
-            ]
+                'description' => __( 'Make sure set a day that is likely to be executed' ),
+            ],
         ]);
 
         return compact( 'recurrence', 'configurations' );

@@ -197,12 +197,13 @@ class CoreService
      */
     public function simplifyManifest()
     {
-        $manifest   =   json_decode( file_get_contents( base_path( 'public/build/manifest.json' ) ), true );
+        $manifest = json_decode( file_get_contents( base_path( 'public/build/manifest.json' ) ), true );
 
         return collect( $manifest )
             ->mapWithKeys( fn( $value, $key ) => [ $key => asset( 'build/' . $value[ 'file' ] ) ] )
             ->filter( function( $element ) {
-                $info   =   pathinfo( $element );
+                $info = pathinfo( $element );
+
                 return $info[ 'extension' ] === 'css';
             });
     }
