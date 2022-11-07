@@ -67,6 +67,7 @@ export default {
     },    
     methods: {
         __, 
+        nsCurrency,
         
         resolveIfQueued,
 

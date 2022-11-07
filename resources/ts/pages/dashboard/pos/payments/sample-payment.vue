@@ -63,6 +63,8 @@ import nsPosDiscountPopupVue from '~/popups/ns-pos-discount-popup.vue';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';
 import { nsSnackBar } from '~/bootstrap';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     name: 'sample-payment',
     props: [ 'label', 'identifier' ],
@@ -148,6 +150,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         toggleDiscount() {
             if ( this.settings.cart_discount !== undefined && this.settings.cart_discount === true ) {
                 Popup.show( nsPosDiscountPopupVue, {
@@ -166,7 +169,7 @@ export default {
                 title: __( 'Confirm Full Payment' ),
                 message: __( 'A full payment will be made using {paymentType} for {total}' )
                     .replace( '{paymentType}', this.label )
-                    .replace( '{total}', this.$options.filters.currency( this.order.total ) ),
+                    .replace( '{total}', nsCurrency( this.order.total ) ),
                 onAction: ( action ) => {
                     if ( action ) {
                         const order     =   POS.order.getValue();
