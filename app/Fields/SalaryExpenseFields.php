@@ -13,7 +13,7 @@ class SalaryExpenseFields extends FieldsService
 {
     protected $identifier = 'ns.salary-expenses';
 
-    public function __construct( Expense $expense )
+    public function __construct( Expense $expense = null )
     {
         $this->fields = Hook::filter( 'ns-direct-expenses-fields', [
             [

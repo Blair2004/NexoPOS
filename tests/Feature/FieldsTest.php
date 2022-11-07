@@ -39,7 +39,7 @@ class FieldsTest extends TestCase
 
             $this->assertTrue(
                 $result->filter( fn( $field ) => isset( $field->name ) )->count() === $result->count(),
-                'Some fields aren\'t corretly defined.'
+                sprintf( 'Some fields aren\'t corretly defined for the class %s.', $class )
             );
         }
 

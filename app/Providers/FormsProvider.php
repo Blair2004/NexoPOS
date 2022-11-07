@@ -9,14 +9,17 @@ use App\Fields\CashRegisterCashoutFields;
 use App\Fields\CashRegisterClosingFields;
 use App\Fields\CashRegisterOpeningFields;
 use App\Fields\CustomersAccountFields;
+use App\Fields\DirectExpenseFields;
 use App\Fields\LayawayFields;
 use App\Fields\NewPasswordFields;
 use App\Fields\OrderPaymentFields;
 use App\Fields\PasswordLostFields;
 use App\Fields\PosOrderSettingsFields;
 use App\Fields\ProcurementFields;
+use App\Fields\RecurringExpenseFields;
 use App\Fields\RefundProductFields;
 use App\Fields\ResetFields;
+use App\Fields\SalaryExpenseFields;
 use App\Fields\UnitsFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
@@ -108,6 +111,15 @@ class FormsProvider extends ServiceProvider
                     break;
                 case 'ns.unit-fields':
                     return new UnitsFields;
+                    break;
+                case 'ns.direct-expenses':
+                    return new DirectExpenseFields();
+                    break;
+                case 'ns.recurring-expenses':
+                    return new RecurringExpenseFields();
+                    break;
+                case 'ns.salary-expenses':
+                    return new SalaryExpenseFields();
                     break;
                 case 'ns.unit-group-fields':
                     return new UnitsFields;

@@ -74,8 +74,6 @@ class CrudTest extends TestCase
                         $slug = str_replace( '{id?}', $entries[ 'data' ][0]->{'$id'}, $slug );
                     }
 
-                    dump( $slug . ' => ' . $config[ 'verb' ] );
-
                     /**
                      * We shouldn't have any {id} or {id?} on
                      * the URL to prevent deleting CRUD with no records.

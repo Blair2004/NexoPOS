@@ -164,6 +164,7 @@ export default {
     props: [ 'order', 'billing', 'shipping' ],
     methods: {
         __,
+        nsCurrency,
         printTable() {
             this.$htmlToPaper( 'invoice-container' )
         }

@@ -29,7 +29,8 @@ class CoreService
         public OrdersService $order,
         public NotificationService $notification,
         public ProcurementService $procurement,
-        public Options $option
+        public Options $option,
+        public MathService $math 
     ) {
         // ...
     }

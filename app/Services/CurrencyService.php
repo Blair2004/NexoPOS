@@ -225,8 +225,8 @@ class CurrencyService
      */
     public function getRaw( $value = null )
     {
-        $value = $value !== null ? (string) BigDecimal::of( $value )->dividedBy(1, $this->decimal_precision, RoundingMode::UP ) : null;
-        $main = $value === null ? (string) $this->value->dividedBy(1, $this->decimal_precision, RoundingMode::UP ) : 0;
+        $value = $value !== null ? (string) BigDecimal::of( $value )->toScale( $this->decimal_precision, RoundingMode::UP ) : null;
+        $main = $value === null ? (string) $this->value->toScale( $this->decimal_precision, RoundingMode::UP ) : 0;
 
         return floatval( $value !== null ? $value : $main );
     }
