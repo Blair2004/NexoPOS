@@ -20,7 +20,7 @@ return new class extends Migration
             $fromDate = Carbon::parse( $order->created_at );
             $toDate = ns()->date->copy()->endOfDay();
 
-            RecomputeCashFlowForDate::dispatch( $fromDate, $toDate )
+            RecomputeCashFlowForDate::dispatch( $fromDate->toDateTimeString(), $toDate->toDateTimeString() )
                 ->delay( now()->addMinute() );
         }
     }

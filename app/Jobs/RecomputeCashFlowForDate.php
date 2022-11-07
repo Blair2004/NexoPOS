@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Role;
 use App\Services\ReportService;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -39,6 +40,9 @@ class RecomputeCashFlowForDate implements ShouldQueue
             $user = Role::namespace( 'admin' )->users->first();
             Auth::login( $user );
         }
+
+        $this->fromDate     =   Carbon::parse( $this->fromDate );
+        $this->toDate     =   Carbon::parse( $this->toDate );
 
         /**
          * @var ReportService $reportService

@@ -30,7 +30,9 @@ class UpdateService
             $migrations = Migration::get()->map( fn( $migration ) => $migration->migration );
         }
 
-        $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )->map( function( $file ) {
+        $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )
+            ->filter( fn( $file ) => pathinfo( $file )[ 'extension' ] === 'php' )
+            ->map( function( $file ) {
             $fileInfo = pathinfo( $file );
 
             return $fileInfo[ 'filename' ];
@@ -41,7 +43,9 @@ class UpdateService
 
     public function getMatchingFullPath( $file )
     {
-        $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )->mapWithKeys( function( $file ) {
+        $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )
+            ->filter( fn( $file ) => pathinfo( $file )[ 'extension' ] === 'php' )
+            ->mapWithKeys( function( $file ) {
             $fileInfo = pathinfo( $file );
 
             return [ $fileInfo[ 'filename' ] => $file ];
