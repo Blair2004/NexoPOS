@@ -16,6 +16,7 @@ use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\ExpenseService;
 use App\Services\Helper;
+use App\Services\MathService;
 use App\Services\MediaService;
 use App\Services\MenuService;
 use App\Services\NotificationService;
@@ -129,7 +130,8 @@ class AppServiceProvider extends ServiceProvider
                 app()->make( OrdersService::class ),
                 app()->make( NotificationService::class ),
                 app()->make( ProcurementService::class ),
-                app()->make( Options::class )
+                app()->make( Options::class ),
+                app()->make( MathService::class )
             );
         });
 
