@@ -54,7 +54,7 @@
     "wildcard": "^2.0.0"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^35.2.1",
+    "@ckeditor/ckeditor5-build-classic": "^35.3.0",
     "@ckeditor/ckeditor5-vue": "^4.0.1",
     "@ckeditor/ckeditor5-vue2": "^3.0.1",
     "@dicebear/avatars": "^4.10.5",
