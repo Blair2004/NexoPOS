@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Classes\Hook;
 use App\Exceptions\NotEnoughPermissionException;
 use App\Models\Migration;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -207,5 +208,21 @@ class CoreService
 
                 return $info[ 'extension' ] === 'css';
             });
+    }
+
+    /**
+     * Some features must be disabled
+     * if the jobs aren't configured correctly
+     * @return bool
+     */
+    public function canPerformAsynchronousOperations(): bool
+    {
+        $lastUpdate = Carbon::parse( ns()->option->get( 'ns_cron_ping', false ) );
+
+        if ( $lastUpdate->diffInMinutes( ns()->date->now() ) > 60 || ! ns()->option->get( 'ns_cron_ping', false ) ) {
+            return false;
+        }
+
+        return true;
     }
 }

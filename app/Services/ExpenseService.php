@@ -4,11 +4,13 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Events\ExpenseAfterCreateEvent;
+use App\Events\ExpenseAfterUpdateEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Fields\DirectExpenseFields;
 use App\Fields\RecurringExpenseFields;
 use App\Fields\SalaryExpenseFields;
+use App\Fields\ScheduledExpenseField;
 use App\Models\AccountType;
 use App\Models\CashFlow;
 use App\Models\Customer;
@@ -77,6 +79,8 @@ class ExpenseService
 
             $expense->author = Auth::id();
             $expense->save();
+
+            event( new ExpenseAfterUpdateEvent( $expense, request()->all() ) );
 
             return [
                 'status' => 'success',
@@ -328,7 +332,7 @@ class ExpenseService
      */
     public function triggerExpense( $expense )
     {
-        $this->recordCashFlowHistory( $expense );
+        $histories   =   $this->recordCashFlowHistory( $expense );
 
         /**
          * a non recurring expenses
@@ -337,6 +341,8 @@ class ExpenseService
          */
         $expense->active = false;
         $expense->save();
+
+        return compact( 'expense', 'histories' );
     }
 
     public function getCategoryExpense( $id )
@@ -349,7 +355,7 @@ class ExpenseService
     public function recordCashFlowHistory( Expense $expense )
     {
         if ( ! empty( $expense->group_id  ) ) {
-            Role::find( $expense->group_id )->users->each( function( $user ) use ( $expense ) {
+            return Role::find( $expense->group_id )->users()->get()->map( function( $user ) use ( $expense ) {
                 if ( $expense->category instanceof ExpenseCategory ) {
                     $history = new CashFlow;
                     $history->value = $expense->value;
@@ -374,8 +380,12 @@ class ExpenseService
                     }
 
                     $history->save();
+
+                    return $history;
                 }
-            });
+
+                return false;
+            })->filter(); // only return valid history created
         } else {
             $history = new CashFlow;
             $history->value = $expense->value;
@@ -404,6 +414,8 @@ class ExpenseService
             }
 
             $history->save();
+
+            return collect([ $history ]);
         }
     }
 
@@ -414,53 +426,64 @@ class ExpenseService
      *
      * @return array of process results.
      */
-    public function handleRecurringExpenses()
+    public function handleRecurringExpenses( Carbon $date = null )
     {
+        if ( $date === null ) {
+            $date = $this->dateService->copy();
+        }
+        
         $processStatus = Expense::recurring()
             ->active()
             ->get()
-            ->map( function( $expense ) {
-                switch ( $expense->occurence ) {
+            ->map( function( $expense ) use ( $date ) {
+                switch ( $expense->occurrence ) {
                     case 'month_starts':
-                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth() );
+                        $expenseScheduledDate = $date->copy()->startOfMonth();
                         break;
                     case 'month_mid':
-                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays(14) );
+                        $expenseScheduledDate = $date->copy()->startOfMonth()->addDays(14);
                         break;
                     case 'month_ends':
-                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth() );
+                        $expenseScheduledDate = $date->copy()->endOfMonth();
                         break;
                     case 'x_before_month_ends':
-                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
+                        $expenseScheduledDate = $date->copy()->endOfMonth()->subDays( $expense->occurrence_value );
                         break;
                     case 'x_after_month_starts':
-                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
+                        $expenseScheduledDate = $date->copy()->startOfMonth()->addDays( $expense->occurrence_value );
+                        break;
+                    case 'on_specific_day':
+                        $expenseScheduledDate = $date->copy();
+                        $expenseScheduledDate->day = $expense->occurrence_value;
                         break;
                 }
 
-                /**
-                 * Checks if the recurring expenses about to be saved has been
-                 * already issued on the occuring day.
-                 */
-                if ( $this->dateService->isSameDay( $expenseScheduledDate ) ) {
-                    if ( ! $this->hadCashFlowRecordedAlready( $expenseScheduledDate, $expense ) ) {
-                        $this->recordCashFlowHistory( $expense );
+                if ( isset( $expenseScheduledDate ) && $expenseScheduledDate instanceof Carbon ) {
+                    /**
+                     * Checks if the recurring expenses about to be saved has been
+                     * already issued on the occuring day.
+                     */
+                    if ( $date->isSameDay( $expenseScheduledDate ) ) {
+                        if ( ! $this->hadCashFlowRecordedAlready( $expenseScheduledDate, $expense ) ) {
+                            $histories    =   $this->recordCashFlowHistory( $expense );
+
+                            return [
+                                'status' => 'success',
+                                'data' => compact( 'expense', 'histories' ),
+                                'message' => sprintf( __( 'The expense "%s" has been processed on day "%s".' ), $expense->name, $date->toDateTimeString() ),
+                            ];
+                        }
 
                         return [
-                            'status' => 'success',
-                            'message' => sprintf( __( 'The expense "%s" has been processed.' ), $expense->name ),
+                            'status' => 'failed',
+                            'message' => sprintf( __( 'The expense "%s" has already been processed.' ), $expense->name ),
                         ];
                     }
-
-                    return [
-                        'status' => 'failed',
-                        'message' => sprintf( __( 'The expense "%s" has already been processed.' ), $expense->name ),
-                    ];
                 }
 
                 return [
                     'status' => 'failed',
-                    'message' => sprintf( __( 'The expenses "%s" hasn\'t been proceesed it\'s out of date.' ), $expense->name ),
+                    'message' => sprintf( __( 'The expenses "%s" hasn\'t been proceesed, as it\'s out of date.' ), $expense->name ),
                 ];
             });
 
@@ -848,13 +871,12 @@ class ExpenseService
     {
         $startDate = Carbon::parse( $rangeStart );
         $endDate = Carbon::parse( $rangeEnds );
-        $current = ns()->date->copy();
 
         if ( $startDate->lessThan( $endDate ) && $startDate->diffInDays( $endDate ) >= 1 ) {
             while ( $startDate->isSameDay() ) {
                 ns()->date = $startDate;
 
-                $this->handleRecurringExpenses();
+                $this->handleRecurringExpenses( $startDate );
 
                 $startDate->addDay();
             }
@@ -938,24 +960,48 @@ class ExpenseService
         $recurringFields = new RecurringExpenseFields( $expense );
         $directFields = new DirectExpenseFields( $expense );
         $salaryFields = new SalaryExpenseFields( $expense );
+        $scheduledFields = new ScheduledExpenseField( $expense );
+
+        $asyncExpenses  =   [];
+        $warningMessage =   false;
+
+        /**
+         * Those features can only be enabled 
+         * if the jobs are configured correctly.
+         */
+        if ( ns()->canPerformAsynchronousOperations() ) {
+            $asyncExpenses  =   [
+                [
+                    'identifier' => RecurringExpenseFields::getIdentifier(),
+                    'label' => __( 'Recurring Expense' ),
+                    'icon' => asset( 'images/recurring.png' ),
+                    'fields' => $recurringFields->get(),
+                ], [
+                    'identifier' => SalaryExpenseFields::getIdentifier(),
+                    'label' => __( 'Salary Expense' ),
+                    'icon' => asset( 'images/salary.png' ),
+                    'fields' => $salaryFields->get(),
+                ], [
+                    'identifier' => ScheduledExpenseField::getIdentifier(),
+                    'label' => __( 'Scheduled Expense' ),
+                    'icon' => asset( 'images/schedule.png' ),
+                    'fields' => $scheduledFields->get(),
+                ]
+            ];
+        } else {
+            $warningMessage     =   sprintf( 
+                __( 'Some expenses are disabled as NexoPOS is not able to <a target="_blank" href="%s">perform asynchronous requests</a>.' ),
+                'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled'
+            );
+        }
 
         $configurations = Hook::filter( 'ns-expenses-configurations', [
             [
-                'identifier' => $directFields->getIdentifier(),
+                'identifier' => DirectExpenseFields::getIdentifier(),
                 'label' => __( 'Direct Expense' ),
                 'icon' => asset( 'images/budget.png' ),
                 'fields' => $directFields->get(),
-            ], [
-                'identifier' => $recurringFields->getIdentifier(),
-                'label' => __( 'Recurring Expense' ),
-                'icon' => asset( 'images/recurring.png' ),
-                'fields' => $recurringFields->get(),
-            ], [
-                'identifier' => $salaryFields->getIdentifier(),
-                'label' => __( 'Salary Expense' ),
-                'icon' => asset( 'images/salary.png' ),
-                'fields' => $salaryFields->get(),
-            ],
+            ], ...$asyncExpenses,
         ]);
 
         $recurrence = Hook::filter( 'ns-expenses-recurrence', [
@@ -963,30 +1009,31 @@ class ExpenseService
                 'type' => 'select',
                 'label' => __( 'Condition' ),
                 'name' => 'occurrence',
-                'value' => $expense->occurrence ?? 'first_day_of_month',
+                'value' => $expense->occurrence ?? '',
                 'options' => Helper::kvToJsOptions([
-                    'first_day_of_month' => __( 'First Day Of Month' ),
-                    'last_day_of_month' => __( 'Last Day Of Month' ),
-                    'x_days_after_month_starts' => __( '{day} after month starts' ),
-                    'x_days_before_month_ends' => __( '{day} before month ends' ),
-                    'on_specific_day' => __( 'Every {day} of the month' ),
+                    Expense::OCCURRENCE_START_OF_MONTH => __( 'First Day Of Month' ),
+                    Expense::OCCURRENCE_END_OF_MONTH => __( 'Last Day Of Month' ),
+                    Expense::OCCURRENCE_MIDDLE_OF_MONTH => __( 'Month middle Of Month' ),
+                    Expense::OCCURRENCE_X_AFTER_MONTH_STARTS => __( '{day} after month starts' ),
+                    Expense::OCCURRENCE_X_BEFORE_MONTH_ENDS => __( '{day} before month ends' ),
+                    Expense::OCCURRENCE_SPECIFIC_DAY => __( 'Every {day} of the month' ),
                 ]),
             ], [
                 'type' => 'number',
                 'label' => __( 'Days' ),
                 'name' => 'occurrence_value',
-                'value' => $expense->occurrence_value ?? 1,
+                'value' => $expense->occurrence_value ?? 0,
                 'shows' => [
                     'occurrence' => [
-                        'x_days_after_month_starts',
-                        'x_days_before_month_ends',
-                        'on_specific_day',
+                        Expense::OCCURRENCE_X_AFTER_MONTH_STARTS,
+                        Expense::OCCURRENCE_X_BEFORE_MONTH_ENDS,
+                        Expense::OCCURRENCE_SPECIFIC_DAY,
                     ],
                 ],
                 'description' => __( 'Make sure set a day that is likely to be executed' ),
             ],
         ]);
 
-        return compact( 'recurrence', 'configurations' );
+        return compact( 'recurrence', 'configurations', 'warningMessage' );
     }
 }

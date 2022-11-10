@@ -52,18 +52,26 @@ class ExpensesController extends DashboardController
 
     public function createExpense()
     {
+        if ( ! ns()->canPerformAsynchronousOperations() ) {
+            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Salary expenses as tasks aren\'t configured correctly.' ) );
+        }
+
         return $this->view( 'pages.dashboard.expenses.create', [
             'title' => __( 'Create New Expense' ),
-            'description' => __( 'Manage your direct, reccurring and salary expenses.' ),
+            'description' => __( 'Manage your direct, recurring and salary expenses.' ),
         ]);
     }
 
     public function editExpense( Expense $expense )
     {
+        if ( ! ns()->canPerformAsynchronousOperations() ) {
+            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Salary expenses as tasks aren\'t configured correctly.' ) );
+        }
+
         return $this->view( 'pages.dashboard.expenses.update', [
             'title' => __( 'Update Expense' ),
             'expense' => $expense,
-            'description' => __( 'Manage your direct, reccurring and salary expenses.' ),
+            'description' => __( 'Manage your direct, recurring and salary expenses.' ),
         ]);
     }
 
@@ -92,6 +100,7 @@ class ExpensesController extends DashboardController
             'group_id',
             'occurrence',
             'occurrence_value',
+            'scheduled_date',
         ]);
 
         return $this->expenseService->create( $fields );
@@ -131,6 +140,7 @@ class ExpensesController extends DashboardController
             'group_id',
             'occurrence',
             'occurrence_value',
+            'scheduled_date',
         ]);
 
         return $this->expenseService->edit( $id, $fields );

@@ -7,7 +7,7 @@ use App\Services\FieldsService;
 
 class NewPasswordFields extends FieldsService
 {
-    protected $identifier = 'ns.new-password';
+    protected static $identifier = 'ns.new-password';
 
     public function get()
     {

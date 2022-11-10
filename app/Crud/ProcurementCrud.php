@@ -223,7 +223,7 @@ class ProcurementCrud extends CrudService
     public function filterPostInputs( $inputs )
     {
         if ( empty( $inputs[ 'invoice_date' ] ) ) {
-            $inputs[ 'invoice_date' ] = ns()->date->getNowFormatted();
+            $inputs[ 'invoice_date' ] = ns()->date->toDateTimeString();
         }
 
         return $inputs;
@@ -238,7 +238,7 @@ class ProcurementCrud extends CrudService
     public function filterPutInputs( $inputs, Procurement $entry )
     {
         if ( empty( $inputs[ 'invoice_date' ] ) ) {
-            $inputs[ 'invoice_date' ] = ns()->date->getNowFormatted();
+            $inputs[ 'invoice_date' ] = ns()->date->toDateTimeString();
         }
 
         return $inputs;

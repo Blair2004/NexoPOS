@@ -18,7 +18,7 @@ class UpdateCommand extends Command
      *
      * @var string
      */
-    protected $description = 'An utility for updating NexoPOS 4.x and it\'s modules. Only works if the project was installed using Git.';
+    protected $description = 'An utility for updating NexoPOS and it\'s modules. Only works if the project was installed using Git.';
 
     /**
      * Create a new command instance.

@@ -285,8 +285,8 @@ class CrudService
              */
             if ( ! empty( $entry->created_at ) || ! empty( $entry->updated_at ) ) {
                 $entry->timestamps = false;
-                $entry->created_at = $entry->created_at ?: ns()->date->getNowFormatted();
-                $entry->updated_at = $entry->updated_at ?: ns()->date->getNowFormatted();
+                $entry->created_at = $entry->created_at ?: ns()->date->toDateTimeString();
+                $entry->updated_at = $entry->updated_at ?: ns()->date->toDateTimeString();
             }
 
             $entry->save();
@@ -342,7 +342,7 @@ class CrudService
         }
 
         /**
-         * @todo adding a link to edit the new entry
+         * @todo remove deprecated entry
          */
         return [
             'status' => 'success',

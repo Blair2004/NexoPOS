@@ -10,7 +10,7 @@ use App\Services\Helper;
 
 class DirectExpenseFields extends FieldsService
 {
-    protected $identifier = 'ns.direct-expenses';
+    protected static $identifier = 'ns.direct-expenses';
 
     public function __construct( Expense $expense = null )
     {
@@ -49,7 +49,7 @@ class DirectExpenseFields extends FieldsService
             ], [
                 'label' => __( 'Recurring' ),
                 'validation' => 'required|min:5',
-                'name' => 'reccuring',
+                'name' => 'recurring',
                 'type' => 'hidden',
             ], [
                 'label' => __( 'type' ),

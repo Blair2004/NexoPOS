@@ -9,13 +9,13 @@ use App\Models\Role;
 use App\Services\FieldsService;
 use App\Services\Helper;
 
-class SalaryExpenseFields extends FieldsService
+class ScheduledExpenseField extends FieldsService
 {
-    protected static $identifier = 'ns.salary-expenses';
+    protected static $identifier = 'ns.scheduled-expenses';
 
     public function __construct( Expense $expense = null )
     {
-        $this->fields = Hook::filter( 'ns-direct-expenses-fields', [
+        $this->fields = Hook::filter( 'ns-scheduled-expenses-fields', [
             [
                 'label' => __( 'Name' ),
                 'description' => __( 'Describe the direct expense.' ),
@@ -23,8 +23,14 @@ class SalaryExpenseFields extends FieldsService
                 'name' => 'name',
                 'type' => 'text',
             ], [
+                'label' => __( 'Scheduled On' ),
+                'description' => __( 'Set when the expense should be executed.' ),
+                'validation' => 'required',
+                'name' => 'scheduled_date',
+                'type' => 'datetimepicker',
+            ], [
                 'label' => __( 'Activated' ),
-                'validation' => 'required|min:5',
+                'validation' => 'required',
                 'name' => 'active',
                 'description' => __( 'If set to yes, the expense will be eligible for an execution.' ),
                 'options' => Helper::kvToJsOptions([ false => __( 'No' ), true => __( 'Yes' )]),
@@ -43,29 +49,18 @@ class SalaryExpenseFields extends FieldsService
                 'name' => 'value',
                 'type' => 'number',
             ], [
-                'label' => __( 'User Group' ),
-                'description' => __( 'The expenses will be multipled by the number of user having that role.' ),
-                'validation' => 'required',
-                'name' => 'group_id',
-                'options' => Helper::toJsOptions( Role::get()->map( function( $role ) {
-                    $role->name .= ' (' . $role->users()->count() . ')';
-
-                    return $role;
-                }), [ 'id', 'name' ]),
-                'type' => 'select',
-            ], [
                 'label' => __( 'Description' ),
                 'description' => __( 'Further details on the expense.' ),
                 'name' => 'description',
                 'type' => 'textarea',
             ], [
                 'label' => __( 'Recurring' ),
-                'validation' => 'required|min:5',
+                'validation' => 'required',
                 'name' => 'recurring',
                 'type' => 'hidden',
             ], [
                 'label' => __( 'type' ),
-                'validation' => 'required|min:5',
+                'validation' => 'required',
                 'name' => 'type',
                 'type' => 'hidden',
             ],

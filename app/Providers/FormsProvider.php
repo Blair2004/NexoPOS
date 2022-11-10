@@ -20,7 +20,9 @@ use App\Fields\RecurringExpenseFields;
 use App\Fields\RefundProductFields;
 use App\Fields\ResetFields;
 use App\Fields\SalaryExpenseFields;
+use App\Fields\ScheduledExpenseField;
 use App\Fields\UnitsFields;
+use App\Fields\UnitsGroupsFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
@@ -64,65 +66,68 @@ class FormsProvider extends ServiceProvider
 
         Hook::addFilter( 'ns.fields', function( $class, $identifier ) {
             switch ( $class ) {
-                case 'ns.login' :
+                case AuthLoginFields::getIdentifier():
                     return new AuthLoginFields;
                     break;
-                case 'ns.password-lost' :
+                case PasswordLostFields::getIdentifier():
                     return new PasswordLostFields;
                     break;
-                case 'ns.new-password' :
+                case NewPasswordFields::getIdentifier():
                     return new NewPasswordFields;
                     break;
-                case 'ns.register' :
+                case AuthRegisterFields::getIdentifier():
                     return new AuthRegisterFields;
                     break;
-                case 'ns.customers-account' :
+                case CustomersAccountFields::getIdentifier():
                     return new CustomersAccountFields;
                     break;
-                case 'ns.layaway' :
+                case LayawayFields::getIdentifier():
                     return new LayawayFields;
                     break;
-                case 'ns.refund-product':
+                case RefundProductFields::getIdentifier():
                     return new RefundProductFields;
                     break;
-                case 'ns.cash-registers-opening':
+                case CashRegisterOpeningFields::getIdentifier():
                     return new CashRegisterOpeningFields;
                     break;
-                case 'ns.cash-registers-closing':
+                case CashRegisterClosingFields::getIdentifier():
                     return new CashRegisterClosingFields;
                     break;
-                case 'ns.cash-registers-cashing':
+                case CashRegisterCashingFields::getIdentifier():
                     return new CashRegisterCashingFields;
                     break;
-                case 'ns.cash-registers-cashout':
+                case CashRegisterCashoutFields::getIdentifier():
                     return new CashRegisterCashoutFields;
                     break;
-                case 'ns.pos-order-settings':
+                case PosOrderSettingsFields::getIdentifier():
                     return new PosOrderSettingsFields;
                     break;
-                case 'ns.order-payments':
+                case OrderPaymentFields::getIdentifier():
                     return new OrderPaymentFields;
                     break;
-                case 'ns.procurement-fields':
+                case ProcurementFields::getIdentifier():
                     return new ProcurementFields;
                     break;
-                case 'ns.reset':
+                case ResetFields::getIdentifier():
                     return new ResetFields;
                     break;
-                case 'ns.unit-fields':
+                case UnitsFields::getIdentifier():
                     return new UnitsFields;
                     break;
-                case 'ns.direct-expenses':
+                case DirectExpenseFields::getIdentifier():
                     return new DirectExpenseFields();
                     break;
-                case 'ns.recurring-expenses':
+                case RecurringExpenseFields::getIdentifier():
                     return new RecurringExpenseFields();
                     break;
-                case 'ns.salary-expenses':
+                case SalaryExpenseFields::getIdentifier():
                     return new SalaryExpenseFields();
                     break;
-                case 'ns.unit-group-fields':
-                    return new UnitsFields;
+                case ScheduledExpenseField::getIdentifier():
+                    return new ScheduledExpenseField();
+                    break;
+                case UnitsGroupsFields::getIdentifier():
+                    return new UnitsGroupsFields;
                     break;
                 default:
                     return $class;

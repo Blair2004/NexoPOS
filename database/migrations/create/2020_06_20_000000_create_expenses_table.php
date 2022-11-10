@@ -30,6 +30,7 @@ return new class extends Migration
                 $table->integer( 'group_id' )->nullable();
                 $table->string( 'occurrence' )->nullable(); // 1st 15th startOfMonth, endOfMonth
                 $table->string( 'occurrence_value' )->nullable(); // 1,2,3...
+                $table->dateTime( 'scheduled_date' )->nullable();
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

@@ -61,14 +61,14 @@ export default {
             expense: {},
             originalRecurrence: [],
             validation: new FormValidation,
-            recurrence: []
+            recurrence: [],
+            warningMessage: false,
         }
     },
     computed: {
         // ...
     },
     mounted() {
-        console.log( window.nsExpenseData );
         if ( window.nsExpenseData !== undefined ) {
             this.expense    =   window.nsExpenseData;
         }
@@ -94,7 +94,7 @@ export default {
         },
         saveExpense() {
             const verb              =   this.expense.id !== undefined ? 'put' : 'post';
-            const url               =   this.expense.id !== undefined ? `/api/nexopos/v4/expenses/${this.expense.id}` : `/api/nexopos/v4/expenses`;
+            const url               =   this.expense.id !== undefined ? `/api/nexopos/v4/crud/ns.expenses/${this.expense.id}` : `/api/nexopos/v4/crud/ns.expenses`;
             const correctConfig     =   this.configurations.filter( config => config.identifier === this.selectedConfiguration.identifier );
 
             /**
@@ -110,13 +110,26 @@ export default {
              * validation here.
              */
             if ( ! this.validation.validateFields( correctConfig[0].fields ) ) {
+                console.log( correctConfig[0].fields );
                 return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
 
             const firstTabFields    =   this.validation.extractFields( correctConfig[0].fields );
             const secondTabFields   =   this.validation.extractFields( this.recurrence );
+            const merged            =   { ...firstTabFields, ...secondTabFields };
+            const crudForm          =   {
+                general: {}
+            };
 
-            nsHttpClient[ verb ]( url,  { ...firstTabFields, ...secondTabFields })
+            for( let key in merged ) {
+                if ( key === 'name' ) {
+                    crudForm[ key ]     =   merged[ key ];
+                } else {
+                    crudForm.general[ key ]     =   merged[ key ];
+                }
+            }
+
+            nsHttpClient[ verb ]( url, crudForm )
                 .subscribe({
                     next: result => {
                         nsSnackBar.success( result.message ).subscribe();
@@ -131,7 +144,7 @@ export default {
                 this.recurrence[0].options  =   this.recurrence[0].options.map( (option, key) => {
                     const referenceOption   =   this.originalRecurrence[0].options[key];
 
-                    if ([ 'x_days_after_month_starts', 'x_days_before_month_ends' ].includes( option.value ) ) {
+                    if ([ 'x_after_month_starts', 'x_before_month_ends' ].includes( option.value ) ) {
                         option.label            =   referenceOption.label.replace( '{day}', this.recurrence[1].value >= 0 && this.recurrence[1].value <= 1 ? `${this.recurrence[1].value} day` : `${this.recurrence[1].value} days` );
                         option.label            =   referenceOption.label.replace( '{day}', this.recurrence[1].value >= 0 && this.recurrence[1].value <= 1 ? `${this.recurrence[1].value} day` : `${this.recurrence[1].value} days` );
                     } else if ([ 'on_specific_day' ].includes( option.value ) ) {
@@ -185,16 +198,22 @@ export default {
         async init() {
             try {
                 this.isLoading  =   true;
-                const { configurations, recurrence } = await this.loadConfiguration();
+                const { configurations, recurrence, warningMessage } = await this.loadConfiguration();
 
                 this.configurations         =   configurations;
                 this.recurrence             =   recurrence;
+                this.warningMessage         =   warningMessage;
                 this.originalRecurrence     =   JSON.parse( JSON.stringify(recurrence) );
 
                 if ( this.expense.type === undefined ) {
                     await this.selectExpenseType();
                 } else {
                     const expenseConfiguration  =   this.configurations.filter( configuration => configuration.identifier === this.expense.type );
+
+                    if ( expenseConfiguration.length == 0 ) {
+                        return nsSnackBar.error( __( 'Unable to load the expense.' ) ).subscribe();
+                    }
+
                     this.processSelectedConfiguration( expenseConfiguration[0] );
                 }
                 
@@ -215,7 +234,7 @@ export default {
              * let's define if the expense is recurring or not
              */
             result.fields.forEach( field => {
-                if ( field.name === 'reccuring' ) {
+                if ( field.name === 'recurring' ) {
                     if ([ 'ns.recurring-expenses', 'ns.salary-expenses' ].includes( result.identifier ) ) {
                         field.value =   true;
                     } else {
@@ -237,7 +256,7 @@ export default {
         async selectExpenseType() {
             try {
                 const result    =   await new Promise( ( resolve, reject ) => {
-                    Popup.show( nsExpenseSelectorVue, { resolve, reject, configurations: this.configurations, type: this.expense.type });
+                    Popup.show( nsExpenseSelectorVue, { resolve, reject, configurations: this.configurations, type: this.expense.type, warningMessage: this.warningMessage });
                 });
 
                 this.processSelectedConfiguration( result );

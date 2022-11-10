@@ -15,6 +15,13 @@ class Expense extends NsModel
         'active' => 'boolean',
     ];
 
+    const OCCURRENCE_START_OF_MONTH = 'month_starts';
+    const OCCURRENCE_END_OF_MONTH = 'month_ends';
+    const OCCURRENCE_MIDDLE_OF_MONTH = 'month_mid';
+    const OCCURRENCE_SPECIFIC_DAY = 'on_specific_day';
+    const OCCURRENCE_X_AFTER_MONTH_STARTS = 'x_after_month_starts';
+    const OCCURRENCE_X_BEFORE_MONTH_ENDS = 'x_before_month_ends';
+
     public function category()
     {
         return $this->belongsTo( ExpenseCategory::class, 'category_id' );

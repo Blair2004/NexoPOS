@@ -33,7 +33,7 @@ class FieldsTest extends TestCase
             $object = new $class;
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'get', '/api/nexopos/v4/fields/' . $object->getIdentifier() );
+                ->json( 'get', '/api/nexopos/v4/fields/' . $class::getIdentifier() );
 
             $result = collect( json_decode( $response->getContent() ) );
 

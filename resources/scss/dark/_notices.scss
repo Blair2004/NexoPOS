@@ -11,6 +11,13 @@
 
     &.danger {
         @apply border-danger-secondary bg-danger-primary;
+
+        a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
     
         pre {
             @apply bg-pre text-primary;
@@ -19,6 +26,13 @@
     
     &.warning {
         @apply border-warning-secondary bg-warning-primary;
+
+        a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
     
         pre {
             @apply bg-pre text-primary;
@@ -27,6 +41,13 @@
     
     &.success {
         @apply border-success-secondary bg-success-primary;
+
+        a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
     
         pre {
             @apply bg-pre text-primary;
@@ -35,6 +56,13 @@
     
     &.error {
         @apply border-error-tertiary bg-error-secondary text-primary;
+
+        a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
     
         pre {
             @apply bg-pre text-primary;
@@ -42,7 +70,14 @@
     }
     
     &.info {
-        @apply border-info-secondary bg-info-primary;
+        @apply border-info-tertiary bg-info-secondary;
+
+        a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
     
         pre {
             @apply bg-pre text-primary;

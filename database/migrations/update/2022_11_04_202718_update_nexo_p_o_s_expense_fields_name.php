@@ -21,6 +21,10 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_expenses', 'occurence_value' ) ) {
                 $table->renameColumn( 'occurence_value', 'occurrence_value' );
             }
+
+            if ( ! Schema::hasColumn( 'nexopos_expenses', 'scheduled_date' ) ) {
+                $table->dateTime( 'scheduled_date' )->nullable();
+            }
         });
     }
 

@@ -46,7 +46,7 @@ class Options
 
         $defaultOptions = [
             'ns_registration_enabled' => false,
-            'ns_store_name' => 'NexoPOS 4.x',
+            'ns_store_name' => 'NexoPOS',
             'ns_pos_order_types' => [ 'takeaway', 'delivery' ],
         ];
 

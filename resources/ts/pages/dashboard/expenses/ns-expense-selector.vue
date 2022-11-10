@@ -3,6 +3,12 @@
         <div class="ns-box-header p-2 border-b flex justify-between items-center">
             <h3 class="font-bold text-xl">{{ __( 'Expense Type' ) }}</h3>
         </div>
+        <div class="p-2" v-if="warningMessage">
+            <ns-notice color="info">
+                <template #title>{{ __( 'Warning' ) }}</template>
+                <span v-html="warningMessage"></span>
+            </ns-notice>
+        </div>
         <div class="grid grid-cols-2">
             <div :class="type === configuration.identifier ? 'info' : ''" @click="selectType( configuration )" class="h-40 elevation-surface hoverable flex-col flex items-center justify-center cursor-pointer" :key="configuration.identifier" v-for="configuration of configurations">
                 <img :src="configuration.icon" class="w-20 my-2" :alt="configuration.label">
@@ -22,11 +28,13 @@ export default {
     data() {
         return {
             configurations: [],
+            warningMessage: false,
             type: null
         }
     },
     mounted() {
         this.configurations     =   this.$popupParams.configurations;
+        this.warningMessage     =   this.$popupParams.warningMessage;
         this.type   =   this.$popupParams.type
     },
     methods: {

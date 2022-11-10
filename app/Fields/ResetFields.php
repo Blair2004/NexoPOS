@@ -9,7 +9,7 @@ use App\Services\Helper;
 
 class ResetFields extends FieldsService
 {
-    protected $identifier = 'ns.reset';
+    protected static $identifier = 'ns.reset';
 
     public function get( Unit $model = null )
     {

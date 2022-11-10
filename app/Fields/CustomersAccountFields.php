@@ -7,7 +7,7 @@ use App\Services\Helper;
 
 class CustomersAccountFields extends FieldsService
 {
-    protected $identifier = 'ns.customers-account';
+    protected static $identifier = 'ns.customers-account';
 
     public function get()
     {

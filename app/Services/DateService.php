@@ -66,10 +66,10 @@ class DateService extends Carbon
     {
         switch ( $mode ) {
             case 'short':
-                return $this->now( $this->timezone )->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
+                return $this->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
                 break;
             case 'full':
-                return $this->now( $this->timezone )->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
+                return $this->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
                 break;
         }
     }

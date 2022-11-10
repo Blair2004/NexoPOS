@@ -97,7 +97,7 @@ class SetupCommand extends Command
                 'ns_store_name' => $this->ns_store_name,
             ]);
 
-            return $this->info( 'Thank you, NexoPOS 4.x has been successfully installed.' );
+            return $this->info( 'Thank you, NexoPOS has been successfully installed.' );
         } else {
             return $this->info( 'The installation has been aborded.' );
         }

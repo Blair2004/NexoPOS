@@ -32,17 +32,14 @@ class TaskSchedulingPingJob implements ShouldQueue
      */
     public function handle()
     {
-        /**
-         * @var NotificationService
-         */
-        $notification = app()->make( NotificationService::class );
-        $notification->deleteHavingIdentifier( NotificationsEnum::NSCRONDISABLED );
+        if ( env( 'QUEUE_CONNECTION' ) !== 'sync' ) {
+            /**
+             * @var NotificationService
+             */
+            $notification = app()->make( NotificationService::class );
+            $notification->deleteHavingIdentifier( NotificationsEnum::NSCRONDISABLED );
 
-        /**
-         * @var DateService
-         */
-        $date = app()->make( DateService::class );
-
-        ns()->option->set( 'ns_cron_ping', $date->toDateTimeString() );
+            ns()->option->set( 'ns_cron_ping', ns()->date->toDateTimeString() );
+        }
     }
 }

@@ -18,3 +18,13 @@
     </div>
 </div>
 @endif
+@if ( session()->has( 'infoMessage' ) )
+<div class="flex border border-blue-400 bg-blue-100 rounded-lg mb-3">
+    <div class="p-3">
+        <i class="las la-exclamation-circle text-2xl text-blue-700"></i>
+    </div>
+    <div class="flex-auto items-center flex">
+        <p class="text-blue-700 py-1">{!! session()->get( 'infoMessage' ) !!}</p>
+    </div>
+</div>
+@endif
