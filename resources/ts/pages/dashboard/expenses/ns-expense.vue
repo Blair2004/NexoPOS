@@ -110,9 +110,10 @@ export default {
              * validation here.
              */
             if ( ! this.validation.validateFields( correctConfig[0].fields ) ) {
-                console.log( correctConfig[0].fields );
                 return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
+
+            this.validation.disableFields( correctConfig[0].fields );
 
             const firstTabFields    =   this.validation.extractFields( correctConfig[0].fields );
             const secondTabFields   =   this.validation.extractFields( this.recurrence );
@@ -133,8 +134,12 @@ export default {
                 .subscribe({
                     next: result => {
                         nsSnackBar.success( result.message ).subscribe();
+                        setTimeout( ( ) => {
+                            document.location   =   result.data.editUrl;
+                        }, 1000 );
                     },
                     error: error => {
+                        this.validation.enableFields( correctConfig[0].fields );
                         nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) ).subscribe();
                     }
                 });

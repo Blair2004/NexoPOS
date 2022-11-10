@@ -105,13 +105,13 @@
                     </div>
                 </div>
                 <div class="px-2">
-                    <div class="rounded flex items-center justify-center p-1 border ">
+                    <div class="rounded border-tab-table-th-edge flex items-center justify-center p-1 border">
                         <span class="pr-2 pl-1 text-primary">
                             <i class="las la-clock"></i>
                         </span>
-                        <input placeholder="HH" ref="hours" @change="detectHoursChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input text-primary text-sm active:border-numpad-edge" v-model="hours" type="number">
+                        <input placeholder="HH" ref="hours" @change="detectHoursChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input-background outline-none text-sm active:border-numpad-edge" v-model="hours" type="number">
                         <span class="mx-1">:</span>
-                        <input placeholder="mm" ref="minutes" @change="detectMinuteChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input text-primary text-sm active:border-numpad-edge" v-model="minutes" type="number">
+                        <input placeholder="mm" ref="minutes" @change="detectMinuteChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input-background outline-none text-sm active:border-numpad-edge" v-model="minutes" type="number">
                     </div>
                 </div>
             </div>
@@ -154,6 +154,8 @@ export default {
         document.addEventListener( 'click', this.checkClickedItem );
 
         this.currentDay     =   [ undefined, null ].includes( this.date ) ? moment() : moment( this.date );
+        this.hours          =   this.currentDay.hours();
+        this.minutes        =   this.currentDay.minutes();
         this.build();
     },
     methods: {

@@ -69,7 +69,7 @@ class ExecuteDelayedExpenseJob implements ShouldQueue
             $notificationService->create([
                 'title' =>  __( 'Scheduled Expenses' ),
                 'identifier'    =>  NotificationsEnum::NSSCHEDULEDEXPENSES,
-                'description'   =>  sprintf( __( 'the expense %s was executed as scheduled on %s.' ), $this->expense->name, $dateService->getNowFormatted() ),
+                'description'   =>  sprintf( __( 'the expense "%s" was executed as scheduled on %s.' ), $this->expense->name, $dateService->getNowFormatted() ),
                 'url'   =>  ns()->route( 'ns.dashboard.expenses.edit', [ 'expense' => $this->expense->id ])
             ])->dispatchForGroup([ Role::namespace( Role::ADMIN ), Role::namespace( Role::STOREADMIN ) ]);
         } else {
