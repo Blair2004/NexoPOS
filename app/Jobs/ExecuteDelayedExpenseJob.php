@@ -75,7 +75,7 @@ class ExecuteDelayedExpenseJob implements ShouldQueue
         } else {
             Log::alert( 
                 sprintf( 
-                    __( 'The expense %s which was scheduled on %s didn\'t executed, as the server date and the scheduled date doesn\'t match. The expense scheduled date might have been updated.' ), 
+                    __( 'The expense "%s" which was scheduled on %s didn\'t executed, as the server date and the scheduled date doesn\'t match. The expense scheduled date might have been updated.' ), 
                     $this->expense->name,
                     $dateService->getNowFormatted()
                 ) 
