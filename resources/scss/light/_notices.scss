@@ -12,7 +12,7 @@
     &.danger {
         @apply border-danger-tertiary bg-danger-primary;
 
-        a {
+        p > a {
             @apply text-danger-tertiary;
             &:hover {
                 @apply underline;
@@ -27,7 +27,7 @@
     &.warning {
         @apply border-warning-tertiary bg-warning-primary;
 
-        a {
+        p > a {
             @apply text-warning-tertiary;
             &:hover {
                 @apply underline;
@@ -42,7 +42,7 @@
     &.success {
         @apply border-success-tertiary bg-success-primary;
 
-        a {
+        p > a {
             @apply text-success-tertiary;
             &:hover {
                 @apply underline;
@@ -57,7 +57,7 @@
     &.error {
         @apply border-error-tertiary bg-error-primary;
 
-        a {
+        p > a {
             @apply text-error-tertiary;
             &:hover {
                 @apply underline;
@@ -72,7 +72,7 @@
     &.info {
         @apply border-info-tertiary bg-info-primary;
 
-        a {
+        p > a {
             @apply text-info-tertiary;
             &:hover {
                 @apply underline;

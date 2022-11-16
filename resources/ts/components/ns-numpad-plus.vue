@@ -1,7 +1,7 @@
 <template>
-    <div id="numpad-holder">
+    <div id="numpad-holder" class="border-t">
         <div v-for="(keys,index) of keyRows" :key="index">
-            <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-1 text-lg">
+            <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-1 text-lg border-r">
                     <div 
                     @click="inputValue( key )"
                     :key="index" 
@@ -23,7 +23,6 @@ export default {
     props: [ 'value', 'currency', 'limit' ],
     data() {
         return {
-            screenValue: 0,
             order: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
@@ -38,8 +37,6 @@ export default {
         }
     },
     mounted() {
-        this.screenValue    =   this.value || 0;
-
         /**
          * will bind keyboard event listening
          */
@@ -77,15 +74,6 @@ export default {
             .whenVisible([ '.is-popup' ])
             .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
-    watch: {
-        value() {        
-            if ( this.value.toString().length > 0 ) {
-                this.screenValue    =   this.value;
-            } else {
-                this.screenValue    =   '';
-            }
-        }
-    },
     beforeDestroy() {
         nsHotPress.destroy( 'numpad-backspace' );
         nsHotPress.destroy( 'numpad-increase' );
@@ -95,48 +83,50 @@ export default {
     },
     methods: {
         increaseBy( key ) {
-            this.screenValue      =   ( parseFloat( key.value ) + ( parseFloat( this.screenValue ) || 0 ) ).toString();
+            this.$emit( 'changed', ( parseFloat( key.value ) + ( parseFloat( this.value ) || 0 ) ).toString() )
             this.allSelected    =   false;
         },
 
         inputValue( key ) {
+            let value   =   this.value;
+            
             if ( key.identifier === 'next' ) {
-                this.$emit( 'next', this.screenValue );
+                this.$emit( 'next', this.value );
                 return;
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {
-                    this.screenValue    =   '0';
+                    value    =   '0';
                     this.allSelected    =   false;
                 } else {
-                    this.screenValue    =   this.screenValue.toString().substr( 0, this.screenValue.length - 1 );
+                    value    =   this.value.toString().substr( 0, this.value.length - 1 );
                 }
             } else if ( key.identifier === '.' ) {
                 if ( this.allSelected ) {
-                    this.screenValue    =   '0.';
+                    value    =   '0.';
                     this.allSelected    =   false;
                 } else {
-                    if ( this.screenValue.toString().match( /^[0-9][1-9]*\.[0-9]*$/) === null ) {
-                        this.screenValue    =   this.screenValue      +=  '.';
+                    if ( value.toString().match( /^[0-9][1-9]*\.[0-9]*$/) === null ) {
+                        value    +=  '.';
                     }
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
-                if ( this.limit > 0 && this.screenValue.length >= this.limit ) {
+                if ( this.limit > 0 && this.value.length >= this.limit ) {
                     return;
                 }
                 
                 if ( this.allSelected ) {
-                    this.screenValue      =   key.value.toString();
+                    value      =   key.value.toString();
                     this.allSelected    =   false;
                 } else {
-                    this.screenValue      +=  '' + key.value.toString();
+                    value      +=  '' + key.value.toString();
 
                     if ( this.mode === 'percentage' ) {
-                        this.screenValue = this.screenValue > 100 ? 100 : this.screenValue;
+                        value = this.value > 100 ? 100 : this.value;
                     }
                 }
             } 
 
-            this.$emit( 'changed', this.screenValue );
+            this.$emit( 'changed', value );
         }
     }
 }

@@ -108,16 +108,6 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     protected $whereIn      =   [];
 
     /**
-     * Fields which will be filled during post/put
-     */
-    @php
-    $fields         =   explode( ',', $fillable );
-    foreach( $fields as &$field ) {
-        $field      =   trim( $field );
-    }
-    @endphp
-
-    /**
      * If few fields should only be filled
      * those should be listed here.
      */
@@ -134,6 +124,12 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * before the crud columns
      */
     protected $prependOptions     =   false;
+
+    /**
+     * Will make the options column available per row if
+     * set to "true". Otherwise it will be hidden.
+     */
+    protected $showOptions     =   true;
 
     /**
      * Define Constructor
@@ -164,15 +160,6 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             'edit_description'      =>  __( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
             'back_to_list'          =>  __( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
         ];
-    }
-
-    /**
-     * Check whether a feature is enabled
-     * @return boolean
-    **/
-    public function isEnabled( $feature ): bool
-    {
-        return false; // by default
     }
 
     /**
@@ -320,7 +307,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * Define Columns
      * @return array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns() 
+    {
         return [
             @foreach( $Schema::getColumnListing( $table_name ) as $column )
 '{{ $column }}'  =>  [

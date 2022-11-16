@@ -4,10 +4,10 @@ namespace App\Console;
 
 use App\Jobs\ClearHoldOrdersJob;
 use App\Jobs\DetectLowStockProductsJob;
+use App\Jobs\DetectScheduledExpenseJob;
 use App\Jobs\ExecuteRecurringExpensesJob;
 use App\Jobs\PurgeOrderStorageJob;
 use App\Jobs\StockProcurementJob;
-use App\Jobs\TaskSchedulingPingJob;
 use App\Jobs\TrackLaidAwayOrdersJob;
 use App\Services\ModulesService;
 use Illuminate\Console\Scheduling\Schedule;
@@ -45,15 +45,21 @@ class Kernel extends ConsoleKernel
         })->daily();
 
         /**
-         * Will check hourly if the script
-         * can perform asynchronous tasks.
+         * This will check if cron jobs are correctly configured
+         * and delete the generated notification if it was disabled.
          */
-        $schedule->job( new TaskSchedulingPingJob )->hourly();
+        $schedule->call( fn() => ns()->setLastCronActivity() )->everyMinute();
 
         /**
          * Will execute expenses job daily.
          */
         $schedule->job( new ExecuteRecurringExpensesJob )->daily( '00:01' );
+
+        /**
+         * Will execute scheduled expenses
+         * every minutes
+         */
+        $schedule->job( DetectScheduledExpenseJob::class )->everyMinute();
 
         /**
          * Will check procurement awaiting automatic

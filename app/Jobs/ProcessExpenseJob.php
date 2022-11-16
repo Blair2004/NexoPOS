@@ -36,31 +36,14 @@ class ProcessExpenseJob implements ShouldQueue
         /**
          * @var DateService $date
          */
-        $date   =   app()->make( DateService::class );
+        $date = app()->make( DateService::class );
 
-        if ( (bool) $this->expense->active && ! $this->expense->recurring ) {
+        if ( (bool) $this->expense->active && ! $this->expense->recurring && Carbon::parse( $this->expense->scheduled_date )->lessThan( $date->toDateTimeString() ) ) {
             /**
              * if the expense is not recurring and not scheduled
              * we'll immediately trigger it.
              */
-            if ( Carbon::parse( $this->expense->scheduled_date )->lessThan( $date )  ) {
-                $expenseService->triggerExpense( $this->expense );
-            } else {
-                /**
-                 * Here we'll schedule the expense to run
-                 * at the scheduled date. If for any reason while running the scheduled date
-                 * no longer match the server date, the execution will be prevented.
-                 */
-                $diffInMinutes  =   ns()
-                    ->date
-                    ->diffInMinutes( ns()->date->createFromTimeString( 
-                        $this->expense->scheduled_date,
-                        ns()->date->getTimezone()
-                    ) );
-
-                ExecuteDelayedExpenseJob::dispatch( $this->expense )
-                    ->delay( now()->copy()->addMinutes( $diffInMinutes ) ); // 
-            }
+            $expenseService->triggerExpense( $this->expense );
         }
     }
 }

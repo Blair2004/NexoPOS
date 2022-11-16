@@ -16,15 +16,43 @@ class Expense extends NsModel
     ];
 
     const OCCURRENCE_START_OF_MONTH = 'month_starts';
+
     const OCCURRENCE_END_OF_MONTH = 'month_ends';
+
     const OCCURRENCE_MIDDLE_OF_MONTH = 'month_mid';
+
     const OCCURRENCE_SPECIFIC_DAY = 'on_specific_day';
+
     const OCCURRENCE_X_AFTER_MONTH_STARTS = 'x_after_month_starts';
+
     const OCCURRENCE_X_BEFORE_MONTH_ENDS = 'x_before_month_ends';
+
+    const TYPE_SCHEDULED = 'ns.scheduled-expenses';
+
+    const TYPE_RECURRING = 'ns.recurring-expenses';
+
+    const TYPE_SALARY = 'ns.salary-expenses';
+
+    const TYPE_DIRECT = 'ns.direct-expenses';
 
     public function category()
     {
-        return $this->belongsTo( ExpenseCategory::class, 'category_id' );
+        return $this->belongsTo( AccountType::class, 'category_id' );
+    }
+
+    public function scopeScheduled( $query )
+    {
+        return $query->where( 'type', self::TYPE_SCHEDULED );
+    }
+
+    public function scopeScheduledAfterDate( $query, $date )
+    {
+        return $query->where( 'scheduled_date', '>=', $date );
+    }
+
+    public function scopeScheduledBeforeDate( $query, $date )
+    {
+        return $query->where( 'scheduled_date', '<=', $date );
     }
 
     public function scopeRecurring( $query )

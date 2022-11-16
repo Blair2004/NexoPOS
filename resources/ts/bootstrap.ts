@@ -12,11 +12,13 @@ import { Popup } from "~/libraries/popup";
 import { EventEmitter, HttpClient, SnackBar, State, FloatingNotice } from "./libraries/libraries";
 import FormValidation from "./libraries/form-validation";
 import Url from "./libraries/url";
+import countdown from "./libraries/countdown";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
 import { __, __m } from "./libraries/lang";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
+import { timespan } from "./libraries/timespan";
 
 
 declare global {
@@ -34,7 +36,9 @@ declare global {
         popupResolver: any,
         popupCloser: any,
         Pusher:any,
-        Echo: any
+        Echo: any,
+        timespan: any,
+        countdown: any
     }
 };
 
@@ -53,6 +57,8 @@ window.FloatingNotice   =   <any>FloatingNotice;
 window.nsHooks          =   createHooks();
 window.popupResolver    =   popupResolver,
 window.popupCloser      =   popupCloser,
+window.countdown        =   countdown;
+window.timespan         =   timespan;
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
 

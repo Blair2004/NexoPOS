@@ -29,7 +29,7 @@
                     <div class="p-2" v-if="order">
                         <div class="border shadow p-2 w-full flex justify-between items-center elevation-surface">
                             <span>{{ __( 'Product Taxes' ) }}</span>
-                            <span>{{ order.products_tax_value | currency  }}</span>
+                            <span>{{ nsCurrency( order.products_tax_value )  }}</span>
                         </div>
                     </div>
                 </ns-tabs-item>

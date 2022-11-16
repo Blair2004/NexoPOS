@@ -115,16 +115,16 @@ class FormsProvider extends ServiceProvider
                     return new UnitsFields;
                     break;
                 case DirectExpenseFields::getIdentifier():
-                    return new DirectExpenseFields();
+                    return new DirectExpenseFields;
                     break;
                 case RecurringExpenseFields::getIdentifier():
-                    return new RecurringExpenseFields();
+                    return new RecurringExpenseFields;
                     break;
                 case SalaryExpenseFields::getIdentifier():
-                    return new SalaryExpenseFields();
+                    return new SalaryExpenseFields;
                     break;
                 case ScheduledExpenseField::getIdentifier():
-                    return new ScheduledExpenseField();
+                    return new ScheduledExpenseField;
                     break;
                 case UnitsGroupsFields::getIdentifier():
                     return new UnitsGroupsFields;

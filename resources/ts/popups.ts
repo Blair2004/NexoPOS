@@ -1,13 +1,13 @@
-import { default as nsOrderPreview } from '~/popups/ns-orders-preview-popup.vue';
-import { default as nsProductPreview } from '~/popups/ns-products-preview.vue';
-import { default as nsAlertPopup } from '~/popups/ns-alert-popup.vue';
-import { default as nsConfirmPopup } from '~/popups/ns-pos-confirm-popup.vue';
-import { default as nsPromptPopup } from '~/popups/ns-prompt-popup.vue';
-import { default as nsMediaPopup } from '~/pages/dashboard/ns-media.vue';
-import { default as nsProcurementQuantity } from '~/popups/ns-procurement-quantity.vue';
-import { default as nsOrdersRefund } from '~/popups/ns-orders-refund-popup.vue';
-import { default as nsSelectPopup } from '~/popups/ns-select-popup.vue';
-import { default as nsPOSLoadingPopup } from '~/popups/ns-pos-loading-popup.vue';
+import nsAlertPopup from '~/popups/ns-alert-popup.vue';
+import nsConfirmPopup from '~/popups/ns-pos-confirm-popup.vue';
+import nsMediaPopup from '~/pages/dashboard/ns-media.vue';
+import nsOrderPreview from '~/popups/ns-orders-preview-popup.vue';
+import nsOrdersRefund from '~/popups/ns-orders-refund-popup.vue';
+import nsPOSLoadingPopup from '~/popups/ns-pos-loading-popup.vue';
+import nsProcurementQuantity from '~/popups/ns-procurement-quantity.vue';
+import nsProductPreview from '~/popups/ns-products-preview.vue';
+import nsPromptPopup from '~/popups/ns-prompt-popup.vue';
+import nsSelectPopup from '~/popups/ns-select-popup.vue';
 
 const popups    =   { 
     nsOrderPreview,

@@ -38,7 +38,7 @@
                         <div class="my-2 px-2 h-12 flex justify-end items-center border elevation-surface">
                             {{ nsCurrency( inputValue ) }}
                         </div>
-                        <ns-numpad :floating="true" @next="submitPayment( $event )" @changed="updateValue( $event )" :value="inputValue"></ns-numpad>
+                        <ns-numpad-plus :floating="true" @next="submitPayment( $event )" @changed="updateValue( $event )" :value="inputValue"></ns-numpad-plus>
                     </div>
                 </div>
                 <div v-if="order.payment_status === 'paid'" class="flex items-center justify-center h-full">
@@ -95,6 +95,7 @@ export default {
         nsCurrency,
 
         updateValue( value ) {
+            console.log( value );
             this.inputValue     =   value;
         },
         loadPaymentFields() {

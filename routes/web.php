@@ -48,7 +48,13 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
  * vie server. For some reason we're unable to
  * configure that correctly on vite.config.js
  */
-Route::get( '__vite_ping', fn() => redirect( file_get_contents( base_path( 'public/hot' ) ) . '/__vite_ping' ) );
+Route::get( '__vite_ping', function() {
+    $filePath = base_path( 'public/hot' );
+
+    if ( file_exists( $filePath ) ) {
+        return redirect( file_get_contents( $filePath ) . '/__vite_ping' );
+    }
+});
 
 /**
  * for local Vue 3 components development

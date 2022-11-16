@@ -364,7 +364,7 @@ class CrudService
      */
     public function isEnabled( $feature ): bool| null
     {
-        return @$this->features[ $feature ];
+        return $this->features[ $feature ] ?? false;
     }
 
     /**
@@ -1193,7 +1193,7 @@ class CrudService
              * This pull the creation link. That link should takes the user
              * to the creation form.
              */
-            'createUrl' => Hook::filter( $instance::method( 'getLinks' ), $instance->getLinks() )[ 'create' ] ?? '#',
+            'createUrl' => Hook::filter( $instance::method( 'getFilteredLinks' ), $instance->getFilteredLinks() )[ 'create' ] ?? false,
 
             /**
              * Provided to render the side menu.
@@ -1420,5 +1420,33 @@ class CrudService
                 }
             }
         }
+    }
+
+    /**
+     * We want to restrict links if matching
+     * permissons is explicitely disabled by the user
+     *
+     * @return array
+     */
+    public function getFilteredLinks()
+    {
+        $links = $this->getLinks();
+
+        $mapping = [
+            'create' => [ 'post', 'create' ],
+            'read' => [ 'list' ],
+            'update' => [ 'put', 'update' ],
+            'delete' => [ 'delete' ],
+        ];
+
+        return collect( $links )
+            ->filter( function( $value, $key ) use ( $mapping ) {
+                $rightVerb = collect( $mapping )->map( fn( $value, $mapKey ) => (
+                    in_array( $key, $value ) ? $mapKey : false
+                ))->filter();
+
+                return $this->getPermission( $rightVerb->first() ?: null );
+            })
+            ->toArray();
     }
 }

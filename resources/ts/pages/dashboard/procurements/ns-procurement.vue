@@ -7,6 +7,7 @@ import nsManageProducts from '~/pages/dashboard/procurements/manage-products.vue
 import { Tax } from "~/libraries/tax";
 import nsProcurementProductOptionsVue from '~/popups/ns-procurement-product-options.vue';
 import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
 export default {
     name: 'ns-procurement',
     mounted() {
@@ -123,6 +124,7 @@ export default {
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
     methods: {
         __,
+        nsCurrency,
 
         computeTotal() {
 
@@ -351,7 +353,7 @@ export default {
         submit() {
 
             if ( this.form.products.length === 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-products' ] ? this.$slots[ 'error-no-products' ][0].text : __( 'Unable to proceed, no product were provided.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
+                return nsSnackBar.error( __( 'Unable to proceed, no product were provided.' ), __( 'OK' ) )
                     .subscribe();
             }
 
@@ -368,7 +370,7 @@ export default {
             const invalidProducts   =   this.form.products.filter( product => product.procurement.$invalid );
 
             if ( invalidProducts.length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-invalid-products' ] ? this.$slots[ 'error-invalid-products' ][0].text : __( 'Unable to proceed, one or more product has incorrect values.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
+                return nsSnackBar.error( __( 'Unable to proceed, one or more product has incorrect values.' ), __( 'OK' ) )
                     .subscribe();
             }
 
@@ -379,12 +381,12 @@ export default {
                  */
                 this.setTabActive( this.activeTab );
 
-                return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : __( 'Unable to proceed, the procurement form is not valid.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
+                return nsSnackBar.error( __( 'Unable to proceed, the procurement form is not valid.' ), __( 'OK' ) )
                     .subscribe();
             }
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-submit-url' ] ? this.$slots[ 'error-no-submit-url' ][0].text : __( 'Unable to submit, no valid submit URL were provided.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
+                return nsSnackBar.error( __( 'Unable to submit, no valid submit URL were provided.' ), __( 'OK' ) )
                     .subscribe();
             }
 
@@ -477,106 +479,111 @@ export default {
                                 {{ tab.label }}
                             </div>
                         </div>
-                        <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg shadow p-2" v-if="activeTab.identifier === 'details'">
-                            <div class="-mx-4 flex flex-wrap" v-if="form.tabs">
-                                <div class="flex px-4 w-full md:w-1/2 lg:w-1/3" :key="index" v-for="(field, index) of form.tabs.general.fields">
-                                    <ns-field :field="field"></ns-field>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg shadow p-2 " v-if="activeTab.identifier === 'products'">
-                            <div class="mb-2">
-                                <div class="input-group info flex border-2 rounded overflow-hidden">
-                                    <input
-                                        v-model="searchValue"
-                                        type="text" 
-                                        :placeholder="$slots[ 'search-placeholder' ] ? $slots[ 'search-placeholder' ][0].text : 'SKU, Barcode, Name'"
-                                        class="flex-auto text-primary outline-none h-10 px-2">
-                                </div>
-                                <div class="h-0">
-                                    <div class="shadow bg-floating-menu relative z-10">
-                                        <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b hover:bg-floating-menu-hover border-floating-menu-edge p-2 text-primary">
-                                            <span class="block font-bold text-primary">{{ product.name }}</span>
-                                            <span class="block text-sm text-priamry">{{ __( 'SKU' ) }} : {{ product.sku }}</span>
-                                            <span class="block text-sm text-primary">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
-                                        </div>
+                        <div class="ns-tab-item" v-if="activeTab.identifier === 'details'">
+                            <div class="card-body rounded-br-lg rounded-bl-lg shadow p-2">
+                                <div class="-mx-4 flex flex-wrap" v-if="form.tabs">
+                                    <div class="flex px-4 w-full md:w-1/2 lg:w-1/3" :key="index" v-for="(field, index) of form.tabs.general.fields">
+                                        <ns-field :field="field"></ns-field>
                                     </div>
                                 </div>
                             </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full ns-table">
-                                    <thead>
-                                        <tr>
-                                            <td v-for="( column, key ) of form.columns" width="200" :key="key" class="text-primary p-2 border">{{ column.label }}</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'error border-2 border-error-primary' : ''">
-                                            <template v-for="( column, key ) of form.columns" >
-                                                <td :key="key" v-if="column.type === 'name'" class="p-2 text-primary border">
-                                                    <span class="font-semibold">{{ product.name }}</span>
-                                                    <div class="flex justify-between">
-                                                        <div class="flex -mx-1 flex-col">
-                                                            <div class="px-1">
-                                                                <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
+                        </div>
+                        <div class="ns-tab-item" v-if="activeTab.identifier === 'products'">
+                            <div class="card-body rounded-br-lg rounded-bl-lg shadow p-2">
+
+                                <div class="mb-2">
+                                    <div class="input-group info flex border-2 rounded overflow-hidden">
+                                        <input
+                                            v-model="searchValue"
+                                            type="text" 
+                                            :placeholder="__( 'SKU, Barcode, Name' )"
+                                            class="flex-auto text-primary outline-none h-10 px-2">
+                                    </div>
+                                    <div class="h-0">
+                                        <div class="shadow bg-floating-menu relative z-10">
+                                            <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b hover:bg-floating-menu-hover border-floating-menu-edge p-2 text-primary">
+                                                <span class="block font-bold text-primary">{{ product.name }}</span>
+                                                <span class="block text-sm text-priamry">{{ __( 'SKU' ) }} : {{ product.sku }}</span>
+                                                <span class="block text-sm text-primary">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full ns-table">
+                                        <thead>
+                                            <tr>
+                                                <td v-for="( column, key ) of form.columns" width="200" :key="key" class="text-primary p-2 border">{{ column.label }}</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'error border-2 border-error-primary' : ''">
+                                                <template v-for="( column, key ) of form.columns">                                                                                                       
+                                                    <td :key="key" v-if="column.type === 'tax_group_id'" class="p-2 text-primary border">
+                                                        <div class="flex items-start">
+                                                            <div class="input-group rounded border-2">
+                                                                <select @change="updateLine( index )" v-model="product.procurement.tax_group_id" class="p-2">
+                                                                    <option v-for="option of taxes" :key="option.id" :value="option.id">{{ option.name }}</option>
+                                                                </select>
                                                             </div>
                                                         </div>
-                                                        <div class="flex -mx-1 flex-col">
-                                                            <div class="px-1">
-                                                                <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
+                                                    </td>
+                                                    <td :key="key" v-if="column.type === 'name'" class="p-2 text-primary border">
+                                                        <span class="font-semibold">{{ product.name }}</span>
+                                                        <div class="flex justify-between">
+                                                            <div class="flex -mx-1 flex-col">
+                                                                <div class="px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex -mx-1 flex-col">
+                                                                <div class="px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td :key="key" v-if="column.type === 'text'" class="p-2 w-3 text-primary border">
-                                                    <div class="flex items-start">
-                                                        <div class="input-group rounded border-2">
-                                                            <input @change="updateLine( index )" type="text" v-model="product.procurement[ key ]" class="w-24 p-2">
+                                                    </td> 
+                                                    <td :key="key" v-if="column.type === 'text'" class="p-2 w-3 text-primary border">
+                                                        <div class="flex items-start">
+                                                            <div class="input-group rounded border-2">
+                                                                <input @change="updateLine( index )" type="text" v-model="product.procurement[ key ]" class="w-24 p-2">
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td :key="key" v-if="column.type === 'tax_group_id'" class="p-2 text-primary border">
-                                                    <div class="flex items-start">
-                                                        <div class="input-group rounded border-2">
-                                                            <select @change="updateLine( index )" v-model="product.procurement.tax_group_id" class="p-2">
-                                                                <option v-for="option of taxes" :key="option.id" :value="option.id">{{ option.name }}</option>
-                                                            </select>
+                                                    </td>
+                                                    <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-primary border">
+                                                        <div class="flex items-start">
+                                                            <div class="input-group rounded border-2">
+                                                                <select @change="updateLine( index )" v-model="product.procurement[ key ]" class="p-2">
+                                                                    <option v-for="option of column.options" :key="option.value" :value="option.value">{{ option.label }}</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-primary border">
-                                                    <div class="flex items-start">
-                                                        <div class="input-group rounded border-2">
-                                                            <select @change="updateLine( index )" v-model="product.procurement[ key ]" class="p-2">
-                                                                <option v-for="option of column.options" :key="option.value" :value="option.value">{{ option.label }}</option>
-                                                            </select>
+                                                    </td>
+                                                    <td :key="key" v-if="column.type === 'currency'" class="p-2 text-primary border">
+                                                        <div class="flex items-start flex-col justify-end">
+                                                            <span class="text-sm text-primary">{{ nsCurrency( product.procurement[ key ] ) }}</span>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td :key="key" v-if="column.type === 'currency'" class="p-2 text-primary border">
-                                                    <div class="flex items-start flex-col justify-end">
-                                                        <span class="text-sm text-primary">{{ product.procurement[ key ] | currency }}</span>
-                                                    </div>
-                                                </td>
-                                                <td :key="key" v-if="column.type === 'unit_quantities'" class="p-2 text-primary border">
-                                                    <div class="flex items-start">
-                                                        <div class="input-group rounded border-2">
-                                                            <select @change="fetchLastPurchasePrice( index )" v-model="product.procurement.unit_id" class="p-2 w-32">
-                                                                <option v-for="option of product.unit_quantities" :key="option.id" :value="option.unit.id">{{ option.unit.name }}</option>
-                                                            </select>
+                                                    </td>
+                                                    <td :key="key" v-if="column.type === 'unit_quantities'" class="p-2 text-primary border">
+                                                        <div class="flex items-start">
+                                                            <div class="input-group rounded border-2">
+                                                                <select @change="fetchLastPurchasePrice( index )" v-model="product.procurement.unit_id" class="p-2 w-32">
+                                                                    <option v-for="option of product.unit_quantities" :key="option.id" :value="option.unit.id">{{ option.unit.name }}</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                            </template>
-                                        </tr>
-                                        <tr class="text-primary">
-                                            <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'tax_value' )"></td>
-                                            <td class="p-2 border">{{ totalTaxValues | currency }}</td>
-                                            <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'total_purchase_price' ) - ( Object.keys( form.columns ).indexOf( 'tax_value' ) + 1 )"></td>
-                                            <td class="p-2 border">{{ totalPurchasePrice | currency }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                    </td>
+                                                </template>
+                                            </tr>
+                                            <tr class="text-primary">
+                                                <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'tax_value' )"></td>
+                                                <td class="p-2 border">{{ nsCurrency( totalTaxValues ) }}</td>
+                                                <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'total_purchase_price' ) - ( Object.keys( form.columns ).indexOf( 'tax_value' ) + 1 )"></td>
+                                                <td class="p-2 border">{{ nsCurrency( totalPurchasePrice ) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>

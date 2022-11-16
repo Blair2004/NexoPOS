@@ -14,15 +14,15 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start ns-notice error">
+                    <div class="p-2 flex justify-between items-start border ns-notice error">
                         <div>
                             <h4 class="text-semibold">
-                                <span class="text-white">{{ __( 'Discount' ) }}</span>
-                                <span class="text-white ml-1" v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
-                                <span class="text-white ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
+                                <span class="text-primary">{{ __( 'Discount' ) }}</span>
+                                <span class="text-primary ml-1" v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
+                                <span class="text-primary ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
                             </h4>
                         </div>
-                        <div class="font-semibold">{{ nsCurrency( order.discount ) }}</div>
+                        <div class="font-semibold text-primary">{{ nsCurrency( order.discount ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -34,25 +34,25 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start ns-notice error">
+                    <div class="p-2 flex justify-between items-start border ns-notice error">
                         <div>
                             <h4 class="text-semibold">
                                 {{ __( 'Coupons' ) }}
                             </h4>
                         </div>
-                        <div class="font-semibold">{{ nsCurrency( order.total_coupons ) }}</div>
+                        <div class="font-semibold text-primary">{{ nsCurrency( order.total_coupons ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start ns-notice info">
+                    <div class="p-2 flex justify-between items-start border ns-notice info">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Total' ) }}</h4>
                         </div>
-                        <div class="font-semibold">{{ nsCurrency( order.total ) }}</div>
+                        <div class="font-semibold text-primary">{{ nsCurrency( order.total ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start ns-notice warning">
+                    <div class="p-2 flex justify-between items-start border ns-notice warning">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Taxes' ) }}</h4>
                         </div>
@@ -195,6 +195,8 @@ import { Popup } from '~/libraries/popup';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import nsOrdersRefundPopupVue from '~/popups/ns-orders-refund-popup.vue';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     props: [ 'order' ],
     data() {
@@ -210,6 +212,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         submitProcessingChange() {
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Would you proceed ?' ),

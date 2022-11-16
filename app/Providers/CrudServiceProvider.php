@@ -12,6 +12,7 @@ use App\Crud\CustomerOrderCrud;
 use App\Crud\CustomerRewardCrud;
 use App\Crud\ExpenseCategoryCrud;
 use App\Crud\ExpenseCrud;
+use App\Crud\ExpenseHistoryCrud;
 use App\Crud\GlobalProductHistoryCrud;
 use App\Crud\HoldOrderCrud;
 use App\Crud\OrderCrud;
@@ -100,6 +101,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.providers-procurements': return ProviderProcurementsCrud::class;
                 case 'ns.customers-account-history': return CustomerAccountCrud::class;
                 case 'ns.providers-products': return ProviderProductsCrud::class;
+                case 'ns.expense-history': return ExpenseHistoryCrud::class;
             }
 
             return $namespace;

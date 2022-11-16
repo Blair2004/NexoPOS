@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Classes\Hook;
+use App\Enums\NotificationsEnum;
 use App\Exceptions\NotEnoughPermissionException;
+use App\Jobs\CheckTaskSchedulingConfigurationJob;
 use App\Models\Migration;
+use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +34,7 @@ class CoreService
         public NotificationService $notification,
         public ProcurementService $procurement,
         public Options $option,
-        public MathService $math 
+        public MathService $math
     ) {
         // ...
     }
@@ -213,16 +216,131 @@ class CoreService
     /**
      * Some features must be disabled
      * if the jobs aren't configured correctly
+     *
      * @return bool
      */
     public function canPerformAsynchronousOperations(): bool
     {
-        $lastUpdate = Carbon::parse( ns()->option->get( 'ns_cron_ping', false ) );
+        $lastUpdate = Carbon::parse( ns()->option->get( 'ns_jobs_last_activity', false ) );
 
-        if ( $lastUpdate->diffInMinutes( ns()->date->now() ) > 60 || ! ns()->option->get( 'ns_cron_ping', false ) ) {
+        if ( $lastUpdate->diffInMinutes( ns()->date->now() ) > 60 || ! ns()->option->get( 'ns_jobs_last_activity', false ) ) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Check if the tasks scheduling is configured or
+     * will emit a notification to help fixing it.
+     *
+     * @return void
+     */
+    public function checkTaskSchedulingConfiguration()
+    {
+        if ( ns()->option->get( 'ns_jobs_last_activity', false ) === false ) {
+            /**
+             * @var NotificationsEnum;
+             */
+            $this->emitNotificationForTaskSchedulingMisconfigured();
+
+            /**
+             * force dispatching the job
+             * to force check the tasks status.
+             */
+            CheckTaskSchedulingConfigurationJob::dispatch();
+        } else {
+            /**
+             * @var DateService
+             */
+            $date = app()->make( DateService::class );
+            $lastUpdate = Carbon::parse( ns()->option->get( 'ns_jobs_last_activity' ) );
+
+            if ( $lastUpdate->diffInMinutes( $date->now() ) > 60 ) {
+                $this->emitNotificationForTaskSchedulingMisconfigured();
+
+                /**
+                 * force dispatching the job
+                 * to force check the tasks status.
+                 */
+                CheckTaskSchedulingConfigurationJob::dispatch();
+            }
+        }
+    }
+
+    /**
+     * This will update the last time
+     * the cron has been active
+     *
+     * @return void
+     */
+    public function setLastCronActivity()
+    {
+        /**
+         * @var NotificationService
+         */
+        $notification = app()->make( NotificationService::class );
+        $notification->deleteHavingIdentifier( NotificationsEnum::NSCRONDISABLED );
+
+        ns()->option->set( 'ns_cron_last_activity', ns()->date->toDateTimeString() );
+    }
+
+    /**
+     * Will check if the cron has been active recently
+     * and delete a ntoification that has been generated for that.
+     *
+     * @return void
+     */
+    public function checkCronConfiguration()
+    {
+        if ( ns()->option->get( 'ns_cron_last_activity', false ) === false ) {
+            $this->emitCronMisconfigurationNotification();
+        } else {
+            /**
+             * @var DateService
+             */
+            $date = app()->make( DateService::class );
+            $lastUpdate = Carbon::parse( ns()->option->get( 'ns_cron_last_activity' ) );
+
+            if ( $lastUpdate->diffInMinutes( $date->now() ) > 60 ) {
+                $this->emitCronMisconfigurationNotification();
+            }
+        }
+    }
+
+    /**
+     * Emit a notification when Cron aren't
+     * correctly configured.
+     *
+     * @return void
+     */
+    private function emitCronMisconfigurationNotification()
+    {
+        $notification = app()->make( NotificationService::class );
+        $notification->create([
+            'title' => __( 'Cron Disabled' ),
+            'identifier' => NotificationsEnum::NSCRONDISABLED,
+            'source' => 'system',
+            'url' => 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
+            'description' => __( "Cron jobs aren't configured correctly on NexoPOS. This might restrict necessary features. Click here to learn how to fix it." ),
+        ])->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+    }
+
+    /**
+     * Emit a notification when workers aren't
+     * correctly configured.
+     *
+     * @return void
+     */
+    private function emitNotificationForTaskSchedulingMisconfigured()
+    {
+        $notification = app()->make( NotificationService::class );
+        $notification->create([
+            'title' => __( 'Task Scheduling Disabled' ),
+            'identifier' => NotificationsEnum::NSWORKERDISABLED,
+            'source' => 'system',
+            'url' => 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
+            'description' => __( 'NexoPOS is unable to schedule background tasks. This might restrict necessary features. Click here to learn how to fix it.' ),
+        ])->dispatchForGroup( Role::namespace( Role::ADMIN ) );
     }
 }

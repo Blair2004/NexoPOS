@@ -72,6 +72,10 @@
         p {
             @apply text-primary;
         }
+
+        .date {
+            @apply text-gray-400;
+        }
     
         @apply border-box-edge;
     }

@@ -33,10 +33,10 @@ class UpdateService
         $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )
             ->filter( fn( $file ) => pathinfo( $file )[ 'extension' ] === 'php' )
             ->map( function( $file ) {
-            $fileInfo = pathinfo( $file );
+                $fileInfo = pathinfo( $file );
 
-            return $fileInfo[ 'filename' ];
-        });
+                return $fileInfo[ 'filename' ];
+            });
 
         return collect( $files )->diff( $migrations );
     }
@@ -46,10 +46,10 @@ class UpdateService
         $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )
             ->filter( fn( $file ) => pathinfo( $file )[ 'extension' ] === 'php' )
             ->mapWithKeys( function( $file ) {
-            $fileInfo = pathinfo( $file );
+                $fileInfo = pathinfo( $file );
 
-            return [ $fileInfo[ 'filename' ] => $file ];
-        });
+                return [ $fileInfo[ 'filename' ] => $file ];
+            });
 
         return $files[ $file ];
     }

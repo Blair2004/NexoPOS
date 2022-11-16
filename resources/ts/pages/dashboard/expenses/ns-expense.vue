@@ -1,6 +1,17 @@
 <template>
-    <div v-if="isLoading" class="h-half w-full flex items-center justify-center">
+    <div v-if="isLoading && ! unavailableType" class="h-half w-full flex items-center justify-center">
         <ns-spinner></ns-spinner>
+    </div>
+    <div v-if="unavailableType && ! isLoading" class="flex items-center justify-center">
+        <ns-notice color="warning">
+            <template #title>{{ __( 'Unable to edit this expense' ) }}</template>
+            <template #description>
+                {{ __( 'This expense was created with a type that is no longer available. This type is no longer available because NexoPOS is unable to perform background requests.' ) }}
+            </template>
+            <template #controls>
+                <ns-button target="_blank" href="https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app" type="warning">{{ __( 'Learn More' ) }}</ns-button>
+            </template>
+        </ns-notice>
     </div>
     <div v-if="tabs.length > 0 && ! isLoading">
         <ns-tabs :active="activeTab" @active="setActiveTab( $event )">
@@ -43,7 +54,7 @@
 </template>
 <script>
 import { nsSnackBar } from '~/bootstrap';
-import { nsConfirmPopup } from '~/components/components';
+import { nsAlertPopup, nsConfirmPopup } from '~/components/components';
 import { nsCurrency } from '~/filters/currency';
 import FormValidation from '~/libraries/form-validation';
 import { __ } from '~/libraries/lang';
@@ -58,6 +69,7 @@ export default {
             selectedConfiguration: {},
             isLoading: false,
             tabs: [],
+            unavailableType: false,
             expense: {},
             originalRecurrence: [],
             validation: new FormValidation,
@@ -216,7 +228,13 @@ export default {
                     const expenseConfiguration  =   this.configurations.filter( configuration => configuration.identifier === this.expense.type );
 
                     if ( expenseConfiguration.length == 0 ) {
-                        return nsSnackBar.error( __( 'Unable to load the expense.' ) ).subscribe();
+                        this.unavailableType    =   true;
+                        this.isLoading          =   false;
+
+                        return Popup.show( nsAlertPopup, {
+                            title: __( 'Unable to load the Expense' ),
+                            message: __( 'You cannot edit this expense if NexoPOS cannot perform background requests.' )
+                        });
                     }
 
                     this.processSelectedConfiguration( expenseConfiguration[0] );

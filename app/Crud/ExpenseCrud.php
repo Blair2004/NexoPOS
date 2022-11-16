@@ -464,6 +464,14 @@ class ExpenseCrud extends CrudService
             'url' => ns()->url( '/dashboard/' . 'expenses' . '/edit/' . $entry->id ),
         ]);
 
+        $entry->addAction( 'history', [
+            'label' => __( 'History' ),
+            'namespace' => 'history',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'expenses' . '/history/' . $entry->id ),
+        ]);
+
         $entry->addAction( 'delete', [
             'label' => __( 'Delete' ),
             'namespace' => 'delete',

@@ -1,0 +1,1 @@
+import{_ as n}from"./ns-numpad.294977cb.js";import{o as s,m as e,k as p}from"./bootstrap.7115ed90.js";const r={name:"ns-pos-loading-popup"};function t(a,c,_,i,m,f){const o=p("ns-spinner");return s(),e(o)}var l=n(r,[["render",t]]);export{l as default};

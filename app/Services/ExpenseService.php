@@ -332,7 +332,7 @@ class ExpenseService
      */
     public function triggerExpense( $expense )
     {
-        $histories   =   $this->recordCashFlowHistory( $expense );
+        $histories = $this->recordCashFlowHistory( $expense );
 
         /**
          * a non recurring expenses
@@ -364,21 +364,6 @@ class ExpenseService
                     $history->author = $expense->author;
                     $history->name = str_replace( '{user}', ucwords( $user->username ), $expense->name );
                     $history->expense_category_id = $expense->category->id;
-
-                    /**
-                     * Just in case we want to set the CashFlow as having been
-                     * created at a specific moment
-                     */
-                    if ( isset( $expense->created_at ) ) {
-                        $history->timestamps = false;
-                        $history->created_at = $expense->created_at;
-                    }
-
-                    if ( isset( $expense->updated_at ) ) {
-                        $history->timestamps = false;
-                        $history->updated_at = $expense->updated_at;
-                    }
-
                     $history->save();
 
                     return $history;
@@ -398,21 +383,6 @@ class ExpenseService
             $history->register_history_id = $expense->register_history_id ?? 0; // if the cash flow is created from a register transaction
             $history->customer_account_history_id = $expense->customer_account_history_id ?? 0; // if the cash flow is created from a customer payment.
             $history->expense_category_id = $expense->category->id;
-
-            /**
-             * Just in case we want to set the CashFlow as having been
-             * created at a specific moment
-             */
-            if ( isset( $expense->created_at ) ) {
-                $history->timestamps = false;
-                $history->created_at = $expense->created_at;
-            }
-
-            if ( isset( $expense->updated_at ) ) {
-                $history->timestamps = false;
-                $history->updated_at = $expense->updated_at;
-            }
-
             $history->save();
 
             return collect([ $history ]);
@@ -431,7 +401,7 @@ class ExpenseService
         if ( $date === null ) {
             $date = $this->dateService->copy();
         }
-        
+
         $processStatus = Expense::recurring()
             ->active()
             ->get()
@@ -465,7 +435,7 @@ class ExpenseService
                      */
                     if ( $date->isSameDay( $expenseScheduledDate ) ) {
                         if ( ! $this->hadCashFlowRecordedAlready( $expenseScheduledDate, $expense ) ) {
-                            $histories    =   $this->recordCashFlowHistory( $expense );
+                            $histories = $this->recordCashFlowHistory( $expense );
 
                             return [
                                 'status' => 'success',
@@ -962,15 +932,15 @@ class ExpenseService
         $salaryFields = new SalaryExpenseFields( $expense );
         $scheduledFields = new ScheduledExpenseField( $expense );
 
-        $asyncExpenses  =   [];
-        $warningMessage =   false;
+        $asyncExpenses = [];
+        $warningMessage = false;
 
         /**
-         * Those features can only be enabled 
+         * Those features can only be enabled
          * if the jobs are configured correctly.
          */
         if ( ns()->canPerformAsynchronousOperations() ) {
-            $asyncExpenses  =   [
+            $asyncExpenses = [
                 [
                     'identifier' => RecurringExpenseFields::getIdentifier(),
                     'label' => __( 'Recurring Expense' ),
@@ -986,10 +956,10 @@ class ExpenseService
                     'label' => __( 'Scheduled Expense' ),
                     'icon' => asset( 'images/schedule.png' ),
                     'fields' => $scheduledFields->get(),
-                ]
+                ],
             ];
         } else {
-            $warningMessage     =   sprintf( 
+            $warningMessage = sprintf(
                 __( 'Some expenses are disabled as NexoPOS is not able to <a target="_blank" href="%s">perform asynchronous requests</a>.' ),
                 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled'
             );

@@ -12,14 +12,9 @@ import { __ } from "~/libraries/lang";
 import popupResolver from "~/libraries/popup-resolver";
 import popupCloser from "~/libraries/popup-closer";
 
-/**
- * @var {ExtendedVue}
- */
-const nsOrderPreviewPopup   =   {
-    filters: {
-        nsCurrency
-    },
-    name: 'ns-preview-popup',
+export default {
+    name: 'ns-orders-preview-popup',
+    props: [ 'orderData' ],
     data() {
         return {
             active: 'details',
@@ -48,6 +43,7 @@ const nsOrderPreviewPopup   =   {
         __,
         popupResolver,
         popupCloser,
+        nsCurrency,
 
         closePopup( action = false ) {
             this.popupResolver( action );
@@ -180,14 +176,6 @@ const nsOrderPreviewPopup   =   {
         this.popupCloser();
     }
 }
-
-/**
- * in order to make sure the popup
- * is available globally.
- */
-window.nsOrderPreviewPopup      =   nsOrderPreviewPopup;
-
-export default nsOrderPreviewPopup;
 </script>
 <template>
     <div class="h-95vh w-95vw md:h-6/7-screen md:w-6/7-screen overflow-hidden shadow-xl ns-box flex flex-col">
@@ -199,7 +187,7 @@ export default nsOrderPreviewPopup;
                 <ns-close-button @click="closePopup(true)"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 overflow-scroll ns-box-body flex flex-auto">
+        <div class="p-2 ns-box-body overflow-hidden flex flex-auto">
             <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
                 <ns-tabs-item :label="__( 'Details' )" identifier="details" class="overflow-y-auto">
@@ -209,19 +197,19 @@ export default nsOrderPreviewPopup;
                 <!-- End Summary -->
 
                 <!-- Payment Component -->
-                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded', 'partially_refunded' ].includes( order.payment_status )" :label="__( 'Payments' )" identifier="payments" class="overflow-y-auto">
+                <ns-tabs-item :visible="! [ 'order_void', 'hold', 'refunded', 'partially_refunded' ].includes( order.payment_status )" :label="__( 'Payments' )" identifier="payments">
                     <ns-order-payment @changed="refresh()" :order="order"></ns-order-payment>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Refund -->
-                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" :label="__( 'Refund & Return' )" identifier="refund" class="flex overflow-y-auto">
+                <ns-tabs-item :visible="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" :label="__( 'Refund & Return' )" identifier="refund">
                     <ns-order-refund @loadTab="setActive( $event )" @changed="refresh()" :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Instalment -->
-                <ns-tabs-item v-if="[ 'partially_paid', 'unpaid' ].includes( order.payment_status ) && order.support_instalments" :label="__( 'Installments' )" identifier="instalments" class="flex overflow-y-auto">
+                <ns-tabs-item :visible="[ 'partially_paid', 'unpaid' ].includes( order.payment_status ) && order.support_instalments" :label="__( 'Installments' )" identifier="instalments">
                     <ns-order-instalments @changed="refresh()" :order="order"></ns-order-instalments>
                 </ns-tabs-item>
                 <!-- End Instalment -->

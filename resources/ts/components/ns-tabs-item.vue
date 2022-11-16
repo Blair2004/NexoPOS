@@ -1,6 +1,6 @@
 <template>
-    <div :label="label" :identifier="identifier" class="ns-tab-item">
-        <div v-if="selectedTab === identifier" class="border rounded flex-auto" :class="( padding || 'p-4' )">
+    <div :class="selectedTab.identifier !== identifier ? 'hidden' : ''" :label="label" :identifier="identifier" class="ns-tab-item flex flex-auto overflow-hidden">
+        <div v-if="selectedTab.identifier === identifier" class="border rounded flex-auto overflow-y-auto" :class="( padding || 'p-4' )">
             <slot></slot>
         </div>
     </div>
@@ -17,8 +17,8 @@ export default {
         // ....
     },
     mounted() {
-        this.tabStateSubscriber     =   this.$parent.tabState.subscribe( identifier => {
-            this.selectedTab    =   identifier;
+        this.tabStateSubscriber     =   this.$parent.tabState.subscribe( tab => {
+            this.selectedTab    =   tab;
         })
     },
     beforeUnmount() {

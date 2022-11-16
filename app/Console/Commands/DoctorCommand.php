@@ -19,6 +19,7 @@ class DoctorCommand extends Command
         {--fix-users-attributes} 
         {--fix-orders-products} 
         {--fix-customers}
+        {--fix-domains}
         {--fix-duplicate-options}';
 
     /**
@@ -69,6 +70,12 @@ class DoctorCommand extends Command
             $doctorService->fixCustomers();
 
             return $this->info( 'The customers were fixed.' );
+        }
+
+        if ( $this->option( 'fix-domains' ) ) {
+            $doctorService->fixDomains();
+
+            return $this->info( 'The domain is correctly configured.' );
         }
 
         if ( $this->option( 'fix-orders-products' ) ) {

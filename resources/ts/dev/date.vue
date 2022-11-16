@@ -36,7 +36,7 @@ export default {
     </ns-page-title>
     <ns-tabs :active="active" @active="active = $event">
         <ns-tabs-item identifier="general" label="General">
-            
+            <div style="height:2000px">A</div>
         </ns-tabs-item>
         <ns-tabs-item identifier="demo" label="Demo">
             <ns-datepicker @set="date = $event" :date="date"></ns-datepicker>

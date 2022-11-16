@@ -22,6 +22,9 @@
                                     <ns-close-button @click="closeNotice( $event, notification )"></ns-close-button>
                                 </div>
                                 <p class="py-1 text-sm">{{ notification.description }}</p>
+                                <div class="flex justify-end">
+                                    <span class="text-xs date">{{ timespan( notification.updated_at ) }}</span>
+                                </div>
                             </div>
                         </div>
                         <div v-if="notifications.length === 0" class="h-full w-full flex items-center justify-center">
@@ -45,6 +48,7 @@ import { __ } from '~/libraries/lang';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import nsCloseButton from '~/components/ns-close-button.vue';
 import { nsNumberAbbreviate } from '~/filters/currency';
+import { timespan } from '~/libraries/timespan';
 
 export default {
     name: 'ns-notifications',
@@ -82,6 +86,7 @@ export default {
     },
     methods: {
         __,
+        timespan,
         nsNumberAbbreviate,
         pushNotificationIfNew( notification ) {
             const exists     =   this.notifications.filter( _notification => _notification.id === notification.id ).length > 0;

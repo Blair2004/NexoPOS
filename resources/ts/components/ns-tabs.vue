@@ -1,8 +1,14 @@
 <template>
-    <div class="tabs flex flex-col flex-auto ns-tab" :selected-tab="activeComponent.identifier">
+    <div class="tabs flex flex-col flex-auto ns-tab overflow-hidden" :selected-tab="activeComponent.identifier">
         <div class="header ml-4 flex justify-between" style="margin-bottom: -1px;">
             <div class="flex flex-auto">
-                <div :key="identifier" v-for="( tab , identifier ) of childrens" @click="toggle( tab )" :class="active === tab.identifier ? 'border-b-0 active z-10' : 'border inactive'" class="tab rounded-tl rounded-tr border  px-3 py-2 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+                <div 
+                    :key="identifier" 
+                    v-for="( tab , identifier ) of childrens" 
+                    @click="toggle( tab )" 
+                    :class="active === tab.identifier ? 'border-b-0 active z-10' : 'border inactive'" 
+                    class="tab rounded-tl rounded-tr border  px-3 py-2 cursor-pointer" 
+                    style="margin-right: -1px">{{ tab.label }}</div>
             </div>
             <div>
                 <slot name="extra"></slot>
@@ -44,18 +50,27 @@ export default {
         toggle( tab ) {
             this.$emit( 'active', tab.identifier );
             this.$emit( 'changeTab', tab.identifier );
-            this.tabState.next( tab.identifier );
+            this.tabState.next( tab );
         },
         buildChildrens( active ) {
             this.childrens  =   Array.from( this.$el.querySelectorAll( '.ns-tab-item' ) ).map( element => {
                 const identifier =  element.getAttribute( 'identifier' ) || undefined;
+                
+                let visible     =   true;
+
+                if ( element.getAttribute( 'visible' ) ) {
+                    visible     =   element.getAttribute( 'visible' ) === 'true' ? true : false;
+                }
+
                 return {
                     el: element,
                     active: active && active === identifier ? true : false,
                     identifier,
+                    initialized: false,
+                    visible,
                     label: element.getAttribute( 'label' ) || __( 'Unamed Tab' )
                 }
-            });
+            }).filter( child => child.visible );
 
             /**
              * if no tabs is selected

@@ -70,10 +70,10 @@
                 </div>
                 <div class="elevation-surface border font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Screen' ) }}</span>
-                    <span>{{ nsCurrency( screenValue ) }}</span>
+                    <span>{{ nsCurrency( screen ) }}</span>
                 </div>
                 <div>
-                    <ns-numpad :currency="true" @changed="updateScreen( $event )" :value="screen" @next="proceedPayment( $event )"></ns-numpad>
+                    <ns-numpad-plus :currency="true" @changed="updateScreen( $event )" :value="screen" @next="proceedPayment( $event )"></ns-numpad-plus>
                 </div>
             </div>
         </div>
@@ -90,6 +90,7 @@ import { Popup } from '~/libraries/popup';
 import { __ } from '~/libraries/lang';
 import Print from '~/libraries/print';
 import { nsNumpad } from '~/components/components';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
     components: {
@@ -97,16 +98,6 @@ export default {
     },
     props: [ 'order' ],
     computed: {
-        screenValue() {
-            let number    =   parseInt( 
-                1 + ( new Array( parseInt( ns.currency.ns_currency_precision ) ) )
-                .fill('')
-                .map( _ => 0 )
-                .join('') 
-            )
-            const amount    =   this.screen  / number;
-            return amount;
-        },
         total() {
             if ( this.refundables.length > 0 ) {
                 return this.refundables.map( product => parseFloat( product.unit_price ) * parseFloat( product.quantity ) )
@@ -149,7 +140,8 @@ export default {
     }, 
     methods: {
         __,
-
+        nsCurrency,
+        
         updateScreen( value ) {
             this.screen     =   value;
         },
@@ -171,7 +163,7 @@ export default {
                 return nsSnackBar.error( __( 'There is nothing to refund.' ) ).subscribe();
             }
 
-            if ( this.screenValue === 0 ) {
+            if ( this.screen === 0 ) {
                 return nsSnackBar.error( __( 'Please provide a valid payment amount.' ) ).subscribe();
             }
 
@@ -189,7 +181,7 @@ export default {
         doProceed() {
             const data      =   {
                 products            :   this.refundables,
-                total               :   this.screenValue,
+                total               :   this.screen,
                 payment             :   this.selectedPaymentGateway,
                 refund_shipping     :   this.refundShipping
             }

@@ -137,6 +137,7 @@ if ( Auth::check() ) {
     </div>
     @section( 'layout.dashboard.footer' )
         @include( '../common/footer' )
+        @vite([ 'resources/ts/popups.ts' ])
         @vite([ 'resources/ts/app.ts' ])
     @show
 </body>
