@@ -11,7 +11,7 @@ countdown.setFormat({
 });
 
 export const timespan = function( date ) {
-    const from  =   moment( ns.date.current );
+    const from  =   moment( ns.date.current, 'YYYY-MM-DD HH:mm:ss' );
     const now   =   moment( date );
     const comparison    =   from.isBefore( now ) ? 'after' : 'before';
 
@@ -19,6 +19,7 @@ export const timespan = function( date ) {
     const diffInDays        =   Math.abs( from.diff( now, 'days' ) ) > 0;
     const diffInHours       =   Math.abs( from.diff( now, 'hours' ) ) > 0;
     const diffInMinutes     =   Math.abs( from.diff( now, 'minutes' ) ) > 0;
+    const diffInSeconds     =   Math.abs( from.diff( now, 'seconds' ) ) > 0;
 
     let unit;
 
@@ -30,6 +31,8 @@ export const timespan = function( date ) {
         unit    =   countdown.HOURS;
     } else if ( diffInMinutes ) {
         unit    =   countdown.MINUTES;
+    } else if ( diffInSeconds ) {
+        unit    =   countdown.SECONDS;
     } else {
         unit    =   countdown.MONTHS|countdown.DAYS|countdown.HOURS|countdown.MINUTES;
     }

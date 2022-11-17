@@ -845,7 +845,7 @@ class CrudService
              *
              * @todo add support for default casting.
              */
-            $casts = ( new $this->model )->casts;
+            $casts = ( new $this->model )->getCasts();
 
             if ( ! empty( $casts ) ) {
                 foreach ( $casts as $column => $cast ) {

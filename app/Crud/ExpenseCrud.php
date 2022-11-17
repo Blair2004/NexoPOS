@@ -397,6 +397,11 @@ class ExpenseCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
+            'type' => [
+                'label' => __( 'Type' ),
+                '$direction' => '',
+                '$sort' => false,
+            ],
             'expense_category_name' => [
                 'label' => __( 'Category' ),
                 '$direction' => '',
@@ -436,24 +441,7 @@ class ExpenseCrud extends CrudService
     public function setActions( CrudEntry $entry, $namespace )
     {
         $entry->value = (string) ns()->currency->value( $entry->value );
-        $entry->recurring = (bool) $entry->recurring ? __( 'Yes' ) : __( 'No' );
-
-        switch ( $entry->occurrence ) {
-            case Expense::OCCURRENCE_X_AFTER_MONTH_STARTS : $entry->occurrence = __( 'Month Starts' );
-                break;
-            case Expense::OCCURRENCE_MIDDLE_OF_MONTH : $entry->occurrence = __( 'Month Middle' );
-                break;
-            case Expense::OCCURRENCE_END_OF_MONTH : $entry->occurrence = __( 'Month Ends' );
-                break;
-            case Expense::OCCURRENCE_X_AFTER_MONTH_STARTS : $entry->occurrence = __( 'X Days After Month Starts' );
-                break;
-            case Expense::OCCURRENCE_X_BEFORE_MONTH_ENDS : $entry->occurrence = __( 'X Days Before Month Ends' );
-                break;
-            case Expense::OCCURRENCE_SPECIFIC_DAY : $entry->occurrence = __( 'On Specific Day' );
-                break;
-            default: $entry->occurrence = __( 'Unknown Occurance' );
-                break;
-        }
+        // $entry->recurring = (bool) $entry->recurring ? __( 'Yes' ) : __( 'No' );        
 
         // you can make changes here
         $entry->addAction( 'edit', [

@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Casts\CurrencyCast;
+use App\Casts\ExpenseOccurrenceCast;
+use App\Casts\ExpenseTypeCast;
+use App\Casts\YesNoBoolCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Expense extends NsModel
@@ -11,8 +15,12 @@ class Expense extends NsModel
     protected $table = 'nexopos_' . 'expenses';
 
     protected $casts = [
-        'recurring' => 'boolean',
-        'active' => 'boolean',
+        'recurring'     => 'boolean',
+        'active'        => 'boolean',
+        'type'          =>  ExpenseTypeCast::class,
+        'occurrence'    =>  ExpenseOccurrenceCast::class,
+        'recurring'     =>  YesNoBoolCast::class,
+        'value'         =>  CurrencyCast::class,
     ];
 
     const OCCURRENCE_START_OF_MONTH = 'month_starts';
