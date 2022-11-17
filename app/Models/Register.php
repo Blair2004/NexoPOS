@@ -4,6 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property string $printer_address
+ * @property string $description
+ * @property integer $author
+ * @property float $balance
+ * @property \Carbon\Carbon $updated_at
+*/
 class Register extends NsModel
 {
     use HasFactory;

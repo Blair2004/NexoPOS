@@ -5,6 +5,12 @@ namespace App\Models;
 use App\Events\DashboardMonthAfterCreatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property float $total_expenses
+ * @property integer $month_of_year
+ * @property \Carbon\Carbon $updated_at
+*/
 class DashboardMonth extends NsModel
 {
     use HasFactory;

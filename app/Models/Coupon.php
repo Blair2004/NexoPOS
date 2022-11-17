@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property string $type
+ * @property float $limit_usage
+ * @property \Carbon\Carbon $updated_at
+ * @property integer $author
+*/
 class Coupon extends NsModel
 {
     use HasFactory;

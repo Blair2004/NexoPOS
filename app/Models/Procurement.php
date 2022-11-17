@@ -10,6 +10,15 @@ use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property string $uuid
+ * @property integer $author
+ * @property float $tax_value
+ * @property bool $automatic_approval
+ * @property \Carbon\Carbon $updated_at
+ * @property string $description
+*/
 class Procurement extends NsModel
 {
     use HasFactory;

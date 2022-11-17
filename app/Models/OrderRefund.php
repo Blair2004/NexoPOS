@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property integer $author
+ * @property float $shipping
+ * @property string $payment_method
+ * @property \Carbon\Carbon $updated_at
+*/
 class OrderRefund extends NsModel
 {
     use HasFactory;

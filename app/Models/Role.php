@@ -6,6 +6,13 @@ use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Collection;
 
+/**
+ * @property integer $total_stores
+ * @property string $dashid
+ * @property string $description
+ * @property bool $locked
+ * @property \Carbon\Carbon $updated_at
+*/
 class Role extends NsRootModel
 {
     use HasFactory;

@@ -8,6 +8,15 @@ use App\Casts\ExpenseTypeCast;
 use App\Casts\YesNoBoolCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property string $type
+ * @property integer $author
+ * @property string $description
+ * @property float $value
+ * @property bool $active
+ * @property \Carbon\Carbon $scheduled_date
+*/
 class Expense extends NsModel
 {
     use HasFactory;

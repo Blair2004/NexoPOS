@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property integer $id
+ * @property integer $author
+ * @property string $uuid
+ * @property \Carbon\Carbon $updated_at
+*/
 class CustomerAddress extends NsModel
 {
     use HasFactory;

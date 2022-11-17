@@ -5,6 +5,14 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property integer $user_id
+ * @property string $source
+ * @property string $description
+ * @property bool $dismissable
+ * @property \Carbon\Carbon $updated_at
+*/
 class Notification extends NsModel
 {
     use HasFactory;

@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property string $uuid
+ * @property string $description
+ * @property integer $author
+ * @property \Carbon\Carbon $updated_at
+*/
 class AccountType extends NsModel
 {
     use HasFactory;

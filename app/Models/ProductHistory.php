@@ -4,6 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property integer $author
+ * @property string $uuid
+ * @property float $total_price
+ * @property string $description
+ * @property \Carbon\Carbon $updated_at
+*/
 class ProductHistory extends NsModel
 {
     use HasFactory;

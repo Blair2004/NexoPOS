@@ -7,6 +7,13 @@ use App\Events\CashFlowHistoryAfterDeletedEvent;
 use App\Events\CashFlowHistoryAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property integer $author
+ * @property string $status
+ * @property float $value
+ * @property \Carbon\Carbon $updated_at
+*/
 class CashFlow extends NsModel
 {
     use HasFactory;

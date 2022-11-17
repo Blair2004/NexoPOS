@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use ReflectionClass;
@@ -23,6 +24,18 @@ class DevShortCutCommand extends Command
      */
     protected $description = 'Perform various shortcut commands';
 
+    protected $patterForClassWithoutComments  =   "/(use (?:\w|\W)*;\n*|namespace (?:\w|\W)*;\n)(\nclass)/";
+
+    protected $typeMapping  =   [
+        'bigint'    =>  'integer',
+        'string'    =>  'string',
+        'datetime'  =>  '\Carbon\Carbon',
+        'text'      =>  'string',
+        'integer'   =>  'integer',
+        'boolean'   =>  'bool',
+        'float'     =>  'float'
+    ];
+
     /**
      * Execute the console command.
      *
@@ -31,7 +44,7 @@ class DevShortCutCommand extends Command
     public function handle()
     {
         return match( $this->argument( 'argument' ) ) {
-            'model-attributes'  =>  $this->setModelAttributes()
+            'model-attributes'  =>  $this->table([ __( 'File Name' ), __( 'Status' )], $this->setModelAttributes())
         };
     }
 
@@ -39,33 +52,69 @@ class DevShortCutCommand extends Command
     {
         $files  =   Storage::disk( 'ns' )->files( 'app/Models' );
 
-        collect( $files )->each( function( $file ) {
+        $bar = $this->output->createProgressBar(count($files));
+
+        $bar->start();
+
+        $result    =    collect( $files )->map( function( $file ) use ( $bar ) {
             $path   =   pathinfo( $file );
             $firstSlice     =   ucwords( str_replace( '/', '\\', $path[ 'dirname' ] ) );
             $className  =   $firstSlice . '\\' . $path[ 'filename' ];
+
+            $bar->advance();
 
             if ( ! ( new ReflectionClass( $className ) )->isAbstract() ) {
                 $model      =   new $className;
                 $columns    =   Schema::getColumnListing( $model->getTable() );
     
                 $withTypes  =   collect( $columns )->mapWithKeys( fn( $value ) => [ Schema::getColumnType( $model->getTable(), $value ) => $value ]);
+                $content    =   file_get_contents( base_path( $file ) );
                 
-                $this->fileContentHasClassComments( $file );
+                if ( $this->fileContentHasClassComments( $file, $content ) ) {
+                    $preparedComments   =   $this->prepareComments( $withTypes );
 
+                    $finalContent   =   $this->replacePreparedComments( $preparedComments, $content );
 
+                    file_put_contents( base_path( $file ), $finalContent );
+
+                    return [$file, __( 'Done' )];
+                }
             }
-        });
+
+            return false;
+        })->filter();
+
+        $bar->finish();
+
+        return $result;
     }
 
-    protected function fileContentHasClassComments( $file )
+    protected function replacePreparedComments( $preparedComments, $content )
     {
-        // $pattern =   "/\/\*(?:\*| )*\n(?: |\W|\w)*\n *\*\/\nclass *\w*/";
-        $pattern =   "/(use (?:\w|\W)*;\n*|namespace (?:\w|\W)*;\n)(\nclass)/";
-        $content =   file_get_contents( base_path( $file ) );
-        $matches =   [];
+        return preg_replace( $this->patterForClassWithoutComments, "$1" . $preparedComments . "$2", $content );
+    }
 
-        if( preg_match_all( $pattern, $content, $matches ) ) {
-            dump( $file, $matches );
+    protected function prepareComments( Collection $withTypes )
+    {
+        $withTypes  =   $withTypes->map( function( $value, $key ) {
+            return " * @property " . ( $this->typeMapping[ $key ] ?? 'mixed' ) . " $" . $value;
+        });
+
+        /**
+         * only compatible files 
+         * are handled.
+         */
+        if ( $withTypes->count() > 0 ) {
+            $withTypes->prepend( "\n/**" );
+            $withTypes->push( "*/" );
+            return $withTypes->join( "\n" );
         }
+
+        return '';
+    }
+
+    protected function fileContentHasClassComments( $file, $content )
+    {
+        return preg_match_all( $this->patterForClassWithoutComments, $content, $matches );
     }
 }

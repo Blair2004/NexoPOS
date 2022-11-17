@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $role_id
+*/
 class RolePermission extends NsRootModel
 {
     use HasFactory;
