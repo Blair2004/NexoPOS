@@ -37,6 +37,7 @@ import popupCloser from "@/libraries/popup-closer";
 import popupResolver from '@/libraries/popup-resolver';
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
+import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 export default {
     name: 'ns-pos-search-product',
     data() {
@@ -77,8 +78,21 @@ export default {
         popupResolver,
 
         addToCart( product ) {
-            POS.addToCart( product );
             this.$popup.close();
+
+            if ( parseInt( product.accurate_tracking ) === 1 ) {
+                return Popup.show( nsPosConfirmPopupVue, {
+                    title: __( 'Unable to add the product' ),
+                    message: __( 'The product "{product}" can\'t be added from a search field, as "Accurate Tracking" is enabled. Would you like to learn more ?' ).replace( '{product}', product.name ),
+                    onAction: ( action ) => {
+                        if ( action ) {
+                            window.open( 'https://my.nexopos.com/en/troubleshooting/accurate-tracking', '_blank' );
+                        }
+                    }
+                });
+            }
+
+            POS.addToCart( product );
         },
 
         search() {
@@ -93,6 +107,9 @@ export default {
                             this.addToCart( this.products[0] );
                         }
 
+                        if ( this.products.length === 0 ) {
+                            return nsSnackBar.info( __( 'No result to result match the search value provided.' ) ).subscribe();
+                        }
                     },
                     error: ( error ) => {
                         this.isLoading  =   false;

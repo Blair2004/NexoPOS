@@ -2128,7 +2128,8 @@ class OrdersService
             ->products()
             ->get()
             ->each( function( OrderProduct $orderProduct) {
-                $product = $orderProduct->load( 'product' );
+                $orderProduct->load( 'product' );
+                $product    =   $orderProduct->product;
                 /**
                  * we do proceed by doing an initial return
                  * only if the product is not a quick product/service
