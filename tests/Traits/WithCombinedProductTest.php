@@ -13,14 +13,19 @@ trait WithCombinedProductTest
         ns()->option->set( 'ns_invoice_merge_similar_products', 'yes' );
 
         $testService = new TestService;
-        $orderDetails = $testService->prepareOrder( ns()->date->now(), [], [], [
-            'products' => function() {
-                $product = Product::where( 'tax_group_id', '>', 0 )->with( 'unit_quantities' )->first();
+        $orderDetails = $testService->prepareOrder( 
+            date: ns()->date->now(), 
+            orderDetails: [], 
+            productDetails: [], 
+            config: [
+                'products' => function() {
+                    $product = Product::where( 'tax_group_id', '>', 0 )->with( 'unit_quantities' )->first();
 
-                return collect([ $product, $product ]);
-            },
-            'allow_quick_products' => false,
-        ]);
+                    return collect([ $product, $product ]);
+                },
+                'allow_quick_products' => false,
+            ]
+        );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );

@@ -1265,6 +1265,13 @@ trait WithOrderTest
             orderDetails: [
                 'customer_id' => $customer->id,
             ],
+            config: [
+                'products'  =>  function() {
+                    return Product::where( 'STOCK_MANAGEMENT', Product::STOCK_MANAGEMENT_ENABLED )
+                        ->where( 'type', '<>', Product::TYPE_GROUPED )
+                        ->get();
+                }
+            ],
             date: ns()->date->now()
         );
 
@@ -1336,12 +1343,10 @@ trait WithOrderTest
                      * Let's check if the quantity has been restored
                      * to the default value.
                      */
-                    if ( ! (float) $orderProduct->actual_quantity == (float) $orderProduct->previous_quantity + (float) $orderProduct->quantity ) {
-                        $this->assertTrue(
-                            (float) $orderProduct->actual_quantity == (float) $orderProduct->previous_quantity + (float) $orderProduct->quantity,
-                            __( 'The new quantity was not restored to what it was before the deletion.')
-                        );
-                    }
+                    $this->assertTrue(
+                        (float) $orderProduct->actual_quantity === (float) $orderProduct->previous_quantity + (float) $orderProduct->quantity,
+                        __( 'The new quantity was not restored to what it was before the deletion.')
+                    );
                 }
             });
         } else {

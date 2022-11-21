@@ -336,7 +336,7 @@ class ProcurementController extends DashboardController
 
         return [
             'from' => 'procurements',
-            'product' => $this->procurementService->searchProcurementProduct( $request->input( 'search' ) ),
+            'product' => $this->procurementService->searchProcurementProduct( $request->input( 'argument' ) ),
         ];
     }
 
