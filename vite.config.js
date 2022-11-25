@@ -56,6 +56,7 @@ export default ({ mode }) => {
                     'resources/ts/lang-loader.ts',
                     'resources/ts/dev.ts',
                     'resources/ts/popups.ts',
+                    'resources/ts/widgets.ts',
     
                     'resources/scss/app.scss',
                     'resources/scss/light.scss',

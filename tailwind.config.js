@@ -125,6 +125,7 @@ module.exports = {
         'tab-inactive': withOpacityValue('--tab-inactive'),
 
         'floating-menu-hover': withOpacityValue('--floating-menu-hover'),
+        'floating-menu-selected': withOpacityValue('--floating-menu-selected'),
         'floating-menu': withOpacityValue('--floating-menu'),
         'floating-menu-edge': withOpacityValue('--floating-menu-edge'),
 

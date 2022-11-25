@@ -84,7 +84,8 @@
     "vue-upload-component": "^2.8.20",
     "vue-virtual-collection": "^1.5.0",
     "vue2-daterange-picker": "^0.6.6",
-    "vue3-apexcharts": "^1.4.1"
+    "vue3-apexcharts": "^1.4.1",
+    "vuedraggable": "^4.1.0"
   },
   "name": "nexopos-4x"
 }

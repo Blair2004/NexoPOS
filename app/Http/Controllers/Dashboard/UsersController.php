@@ -21,12 +21,9 @@ use Illuminate\Support\Facades\View;
 
 class UsersController extends DashboardController
 {
-    /**
-     * @param Users
-     */
-    protected $usersService;
-
-    public function __construct()
+    public function __construct(
+        protected Users $usersService
+    )
     {
         parent::__construct();
     }
@@ -184,8 +181,11 @@ class UsersController extends DashboardController
     {
         ns()->restrict([ 'create.roles' ]);
 
-        $this->usersService = app()->make( Users::class );
-
         return $this->usersService->cloneRole( $role );
+    }
+
+    public function configureWidgets( Request $request )
+    {
+        return $this->usersService->storeWidgetsOnAreas( $request->only([ 'column' ]));
     }
 }

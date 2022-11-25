@@ -8,3 +8,4 @@ Route::get( '/users', [ UsersController::class, 'getUsers' ]);
 Route::put( '/users/roles', [ UsersController::class, 'updateRole' ]);
 Route::get( '/users/roles/{role}/clone', [ UsersController::class, 'cloneRole' ]);
 Route::get( '/users/permissions', [ UsersController::class, 'getPermissions' ]);
+Route::post( '/users/widgets', [ UsersController::class, 'configureWidgets' ]);

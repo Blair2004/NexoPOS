@@ -34,6 +34,7 @@ use App\Services\UpdateService;
 use App\Services\UserOptions;
 use App\Services\Users;
 use App\Services\Validation;
+use App\Services\WidgetService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
@@ -90,11 +91,7 @@ class AppServiceProvider extends ServiceProvider
 
         // save Singleton for options
         $this->app->singleton( Users::class, function() {
-            return new Users(
-                Auth::check() ? Auth::user()->roles : collect([]),
-                Auth::user(),
-                new Permission
-            );
+            return new Users();
         });
 
         // provide media manager
@@ -217,6 +214,10 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( DateService::class ),
                 $app->make( BarcodeService::class ),
             );
+        });
+
+        $this->app->singleton( WidgetService::class, function( $app ) {
+            return new WidgetService;
         });
 
         /**

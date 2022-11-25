@@ -1,8 +1,11 @@
 <template>
     <div id="ns-best-cashiers" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="flex-auto">
-            <div class="head text-center border-b w-full py-2">
+            <div class="head text-center border-b w-full flex justify-between items-center p-2">
                 <h5>{{ __( 'Best Cashiers' ) }}</h5>
+                <div>
+                    <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+                </div>
             </div>
             <div class="body">
                 <table class="table w-full" v-if="cashiers.length > 0">

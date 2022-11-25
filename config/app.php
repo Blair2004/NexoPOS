@@ -180,6 +180,7 @@ return [
         App\Providers\SettingsPageProvider::class,
         App\Providers\FormsProvider::class,
         App\Providers\LocalizationServiceProvider::class,
+        App\Providers\WidgetsServiceProvider::class,
     ],
 
     /*

@@ -1,8 +1,8 @@
 <?php
 
 use App\Classes\Hook;
+use App\Classes\Output;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View;
 
 ?>
 @extends( 'layout.dashboard' )
@@ -40,6 +40,12 @@ use Illuminate\Support\Facades\View;
 
 @section( 'layout.dashboard.footer.inject' )
     @if ( $dashid === 'store' )
+        <?php 
+            $output     =   new Output;
+            Hook::action( 'ns-dashboard-home-footer', $output );
+            echo ( string ) $output;
+        ?>
+        @vite([ 'resources/ts/widgets.ts' ])
         @vite([ 'resources/ts/dashboard.ts' ])
     @elseif ( $dashid === 'cashier' )
         @vite([ 'resources/ts/cashier.ts' ])

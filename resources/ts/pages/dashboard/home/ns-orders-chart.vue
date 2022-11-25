@@ -1,5 +1,11 @@
 <template>
     <div id="ns-orders-chart" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
+        <div class="p-2 flex head items-center justify-between border-b">
+            <h3 class="font-semibold">{{ __( 'Recents Orders' ) }}</h3>
+            <div>
+                <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+            </div>
+        </div>
         <div class="head flex-auto flex h-56">
             <div class="w-full h-full pt-2">
                 <vue-apex-charts v-if="report" height="100%" type="area" :options="chartOptions" :series="series"></vue-apex-charts>

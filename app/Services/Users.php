@@ -9,26 +9,18 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserAttribute;
 use App\Models\UserRoleRelation;
+use App\Models\UserWidget;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class Users
 {
-    private $roles = [];
-
-    private $users = [];
-
-    public function __construct(
-        $roles,
-        $user,
-        Permission $permission
-    ) {
-        $this->roles = $roles;
-        $this->user = $user;
-        $this->permission = $permission;
+    public function __construct() {
+        // ...
     }
 
     /**
@@ -39,10 +31,11 @@ class Users
      */
     public function all( $namespace = null )
     {
+
         if ( $namespace != null ) {
-            return @$this->roles[ $namespace ][ 'users' ];
+            return Role::namespace( $namespace )->users()->get();
         } else {
-            return $this->users;
+            return User::get();
         }
     }
 
@@ -270,5 +263,107 @@ class Users
             $userAttribute->language = ns()->option->get( 'ns_store_language' );
             $userAttribute->save();
         }
+    }
+
+    public function storeWidgetsOnAreas( $config )
+    {
+        extract( $config );
+        /**
+         * @var array $column
+         */
+
+        foreach( $column[ 'widgets' ] as $position => $columnWidget ) {
+            $widget             =   UserWidget::where( 'identifier', $columnWidget[ 'componentName' ] )
+                ->where( 'column', $column[ 'name' ] )
+                ->where( 'user_id', Auth::user()->id )
+                ->first();
+
+            if ( ! $widget instanceof UserWidget ) {
+                $widget     =   new UserWidget;
+            }
+
+            $widget->identifier     =   $columnWidget[ 'componentName' ];
+            $widget->position       =   $position;
+            $widget->user_id        =   Auth::user()->id;
+            $widget->column         =   $column[ 'name' ];
+            $widget->save();
+        }
+
+        $identifiers    =   collect( $column[ 'widgets' ] )->map( fn( $widget ) => $widget[ 'componentName' ] )->toArray();
+
+        UserWidget::whereNotIn( 'identifier', $identifiers )
+            ->where( 'column', $column[ 'name' ] )
+            ->where( 'user_id', Auth::user()->id )
+            ->delete();
+    }
+
+    public function saveWidgets( $array )
+    {
+        $event      =   $array[ 'event' ];
+        $column     =   $array[ 'column' ];
+
+        foreach( $event as $action => $eventDetails ) {
+            switch( $action ) {
+                case 'moved':
+                case 'added':
+                    $widget     =   $this->getUserWidthUsingIdentifier( $eventDetails[ 'element' ][ 'componentName' ] );
+                    $widget->column     =   $column[ 'name' ];
+                    $widget->identifier =   $eventDetails[ 'element' ][ 'componentName' ];
+                    $widget->position   =   $eventDetails[ 'newIndex' ];
+                    $widget->user_id    =   Auth::user()->id;
+                    $widget->save();
+
+                    $this->reorderOrderWidgets( 
+                        column: $column[ 'name' ],
+                        fromPosition: $eventDetails[ 'newIndex' ],
+                        exclude: $widget
+                    );
+                    break;               
+                    
+                case 'removed':
+                    $widget     =   $this->getUserWidthUsingIdentifier( $eventDetails[ 'element' ][ 'componentName' ] );
+                    $widget->delete();
+                    break;
+            }
+        }
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The widgets were saved.' )
+        ];
+    }
+
+    private function reorderOrderWidgets( $column, $fromPosition, UserWidget $exclude )
+    {
+        $widgetsAfter    =   UserWidget::where( 'user_id', Auth::user()->id )
+            ->where( 'id', '<>', $exclude->id )
+            ->where( 'column', $column )
+            ->where( 'position', '>=', $fromPosition )
+            ->orderBy( 'position' )
+            ->get();
+
+        $widgetsAfter->each( function( $widget, $index ) use ( $fromPosition ) {
+            $widget->position   =   $index + ( $fromPosition + 1 );
+            $widget->save();
+        });
+
+        $widgetsBefore    =   UserWidget::where( 'user_id', Auth::user()->id )
+            ->where( 'id', '<>', $exclude->id )
+            ->where( 'column', $column )
+            ->where( 'position', '<=', $fromPosition )
+            ->orderBy( 'position', 'desc' )
+            ->get();
+
+        $widgetsBefore->each( function( $widget, $index ) use ( $fromPosition ) {
+            $widget->position   =   $index - ( $fromPosition + 1 );
+            $widget->save();
+        });
+    }
+
+    private function getUserWidthUsingIdentifier( $identifier )
+    {
+        return UserWidget::where( 'user_id', Auth::user()->id )
+            ->where( 'identifier', $identifier )
+            ->firstOrNew();
     }
 }

@@ -1,14 +1,17 @@
 <template>
     <div id="ns-best-customers" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="flex-auto">
-            <div class="head text-center border-b w-full py-2">
+            <div class="head text-center flex justify-between items-center border-b w-full p-2">
                 <h5>{{ __( 'Best Customers' ) }}</h5>
+                <div>
+                    <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+                </div>
             </div>
-            <div class="body">
-                <div v-if="! hasLoaded" class="h-56 w-full flex items-center justify-center">
+            <div class="body flex flex-col h-64">
+                <div v-if="! hasLoaded" class="w-full flex items-center justify-center">
                     <ns-spinner size="12" border="4"></ns-spinner>
                 </div>
-                <div class="h-56 flex items-center justify-center flex-col" v-if="hasLoaded && customers.length === 0">
+                <div class="flex items-center justify-center flex-col" v-if="hasLoaded && customers.length === 0">
                     <i class="las la-grin-beam-sweat text-6xl"></i>
                     <p class="text-sm">{{ __( 'Well.. nothing to show for the meantime' ) }}</p>
                 </div>
@@ -51,7 +54,7 @@ export default {
     methods: {
         __,
         nsCurrency,
-        nsRawCurrency
+        nsRawCurrency,
     },
     data() {
         return {

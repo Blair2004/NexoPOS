@@ -12,14 +12,19 @@
             <p class="p-2 text-center text-sm bg-info-primary" v-if="description.length > 0">{{ description }}</p>
             <ul class="ns-vertical-menu">
                 <template v-if="type === 'select'">
-                    <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                    <li @click="select( option )" class="flex p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of options" :key="option.value">
+                        <span>{{ option.label }}</span>
+                    </li>
                 </template>
                 <template v-if="type === 'multiselect'">
-                    <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                    <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="flex justify-between p-2 border-b text-primary cursor-pointer" v-for="option of options" :key="option.value">
+                        <span>{{ option.label }}</span>
+                        <span v-if="isSelected( option )" class="text-sm text-gray-500">{{ __( 'Selected' ) }}</span>
+                    </li>
                 </template>
             </ul>
         </div>
-        <div class="flex justify-between" v-if="type === 'multiselect'">
+        <div class="flex justify-between p-2" v-if="type === 'multiselect'">
             <div></div>
             <div>
                 <ns-button @click="select()" type="info">{{ __( 'Select' ) }}</ns-button>

@@ -24,7 +24,7 @@ ul.ns-vertical-menu {
     li {
         @apply text-primary border-box-edge;
         &:hover, .active {
-            @apply bg-floating-menu-hover text-primary;
+            @apply bg-floating-menu-selected text-primary;
         }
     }
 }

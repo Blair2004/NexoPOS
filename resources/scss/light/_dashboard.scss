@@ -33,6 +33,16 @@
     }
 }
 
+.pending-drag {
+    @apply border-transparent;
+}
+.awaiting-drop {
+    @apply border-gray-400;
+}
+.drag-over {
+    @apply border-blue-400;
+}
+
 /**
  * Notifications Wrapper
 **/

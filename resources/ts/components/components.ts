@@ -13,6 +13,7 @@ import nsDateRangePicker    from  './ns-date-range-picker.vue';
 import nsDateTimePicker     from  './ns-date-time-picker.vue';
 import nsDatepicker         from  './ns-datepicker.vue';
 import nsDaterangePicker    from  './ns-daterange-picker.vue';
+import nsDragzone           from  './ns-dragzone.vue';
 import nsField              from  './ns-field.vue';
 import nsIconButton         from  './ns-icon-button.vue';
 import nsInput              from  './ns-input.vue';
@@ -48,6 +49,7 @@ export {
     nsSelect, 
     nsCheckbox, 
     nsCrud, 
+    nsDragzone,
     nsTableRow, 
     nsSpinner, 
     nsCrudForm, 

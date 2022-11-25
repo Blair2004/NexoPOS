@@ -1,9 +1,9 @@
 <template>
     <div id="ns-orders-summary" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
-        <div class="p-2 flex title justify-between border-b">
+        <div class="p-2 flex title items-center justify-between border-b">
             <h3 class="font-semibold">{{ __( 'Recents Orders' ) }}</h3>
-            <div class="">
-                
+            <div>
+                <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
             </div>
         </div>
         <div class="head flex-auto flex-col flex h-56 overflow-y-auto ns-scrollbar">
