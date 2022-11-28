@@ -6,7 +6,7 @@
                 <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
             </div>
         </div>
-        <div class="head flex-auto flex-col flex h-56 overflow-y-auto ns-scrollbar">
+        <div class="head flex-auto flex-col flex h-64 overflow-y-auto ns-scrollbar">
             <div class="h-full flex items-center justify-center" v-if="! hasLoaded">
                 <ns-spinner size="8" border="4"></ns-spinner>
             </div>

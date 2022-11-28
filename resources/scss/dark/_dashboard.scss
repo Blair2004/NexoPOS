@@ -2,8 +2,10 @@
     @apply bg-surface;
 }
 
-#dashboard-cards * {
-    @apply text-typography;
+.card-widget {
+    h1, h2, h3, h4, h5, h6, i {
+        @apply text-typography;
+    }
 }
 
 #dashboard-aside > div {

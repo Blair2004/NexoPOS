@@ -313,7 +313,7 @@
 }
 
 .ns-close-button {
-    @apply border-input-edge text-primary;
+    @apply border-input-button text-primary;
 
     &:hover {
         @apply bg-error-secondary border-transparent;

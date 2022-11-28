@@ -1024,19 +1024,47 @@ class ReportService
             }
 
             return array_merge([
-                'total_sales_count' => $totalSales,
-                'today_sales_count' => $todaySales,
-                'total_sales_amount' => $totalSalesAmount,
-                'today_sales_amount' => $todaySalesAmount,
-                'total_refunds_amount' => $totalRefundsAmount,
-                'today_refunds_amount' => $todayRefunds,
-                'total_customers' => $totalCustomers,
-                'today_customers' => $todayCustomers,
-                'today_orders' => Order::where( 'created_at', '>=', $startDate )
-                    ->where( 'created_at', '<=', $endDate )
-                    ->where( 'author', $cashier )
-                    ->orderBy( 'id', 'desc' )
-                    ->get(),
+                [
+                    'key' =>  'created_at',
+                    'value' =>  ns()->date->getFormatted( Auth::user()->created_at ),
+                    'label' =>  __( 'Member Since' ),
+                ], [
+                    'key' =>  'total_sales_count',
+                    'value' =>  $totalSales,
+                    'label' =>  __( 'Total Orders' ),
+                    'today' =>  [
+                        'key' =>  'today_sales_count',
+                        'value' =>  $todaySales,
+                        'label' =>  __( 'Today\'s Orders' ),
+                    ], 
+                ], [
+                    'key' =>  'total_sales_amount',
+                    'value' =>  ns()->currency->define( $totalSalesAmount )->format(),
+                    'label' =>  __( 'Total Sales' ),
+                    'today' =>  [
+                        'key' =>  'today_sales_amount',
+                        'value' =>  ns()->currency->define( $todaySalesAmount )->format(),
+                        'label' =>  __( 'Today\'s Sales' ),
+                    ], 
+                ], [
+                    'key' =>  'total_refunds_amount',
+                    'value' =>  ns()->currency->define( $totalRefundsAmount )->format(),
+                    'label' =>  __( 'Total Refunds' ),
+                    'today' =>  [
+                        'key' =>  'today_refunds_amount',
+                        'value' =>  ns()->currency->define( $todayRefunds )->format(),
+                        'label' =>  __( 'Today\'s Refunds' ),
+                    ], 
+                ], [
+                    'key' =>  'total_customers',
+                    'value' =>  $totalCustomers,
+                    'label' =>  __( 'Total Customers' ),
+                    'today' =>  [
+                        'key' =>  'today_customers',
+                        'value' =>  $todayCustomers,
+                        'label' =>  __( 'Today\'s Customers' ),
+                    ], 
+                ], 
             ], $config );
         });
     }

@@ -283,6 +283,7 @@ class Users
             }
 
             $widget->identifier     =   $columnWidget[ 'componentName' ];
+            $widget->class_name     =   $columnWidget[ 'className' ] ?? '';
             $widget->position       =   $position;
             $widget->user_id        =   Auth::user()->id;
             $widget->column         =   $column[ 'name' ];
@@ -295,6 +296,11 @@ class Users
             ->where( 'column', $column[ 'name' ] )
             ->where( 'user_id', Auth::user()->id )
             ->delete();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The widgets was successfully updated.' )
+        ];
     }
 
     public function saveWidgets( $array )

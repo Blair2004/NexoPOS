@@ -161,14 +161,6 @@ class RolesCrud extends CrudService
                             'description' => __( 'Should be a unique value with no spaces or special character' ),
                             'value' => $entry->namespace ?? '',
                         ], [
-                            'type' => 'select',
-                            'name' => 'dashid',
-                            'label' => __( 'Dashboard Identifier' ),
-                            'validation' => 'required',
-                            'options' => Helper::kvToJsOptions( $this->dashboardOptions ),
-                            'description' => __( 'Define what should be the home page of the dashboard.' ),
-                            'value' => $entry->dashid ?? 'none',
-                        ], [
                             'type' => 'textarea',
                             'name' => 'description',
                             'label' => __( 'Description' ),
@@ -358,11 +350,6 @@ class RolesCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'dashid' => [
-                'label' => __( 'Namespace' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
             'created_at' => [
                 'label' => __( 'Created At' ),
                 '$direction' => '',
@@ -377,7 +364,6 @@ class RolesCrud extends CrudService
     public function setActions( CrudEntry $entry, $namespace )
     {
         $entry->locked = (bool) $entry->locked;
-        $entry->dashid = $this->dashboardOptions[ $entry->dashid ] ?? __( 'Unknown Dashboard' );
 
         // you can make changes here
         $entry->addAction( 'edit', [

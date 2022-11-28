@@ -36,6 +36,11 @@ class WidgetService
     protected $widgetAreas  =   [];
 
     /**
+     * Describe what the widget does.
+     */
+    protected $description;
+
+    /**
      * Returns the widget vue component name
      */
     public function getVueComponent(): string
@@ -61,10 +66,10 @@ class WidgetService
     }
 
     /**
-     * Build the collection of all declared widget
-     * and check if the logged user is eligible to see them.
+     * returns all defined widgets
+     * without applying any restriction
      */
-    public function getWidgets(): Collection
+    public function getAllWidgets(): Collection
     {
         return collect( $this->widgets )->map( function( $widget ) {
             /**
@@ -72,13 +77,44 @@ class WidgetService
              */
             $widgetInstance     =   new $widget;
 
-            return [
+            return ( object ) [
+                'className' =>  $widget,
+                'instance'  =>  $widgetInstance,
                 'name'      =>  $widgetInstance->getName(),
                 'component' =>  $widgetInstance->getVueComponent(),
                 'canAccess' =>  $widgetInstance->canAccess()
             ];
-        })
-        ->filter( fn( $widget ) => $widget[ 'canAccess' ] );
+        });
+    }
+
+    /**
+     * Build the collection of all declared widget
+     * and check if the logged user is eligible to see them.
+     */
+    public function getWidgets(): Collection
+    {
+        return $this->getAllWidgets()
+            ->filter( function( $widget ) {
+                return $widget->canAccess;
+            });
+    }
+
+    /**
+     * Returns only the declared perimssion. If
+     * not defined, will return false.
+     */
+    public function getPermission(): string|bool
+    {
+        return $this->permission;
+    }
+
+    /**
+     * Returns the description of the widget.
+     * That describe what the widget does.
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**

@@ -52,7 +52,7 @@ class DashboardController extends Controller
 
         return DashboardDay::from( $todayStarts )
             ->to( $todayEnds )
-            ->first();
+            ->first() ?: [];
     }
 
     public function getBestCustomers()

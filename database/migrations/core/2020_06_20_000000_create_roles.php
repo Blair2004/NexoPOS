@@ -33,7 +33,6 @@ return new class extends Migration
         $user->name = __( 'User' );
         $user->namespace = 'user';
         $user->locked = true;
-        $user->dashid = 'default';
         $user->description = __( 'Basic user role.' );
         $user->save();
         $user->addPermissions([
@@ -44,7 +43,6 @@ return new class extends Migration
         $admin = Role::firstOrNew([ 'namespace' => 'admin' ]);
         $admin->name = __( 'Administrator' );
         $admin->namespace = 'admin';
-        $admin->dashid = 'store';
         $admin->locked = true;
         $admin->description = __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
         $admin->save();

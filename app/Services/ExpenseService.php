@@ -358,7 +358,7 @@ class ExpenseService
             return Role::find( $expense->group_id )->users()->get()->map( function( $user ) use ( $expense ) {
                 if ( $expense->category instanceof ExpenseCategory ) {
                     $history = new CashFlow;
-                    $history->value = $expense->value;
+                    $history->value = $expense->getRawOriginal( 'value' );
                     $history->expense_id = $expense->id;
                     $history->operation = 'debit';
                     $history->author = $expense->author;
@@ -373,7 +373,7 @@ class ExpenseService
             })->filter(); // only return valid history created
         } else {
             $history = new CashFlow;
-            $history->value = $expense->value;
+            $history->value = $expense->getRawOriginal( 'value' );
             $history->expense_id = $expense->id;
             $history->operation = $expense->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
             $history->author = $expense->author;

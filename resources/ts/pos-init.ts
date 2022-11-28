@@ -1126,9 +1126,12 @@ export class POS {
     selectCustomer(customer) {
         return new Promise((resolve, reject) => {
             const order = this.order.getValue();
+            console.log( customer );
+            const billing = Object.assign( customer.billing || {},  {});
 
-            const billing = Object.assign( customer.billing,  {});
-            delete billing.id;
+            if ( billing.id !== undefined ) {
+                delete billing.id;
+            }
 
             order.customer = customer;
             order.customer_id = customer.id;

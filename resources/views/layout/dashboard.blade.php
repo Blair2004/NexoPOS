@@ -1,6 +1,7 @@
 <?php
 
 use App\Classes\Hook;
+use App\Models\User;
 use App\Services\Helper;
 use App\Services\DateService;
 use Illuminate\Support\Facades\Auth;
@@ -66,7 +67,12 @@ if ( Auth::check() ) {
             'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
         ]));?>
 
-        window.ns.user          =   <?php echo json_encode( Auth::user() );?>;
+        /**
+         * We display only fillable values for the
+         * logged user. The password might be displayed on an encrypted form.
+         */
+        window.ns.user              =   <?php echo json_encode( ns()->getUserDetails() );?>;
+        window.ns.user.attributes   =   <?php echo json_encode( Auth::user()->attribute->first() );?>;
 
         window.ns.cssFiles      =   <?php echo json_encode( ns()->simplifyManifest() );?>;
     </script>

@@ -26,6 +26,7 @@ const nsProcurementInvoice          =   defineAsyncComponent( () => import( './p
 const nsNotifications               =   defineAsyncComponent( () => import( './pages/dashboard/ns-notifications.vue' ) );
 const nsMedia                       =   defineAsyncComponent( () => import( './pages/dashboard/ns-media.vue' ) );
 const nsExpense                     =   defineAsyncComponent( () => import( './pages/dashboard/expenses/ns-expense.vue' ) );
+const nsDashboard                   =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-dashboard.vue' ) );
 
 const nsLowStockReport              =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-low-stock-report.vue' ) );
 const nsSaleReport                  =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sale-report.vue' ) );
@@ -61,6 +62,7 @@ const allComponents    =   Object.assign({
     nsProcurementInvoice,
     nsMedia,
     nsExpense,
+    nsDashboard,
 
     nsNotifications,
     nsSaleReport,

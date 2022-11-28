@@ -8,7 +8,6 @@ use Illuminate\Support\Collection;
 
 /**
  * @property integer $total_stores
- * @property string $dashid
  * @property string $description
  * @property bool $locked
  * @property \Carbon\Carbon $updated_at
@@ -40,22 +39,6 @@ class Role extends NsRootModel
      * @var string USER base role with no or less permissions
      */
     const USER = 'user';
-
-    /**
-     * Default dashboard identifier.
-     * Store dashboard
-     */
-    const DASHID_STORE = 'store';
-
-    /**
-     * Store cashier dashboard.
-     */
-    const DASHID_CASHIER = 'cashier';
-
-    /**
-     * Default dashboard for other users.
-     */
-    const DASHID_DEFAULT = 'default';
 
     protected $cats = [
         'locked' => 'boolean',

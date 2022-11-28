@@ -1,6 +1,6 @@
 <template>
-    <div id="ns-orders-chart" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
-        <div class="p-2 flex head items-center justify-between border-b">
+    <div id="ns-orders-chart" class="flex flex-auto flex-col shadow ns-box rounded-lg overflow-hidden">
+        <div class="p-2 flex ns-box-header items-center justify-between border-b">
             <h3 class="font-semibold">{{ __( 'Recents Orders' ) }}</h3>
             <div>
                 <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="foot p-2 -mx-4 flex flex-wrap">
-            <div class="flex w-full md:w-1/2 lg:w-full xl:w-1/2 lg:border-b lg:border-t xl:border-none lg:py-1 lg:my-1">
+            <div class="flex w-full lg:w-full border-b lg:border-t lg:py-1 lg:my-1">
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Weekly Sales' ) }}</span>
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeeklySales, 'abbreviate' ) }}</h2>
@@ -22,7 +22,7 @@
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeekTaxes, 'abbreviate' ) }}</h2>
                 </div>
             </div>
-            <div class="flex w-full md:w-1/2 lg:w-full xl:w-1/2">
+            <div class="flex w-full lg:w-full">
                 <div class="px-4 w-full lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Net Income' ) }}</span>
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeekIncome, 'abbreviate' ) }}</h2>

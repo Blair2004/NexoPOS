@@ -1,7 +1,7 @@
 <template>
     <div class="-mx-4 mt-4 flex flex-col md:flex-row-reverse flex-wrap">
         <template v-for="column in columns" :key="column.name">
-            <draggable @change="handleChange( column )" item-key="componentName" :group="column.parent" :list="column.widgets" class="mb-4 px-4 w-full lg:w-1/2 xl:w-1/3">
+            <draggable @change="handleChange( column, $event )" item-key="componentName" :group="column.parent" :list="column.widgets" class="mb-4 px-4 w-full lg:w-1/2 xl:w-1/3">
                 <template #item="{element}">
                     <div class="mb-4">
                         <component @onRemove="handleRemoveWidget( element, column )" :is="element.component"></component>
@@ -10,7 +10,7 @@
                 <!-- v-if="column.widgets.length === 0" -->
                 <template #footer>
                     <div @click="openWidgetAdded( column )" class="cursor-pointer border-2 border-dashed h-16 flex items-center justify-center">
-                        <span class="text-sm" type="info">{{ __( 'Click here to add widgets' ) }}</span>
+                        <span class="text-sm text-primary" type="info">{{ __( 'Click here to add widgets' ) }}</span>
                     </div>
                 </template>
             </draggable>
@@ -22,6 +22,7 @@ import { shallowRef } from '@vue/reactivity';
 import draggable from 'vuedraggable';
 import { __ } from '~/libraries/lang';
 import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
+import { nsSnackBar } from '~/bootstrap';
 
 
 export default {
@@ -39,13 +40,19 @@ export default {
     },
     mounted() {
         this.widgets     =   this.rawWidgets.map( widget => {
-            return { name: widget.name, componentName: widget.component, component: shallowRef( window[ widget.component ])};
+            return { 
+                name: widget.name, 
+                componentName: widget.component, 
+                className: widget.className,
+                component: shallowRef( window[ widget.component ])
+            };
         });
 
         this.columns    =   this.rawColumns.map( column => {
             column.widgets.forEach( widget => {
                 widget.component        =   shallowRef( window[ widget.identifier ] );
                 widget.componentName    =   widget.identifier;
+                widget.className        =   widget.class_name;
             });
 
             return column;
@@ -53,11 +60,13 @@ export default {
     },
     methods: {
         __,
-        handleChange( column ) {
+        handleChange( column, event ) {
             setTimeout( () => {
                 nsHttpClient.post( '/api/nexopos/v4/users/widgets', { column })
                     .subscribe( result => {
-                        console.log( result );
+                        // ...
+                    }, error => {
+                        return nsSnackBar.error( __( 'An unpexpected error occured while creating the snackbar.' ) ).subscribe();
                     })
             }, 100 );
         },
@@ -109,11 +118,8 @@ export default {
                 const index     =   this.columns.indexOf( column );
                 const widgets   =   result.map( option => option.value );
                 this.columns[ index ].widgets  =   widgets;
-
-                widgets.forEach( widget => {
-                    this.handleChange( this.columns[ index ] );
-                });
-
+                this.handleChange( this.columns[ index ] );
+                
             } catch( exception ) {
                 console.log( exception );
             }

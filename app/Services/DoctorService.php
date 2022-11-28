@@ -47,19 +47,15 @@ class DoctorService
         $rolesLabels = [
             Role::ADMIN => [
                 'name' => __( 'Administrator' ),
-                'dashid' => Role::DASHID_STORE,
             ],
             Role::STOREADMIN => [
                 'name' => __( 'Store Administrator' ),
-                'dashid' => Role::DASHID_STORE,
             ],
             Role::STORECASHIER => [
                 'name' => __( 'Store Cashier' ),
-                'dashid' => Role::DASHID_CASHIER,
             ],
             Role::USER => [
                 'name' => __( 'User' ),
-                'dashid' => Role::DASHID_DEFAULT,
             ],
         ];
 
@@ -73,7 +69,6 @@ class DoctorService
                 $role = new Role;
                 $role->namespace = $roleNamespace;
                 $role->name = $rolesLabels[ $roleNamespace ][ 'name' ];
-                $role->dashid = $rolesLabels[ $roleNamespace ][ 'dashid' ];
                 $role->locked = true;
                 $role->save();
             }

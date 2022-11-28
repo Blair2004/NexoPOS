@@ -13,14 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('nexopos_users_widgets', function (Blueprint $table) {
-            $table->uuid( 'id' )->primary();
-            $table->string( 'identifier' );
-            $table->string( 'column' );
-            $table->integer( 'position' );
-            $table->integer( 'user_id' );
-            $table->timestamps();
-        });
+        if ( ! Schema::hasTable( 'nexopos_users_widgets' ) ) {
+            Schema::create('nexopos_users_widgets', function (Blueprint $table) {
+                $table->uuid( 'id' )->primary();
+                $table->string( 'identifier' );
+                $table->string( 'column' );
+                $table->string( 'class_name' );
+                $table->integer( 'position' );
+                $table->integer( 'user_id' );
+                $table->timestamps();
+            });
+        }
     }
 
     /**

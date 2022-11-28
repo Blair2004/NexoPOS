@@ -8,7 +8,9 @@ use App\Exceptions\NotEnoughPermissionException;
 use App\Jobs\CheckTaskSchedulingConfigurationJob;
 use App\Models\Migration;
 use App\Models\Role;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -43,10 +45,8 @@ class CoreService
      * Returns a boolean if the system
      * is installed or not. returns "true" if the system is installed
      * and "false" if it's not.
-     *
-     * @return bool
      */
-    public function installed()
+    public function installed(): bool
     {
         return Helper::installed();
     }
@@ -54,12 +54,8 @@ class CoreService
     /**
      * Returns a filtered route to which apply
      * the filter "ns-route".
-     *
-     * @param string $route
-     * @param array $params
-     * @return string
      */
-    public function route( $route, $params = [])
+    public function route( string $route, array $params = []): string
     {
         return Hook::filter( 'ns-route', false, $route, $params ) ?: route( $route, $params );
     }
@@ -67,11 +63,8 @@ class CoreService
     /**
      * Returns a filtred route name to which apply
      * the filter "ns-route-name".
-     *
-     * @param string $name
-     * @return string $name
      */
-    public function routeName( $name )
+    public function routeName( string $name ): string
     {
         return Hook::filter( 'ns-route-name', $name );
     }
@@ -79,11 +72,8 @@ class CoreService
     /**
      * Returns a filtred URL to which
      * apply the filter "ns-url" hook.
-     *
-     * @param string $url
-     * @return string $url
      */
-    public function url( $url = null )
+    public function url( string $url = null ): string
     {
         return url( Hook::filter( 'ns-url', $url ) );
     }
@@ -91,11 +81,8 @@ class CoreService
     /**
      * Returns a filtred URL to which
      * apply the filter "ns-url" hook.
-     *
-     * @param string $url
-     * @return string $url
      */
-    public function asset( $url )
+    public function asset( string $url ): string
     {
         return url( Hook::filter( 'ns-asset', $url ) );
     }
@@ -105,7 +92,7 @@ class CoreService
      * access a page or trigger an error. This should not be used
      * on middleware or controller constructor.
      */
-    public function restrict( $permissions, $message = '' )
+    public function restrict( $permissions, $message = '' ): void
     {
         $passed = $this->allowedTo( $permissions );
 
@@ -115,13 +102,19 @@ class CoreService
     }
 
     /**
+     * Will return the logged user details
+     * that are actually fillable to avoid exposing any sensitive information.
+     */
+    public function getUserDetails(): Collection
+    {
+        return collect( ( new User() )->getFillable() )->mapWithKeys( fn( $key ) => [ $key => Auth::user()->$key ] );
+    }
+
+    /**
      * Will determine if a user is allowed
      * to perform a specific action (using a permission)
-     *
-     * @param array $permissions
-     * @return boolean;
      */
-    public function allowedTo( $permissions ): bool
+    public function allowedTo( array|string $permissions ): bool
     {
         $passed = false;
 
@@ -141,11 +134,8 @@ class CoreService
 
     /**
      * check if the logged user has a specific role.
-     *
-     * @param string $role
-     * @return bool
      */
-    public function hasRole( $roleNamespace )
+    public function hasRole( string $roleNamespace ): bool
     {
         return Auth::user()
             ->roles()
@@ -156,10 +146,8 @@ class CoreService
     /**
      * clear missing migration files
      * from migrated files.
-     *
-     * @return void
      */
-    public function purgeMissingMigrations()
+    public function purgeMissingMigrations(): void
     {
         $migrations = collect( Migration::get() )
             ->map( function( $migration ) {
@@ -188,10 +176,8 @@ class CoreService
     /**
      * Returns a boolean if the environment is
      * on production mode
-     *
-     * @return bool
      */
-    public function isProduction()
+    public function isProduction(): bool
     {
         return ! is_file( base_path( 'public/hot' ) );
     }
@@ -200,7 +186,7 @@ class CoreService
      * Simplify the manifest to return
      * only the files to use.
      */
-    public function simplifyManifest()
+    public function simplifyManifest(): Collection
     {
         $manifest = json_decode( file_get_contents( base_path( 'public/build/manifest.json' ) ), true );
 
@@ -215,9 +201,7 @@ class CoreService
 
     /**
      * Some features must be disabled
-     * if the jobs aren't configured correctly
-     *
-     * @return bool
+     * if the jobs aren't configured correctly.
      */
     public function canPerformAsynchronousOperations(): bool
     {
@@ -233,10 +217,8 @@ class CoreService
     /**
      * Check if the tasks scheduling is configured or
      * will emit a notification to help fixing it.
-     *
-     * @return void
      */
-    public function checkTaskSchedulingConfiguration()
+    public function checkTaskSchedulingConfiguration(): void
     {
         if ( ns()->option->get( 'ns_jobs_last_activity', false ) === false ) {
             /**
@@ -271,10 +253,8 @@ class CoreService
     /**
      * This will update the last time
      * the cron has been active
-     *
-     * @return void
      */
-    public function setLastCronActivity()
+    public function setLastCronActivity(): void
     {
         /**
          * @var NotificationService
@@ -288,10 +268,8 @@ class CoreService
     /**
      * Will check if the cron has been active recently
      * and delete a ntoification that has been generated for that.
-     *
-     * @return void
      */
-    public function checkCronConfiguration()
+    public function checkCronConfiguration(): void
     {
         if ( ns()->option->get( 'ns_cron_last_activity', false ) === false ) {
             $this->emitCronMisconfigurationNotification();
@@ -311,10 +289,8 @@ class CoreService
     /**
      * Emit a notification when Cron aren't
      * correctly configured.
-     *
-     * @return void
      */
-    private function emitCronMisconfigurationNotification()
+    private function emitCronMisconfigurationNotification(): void
     {
         $notification = app()->make( NotificationService::class );
         $notification->create([
@@ -329,10 +305,8 @@ class CoreService
     /**
      * Emit a notification when workers aren't
      * correctly configured.
-     *
-     * @return void
      */
-    private function emitNotificationForTaskSchedulingMisconfigured()
+    private function emitNotificationForTaskSchedulingMisconfigured(): void
     {
         $notification = app()->make( NotificationService::class );
         $notification->create([

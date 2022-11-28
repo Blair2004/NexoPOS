@@ -134,11 +134,13 @@ export default {
              * POS object;
              */
             this.isLoading      =   true;
-            
+
             POS.selectCustomer( customer ).then( resolve => {
+                console.log( customer );
                 this.isLoading  =   false;
                 this.resolveIfQueued( customer );
             }).catch( error => {
+                console.log( error );
                 this.isLoading  =   false;
             });
         },
