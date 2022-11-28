@@ -62,7 +62,7 @@ class WidgetService
      */
     public function canAccess(): bool
     {
-        return ! $this->permission  ?: User::allowedTo( $this->permission );
+        return ! $this->permission ?: User::allowedTo( $this->permission );
     }
 
     /**

@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Permission;
+use App\Models\Role;
+use App\Widgets\ProfileWidget;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -32,6 +35,27 @@ return new class extends Migration
          * for all the declared widgets.
          */
         include( dirname( __FILE__ ) . '/../../permissions/widgets.php' );
+
+        /**
+         * We'll now defined default permissions
+         */
+        $admin          =   Role::namespace( Role::ADMIN );
+        $storeAdmin     =   Role::namespace( Role::STOREADMIN );
+        $storeCashier   =   Role::namespace( Role::STORECASHIER );
+        
+        $admin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
+            ( new ProfileWidget )->getPermission()
+        ])->get()->map( fn( $permission ) => $permission->namespace ) );
+
+        /**
+         * to all roles available, we'll make all available widget added
+         * to their dashboard
+         */
+        Role::get()->each( function( $role ) {
+
+        });
     }
 
     /**

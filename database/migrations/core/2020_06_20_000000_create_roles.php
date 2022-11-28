@@ -5,6 +5,7 @@
 use App\Models\Permission;
 use App\Models\Role;
 use App\Services\Options;
+use App\Widgets\ProfileWidget;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
@@ -88,6 +89,8 @@ return new class extends Migration
         $admin->addPermissions( Permission::includes( '.units' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $admin->addPermissions( Permission::includes( '.manage-payments-types' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $admin->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $admin->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $admin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
 
         /**
          * store administrator role
@@ -98,6 +101,7 @@ return new class extends Migration
         $storeAdmin->locked = true;
         $storeAdmin->description = __( 'Has a control over an entire store of NexoPOS.' );
         $storeAdmin->save();
+        
         $storeAdmin->addPermissions([ 'read.dashboard' ]);
         $storeAdmin->addPermissions( Permission::includes( '.expenses' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $storeAdmin->addPermissions( Permission::includes( '.cash-flow-history' )->get()->map( fn( $permission ) => $permission->namespace ) );
@@ -124,6 +128,7 @@ return new class extends Migration
         $storeAdmin->addPermissions( Permission::includes( '.units' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $storeAdmin->addPermissions( Permission::includes( '.manage-payments-types' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $storeAdmin->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
 
         /**
          * store administrator role
@@ -137,6 +142,9 @@ return new class extends Migration
         $storeCashier->addPermissions([ 'read.dashboard' ]);
         $storeCashier->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $storeCashier->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
+            ( new ProfileWidget )->getPermission()
+        ])->get()->map( fn( $permission ) => $permission->namespace ) );
     }
 
     /**
