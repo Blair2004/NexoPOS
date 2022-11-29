@@ -14,7 +14,6 @@ use App\Services\CrudService;
 use App\Services\CustomerService;
 use App\Services\Helper;
 use App\Services\Options;
-use App\Services\Users;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -461,16 +460,10 @@ class CustomerCrud extends CrudService
      **/
     public function canAccess( $fields )
     {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
+        return [
+            'status' => 'success',
+            'message' => __( 'The access is granted.' ), 
+        ];
     }
 
     /**

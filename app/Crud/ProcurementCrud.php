@@ -7,7 +7,7 @@ use App\Models\Procurement;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\ProviderService;
-use App\Services\Users;
+use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -317,16 +317,10 @@ class ProcurementCrud extends CrudService
      **/
     public function canAccess( $fields )
     {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
+        return [
+            'status' => 'success',
+            'message' => __( 'The access is granted.' ), 
+        ];
     }
 
     /**

@@ -7,7 +7,7 @@ use App\Models\RegisterHistory;
 use App\Models\User;
 use App\Services\CashRegistersService;
 use App\Services\CrudService;
-use App\Services\Users;
+use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 

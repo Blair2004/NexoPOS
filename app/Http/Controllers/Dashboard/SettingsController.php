@@ -197,9 +197,7 @@ class SettingsController extends DashboardController
          * Users who can manage options can
          * reset the system.
          */
-        if ( ! Auth::user()->allowedTo([ 'manage.options' ]) ) {
-            throw new NotAllowedException( __( 'Access Denied' ) );
-        }
+        ns()->restrict([ 'manage.options' ]);
 
         return $this->view( 'pages.dashboard.settings.reset', [
             'title' => __( 'Reset Settings' ),

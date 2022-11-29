@@ -129,6 +129,12 @@ class CrudService
     protected $exportColumns = [];
 
     /**
+     * This define custom casts
+     * that are only applicable to the CRUD instance.
+     */
+    protected $casts   =    [];
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -842,10 +848,8 @@ class CrudService
             /**
              * apply casting to crud resources
              * as it's defined by the class casting
-             *
-             * @todo add support for default casting.
              */
-            $casts = ( new $this->model )->getCasts();
+            $casts = $this->getCasts();
 
             if ( ! empty( $casts ) ) {
                 foreach ( $casts as $column => $cast ) {
@@ -1420,6 +1424,14 @@ class CrudService
                 }
             }
         }
+    }
+
+    /**
+     * Returns the defined casts
+     */
+    public function getCasts(): array
+    {
+        return $this->casts;
     }
 
     /**

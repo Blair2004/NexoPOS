@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class WidgetService
 {
@@ -62,7 +63,7 @@ class WidgetService
      */
     public function canAccess(): bool
     {
-        return ! $this->permission ?: User::allowedTo( $this->permission );
+        return ! $this->permission ?: Gate::allows( $this->permission );
     }
 
     /**

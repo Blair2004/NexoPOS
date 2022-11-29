@@ -25,11 +25,7 @@ class Expense extends NsModel
 
     protected $casts = [
         'recurring'     => 'boolean',
-        'active'        => 'boolean',
-        'type'          =>  ExpenseTypeCast::class,
-        'occurrence'    =>  ExpenseOccurrenceCast::class,
-        'recurring'     =>  YesNoBoolCast::class,
-        'value'         =>  CurrencyCast::class,
+        'active'        => 'boolean'
     ];
 
     const OCCURRENCE_START_OF_MONTH = 'month_starts';
@@ -51,6 +47,14 @@ class Expense extends NsModel
     const TYPE_SALARY = 'ns.salary-expenses';
 
     const TYPE_DIRECT = 'ns.direct-expenses';
+
+    protected static function boot(){
+        parent::boot();
+
+        static::addGlobalScope( 'category', function($builder){
+            $builder->with( 'category' );
+        });
+    }
 
     public function category()
     {

@@ -12,6 +12,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class CoreService
@@ -94,10 +95,22 @@ class CoreService
      */
     public function restrict( $permissions, $message = '' ): void
     {
-        $passed = $this->allowedTo( $permissions );
+        if ( is_array( $permissions ) ) {
+            $passed     =   collect( $permissions )->filter( function( $permission ) {
+                if ( is_bool( $permission ) ) {
+                    return $permission;
+                } else {
+                    return $this->allowedTo( $permission );
+                }
+            })->count() === count( $permissions );
+        } else if ( is_string( $permissions ) ) {
+            $passed = $this->allowedTo( $permissions );
+        } else if ( is_bool( $permissions ) ) {
+            $passed =   $permissions;
+        }
 
         if ( ! $passed ) {
-            throw new NotEnoughPermissionException( $message ?: __( 'Your don\'t have enough permission to see this page.' ) );
+            throw new NotEnoughPermissionException( $message ?: __( 'Your don\'t have enough permissions to see this page.' ) );
         }
     }
 
@@ -116,20 +129,11 @@ class CoreService
      */
     public function allowedTo( array|string $permissions ): bool
     {
-        $passed = false;
+        if ( is_array( $permissions ) ) {
+            return Gate::any( $permissions );
+        }
 
-        collect( $permissions )->each( function( $permission ) use ( &$passed ) {
-            $userPermissionsNamespaces = collect( Auth::user()->permissions() )
-                ->toArray();
-
-            /**
-             * if there is a match with the permission or the provided permission is "true"
-             * that causes permission check bypass.
-             */
-            $passed = in_array( $permission, $userPermissionsNamespaces ) || $permission === true;
-        });
-
-        return $passed;
+        return Gate::allows( $permissions );
     }
 
     /**

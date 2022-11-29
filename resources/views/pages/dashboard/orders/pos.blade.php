@@ -1,5 +1,7 @@
 <?php
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
+
 ?>
 @extends( 'layout.base' )
 
@@ -46,10 +48,10 @@ use App\Models\User;
         POS.defineSettings({
             barcode_search          :   true,
             text_search             :   false,
-            edit_purchase_price     :   <?php echo User::allowedTo( 'nexopos.pos.edit-purchase-price' ) ? 'true' : 'false';?>,
-            edit_settings           :   <?php echo User::allowedTo( 'nexopos.pos.edit-settings' ) ? 'true' : 'false';?>,
-            products_discount       :   <?php echo User::allowedTo( 'nexopos.pos.products-discount' ) ? 'true' : 'false';?>,
-            cart_discount           :   <?php echo User::allowedTo( 'nexopos.pos.cart-discount' ) ? 'true' : 'false';?>,
+            edit_purchase_price     :   <?php echo Gate::allows( 'nexopos.pos.edit-purchase-price' ) ? 'true' : 'false';?>,
+            edit_settings           :   <?php echo Gate::allows( 'nexopos.pos.edit-settings' ) ? 'true' : 'false';?>,
+            products_discount       :   <?php echo Gate::allows( 'nexopos.pos.products-discount' ) ? 'true' : 'false';?>,
+            cart_discount           :   <?php echo Gate::allows( 'nexopos.pos.cart-discount' ) ? 'true' : 'false';?>,
             breadcrumb              :   [],
             products_queue          :   [],
             ns_pos_items_merge      :   <?php echo ns()->option->get( 'ns_pos_items_merge', 'no' ) === 'yes' ? 'true' : 'false';?>,

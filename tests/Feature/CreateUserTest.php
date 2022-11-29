@@ -17,7 +17,7 @@ use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use App\Models\User;
-use App\Services\Users;
+use App\Services\UsersService;
 use Exception;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
@@ -30,7 +30,7 @@ class CreateUserTest extends TestCase
 {
     use WithAuthentication, WithFaker;
 
-    protected Users $users;
+    protected UsersService $users;
 
     /**
      * A basic feature test example.
@@ -41,7 +41,7 @@ class CreateUserTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $this->users = app()->make( Users::class );
+        $this->users = app()->make( UsersService::class );
 
         return Role::get()->map( function( $role ) {
             $password = Hash::make( Str::random(20) );

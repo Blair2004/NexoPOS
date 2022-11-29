@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Fields\RecurringExpenseFields;
 use App\Fields\ScheduledExpenseField;
+use App\Jobs\DetectScheduledExpenseJob;
 use App\Models\AccountType;
 use App\Models\CashFlow;
 use App\Models\Expense;
@@ -63,6 +64,8 @@ class ProcessExpensesTest extends TestCase
         $scheduledCarbon = Carbon::parse( $expense->scheduled_date );
 
         ns()->date->setDateTimeFrom( $scheduledCarbon );
+
+        DetectScheduledExpenseJob::dispatchSync();
 
         $cashFlow = CashFlow::where( 'expense_id', $expense->id )->first();
 

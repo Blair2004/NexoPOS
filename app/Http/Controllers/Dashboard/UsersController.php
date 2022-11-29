@@ -14,7 +14,7 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\Users;
+use App\Services\UsersService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\View;
 class UsersController extends DashboardController
 {
     public function __construct(
-        protected Users $usersService
+        protected UsersService $usersService
     )
     {
         parent::__construct();

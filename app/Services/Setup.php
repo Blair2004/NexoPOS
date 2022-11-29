@@ -5,6 +5,14 @@ namespace App\Services;
 use App\Models\Migration;
 use App\Models\PaymentType;
 use App\Models\User;
+use App\Widgets\BestCashiersWidget;
+use App\Widgets\BestCustomersWidget;
+use App\Widgets\ExpenseCardWidget;
+use App\Widgets\IncompleteSaleCardWidget;
+use App\Widgets\OrdersChartWidget;
+use App\Widgets\OrdersSummaryWidget;
+use App\Widgets\ProfileWidget;
+use App\Widgets\SaleCardWidget;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -167,11 +175,7 @@ class Setup
         $user->author = $userID;
         $user->active = true; // first user active by default;
         $user->save();
-
-        /**
-         * The main user is the master
-         */
-        User::set( $user )->as( 'admin' );
+        $user->assignRole( 'admin' );
 
         /**
          * define default user language
@@ -179,6 +183,54 @@ class Setup
         $user->attribute()->create([
             'language' => 'en',
         ]);
+
+        /**
+         * let's define the default widgets
+         * available for the created administrator.
+         * @var UsersService $usersService
+         */
+        $usersService   =   app()->make( UsersService::class );
+
+        $areas  =   [
+            'first-column',
+            'second-column',
+            'third-column'
+        ];
+        
+        /**
+         * This will assign all widgets
+         * to available areas.
+         */
+        foreach([
+            SaleCardWidget::class,
+            ExpenseCardWidget::class,
+            IncompleteSaleCardWidget::class,
+            ProfileWidget::class,
+            OrdersChartWidget::class,
+            BestCustomersWidget::class,
+            OrdersSummaryWidget::class,
+            BestCashiersWidget::class
+        ] as $index => $widgetClass ) {
+            /**
+             * @var WidgetService $widgetInstance
+             */
+            $widgetInstance     =   new $widgetClass;
+
+            $usersService->storeWidgetsOnAreas(
+                config: [
+                    'column'   =>  [
+                        'name'      =>  $areas[ $index % 3 ] ?? 'first-column',
+                        'widgets'   =>  [
+                            [
+                                'className' =>  $widgetClass,
+                                'componentName' =>  $widgetInstance->getVueComponent()
+                            ]
+                        ]
+                    ]
+                ],
+                user: $user
+            );
+        }
 
         $this->createDefaultPayment( $user );
 

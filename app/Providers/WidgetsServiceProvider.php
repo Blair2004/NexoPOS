@@ -14,6 +14,7 @@ use App\Widgets\OrdersSummaryWidget;
 use App\Widgets\ProfileWidget;
 use App\Widgets\SaleCardWidget;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class WidgetsServiceProvider extends ServiceProvider
@@ -36,18 +37,20 @@ class WidgetsServiceProvider extends ServiceProvider
             ExpenseCardWidget::class,
         ]);
 
-        $widgetArea     =   fn() => ( collect([ 'first', 'second', 'third' ])->map( function( $column ) {
-            $columnName =   $column . '-column';
-            return [
-                'name'  =>  $columnName,
-                'widgets'   =>  UserWidget::where( 'user_id', Auth::id() )
-                    ->where( 'column', $columnName )
-                    ->orderBy( 'position' )
-                    ->get()
-                    ->filter( fn( $widget ) => User::allowedTo( ( new $widget->class_name )->getPermission() ) )
-            ];
-        })->toArray() ) ;
+        $widgetArea     =   function() {
+            return ( collect([ 'first', 'second', 'third' ])->map( function( $column ) {
+                $columnName =   $column . '-column';
+                return [
+                    'name'  =>  $columnName,
+                    'widgets'   =>  UserWidget::where( 'user_id', Auth::id() )
+                        ->where( 'column', $columnName )
+                        ->orderBy( 'position' )
+                        ->get()
+                        ->filter( fn( $widget ) => Gate::allows( ( new $widget->class_name )->getPermission() ) )
+                ];
+            })->toArray() );
+        };
 
-        $widgetService->registerWidgetsArea( 'ns-dashboard-widgets', fn() => $widgetArea() );
+        $widgetService->registerWidgetsArea( 'ns-dashboard-widgets', $widgetArea );
     }
 }

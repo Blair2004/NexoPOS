@@ -10,7 +10,7 @@ use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\OrdersService;
-use App\Services\Users;
+use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -430,16 +430,10 @@ class OrderCrud extends CrudService
      **/
     public function canAccess( $fields )
     {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
+        return [
+            'status' => 'success',
+            'message' => __( 'The access is granted.' ), 
+        ];
     }
 
     /**
@@ -656,7 +650,7 @@ class OrderCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( Users::class );
+        $user = app()->make( UsersService::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status' => 'failed',

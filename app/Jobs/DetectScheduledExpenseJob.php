@@ -39,6 +39,7 @@ class DetectScheduledExpenseJob implements ShouldQueue
         $endRange->setSeconds(59);
 
         $query = Expense::scheduled()
+            ->with( 'category' )
             ->active()
             ->scheduledAfterDate( $startRange->toDateTimeString() )
             ->scheduledBeforeDate( $endRange->toDateTimeString() );

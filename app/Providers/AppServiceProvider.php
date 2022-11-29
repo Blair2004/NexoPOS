@@ -32,7 +32,7 @@ use App\Services\TaxService;
 use App\Services\UnitService;
 use App\Services\UpdateService;
 use App\Services\UserOptions;
-use App\Services\Users;
+use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
 use Illuminate\Support\Facades\Auth;
@@ -90,8 +90,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // save Singleton for options
-        $this->app->singleton( Users::class, function() {
-            return new Users();
+        $this->app->singleton( UsersService::class, function() {
+            return new UsersService();
         });
 
         // provide media manager

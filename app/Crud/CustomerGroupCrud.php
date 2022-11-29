@@ -249,16 +249,10 @@ class CustomerGroupCrud extends CrudService
      **/
     public function canAccess( $fields )
     {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
+        return [
+            'status' => 'success',
+            'message' => __( 'The access is granted.' ), 
+        ];
     }
 
     /**
@@ -368,7 +362,7 @@ class CustomerGroupCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( 'App\Services\Users' );
+        $user = app()->make( 'App\Services\UsersService' );
 
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([

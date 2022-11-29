@@ -2,6 +2,10 @@
 
 namespace App\Crud;
 
+use App\Casts\CurrencyCast;
+use App\Casts\ExpenseOccurrenceCast;
+use App\Casts\ExpenseTypeCast;
+use App\Casts\YesNoBoolCast;
 use App\Events\ExpenseAfterCreateEvent;
 use App\Events\ExpenseAfterUpdateEvent;
 use App\Events\ExpenseBeforeCreateEvent;
@@ -13,7 +17,7 @@ use App\Models\Role;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use App\Services\Users;
+use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -80,6 +84,15 @@ class ExpenseCrud extends CrudService
      * Fields which will be filled during post/put
      */
     public $fillable = [];
+
+    protected $casts    =   [
+        'recurring'     => 'boolean',
+        'active'        => 'boolean',
+        'type'          =>  ExpenseTypeCast::class,
+        'occurrence'    =>  ExpenseOccurrenceCast::class,
+        'recurring'     =>  YesNoBoolCast::class,
+        'value'         =>  CurrencyCast::class,
+    ];
 
     /**
      * Define Constructor
@@ -358,16 +371,10 @@ class ExpenseCrud extends CrudService
      **/
     public function canAccess( $fields )
     {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
+        return [
+            'status' => 'success',
+            'message' => __( 'The access is granted.' ), 
+        ];
     }
 
     /**
@@ -485,7 +492,7 @@ class ExpenseCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( Users::class );
+        $user = app()->make( UsersService::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status' => 'failed',

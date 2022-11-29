@@ -6,7 +6,7 @@ use App\Exceptions\NotAllowedException;
 use App\Models\ProductUnitQuantity;
 use App\Models\User;
 use App\Services\CrudService;
-use App\Services\Users;
+use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 

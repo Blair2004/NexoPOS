@@ -352,13 +352,13 @@ class ExpenseService
         return $accountType->expenses;
     }
 
-    public function recordCashFlowHistory( Expense $expense )
+    public function recordCashFlowHistory( $expense )
     {
         if ( ! empty( $expense->group_id  ) ) {
             return Role::find( $expense->group_id )->users()->get()->map( function( $user ) use ( $expense ) {
-                if ( $expense->category instanceof ExpenseCategory ) {
+                if ( $expense->category instanceof AccountType ) {
                     $history = new CashFlow;
-                    $history->value = $expense->getRawOriginal( 'value' );
+                    $history->value = $expense->value;
                     $history->expense_id = $expense->id;
                     $history->operation = 'debit';
                     $history->author = $expense->author;
@@ -373,7 +373,7 @@ class ExpenseService
             })->filter(); // only return valid history created
         } else {
             $history = new CashFlow;
-            $history->value = $expense->getRawOriginal( 'value' );
+            $history->value = $expense->value;
             $history->expense_id = $expense->id;
             $history->operation = $expense->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
             $history->author = $expense->author;
@@ -598,9 +598,8 @@ class ExpenseService
      *
      * @param string $accountSettingsName
      * @param array $defaults
-     * @return ExpenseCategory $expenseCategory
      */
-    public function getDefinedAccountType( $accountSettingsName, $defaults )
+    public function getDefinedAccountType( $accountSettingsName, $defaults ): AccountType
     {
         $accountType = AccountType::find( ns()->option->get( $accountSettingsName ) );
 
@@ -673,9 +672,8 @@ class ExpenseService
      * using the account type
      *
      * @param string $type
-     * @return ExpenseCategory|AccountType
      */
-    public function getAccountTypeByCode( $type )
+    public function getAccountTypeByCode( $type ): AccountTYpe
     {
         $account = $this->accountTypes[ $type ] ?? false;
 
