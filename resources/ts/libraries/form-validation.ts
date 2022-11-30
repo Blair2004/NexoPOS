@@ -85,7 +85,6 @@ export default class FormValidation {
             if ( field.type === 'custom' && typeof field.component === 'string' ) {
                 const componentName     =   field.component;
                 field.component         =   shallowRef( nsExtraComponents[ field.component ] );
-                console.log( field.component );
 
                 if ( field.component ) {
                     /**
