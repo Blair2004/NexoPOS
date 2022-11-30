@@ -7,8 +7,8 @@
         @include( 'common.dashboard.title' )
         <ns-crud-form 
             return-url="{{ url( '/dashboard/customers' ) }}"
-            submit-url="{{ url( '/api/nexopos/v4/crud/ns.customers' ) }}"
-            src="{{ url( '/api/nexopos/v4/crud/ns.customers/form-config' ) }}">
+            submit-url="{{ url( '/api/crud/ns.customers' ) }}"
+            src="{{ url( '/api/crud/ns.customers/form-config' ) }}">
             <template v-slot:title>Customer Name</template>
             <template v-slot:save>Save Customer</template>
         </ns-crud-form>

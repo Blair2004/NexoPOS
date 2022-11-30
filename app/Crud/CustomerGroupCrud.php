@@ -338,7 +338,7 @@ class CustomerGroupCrud extends CrudService
             'namespace' => 'delete',
             'type' => 'DELETE',
             'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-groups/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.customers-groups/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
                 'title' => __( 'Delete a licence' ),
@@ -404,8 +404,8 @@ class CustomerGroupCrud extends CrudService
             'list' => ns()->url(  'dashboard/customers/groups' ),
             'create' => ns()->url(  'dashboard/customers/groups/create' ),
             'edit' => ns()->url(  'dashboard/customers/groups/edit' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-groups' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-groups/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-groups' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-groups/{id}' . '' ),
         ];
     }
 

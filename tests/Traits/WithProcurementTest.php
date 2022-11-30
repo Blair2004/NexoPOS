@@ -28,7 +28,7 @@ trait WithProcurementTest
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/procurements', $procurementsDetails );
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
 
         $response->assertOk();
         $decode = json_decode( $response->getContent(), true );
@@ -48,7 +48,7 @@ trait WithProcurementTest
         $currentExpenseValue = CashFlow::where( 'expense_category_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/nexopos/v4/procurements/' . $procurement[ 'id' ] . '/set-as-paid' );
+            ->json( 'GET', 'api/procurements/' . $procurement[ 'id' ] . '/set-as-paid' );
 
         $response->assertOk();
         $decode = json_decode( $response->getContent(), true );
@@ -72,7 +72,7 @@ trait WithProcurementTest
         $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [] );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/procurements', $procurementsDetails );
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
 
         $response->assertOk();
 

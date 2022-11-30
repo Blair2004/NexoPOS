@@ -40,7 +40,7 @@ export default {
         saveConfiguration( fields ) {
             this.form.disableFields( this.fields );
             this.processing     =   true;
-            return nsHttpClient.post( `/api/nexopos/v4/setup/configuration`, this.form.getValue( this.fields ) )
+            return nsHttpClient.post( `/api/setup/configuration`, this.form.getValue( this.fields ) )
                 .subscribe( result => {
                     document.location   =   '/sign-in';
                 }, error => {
@@ -53,7 +53,7 @@ export default {
         },
 
         checkDatabase() {
-            nsHttpClient.get( '/api/nexopos/v4/setup/database' )
+            nsHttpClient.get( '/api/setup/database' )
                 .subscribe( result => {
                     this.fields     =   this.form.createFields([
                         {

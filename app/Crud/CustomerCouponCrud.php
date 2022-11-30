@@ -402,7 +402,7 @@ class CustomerCouponCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-coupons/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.customers-coupons/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -465,8 +465,8 @@ class CustomerCouponCrud extends CrudService
             'list' => ns()->route( 'ns.dashboard.customers-coupons-generated-list' ),
             'create' => '#', // ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/create' ),
             'edit' => ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/{id}' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-coupons' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-coupons/{id}' ),
         ];
     }
 

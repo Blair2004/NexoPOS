@@ -326,7 +326,7 @@ export default {
             return resolve({ order, skip_layaway : false });
         },
         loadFields() {
-            nsHttpClient.get( `/api/nexopos/v4/fields/ns.layaway` )
+            nsHttpClient.get( `/api/fields/ns.layaway` )
                 .subscribe( fields => {
                     this.fields     =   this.formValidation.createFields( fields );
                     this.fields.forEach( field => {

@@ -1,5 +1,5 @@
 <template>
-    <div id="numpad" class="grid grid-flow-row divide-x divide-y border-r border-b grid-cols-3 grid-rows-3">
+    <div id="numpad" class="grid grid-flow-row divide-x divide-y border-r border-b border-input-edge grid-cols-3 grid-rows-3">
         <div 
             @click="inputValue( key )"
             :key="index" 

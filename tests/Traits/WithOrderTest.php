@@ -332,7 +332,7 @@ trait WithOrderTest
         );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+                ->json( 'POST', 'api/orders', $orderDetails );
 
         /**
          * Step 0: Ensure no error occured
@@ -525,7 +525,7 @@ trait WithOrderTest
         ], $data ) );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+                ->json( 'POST', 'api/orders', $orderDetails );
 
         $response->assertStatus( 200 );
 
@@ -556,7 +556,7 @@ trait WithOrderTest
         ], $data ) );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+            ->json( 'POST', 'api/orders', $orderDetails );
 
         $response->assertStatus( 200 );
 
@@ -617,7 +617,7 @@ trait WithOrderTest
         $shippingFees = 150;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', [
+            ->json( 'POST', 'api/orders', [
                 'customer_id' => Customer::first()->id,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
@@ -695,7 +695,7 @@ trait WithOrderTest
         $oldBalance = (float) $customer->account_amount;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', [
+            ->json( 'POST', 'api/orders', [
                 'customer_id' => $customer->id,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
@@ -778,7 +778,7 @@ trait WithOrderTest
          * that has paypal as identifier
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.payments-types', [
+            ->json( 'POST', 'api/crud/ns.payments-types', [
                 'label' => __( 'PayPal' ),
                 'general' => [
                     'identifier' => 'paypal-payment',
@@ -970,7 +970,7 @@ trait WithOrderTest
             $customerFirstOwed = $customer->owed_amount;
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
+                ->json( 'POST', 'api/orders', $orderData );
 
             $response->assertJson([
                 'status' => 'success',
@@ -1074,7 +1074,7 @@ trait WithOrderTest
                 });
 
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'POST', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
+                    ->json( 'POST', 'api/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
                         'payment' => [
                             'identifier' => $faker->randomElement([
                                 OrderPayment::PAYMENT_ACCOUNT,
@@ -1149,7 +1149,7 @@ trait WithOrderTest
         $shippingFees = 150;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', [
+            ->json( 'POST', 'api/orders', [
                 'customer_id' => 1,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
@@ -1211,7 +1211,7 @@ trait WithOrderTest
         $subtotal = $unitQuantity->sale_price * 5;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', [
+            ->json( 'POST', 'api/orders', [
                 'customer_id' => 1,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
@@ -1276,7 +1276,7 @@ trait WithOrderTest
         );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', $data );
+            ->json( 'POST', 'api/orders', $data );
 
         $order = (object) json_decode( $response->getContent(), true )[ 'data' ][ 'order' ];
         $order = Order::with([ 'products', 'user' ])->find( $order->id );
@@ -1410,7 +1410,7 @@ trait WithOrderTest
         }
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', [
+            ->json( 'POST', 'api/orders', [
                 'customer_id' => $firstFetchCustomer->id,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
@@ -1474,7 +1474,7 @@ trait WithOrderTest
         })->toArray();
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
+            ->json( 'POST', 'api/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
                 'payment' => [
                     'identifier' => 'account-payment',
                 ],
@@ -1577,7 +1577,7 @@ trait WithOrderTest
         $instalmentPayment = ns()->currency->getRaw( $instalmentSlice );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', [
+            ->json( 'POST', 'api/orders', [
                 'customer_id' => $customer->id,
                 'type' => [ 'identifier' => 'takeaway' ],
                 // 'discount_type'         =>  'percentage',
@@ -1635,7 +1635,7 @@ trait WithOrderTest
         $instalment = OrderInstalment::where( 'order_id', $order[ 'id' ] )->where( 'paid', false )->get()->random();
         $instalmentAmount = ns()->currency->getRaw( $instalment->amount / 2 );
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', 'api/nexopos/v4/orders/' . $order[ 'id' ] . '/instalments/' . $instalment->id, [
+            ->json( 'PUT', 'api/orders/' . $order[ 'id' ] . '/instalments/' . $instalment->id, [
                 'instalment' => [
                     'date' => $today,
                     'amount' => $instalmentAmount,
@@ -1658,7 +1658,7 @@ trait WithOrderTest
         $order = Order::find( $order[ 'id' ] );
         $oldInstlaments = $order->total_instalments;
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders/' . $order[ 'id' ] . '/instalments', [
+            ->json( 'POST', 'api/orders/' . $order[ 'id' ] . '/instalments', [
                 'instalment' => [
                     'date' => $today,
                     'amount' => $instalmentAmount,
@@ -1687,7 +1687,7 @@ trait WithOrderTest
         $order = Order::find( $order[ 'id' ] );
         $oldInstlaments = $order->total_instalments;
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'DELETE', 'api/nexopos/v4/orders/' . $order[ 'id' ] . '/instalments/' . $responseData[ 'data' ][ 'instalment' ][ 'id' ] );
+            ->json( 'DELETE', 'api/orders/' . $order[ 'id' ] . '/instalments/' . $responseData[ 'data' ][ 'instalment' ][ 'id' ] );
 
         $response->assertJson([
             'status' => 'success',
@@ -1705,7 +1705,7 @@ trait WithOrderTest
         $order = Order::find( $order[ 'id' ] );
         $oldInstlaments = $order->total_instalments;
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders/' . $order[ 'id' ] . '/instalments', [
+            ->json( 'POST', 'api/orders/' . $order[ 'id' ] . '/instalments', [
                 'instalment' => [
                     'date' => $today,
                     'amount' => $instalmentAmount,
@@ -1732,7 +1732,7 @@ trait WithOrderTest
             ->get()
             ->each( function( $instalment ) use ( $order ) {
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'POST', 'api/nexopos/v4/orders/' . $order->id . '/instalments/' . $instalment->id . '/pay', [
+                    ->json( 'POST', 'api/orders/' . $order->id . '/instalments/' . $instalment->id . '/pay', [
                         'payment_type' => OrderPayment::PAYMENT_CASH,
                     ]);
 
@@ -1769,7 +1769,7 @@ trait WithOrderTest
         $subtotal = collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', [
+            ->json( 'POST', 'api/orders', [
                 'customer_id' => $customer->id,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
@@ -1820,7 +1820,7 @@ trait WithOrderTest
 
         $subtotal = collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ], [
+            ->json( 'PUT', 'api/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ], [
                 'customer_id' => 1,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
@@ -1873,7 +1873,7 @@ trait WithOrderTest
 
         for ( $i = 0; $i < $timesForOrders; $i++ ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', [
+                ->json( 'POST', 'api/orders', [
                     'customer_id' => $customer->id,
                     'type' => [ 'identifier' => 'takeaway' ],
                     // 'discount_type'         =>  'percentage',
@@ -2002,7 +2002,7 @@ trait WithOrderTest
         ];
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
+            ->json( 'POST', 'api/orders', $orderData );
 
         $response->assertJson([
             'status' => 'success',

@@ -605,7 +605,7 @@ class CustomerCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.customers/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
                 'title' => __( 'Delete a customers' ),
@@ -685,8 +685,8 @@ class CustomerCrud extends CrudService
             'list' => ns()->url( '/dashboard/customers' ),
             'create' => ns()->url( '/dashboard/customers/create' ),
             'edit' => ns()->url( '/dashboard/customers/edit/{id}' ),
-            'post' => ns()->url( '/api/nexopos/v4/crud/ns.customers' ),
-            'put' => ns()->url( '/api/nexopos/v4/crud/ns.customers/{id}' ),
+            'post' => ns()->url( '/api/crud/ns.customers' ),
+            'put' => ns()->url( '/api/crud/ns.customers/{id}' ),
         ];
     }
 

@@ -57,7 +57,7 @@ export default {
         __,
         nsCurrency,
         loadUserProfileWidget( refresh ) {
-            nsHttpClient.get( `/api/nexopos/v4/reports/cashier-report${refresh ? '?refresh=true' : ''}` ).subscribe( result => {
+            nsHttpClient.get( `/api/reports/cashier-report${refresh ? '?refresh=true' : ''}` ).subscribe( result => {
                 this.profileDetails     =   result;
             })
         }

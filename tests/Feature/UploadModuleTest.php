@@ -82,7 +82,7 @@ class UploadModuleTest extends TestCase
          * Step 5: We'll reupload the module
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', '/api/nexopos/v4/modules', [
+            ->json( 'POST', '/api/modules', [
                 'module' => UploadedFile::fake()->createWithContent( 'module.zip', file_get_contents( $result[ 'path' ] ) ),
             ]);
 

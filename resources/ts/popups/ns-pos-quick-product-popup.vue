@@ -96,8 +96,8 @@ export default {
             this.loaded     =   false;
 
             forkJoin(
-                nsHttpClient.get( `/api/nexopos/v4/units` ),
-                nsHttpClient.get( `/api/nexopos/v4/taxes/groups` ),
+                nsHttpClient.get( `/api/units` ),
+                nsHttpClient.get( `/api/taxes/groups` ),
             ).subscribe({
                 next: ( result ) => {
                     // ..

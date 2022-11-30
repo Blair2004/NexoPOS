@@ -503,8 +503,8 @@ class ExpenseHistoryCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'history' ),
             'create' => ns()->url( 'dashboard/' . 'history/create' ),
             'edit' => ns()->url( 'dashboard/' . 'history/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expense-history' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expense-history/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.expense-history' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.expense-history/{id}' . '' ),
         ];
     }
 

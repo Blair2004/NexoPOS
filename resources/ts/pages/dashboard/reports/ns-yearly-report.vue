@@ -213,7 +213,7 @@ export default {
                 message: __( `The report will be computed for the current year, a job will be dispatched and you'll be informed once it's completed.` ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.post( `/api/nexopos/v4/reports/compute/yearly`, {
+                        nsHttpClient.post( `/api/reports/compute/yearly`, {
                             year: this.year
                         }).subscribe( result => {
                             nsSnackBar.success( result.message ).subscribe();
@@ -233,7 +233,7 @@ export default {
         loadReport() {
             const year       =   this.year;
 
-            nsHttpClient.post( '/api/nexopos/v4/reports/annual-report', { year })
+            nsHttpClient.post( '/api/reports/annual-report', { year })
                 .subscribe( result => {
                     this.report     =   result;
                 }, ( error ) => {

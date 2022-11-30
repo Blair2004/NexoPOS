@@ -82,7 +82,7 @@
                                         </a>
                                     </div>
                                     <div class="px-1" v-if="options.ns_pos_allow_wholesale_price && allowQuantityModification( product )"> 
-                                        <a :class="product.mode === 'wholesale' ? 'text-success-secondary border-success-secondary' : 'border-info-primary'" @click="toggleMode( product )" class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
+                                        <a :class="product.mode === 'wholesale' ? 'text-success-secondary border-success-secondary' : 'border-info-primary'" @click="toggleMode( product, index )" class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
                                             <i class="las la-award text-xl"></i>
                                         </a>
                                     </div>
@@ -98,10 +98,10 @@
                                         >{{ __( 'Price' ) }} : {{ nsCurrency( product.unit_price ) }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1"> 
-                                        <a v-if="allowQuantityModification( product )" @click="openDiscountPopup( product, 'product' )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ nsCurrency( product.discount ) }}</a>
+                                        <a v-if="allowQuantityModification( product )" @click="openDiscountPopup( product, 'product', index )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ nsCurrency( product.discount ) }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
-                                        <a v-if="allowQuantityModification( product )" @click="changeQuantity( product )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Quantity' ) }}: {{ product.quantity }}</a>
+                                        <a v-if="allowQuantityModification( product )" @click="changeQuantity( product, index )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Quantity' ) }}: {{ product.quantity }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
                                         <span class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Total :' ) }} {{ nsCurrency( product.total_price ) }}</span>
@@ -109,7 +109,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div @click="changeQuantity( product )" :class="allowQuantityModification( product ) ? 'cursor-pointer ns-numpad-key' : ''" class="hidden lg:flex w-1/6 p-2 border-b items-center justify-center">
+                        <div @click="changeQuantity( product, index )" :class="allowQuantityModification( product ) ? 'cursor-pointer ns-numpad-key' : ''" class="hidden lg:flex w-1/6 p-2 border-b items-center justify-center">
                             <span v-if="allowQuantityModification( product )" class="border-b border-dashed border-info-primary p-2">{{ product.quantity }}</span>
                         </div>
                         <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 items-center justify-center">{{ nsCurrency( product.total_price ) }}</div>
@@ -239,7 +239,7 @@
                         <i class="mr-2 text-2xl lg:text-xl las la-pause"></i> 
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Hold' ) }}</span>
                     </div>
-                    <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center border-r border-box-edge hover:bg-indigo-100 flex-auto">
+                    <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center border-r border-box-edge flex-auto">
                         <i class="mr-2 text-2xl lg:text-xl las la-percent"></i> 
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Discount' ) }}</span>
                     </div>
@@ -279,6 +279,7 @@ import nsPosCouponsLoadPopupVue from '~/popups/ns-pos-coupons-load-popup.vue';
 import nsPosOrderSettingsVue from '~/popups/ns-pos-order-settings.vue';
 import nsPosProductPricePopupVue from '~/popups/ns-pos-product-price-popup.vue';
 import nsPosQuickProductPopupVue from '~/popups/ns-pos-quick-product-popup.vue';
+import { ref } from '@vue/reactivity';
 
 export default {
     name: 'ns-pos-cart',
@@ -296,7 +297,7 @@ export default {
             settingsSubscribe: null,
             settings: {},
             types: [],
-            order: {},
+            order: ref({}),
         }
     },
     computed: {
@@ -319,19 +320,18 @@ export default {
         });
         this.typeSubscribe  =   POS.types.subscribe( types => this.types = types );
         this.orderSubscribe  =   POS.order.subscribe( order => {
-            this.order   =   order;
+            this.order   =   ref(order);
         });
         this.productSubscribe  =   POS.products.subscribe( products => {
-            this.products = products;
-            this.$forceUpdate();
+            this.products = ref(products);
         });
 
         this.settingsSubscribe  =   POS.settings.subscribe( settings => {
-            this.settings   =   settings;
+            this.settings   =   ref(settings);
         });
 
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
-            this.visibleSection     =   section;
+            this.visibleSection     =   ref(section);
         });
 
         /**
@@ -608,7 +608,7 @@ export default {
             popup();
         },
 
-        openDiscountPopup( reference, type ) {
+        openDiscountPopup( reference, type, productIndex = null ) {
             if ( ! this.settings.products_discount && type === 'product' ) {
                 return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) ).subscribe();
             }
@@ -622,7 +622,7 @@ export default {
                 type,
                 onSubmit( response ) {
                     if ( type === 'product' ) {
-                        POS.updateProduct( reference, response );
+                        POS.updateProduct( reference, response, productIndex );
                     } else if ( type === 'cart' ) {
                         POS.updateCart( reference, response );
                     }
@@ -636,7 +636,7 @@ export default {
             Popup.show( nsPosCustomerPopupVue );
         },
 
-        toggleMode( product ) {
+        toggleMode( product, index ) {
             if ( ! this.options.ns_pos_allow_wholesale_price ) {
                 return nsSnackBar.error( __( 'Unable to change the price mode. This feature has been disabled.' ) ).subscribe();
             }
@@ -647,7 +647,7 @@ export default {
                     message: __( 'Would you like to switch to wholesale price ?' ),
                     onAction( action ) {
                         if ( action ) {
-                            POS.updateProduct( product, { mode: 'wholesale' });
+                            POS.updateProduct( product, { mode: 'wholesale' }, index );
                         }
                     }
                 });
@@ -657,7 +657,7 @@ export default {
                     message: __( 'Would you like to switch to normal price ?' ),
                     onAction( action ) {
                         if ( action ) {
-                            POS.updateProduct( product, { mode: 'normal' });
+                            POS.updateProduct( product, { mode: 'normal' }, index );
                         }
                     }
                 });
@@ -683,7 +683,7 @@ export default {
          * This will use the previously used 
          * popup to run the promise.
          */
-        changeQuantity( product ) {
+        changeQuantity( product, index ) {
             if ( this.allowQuantityModification( product ) ) {
                 const quantityPromise   =   new ProductQuantityPromise( product );
                 quantityPromise.run({ 
@@ -691,7 +691,7 @@ export default {
                     unit_name           : product.unit_name, 
                     $quantities         : product.$quantities 
                 }).then( result => {
-                    POS.updateProduct( product, result );
+                    POS.updateProduct( product, result, index );
                 });
             }
         },

@@ -145,7 +145,7 @@ export default {
             this.tabs[ identifier ].active     =   true;
         },
         loadForm() {
-            nsHttpClient.get( '/api/nexopos/v4/forms/ns.pos-addresses' )
+            nsHttpClient.get( '/api/forms/ns.pos-addresses' )
                 .subscribe( ({tabs}) => {
                     /**
                      * let's populate back the fields

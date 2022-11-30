@@ -12,7 +12,7 @@ trait WithExpenseTest
     protected function attemptCreateExpensesCategories()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/expenses-categories', [
+            ->json( 'POST', 'api/expenses-categories', [
                 'name' => __( 'Exploitation Expenses' ),
                 'author' => Auth::id(),
                 'account' => '000010',
@@ -22,7 +22,7 @@ trait WithExpenseTest
         $response->assertStatus(200);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/expenses-categories', [
+            ->json( 'POST', 'api/expenses-categories', [
                 'name' => __( 'Employee Salaries' ),
                 'author' => Auth::id(),
                 'account' => '000011',
@@ -32,7 +32,7 @@ trait WithExpenseTest
         $response->assertStatus(200);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/expenses-categories', [
+            ->json( 'POST', 'api/expenses-categories', [
                 'name' => __( 'Random Expenses' ),
                 'author' => Auth::id(),
                 'account' => '000012',
@@ -50,7 +50,7 @@ trait WithExpenseTest
         $category = AccountType::find(1);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
+            ->json( 'POST', 'api/crud/ns.expenses', [
                 'name' => __( 'Store Rent' ),
                 'general' => [
                     'active' => true,
@@ -70,7 +70,7 @@ trait WithExpenseTest
         $category = AccountType::find(1);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
+            ->json( 'POST', 'api/crud/ns.expenses', [
                 'name' => __( 'Material Delivery' ),
                 'general' => [
                     'active' => true,
@@ -91,7 +91,7 @@ trait WithExpenseTest
 
         $role = Role::get()->shuffle()->first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
+            ->json( 'POST', 'api/crud/ns.expenses', [
                 'name' => __( 'Store Rent' ),
                 'general' => [
                     'active' => true,

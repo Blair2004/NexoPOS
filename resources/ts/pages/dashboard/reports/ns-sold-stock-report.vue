@@ -149,7 +149,7 @@ export default {
                 return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
             }
 
-            nsHttpClient.post( '/api/nexopos/v4/reports/sold-stock-report', { 
+            nsHttpClient.post( '/api/reports/sold-stock-report', { 
                 startDate: this.startDate,
                 endDate: this.endDate
             }).subscribe({

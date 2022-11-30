@@ -60,7 +60,7 @@ export default {
         },
 
         updateInstalmentAsDue( instalment ) {
-            nsHttpClient.put( `/api/nexopos/v4/orders/${this.order.id}/instalments/${this.instalment.id}/`, {
+            nsHttpClient.put( `/api/orders/${this.order.id}/instalments/${this.instalment.id}/`, {
                 instalment: {
                     date: ns.date.moment.format('YYYY-MM-DD HH:mm:ss' )
                 }
@@ -79,7 +79,7 @@ export default {
                 return nsSnackBar.error( __m( 'The form is not valid.' ) ).subcribe();
             }
 
-            nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments/${this.instalment.id}/pay`, { 
+            nsHttpClient.post( `/api/orders/${this.order.id}/instalments/${this.instalment.id}/pay`, { 
                     ...this.validation.extractFields( this.fields ) 
                 })
                 .subscribe({

@@ -58,7 +58,7 @@ class CreateUserTest extends TestCase
             ];
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'post', '/api/nexopos/v4/crud/ns.users', $configuration );
+                ->json( 'post', '/api/crud/ns.users', $configuration );
 
             $response->assertJsonPath( 'status', 'success' );
             $result = json_decode( $response->getContent() );
@@ -108,7 +108,7 @@ class CreateUserTest extends TestCase
             ];
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'put', '/api/nexopos/v4/crud/ns.users/' . $result->entry->id, $configuration );
+                ->json( 'put', '/api/crud/ns.users/' . $result->entry->id, $configuration );
 
             $response->assertJsonPath( 'status', 'success' );
             $result = json_decode( $response->getContent() );
@@ -130,7 +130,7 @@ class CreateUserTest extends TestCase
                  * Step 1: attempt to delete himself
                  */
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'delete', '/api/nexopos/v4/crud/ns.users/' . $user->id );
+                    ->json( 'delete', '/api/crud/ns.users/' . $user->id );
 
                 $response->assertStatus( 401 );
             });
@@ -145,7 +145,7 @@ class CreateUserTest extends TestCase
 
         if ( $order instanceof Order ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'delete', '/api/nexopos/v4/crud/ns.users/' . $order->author );
+                ->json( 'delete', '/api/crud/ns.users/' . $order->author );
 
             $response->assertStatus( 401 );
         }

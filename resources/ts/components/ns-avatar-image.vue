@@ -22,8 +22,6 @@ export default {
             seed: this.name,
             // ... and other options
         });
-
-        console.log( this );
     },
 }
 </script>

@@ -59,7 +59,7 @@ export default {
         },
         checkUsedRegister() {
             this.priorVerification  =   false;
-            nsHttpClient.get( `/api/nexopos/v4/cash-registers/used` )
+            nsHttpClient.get( `/api/cash-registers/used` )
                 .subscribe({
                     next: result => {
                         this.$popupParams.resolve( result );
@@ -74,7 +74,7 @@ export default {
         },
         loadRegisters() {
             this.hasLoadedRegisters     =   false;
-            nsHttpClient.get( `/api/nexopos/v4/cash-registers` )
+            nsHttpClient.get( `/api/cash-registers` )
                 .subscribe( result => {
                     this.registers              =   result;
                     this.hasLoadedRegisters     =   true;

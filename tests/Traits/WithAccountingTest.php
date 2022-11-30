@@ -64,7 +64,7 @@ trait WithAccountingTest
              */
             if ( ! $AccountType instanceof AccountType ) {
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'POST', 'api/nexopos/v4/crud/ns.accounting-accounts', [
+                    ->json( 'POST', 'api/crud/ns.accounting-accounts', [
                         'name' => $account[ 'name' ],
                         'general' => [
                             'operation' => $account[ 'operation' ],
@@ -116,7 +116,7 @@ trait WithAccountingTest
         $procurementData = $procurementsDetails->prepareProcurement( ns()->date->now(), [] );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/procurements', $procurementData );
+            ->json( 'POST', 'api/procurements', $procurementData );
 
         $response->assertStatus(200);
 

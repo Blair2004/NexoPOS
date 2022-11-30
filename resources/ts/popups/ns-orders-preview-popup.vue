@@ -96,9 +96,9 @@ export default {
 
         loadOrderDetails( orderId ) {
             forkJoin([
-                nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}` ),
-                nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}/products` ),
-                nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}/payments` ),
+                nsHttpClient.get( `/api/orders/${orderId}` ),
+                nsHttpClient.get( `/api/orders/${orderId}/products` ),
+                nsHttpClient.get( `/api/orders/${orderId}/payments` ),
             ])
                 .subscribe( result => {
                     this.order              =   result[0];
@@ -112,7 +112,7 @@ export default {
                 message: __( 'Would you like to delete this order' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.delete( `/api/nexopos/v4/orders/${this.order.id}` )
+                        nsHttpClient.delete( `/api/orders/${this.order.id}` )
                             .subscribe({
                                 next: result => {
                                     nsSnackBar.success( result.message ).subscribe();
@@ -137,7 +137,7 @@ export default {
                         message: __( 'The current order will be void. This action will be recorded. Consider providing a reason for this operation' ),
                         onAction:  ( reason ) => {
                             if ( reason !== false ) {
-                                nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/void`, { reason })
+                                nsHttpClient.post( `/api/orders/${this.order.id}/void`, { reason })
                                     .subscribe({
                                         next: result => {
                                             nsSnackBar.success( result.message ).subscribe();

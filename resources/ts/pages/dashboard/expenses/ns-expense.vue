@@ -106,7 +106,7 @@ export default {
         },
         saveExpense() {
             const verb              =   this.expense.id !== undefined ? 'put' : 'post';
-            const url               =   this.expense.id !== undefined ? `/api/nexopos/v4/crud/ns.expenses/${this.expense.id}` : `/api/nexopos/v4/crud/ns.expenses`;
+            const url               =   this.expense.id !== undefined ? `/api/crud/ns.expenses/${this.expense.id}` : `/api/crud/ns.expenses`;
             const correctConfig     =   this.configurations.filter( config => config.identifier === this.selectedConfiguration.identifier );
 
             /**
@@ -318,7 +318,7 @@ export default {
 
         loadConfiguration() {
             return new Promise( ( resolve, reject ) => {
-                nsHttpClient.get( `/api/nexopos/v4/expenses/configurations/${this.expense.id ? this.expense.id : ''}` )
+                nsHttpClient.get( `/api/expenses/configurations/${this.expense.id ? this.expense.id : ''}` )
                     .subscribe({
                         next: result => {
                             resolve( result );

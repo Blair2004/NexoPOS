@@ -7,13 +7,13 @@
             </div>
         </div>
         <div class="p-1 ns-box-body">
-            <ns-tabs @changeTab="setActiveTab( $event )" :active="activeTab">
+            <ns-tabs @active="setActiveTab( $event )" :active="activeTab">
                 <ns-tabs-item 
                     :label="__( 'Apply A Coupon' )" 
                     padding="p-2"
                     identifier="apply-coupon">
                     <div class="border-2 input-group info rounded flex">
-                        <input ref="coupon" @keyup.enter="loadCoupon()" v-model="couponCode" type="text" class="w-full text-primary p-2 outline-none" :placeholder="placeHolder">
+                        <input ref="coupon" @keyup.enter="loadCoupon()" v-model="couponCode" type="text" class="coupon-field w-full text-primary p-2 outline-none" :placeholder="placeHolder">
                         <button @click="loadCoupon()" class="px-3 py-2">{{ __( 'Load' ) }}</button>
                     </div>
                     <div class="pt-2">
@@ -27,8 +27,7 @@
                     <div class="pt-2" v-if="order && order.customer_id !== undefined">
                         <ns-notice color="success">
                             <template v-slot:description>{{ __( 'Loading Coupon For : ' ) + `${order.customer.name} ${order.customer.surname}` }}</template>
-                        </ns-notice>
-                        
+                        </ns-notice>                        
                     </div>
                     <div class="overflow-hidden">
                         <div class="pt-2 fade-in-entrance anim-duration-500 overflow-y-auto ns-scrollbar h-64" v-if="customerCoupon">
@@ -133,9 +132,11 @@ export default {
     },
     mounted() {
         this.popupCloser();
-        this.$refs[ 'coupon' ].select();
+
         this.orderSubscriber    =   POS.order.subscribe( order => {
             this.order = order;
+
+            console.log( order );
             
             if ( this.order.coupons.length > 0 ) {
                 this.activeTab  =   'active-coupons';
@@ -285,14 +286,20 @@ export default {
 
         setActiveTab( tab ) {
             this.activeTab  =   tab;
+
+            if ( tab === 'apply-coupon' ) {
+                setTimeout( () => {
+                    document.querySelector( '.coupon-field' ).select();
+                }, 10 );
+            }
         },
 
         getCoupon( code ) {
             if ( ! this.order.customer_id > 0 ) {
-                return nsSnackBar.error( __( 'You must select a customer before applying a coupon.' ) ).subscribe();
+                return nsSnackBar.error( __( 'You must select a customer before applying a coupon.' ) );
             }
 
-            return nsHttpClient.post( `/api/nexopos/v4/customers/coupons/${code}`, {
+            return nsHttpClient.post( `/api/customers/coupons/${code}`, {
                     customer_id :  this.order.customer_id
                 });
         },

@@ -26,7 +26,7 @@ class UpdateProductTest extends TestCase
 
         $response = $this
             ->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', '/api/nexopos/v4/products/' . $product->id, [
+            ->json( 'PUT', '/api/products/' . $product->id, [
                 'name' => 'Sample Product',
                 'variations' => [
                     [

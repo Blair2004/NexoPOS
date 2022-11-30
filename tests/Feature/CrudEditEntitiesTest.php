@@ -32,7 +32,7 @@ class CrudEditEntitiesTest extends TestCase
                 if ( ! empty( $object->getNamespace() ) ) {
                     $response = $this
                         ->withSession( $this->app[ 'session' ]->all() )
-                        ->json( 'GET', '/api/nexopos/v4/crud/' . $object->getNamespace() . '/form-config' );
+                        ->json( 'GET', '/api/crud/' . $object->getNamespace() . '/form-config' );
 
                     $response->assertOk();
                 }

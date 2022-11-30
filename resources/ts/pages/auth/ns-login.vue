@@ -44,7 +44,7 @@ export default {
     },
     mounted() {
         forkJoin({
-            login: nsHttpClient.get( '/api/nexopos/v4/fields/ns.login' ),
+            login: nsHttpClient.get( '/api/fields/ns.login' ),
             csrf: nsHttpClient.get( '/sanctum/csrf-cookie' ),
         })
         .subscribe({

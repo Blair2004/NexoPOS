@@ -19,7 +19,7 @@ trait WithCustomerTest
     protected function attemptCreateCustomerGroup()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers-groups', [
+            ->json( 'POST', 'api/crud/ns.customers-groups', [
                 'name' => __( 'Base Customers' ),
                 'general' => [
                     'reward_system_id' => $this->faker->randomElement( RewardSystem::get()->map( fn( $reward ) => $reward->id )->toArray() ),
@@ -39,7 +39,7 @@ trait WithCustomerTest
         if ( $customer instanceof Customer ) {
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', '/api/nexopos/v4/customers/' . $customer->id . '/account-history', [
+                ->json( 'POST', '/api/customers/' . $customer->id . '/account-history', [
                     'amount' => 500,
                     'description' => __( 'Test credit account' ),
                     'operation' => CustomerAccountHistory::OPERATION_DEDUCT,
@@ -59,7 +59,7 @@ trait WithCustomerTest
         if ( $customer instanceof Customer ) {
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', '/api/nexopos/v4/customers/' . $customer->id . '/account-history', [
+                ->json( 'POST', '/api/customers/' . $customer->id . '/account-history', [
                     'amount' => 500,
                     'description' => __( 'Test credit account' ),
                     'operation' => CustomerAccountHistory::OPERATION_ADD,
@@ -77,7 +77,7 @@ trait WithCustomerTest
         $group = CustomerGroup::first();
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
+            ->json( 'POST', 'api/crud/ns.customers', [
                 'name' => $faker->firstName,
                 'general' => [
                     'group_id' => $group->id,
@@ -107,7 +107,7 @@ trait WithCustomerTest
          * be successful.
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
+            ->json( 'POST', 'api/crud/ns.customers', [
                 'name' => $faker->firstName,
                 'general' => [
                     'group_id' => $group->id,
@@ -129,7 +129,7 @@ trait WithCustomerTest
          * using the exact same non-empty email
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
+            ->json( 'POST', 'api/crud/ns.customers', [
                 'name' => $faker->firstName,
                 'general' => [
                     'group_id' => $group->id,
@@ -166,7 +166,7 @@ trait WithCustomerTest
             $lastName = $faker->lastName;
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
+                ->json( 'POST', 'api/crud/ns.customers', [
                     'name' => $firstName,
                     'general' => [
                         'group_id' => $group->id,
@@ -244,7 +244,7 @@ trait WithCustomerTest
     protected function attemptCreateReward()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'post', 'api/nexopos/v4/crud/ns.rewards-system', [
+            ->json( 'post', 'api/crud/ns.rewards-system', [
                 'name' => __( 'Sample Reward System' ),
                 'general' => [
                     'coupon_id' => $this->faker->randomElement( Coupon::get()->map( fn( $coupon ) => $coupon->id )->toArray() ),
@@ -276,7 +276,7 @@ trait WithCustomerTest
 
         if ( $accountHistory instanceof CustomerAccountHistory ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'GET', 'api/nexopos/v4/customers/' . $accountHistory->customer_id . '/account-history' );
+                ->json( 'GET', 'api/customers/' . $accountHistory->customer_id . '/account-history' );
 
             $response->assertOk();
             $response = json_decode( $response->getContent(), true );
@@ -295,7 +295,7 @@ trait WithCustomerTest
     {
         $customer = Customer::first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/rewards' );
+            ->json( 'GET', 'api/customers/' . $customer->id . '/rewards' );
 
         $response->assertOk();
     }
@@ -304,7 +304,7 @@ trait WithCustomerTest
     {
         $customer = Customer::first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/orders' );
+            ->json( 'GET', 'api/customers/' . $customer->id . '/orders' );
 
         $response->assertOk();
     }
@@ -313,7 +313,7 @@ trait WithCustomerTest
     {
         $customer = Customer::first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/addresses' );
+            ->json( 'GET', 'api/customers/' . $customer->id . '/addresses' );
 
         $response->assertOk();
     }
@@ -322,7 +322,7 @@ trait WithCustomerTest
     {
         $customer = Customer::first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/group' );
+            ->json( 'GET', 'api/customers/' . $customer->id . '/group' );
 
         $response->assertOk();
     }

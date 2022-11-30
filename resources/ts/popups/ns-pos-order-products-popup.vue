@@ -29,7 +29,7 @@ export default {
             this.isLoading  =   true;
             const id    =   this.$popupParams.order.id;
 
-            nsHttpClient.get( `/api/nexopos/v4/orders/${id}/products` )
+            nsHttpClient.get( `/api/orders/${id}/products` )
                 .subscribe( result => {
                     this.isLoading  =   false;
                     this.products   =   result;

@@ -428,7 +428,7 @@ class GlobalProductHistoryCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.global-products-history/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.global-products-history/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -496,8 +496,8 @@ class GlobalProductHistoryCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . '/products/history' ),
             'create' => ns()->url( 'dashboard/' . '/products/history/create' ),
             'edit' => ns()->url( 'dashboard/' . '/products/history/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.global-products-history' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.global-products-history/{id}' . '' ),
         ];
     }
 

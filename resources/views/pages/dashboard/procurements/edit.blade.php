@@ -6,9 +6,9 @@
     <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
         @include( 'common.dashboard.title' )
         <ns-procurement
-            submit-url="{{ ns()->url( '/api/nexopos/v4/procurements/' . $procurement->id ) }}"
+            submit-url="{{ ns()->url( '/api/procurements/' . $procurement->id ) }}"
             submit-method="put"
-            src="{{ ns()->url( '/api/nexopos/v4/forms/ns.procurement/' . $procurement->id ) }}"
+            src="{{ ns()->url( '/api/forms/ns.procurement/' . $procurement->id ) }}"
             return-url="{{ ns()->url( '/dashboard/procurements' ) }}">
             <template v-slot:title>{{ __( 'Procurement Name' ) }}</template>
             <template v-slot:error-no-products>{{ __( 'Unable to proceed no products has been provided.' ) }}</template>

@@ -237,7 +237,7 @@ export default {
             }
         },
         searchProducts( search ) {
-            nsHttpClient.post( `/api/nexopos/v4/products/search`, { 
+            nsHttpClient.post( `/api/products/search`, { 
                 search, 
                 arguments: {
                     type: {

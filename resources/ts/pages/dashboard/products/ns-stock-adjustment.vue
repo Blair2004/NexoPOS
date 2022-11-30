@@ -27,7 +27,7 @@ export default {
 
         searchProduct( argument ) {
             if ( argument.length > 0 ) {
-                nsHttpClient.post( '/api/nexopos/v4/procurements/products/search-procurement-product', { argument })
+                nsHttpClient.post( '/api/procurements/products/search-procurement-product', { argument })
                     .subscribe( result => {
                         if ( result.from === 'products' ) {
                             if ( result.products.length > 0 ) {
@@ -86,8 +86,8 @@ export default {
 
         addSuggestion( suggestion ) {
             forkJoin([
-                nsHttpClient.get( `/api/nexopos/v4/products/${suggestion.id}/units/quantities` ),
-                // nsHttpClient.get( `/api/nexopos/v4/products/${suggestion.id}/procurements` )
+                nsHttpClient.get( `/api/products/${suggestion.id}/units/quantities` ),
+                // nsHttpClient.get( `/api/products/${suggestion.id}/procurements` )
             ]).subscribe( result => {
                     if ( result[0].length > 0 ) {
                         suggestion.quantities                       =   result[0];
@@ -162,7 +162,7 @@ export default {
                 message: __( 'The stock adjustment is about to be made. Would you like to confirm ?' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.post( '/api/nexopos/v4/products/adjustments', { products: this.products })
+                        nsHttpClient.post( '/api/products/adjustments', { products: this.products })
                             .subscribe( result => {
                                 nsSnackBar.success( result.message ).subscribe();
                                 this.products       =   [];

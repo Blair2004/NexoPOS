@@ -60,7 +60,7 @@ export default {
         popupCloser,
         
         searchOrder( search ) {
-            nsHttpClient.get( `/api/nexopos/v4/crud/${this.active}?search=${search}` )
+            nsHttpClient.get( `/api/crud/${this.active}?search=${search}` )
                 .subscribe( (result) => {
                     this.orders     =   result.data;
                 })
@@ -77,7 +77,7 @@ export default {
         },
 
         loadOrderFromType( type ) {
-            nsHttpClient.get( `/api/nexopos/v4/crud/${type}` )
+            nsHttpClient.get( `/api/crud/${type}` )
                 .subscribe( result => {
                     this.orders     =   result.data;
                 });

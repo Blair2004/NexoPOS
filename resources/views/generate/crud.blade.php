@@ -339,7 +339,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             'label'     =>  __( 'Delete' ),
             'namespace' =>  'delete',
             'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
+            'url'       =>  ns()->url( '/api/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
             ]
@@ -402,8 +402,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             'list'      =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
             'create'    =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
             'edit'      =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
+            'post'      =>  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
+            'put'       =>  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
         ];
     }
 

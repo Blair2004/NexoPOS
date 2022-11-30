@@ -300,7 +300,7 @@ class TaxesGroupCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.taxes-groups/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -362,8 +362,8 @@ class TaxesGroupCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'taxes/groups' ),
             'create' => ns()->url( 'dashboard/' . 'taxes/groups/create' ),
             'edit' => ns()->url( 'dashboard/' . 'taxes/groups/edit/{id}' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups/' . '{id}' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.taxes-groups' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.taxes-groups/' . '{id}' ),
         ];
     }
 

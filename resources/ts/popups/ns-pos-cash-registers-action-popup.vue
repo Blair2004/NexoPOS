@@ -76,7 +76,7 @@ export default {
         },
         loadFields() {
             this.loaded     =   false;
-            nsHttpClient.get( `/api/nexopos/v4/fields/${this.identifier}` )
+            nsHttpClient.get( `/api/fields/${this.identifier}` )
                 .subscribe( result => {
                     this.loaded     =   true;
                     this.fields     =   result;
@@ -100,7 +100,7 @@ export default {
             const fields    =   this.validation.extractFields( this.fields );
             fields.amount   =   this.amount === '' ? 0 : this.amount;
 
-            nsHttpClient.post( `/api/nexopos/v4/cash-registers/${this.action}/${this.register_id || this.settings.register.id}`, fields )
+            nsHttpClient.post( `/api/cash-registers/${this.action}/${this.register_id || this.settings.register.id}`, fields )
                 .subscribe({
                     next: result => {
                         this.$popupParams.resolve( result );

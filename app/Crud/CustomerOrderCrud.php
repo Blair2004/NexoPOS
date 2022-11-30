@@ -427,8 +427,8 @@ class CustomerOrderCrud extends OrderCrud
             'list' => ns()->url( 'dashboard/' . 'dashboard/customers/orders' ),
             'create' => ns()->url( 'dashboard/' . 'dashboard/customers/orders/create' ),
             'edit' => ns()->url( 'dashboard/' . 'dashboard/customers/orders/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers.orders' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers.orders/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers.orders' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers.orders/{id}' . '' ),
         ];
     }
 

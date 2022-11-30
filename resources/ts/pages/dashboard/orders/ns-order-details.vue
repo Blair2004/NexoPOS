@@ -219,7 +219,7 @@ export default {
                 message: __( 'The processing status of the order will be changed. Please confirm your action.' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/processing`, {
+                        nsHttpClient.post( `/api/orders/${this.order.id}/processing`, {
                             process_status: this.order.process_status
                         }).subscribe({
                             next: result => {
@@ -252,7 +252,7 @@ export default {
                 message: __( 'The delivery status of the order will be changed. Please confirm your action.' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/delivery`, {
+                        nsHttpClient.post( `/api/orders/${this.order.id}/delivery`, {
                             delivery_status: this.order.delivery_status
                         }).subscribe({
                             next: result => {

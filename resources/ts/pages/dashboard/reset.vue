@@ -42,7 +42,7 @@ export default {
             const fields   =   this.validation.getValue( this.fields );
 
             if ( confirm( this.$slots[ 'confirm-message' ] ? this.$slots[ 'confirm-message' ][0].text : __( 'Would you like to proceed ?' ) ) ) {
-                nsHttpClient.post( '/api/nexopos/v4/reset', fields )
+                nsHttpClient.post( '/api/reset', fields )
                     .subscribe({
                         next: result => {
                             nsSnackBar.success( result.message ).subscribe();
@@ -54,7 +54,7 @@ export default {
             }
         },
         loadFields() {
-            nsHttpClient.get( '/api/nexopos/v4/fields/ns.reset' )
+            nsHttpClient.get( '/api/fields/ns.reset' )
                 .subscribe({
                     next: fields => {
                         this.fields     =   this.validation.createFields( fields );

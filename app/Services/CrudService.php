@@ -1191,7 +1191,7 @@ class CrudService
             /**
              * This create the src URL using the "namespace".
              */
-            'src' => ns()->url( '/api/nexopos/v4/crud/' . $instance->namespace ),
+            'src' => ns()->url( '/api/crud/' . $instance->namespace ),
 
             /**
              * This pull the creation link. That link should takes the user
@@ -1255,7 +1255,7 @@ class CrudService
              * this automatically build a source URL based on the identifier
              * provided. But can be overwritten with the config.
              */
-            'src' => $config[ 'src' ] ?? ( ns()->url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( ! empty( $entry ) ? 'form-config/' . $entry->id : 'form-config' ) ) ),
+            'src' => $config[ 'src' ] ?? ( ns()->url( '/api/crud/' . $instance->namespace . '/' . ( ! empty( $entry ) ? 'form-config/' . $entry->id : 'form-config' ) ) ),
 
             /**
              * this use the built in links to create a return URL.

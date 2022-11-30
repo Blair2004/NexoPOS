@@ -376,7 +376,7 @@ class ProviderProductsCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.providers-products/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.providers-products/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],

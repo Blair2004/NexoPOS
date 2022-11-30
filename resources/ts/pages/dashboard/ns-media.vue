@@ -86,7 +86,7 @@ export default {
     },
     computed: {
         postMedia() {
-            return nsHooks.applyFilters( 'http-client-url', '/api/nexopos/v4/medias' );
+            return nsHooks.applyFilters( 'http-client-url', '/api/medias' );
         },
         currentPage() {
             return this.pages.filter( page => page.selected )[0];
@@ -135,7 +135,7 @@ export default {
                 message: __( 'You\'re about to delete selected resources. Would you like to proceed?' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.post( '/api/nexopos/v4/medias/bulk-delete', {
+                        nsHttpClient.post( '/api/medias/bulk-delete', {
                             ids: this.response.data
                                 .filter( v => v.selected )
                                 .map( v => v.id )
@@ -199,7 +199,7 @@ export default {
                         const formData      =   new FormData();
                         formData.append( 'file', fileData.file );
 
-                        nsHttpClient.post( `/api/nexopos/v4/medias`, formData, {
+                        nsHttpClient.post( `/api/medias`, formData, {
                             headers: {
                                 "Content-Type": "multipart/form-data"
                             }
@@ -287,7 +287,7 @@ export default {
         loadGallery( page = null ) {
             page = page === null ? this.queryPage : page;
             this.queryPage  =   page;
-            nsHttpClient.get( `/api/nexopos/v4/medias?page=${page}&user_id=${this.user_id}${this.searchField.length > 0 ? `&search=${this.searchField}` : `` }` )
+            nsHttpClient.get( `/api/medias?page=${page}&user_id=${this.user_id}${this.searchField.length > 0 ? `&search=${this.searchField}` : `` }` )
                 .subscribe( result => {
                     // define default selection status
                     result.data.forEach( resource => resource.selected = false );
@@ -296,7 +296,7 @@ export default {
         },
 
         submitChange( field, selectedResource ) {
-            nsHttpClient.put( `/api/nexopos/v4/medias/${selectedResource.id}`, {
+            nsHttpClient.put( `/api/medias/${selectedResource.id}`, {
                 name: field.srcElement.textContent
             }).subscribe({
                 next: result => {

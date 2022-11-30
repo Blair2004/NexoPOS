@@ -64,7 +64,7 @@ class SaveSettingsTest extends TestCase
                 if ( ! empty( $object->getNamespace() ) ) {
                     $response = $this
                         ->withSession( $this->app[ 'session' ]->all() )
-                        ->json( 'POST', '/api/nexopos/v4/settings/' . $object->getNamespace(), $form );
+                        ->json( 'POST', '/api/settings/' . $object->getNamespace(), $form );
 
                     $response->assertJsonPath( 'status', 'success' );
 

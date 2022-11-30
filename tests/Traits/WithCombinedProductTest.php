@@ -28,7 +28,7 @@ trait WithCombinedProductTest
         );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+                ->json( 'POST', 'api/orders', $orderDetails );
 
         $response->assertStatus( 200 );
 

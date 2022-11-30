@@ -1,7 +1,7 @@
 <template>
-    <div id="numpad-holder" class="border-t">
+    <div id="numpad-holder" class="border-t border-numpad-edge">
         <div v-for="(keys,index) of keyRows" :key="index">
-            <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-1 text-lg border-r">
+            <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-1 text-lg border-r border-numpad-edge">
                     <div 
                     @click="inputValue( key )"
                     :key="index" 

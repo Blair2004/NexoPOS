@@ -40,7 +40,7 @@ export default {
     },
     mounted() {
         forkJoin([
-            nsHttpClient.get( '/api/nexopos/v4/fields/ns.new-password' ),
+            nsHttpClient.get( '/api/fields/ns.new-password' ),
             nsHttpClient.get( '/sanctum/csrf-cookie' ),
         ])
         .subscribe( result => {

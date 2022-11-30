@@ -60,7 +60,7 @@ export default {
             const form          =   this.formValidation.extractFields( this.fields );
             this.isSubmiting    =   true;
 
-            nsHttpClient.post( `/api/nexopos/v4/customers/${customer.id}/account-history`, form )
+            nsHttpClient.post( `/api/customers/${customer.id}/account-history`, form )
                 .subscribe({
                     next: result => {
                         this.isSubmiting    =   false;
@@ -82,7 +82,7 @@ export default {
         },
 
         loadTransactionFields() {
-            nsHttpClient.get( '/api/nexopos/v4/fields/ns.customers-account' )
+            nsHttpClient.get( '/api/fields/ns.customers-account' )
                 .subscribe({
                     next: fields => {
                         this.fields     =   this.formValidation.createFields( fields );

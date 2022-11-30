@@ -5,8 +5,8 @@
             <button @click="visible = !visible" :class="field ? 'mt-1' : ''" class="border border-input-edge shadow rounded cursor-pointer w-full px-1 py-1 flex items-center text-primary">
                 <i class="las la-clock text-2xl"></i>
                 <span class="mx-1 text-sm" v-if="field">
-                    <span v-if="field.value !== null">{{ fieldDate.format( 'YYYY-MM-DD HH:mm' ) }}</span>
-                    <span v-if="field.value === null">N/A</span>
+                    <span v-if="! [ null, '', undefined ].includes( field.value )">{{ fieldDate.format( 'YYYY-MM-DD HH:mm' ) }}</span>
+                    <span v-if="[ null, '', undefined ].includes( field.value )">N/A</span>
                 </span>
             </button>
         </div>
@@ -40,7 +40,7 @@ export default {
     },
     computed: {
         fieldDate() {
-            return moment( this.field.value );
+            return moment( this.field.value ).isValid() ? moment( this.field.value ) : moment();
         }
     },
     mounted() {

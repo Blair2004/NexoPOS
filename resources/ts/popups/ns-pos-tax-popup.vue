@@ -139,7 +139,7 @@ export default {
             this.popupResolver( fields );
         },  
         loadGroups() {
-            nsHttpClient.get( `/api/nexopos/v4/taxes/groups` )
+            nsHttpClient.get( `/api/taxes/groups` )
                 .subscribe( groups => {
                     this.groups     =   groups;
                     this.group_fields.forEach( field => {

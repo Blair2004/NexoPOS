@@ -62,7 +62,7 @@ export default {
         __,
         handleChange( column, event ) {
             setTimeout( () => {
-                nsHttpClient.post( '/api/nexopos/v4/users/widgets', { column })
+                nsHttpClient.post( '/api/users/widgets', { column })
                     .subscribe( result => {
                         // ...
                     }, error => {

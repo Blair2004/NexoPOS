@@ -39,7 +39,7 @@ class TestOtherGetRoutes extends TestCase
                      */
                     if ( in_array( $response->status(), [ 401, 200 ] ) ) {
                         if ( in_array( $uri, [
-                            'api/nexopos/v4/cash-registers/used',
+                            'api/cash-registers/used',
                         ] ) ) {
                             $response->assertStatus(401);
                         } else {

@@ -10,8 +10,8 @@
         </div>
         <ns-crud-form 
             return-url="{{ url( '/dashboard/customers/groups' ) }}"
-            submit-url="{{ url( '/api/nexopos/v4/crud/ns.customers-groups' ) }}"
-            src="{{ url( '/api/nexopos/v4/crud/ns.customers-groups/form-config' ) }}">
+            submit-url="{{ url( '/api/crud/ns.customers-groups' ) }}"
+            src="{{ url( '/api/crud/ns.customers-groups/form-config' ) }}">
             <template v-slot:title>Group Name</template>
             <template v-slot:save>Save Group</template>
             <template v-slot:error-required>The following field is required</template>

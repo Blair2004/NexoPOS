@@ -177,7 +177,7 @@ class ProcessExpensesTest extends TestCase
             default => 1,
         };
 
-        $response = $this->json( 'POST', '/api/nexopos/v4/expenses', [
+        $response = $this->json( 'POST', '/api/expenses', [
             'name' => $config[ 'name' ] ?? $this->faker->paragraph(2),
             'active' => true,
             'category_id' => AccountType::get( 'id' )->random()->id,

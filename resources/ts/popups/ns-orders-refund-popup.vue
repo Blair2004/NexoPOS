@@ -86,7 +86,7 @@ export default {
         },
 
         loadOrderRefunds() {
-            nsHttpClient.get( `/api/nexopos/v4/orders/${this.order.id}/refunds` )
+            nsHttpClient.get( `/api/orders/${this.order.id}/refunds` )
                 .subscribe( order => {
                     this.loaded     =   true;
                     this.refunds    =   order.refunds;

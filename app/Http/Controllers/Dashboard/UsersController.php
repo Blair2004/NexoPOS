@@ -15,8 +15,10 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\UsersService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 
 class UsersController extends DashboardController
@@ -34,7 +36,7 @@ class UsersController extends DashboardController
             'title' => __( 'Users List' ),
             'createUrl' => url( '/dashboard/users/create' ),
             'description' => __( 'Manage all users available.' ),
-            'src' => url( '/api/nexopos/v4/crud/ns.users' ),
+            'src' => url( '/api/crud/ns.users' ),
         ]);
     }
 
@@ -93,8 +95,8 @@ class UsersController extends DashboardController
         return $this->view( 'pages.dashboard.users.profile', [
             'title' => __( 'My Profile' ),
             'description' => __( 'Change your personal settings' ),
-            'src' => url( '/api/nexopos/v4/forms/ns.user-profile' ),
-            'submitUrl' => url( '/api/nexopos/v4/users/profile'),
+            'src' => url( '/api/forms/ns.user-profile' ),
+            'submitUrl' => url( '/api/users/profile'),
         ]);
     }
 
@@ -187,5 +189,28 @@ class UsersController extends DashboardController
     public function configureWidgets( Request $request )
     {
         return $this->usersService->storeWidgetsOnAreas( $request->only([ 'column' ]));
+    }
+
+    public function createToken( Request $request )
+    {
+        $validation     =   Validator::make( $request->all(), [
+            'name'  =>  'required'
+        ]);
+
+        if ( ! $validation->passes() ) {
+            throw new Exception( __( 'The provided data aren\'t valid' ) );
+        }
+
+        return $this->usersService->createToken( $request->input( 'name' ) );
+    }
+
+    public function getTokens()
+    {
+        return $this->usersService->getTokens();
+    }
+
+    public function deleteToken( $tokenId )
+    {
+        return $this->usersService->deleteToken( $tokenId );
     }
 }

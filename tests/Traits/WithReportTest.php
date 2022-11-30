@@ -52,7 +52,7 @@ trait WithReportTest
     private function getSaleReport()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/reports/sale-report', [
+            ->json( 'POST', 'api/reports/sale-report', [
                 'startDate' => ns()->date->startOfDay()->toDateTimeString(),
                 'endDate' => ns()->date->endOfDay()->toDateTimeString(),
                 'type' => 'categories_report',

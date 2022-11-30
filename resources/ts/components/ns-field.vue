@@ -153,7 +153,7 @@ export default {
                     :field="field"
                     @blur="$emit( 'blur', field )" 
                     @change="$emit( 'change', field )" 
-                    v-bind:is="field.component"></component>
+                        v-bind:is="field.component"></component>
             </keep-alive>
         </template>
     </div>

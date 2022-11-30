@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class DateService extends Carbon
 {
@@ -19,6 +20,34 @@ class DateService extends Carbon
 
         $this->timezone = $timezone;
         $this->options = app()->make( Options::class );
+
+        if ( Auth::check() ) {
+            $language  =   Auth::user()->attribute->language ?: $this->option->get( 'ns_store_language', 'light' );
+        } else {
+            $language  =   $this->options->get( 'ns_store_language', 'en' );
+        }
+
+        $longForm   =   $this->getLongLocaleCode( $language );
+
+        $this->locale( $longForm );
+    }
+
+    /**
+     * Return the long locale form
+     * for a short version provided
+     */
+    public function getLongLocaleCode( string $locale ): string
+    {
+        return match( $locale ) {
+            'fr'    =>  'fr_FR',
+            'en'    =>  'en_US',
+            'es'    =>  'es_ES',
+            'it'    =>  'it_IT',
+            'ar'    =>  'ar_SA',
+            'pt'    =>  'pt_PT',
+            'tr'    =>  'tr_TR',
+            'vi'    =>  'vi_VN'
+        };
     }
 
     public function define( $time, $timezone = 'Europe/London' )

@@ -376,14 +376,14 @@ class RolesCrud extends CrudService
                 'message' => __( 'Would you like to clone this role ?' ),
             ],
             'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/' . 'users/roles/' . $entry->id . '/clone' ),
+            'url' => ns()->url( '/api/' . 'users/roles/' . $entry->id . '/clone' ),
         ]);
 
         $entry->addAction( 'delete', [
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.roles/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.roles/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -458,8 +458,8 @@ class RolesCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'users/roles' ),
             'create' => ns()->url( 'dashboard/' . 'users/roles/create' ),
             'edit' => ns()->url( 'dashboard/' . 'users/roles/edit/{id}' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.roles' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.roles/{id}' . '' ),
         ];
     }
 

@@ -94,7 +94,7 @@ export default {
         },
 
         loadUnits() {
-            nsHttpClient.get( `/api/nexopos/v4/products/${this.$popupParams.product.$original().id}/units/quantities` )
+            nsHttpClient.get( `/api/products/${this.$popupParams.product.$original().id}/units/quantities` )
                 .subscribe( result => {
                     
                     if ( result.length === 0 ) {

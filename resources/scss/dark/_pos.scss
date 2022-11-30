@@ -184,7 +184,7 @@
                     @apply bg-box-background border-r border-pos-button-edge text-primary;
 
                     &:hover, &:active {
-                        @apply bg-input-button-active;
+                        @apply bg-box-elevation-background;
                     }
                 }
 

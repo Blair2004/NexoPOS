@@ -387,7 +387,7 @@ class RegisterCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.registers/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.registers/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -450,8 +450,8 @@ class RegisterCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'cash-registers' ),
             'create' => ns()->url( 'dashboard/' . 'cash-registers/create' ),
             'edit' => ns()->url( 'dashboard/' . 'cash-registers/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.registers' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.registers/{id}' . '' ),
         ];
     }
 

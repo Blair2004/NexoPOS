@@ -327,7 +327,7 @@ class ExpenseCategoryCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.accounting-accounts/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.accounting-accounts/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -389,8 +389,8 @@ class ExpenseCategoryCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'accounting/accounts' ),
             'create' => ns()->url( 'dashboard/' . 'accounting/accounts/create' ),
             'edit' => ns()->url( 'dashboard/' . 'accounting/accounts/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/ns.accounting-accounts' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/ns.accounting-accounts/{id}' ),
+            'post' => ns()->url( 'api/crud/ns.accounting-accounts' ),
+            'put' => ns()->url( 'api/crud/ns.accounting-accounts/{id}' ),
         ];
     }
 

@@ -367,7 +367,7 @@ class TaxCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.taxes/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.taxes/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -430,8 +430,8 @@ class TaxCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'taxes' ),
             'create' => ns()->url( 'dashboard/' . 'taxes/create' ),
             'edit' => ns()->url( 'dashboard/' . 'taxes/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.taxes' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.taxes/{id}' . '' ),
         ];
     }
 

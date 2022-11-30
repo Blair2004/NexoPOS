@@ -145,7 +145,7 @@ export default {
             });
         },
         searchCustomer( value ) {
-            nsHttpClient.post( '/api/nexopos/v4/customers/search', {
+            nsHttpClient.post( '/api/customers/search', {
                 search: value
             }).subscribe( customers => {
                 customers.forEach( customer => customer.selected = false );
@@ -161,7 +161,7 @@ export default {
         getRecentCustomers() {
             this.isLoading  =   true;
 
-            nsHttpClient.get( '/api/nexopos/v4/customers/recently-active' )
+            nsHttpClient.get( '/api/customers/recently-active' )
                 .subscribe({
                     next: customers => {
                         this.isLoading  =   false;

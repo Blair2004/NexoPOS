@@ -33,7 +33,7 @@ class FieldsTest extends TestCase
             $object = new $class;
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'get', '/api/nexopos/v4/fields/' . $class::getIdentifier() );
+                ->json( 'get', '/api/fields/' . $class::getIdentifier() );
 
             $result = collect( json_decode( $response->getContent() ) );
 
@@ -55,7 +55,7 @@ class FieldsTest extends TestCase
             $object = new $class;
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'get', '/api/nexopos/v4/forms/' . $object->getIdentifier() );
+                ->json( 'get', '/api/forms/' . $object->getIdentifier() );
 
             $result = json_decode( $response->getContent() );
 

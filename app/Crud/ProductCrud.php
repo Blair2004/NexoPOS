@@ -744,7 +744,7 @@ class ProductCrud extends CrudService
             'label' => '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.products/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.products/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],

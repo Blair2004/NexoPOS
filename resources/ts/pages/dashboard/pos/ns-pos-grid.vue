@@ -288,7 +288,7 @@ export default {
 
         submitSearch( value ) {
             if ( value.length > 0 ) {
-                nsHttpClient.get( `/api/nexopos/v4/products/search/using-barcode/${value}` )
+                nsHttpClient.get( `/api/products/search/using-barcode/${value}` )
                     .subscribe({
                         next: result => {
                             this.barcode     =   '';
@@ -318,7 +318,7 @@ export default {
         
         loadCategories( parent ) {
             this.isLoading  =   true;
-            nsHttpClient.get( `/api/nexopos/v4/categories/pos/${ parent ? parent.id : ''}` )
+            nsHttpClient.get( `/api/categories/pos/${ parent ? parent.id : ''}` )
                 .subscribe({
                     next: (result ) => {
                         this.categories         =   result.categories;

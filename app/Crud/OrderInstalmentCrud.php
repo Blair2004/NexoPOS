@@ -380,7 +380,7 @@ class OrderInstalmentCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.orders-instalments/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.orders-instalments/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -443,8 +443,8 @@ class OrderInstalmentCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'orders/instalments' ),
             'create' => false,
             'edit' => ns()->url( 'dashboard/' . 'orders/instalments/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.orders-instalments' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.orders-instalments/{id}' . '' ),
         ];
     }
 

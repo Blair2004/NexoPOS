@@ -359,7 +359,7 @@ class CustomerRewardCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-rewards/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.customers-rewards/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -427,8 +427,8 @@ class CustomerRewardCrud extends CrudService
             'list' => 'javascript:void(0)',
             'create' => 'javascript:void(0)',
             'edit' => ns()->url( 'dashboard/' . $this->getSlug() . '/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-rewards' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-rewards/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-rewards' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-rewards/{id}' . '' ),
         ];
     }
 

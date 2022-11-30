@@ -86,7 +86,7 @@ export default {
                 try {
                     this.index      =   ( parseInt( index ) + 1 );
                     const response  =   await new Promise( ( resolve, reject ) => {
-                        nsHttpClient.post( '/api/nexopos/v4/update', {
+                        nsHttpClient.post( '/api/update', {
                             file: this.files[ index ]
                         }, {
                             headers: {
@@ -117,7 +117,7 @@ export default {
                         iterator        +=  1;
                         this.index      =   iterator;
                         const response  =   await new Promise( ( resolve, reject ) => {
-                            nsHttpClient.post( '/api/nexopos/v4/update', {
+                            nsHttpClient.post( '/api/update', {
                                 module: this.modules[ index ]
                             }, {
                                 headers: {

@@ -109,7 +109,7 @@ export default {
                 message: __( 'Would you like to clear all the notifications ?' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.delete( `/api/nexopos/v4/notifications/all` )
+                        nsHttpClient.delete( `/api/notifications/all` )
                             .subscribe( result => {
                                 nsSnackBar.success( result.message ).subscribe();
                             })
@@ -134,7 +134,7 @@ export default {
         },
 
         loadNotifications() {
-            nsHttpClient.get( '/api/nexopos/v4/notifications' )
+            nsHttpClient.get( '/api/notifications' )
                 .subscribe( notifications => {
                     this.notifications  =   notifications;
                 })
@@ -147,7 +147,7 @@ export default {
         },
 
         closeNotice( event, notification ) {
-            nsHttpClient.delete( `/api/nexopos/v4/notifications/${notification.id}` )
+            nsHttpClient.delete( `/api/notifications/${notification.id}` )
                 .subscribe( result => {
                     this.loadNotifications();
                 });

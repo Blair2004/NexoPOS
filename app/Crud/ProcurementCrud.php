@@ -440,7 +440,7 @@ class ProcurementCrud extends CrudService
             $entry->addAction( 'set_paid', [
                 'label' => __( 'Set Paid' ),
                 'type' => 'GET',
-                'url' => ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/set-as-paid' ),
+                'url' => ns()->url( '/api/procurements/' . $entry->id . '/set-as-paid' ),
                 'confirm' => [
                     'message' => __( 'Would you like to mark this procurement as paid?' ),
                 ],
@@ -452,7 +452,7 @@ class ProcurementCrud extends CrudService
             'namespace' => 'refresh',
             'type' => 'GET',
             'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/refresh' ),
+            'url' => ns()->url( '/api/procurements/' . $entry->id . '/refresh' ),
             'confirm' => [
                 'message' => __( 'Would you like to refresh this ?' ),
             ],
@@ -462,7 +462,7 @@ class ProcurementCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],

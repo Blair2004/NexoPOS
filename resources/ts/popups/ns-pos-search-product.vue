@@ -97,7 +97,7 @@ export default {
 
         search() {
             this.isLoading  =   true;
-            nsHttpClient.post( '/api/nexopos/v4/products/search', { search: this.searchValue })
+            nsHttpClient.post( '/api/products/search', { search: this.searchValue })
                 .subscribe({
                     next: result => {
                         this.isLoading  =   false;

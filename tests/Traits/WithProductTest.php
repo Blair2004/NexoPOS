@@ -37,7 +37,7 @@ trait WithProductTest
 
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', '/api/nexopos/v4/products/', [
+                ->json( 'POST', '/api/products/', [
                     'name' => $faker->word,
                     'variations' => [
                         [
@@ -173,7 +173,7 @@ trait WithProductTest
 
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', '/api/nexopos/v4/products/', [
+                ->json( 'POST', '/api/products/', [
                     'name' => $faker->word,
                     'variations' => [
                         [
@@ -261,7 +261,7 @@ trait WithProductTest
         $product = Product::find(1);
         $unitQuantity = $product->unit_quantities[0];
 
-        $response = $this->json( 'POST', '/api/nexopos/v4/products/adjustments', [
+        $response = $this->json( 'POST', '/api/products/adjustments', [
             'products' => [
                 [
                     'id' => $product->id,
@@ -284,7 +284,7 @@ trait WithProductTest
         if ( $searchable instanceof Product ) {
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'GET', '/api/nexopos/v4/categories/pos/' . $searchable->category_id );
+                ->json( 'GET', '/api/categories/pos/' . $searchable->category_id );
 
             $response = json_decode( $response->getContent(), true );
             $exists = collect( $response[ 'products' ] )
@@ -304,7 +304,7 @@ trait WithProductTest
         if ( $searchable instanceof Product ) {
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'GET', '/api/nexopos/v4/categories/pos/' . $searchable->category_id );
+                ->json( 'GET', '/api/categories/pos/' . $searchable->category_id );
 
             $response = json_decode( $response->getContent(), true );
             $exists = collect( $response[ 'products' ] )
@@ -329,7 +329,7 @@ trait WithProductTest
 
         foreach ( ProductHistory::STOCK_REDUCE as $action ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/products/adjustments', [
+                ->json( 'POST', 'api/products/adjustments', [
                     'products' => [
                         [
                             'adjust_action' => $action,
@@ -370,7 +370,7 @@ trait WithProductTest
 
         foreach ( ProductHistory::STOCK_INCREASE as $action ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/products/adjustments', [
+                ->json( 'POST', 'api/products/adjustments', [
                     'products' => [
                         [
                             'adjust_action' => $action,

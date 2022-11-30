@@ -24,7 +24,8 @@ export default {
             field: {
                 label: 'Date',
                 name: 'date',
-                description: 'a sample datetime field'
+                description: 'a sample datetime field',
+                value: '',
             }
         }
     }

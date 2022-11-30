@@ -19,7 +19,7 @@ import FormValidation from '~/libraries/form-validation';
 export default {
     name: 'ns-pos-order-settings',
     mounted() {
-        nsHttpClient.get( '/api/nexopos/v4/fields/ns.pos-order-settings' )
+        nsHttpClient.get( '/api/fields/ns.pos-order-settings' )
             .subscribe( fields => {
                 fields.forEach( field => {
                     field.value     =   this.$popupParams.order[ field.name ] || '';

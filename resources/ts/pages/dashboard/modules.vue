@@ -100,7 +100,7 @@ export default {
         performMigration: async ( module, migrations ) => {
             const syncRunMigration  =   async ( file, version ) => {
                 return new Promise( ( resolve, reject ) => {
-                    nsHttpClient.post( `/api/nexopos/v4/modules/${module.namespace}/migrate`, { file, version })
+                    nsHttpClient.post( `/api/modules/${module.namespace}/migrate`, { file, version })
                         .subscribe( result => {
                             resolve( true );
                         }, error => {

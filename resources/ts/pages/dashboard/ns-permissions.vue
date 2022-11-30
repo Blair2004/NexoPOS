@@ -110,7 +110,7 @@ export default {
                     roles[ role.namespace ][ permission ]       =   role.field.value;
                 }    
 
-                nsHttpClient.put( '/api/nexopos/v4/users/roles', roles )
+                nsHttpClient.put( '/api/users/roles', roles )
                     .subscribe( result => {
                         nsSnackBar.success( result.message, null, {
                             duration: 3000
@@ -138,7 +138,7 @@ export default {
             roles[ role.namespace ]                     =   new Object;
             roles[ role.namespace ][ permission.name ]  =   permission.value;
 
-            nsHttpClient.put( '/api/nexopos/v4/users/roles', roles )
+            nsHttpClient.put( '/api/users/roles', roles )
                 .subscribe( result => {
                     nsSnackBar.success( result.message, null, {
                         duration: 3000
@@ -152,8 +152,8 @@ export default {
          */
         loadPermissionsAndRoles() {
             return forkJoin([
-                nsHttpClient.get( '/api/nexopos/v4/users/roles' ),
-                nsHttpClient.get( '/api/nexopos/v4/users/permissions' ),
+                nsHttpClient.get( '/api/users/roles' ),
+                nsHttpClient.get( '/api/users/permissions' ),
             ]).subscribe( result => {
                 this.permissions    =   result[1];
                 this.roles          =   result[0].map( role => {

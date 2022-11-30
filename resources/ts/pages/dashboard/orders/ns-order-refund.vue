@@ -187,7 +187,7 @@ export default {
             }
 
             this.isSubmitting   =   true;
-            nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/refund`, data )
+            nsHttpClient.post( `/api/orders/${this.order.id}/refund`, data )
                 .subscribe({
                     next:  (result) => {
                         this.isSubmitting   =   false;
@@ -341,7 +341,7 @@ export default {
     },  
     mounted() {
         this.selectFields   =   this.formValidation.createFields( this.selectFields );
-        nsHttpClient.get( '/api/nexopos/v4/orders/payments' )
+        nsHttpClient.get( '/api/orders/payments' )
             .subscribe( paymentField => {
                 this.paymentField       =   paymentField;
             });

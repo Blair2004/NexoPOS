@@ -14,7 +14,7 @@ trait WithCouponTest
     protected function attemptCreatecoupon()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'post', 'api/nexopos/v4/crud/ns.coupons', [
+            ->json( 'post', 'api/crud/ns.coupons', [
                 'name' => $this->faker->name,
                 'general' => [
                     'type' => 'percentage_discount',
@@ -50,7 +50,7 @@ trait WithCouponTest
         $coupon = Coupon::first();
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'put', 'api/nexopos/v4/crud/ns.coupons/' . $coupon->id, [
+            ->json( 'put', 'api/crud/ns.coupons/' . $coupon->id, [
                 'name' => $this->faker->name,
                 'general' => [
                     'type' => 'percentage_discount',

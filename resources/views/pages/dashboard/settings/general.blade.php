@@ -9,7 +9,7 @@
         </div>
         <div>
             <ns-settings
-                url="{{ ns()->url( '/api/nexopos/v4/settings/ns.general' ) }}"
+                url="{{ ns()->url( '/api/settings/ns.general' ) }}"
                 >
                 <template v-slot:error-form-invalid>{{ __( 'Unable to proceed the form is not valid.' ) }}</template>
             </ns-settings>

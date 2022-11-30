@@ -13,8 +13,8 @@
                         v-if="options.ns_pos_customers_creation_enabled === 'yes'"
                         @updated="prefillForm( $event )"
                         @save="handleSavedCustomer( $event )"
-                        submit-url="/api/nexopos/v4/crud/ns.customers"
-                        src="/api/nexopos/v4/crud/ns.customers/form-config">
+                        submit-url="/api/crud/ns.customers"
+                        src="/api/crud/ns.customers/form-config">
                         <template v-slot:title>{{ __( 'Customer Name' ) }}</template>
                         <template v-slot:save>{{ __( 'Save Customer' ) }}</template>
                     </ns-crud-form>
@@ -417,7 +417,7 @@ export default {
 
         loadAccounHistory() {
             this.isLoadingHistory   =   true;
-            nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/account-history` )
+            nsHttpClient.get( `/api/customers/${this.customer.id}/account-history` )
                 .subscribe({
                     next: ( result ) => {
                         this.walletHistories    =   result.data;
@@ -431,7 +431,7 @@ export default {
 
         loadCoupons() {
             this.isLoadingCoupons   =   true;
-            nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/coupons` )
+            nsHttpClient.get( `/api/customers/${this.customer.id}/coupons` )
                 .subscribe({
                     next: ( coupons ) => {
                         this.coupons            =   coupons;
@@ -443,7 +443,7 @@ export default {
                 });
         },
         
-        loadRewards( url = `/api/nexopos/v4/customers/${this.customer.id}/rewards` ) {
+        loadRewards( url = `/api/customers/${this.customer.id}/rewards` ) {
             this.isLoadingRewards   =   true;
             nsHttpClient.get( url )
                 .subscribe({
@@ -470,7 +470,7 @@ export default {
 
         loadCustomerOrders() {
             this.isLoadingOrders    =   true;
-            nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/orders` )
+            nsHttpClient.get( `/api/customers/${this.customer.id}/orders` )
                 .subscribe({
                     next: orders => {
                         this.orders     =   orders;

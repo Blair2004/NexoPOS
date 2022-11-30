@@ -1,3 +1,5 @@
+import { shallowRef } from "vue";
+
 declare const nsExtraComponents;
 
 export default class FormValidation {
@@ -82,15 +84,16 @@ export default class FormValidation {
              */
             if ( field.type === 'custom' && typeof field.component === 'string' ) {
                 const componentName     =   field.component;
-                field.component         =   nsExtraComponents[ field.component ];
+                field.component         =   shallowRef( nsExtraComponents[ field.component ] );
+                console.log( field.component );
 
                 if ( field.component ) {
                     /**
                      * we make sure to make the current field(s)
                      * available for the custom component.
                      */
-                    field.component.$field      =   field;
-                    field.component.$fields     =   fields;
+                    field.component.value.$field      =   field;
+                    field.component.value.$fields     =   fields;
                 } else {
                     throw `Failed to load a custom component. "${componentName}" is not provided as an extra component. More details here: "https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-a-custom-vue-component"`;
                 }

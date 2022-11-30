@@ -367,7 +367,7 @@ class ProductsController extends DashboardController
             'title' => __( 'Products List' ),
             'createUrl' => ns()->url( '/dashboard/products/create' ),
             'description' => __( 'List all products available on the system' ),
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.products' ),
+            'src' => ns()->url( '/api/crud/ns.products' ),
         ]);
     }
 
@@ -378,11 +378,11 @@ class ProductsController extends DashboardController
         return $this->view( 'pages.dashboard.products.create', [
             'title' => __( 'Edit a product' ),
             'description' => __( 'Makes modifications to a product' ),
-            'submitUrl' => ns()->url( '/api/nexopos/v4/products/' . $product->id ),
+            'submitUrl' => ns()->url( '/api/products/' . $product->id ),
             'returnUrl' => ns()->url( '/dashboard/products' ),
-            'unitsUrl' => ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
+            'unitsUrl' => ns()->url( '/api/units-groups/{id}/units' ),
             'submitMethod' => 'PUT',
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.products/form-config/' . $product->id ),
+            'src' => ns()->url( '/api/crud/ns.products/form-config/' . $product->id ),
         ]);
     }
 
@@ -393,10 +393,10 @@ class ProductsController extends DashboardController
         return $this->view( 'pages.dashboard.products.create', [
             'title' => __( 'Create a product' ),
             'description' => __( 'Add a new product on the system' ),
-            'submitUrl' => ns()->url( '/api/nexopos/v4/products' ),
+            'submitUrl' => ns()->url( '/api/products' ),
             'returnUrl' => ns()->url( '/dashboard/products' ),
-            'unitsUrl' => ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.products/form-config' ),
+            'unitsUrl' => ns()->url( '/api/units-groups/{id}/units' ),
+            'src' => ns()->url( '/api/crud/ns.products/form-config' ),
         ]);
     }
 

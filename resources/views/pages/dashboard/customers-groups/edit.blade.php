@@ -11,8 +11,8 @@
         <ns-crud-form 
             return-url="{{ url( '/dashboard/customers/groups' ) }}"
             submit-method="PUT"
-            submit-url="{{ url( '/api/nexopos/v4/crud/ns.customers-groups/' . $group->id ) }}"
-            src="{{ url( '/api/nexopos/v4/crud/ns.customers-groups/form-config/' . $group->id ) }}">
+            submit-url="{{ url( '/api/crud/ns.customers-groups/' . $group->id ) }}"
+            src="{{ url( '/api/crud/ns.customers-groups/form-config/' . $group->id ) }}">
             <template v-slot:title>Group Name</template>
             <template v-slot:save>Update Group</template>
             <template v-slot:error-required>The following field is required</template>

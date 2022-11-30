@@ -13,6 +13,8 @@ use App\Models\UserWidget;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -297,6 +299,61 @@ class UsersService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The widgets was successfully updated.' )
+        ];
+    }
+
+    /**
+     * Will generate a token for either the
+     * logged user or for the provided user
+     */
+    public function createToken( $name, User | null $user = null ): array
+    {
+        if ( $user === null ) {
+            /**
+             * @var User $user
+             */
+            $user   =   Auth::user();
+        }
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The token was successfully created' ),
+            'data'      =>  [
+                'token' =>  $user->createToken( $name )
+            ]
+        ];
+    }
+
+    /**
+     * Returns all generated token
+     * using the provided user or the logged one.
+     */
+    public function getTokens( User | null $user = null ): EloquentCollection
+    {
+        if ( $user === null ) {
+            /**
+             * @var User $user
+             */
+            $user   =   Auth::user();
+        }
+
+        return $user->tokens()->orderBy( 'created_at', 'desc' )->get();
+    }
+
+    public function deleteToken( $tokenId, User | null $user = null )
+    {
+        if ( $user === null ) {
+            /**
+             * @var User $user
+             */
+            $user   =   Auth::user();
+        }
+
+        $user->tokens()->where( 'id', $tokenId )->delete();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The token has been successfully deleted.' )
         ];
     }
 }

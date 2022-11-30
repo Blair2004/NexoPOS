@@ -66,7 +66,7 @@ export default {
 
         loadCoupons() {
             this.hasLoaded  =   false;
-            nsHttpClient.get( `/api/nexopos/v4/customers/${this.order.customer_id}/coupons` )
+            nsHttpClient.get( `/api/customers/${this.order.customer_id}/coupons` )
                 .subscribe( coupons => {
                     this.hasLoaded  =   true;
                     this.coupons    =   coupons;

@@ -60,7 +60,7 @@ export default {
         },
         loadProductQuantities() {
             this.hasLoadedUnitQuantities            =   false;
-            nsHttpClient.get( `/api/nexopos/v4/products/${this.product.id}/units/quantities` )
+            nsHttpClient.get( `/api/products/${this.product.id}/units/quantities` )
                 .subscribe( result => {
                     this.unitQuantities             =   result;
                     this.hasLoadedUnitQuantities    =   true;

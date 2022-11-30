@@ -16,7 +16,7 @@ import VueHtmlToPaper from './libraries/html-printer';
 
 const nsRewardsSystem               =   defineAsyncComponent( () => import( '~/pages/dashboard/rewards-system.vue' ) );
 const nsCreateCoupons               =   defineAsyncComponent( () => import( './pages/dashboard/create-coupons.vue' ) );
-const nsSettings                    =   defineAsyncComponent( () => import( './pages/dashboard/settings.vue' ) );
+const nsSettings                    =   defineAsyncComponent( () => import( './pages/dashboard/ns-settings.vue' ) );
 const nsReset                       =   defineAsyncComponent( () => import( './pages/dashboard/reset.vue' ) );
 const nsModules                     =   defineAsyncComponent( () => import( './pages/dashboard/modules.vue' ) );
 const nsPermissions                 =   defineAsyncComponent( () => import( './pages/dashboard/ns-permissions.vue' ) );
@@ -42,11 +42,12 @@ const nsStockAdjustment             =   defineAsyncComponent( () => import( './p
 const nsOrderInvoice                =   defineAsyncComponent( () => import( './pages/dashboard/orders/ns-order-invoice.vue' ) );
 
 declare const window;
+declare let nsExtraComponents;   
 
 const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ]; 
-const nsExtraComponents     =   window[ 'nsExtraComponents' ];    
 
+nsExtraComponents.nsToken       =   defineAsyncComponent( () => import( './pages/dashboard/profile/ns-token.vue' ) );
 
 window.nsHotPress            =   new NsHotPress;
 

@@ -356,7 +356,7 @@ class UnitCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.units/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.units/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -418,8 +418,8 @@ class UnitCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'units' ),
             'create' => ns()->url( 'dashboard/' . 'units/create' ),
             'edit' => ns()->url( 'dashboard/' . 'units/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.units' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.units/{id}' . '' ),
         ];
     }
 

@@ -165,7 +165,7 @@ class RouteServiceProvider extends ServiceProvider
 
     public function mapModuleApiRoutes( $module )
     {
-        Route::prefix( 'api/nexopos/v4' )
+        Route::prefix( 'api/' )
                     ->middleware([ 'ns.installed', 'api' ])
                     ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
                     ->group( $module[ 'api-file' ] );

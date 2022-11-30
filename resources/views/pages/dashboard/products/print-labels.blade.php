@@ -202,7 +202,7 @@ Vue.component( 'label-printing', {
         },
 
         searchProduct() {
-            nsHttpClient.post( `/api/nexopos/v4/products/search`, { search: this.search_product })
+            nsHttpClient.post( `/api/products/search`, { search: this.search_product })
                 .subscribe( result => {
                     this.resultSuggestions      =   result;
                 }, ( error ) => {

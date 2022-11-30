@@ -290,7 +290,7 @@ export default {
                         const id    =   group_fields.filter( f => f.name === 'id' )
                         .map( f => f.value )[0];
 
-                        nsHttpClient.delete( `/api/nexopos/v4/products/units/quantity/${id}`)
+                        nsHttpClient.delete( `/api/products/units/quantity/${id}`)
                             .subscribe( result => {
                                 const index     =   group.indexOf( group_fields );
                                 group.splice( index, 1 );

@@ -73,7 +73,7 @@ export default {
         },
 
         checkDatabase( fields ) {
-            return nsHttpClient.post( `/api/nexopos/v4/setup/database`, fields );
+            return nsHttpClient.post( `/api/setup/database`, fields );
         },
         sliceRange( entries, slices, index ) {
             const length    =   entries.length;

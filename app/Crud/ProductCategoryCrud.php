@@ -384,7 +384,7 @@ class ProductCategoryCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.products-categories/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.products-categories/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -447,8 +447,8 @@ class ProductCategoryCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'products/categories' ),
             'create' => ns()->url( 'dashboard/' . 'products/categories/create' ),
             'edit' => ns()->url( 'dashboard/' . 'products/categories/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.products-categories' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.products-categories/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.products-categories' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.products-categories/{id}' . '' ),
         ];
     }
 

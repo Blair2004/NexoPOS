@@ -416,7 +416,7 @@ class RewardSystemCrud extends CrudService
             'namespace' => 'delete',
             'type' => 'DELETE',
             'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.rewards-system/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.rewards-system/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this reward system ?' ),
                 'title' => __( 'Delete a licence' ),

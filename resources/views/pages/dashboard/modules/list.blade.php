@@ -8,7 +8,7 @@
         <div class="flex-auto flex h-full w-full">
             <ns-modules 
                 upload="{{ url( 'dashboard/modules/upload' ) }}"
-                url="{{ url( 'api/nexopos/v4/modules' ) }}"></ns-modules>
+                url="{{ url( 'api/modules' ) }}"></ns-modules>
         </div>
     </div>
 </div>

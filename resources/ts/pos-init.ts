@@ -237,7 +237,7 @@ export class POS {
             const order = this.order.getValue();
 
             if (options.ns_customers_default !== false) {
-                nsHttpClient.get(`/api/nexopos/v4/customers/${options.ns_customers_default}`)
+                nsHttpClient.get(`/api/customers/${options.ns_customers_default}`)
                     .subscribe({
                         next: customer => {
                             this.selectCustomer(customer);
@@ -581,7 +581,7 @@ export class POS {
             }
             
             if (order.tax_group_id !== undefined && order.tax_group_id.toString().length > 0 ) {
-                nsHttpClient.get(`/api/nexopos/v4/taxes/groups/${order.tax_group_id}`)
+                nsHttpClient.get(`/api/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
                             order   =   this.computeOrderTaxGroup( order, tax );
@@ -822,7 +822,7 @@ export class POS {
 
                 this._isSubmitting = true;
 
-                return nsHttpClient[method](`/api/nexopos/v4/orders${order.id !== undefined ? '/' + order.id : ''}`, order)
+                return nsHttpClient[method](`/api/orders${order.id !== undefined ? '/' + order.id : ''}`, order)
                     .subscribe({
                         next: result => {
                             resolve(result);
@@ -893,7 +893,7 @@ export class POS {
             if( [ 'inclusive', 'exclusive' ].includes( product.tax_type ) ) {
                 try {
                     if( product.tax_group_id ) {
-                        nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${product.tax_group_id}` )
+                        nsHttpClient.get( `/api/taxes/groups/${product.tax_group_id}` )
                             .subscribe({
                                 next: (taxGroup: any) => {
                                     [ 'sale', 'wholesale', 'custom' ].forEach( label => {
@@ -931,7 +931,7 @@ export class POS {
 
     loadOrder(order_id) {
         return new Promise((resolve, reject) => {
-            nsHttpClient.get(`/api/nexopos/v4/orders/${order_id}/pos`)
+            nsHttpClient.get(`/api/orders/${order_id}/pos`)
                 .subscribe({
                     next: async (order: any) => {
                         /**
@@ -1144,7 +1144,7 @@ export class POS {
              * customer meta data
              */
             if (customer.group === undefined || customer.group === null) {
-                nsHttpClient.get(`/api/nexopos/v4/customers/${customer.id}/group`)
+                nsHttpClient.get(`/api/customers/${customer.id}/group`)
                     .subscribe({
                         next: group => {
                             order.customer.group = group;
@@ -1576,6 +1576,9 @@ export class POS {
     updateProduct(product, data, index = null) {
         const products = this._products.getValue();
         index = index === null ? products.indexOf(product) : index;
+        index = index === -1 ? 0 : index;
+
+        console.log( product, data, index );
 
         /**
          * to ensure Vue updates accordingly.
@@ -1763,7 +1766,7 @@ export class POS {
     }
 
     loadCustomer(id) {
-        return nsHttpClient.get(`/api/nexopos/v4/customers/${id}`);
+        return nsHttpClient.get(`/api/customers/${id}`);
     }
 
     defineSettings(settings) {
@@ -1778,7 +1781,7 @@ export class POS {
                     message: __( 'The current order will be deleted as no payment has been made so far.' ),
                     onAction: (action) => {
                         if (action) {
-                            nsHttpClient.delete(`/api/nexopos/v4/orders/${order.id}`)
+                            nsHttpClient.delete(`/api/orders/${order.id}`)
                                 .subscribe({
                                     next: (result: any) => {
                                         nsSnackBar.success(result.message).subscribe();
@@ -1797,7 +1800,7 @@ export class POS {
                     message: __( 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.' ),
                     onAction: (reason) => {
                         if (reason !== false) {
-                            nsHttpClient.post(`/api/nexopos/v4/orders/${order.id}/void`, { reason })
+                            nsHttpClient.post(`/api/orders/${order.id}/void`, { reason })
                                 .subscribe({
                                     next: (result: any) => {
                                         nsSnackBar.success(result.message).subscribe();

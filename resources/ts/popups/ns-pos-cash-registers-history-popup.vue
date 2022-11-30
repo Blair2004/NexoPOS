@@ -72,7 +72,7 @@ export default {
         },
 
         getHistory() {
-            nsHttpClient.get( `/api/nexopos/v4/cash-registers/session-history/${this.settings.register.id}` )
+            nsHttpClient.get( `/api/cash-registers/session-history/${this.settings.register.id}` )
                 .subscribe( histories  =>  {
                     this.histories      =   histories;
                     this.totalIn        =   this.histories

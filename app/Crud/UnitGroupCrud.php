@@ -302,7 +302,7 @@ class UnitGroupCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.units-groups/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.units-groups/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -364,8 +364,8 @@ class UnitGroupCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'units/groups' ),
             'create' => ns()->url( 'dashboard/' . 'units/groups/create' ),
             'edit' => ns()->url( 'dashboard/' . 'units/groups/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units-groups' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units-groups/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.units-groups' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.units-groups/{id}' . '' ),
         ];
     }
 

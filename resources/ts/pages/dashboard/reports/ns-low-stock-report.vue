@@ -206,7 +206,7 @@ export default {
             this.$htmlToPaper( 'low-stock-report' );
         },
         loadStockReport( url = null ) {
-            nsHttpClient.get( url || '/api/nexopos/v4/reports/stock-report' )
+            nsHttpClient.get( url || '/api/reports/stock-report' )
                 .subscribe({
                     next: result => {
                         this.stockReportResult   =   result;
@@ -260,7 +260,7 @@ export default {
             return 0;
         },
         loadReport() {
-            nsHttpClient.get( '/api/nexopos/v4/reports/low-stock' )
+            nsHttpClient.get( '/api/reports/low-stock' )
                 .subscribe({
                     next: result => {
                         this.products   =   result;

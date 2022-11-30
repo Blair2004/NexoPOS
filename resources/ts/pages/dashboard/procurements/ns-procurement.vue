@@ -224,7 +224,7 @@ export default {
          * @return void
          */
         doSearch( search ) {
-            nsHttpClient.post( '/api/nexopos/v4/procurements/products/search-product', { search })
+            nsHttpClient.post( '/api/procurements/products/search-product', { search })
                 .subscribe( result => {
                     if ( result.length === 1 ) {
                         this.addProductList( result[0] );
@@ -246,10 +246,10 @@ export default {
             this.reloading          =   true;
             
             forkJoin([
-                nsHttpClient.get( '/api/nexopos/v4/categories' ),
-                nsHttpClient.get( '/api/nexopos/v4/products' ),
+                nsHttpClient.get( '/api/categories' ),
+                nsHttpClient.get( '/api/products' ),
                 nsHttpClient.get( this.src ),
-                nsHttpClient.get( '/api/nexopos/v4/taxes/groups' ),
+                nsHttpClient.get( '/api/taxes/groups' ),
             ]).subscribe( result => {
                 this.reloading      =   false;
                 this.categories     =   result[0];

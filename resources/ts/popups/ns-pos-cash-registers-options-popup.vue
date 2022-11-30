@@ -34,7 +34,7 @@ export default {
         popupCloser,
 
         loadRegisterSummary() {
-            nsHttpClient.get( `/api/nexopos/v4/cash-registers/${this.settings.register.id}` )
+            nsHttpClient.get( `/api/cash-registers/${this.settings.register.id}` )
                 .subscribe( result => {
                     this.register   =   result;
                 })

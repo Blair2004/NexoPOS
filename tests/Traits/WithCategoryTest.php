@@ -17,7 +17,7 @@ trait WithCategoryTest
 
         if ( $product instanceof Product ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'DELETE', 'api/nexopos/v4/crud/ns.products-categories/' . $product->category_id );
+                ->json( 'DELETE', 'api/crud/ns.products-categories/' . $product->category_id );
 
             return $response->assertJson([
                 'status' => 'failed',
@@ -30,7 +30,7 @@ trait WithCategoryTest
     protected function attemptCreateCategory()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.products-categories', [
+            ->json( 'POST', 'api/crud/ns.products-categories', [
                 'name' => __( 'Computers' ),
                 'general' => [
                     'displays_on_pos' => true,
@@ -44,7 +44,7 @@ trait WithCategoryTest
         $category = ProductCategory::first();
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.products-categories', [
+            ->json( 'POST', 'api/crud/ns.products-categories', [
                 'name' => __( 'Laptops' ),
                 'general' => [
                     'parent_id' => $category->id,
@@ -57,7 +57,7 @@ trait WithCategoryTest
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.products-categories', [
+            ->json( 'POST', 'api/crud/ns.products-categories', [
                 'name' => __( 'Desktop' ),
                 'general' => [
                     'parent_id' => $category->id,

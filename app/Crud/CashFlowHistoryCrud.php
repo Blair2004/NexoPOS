@@ -384,7 +384,7 @@ class CashFlowHistoryCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.cash-flow-history/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.cash-flow-history/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -447,8 +447,8 @@ class CashFlowHistoryCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'cash-flow/history' ),
             'create' => ns()->url( 'dashboard/' . 'cash-flow/history/create' ),
             'edit' => ns()->url( 'dashboard/' . 'cash-flow/history/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.cash-flow-history' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.cash-flow-history/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.cash-flow-history' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.cash-flow-history/{id}' . '' ),
         ];
     }
 

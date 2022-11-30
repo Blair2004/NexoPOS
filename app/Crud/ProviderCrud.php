@@ -376,7 +376,7 @@ class ProviderCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.providers/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.providers/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -438,8 +438,8 @@ class ProviderCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'providers' ),
             'create' => ns()->url( 'dashboard/' . 'providers/create' ),
             'edit' => ns()->url( 'dashboard/' . 'providers/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.providers' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.providers/{id}' . '' ),
         ];
     }
 

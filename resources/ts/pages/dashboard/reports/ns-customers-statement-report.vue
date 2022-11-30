@@ -160,7 +160,7 @@ export default {
         handleSelectedCustomer( customer ) {
             this.selectedCustomer   =   customer;
 
-            nsHttpClient.post( `/api/nexopos/v4/reports/customers-statement/${customer.id}`, {
+            nsHttpClient.post( `/api/reports/customers-statement/${customer.id}`, {
                 rangeStarts: this.startDate.format( 'YYYY-MM-DD HH:mm:ss' ),
                 rangeEnds: this.endDate.format( 'YYYY-MM-DD HH:mm:ss' ),
             }).subscribe({

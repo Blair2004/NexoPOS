@@ -134,7 +134,7 @@ export default {
             const startDate     =   this.startDate;
             const endDate       =   this.endDate;
 
-            nsHttpClient.post( '/api/nexopos/v4/reports/cash-flow', { startDate, endDate })
+            nsHttpClient.post( '/api/reports/cash-flow', { startDate, endDate })
                 .subscribe({
                     next: result => {
                         this.report     =   result;

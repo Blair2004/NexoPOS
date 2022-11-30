@@ -99,7 +99,7 @@ export default {
             this.inputValue     =   value;
         },
         loadPaymentFields() {
-            nsHttpClient.get( '/api/nexopos/v4/orders/payments' )
+            nsHttpClient.get( '/api/orders/payments' )
                 .subscribe( fields => {
                     this.fields     =   this.validation.createFields( fields );
                 });
@@ -127,7 +127,7 @@ export default {
                 message: __( 'You make a payment for {amount}. A payment can\'t be canceled. Would you like to proceed ?' ).replace( '{amount}', this.$options.filters.currency( value ) ),
                 onAction:  ( action ) => {
                     if ( action ) {
-                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/payments`, form )
+                        nsHttpClient.post( `/api/orders/${this.order.id}/payments`, form )
                             .subscribe( result => {
                                 nsSnackBar.success( result.message ).subscribe();
                                 this.$emit( 'changed' );

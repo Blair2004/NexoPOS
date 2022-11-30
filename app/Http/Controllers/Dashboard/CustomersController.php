@@ -231,10 +231,10 @@ class CustomersController extends DashboardController
         return $this->view( 'pages.dashboard.coupons.create', [
             'title' => __( 'Create Coupon' ),
             'description' => __( 'helps you creating a coupon.' ),
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config' ),
+            'src' => ns()->url( '/api/crud/ns.coupons/form-config' ),
             'returnUrl' => ns()->url( '/dashboard/customers/coupons' ),
             'submitMethod' => 'POST',
-            'submitUrl' => ns()->url( '/api/nexopos/v4/crud/ns.coupons' ),
+            'submitUrl' => ns()->url( '/api/crud/ns.coupons' ),
         ]);
     }
 
@@ -243,10 +243,10 @@ class CustomersController extends DashboardController
         return $this->view( 'pages.dashboard.coupons.create', [
             'title' => __( 'Edit Coupon' ),
             'description' => __( 'Editing an existing coupon.' ),
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config/' . $coupon->id ),
+            'src' => ns()->url( '/api/crud/ns.coupons/form-config/' . $coupon->id ),
             'returnUrl' => ns()->url( '/dashboard/customers/coupons' ),
             'submitMethod' => 'PUT',
-            'submitUrl' => ns()->url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
+            'submitUrl' => ns()->url( '/api/crud/ns.coupons/' . $coupon->id ),
         ]);
     }
 
@@ -291,7 +291,7 @@ class CustomersController extends DashboardController
     public function getCustomersOrders( Customer $customer )
     {
         return CustomerOrderCrud::table([
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.customers-orders' ),
+            'src' => ns()->url( '/api/crud/ns.customers-orders' ),
             'queryParams' => [
                 'customer_id' => $customer->id,
             ],
@@ -408,7 +408,7 @@ class CustomersController extends DashboardController
                 'customer_id' => $customer->id,
             ],
             'returnUrl' => ns()->url( '/dashboard/customers/' . $customer->id . '/account-history' ),
-            'submitUrl' => ns()->url( '/api/nexopos/v4/customers/' . $customer->id . '/crud/account-history' ),
+            'submitUrl' => ns()->url( '/api/customers/' . $customer->id . '/crud/account-history' ),
             'description' => sprintf(
                 __( 'Displays the customer account history for %s' ),
                 $customer->name

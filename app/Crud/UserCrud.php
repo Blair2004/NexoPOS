@@ -415,7 +415,7 @@ class UserCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.users/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.users/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -484,8 +484,8 @@ class UserCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'users' ),
             'create' => ns()->url( 'dashboard/' . 'users/create' ),
             'edit' => ns()->url( 'dashboard/' . 'users/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.users' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.users/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.users' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.users/{id}' . '' ),
         ];
     }
 
