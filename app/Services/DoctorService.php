@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Console\Commands\DoctorCommand;
+use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerShippingAddress;
@@ -131,6 +133,56 @@ class DoctorService
             DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'localhost', '127.0.0.1' ])->unique()->join(',') );
             DotenvEditor::save();
         }
+    }
+
+    /**
+     * clear current cash flow and recompute
+     * them using the current information.
+     */
+    public function fixCashFlowOrders( DoctorCommand $command )
+    {
+        /**
+         * @var ExpenseService $expenseService
+         */
+        $expenseService     =   app()->make( ExpenseService::class );
+
+        CashFlow::where( 'order_id', '>', 0 )->delete();
+        CashFlow::where( 'order_refund_id', '>', 0 )->delete();
+
+        /**
+         * Step 1: Recompute from order sales
+         */
+        $orders     =   Order::paymentStatus( Order::PAYMENT_PAID )->get();
+        
+        $command->info( __( 'Restoring cash flow from paid orders...' ) );
+        
+        $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
+            $expenseService->handleCreatedOrder( $order );
+        });
+
+        $command->newLine();
+
+        /**
+         * Step 2: Recompute from refund
+         */
+        $command->info( __( 'Restoring cash flow from refunded orders...' ) );
+        
+        $orders     =   Order::paymentStatusIn([
+            Order::PAYMENT_REFUNDED,
+            Order::PAYMENT_PARTIALLY_REFUNDED
+        ])->get();
+
+        $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
+            $order->refundedProducts()->with( 'orderProduct' )->get()->each( function( $orderRefundedProduct ) use ( $order, $expenseService ) {
+                $expenseService->createExpenseFromRefund(
+                    order: $order,
+                    orderProductRefund: $orderRefundedProduct,
+                    orderProduct: $orderRefundedProduct->orderProduct
+                );
+            });
+        });
+
+        $command->newLine();
     }
 
     public function fixCustomers()
