@@ -6,11 +6,14 @@ use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerShippingAddress;
 use App\Models\Option;
+use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserAttribute;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class DoctorService
@@ -46,19 +49,15 @@ class DoctorService
         $rolesLabels = [
             Role::ADMIN => [
                 'name' => __( 'Administrator' ),
-                'dashid' => Role::DASHID_STORE,
             ],
             Role::STOREADMIN => [
                 'name' => __( 'Store Administrator' ),
-                'dashid' => Role::DASHID_STORE,
             ],
             Role::STORECASHIER => [
                 'name' => __( 'Store Cashier' ),
-                'dashid' => Role::DASHID_CASHIER,
             ],
             Role::USER => [
                 'name' => __( 'User' ),
-                'dashid' => Role::DASHID_DEFAULT,
             ],
         ];
 
@@ -72,7 +71,6 @@ class DoctorService
                 $role = new Role;
                 $role->namespace = $roleNamespace;
                 $role->name = $rolesLabels[ $roleNamespace ][ 'name' ];
-                $role->dashid = $rolesLabels[ $roleNamespace ][ 'dashid' ];
                 $role->locked = true;
                 $role->save();
             }
@@ -94,6 +92,45 @@ class DoctorService
                 // the option might be deleted, let's skip that.
             }
         });
+    }
+
+    public function fixOrphanOrderProducts()
+    {
+        $orderIds   =   Order::get( 'id' );
+
+        $query  =   OrderProduct::whereNotIn( 'order_id', $orderIds );
+        $total  =   $query->count();
+        $query->delete();
+
+        return sprintf( __( '%s products were freed' ), $total );
+    }
+
+    /**
+     * useful to configure
+     * session domain and sanctum stateful domains
+     *
+     * @return void
+     */
+    public function fixDomains()
+    {
+        /**
+         * Set version to close setup
+         */
+        $domain = Str::replaceFirst( 'http://', '', url( '/' ) );
+        $domain = Str::replaceFirst( 'https://', '', $domain );
+        $domain = explode( ':', $domain )[0];
+
+        if ( ! env( 'SESSION_DOMAIN', false ) ) {
+            DotenvEditor::load();
+            DotenvEditor::setKey( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', explode( ':', $domain )[0] ) );
+            DotenvEditor::save();
+        }
+
+        if ( ! env( 'SANCTUM_STATEFUL_DOMAINS', false ) ) {
+            DotenvEditor::load();
+            DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'localhost', '127.0.0.1' ])->unique()->join(',') );
+            DotenvEditor::save();
+        }
     }
 
     public function fixCustomers()
