@@ -6,6 +6,8 @@ use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerShippingAddress;
 use App\Models\Option;
+use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserAttribute;
@@ -90,6 +92,17 @@ class DoctorService
                 // the option might be deleted, let's skip that.
             }
         });
+    }
+
+    public function fixOrphanOrderProducts()
+    {
+        $orderIds   =   Order::get( 'id' );
+
+        $query  =   OrderProduct::whereNotIn( 'order_id', $orderIds );
+        $total  =   $query->count();
+        $query->delete();
+
+        return sprintf( __( '%s products were freed' ), $total );
     }
 
     /**
