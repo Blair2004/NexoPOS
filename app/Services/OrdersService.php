@@ -2395,6 +2395,7 @@ class OrdersService
             'cashier_name' => $order->user->username,
             'cashier_id' => $order->author,
             'order_code' => $order->code,
+            'order_type' => $this->getTypeLabel( $order->type ),
             'order_date' => ns()->date->getFormatted( $order->created_at ),
             'customer_name' => $order->customer->name,
             'customer_email' => $order->customer->email,

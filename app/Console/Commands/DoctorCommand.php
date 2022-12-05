@@ -19,6 +19,9 @@ class DoctorCommand extends Command
         {--fix-users-attributes} 
         {--fix-orders-products} 
         {--fix-customers}
+        {--fix-domains}
+        {--fix-orphan-orders-products}
+        {--fix-cash-flow-orders}
         {--fix-duplicate-options}';
 
     /**
@@ -62,13 +65,27 @@ class DoctorCommand extends Command
         if ( $this->option( 'fix-duplicate-options' ) ) {
             $doctorService->fixDuplicateOptions();
 
-            return $this->info( 'The duplicated options where cleared.' );
+            return $this->info( 'The duplicated options were cleared.' );
         }
 
         if ( $this->option( 'fix-customers' ) ) {
             $doctorService->fixCustomers();
 
             return $this->info( 'The customers were fixed.' );
+        }
+
+        if ( $this->option( 'fix-domains' ) ) {
+            $doctorService->fixDomains();
+
+            return $this->info( 'The domain is correctly configured.' );
+        }
+
+        if ( $this->option( 'fix-orphan-orders-products' ) ) {
+            return $this->info( $doctorService->fixOrphanOrderProducts() );
+        }
+
+        if ( $this->option( 'fix-cash-flow-orders' ) ) {
+            return $doctorService->fixCashFlowOrders( $this );
         }
 
         if ( $this->option( 'fix-orders-products' ) ) {
