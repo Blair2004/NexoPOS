@@ -268,7 +268,7 @@ class CrudGeneratorCommand extends Command
 
             return $this->info( sprintf(
                 __( 'The CRUD resource "%s" has been generated at %s' ),
-                $this->crudDetails[ 'model_name' ],
+                $this->crudDetails[ 'resource_name' ],
                 $fileName
             ) );
         }

@@ -28,7 +28,8 @@ class DevShortCutCommand extends Command
 
     protected $typeMapping  =   [
         'bigint'    =>  'integer',
-        'string'    =>  'string',
+        'double'    =>  'float',
+        'varchar'   =>  'string',
         'datetime'  =>  '\Carbon\Carbon',
         'text'      =>  'string',
         'integer'   =>  'integer',

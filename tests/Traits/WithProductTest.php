@@ -100,6 +100,28 @@ trait WithProductTest
         return $response;
     }
 
+    protected function orderProduct( $name, $unit_price, $quantity, $unitQuantityId = null, $productId = null, $discountType = null, $discountPercentage = null, $taxType = null, $taxGroupId = null )
+    {
+        $product        =   $productId !== null ? Product::with( 'unit_quantities' )->find( $productId ) : Product::with( 'unit_quantities' )->withStockEnabled()->get()->random();
+        $unitQuantity   =   $unitQuantityId !== null ? $product->unit_quantities->filter( fn( $unitQuantity ) => ( int ) $unitQuantity->id === ( int ) $unitQuantityId )->first() : $product->unit_quantities->first();
+
+        ! $product instanceof Product ? throw new Exception( 'The provided product is not valid.' ) : null;
+        ! $unitQuantity instanceof ProductUnitQuantity ? throw new Exception( 'The provided unit quantity is not valid.' ) : null;
+
+        return [
+            'name'  =>  $name,
+            'unit_price'    =>  $unit_price,
+            'quantity'      =>  $quantity,
+            'product_id'    =>  $product->id,
+            'unit_quantity_id'  =>  $unitQuantity->id,
+            'unit_id'       =>  $unitQuantity->unit_id,
+            'discount_type' =>  $discountType,
+            'discount_percentage' =>  $discountPercentage,
+            'tax_group_id'  =>  $taxGroupId,
+            'tax_type'      =>  $taxType
+        ];
+    }
+
     protected function attemptDeleteProducts()
     {
         $response = $this->attemptCreateProduct(1);

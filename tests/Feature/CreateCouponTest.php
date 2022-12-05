@@ -31,4 +31,13 @@ class CreateCouponTest extends TestCase
         $this->attemptAuthenticate();
         $this->attemptUpdateCoupon();
     }
+
+    /**
+     * We'll try to use coupon and track usage
+     */
+    public function testTrackCouponUsage()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptAssignCouponToOrder();
+    }
 }

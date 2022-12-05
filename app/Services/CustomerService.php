@@ -18,6 +18,7 @@ use App\Models\CustomerGroup;
 use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Models\RewardSystem;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -475,7 +476,7 @@ class CustomerService
                 $customerCoupon->code = $coupon->code . '-' . ns()->date->format( 'dmi' );
                 $customerCoupon->customer_id = $customer->id;
                 $customerCoupon->limit_usage = $coupon->limit_usage;
-                $customerCoupon->author = 0;
+                $customerCoupon->author = $customerReward->author;
                 $customerCoupon->save();
 
                 $customerReward->points = abs( $customerReward->points - $customerReward->target );
@@ -536,37 +537,19 @@ class CustomerService
         throw new Exception( __( 'Unable to find a coupon with the provided code.' ) );
     }
 
-    public function setCoupon( $fields, Coupon $coupon )
+    public function setCouponHistory( $fields, Coupon $coupon )
     {
-        $customerCoupon = CustomerCoupon::where([
-            'coupon_id' => $coupon->id,
-        ])->get();
+        $customerCoupon = new CustomerCoupon;
+        $customerCoupon->name = $coupon->name;
+        $customerCoupon->limit_usage = $coupon->limit_usage;
+        $customerCoupon->code = $coupon->code;
+        $customerCoupon->coupon_id = $coupon->id;
+        $customerCoupon->customer_id = $fields[ 'customer_id' ];
+        $customerCoupon->order_id = $fields[ 'order_id' ];
+        $customerCoupon->author = Auth::id();
+        $customerCoupon->save();
 
-        if ( $customerCoupon->count() === 0 ) {
-            $customerCoupon = new CustomerCoupon;
-            $customerCoupon->name = $coupon->name;
-            $customerCoupon->limit_usage = $coupon->limit_usage;
-            $customerCoupon->code = $coupon->code;
-            $customerCoupon->coupon_id = $coupon->id;
-            $customerCoupon->customer_id = 0; // $fields[ 'customer_id' ];
-            $customerCoupon->author = Auth::id();
-            $customerCoupon->save();
-
-            $this->setActiveStatus( $customerCoupon );
-        } else {
-            $customerCoupon
-                ->each( function( $customerCoupon ) use ( $coupon  ) {
-                    $customerCoupon->name = $coupon->name;
-                    $customerCoupon->limit_usage = $coupon->limit_usage;
-                    $customerCoupon->code = $coupon->code;
-                    $customerCoupon->coupon_id = $coupon->id;
-                    $customerCoupon->customer_id = 0; // $fields[ 'general' ][ 'customer_id' ];
-                    $customerCoupon->author = Auth::id();
-                    $customerCoupon->save();
-
-                    $this->setActiveStatus( $customerCoupon );
-                });
-        }
+        $this->setActiveStatus( $customerCoupon );
 
         return [
             'status' => 'sucess',
@@ -684,9 +667,94 @@ class CustomerService
             Order::PAYMENT_PAID,
         ]) ) {
             $this->increasePurchases(
-                $order->customer,
-                $order->total
+                customer: $order->customer,
+                value: $order->total
             );
         }
+    }
+
+    /**
+     * If a customer tries to use a coupon. That coupon is assigned to his account
+     * with the rule defined by the parent coupon.
+     */
+    public function assignCouponUsage( int $customer_id, Coupon $coupon ): CustomerCoupon
+    {
+        $customerCoupon     =   CustomerCoupon::where( 'customer_id', $customer_id )->where( 'coupon_id', $coupon->id )->first();
+
+        if( ! $customerCoupon instanceof CustomerCoupon ) {
+            $customerCoupon                 =   new CustomerCoupon;
+            $customerCoupon->customer_id    =   $customer_id;
+            $customerCoupon->coupon_id      =   $coupon->id;
+            $customerCoupon->name           =   $coupon->name;
+            $customerCoupon->author         =   $coupon->author;
+            $customerCoupon->active         =   true;
+            $customerCoupon->code           =   $coupon->code;
+            $customerCoupon->limit_usage    =   $coupon->limit_usage;
+            $customerCoupon->save();
+        }
+
+        return $customerCoupon;
+    }
+
+    public function checkCouponExistence( $coupon, $fields ): Coupon
+    {
+        $coupon = Coupon::find( $coupon[ 'id' ] );
+
+        if ( ! $coupon instanceof Coupon ) {
+            throw new NotFoundException( sprintf( __( 'Unable to find a reference to the attached coupon : %s' ), $coupon->name ?? __( 'N/A' ) ) );
+        }
+
+        /**
+         * we'll check if the coupon is still valid.
+         */
+        if ( $coupon->valid_until !== null && ns()->date->lessThan( Carbon::parse( $coupon->valid_until ) ) ) {
+            throw new NotAllowedException( sprintf( __( 'Unable to use the coupon %s as it has expired.' ), $coupon->name ) );
+        }
+
+        /**
+         * @todo check products on the order
+         * @todo check category on the order
+         */
+
+        /**
+         * We'll now check if we're about to use
+         * the coupon during a period is supposed to be active.
+         * 
+         * @todo Well we're doing this because we don't yet have a proper time picker. As we're using a date time picker
+         * we're extracting the hours from it :(.
+         */
+        $hourStarts     =   ! empty( $coupon->valid_hours_start ) ? Carbon::parse( $coupon->valid_hours_start )->format( 'H:i' ) : null;
+        $hoursEnds      =   ! empty( $coupon->valid_hours_end ) ? Carbon::parse( $coupon->valid_hours_end )->format( 'H:i' ) : null;
+
+        if ( 
+            $hourStarts !== null && 
+            $hoursEnds !== null ) {
+
+            $todayStartDate =   ns()->date->format( 'Y-m-d' ) . ' ' . $hourStarts;
+            $todayEndDate   =   ns()->date->format( 'Y-m-d' ) . ' ' . $hoursEnds;
+
+            if (
+                ns()->date->between( 
+                    date1: Carbon::parse( $todayStartDate ), 
+                    date2: Carbon::parse( $todayEndDate ) 
+                )
+            ) {
+                throw new NotAllowedException( sprintf( __( 'Unable to use the coupon %s at this moment.' ), $coupon->name ) );
+            }  
+            
+            /**
+             * We'll now check if the customer has an ongoing
+             * coupon with the provided parameters
+             */
+            $customerCoupon     =   CustomerCoupon::where( 'coupon_id', $coupon[ 'id' ] )
+                ->where( 'customer_id', $fields[ 'customer_id' ] ?? 0 )
+                ->first();
+
+            if ( $customerCoupon instanceof CustomerCoupon && ! $customerCoupon->active ) {
+                throw new NotAllowedException( sprintf( __( 'You\'re not allowed to use this coupon as it\'s no longer active' ) ) );
+            }
+        }
+
+        return $coupon;
     }
 }

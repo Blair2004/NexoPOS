@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\CouponCrud;
+use App\Crud\CouponOrderHistoryCrud;
 use App\Crud\CustomerAccountCrud;
 use App\Crud\CustomerCouponCrud;
 use App\Crud\CustomerCrud;
@@ -476,5 +477,14 @@ class CustomersController extends DashboardController
             ->account_history()
             ->orderBy( 'created_at', 'desc' )
             ->paginate(20);
+    }
+
+    public function couponHistory( Coupon $coupon )
+    {
+        CouponOrderHistoryCrud::table([
+            'queryParams'   =>  [
+                'coupon_id' =>  $coupon->id
+            ]
+        ]);
     }
 }

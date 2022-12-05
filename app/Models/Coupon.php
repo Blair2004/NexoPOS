@@ -4,18 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-/**
- * @property integer $id
- * @property string $type
- * @property float $limit_usage
- * @property \Carbon\Carbon $updated_at
- * @property integer $author
-*/
 class Coupon extends NsModel
 {
     use HasFactory;
 
     protected $table = 'nexopos_' . 'coupons';
+
+    const TYPE_PERCENTAGE   =   'percentage_discount';
+    const TYPE_FLAT         =   'flat_discount';
 
     public function categories()
     {

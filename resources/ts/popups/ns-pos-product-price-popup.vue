@@ -8,7 +8,7 @@
         </div>
         <div class="flex flex-col ns-box-body">
             <div class="h-16 flex items-center justify-center elevation-surface info font-bold">
-                <h2 class="text-2xl">{{ nsCurrency( price ) }}</h2>
+                <h2 class="text-2xl">{{ nsCurrency( product.unit_price ) }}</h2>
             </div>
             <ns-numpad v-if="options.ns_pos_numpad === 'default'" :floating="options.ns_pos_allow_decimal_quantities" @changed="updateProductPrice( $event )" @next="resolveProductPrice( $event )" :value="product.unit_price"></ns-numpad>
             <ns-numpad-plus v-if="options.ns_pos_numpad === 'advanced'" @changed="updateProductPrice( $event )" @next="resolveProductPrice( $event )" :value="product.unit_price"></ns-numpad-plus>
@@ -16,6 +16,7 @@
     </div>
 </template>
 <script>
+import { ref } from '@vue/reactivity';
 import { nsNumpad, nsNumpadPlus } from '~/components/components';
 import { nsCurrency } from '~/filters/currency';
 
@@ -42,7 +43,7 @@ export default {
         this.product    =   this.$popupParams.product;
 
         this.optionsSubscription    =   POS.options.subscribe( options => {
-            this.options    =   options;
+            this.options    =   ref(options);
         });
     },
     beforeDestroy() {

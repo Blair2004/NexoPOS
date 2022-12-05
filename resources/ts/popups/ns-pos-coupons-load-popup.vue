@@ -239,6 +239,7 @@ export default {
                     name: customerCoupon.coupon.name,
                     type: customerCoupon.coupon.type,
                     value: 0,
+                    id: customerCoupon.coupon.id,
                     limit_usage: customerCoupon.coupon.limit_usage,
                     code: customerCoupon.coupon.code,
                     discount_value: customerCoupon.coupon.discount_value,

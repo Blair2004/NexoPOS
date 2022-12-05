@@ -31,6 +31,7 @@ use App\Services\ProductService;
 use App\Services\TaxService;
 use App\Services\TestService;
 use App\Services\UnitService;
+use Carbon\Carbon;
 use Exception;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -38,7 +39,7 @@ use Illuminate\Support\Arr;
 
 trait WithOrderTest
 {
-    use WithFaker;
+    use WithFaker, WithTaxService;
 
     protected $customProductParams = [];
 
@@ -74,7 +75,9 @@ trait WithOrderTest
             $date = $startOfWeek->addDay()->clone();
             $this->count = $this->count === false ? $faker->numberBetween(5, 10) : $this->count;
             $this->output( sprintf( "\e[32mWill generate for the day \"%s\", %s order(s)", $date->toFormattedDateString(), $this->count ) );
-            $responses[] = $this->processOrders( $date, $callback );
+            $responses[] = $this->processOrders([
+                'created_at'    =>  $date
+            ], $callback );
         }
 
         return $responses;
@@ -800,7 +803,7 @@ trait WithOrderTest
         fclose($fp);
     }
 
-    public function processOrders( $currentDate, $callback )
+    public function processOrders( $orderDetails, $callback = null )
     {
         $responses = [];
         /**
@@ -817,112 +820,143 @@ trait WithOrderTest
         for ( $i = 0; $i < $this->count; $i++ ) {
             $singleResponse = [];
 
-            $products = Product::where( 'type', '<>', Product::TYPE_GROUPED )->with( 'unit_quantities' )->get()->shuffle()->take(3);
             $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
             $discountRate = $faker->numberBetween(0, 5);
 
-            $products = $products->map( function( $product ) use ( $faker, $taxService ) {
-                $unitElement = $faker->randomElement( $product->unit_quantities );
-                $discountRate = 10;
-                $quantity = $faker->numberBetween(1, 10);
-                $data = array_merge([
-                    'name' => $product->name,
-                    'discount' => $taxService->getPercentageOf( $unitElement->sale_price * $quantity, $discountRate ),
-                    'discount_percentage' => $discountRate,
-                    'discount_type' => $faker->randomElement([ 'flat', 'percentage' ]),
-                    'quantity' => $quantity,
-                    'unit_price' => $unitElement->sale_price,
-                    'tax_type' => 'inclusive',
-                    'tax_group_id' => 1,
-                    'unit_id' => $unitElement->unit_id,
-                ], $this->customProductParams );
-
-                if ( ! $this->allowQuickProducts ) {
-                    $data[ 'product_id' ] = $product->id;
-                    $data[ 'unit_quantity_id' ] = $unitElement->id;
-                } elseif ( $faker->randomElement([ true, false ]) ) {
-                    $data[ 'product_id' ] = $product->id;
-                    $data[ 'unit_quantity_id' ] = $unitElement->id;
-                }
-
-                return $data;
-            })->filter( function( $product ) {
-                return $product[ 'quantity' ] > 0;
-            });
-
             /**
-             * testing customer balance
+             * if no products are provided we'll generate random
+             * product to use on the order.
              */
-            $customer = Customer::get()->random();
+            if ( ! isset( $orderDetails[ 'products' ] ) ) {
+                $products = Product::where( 'type', '<>', Product::TYPE_GROUPED )->with( 'unit_quantities' )->get()->shuffle()->take(3);
+                $products = $products->map( function( $product ) use ( $faker, $taxService ) {
+                    $unitElement = $faker->randomElement( $product->unit_quantities );
+                    $discountRate = 10;
+                    $quantity = $faker->numberBetween(1, 10);
+                    $data = array_merge([
+                        'name' => $product->name,
+                        'discount' => $taxService->getPercentageOf( $unitElement->sale_price * $quantity, $discountRate ),
+                        'discount_percentage' => $discountRate,
+                        'discount_type' => $faker->randomElement([ 'flat', 'percentage' ]),
+                        'quantity' => $quantity,
+                        'unit_price' => $unitElement->sale_price,
+                        'tax_type' => 'inclusive',
+                        'tax_group_id' => 1,
+                        'unit_id' => $unitElement->unit_id,
+                    ], $this->customProductParams );
+
+                    if ( ! $this->allowQuickProducts ) {
+                        $data[ 'product_id' ] = $product->id;
+                        $data[ 'unit_quantity_id' ] = $unitElement->id;
+                    } elseif ( $faker->randomElement([ true, false ]) ) {
+                        $data[ 'product_id' ] = $product->id;
+                        $data[ 'unit_quantity_id' ] = $unitElement->id;
+                    }
+
+                    return $data;
+                })->filter( function( $product ) {
+                    return $product[ 'quantity' ] > 0;
+                });
+            } else {
+                $products   =   collect( $orderDetails[ 'products' ] );
+            }
 
             $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
+                $discount   =   match( $product[ 'discount_type' ] ) {
+                    'percentage'    =>  $this->getPercentageOf( $product[ 'unit_price' ] * $product[ 'quantity' ], $product[ 'discount_percentage' ] ),
+                    'flat'          =>  $product[ 'discount' ],
+                };
+
+                $product[ 'discount' ]  =   $discount;
+
                 $productSubTotal = $currency
                     ->fresh( $product[ 'unit_price' ] )
                     ->multiplyBy( $product[ 'quantity' ] )
-                    ->subtractBy( $product[ 'discount' ] )
+                    ->subtractBy( $product[ 'discount' ] ?? 0 )
                     ->getRaw();
 
                 return $productSubTotal;
             })->sum() );
 
-            $customerCoupon = CustomerCoupon::get()->last();
-
-            if ( $customerCoupon instanceof CustomerCoupon && $this->processCoupon && $customerCoupon->usage < $customerCoupon->limit_usage ) {
-                $allCoupons = [
-                    [
-                        'customer_coupon_id' => $customerCoupon->id,
-                        'coupon_id' => $customerCoupon->coupon_id,
-                        'name' => $customerCoupon->name,
-                        'type' => 'percentage_discount',
-                        'code' => $customerCoupon->code,
-                        'limit_usage' => $customerCoupon->coupon->limit_usage,
-                        'value' => $currency->define( $customerCoupon->coupon->discount_value )
-                            ->multiplyBy( $subtotal )
-                            ->divideBy( 100 )
-                            ->getRaw(),
-                        'discount_value' => $customerCoupon->coupon->discount_value,
-                        'minimum_cart_value' => $customerCoupon->coupon->minimum_cart_value,
-                        'maximum_cart_value' => $customerCoupon->coupon->maximum_cart_value,
-                    ],
-                ];
-
-                $totalCoupons = collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+            if ( ! isset( $orderDetails[ 'customer_id' ] ) ) {
+                $customer = Customer::get()->random();
             } else {
-                $allCoupons = [];
-                $totalCoupons = 0;
+                $customer = Customer::find( $orderDetails[ 'customer_id' ] );
             }
+            
+            /**
+             * if coupons aren't defined
+             * We'll try to assign a coupon to 
+             * the selected customer
+             */
+            if ( ! isset( $orderDetails[ 'coupons' ] ) ) {
+                $customerCoupon = CustomerCoupon::where( 'customer_id', $customer->id )->get()->last();
 
-            $discount = [
-                'type' => '',
-                'rate' => 0,
-            ];
-
-            $discountCoupons = 0;
-
-            if ( $this->useDiscount ) {
-                /**
-                 * If the discount is percentage or flat.
-                 */
-                if ( $discount[ 'type' ] === 'percentage' ) {
-                    $discount[ 'rate' ] = $discountRate;
-                    $discount[ 'value' ] = $currency->define( $discount[ 'rate' ] )
-                        ->multiplyBy( $subtotal )
-                        ->divideBy( 100 )
-                        ->getRaw();
+                if ( $customerCoupon instanceof CustomerCoupon && $this->processCoupon && $customerCoupon->usage < $customerCoupon->limit_usage ) {
+                    $allCoupons = [
+                        [
+                            'customer_coupon_id' => $customerCoupon->id,
+                            'coupon_id' => $customerCoupon->coupon_id,
+                            'name' => $customerCoupon->name,
+                            'type' => 'percentage_discount',
+                            'code' => $customerCoupon->code,
+                            'limit_usage' => $customerCoupon->coupon->limit_usage,
+                            'value' => $currency->define( $customerCoupon->coupon->discount_value )
+                                ->multiplyBy( $subtotal )
+                                ->divideBy( 100 )
+                                ->getRaw(),
+                            'discount_value' => $customerCoupon->coupon->discount_value,
+                            'minimum_cart_value' => $customerCoupon->coupon->minimum_cart_value,
+                            'maximum_cart_value' => $customerCoupon->coupon->maximum_cart_value,
+                        ],
+                    ];
+    
+                    $totalCoupons = collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
                 } else {
-                    $discount[ 'value' ] = Currency::fresh( $subtotal )
-                        ->divideBy( 2 )
-                        ->getRaw();
-
-                    $discount[ 'rate' ] = 0;
+                    $allCoupons = collect([]);
                 }
-
-                $discountCoupons = $currency->define( $discount[ 'value' ] )
-                    ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
-                    ->getRaw();
+            } else {
+                $allCoupons     =   $orderDetails[ 'coupons' ];
             }
 
-            $dateString = $currentDate->startOfDay()->addHours(
+            $totalCoupons = collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] ?? 0 )->sum();
+
+            if ( isset( $orderDetails[ 'discount_type' ] ) && in_array( $orderDetails[ 'discount_type' ], [ 'percentage', 'flat' ] ) ) {
+                $discount = [
+                    'type' => $orderDetails[ 'discount_type' ],
+                    'rate' => $orderDetails[ 'discount_percentage' ],
+                    'value' =>  0,
+                ];
+            } else {
+                $discount = [
+                    'type' => '',
+                    'rate' => 0,
+                    'value' =>  0,
+                ];
+            }
+
+            /**
+             * If the discount is percentage or flat.
+             */
+            if ( $discount[ 'type' ] === 'percentage' ) {
+                $discount[ 'rate' ] = $discountRate;
+                $discount[ 'value' ] = $currency->define( $discount[ 'rate' ] )
+                    ->multiplyBy( $subtotal )
+                    ->divideBy( 100 )
+                    ->getRaw();
+            } else if( $discount[ 'type' ] === 'flat' ) {
+                $discount[ 'value' ] = Currency::fresh( $subtotal )
+                    ->divideBy( 2 )
+                    ->getRaw();
+
+                $discount[ 'rate' ] = 0;
+            }
+
+            $discountCoupons = $currency->define( $discount[ 'value' ] )
+                ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
+                ->getRaw();
+
+            $dateString = Carbon::parse( $orderDetails[ 'created_at' ] ?? now()->toDateTimeString() )->startOfDay()->addHours(
                 $faker->numberBetween( 0, 23 )
             )->format( 'Y-m-d H:m:s' );
 
@@ -963,7 +997,7 @@ trait WithOrderTest
                             ->getRaw(),
                     ],
                 ] : [],
-            ], $this->customOrderParams );
+            ], $orderDetails );
 
             $customer = Customer::find( $orderData[ 'customer_id' ] );
             $customerFirstPurchases = $customer->purchases_amount;
@@ -976,17 +1010,14 @@ trait WithOrderTest
                 'status' => 'success',
             ]);
 
-            $singleResponse[ 'order-creation' ] = json_decode( $response->getContent(), true );
+            $singleResponse[ 'order-creation' ] = $response->json();
+            $totalCoupons   =   collect( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.coupons' ) )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
 
             if ( $this->shouldMakePayment ) {
-                $netsubtotal = $currency
-                    ->define( $orderData[ 'subtotal' ] )
-                    ->subtractBy( $totalCoupons )
-                    ->subtractBy( $orderData[ 'discount' ] )
-                    ->getRaw();
 
-                $total = $currency->define( $netsubtotal )
+                $total = $currency->define( $subtotal )
                     ->additionateBy( $orderData[ 'shipping' ] )
+                    ->subtractBy( $totalCoupons )
                     ->getRaw();
 
                 $this->assertEquals( $currency->getRaw(
@@ -995,14 +1026,15 @@ trait WithOrderTest
 
                 $this->assertEquals( $currency->getRaw(
                     Arr::get( $singleResponse[ 'order-creation' ], 'data.order.total' )
-                ), $currency->define( $netsubtotal )
+                ), $currency->define( $subtotal )
                     ->additionateBy( $orderData[ 'shipping' ] )
+                    ->subtractBy( $totalCoupons )
                     ->getRaw()
                 );
 
-                $couponValue = ( ! empty( $orderData[ 'coupons' ] ) ? (float) $orderData[ 'coupons' ][0][ 'value' ] : 0 );
+                $couponValue = ( ! empty( $orderData[ 'coupons' ] ) ? $totalCoupons : 0 );
                 $totalPayments = collect( $orderData[ 'payments' ] )->map( fn( $payment ) => (float) $payment[ 'value' ] )->sum() ?: 0;
-                $sum = (  (float) $orderData[ 'subtotal' ] + (float) $orderData[ 'shipping' ] - (float) $orderData[ 'discount' ] - $couponValue );
+                $sum = (  (float) $orderData[ 'subtotal' ] + (float) $orderData[ 'shipping' ] - ( in_array( $orderData[ 'discount_type' ], [ 'flat', 'percentage' ]) ? (float) $orderData[ 'discount' ] : 0 ) - $couponValue );
                 $change = ns()->currency->fresh( $totalPayments )->subtractBy( $sum )->getRaw();
 
                 $changeFromOrder = ns()->currency->getRaw( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.change' ) );

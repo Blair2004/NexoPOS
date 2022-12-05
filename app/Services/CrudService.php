@@ -352,7 +352,6 @@ class CrudService
          */
         return [
             'status' => 'success',
-            'entry' => $entry, // deprecated
             'data' => [
                 'entry' => $entry,
                 'editUrl' => str_contains( $resource->getLinks()[ 'edit' ], '{id}' ) ? Str::replace( '{id}', $entry->id, $resource->getLinks()[ 'edit' ] ) : false,

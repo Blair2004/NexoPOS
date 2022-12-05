@@ -420,12 +420,6 @@ class CouponCrud extends CrudService
             }
         }
 
-        /**
-         * @var CustomerService
-         */
-        $customersService = app()->make( CustomerService::class );
-        $customersService->setCoupon( $inputs, $coupon );
-
         return $inputs;
     }
 
@@ -524,12 +518,6 @@ class CouponCrud extends CrudService
             $categoryRelation->save();
         }
 
-        /**
-         * @var CustomerService
-         */
-        $customersService = app()->make( CustomerService::class );
-        $customersService->setCoupon( $inputs, $coupon );
-
         return $inputs;
     }
 
@@ -627,12 +615,20 @@ class CouponCrud extends CrudService
         $entry->valid_until = $entry->valid_until ?? __('Undefined');
 
         // you can make changes here
-        $entry->addAction( 'edit.license', [
+        $entry->addAction( 'edit-coupon', [
             'label' => __('Edit'),
-            'namespace' => 'edit.licence',
+            'namespace' => 'edit-coupon',
             'type' => 'GOTO',
             'index' => 'id',
             'url' => ns()->url('/dashboard/customers/coupons/edit/' . $entry->id),
+        ]);
+
+        $entry->addAction( 'coupon-history', [
+            'label' => __('History'),
+            'namespace' => 'coupon-history',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url('/dashboard/customers/coupons/history/' . $entry->id),
         ]);
 
         $entry->addAction( 'delete', [
