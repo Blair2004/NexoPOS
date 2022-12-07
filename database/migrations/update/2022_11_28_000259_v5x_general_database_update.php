@@ -2,6 +2,8 @@
 
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\User;
+use App\Services\WidgetService;
 use App\Widgets\ProfileWidget;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -49,13 +51,21 @@ return new class extends Migration
             ( new ProfileWidget )->getPermission()
         ])->get()->map( fn( $permission ) => $permission->namespace ) );
 
+
+        /**
+         * We're introducing a driver role
+         */
+        include_once( dirname( __FILE__ ) . '/../../permissions/store-driver-role.php' );
+        include_once( dirname( __FILE__ ) . '/../../permissions/store-customer-role.php' );
+
         /**
          * to all roles available, we'll make all available widget added
          * to their dashboard
+         * @var WidgetService $widgetService
          */
-        Role::get()->each( function( $role ) {
-
-        });
+        $widgetService  =   app()->make( WidgetService::class );
+        
+        User::get()->each( fn( $user ) => $widgetService->addDefaultWidgetsToAreas( $user ) );
     }
 
     /**

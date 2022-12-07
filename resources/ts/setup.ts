@@ -1,10 +1,12 @@
-import Vue, { createApp, defineAsyncComponent } from 'vue/dist/vue.esm-bundler';
-import { createRouter, createWebHashHistory } from 'vue-router';
 import * as components from './components/components';
 
-const WelcomeComponent              =   defineAsyncComponent( () => import( './pages/setup/welcome.vue' ) );
-const DatabaseComponent             =   defineAsyncComponent( () => import( './pages/setup/database.vue' ) );
-const SetupConfigurationComponent   =   defineAsyncComponent( () => import( './pages/setup/setup-configuration.vue' ) );
+import { createRouter, createWebHashHistory } from 'vue-router';
+
+import { createApp } from 'vue/dist/vue.esm-bundler';
+
+const WelcomeComponent              =   () => import( './pages/setup/welcome.vue' );
+const DatabaseComponent             =   () => import( './pages/setup/database.vue' );
+const SetupConfigurationComponent   =   () => import( './pages/setup/setup-configuration.vue' );
 
 const routes    =   [
     { path: '/', component: WelcomeComponent },
@@ -25,6 +27,7 @@ nsRouterApp.use( nsRouter );
     nsRouterApp.component( name, components[ name ] );
 }
 
+console.log( 'mount' );
 nsRouterApp.mount( '#nexopos-setup' );
 
 export { nsRouter };

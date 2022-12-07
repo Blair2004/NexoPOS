@@ -1,9 +1,9 @@
 <?php
 
 use App\Classes\Hook;
-use App\Models\User;
-use App\Services\Helper;
 use App\Services\DateService;
+use App\Services\Helper;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
 if ( Auth::check() ) {

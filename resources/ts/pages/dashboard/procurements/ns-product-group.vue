@@ -28,9 +28,11 @@
                                     <ul>
                                         <li @click="toggleUnitField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
                                             <span>{{ __( 'Unit' ) }}:</span> 
-                                            <select @change="redefineUnit( product )" ref="unitField" type="text" v-model="product.unit_quantity_id">
-                                                <option :key="unitQuantity.id" :value="unitQuantity.id" v-for="unitQuantity of product.unit_quantities">{{ unitQuantity.unit.name }}</option>
-                                            </select>
+                                            <div class="input-group">
+                                                <select @change="redefineUnit( product )" ref="unitField" type="text" v-model="product.unit_quantity_id">
+                                                    <option :key="unitQuantity.id" :value="unitQuantity.id" v-for="unitQuantity of product.unit_quantities">{{ unitQuantity.unit.name }}</option>
+                                                </select>
+                                            </div>
                                         </li>
                                         <li @click="toggleQuantityField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
                                             <span>{{ __( 'Quantity' ) }}:</span> 
@@ -120,6 +122,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         setSalePrice() {
             this.$emit( 'updateSalePrice', this.totalProducts );
         },

@@ -217,7 +217,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton( WidgetService::class, function( $app ) {
-            return new WidgetService;
+            return new WidgetService(
+                $app->make( UsersService::class )
+            );
         });
 
         /**

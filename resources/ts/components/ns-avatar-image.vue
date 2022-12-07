@@ -1,7 +1,7 @@
 <template>
     <div :class="'h-' + currentSize + ' w-' + currentSize">
-        <img v-if="url !== ''" :src="url" class="overflow-hidden rounded-full" :alt="name" srcset="">
-        <div :class="'h-' + currentSize + ' w-' + currentSize" v-html="svg" v-if="url === ''"></div>
+        <img v-if="url !== '' && url !== null" :src="url" class="overflow-hidden rounded-full" :alt="name" srcset="">
+        <div :class="'h-' + currentSize + ' w-' + currentSize" v-html="svg" v-if="url === '' || url === null"></div>
     </div>
 </template>
 <script>

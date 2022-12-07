@@ -12,6 +12,7 @@ Route::get( '/customers/{customer}/rewards', [ CustomersController::class, 'getC
 Route::get( '/customers/{customer}/rewards/edit/{reward}', [ CustomersController::class, 'editCustomerReward' ])->name( ns()->routeName( 'ns.dashboard.customers-rewards-edit' ) );
 Route::get( '/customers/{customer}/orders', [ CustomersController::class, 'getCustomersOrders' ])->name( ns()->routeName( 'ns.dashboard.customers-orders-list' ) ); // @todo update
 Route::get( '/customers/{customer}/coupons', [ CustomersController::class, 'getCustomersCoupons' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-list' ) );
+Route::get( '/customers/{customer}/coupons/{customerCoupon}/history', [ CustomersController::class, 'listCustomerCouponHistory' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-history-list' ) );
 Route::get( '/customers/{customer}/account-history', [ CustomersController::class, 'getCustomerAccountHistory' ])->name( ns()->routeName( 'ns.dashboard.customers-account-history-list' ) ); // @todo update
 Route::get( '/customers/{customer}/account-history/create', [ CustomersController::class, 'createCustomerAccountHistory' ])->name( ns()->routeName( 'ns.dashboard.customers-account-history-create' ) );
 Route::get( '/customers/{customer}/account-history/edit/{customerAccountHistory}', [ CustomersController::class, 'editCustomerAccountHistory' ])->name( ns()->routeName( 'ns.dashboard.customers-account-history-edit' ) );

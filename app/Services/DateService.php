@@ -22,7 +22,7 @@ class DateService extends Carbon
         $this->options = app()->make( Options::class );
 
         if ( Auth::check() ) {
-            $language  =   Auth::user()->attribute->language ?: $this->option->get( 'ns_store_language', 'light' );
+            $language  =   Auth::user()->attribute->language ?: $this->options->get( 'ns_store_language', 'light' );
         } else {
             $language  =   $this->options->get( 'ns_store_language', 'en' );
         }
@@ -46,7 +46,8 @@ class DateService extends Carbon
             'ar'    =>  'ar_SA',
             'pt'    =>  'pt_PT',
             'tr'    =>  'tr_TR',
-            'vi'    =>  'vi_VN'
+            'vi'    =>  'vi_VN',
+            default =>  'en_US',
         };
     }
 

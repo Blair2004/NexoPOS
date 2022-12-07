@@ -3,10 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderCouponBeforeCreatedEvent;
-use App\Models\CustomerCoupon;
 use App\Services\CustomerService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderCouponBeforeCreatedEventListener
 {

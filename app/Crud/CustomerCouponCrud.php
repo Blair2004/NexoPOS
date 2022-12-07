@@ -324,11 +324,6 @@ class CustomerCouponCrud extends CrudService
     public function getColumns()
     {
         return [
-            'customer_name' => [
-                'label' => __( 'Customer' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
             'name' => [
                 'label' => __( 'Name' ),
                 '$direction' => '',
@@ -389,6 +384,13 @@ class CustomerCouponCrud extends CrudService
         }
 
         $entry->coupon_type = $entry->coupon_type === 'percentage_discount' ? __( 'Percentage' ) : __( 'Flat' );
+
+        $entry->action(
+            label: __( 'Usage History' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/customers/' . $entry->customer_id . '/coupons/' . $entry->id . '/history/' ),
+            identifier: 'usage.history'
+        );
 
         // you can make changes here
         $entry->addAction( 'edit', [

@@ -2,6 +2,15 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Widgets\BestCashiersWidget;
+use App\Widgets\BestCustomersWidget;
+use App\Widgets\ExpenseCardWidget;
+use App\Widgets\IncompleteSaleCardWidget;
+use App\Widgets\OrdersChartWidget;
+use App\Widgets\OrdersSummaryWidget;
+use App\Widgets\ProfileWidget;
+use App\Widgets\SaleCardWidget;
+use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 
@@ -40,6 +49,11 @@ class WidgetService
      * Describe what the widget does.
      */
     protected $description;
+
+    public function __construct( private UsersService $usersService )
+    {
+        // ...
+    }
 
     /**
      * Returns the widget vue component name
@@ -133,12 +147,19 @@ class WidgetService
         }
     }
 
-    public function registerWidgetsArea( $name, $columns )
+    /**
+     * Register widgets areas.
+     */
+    public function registerWidgetsArea( string $name, Closure $columns ): void
     {
         $this->widgetAreas[ $name ]     =   $columns;
     }
 
-    public function getWidgetsArea( $name )
+
+    /**
+     * Get the widget defined for a specifc area.
+     */
+    public function getWidgetsArea( string $name ): Collection
     {
         $widgets    =   $this->widgetAreas[ $name ] ?? [];
 
@@ -151,5 +172,63 @@ class WidgetService
         }
 
         return collect([]);
+    }
+
+    /**
+     * Will assign the widget to the provider user.
+     */
+    public function addDefaultWidgetsToAreas( User $user )
+    {
+        $areas  =   [
+            'first-column',
+            'second-column',
+            'third-column'
+        ];
+
+        $areaWidgets  = [];
+        $widgetClasses  =   collect([
+            SaleCardWidget::class,
+            IncompleteSaleCardWidget::class,
+            ExpenseCardWidget::class,
+            ProfileWidget::class,
+            OrdersChartWidget::class,
+            BestCustomersWidget::class,
+            OrdersSummaryWidget::class,
+            BestCashiersWidget::class
+        ])->filter( fn( $class ) => ( new $class )->canAccess() )->toArray();
+        
+        /**
+         * This will assign all widgets
+         * to available areas.
+         */
+        foreach( $widgetClasses as $index => $widgetClass ) {
+            /**
+             * @var WidgetService $widgetInstance
+             */
+            $widgetInstance     =   new $widgetClass;
+
+            $areaWidgets[ $areas[ $index % 3 ] ][]  = [
+                'className' =>  $widgetClass,
+                'componentName' =>  $widgetInstance->getVueComponent()
+            ];
+        }
+
+        /**
+         * We're now storing widgets to
+         * each relevant area.
+         */
+        foreach( $areaWidgets as $areaName => $widgets ) {
+            $config = [
+                'column'   =>  [
+                    'name'      =>  $areaName,
+                    'widgets'   =>  $widgets
+                ]
+            ];
+    
+            $this->usersService->storeWidgetsOnAreas(
+                config: $config,
+                user: $user
+            );
+        }
     }
 }

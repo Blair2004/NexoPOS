@@ -68,7 +68,7 @@ class DevShortCutCommand extends Command
                 $model      =   new $className;
                 $columns    =   Schema::getColumnListing( $model->getTable() );
     
-                $withTypes  =   collect( $columns )->mapWithKeys( fn( $value ) => [ Schema::getColumnType( $model->getTable(), $value ) => $value ]);
+                $withTypes  =   collect( $columns )->map( fn( $value ) => [ 'columnType' => Schema::getColumnType( $model->getTable(), $value ), 'columnName' => $value ]);
                 $content    =   file_get_contents( base_path( $file ) );
                 
                 if ( $this->fileContentHasClassComments( $file, $content ) ) {
@@ -97,8 +97,8 @@ class DevShortCutCommand extends Command
 
     protected function prepareComments( Collection $withTypes )
     {
-        $withTypes  =   $withTypes->map( function( $value, $key ) {
-            return " * @property " . ( $this->typeMapping[ $key ] ?? 'mixed' ) . " $" . $value;
+        $withTypes  =   $withTypes->map( function( $column ) {
+            return " * @property " . ( $this->typeMapping[ $column[ 'columnType'] ] ?? 'mixed' ) . " $" . $column[ 'columnName' ];
         });
 
         /**

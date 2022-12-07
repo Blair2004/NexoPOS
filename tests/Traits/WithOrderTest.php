@@ -820,8 +820,8 @@ trait WithOrderTest
         for ( $i = 0; $i < $this->count; $i++ ) {
             $singleResponse = [];
 
-            $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
-            $discountRate = $faker->numberBetween(0, 5);
+            $shippingFees = $orderDetails[ 'shipping' ] ?? $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
+            $discountRate = $orderDetails[ 'discount_rate' ] ?? $faker->numberBetween(0, 5);
 
             /**
              * if no products are provided we'll generate random
@@ -865,6 +865,7 @@ trait WithOrderTest
                 $discount   =   match( $product[ 'discount_type' ] ) {
                     'percentage'    =>  $this->getPercentageOf( $product[ 'unit_price' ] * $product[ 'quantity' ], $product[ 'discount_percentage' ] ),
                     'flat'          =>  $product[ 'discount' ],
+                    default         =>  0
                 };
 
                 $product[ 'discount' ]  =   $discount;
@@ -1006,167 +1007,169 @@ trait WithOrderTest
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/orders', $orderData );
 
-            $response->assertJson([
-                'status' => 'success',
-            ]);
-
-            $singleResponse[ 'order-creation' ] = $response->json();
-            $totalCoupons   =   collect( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.coupons' ) )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
-
-            if ( $this->shouldMakePayment ) {
-
-                $total = $currency->define( $subtotal )
-                    ->additionateBy( $orderData[ 'shipping' ] )
-                    ->subtractBy( $totalCoupons )
-                    ->getRaw();
-
-                $this->assertEquals( $currency->getRaw(
-                    Arr::get( $singleResponse[ 'order-creation' ], 'data.order.subtotal' )
-                ), $currency->getRaw( $orderData[ 'subtotal' ] ) );
-
-                $this->assertEquals( $currency->getRaw(
-                    Arr::get( $singleResponse[ 'order-creation' ], 'data.order.total' )
-                ), $currency->define( $subtotal )
-                    ->additionateBy( $orderData[ 'shipping' ] )
-                    ->subtractBy( $totalCoupons )
-                    ->getRaw()
-                );
-
-                $couponValue = ( ! empty( $orderData[ 'coupons' ] ) ? $totalCoupons : 0 );
-                $totalPayments = collect( $orderData[ 'payments' ] )->map( fn( $payment ) => (float) $payment[ 'value' ] )->sum() ?: 0;
-                $sum = (  (float) $orderData[ 'subtotal' ] + (float) $orderData[ 'shipping' ] - ( in_array( $orderData[ 'discount_type' ], [ 'flat', 'percentage' ]) ? (float) $orderData[ 'discount' ] : 0 ) - $couponValue );
-                $change = ns()->currency->fresh( $totalPayments )->subtractBy( $sum )->getRaw();
-
-                $changeFromOrder = ns()->currency->getRaw( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.change' ) );
-                $this->assertEquals( $changeFromOrder, $change );
-
-                $singleResponse[ 'order-payment' ] = json_decode( $response->getContent() );
-
-                /**
-                 * test if the order has updated
-                 * correctly the customer account
-                 */
-                $customer->refresh();
-                $customerSecondPurchases = $customer->purchases_amount;
-                $customerSecondOwed = $customer->owed_amount;
-
-                if ( (float) trim( $customerFirstPurchases + ( $total ?? 0 ) ) != (float) trim( $customerSecondPurchases ) ) {
-                    throw new Exception(
-                        sprintf(
-                            __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Total : %s' ),
-                            $customerFirstPurchases + $total,
-                            $customerSecondPurchases,
-                            $total
-                        )
-                    );
-                }
-            }
-
-            $responseData = json_decode( $response->getContent(), true );
-
-            /**
-             * Let's test wether the cash
-             * flow has been created for this sale
-             */
-            if ( $responseData[ 'data' ][ 'order' ][ 'payment_status' ] !== 'unpaid' ) {
-                $this->assertTrue(
-                    CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )->first()
-                    instanceof CashFlow,
-                    __( 'No cash flow were created for this order.' )
-                );
-            }
-
             /**
              * if a custom callback is provided
              * we'll call that callback as well
              */
             if ( is_callable( $callback ) ) {
-                $callback( $response, $responseData );
-            }
-
-            if ( $faker->randomElement([ true ]) === true && $this->shouldRefund ) {
-                /**
-                 * We'll keep original products amounts and quantity
-                 * this means we're doing a full refund of price and quantities
-                 */
-                $productCondition = $faker->randomElement([
-                    OrderProductRefund::CONDITION_DAMAGED,
-                    OrderProductRefund::CONDITION_UNSPOILED,
-                ]);
-
-                $products = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) use ( $faker, $productCondition ) {
-                    return array_merge( $product, [
-                        'condition' => $productCondition,
-                        'description' => __( 'A random description from the refund test' ),
-                        'quantity' => $faker->randomElement([
-                            $product[ 'quantity' ],
-                            // floor( $product[ 'quantity' ] / 2 )
-                        ]),
-                    ]);
-                });
-
-                $response = $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'POST', 'api/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
-                        'payment' => [
-                            'identifier' => $faker->randomElement([
-                                OrderPayment::PAYMENT_ACCOUNT,
-                                OrderPayment::PAYMENT_CASH,
-                            ]),
-                        ],
-                        'refund_shipping' => $faker->randomElement([ true, false ]),
-                        'total' => collect( $products )
-                            ->map( fn( $product ) => $currency
-                                    ->define( $product[ 'quantity' ] )
-                                    ->multiplyBy( $product[ 'unit_price' ] )
-                                    ->getRaw()
-                            )->sum(),
-                        'products' => $products,
-                    ]);
-
+                $callback( $response, $response->json() );
+            } else {
                 $response->assertJson([
                     'status' => 'success',
                 ]);
-
+    
+                $singleResponse[ 'order-creation' ] = $response->json();
+                $totalCoupons   =   collect( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.coupons' ) )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+    
+                if ( $this->shouldMakePayment ) {
+    
+                    $total = $currency->define( $subtotal )
+                        ->additionateBy( $orderData[ 'shipping' ] )
+                        ->subtractBy( $totalCoupons )
+                        ->getRaw();
+    
+                    $this->assertEquals( $currency->getRaw(
+                        Arr::get( $singleResponse[ 'order-creation' ], 'data.order.subtotal' )
+                    ), $currency->getRaw( $orderData[ 'subtotal' ] ) );
+    
+                    $this->assertEquals( $currency->getRaw(
+                        Arr::get( $singleResponse[ 'order-creation' ], 'data.order.total' )
+                    ), $currency->define( $subtotal )
+                        ->additionateBy( $orderData[ 'shipping' ] )
+                        ->subtractBy( $totalCoupons )
+                        ->getRaw()
+                    );
+    
+                    $couponValue = ( ! empty( $orderData[ 'coupons' ] ) ? $totalCoupons : 0 );
+                    $totalPayments = collect( $orderData[ 'payments' ] )->map( fn( $payment ) => (float) $payment[ 'value' ] )->sum() ?: 0;
+                    $sum = (  (float) $orderData[ 'subtotal' ] + (float) $orderData[ 'shipping' ] - ( in_array( $orderData[ 'discount_type' ], [ 'flat', 'percentage' ]) ? (float) $orderData[ 'discount' ] : 0 ) - $couponValue );
+                    $change = ns()->currency->fresh( $totalPayments )->subtractBy( $sum )->getRaw();
+    
+                    $changeFromOrder = ns()->currency->getRaw( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.change' ) );
+                    $this->assertEquals( $changeFromOrder, $change );
+    
+                    $singleResponse[ 'order-payment' ] = json_decode( $response->getContent() );
+    
+                    /**
+                     * test if the order has updated
+                     * correctly the customer account
+                     */
+                    $customer->refresh();
+                    $customerSecondPurchases = $customer->purchases_amount;
+                    $customerSecondOwed = $customer->owed_amount;
+    
+                    if ( (float) trim( $customerFirstPurchases + ( $total ?? 0 ) ) != (float) trim( $customerSecondPurchases ) ) {
+                        throw new Exception(
+                            sprintf(
+                                __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Total : %s' ),
+                                $customerFirstPurchases + $total,
+                                $customerSecondPurchases,
+                                $total
+                            )
+                        );
+                    }
+                }
+    
+                $responseData = json_decode( $response->getContent(), true );
+    
                 /**
-                 * A single cash flow should be
-                 * created for that order for the sale account
+                 * Let's test wether the cash
+                 * flow has been created for this sale
                  */
-                $totalCashFlow = CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-                    ->where( 'operation', CashFlow::OPERATION_CREDIT )
-                    ->where( 'expense_category_id', ns()->option->get( 'ns_sales_cashflow_account' ) )
-                    ->count();
-
-                $this->assertTrue( $totalCashFlow === 1, 'More than 1 cash flow was created for the sale account.' );
-
-                /**
-                 * all refund transaction give a stock flow record.
-                 * We need to check if it has been created.
-                 */
-                $totalRefundedCashFlow = CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-                    ->where( 'operation', CashFlow::OPERATION_DEBIT )
-                    ->where( 'expense_category_id', ns()->option->get( 'ns_sales_refunds_account' ) )
-                    ->count();
-
-                $this->assertTrue( $totalRefundedCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
-
-                /**
-                 * in case the order is refunded with
-                 * some defective products, we need to check if
-                 * the waste expense has been created.
-                 */
-                if ( $productCondition === OrderProductRefund::CONDITION_DAMAGED ) {
-                    $totalSpoiledCashFlow = CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-                        ->where( 'operation', CashFlow::OPERATION_DEBIT )
-                        ->where( 'expense_category_id', ns()->option->get( 'ns_stock_return_spoiled_account' ) )
-                        ->count();
-
-                    $this->assertTrue( $totalSpoiledCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
+                if ( $responseData[ 'data' ][ 'order' ][ 'payment_status' ] !== 'unpaid' ) {
+                    $this->assertTrue(
+                        CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )->first()
+                        instanceof CashFlow,
+                        __( 'No cash flow were created for this order.' )
+                    );
                 }
 
-                $singleResponse[ 'order-refund' ] = json_decode( $response->getContent() );
+                if ( $faker->randomElement([ true ]) === true && $this->shouldRefund ) {
+                    /**
+                     * We'll keep original products amounts and quantity
+                     * this means we're doing a full refund of price and quantities
+                     */
+                    $productCondition = $faker->randomElement([
+                        OrderProductRefund::CONDITION_DAMAGED,
+                        OrderProductRefund::CONDITION_UNSPOILED,
+                    ]);
+    
+                    $products = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) use ( $faker, $productCondition ) {
+                        return array_merge( $product, [
+                            'condition' => $productCondition,
+                            'description' => __( 'A random description from the refund test' ),
+                            'quantity' => $faker->randomElement([
+                                $product[ 'quantity' ],
+                                // floor( $product[ 'quantity' ] / 2 )
+                            ]),
+                        ]);
+                    });
+    
+                    $response = $this->withSession( $this->app[ 'session' ]->all() )
+                        ->json( 'POST', 'api/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
+                            'payment' => [
+                                'identifier' => $faker->randomElement([
+                                    OrderPayment::PAYMENT_ACCOUNT,
+                                    OrderPayment::PAYMENT_CASH,
+                                ]),
+                            ],
+                            'refund_shipping' => $faker->randomElement([ true, false ]),
+                            'total' => collect( $products )
+                                ->map( fn( $product ) => $currency
+                                        ->define( $product[ 'quantity' ] )
+                                        ->multiplyBy( $product[ 'unit_price' ] )
+                                        ->getRaw()
+                                )->sum(),
+                            'products' => $products,
+                        ]);
+    
+                    $response->assertJson([
+                        'status' => 'success',
+                    ]);
+    
+                    /**
+                     * A single cash flow should be
+                     * created for that order for the sale account
+                     */
+                    $totalCashFlow = CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                        ->where( 'operation', CashFlow::OPERATION_CREDIT )
+                        ->where( 'expense_category_id', ns()->option->get( 'ns_sales_cashflow_account' ) )
+                        ->count();
+    
+                    $this->assertTrue( $totalCashFlow === 1, 'More than 1 cash flow was created for the sale account.' );
+    
+                    /**
+                     * all refund transaction give a stock flow record.
+                     * We need to check if it has been created.
+                     */
+                    $totalRefundedCashFlow = CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                        ->where( 'operation', CashFlow::OPERATION_DEBIT )
+                        ->where( 'expense_category_id', ns()->option->get( 'ns_sales_refunds_account' ) )
+                        ->count();
+    
+                    $this->assertTrue( $totalRefundedCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
+    
+                    /**
+                     * in case the order is refunded with
+                     * some defective products, we need to check if
+                     * the waste expense has been created.
+                     */
+                    if ( $productCondition === OrderProductRefund::CONDITION_DAMAGED ) {
+                        $totalSpoiledCashFlow = CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                            ->where( 'operation', CashFlow::OPERATION_DEBIT )
+                            ->where( 'expense_category_id', ns()->option->get( 'ns_stock_return_spoiled_account' ) )
+                            ->count();
+    
+                        $this->assertTrue( $totalSpoiledCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
+                    }
+    
+                    $singleResponse[ 'order-refund' ] = json_decode( $response->getContent() );
+                }
+    
+                $responses[] = $singleResponse;
             }
 
-            $responses[] = $singleResponse;
+            
         }
 
         return $responses;

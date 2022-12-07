@@ -585,12 +585,12 @@ class OrderCrud extends CrudService
         $entry->payment_status = ns()->order->getPaymentLabel( $entry->payment_status );
 
         // you can make changes here
-        $entry->addAction( 'ns.order-options', [
-            'label' => '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
-            'namespace' => 'ns.order-options',
-            'type' => 'POPUP',
-            'url' => ns()->url( '/dashboard/' . 'orders' . '/edit/' . $entry->id ),
-        ]);
+        $entry->action( 
+            identifier: 'ns.order-options',
+            label: '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
+            type: 'POPUP',
+            url: ns()->url( '/dashboard/' . 'orders' . '/edit/' . $entry->id )
+        );
 
         /**
          * We'll check if the order has refunds
@@ -603,37 +603,37 @@ class OrderCrud extends CrudService
         $hasRefunds = $refundCount > 0;
 
         if ( $hasRefunds ) {
-            $entry->addAction( 'ns.order-refunds', [
-                'label' => '<i class="mr-2 las la-receipt"></i> ' . __( 'Refund Receipt' ),
-                'type' => 'POPUP',
-                'namespace' => 'ns.order-refunds',
-                'url' => ns()->url( '/dashboard/' . 'orders' . '/refund-receipt/' . $entry->id ),
-            ]);
+            $entry->action(
+                identifier: 'ns.order-refunds',
+                label: '<i class="mr-2 las la-receipt"></i> ' . __( 'Refund Receipt' ),
+                type: 'POPUP',
+                url: ns()->url( '/dashboard/' . 'orders' . '/refund-receipt/' . $entry->id ),
+            );
         }
 
-        $entry->addAction( 'invoice', [
-            'label' => '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
-            'namespace' => 'invoice',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id ),
-        ]);
+        $entry->action( 
+            identifier: 'invoice',
+            label: '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id ),
+        );
 
-        $entry->addAction( 'receipt', [
-            'label' => '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
-            'namespace' => 'receipt',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id ),
-        ]);
+        $entry->action( 
+            identifier: 'receipt',
+            label: '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id ),
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.orders/' . $entry->id ),
-            'confirm' => [
+        $entry->action( 
+            identifier: 'delete',
+            label: '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.orders/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
-        ]);
+        );
 
         return $entry;
     }

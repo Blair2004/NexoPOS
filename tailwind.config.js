@@ -84,6 +84,7 @@ module.exports = {
         
         surface: withOpacityValue('--surface'),
         'surface-soft': withOpacityValue('--surface-soft'),
+        'surface-hard': withOpacityValue('--surface-hard'),
         'popup-surface': withOpacityValue('--popup-surface'),
 
         'input-edge': withOpacityValue('--input-edge'),

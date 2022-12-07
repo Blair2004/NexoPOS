@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Events\UserAfterActivationSuccessfulEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\Role;
 use App\Models\User;
@@ -270,6 +271,14 @@ class UserCrud extends CrudService
                 );
 
             $this->userService->createAttribute( $entry );
+            
+            /**
+             * While creating the user, if we set that user as active
+             * we'll dispatch the activation successful event.
+             */
+            if ( $entry->active ) {
+                UserAfterActivationSuccessfulEvent::dispatch( $entry );
+            }
         }
 
         return $request;
@@ -310,7 +319,7 @@ class UserCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $request, $entry )
+    public function afterPut( $request, User $entry )
     {
         if ( isset( $request[ 'roles'] ) ) {
             $this->userService
@@ -320,6 +329,14 @@ class UserCrud extends CrudService
                 );
 
             $this->userService->createAttribute( $entry );
+            
+            /**
+             * While creating the user, if we set that user as active
+             * we'll dispatch the activation successful event.
+             */
+            if ( $entry->active ) {
+                UserAfterActivationSuccessfulEvent::dispatch( $entry );
+            }
         }
 
         return $request;

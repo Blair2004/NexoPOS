@@ -716,13 +716,12 @@ class ProductCrud extends CrudService
             'url' => ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
         ]);
 
-        $entry->addAction( 'ns.quantities', [
-            'label' => '<i class="mr-2 las la-eye"></i> ' . __( 'Preview' ),
-            'namespace' => 'ns.quantities',
-            'type' => 'POPUP',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'ns.quantities',
+            label: '<i class="mr-2 las la-eye"></i> ' . __( 'Preview' ),
+            type: 'POPUP',
+            url: ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
+        );
 
         $entry->addAction( 'units', [
             'label' => '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),

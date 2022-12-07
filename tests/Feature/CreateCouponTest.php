@@ -40,4 +40,34 @@ class CreateCouponTest extends TestCase
         $this->attemptAuthenticate();
         $this->attemptAssignCouponToOrder();
     }
+
+    /**
+     * This test will assign a coupon that doesn't exist
+     * to an order. This will cause the order to throw an error.
+     */
+    public function testAssignNotExistingCoupon()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptAssigningANonExistingCoupon();
+    }
+
+    /**
+     * This test will try to assign a coupon
+     * that is exhausted. It should cause a failure of the order creation
+     */
+    public function testUseExhaustedCoupon()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptUseExaustedCoupon();
+    }
+
+    /**
+     * This test will use coupon this it get exhausted.
+     * By the end, the order creation should fail.
+     */
+    public function testUseCouponTillUsageGetExhausted()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptUseCouponTillUsageIsExhausted();
+    }
 }

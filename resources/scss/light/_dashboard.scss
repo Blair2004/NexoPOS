@@ -10,6 +10,27 @@
 
 #dashboard-aside > div {
     @apply bg-gray-900;
+    .ns-aside-menu {
+        @apply text-gray-200 hover:bg-gray-700;
+        &.toggled {
+            @apply border-blue-800 bg-blue-800;
+        }
+        &.normal {
+            @apply border-transparent bg-gray-900;
+        }
+        .notification-label {
+            @apply bg-red-600 text-white;
+        }
+    }
+    .ns-aside-submenu {
+        @apply border-blue-800 bg-gray-800 hover:bg-gray-700;
+        &.active {
+            @apply text-white;
+        }
+        &.normal {
+            @apply text-gray-100;
+        }
+    }
 }
 
 #dashboard-body {

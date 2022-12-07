@@ -537,6 +537,9 @@ class CustomerService
         throw new Exception( __( 'Unable to find a coupon with the provided code.' ) );
     }
 
+    /**
+     * @todo this method doesn't seems used.
+     */
     public function setCouponHistory( $fields, Coupon $coupon )
     {
         $customerCoupon = new CustomerCoupon;
@@ -696,12 +699,12 @@ class CustomerService
         return $customerCoupon;
     }
 
-    public function checkCouponExistence( $coupon, $fields ): Coupon
+    public function checkCouponExistence( array $couponConfig, $fields ): Coupon
     {
-        $coupon = Coupon::find( $coupon[ 'id' ] );
+        $coupon = Coupon::find( $couponConfig[ 'id' ] );
 
         if ( ! $coupon instanceof Coupon ) {
-            throw new NotFoundException( sprintf( __( 'Unable to find a reference to the attached coupon : %s' ), $coupon->name ?? __( 'N/A' ) ) );
+            throw new NotFoundException( sprintf( __( 'Unable to find a reference to the attached coupon : %s' ), $couponConfig[ 'name' ] ?? __( 'N/A' ) ) );
         }
 
         /**
@@ -741,20 +744,49 @@ class CustomerService
             ) {
                 throw new NotAllowedException( sprintf( __( 'Unable to use the coupon %s at this moment.' ), $coupon->name ) );
             }  
-            
-            /**
-             * We'll now check if the customer has an ongoing
-             * coupon with the provided parameters
-             */
-            $customerCoupon     =   CustomerCoupon::where( 'coupon_id', $coupon[ 'id' ] )
-                ->where( 'customer_id', $fields[ 'customer_id' ] ?? 0 )
-                ->first();
+        }
 
-            if ( $customerCoupon instanceof CustomerCoupon && ! $customerCoupon->active ) {
+        /**
+         * We'll now check if the customer has an ongoing
+         * coupon with the provided parameters
+         */
+        $customerCoupon     =   CustomerCoupon::where( 'coupon_id', $couponConfig[ 'id' ] )
+            ->where( 'customer_id', $fields[ 'customer_id' ] ?? 0 )
+            ->first();
+
+        if ( $customerCoupon instanceof CustomerCoupon ) {
+            if ( ! $customerCoupon->active ) {
                 throw new NotAllowedException( sprintf( __( 'You\'re not allowed to use this coupon as it\'s no longer active' ) ) );
+            }
+    
+            /**
+             * We're trying to use a coupon that is already exhausted
+             * this should be prevented here.
+             */
+
+            if ( $customerCoupon->limit_usage > 0 && $customerCoupon->usage + 1 > $customerCoupon->limit_usage ) {
+                throw new NotAllowedException( sprintf( __( 'You\'re not allowed to use this coupon it has reached the maximum usage allowed.' ) ) );
             }
         }
 
         return $coupon;
+    }
+
+    /**
+     * Will check if a coupon is a eligible for an increase
+     * and will perform a usage increase.
+     */
+    public function increaseCouponUsage( CustomerCoupon $customerCoupon )
+    {
+        if ( $customerCoupon->limit_usage > 0 ) {
+            if ( $customerCoupon->usage + 1 < $customerCoupon->limit_usage ) {
+                $customerCoupon->usage += 1;
+                $customerCoupon->save();
+            } elseif ( $customerCoupon->usage + 1 === $customerCoupon->limit_usage ) {
+                $customerCoupon->usage += 1;
+                $customerCoupon->active = false;
+                $customerCoupon->save();
+            }
+        }
     }
 }

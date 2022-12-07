@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
+use App\Http\Middleware\KillSessionIfNotInstalledMiddleware;
 use App\Http\Middleware\LoadLangMiddleware;
 use App\Http\Middleware\ProtectRoutePermissionMiddleware;
 use App\Http\Middleware\ProtectRouteRoleMiddleware;
@@ -36,6 +37,7 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
         'web' => [
             \App\Http\Middleware\EncryptCookies::class,
+            KillSessionIfNotInstalledMiddleware::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,

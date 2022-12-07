@@ -12,6 +12,7 @@ use App\Crud\CouponCrud;
 use App\Crud\CouponOrderHistoryCrud;
 use App\Crud\CustomerAccountCrud;
 use App\Crud\CustomerCouponCrud;
+use App\Crud\CustomerCouponHistoryCrud;
 use App\Crud\CustomerCrud;
 use App\Crud\CustomerOrderCrud;
 use App\Crud\CustomerRewardCrud;
@@ -341,11 +342,12 @@ class CustomersController extends DashboardController
      */
     public function getCustomersCoupons( Customer $customer )
     {
-        return CustomerCouponCrud::table([
-            'queryParams' => [
+        return CustomerCouponCrud::table(
+            title:  sprintf( __( '%s Coupons' ), $customer->name ),
+            queryParams: [
                 'customer_id' => $customer->id,
             ],
-        ]);
+        );
     }
 
     /**
@@ -486,5 +488,16 @@ class CustomersController extends DashboardController
                 'coupon_id' =>  $coupon->id
             ]
         ]);
+    }
+
+    public function listCustomerCouponHistory( Customer $customer, CustomerCoupon $customerCoupon )
+    {
+        return CustomerCouponHistoryCrud::table(
+            title: sprintf( __( '%s Coupon History' ), $customer->name ),
+            queryParams: [
+                'customer_id'   =>  $customer->id,
+                'customer_coupon_id'    =>  $customerCoupon->id
+            ]
+        );
     }
 }

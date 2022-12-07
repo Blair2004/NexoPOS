@@ -147,6 +147,7 @@ import { nsSnackBar, nsHttpClient } from '~/bootstrap';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';
 import nsProductGroup from './ns-product-group.vue';
+import { nsCurrency } from '~/filters/currency';
 export default {
     components: {
         nsProductGroup
@@ -230,6 +231,7 @@ export default {
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
     methods: {
         __,
+        nsCurrency,
         getGroupProducts( tabs ) {
             if ( tabs[ 'groups' ] ) {
                 const products  =   tabs.groups.fields.filter( field => field.name === 'products_subitems' );

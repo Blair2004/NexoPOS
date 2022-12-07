@@ -113,7 +113,8 @@ export default {
             this.$emit( 'updated', this.row );
         },
         triggerAsync( action ) {
-            if ( action.confirm ) {
+            console.log( action );
+            if ( action.confirm !== null ) {
                 if ( confirm( action.confirm.message ) ) {
                     nsHttpClient[ action.type.toLowerCase() ]( action.url )
                         .subscribe( response => {

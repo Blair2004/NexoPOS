@@ -41,55 +41,60 @@ export default {
             this.form.disableFields( this.fields );
             this.processing     =   true;
             return nsHttpClient.post( `/api/setup/configuration`, this.form.getValue( this.fields ) )
-                .subscribe( result => {
-                    document.location   =   '/sign-in';
-                }, error => {
-                    this.processing     =   false;
-                    this.form.enableFields( this.fields );
-                    this.form.triggerFieldsErrors( this.fields, error.data );
-                    nsSnackBar.error( error.message, 'OK' )
-                        .subscribe();
+                .subscribe({
+                    next: result => {
+                        document.location   =   '/sign-in';
+                    },
+                    error:  error => {
+                        this.processing     =   false;
+                        this.form.enableFields( this.fields );
+                        this.form.triggerFieldsErrors( this.fields, error.data );
+                        nsSnackBar.error( error.message, 'OK' )
+                            .subscribe();
+                    }
                 });
         },
 
         checkDatabase() {
             nsHttpClient.get( '/api/setup/database' )
-                .subscribe( result => {
-                    this.fields     =   this.form.createFields([
-                        {
-                            label: 'Application',
-                            description: 'That is the application name.',
-                            name: 'ns_store_name',
-                            validation: 'required',
-                        }, {
-                            label: 'Username',
-                            description: 'Provide the administrator username.',
-                            name: 'admin_username',
-                            validation: 'required',
-                        }, {
-                            label: 'Email',
-                            description: 'Provide the administrator email.',
-                            name: 'admin_email',
-                            validation: 'required',
-                        }, {
-                            label: 'Password',
-                            type: 'password',
-                            description: 'What should be the password required for authentication.',
-                            name: 'password',
-                            validation: 'required',
-                        }, {
-                            label: 'Confirm Password',
-                            type: 'password',
-                            description: 'Should be the same as the password above.',
-                            name: 'confirm_password',
-                            validation: 'required',
-                        }
-                    ]);
-                }, error => {
-                    console.log( error );
-                    nsRouter.push( '/database' );
-                    nsSnackBar.error( 'You need to define database settings', 'OKAY', { duration: 3000 })
-                        .subscribe();
+                .subscribe({
+                    next: result => {
+                        this.fields     =   this.form.createFields([
+                            {
+                                label: 'Application',
+                                description: 'That is the application name.',
+                                name: 'ns_store_name',
+                                validation: 'required',
+                            }, {
+                                label: 'Username',
+                                description: 'Provide the administrator username.',
+                                name: 'admin_username',
+                                validation: 'required',
+                            }, {
+                                label: 'Email',
+                                description: 'Provide the administrator email.',
+                                name: 'admin_email',
+                                validation: 'required',
+                            }, {
+                                label: 'Password',
+                                type: 'password',
+                                description: 'What should be the password required for authentication.',
+                                name: 'password',
+                                validation: 'required',
+                            }, {
+                                label: 'Confirm Password',
+                                type: 'password',
+                                description: 'Should be the same as the password above.',
+                                name: 'confirm_password',
+                                validation: 'required',
+                            }
+                        ]);
+                    },
+                    error: error => {
+                        nsRouter.push( '/database' );
+                        nsSnackBar.error( 'You need to define database settings', 'OKAY', { duration: 3000 })
+                            .subscribe();
+                    }
                 })
         }
     },

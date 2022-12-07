@@ -518,11 +518,11 @@ class ProductHistoryCrud extends CrudService
         }
 
         // you can make changes here
-        $entry->addAction( 'ns.description', [
-            'label' => '<i class="mr-2 las la-eye"></i> ' . __( 'Description' ),
-            'namespace' => 'ns.description',
-            'type' => 'POPUP',
-        ]);
+        $entry->action(
+            identifier: 'ns.description',
+            label: '<i class="mr-2 las la-eye"></i> ' . __( 'Description' ),
+            type: 'POPUP',
+        );
 
         return $entry;
     }

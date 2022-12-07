@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\UserAfterActivationSuccessfulEvent;
 use App\Models\Migration;
 use App\Models\PaymentType;
 use App\Models\User;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
@@ -184,54 +186,8 @@ class Setup
             'language' => 'en',
         ]);
 
-        /**
-         * let's define the default widgets
-         * available for the created administrator.
-         * @var UsersService $usersService
-         */
-        $usersService   =   app()->make( UsersService::class );
-
-        $areas  =   [
-            'first-column',
-            'second-column',
-            'third-column'
-        ];
-        
-        /**
-         * This will assign all widgets
-         * to available areas.
-         */
-        foreach([
-            SaleCardWidget::class,
-            ExpenseCardWidget::class,
-            IncompleteSaleCardWidget::class,
-            ProfileWidget::class,
-            OrdersChartWidget::class,
-            BestCustomersWidget::class,
-            OrdersSummaryWidget::class,
-            BestCashiersWidget::class
-        ] as $index => $widgetClass ) {
-            /**
-             * @var WidgetService $widgetInstance
-             */
-            $widgetInstance     =   new $widgetClass;
-
-            $usersService->storeWidgetsOnAreas(
-                config: [
-                    'column'   =>  [
-                        'name'      =>  $areas[ $index % 3 ] ?? 'first-column',
-                        'widgets'   =>  [
-                            [
-                                'className' =>  $widgetClass,
-                                'componentName' =>  $widgetInstance->getVueComponent()
-                            ]
-                        ]
-                    ]
-                ],
-                user: $user
-            );
-        }
-
+        UserAfterActivationSuccessfulEvent::dispatch( $user );
+                
         $this->createDefaultPayment( $user );
 
         $domain = pathinfo( url()->to( '/' ) );

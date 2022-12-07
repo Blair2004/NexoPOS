@@ -9,7 +9,28 @@
 }
 
 #dashboard-aside > div {
-    @apply bg-surface;
+    @apply bg-surface-hard;
+    .ns-aside-menu {
+        @apply text-slate-300 hover:bg-slate-700;
+        &.toggled {
+            @apply border-slate-700 bg-slate-700;
+        }
+        &.normal {
+            @apply border-transparent;
+        }
+        &.notification-label {
+            @apply bg-red-600 text-slate-300;
+        }
+    }
+    .ns-aside-submenu {
+        @apply border-slate-700 bg-slate-800 hover:bg-slate-700 ;
+        &.active {
+            @apply text-slate-300;
+        }
+        &.normal {
+            @apply text-slate-200;
+        }
+    }
 }
 
 #dashboard-body {

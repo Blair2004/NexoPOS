@@ -317,7 +317,7 @@ class OrdersService
     public function __checkAttachedCoupons( $fields )
     {
         collect( $fields[ 'coupons' ] ?? [] )->each( function( $coupon ) use ( $fields ) {
-            $this->customerService->checkCouponExistence( $coupon, $fields );
+            $result = $this->customerService->checkCouponExistence( $coupon, $fields );
         });
     }
 
@@ -393,7 +393,7 @@ class OrdersService
             }
 
             $existingCoupon->value = $coupon[ 'value' ] ?: (
-                $arrayCoupon[ 'discount_type' ] === 'percentage_discount' ?
+                $arrayCoupon[ 'type' ] === 'percentage_discount' ?
                     $this->computeDiscountValues( $arrayCoupon[ 'discount_value' ], $order->subtotal ) :
                     $arrayCoupon[ 'discount_value' ]
             );
@@ -1582,27 +1582,6 @@ class OrdersService
     }
 
     /**
-     * Will return the tax values from the order taxes
-     *
-     * @param Order $order
-     * @param float $value
-     * @param string $type
-     * @return float
-     *
-     * @deprecated
-     */
-    public function getTaxComputedFromOrderTaxes( Order $order, $value, $type )
-    {
-        $rates = $order->taxes->map( function( $tax ) {
-            return $tax->rate;
-        })->sum();
-
-        return $this->taxService->getComputedTaxValue(
-            $type, $rates, $value
-        );
-    }
-
-    /**
      * will compute the taxes based
      * on the configuration and the products
      *
@@ -2602,19 +2581,7 @@ class OrdersService
                 ) );
             }
 
-            /**
-             * if a limit_usage is set to 0, that means there is no limit.
-             */
-            if ( $customerCoupon->limit_usage > 0 ) {
-                if ( $customerCoupon->usage + 1 < $customerCoupon->limit_usage ) {
-                    $customerCoupon->usage += 1;
-                    $customerCoupon->save();
-                } elseif ( $customerCoupon->usage + 1 === $customerCoupon->limit_usage ) {
-                    $customerCoupon->usage += 1;
-                    $customerCoupon->active = false;
-                    $customerCoupon->save();
-                }
-            }
+            $this->customerService->increaseCouponUsage( $customerCoupon );
         });
     }
 
@@ -2634,8 +2601,8 @@ class OrdersService
                 ->get();
 
             $paidInstalments = $order->instalments()->where( 'paid', true )->sum( 'amount' );
-            $otherInstalments = $order->instalments()->whereNotIn( 'id', $orderInstalments->only( 'id' )->toArray() )->sum( 'amount' );
-            $dueInstalments = Currency::raw( $orderInstalments->sum( 'amount' ) );
+            // $otherInstalments = $order->instalments()->whereNotIn( 'id', $orderInstalments->only( 'id' )->toArray() )->sum( 'amount' );
+            // $dueInstalments = Currency::raw( $orderInstalments->sum( 'amount' ) );
 
             if ( $orderInstalments->count() > 0 ) {
                 $payableDifference = Currency::define( $order->tendered )

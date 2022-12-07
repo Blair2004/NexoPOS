@@ -1158,10 +1158,20 @@ class CrudService
         return $rules;
     }
 
-    public static function table( $config = [] ): ContractView
+    public static function table( $config = [], $title = null, $description = null, $src = null, $createUrl = null, $queryParams = null ): ContractView
     {
         $className = get_called_class();
         $instance = new $className;
+
+        /**
+         * in case the default way of proceeding is not defined
+         * we'll proceed by using the named arguments.
+         */
+        if ( empty( $config ) ) {
+            $config     =   collect( compact( 'title', 'description', 'src', 'createUrl', 'queryParams' ) )
+                ->filter()
+                ->toArray();
+        }
 
         /**
          * "manage.profile" is the default permission

@@ -74,6 +74,7 @@
     "normalize.css": "^8.0.1",
     "numeral": "^2.0.6",
     "postcss-sass": "^0.5.0",
+    "qrcode": "^1.5.1",
     "rx": "^4.1.0",
     "rxjs": "^7.5.6",
     "tailwindcss": "^3.1.8",

@@ -13,7 +13,7 @@ class MenuService
         $this->menus = [
             'dashboard' => [
                 'label' => __( 'Dashboard' ),
-                'permissions' => [ 'update.core', 'read.dashboard' ],
+                'permissions' => [ 'read.dashboard' ],
                 'icon' => 'la-home',
                 'childrens' => [
                     'index' => [

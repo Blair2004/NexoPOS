@@ -21,16 +21,12 @@
                     <li v-for="(token, index) of tokens" :key="index" class="p-2 border-b flex justify-between items-center border-box-edge">
                         <div class="flex flex-col">
                             <h4 class="text-lg">{{ token.name }}</h4>
-                            <div class="-mx-2 flex flex-col">
-                                <div class="px-2">
-                                    <span class="text-xs text-tertiary">{{ __( 'Created' ) }}: {{ token.created_at }}</span>
-                                </div>
-                                <div class="px-2">
-                                    <span class="text-xs text-tertiary">{{ __( 'Last Use' ) }}: {{ token.last_used_at || __( 'Never' ) }}</span>
-                                </div>
-                                <div class="px-2">
-                                    <span class="text-xs text-tertiary">{{ __( 'Expires' ) }}: {{ token.expires_at || __( 'Never' ) }}</span>
-                                </div>
+                            <div>
+                                <ul>
+                                    <li><span class="text-xs text-tertiary">{{ __( 'Created' ) }}: {{ token.created_at }}</span></li>
+                                    <li><span class="text-xs text-tertiary">{{ __( 'Last Use' ) }}: {{ token.last_used_at || __( 'Never' ) }}</span></li>
+                                    <li><span class="text-xs text-tertiary">{{ __( 'Expires' ) }}: {{ token.expires_at || __( 'Never' ) }}</span></li>
+                                </ul>
                             </div>
                         </div>
                         <div>

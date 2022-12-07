@@ -47,6 +47,7 @@ class WidgetsServiceProvider extends ServiceProvider
                         ->orderBy( 'position' )
                         ->get()
                         ->filter( fn( $widget ) => Gate::allows( ( new $widget->class_name )->getPermission() ) )
+                        ->values()
                 ];
             })->toArray() );
         };

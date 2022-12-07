@@ -38,6 +38,7 @@ use App\Crud\UnitCrud;
 use App\Crud\UnitGroupCrud;
 use App\Crud\UnpaidOrderCrud;
 use App\Crud\UserCrud;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -65,46 +66,64 @@ class CrudServiceProvider extends ServiceProvider
          * added here in order to be available and supported.
          */
         Hook::addFilter( 'ns-crud-resource', function( $namespace ) {
-            switch ( $namespace ) {
-                case 'ns.orders': return OrderCrud::class;
-                case 'ns.orders-instalments': return OrderInstalmentCrud::class;
-                case 'ns.payments-types': return PaymentTypeCrud::class;
-                case 'ns.hold-orders': return HoldOrderCrud::class;
-                case 'ns.unpaid-orders': return UnpaidOrderCrud::class;
-                case 'ns.partially-paid-orders': return PartiallyPaidOrderCrud::class;
-                case 'ns.coupons': return CouponCrud::class;
-                case 'ns.customers': return CustomerCrud::class;
-                case 'ns.customers-groups': return CustomerGroupCrud::class;
-                case 'ns.customers-rewards': return CustomerRewardCrud::class;
-                case 'ns.customers-orders': return CustomerOrderCrud::class;
-                case 'ns.customers-coupons': return CustomerCouponCrud::class;
-                case 'ns.rewards-system': return RewardSystemCrud::class;
-                case 'ns.providers': return ProviderCrud::class;
-                case 'ns.accounting-accounts': return ExpenseCategoryCrud::class;
-                case 'ns.cash-flow-history': return CashFlowHistoryCrud::class;
-                case 'ns.expenses': return ExpenseCrud::class;
-                case 'ns.units-groups': return UnitGroupCrud::class;
-                case 'ns.units': return UnitCrud::class;
-                case 'ns.products': return ProductCrud::class;
-                case 'ns.products-categories': return ProductCategoryCrud::class;
-                case 'ns.products-units': return ProductUnitQuantitiesCrud::class;
-                case 'ns.products-histories': return ProductHistoryCrud::class;
-                case 'ns.taxes': return TaxCrud::class;
-                case 'ns.taxes-groups': return TaxesGroupCrud::class;
-                case 'ns.users': return UserCrud::class;
-                case 'ns.registers': return RegisterCrud::class;
-                case 'ns.registers-hitory': return RegisterHistoryCrud::class;
-                case 'ns.procurements': return ProcurementCrud::class;
-                case 'ns.procurements-products': return ProcurementProductCrud::class;
-                case 'ns.roles': return RolesCrud::class;
-                case 'ns.global-products-history': return GlobalProductHistoryCrud::class;
-                case 'ns.providers-procurements': return ProviderProcurementsCrud::class;
-                case 'ns.customers-account-history': return CustomerAccountCrud::class;
-                case 'ns.providers-products': return ProviderProductsCrud::class;
-                case 'ns.expense-history': return ExpenseHistoryCrud::class;
-            }
+            
+            /**
+             * We'll attempt autoloading crud that explicitely
+             * defined they want to be autoloaded. We expect classes to have 2 
+             * constant: AUTOLOAD=true, IDENTIFIER=<string>.
+             */
+            $files  =   collect( Storage::disk( 'ns' )->files( 'app/Crud' ) );
+            $class  =   $files->map( fn( $file ) => 'App\Crud\\' . pathinfo( $file )[ 'filename' ] )
+                ->filter( fn( $class ) => ( defined( $class . '::AUTOLOAD' ) && defined( $class . '::IDENTIFIER' ) ) )
+                ->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace );
 
-            return $namespace;
+            if ( $class->count() === 1 ) {
+                return $class->first();
+            }
+              
+            /**
+             * We'll still allow users to define crud
+             * manually from this section.
+             */
+            return match( $namespace ) {
+                'ns.orders' => OrderCrud::class,
+                'ns.orders-instalments' => OrderInstalmentCrud::class,
+                'ns.payments-types' => PaymentTypeCrud::class,
+                'ns.hold-orders' => HoldOrderCrud::class,
+                'ns.unpaid-orders' => UnpaidOrderCrud::class,
+                'ns.partially-paid-orders' => PartiallyPaidOrderCrud::class,
+                'ns.coupons' => CouponCrud::class,
+                'ns.customers' => CustomerCrud::class,
+                'ns.customers-groups' => CustomerGroupCrud::class,
+                'ns.customers-rewards' => CustomerRewardCrud::class,
+                'ns.customers-orders' => CustomerOrderCrud::class,
+                'ns.customers-coupons' => CustomerCouponCrud::class,
+                'ns.rewards-system' => RewardSystemCrud::class,
+                'ns.providers' => ProviderCrud::class,
+                'ns.accounting-accounts' => ExpenseCategoryCrud::class,
+                'ns.cash-flow-history' => CashFlowHistoryCrud::class,
+                'ns.expenses' => ExpenseCrud::class,
+                'ns.units-groups' => UnitGroupCrud::class,
+                'ns.units' => UnitCrud::class,
+                'ns.products' => ProductCrud::class,
+                'ns.products-categories' => ProductCategoryCrud::class,
+                'ns.products-units' => ProductUnitQuantitiesCrud::class,
+                'ns.products-histories' => ProductHistoryCrud::class,
+                'ns.taxes' => TaxCrud::class,
+                'ns.taxes-groups' => TaxesGroupCrud::class,
+                'ns.users' => UserCrud::class,
+                'ns.registers' => RegisterCrud::class,
+                'ns.registers-hitory' => RegisterHistoryCrud::class,
+                'ns.procurements' => ProcurementCrud::class,
+                'ns.procurements-products' => ProcurementProductCrud::class,
+                'ns.roles' => RolesCrud::class,
+                'ns.global-products-history' => GlobalProductHistoryCrud::class,
+                'ns.providers-procurements' => ProviderProcurementsCrud::class,
+                'ns.customers-account-history' => CustomerAccountCrud::class,
+                'ns.providers-products' => ProviderProductsCrud::class,
+                'ns.expense-history' => ExpenseHistoryCrud::class,
+                default => $namespace,
+            };
         });
     }
 }

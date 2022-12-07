@@ -30,22 +30,13 @@ use Illuminate\Http\Request;
 
 class OrdersController extends DashboardController
 {
-    /** @var OrdersService */
-    private $ordersService;
-
-    /** @var OptionsService */
-    private $optionsService;
-
     private $paymentTypes;
 
     public function __construct(
-        OrdersService $ordersService,
-        Options $options
+        private OrdersService $ordersService,
+        private Options $optionsService
     ) {
         parent::__construct();
-
-        $this->optionsService = $options;
-        $this->ordersService = $ordersService;
 
         $this->middleware( function( $request, $next ) {
             $this->paymentTypes = PaymentType::orderBy( 'priority', 'asc' )
