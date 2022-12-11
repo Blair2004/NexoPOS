@@ -347,9 +347,6 @@ class CrudService
             $resource->afterPut( $unfiltredInputs, $entry, $inputs );
         }
 
-        /**
-         * @todo remove deprecated entry
-         */
         return [
             'status' => 'success',
             'data' => [
@@ -846,7 +843,7 @@ class CrudService
 
             /**
              * apply casting to crud resources
-             * as it's defined by the class casting
+             * as it's defined by the casting property
              */
             $casts = $this->getCasts();
 
@@ -960,8 +957,6 @@ class CrudService
      */
     public function extractCrudValidation( $crud, $model = null ): array
     {
-        $form = Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
-
         if ( is_subclass_of( $crud, CrudService::class ) ) {
             $form = Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
         }
@@ -1052,8 +1047,6 @@ class CrudService
      */
     public function getFlatForm( $crud, $fields, $model = null ): array
     {
-        $form = Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
-
         if ( is_subclass_of( $crud, CrudService::class ) ) {
             $form = Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
         }

@@ -105,7 +105,7 @@ class CustomerService
              * the provided  and which is not the actula customer.
              */
             $customer = Customer::byEmail( $fields[ 'email' ] )
-                ->where( 'id', '<>', $id )
+                ->where( 'nexopos_users.id', '<>', $id )
                 ->first();
         }
 

@@ -25,8 +25,8 @@ class CheckApplicationHealthMiddleware
         ns()->checkTaskSchedulingConfiguration();
 
         /**
-         * Will check if Cron Jobs are correctly set for
-         * NexoPOS 4x
+         * Will check if Cron Jobs are 
+         * correctly set for NexoPOS
          */
         ns()->checkCronConfiguration();
 

@@ -28,19 +28,24 @@ class DoctorService
     public function createUserAttribute(): array
     {
         User::get()->each( function( User $user ) {
-            if ( ! $user->attribute instanceof UserAttribute ) {
-                $attribute = new UserAttribute;
-                $attribute->user_id = $user->id;
-                $attribute->language = ns()->option->get( 'ns_store_language', 'en' );
-                $attribute->theme = ns()->option->get( 'ns_default_theme', 'dark' );
-                $attribute->save();
-            }
+            $this->createAttributeForUser( $user );
         });
 
         return [
             'status' => 'success',
             'message' => __( 'The user attributes has been updated.' ),
         ];
+    }
+
+    public function createAttributeForUser( User $user )
+    {
+        if ( ! $user->attribute instanceof UserAttribute ) {
+            $attribute = new UserAttribute;
+            $attribute->user_id = $user->id;
+            $attribute->language = ns()->option->get( 'ns_store_language', 'en' );
+            $attribute->theme = ns()->option->get( 'ns_default_theme', 'dark' );
+            $attribute->save();
+        }
     }
 
     /**
@@ -192,8 +197,8 @@ class DoctorService
                 if ( ! $customer->billing instanceof CustomerBillingAddress ) {
                     $billing = new CustomerBillingAddress;
                     $billing->customer_id = $customer->id;
-                    $billing->name = $customer->name;
-                    $billing->surname = $customer->surname;
+                    $billing->first_name = $customer->first_name;
+                    $billing->last_name = $customer->last_name;
                     $billing->email = $customer->email;
                     $billing->phone = $customer->phone;
                     $billing->author = $customer->author;
@@ -203,8 +208,8 @@ class DoctorService
                 if ( ! $customer->shipping instanceof CustomerShippingAddress ) {
                     $shipping = new CustomerShippingAddress;
                     $shipping->customer_id = $customer->id;
-                    $shipping->name = $customer->name;
-                    $shipping->surname = $customer->surname;
+                    $shipping->first_name = $customer->first_name;
+                    $shipping->last_name = $customer->last_name;
                     $shipping->email = $customer->email;
                     $shipping->phone = $customer->phone;
                     $shipping->author = $customer->author;

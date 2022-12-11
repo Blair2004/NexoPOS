@@ -44,13 +44,13 @@ class OrderCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users', 'nexopos_orders.author', '=', 'nexopos_users.id' ],
-        [ 'nexopos_customers', 'nexopos_customers.id', '=', 'nexopos_orders.customer_id' ],
+        [ 'nexopos_users as author', 'nexopos_orders.author', '=', 'author.id' ],
+        [ 'nexopos_users as customer', 'nexopos_orders.customer_id', '=', 'customer.id' ],
     ];
 
     public $pick = [
-        'nexopos_users' => [ 'username' ],
-        'nexopos_customers' => [ 'name', 'phone' ],
+        'author' => [ 'username' ],
+        'customer' => [ 'name', 'phone' ],
     ];
 
     public $queryFilters = [];

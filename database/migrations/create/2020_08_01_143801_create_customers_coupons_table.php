@@ -35,7 +35,5 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists( 'nexopos_customers_coupons' );
-        Schema::dropIfExists( 'nexopos_customers_coupons_products' );
-        Schema::dropIfExists( 'nexopos_customers_coupons_categories' );
     }
 };

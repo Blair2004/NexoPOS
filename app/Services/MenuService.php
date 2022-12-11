@@ -290,12 +290,12 @@ class MenuService
                 'icon' => 'la-users',
                 'childrens' => [
                     'profile' => [
-                        'label' => __( 'List' ),
+                        'label' => __( 'My Profile' ),
                         'permissions' => [ 'manage.profile' ],
                         'href' => ns()->url( '/dashboard/users/profile' ),
                     ],
                     'users' => [
-                        'label' => __( 'List' ),
+                        'label' => __( 'Users List' ),
                         'permissions' => [ 'read.users' ],
                         'href' => ns()->url( '/dashboard/users' ),
                     ],
@@ -304,7 +304,14 @@ class MenuService
                         'permissions' => [ 'create.users' ],
                         'href' => ns()->url( '/dashboard/users/create' ),
                     ],
-                    'roles' => [
+                ],
+            ],
+            'roles' =>  [
+                'label' =>  __( 'Roles' ),
+                'icon'  =>  'la-shield-alt',
+                'permissions'   =>  [ 'read.roles', 'create.roles', 'update.roles' ],
+                'childrens' =>  [
+                    'all-roles' => [
                         'label' => __( 'Roles' ),
                         'permissions' => [ 'read.roles' ],
                         'href' => ns()->url( '/dashboard/users/roles' ),
@@ -319,11 +326,7 @@ class MenuService
                         'permissions' => [ 'update.roles' ],
                         'href' => ns()->url( '/dashboard/users/roles/permissions-manager' ),
                     ],
-                    'profile' => [
-                        'label' => __( 'Profile' ),
-                        'href' => ns()->url( '/dashboard/users/profile' ),
-                    ],
-                ],
+                ]
             ],
             'procurements' => [
                 'label' => __( 'Procurements' ),

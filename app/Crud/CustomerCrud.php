@@ -2,6 +2,9 @@
 
 namespace App\Crud;
 
+use App\Casts\CurrencyCast;
+use App\Casts\GenderCast;
+use App\Casts\NotDefinedCast;
 use App\Events\CustomerAfterCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerBeforeDeletedEvent;
@@ -10,13 +13,18 @@ use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerGroup;
 use App\Models\CustomerShippingAddress;
+use App\Models\Role;
+use App\Models\User;
 use App\Services\CrudService;
 use App\Services\CustomerService;
 use App\Services\Helper;
 use App\Services\Options;
+use App\Services\UsersService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -25,7 +33,7 @@ class CustomerCrud extends CrudService
     /**
      * define the base table
      */
-    protected $table = 'nexopos_customers';
+    protected $table = 'nexopos_users';
 
     /**
      * base route name
@@ -50,12 +58,17 @@ class CustomerCrud extends CrudService
      */
     protected $prependOptions = true;
 
+    protected $pick     =   [
+        'user'  =>  [ 'id', 'username' ],
+        'group' =>  [ 'id', 'name' ]
+    ];
+
     /**
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_customers_groups', 'nexopos_customers.group_id', '=', 'nexopos_customers_groups.id' ],
-        [ 'nexopos_users', 'nexopos_customers.author', '=', 'nexopos_users.id' ],
+        [ 'nexopos_users_groups as group', 'nexopos_users.group_id', '=', 'group.id' ],
+        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_users.author' ],
     ];
 
     /**
@@ -65,6 +78,16 @@ class CustomerCrud extends CrudService
     protected $tabsRelations = [
         'shipping' => [ CustomerShippingAddress::class, 'customer_id', 'id' ],
         'billing' => [ CustomerBillingAddress::class, 'customer_id', 'id' ],
+    ];
+
+    protected $casts        =   [
+        'first_name'        =>  NotDefinedCast::class,
+        'last_name'         =>  NotDefinedCast::class,
+        'phone'             =>  NotDefinedCast::class,
+        'owed_amount'       =>  CurrencyCast::class,
+        'account_amount'    =>  CurrencyCast::class,
+        'purchases_amount'  =>  CurrencyCast::class,
+        'gender'            =>  GenderCast::class
     ];
 
     /**
@@ -140,6 +163,8 @@ class CustomerCrud extends CrudService
 
     public function hook( $query ): void
     {
+        $query->join( 'nexopos_users_roles_relations', 'nexopos_users.id', '=', 'nexopos_users_roles_relations.user_id' );
+        $query->join( 'nexopos_roles', 'nexopos_roles.id', '=', 'nexopos_users_roles_relations.role_id' );
         $query->orderBy( 'updated_at', 'desc' );
     }
 
@@ -154,9 +179,9 @@ class CustomerCrud extends CrudService
         return [
             'main' => [
                 'label' => __( 'Customer Name' ),
-                'name' => 'name',
+                'name' => 'first_name',
                 'validation' => 'required',
-                'value' => $entry->name ?? '',
+                'value' => $entry->first_name ?? '',
                 'description' => __( 'Provide a unique name for the customer.' ),
             ],
             'tabs' => [
@@ -165,10 +190,10 @@ class CustomerCrud extends CrudService
                     'fields' => [
                         [
                             'type' => 'text',
-                            'label' => __( 'Surname' ),
-                            'name' => 'surname',
-                            'value' => $entry->surname ?? '',
-                            'description' => __( 'Provide the customer surname' ),
+                            'label' => __( 'Last Name' ),
+                            'name' => 'last_name',
+                            'value' => $entry->last_name ?? '',
+                            'description' => __( 'Provide the customer last name' ),
                         ], [
                             'type' => 'number',
                             'label' => __( 'Credit Limit' ),
@@ -196,7 +221,7 @@ class CustomerCrud extends CrudService
                             'validation' => collect([
                                 ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? 'email' : '',
                                 ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? (
-                                    $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
+                                    $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_users', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_users', 'email' )
                                 ) : '',
                             ])->filter()->toArray(),
                             'description' => __( 'Provide the customer email.' ),
@@ -207,7 +232,7 @@ class CustomerCrud extends CrudService
                             'value' => $entry->phone ?? '',
                             'validation' => collect([
                                 ns()->option->get( 'ns_customers_force_unique_phone', 'no' ) === 'yes' ? (
-                                    $entry instanceof Customer && ! empty( $entry->phone ) ? Rule::unique( 'nexopos_customers', 'phone' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'phone' )
+                                    $entry instanceof Customer && ! empty( $entry->phone ) ? Rule::unique( 'nexopos_users', 'phone' )->ignore( $entry->id ) : Rule::unique( 'nexopos_users', 'phone' )
                                 ) : '',
                             ])->toArray(),
                             'description' => __( 'Provide the customer phone number' ),
@@ -236,16 +261,16 @@ class CustomerCrud extends CrudService
                     'fields' => [
                         [
                             'type' => 'text',
-                            'name' => 'name',
-                            'value' => $entry->billing->name ?? '',
-                            'label' => __( 'Name' ),
-                            'description' => __( 'Provide the billing name.' ),
+                            'name' => 'first_name',
+                            'value' => $entry->billing->first_name ?? '',
+                            'label' => __( 'First Name' ),
+                            'description' => __( 'Provide the billing first name.' ),
                         ], [
                             'type' => 'text',
-                            'name' => 'surname',
-                            'value' => $entry->billing->surname ?? '',
-                            'label' => __( 'Surname' ),
-                            'description' => __( 'Provide the billing surname.' ),
+                            'name' => 'last_name',
+                            'value' => $entry->billing->last_name ?? '',
+                            'label' => __( 'Last Name' ),
+                            'description' => __( 'Provide the billing last name.' ),
                         ], [
                             'type' => 'text',
                             'name' => 'phone',
@@ -302,16 +327,16 @@ class CustomerCrud extends CrudService
                     'fields' => [
                         [
                             'type' => 'text',
-                            'name' => 'name',
-                            'value' => $entry->shipping->name ?? '',
-                            'label' => __( 'Name' ),
-                            'description' => __( 'Provide the shipping name.' ),
+                            'name' => 'first_name',
+                            'value' => $entry->shipping->first_name ?? '',
+                            'label' => __( 'First Name' ),
+                            'description' => __( 'Provide the shipping First Name.' ),
                         ], [
                             'type' => 'text',
-                            'name' => 'surname',
-                            'value' => $entry->shipping->surname ?? '',
-                            'label' => __( 'Surname' ),
-                            'description' => __( 'Provide the shipping surname.' ),
+                            'name' => 'last_name',
+                            'value' => $entry->shipping->last_name ?? '',
+                            'label' => __( 'Last Name' ),
+                            'description' => __( 'Provide the shipping Last Name.' ),
                         ], [
                             'type' => 'text',
                             'name' => 'phone',
@@ -376,6 +401,20 @@ class CustomerCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        unset( $inputs[ 'password_confirm' ] );
+
+        /**
+         * if the password is not changed, no
+         * need to hash it
+         */
+        $inputs = collect( $inputs )->filter( fn( $input ) => ! empty( $input ) || $input === 0 )->toArray();
+
+        if ( ! empty( $inputs[ 'password' ] ) ) {
+            $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
+        } else {
+            $inputs[ 'password' ] = Hash::make( Str::random(10) );
+        }
+        
         return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
                 $value = $this->options->get( 'ns_customers_default_group', false );
@@ -398,6 +437,20 @@ class CustomerCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Customer $entry )
     {
+        unset( $inputs[ 'password_confirm' ] );
+
+        /**
+         * if the password is not changed, no
+         * need to hash it
+         */
+        $inputs = collect( $inputs )->filter( fn( $input ) => ! empty( $input ) || $input === 0 )->toArray();
+
+        if ( ! empty( $inputs[ 'password' ] ) ) {
+            $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
+        } else {
+            $inputs[ 'password' ] = Hash::make( Str::random(10) );
+        }
+
         return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
                 $value = $this->options->get( 'ns_customers_default_group', false );
@@ -421,6 +474,12 @@ class CustomerCrud extends CrudService
     public function afterPost( $inputs, Customer $customer )
     {
         CustomerAfterCreatedEvent::dispatch( $customer );
+
+        /**
+         * @var UsersService $usersService
+         */
+        $usersService    =   app()->make( UsersService::class );
+        $usersService->setUserRole( User::find( $customer->id ), [ Role::namespace( Role::STORECUSTOMER )->id ]);
 
         return $inputs;
     }
@@ -520,20 +579,20 @@ class CustomerCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name' => [
-                'label' => __( 'Name' ),
+            'first_name' => [
+                'label' => __( 'First Name' ),
             ],
-            'surname' => [
-                'label' => __( 'Surname' ),
+            'last_name' => [
+                'label' => __( 'Last Name' ),
             ],
             'phone' => [
                 'label' => __( 'Phone' ),
             ],
-            'nexopos_customers_groups_name' => [
-                'label' => __( 'Group' ),
-            ],
             'email' => [
                 'label' => __( 'Email' ),
+            ],
+            'group_name' => [
+                'label' => __( 'Group' ),
             ],
             'account_amount' => [
                 'label' => __( 'Account Credit' ),
@@ -547,7 +606,7 @@ class CustomerCrud extends CrudService
             'gender' => [
                 'label' => __( 'Gender' ),
             ],
-            'nexopos_users_username' => [
+            'user_username' => [
                 'label' => __( 'Author' ),
             ],
             'created_at' => [
@@ -561,11 +620,6 @@ class CustomerCrud extends CrudService
      */
     public function setActions( $entry, $namespace )
     {
-        $entry->owed_amount = (string) ns()->currency->define( $entry->owed_amount );
-        $entry->account_amount = (string) ns()->currency->define( $entry->account_amount );
-        $entry->purchases_amount = (string) ns()->currency->define( $entry->purchases_amount );
-        $entry->phone = empty( $entry->phone ) ? __( 'Not Defined' ) : $entry->phone;
-
         $entry->addAction( 'edit_customers_group', [
             'label' => __( 'Edit' ),
             'namespace' => 'edit_customers_group',
@@ -611,11 +665,6 @@ class CustomerCrud extends CrudService
                 'title' => __( 'Delete a customers' ),
             ],
         ]);
-
-        $entry->surname = $entry->surname ?? __( 'Not Defined' );
-        $entry->pobox = $entry->pobox ?? __( 'Not Defined' );
-        $entry->reward_system_id = $entry->reward_system_id ?? __( 'Not Defined' );
-        $entry->email = $entry->email ?: __( 'Not Defined' );
 
         switch ( $entry->gender ) {
             case 'male': $entry->gender = __( 'Male' );

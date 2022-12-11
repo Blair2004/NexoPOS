@@ -78,13 +78,13 @@ trait WithCustomerTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/crud/ns.customers', [
-                'name' => $faker->firstName,
+                'first_name' => $faker->firstName,
                 'general' => [
                     'group_id' => $group->id,
-                    'surname' => $faker->lastName,
+                    'last_name' => $faker->lastName,
                 ],
                 'shipping' => [
-                    'name' => $faker->firstName,
+                    'first_name' => $faker->firstName,
                     'email' => $faker->email,
                 ],
             ]);
@@ -108,14 +108,14 @@ trait WithCustomerTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/crud/ns.customers', [
-                'name' => $faker->firstName,
+                'first_name' => $faker->firstName,
                 'general' => [
                     'group_id' => $group->id,
-                    'surname' => $faker->lastName,
+                    'last_name' => $faker->lastName,
                     'email' => $email,
                 ],
                 'shipping' => [
-                    'name' => $faker->firstName,
+                    'first_name' => $faker->firstName,
                     'email' => $faker->email,
                 ],
             ]);
@@ -130,14 +130,14 @@ trait WithCustomerTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/crud/ns.customers', [
-                'name' => $faker->firstName,
+                'first_name' => $faker->firstName,
                 'general' => [
                     'group_id' => $group->id,
-                    'surname' => $faker->lastName,
+                    'last_name' => $faker->lastName,
                     'email' => $email,
                 ],
                 'shipping' => [
-                    'name' => $faker->firstName,
+                    'first_name' => $faker->firstName,
                     'email' => $faker->email,
                 ],
             ]);
@@ -167,20 +167,20 @@ trait WithCustomerTest
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/crud/ns.customers', [
-                    'name' => $firstName,
+                    'first_name' => $firstName,
                     'general' => [
                         'group_id' => $group->id,
-                        'surname' => $faker->lastName,
+                        'last_name' => $faker->lastName,
                         'email' => $email,
                     ],
                     'shipping' => [
-                        'name' => $firstName,
-                        'surname' => $lastName,
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
                         'email' => $email,
                     ],
                     'billing' => [
-                        'name' => $firstName,
-                        'surname' => $lastName,
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
                         'email' => $email,
                     ],
                 ]);

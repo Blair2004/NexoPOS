@@ -125,9 +125,9 @@ class ProviderCrud extends CrudService
     {
         return [
             'main' => [
-                'label' => __( 'Name' ),
-                'name' => 'name',
-                'value' => $entry->name ?? '',
+                'label' => __( 'First Name' ),
+                'name' => 'first_name',
+                'value' => $entry->first_name ?? '',
                 'description' => __( 'Provide a name to the resource.' ),
                 'validation' => 'required',
             ],
@@ -143,10 +143,10 @@ class ProviderCrud extends CrudService
                             'value' => $entry->email ?? '',
                         ], [
                             'type' => 'text',
-                            'name' => 'surname',
-                            'label' => __( 'Surname' ),
-                            'description' => __( 'Provider surname if necessary.' ),
-                            'value' => $entry->surname ?? '',
+                            'name' => 'last_name',
+                            'label' => __( 'Last Name' ),
+                            'description' => __( 'Provider last name if necessary.' ),
+                            'value' => $entry->last_name ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'phone',

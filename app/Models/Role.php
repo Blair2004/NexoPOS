@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -85,10 +86,8 @@ class Role extends NsRootModel
 
     /**
      * Relation with Permissions
-     *
-     * @return void
      **/
-    public function permissions()
+    public function permissions(): BelongsToMany
     {
         return $this->belongsToMany( Permission::class, 'nexopos_role_permission' );
     }

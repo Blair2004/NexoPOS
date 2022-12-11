@@ -1,13 +1,20 @@
 <?php
 
+use App\Models\CustomerAddress;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\CoreService;
+use App\Services\DoctorService;
+use App\Services\UsersService;
 use App\Services\WidgetService;
 use App\Widgets\ProfileWidget;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -18,6 +25,21 @@ return new class extends Migration
      */
     public function up()
     {
+        /**
+         * @var UsersService $usersService
+         */
+        $usersService   =   app()->make( UsersService::class );
+
+        /**
+         * @var DoctorService $doctorService
+         */
+        $doctorService   =   app()->make( DoctorService::class );
+
+        /**
+         * @var CoreService $coreService
+         */
+        $coreService   =   app()->make( CoreService::class );
+
         Schema::table( 'nexopos_roles', function( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_roles', 'dashid' ) ) {
                 $table->removeColumn( 'dashid' );
@@ -36,7 +58,7 @@ return new class extends Migration
          * let's include the files that will create permissions
          * for all the declared widgets.
          */
-        include( dirname( __FILE__ ) . '/../../permissions/widgets.php' );
+        include_once( base_path() . '/database/permissions/widgets.php' );
 
         /**
          * We'll now defined default permissions
@@ -51,12 +73,17 @@ return new class extends Migration
             ( new ProfileWidget )->getPermission()
         ])->get()->map( fn( $permission ) => $permission->namespace ) );
 
+        /**
+         * We need to register the permissions as gates,
+         * to be sure while using Gate::allows those are defined.
+         */
+        $coreService->registerGatePermissions();
 
         /**
          * We're introducing a driver role
          */
-        include_once( dirname( __FILE__ ) . '/../../permissions/store-driver-role.php' );
-        include_once( dirname( __FILE__ ) . '/../../permissions/store-customer-role.php' );
+        include_once( base_path() . '/database/permissions/store-driver-role.php' );
+        include_once( base_path() . '/database/permissions/store-customer-role.php' );
 
         /**
          * to all roles available, we'll make all available widget added
@@ -66,6 +93,121 @@ return new class extends Migration
         $widgetService  =   app()->make( WidgetService::class );
         
         User::get()->each( fn( $user ) => $widgetService->addDefaultWidgetsToAreas( $user ) );
+
+        /**
+         * We're make the users table to be able to receive customers
+         */
+        Schema::table( 'nexopos_users', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_users', 'birth_date' ) ) {
+                $table->datetime( 'birth_date' )->nullable();
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'purchases_amount' ) ) {
+                $table->float( 'purchases_amount' )->default(0);
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'owed_amount' ) ) {
+                $table->float( 'owed_amount' )->default(0);
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'credit_limit_amount' ) ) {
+                $table->float( 'credit_limit_amount' )->default(0);
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'account_amount' ) ) {
+                $table->float( 'account_amount' )->default(0);
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'first_name' ) ) {
+                $table->string( 'first_name' )->nullable();
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'last_name' ) ) {
+                $table->string( 'last_name' )->nullable();
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'gender' ) ) {
+                $table->string( 'gender' )->nullable();
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'phone' ) ) {
+                $table->string( 'phone' )->nullable();
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'pobox' ) ) {
+                $table->string( 'pobox' )->nullable();
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'group_id' ) ) {
+                $table->integer( 'group_id' )->nullable();
+            }
+        });
+
+        /**
+         * Let's convert customers into users
+         */
+        $firstAdministrator     =   Role::namespace( Role::ADMIN )->users()->first();
+
+        $users  =   DB::table( 'nexopos_customers' )->get( '*' )->map( function( $customer ) use ( $usersService, $doctorService, $firstAdministrator ) {
+            $user   =   User::where( 'email', $customer->email )
+                ->orWhere( 'username', $customer->email )
+                ->firstOrNew();
+
+            $user->birth_date           =   $customer->birth_date;
+            $user->username             =   $customer->email;
+            $user->email                =   $customer->email;
+            $user->purchases_amount     =   $customer->purchases_amount;
+            $user->owed_amount          =   $customer->owed_amount;
+            $user->credit_limit_amount  =   $customer->credit_limit_amount;
+            $user->account_amount       =   $customer->account_amount;
+            $user->first_name           =   $customer->name;
+            $user->last_name            =   $customer->surname;
+            $user->gender               =   $customer->gender;
+            $user->phone                =   $customer->phone;
+            $user->pobox                =   $customer->pobox;
+            $user->group_id             =   $customer->group_id;
+            $user->author               =   $firstAdministrator->id;
+            $user->password             =   Hash::make( Str::random(10) ); // every customer has a random password. 
+            $user->save();
+
+            /**
+             * We'll assign the user to the role that was created based.
+             */
+            $usersService->setUserRole( $user, [ Role::namespace( Role::STORECUSTOMER )->id ]);
+            $doctorService->createAttributeForUser( $user );
+
+            return [
+                'old_id'    =>  $customer->id,
+                'new_id'    =>  $user->id,
+                'user'      =>  $user
+            ];
+        });
+
+        /**
+         * rename the provider columns
+         */
+        Schema::table( 'nexopos_providers', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_providers', 'name' ) ) {
+                $table->renameColumn( 'name', 'first_name' );
+            }
+            if ( Schema::hasColumn( 'nexopos_providers', 'surname' ) ) {
+                $table->renameColumn( 'surname', 'last_name' );
+            }
+        });
+
+        Schema::table( 'nexopos_customers_addresses', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_customers_addresses', 'name' ) ) {
+                $table->renameColumn( 'name', 'first_name' );
+            }
+            if ( Schema::hasColumn( 'nexopos_customers_addresses', 'surname' ) ) {
+                $table->renameColumn( 'surname', 'last_name' );
+            }
+        });
+
+        /**
+         * Since we believe the address already exists
+         * we'll just make sure the new user id match the addresses
+         * that was created before.
+         */
+        $users->each( function( $data ) {
+            CustomerAddress::where( 'customer_id', $data[ 'old_id' ] )->get()->each( function( $address ) use ( $data ) {
+                $address->customer_id   =   $data[ 'new_id' ];
+                $address->save();
+            });
+        });
+
+        Schema::drop( 'nexopos_customers' );
+        Schema::drop( 'nexopos_customers_metas' );
     }
 
     /**

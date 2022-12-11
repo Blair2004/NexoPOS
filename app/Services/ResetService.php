@@ -20,12 +20,10 @@ class ResetService
             'nexopos_coupons_products',
             'nexopos_coupons_categories',
 
-            'nexopos_customers',
             'nexopos_customers_account_history',
             'nexopos_customers_addresses',
             'nexopos_customers_coupons',
             'nexopos_customers_groups',
-            'nexopos_customers_metas',
             'nexopos_customers_rewards',
 
             'nexopos_dashboard_days',

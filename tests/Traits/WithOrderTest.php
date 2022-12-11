@@ -627,13 +627,13 @@ trait WithOrderTest
                 'discount_percentage' => 2.5,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Doe',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -705,13 +705,13 @@ trait WithOrderTest
                 'discount_percentage' => 2.5,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -970,13 +970,13 @@ trait WithOrderTest
                 'discount' => $discount[ 'value' ] ?? 0,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -1191,13 +1191,13 @@ trait WithOrderTest
                 'discount_percentage' => 2.5,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -1253,13 +1253,13 @@ trait WithOrderTest
                 'discount_percentage' => 2.5,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -1455,13 +1455,13 @@ trait WithOrderTest
                 'tax_type' => 'inclusive',
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -1621,13 +1621,13 @@ trait WithOrderTest
                 'discount' => $discountValue,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -1811,13 +1811,13 @@ trait WithOrderTest
                 'discount_percentage' => $discountRate,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -1862,13 +1862,13 @@ trait WithOrderTest
                 'discount_percentage' => $discountRate,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -1915,13 +1915,13 @@ trait WithOrderTest
                     // 'discount_percentage'   =>  2.5,
                     'addresses' => [
                         'shipping' => [
-                            'name' => 'First Name Delivery',
-                            'surname' => 'Surname',
+                            'first_name' => 'First Name Delivery',
+                            'last_name' => 'Surname',
                             'country' => 'Cameroon',
                         ],
                         'billing' => [
-                            'name' => 'EBENE Voundi',
-                            'surname' => 'Antony Hervé',
+                            'first_name' => 'EBENE Voundi',
+                            'last_name' => 'Antony Hervé',
                             'country' => 'United State Seattle',
                         ],
                     ],
@@ -2010,13 +2010,13 @@ trait WithOrderTest
             'discount' => $discount[ 'value' ] ?? 0,
             'addresses' => [
                 'shipping' => [
-                    'name' => 'First Name Delivery',
-                    'surname' => 'Surname',
+                    'first_name' => 'First Name Delivery',
+                    'last_name' => 'Surname',
                     'country' => 'Cameroon',
                 ],
                 'billing' => [
-                    'name' => 'EBENE Voundi',
-                    'surname' => 'Antony Hervé',
+                    'first_name' => 'EBENE Voundi',
+                    'last_name' => 'Antony Hervé',
                     'country' => 'United State Seattle',
                 ],
             ],

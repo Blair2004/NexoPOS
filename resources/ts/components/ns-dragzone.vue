@@ -39,7 +39,6 @@ export default {
         }
     },
     mounted() {
-        console.log( this.rawWidgets, this.rawColumns );
         this.widgets     =   this.rawWidgets.map( widget => {
             return { 
                 name: widget.name, 

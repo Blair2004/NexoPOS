@@ -165,13 +165,13 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 'discount' => $discount[ 'value' ] ?? 0,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],

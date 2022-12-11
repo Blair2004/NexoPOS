@@ -21,8 +21,8 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'order_id' );
                 $table->string( 'type' ); // either "billing" or "shipping"
-                $table->string( 'name' )->nullable();
-                $table->string( 'surname' )->nullable();
+                $table->string( 'first_name' )->nullable();
+                $table->string( 'last_name' )->nullable();
                 $table->string( 'phone' )->nullable();
                 $table->string( 'address_1' )->nullable();
                 $table->string( 'email' )->nullable();

@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\UserWidget;
 use App\Widgets\BestCashiersWidget;
 use App\Widgets\BestCustomersWidget;
 use App\Widgets\ExpenseCardWidget;
@@ -12,6 +13,7 @@ use App\Widgets\ProfileWidget;
 use App\Widgets\SaleCardWidget;
 use Closure;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class WidgetService
@@ -52,7 +54,16 @@ class WidgetService
 
     public function __construct( private UsersService $usersService )
     {
-        // ...
+        $this->widgets      =   [
+            IncompleteSaleCardWidget::class,
+            ExpenseCardWidget::class,
+            SaleCardWidget::class,
+            BestCustomersWidget::class,
+            ProfileWidget::class,
+            OrdersChartWidget::class,
+            OrdersSummaryWidget::class,
+            BestCashiersWidget::class,
+        ];
     }
 
     /**
@@ -75,9 +86,9 @@ class WidgetService
      * Return a boolean if the logged user
      * is allowed to see the current widget
      */
-    public function canAccess(): bool
+    public function canAccess( User|null $user = null ): bool
     {
-        return ! $this->permission ?: Gate::allows( $this->permission );
+        return ! $this->permission ?: ( $user == null ? Gate::allows( $this->permission ) : Gate::forUser( $user )->allows( $this->permission ) );
     }
 
     /**
@@ -177,7 +188,7 @@ class WidgetService
     /**
      * Will assign the widget to the provider user.
      */
-    public function addDefaultWidgetsToAreas( User $user )
+    public function addDefaultWidgetsToAreas( User $user ): void
     {
         $areas  =   [
             'first-column',
@@ -186,16 +197,10 @@ class WidgetService
         ];
 
         $areaWidgets  = [];
-        $widgetClasses  =   collect([
-            SaleCardWidget::class,
-            IncompleteSaleCardWidget::class,
-            ExpenseCardWidget::class,
-            ProfileWidget::class,
-            OrdersChartWidget::class,
-            BestCustomersWidget::class,
-            OrdersSummaryWidget::class,
-            BestCashiersWidget::class
-        ])->filter( fn( $class ) => ( new $class )->canAccess() )->toArray();
+        
+        $widgetClasses  =   collect( $this->widgets )->filter( function( $class ) use ( $user ) {
+            return ( new $class )->canAccess( $user );
+        })->toArray();
         
         /**
          * This will assign all widgets
@@ -230,5 +235,28 @@ class WidgetService
                 user: $user
             );
         }
+    }
+
+    /**
+     * Initialize the widgets areas with their widgets.
+     */
+    public function bootWidgetsAreas(): void
+    {
+        $widgetArea     =   function() {
+            return ( collect([ 'first', 'second', 'third' ])->map( function( $column ) {
+                $columnName =   $column . '-column';
+                return [
+                    'name'  =>  $columnName,
+                    'widgets'   =>  UserWidget::where( 'user_id', Auth::id() )
+                        ->where( 'column', $columnName )
+                        ->orderBy( 'position' )
+                        ->get()
+                        ->filter( fn( $widget ) => Gate::allows( ( new $widget->class_name )->getPermission() ) )
+                        ->values()
+                ];
+            })->toArray() );
+        };
+
+        $this->registerWidgetsArea( 'ns-dashboard-widgets', $widgetArea );
     }
 }

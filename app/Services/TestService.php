@@ -97,13 +97,13 @@ class TestService
             'discount' => $discount[ 'value' ] ?? 0,
             'addresses' => [
                 'shipping' => [
-                    'name' => 'First Name Delivery',
-                    'surname' => 'Surname',
+                    'first_name' => 'John',
+                    'last_name' => 'Doe',
                     'country' => 'Cameroon',
                 ],
                 'billing' => [
-                    'name' => 'EBENE Voundi',
-                    'surname' => 'Antony Hervé',
+                    'first_name' => 'EBENE Voundi',
+                    'last_name' => 'Antony Hervé',
                     'country' => 'United State Seattle',
                 ],
             ],

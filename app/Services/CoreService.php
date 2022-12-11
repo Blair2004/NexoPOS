@@ -7,11 +7,13 @@ use App\Enums\NotificationsEnum;
 use App\Exceptions\NotEnoughPermissionException;
 use App\Jobs\CheckTaskSchedulingConfigurationJob;
 use App\Models\Migration;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -251,6 +253,36 @@ class CoreService
                  */
                 CheckTaskSchedulingConfigurationJob::dispatch();
             }
+        }
+    }
+
+    /**
+     * Register the available permissions when 
+     * the app is installed as valid gates.
+     */
+    public function registerGatePermissions(): void
+    {
+        /**
+         * We'll define gate by using all available permissions.
+         * Those will be cached to avoid unecessary db calls when testing
+         * wether the user has the permission or not.
+         */
+        if ( Helper::installed() ) {
+            Permission::get()->each( function( $permission ) {
+                if ( ! Gate::has( $permission->namespace ) ) {
+                    Gate::define( $permission->namespace, function( User $user ) use ( $permission ) {
+                        $permissions    =   Cache::remember( 'ns-all-permissions-' . $user->id, 3600, function() use ( $user ) {
+                            return $user->roles()
+                                ->with( 'permissions' )
+                                ->get()
+                                ->map( fn( $role ) => $role->permissions->map( fn( $permission ) => $permission->namespace ) )
+                                ->flatten();
+                        })->toArray();
+        
+                        return in_array( $permission->namespace, $permissions );
+                    });
+                }
+            });
         }
     }
 

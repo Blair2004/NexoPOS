@@ -20,7 +20,7 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
          */
         if ( $widget->instance->getPermission() ) {
             $taxes = Permission::firstOrNew([ 'namespace' => $widget->instance->getPermission() ]);
-            $taxes->name = sprintf( __( 'Can See Widget: %s' ), $widget->instance->getName() );
+            $taxes->name = sprintf( __( 'Widget: %s' ), $widget->instance->getName() );
             $taxes->namespace = $widget->instance->getPermission();
             $taxes->description = $widget->instance->getDescription();
             $taxes->save();

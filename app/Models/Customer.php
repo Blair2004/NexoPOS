@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int id
- * @property string name
- * @property string surname
+ * @property string first_name
+ * @property string last_name
  * @property string description
  * @property int author
  * @property string gender
@@ -26,7 +27,9 @@ class Customer extends NsModel
 {
     use HasFactory;
 
-    protected $table = 'nexopos_' . 'customers';
+    protected $table = 'nexopos_' . 'users';
+
+    protected $primaryKey =   'nexopos_users.id';
 
     protected $isDependencyFor = [
         Order::class => [
@@ -37,6 +40,21 @@ class Customer extends NsModel
         ],
     ];
 
+    protected static function booted()
+    {
+        static::addGlobalScope( 'customers', function( Builder $builder ) {
+            $builder->select([
+                '*',
+                'nexopos_users.id as id',
+                'nexopos_users_roles_relations.id as relation_id',
+                'nexopos_roles.id as role_id',
+            ]);
+            $builder->leftJoin( 'nexopos_users_roles_relations', 'nexopos_users.id', '=', 'nexopos_users_roles_relations.user_id' );
+            $builder->leftJoin( 'nexopos_roles', 'nexopos_users_roles_relations.role_id', '=', 'nexopos_roles.id' );
+            $builder->where( 'nexopos_roles.namespace', Role::STORECUSTOMER );
+        });
+    }
+
     /**
      * define the relationship
      *
@@ -44,17 +62,29 @@ class Customer extends NsModel
      */
     public function group()
     {
-        return $this->belongsTo( CustomerGroup::class, 'group_id' );
+        return $this->belongsTo( 
+            related: CustomerGroup::class, 
+            foreignKey: 'group_id',
+            ownerKey: 'id'
+        );
     }
 
     public function coupons()
     {
-        return $this->hasMany( CustomerCoupon::class, 'customer_id' );
+        return $this->hasMany( 
+            related: CustomerCoupon::class, 
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     public function rewards()
     {
-        return $this->hasMany( CustomerReward::class, 'customer_id' );
+        return $this->hasMany(
+            related: CustomerReward::class, 
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     /**
@@ -64,27 +94,47 @@ class Customer extends NsModel
      */
     public function orders()
     {
-        return $this->hasMany( Order::class, 'customer_id' );
+        return $this->hasMany(
+            related: Order::class, 
+            foreignKey: 'customer_id',
+            localKey: 'id' 
+        );
     }
 
     public function addresses()
     {
-        return $this->hasMany( CustomerAddress::class, 'customer_id' );
+        return $this->hasMany(
+            related: CustomerAddress::class, 
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     public function billing()
     {
-        return $this->hasOne( CustomerBillingAddress::class, 'customer_id' );
+        return $this->hasOne(
+            related: CustomerBillingAddress::class,
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     public function shipping()
     {
-        return $this->hasOne( CustomerShippingAddress::class, 'customer_id' );
+        return $this->hasOne(
+            related: CustomerShippingAddress::class, 
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     public function account_history()
     {
-        return $this->hasMany( CustomerAccountHistory::class, 'customer_id' );
+        return $this->hasMany(
+            related: CustomerAccountHistory::class, 
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     /**

@@ -24,8 +24,8 @@
             <div class="px-3 w-full print:w-1/2 md:w-1/2">
                 <h3 class="font-semibold text-xl border-b-2 border-blue-400 py-2 mb-2">Provider</h3>
                 <ul>
-                    <li class="py-1"><span class="font-bold">{{ __( 'Name' ) }}: </span> {{ $procurement->provider->name }}</li>
-                    <li class="py-1"><span class="font-bold">{{ __( 'Surname' ) }}: </span>{{ $procurement->provider->surname ?? __( 'N/A' ) }}</li>
+                    <li class="py-1"><span class="font-bold">{{ __( 'First Name' ) }}: </span> {{ $procurement->provider->first_name }}</li>
+                    <li class="py-1"><span class="font-bold">{{ __( 'Last Name' ) }}: </span>{{ $procurement->provider->last_name ?? __( 'N/A' ) }}</li>
                     <li class="py-1"><span class="font-bold">{{ __( 'Email' ) }}: </span>{{ $procurement->provider->email ?? __( 'N/A' ) }}</li>
                     <li class="py-1"><span class="font-bold">{{ __( 'Phone' ) }}: </span>{{ $procurement->provider->phone ?? __( 'N/A' ) }}</li>
                     <li class="py-1"><span class="font-bold">{{ __( 'First Address' ) }}: </span>{{ $procurement->provider->address_1 ?? __( 'N/A' ) }}</li>

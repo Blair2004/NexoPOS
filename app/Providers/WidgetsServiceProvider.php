@@ -26,32 +26,6 @@ class WidgetsServiceProvider extends ServiceProvider
          */
         $widgetService  = app()->make( WidgetService::class );
 
-        $widgetService->registerWidgets([
-            OrdersSummaryWidget::class,
-            BestCashiersWidget::class,
-            BestCustomersWidget::class,
-            OrdersChartWidget::class,
-            ProfileWidget::class,
-            SaleCardWidget::class,
-            IncompleteSaleCardWidget::class,
-            ExpenseCardWidget::class,
-        ]);
-
-        $widgetArea     =   function() {
-            return ( collect([ 'first', 'second', 'third' ])->map( function( $column ) {
-                $columnName =   $column . '-column';
-                return [
-                    'name'  =>  $columnName,
-                    'widgets'   =>  UserWidget::where( 'user_id', Auth::id() )
-                        ->where( 'column', $columnName )
-                        ->orderBy( 'position' )
-                        ->get()
-                        ->filter( fn( $widget ) => Gate::allows( ( new $widget->class_name )->getPermission() ) )
-                        ->values()
-                ];
-            })->toArray() );
-        };
-
-        $widgetService->registerWidgetsArea( 'ns-dashboard-widgets', $widgetArea );
+        $widgetService->bootWidgetsAreas();
     }
 }

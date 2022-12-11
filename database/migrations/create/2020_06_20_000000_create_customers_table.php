@@ -16,36 +16,14 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_customers' ) ) {
-            Schema::createIfMissing( 'nexopos_customers', function( Blueprint $table ) {
-                $table->bigIncrements( 'id' );
-                $table->string( 'name' );
-                $table->string( 'surname' )->nullable();
-                $table->text( 'description' )->nullable();
-                $table->integer( 'author' );
-                $table->string( 'gender' )->nullable();
-                $table->string( 'phone' )->nullable();
-                $table->string( 'email' )->nullable();
-                $table->string( 'pobox' )->nullable();
-                $table->integer( 'group_id' );
-                $table->datetime( 'birth_date' )->nullable();
-                $table->float( 'purchases_amount', 18, 5 )->default(0);
-                $table->float( 'owed_amount', 18, 5 )->default(0);
-                $table->float( 'credit_limit_amount', 18, 5 )->default(0)->nullable();
-                $table->float( 'account_amount', 18, 5 )->default(0);
-                $table->string( 'uuid' )->nullable();
-                $table->timestamps();
-            });
-        }
-
         if ( ! Schema::hasTable( 'nexopos_customers_addresses' ) ) {
             Schema::createIfMissing( 'nexopos_customers_addresses', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'customer_id' );
                 $table->string( 'type' ); // either "billing" | "shipping"
-                $table->string( 'name' )->nullable();
                 $table->string( 'email' )->nullable();
-                $table->string( 'surname' )->nullable();
+                $table->string( 'first_name' )->nullable();
+                $table->string( 'last_name' )->nullable();
                 $table->string( 'phone' )->nullable();
                 $table->string( 'address_1' )->nullable();
                 $table->string( 'address_2' )->nullable();
@@ -82,7 +60,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( 'nexopos_customers' );
         Schema::dropIfExists( 'nexopos_customers_addresses' );
         Schema::dropIfExists( 'nexopos_customers_account_history' );
     }

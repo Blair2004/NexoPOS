@@ -363,13 +363,13 @@ class DemoCoreService
                 'discount_percentage' => $discountRate,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'Paul',
+                        'last_name' => 'Walker',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
