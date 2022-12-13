@@ -55,6 +55,13 @@
         tr.warning {
             @apply bg-warning-primary text-white;
         }
+        
+        .ns-inset-button {
+            @apply border-gray-300;
+            &.active, &:hover {
+                @apply border-transparent;
+            }
+        }
     }
 
     td {

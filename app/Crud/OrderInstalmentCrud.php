@@ -67,7 +67,7 @@ class OrderInstalmentCrud extends CrudService
      */
     public $relations = [
         [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_instalments.order_id' ],
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'order.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'order.customer_id' ],
     ];
 
     /**

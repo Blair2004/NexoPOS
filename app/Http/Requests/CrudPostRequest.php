@@ -35,7 +35,7 @@ class CrudPostRequest extends BaseCrudRequest
          * Now let's extract the validation rules
          * from the getForm method.
          */
-        $arrayRules = $service->extractCrudValidation( $resource );
+        $arrayRules = $service->extractValidation( $resource );
 
         /**
          * As rules might contains complex array (with Rule class),

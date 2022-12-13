@@ -15,6 +15,7 @@ use App\Models\CustomerGroup;
 use App\Models\CustomerShippingAddress;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\CustomerService;
 use App\Services\Helper;
@@ -67,7 +68,7 @@ class CustomerCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users_groups as group', 'nexopos_users.group_id', '=', 'group.id' ],
+        [ 'nexopos_customers_groups as group', 'nexopos_users.group_id', '=', 'group.id' ],
         [ 'nexopos_users as user', 'user.id', '=', 'nexopos_users.author' ],
     ];
 
@@ -414,6 +415,30 @@ class CustomerCrud extends CrudService
         } else {
             $inputs[ 'password' ] = Hash::make( Str::random(10) );
         }
+
+        /**
+         * if no email is provided, then we'll generate a random
+         * email for the customer based on the domain and the last customer id.
+         */
+        if ( empty( $inputs[ 'email' ] ) ) {
+            $domain                 =   parse_url( url('/' ) );
+            $lastCustomer           =   User::orderBy( 'nexopos_users.id', 'desc' )->first();
+
+            if ( $lastCustomer instanceof User ) {
+                $lastCustomerId     =   $lastCustomer->id + 1;
+            } else {
+                $lastCustomerId     =   1;
+            }
+            
+            $inputs[ 'email' ] = 'customer-' . $lastCustomerId + 1 . '@' . ( $domain[ 'host' ] ?? 'nexopos.com' );
+        } 
+
+        /**
+         * if the username is empty, it will match the email.
+         */
+        if ( empty( $inputs[ 'username' ] ) ) {
+            $inputs[ 'username' ]   = $inputs[ 'email' ];
+        } 
         
         return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
@@ -467,11 +492,8 @@ class CustomerCrud extends CrudService
 
     /**
      * After Crud POST
-     *
-     * @param  object entry
-     * @return  void
      */
-    public function afterPost( $inputs, Customer $customer )
+    public function afterPost( array $inputs, Customer $customer ): array
     {
         CustomerAfterCreatedEvent::dispatch( $customer );
 
@@ -500,11 +522,8 @@ class CustomerCrud extends CrudService
 
     /**
      * After Crud PUT
-     *
-     * @param  object entry
-     * @return  void
      */
-    public function afterPut( $inputs, Customer $customer )
+    public function afterPut( array $inputs, Customer $customer ): array
     {
         CustomerAfterUpdatedEvent::dispatch( $customer );
 
@@ -513,11 +532,8 @@ class CustomerCrud extends CrudService
 
     /**
      * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw AccessDeniedException
      **/
-    public function canAccess( $fields )
+    public function canAccess( array $fields ): array
     {
         return [
             'status' => 'success',
@@ -527,10 +543,8 @@ class CustomerCrud extends CrudService
 
     /**
      * Before Delete
-     *
-     * @return  void
      */
-    public function beforeDelete( $namespace, $id, Customer $customer )
+    public function beforeDelete( string $namespace, int $id, Customer $customer ): void
     {
         if ( $namespace == 'ns.customers' ) {
             $this->allowedTo( 'delete' );
@@ -541,10 +555,8 @@ class CustomerCrud extends CrudService
 
     /**
      * before creating
-     *
-     * @return  void
      */
-    public function beforePost( $inputs )
+    public function beforePost( $inputs ): void
     {
         $this->allowedTo( 'create' );
 
@@ -557,10 +569,8 @@ class CustomerCrud extends CrudService
 
     /**
      * before updating
-     *
-     * @return  void
      */
-    public function beforePut( $inputs, $customer )
+    public function beforePut( $inputs, $customer ): void
     {
         $this->allowedTo( 'update' );
 
@@ -573,10 +583,8 @@ class CustomerCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'first_name' => [
@@ -618,62 +626,53 @@ class CustomerCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
-        $entry->addAction( 'edit_customers_group', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit_customers_group',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/edit/' . $entry->id ),
-        ]);
+        $entry->action( 
+            identifier: 'edit_customers_group',
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/edit/' . $entry->id ),
+        );
 
-        $entry->addAction( 'customers_orders', [
-            'label' => __( 'Orders' ),
-            'namespace' => 'customers_orders',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/orders' ),
-        ]);
+        $entry->action( 
+            identifier: 'customers_orders',
+            label: __( 'Orders' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/' . $entry->id . '/orders' ),
+        );
 
-        $entry->addAction( 'customers_rewards', [
-            'label' => __( 'Rewards' ),
-            'namespace' => 'customers_rewards',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' ),
-        ]);
+        $entry->action( 
+            identifier: 'customers_rewards',
+            label: __( 'Rewards' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' ),
+        );
 
-        $entry->addAction( 'customers_coupons', [
-            'label' => __( 'Coupons' ),
-            'namespace' => 'customers_coupons',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' ),
-        ]);
+        $entry->action( 
+            identifier: 'customers_coupons',
+            label: __( 'Coupons' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' ),
+        );
 
-        $entry->addAction( 'customers_history', [
-            'label' => __( 'Wallet History' ),
-            'namespace' => 'customers_history',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' ),
-        ]);
+        $entry->action( 
+            identifier: 'customers_history',
+            label: __( 'Wallet History' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' ),
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.customers/' . $entry->id ),
-            'confirm' => [
+        $entry->action( 
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.customers/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
                 'title' => __( 'Delete a customers' ),
             ],
-        ]);
-
-        switch ( $entry->gender ) {
-            case 'male': $entry->gender = __( 'Male' );
-                break;
-            case 'female': $entry->gender = __( 'Female' );
-                break;
-            default: $entry->gender = __( 'Not Defined' );
-                break;
-        }
+        );
 
         return $entry;
     }

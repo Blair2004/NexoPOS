@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int id
@@ -29,8 +30,6 @@ class Customer extends NsModel
 
     protected $table = 'nexopos_' . 'users';
 
-    protected $primaryKey =   'nexopos_users.id';
-
     protected $isDependencyFor = [
         Order::class => [
             'local_name' => 'name',
@@ -43,15 +42,13 @@ class Customer extends NsModel
     protected static function booted()
     {
         static::addGlobalScope( 'customers', function( Builder $builder ) {
-            $builder->select([
-                '*',
-                'nexopos_users.id as id',
-                'nexopos_users_roles_relations.id as relation_id',
-                'nexopos_roles.id as role_id',
-            ]);
-            $builder->leftJoin( 'nexopos_users_roles_relations', 'nexopos_users.id', '=', 'nexopos_users_roles_relations.user_id' );
-            $builder->leftJoin( 'nexopos_roles', 'nexopos_users_roles_relations.role_id', '=', 'nexopos_roles.id' );
-            $builder->where( 'nexopos_roles.namespace', Role::STORECUSTOMER );
+            $role     =   DB::table( 'nexopos_roles' )->where( 'namespace', Role::STORECUSTOMER )->first();
+            
+            $userRoleRelations  =   DB::table( 'nexopos_users_roles_relations' )
+                ->where( 'role_id', $role->id )
+                ->get([ 'user_id', 'role_id' ]);
+
+            $builder->whereIn( 'id', $userRoleRelations->map( fn( $role ) => $role->user_id )->toArray() );
         });
     }
 

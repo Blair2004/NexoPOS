@@ -325,7 +325,19 @@ class CrudController extends DashboardController
             $resource->getExportColumns() ?: $resource->getColumns()
         );
 
-        $sheetColumns = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
+        /**
+         * We'll make sure th provide enough columns to ensure
+         * long tables are exported successfully.
+         */
+        $sheetCol1 = [ '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
+        $sheetCol2 = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
+        $sheetColumns   =   [];
+
+        foreach( $sheetCol1 as $col ) {
+            foreach( $sheetCol2 as $col2 ) {
+                $sheetColumns[]     =   $col . $col2;
+            }
+        }
 
         if ( count( array_values( $columns ) ) > count( $sheetColumns ) ) {
             throw new Exception( __( 'The crud columns exceed the maximum column that can be exported (27)' ) );
@@ -370,6 +382,7 @@ class CrudController extends DashboardController
                 $sheet->setCellValue( $sheetColumns[ $totalColumns ] . ( $rowIndex + 2 ), strip_tags( $entry->$columnName ) );
                 $totalColumns++;
             }
+            $totalColumns   =   0;
         }
 
         /**

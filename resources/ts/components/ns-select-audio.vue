@@ -6,7 +6,7 @@ export default {
         return {
         }
     },
-    props: [ 'name', 'placeholder', 'field' ],
+    props: [ 'name', 'placeholder', 'field', 'leading' ],
     computed: {
         hasError() {
             if ( this.field.errors !== undefined && this.field.errors.length > 0 ) {
@@ -27,7 +27,7 @@ export default {
     methods: { 
         __,
         playSelectedSound() {
-            if ( this.field.value.length > 0 ) {
+            if ( this.field.value !== null && this.field.value.length > 0 ) {
                 (new Audio( this.field.value )).play();
             }
         }
@@ -38,7 +38,7 @@ export default {
     <div class="flex flex-col flex-auto">
         <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block leading-5 font-medium"><slot></slot></label>
         <div :class="hasError ? 'border-error-primary' : 'border-input-edge'" class="border-2 mt-1 flex relative overflow-hidden rounded-md shadow-sm mb-2 form-input">
-            <div @click="playSelectedSound()" class="border-r-2 border-input-edge flex-auto flex items-center justify-center hover:bg-info-primary hover:text-white">
+            <div @click="playSelectedSound()" class="border-r-2 border-input-edge flex-auto flex items-center justify-center hover:bg-info-tertiary hover:text-white">
                 <button class="w-10 flex item-center justify-center">
                     <i class="las la-play text-2xl"></i>
                 </button>

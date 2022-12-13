@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Events\SettingsSavedEvent;
+use App\Traits\NsForms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
 class SettingsPage
 {
+    use NsForms;
+
     protected $form = [];
 
     protected $labels = [];
@@ -94,7 +97,7 @@ class SettingsPage
     public function validateForm( Request $request )
     {
         $service = new CrudService;
-        $arrayRules = $service->extractCrudValidation( $this, null );
+        $arrayRules = $service->extractValidation( $this, null );
 
         /**
          * As rules might contains complex array (with Rule class),

@@ -59,7 +59,7 @@ class CustomerRewardCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_rewards.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'nexopos_customers_rewards.customer_id' ],
     ];
 
     /**

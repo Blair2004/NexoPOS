@@ -26,7 +26,7 @@
                                         </div>
                                     </div>
                                     <div class="px-1 justify-center">
-                                        <h3 class="font-semibold  items-center">{{ customer.name }}</h3>
+                                        <h3 class="font-semibold  items-center">{{ customer.first_name }}</h3>
                                     </div>
                                 </div>
                             </th>
@@ -39,7 +39,6 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 

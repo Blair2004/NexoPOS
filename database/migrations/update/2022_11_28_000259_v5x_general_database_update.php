@@ -1,6 +1,10 @@
 <?php
 
+use App\Models\CustomerAccountHistory;
 use App\Models\CustomerAddress;
+use App\Models\CustomerCoupon;
+use App\Models\CustomerReward;
+use App\Models\Order;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -195,15 +199,17 @@ return new class extends Migration
         });
 
         /**
-         * Since we believe the address already exists
-         * we'll just make sure the new user id match the addresses
-         * that was created before.
+         * Every models that was pointing to the old customer id
+         * must be update to support the new customer id which is not
+         * set on the users table.
          */
         $users->each( function( $data ) {
-            CustomerAddress::where( 'customer_id', $data[ 'old_id' ] )->get()->each( function( $address ) use ( $data ) {
-                $address->customer_id   =   $data[ 'new_id' ];
-                $address->save();
-            });
+            foreach([ Order::class, CustomerAccountHistory::class, CustomerCoupon::class, CustomerAddress::class, CustomerReward::class ] as $class ) {
+                $class::where( 'customer_id', $data[ 'old_id' ] )->get()->each( function( $address ) use ( $data ) {
+                    $address->customer_id   =   $data[ 'new_id' ];
+                    $address->save();
+                });
+            }
         });
 
         Schema::drop( 'nexopos_customers' );

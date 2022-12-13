@@ -13,7 +13,10 @@ use Exception;
 use App\Models\OrderCoupon;
 
 class CouponOrderHistoryCrud extends CrudService
-{
+{    
+    const AUTOLOAD  =   true;
+    const IDENTIFIER = 'ns.coupons-orders-history';
+
     /**
      * define the base table
      * @param string
@@ -30,7 +33,7 @@ class CouponOrderHistoryCrud extends CrudService
      * Define namespace
      * @param string
      */
-    protected $namespace  =   'ns.coupons-orders-hitory';
+    protected $namespace  =   'ns.coupons-orders-history';
 
     /**
      * Model Used

@@ -170,7 +170,7 @@ trait WithCashRegisterTest
         global $argv;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'DELETE', 'api/crud/ns.registers/' . $argv[ 'entry' ][ 'id' ], [
+            ->json( 'DELETE', 'api/crud/ns.registers/' . $argv[ 'data' ][ 'entry' ][ 'id' ], [
                 'name' => __( 'Register' ),
                 'general' => [
                     'status' => Register::STATUS_CLOSED,

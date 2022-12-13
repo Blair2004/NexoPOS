@@ -8,7 +8,7 @@ trait WithProviderTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/crud/ns.providers', [
-                'name' => __( 'Computers' ),
+                'first_name' => __( 'Computers' ),
             ]);
 
         $response->assertJson([

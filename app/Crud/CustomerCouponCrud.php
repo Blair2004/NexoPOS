@@ -62,7 +62,7 @@ class CustomerCouponCrud extends CrudService
         'leftJoin' => [
             [ 'nexopos_users as user', 'user.id', '=', 'nexopos_customers_coupons.author' ],
         ],
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ],
         [ 'nexopos_coupons as coupon', 'coupon.id', '=', 'nexopos_customers_coupons.coupon_id' ],
     ];
 

@@ -2,6 +2,12 @@
 
 namespace App\Crud;
 
+use App\Casts\CurrencyCast;
+use App\Casts\NotDefinedCast;
+use App\Casts\OrderDeliveryCast;
+use App\Casts\OrderPaymentCast;
+use App\Casts\OrderProcessCast;
+use App\Casts\OrderTypeCast;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Register;
@@ -50,7 +56,7 @@ class OrderCrud extends CrudService
 
     public $pick = [
         'author' => [ 'username' ],
-        'customer' => [ 'name', 'phone' ],
+        'customer' => [ 'first_name', 'phone' ],
     ];
 
     public $queryFilters = [];
@@ -85,6 +91,16 @@ class OrderCrud extends CrudService
         'read' => 'nexopos.read.orders',
         'update' => 'nexopos.update.orders',
         'delete' => 'nexopos.delete.orders',
+    ];
+
+    protected $casts        =   [
+        'customer_phone'    =>  NotDefinedCast::class,
+        'total'             =>  CurrencyCast::class,
+        'discount'          =>  CurrencyCast::class,
+        'delivery_status'   =>  OrderDeliveryCast::class,
+        'process_status'    =>  OrderProcessCast::class,
+        'type'              =>  OrderTypeCast::class,
+        'payment_status'    =>  OrderPaymentCast::class,
     ];
 
     /**
@@ -473,13 +489,13 @@ class OrderCrud extends CrudService
                 '$sort' => false,
                 'width' => '120px',
             ],
-            'nexopos_customers_name' => [
+            'customer_first_name' => [
                 'label' => __( 'Customer' ),
                 '$direction' => '',
                 '$sort' => false,
                 'width' => '120px',
             ],
-            'nexopos_customers_phone' => [
+            'customer_phone' => [
                 'label' => __( 'Phone' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -514,7 +530,7 @@ class OrderCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'nexopos_users_username' => [
+            'author_username' => [
                 'label' => __( 'Author' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -539,48 +555,18 @@ class OrderCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        /**
-         * @var OrdersService
-         */
-        $orderService = app()->make( OrdersService::class );
-
-        $entry->nexopos_customers_phone = $entry->nexopos_customers_phone ?: __( 'N/A' );
-        $entry->total = (string) ns()->currency->define( $entry->total );
-        $entry->discount = (string) ns()->currency->define( $entry->discount );
-
-        $entry->delivery_status = $orderService->getShippingLabel( $entry->delivery_status );
-        $entry->process_status = $orderService->getProcessStatus( $entry->process_status );
-        $entry->type = $orderService->getTypeLabel( $entry->type );
-
-        switch ( $entry->payment_status ) {
-            case Order::PAYMENT_PAID:
-                $entry->{ '$cssClass' } = 'success border text-sm';
-                break;
-            case Order::PAYMENT_UNPAID:
-                $entry->{ '$cssClass' } = 'danger border text-sm';
-                break;
-            case Order::PAYMENT_PARTIALLY:
-                $entry->{ '$cssClass' } = 'info border text-sm';
-                break;
-            case Order::PAYMENT_HOLD:
-                $entry->{ '$cssClass' } = 'danger border text-sm';
-                break;
-            case Order::PAYMENT_VOID:
-                $entry->{ '$cssClass' } = 'error border text-sm';
-                break;
-            case Order::PAYMENT_REFUNDED:
-                $entry->{ '$cssClass' } = 'default border text-sm';
-                break;
-            case Order::PAYMENT_PARTIALLY_REFUNDED:
-                $entry->{ '$cssClass' } = 'default border text-sm';
-                break;
-            case Order::PAYMENT_DUE:
-                $entry->{ '$cssClass' } = 'danger border text-sm';
-                break;
-            case Order::PAYMENT_PARTIALLY_DUE:
-                $entry->{ '$cssClass' } = 'danger border text-sm';
-                break;
-        }
+        $entry->{ '$cssClass' } = match ( $entry->payment_status ) {
+            Order::PAYMENT_PAID => 'success border text-sm',
+            Order::PAYMENT_UNPAID => 'danger border text-sm',
+            Order::PAYMENT_PARTIALLY => 'info border text-sm',
+            Order::PAYMENT_HOLD => 'danger border text-sm',
+            Order::PAYMENT_VOID => 'error border text-sm',
+            Order::PAYMENT_REFUNDED => 'default border text-sm',
+            Order::PAYMENT_PARTIALLY_REFUNDED => 'default border text-sm',
+            Order::PAYMENT_DUE => 'danger border text-sm',
+            Order::PAYMENT_PARTIALLY_DUE => 'danger border text-sm',
+            default => ''
+        };
 
         $entry->payment_status = ns()->order->getPaymentLabel( $entry->payment_status );
 

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\NotAllowedException;
 use App\Models\NsModel;
+use App\Traits\NsForms;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\View\View as ContractView;
@@ -20,6 +21,8 @@ use TorMorten\Eventy\Facades\Events as Hook;
 
 class CrudService
 {
+    use NsForms;
+    
     /**
      * Toggle feature array
      *
@@ -305,10 +308,10 @@ class CrudService
                 $fields = request()->input( $tab );
                 $class = $relationParams[0];
                 $localKey = $relationParams[1];
-                $foreighKey = $relationParams[2];
+                $foreignKey = $relationParams[2];
 
                 if ( ! empty( $fields ) ) {
-                    $model = $class::where( $localKey, $entry->$foreighKey )->first();
+                    $model = $class::where( $localKey, $entry->$foreignKey )->first();
 
                     /**
                      * no relation has been found
@@ -326,7 +329,7 @@ class CrudService
                         $model->$name = $value;
                     }
 
-                    $model->$localKey = $entry->$foreighKey;
+                    $model->$localKey = $entry->$foreignKey;
                     $model->author = Auth::id();
                     $model->save();
                 }
@@ -949,37 +952,6 @@ class CrudService
         return new $crudClass;
     }
 
-    /**
-     * Extracts Crud validation from a crud resource
-     *
-     * @param Crud $resource
-     * @return arra
-     */
-    public function extractCrudValidation( $crud, $model = null ): array
-    {
-        if ( is_subclass_of( $crud, CrudService::class ) ) {
-            $form = Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
-        }
-
-        $rules = [];
-
-        if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
-            $rules[ $form[ 'main' ][ 'name' ] ] = $form[ 'main' ][ 'validation' ];
-        }
-
-        foreach ( $form[ 'tabs' ] as $tabKey => $tab ) {
-            if ( ! empty( $tab[ 'fields' ] ) ) {
-                foreach ( $tab[ 'fields' ] as $field ) {
-                    if ( isset( $field[ 'validation' ] ) ) {
-                        $rules[ $tabKey ][ $field[ 'name' ] ] = $field[ 'validation' ];
-                    }
-                }
-            }
-        }
-
-        return $rules;
-    }
-
     public function getForm()
     {
         return [];
@@ -988,9 +960,7 @@ class CrudService
     /**
      * Will extract form with the entry
      * as a reference for the values.
-     *
-     * @param object $entry
-     * @return array $final
+     * @unused
      */
     public function getExtractedForm( $entry = null, $multiEntry = false )
     {
@@ -1312,18 +1282,6 @@ class CrudService
     public function getPermission( $name )
     {
         return $this->permissions[ $name ] ?? false;
-    }
-
-    /**
-     * Provide a callback notation for
-     * a specific method
-     *
-     * @param string $methodName
-     * @return string
-     */
-    public static function method( $methodName )
-    {
-        return get_called_class() . '@' . $methodName;
     }
 
     /**

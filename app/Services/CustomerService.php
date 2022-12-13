@@ -109,8 +109,8 @@ class CustomerService
                 ->first();
         }
 
-        if ( $customer instanceof Customer && ! empty( $fields[ 'email' ] ) && ns()->option->get( 'ns_customers_force_unique_phone' ) === 'yes' ) {
-            throw new NotAllowedException( sprintf( __( 'The email "%s" is already stored on another customer informations.' ), $fields[ 'email' ] ) );
+        if ( $customer instanceof Customer && ! empty( $fields[ 'email' ] ) ) {
+            throw new NotAllowedException( sprintf( __( 'The email "%s" is already used for another customer.' ), $fields[ 'email' ] ) );
         }
     }
 

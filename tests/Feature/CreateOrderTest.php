@@ -18,7 +18,7 @@ class CreateOrderTest extends TestCase
      */
     public function testPostingOrder( $callback = null )
     {
-        $this->count = 5;
+        $this->count = 2;
         $this->totalDaysInterval = 14;
 
         if ( $this->defaultProcessing ) {

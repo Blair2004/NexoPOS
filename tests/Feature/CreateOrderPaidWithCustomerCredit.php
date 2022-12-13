@@ -150,7 +150,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
                 ->getRaw();
 
-            $dateString = $currentDate->startOfDay()->addHours(
+            $dateString = $currentDate[ 'created_at' ]->startOfDay()->addHours(
                 $faker->numberBetween( 0, 23 )
             )->format( 'Y-m-d H:m:s' );
 

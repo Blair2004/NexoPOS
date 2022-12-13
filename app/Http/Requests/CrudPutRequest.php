@@ -32,7 +32,7 @@ class CrudPutRequest extends BaseCrudRequest
          * it might be used to ignore record
          * during validation.
          */
-        $arrayRules = $service->extractCrudValidation(
+        $arrayRules = $service->extractValidation(
             $resource,
             $resource->getModel()::find( $this->route( 'id' ) )
         );

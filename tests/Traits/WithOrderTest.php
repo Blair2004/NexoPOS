@@ -897,7 +897,7 @@ trait WithOrderTest
                     $allCoupons = [
                         [
                             'customer_coupon_id' => $customerCoupon->id,
-                            'coupon_id' => $customerCoupon->coupon_id,
+                            'id'    =>  $customerCoupon->coupon_id,
                             'name' => $customerCoupon->name,
                             'type' => 'percentage_discount',
                             'code' => $customerCoupon->code,
@@ -1185,7 +1185,7 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', [
-                'customer_id' => 1,
+                'customer_id' => Customer::get()->random()->id,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
                 'discount_percentage' => 2.5,
@@ -1228,6 +1228,7 @@ trait WithOrderTest
                 ],
             ]);
 
+        $response->assertOk();
         $response = json_decode( $response->getContent(), true );
         $order = $response[ 'data' ][ 'order' ];
 

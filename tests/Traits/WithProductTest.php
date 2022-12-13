@@ -102,7 +102,7 @@ trait WithProductTest
 
     protected function orderProduct( $name, $unit_price, $quantity, $unitQuantityId = null, $productId = null, $discountType = null, $discountPercentage = null, $taxType = null, $taxGroupId = null )
     {
-        $product        =   $productId !== null ? Product::with( 'unit_quantities' )->find( $productId ) : Product::with( 'unit_quantities' )->withStockEnabled()->get()->random();
+        $product        =   $productId !== null ? Product::with( 'unit_quantities' )->find( $productId ) : Product::with( 'unit_quantities' )->withStockEnabled()->whereHas( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', $quantity ) )->get()->random();
         $unitQuantity   =   $unitQuantityId !== null ? $product->unit_quantities->filter( fn( $unitQuantity ) => ( int ) $unitQuantity->id === ( int ) $unitQuantityId )->first() : $product->unit_quantities->first();
 
         ! $product instanceof Product ? throw new Exception( 'The provided product is not valid.' ) : null;
