@@ -249,7 +249,7 @@ class CustomersController extends DashboardController
         $search = $request->input( 'search' );
         $customers = Customer::with( 'billing' )
             ->with( 'shipping' )
-            ->where( 'name', 'like', '%' . $search . '%' )
+            ->where( 'first_name', 'like', '%' . $search . '%' )
             ->orWhere( 'email', 'like', '%' . $search . '%' )
             ->orWhere( 'phone', 'like', '%' . $search . '%' )
             ->limit(10)

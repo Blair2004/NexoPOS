@@ -207,6 +207,7 @@ class OrdersController extends DashboardController
                 'orders_url' => ns()->route( 'ns.dashboard.orders' ),
                 'dashboard_url' => ns()->route( 'ns.dashboard.home' ),
                 'registers_url' => ns()->route( 'ns.dashboard.registers-create' ),
+                'order_type_url' =>  ns()->route( 'ns.dashboard.settings', [ 'settings' => 'pos?tab=features' ])
             ],
             'paymentTypes' => $this->paymentTypes,
         ]);

@@ -138,6 +138,36 @@ return new class extends Migration
         });
 
         /**
+         * Coupons can now be added to 
+         * customer groups.
+         */
+        Schema::table( 'nexopos_coupons', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_coupons', 'groups_id' ) ) {
+                $table->string( 'groups_id' )->nullable();
+            }
+
+            if ( ! Schema::hasColumn( 'nexopos_coupons', 'customers_id' ) ) {
+                $table->string( 'customers_id' )->nullable();
+            }
+        });
+
+        if ( ! Schema::hasTable( 'nexopos_coupons_customers' ) ) {
+            Schema::create( 'nexopos_coupons_customers', function (Blueprint $table) {
+                $table->id();
+                $table->integer( 'coupon_id' );
+                $table->integer( 'customer_id' );
+            });
+        }
+
+        if ( ! Schema::hasTable( 'nexopos_coupons_customers_groups' ) ) {
+            Schema::create( 'nexopos_coupons_customers_groups', function (Blueprint $table) {
+                $table->id();
+                $table->integer( 'coupon_id' );
+                $table->integer( 'group_id' );
+            });
+        }
+
+        /**
          * Let's convert customers into users
          */
         $firstAdministrator     =   Role::namespace( Role::ADMIN )->users()->first();

@@ -509,25 +509,38 @@ class CustomerService
      * @param string $customer_id
      * @return array
      */
-    public function loadCoupon( $code, $customer_id = null )
+    public function loadCoupon( string $code, $customer_id = null )
     {
-        $coupon = CustomerCoupon::code( $code )
-            ->with( 'coupon.products.product' )
-            ->with( 'coupon.categories.category' )
+        $coupon = Coupon::code( $code )
+            ->with( 'products.product' )
+            ->with( 'categories.category' )
+            ->with( 'customers' )
+            ->with( 'groups' )
             ->first();
 
-        if ( $coupon instanceof CustomerCoupon ) {
-            if ( ! $coupon->active ) {
-                throw new Exception( __( 'The request coupon no longer be used as it\'s no more active.' ) );
+        if ( $coupon instanceof Coupon ) {            
+            if ( $coupon->customers()->count() > 0 ) {
+                $customers_id    =   $coupon->customers()
+                    ->get( 'customer_id' )
+                    ->map( fn( $coupon ) => $coupon->customer_id )
+                    ->flatten()
+                    ->toArray();
+
+                if ( ! in_array( $customer_id, $customers_id ) ) {
+                    throw new Exception( __( 'The provided coupon cannot be loaded for that customer.' ) );
+                }
             }
 
-            if ( $coupon->customer_id !== 0 ) {
-                if ( $customer_id === null ) {
-                    throw new Exception( __( 'The coupon is issued for a customer.' ) );
-                }
+            if ( $coupon->groups()->count() > 0 ) {
+                $customer      =   Customer::with( 'group' )->find( $customer_id );
+                $groups_id  =   $coupon->groups()
+                    ->get( 'group_id' )
+                    ->map( fn( $coupon ) => $coupon->group_id )
+                    ->flatten()
+                    ->toArray();
 
-                if ( (int) $coupon->customer_id !== (int) $customer_id ) {
-                    throw new Exception( __( 'The coupon is not issued for the selected customer.' ) );
+                if ( ! in_array( $customer->group->id, $groups_id ) ) {
+                    throw new Exception( __( 'The provided coupon cannot be loaded for the group assigned to the selected customer.' ) );
                 }
             }
 

@@ -62,7 +62,10 @@ export default {
         }
     },
     mounted() {
-        this.loadSettingsForm();
+        const address   =   window.location.href;
+        const url       =   new URL( address );
+
+        this.loadSettingsForm( url.searchParams.get( 'tab' ) || null );
     },
     methods: {
         __,
@@ -118,9 +121,17 @@ export default {
 
             nsHooks.doAction( 'ns-settings-change-tab', { tab, instance: this });
         },
-        loadSettingsForm() {
+        loadSettingsForm( activeTab = null ) {
+
             nsHttpClient.get( this.url ).subscribe( form => {
                 let i   =   0;
+
+                /**
+                 * if we provide a tab that doesn't exists
+                 * then we'll make suer to set it as undefined.
+                 * So the first tab will be used by default.
+                 */
+                activeTab   =   form.tabs[ activeTab ] !== undefined ? activeTab : null;
 
                 /**
                  * only if it doesn't have selected
@@ -129,7 +140,10 @@ export default {
                 for( let tab in form.tabs ) {
                     if ( ! this.formDefined ) {
                         form.tabs[ tab ].active  =   false;
-                        if ( i === 0 ) {
+
+                        if ( activeTab === null && i === 0 ) {
+                            form.tabs[ tab ].active  =   true;
+                        } else if ( activeTab !== null && tab === activeTab ) {
                             form.tabs[ tab ].active  =   true;
                         }
                     } else {

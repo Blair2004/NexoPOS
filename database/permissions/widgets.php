@@ -7,13 +7,12 @@
 use App\Models\Permission;
 use App\Services\WidgetService;
 
-$widgetService  = app()->make( WidgetService::class );
+$widgetService = app()->make( WidgetService::class );
 
-$widgets    =   $widgetService->getAllWidgets();
+$widgets = $widgetService->getAllWidgets();
 
 if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $widgets->each( function( $widget ) {
-
         /**
          * The permission is created only
          * if the widget declares some permission.

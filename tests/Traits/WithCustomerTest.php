@@ -291,6 +291,55 @@ trait WithCustomerTest
         throw new Exception( 'Unable to perform the test without a valid history.' );
     }
 
+    protected function attemptSearchCustomers()
+    {
+        $faker = Factory::create();
+        $group = CustomerGroup::first();
+
+        /**
+         * Creating a first customer
+         */
+        $email = $faker->email;
+        $firstName = $faker->firstName;
+        $lastName = $faker->lastName;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/crud/ns.customers', [
+                'first_name' => $firstName,
+                'general' => [
+                    'group_id' => $group->id,
+                    'last_name' => $faker->lastName,
+                    'email' => $email,
+                ],
+                'shipping' => [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                ],
+                'billing' => [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                ],
+            ]);
+
+        $response->assertJson([
+            'status' => 'success',
+        ]);
+
+        $lastCustomer = Customer::orderBy( 'id', 'desc' )->first();
+
+        /**
+         * let's now search
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/customers/search', [
+                'search'    =>  $lastCustomer->first_name,
+            ]);
+
+        $response->assertJsonPath( '0.id', $lastCustomer->id );
+    }
+
     protected function attemptGetCustomerReward()
     {
         $customer = Customer::first();

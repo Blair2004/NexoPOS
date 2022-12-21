@@ -27,5 +27,5 @@ $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
 
 $storeCashier->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
-    ( new ProfileWidget )->getPermission()
+    ( new ProfileWidget )->getPermission(),
 ])->get()->map( fn( $permission ) => $permission->namespace ) );

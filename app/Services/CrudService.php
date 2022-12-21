@@ -1008,90 +1008,7 @@ class CrudService
     }
 
     /**
-     * Return flat fields for the crud form provided
-     *
-     * @param CrudService
-     * @param array $fields
-     * @param Model|null $model
-     * @return array
-     */
-    public function getFlatForm( $crud, $fields, $model = null ): array
-    {
-        if ( is_subclass_of( $crud, CrudService::class ) ) {
-            $form = Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
-        }
-
-        $data = [];
-
-        if ( isset( $form[ 'main' ][ 'name' ] ) ) {
-            $data[ $form[ 'main' ][ 'name' ] ] = $fields[ $form[ 'main' ][ 'name' ] ];
-        }
-
-        foreach ( $form[ 'tabs' ] as $tabKey => $tab ) {
-            /**
-             * if the object bein used is not an instance
-             * of a Crud and include the method, let's skip
-             * this.
-             */
-            $keys = [];
-            if ( method_exists( $crud, 'getTabsRelations' ) ) {
-                $keys = array_keys( $crud->getTabsRelations() );
-            }
-
-            /**
-             * We're ignoring the tabs
-             * that are linked to a model.
-             */
-            if ( ! in_array( $tabKey, $keys ) && ! empty( $tab[ 'fields' ] ) ) {
-                foreach ( $tab[ 'fields' ] as $field ) {
-                    $value = data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
-
-                    /**
-                     * if the field doesn't have any value
-                     * we'll omit it. To avoid filling wrong value
-                     */
-                    if ( ! empty( $value ) || (int) $value === 0 ) {
-                        $data[ $field[ 'name' ] ] = $value;
-                    }
-                }
-            }
-        }
-
-        /**
-         * We'll add custom fields
-         * that might be added by modules
-         */
-        $fieldsToIgnore = array_keys( collect( $form[ 'tabs' ] )->toArray() );
-
-        foreach ( $fields as $field => $value ) {
-            if ( ! in_array( $field, $fieldsToIgnore ) ) {
-                $data[ $field ] = $value;
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Return plain data that can be used
-     * for inserting. The data is parsed from the defined
-     * form on the Request
-     *
-     * @param Crud $resource
-     * @param Request $request
-     * @return array
-     */
-    public function getPlainData( $crud, Request $request, $model = null )
-    {
-        $fields = $request->all();
-
-        return $this->getFlatForm( $crud, $fields, $model );
-    }
-
-    /**
-     * To pull out the tabs relations
-     *
-     * @return array
+     * Will returns the defeind tabs relations.
      */
     public function getTabsRelations(): array
     {
@@ -1100,11 +1017,8 @@ class CrudService
 
     /**
      * Isolate Rules that use the Rule class
-     *
-     * @param array
-     * @return array
      */
-    public function isolateArrayRules( $arrayRules, $parentKey = '' ): array
+    public function isolateArrayRules( array $arrayRules, string $parentKey = '' ): array
     {
         $rules = [];
 
@@ -1121,7 +1035,7 @@ class CrudService
         return $rules;
     }
 
-    public static function table( $config = [], $title = null, $description = null, $src = null, $createUrl = null, $queryParams = null ): ContractView
+    public static function table( array $config = [], string|null $title = null, string|null $description = null, string|null $src = null, string|null $createUrl = null, string|null $queryParams = null ): ContractView
     {
         $className = get_called_class();
         $instance = new $className;
@@ -1185,12 +1099,10 @@ class CrudService
     }
 
     /**
-     * Will render a form UI
-     *
-     * @param Model|null reference passed
-     * @param array custom configuration
+     * Will render a crud form using
+     * the provided settings.
      */
-    public static function form( $entry = null, $config = [] )
+    public static function form( $entry = null, array $config = [] ): \Illuminate\Contracts\View\View
     {
         $className = get_called_class();
         $instance = new $className;
@@ -1263,7 +1175,7 @@ class CrudService
      * perform a quick check over
      * the permissions array provided on the instance
      */
-    public function allowedTo( $permission )
+    public function allowedTo( string $permission ): void
     {
         if ( isset( $this->permissions ) && $this->permissions[ $permission ] !== false ) {
             ns()->restrict( $this->permissions[ $permission ] );
@@ -1275,33 +1187,24 @@ class CrudService
     /**
      * retrieve one of the declared permissions
      * the name must either be "create", "read", "update", "delete".
-     *
-     * @param string $name
-     * @return string $permission
      */
-    public function getPermission( $name )
+    public function getPermission( string $name ): bool
     {
         return $this->permissions[ $name ] ?? false;
     }
 
     /**
      * Shortcut for filtering CRUD methods
-     *
-     * @param string $methodName
-     * @param callable $callback
-     * @return mixed
      */
-    public static function filterMethod( $methodName, $callback )
+    public static function filterMethod( string $methodName, callable $callback ): mixed
     {
         return Hook::filter( self::method( $methodName ), $callback );
     }
 
     /**
      * Return if the table show display raw actions.
-     *
-     * @return bool
      */
-    public function getShowOptions()
+    public function getShowOptions(): bool
     {
         return $this->showOptions;
     }
@@ -1310,10 +1213,8 @@ class CrudService
      * Will check if the provided model
      * has dependencies declared and existing
      * to prevent any deletion.
-     *
-     * @param NsModel
      */
-    public function handleDependencyForDeletion( $model )
+    public function handleDependencyForDeletion( mixed $model ): void
     {
         if ( method_exists( $model, 'getDeclaredDependencies' ) ) {
             /**
@@ -1397,10 +1298,8 @@ class CrudService
     /**
      * We want to restrict links if matching
      * permissons is explicitely disabled by the user
-     *
-     * @return array
      */
-    public function getFilteredLinks()
+    public function getFilteredLinks(): array
     {
         $links = $this->getLinks();
 

@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Events\ModulesAfterDisabledEvent;
+use App\Events\ModulesAfterEnabledEvent;
+use App\Events\ModulesBeforeDisabledEvent;
+use App\Events\ModulesBeforeEnabledEvent;
 use App\Exceptions\MissingDependencyException;
 use App\Exceptions\ModuleVersionMismatchException;
 use App\Exceptions\NotAllowedException;
@@ -1131,6 +1135,8 @@ class ModulesService
              */
             $enabledModules = $this->options->get( 'enabled_modules', [] );
 
+            ModulesBeforeEnabledEvent::dispatch( $module );
+
             /**
              * @todo we might need to check if this module
              * has dependencies that are missing.
@@ -1209,6 +1215,8 @@ class ModulesService
              */
             $this->createSymLink( $namespace );
 
+            ModulesAfterEnabledEvent::dispatch( $module );
+
             return [
                 'status' => 'success',
                 'message' => __( 'The module has correctly been enabled.' ),
@@ -1239,6 +1247,9 @@ class ModulesService
 
         // check if module exists
         if ( $module = $this->get( $namespace ) ) {
+            
+            ModulesBeforeDisabledEvent::dispatch( $module );
+
             // @todo sandbox to test if the module runs
             $enabledModules = $this->options->get( 'enabled_modules', []);
             $indexToRemove = array_search( $namespace, $enabledModules );
@@ -1249,6 +1260,8 @@ class ModulesService
             }
 
             $this->options->set( 'enabled_modules', json_encode( $enabledModules ) );
+
+            ModulesAfterDisabledEvent::dispatch( $module );
 
             return [
                 'status' => 'success',

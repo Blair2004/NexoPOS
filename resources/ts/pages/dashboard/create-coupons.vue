@@ -13,7 +13,7 @@ export default {
             if ( this.form ) {
                 const tabs  =   [];
                 for( let tab in this.form.tabs ) {
-                    if ([ 'selected_products', 'selected_categories' ].includes( tab ) ) {
+                    if ([ 'selected_products', 'selected_categories', 'selected_groups', 'selected_customers' ].includes( tab ) ) {
                         tabs.push( this.form.tabs[ tab ] );
                     }
                 }
@@ -83,9 +83,9 @@ export default {
                     nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), undefined, {
                         duration: 5000
                     }).subscribe();
-                    
-                    if ( error.response ) {
-                        this.formValidation.triggerError( this.form, error.response.data );
+
+                    if ( error.status === 'failed' ) {
+                        this.formValidation.triggerError( this.form, error.data );
                     }
 
                     this.formValidation.enableForm( this.form );

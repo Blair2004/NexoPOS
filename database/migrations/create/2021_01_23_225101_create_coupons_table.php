@@ -25,6 +25,8 @@ return new class extends Migration
             $table->datetime( 'valid_hours_start' )->nullable();
             $table->datetime( 'valid_hours_end' )->nullable();
             $table->float( 'limit_usage', 18, 5 )->default(0); // unlimited
+            $table->string( 'groups_id' )->nullable();
+            $table->string( 'customers_id' )->nullable();
             $table->integer( 'author' );
             $table->timestamps();
         });
@@ -39,6 +41,18 @@ return new class extends Migration
             $table->id();
             $table->integer( 'coupon_id' );
             $table->integer( 'category_id' );
+        });
+
+        Schema::createIfMissing( 'nexopos_coupons_customers', function (Blueprint $table) {
+            $table->id();
+            $table->integer( 'coupon_id' );
+            $table->integer( 'customer_id' );
+        });
+
+        Schema::createIfMissing( 'nexopos_coupons_customers_groups', function (Blueprint $table) {
+            $table->id();
+            $table->integer( 'coupon_id' );
+            $table->integer( 'group_id' );
         });
     }
 

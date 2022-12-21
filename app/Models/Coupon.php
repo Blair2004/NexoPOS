@@ -29,6 +29,11 @@ class Coupon extends NsModel
     const TYPE_PERCENTAGE   =   'percentage_discount';
     const TYPE_FLAT         =   'flat_discount';
 
+    public function scopeCode( $query, $code )
+    {
+        return $query->where( 'code', $code );
+    }
+
     public function categories()
     {
         return $this->hasMany( CouponCategory::class );
@@ -37,5 +42,23 @@ class Coupon extends NsModel
     public function products()
     {
         return $this->hasMany( CouponProduct::class );
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(
+            related: CouponCustomer::class,
+            foreignKey: 'coupon_id',
+            localKey: 'id'
+        );
+    }
+
+    public function groups()
+    {
+        return $this->hasMany(
+            related: CouponCustomerGroup::class,
+            foreignKey: 'coupon_id',
+            localKey: 'id'
+        );
     }
 }

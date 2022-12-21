@@ -32,4 +32,10 @@ class CreateCustomerTest extends TestCase
         $this->attemptAuthenticate();
         $this->attemptCreateCustomersWithSimilarEmail();
     }
+
+    public function testAttemptSearchCustomer()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptSearchCustomers();
+    }
 }

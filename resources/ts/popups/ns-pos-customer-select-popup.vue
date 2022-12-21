@@ -33,7 +33,7 @@
                         <span class="border-b border-dashed border-info-primary">{{ __( 'Create a customer' ) }}</span>
                     </li>
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
-                        <span>{{ customer.name }}</span>
+                        <span>{{ customer.first_name }}</span>
                         <p class="flex items-center">
                             <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owe_amount ) }}</span>
                             <span v-if="customer.owe_amount > 0">/</span>
@@ -136,11 +136,9 @@ export default {
             this.isLoading      =   true;
 
             POS.selectCustomer( customer ).then( resolve => {
-                console.log( customer );
                 this.isLoading  =   false;
                 this.resolveIfQueued( customer );
             }).catch( error => {
-                console.log( error );
                 this.isLoading  =   false;
             });
         },

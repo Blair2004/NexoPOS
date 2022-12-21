@@ -15,5 +15,5 @@ $storeDriver->addPermissions([ 'read.dashboard' ]);
 $storeDriver->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $storeDriver->addPermissions( Permission::includes( '.orders' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $storeDriver->addPermissions( Permission::whereIn( 'namespace', [
-    ( new ProfileWidget )->getPermission()
+    ( new ProfileWidget )->getPermission(),
 ])->get()->map( fn( $permission ) => $permission->namespace ) );

@@ -14,5 +14,5 @@ $user->addPermissions([
     'manage.profile',
 ]);
 $user->addPermissions( Permission::whereIn( 'namespace', [
-    ( new ProfileWidget )->getPermission()
+    ( new ProfileWidget )->getPermission(),
 ])->get()->map( fn( $permission ) => $permission->namespace ) );

@@ -14,5 +14,5 @@ $storeCustomer->save();
 $storeCustomer->addPermissions([ 'read.dashboard' ]);
 $storeCustomer->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $storeCustomer->addPermissions( Permission::whereIn( 'namespace', [
-    ( new ProfileWidget )->getPermission()
+    ( new ProfileWidget )->getPermission(),
 ])->get()->map( fn( $permission ) => $permission->namespace ) );
