@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\ModulesService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class ModuleSymlinkCommand extends Command
 {
@@ -35,6 +36,12 @@ class ModuleSymlinkCommand extends Command
             $this->error( sprintf( 'Unable to find the module "%s".', $this->argument( 'namespace' ) ) );
         } else {
             $modules = $moduleService->get();
+
+            /**
+             * let's clear all existing links
+             */
+            Storage::disk( 'ns' )->deleteDirectory( 'public/modules' );
+            Storage::disk( 'ns' )->makeDirectory( 'public/modules' );
 
             $this->withProgressBar( $modules, function( $module ) use ( $moduleService ) {
                 $moduleService->createSymLink( $module[ 'namespace' ] );

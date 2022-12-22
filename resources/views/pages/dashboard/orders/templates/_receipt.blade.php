@@ -1,6 +1,8 @@
 <?php
 use App\Models\Order;
 use App\Classes\Hook;
+use Illuminate\Support\Facades\View;
+
 ?>
 <div class="w-full h-full">
     <div class="w-full md:w-1/2 lg:w-1/3 shadow-lg bg-white p-2 mx-auto">
@@ -33,9 +35,8 @@ use App\Classes\Hook;
                     @foreach( Hook::filter( 'ns-receipt-products', $order->combinedProducts ) as $product )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-700">
-                            <span class="">{{ $product->name }} (x{{ $product->quantity }})</span>
-                            <br>
-                            <span class="text-xs text-gray-600">{{ $product->unit->name }}</span>
+                            <?php $productName  =   View::make( 'pages.dashboard.orders.templates._product-name', compact( 'product' ) );?>
+                            <?php echo Hook::filter( 'ns-receipt-product-name', $productName->render(), $product );?>
                         </td>
                         <td class="p-2 border-b border-gray-800 text-right">{{ ns()->currency->define( $product->total_price ) }}</td>
                     </tr>

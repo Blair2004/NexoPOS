@@ -15,7 +15,7 @@ class ResetCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:reset {--mode=soft} {--user=default}';
+    protected $signature = 'ns:reset {--mode=soft} {--user=default} {--with-sales} {--with-procurements}';
 
     /**
      * The console command description.
@@ -70,8 +70,8 @@ class ResetCommand extends Command
                 $this->initializeRole();
                 $this->demoService->run([
                     'mode' => 'grocery',
-                    'create_sales' => true,
-                    'create_procurements' => true,
+                    'create_sales' => $this->option( 'with-sales' ) && $this->option( 'with-procurements' ) ? true : false,
+                    'create_procurements' => $this->option( 'with-procurements' ) ? true : false,
                 ]);
                 $this->info( __( 'The demo has been enabled.' ) );
                 break;
