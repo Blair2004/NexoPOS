@@ -14,6 +14,8 @@ use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class Setup
 {
+    public Options $options;
+    
     /**
      * Attempt database and save db informations
      *

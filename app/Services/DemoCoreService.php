@@ -134,7 +134,7 @@ class DemoCoreService
             'account' => '008',
         ]);
 
-        ns()->option->set( 'ns_customer_debitting_cashflow_account', AccountType::account( '007' )->first()->id );
+        ns()->option->set( 'ns_customer_debitting_cashflow_account', AccountType::account( '008' )->first()->id );
     }
 
     public function createCustomers()
