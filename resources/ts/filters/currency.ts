@@ -1,5 +1,5 @@
-import Vue from 'vue';
 import NumeralJS from "numeral";
+import Vue from 'vue';
 import currency from 'currency.js';
 
 declare const ns;

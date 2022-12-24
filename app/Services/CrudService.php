@@ -493,31 +493,32 @@ class CrudService
         $columnsLongName = [];
 
         /**
+         * First loop to retreive the columns and rename it
+         */
+        $select = [];
+
+        /**
+         * Building Select field for primary table
+         * We're caching the table columns, since we would like to
+         * avoid many DB Calls
+         */
+        if ( ! empty( Cache::get( 'table-columns-' . $table ) ) && true === false ) {
+            $columns = Cache::get( 'table-columns-' . $table );
+        } else {
+            $columns = Schema::getColumnListing( $table );
+            Cache::put( 'table-columns-' . $table, $columns, Carbon::now()->addDays(1) );
+        }
+
+        foreach ( $columns as $index => $column ) {
+            $__name = $table . '.' . $column;
+            $columnsLongName[] = $__name;
+            $select[] = $__name . ' as ' . $column;
+        }
+        
+        /**
          * Let's loop relation if they exists
          */
         if ( $this->getRelations() ) {
-            /**
-             * First loop to retreive the columns and rename it
-             */
-            $select = [];
-
-            /**
-             * Building Select field for primary table
-             * We're caching the table columns, since we would like to
-             * avoid many DB Calls
-             */
-            if ( ! empty( Cache::get( 'table-columns-' . $table ) ) && true === false ) {
-                $columns = Cache::get( 'table-columns-' . $table );
-            } else {
-                $columns = Schema::getColumnListing( $table );
-                Cache::put( 'table-columns-' . $table, $columns, Carbon::now()->addDays(1) );
-            }
-
-            foreach ( $columns as $index => $column ) {
-                $__name = $table . '.' . $column;
-                $columnsLongName[] = $__name;
-                $select[] = $__name . ' as ' . $column;
-            }
 
             /**
              * we're extracting the joined table
