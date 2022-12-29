@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-xl ns-box w-6/7-screen md:w-4/7-screen lg:w-3/7-screen overflow-hidden">
+    <div class="shadow-xl ns-box w-6/7-screen md:w-4/7-screen lg:w-3/7-screen max-h-5/6-screen overflow-hidden flex flex-col">
         <div class="p-2 flex justify-between border-b items-center ns-box-header">
             <span class="text-semibold text-primary">
                 {{ label }}
@@ -8,16 +8,18 @@
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>
-        <div class="flex-auto overflow-y-auto">
+        <div class="flex flex-col overflow-hidden">
             <p class="p-2 text-center text-sm bg-info-primary" v-if="description.length > 0">{{ description }}</p>
-            <ul class="ns-vertical-menu">
-                <template v-if="type === 'select'">
-                    <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
-                </template>
-                <template v-if="type === 'multiselect'">
-                    <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
-                </template>
-            </ul>
+            <div class="overflow-y-auto">
+                <ul class="ns-vertical-menu">
+                    <template v-if="type === 'select'">
+                        <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                    </template>
+                    <template v-if="type === 'multiselect'">
+                        <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                    </template>
+                </ul>
+            </div>
         </div>
         <div class="flex justify-between" v-if="type === 'multiselect'">
             <div></div>
