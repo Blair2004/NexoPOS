@@ -28,6 +28,7 @@ public/css/*.css
 !public/css/app.*.css
 !public/css/light.*.css
 !public/css/dark.*.css
+!public/css/fonts.*.css
 !public/css/typography.*.css
 !public/css/grid.*.css
 !public/css/animations.*.css
