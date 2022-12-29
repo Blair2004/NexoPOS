@@ -81,7 +81,7 @@
     "vue-custom-scrollbar": "^1.4.3",
     "vue-html-to-paper": "1.4.4",
     "vue-router": "^3.6.5",
-    "vue-upload-component": "^2.8.20",
+    "vue-upload-component": "^2.8.23",
     "vue-virtual-collection": "^1.5.0",
     "vue2-daterange-picker": "^0.6.6"
   },
