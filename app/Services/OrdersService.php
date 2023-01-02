@@ -1459,8 +1459,8 @@ class OrdersService
         $order->discount_type = $fields['discount_type'] ?? null;
         $order->discount_percentage = $this->currencyService->getRaw( $fields['discount_percentage'] ?? 0 );
         $order->discount = (
-            $this->currencyService->getRaw( $fields['discount_type'] === 'flat' && isset( $fields['discount'] ) ? $fields['discount'] : 0 )
-        ) ?: ( $fields['discount_type'] === 'percentage' ? $this->computeOrderDiscount( $order, $fields ) : 0 );
+            $this->currencyService->getRaw( $order->discount_type === 'flat' && isset( $fields['discount'] ) ? $fields['discount'] : 0 )
+        ) ?: ( $order->discount_type === 'percentage' ? $this->computeOrderDiscount( $order, $fields ) : 0 );
         $order->total = $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
         $order->type = $fields['type']['identifier'];
         $order->final_payment_date = isset( $fields['final_payment_date' ] ) ? Carbon::parse( $fields['final_payment_date' ] )->format( 'Y-m-d h:m:s' ) : null; // when the order is not saved as laid away
@@ -2571,7 +2571,7 @@ class OrdersService
 
     public function trackOrderCoupons( Order $order )
     {
-        $order->coupons->each( function( OrderCoupon $orderCoupon ) {
+        $order->coupons()->where( 'counted', false )->each( function( OrderCoupon $orderCoupon ) {
             $customerCoupon = CustomerCoupon::find( $orderCoupon->customer_coupon_id );
 
             if ( ! $customerCoupon instanceof CustomerCoupon ) {
@@ -2582,6 +2582,9 @@ class OrdersService
             }
 
             $this->customerService->increaseCouponUsage( $customerCoupon );
+
+            $orderCoupon->counted   =   true;
+            $orderCoupon->save();
         });
     }
 

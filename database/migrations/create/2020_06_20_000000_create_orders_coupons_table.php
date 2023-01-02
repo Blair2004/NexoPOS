@@ -31,6 +31,7 @@ return new class extends Migration
                 $table->integer( 'limit_usage' )->default(0);
                 $table->float( 'value', 18, 5 )->default(0);
                 $table->integer( 'author' );
+                $table->boolean( 'counted' )->default( false );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });

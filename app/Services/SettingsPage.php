@@ -19,10 +19,8 @@ class SettingsPage
 
     /**
      * returns the defined form
-     *
-     * @return array
      */
-    public function getForm()
+    public function getForm(): array
     {
         return collect( $this->form )->mapWithKeys( function( $tab, $key ) {
             if ( $tab === 'tabs' ) {
@@ -42,7 +40,7 @@ class SettingsPage
             }
 
             return [ $key => $tab ];
-        });
+        })->toArray();
     }
 
     public function getLabels()

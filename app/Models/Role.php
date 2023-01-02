@@ -37,11 +37,6 @@ class Role extends NsRootModel
     const STORECASHIER = 'nexopos.store.cashier';
 
     /**
-     * @var string STOREDRIVER store role with shipping and delivery capacity
-     */
-    const STOREDRIVER = 'nexopos.store.driver';
-
-    /**
      * @var string STOREDRIVER store role with purchasing capacity
      */
     const STORECUSTOMER = 'nexopos.store.customer';

@@ -37,7 +37,6 @@ return new class extends Migration
         $role->addPermissions( 'nexopos.create.customers' );
         $role->addPermissions( 'nexopos.update.customers' );
         $role->addPermissions( 'nexopos.read.customers' );
-        $role->addPermissions( 'nexopos.customers.manage-account' );
         $role->addPermissions( 'nexopos.customers.manage-account-history' );
 
         /**

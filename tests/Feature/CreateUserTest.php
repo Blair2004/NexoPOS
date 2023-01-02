@@ -108,12 +108,12 @@ class CreateUserTest extends TestCase
             ];
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'put', '/api/crud/ns.users/' . $result->entry->id, $configuration );
+                ->json( 'put', '/api/crud/ns.users/' . $result->data->entry->id, $configuration );
 
             $response->assertJsonPath( 'status', 'success' );
             $result = json_decode( $response->getContent() );
 
-            return $result->entry;
+            return $result->data->entry;
         });
     }
 

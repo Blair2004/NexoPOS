@@ -16,4 +16,13 @@ class CustomerReward extends NsModel
     use HasFactory;
 
     protected $table = 'nexopos_' . 'customers_rewards';
+
+    public function reward()
+    {
+        return $this->belongsTo(
+            related: RewardSystem::class,
+            foreignKey: 'reward_id',
+            ownerKey: 'id'
+        );
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\RolePermission;
 use App\Models\User;
 use App\Services\CoreService;
 use App\Services\DoctorService;
@@ -86,7 +87,6 @@ return new class extends Migration
         /**
          * We're introducing a driver role
          */
-        include_once( base_path() . '/database/permissions/store-driver-role.php' );
         include_once( base_path() . '/database/permissions/store-customer-role.php' );
 
         /**
@@ -228,6 +228,21 @@ return new class extends Migration
             }
         });
 
+        Schema::table( 'nexopos_orders_coupons', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_orders_coupons', 'counted' ) ) {
+                $table->boolean( 'counted' )->default( false );
+            }
+        });
+
+        Schema::table( 'nexopos_orders_addresses', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_orders_addresses', 'name' ) ) {
+                $table->renameColumn( 'name', 'first_name' );
+            }
+            if ( Schema::hasColumn( 'nexopos_orders_addresses', 'surname' ) ) {
+                $table->renameColumn( 'surname', 'last_name' );
+            }
+        });
+
         /**
          * Every models that was pointing to the old customer id
          * must be update to support the new customer id which is not
@@ -244,6 +259,21 @@ return new class extends Migration
 
         Schema::drop( 'nexopos_customers' );
         Schema::drop( 'nexopos_customers_metas' );
+
+        /**
+         * We'll drop permissions we no longer use
+         */
+
+         /**
+          * 1: This permission is a duplicate one, and can easilly be confused
+          * with "nexopos.customers.manage-account-history"
+          */
+        $permission = Permission::namespace( 'nexopos.customers.manage-account' );
+
+        if ( $permission instanceof Permission ) {
+            RolePermission::where( 'permission_id', $permission->id )->delete();
+            $permission->delete();
+        }
     }
 
     /**

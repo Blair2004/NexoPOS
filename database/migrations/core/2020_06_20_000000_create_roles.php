@@ -37,7 +37,6 @@ return new class extends Migration
         include_once( dirname( __FILE__ ) . '/../../permissions/admin-role.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/store-admin-role.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/store-cashier-role.php' );
-        include_once( dirname( __FILE__ ) . '/../../permissions/store-driver-role.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/store-customer-role.php' );
     }
 
@@ -54,16 +53,6 @@ return new class extends Migration
         }
 
         $role = Role::where( 'namespace', 'nexopos.store.cashier' )->first();
-        if ( $role instanceof Role ) {
-            $role->delete();
-        }
-
-        $role = Role::where( 'namespace', 'nexopos.store.drivers' )->first();
-        if ( $role instanceof Role ) {
-            $role->delete();
-        }
-        
-        $role = Role::where( 'namespace', Role::STOREDRIVER )->first();
         if ( $role instanceof Role ) {
             $role->delete();
         }

@@ -453,6 +453,7 @@ class CustomerService
 
             $currentReward->points += $points;
             $currentReward->save();
+            $currentReward->load( 'reward' );
 
             CustomerRewardAfterCreatedEvent::dispatch( $currentReward, $order->customer, $reward );
         }
@@ -476,7 +477,7 @@ class CustomerService
                 $customerCoupon->code = $coupon->code . '-' . ns()->date->format( 'dmi' );
                 $customerCoupon->customer_id = $customer->id;
                 $customerCoupon->limit_usage = $coupon->limit_usage;
-                $customerCoupon->author = $customerReward->author;
+                $customerCoupon->author = $customerReward->reward->author;
                 $customerCoupon->save();
 
                 $customerReward->points = abs( $customerReward->points - $customerReward->target );

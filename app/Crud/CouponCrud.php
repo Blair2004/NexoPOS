@@ -528,28 +528,28 @@ class CouponCrud extends CrudService
         if ( $this->permissions[ 'update' ] !== false ) {
             ns()->restrict( $this->permissions[ 'update' ] );
 
-            foreach ( $inputs[ 'products' ] as $product_id ) {
+            foreach ( $inputs[ 'products' ] ?? [] as $product_id ) {
                 $product = Product::find( $product_id );
                 if ( ! $product instanceof Product ) {
                     throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
                 }
             }
 
-            foreach ( $inputs[ 'categories' ] as $category_id ) {
+            foreach ( $inputs[ 'categories' ] ?? [] as $category_id ) {
                 $category = ProductCategory::find( $category_id );
                 if ( ! $category instanceof ProductCategory ) {
                     throw new Exception( __( 'Unable to save the coupon as this category doens\'t exists.' ) );
                 }
             }
 
-            foreach ( $inputs[ 'customers' ] as $customer_id ) {
+            foreach ( $inputs[ 'customers' ] ?? [] as $customer_id ) {
                 $customer = Customer::find( $customer_id );
                 if ( ! $customer instanceof Customer ) {
                     throw new Exception( __( 'Unable to save the coupon as one of the customers provided no longer exists.' ) );
                 }
             }
 
-            foreach ( $inputs[ 'groups' ] as $groups ) {
+            foreach ( $inputs[ 'groups' ] ?? [] as $groups ) {
                 $customerGroup = CustomerGroup::find( $groups );
                 if ( ! $customerGroup instanceof CustomerGroup ) {
                     throw new Exception( __( 'Unable to save the coupon as one of the provided customer group no longer exists.' ) );
@@ -591,18 +591,20 @@ class CouponCrud extends CrudService
                 }
             });
 
-            foreach ( $inputs[ $key ] as $argument ) {
-                $productRelation = $data[ 'class' ]::where( 'coupon_id', $coupon->id )
-                    ->where( $data[ 'property' ], $argument )
-                    ->first();
-    
-                if ( ! $productRelation instanceof $data[ 'class' ] ) {
-                    $productRelation = new $data[ 'class' ];
+            if ( isset( $inputs[ $key ] ) ) {
+                foreach ( $inputs[ $key ] as $argument ) {
+                    $productRelation = $data[ 'class' ]::where( 'coupon_id', $coupon->id )
+                        ->where( $data[ 'property' ], $argument )
+                        ->first();
+        
+                    if ( ! $productRelation instanceof $data[ 'class' ] ) {
+                        $productRelation = new $data[ 'class' ];
+                    }
+        
+                    $productRelation->coupon_id = $coupon->id;
+                    $productRelation->{$data[ 'property' ]} = $argument;
+                    $productRelation->save();
                 }
-    
-                $productRelation->coupon_id = $coupon->id;
-                $productRelation->{$data[ 'property' ]} = $argument;
-                $productRelation->save();
             }
         });
 

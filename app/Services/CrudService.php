@@ -1188,7 +1188,7 @@ class CrudService
      * retrieve one of the declared permissions
      * the name must either be "create", "read", "update", "delete".
      */
-    public function getPermission( string $name ): bool
+    public function getPermission( string|null $name ): bool
     {
         return $this->permissions[ $name ] ?? false;
     }

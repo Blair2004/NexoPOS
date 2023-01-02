@@ -45,16 +45,16 @@ trait NsForms
     }
 
     /**
-     * Returns the collection that represent the
+     * Returns the array that represent the
      * form object for either the CrudService or the SettingsPage.
      */
-    private function getFormObject( CrudService|SettingsPage $formObject, $model ): Collection
+    private function getFormObject( CrudService|SettingsPage $formObject, $model ): array
     {
         if ( is_subclass_of( $formObject, CrudService::class ) || is_subclass_of( $formObject, SettingsPage::class ) ) {
             return Hook::filter( get_class( $formObject )::method( 'getForm' ), $formObject->getForm( $model ), compact( 'model' ) );
         }
 
-        return collect([]);
+        return [];
     }
 
     /**

@@ -1248,7 +1248,7 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', [
-                'customer_id' => 1,
+                'customer_id' => Customer::first()->id,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
                 'discount_percentage' => 2.5,
@@ -1277,6 +1277,7 @@ trait WithOrderTest
                 ],
             ]);
 
+        $response->dump();
         $response->assertJsonPath( 'data.order.payment_status', 'hold' );
 
         return json_decode( $response->getContent(), true );
@@ -1857,7 +1858,7 @@ trait WithOrderTest
         $subtotal = collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ], [
-                'customer_id' => 1,
+                'customer_id' => $responseData[ 'data' ][ 'order' ][ 'customer_id' ],
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
                 'discount_percentage' => $discountRate,
@@ -1974,7 +1975,7 @@ trait WithOrderTest
             $allCoupons = [
                 [
                     'customer_coupon_id' => $customerCoupon->id,
-                    'coupon_id' => $customerCoupon->coupon_id,
+                    'id' => $customerCoupon->coupon->id,
                     'name' => $customerCoupon->name,
                     'type' => 'percentage_discount',
                     'code' => $customerCoupon->code,
