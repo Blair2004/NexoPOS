@@ -89,6 +89,8 @@ trait WithCustomerTest
                 ],
             ]);
 
+        $this->attemptTestCustomerGroup( $response->json() );
+
         $response->assertJson([
             'status' => 'success',
         ]);
@@ -124,6 +126,8 @@ trait WithCustomerTest
             'status' => 'success',
         ]);
 
+        $this->attemptTestCustomerGroup( $response->json() );
+
         /**
          * The second should fail as we're
          * using the exact same non-empty email
@@ -145,6 +149,13 @@ trait WithCustomerTest
         $response->assertJson([
             'status' => 'failed',
         ]);
+    }
+
+    public function attemptTestCustomerGroup( $json )
+    {
+        $customer   =   Customer::with( 'group' )->find( $json[ 'data' ][ 'entry' ][ 'id' ] );
+
+        $this->assertTrue( $customer->group instanceof CustomerGroup );
     }
 
     protected function attemptCreateCustomer()
@@ -188,6 +199,8 @@ trait WithCustomerTest
             $response->assertJson([
                 'status' => 'success',
             ]);
+
+            $this->attemptTestCustomerGroup( $response->json() );
 
             $lastCustomer = Customer::orderBy( 'id', 'desc' )->first();
 

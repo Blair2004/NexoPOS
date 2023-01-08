@@ -21,6 +21,11 @@ class Option extends NsModel
 
     protected $key;
 
+    protected $casts    =   [
+        'array' =>  'boolean',
+        'user_id' => 'integer',
+    ];
+
     public function scopeKey( $query, $key )
     {
         return $query->where( 'key', $key )->first();

@@ -555,7 +555,7 @@ class OrderCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->{ '$cssClass' } = match ( $entry->payment_status ) {
+        $entry->{ '$cssClass' } = match ( $entry->raw->payment_status ) {
             Order::PAYMENT_PAID => 'success border text-sm',
             Order::PAYMENT_UNPAID => 'danger border text-sm',
             Order::PAYMENT_PARTIALLY => 'info border text-sm',
@@ -568,9 +568,6 @@ class OrderCrud extends CrudService
             default => ''
         };
 
-        $entry->payment_status = ns()->order->getPaymentLabel( $entry->payment_status );
-
-        // you can make changes here
         $entry->action( 
             identifier: 'ns.order-options',
             label: '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
@@ -600,14 +597,12 @@ class OrderCrud extends CrudService
         $entry->action( 
             identifier: 'invoice',
             label: '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
-            type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id ),
         );
 
         $entry->action( 
             identifier: 'receipt',
             label: '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
-            type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id ),
         );
 

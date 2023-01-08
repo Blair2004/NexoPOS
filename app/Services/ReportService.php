@@ -803,14 +803,9 @@ class ReportService
 
     /**
      * Will return a report based
-     * on the requested type
-     *
-     * @param string $start
-     * @param string $end
-     * @param string $type
-     * @return array
+     * on the requested type.
      */
-    public function getSaleReport( $start, $end, $type, $user_id = null )
+    public function getSaleReport( string $start, string $end, string $type, $user_id = null )
     {
         switch ( $type ) {
             case 'products_report':
@@ -826,8 +821,10 @@ class ReportService
     private function getSalesSummary( $orders )
     {
         $allSales = $orders->map( function( $order ) {
+            $productTaxes   =   $order->products()->sum( 'tax_value' );
             return [
-                'subtotal' => $order->subtotal,
+                'subtotal' => $order->subtotal - $productTaxes,
+                'product_taxes'   =>  $productTaxes,
                 'sales_discounts' => $order->discount,
                 'sales_taxes' => $order->tax_value,
                 'shipping' => $order->shipping,
@@ -837,6 +834,7 @@ class ReportService
 
         return [
             'sales_discounts' => Currency::define( $allSales->sum( 'sales_discounts' ) )->getRaw(),
+            'product_taxes' => Currency::define( $allSales->sum( 'product_taxes' ) )->getRaw(),
             'sales_taxes' => Currency::define( $allSales->sum( 'sales_taxes' ) )->getRaw(),
             'subtotal' => Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
             'shipping' => Currency::define( $allSales->sum( 'shipping' ) )->getRaw(),
@@ -944,6 +942,7 @@ class ReportService
             $category->total_price = collect( $category->products )->sum( 'total_price' );
             $category->total_discount = collect( $category->products )->sum( 'discount' );
             $category->total_sold_items = collect( $category->products )->sum( 'quantity' );
+            $category->total_purchase_price = collect( $category->products )->sum( 'total_purchase_price' );
         });
 
         return [

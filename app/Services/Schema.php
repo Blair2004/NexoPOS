@@ -40,7 +40,8 @@ class Schema
     public function renderSchema( $data )
     {
         extract( $data );
-        if ( @$table ) {
+        
+        if ( isset( $table ) && ! empty( $table ) ) {
             echo "if ( ! Schema::hasTable( '{$table}' ) ) {\n";
             echo "\t\t\tSchema::create( '{$table}', function (Blueprint \$table) {\n";
             echo "\t\t\t\t\$table->increments('id');\n";
@@ -65,7 +66,7 @@ class Schema
     {
         extract( $details );
 
-        if ( $table ) {
+        if ( isset( $table ) && ! empty( $table ) ) {
             echo "Schema::dropIfExists( '{$table}' );\n";
         } else {
             echo "// drop tables here\n";

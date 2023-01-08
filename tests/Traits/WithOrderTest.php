@@ -1277,7 +1277,6 @@ trait WithOrderTest
                 ],
             ]);
 
-        $response->dump();
         $response->assertJsonPath( 'data.order.payment_status', 'hold' );
 
         return json_decode( $response->getContent(), true );

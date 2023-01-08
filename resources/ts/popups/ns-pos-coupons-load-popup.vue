@@ -30,35 +30,35 @@
                         </ns-notice>                        
                     </div>
                     <div class="overflow-hidden">
-                        <div class="pt-2 fade-in-entrance anim-duration-500 overflow-y-auto ns-scrollbar h-64" v-if="customerCoupon">
+                        <div class="pt-2 fade-in-entrance anim-duration-500 overflow-y-auto ns-scrollbar h-64" v-if="coupon">
                             <table class="w-full ns-table">
                                 <tbody>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Coupon Name' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.name }}</td>
+                                        <td class="p-2 w-1/2 border">{{ coupon.name }}</td>
                                     </tr>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                     <tr>
-                                        <td class="p-2 w-1/2 border">{{ __( 'Discount' ) }} ({{ getCouponType( customerCoupon.type ) }})</td>
-                                        <td class="p-2 w-1/2 border">{{ getDiscountValue( customerCoupon ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ __( 'Discount' ) }} ({{ getCouponType( coupon.type ) }})</td>
+                                        <td class="p-2 w-1/2 border">{{ getDiscountValue( coupon ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Usage' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.usage + '/' + ( customerCoupon.limit_usage || __( 'Unlimited' ) ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ ( coupon.customer_coupon.length > 0 ? coupon.customer_coupon[0].usage : 0 ) + '/' + ( coupon.limit_usage || __( 'Unlimited' ) ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Valid From' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.valid_hours_start || __( 'N/A' ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ coupon.valid_hours_start || __( 'N/A' ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Valid Till' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.valid_hours_end || __( 'N/A' ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ coupon.valid_hours_end || __( 'N/A' ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Categories' ) }}</td>
                                         <td class="p-2 w-1/2 border">
                                             <ul>
-                                                <li class="rounded-full px-3 py-1 border" :key="category.id" v-for="category of customerCoupon.categories">{{ category.category.name }}</li>
-                                                <li v-if="customerCoupon.categories.length === 0">{{ __( 'Not applicable' ) }}</li>
+                                                <li class="rounded-full px-3 py-1 border" :key="category.id" v-for="category of coupon.categories">{{ category.category.name }}</li>
+                                                <li v-if="coupon.categories.length === 0">{{ __( 'Not applicable' ) }}</li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -66,8 +66,8 @@
                                         <td class="p-2 w-1/2 border">{{ __( 'Products' ) }}</td>
                                         <td class="p-2 w-1/2 border">
                                             <ul>
-                                                <li class="rounded-full px-3 py-1 border" :key="product.id" v-for="product of customerCoupon.products">{{ product.product.name }}</li>
-                                                <li v-if="customerCoupon.products.length === 0">{{ __( 'Not applicable' ) }}</li>
+                                                <li class="rounded-full px-3 py-1 border" :key="product.id" v-for="product of coupon.products">{{ product.product.name }}</li>
+                                                <li v-if="coupon.products.length === 0">{{ __( 'Not applicable' ) }}</li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -78,11 +78,11 @@
                 </ns-tabs-item>
                 <ns-tabs-item :label="__( 'Active Coupons' )" padding="p-1" identifier="active-coupons">
                     <ul v-if="order">
-                        <li v-for="( customerCoupon, index) of order.coupons" :key="index" class="flex justify-between elevation-surface border items-center px-2 py-1">
+                        <li v-for="( coupon, index) of order.coupons" :key="index" class="flex justify-between elevation-surface border items-center px-2 py-1">
                             <div class="flex-auto">
                                 <h3 class="font-semibold text-primary p-2 flex justify-between">
-                                    <span>{{ customerCoupon.name }}</span>
-                                    <span>{{ getDiscountValue( customerCoupon ) }}</span>
+                                    <span>{{ coupon.name }}</span>
+                                    <span>{{ getDiscountValue( coupon ) }}</span>
                                 </h3>
                             </div>
                             <div>
@@ -96,7 +96,7 @@
                 </ns-tabs-item>
             </ns-tabs>
         </div>
-        <div class="flex" v-if="customerCoupon">
+        <div class="flex" v-if="coupon">
             <button @click="apply()" class="w-1/2 px-3 py-2 bg-success-tertiary text-white font-bold">
                 {{ __( 'Apply' ) }}
             </button>
@@ -112,7 +112,6 @@ import popupResolver from '~/libraries/popup-resolver';
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from "~/libraries/lang";
 import nsPosCustomerSelectPopupVue from './ns-pos-customer-select-popup.vue';
-import { SnackBar } from '~/libraries/snackbar';
 import nsNotice from '~/components/ns-notice.vue';
 import { ref } from "vue";
 
@@ -128,7 +127,7 @@ export default {
             order: null,
             activeTab: 'apply-coupon',
             orderSubscriber: null,
-            customerCoupon: null
+            coupon: null
         }
     },
     mounted() {
@@ -153,7 +152,7 @@ export default {
                 this.getCoupon( this.couponCode )
                     .subscribe({
                         next: ( coupon ) => {
-                            this.customerCoupon     =   coupon;
+                            this.coupon     =   coupon;
                             this.apply();
                         }
                     })
@@ -173,7 +172,7 @@ export default {
         },
 
         cancel() {
-            this.customerCoupon =   null;
+            this.coupon         =   null;
             this.couponCode     =   null;
         },
 
@@ -184,27 +183,25 @@ export default {
 
         apply() {
             try {
-                const customerCoupon    =   this.customerCoupon;
-
                 if ( 
-                    this.customerCoupon.valid_hours_start !== null &&
-                    ! ns.date.moment.isAfter( this.customerCoupon.valid_hours_start ) && 
-                    this.customerCoupon.valid_hours_start.length > 0
+                    this.coupon.valid_hours_start !== null &&
+                    ! ns.date.moment.isAfter( this.coupon.valid_hours_start ) && 
+                    this.coupon.valid_hours_start.length > 0
                 ) {
                     return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) )
                         .subscribe();
                 }
 
                 if ( 
-                    this.customerCoupon.valid_hours_end !== null &&
-                    ! ns.date.moment.isBefore( this.customerCoupon.valid_hours_end ) &&
-                    this.customerCoupon.valid_hours_end.length > 0 
+                    this.coupon.valid_hours_end !== null &&
+                    ! ns.date.moment.isBefore( this.coupon.valid_hours_end ) &&
+                    this.coupon.valid_hours_end.length > 0 
                 ) {
                     return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) )
                         .subscribe();
                 }
 
-                const requiredProducts      =   this.customerCoupon.products;
+                const requiredProducts      =   this.coupon.products;
 
                 if ( 
                     requiredProducts.length > 0
@@ -216,7 +213,7 @@ export default {
                     }
                 }
 
-                const requiredCategories      =   this.customerCoupon.categories;
+                const requiredCategories      =   this.coupon.categories;
 
                 if ( 
                     requiredCategories.length > 0
@@ -228,29 +225,28 @@ export default {
                     }
                 }
 
-                this.cancel();
-
-                const coupon    =   {
-                    active: customerCoupon.active,
-                    customer_coupon_id   :   customerCoupon.id,
-                    minimum_cart_value: customerCoupon.minimum_cart_value,
-                    maximum_cart_value: customerCoupon.maximum_cart_value,
-                    name: customerCoupon.name,
-                    type: customerCoupon.type,
+                let finalCoupon    =   {
+                    customer_coupon_id   :   this.coupon.customer_coupon.length > 0 ? this.coupon.customer_coupon[0].id : 0,
+                    minimum_cart_value: this.coupon.minimum_cart_value,
+                    maximum_cart_value: this.coupon.maximum_cart_value,
+                    name: this.coupon.name,
+                    type: this.coupon.type,
                     value: 0,
-                    id: customerCoupon.id,
-                    limit_usage: customerCoupon.limit_usage,
-                    code: customerCoupon.code,
-                    discount_value: customerCoupon.discount_value,
-                    categories: customerCoupon.categories,
-                    products: customerCoupon.products,
+                    id: this.coupon.id,
+                    limit_usage: this.coupon.limit_usage,
+                    code: this.coupon.code,
+                    discount_value: this.coupon.discount_value,
+                    categories: this.coupon.categories,
+                    products: this.coupon.products,
                 }
 
-                POS.pushCoupon( coupon );
+                this.cancel();
+
+                POS.pushCoupon( finalCoupon );
                 this.activeTab  =   'active-coupons';
                 
                 setTimeout( () => {
-                    this.popupResolver( coupon );
+                    this.popupResolver( finalCoupon );
                 }, 500 );
 
                 nsSnackBar.success( __( 'The coupon has applied to the cart.' ) )
@@ -310,9 +306,8 @@ export default {
 
             this.getCoupon( code )
                 .subscribe({
-                    next: customerCoupon => {
-                        console.log( customerCoupon );
-                        this.customerCoupon     =   customerCoupon;
+                    next: coupon => {
+                        this.coupon     =   coupon;
                         nsSnackBar.success( __( 'The coupon has been loaded.' ) ).subscribe()
                     },
                     error : error => {

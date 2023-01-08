@@ -850,10 +850,24 @@ class CrudService
              */
             $casts = $this->getCasts();
 
+            /**
+             * We'll define a raw property
+             * that will have default uncasted values.
+             */
+            if ( ! isset( $entry->raw ) ) {
+                $entry->raw     =   new \stdClass;
+            }
+
             if ( ! empty( $casts ) ) {
                 foreach ( $casts as $column => $cast ) {
                     if ( class_exists( $cast ) ) {
                         $castObject = new $cast;
+
+                        // We'll keep a reference of the raw
+                        // uncasted property.
+                        $entry->raw->$column    =   $entry->$column;
+
+                        // We'll now cast the property.
                         $entry->$column = $castObject->get( $entry, $column, $entry->$column, []);
                     }
                 }
@@ -1035,7 +1049,7 @@ class CrudService
         return $rules;
     }
 
-    public static function table( array $config = [], string|null $title = null, string|null $description = null, string|null $src = null, string|null $createUrl = null, string|null $queryParams = null ): ContractView
+    public static function table( array $config = [], string|null $title = null, string|null $description = null, string|null $src = null, string|null $createUrl = null, array $queryParams = null ): ContractView
     {
         $className = get_called_class();
         $instance = new $className;

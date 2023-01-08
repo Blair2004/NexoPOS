@@ -5,6 +5,7 @@ namespace Tests\Traits;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerCoupon;
+use App\Models\OrderCoupon;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\CustomerService;
@@ -20,6 +21,7 @@ trait WithCouponTest
         /**
          * @var TestResponse
          */
+        $customers  =   Customer::get()->take(3);
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'post', 'api/crud/ns.coupons', [
                 'name' => $this->faker->name,
@@ -41,10 +43,24 @@ trait WithCouponTest
                         ->map( fn( $product ) => $product->id )
                         ->toArray(),
                 ],
+                'selected_customers'    =>  [
+                    'customers' =>  $customers->map( fn( $customer ) => $customer->id )->toArray()
+                ]
             ]);
 
-        $response->dump();
         $response->assertJsonPath( 'status', 'success' );
+
+        $entry  =   $response->json()[ 'data' ][ 'entry' ];
+
+        $coupon     =   Coupon::with( 'customers' )->find( $entry[ 'id' ] );
+
+        $ids    =   $customers->map( fn( $customer ) => $customer->id )->toArray();
+
+        /**
+         * Checks if the customers assigned are returned
+         * once we load the coupon.
+         */
+        $coupon->customers->each( fn( $couponCustomer ) => $this->assertTrue( in_array( $couponCustomer->customer_id, $ids ) ) );
 
         return $response;
     }
@@ -58,6 +74,7 @@ trait WithCouponTest
         $this->attemptCreatecoupon();
 
         $coupon = Coupon::first();
+        $customers  =   Customer::get()->take(3);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'put', 'api/crud/ns.coupons/' . $coupon->id, [
@@ -79,6 +96,9 @@ trait WithCouponTest
                         ->get()
                         ->map( fn( $product ) => $product->id )
                         ->toArray(),
+                ],
+                'selected_customers' => [
+                    'categories' => $customers->map( fn( $customer ) => $customer->id )->toArray(),
                 ],
             ]);
 
@@ -365,8 +385,47 @@ trait WithCouponTest
          * We'll now try to figure out if there is a coupon generated
          * for the customer we've selected.
          */
+        $this->assertTrue( 
+            OrderCoupon::where( 'order_id', $result[0][ 'order-creation' ][ 'data' ][ 'order' ][ 'id' ] )
+                ->where( 'coupon_id', $coupon->id )
+                ->first() instanceof OrderCoupon,
+            'No coupon history was created when the order was placed.'
+        );
+
+        $customerCoupon =   $customer->coupons()->first();
+
+        $this->assertTrue( $customer->coupons()->where( 'coupon_id', $couponResponse[ 'data' ][ 'entry' ][ 'id' ] )->first() instanceof CustomerCoupon, 'The coupon assigned to the order is not assigned to the customer' );
         $this->assertTrue( $customer->coupons()->count() === 1, 'No coupon was created while using the coupon on the customer sale.' );
-        $this->assertTrue( ( int ) $customer->coupons()->first()->coupon_id === ( int ) $coupon->id, 'The customer generated coupon doesn\'t match the coupon created earlier.' );
+        $this->assertTrue( ( int ) $customerCoupon->coupon_id === ( int ) $coupon->id, 'The customer generated coupon doesn\'t match the coupon created earlier.' );
+        $this->assertTrue( ( int ) $customerCoupon->usage === 1, 'The coupon usage hasn\'t increased.' );
+
+        /**
+         * We'll make another test to make sure
+         * the coupon usage increases
+         */
+        $order              =   [
+            'created_at'    =>  ns()->date->now()->toDateTimeString(),
+            'shipping'      =>  30,
+            'customer_id'   =>  $customer->id,
+            'products'  =>  $products,
+            'coupons'   =>  [
+                [
+                    'id'                    =>  $couponResponse[ 'data' ][ 'entry' ][ 'id' ],
+                    'minimum_cart_value'    =>  $couponResponse[ 'data' ][ 'entry' ][ 'minimum_cart_value' ],
+                    'maximum_cart_value'    =>  $couponResponse[ 'data' ][ 'entry' ][ 'maximum_cart_value' ],
+                    'discount_value'        =>  $couponResponse[ 'data' ][ 'entry' ][ 'discount_value' ],
+                    'name'                  =>  $couponResponse[ 'data' ][ 'entry' ][ 'name' ],
+                    'type'                  =>  $couponResponse[ 'data' ][ 'entry' ][ 'type' ],
+                    'limit_usage'           =>  $couponResponse[ 'data' ][ 'entry' ][ 'limit_usage' ],
+                    'value'                 =>  $couponValue
+                ]
+            ]
+        ];
+
+        $result     =   $this->processOrders( $order ); 
+
+        $customerCoupon =   $customer->coupons()->first();
+        $this->assertTrue( ( int ) $customerCoupon->usage === 2, 'The coupon usage hasn\'t increased.' );
 
         return $result;
     }

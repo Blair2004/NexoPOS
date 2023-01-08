@@ -1,6 +1,9 @@
 <?php
 namespace App\Crud;
 
+use App\Casts\CurrencyCast;
+use App\Casts\DateCast;
+use App\Casts\DiscountTypeCast;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -47,9 +50,15 @@ class CouponOrderHistoryCrud extends CrudService
      */
     protected $permissions  =   [
         'create'    =>  false,
-        'read'      =>  false,
-        'update'    =>  true,
-        'delete'    =>  true,
+        'read'      =>  true,
+        'update'    =>  false,
+        'delete'    =>  false,
+    ];
+
+    protected $casts    =   [
+        'type'  =>  DiscountTypeCast::class,
+        'value' =>  CurrencyCast::class,
+        'created_at' =>  DateCast::class,
     ];
 
     /**
@@ -58,6 +67,9 @@ class CouponOrderHistoryCrud extends CrudService
      * @param array
      */
     public $relations   =  [
+        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders_coupons.author' ],
+        [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_coupons.order_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'order.customer_id' ],
     ];
 
     /**
@@ -83,7 +95,11 @@ class CouponOrderHistoryCrud extends CrudService
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [];
+    public $pick        =   [
+        'user'  =>  [ 'username' ],
+        'order' =>  [ 'id', 'code' ],
+        'customer'  =>  [ 'username', 'first_name', 'last_name' ]
+    ];
 
     /**
      * Define where statement
@@ -134,7 +150,7 @@ class CouponOrderHistoryCrud extends CrudService
 
     public function hook( $query ): void
     {
-        $query->where( 'coupon' );
+        $query->where( 'coupon_id', request()->query( 'coupon_id' ) );
     }
 
     /**
@@ -374,8 +390,8 @@ class CouponOrderHistoryCrud extends CrudService
     public function getColumns() 
     {
         return [
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
+            'name'  =>  [
+                'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -384,18 +400,13 @@ class CouponOrderHistoryCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
+            'customer_first_name'  =>  [
+                'label'  =>  __( 'Customer' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'customer_coupon_id'  =>  [
-                'label'  =>  __( 'Customer_coupon_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'order_id'  =>  [
-                'label'  =>  __( 'Order_id' ),
+            'order_code'  =>  [
+                'label'  =>  __( 'Order' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -405,22 +416,7 @@ class CouponOrderHistoryCrud extends CrudService
                 '$sort'         =>  false
             ],
             'discount_value'  =>  [
-                'label'  =>  __( 'Discount_value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'minimum_cart_value'  =>  [
-                'label'  =>  __( 'Minimum_cart_value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'maximum_cart_value'  =>  [
-                'label'  =>  __( 'Maximum_cart_value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'limit_usage'  =>  [
-                'label'  =>  __( 'Limit_usage' ),
+                'label'  =>  __( 'Discount' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -429,27 +425,17 @@ class CouponOrderHistoryCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'author'  =>  [
+            'user_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
+                'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-                    ];
+        ];
     }
 
     /**
@@ -460,22 +446,21 @@ class CouponOrderHistoryCrud extends CrudService
         /**
          * Declaring entry actions
          */
-        $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
-        ]);
+        $entry->action(
+            label: __( 'Edit' ),
+            identifier: 'edit',
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        );
         
-        $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/crud/ns.coupons-orders-hitory/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+        $entry->action(
+            label: __( 'Delete' ),
+            identifier: 'delete',
+            url: ns()->url( '/api/crud/ns.coupons-orders-hitory/' . $entry->id ),
+            type: 'DELETE',
+            confirm: [
+                'message'   =>  __( 'Would you like to delete this?' ),
             ]
-        ]);
+        );
         
         return $entry;
     }

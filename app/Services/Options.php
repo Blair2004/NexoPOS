@@ -107,17 +107,7 @@ class Options
             if ( $key === $index ) {
                 $this->hasFound = true;
 
-                switch ( $value ) {
-                    case is_array( $value ) :
-                        $option->value = json_encode( $value );
-                        break;
-                    case empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) :
-                        $option->value = '';
-                        break;
-                    default:
-                        $option->value = $value;
-                        break;
-                }
+                $this->encodeOptionValue( $option, $value );
 
                 $option->expire_on = $expiration;
 
@@ -145,19 +135,9 @@ class Options
             $option = new Option;
             $option->key = trim( strtolower( $key ) );
             $option->array = false;
-
-            switch ( $value ) {
-                case is_array( $value ) :
-                    $option->value = json_encode( $value );
-                    break;
-                case empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) :
-                    $option->value = '';
-                    break;
-                default:
-                    $option->value = $value;
-                    break;
-            }
-
+            
+            $this->encodeOptionValue( $option, $value );
+            
             $option->expire_on = $expiration;
 
             /**
@@ -179,7 +159,29 @@ class Options
         return $option;
     }
 
-    public function beforeSave( $option )
+    /**
+     * Encodes the value for the option before saving.
+     */
+    public function encodeOptionValue( Option $option, mixed $value ): void
+    {
+        switch ( $value ) {
+            case is_array( $value ) :
+                $option->array = true;
+                $option->value = json_encode( $value );
+                break;
+            case empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) :
+                $option->value = '';
+                break;
+            default:
+                $option->value = $value;
+                break;
+        }
+    }
+
+    /**
+     * Sanitizes values before storing on the database.
+     */
+    public function beforeSave( Option $option )
     {
         /**
          * sanitizing input to remove
@@ -192,11 +194,8 @@ class Options
 
     /**
      * Get options
-     *
-     * @param string|array $key
-     * @return string|array|bool|float
      **/
-    public function get( $key = null, $default = null )
+    public function get( string $key = null, mixed $default = null )
     {
         if ( $key === null ) {
             return $this->rawOptions;
@@ -207,28 +206,7 @@ class Options
         });
 
         $options = $filtredOptions->map( function( $option ) {
-            /**
-             * We should'nt run this everytime we
-             * try to pull an option from the database or from the array
-             */
-            if ( ! empty( $option->value ) && ! $option->parsed ) {
-                if ( is_string( $option->value ) ) {
-                    $json = json_decode( $option->value, true );
-
-                    if ( json_last_error() == JSON_ERROR_NONE ) {
-                        $option->value = $json;
-                        $option->parsed = true;
-                    }
-                } elseif ( ! is_array( $option->value ) ) {
-                    $option->parsed = true;
-                    $option->value = match ( $option->value ) {
-                        preg_match( '/[0-9]{1,}/', $option->value ) => (int) $option->value,
-                        preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) => (float) $option->value,
-                        default => $option->value,
-                    };
-                }
-            }
-
+            $this->decodeOptionValue( $option );
             return $option;
         });
 
@@ -238,13 +216,34 @@ class Options
             default => $options->map( fn( $option ) => $option->value )->toArray()
         };
     }
+    
+    public function decodeOptionValue( $option )
+    {
+        /**
+         * We should'nt run this everytime we
+         * try to pull an option from the database or from the array
+         */
+        if ( ! empty( $option->value ) && $option->isClean() ) {
+            if ( is_string( $option->value ) && $option->array ) {
+                $json = json_decode( $option->value, true );
+
+                if ( json_last_error() == JSON_ERROR_NONE ) {
+                    $option->value  =   $json;
+                }
+            } elseif ( ! $option->array ) {
+                $option->value  =   match ( $option->value ) {
+                    preg_match( '/[0-9]{1,}/', $option->value ) => (int) $option->value,
+                    preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) => (float) $option->value,
+                    default => $option->value,
+                };
+            }
+        }
+    }
 
     /**
-     * Delete Key
-     *
-     * @param string key
+     * Delete an option using a specific key.
      **/
-    public function delete( $key ): void
+    public function delete( string $key ): void
     {
         $this->rawOptions = collect( $this->rawOptions )->filter( function( Option $option ) use ( $key ) {
             if ( $option->key === $key ) {

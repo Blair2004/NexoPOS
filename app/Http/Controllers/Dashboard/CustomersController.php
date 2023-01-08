@@ -475,7 +475,7 @@ class CustomersController extends DashboardController
 
     public function couponHistory( Coupon $coupon )
     {
-        CouponOrderHistoryCrud::table([
+        return CouponOrderHistoryCrud::table([
             'queryParams'   =>  [
                 'coupon_id' =>  $coupon->id
             ]

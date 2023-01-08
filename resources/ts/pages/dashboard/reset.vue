@@ -5,15 +5,17 @@
                 {{ __( 'Reset' ) }}
             </div>
         </div>
-        <div class="card-body ns-box ns-tab-item rounded-br-lg rounded-bl-lg shadow">
-            <div class="-mx-4 flex flex-wrap p-2">
-                <div class="px-4" :key="index" v-for="(field, index) of fields">
-                    <ns-field :field="field"></ns-field>
+        <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg">
+            <div class="shadow rounded">
+                <div class="-mx-4 flex flex-wrap p-2">
+                    <div class="px-4" :key="index" v-for="(field, index) of fields">
+                        <ns-field :field="field"></ns-field>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body ns-box-footer border-t p-2 flex">
-                <div> 
-                    <ns-button type="info" @click="submit()">{{ __( 'Proceed' ) }}</ns-button>
+                <div class="card-body ns-box-footer border-t p-2 flex">
+                    <div> 
+                        <ns-button type="info" @click="submit()">{{ __( 'Proceed' ) }}</ns-button>
+                    </div>
                 </div>
             </div>
         </div>

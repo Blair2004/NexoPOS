@@ -5,6 +5,7 @@ use App\Models\CustomerAddress;
 use App\Models\CustomerCoupon;
 use App\Models\CustomerReward;
 use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\RolePermission;
@@ -259,6 +260,15 @@ return new class extends Migration
 
         Schema::drop( 'nexopos_customers' );
         Schema::drop( 'nexopos_customers_metas' );
+
+        /**
+         * We noticed taxes were saved as a negative value on order products
+         * this will fix those value by storing absolute values.
+         */
+        OrderProduct::get( 'tax_value' )->each( function( $orderProduct ) {
+            $orderProduct->tax_value    =   abs( $orderProduct->tax_value );
+            $orderProduct->save();
+        });
 
         /**
          * We'll drop permissions we no longer use

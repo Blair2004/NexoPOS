@@ -34,6 +34,15 @@ class Coupon extends NsModel
         return $query->where( 'code', $code );
     }
 
+    public function customerCoupon()
+    {
+        return $this->hasMany(
+            related: CustomerCoupon::class,
+            foreignKey: 'coupon_id',
+            localKey: 'id'
+        );
+    }
+
     public function categories()
     {
         return $this->hasMany( CouponCategory::class );

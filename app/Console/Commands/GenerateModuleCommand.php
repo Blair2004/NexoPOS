@@ -71,7 +71,7 @@ class GenerateModuleCommand extends Command
         $table = [ 'Namespace', 'Name', 'Author', 'Description', 'Version' ];
         $this->table( $table, [ $this->module ] );
 
-        if ( ! $this->confirm( 'Would you confirm theses informations \n' ) ) {
+        if ( ! $this->confirm( 'Would you confirm theses informations' ) ) {
             $this->askInformations();
         }
 

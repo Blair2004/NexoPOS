@@ -50,6 +50,16 @@ class OptionSavingTest extends TestCase
             'The option wasn\'t deleted'
         );
 
+        $array = [ 'hello' => 'me' ];
+        ns()->option->set( '_custom_array', $array );
+
+        $value = ns()->option->get( '_custom_array' );
+
+        $this->assertTrue(
+            $value[ 'hello' ] === $array[ 'hello' ],
+            'The option with array wasn\'t saved'
+        );
+
         /**
          * Step: 2 Saving simple array
          */

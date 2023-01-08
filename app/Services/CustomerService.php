@@ -428,6 +428,8 @@ class CustomerService
      */
     public function computeReward( Order $order )
     {
+        $order->load( 'customer.group.reward' );
+
         $reward = $order->customer->group->reward;
 
         if ( $reward instanceof RewardSystem ) {
@@ -516,6 +518,9 @@ class CustomerService
             ->with( 'products.product' )
             ->with( 'categories.category' )
             ->with( 'customers' )
+            ->with([ 'customerCoupon' => function( $query ) use ( $customer_id ) {
+                $query->where( 'customer_id', $customer_id );
+            }])
             ->with( 'groups' )
             ->first();
 

@@ -11,7 +11,7 @@ use App\Classes\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class {{ ucwords( $Str::camel( $migration ) ) }} extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -20,9 +20,13 @@ class {{ ucwords( $Str::camel( $migration ) ) }} extends Migration
      */
     public function up()
     {
-        @php
-        $SchemaService->renderSchema( compact( 'table', 'schema' ) )
-        @endphp
+        @if ( isset( $table, $schema ) )
+            @php
+            $SchemaService->renderSchema( compact( 'table', 'schema' ) )
+            @endphp
+        @else
+        // ...
+        @endif
     }
 
     /**
@@ -32,8 +36,12 @@ class {{ ucwords( $Str::camel( $migration ) ) }} extends Migration
      */
     public function down()
     {
-        @php
-        $SchemaService->renderDrop( compact( 'table', 'schema' ) )
-        @endphp
+        @if ( isset( $table, $schema ) )
+            @php
+            $SchemaService->renderDrop( compact( 'table', 'schema' ) )
+            @endphp
+        @else
+        // ...
+        @endif
     }
-}
+};

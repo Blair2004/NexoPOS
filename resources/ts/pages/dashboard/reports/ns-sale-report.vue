@@ -2,10 +2,10 @@
     <div id="report-section" class="px-4">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :field="startDateField"></ns-date-time-picker>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :field="endDateField"></ns-date-time-picker>
             </div>
             <div class="px-2">
                 <button @click="loadReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
@@ -68,6 +68,10 @@
                                             <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Sales Taxes' ) }}</td>
                                             <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.sales_taxes ) }}</td>
                                         </tr>
+                                        <tr class="" v-if="summary.product_taxes > 0">
+                                            <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Product Taxes' ) }}</td>
+                                            <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.product_taxes ) }}</td>
+                                        </tr>
                                         <tr class="">
                                             <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white">{{ __( 'Shipping' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.shipping ) }}</td>
@@ -129,6 +133,8 @@
                                 <th width="150" class="border p-2">{{ __( 'Discounts' ) }}</th>
                                 <th width="150" class="border p-2">{{ __( 'Taxes' ) }}</th>
                                 <th width="150" class="border p-2">{{ __( 'Total' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Purchase Price' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Profit' ) }}</th>
                             </tr>
                         </thead>
                         <tbody class="text-primary">
@@ -141,6 +147,15 @@
                                         <td class="p-2 border text-right">{{ nsCurrency( product.discount ) }}</td>
                                         <td class="p-2 border text-right">{{ nsCurrency( product.tax_value ) }}</td>
                                         <td class="p-2 border text-right">{{ nsCurrency( product.total_price ) }}</td>
+                                        <td class="p-2 border text-right">{{ nsCurrency( product.total_purchase_price ) }}</td>
+                                        <td class="p-2 border text-right">{{ nsCurrency( 
+                                            product.total_price - 
+                                            (
+                                                product.total_purchase_price + 
+                                                product.tax_value + 
+                                                product.discount
+                                            ) 
+                                        ) }}</td>
                                     </tr>
                                 </template>
                                 <tr class="bg-info-primary">
@@ -149,6 +164,15 @@
                                     <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'discount' ) ) }}</td>
                                     <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'tax_value' ) ) }}</td>
                                     <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'total_price' ) ) }}</td>
+                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( computeTotal( category.products, 'total_purchase_price' ) ) }}</td>
+                                    <td class="p-2 border text-right border-info-secondary">{{ nsCurrency( 
+                                        computeTotal( category.products, 'total_price' ) -
+                                        (
+                                            computeTotal( category.products, 'total_purchase_price' ) +
+                                            computeTotal( category.products, 'tax_value' ) +
+                                            computeTotal( category.products, 'discount' )
+                                        )
+                                    ) }}</td>
                                 </tr>
                             </template>
                         </tbody>
@@ -159,6 +183,15 @@
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_discount' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_tax_value' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_purchase_price' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( 
+                                    computeTotal( result, 'total_price' ) -
+                                    (
+                                        computeTotal( result, 'total_purchase_price' )  +
+                                        computeTotal( result, 'total_discount' ) +
+                                        computeTotal( result, 'total_tax_value' )
+                                    )
+                                ) }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -216,8 +249,16 @@ export default {
     data() {
         return {
             saleReport: '',
-            startDate: moment(),
-            endDate: moment(),
+            startDateField: {
+                name: 'start_date',
+                type: 'datetime',
+                value: moment()
+            },
+            endDateField: {
+                name: 'end_date',
+                type: 'datetime',
+                value: moment()
+            },
             result: [],
             users: [],
             ns: window.ns,
@@ -271,9 +312,6 @@ export default {
         nsCurrency,
         printSaleReport() {
             this.$htmlToPaper( 'sale-report' );
-        },
-        setStartDate( moment ) {
-            this.startDate  =   moment.format();
         },
 
         async openSettings() {
@@ -365,8 +403,8 @@ export default {
             }
 
             nsHttpClient.post( '/api/reports/sale-report', { 
-                startDate: this.startDate,
-                endDate: this.endDate,
+                startDate: this.startDateField.value,
+                endDate: this.endDateField.value,
                 type: this.reportType.value,
                 user_id: this.filterUser.value
             }).subscribe({
@@ -387,10 +425,6 @@ export default {
             }
 
             return 0;
-        },
-
-        setEndDate( moment ) {
-            this.endDate    =   moment.format();
         },
     },
     props: [ 'store-logo', 'store-name' ],

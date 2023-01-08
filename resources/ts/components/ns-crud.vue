@@ -7,7 +7,7 @@
                 </div>
                 <div class="px-2">
                     <div class="rounded-full p-1 ns-crud-input flex">
-                        <input v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-none px-2">
+                        <input @keypress.enter="search()" v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-none px-2">
                         <button @click="search()" class="rounded-full w-8 h-8 outline-none ns-crud-input-button"><i class="las la-search"></i></button>
                         <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-secondary text-white outline-none hover:bg-error-tertiary"><i class="las la-times"></i></button>
                     </div>
