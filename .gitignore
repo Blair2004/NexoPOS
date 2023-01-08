@@ -44,6 +44,7 @@ tests/database.sqlite
 tests/database.sqlite-journal
 tests/Post/*
 storage/snapshots/*.sql
+storage/temporary-files/*
 .idea
 public/hot
 database/migrations/2019_12_14_000001_create_personal_access_tokens_table.php
