@@ -90,6 +90,11 @@ return [
             'driver' => 'local',
             'root' => storage_path( 'temporary-files/modules' )
         ],
+
+        'ns-temp' => [
+            'driver' => 'local',
+            'root' => storage_path( 'temporary-files' )
+        ],
     ],
 
     /*

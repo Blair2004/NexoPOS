@@ -19,6 +19,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -197,7 +198,7 @@ class ModulesService
                  * since by default it's not enabled
                  */
                 if ( ns()->installed() ) {
-                    $modules = (array) $this->options->get( 'enabled_modules' );
+                    $modules = $this->options->get( 'enabled_modules', [] );
                     $config[ 'migrations' ] = $this->__getModuleMigration( $config );
                     $config[ 'all-migrations' ] = $this->getAllModuleMigrationFiles( $config );
                     $config[ 'enabled' ] = in_array( $config[ 'namespace' ], $modules ) ? true : false;
@@ -682,7 +683,7 @@ class ModulesService
                 /**
                  * the file send is not a valid module
                  */
-                $this->__clearTempFolder();
+                $this->clearTemporaryFiles();
 
                 return [
                     'status' => 'failed',
@@ -702,7 +703,7 @@ class ModulesService
                     /**
                      * We're dealing with old module
                      */
-                    $this->__clearTempFolder();
+                    $this->clearTemporaryFiles();
 
                     return [
                         'status' => 'danger',
@@ -769,6 +770,8 @@ class ModulesService
 
             $module     =   $this->get( $moduleNamespace );
 
+            $this->clearTemporaryFiles();
+
             return [
                 'status'    =>  'success',
                 'message'   =>  sprintf( __( 'The module was "%s" was successfully installed.' ), $module[ 'name' ] )
@@ -777,7 +780,7 @@ class ModulesService
             /**
              * the file send is not a valid module
              */
-            $this->__clearTempFolder();
+            $this->clearTemporaryFiles();
 
             return [
                 'status' => 'danger',
@@ -886,7 +889,7 @@ class ModulesService
             }
         }
 
-        $this->__clearTempFolder();
+        $this->clearTemporaryFiles();
 
         return [
             'status' => 'success',
@@ -897,26 +900,9 @@ class ModulesService
     /**
      * Clears Temp Folder
      */
-    private function __clearTempFolder(): void
+    function clearTemporaryFiles(): void
     {
-        /**
-         * The user may have uploaded some unuseful folders.
-         * We should then delete everything and return an error.
-         */
-        $directories = Storage::disk( 'ns-modules-temp' )->allDirectories();
-
-        foreach ( $directories as $directory ) {
-            Storage::disk( 'ns-modules-temp' )->deleteDirectory( $directory );
-        }
-
-        /**
-         * Delete unused files as well
-         */
-        $files = Storage::disk( 'ns-modules-temp' )->allFiles();
-
-        foreach ( $files as $file ) {
-            Storage::disk( 'ns-modules-temp' )->delete( $file );
-        }
+        Artisan::call( 'ns:doctor', [ '--clear-modules-temp' => true ]);
     }
 
     /**
@@ -1220,7 +1206,7 @@ class ModulesService
                 unset( $enabledModules[ $indexToRemove ] );
             }
 
-            $this->options->set( 'enabled_modules', json_encode( $enabledModules ) );
+            $this->options->set( 'enabled_modules', $enabledModules );
 
             ModulesAfterDisabledEvent::dispatch( $module );
 

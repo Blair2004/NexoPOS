@@ -14,7 +14,8 @@ class DoctorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:doctor 
+    protected $signature = 'ns:doctor
+        {--clear-modules-temp}
         {--fix-roles} 
         {--fix-users-attributes} 
         {--fix-orders-products} 
@@ -85,7 +86,11 @@ class DoctorCommand extends Command
         }
 
         if ( $this->option( 'fix-cash-flow-orders' ) ) {
-            return $doctorService->fixCashFlowOrders( $this );
+            return $doctorService->fixCashFlowOrders();
+        }
+
+        if ( $this->option( 'clear-modules-temp' ) ) {
+            return $doctorService->clearTemporaryFiles();
         }
 
         if ( $this->option( 'fix-orders-products' ) ) {

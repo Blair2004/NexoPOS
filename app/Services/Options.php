@@ -164,17 +164,13 @@ class Options
      */
     public function encodeOptionValue( Option $option, mixed $value ): void
     {
-        switch ( $value ) {
-            case is_array( $value ) :
-                $option->array = true;
-                $option->value = json_encode( $value );
-                break;
-            case empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) :
-                $option->value = '';
-                break;
-            default:
-                $option->value = $value;
-                break;
+        if ( is_array( $value ) ) {
+            $option->array = true;
+            $option->value = json_encode( $value );
+        } else if ( empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) ) {
+            $option->value = '';
+        } else {
+            $option->value = $value;
         }
     }
 

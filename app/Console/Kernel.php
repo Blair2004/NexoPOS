@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\ClearHoldOrdersJob;
+use App\Jobs\ClearModuleTempJob;
 use App\Jobs\DetectLowStockProductsJob;
 use App\Jobs\DetectScheduledExpenseJob;
 use App\Jobs\ExecuteRecurringExpensesJob;
@@ -88,6 +89,12 @@ class Kernel extends ConsoleKernel
          * trigger relevant notifications.
          */
         $schedule->job( new TrackLaidAwayOrdersJob )->dailyAt( '13:00' );
+
+        /**
+         * We'll clear temporary files weekly. This will erase folder that 
+         * hasn't been deleted after a module installation.
+         */
+        $schedule->job( new ClearModuleTempJob )->weekly();
 
         /**
          * @var ModulesService

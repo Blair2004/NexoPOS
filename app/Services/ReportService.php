@@ -823,7 +823,7 @@ class ReportService
         $allSales = $orders->map( function( $order ) {
             $productTaxes   =   $order->products()->sum( 'tax_value' );
             return [
-                'subtotal' => $order->subtotal - $productTaxes,
+                'subtotal' => $order->subtotal,
                 'product_taxes'   =>  $productTaxes,
                 'sales_discounts' => $order->discount,
                 'sales_taxes' => $order->tax_value,

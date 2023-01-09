@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\UserAttribute;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
@@ -144,7 +145,7 @@ class DoctorService
      * clear current cash flow and recompute
      * them using the current information.
      */
-    public function fixCashFlowOrders( DoctorCommand $command )
+    public function fixCashFlowOrders()
     {
         /**
          * @var ExpenseService $expenseService
@@ -159,25 +160,25 @@ class DoctorService
          */
         $orders     =   Order::paymentStatus( Order::PAYMENT_PAID )->get();
         
-        $command->info( __( 'Restoring cash flow from paid orders...' ) );
+        $this->command->info( __( 'Restoring cash flow from paid orders...' ) );
         
-        $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
+        $this->command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
             $expenseService->handleCreatedOrder( $order );
         });
 
-        $command->newLine();
+        $this->command->newLine();
 
         /**
          * Step 2: Recompute from refund
          */
-        $command->info( __( 'Restoring cash flow from refunded orders...' ) );
+        $this->command->info( __( 'Restoring cash flow from refunded orders...' ) );
         
         $orders     =   Order::paymentStatusIn([
             Order::PAYMENT_REFUNDED,
             Order::PAYMENT_PARTIALLY_REFUNDED
         ])->get();
 
-        $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
+        $this->command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
             $order->refundedProducts()->with( 'orderProduct' )->get()->each( function( $orderRefundedProduct ) use ( $order, $expenseService ) {
                 $expenseService->createExpenseFromRefund(
                     order: $order,
@@ -187,7 +188,28 @@ class DoctorService
             });
         });
 
-        $command->newLine();
+        $this->command->newLine();
+    }
+
+    public function clearTemporaryFiles()
+    {
+        $directories    =   Storage::disk( 'ns-modules-temp' )->directories();
+        $deleted        =   collect( $directories )->filter( fn( $directory ) => Storage::disk( 'ns-modules-temp' )->deleteDirectory( $directory ) );
+
+        $this->command->info( sprintf(
+            __( '%s on %s directories were deleted.' ),
+            count( $directories ),
+            $deleted->count()
+        ) );
+
+        $files    =   Storage::disk( 'ns-modules-temp' )->files();
+        $deleted        =   collect( $files )->filter( fn( $file ) => Storage::disk( 'ns-modules-temp' )->delete( $file ) );
+
+        $this->command->info( sprintf(
+            __( '%s on %s files were deleted.' ),
+            count( $files ),
+            $deleted->count()
+        ) );
     }
 
     public function fixCustomers()

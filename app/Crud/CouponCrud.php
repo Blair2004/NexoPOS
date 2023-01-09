@@ -586,7 +586,7 @@ class CouponCrud extends CrudService
             ]
         ])->each( function( $data, $key ) use ( $inputs, $coupon ) {
             $coupon->{$key}->each( function( $element ) use ( $inputs, $data, $key ) {
-                if ( ! in_array( $element->{$data[ 'property' ]}, $inputs[ $key ] ) ) {
+                if ( isset( $inputs[ $key ] ) && ! in_array( $element->{$data[ 'property' ]}, $inputs[ $key ] ) ) {
                     $element->delete();
                 }
             });
