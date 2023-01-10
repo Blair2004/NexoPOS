@@ -201,7 +201,7 @@ class ModulesService
                     $modules = $this->options->get( 'enabled_modules', [] );
                     $config[ 'migrations' ] = $this->__getModuleMigration( $config );
                     $config[ 'all-migrations' ] = $this->getAllModuleMigrationFiles( $config );
-                    $config[ 'enabled' ] = in_array( $config[ 'namespace' ], $modules ) ? true : false;
+                    $config[ 'enabled' ] = in_array( $config[ 'namespace' ], (array) $modules ) ? true : false;
                 }
 
                 /**

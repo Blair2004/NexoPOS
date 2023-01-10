@@ -4,6 +4,7 @@ use App\Models\CustomerAccountHistory;
 use App\Models\CustomerAddress;
 use App\Models\CustomerCoupon;
 use App\Models\CustomerReward;
+use App\Models\Option;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Permission;
@@ -284,6 +285,27 @@ return new class extends Migration
             RolePermission::where( 'permission_id', $permission->id )->delete();
             $permission->delete();
         }
+
+        /**
+         * Fix options
+         */
+        $options    =   Option::get();
+
+        $options->each( function( $option ) {
+            $json = json_decode( $option->value, true );
+
+            if ( json_last_error() == JSON_ERROR_NONE ) {
+                $option->value  =   $json;
+            } else {
+                $option->value  =   match ( $option->value ) {
+                    preg_match( '/[0-9]{1,}/', $option->value ) => (int) $option->value,
+                    preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) => (float) $option->value,
+                    default => $option->value,
+                };
+            }
+
+            $option->save();
+        });
     }
 
     /**

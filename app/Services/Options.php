@@ -225,6 +225,8 @@ class Options
 
                 if ( json_last_error() == JSON_ERROR_NONE ) {
                     $option->value  =   $json;
+                } else {
+                    $option->value  =   null;
                 }
             } elseif ( ! $option->array ) {
                 $option->value  =   match ( $option->value ) {
