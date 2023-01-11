@@ -1,5 +1,5 @@
 import * as Lodash from "lodash";
-import * as Axios from "axios";
+import axios from "axios";
 import * as ChartJS from "chart.js";
 import VueRouter from "vue-router";
 import { EventEmitter, HttpClient, SnackBar, State } from "./libraries/libraries";
@@ -46,7 +46,7 @@ window.ChartJS          =   ChartJS;
 window.Pusher           =   Pusher;
 window.Vue              =   Vue;
 window.moment           =   <any>moment;
-window.Axios            =   Axios;
+window.Axios            =   axios;
 window.__               =   __;
 window.__m              =   __m;
 window.VueRouter        =   <any>VueRouter;
@@ -54,6 +54,7 @@ window.SnackBar         =   <any>SnackBar;
 window.nsHooks          =   createHooks();
 window.popupResolver    =   popupResolver,
 window.popupCloser      =   popupCloser,
+
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
 
@@ -121,7 +122,7 @@ const nsState           =   new State({
     sidebar: [ 'xs', 'sm', 'md' ].includes( nsScreen.breakpoint ) ? 'hidden' : 'visible'
 });
 
-nsHttpClient.defineClient( Axios );
+nsHttpClient.defineClient( axios );
 
 ( window as any ).nsEvent            =   nsEvent;
 ( window as any ).nsHttpClient       =   nsHttpClient;
