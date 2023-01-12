@@ -141,7 +141,7 @@ class TestService
         $taxGroup = TaxGroup::get()->random();
         $margin = 25;
 
-        return array_merge([
+        $config     =   [
             'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
             'general' => [
                 'provider_id' => Provider::get()->random()->id,
@@ -201,6 +201,12 @@ class TestService
                         'unit_id' => $data->unit->id,
                     ];
                 }),
-        ], $details );
+        ];
+
+        foreach( $details as $key => $value ) {
+            Arr::set( $config, $key, $value );
+        }
+
+        return $config;
     }
 }
