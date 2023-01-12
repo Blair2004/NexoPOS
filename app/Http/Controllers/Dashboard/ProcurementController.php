@@ -142,8 +142,6 @@ class ProcurementController extends DashboardController
         $procurement->payment_status = $request->input( 'payment_status' );
         $procurement->save();
 
-        event( new ProcurementAfterUpdateEvent( $procurement ) );
-
         return [
             'status' => 'success',
             'message' => __( 'The procurement payment status has been changed successfully.' ),
@@ -165,8 +163,6 @@ class ProcurementController extends DashboardController
 
         $procurement->payment_status = Procurement::PAYMENT_PAID;
         $procurement->save();
-
-        event( new ProcurementAfterUpdateEvent( $procurement ) );
 
         return [
             'status' => 'success',

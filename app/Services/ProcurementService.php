@@ -226,7 +226,7 @@ class ProcurementService
         }
 
         /**
-         * we want to dispatch the even
+         * we want to dispatch the event
          * only when the product has been created
          */
         event( new ProcurementAfterUpdateEvent( $procurement ) );

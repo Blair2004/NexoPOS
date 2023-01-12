@@ -1,7 +1,7 @@
 import * as Lodash from "lodash";
-import * as Axios from "axios";
 import Echo from "laravel-echo";
 import Pusher from 'pusher-js';
+import axios from "axios";
 import * as ChartJS from "chart.js";
 import { fromEvent } from "rxjs";
 import * as RxJS from 'rxjs';
@@ -49,7 +49,7 @@ window.ChartJS          =   ChartJS;
 window.Pusher           =   Pusher;
 window.createApp        =   createApp;
 window.moment           =   <any>moment;
-window.Axios            =   Axios;
+window.Axios            =   axios;
 window.__               =   __;
 window.__m              =   __m;
 window.SnackBar         =   <any>SnackBar;
@@ -59,6 +59,7 @@ window.popupResolver    =   popupResolver,
 window.popupCloser      =   popupCloser,
 window.countdown        =   countdown;
 window.timespan         =   timespan;
+
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
 
@@ -127,7 +128,7 @@ const nsState           =   new State({
     sidebar: [ 'xs', 'sm', 'md' ].includes( nsScreen.breakpoint ) ? 'hidden' : 'visible'
 });
 
-nsHttpClient.defineClient( Axios );
+nsHttpClient.defineClient( axios );
 
 ( window as any ).nsEvent            =   nsEvent;
 ( window as any ).nsHttpClient       =   nsHttpClient;
