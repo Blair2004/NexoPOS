@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'version' => '4.8.13',
+    'version' => '4.8.14',
     'languages' => [
         'en' => 'English',
         'fr' => 'Français',
@@ -11,6 +11,7 @@ return [
         'pt' => 'Portuguese',
         'tr' => 'Türkçe',
         'vi' => 'Vietnamese',
+        'de' => 'German',
     ],
     'rtl-languages' => [ 'ar' ],
     'timezones' => [

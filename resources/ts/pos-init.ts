@@ -1731,6 +1731,9 @@ export class POS {
                 product.discount    =   ((product.unit_price * product.discount_percentage) / 100) * product.quantity;
                 discount_without_tax      =   ((price_without_tax * product.discount_percentage) / 100) * product.quantity;
                 discount_with_tax        =   ((price_with_tax * product.discount_percentage) / 100) * product.quantity;
+            } else {
+                discount_without_tax      =   product.discount;
+                discount_with_tax        =   product.discount;
             }
         }
 
