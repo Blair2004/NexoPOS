@@ -137,8 +137,8 @@ class Product extends NsModel
     /**
      * get a product using a barcode
      *
-     * @param QueryBuilder
-     * @param string barcode
+     * @param QueryBuilder $query 
+     * @param string $sku
      * @return QueryBuilder
      */
     public function scopeSku( $query, $sku )

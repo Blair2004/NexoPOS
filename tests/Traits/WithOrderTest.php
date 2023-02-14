@@ -22,6 +22,7 @@ use App\Models\Register;
 use App\Models\RegisterHistory;
 use App\Models\RewardSystem;
 use App\Models\TaxGroup;
+use App\Models\Unit;
 use App\Models\User;
 use App\Services\CashRegistersService;
 use App\Services\CurrencyService;
@@ -313,6 +314,7 @@ trait WithOrderTest
                     product_id: $value->product_id,
                     unit_id: $value->unit_id
                 ),
+                'product_id'    =>  $value->product_id,
                 'unit' => $unit,
                 'unitGroup' => $group,
                 'baseUnit' => $baseUnit,
@@ -332,7 +334,7 @@ trait WithOrderTest
         );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+            ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
 
         /**
          * Step 0: Ensure no error occured
@@ -343,11 +345,12 @@ trait WithOrderTest
          * Let's convert the response for a
          * better computation.
          */
-        $response = json_decode( $response->getContent(), true );
+        $response = $response->json();
 
         $orderProductQuantity = $response[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ];
 
-        $query = ProductHistory::where( 'order_id', $response[ 'data' ][ 'order' ][ 'id' ] );
+        $query = ProductHistory::where( 'order_id', $response[ 'data' ][ 'order' ][ 'id' ] )
+            ->whereIn( 'product_id', collect( $quantities )->map( fn( $quantity ) => $quantity[ 'product_id' ] )->toArray() );
 
         /**
          * Step 1: assert match on the items included with the history
@@ -355,16 +358,26 @@ trait WithOrderTest
         $this->assertTrue( $query->count() === $product->sub_items->count(), 'Mismatch between the sold product and the included products.' );
 
         /**
-         * Step 2: assert valid deduction of quantities
+         * Step 2: We'll check if an history is created for the parent products
+         */
+        collect( $response[ 'data' ][ 'order' ][ 'products' ] )->each( function( $orderProduct ) use ( $response ) {
+            $this->assertTrue( 
+                ProductHistory::where( 'order_id', $response[ 'data' ][ 'order' ][ 'id' ] )->where( 'product_id', $orderProduct[ 'id' ] )->first() instanceof ProductHistory, 
+                sprintf( 'There is no product history for the parent product %s', $orderProduct[ 'name' ] ) 
+            );
+        });
+
+        /**
+         * Step 3: assert valid deduction of quantities
          */
         foreach ( $query->get() as $productHistory ) {
             $savedQuantity = $quantities[ $productHistory->product_id . '-' . $productHistory->unit_id ];
+            $orderProduct   =   OrderProduct::findOrFail( $productHistory->order_product_id );
 
             $finalQuantity = $productService->computeSubItemQuantity(
-                baseUnit: $savedQuantity[ 'baseUnit' ],
-                currentUnit: $savedQuantity[ 'unit' ],
-                orderProductQuantity: $orderProductQuantity,
-                subItemQuantity: $savedQuantity[ 'quantity' ]
+                subItemQuantity: $savedQuantity[ 'quantity' ],
+                parentQuantity: $orderProductQuantity,
+                parentUnit: Unit::find( $orderProduct->unit_id )
             );
 
             $actualQuantity = $productService->getQuantity(
@@ -375,7 +388,8 @@ trait WithOrderTest
             if ( ! (float) ( $savedQuantity[ 'currentQuantity' ] - ( $finalQuantity ) ) === (float) $actualQuantity ) {
                 throw new Exception( 'Something went wrong' );
             }
-            // $this->assertTrue( ( float ) ( $savedQuantity[ 'currentQuantity' ] - ( $finalQuantity ) ) === ( float ) $actualQuantity, 'Quantity sold and recorded not matching' );
+
+            $this->assertTrue( ( float ) ( $savedQuantity[ 'currentQuantity' ] - ( $finalQuantity ) ) === ( float ) $actualQuantity, 'Quantity sold and recorded not matching' );
         }
 
         return $response;
@@ -401,7 +415,7 @@ trait WithOrderTest
         $lastOrder = Order::orderBy( 'id', 'desc' )->first();
 
         $inventory = $lastOrder->products->map( function( $orderProduct ) use ( $productService, $unitService ) {
-            return $orderProduct->product->sub_items->mapWithKeys( function( $subItem ) use ( $productService, $unitService ) {
+            return $orderProduct->product->sub_items->mapWithKeys( function( $subItem ) use ( $orderProduct, $productService, $unitService ) {
                 $unit = $unitService->get( $subItem->unit_id );
                 $unitGroup = $unitService->getGroups( $unit->group_id );
                 $baseUnit = $unitService->getBaseUnit( $unitGroup );
@@ -413,6 +427,7 @@ trait WithOrderTest
                             unit_id: $subItem->unit_id
                         ),
                         'unit' => $unit,
+                        'parentUnit'    =>  $unitService->get( $orderProduct->unit_id ),
                         'baseUnit' => $baseUnit,
                         'unitGroup' => $unitGroup,
                         'quantity' => $subItem->quantity,
@@ -453,9 +468,8 @@ trait WithOrderTest
                     $savedQuantity = $entry[ $subItem->product_id . '-' . $subItem->unit_id ];
 
                     $finalQuantity = $productService->computeSubItemQuantity(
-                        baseUnit: $savedQuantity[ 'baseUnit' ],
-                        currentUnit: $savedQuantity[ 'unit' ],
-                        orderProductQuantity: $orderProduct->refunded_product->quantity,
+                        parentUnit: $savedQuantity[ 'parentUnit' ],
+                        parentQuantity: $orderProduct->refunded_product->quantity,
                         subItemQuantity: $savedQuantity[ 'quantity' ]
                     );
 

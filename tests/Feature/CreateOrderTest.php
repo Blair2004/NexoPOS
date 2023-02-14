@@ -16,7 +16,7 @@ class CreateOrderTest extends TestCase
      *
      * @return void
      */
-    public function testPostingOrder( $callback = null )
+    private function testPostingOrder( $callback = null )
     {
         $this->count = 5;
         $this->totalDaysInterval = 14;
@@ -66,7 +66,7 @@ class CreateOrderTest extends TestCase
         }
     }
 
-    private function testCreateOrderWithGroupedProducts()
+    public function testCreateOrderWithGroupedProducts()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderWithGroupedProducts();

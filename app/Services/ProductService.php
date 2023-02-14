@@ -1138,7 +1138,7 @@ class ProductService
                     orderProductQuantity: $quantity,
                     product: $product,
                     orderProduct: isset( $orderProduct ) ? $orderProduct : null,
-                    unit: $unit
+                    parentUnit: $unit
                 );
             } else {
                 return $this->handleStockAdjustmentRegularProducts(
@@ -1166,20 +1166,22 @@ class ProductService
      * @param Unit $unit
      * @return EloquentCollection
      */
-    private function handleStockAdjustmentsForGroupedProducts( $action, $orderProductQuantity, Product $product, Unit $unit, OrderProduct $orderProduct = null  ): EloquentCollection
+    private function handleStockAdjustmentsForGroupedProducts( 
+        $action, 
+        $orderProductQuantity, 
+        Product $product, 
+        Unit $parentUnit, 
+        OrderProduct $orderProduct = null  ): EloquentCollection
     {
         $product->load( 'sub_items' );
 
-        return $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $unit, $orderProduct ) {
-            $unitGroup = $this->unitService->getGroups( $unit->group_id );
-            $baseUnit = $this->unitService->getBaseUnit( $unitGroup );
+        $products   =   $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $parentUnit, $orderProduct ) {            
             $finalQuantity = $this->computeSubItemQuantity(
-                baseUnit: $baseUnit,
-                currentUnit: $unit,
-                orderProductQuantity: $orderProductQuantity,
-                subItemQuantity: $subItem->quantity
+                subItemQuantity: $subItem->quantity,
+                parentUnit: $parentUnit,
+                parentQuantity: $orderProductQuantity
             );
-
+            
             /**
              * Let's retrieve the old item quantity.
              */
@@ -1227,11 +1229,31 @@ class ProductService
                 unit_price: $subItem->sale_price,
                 quantity: $finalQuantity,
                 order_id: $orderProduct->order_id,
+                order_product_id: $orderProduct->id,
                 total_price: $finalQuantity * $subItem->sale_price,
                 old_quantity: $result[ 'data' ][ 'oldQuantity' ],
                 new_quantity: $result[ 'data' ][ 'newQuantity' ]
             );
         });
+
+        /**
+         * This should record the transaction for
+         * the grouped product
+         */
+        $this->recordStockHistory(
+            product_id: $orderProduct->id,
+            action: $action,
+            unit_id: $orderProduct->unit_id,
+            unit_price: $orderProduct->unit_price,
+            quantity: $orderProductQuantity,
+            order_id: $orderProduct->order_id,
+            order_product_id: $orderProduct->id,
+            total_price: $orderProductQuantity * $orderProduct->unit_price,
+            old_quantity: 0,
+            new_quantity: 0
+        );
+
+        return $products;
     }
 
     /**
@@ -1327,6 +1349,7 @@ class ProductService
             quantity: $quantity,
             total_price: $total_price,
             order_id: isset( $orderProduct ) ? $orderProduct->order_id : null,
+            order_product_id: isset( $orderProduct ) ? $orderProduct->id : null,
             old_quantity: $result[ 'data' ][ 'oldQuantity' ],
             new_quantity: $result[ 'data' ][ 'newQuantity' ]
         );
@@ -1344,7 +1367,17 @@ class ProductService
      * @param float $old_quantity
      * @param float $new_quantity
      */
-    public function recordStockHistory( $product_id, $action, $unit_id, $unit_price, $quantity, $total_price, $order_id = null, $old_quantity = 0, $new_quantity = 0 )
+    public function recordStockHistory( 
+        $product_id, 
+        $action, 
+        $unit_id, 
+        $unit_price, 
+        $quantity, 
+        $total_price, 
+        $order_id = null, 
+        $order_product_id = null,
+        $old_quantity = 0, 
+        $new_quantity = 0 )
     {
         $history = new ProductHistory;
         $history->product_id = $product_id;
@@ -1352,6 +1385,7 @@ class ProductService
         $history->procurement_product_id = $procurement_product_id ?? null;
         $history->unit_id = $unit_id;
         $history->order_id = $order_id ?? null;
+        $history->order_product_id = $order_product_id ?? null;
         $history->operation_type = $action;
         $history->unit_price = $unit_price;
         $history->total_price = $total_price;
@@ -1367,11 +1401,25 @@ class ProductService
         return $history;
     }
 
-    public function computeSubItemQuantity( Unit $baseUnit, Unit $currentUnit, $orderProductQuantity, $subItemQuantity )
+    /**
+     * Return a base unit from a unit.
+     */
+    public function getBaseUnit( Unit $unit )
     {
-        return (
-            ( (bool) $currentUnit->base_unit ? $currentUnit->value : $currentUnit->value * $baseUnit->value ) * (float) $orderProductQuantity
-        ) * (float) $subItemQuantity;
+        if ( $unit->base_unit ) {
+            return $unit;
+        }
+
+        $unit->load( 'group.units' );
+        return $unit->group->units->filter( fn( $unit ) => $unit->base_unit )->first();
+    }
+
+    public function computeSubItemQuantity( 
+        float $subItemQuantity,
+        Unit $parentUnit,
+        float $parentQuantity )
+    {
+        return ( ( $subItemQuantity * $parentUnit->value ) * $parentQuantity );
     }
 
     /**

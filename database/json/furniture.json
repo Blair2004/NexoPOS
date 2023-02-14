@@ -34,6 +34,22 @@
             "name": "Porch & Den Westphalian Seagrass Wicker Storage Filing Cabinet",
             "price": 60.45,
             "image": "/images/products/File-Cabinet---Rolling-Seagrass-Filing-&-Storage-Cabinet.jpg"
+        }, {
+            "name": "Group Porch + The Gray Barn",
+            "price": 280,
+            "image": "/images/products/File-Cabinet---Rolling-Seagrass-Filing-&-Storage-Cabinet.jpg",
+            "groups": [
+                "Porch & Den Westphalian Seagrass Wicker Storage Filing Cabinet",
+                "The Gray Barn Lowbridge Antique White L-shaped Storage Desk"
+            ]
+        }, {
+            "name": "Group Simple Living + Zuna Mid-Back Office Chair",
+            "price": 225.55,
+            "image": "/images/products/File-Cabinet---Rolling-Seagrass-Filing-&-Storage-Cabinet.jpg",
+            "groups": [
+                "Modern Home Zuna Mid-back Office Chair",
+                "Simple Living Jamie Storage Cabinet"
+            ]
         }
     ]
 }
