@@ -52,6 +52,32 @@ class UpdateService
         $this->executeMigration( $file, 'up' );
     }
 
+    /**
+     * Will mark migration file as
+     * executed while it might have not been executed
+     */
+    public function assumeExecuted( string $file )
+    {
+        $file = $this->getMatchingFullPath( $file );
+        $pathinfo = pathinfo( $file );
+        $type = collect( explode( '/', $pathinfo[ 'dirname' ]) )->last();
+
+        $class = require base_path( $file );
+
+        if ( $class instanceof MigrationsMigration ) {
+
+            $migration = new Migration;
+            $migration->migration = $pathinfo[ 'filename' ];
+            $migration->type = $type;
+            $migration->batch = 0;
+            $migration->save();
+
+            return $migration;
+        }
+
+        throw new Exception( 'Unsupported class provided for the migration.' );
+    }
+
     public function getMatchingFullPath( $file )
     {
         $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )
