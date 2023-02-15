@@ -18,7 +18,7 @@
     "asset-build": "npm run font-build && npm run css-build"
   },
   "devDependencies": {
-    "@types/node": "^18.11.8",
+    "@types/node": "^18.13.0",
     "autoprefixer": "^10.4.13",
     "axios": "^1.2.2",
     "babel-loader": "^9.1.0",
