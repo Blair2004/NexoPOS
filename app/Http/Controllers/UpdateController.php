@@ -37,11 +37,7 @@ class UpdateController extends Controller
          * Proceeding code migration.
          */
         if ( $request->input( 'file' ) ) {
-            $file = ns()->update->getMatchingFullPath(
-                $request->input( 'file' )
-            );
-
-            $this->updateService->executeMigration( $file, 'up' );
+            $this->updateService->executeMigrationFromFileName( file: $request->input( 'file' ) );
         }
 
         /**

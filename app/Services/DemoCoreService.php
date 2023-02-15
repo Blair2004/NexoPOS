@@ -79,6 +79,34 @@ class DemoCoreService
             $unit->value = 1;
             $unit->save();
         }
+
+        $unit = Unit::identifier( 'small-box' )->first();
+
+        if ( ! $unit instanceof Unit ) {
+            $unit = new Unit;
+            $unit->name = __( 'Small Box' );
+            $unit->identifier = 'small-box';
+            $unit->description = '';
+            $unit->author = Auth::id();
+            $unit->group_id = $group->id;
+            $unit->base_unit = true;
+            $unit->value = 6;
+            $unit->save();
+        }
+
+        $unit = Unit::identifier( 'box' )->first();
+
+        if ( ! $unit instanceof Unit ) {
+            $unit = new Unit;
+            $unit->name = __( 'Box' );
+            $unit->identifier = 'box';
+            $unit->description = '';
+            $unit->author = Auth::id();
+            $unit->group_id = $group->id;
+            $unit->base_unit = true;
+            $unit->value = 12;
+            $unit->save();
+        }
     }
 
     public function createAccountingAccounts()

@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Classes\Hook;
+use App\Models\Product;
+use App\Models\ProductUnitQuantity;
 use App\Models\UnitGroup;
 use Faker\Factory;
 use Illuminate\Support\Arr;
@@ -128,8 +130,7 @@ class DemoService extends DemoCoreService
             foreach ( $category->products as $product ) {
                 $random = Str::random(8);
                 $unitGroup = UnitGroup::with( 'units' )->where( 'name', __( 'Countable' ) )->first();
-
-                $result = $this->productService->create([
+                $newProduct = [
                     'product_type' => 'product',
                     'name' => $product->name,
                     'sku' => $random,
@@ -152,15 +153,46 @@ class DemoService extends DemoCoreService
                         'selling_group' => $unitGroup
                             ->units->map( function( $unit ) use ( $product ) {
                                 return [
-                                    'sale_price_edit' => $product->price,
-                                    'wholesale_price_edit' => ns()->currency->getPercentageValue( $product->price, 10, 'substract' ),
+                                    'sale_price_edit' => $product->price * $unit->value,
+                                    'wholesale_price_edit' => ns()->currency->getPercentageValue( $product->price, 10, 'substract' ) * $unit->value,
                                     'unit_id' => $unit->id,
                                     'preview_url' => asset( $product->image ),
                                 ];
                             }),
                         'unit_group' => $unitGroup->id,
                     ],
-                ]);
+                ];
+
+                /**
+                 * if groups is provided
+                 */
+                if ( isset( $product->groups ) ) {
+                    $subProducts   =   collect( $product->groups )->map( function( $productName ) {
+                        $subProduct    =   Product::where( 'name', $productName )
+                            ->with( 'unit_quantities' )
+                            ->first();
+
+                        /**
+                         * @var ProductUnitQuantity $unitQuantity
+                         */
+                        $unitQuantity   =   $subProduct->unit_quantities->random();
+
+                        return [
+                            'product_id'        =>  $subProduct->id,
+                            'unit_id'           =>  $unitQuantity->unit_id,
+                            'unit_quantity_id'  =>  $unitQuantity->id,
+                            'quantity'          =>  $this->faker->numberBetween(1,5),
+                            'sale_price'        =>  $unitQuantity->sale_price,
+                        ];
+                    });
+
+                    $newProduct[ 'type' ]      =   'grouped';
+                    $newProduct[ 'groups' ]    =   [
+                        'product_subitems'  =>  $subProducts
+                    ];
+                }
+
+                $result = $this->productService->create( $newProduct );
             }
         }
     }
