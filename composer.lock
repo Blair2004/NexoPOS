@@ -2371,28 +2371,29 @@
         },
         {
             "name": "laravel/telescope",
-            "version": "v4.10.2",
+            "version": "v4.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/telescope.git",
-                "reference": "3b1220b71ee08ac7be6be074635df50c2b83ab51"
+                "reference": "f8afaccfb5b636aa20735e0a390ab312a6f57c65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/telescope/zipball/3b1220b71ee08ac7be6be074635df50c2b83ab51",
-                "reference": "3b1220b71ee08ac7be6be074635df50c2b83ab51",
+                "url": "https://api.github.com/repos/laravel/telescope/zipball/f8afaccfb5b636aa20735e0a390ab312a6f57c65",
+                "reference": "f8afaccfb5b636aa20735e0a390ab312a6f57c65",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "laravel/framework": "^8.37|^9.0",
-                "php": "^7.3|^8.0",
+                "laravel/framework": "^8.37|^9.0|^10.0",
+                "php": "^8.0",
                 "symfony/var-dumper": "^5.0|^6.0"
             },
             "require-dev": {
                 "ext-gd": "*",
                 "guzzlehttp/guzzle": "^6.0|^7.0",
-                "orchestra/testbench": "^6.0|^7.0"
+                "orchestra/testbench": "^6.0|^7.0|^8.0",
+                "phpunit/phpunit": "^9.0"
             },
             "type": "library",
             "extra": {
@@ -2433,9 +2434,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/telescope/issues",
-                "source": "https://github.com/laravel/telescope/tree/v4.10.2"
+                "source": "https://github.com/laravel/telescope/tree/v4.13.1"
             },
-            "time": "2022-12-19T11:20:10+00:00"
+            "time": "2023-02-06T14:37:41+00:00"
         },
         {
             "name": "laravel/tinker",
