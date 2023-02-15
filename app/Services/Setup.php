@@ -123,16 +123,6 @@ class Setup
         /**
          * Let's create the tables. The DB is supposed to be set
          */
-        Artisan::call( 'migrate', [
-            '--force' => true,
-            '--path' => '/database/migrations/core',
-        ]);
-
-        Artisan::call( 'migrate', [
-            '--force' => true,
-            '--path' => '/database/migrations/create',
-        ]);
-
         Artisan::call( 'vendor:publish', [
             '--force' => true,
             '--provider' => 'Laravel\Sanctum\SanctumServiceProvider',
@@ -148,15 +138,11 @@ class Setup
          * to be integrated on "create" files.
          */
         ns()->update
-            ->getMigrations()
+            ->getMigrations(
+                directories: [ 'core', 'create' ]
+            )
             ->each( function( $file ) {
-                $migration = Migration::where( 'migration', $file )->first();
-                if ( ! $migration instanceof Migration ) {
-                    $migration = new Migration;
-                    $migration->migration = $file;
-                    $migration->batch = 0;
-                    $migration->save();
-                }
+                ns()->update->executeMigrationFromFileName( $file );
             });
 
         $userID = rand(1, 99);
