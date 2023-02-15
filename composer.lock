@@ -7040,16 +7040,16 @@
         },
         {
             "name": "symfony/mailgun-mailer",
-            "version": "v6.2.0",
+            "version": "v6.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mailgun-mailer.git",
-                "reference": "c5364fbcf5581ba9eae569db12b380b9255ce238"
+                "reference": "d1eb7283e30752f2802ced37bffdee2c67cad42a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mailgun-mailer/zipball/c5364fbcf5581ba9eae569db12b380b9255ce238",
-                "reference": "c5364fbcf5581ba9eae569db12b380b9255ce238",
+                "url": "https://api.github.com/repos/symfony/mailgun-mailer/zipball/d1eb7283e30752f2802ced37bffdee2c67cad42a",
+                "reference": "d1eb7283e30752f2802ced37bffdee2c67cad42a",
                 "shasum": ""
             },
             "require": {
@@ -7085,7 +7085,7 @@
             "description": "Symfony Mailgun Mailer Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/mailgun-mailer/tree/v6.2.0"
+                "source": "https://github.com/symfony/mailgun-mailer/tree/v6.2.5"
             },
             "funding": [
                 {
@@ -7101,7 +7101,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-09T08:55:40+00:00"
+            "time": "2023-01-01T08:38:09+00:00"
         },
         {
             "name": "symfony/mime",
