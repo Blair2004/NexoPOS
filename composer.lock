@@ -2048,16 +2048,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v9.51.0",
+            "version": "v9.52.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "b81123134349a013a738a9f7f715c6ce99d5a414"
+                "reference": "eb85cd9d72e5bfa54b4d0d9040786f26d6184a9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/b81123134349a013a738a9f7f715c6ce99d5a414",
-                "reference": "b81123134349a013a738a9f7f715c6ce99d5a414",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/eb85cd9d72e5bfa54b4d0d9040786f26d6184a9e",
+                "reference": "eb85cd9d72e5bfa54b4d0d9040786f26d6184a9e",
                 "shasum": ""
             },
             "require": {
@@ -2242,7 +2242,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-02-07T15:37:18+00:00"
+            "time": "2023-02-14T14:51:14+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -5887,20 +5887,20 @@
         },
         {
             "name": "spatie/laravel-db-snapshots",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-db-snapshots.git",
-                "reference": "ef3318295e544bca263bd4b4c9c02ba06be31f33"
+                "reference": "c50d9595c0efe5a9a1cfdc3b6fb540f0a00a582c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-db-snapshots/zipball/ef3318295e544bca263bd4b4c9c02ba06be31f33",
-                "reference": "ef3318295e544bca263bd4b4c9c02ba06be31f33",
+                "url": "https://api.github.com/repos/spatie/laravel-db-snapshots/zipball/c50d9595c0efe5a9a1cfdc3b6fb540f0a00a582c",
+                "reference": "c50d9595c0efe5a9a1cfdc3b6fb540f0a00a582c",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "^7.0|^8.0|^9.0",
+                "illuminate/support": "^7.0|^8.0|^9.0|^10.0",
                 "league/flysystem": "^1.0.41|^2.0|^3.0",
                 "php": "^8.0",
                 "spatie/db-dumper": "^3.3",
@@ -5909,7 +5909,8 @@
             },
             "require-dev": {
                 "mockery/mockery": "^1.4",
-                "orchestra/testbench": "^5.0|^6.0|^7.0",
+                "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0",
+                "pestphp/pest-plugin-laravel": "^1.3",
                 "phpunit/phpunit": "^9.5"
             },
             "type": "library",
@@ -5944,8 +5945,7 @@
                 "spatie"
             ],
             "support": {
-                "issues": "https://github.com/spatie/laravel-db-snapshots/issues",
-                "source": "https://github.com/spatie/laravel-db-snapshots/tree/2.5.0"
+                "source": "https://github.com/spatie/laravel-db-snapshots/tree/2.5.1"
             },
             "funding": [
                 {
@@ -5957,31 +5957,32 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-10-19T13:03:33+00:00"
+            "time": "2023-01-24T23:18:51+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
-            "version": "1.13.6",
+            "version": "1.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-package-tools.git",
-                "reference": "c377cc7223655c2278c148c1685b8b5a78af5c65"
+                "reference": "b477dd2f89d0751f0e51ffb3a70181f0bc7ab8df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/c377cc7223655c2278c148c1685b8b5a78af5c65",
-                "reference": "c377cc7223655c2278c148c1685b8b5a78af5c65",
+                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/b477dd2f89d0751f0e51ffb3a70181f0bc7ab8df",
+                "reference": "b477dd2f89d0751f0e51ffb3a70181f0bc7ab8df",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^9.28",
+                "illuminate/contracts": "^9.28|^10.0",
                 "php": "^8.0"
             },
             "require-dev": {
                 "mockery/mockery": "^1.5",
-                "orchestra/testbench": "^7.7",
+                "orchestra/testbench": "^7.7|^8.0",
+                "pestphp/pest": "^1.22",
                 "phpunit/phpunit": "^9.5.24",
-                "spatie/test-time": "^1.3"
+                "spatie/pest-plugin-test-time": "^1.1"
             },
             "type": "library",
             "autoload": {
@@ -6008,7 +6009,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-package-tools/issues",
-                "source": "https://github.com/spatie/laravel-package-tools/tree/1.13.6"
+                "source": "https://github.com/spatie/laravel-package-tools/tree/1.14.1"
             },
             "funding": [
                 {
@@ -6016,7 +6017,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-10-11T06:37:42+00:00"
+            "time": "2023-01-27T15:33:45+00:00"
         },
         {
             "name": "spatie/temporary-directory",
