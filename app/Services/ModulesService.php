@@ -9,6 +9,7 @@ use App\Models\ModuleMigration;
 use Error as GlobalError;
 use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -1208,6 +1209,8 @@ class ModulesService
              * for the module that is about to be enabled
              */
             $this->createSymLink( $namespace );
+
+            Artisan::call( 'cache:clear' );
 
             return [
                 'status' => 'success',
