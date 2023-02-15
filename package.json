@@ -36,7 +36,7 @@
     "postcss-import": "^15.1.0",
     "postcss-mixins": "^9.0.4",
     "postcss-nested": "^6.0.0",
-    "postcss-nesting": "^10.2.0",
+    "postcss-nesting": "^11.2.0",
     "postcss-scss": "^4.0.6",
     "postcss-simple-vars": "^7.0.0",
     "postcss-url": "^10.1.3",
