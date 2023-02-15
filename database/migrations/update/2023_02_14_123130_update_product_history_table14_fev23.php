@@ -20,7 +20,15 @@ return new class extends Migration
             }
         });
 
-        ModelsMigration::truncate();
+        if ( ns()->option->get( 'reset_migration_2023_02_14', false ) === false ) {
+            ModelsMigration::truncate();
+
+            /**
+             * let's avoid a loop hole.
+             * This will make sure that runs only once.
+             */
+            ns()->option->set( 'reset_migration_2023_02_14', true );
+        }
     }
 
     /**
