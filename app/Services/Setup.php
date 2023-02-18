@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 class Setup
 {
     public Options $options;
-    
+
     /**
      * Attempt database and save db informations
      *
@@ -121,7 +121,7 @@ class Setup
     {
         /**
          * We're running this simple migration call to ensure
-         * default tables are created. Those table are located at the 
+         * default tables are created. Those table are located at the
          * root of the database folder.
          */
         Artisan::call( 'migrate' );
@@ -134,10 +134,6 @@ class Setup
             '--provider' => 'Laravel\Sanctum\SanctumServiceProvider',
         ]);
 
-        Artisan::call( 'ns:translate', [
-            '--symlink' => true,
-        ]);
-
         $domain = pathinfo( url()->to( '/' ) );
         ns()->envEditor->set( 'NS_VERSION', config( 'nexopos.version' ) );
         ns()->envEditor->set( 'NS_AUTHORIZATION', Str::random(20) );
@@ -145,7 +141,7 @@ class Setup
         ns()->envEditor->set( 'NS_SOCKET_DOMAIN', $domain[ 'basename' ] );
         ns()->envEditor->set( 'NS_SOCKET_ENABLED', 'false' );
         ns()->envEditor->set( 'NS_ENV', 'production' );
-        
+
         /**
          * we'll register all "update" migration
          * as already run as these migration are supposed
@@ -161,7 +157,7 @@ class Setup
             });
 
         /**
-         * The update migrations should'nt be executed. 
+         * The update migrations should'nt be executed.
          * This should improve the speed during the installation.
          */
         ns()->update
@@ -198,7 +194,7 @@ class Setup
         ]);
 
         UserAfterActivationSuccessfulEvent::dispatch( $user );
-                
+
         $this->createDefaultPayment( $user );
 
         /**
