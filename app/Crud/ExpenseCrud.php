@@ -222,10 +222,10 @@ class ExpenseCrud extends CrudService
                                     'value' => 'x_after_month_starts',
                                 ],
                             ],
-                            'name' => 'occurrence',
+                            'name' => 'occurence',
                             'label' => __( 'Occurrence' ),
                             'description' => __( 'Define how often this expenses occurs' ),
-                            'value' => $entry->occurrence ?? '',
+                            'value' => $entry->occurence ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'occurence_value',
@@ -406,7 +406,7 @@ class ExpenseCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'occurrence' => [
+            'occurence' => [
                 'label' => __( 'Occurrence' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -432,18 +432,18 @@ class ExpenseCrud extends CrudService
         $entry->value = (string) ns()->currency->value( $entry->value );
         $entry->recurring = (bool) $entry->recurring ? __( 'Yes' ) : __( 'No' );
 
-        switch ( $entry->occurrence ) {
-            case 'month_start' : $entry->occurrence = __( 'Month Starts' );
+        switch ( $entry->occurence ) {
+            case 'month_start' : $entry->occurence = __( 'Month Starts' );
             break;
-            case 'month_mid' : $entry->occurrence = __( 'Month Middle' );
+            case 'month_mid' : $entry->occurence = __( 'Month Middle' );
             break;
-            case 'month_end' : $entry->occurrence = __( 'Month Ends' );
+            case 'month_end' : $entry->occurence = __( 'Month Ends' );
             break;
-            case 'x_after_month_starts' : $entry->occurrence = __( 'X Days Before Month Starts' );
+            case 'x_after_month_starts' : $entry->occurence = __( 'X Days Before Month Starts' );
             break;
-            case 'x_before_month_ends' : $entry->occurrence = __( 'X Days Before Month Ends' );
+            case 'x_before_month_ends' : $entry->occurence = __( 'X Days Before Month Ends' );
             break;
-            default: $entry->occurrence = __( 'Unknown Occurrence' );
+            default: $entry->occurence = __( 'Unknown Occurrence' );
             break;
         }
 

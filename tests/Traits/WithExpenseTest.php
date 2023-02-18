@@ -98,7 +98,7 @@ trait WithExpenseTest
                     'value' => 1500,
                     'recurring' => false,
                     'category_id' => $category->id,
-                    'occurrence' => 'month_starts',
+                    'occurence' => 'month_starts',
                     'group_id' => $role->id,
                 ],
             ]);

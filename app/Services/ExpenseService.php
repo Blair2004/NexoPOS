@@ -416,7 +416,7 @@ class ExpenseService
             ->active()
             ->get()
             ->map( function( $expense ) {
-                switch ( $expense->occurrence ) {
+                switch ( $expense->occurence ) {
                     case 'month_starts':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth() );
                         break;
