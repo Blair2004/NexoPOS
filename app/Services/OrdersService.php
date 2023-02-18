@@ -99,7 +99,7 @@ class OrdersService
 
         /**
          * We'll now check the attached coupon
-         * and determin wether they can be processed.
+         * and determin whether they can be processed.
          */
         $this->__checkAttachedCoupons( $fields[ 'coupons' ] ?? [] );
 
@@ -305,7 +305,7 @@ class OrdersService
     }
 
     /**
-     * Checks wether the attached coupons are valid
+     * Checks whether the attached coupons are valid
      *
      * @param array $coupons
      * @return void
@@ -616,7 +616,7 @@ class OrdersService
     }
 
     /**
-     * Check wether a discount is valid or
+     * Check whether a discount is valid or
      * not
      *
      * @param array fields
@@ -767,7 +767,7 @@ class OrdersService
         $payment = $this->__saveOrderSinglePayment( $payment, $order );
 
         /**
-         * let's refresh the order to check wether the
+         * let's refresh the order to check whether the
          * payment has made the order complete or not.
          */
         $order->refresh();
@@ -1061,7 +1061,7 @@ class OrdersService
             $orderProduct->rate = $product[ 'rate' ] ?? 0;
             $orderProduct->product_id = $product[ 'product' ]->id ?? 0;
             $orderProduct->product_category_id = $product[ 'product' ]->category_id ?? 0;
-            $orderProduct->name = $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unamed Product' );
+            $orderProduct->name = $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unnamed Product' );
             $orderProduct->quantity = $product[ 'quantity' ];
 
             /**
@@ -1418,7 +1418,7 @@ class OrdersService
         /**
          * If any other attributes needs to be
          * saved while creating the order, it should be
-         * explicitely allowed on this filter
+         * explicitly allowed on this filter
          */
         foreach ( Hook::filter( 'ns-order-attributes', [] ) as $attribute ) {
             if ( ! in_array( $attribute, [
@@ -2100,7 +2100,7 @@ class OrdersService
 
         return [
             'status' => 'success',
-            'message' => __('the order has been succesfully computed.'),
+            'message' => __('the order has been successfully computed.'),
             'data' => compact('order'),
         ];
     }

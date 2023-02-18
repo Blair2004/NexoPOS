@@ -184,7 +184,7 @@ class UserCrud extends CrudService
                             'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                             'name' => 'active',
                             'label' => __( 'Active' ),
-                            'description' => __( 'Define wether the user can use the application.' ),
+                            'description' => __( 'Define whether the user can use the application.' ),
                             'value' => ( $entry !== null && $entry->active ? 1 : 0 ) ?? 0,
                         ], [
                             'type' => 'multiselect',

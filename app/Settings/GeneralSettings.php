@@ -66,7 +66,7 @@ class GeneralSettings extends SettingsPage
                             'value' => ns()->option->get( 'ns_store_additional' ),
                             'label' => __( 'Store Additional Information' ),
                             'type' => 'textarea',
-                            'description' => __( 'Store additional informations.' ),
+                            'description' => __( 'Store additional information.' ),
                         ], [
                             'name' => 'ns_store_square_logo',
                             'value' => ns()->option->get( 'ns_store_square_logo' ),
@@ -134,7 +134,7 @@ class GeneralSettings extends SettingsPage
                         ], [
                             'name' => 'ns_currency_prefered',
                             'value' => ns()->option->get( 'ns_currency_prefered' ),
-                            'label' => __( 'Prefered Currency' ),
+                            'label' => __( 'Preferred Currency' ),
                             'type' => 'select',
                             'options' => [
                                 [

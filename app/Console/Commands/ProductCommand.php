@@ -126,7 +126,7 @@ class ProductCommand extends Command
         $this->newLine();
 
         return $this->info( sprintf(
-            __( '%s prodcuts where updated.' ),
+            __( '%s products where updated.' ),
             $queryBuilder->count()
         ) );
     }

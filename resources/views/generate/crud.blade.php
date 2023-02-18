@@ -86,8 +86,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Pick
-     * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Restrict columns you retrieve from relation.
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
@@ -137,7 +137,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Define Constructor
-     * @param 
+     * @param
      */
     public function __construct()
     {
@@ -147,7 +147,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
      * @return array
     **/
@@ -180,7 +180,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * @param object/null
      * @return array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
@@ -252,7 +252,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         return $request;
     }
 
-    
+
     /**
      * get
      * @param string
@@ -346,7 +346,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             'type'          =>      'GOTO',
             'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
         ]);
-        
+
         $entry->addAction( 'delete', [
             'label'     =>  __( 'Delete' ),
             'namespace' =>  'delete',
@@ -356,17 +356,17 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
                 'message'  =>  __( 'Would you like to delete this ?' ),
             ]
         ]);
-        
+
         return $entry;
     }
 
-    
+
     /**
      * Bulk Delete Action
      * @param  object Request with object
      * @return  false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin

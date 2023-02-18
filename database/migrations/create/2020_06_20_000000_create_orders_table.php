@@ -28,7 +28,7 @@ return new class extends Migration
                 $table->string( 'delivery_status' )->default( 'pending' ); // pending, shipped, delivered,
                 $table->float( 'discount', 18, 5 )->default(0);
                 $table->string( 'discount_type' )->nullable();
-                $table->boolean( 'support_instalments' )->default(true); // define wether an order should only be paid using instalments feature
+                $table->boolean( 'support_instalments' )->default(true); // define whether an order should only be paid using instalments feature
                 $table->float( 'discount_percentage', 18, 5 )->nullable();
                 $table->float( 'shipping', 18, 5 )->default(0); // could be set manually or computed based on shipping_rate and shipping_type
                 $table->float( 'shipping_rate', 18, 5 )->default(0);

@@ -112,7 +112,7 @@ class ModulesService
         $rawfiles = Storage::disk( 'ns-modules' )->files( $dir );
 
         /**
-         * Just retreive the files name
+         * Just retrieve the files name
          */
         $files = array_map( function( $file ) {
             $info = pathinfo( $file );
@@ -679,7 +679,7 @@ class ModulesService
         $module = [];
 
         /**
-         * Just retreive the files name
+         * Just retrieve the files name
          */
         $files = array_map( function( $file ) {
             $info = pathinfo( $file );
@@ -1167,7 +1167,7 @@ class ModulesService
                 return response()->json([
                     'status' => 'failed',
                     'message' => sprintf(
-                        __( 'An Error Occured "%s": %s'),
+                        __( 'An Error Occurred "%s": %s'),
                         $module[ 'name' ],
                         $error->getMessage(),
                     ),
@@ -1186,7 +1186,7 @@ class ModulesService
                 return response()->json([
                     'status' => 'failed',
                     'message' => sprintf(
-                        __( 'An Error Occured "%s": %s'),
+                        __( 'An Error Occurred "%s": %s'),
                         $module[ 'name' ],
                         $error->getMessage(),
                         $error->getFile(),
@@ -1501,7 +1501,7 @@ class ModulesService
 
     /**
      * Prevent module management when
-     * it's explicitely disabled from the settings
+     * it's explicitly disabled from the settings
      *
      * @return void
      */

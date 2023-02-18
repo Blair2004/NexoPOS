@@ -25,7 +25,7 @@
                         <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Mon' ) }}</div>
                         <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Tue' ) }}</div>
                         <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Wed' ) }}</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Thr' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Thu' ) }}</div>
                         <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Fri' ) }}</div>
                         <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Sat' ) }}</div>
                     </div>
@@ -73,7 +73,7 @@ export default {
             let clickChildrens;
 
             clickChildrens        =   this.$el.contains( event.srcElement );
-            
+
             if ( ! clickChildrens && this.visible ) {
                 this.visible    =   false;
             }
@@ -101,7 +101,7 @@ export default {
             const startOfMonth      =   this.currentDay.clone().startOf( 'month' );
             const currentCursor     =   this.currentDay.clone().startOf( 'month' );
             const endOfMonth        =   this.currentDay.clone().endOf( 'month' );
-            
+
             while( true ) {
                 if ( currentCursor.day() === 0 ) {
                     if ( this.calendar[0].length > 0 ) {

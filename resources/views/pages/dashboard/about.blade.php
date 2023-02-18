@@ -2,7 +2,7 @@
 
 @section( 'layout.dashboard.with-title' )
     <div class="w-full md:w-1/2 ns-box border">
-        <div class="box-header p-2 text-center border-b">{{ __( 'Enviroment Details' ) }}</div>
+        <div class="box-header p-2 text-center border-b">{{ __( 'Environment Details' ) }}</div>
         <div class="box-body p-2">
             <table class="table ns-table">
                 <thead>
