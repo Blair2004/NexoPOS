@@ -17,7 +17,7 @@ class ExtractTranslation extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:translate {module?} {--extract} {--lang=en} {--symlink}';
+    protected $signature = 'ns:translate {module?} {--extract} {--lang=en}';
 
     /**
      * The console command description.
@@ -48,26 +48,7 @@ class ExtractTranslation extends Command
     {
         if ( $this->option( 'extract' ) ) {
             $this->extracting();
-        } elseif ( $this->option( 'symlink' ) ) {
-            $this->createSymlink();
         }
-    }
-
-    /**
-     * Create symbolic link
-     */
-    private function createSymLink()
-    {
-        if ( ! \windows_os() ) {
-            $link = @\symlink( base_path( 'lang' ), public_path( '/lang' ) );
-        } else {
-            $mode = 'J';
-            $link = public_path( 'lang' );
-            $target = base_path( 'lang' );
-            $link = exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
-        }
-
-        return $this->info( 'Language Symbolic Link has been created !' );
     }
 
     /**

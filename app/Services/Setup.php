@@ -15,7 +15,7 @@ use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 class Setup
 {
     public Options $options;
-    
+
     /**
      * Attempt database and save db informations
      *
@@ -126,10 +126,6 @@ class Setup
         Artisan::call( 'vendor:publish', [
             '--force' => true,
             '--provider' => 'Laravel\Sanctum\SanctumServiceProvider',
-        ]);
-
-        Artisan::call( 'ns:translate', [
-            '--symlink' => true,
         ]);
 
         /**

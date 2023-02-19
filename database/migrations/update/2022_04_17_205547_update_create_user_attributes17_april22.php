@@ -30,8 +30,6 @@ return new class extends Migration
         $userService = app()->make( Users::class );
 
         User::get()->each( fn( $user ) => $userService->createAttribute( $user ) );
-
-        Artisan::call( 'ns:translate --symlink' );
     }
 
     /**

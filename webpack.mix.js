@@ -1,6 +1,8 @@
 const tailwindcss   = require('tailwindcss');
 const path          = require( 'path' );
 const mix           = require( 'laravel-mix' );
+const JsonMinimizerPlugin = require('json-minimizer-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 /*
  |--------------------------------------------------------------------------
@@ -19,7 +21,30 @@ mix
             alias: {
                 '@': path.resolve( __dirname, 'resources/ts/')
             }
-        }
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.json$/i,
+                    type: 'asset/resource',
+                },
+            ],
+        },
+        plugins: [
+            new CopyPlugin({
+                patterns: [
+                    {
+                        from: './lang/*.json',
+                    },
+                ],
+            }),
+        ],
+        optimization: {
+            minimize: true,
+            minimizer: [
+                new JsonMinimizerPlugin(),
+            ],
+        },
     });
 
 
