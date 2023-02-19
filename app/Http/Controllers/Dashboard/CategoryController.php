@@ -12,6 +12,7 @@ use App\Crud\GlobalProductHistoryCrud;
 use App\Crud\ProductCategoryCrud;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductCategoryService;
 use Exception;
@@ -245,39 +246,45 @@ class CategoryController extends DashboardController
                 ->displayOnPOS()
                 ->with( 'subCategories' )
                 ->first();
+            $productQuery = $category->products();
+            $categories = $category
+                ->subCategories()
+                ->displayOnPOS()
+                ->get();
 
-            return [
-                'products' => $category->products()
-                    ->with( 'galleries', 'tax_group.taxes' )
-                    ->onSale()
-                    ->trackingDisabled()
-                    ->get()
-                    ->map( function( $product ) {
-                        if ( $product->unit_quantities()->count() === 1 ) {
-                            $product->load( 'unit_quantities.unit' );
-                        }
+            // means should return to the root
+            $previousCategory = ProductCategory::find( $category->parent_id ) ?? null;
+            $currentCategory = $category;
 
-                        return $product;
-                    }),
-                'categories' => $category
-                    ->subCategories()
-                    ->displayOnPOS()
-                    ->get(),
-                'previousCategory' => ProductCategory::find( $category->parent_id ) ?? null, // means should return to the root
-                'currentCategory' => $category, // means should return to the root
-            ];
+        } else {    // root category
+            $productQuery = Product::where('category_id', null)->orWhere('category_id', 0);
+            $categories = ProductCategory::whereNot( 'id', 0 )
+                ->where( function( $query ) {
+                    $query->where( 'parent_id', null )
+                        ->orWhere( 'parent_id', 0 );
+                })
+                ->displayOnPOS()
+                ->get();
+            $previousCategory = false;
+            $currentCategory = false;
         }
 
         return [
-            'products' => [],
-            'previousCategory' => false,
-            'currentCategory' => false,
-            'categories' => ProductCategory::where(function( $query ) {
-                $query->where( 'parent_id', null )
-                        ->orWhere( 'parent_id', 0 );
-            })
-                ->displayOnPOS()
-                ->get(),
+            'products' => $productQuery
+                ->with( 'galleries', 'tax_group.taxes' )
+                ->onSale()
+                ->trackingDisabled()
+                ->get()
+                ->map( function( $product ) {
+                    if ( $product->unit_quantities()->count() === 1 ) {
+                        $product->load( 'unit_quantities.unit' );
+                    }
+
+                    return $product;
+                }),
+            'categories' => $categories,
+            'previousCategory' => $previousCategory,
+            'currentCategory' => $currentCategory,
         ];
     }
 
