@@ -92,7 +92,7 @@ export default {
             if ([ 'click-overlay', 'press-esc' ].includes( action.event ) ) {
                 this.close();
             }
-        });        
+        });
     },
     updated() {
         setTimeout( () => {
@@ -126,7 +126,7 @@ export default {
                                 disabled: instalment.paid === 1 ? true : false,
                                 value: moment( instalment.date ).format( 'YYYY-MM-DD' )
                             };
-    
+
                             instalment[ name ]    =   field;
                         } else if ( name === 'amount' ) {
                             const field    =   {
@@ -136,7 +136,7 @@ export default {
                                 disabled: instalment.paid === 1 ? true : false,
                                 value: instalment.amount
                             };
-    
+
                             instalment[ name ]    =   field;
                         } else if ( ! [ 'paid', 'id' ].includes( name ) ) {
                             const field    =   {
@@ -144,7 +144,7 @@ export default {
                                 name,
                                 value: instalment[ name ]
                             };
-    
+
                             instalment[ name ]    =   field;
                         }
                     }
@@ -226,7 +226,7 @@ export default {
                 this.order.support_instalments  =   false;
             } else {
                 /**
-                 * the order should be 
+                 * the order should be
                  * due from this moment
                  */
                 this.order.final_payment_date   =   ns.date.current;
@@ -236,22 +236,22 @@ export default {
 
 
             this.$popup.close();
-            
+
             POS.order.next( this.order );
 
             const { resolve, reject }   =   this.$popupParams;
-            
+
             return resolve({ order: this.order, skip_layaway: true });
         },
         updateOrder() {
             if ( this.order.instalments.length === 0 ) {
                 return nsSnackBar.error( __( 'Please provide instalments before proceeding.' ) ).subscribe();
             }
-            
+
             this.fields.forEach( field => this.formValidation.validateField( field ) );
 
             if ( ! this.formValidation.fieldsValid( this.fields ) ) {
-                return nsSnackBar.error( __( 'Unable to procee the form is not valid' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to process, the form is not valid' ) ).subscribe();
             }
 
             this.$forceUpdate();
@@ -317,9 +317,9 @@ export default {
             const { resolve, reject }   =   this.$popupParams;
 
             this.$popup.close();
-            
+
             POS.order.next( order );
-            
+
             return resolve({ order, skip_layaway : false });
         },
         loadFields() {

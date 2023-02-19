@@ -139,7 +139,7 @@ class ProviderCrud extends CrudService
                             'type' => 'text',
                             'name' => 'email',
                             'label' => __( 'Email' ),
-                            'description' => __( 'Provide the provider email. Mightbe used to send automatted email.' ),
+                            'description' => __( 'Provide the provider email. Might be used to send automated email.' ),
                             'value' => $entry->email ?? '',
                         ], [
                             'type' => 'text',
@@ -151,7 +151,7 @@ class ProviderCrud extends CrudService
                             'type' => 'text',
                             'name' => 'phone',
                             'label' => __( 'Phone' ),
-                            'description' => __( 'Contact phone number for the provider. Might be used to send automatted SMS notifications.' ),
+                            'description' => __( 'Contact phone number for the provider. Might be used to send automated SMS notifications.' ),
                             'value' => $entry->phone ?? '',
                         ], [
                             'type' => 'text',

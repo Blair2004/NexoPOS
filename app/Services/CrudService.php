@@ -242,7 +242,7 @@ class CrudService
 
             foreach ( $inputs as $name => $value ) {
                 /**
-                 * If the fields where explicitely added
+                 * If the fields where explicitly added
                  * on field that must be ignored we should skip that.
                  */
                 if ( ! in_array( $name, $resource->skippable ) ) {
@@ -272,7 +272,7 @@ class CrudService
             }
 
             /**
-             * If fillable is empty or if "author" it's explicitely
+             * If fillable is empty or if "author" it's explicitly
              * mentionned on the fillable array.
              */
             if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
@@ -493,7 +493,7 @@ class CrudService
         $columnsLongName = [];
 
         /**
-         * First loop to retreive the columns and rename it
+         * First loop to retrieve the columns and rename it
          */
         $select = [];
 
@@ -514,7 +514,7 @@ class CrudService
             $columnsLongName[] = $__name;
             $select[] = $__name . ' as ' . $column;
         }
-        
+
         /**
          * Let's loop relation if they exists
          */
@@ -1261,14 +1261,14 @@ class CrudService
             'returnUrl' => $config[ 'returnUrl' ] ?? ( $instance->getLinks()[ 'list' ] ?? '#' ),
 
             /**
-             * This will pull the submitURL that might be different wether the $entry is
+             * This will pull the submitURL that might be different whether the $entry is
              * provided or not. can be overwritten on the configuration ($config).
              */
             'submitUrl' => $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : str_replace( '{id}', $entry->id, $instance->getLinks()[ 'put' ] ) ),
 
             /**
              * By default the method used is "post" but might change to "put" according to
-             * wether the entry is provided (Model). Can be changed from the $config.
+             * whether the entry is provided (Model). Can be changed from the $config.
              */
             'submitMethod' => $config[ 'submitMethod' ] ?? ( $entry === null ? 'post' : 'put' ),
 
@@ -1392,7 +1392,7 @@ class CrudService
                             if ( $result instanceof $relatedSubModel ) {
                                 $foreignName = $result->$labelColumn ?? __( 'Unidentified Item' );
                             } else {
-                                $foreignName = $result->$labelColumn ?? __( 'Unexisting Item' );
+                                $foreignName = $result->$labelColumn ?? __( 'Non-existent Item' );
                             }
                         } else {
                             $foreignName = $dependencyFound->{ $indexes[ 'foreign_name' ] } ?? __( 'Unidentified Item' );

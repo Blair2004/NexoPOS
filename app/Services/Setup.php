@@ -211,7 +211,7 @@ class Setup
 
         return [
             'status' => 'success',
-            'message' => __( 'NexoPOS has been successfuly installed.' ),
+            'message' => __( 'NexoPOS has been successfully installed.' ),
         ];
     }
 
