@@ -47,7 +47,7 @@ export default {
         },
         submit() {
             if ( this.formValidation.validateForm( this.form ).length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-invalid' ] ? this.$slots[ 'error-invalid' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid' ), __( 'Close' ) )
                     .subscribe();
             }
 

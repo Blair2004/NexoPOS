@@ -51,6 +51,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         changeActiveTab( event ) {
             this.active     =   event;
 

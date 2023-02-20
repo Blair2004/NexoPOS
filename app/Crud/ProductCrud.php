@@ -286,16 +286,6 @@ class ProductCrud extends CrudService
                                     'validation' => 'required',
                                     'value' => $entry->barcode_type ?? 'code128',
                                 ], [
-                                    'type' => 'switch',
-                                    'description' => __( 'Determine if the product can be searched on the POS.' ),
-                                    'options' => Helper::kvToJsOptions([
-                                        1 => __( 'Yes' ),
-                                        0 => __( 'No' ),
-                                    ]),
-                                    'name' => 'searchable',
-                                    'label' => __( 'Searchable' ),
-                                    'value' => $entry->searchable ?? 1,
-                                ], [
                                     'type' => 'select',
                                     'options' => Helper::kvToJsOptions( Hook::filter( 'ns-products-type', [
                                         'materialized' => __( 'Materialized Product' ),
@@ -708,13 +698,12 @@ class ProductCrud extends CrudService
         $entry->status = $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
         $entry->category_name = $entry->category_name ?: __( 'Unassigned' );
         // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => '<i class="mr-2 las la-edit"></i> ' . __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
-        ]);
+        $entry->action( 
+            identifier: 'edit', 
+            label: '<i class="mr-2 las la-edit"></i> ' . __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
+        );
 
         $entry->action(
             identifier: 'ns.quantities',
@@ -723,31 +712,29 @@ class ProductCrud extends CrudService
             url: ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
         );
 
-        $entry->addAction( 'units', [
-            'label' => '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),
-            'namespace' => 'units',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products/' . $entry->id . '/units' ),
-        ]);
+        $entry->action( 
+            identifier: 'units',
+            label: '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products/' . $entry->id . '/units' ),
+        );
 
-        $entry->addAction( 'history', [
-            'label' => '<i class="mr-2 las la-history"></i> ' . __( 'See History' ),
-            'namespace' => 'history',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products/' . $entry->id . '/history' ),
-        ]);
+        $entry->action( 
+            identifier: 'history',
+            label: '<i class="mr-2 las la-history"></i> ' . __( 'See History' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products/' . $entry->id . '/history' ),
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.products/' . $entry->id ),
-            'confirm' => [
+        $entry->action( 
+            identifier: 'delete',
+            label: '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.products/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
-        ]);
+        );
 
         return $entry;
     }

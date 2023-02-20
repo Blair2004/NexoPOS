@@ -1733,7 +1733,6 @@ class ProductService
          * @var Builder $query
          */
         $query = Product::query()
-            ->searchable()
             ->where( function( $query ) use ( $search ) {
                 $query
                 ->orWhere( 'name', 'LIKE', "%{$search}%" )

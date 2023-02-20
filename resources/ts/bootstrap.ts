@@ -7,7 +7,6 @@ import { fromEvent } from "rxjs";
 import * as RxJS from 'rxjs';
 import * as moment from 'moment';
 import { createApp } from "vue/dist/vue.esm-bundler";
-
 import { Popup } from "~/libraries/popup";
 import { EventEmitter, HttpClient, SnackBar, State, FloatingNotice } from "./libraries/libraries";
 import FormValidation from "./libraries/form-validation";
@@ -19,6 +18,7 @@ import { __, __m } from "./libraries/lang";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
 import { timespan } from "./libraries/timespan";
+import { defineAsyncComponent, defineComponent } from "vue";
 
 
 declare global {
@@ -130,18 +130,20 @@ const nsState           =   new State({
 
 nsHttpClient.defineClient( axios );
 
-( window as any ).nsEvent            =   nsEvent;
-( window as any ).nsHttpClient       =   nsHttpClient;
-( window as any ).nsSnackBar         =   nsSnackBar;
-( window as any ).nsNotice           =   nsNotice;
-( window as any ).nsState            =   nsState;
-( window as any ).nsUrl              =   nsUrl;
-( window as any ).nsScreen           =   nsScreen;
-( window as any ).ChartJS            =   ChartJS;
-( window as any ).EventEmitter       =   EventEmitter;
-( window as any ).Popup              =   Popup;
-( window as any ).RxJS               =   RxJS;
-( window as any ).FormValidation     =   FormValidation;
-( window as any ).nsCrudHandler      =   nsCrudHandler;
+( window as any ).nsEvent               =   nsEvent;
+( window as any ).nsHttpClient          =   nsHttpClient;
+( window as any ).nsSnackBar            =   nsSnackBar;
+( window as any ).nsNotice              =   nsNotice;
+( window as any ).nsState               =   nsState;
+( window as any ).nsUrl                 =   nsUrl;
+( window as any ).nsScreen              =   nsScreen;
+( window as any ).ChartJS               =   ChartJS;
+( window as any ).EventEmitter          =   EventEmitter;
+( window as any ).Popup                 =   Popup;
+( window as any ).RxJS                  =   RxJS;
+( window as any ).FormValidation        =   FormValidation;
+( window as any ).nsCrudHandler         =   nsCrudHandler;
+( window as any ).defineComponent       =   defineComponent;
+( window as any ).defineAsyncComponent  =   defineAsyncComponent;
 
 export { nsSnackBar, nsNotice, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

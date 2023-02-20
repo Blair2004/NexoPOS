@@ -1335,4 +1335,13 @@ class CrudService
             })
             ->toArray();
     }
+
+    /**
+     * This will loads the header buttons that can be used
+     * to render custom vue component on the crud table.
+     */
+    public function getHeaderButtons(): array
+    {
+        return [];
+    }
 }

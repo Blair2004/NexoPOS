@@ -172,7 +172,7 @@ class CategoryController extends DashboardController
 
         return $category->products()
             ->whereIn( 'product_type', [ 'product', 'variation' ])
-            ->searchable()
+            ->onSale()
             ->get();
     }
 
@@ -191,7 +191,7 @@ class CategoryController extends DashboardController
 
         return $category->products->products()
             ->whereIn( 'product_type', [ 'variation' ])
-            ->searchable()
+            ->onSale()
             ->get();
     }
 
@@ -249,7 +249,6 @@ class CategoryController extends DashboardController
             return [
                 'products' => $category->products()
                     ->with( 'galleries', 'tax_group.taxes' )
-                    ->searchable()
                     ->onSale()
                     ->trackingDisabled()
                     ->get()

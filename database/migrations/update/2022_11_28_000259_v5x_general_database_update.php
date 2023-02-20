@@ -294,14 +294,13 @@ return new class extends Migration
         $options->each( function( $option ) {
             $json = json_decode( $option->value, true );
 
-            if ( json_last_error() == JSON_ERROR_NONE ) {
+            if ( preg_match( '/[0-9]{1,}/', $option->value ) ) {
+                $option->value  =   (int) $option->value;
+            } else if ( preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) ) {
+                $option->value  =   (float) $option->value;
+            } else if ( json_last_error() == JSON_ERROR_NONE ) {
                 $option->value  =   $json;
-            } else {
-                $option->value  =   match ( $option->value ) {
-                    preg_match( '/[0-9]{1,}/', $option->value ) => (int) $option->value,
-                    preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) => (float) $option->value,
-                    default => $option->value,
-                };
+                $option->array  =   1;
             }
 
             $option->save();

@@ -25,6 +25,9 @@ use App\Classes\Output;
 $identifier    =   collect( explode( '/', $src ) )
     ->filter( fn( $segment ) => ! empty( $segment ) )
     ->last();
+
+$output     =   new Output;
+Hook::action( 'ns-crud-footer', $output, $identifier );
 ?>
-{!! ( string ) Hook::filter( 'ns-crud-footer', new Output, $identifier ) !!}
+{!! ( string ) $output !!}
 @endsection

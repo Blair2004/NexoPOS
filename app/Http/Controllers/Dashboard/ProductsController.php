@@ -156,9 +156,6 @@ class ProductsController extends DashboardController
         return $this->productService->update( $product, $primary );
     }
 
-    /**
-     * @todo must be extracted to a service
-     */
     public function searchProduct( Request $request )
     {
         return $this->productService->searchProduct(
@@ -357,7 +354,7 @@ class ProductsController extends DashboardController
     {
         ns()->restrict([ 'nexopos.read.products' ]);
 
-        Hook::addFilter( 'ns-crud-footer', function( Output $output ) {
+        Hook::addAction( 'ns-crud-footer', function( Output $output ) {
             $output->addView( 'pages.dashboard.products.quantity-popup' );
 
             return $output;
@@ -423,7 +420,7 @@ class ProductsController extends DashboardController
      */
     public function productHistory( $identifier )
     {
-        Hook::addFilter( 'ns-crud-footer', function( Output $output, $identifier ) {
+        Hook::addAction( 'ns-crud-footer', function( Output $output, $identifier ) {
             $output->addView( 'pages.dashboard.products.history' );
 
             return $output;
@@ -556,7 +553,7 @@ class ProductsController extends DashboardController
         $procurementProduct = ProcurementProduct::barcode( $reference )->first();
         $productUnitQuantity = ProductUnitQuantity::barcode( $reference )->with( 'unit' )->first();
         $product = Product::barcode( $reference )
-            ->searchable()
+            ->onSale()
             ->first();
 
         if ( $procurementProduct instanceof ProcurementProduct ) {

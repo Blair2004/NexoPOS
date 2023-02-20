@@ -246,6 +246,10 @@ export default {
                     type: {
                         comparison: '<>',
                         value: 'grouped'
+                    },
+                    searchable: {
+                        comparison: 'in',
+                        value: [ 0, 1 ]
                     }
                 }
             }).subscribe({

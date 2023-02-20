@@ -30,6 +30,9 @@
                         <span class="ml-1" v-if="withFilters">{{ __( 'Has Filters' ) }}</span>
                     </button>
                 </div>
+                <div id="custom-buttons" v-if="headerButtonsComponents.length > 0">
+                    <component @refresh="refresh()" :result="result" :is="component" :key="index" v-for="(component, index) of headerButtonsComponents"/>
+                </div>
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">
                 <div class="px-1 flex items-center" v-if="selectedEntries.length > 0">
@@ -119,8 +122,10 @@ import { __ } from '~/libraries/lang';
 import { HttpStatusResponse } from '~/interfaces/http-status-response';
 import { HttpCrudResponse } from '~/interfaces/http-crud-response';
 import nsOrdersFilterPopupVue from '~/popups/ns-orders-filter-popup.vue';
+import { defineAsyncComponent } from 'vue';
 
 declare const nsCrudHandler;
+declare const nsExtraComponents;
 
 export default {
     data: () => {
@@ -136,6 +141,7 @@ export default {
             bulkAction: '',
             bulkActions: [],
             queryFilters:[],
+            headerButtons: [],
             withFilters: false,
             columns: [],
             selectedEntries:[],
@@ -203,6 +209,15 @@ export default {
             return __( 'displaying {perPage} on {items} items' )
                 .replace( '{perPage}', this.result.total )
                 .replace( '{items}', this.result.total )
+        },
+        headerButtonsComponents() {
+            return this.headerButtons.map( buttonComponent => {
+                return defineAsyncComponent( () => {
+                    return new Promise( ( resolve ) => {
+                        resolve( nsExtraComponents[ buttonComponent ] );
+                    })
+                })
+            });
         }
     },
     methods: {
@@ -308,6 +323,7 @@ export default {
                 this.queryFilters   =   f.queryFilters;
                 this.prependOptions =   f.prependOptions;
                 this.showOptions    =   f.showOptions;
+                this.headerButtons  =   f.headerButtons || [];
                 this.refresh();
             }, ( error ) => {
                 nsSnackBar.error( error.message, 'OK', { duration: false }).subscribe();

@@ -15,7 +15,7 @@ class MigrateForgetCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'migrate:forget {module?} {--file=}';
+    protected $signature = 'migrate:forget {module?} {--file=} {--down}';
 
     /**
      * The console command description.
@@ -55,13 +55,29 @@ class MigrateForgetCommand extends Command
 
         if ( $module !== null && $this->argument( 'module' ) !== null ) {
             if ( ! in_array( $this->option( 'file' ), $module[ 'all-migrations' ] ) ) {
+                if ( $this->option( 'down' ) ) {
+                    $this->moduleService->revertMigrations( $module );
+                }
+
                 ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
+                    ->delete();
+
+            } else {
+                if ( $this->option( 'down' ) ) {
+                    $migrations     =   ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
+                        ->get()
+                        ->map( fn( $migration ) => $migration->file )
+                        ->toArray();
+
+                    $this->moduleService->revertMigrations( $module, $migrations );
+                }
+
+                ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
+                    ->where( 'file', $this->option( 'file' ) )
                     ->delete();
             }
 
-            ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
-                ->where( 'file', $this->option( 'file' ) )
-                ->delete();
+
 
             Artisan::call( 'cache:clear' );
 

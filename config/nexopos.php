@@ -1,7 +1,25 @@
 <?php
 
 return [
+    /**
+     * --------------------------------------------------------------------
+     *  Version
+     * --------------------------------------------------------------------
+     * 
+     * This is the core version of NexoPOS. This is used to displays on the
+     * dashboard and to ensure a compatibility with the modules.
+     */
     'version' => '5.0.0',
+
+    /**
+     * --------------------------------------------------------------------
+     *  Supported Languages
+     * --------------------------------------------------------------------
+     * 
+     * Describes all the languages that are supported by NexoPOS.
+     * If the language is not supported or if there is no valid translation
+     * every localization functions will return the original string
+     */
     'languages' => [
         'en' => 'English',
         'fr' => 'Français',
@@ -12,7 +30,24 @@ return [
         'tr' => 'Türkçe',
         'vi' => 'Vietnamese',
     ],
+
+    /**
+     * --------------------------------------------------------------------
+     *  RTL Languages
+     * --------------------------------------------------------------------
+     * 
+     * Define all language which once enabled should
+     * turn on the RTL dashboard.
+     */
     'rtl-languages' => [ 'ar' ],
+
+    /**
+     * --------------------------------------------------------------------
+     *  Timezones
+     * --------------------------------------------------------------------
+     * 
+     * Here are defined all supported timezones.
+     */
     'timezones' => [
         'America/Adak' => '(GMT-10:00) America/Adak (Hawaii-Aleutian Standard Time)',
         'America/Atka' => '(GMT-10:00) America/Atka (Hawaii-Aleutian Standard Time)',

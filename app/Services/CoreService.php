@@ -55,7 +55,7 @@ class CoreService
     }
 
     /**
-     * Returns a filtered route to which apply
+     * Returns a route to which apply
      * the filter "ns-route".
      */
     public function route( string $route, array $params = []): string
@@ -64,7 +64,7 @@ class CoreService
     }
 
     /**
-     * Returns a filtred route name to which apply
+     * Returns a route name to which apply
      * the filter "ns-route-name".
      */
     public function routeName( string $name ): string

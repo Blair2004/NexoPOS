@@ -24,7 +24,7 @@ export default {
     },
     methods: {
         __,
-
+        nsCurrency,
         searchProduct( argument ) {
             if ( argument.length > 0 ) {
                 nsHttpClient.post( '/api/procurements/products/search-procurement-product', { argument })

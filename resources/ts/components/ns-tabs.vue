@@ -17,7 +17,7 @@
         <slot></slot>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { Subject } from 'rxjs';
 export default {
     data() {

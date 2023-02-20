@@ -181,7 +181,6 @@ class ModulesService
                 $config[ 'composer-installed' ] = Storage::disk( 'ns-modules' )->exists( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
                 $config[ 'controllers-path' ] = $currentModulePath . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
                 $config[ 'controllers-relativePath' ] = ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
-                $config[ 'dashboard-path' ] = $currentModulePath . 'Dashboard' . DIRECTORY_SEPARATOR;
                 $config[ 'enabled' ] = false; // by default the module is set as disabled
                 $config[ 'has-languages' ] = Storage::disk( 'ns-modules' )->exists( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Lang' );
                 $config[ 'lang-relativePath' ] = 'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Lang';

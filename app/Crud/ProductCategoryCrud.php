@@ -270,15 +270,15 @@ class ProductCategoryCrud extends CrudService
     {
         /**
          * If the category is not visible on the POS
-         * the products aren't searchable.
+         * This products aren't available either.
          */
         if ( ! (bool) $entry->displays_on_pos ) {
             Product::where( 'category_id', $entry->id )->update([
-                'searchable' => false,
+                'status' => 'unavailable',
             ]);
         } else {
             Product::where( 'category_id', $entry->id )->update([
-                'searchable' => true,
+                'status' => 'available',
             ]);
         }
 
@@ -364,31 +364,29 @@ class ProductCategoryCrud extends CrudService
         $entry->parent_name = $entry->parent_name === null ? __( 'No Parent' ) : $entry->parent_name;
         $entry->displays_on_pos = (int) $entry->displays_on_pos === 1 ? __( 'Yes' ) : __( 'No' );
 
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id ),
-        ]);
+        $entry->action( 
+            identifier: 'edit',
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id ),
+        );
 
-        $entry->addAction( 'compute', [
-            'label' => __( 'Compute Products' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id ),
-        ]);
+        $entry->action( 
+            identifier: 'compute',
+            label: _( 'Compute Products' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id ),
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.products-categories/' . $entry->id ),
-            'confirm' => [
+        $entry->action( 
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.products-categories/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
-        ]);
+        );
 
         return $entry;
     }
