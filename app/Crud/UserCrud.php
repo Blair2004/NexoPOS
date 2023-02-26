@@ -61,8 +61,8 @@ class UserCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_customers_groups as group', 'nexopos_users.group_id', '=', 'group.id' ],
         'leftJoin' => [
+            [ 'nexopos_customers_groups as group', 'nexopos_users.group_id', '=', 'group.id' ],
             [ 'nexopos_users as author', 'nexopos_users.author', '=', 'author.id' ],
         ],
     ];
