@@ -9,7 +9,7 @@
         <div class="ns-body flex-auto flex p-2 overflow-y-auto">
             <ns-tabs :active="activeTab" @active="activeTab = $event">
                 <ns-tabs-item identifier="create-customers" label="New Customer">
-                    <ns-crud-form 
+                    <ns-crud-form
                         v-if="options.ns_pos_customers_creation_enabled === 'yes'"
                         @updated="prefillForm( $event )"
                         @save="handleSavedCustomer( $event )"
@@ -198,7 +198,7 @@
                                                                         </ul>
                                                                     </div>
                                                                 </td>
-                                                                <td class="border p-2 text-center">{{ getType( coupon.coupon.type ) }} 
+                                                                <td class="border p-2 text-center">{{ getType( coupon.coupon.type ) }}
                                                                     <span v-if="coupon.coupon.type === 'percentage_discount'">
                                                                         ({{ coupon.coupon.discount_value }}%)
                                                                     </span>
@@ -308,7 +308,7 @@ export default {
             order: null,
             walletHistories: [],
         }
-    }, 
+    },
     components: {
         nsPaginate
     },
@@ -324,7 +324,7 @@ export default {
         });
 
         this.subscription   =   POS.order.subscribe( order => {
-            
+
             this.order  =   order;
 
             if ( this.$popupParams.customer !== undefined ) {
@@ -373,7 +373,7 @@ export default {
                     return __( 'Flat Discount' );
             }
         },
-        
+
         closeWithOverlayClicked,
 
         async openOrderOptions( order ) {
@@ -389,7 +389,7 @@ export default {
                 this.reload();
 
             } catch( exception ) {
-                nsSnackBar.error( __( 'An error occured while opening the order options' ) ).subscribe();
+                nsSnackBar.error( __( 'An error occurred while opening the order options' ) ).subscribe();
             }
         },
 
@@ -440,7 +440,7 @@ export default {
                     }
                 });
         },
-        
+
         loadRewards( url = `/api/nexopos/v4/customers/${this.customer.id}/rewards` ) {
             this.isLoadingRewards   =   true;
             nsHttpClient.get( url )
@@ -507,7 +507,7 @@ export default {
                             POS.selectCustomer( this.customer )
                                 .then( result => {
                                     this.proceedApplyingCoupon( customerCoupon );
-                                })                            
+                                })
                         }
                     }
                 })
@@ -522,11 +522,11 @@ export default {
                             POS.selectCustomer( this.customer )
                                 .then( result => {
                                     this.proceedApplyingCoupon( customerCoupon );
-                                })                            
+                                })
                         }
                     }
                 })
-            }        
+            }
         },
 
         proceedApplyingCoupon( customerCoupon ) {

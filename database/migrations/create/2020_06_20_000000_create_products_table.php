@@ -41,7 +41,7 @@ return new class extends Migration
                 $table->integer( 'unit_group' );
                 $table->string( 'on_expiration' )->default( 'prevent_sales' ); // allow_sales, prevent_sales
                 $table->boolean( 'expires' )->default(false); // true/false
-                $table->boolean( 'searchable' )->default(true); // wether the product can be searched on the POS.
+                $table->boolean( 'searchable' )->default(true); // whether the product can be searched on the POS.
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

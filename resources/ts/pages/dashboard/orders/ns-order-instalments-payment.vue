@@ -69,7 +69,7 @@ export default {
                     this.submitPayment();
                 },
                 error: error => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
                 }
             })
         },
@@ -79,8 +79,8 @@ export default {
                 return nsSnackBar.error( __m( 'The form is not valid.' ) ).subcribe();
             }
 
-            nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments/${this.instalment.id}/pay`, { 
-                    ...this.validation.extractFields( this.fields ) 
+            nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments/${this.instalment.id}/pay`, {
+                    ...this.validation.extractFields( this.fields )
                 })
                 .subscribe({
                     next: result => {
@@ -102,7 +102,7 @@ export default {
                             });
                         }
 
-                        nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                        nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
                     }
                 })
         }

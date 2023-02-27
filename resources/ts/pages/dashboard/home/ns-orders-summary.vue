@@ -1,9 +1,9 @@
 <template>
     <div id="ns-orders-summary" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="p-2 flex title justify-between border-b">
-            <h3 class="font-semibold">{{ __( 'Recents Orders' ) }}</h3>
+            <h3 class="font-semibold">{{ __( 'Recent Orders' ) }}</h3>
             <div class="">
-                
+
             </div>
         </div>
         <div class="head flex-auto flex-col flex h-56 overflow-y-auto ns-scrollbar">
@@ -14,10 +14,10 @@
                 <i class="las la-grin-beam-sweat text-6xl"></i>
                 <p class="text-sm">{{ __( 'Well.. nothing to show for the meantime.' ) }}</p>
             </div>
-            <div 
-                v-for="order of orders" 
-                :key="order.id" 
-                :class="order.payment_status === 'paid' ? 'paid-order' : 'other-order'" 
+            <div
+                v-for="order of orders"
+                :key="order.id"
+                :class="order.payment_status === 'paid' ? 'paid-order' : 'other-order'"
                 class="border-b single-order p-2 flex justify-between">
                 <div>
                     <h3 class="text-lg font-semibold">{{ __( 'Order' ) }} : {{ order.code }}</h3>
@@ -31,15 +31,15 @@
                         <div class="divide-y-4"></div>
                         <div class="px-1">
                             <h4 class="text-semibold text-xs">
-                                <i class="las la-clock"></i> 
+                                <i class="las la-clock"></i>
                                 <span>{{ order.created_at }}</span>
                             </h4>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <h2 
-                        :class="order.payment_status === 'paid' ? 'paid-currency' : 'unpaid-currency'" 
+                    <h2
+                        :class="order.payment_status === 'paid' ? 'paid-currency' : 'unpaid-currency'"
                         class="text-xl font-bold">{{ order.total | currency }}</h2>
                 </div>
             </div>

@@ -149,7 +149,7 @@ class ExpenseCrud extends CrudService
                             'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                             'name' => 'active',
                             'label' => __( 'Active' ),
-                            'description' => __( 'determine if the expense is effective or not. Work for recurring and not reccuring expenses.' ),
+                            'description' => __( 'determine if the expense is effective or not. Work for recurring and not recurring expenses.' ),
                             'validation' => 'required',
                             'value' => $entry->active ?? '',
                         ], [
@@ -189,7 +189,7 @@ class ExpenseCrud extends CrudService
                         ], [
                             'type' => 'switch',
                             'name' => 'recurring',
-                            'description' => __( 'If set to Yes, the expense will trigger on defined occurence.' ),
+                            'description' => __( 'If set to Yes, the expense will trigger on defined occurrence.' ),
                             'label' => __( 'Recurring' ),
                             'validation' => 'required',
                             'options' => [
@@ -223,13 +223,13 @@ class ExpenseCrud extends CrudService
                                 ],
                             ],
                             'name' => 'occurence',
-                            'label' => __( 'Occurence' ),
+                            'label' => __( 'Occurrence' ),
                             'description' => __( 'Define how often this expenses occurs' ),
                             'value' => $entry->occurence ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'occurence_value',
-                            'label' => __( 'Occurence Value' ),
+                            'label' => __( 'Occurrence Value' ),
                             'description' => __( 'Must be used in case of X days after month starts and X days before month ends.' ),
                             'value' => $entry->occurence_value ?? '',
                         ], [
@@ -407,7 +407,7 @@ class ExpenseCrud extends CrudService
                 '$sort' => false,
             ],
             'occurence' => [
-                'label' => __( 'Occurence' ),
+                'label' => __( 'Occurrence' ),
                 '$direction' => '',
                 '$sort' => false,
             ],
@@ -443,7 +443,7 @@ class ExpenseCrud extends CrudService
             break;
             case 'x_before_month_ends' : $entry->occurence = __( 'X Days Before Month Ends' );
             break;
-            default: $entry->occurence = __( 'Unknown Occurance' );
+            default: $entry->occurence = __( 'Unknown Occurrence' );
             break;
         }
 

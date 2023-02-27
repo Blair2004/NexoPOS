@@ -464,7 +464,7 @@ class ProductService
 
         return [
             'status' => 'success',
-            'message' => __( 'The product has been udpated' ),
+            'message' => __( 'The product has been updated' ),
             'data' => compact( 'product', 'editUrl' ),
         ];
     }
@@ -697,7 +697,7 @@ class ProductService
                 /**
                  * We don't need tos ave all the informations
                  * available on the group variable, that's why we define
-                 * explicitely how everything is saved here.
+                 * explicitly how everything is saved here.
                  */
                 $unitQuantity->sale_price = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
                 $unitQuantity->sale_price_edit = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
@@ -905,13 +905,13 @@ class ProductService
 
         /**
          * dispatch an event to let everyone knows
-         * a product has been resetted
+         * a product has been reset
          */
         event( new ProductResetEvent( $product ) );
 
         return [
             'status' => 'success',
-            'message' => __( 'The product has been resetted.' ),
+            'message' => __( 'The product has been reset.' ),
             'data' => compact( 'product' ),
         ];
     }
@@ -1692,7 +1692,7 @@ class ProductService
 
         return [
             'status' => 'success',
-            'message' => __( 'The product variation has been succesfully created.' ),
+            'message' => __( 'The product variation has been successfully created.' ),
             'data' => compact( 'product' ),
         ];
     }

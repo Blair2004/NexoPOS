@@ -10,7 +10,7 @@
         <ns-yearly-report inline-template v-cloak>
             <div class="px-4">
                 <ns-notice color="error" v-if="timezone === ''">
-                    <template v-slot:title>{{ __( 'An Error Has Occured' ) }}</template>
+                    <template v-slot:title>{{ __( 'An Error Has Occurred' ) }}</template>
                     <template v-slot:description>{{ __( 'Unable to load the report as the timezone is not set on the settings.' ) }}</template>
                 </ns-notice>
                 <div class="flex -mx-2" v-if="timezone !== ''">
@@ -71,7 +71,7 @@
                                         </template>
                                     </tr>
                                     <tr>
-                                        <td class="border p-2 text-left">{{ __( 'Febuary' ) }}</td>
+                                        <td class="border p-2 text-left">{{ __( 'February' ) }}</td>
                                         <template v-for="label of labels">
                                             <td class="border p-2 text-right">@{{ ( report[2] ? report[2][ label ] : 0 ) | currency }}</td>
                                         </template>

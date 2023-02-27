@@ -56,7 +56,7 @@ class DashboardDay extends NsModel
     }
 
     /**
-     * This should retreive the previous DashboardDay instance
+     * This should retrieve the previous DashboardDay instance
      *
      * @todo Maybe there is a better way to do this
      *

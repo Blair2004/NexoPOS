@@ -71,11 +71,11 @@
                                     <tr class="">
                                         <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white print:text-black">{{ __( 'Wallet Balance' ) }}</td>
                                         <td class="p-2 border text-right border-info-primary">@{{ report.account_amount | currency }}</td>
-                                    </tr>                                   
+                                    </tr>
                                     <tr class="">
                                         <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Credit Limit' ) }}</td>
                                         <td class="p-2 border text-right border-info-primary">@{{ report.credit_limit_amount | currency }}</td>
-                                    </tr>                             
+                                    </tr>
                                     <tr class="">
                                         <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Total Orders' ) }}</td>
                                         <td class="p-2 border text-right border-info-primary">@{{ report.total_orders }}</td>
@@ -166,7 +166,7 @@
                         this.report     =   report;
                     },
                     error: error => {
-                        nsSnackBar.error( error.message || __( 'An unexpected error occured' ) ).subscribe();
+                        nsSnackBar.error( error.message || __( 'An unexpected error occurred' ) ).subscribe();
                     }
                 })
             }

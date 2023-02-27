@@ -294,7 +294,7 @@ class TaxService
         $product->wholesale_price_tax = 0;
 
         /**
-         * calculate the taxes wether they are all
+         * calculate the taxes whether they are all
          * inclusive or exclusive for the sale_price
          */
         if ( $taxGroup instanceof TaxGroup ) {
@@ -326,7 +326,7 @@ class TaxService
         }
 
         /**
-         * calculate the taxes wether they are all
+         * calculate the taxes whether they are all
          * inclusive or exclusive for the wholesale price
          */
         if ( $taxGroup instanceof TaxGroup ) {

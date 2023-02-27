@@ -24,7 +24,7 @@ Route::middleware([
 
 /**
  * Should protect recovery when the
- * recovery is explicitely disabled
+ * recovery is explicitly disabled
  */
 Route::middleware([
     PasswordRecoveryMiddleware::class,

@@ -60,7 +60,7 @@ class ProcurementService
 
     /**
      * get a single procurement
-     * or retreive a list of procurement
+     * or retrieve a list of procurement
      *
      * @param int procurement id
      * @return Collection|Procurement
@@ -440,7 +440,7 @@ class ProcurementService
 
         if ( empty( $stored = @$storedUnitReference[ $procurementProduct->unit_id ] ) ) {
             $unit = $this->unitService->get( $procurementProduct->unit_id );
-            $group = $this->unitService->getGroups( $item->purchase_unit_id ); // which should retreive the group
+            $group = $this->unitService->getGroups( $item->purchase_unit_id ); // which should retrieve the group
             $base = $unit->base_unit ? $unit : $this->unitService->getBaseUnit( $group );
             $base_quantity = $this->unitService->computeBaseUnit( $unit, $base, $procurementProduct->quantity );
             $storedBase[ $procurementProduct->unit_id ] = compact( 'base', 'unit', 'group' );

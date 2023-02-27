@@ -1,6 +1,6 @@
 # Guideline For Reporting Vulnerability
 First of all, thank you for taking time to read this. We believe, you're considering sharing what could be a security issue that might affect every installation running NexoPOS 4.x. 
-We believe in the power of open-source and contributions of it's adherants, that's why regardless of wether your report is proven or not, it's welcome.
+We believe in the power of open-source and contributions of it's adherants, that's why regardless of whether your report is proven or not, it's welcome.
 
 # What Can Be Reported ?
 Basically, everything that could be a leak, that makes the system's (NexoPOS) security inefficient, anything that can expose the server (files & database) or that makes the system to be used in a manner that is out of the purpose we're aiming. 
