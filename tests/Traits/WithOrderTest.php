@@ -484,10 +484,11 @@ trait WithOrderTest
                     if ( ! (float) $actualQuantity === (float) ( $finalQuantity + $savedQuantity[ 'currentQuantity' ] ) ) {
                         throw new Exception( 'foo' );
                     }
-                    // $this->assertTrue(
-                    //     ( float ) $actualQuantity === ( float ) ( $finalQuantity + $savedQuantity[ 'currentQuantity' ] ),
-                    //     'The new quantity doesn\'t match.'
-                    // );
+
+                    $this->assertTrue(
+                        ( float ) $actualQuantity === ( float ) ( $finalQuantity + $savedQuantity[ 'currentQuantity' ] ),
+                        'The new quantity doesn\'t match.'
+                    );
                 });
             });
     }
@@ -1222,42 +1223,73 @@ trait WithOrderTest
             throw new Exception( 'No valid unit is provided.' );
         }
 
+        /**
+         * We want to make sure the system take in account
+         * the remaining quantity while editing the order.
+         */
+        $unitQuantity->quantity     =   5;
+        $unitQuantity->save();
+
         $subtotal = $unitQuantity->sale_price * 5;
+        $orderDetails   =   [
+            'customer_id' => 1,
+            'type' => [ 'identifier' => 'takeaway' ],
+            'discount_type' => 'percentage',
+            'discount_percentage' => 2.5,
+            'addresses' => [
+                'shipping' => [
+                    'name' => 'First Name Delivery',
+                    'surname' => 'Surname',
+                    'country' => 'Cameroon',
+                ],
+                'billing' => [
+                    'name' => 'EBENE Voundi',
+                    'surname' => 'Antony Hervé',
+                    'country' => 'United State Seattle',
+                ],
+            ],
+            'payment_status' => 'hold',
+            'subtotal' => $subtotal,
+            'shipping' => 150,
+            'products' => [
+                [
+                    'product_id' => $unitQuantity->product->id,
+                    'quantity' => 4,
+                    'unit_price' => 12,
+                    'unit_quantity_id' => $unitQuantity->id,
+                ],
+            ],
+        ];
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id' => 1,
-                'type' => [ 'identifier' => 'takeaway' ],
-                'discount_type' => 'percentage',
-                'discount_percentage' => 2.5,
-                'addresses' => [
-                    'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
-                        'country' => 'Cameroon',
-                    ],
-                    'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
-                        'country' => 'United State Seattle',
-                    ],
-                ],
-                'payment_status' => 'hold',
-                'subtotal' => $subtotal,
-                'shipping' => 150,
-                'products' => [
-                    [
-                        'product_id' => $unitQuantity->product->id,
-                        'quantity' => 5,
-                        'unit_price' => 12,
-                        'unit_quantity_id' => $unitQuantity->id,
-                    ],
-                ],
-            ]);
-
+            ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+            
         $response->assertJsonPath( 'data.order.payment_status', 'hold' );
+            
+        $payment    =   PaymentType::first();
+        $order  =   $response->json()[ 'data' ][ 'order' ];
 
-        return json_decode( $response->getContent(), true );
+        /**
+         * We'll try to make a payment to the order to 
+         * turn that into a partially paid order.
+         */
+        $orderDetails   =   array_merge( $orderDetails, [
+            'products'  =>  Order::find( $order[ 'id' ] )->products->toArray(),
+            'payments'  =>  [
+                [
+                    'identifier'  =>  $payment->identifier,
+                    'value'         =>  $order[ 'total' ] / 3
+                ]
+            ]
+        ]);
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/nexopos/v4/orders/' . $order[ 'id' ], $orderDetails );
+        
+        $response->dump();
+        $response->assertStatus(200);
+
+        return $response->json();
     }
 
     protected function attemptDeleteOrder()
