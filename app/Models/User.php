@@ -38,6 +38,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'active' => 'boolean',
+        'banned' => 'boolean'
     ];
 
     /**

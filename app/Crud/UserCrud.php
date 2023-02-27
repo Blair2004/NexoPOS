@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
+use App\Services\Options;
 use App\Services\UsersService;
 use Carbon\Carbon;
 use Exception;
@@ -107,7 +108,8 @@ class UserCrud extends CrudService
         'phone',
         'gender',
         'pobox',
-        'credit_limit_amount'
+        'credit_limit_amount',
+        'banned'
     ];
 
     protected $tabsRelations = [
@@ -126,6 +128,8 @@ class UserCrud extends CrudService
         'active'            =>  YesNoBoolCast::class,
     ];
 
+    private Options $options;
+
     private UsersService $userService;
 
     /**
@@ -140,6 +144,7 @@ class UserCrud extends CrudService
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
         $this->userService = app()->make( UsersService::class );
+        $this->options = app()->make( Options::class );
     }
 
     /**
@@ -238,6 +243,13 @@ class UserCrud extends CrudService
                             'label' => __( 'Active' ),
                             'description' => __( 'Define wether the user can use the application.' ),
                             'value' => ( $entry !== null && $entry->active ? 1 : 0 ) ?? 0,
+                        ], [
+                            'type' => 'switch',
+                            'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'name' => 'banned',
+                            'label' => __( 'Banned' ),
+                            'description' => __( 'Will restrict the user from accessing the application either through the login page or to be selected as a resource.' ),
+                            'value' => ( $entry !== null && $entry->banned ? 1 : 0 ) ?? 0,
                         ], [
                             'type' => 'multiselect',
                             'options' => Helper::toJsOptions( Role::get(), [ 'id', 'name' ] ),
@@ -449,7 +461,7 @@ class UserCrud extends CrudService
 
         if ( ! empty( $inputs[ 'password' ] ) ) {
             $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
-        } 
+        }         
         
         return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
@@ -484,6 +496,21 @@ class UserCrud extends CrudService
         if ( ! empty( $inputs[ 'password' ] ) ) {
             $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
         } 
+
+        /**
+         * If the account is already banned, but we attempt
+         * to update the user, we'll unset the "banned" to avoid
+         * defining an incorrect "banned_since" date.
+         */
+        if ( ! $entry->banned ) {            
+            /**
+             * if the user is recently banned we should also mention
+             * from when that has occured.
+             */
+            if ( ( bool ) $inputs[ 'banned' ] ) {
+                $entry->banned_since    =   ns()->date->now()->toDateTimeString();
+            }
+        }
         
         return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
@@ -529,6 +556,15 @@ class UserCrud extends CrudService
                 );
 
             $this->userService->createAttribute( $entry );
+
+            /**
+             * if the user is recently banned we should also mention
+             * from when that has occured.
+             */
+            if ( ( bool ) $request[ 'banned' ] ) {
+                $entry->banned_since    =   ns()->date->now()->toDateTimeString();
+                $entry->save();
+            }
             
             /**
              * While creating the user, if we set that user as active

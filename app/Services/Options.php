@@ -45,7 +45,7 @@ class Options
         Option::truncate();
 
         $defaultOptions = [
-            'ns_registration_enabled' => false,
+            'ns_registration_enabled' => 'no',
             'ns_store_name' => 'NexoPOS',
             'ns_pos_order_types' => [ 'takeaway', 'delivery' ],
         ];
@@ -229,11 +229,13 @@ class Options
                     $option->value  =   null;
                 }
             } elseif ( ! $option->array ) {
-                $option->value  =   match ( $option->value ) {
-                    preg_match( '/[0-9]{1,}/', $option->value ) => (int) $option->value,
-                    preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) => (float) $option->value,
-                    default => $option->value,
-                };
+                if ( preg_match( '/^[0-9]{1,}$/', $option->value ) ) {
+                    $option->value  =   (int) $option->value;
+                } else if ( preg_match( '/^[0-9]{1,}\.[0-9]{1,}$/', $option->value ) ) {
+                    $option->value  =   (float) $option->value;
+                } else {
+                    $option->value  =   $option->value;
+                }
             }
         }
     }

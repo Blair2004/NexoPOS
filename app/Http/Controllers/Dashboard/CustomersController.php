@@ -247,15 +247,8 @@ class CustomersController extends DashboardController
     public function searchCustomer( Request $request )
     {
         $search = $request->input( 'search' );
-        $customers = Customer::with( 'billing' )
-            ->with( 'shipping' )
-            ->where( 'first_name', 'like', '%' . $search . '%' )
-            ->orWhere( 'email', 'like', '%' . $search . '%' )
-            ->orWhere( 'phone', 'like', '%' . $search . '%' )
-            ->limit(10)
-            ->get();
-
-        return $customers;
+        
+        return $this->customerService->search( $search );
     }
 
     public function accountTransaction( Customer $customer, Request $request )

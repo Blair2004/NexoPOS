@@ -58,6 +58,7 @@ class CustomerService
             ->with( 'shipping' )
             ->where( 'group_id', '<>', null )
             ->limit( $limit )
+            ->notBanned()
             ->orderBy( 'updated_at', 'desc' )->get();
     }
 
@@ -91,6 +92,23 @@ class CustomerService
         ];
     }
 
+    /**
+     * Search customers having the defined argument.
+     */
+    public function search( int | string $argument ): Collection
+    {
+        $customers = Customer::with( 'billing' )
+            ->with( 'shipping' )
+            ->where( 'first_name', 'like', '%' . $argument . '%' )
+            ->orWhere( 'email', 'like', '%' . $argument . '%' )
+            ->orWhere( 'phone', 'like', '%' . $argument . '%' )
+            ->notBanned()
+            ->limit(10)
+            ->get();
+
+        return $customers;
+    }
+
     public function precheckCustomers( $fields, $id = null )
     {
         if ( $id === null ) {
@@ -115,12 +133,9 @@ class CustomerService
     }
 
     /**
-     * Create customer fields
-     *
-     * @param array fields
-     * @return array response
+     * Create customer fields.
      */
-    public function create( $fields )
+    public function create( array $fields ): array
     {
         $this->precheckCustomers( $fields );
 
@@ -175,13 +190,9 @@ class CustomerService
 
     /**
      * Update a specific customer
-     * using a provided informations
-     *
-     * @param int customer id
-     * @param array data
-     * @return array response
+     * using a provided informations.
      */
-    public function update( $id, array $fields )
+    public function update( int $id, array $fields ): array
     {
         $customer = Customer::find( $id );
 
@@ -253,11 +264,8 @@ class CustomerService
 
     /**
      * get customers addresses
-     *
-     * @param int customer id
-     * @return array
      */
-    public function getCustomerAddresses( $id )
+    public function getCustomerAddresses( int $id ): array
     {
         $customer = $this->get( $id );
 
@@ -266,12 +274,9 @@ class CustomerService
 
     /**
      * Delete a specific customer
-     * who use the provided email
-     *
-     * @param string email
-     * @return array response
+     * havign the defined email
      */
-    public function deleteUsingEmail( $email )
+    public function deleteUsingEmail( string $email ): array
     {
         $customer = Customer::byEmail( $email )->first();
 
@@ -289,13 +294,9 @@ class CustomerService
     }
 
     /**
-     * save customer transaction
-     *
-     * @param string operation
-     * @param int amount
-     * @return array
+     * save a customer transaction.
      */
-    public function saveTransaction( Customer $customer, $operation, $amount, $description = '', $details = [] )
+    public function saveTransaction( Customer $customer, string $operation, float $amount, string $description = '', array $details = [] ): array
     {
         if ( in_array( $operation, [
             CustomerAccountHistory::OPERATION_DEDUCT,
@@ -375,7 +376,10 @@ class CustomerService
         ];
     }
 
-    public function updateCustomerAccount( CustomerAccountHistory $history )
+    /**
+     * Updates the customers account.
+     */
+    public function updateCustomerAccount( CustomerAccountHistory $history ): void
     {
         if ( in_array( $history->operation, [
             CustomerAccountHistory::OPERATION_DEDUCT,

@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\DB;
  * @property float credit_limit_amount
  * @property float account_amount
  */
-class Customer extends NsModel
+class Customer extends UserScope
 {
     use HasFactory;
 
@@ -132,24 +132,5 @@ class Customer extends NsModel
             foreignKey: 'customer_id',
             localKey: 'id'
         );
-    }
-
-    /**
-     * Get customer using email
-     *
-     * @param Query
-     * @param string email
-     */
-    public function scopeByEmail( $query, $email )
-    {
-        return $query->where( 'email', $email );
-    }
-
-    /**
-     * get customers from groups
-     */
-    public function scopeFromGroup( $query, $index )
-    {
-        return $query->where( 'parent_id', $index );
     }
 }

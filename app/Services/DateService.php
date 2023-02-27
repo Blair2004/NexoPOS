@@ -57,13 +57,9 @@ class DateService extends Carbon
     }
 
     /**
-     * Get the defined date format
-     *
-     * @param string $date
-     * @param string $mode
-     * @return string formatted string
+     * Get the defined date format.
      */
-    public function getFormatted( $date, $mode = 'full' )
+    public function getFormatted( string $date, string $mode = 'full' ): string
     {
         switch ( $mode ) {
             case 'short':
@@ -78,10 +74,8 @@ class DateService extends Carbon
     /**
      * Get the actual date time instance
      * based on the provided timezone
-     *
-     * @return DateService $date
      */
-    public function getNow()
+    public function getNow(): DateService
     {
         return $this->now( $this->timezone );
     }
@@ -89,10 +83,8 @@ class DateService extends Carbon
     /**
      * Return a formatted string the current date/time
      * usign a defined format (full or short)
-     *
-     * @return string
      */
-    public function getNowFormatted( $mode = 'full' )
+    public function getNowFormatted( string $mode = 'full' ): string
     {
         switch ( $mode ) {
             case 'short':
@@ -105,13 +97,9 @@ class DateService extends Carbon
     }
 
     /**
-     * get days between two dates
-     *
-     * @param Carbon $startRange
-     * @param Carbon $endRange
-     * @return array[Carbon]
+     * Get days as an array between two dates.
      */
-    public function getDaysInBetween( $startRange, $endRange )
+    public function getDaysInBetween( Carbon $startRange, Carbon $endRange ): array
     {
         if ( $startRange->lessThan( $endRange ) && $startRange->diffInDays( $endRange ) >= 1 ) {
             $days = [];

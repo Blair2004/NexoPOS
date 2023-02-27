@@ -137,6 +137,12 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_users', 'group_id' ) ) {
                 $table->integer( 'group_id' )->nullable();
             }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'banned' ) ) {
+                $table->boolean( 'banned' )->default( false )->after( 'active' );
+            }
+            if ( ! Schema::hasColumn( 'nexopos_users', 'banned_since' ) ) {
+                $table->datetime( 'banned_since' )->nullable()->after( 'banned' );
+            }
         });
 
         /**
@@ -294,9 +300,9 @@ return new class extends Migration
         $options->each( function( $option ) {
             $json = json_decode( $option->value, true );
 
-            if ( preg_match( '/[0-9]{1,}/', $option->value ) ) {
+            if ( preg_match( '/^[0-9]{1,}$/', $option->value ) ) {
                 $option->value  =   (int) $option->value;
-            } else if ( preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) ) {
+            } else if ( preg_match( '/^[0-9]{1,}\.[0-9]{1,}$/', $option->value ) ) {
                 $option->value  =   (float) $option->value;
             } else if ( json_last_error() == JSON_ERROR_NONE ) {
                 $option->value  =   $json;
