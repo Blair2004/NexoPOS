@@ -19,6 +19,8 @@ class ResetService
             'nexopos_coupons',
             'nexopos_coupons_products',
             'nexopos_coupons_categories',
+            'nexopos_coupons_customers',
+            'nexopos_coupons_customers_groups',
 
             'nexopos_customers_account_history',
             'nexopos_customers_addresses',
