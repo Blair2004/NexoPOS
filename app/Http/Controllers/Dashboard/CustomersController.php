@@ -98,7 +98,7 @@ class CustomersController extends DashboardController
                 return $customer;
             }
 
-            throw new NotFoundException( __( 'The requested customer cannot be fonud.' ) );
+            throw new NotFoundException( __( 'The requested customer cannot be found.' ) );
         }
 
         return $this->customerService->get();

@@ -73,7 +73,7 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Pick
-     * Restrict columns you retreive from relation.
+     * Restrict columns you retrieve from relation.
      * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
@@ -249,7 +249,7 @@ class HoldOrderCrud extends CrudService
                         ], [
                             'type' => 'text',
                             'name' => 'process_status',
-                            'label' => __( 'Process Statuss' ),
+                            'label' => __( 'Process Status' ),
                             'value' => $entry->process_status ?? '',
                         ], [
                             'type' => 'text',

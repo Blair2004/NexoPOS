@@ -77,7 +77,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="px-4 w-full md:w-1/2 lg:w-2/4 mb-2">
             <div class="mb-2">
                 <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Order Status' ) }}</h3>
@@ -111,9 +111,9 @@
                     <div v-if="showDeliverySelect" class="flex-auto flex">
                         <div class="ns-select flex items-center justify-center">
                             <select ref="process_status" class="flex-auto border-info-primary rounded-lg" v-model="order.delivery_status">
-                                <option 
-                                    v-for="( option, index ) of deliveryStatuses" 
-                                    :key="index" 
+                                <option
+                                    v-for="( option, index ) of deliveryStatuses"
+                                    :key="index"
                                     :value="option.value">{{ option.label }}</option>
                             </select>
                         </div>
@@ -137,9 +137,9 @@
                     <div class="flex-auto flex" v-if="showProcessingSelect">
                         <div class="ns-select flex items-center justify-center">
                             <select ref="process_status" class="flex-auto border-info-primary rounded-lg" v-model="order.process_status">
-                                <option 
-                                    v-for="( option, index ) of processingStatuses" 
-                                    :key="index" 
+                                <option
+                                    v-for="( option, index ) of processingStatuses"
+                                    :key="index"
                                     :value="option.value">{{ option.label }}</option>
                             </select>
                         </div>
@@ -225,11 +225,11 @@ export default {
                             next: result => {
                                 this.showProcessingSelect   =   false;
                                 nsSnackBar.success( result.message ).subscribe();
-                            }, 
+                            },
                             error: ( error ) => {
-                                nsSnackBar.error( error.message || __( 'Unexpected error occured.' ) ).subscribe();
+                                nsSnackBar.error( error.message || __( 'Unexpected error occurred.' ) ).subscribe();
                             }
-                        })                            
+                        })
                     }
                 }
             })
@@ -258,11 +258,11 @@ export default {
                             next: result => {
                                 this.showDeliverySelect     =   false;
                                 nsSnackBar.success( result.message ).subscribe();
-                            }, 
+                            },
                             error: ( error ) => {
-                                nsSnackBar.error( error.message || __( 'Unexpected error occured.' ) ).subscribe();
+                                nsSnackBar.error( error.message || __( 'Unexpected error occurred.' ) ).subscribe();
                             }
-                        })                            
+                        })
                     }
                 }
             })

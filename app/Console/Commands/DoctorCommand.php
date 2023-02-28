@@ -108,7 +108,7 @@ class DoctorCommand extends Command
 
             $this->newLine();
 
-            $this->info( 'The products were succesfully updated' );
+            $this->info( 'The products were successfully updated' );
         }
     }
 }

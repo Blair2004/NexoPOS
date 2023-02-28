@@ -59,7 +59,7 @@ export default {
                 setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
             },
             error: ( error ) => {
-                nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), __( 'OK' ), { duration: 0 }).subscribe();
+                nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ), __( 'OK' ), { duration: 0 }).subscribe();
             }
         });
     },

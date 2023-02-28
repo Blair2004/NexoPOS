@@ -68,14 +68,14 @@
                     </thead>
                     <tbody>
                         <template v-if="result.data !== undefined && result.data.length > 0">
-                            <ns-table-row 
+                            <ns-table-row
                                 :key="index"
-                                @updated="refreshRow( $event )" 
-                                v-for="(row,index) of result.data" 
-                                :columns="columns" 
+                                @updated="refreshRow( $event )"
+                                v-for="(row,index) of result.data"
+                                :columns="columns"
                                 :prependOptions="prependOptions"
                                 :showOptions="showOptions"
-                                :row="row" 
+                                :row="row"
                                 @reload="refresh()"
                                 @toggled="handleShowOptions( $event )"></ns-table-row>
                         </template>
@@ -151,7 +151,7 @@ export default {
                 data: [],
                 first_page_url: null,
                 from: null,
-                last_page: null, 
+                last_page: null,
                 last_page_url: null,
                 next_page_url: null,
                 path: null,
@@ -161,7 +161,7 @@ export default {
                 total: null,
             }
         }
-    }, 
+    },
     name: 'ns-crud',
     mounted() {
         if ( this.identifier !== undefined  ) {
@@ -248,7 +248,7 @@ export default {
             if ( current + 3 < count ) {
                 result.push( '...', count );
             }
-            
+
             return result.filter( f => f > 0 || typeof f === 'string' );
         },
 
@@ -261,7 +261,7 @@ export default {
                         .subscribe()
                 }, error => {
                     nsSnackBar
-                        .error( error.message || __( 'Unexpected error occured.' ) )
+                        .error( error.message || __( 'Unexpected error occurred.' ) )
                         .subscribe();
                 })
         },
@@ -364,7 +364,7 @@ export default {
                     this.columns[ identifier ].$direction   =   'asc';
                 break;
             }
-            
+
             if ( [ 'asc', 'desc' ].includes( this.columns[ identifier ].$direction ) ) {
                 this.sortColumn     =   `active=${identifier}&direction=${this.columns[ identifier ].$direction}`;
             } else {
@@ -407,7 +407,7 @@ export default {
         async openQueryFilter() {
             try {
                 console.log( nsOrdersFilterPopupVue );
-                
+
                 const result    =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsOrdersFilterPopupVue, { resolve, reject, queryFilters: this.queryFilters });
                 });
@@ -421,8 +421,8 @@ export default {
                  */
                 if ( result !== null ) {
                     this.withFilters            =   true;
-                    this.queryFiltersString     =   '&queryFilters=' + encodeURIComponent( JSON.stringify(result) ); 
-                } 
+                    this.queryFiltersString     =   '&queryFilters=' + encodeURIComponent( JSON.stringify(result) );
+                }
 
                 this.refresh();
             } catch( exception ) {
@@ -441,7 +441,7 @@ export default {
                  */
                 f.data          =   f.data.map( entry => {
                     const selected  =   this.selectedEntries.filter( e => e.$id === entry.$id ).length > 0;
-                    
+
                     if( selected ) {
                         entry.$checked  =   true;
                     }

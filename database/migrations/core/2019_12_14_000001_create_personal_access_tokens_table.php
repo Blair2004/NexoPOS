@@ -7,6 +7,16 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * Determine whether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
+    public function runOnMultiStore()
+    {
+        return false;
+    }
+
+    /**
      * Run the migrations.
      *
      * @return void

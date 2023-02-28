@@ -21,6 +21,6 @@ class PasswordRecoveryMiddleware
             return $next($request);
         }
 
-        throw new NotAllowedException( __( 'The recovery has been explicitely disabled.' ) );
+        throw new NotAllowedException( __( 'The recovery has been explicitly disabled.' ) );
     }
 }

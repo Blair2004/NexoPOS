@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $parent_id
  * @property int $unit_group
  * @property string $on_expiration
- * @property bool $expires wether or not the product has expired
+ * @property bool $expires whether or not the product has expired
  * @property bool $searchable
  * @property int $author
  * @property string $uuid
@@ -137,8 +137,8 @@ class Product extends NsModel
     /**
      * get a product using a barcode
      *
-     * @param QueryBuilder
-     * @param string barcode
+     * @param QueryBuilder $query
+     * @param string $sku
      * @return QueryBuilder
      */
     public function scopeSku( $query, $sku )

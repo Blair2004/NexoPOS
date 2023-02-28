@@ -46,7 +46,7 @@ class RolesCrud extends CrudService
 
     /**
      * Pick
-     * Restrict columns you retreive from relation.
+     * Restrict columns you retrieve from relation.
      * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
@@ -182,7 +182,7 @@ class RolesCrud extends CrudService
     public function filterPostInputs( $inputs )
     {
         /**
-         * the namespace can be automatted
+         * the namespace can be automated
          */
         if ( empty( $inputs[ 'namespace' ] ) ) {
             $inputs[ 'namespace' ] = Str::slug( $inputs[ 'name' ] );
@@ -222,7 +222,7 @@ class RolesCrud extends CrudService
         }
 
         /**
-         * the namespace can be automatted
+         * the namespace can be automated
          */
         if ( empty( $inputs[ 'namespace' ] ) && ! $entry->locked ) {
             $inputs[ 'namespace' ] = Str::slug( $inputs[ 'name' ] );

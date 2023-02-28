@@ -55,13 +55,13 @@ export default {
              */
             setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
         }, ( error ) => {
-            nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), __( 'OK' ), { duration: 0 }).subscribe();
+            nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ), __( 'OK' ), { duration: 0 }).subscribe();
         });
     },
     methods: {
         __,
         requestRecovery() {
-            const isValid   =   this.validation.validateFields( this.fields );            
+            const isValid   =   this.validation.validateFields( this.fields );
 
             if ( ! isValid ) {
                 return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
@@ -87,7 +87,7 @@ export default {
                 }, ( error ) => {
                     this.isSubitting    =   false;
                     this.validation.enableFields( this.fields );
-                    
+
                     if ( error.data ) {
                         this.validation.triggerFieldsErrors( this.fields, error.data );
                     }

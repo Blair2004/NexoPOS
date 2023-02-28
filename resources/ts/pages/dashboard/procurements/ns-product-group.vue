@@ -35,7 +35,7 @@
                                             </div>
                                         </li>
                                         <li @click="toggleQuantityField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
-                                            <span>{{ __( 'Quantity' ) }}:</span> 
+                                            <span>{{ __( 'Quantity' ) }}:</span>
                                             <span v-if="! product._quantity_toggled" class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.quantity }}</span>
                                             <input ref="quantityField" type="text" v-model="product.quantity" v-if="product._quantity_toggled">
                                         </li>
@@ -140,7 +140,7 @@ export default {
         toggleUnitField( product ) {
             if ( ! product._unit_toggled ) {
                 product._unit_toggled   =   ! product._unit_toggled;
-            }            
+            }
 
             setTimeout( () => {
                 if ( product._unit_toggled ) {
@@ -207,7 +207,7 @@ export default {
                                 value: unitQuantity.id
                             }
                         }),
-                        resolve, 
+                        resolve,
                         reject
                     })
                 });
@@ -257,7 +257,7 @@ export default {
                     this.results    =   results;
                 },
                 error: error => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error occured' ), __( 'Ok' ), { duration: 3000 }).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error occurred' ), __( 'Ok' ), { duration: 3000 }).subscribe();
                 }
             })
         }

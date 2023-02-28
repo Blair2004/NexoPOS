@@ -118,7 +118,7 @@ if ( Auth::check() ) {
                     @hasSection( 'layout.dashboard.body' )
                         @yield( 'layout.dashboard.body' )
                     @endif
-                    
+
                     @hasSection( 'layout.dashboard.body.with-header' )
                         @include( 'common.dashboard.with-header' )
                     @endif
@@ -126,7 +126,7 @@ if ( Auth::check() ) {
                     @hasSection( 'layout.dashboard.with-header' )
                         @include( 'common.dashboard.with-header' )
                     @endif
-                    
+
                     @hasSection( 'layout.dashboard.body.with-title' )
                         @include( 'common.dashboard.with-title' )
                     @endif

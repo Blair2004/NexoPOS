@@ -40,7 +40,7 @@ class Unit extends NsModel
     }
 
     /**
-     * retreive a unit using a defined
+     * retrieve a unit using a defined
      * identifier
      *
      * @param Query $query

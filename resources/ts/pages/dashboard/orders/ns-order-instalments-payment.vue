@@ -69,7 +69,7 @@ export default {
                     this.submitPayment();
                 },
                 error: error => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
                 }
             })
         },
@@ -102,7 +102,7 @@ export default {
                             });
                         }
 
-                        nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                        nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
                     }
                 })
         }

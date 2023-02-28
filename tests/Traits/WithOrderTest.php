@@ -338,7 +338,7 @@ trait WithOrderTest
                 ->json( 'POST', 'api/orders', $orderDetails );
 
         /**
-         * Step 0: Ensure no error occured
+         * Step 0: Ensure no error occurred
          */
         $response->assertStatus( 200 );
 

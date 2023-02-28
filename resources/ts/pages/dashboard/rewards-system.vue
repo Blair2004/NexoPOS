@@ -48,7 +48,7 @@ export default {
                 ...this.formValidation.extractForm( this.form ),
                 rules: this.form.rules.map( rule => {
                     const fieldSet    =   {};
-                    
+
                     rule.forEach( f => {
                         fieldSet[ f.name ]  =   f.value;
                     });
@@ -66,7 +66,7 @@ export default {
                 }, ( error ) => {
                     this.formValidation.triggerError( this.form, error.response.data );
                     this.formValidation.enableForm( this.form );
-                    nsSnackBar.error( error.data.message || __( 'An unexpected error has occured' ), undefined, {
+                    nsSnackBar.error( error.data.message || __( 'An unexpected error has occurred' ), undefined, {
                         duration: 5000
                     }).subscribe();
                 })
@@ -125,11 +125,11 @@ export default {
                     </div>
                 </div>
                 <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'info'" class="input-group flex border-2 rounded overflow-hidden">
-                    <input v-model="form.main.value" 
-                        @blur="formValidation.checkField( form.main )" 
-                        @change="formValidation.checkField( form.main )" 
+                    <input v-model="form.main.value"
+                        @blur="formValidation.checkField( form.main )"
+                        @change="formValidation.checkField( form.main )"
                         :disabled="form.main.disabled"
-                        type="text" 
+                        type="text"
                         class="flex-auto text-primary outline-none h-10 px-2">
                     <button :disabled="form.main.disabled" @click="submit()" class="outline-none px-4 h-10 border-l border-tertiary"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>

@@ -48,7 +48,7 @@ export default {
             queryPage: 1,
 
             /**
-             * determine wether the bulk
+             * determine whether the bulk
              * selector is enabled or not.
              */
             bulkSelect: false,
@@ -140,7 +140,7 @@ export default {
                                 .filter( v => v.selected )
                                 .map( v => v.id )
                         })
-                        .subscribe({ 
+                        .subscribe({
                             next: result => {
                                 nsSnackBar.success( result.message ).subscribe();
                                 this.loadGallery();
@@ -189,7 +189,7 @@ export default {
 
         async uploadFiles() {
             const uploadableFiles   =   this.files.filter( file => file.uploaded === false && file.progress === 0 && file.failed === false );
-            
+
             for( let i = 0; i < uploadableFiles.length; i++ ) {
                 const fileData      =   uploadableFiles[i];
 
@@ -278,7 +278,7 @@ export default {
         },
 
         /**
-         * This make sure to load the 
+         * This make sure to load the
          * gallery. That means loading images
          * with a pagination system
          * @param {interger} page
@@ -323,7 +323,7 @@ export default {
             this.$popup.close();
         },
 
-        /** 
+        /**
          * this makes sure resources
          * are correctly select when the bulk selection
          * is enabled or not

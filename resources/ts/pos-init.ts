@@ -647,7 +647,7 @@ export class POS {
         }
 
         /**
-         * By default, we'll use box computed tax and prodcuts tax value 
+         * By default, we'll use box computed tax and products tax value 
          * when priceWithTax is enabled.
          * However to avoid duplicate taxes, we'll only consider computed tax
          * when priceWithTax is disabled
@@ -665,7 +665,7 @@ export class POS {
         const products      =   this.products.getValue();
 
         /**
-         * retreive all products taxes
+         * retrieve all products taxes
          * and sum the total.
          */
         const totalTaxes = products.map((product: OrderProduct) => {
@@ -921,7 +921,7 @@ export class POS {
                         return resolve( quantities );
                     }
                 } catch( exception ) {
-                    return nsSnackBar.error( __( 'An error has occured while computing the product.' ) ).subscribe();
+                    return nsSnackBar.error( __( 'An error has occurred while computing the product.' ) ).subscribe();
                 }
             }
             
@@ -1170,7 +1170,7 @@ export class POS {
         this.order.next(current);
 
         /**
-         * explicitely here we do manually refresh the cart
+         * explicitly here we do manually refresh the cart
          * as if we listen to cart update by subscribing,
          * that will create a loop (huge performance issue).
          */
@@ -1332,7 +1332,7 @@ export class POS {
             order = response['data'].order;
         } catch (exception) {
             if (exception !== false && exception.message !== undefined) {
-                nsSnackBar.error(exception.message || __('An unexpected error has occured while fecthing taxes.'), __('OKAY'), { duration: 0 }).subscribe();
+                nsSnackBar.error(exception.message || __('An unexpected error has occurred while fecthing taxes.'), __('OKAY'), { duration: 0 }).subscribe();
             }
         }
 
@@ -1493,7 +1493,7 @@ export class POS {
         cartProduct = { ...cartProduct, ...productData };
 
         /**
-         * retreive product that 
+         * retrieve product that 
          * are currently stored
          */
         const products = this._products.getValue();

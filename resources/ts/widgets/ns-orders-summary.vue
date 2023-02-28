@@ -14,10 +14,10 @@
                 <i class="las la-grin-beam-sweat text-6xl"></i>
                 <p class="text-sm">{{ __( 'Well.. nothing to show for the meantime.' ) }}</p>
             </div>
-            <div 
-                v-for="order of orders" 
-                :key="order.id" 
-                :class="order.payment_status === 'paid' ? 'paid-order' : 'other-order'" 
+            <div
+                v-for="order of orders"
+                :key="order.id"
+                :class="order.payment_status === 'paid' ? 'paid-order' : 'other-order'"
                 class="border-b single-order p-2 flex justify-between">
                 <div>
                     <h3 class="text-lg font-semibold">{{ __( 'Order' ) }} : {{ order.code }}</h3>
@@ -31,7 +31,7 @@
                         <div class="divide-y-4"></div>
                         <div class="px-1">
                             <h4 class="text-semibold text-xs">
-                                <i class="las la-clock"></i> 
+                                <i class="las la-clock"></i>
                                 <span>{{ order.created_at }}</span>
                             </h4>
                         </div>

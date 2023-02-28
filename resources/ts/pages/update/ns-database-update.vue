@@ -6,13 +6,13 @@
             </div>
             <div class="my-3 rounded shadow ns-box">
                 <div class="border-b ns-box-header py-4 flex items-center justify-center">
-                    <h3 class="text-xl font-bold">{{ __( 'Datebase Update' ) }}</h3>
+                    <h3 class="text-xl font-bold">{{ __( 'Database Update' ) }}</h3>
                 </div>
                 <div class="p-2 ns-box-body">
                     <p class="text-center text-sm py-4">{{ __( 'In order to keep NexoPOS running smoothly with updates, we need to proceed to the database migration. In fact you don\'t need to do any action, just wait until the process is done and you\'ll be redirected.' ) }}</p>
                     <div v-if="error" class="border-l-4 text-sm ns-notice error p-4">
                         <p>
-                            {{ __( 'Looks like an error has occured during the update. Usually, giving another shot should fix that. However, if you still don\'t get any chance.' ) }}
+                            {{ __( 'Looks like an error has occurred during the update. Usually, giving another shot should fix that. However, if you still don\'t get any chance.' ) }}
                             {{ __( 'Please report this message to the support : ' ) }}
                         </p>
                         <pre class="rounded whitespace-pre-wrap my-2 p-2">{{ lastErrorMessage }}</pre>
@@ -100,7 +100,7 @@ export default {
                 } catch( exception ) {
                     this.updating           =   false;
                     this.error              =   true;
-                    this.lastErrorMessage   =   exception.message || __( 'An unexpected error occured' );
+                    this.lastErrorMessage   =   exception.message || __( 'An unexpected error occurred' );
 
                     return nsSnackBar.error( exception.message ).subscribe();
                 }
@@ -131,7 +131,7 @@ export default {
                     } catch( exception ) {
                         this.updating           =   false;
                         this.error              =   true;
-                        this.lastErrorMessage   =   exception.message || __( 'An unexpected error occured' );
+                        this.lastErrorMessage   =   exception.message || __( 'An unexpected error occurred' );
 
                         return nsSnackBar.error( exception.message ).subscribe();
                     }

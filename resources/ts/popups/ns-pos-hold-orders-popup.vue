@@ -17,7 +17,7 @@
             </div>
             <div class="p-2">
                 <p class="text-secondary">
-                    {{ __( `The current order will be set on hold. You can retreive this order from the pending order button. Providing a reference to it might help you to identify the order more quickly.` )}}
+                    {{ __( `The current order will be set on hold. You can retrieve this order from the pending order button. Providing a reference to it might help you to identify the order more quickly.` )}}
                 </p>
             </div>
         </div>
@@ -47,7 +47,7 @@ export default {
     },
     mounted() {
         this.popupCloser();
-        
+
         this.show   =   POS.getHoldPopupEnabled(); // if the popup is enabled, it will be displayed.
 
         /**
@@ -60,7 +60,7 @@ export default {
 
         this.$refs[ 'reference' ].focus();
         this.$refs[ 'reference' ].select();
-        
+
         this.order  =   this.$popupParams.order;
         this.title  =   this.$popupParams.order.title || '';
     },

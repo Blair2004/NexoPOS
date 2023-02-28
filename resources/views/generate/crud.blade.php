@@ -94,8 +94,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Pick
-     * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Restrict columns you retrieve from relation.
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
@@ -240,7 +240,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         return $request;
     }
 
-    
+
     /**
      * A shortcut and secure way to access
      * senstive value on a read only way.
@@ -343,7 +343,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         return $entry;
     }
 
-    
+
     /**
      * trigger actions that are executed
      * when a bulk actio is posted.

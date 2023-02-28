@@ -203,7 +203,7 @@ export default {
 
                 const requiredProducts      =   this.coupon.products;
 
-                if ( 
+                if (
                     requiredProducts.length > 0
                 ) {
                     const productIds    =   requiredProducts.map( p => p.product_id );
@@ -215,7 +215,7 @@ export default {
 
                 const requiredCategories      =   this.coupon.categories;
 
-                if ( 
+                if (
                     requiredCategories.length > 0
                 ) {
                     const categoriesIds    =   requiredCategories.map( p => p.category_id );
@@ -244,7 +244,7 @@ export default {
 
                 POS.pushCoupon( finalCoupon );
                 this.activeTab  =   'active-coupons';
-                
+
                 setTimeout( () => {
                     this.popupResolver( finalCoupon );
                 }, 500 );
@@ -276,7 +276,7 @@ export default {
                 case 'flat_discount': return this.$options.filters.currency( coupon.discount_value );
             }
         },
-        
+
         closePopup() {
             this.popupResolver( false );
         },
@@ -311,10 +311,10 @@ export default {
                         nsSnackBar.success( __( 'The coupon has been loaded.' ) ).subscribe()
                     },
                     error : error => {
-                        nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) ).subscribe()
+                        nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ) ).subscribe()
                     }
                 });
         }
-    } 
+    }
 }
 </script>

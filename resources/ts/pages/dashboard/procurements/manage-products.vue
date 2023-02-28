@@ -13,11 +13,11 @@
                     </div>
                 </div>
                 <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-tertiary' : ''" class="input-group info flex border-2 rounded overflow-hidden">
-                    <input v-model="form.main.value" 
-                        @blur="formValidation.checkField( form.main )" 
-                        @change="formValidation.checkField( form.main )" 
+                    <input v-model="form.main.value"
+                        @blur="formValidation.checkField( form.main )"
+                        @change="formValidation.checkField( form.main )"
                         :disabled="form.main.disabled"
-                        type="text" 
+                        type="text"
                         :class="form.main.disabled ? '' : ''"
                         class="flex-auto text-primary outline-none h-10 px-2">
                     <button :disabled="form.main.disabled" :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'bg-error-tertiary' : ''" @click="submit()" class="outline-none px-4 h-10 rounded-none"><slot name="save">{{ __( 'Save' ) }}</slot></button>
@@ -167,7 +167,7 @@ export default {
             handler( value ) {
                 this.form.variations.forEach( variation => {
                     const identification    =   this.formValidation.extractFields( variation.tabs.identification.fields );
-                    
+
                     if ( identification.type === 'grouped' )  {
                         for( let index in variation.tabs ) {
                             if ( ! [ 'identification', 'groups', 'taxes', 'units' ].includes( index ) ) {
@@ -176,7 +176,7 @@ export default {
                         }
 
                         /**
-                         * explicitely enable the groups tab
+                         * explicitly enable the groups tab
                          */
                         if ( variation.tabs[ 'groups' ] ) {
                             variation.tabs[ 'groups' ].visible  = true;
@@ -189,7 +189,7 @@ export default {
                         }
 
                         /**
-                         * explicitely disable the groups tab
+                         * explicitly disable the groups tab
                          */
                         if ( variation.tabs[ 'groups' ] ) {
                             variation.tabs[ 'groups' ].visible = false;
@@ -212,7 +212,7 @@ export default {
                             return ! [ 'category_id', 'product_type', 'stock_management', 'expires' ].includes( field.name );
                         })
                     .map( field => {
-                        if ( 
+                        if (
                             ( typeof field.value === 'string' && field.value.length === 0 ) ||
                             ( field.value === null )
                         ) {
@@ -227,7 +227,7 @@ export default {
                 tabs: newVariation
             };
         }
-    },  
+    },
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
     methods: {
         __,
@@ -306,7 +306,7 @@ export default {
         },
 
         /**
-         * When the user click on "New Group", 
+         * When the user click on "New Group",
          * this check if there is not enough options as there is groups
          */
         addUnitGroup( field ) {
@@ -378,7 +378,7 @@ export default {
         },
         submit() {
             let formValidGlobally   =   true;
-            this.formValidation.validateFields([ this.form.main ]); 
+            this.formValidation.validateFields([ this.form.main ]);
 
             const validity  =   this.form.variations.map( variation => {
                 return this.formValidation.validateForm( variation );
@@ -410,13 +410,13 @@ export default {
                     .forEach( fields_groups => {
                         const uniqueness    =   new Object;
                         fields_groups.groups.forEach( fields => {
-                            validation.push( this.formValidation.validateFields( fields ) );                            
+                            validation.push( this.formValidation.validateFields( fields ) );
                         });
                 });
             });
 
             if ( validation.length === 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-units-groups' ] ? this.$slots[ 'error-no-units-groups' ][0].text : __( 'Either Selling or Purchase unit isn\'t defined. Unable to proceed.' ) ).subscribe(); 
+                return nsSnackBar.error( this.$slots[ 'error-no-units-groups' ] ? this.$slots[ 'error-no-units-groups' ][0].text : __( 'Either Selling or Purchase unit isn\'t defined. Unable to proceed.' ) ).subscribe();
             }
 
             if ( validation.filter( v => v === false ).length > 0 ) {
@@ -425,7 +425,7 @@ export default {
             }
 
             /**
-             * let's correctly extract 
+             * let's correctly extract
              * the form before submitting that
              */
             const data  =   {
@@ -449,21 +449,21 @@ export default {
                             })
                         });
 
-                    data[ 'units' ]         =   { 
-                        ...data[ 'units' ], 
+                    data[ 'units' ]         =   {
+                        ...data[ 'units' ],
                         ...groups
                     };
 
                     return data;
                 })
             }
-            
+
             this.formValidation.disableForm( this.form );
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe( result => {
                     if ( result.status === 'success' ) {
-                        
+
                         if ( this.submitMethod === 'POST' && this.returnUrl !== false ) {
                             return document.location   =   result.data.editUrl || this.returnUrl;
                         } else {
@@ -506,7 +506,7 @@ export default {
             if ( activeIndex === 'units' ) {
                 this.loadAvailableUnits( tabs[ activeIndex ] );
             }
-        },  
+        },
         duplicate( variation ) {
             this.form.variations.push( Object.assign({}, variation ));
         },
@@ -521,7 +521,7 @@ export default {
             }
 
             return false;
-        }, 
+        },
         getActiveTabKey( tabs ) {
             for( let key in tabs ) {
                 if ( tabs[ key ].active ) {
@@ -540,7 +540,7 @@ export default {
                 for( let key in variation.tabs ) {
 
                     /**
-                     * here we need to explicitely remove the
+                     * here we need to explicitly remove the
                      * name field as this is replaced by the top field.
                      * We also save the default variation as that's used for variations
                      */

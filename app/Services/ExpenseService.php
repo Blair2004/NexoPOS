@@ -391,7 +391,7 @@ class ExpenseService
 
     /**
      * Process recorded expenses
-     * and check wether they are supposed to be processed
+     * and check whether they are supposed to be processed
      * on the current day.
      *
      * @return array of process results.

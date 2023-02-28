@@ -8,12 +8,12 @@
                 <div class="px-4">
                     <ul class="border-table-th-edge border-t text-primary">
                         <li :class="instalment.paid ? 'success' : 'info'"
-                            class="border-b border-l flex justify-between elevation-surface" 
-                            :key="instalment.id" 
+                            class="border-b border-l flex justify-between elevation-surface"
+                            :key="instalment.id"
                             v-for="instalment of instalments">
                             <span class="p-2">
                                 <span v-if="! instalment.date_clicked" @click="toggleDateEdition( instalment )">{{ instalment.date }}</span>
-                                <span v-if="instalment.date_clicked"><input 
+                                <span v-if="instalment.date_clicked"><input
                                     @blur="toggleDateEdition( instalment )"
                                     v-model="instalment.date"
                                     type="date" ref="date" class="border border-info-primary rounded"></span>
@@ -24,7 +24,7 @@
                                         v-if="! instalment.price_clicked" 
                                         @click="togglePriceEdition( instalment )">{{ nsCurrency( instalment.amount ) }}</span>
                                     <span v-if="instalment.price_clicked">
-                                        <input ref="amount" 
+                                        <input ref="amount"
                                             v-model="instalment.amount"
                                             @blur="togglePriceEdition( instalment )" type="text" class="border border-info-primary p-1">
                                     </span>
@@ -161,7 +161,7 @@ export default {
                                     nsSnackBar.success( result.message ).subscribe();
                                 },
                                 error: error => {
-                                    nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
                                 }
                             })
                     }
@@ -182,7 +182,7 @@ export default {
                                     nsSnackBar.success( result.message ).subscribe();
                                 },
                                 error: error => {
-                                    nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
                                 }
                             })
                     }
@@ -195,7 +195,7 @@ export default {
                     Popup.show( nsPosOrderInstalmentsPayment, {
                         order : this.order,
                         instalment,
-                        resolve, 
+                        resolve,
                         reject
                     });
                 });
@@ -213,7 +213,7 @@ export default {
                     setTimeout( () => {
                         this.$refs[ 'amount' ][0].select();
                     }, 100 );
-                } 
+                }
             }
         },
         updateInstalment( instalment ) {
@@ -228,7 +228,7 @@ export default {
                                     nsSnackBar.success( result.message ).subscribe();
                                 },
                                 error: error => {
-                                    nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
                                 }
                             })
                     }

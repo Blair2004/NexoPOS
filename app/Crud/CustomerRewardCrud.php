@@ -72,7 +72,7 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Pick
-     * Restrict columns you retreive from relation.
+     * Restrict columns you retrieve from relation.
      * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [

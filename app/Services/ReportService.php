@@ -648,7 +648,7 @@ class ReportService
     }
 
     /**
-     * Will detect wether an increase
+     * Will detect whether an increase
      * or decrease exists between an old and new value
      *
      * @param int $old

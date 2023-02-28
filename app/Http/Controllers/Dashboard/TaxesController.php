@@ -36,7 +36,7 @@ class TaxesController extends DashboardController
         if ( ! empty( $id ) ) {
             $productTax = Tax::find( $id );
             if ( ! $productTax instanceof Tax ) {
-                throw new Exception( __( 'Unable to find the requeted product tax using the provided id' ) );
+                throw new Exception( __( 'Unable to find the requested product tax using the provided id' ) );
             }
 
             return $productTax;
@@ -86,7 +86,7 @@ class TaxesController extends DashboardController
         /**
          * @todo add a prior validation
          * on this element and check the permisions.
-         * The validation should check wether the type is "grouped" or "simple"
+         * The validation should check whether the type is "grouped" or "simple"
          */
         $fields = $request->only([
             'name', 'rate', 'description', 'type', 'parent_id',
@@ -142,7 +142,7 @@ class TaxesController extends DashboardController
 
         if ( ! $taxGroup instanceof TaxGroup ) {
             throw new NotFoundException( sprintf(
-                __( 'Unable to retreive the requested tax group using the provided identifier "%s".' ),
+                __( 'Unable to retrieve the requested tax group using the provided identifier "%s".' ),
                 $taxId
             ) );
         }

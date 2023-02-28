@@ -73,7 +73,7 @@ class SettingsPage
             'description' => $form->getLabels()[ 'description' ] ?? __( 'No description provided for this settings page.' ),
 
             /**
-             * retreive the identifier of the form if it's defined.
+             * retrieve the identifier of the form if it's defined.
              * this is used to load the form asynchronously.
              */
             'identifier' => $form->getIdentifier(),

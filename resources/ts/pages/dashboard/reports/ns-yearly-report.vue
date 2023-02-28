@@ -218,7 +218,7 @@ export default {
                         }).subscribe( result => {
                             nsSnackBar.success( result.message ).subscribe();
                         }, ( error ) => {
-                            nsSnackBar.success( error.message || __( 'An unexpected error has occured.' ) ).subscribe();
+                            nsSnackBar.success( error.message || __( 'An unexpected error has occurred.' ) ).subscribe();
                         })
                     }
                 }

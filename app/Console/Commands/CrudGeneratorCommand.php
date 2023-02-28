@@ -181,7 +181,7 @@ class CrudGeneratorCommand extends Command
             $parameters = explode( ',', $name );
 
             if ( count( $parameters ) != 3 ) {
-                $this->error( __( 'No enough paramters provided for the relation.' ) );
+                $this->error( __( 'Not enough parameters provided for the relation.' ) );
 
                 return $this->askRelation(false);
             }

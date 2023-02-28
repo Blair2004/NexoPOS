@@ -173,7 +173,7 @@ class CustomersGroupsController extends DashboardController
 
             return [
                 'status' => 'success',
-                'message' => sprintf( __( 'All the customers has been transfered to the new group %s.' ), $toModel->name ),
+                'message' => sprintf( __( 'All the customers has been transferred to the new group %s.' ), $toModel->name ),
             ];
         } elseif ( is_array( $customersID ) ) {
             /**
@@ -193,7 +193,7 @@ class CustomersGroupsController extends DashboardController
 
             return [
                 'status' => 'success',
-                'message' => sprintf( __( 'The categories has been transfered to the group %s.' ), $toModel->name ),
+                'message' => sprintf( __( 'The categories has been transferred to the group %s.' ), $toModel->name ),
             ];
         }
 
