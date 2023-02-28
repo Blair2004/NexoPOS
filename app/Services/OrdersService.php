@@ -139,68 +139,70 @@ class OrdersService
          */
         OrderAfterCheckPerformedEvent::dispatch( $fields, $order );
 
-        /**
-         * ------------------------------------------
-         *                  WARNING
-         * ------------------------------------------
-         * All what follow will proceed database
-         * modification. All verifications on current order
-         * should be made prior this section
-         */
-        $order = $this->__initOrder( $fields, $paymentStatus, $order );
+        DB::beginTransaction();
+        try {
 
-        /**
-         * if we're editing an order. We need to loop the products in order
-         * to recover all the products that has been deleted from the POS and therefore
-         * aren't tracked no more.
-         */
-        $this->__deleteUntrackedProducts( $order, $fields[ 'products' ] );
+            $order = $this->__initOrder( $fields, $paymentStatus, $order );
 
-        $this->__saveAddressInformations( $order, $fields );
+            /**
+             * if we're editing an order. We need to loop the products in order
+             * to recover all the products that has been deleted from the POS and therefore
+             * aren't tracked no more.
+             */
+            $this->__deleteUntrackedProducts( $order, $fields[ 'products' ] );
 
-        /**
-         * if the order has a valid payment
-         * method, then we can save that and attach it the ongoing order.
-         */
-        if ( in_array( $paymentStatus, [
-            Order::PAYMENT_PAID,
-            Order::PAYMENT_PARTIALLY,
-            Order::PAYMENT_UNPAID,
-        ] ) ) {
-            $this->__saveOrderPayments( $order, $payments, $customer );
+            $this->__saveAddressInformations( $order, $fields );
+
+            /**
+             * if the order has a valid payment
+             * method, then we can save that and attach it the ongoing order.
+             */
+            if ( in_array( $paymentStatus, [
+                Order::PAYMENT_PAID,
+                Order::PAYMENT_PARTIALLY,
+                Order::PAYMENT_UNPAID,
+            ] ) ) {
+                $this->__saveOrderPayments( $order, $payments, $customer );
+            }
+
+            /**
+             * save order instalments
+             */
+            $this->__saveOrderInstalments( $order, $fields[ 'instalments' ] ?? [] );
+
+            /**
+             * save order coupons
+             */
+            $this->__saveOrderCoupons( $order, $fields[ 'coupons' ] ?? [] );
+
+            /**
+             * @var Order $order
+             * @var float $taxes
+             * @var float $subTotal
+             */
+            extract( $this->__saveOrderProducts( $order, $fields[ 'products' ] ) );
+
+            /**
+             * register taxes for the order
+             */
+            $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
+
+            /**
+             * compute order total
+             */
+            $this->__computeOrderTotal( compact( 'order', 'subTotal', 'paymentStatus', 'totalPayments') );
+
+            $order->save();
+            $order->load( 'payments' );
+            $order->load( 'products' );
+            $order->load( 'coupons' );
+
+            DB::commit();
+
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw $exception;
         }
-
-        /**
-         * save order instalments
-         */
-        $this->__saveOrderInstalments( $order, $fields[ 'instalments' ] ?? [] );
-
-        /**
-         * save order coupons
-         */
-        $this->__saveOrderCoupons( $order, $fields[ 'coupons' ] ?? [] );
-
-        /**
-         * @var Order $order
-         * @var float $taxes
-         * @var float $subTotal
-         */
-        extract( $this->__saveOrderProducts( $order, $fields[ 'products' ] ) );
-
-        /**
-         * register taxes for the order
-         */
-        $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
-
-        /**
-         * compute order total
-         */
-        $this->__computeOrderTotal( compact( 'order', 'subTotal', 'paymentStatus', 'totalPayments') );
-
-        $order->save();
-        $order->load( 'payments' );
-        $order->load( 'products' );
-        $order->load( 'coupons' );
 
         /**
          * let's notify when an
@@ -364,9 +366,9 @@ class OrdersService
 
         $order->total_coupons = 0;
 
-        foreach ( $coupons as $arrayCoupon ) {  
+        foreach ( $coupons as $arrayCoupon ) {
             $coupon     =   Coupon::find( $arrayCoupon[ 'id' ] );
-             
+
             OrderCouponBeforeCreatedEvent::dispatch( $coupon, $order );
 
             $existingCoupon = OrderCoupon::where( 'order_id', $order->id )
@@ -1291,6 +1293,7 @@ class OrdersService
         $orderProduct[ 'product_type' ] = $orderProduct[ 'product_type' ] ?? 'product';
         $orderProduct[ 'rate' ] = $orderProduct[ 'rate' ] ?? 0;
         $orderProduct[ 'unitQuantity' ] = $productUnitQuantity;
+        $orderProduct[ 'unit_price' ] = $orderProduct[ 'unit_price' ] ?? $productUnitQuantity->sale_price;
 
         return $orderProduct;
     }

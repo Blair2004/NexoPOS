@@ -17,10 +17,10 @@ export default ({ mode }) => {
                 protocol: 'wss',
                 host: 'localhost',
             },
-            https: {
-                key: fs.readFileSync( process.env.VITE_LOCAL_KEY ),
-                cert: fs.readFileSync( process.env.VITE_LOCAL_CRT ),
-            },
+            // https: {
+            //     key: fs.readFileSync( process.env.VITE_LOCAL_KEY ),
+            //     cert: fs.readFileSync( process.env.VITE_LOCAL_CRT ),
+            // },
         },
         resolve: {
             alias: [
@@ -57,7 +57,7 @@ export default ({ mode }) => {
                     'resources/ts/dev.ts',
                     'resources/ts/popups.ts',
                     'resources/ts/widgets.ts',
-    
+
                     'resources/scss/app.scss',
                     'resources/scss/light.scss',
                     'resources/scss/dark.scss',
@@ -67,9 +67,9 @@ export default ({ mode }) => {
                     'resources/scss/fonts.scss',
                     'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
                 ],
-                refresh: [ 
-                    'resources/views/**', 
-                    'resources/sass/**' 
+                refresh: [
+                    'resources/views/**',
+                    'resources/sass/**'
                 ],
             }),
         ],
