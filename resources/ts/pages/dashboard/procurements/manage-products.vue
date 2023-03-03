@@ -76,8 +76,8 @@
                                         </div>
                                     </div>
                                     <div
-                                        :key="index" 
-                                        v-for="( group, index ) of getActiveTab( variation.tabs ).groups" 
+                                        :key="index"
+                                        v-for="( group, index ) of getActiveTab( variation.tabs ).groups"
                                         class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3 mb-4">
                                         <div class="rounded border border-box-elevation-edge flex flex-col overflow-hidden">
                                             <div class="p-2">
@@ -92,7 +92,7 @@
                                 <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'groups'">
                                     <ns-product-group
                                         @update="setProducts( $event, variation.tabs )"
-                                        @updateSalePrice="triggerRecompute( $event, variation.tabs )" 
+                                        @updateSalePrice="triggerRecompute( $event, variation.tabs )"
                                         :fields="getActiveTab( variation.tabs ).fields"></ns-product-group>
                                 </div>
                                 <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
@@ -169,12 +169,6 @@ export default {
                     const identification    =   this.formValidation.extractFields( variation.tabs.identification.fields );
 
                     if ( identification.type === 'grouped' )  {
-                        for( let index in variation.tabs ) {
-                            if ( ! [ 'identification', 'groups', 'taxes', 'units' ].includes( index ) ) {
-                                variation.tabs[ index ][ 'visible' ]    =   false;
-                            }
-                        }
-
                         /**
                          * explicitly enable the groups tab
                          */
@@ -182,12 +176,6 @@ export default {
                             variation.tabs[ 'groups' ].visible  = true;
                         }
                     } else {
-                        for( let index in variation.tabs ) {
-                            if ( ! [ 'identification', 'groups', 'taxes', 'units' ].includes( index ) ) {
-                                variation.tabs[ index ].visible = true;
-                            }
-                        }
-
                         /**
                          * explicitly disable the groups tab
                          */
