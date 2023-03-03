@@ -17,6 +17,7 @@ class DateCast implements CastsAttributes
      */
     public function get($model, $key, $value, $attributes)
     {
+        if (is_null($value)) return $value;
         return ns()->date->getFormatted( $value );
     }
 
