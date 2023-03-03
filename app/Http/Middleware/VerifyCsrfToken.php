@@ -13,5 +13,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'webhook/*', // by default all route pointing to webhooks should have the CSRF disbabled
+        'api/mvl/*', // by default all route pointing to webhooks should have the CSRF disbabled
     ];
 }
