@@ -35,6 +35,12 @@ const nsPromptPopup             = (<any>window).nsPromptPopup = require('./popup
 const nsLayawayPopup            = (<any>window).nsLayawayPopup = require('./popups/ns-pos-' + 'layaway' + '-popup').default;
 const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = require('./popups/ns-pos-' + 'shipping' + '-popup').default;
 
+const nsCashPayment	=  (<any>window).nsCashPayment = require('./pages/dashboard/pos/payments/cash-payment').default;
+const nsCreditCardPayment	=  (<any>window).nsCreditCardPayment = require('./pages/dashboard/pos/payments/creditcard-payment').default;
+const nsBankPayment	=  (<any>window).nsBankPayment = require('./pages/dashboard/pos/payments/bank-payment').default;
+const nsAccountPayment	=  (<any>window).nsAccountPayment = require('./pages/dashboard/pos/payments/account-payment').default;
+const nsPosDiscountPopup = (<any>window).nsPosDiscountPopup = require('./popups/ns-pos-' + 'discount' + '-popup').default;
+
 export class POS {
     private _products: BehaviorSubject<OrderProduct[]>;
     private _breadcrumbs: BehaviorSubject<any[]>;

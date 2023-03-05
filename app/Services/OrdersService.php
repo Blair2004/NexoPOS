@@ -820,7 +820,7 @@ class OrdersService
         $orderPayment->author = $order->author ?? Auth::id();
         $orderPayment->save();
 
-        OrderAfterPaymentCreatedEvent::dispatch( $orderPayment, $order );
+        OrderAfterPaymentCreatedEvent::dispatch( $orderPayment, $order, $payment );
 
         return $orderPayment;
     }
