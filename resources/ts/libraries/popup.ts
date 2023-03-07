@@ -9,7 +9,7 @@ export class Popup {
     private config  =   {
         primarySelector     :   undefined,
         popupClass  :   'shadow-lg h-half w-1/2 bg-white',
-    }; 
+    };
 
     private container       =   document.createElement( 'div' );
     private popupBody       =   document.createElement( 'div' );
@@ -23,8 +23,8 @@ export class Popup {
         popupClass?: string
     } = {} ) {
         this.config             =   Object.assign( this.config, config );
-        
-        if ( 
+
+        if (
             this.config.primarySelector === undefined &&
             document.querySelectorAll( '.is-popup' ).length > 0
         ) {
@@ -68,7 +68,7 @@ export class Popup {
         const body  =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
         this.parentWrapper.style.filter     =   'blur(4px)';
         body.style.filter                   =   'blur(6px)';
-        
+
         this.container.setAttribute( 'class', 'absolute top-0 left-0 w-full h-full flex items-center justify-center is-popup' );
 
         /**
@@ -88,7 +88,7 @@ export class Popup {
                     event: 'click-overlay',
                     value: true
                 });
-    
+
                 event.stopPropagation();
             }
         });
@@ -109,10 +109,10 @@ export class Popup {
         this.popupBody.setAttribute( 'class', 'zoom-out-entrance popup-body' );
         this.popupBody.setAttribute( 'data-index', actualLength );
         this.popupBody.innerHTML            =   '<ns-popup-component></ns-popup-component>';
-        this.container.appendChild( this.popupBody );  
+        this.container.appendChild( this.popupBody );
 
         document.body.appendChild( this.container );
-        
+
         /**
          * We'll provide a reference of the
          * wrapper so that the component
@@ -137,7 +137,7 @@ export class Popup {
         this.instance.mount( `#${this.container.id}` );
     }
 
-    close() {
+    close(immediately: boolean = false) {
         /**
          * The Subject we've initialized earlier
          * need to be closed
@@ -145,7 +145,7 @@ export class Popup {
         this.event.unsubscribe();
 
         /**
-         * For some reason we need to fetch the 
+         * For some reason we need to fetch the
          * primary selector once again.
          */
         this.parentWrapper.style.filter   =   'blur(0px)';
@@ -160,7 +160,7 @@ export class Popup {
         this.popupBody          =   document.querySelector( selector );
         this.popupBody.classList.remove( 'zoom-out-entrance' );
         this.popupBody.classList.add( 'zoom-in-exit' );
- 
+
         this.container          =   document.querySelector( `${this.popupSelector}` );
         this.container.classList.remove( 'is-popup' );
 
@@ -168,10 +168,15 @@ export class Popup {
          * Let's start by destorying the
          * Vue component attached to the popup
          */
-        
-        setTimeout( () => {
+
+        if (immediately) {
             this.instance.unmount();
             this.container.remove();
-        }, 250 ); // as by default the animation is set to 500ms
+        } else {
+            setTimeout( () => {
+                this.instance.unmount();
+                this.container.remove();
+            }, 250 ); // as by default the animation is set to 500ms
+        }
     }
 }

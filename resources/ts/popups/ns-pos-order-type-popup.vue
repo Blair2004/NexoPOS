@@ -32,6 +32,7 @@ import resolveIfQueued from '~/libraries/popup-resolver';
 import { __ } from '~/libraries/lang';
 import popupCloser from '~/libraries/popup-closer';
 import popupResolver from '~/libraries/popup-resolver';
+import {take} from "rxjs";
 
 export default {
     data() {
@@ -52,17 +53,17 @@ export default {
         this.settingsSubscription   =   POS.settings.subscribe( settings => {
             this.urls    =   settings.urls;
         });
-        
-        this.typeSubscription   =   POS.types.subscribe( types => {
+
+        this.typeSubscription   =   POS.types.pipe(take(1)).subscribe( types => {
             this.types  =   types;
 
             if ( Object.values( this.types ).length === 1 ) {
                 /**
                  * we'll automatically select the first payment type
-                 * if only one is provided. 
-                 */ 
-                
-                this.select( Object.keys( this.types )[0] );
+                 * if only one is provided.
+                 */
+
+                this.select( Object.keys( this.types )[0], true );
             }
         });
 
@@ -75,25 +76,26 @@ export default {
         __,
         popupCloser,
         popupResolver,
-        
+
         resolveIfQueued,
 
-        async select( type ) {
+        async select( type, immediate ) {
             Object.values( this.types )
                 .forEach( _type => _type.selected = false );
-            
+
             this.types[ type ].selected     =   true;
             const selectedType              =   this.types[ type ];
 
             /**
              * treat all the promises
-             * that are registered within 
+             * that are registered within
              * the orderType queue
              */
             try {
                 const result    =   await POS.triggerOrderTypeSelection( selectedType );
                 POS.types.next( this.types );
                 this.resolveIfQueued( selectedType );
+                if (immediate) this.$popup.close(true);
             } catch( exception ) {
                 // ...
             }
