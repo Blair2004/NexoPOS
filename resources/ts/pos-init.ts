@@ -248,7 +248,7 @@ export class POS {
                         },
                         error: (error) => {
                             nsNotice
-                                .error( 
+                                .error(
                                     __( 'An error has occured' ),
                                     __( 'Unable to select the default customer. Looks like the customer no longer exists. Consider changing the default customer on the settings.' ),
                                     {
@@ -259,7 +259,7 @@ export class POS {
                                                     instance.close();
                                                     window.open( 'https://my.nexopos.com/en/documentation/troubleshooting/no-default-customer', '_blank' );
                                                 }
-                                            }, 
+                                            },
                                             close: {
                                                 label: __( 'Close' ),
                                             }
@@ -370,7 +370,7 @@ export class POS {
 
     /**
      * This is the first initial queue
-     * that runs when the POS is loaded. 
+     * that runs when the POS is loaded.
      * It also run when the pos is reset.
      * @return void
      */
@@ -422,14 +422,18 @@ export class POS {
          * that needs to be rendered dynamically
          */
         const data = {
-            buttons: {
+            buttons: [
                 nsPosDashboardButton,
                 nsPosPendingOrderButton,
-                nsPosOrderTypeButton,
                 nsPosCustomersButton,
                 nsPosResetButton,
-            }
+            ]
         };
+
+        // only show delivery types selection if there is more than a single option available
+        if (Object.values(this.types.getValue()).length > 1) {
+            data.buttons.splice(2, 0, nsPosOrderTypeButton);
+        }
 
         /**
          * if the cash register is enabled
@@ -437,7 +441,7 @@ export class POS {
          * of button available.
          */
         if (this.options.getValue().ns_pos_registers_enabled === 'yes') {
-            data.buttons['nsPosCashRegister'] = nsPosCashRegister;
+            data.buttons.push(nsPosCashRegister);
         }
 
         /**
@@ -541,7 +545,7 @@ export class POS {
             if (order.tax_group_id === undefined || order.tax_group_id === null) {
                 this.computeOrderTaxes( order );
 
-                return resolve({ 
+                return resolve({
                     data: { order },
                     status: 'success'
                 });
@@ -556,13 +560,13 @@ export class POS {
             if (Object.values(groups).length > 0) {
 
                 /**
-                 * Only if a tax group is assigned to the 
+                 * Only if a tax group is assigned to the
                  * order we should then get the real VAT value.
                  */
                 if ( groups[order.tax_group_id] !== undefined ) {
                     order.taxes = groups[order.tax_group_id].taxes.map(tax => {
                         /**
-                         * tax is computed 
+                         * tax is computed
                          * on the discounted price
                          * should deduct "subtotal" with "discount"
                          */
@@ -579,18 +583,18 @@ export class POS {
                     data: { tax: groups[order.tax_group_id], order }
                 });
             }
-            
+
             if (order.tax_group_id !== undefined && order.tax_group_id.toString().length > 0 ) {
                 nsHttpClient.get(`/api/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
                             order   =   this.computeOrderTaxGroup( order, tax );
-    
+
                             return resolve({
                                 status: 'success',
                                 data: { tax, order }
                             })
-                        }, 
+                        },
                         error: (error) => {
                             return reject(error);
                         }
@@ -627,7 +631,7 @@ export class POS {
         order.taxes = tax.taxes;
 
         /**
-         * this is set to cache the 
+         * this is set to cache the
          * tax group to avoid subsequent request
          * to the server.
          */
@@ -647,7 +651,7 @@ export class POS {
         }
 
         /**
-         * By default, we'll use box computed tax and products tax value 
+         * By default, we'll use box computed tax and products tax value
          * when priceWithTax is enabled.
          * However to avoid duplicate taxes, we'll only consider computed tax
          * when priceWithTax is disabled
@@ -727,7 +731,7 @@ export class POS {
                     if ( firstSlice > 0 ) {
                         /**
                          * If the instalment has been configured, we'll ease things for
-                         * the waiter and invite him to add the first slice as 
+                         * the waiter and invite him to add the first slice as
                          * the payment.
                          */
                         Popup.show(nsConfirmPopup, {
@@ -744,15 +748,15 @@ export class POS {
                                         readonly: false,
                                         selected: true,
                                     }
-        
-                                    this.addPayment(payment);   
-                                    
+
+                                    this.addPayment(payment);
+
                                     /**
                                      * The expected slice
                                      * should be marked as paid once submitted
                                      */
                                     expectedSlice[0].paid   =   true;
-        
+
                                     resolve({ status: 'success', message: __('Layaway defined'), data: { order: result.order } });
                                 } else {
                                     reject({ status: 'failed', message: __( 'The request was canceled' ) })
@@ -774,8 +778,8 @@ export class POS {
     }
 
     /**
-     * Fields might be provided to overwrite the default information 
-     * set on the order. 
+     * Fields might be provided to overwrite the default information
+     * set on the order.
      * @param orderFields Object
      */
     submitOrder(orderFields = {}) {
@@ -788,7 +792,7 @@ export class POS {
             const minimalPayment = order.customer.group.minimal_credit_payment;
 
             /**
-             * this verification applies only if the 
+             * this verification applies only if the
              * order is not "hold".
              */
             if (order.payment_status !== 'hold') {
@@ -841,7 +845,7 @@ export class POS {
                              * a sound if it's enabled
                              */
                             const url     =   this.options.getValue().ns_pos_complete_sale_audio;
-                            
+
                             if ( url.length > 0 ) {
                                 ( new Audio( url ) ).play();
                             }
@@ -860,11 +864,11 @@ export class POS {
     }
 
     defineQuantities( product, units = [] ) {
-        return new Promise ( ( resolve, reject ) => { 
+        return new Promise ( ( resolve, reject ) => {
             const unit  =   units.filter( unit => unit.id === product.unit_id );
             const quantities    =   {
                 unit: unit[0] || {},
-                
+
                 sale_price_with_tax: product.mode === 'normal' ? parseFloat( product.price_with_tax ) : 0,
                 sale_price_without_tax: product.mode === 'normal' ? parseFloat( product.price_without_tax ) : 0,
                 sale_price: product.mode === 'normal' ? parseFloat( product.unit_price ) : 0,
@@ -904,9 +908,9 @@ export class POS {
                                         quantities[ 'gross_' + label + '_price' ]  =  quantities[ label + '_price' ] + quantities[ label + '_price_tax' ];
                                         quantities[ 'net_' + label + '_price' ]  =  quantities[ label + '_price' ] - quantities[ label + '_price_tax' ];
                                     });
-                                    
+
                                     tax_group            =   taxGroup;
-        
+
                                     return resolve( quantities );
                                 },
                                 error:  error => {
@@ -917,14 +921,14 @@ export class POS {
                         quantities.sale_price_tax       =   0;
                         quantities.wholesale_price_tax  =   0;
                         quantities.sale_price_without_tax  =  product.unit_price;
-                        
+
                         return resolve( quantities );
                     }
                 } catch( exception ) {
                     return nsSnackBar.error( __( 'An error has occurred while computing the product.' ) ).subscribe();
                 }
             }
-            
+
             return resolve( quantities );
         });
     }
@@ -936,7 +940,7 @@ export class POS {
                     next: async (order: any) => {
                         /**
                          * an error might occurs while
-                         * dealing with custom action. We should 
+                         * dealing with custom action. We should
                          * catch that and reject the exception.
                          */
                         try {
@@ -948,14 +952,14 @@ export class POS {
                         const options   =   this.options.getValue();
 
                         order = { ...this.defaultOrder(), ...order };
-    
+
                         /**
                          * We'll rebuilt the product
                          */
                         const products  =   [];
-                        
+
                         for( let i = 0; i < order.products.length ; i++ ) {
-                            
+
                             const orderProduct      =   order.products[i];
 
                             /**
@@ -989,12 +993,12 @@ export class POS {
 
                             products.push( orderProduct );
                         }
-    
+
                         /**
                          * we'll redefine the order type
                          */
                         order.type = Object.values(this.types.getValue()).filter((type: any) => type.identifier === order.type)[0];
-    
+
                         /**
                          * the address is provided differently
                          * then we need to rebuild it the way it's saved and used
@@ -1003,22 +1007,22 @@ export class POS {
                             shipping: order.shipping_address,
                             billing: order.billing_address
                         }
-    
+
                         delete order.shipping_address;
                         delete order.billing_address;
-        
+
                         /**
                          * let's all set, let's load the order
                          * from now. No further change is required
                          */
-    
+
                         this.buildOrder(order);
                         this.buildProducts(products);
 
                         await this.selectCustomer(order.customer);
 
                         resolve(order);
-                    }, 
+                    },
                     error: error => reject(error)
                 });
         })
@@ -1135,7 +1139,7 @@ export class POS {
             order.customer = customer;
             order.customer_id = customer.id;
             order.addresses.billing = billing;
-            
+
             this.order.next(order);
 
             /**
@@ -1244,7 +1248,7 @@ export class POS {
     async refreshCart() {
         /**
          * check if according to the product
-         * available on the cart the coupons must 
+         * available on the cart the coupons must
          * remains the same.
          */
         this.checkCart();
@@ -1273,7 +1277,7 @@ export class POS {
             if ( dynamicProducts.length > 0 ) {
                 dynamicProductValue     =   dynamicProducts.reduce( (b,a) => b + a );
             }
-            
+
             order.subtotal = productTotalValue + dynamicProductValue;
         } else {
             order.subtotal = 0;
@@ -1320,11 +1324,11 @@ export class POS {
          */
         order.tax_value         =   0;
         order.total_tax_value   =   0;
-        
+
         this.order.next(order);
 
         /**
-         * will compute the taxes based on 
+         * will compute the taxes based on
          * the actual state of the order
          */
         try {
@@ -1377,8 +1381,8 @@ export class POS {
     /**
      * Get actual stock used by the product
      * using the defined unit
-     * @param product_id 
-     * @param unit_id 
+     * @param product_id
+     * @param unit_id
      */
     getStockUsage(product_id: number, unit_quantity_id: number) {
         const stocks = this._products.getValue().filter((product: OrderProduct) => {
@@ -1394,7 +1398,7 @@ export class POS {
 
     /**
      * this is resolved when a product is being added to the
-     * cart. That will help to mutate the product before 
+     * cart. That will help to mutate the product before
      * it's added the cart.
      */
     addToCartQueue = [
@@ -1404,12 +1408,12 @@ export class POS {
 
     /**
      * Process the item to add it to the cart
-     * @param product 
+     * @param product
      */
     async addToCart(product) {
 
         /**
-         * This is where all the mutation made by the  
+         * This is where all the mutation made by the
          * queue promises are stored.
          */
         let productData = new Object;
@@ -1444,7 +1448,7 @@ export class POS {
         };
 
         /**
-         * will determin if the 
+         * will determin if the
          * script is processing the add queue
          */
         this._processingAddQueue = true;
@@ -1493,7 +1497,7 @@ export class POS {
         cartProduct = { ...cartProduct, ...productData };
 
         /**
-         * retrieve product that 
+         * retrieve product that
          * are currently stored
          */
         const products = this._products.getValue();
@@ -1542,7 +1546,7 @@ export class POS {
         this.recomputeProducts(products);
 
         /**
-         * dispatch event that the 
+         * dispatch event that the
          * product has been added.
          */
         this.products.next(products);
@@ -1614,7 +1618,7 @@ export class POS {
                 return this.computeNormalProductTax( product );
             case 'wholesale':
                 return this.computeWholesaleProductTax( product );
-            default: 
+            default:
                 return product;
         }
     }
@@ -1633,7 +1637,7 @@ export class POS {
              * get summarize rates
              */
             let summarizedRates     =   0;
-            
+
             if ( taxGroup.taxes.length > 0 ) {
                 summarizedRates     =   taxGroup.taxes
                     .map( r => r.rate )
@@ -1659,7 +1663,7 @@ export class POS {
                 tax_value    =   vatValues.reduce( ( b, a ) => b+a );
             }
         }
-        
+
         return { price_without_tax, tax_value, price_with_tax };
     }
 
@@ -1716,12 +1720,12 @@ export class POS {
             case 'normal': return quantities[ 'sale_price_' + type ];
             case 'wholesale': return quantities[ 'wholesale_price_' + type ];
             case 'custom': return quantities[ 'custom_price_' + type ];
-        } 
+        }
     }
 
     computeProduct(product: OrderProduct) {
         /**
-         * determining what is the 
+         * determining what is the
          * real sale price
          */
         if ( product.product_type === 'product' ) {
@@ -1738,7 +1742,7 @@ export class POS {
         }
 
         /**
-         * computing the discount when it's 
+         * computing the discount when it's
          * based on a percentage. @todo While we believe discount
          * shouldn't be calculated after taxes
          */
