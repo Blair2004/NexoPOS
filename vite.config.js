@@ -22,6 +22,10 @@ export default ({ mode }) => {
             //     cert: fs.readFileSync( process.env.VITE_LOCAL_CRT ),
             // },
         },
+        build: {
+            sourcemap: true,
+            minify: false,
+        },
         resolve: {
             alias: [
                 {
@@ -41,6 +45,7 @@ export default ({ mode }) => {
                         includeAbsolute: false,
                     },
                 },
+                isProduction: false,
             }),
             laravel({
                 input: [
