@@ -51,7 +51,7 @@ import { NsHotPress } from './libraries/ns-hotpress';
 const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ]; 
 const nsCssFiles            =   (<any>window)[ 'ns' ].cssFiles;
-const nsExtraComponents     =   (<any>window)[ 'nsExtraComponents' ];    
+const nsExtraComponents     =   (<any>window)[ 'nsExtraComponents' ];  
 
 const VueHtmlToPaperOptions     =   {
     name: '_blank',

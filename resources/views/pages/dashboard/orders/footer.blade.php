@@ -5,6 +5,7 @@ use App\Services\OrdersService;
 
 $ordersService  =   app()->make( OrdersService::class );
 ?>
+<script src="{{ asset( ns()->isProduction() ? '/js/dashboard.min.js' : '/js/dashboard.js' ) }}"></script>
 <script>
 const processingStatuses  =   <?php echo json_encode( Helper::kvToJsOptions( $ordersService->getProcessStatuses() ));?>;
 const deliveryStatuses    =   <?php echo json_encode( Helper::kvToJsOptions( $ordersService->getDeliveryStatuses() ));?>;
