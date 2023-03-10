@@ -15,6 +15,8 @@ export class Dashboard {
         bestCashiers:   nsHttpClient.get( '/api/nexopos/v4/dashboard/best-cashiers' ),
         recentOrders:   nsHttpClient.get( '/api/nexopos/v4/dashboard/recent-orders' )
     };
+    private _visibleSection: BehaviorSubject<string>;
+    private _orderPayments: BehaviorSubject<any[]>;
 
     constructor() {
         this._day               =   new BehaviorSubject<{}>({});
@@ -22,6 +24,8 @@ export class Dashboard {
         this._weeksSummary      =   new BehaviorSubject<{}>({});
         this._bestCashiers      =   new BehaviorSubject<[]>([]);
         this._recentOrders      =   new BehaviorSubject<[]>([]);
+        this._visibleSection 		= 	new BehaviorSubject<string>('');
+        this._orderPayments			=  	new BehaviorSubject<[]>([]);
 
         for( let index in this._reports ) {
             this.loadReport( index );
@@ -53,6 +57,22 @@ export class Dashboard {
 
     get weeksSummary() {
         return this._weeksSummary;
+    }
+    
+    get visibleSection() {
+        return this._visibleSection;
+    }
+    
+    changeVisibleSection(section) {
+        this._visibleSection.next(section);
+    }
+    
+    get orderPayments() {
+    		return this._orderPayments;
+    }
+    
+    setOrderPayments(orderPayments) {
+    		this._orderPayments = orderPayments;
     }
 }
 

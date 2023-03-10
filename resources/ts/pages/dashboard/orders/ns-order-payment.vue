@@ -49,7 +49,7 @@
                 <h3 class="font-semibold border-b-2 border-info-primary py-2 mb-2">
                     {{ __( 'Payment History' ) }}
                 </h3>
-                <ul>
+                <ul id="payments-list">
                     <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite border elevation-surface mb-2">
                         <span>{{ paymentsLabels[ payment.identifier ] || __( 'Unknown' ) }}</span>
                         <span>{{ payment.value | currency }}</span>
@@ -140,6 +140,8 @@ export default {
     },
     mounted() {
         this.loadPaymentFields();
+        Dashboard.changeVisibleSection('ns-order-payment');
+        Dashboard.setOrderPayments(this.order.payments);
     }
 }
 </script>
