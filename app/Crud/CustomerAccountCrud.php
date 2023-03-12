@@ -215,7 +215,7 @@ class CustomerAccountCrud extends CrudService
     public function hook( $query ): void
     {
         $query->orderBy( 'id', 'desc' );
-        $query->where( 'nexopos_customers_account_history.customer_id', request()->query( 'customer_id' ) );
+        $query->where( Hook::filter( 'ns-model-table', 'nexopos_customers_account_history.customer_id' ), request()->query( 'customer_id' ) );
     }
 
     public function addFooterSummary( CrudBeforeExportEvent $event )

@@ -1382,6 +1382,10 @@ trait WithOrderTest
             $products->each( function( OrderProduct $orderProduct ) use ( $productService ) {
                 $originalProduct = $orderProduct->product;
 
+                /**
+                 * Here we'll check if the stock returns when the
+                 * order is deleted
+                 */
                 if ( $originalProduct->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
                     $orderProduct->actual_quantity = $productService->getQuantity( $orderProduct->product_id, $orderProduct->unit_id );
 
@@ -1394,10 +1398,187 @@ trait WithOrderTest
                         __( 'The new quantity was not restored to what it was before the deletion.')
                     );
                 }
+
+                /**
+                 * Here we'll check if there is an history created for every
+                 * product that was deleted.
+                 */
+                $productHistory   =   ProductHistory::where( 'action', ProductHistory::ACTION_RETURNED )
+                    ->where( 'order_product_id', $orderProduct->id )
+                    ->where( 'order_id', $orderProduct->order_id )
+                    ->first();
+
+                $this->assertTrue(
+                    ! $productHistory instanceof ProductHistory,
+                    sprintf( 
+                        __( 'No product history was created for the product "%s" upon is was deleted with the order it\'s attached to.' ),
+                        $orderProduct->name
+                    )
+                );
             });
         } else {
             throw new Exception( __( 'No order where found to perform the test.' ) );
         }
+    }
+
+    protected function attemptDeleteVoidedOrder()
+    {
+        /**
+         * @var TestService
+         */
+        $testService = app()->make( TestService::class );
+        $customer = Customer::get()->random();
+
+        /**
+         * We would like to check easilly
+         * by reset the customer counter
+         */
+        $customer->purchases_amount = 0;
+        $customer->save();
+
+        $data = $testService->prepareOrder(
+            orderDetails: [
+                'customer_id' => $customer->id,
+            ],
+            config: [
+                'products'  =>  function() {
+                    return Product::where( 'STOCK_MANAGEMENT', Product::STOCK_MANAGEMENT_ENABLED )
+                        ->where( 'type', '<>', Product::TYPE_GROUPED )
+                        ->get();
+                }
+            ],
+            date: ns()->date->now()
+        );
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/orders', $data );
+
+        $orderData = ( object ) $response->json()[ 'data' ][ 'order' ];
+        $order = Order::with([ 'products', 'user' ])->find( $orderData->id );
+
+        /**
+         * Step 1: Void an order before deleting
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/orders/' . $orderData->id . '/void', [
+                'reason'    =>  'Testing Voiding'
+            ]);
+
+        $response->assertOk();
+
+        $order->load([ 'products.product' ]);
+        
+        /**
+         * We'll check if for each product on the order
+         * there was a refund made for the returned goods
+         */
+        $order->products->each( function( $product ) {
+            // every product that aren't refund
+            if ( $product->refunded_products()->count() === 0 && $product->product()->first() instanceof Product ) {
+                $history  =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_VOID_RETURN )
+                    ->where( 'order_product_id', $product->id )
+                    ->where( 'order_id', $product->order_id )
+                    ->first();
+
+                $this->assertTrue( $history instanceof ProductHistory, __( 'No return history was created for a void order product.' ) );
+            }
+        });        
+
+        $order->refresh();
+        $order->load([ 'products.product' ]);
+
+        /**
+         * @var OrdersService
+         */
+        $orderService = app()->make( OrdersService::class );
+        $orderService->deleteOrder( $order );
+
+        $totalPayments = OrderPayment::where( 'order_id', $order->id )->count();
+
+        $this->assertTrue( $totalPayments === 0,
+            sprintf(
+                __( 'An order payment hasn\'t been deleted along with the order (%s).' ),
+                $order->id
+            )
+        );
+
+        /**
+         * Step 2: We'll now check if by deleting the order
+         * we still have the product history created.
+         */
+        $order->products->each( function( $product ) {
+            // every product that aren't refund
+            if ( $product->refunded_products()->count() === 0 ) {
+                $history  =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_RETURNED )
+                    ->where( 'order_product_id', $product->id )
+                    ->where( 'order_id', $product->order_id )
+                    ->first();
+
+                $this->assertTrue( ! $history instanceof ProductHistory, __( 'A stock return was performed while the order was initially voided.' ) );
+            }
+        });
+    }
+
+    protected function attemptVoidOrder()
+    {
+        /**
+         * @var TestService
+         */
+        $testService = app()->make( TestService::class );
+        $customer = Customer::get()->random();
+
+        /**
+         * We would like to check easilly
+         * by reset the customer counter
+         */
+        $customer->purchases_amount = 0;
+        $customer->save();
+
+        $data = $testService->prepareOrder(
+            orderDetails: [
+                'customer_id' => $customer->id,
+            ],
+            config: [
+                'products'  =>  function() {
+                    return Product::where( 'STOCK_MANAGEMENT', Product::STOCK_MANAGEMENT_ENABLED )
+                        ->where( 'type', '<>', Product::TYPE_GROUPED )
+                        ->get();
+                }
+            ],
+            date: ns()->date->now()
+        );
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/orders', $data );
+
+        $orderData = ( object ) $response->json()[ 'data' ][ 'order' ];
+        $order = Order::with([ 'products', 'user' ])->find( $orderData->id );
+
+        /**
+         * Step 1: Void an order before deleting
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/orders/' . $orderData->id . '/void', [
+                'reason'    =>  'Testing Voiding'
+            ]);
+
+        $order->load([ 'products.product' ]);
+        
+        /**
+         * We'll check if for each product on the order
+         * there was a refund made for the returned goods
+         */
+        $order->products->each( function( $product ) {
+            // every product that aren't refund
+            if ( $product->refunded_products()->count() === 0 && $product->product()->first() instanceof Product ) {
+                $history  =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_VOID_RETURN )
+                    ->where( 'order_product_id', $product->id )
+                    ->where( 'order_id', $product->order_id )
+                    ->first();
+
+                $this->assertTrue( $history instanceof ProductHistory, __( 'No return history was created for a void order product.' ) );
+            }
+        });
     }
 
     protected function attemptRefundOrder( $productQuantity, $refundQuantity, $paymentStatus, $message )

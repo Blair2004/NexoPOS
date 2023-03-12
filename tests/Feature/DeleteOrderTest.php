@@ -24,4 +24,10 @@ class DeleteOrderTest extends TestCase
         $this->attemptAuthenticate();
         $this->attemptDeleteOrder();
     }
+
+    public function test_void_order()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptVoidOrder();
+    }
 }
