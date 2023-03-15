@@ -67,7 +67,8 @@ class OrdersService
         protected CurrencyService $currencyService,
         protected Options $optionsService,
         protected TaxService $taxService,
-        protected ReportService $reportService
+        protected ReportService $reportService,
+        protected MathService $mathService,
     ) {
         // ...
     }
@@ -109,7 +110,7 @@ class OrdersService
          * order is just saved as hold, otherwise a check is made on the available stock
          */
         if ( in_array( $paymentStatus, [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
-            $fields[ 'products' ] = $this->__checkProductStock( $fields['products'] );
+            $fields[ 'products' ] = $this->__checkProductStock( $fields['products'], $order );
         }
 
         /**
@@ -1175,7 +1176,7 @@ class OrdersService
      * @param SupportCollection $items
      * @return SupportCollection $items
      */
-    private function __checkProductStock( SupportCollection $items )
+    private function __checkProductStock( SupportCollection $items, Order $order = null )
     {
         $session_identifier = Str::random( '10' );
 
@@ -1290,13 +1291,27 @@ class OrdersService
                     ->withUnitQuantity( $orderProduct[ 'unit_quantity_id' ] )
                     ->sum( 'quantity' );
 
-                if ( $productUnitQuantity->quantity - $storageQuantity < $orderProduct[ 'quantity' ] ) {
+                $orderProductQuantity       =   $orderProduct[ 'quantity' ];
+                    
+                /**
+                 * If the orderProduct has an id, that means we're editing an order. In order to extract what is the exact quantity
+                 * we want to deduct from the stock, we need to know wether the quantity has changed (greater or not). We then need to pull 
+                 * the original reference of the orderProduct to compute the new quantity that will be deducted from inventory.
+                 */
+                if ( isset( $orderProduct[ 'id' ] ) ) {
+                    $orderProductRerefence  =   OrderProduct::find( $orderProduct[ 'id' ] );
+                    $orderProductQuantity   =   $this->mathService->set( $orderProductRerefence->quantity )
+                        ->minus( $orderProduct[ 'quantity' ] )
+                        ->toFloat();
+                } 
+
+                if ( $productUnitQuantity->quantity - $storageQuantity < abs( $orderProductQuantity ) ) {
                     throw new \Exception(
                         sprintf(
                             __( 'Unable to proceed, there is not enough stock for %s using the unit %s. Requested : %s, available %s' ),
                             $product->name,
                             $productUnitQuantity->unit->name,
-                            $orderProduct[ 'quantity' ],
+                            abs( $orderProductQuantity ),
                             $productUnitQuantity->quantity - $storageQuantity
                         )
                     );
@@ -1978,7 +1993,7 @@ class OrdersService
      */
     public function addProducts(Order $order, $products)
     {
-        $products = $this->__checkProductStock( collect( $products) );
+        $products = $this->__checkProductStock( collect( $products ), $order );
 
         /**
          * let's save the products
