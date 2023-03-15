@@ -95,7 +95,7 @@ class OrdersController extends DashboardController
 
     public function listOrders()
     {
-        Hook::addFilter(
+        Hook::addAction(
             'ns-crud-footer',
             fn( Output $output ) => $output
                 ->addView( 'pages.dashboard.orders.footer' )

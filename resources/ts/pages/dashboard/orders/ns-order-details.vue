@@ -14,12 +14,12 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start border ns-notice error">
+                    <div class="p-2 flex justify-between items-start text-primary elevation-surface error border">
                         <div>
                             <h4 class="text-semibold">
-                                <span class="text-primary">{{ __( 'Discount' ) }}</span>
-                                <span class="text-primary ml-1" v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
-                                <span class="text-primary ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
+                                <span class="">{{ __( 'Discount' ) }}</span>
+                                <span class=" ml-1" v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
+                                <span class=" ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
                             </h4>
                         </div>
                         <div class="font-semibold text-primary">{{ nsCurrency( order.discount ) }}</div>
@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start border ns-notice error">
+                    <div class="p-2 flex justify-between items-start text-primary elevation-surface error border">
                         <div>
                             <h4 class="text-semibold">
                                 {{ __( 'Coupons' ) }}
@@ -44,7 +44,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start border ns-notice info">
+                    <div class="p-2 flex justify-between items-start border ns-notice success">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Total' ) }}</h4>
                         </div>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start border ns-notice warning">
+                    <div class="p-2 flex justify-between items-start text-primary elevation-surface info border">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Taxes' ) }}</h4>
                         </div>
