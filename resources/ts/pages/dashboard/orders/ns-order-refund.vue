@@ -126,7 +126,7 @@ export default {
             refundables: [],
             paymentOptions: [],
             paymentField: [],
-            print: new Print({ settings: systemSettings, options: systemOptions, type: 'refund' }),
+            print: new Print({ urls: systemUrls, options: systemOptions }),
             refundShipping: false,
             selectedPaymentGateway: false,
             screen: 0,
@@ -211,7 +211,7 @@ export default {
                             this.$emit( 'loadTab', 'details' );
                         }   
 
-                        this.print.printOrder( result.data.orderRefund.id );
+                        this.print.process( result.data.orderRefund.id, 'refund' );
                         
                         nsSnackBar.success( result.message ).subscribe();
                     },

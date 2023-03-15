@@ -94,6 +94,7 @@ class DemoService extends DemoCoreService
          */
         extract( $data );
 
+        $this->createBaseSettings();
         $this->prepareDefaultUnitSystem();
         $this->createCustomers();
         $this->createAccountingAccounts();
