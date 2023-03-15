@@ -143,14 +143,6 @@ class Order extends NsModel
         return $this->hasOne( User::class, 'id', 'author' );
     }
 
-    /**
-     * @deprecated
-     */
-    public function refund()
-    {
-        return $this->hasMany( OrderRefund::class, 'order_id', 'id' );
-    }
-
     public function refunds()
     {
         return $this->hasMany( OrderRefund::class, 'order_id', 'id' );

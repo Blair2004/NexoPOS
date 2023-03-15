@@ -88,9 +88,9 @@ class OrderProduct extends NsModel
         return $this->hasOne( Product::class, 'id', 'product_id' );
     }
 
-    public function refunded_product()
+    public function refunded_products()
     {
-        return $this->hasOne(
+        return $this->hasMany(
             related: OrderProductRefund::class,
             foreignKey: 'order_product_id',
             localKey: 'id'

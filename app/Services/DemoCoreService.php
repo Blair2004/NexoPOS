@@ -109,6 +109,31 @@ class DemoCoreService
         }
     }
 
+    public function createBaseSettings()
+    {
+        $orderTypes     =   app()->make( OrdersService::class )->getTypeLabels();
+
+        /**
+         * @var Options $optionService
+         */
+        $optionService  =   app()->make( Options::class );
+
+        $optionService->set(
+            'ns_pos_order_types',
+            array_values( $orderTypes )
+        );
+
+        $optionService->set( 
+            'ns_currency_symbol',
+            '$'
+        );
+
+        $optionService->set( 
+            'ns_currency_iso',
+            'USD'
+        );
+    }
+
     public function createAccountingAccounts()
     {
         /**

@@ -3,35 +3,32 @@ declare const nsSnackBar;
 declare const __;
 
 export default class Print {
-    private settings;
+    private urls;
     private options;
-    private type;
-
     private printingURL     =   {
         'refund'    :   'refund_printing_url',
         'sale'      :   'sale_printing_url',
         'payment'   :   'payment_printing_url',
     }
 
-    constructor({ settings, options, type }) {
-        this.settings   =   settings;
+    constructor({ urls, options }) {
+        this.urls       =   urls;
         this.options    =   options;
-        this.type       =   type || 'refund';
     }
 
-    processRegularPrinting( reference_id ) {
-        const item  =   document.querySelector( 'printing-section' );
+    processRegularPrinting( reference_id, documentType ) {
+        const item  =   document.querySelector( '#printing-section' );
 
         if ( item ) {
             item.remove();
         }
 
-        const url               =   this.settings[ this.printingURL[ this.type ] ].replace( '{reference_id}', reference_id );
+        const url               =   this.urls[ this.printingURL[ documentType ] ].replace( '{reference_id}', reference_id );
         const printSection      =   document.createElement( 'iframe' );
 
         printSection.id         =   'printing-section';
         printSection.className  =   'hidden';
-        printSection.src        =   url;
+        printSection.src        =   url; // should be different regarding the document
 
         document.body.appendChild( printSection );
         
@@ -40,18 +37,29 @@ export default class Print {
         }, 5000 );
     }
 
-    printOrder( reference_id ) {
+    process( reference_id, document, mode = 'aloud' ) {
         switch( this.options.ns_pos_printing_gateway ) {
-            case 'default' : this.processRegularPrinting( reference_id ); break;
-            default: this.processCustomPrinting( reference_id, this.options.ns_pos_printing_gateway ); break;
+            case 'default' : this.processRegularPrinting( reference_id, document ); break;
+            default: this.processCustomPrinting( reference_id, this.options.ns_pos_printing_gateway, document, mode ); break;
         }
     }
 
-    processCustomPrinting( reference_id, gateway ) {
-        const result =  nsHooks.applyFilters( 'ns-order-custom-refund-print', { printed: false, reference_id, gateway });
-        
-        if ( ! result.printed ) {
-            nsSnackBar.error( __( `Unsupported print gateway.` ) ).subscribe();
-        }
+    processCustomPrinting( reference_id, gateway, document, mode = 'aloud' ) {
+        const params    =   { printed: false, reference_id, gateway, document, mode };
+        const result =  nsHooks.applyFilters( 'ns-custom-print', {
+            params,
+            promise: () => new Promise( ( resolve, reject ) => {
+                reject({
+                    status: 'failed',
+                    message: __( `The selected print gateway doesn't support this type of printing.`, 'NsPrintAdapter' )
+                });
+            }),
+        });
+
+        result.promise().then( result => {
+            nsSnackBar.success( result.message ).subscribe();
+        }).catch( exception => {
+            nsSnackBar.error( exception.message || __( `An error unexpected occured while printing.` ) ).subscribe();
+        })    
     }
 }
