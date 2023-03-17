@@ -13,6 +13,7 @@ return [
         'tr' => 'Türkçe',
         'vi' => 'Vietnamese',
         'sq' => 'Shqiptare'
+        'nl' => 'Nederlands'
     ],
     'rtl-languages' => [ 'ar' ],
     'timezones' => [
