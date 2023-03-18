@@ -12,8 +12,8 @@ return [
         'pt' => 'Portuguese',
         'tr' => 'Türkçe',
         'vi' => 'Vietnamese',
-        'sq' => 'Shqiptare'
-        'nl' => 'Nederlands'
+        'sq' => 'Shqiptare',
+        'nl' => 'Nederlands',
     ],
     'rtl-languages' => [ 'ar' ],
     'timezones' => [
