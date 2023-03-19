@@ -416,7 +416,7 @@ class ExpenseService
             ->active()
             ->get()
             ->map( function( $expense ) {
-                switch ( $expense->occurence ) {
+                switch ( $expense->occurrence ) {
                     case 'month_starts':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth() );
                         break;
@@ -427,10 +427,10 @@ class ExpenseService
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth() );
                         break;
                     case 'x_before_month_ends':
-                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
+                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurrence_value ) );
                         break;
                     case 'x_after_month_starts':
-                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
+                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurrence_value ) );
                         break;
                 }
 
