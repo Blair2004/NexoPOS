@@ -194,14 +194,15 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind( OrdersService::class, function( $app ) {
             return new OrdersService(
-                $app->make( CustomerService::class ),
-                $app->make( ProductService::class ),
-                $app->make( UnitService::class ),
-                $app->make( DateService::class ),
-                $app->make( CurrencyService::class ),
-                $app->make( Options::class ),
-                $app->make( TaxService::class ),
-                $app->make( ReportService::class ),
+                customerService: $app->make( CustomerService::class ),
+                productService: $app->make( ProductService::class ),
+                unitService: $app->make( UnitService::class ),
+                dateService: $app->make( DateService::class ),
+                currencyService: $app->make( CurrencyService::class ),
+                optionsService: $app->make( Options::class ),
+                taxService: $app->make( TaxService::class ),
+                reportService: $app->make( ReportService::class ),
+                mathService: $app->make( MathService::class ),
             );
         });
 

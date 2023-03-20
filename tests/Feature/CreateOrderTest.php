@@ -30,6 +30,18 @@ class CreateOrderTest extends TestCase
         }
     }
 
+    public function testCreateAndEditOrderWithLowStock()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateAndEditOrderWithLowStock();
+    }
+
+    public function testCreateAndEditOrderByDeductedGreaterQuantity()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateAndEditOrderWithGreaterQuantity();
+    }
+
     public function testDeletedVoidedOrder()
     {
         $this->attemptAuthenticate();

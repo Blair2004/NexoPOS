@@ -283,6 +283,158 @@ trait WithOrderTest
         return compact( 'response', 'cashRegister' );
     }
 
+    public function attemptCreateAndEditOrderWithLowStock()
+    {
+        /**
+         * @var ProductService $productSevice
+         */
+        $productService  =   app()->make( ProductService::class );
+
+        /**
+         * @var TestService $testService
+         */
+        $testService    =   app()->make( TestService::class );
+
+        /**
+         * Step 1: we'll set the quantity to be 3
+         * and we'll create the order with 2 quantity partially paid
+         */
+        $product        =   Product::where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED )
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->get()
+            ->random();
+
+        $productService->setQuantity( $product->id, $product->unit_quantities->first()->unit_id, 3 );
+        
+
+        /**
+         * Let's prepare the order to submit that.
+         */
+        $orderDetails = $testService->prepareOrder(
+            date: ns()->date->now(),
+            config: [
+                'allow_quick_products' => false,
+                'payments'  =>  function( $details ) {
+                    return [
+                        [
+                            'identifier'    =>  'cash-payment',
+                            'value'         =>  $details[ 'subtotal' ] / 3
+                        ]
+                    ];
+                },
+                'products' => fn() => collect([
+                    json_decode( json_encode([
+                        'name'  =>  $product->name,
+                        'id'        =>  $product->id,
+                        'quantity'  =>  2,
+                        'unit_price'    =>  10,
+                        'unit_quantities'   =>  [ $product->unit_quantities->first() ]
+                    ]) )
+                ]),
+            ]
+        );
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/orders', $orderDetails );
+
+        /**
+         * Step 2: Ensure no error occured
+         */
+        $response->assertStatus( 200 );
+
+        $details    =   $response->json();
+
+        /**
+         * Step 3: update the order with the same product
+         * and check if it goes through
+         */
+        $details[ 'data' ][ 'order' ][ 'type' ]     =   [ 'identifier' => $details[ 'data' ][ 'order' ][ 'type' ] ];
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/orders/' . $details[ 'data' ][ 'order' ][ 'id' ], $details[ 'data' ][ 'order' ] );
+
+        $response->assertStatus(200, 'An error occured while submitting the order' );
+    }
+    
+    public function attemptCreateAndEditOrderWithGreaterQuantity()
+    {
+        /**
+         * @var ProductService $productSevice
+         */
+        $productService  =   app()->make( ProductService::class );
+
+        /**
+         * @var TestService $testService
+         */
+        $testService    =   app()->make( TestService::class );
+
+        /**
+         * Step 1: we'll set the quantity to be 3
+         * and we'll create the order with 2 quantity partially paid
+         */
+        $product        =   Product::where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED )
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->first();
+
+        $productService->setQuantity( $product->id, $product->unit_quantities->first()->unit_id, 3 );
+        
+
+        /**
+         * Let's prepare the order to submit that.
+         */
+        $orderDetails = $testService->prepareOrder(
+            date: ns()->date->now(),
+            config: [
+                'allow_quick_products' => false,
+                'payments'  =>  function( $details ) {
+                    return [
+                        [
+                            'identifier'    =>  'cash-payment',
+                            'value'         =>  $details[ 'subtotal' ] / 3
+                        ]
+                    ];
+                },
+                'products' => fn() => collect([
+                    json_decode( json_encode([
+                        'name'  =>  $product->name,
+                        'id'        =>  $product->id,
+                        'quantity'  =>  2,
+                        'unit_price'    =>  10,
+                        'unit_quantities'   =>  [ $product->unit_quantities->first() ]
+                    ]) )
+                ]),
+            ]
+        );
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/orders', $orderDetails );
+
+        /**
+         * Step 2: Ensure no error occured
+         */
+        $response->assertStatus( 200 );
+
+        $details    =   $response->json();
+
+        /**
+         * Step 3: update the order with the same product
+         * and check if it goes through
+         */
+        $details[ 'data' ][ 'order' ][ 'type' ]     =   [ 'identifier' => $details[ 'data' ][ 'order' ][ 'type' ] ];
+
+        /**
+         * We'll here request more quantity that what is
+         * available on the inventory. This request must fail.
+         */
+        $details[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ]    =   4;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/orders/' . $details[ 'data' ][ 'order' ][ 'id' ], $details[ 'data' ][ 'order' ] );
+
+        $response->assertStatus(500, 'An error occured while submitting the order' );
+    }
+
     public function attemptCreateOrderWithGroupedProducts( $data = [] )
     {
         /**
@@ -300,7 +452,14 @@ trait WithOrderTest
          */
         $unitService = app()->make( UnitService::class );
 
-        $product = Product::type( Product::TYPE_GROUPED )->with([ 'sub_items.product', 'unit_quantities' ])->first();
+        $product = Product::type( Product::TYPE_GROUPED )
+            ->whereRelation( 'sub_items.product.unit_quantities', 'quantity', '>', 500 )
+            ->with([ 'unit_quantities' ])
+            ->with( 'sub_items.product.unit_quantities', function( $query ) {
+                $query->where( 'quantity', '>', 500 );
+            })
+            ->get()
+            ->random();
 
         /**
          * We would like to store the current Quantity
@@ -342,7 +501,10 @@ trait WithOrderTest
         /**
          * Step 0: Ensure no error occurred
          */
-        $response->assertStatus( 200 );
+        if ( $response->status() !== 200 ) {
+            $response->dump();
+            $response->assertStatus( 200 );
+        }
 
         /**
          * Let's convert the response for a
@@ -472,7 +634,7 @@ trait WithOrderTest
 
                     $finalQuantity = $productService->computeSubItemQuantity(
                         parentUnit: $savedQuantity[ 'parentUnit' ],
-                        parentQuantity: $orderProduct->refunded_product->quantity,
+                        parentQuantity: $orderProduct->refunded_products->sum( 'quantity' ),
                         subItemQuantity: $savedQuantity[ 'quantity' ]
                     );
 
@@ -628,7 +790,11 @@ trait WithOrderTest
          * the order type we have just created
          */
         $currency = app()->make( CurrencyService::class );
-        $product = Product::withStockEnabled()->get()->random();
+        $product = Product::withStockEnabled()
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->get()
+            ->random();
         $unit = $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
         $subtotal = $unit->sale_price * 5;
         $shippingFees = 150;
@@ -686,7 +852,12 @@ trait WithOrderTest
          */
         $currency = app()->make( CurrencyService::class );
 
-        $product = Product::where( 'type', '<>', Product::TYPE_GROUPED )->withStockEnabled()->get()->random();
+        $product = Product::where( 'type', '<>', Product::TYPE_GROUPED )
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->withStockEnabled()
+            ->get()
+            ->random();
         $unit = $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
         $subtotal = $unit->sale_price * 5;
         $shippingFees = 150;
@@ -834,8 +1005,45 @@ trait WithOrderTest
         for ( $i = 0; $i < $this->count; $i++ ) {
             $singleResponse = [];
 
-            $shippingFees = $orderDetails[ 'shipping' ] ?? $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
-            $discountRate = $orderDetails[ 'discount_rate' ] ?? $faker->numberBetween(0, 5);
+            $products = Product::where( 'type', '<>', Product::TYPE_GROUPED )
+                ->whereRelation( 'unit_quantities', 'quantity', '>', 1000 )
+                ->with( 'unit_quantities', function( $query ) {
+                    $query->where( 'quantity', '>', 100 );
+                })
+                ->get()
+                ->shuffle()
+                ->take(3);
+            $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
+            $discountRate = $faker->numberBetween(0, 5);
+
+            $products = $products->map( function( $product ) use ( $faker, $taxService ) {
+                $unitElement = $faker->randomElement( $product->unit_quantities );
+                $discountRate = 10;
+                $quantity = $faker->numberBetween(1, 10);
+                $data = array_merge([
+                    'name' => $product->name,
+                    'discount' => $taxService->getPercentageOf( $unitElement->sale_price * $quantity, $discountRate ),
+                    'discount_percentage' => $discountRate,
+                    'discount_type' => $faker->randomElement([ 'flat', 'percentage' ]),
+                    'quantity' => $quantity,
+                    'unit_price' => $unitElement->sale_price,
+                    'tax_type' => 'inclusive',
+                    'tax_group_id' => 1,
+                    'unit_id' => $unitElement->unit_id,
+                ], $this->customProductParams );
+
+                if ( ! $this->allowQuickProducts ) {
+                    $data[ 'product_id' ] = $product->id;
+                    $data[ 'unit_quantity_id' ] = $unitElement->id;
+                } elseif ( $faker->randomElement([ true, false ]) ) {
+                    $data[ 'product_id' ] = $product->id;
+                    $data[ 'unit_quantity_id' ] = $unitElement->id;
+                }
+
+                return $data;
+            })->filter( function( $product ) {
+                return $product[ 'quantity' ] > 0;
+            });
 
             /**
              * if no products are provided we'll generate random
@@ -1264,7 +1472,11 @@ trait WithOrderTest
     protected function attemptOrderWithProductPriceMode()
     {
         $currency = app()->make( CurrencyService::class );
-        $product = Product::withStockEnabled()->get()->random();
+        $product = Product::withStockEnabled()
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->get()
+            ->random();
         $unit = $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
         $subtotal = $unit->sale_price * 5;
         $shippingFees = 150;
@@ -1365,7 +1577,26 @@ trait WithOrderTest
 
         $response->assertJsonPath( 'data.order.payment_status', 'hold' );
 
-        return json_decode( $response->getContent(), true );
+        /**
+         * We'll try to make a payment to the order to 
+         * turn that into a partially paid order.
+         */
+        $orderDetails   =   array_merge( $orderDetails, [
+            'products'  =>  Order::find( $order[ 'id' ] )->products->toArray(),
+            'payments'  =>  [
+                [
+                    'identifier'  =>  $payment->identifier,
+                    'value'         =>  $order[ 'total' ] / 3
+                ]
+            ]
+        ]);
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/orders/' . $order[ 'id' ], $orderDetails );
+        
+        $response->assertStatus(200);
+
+        return $response->json();
     }
 
     protected function attemptDeleteOrder()
@@ -1389,7 +1620,9 @@ trait WithOrderTest
             ],
             config: [
                 'products'  =>  function() {
-                    return Product::where( 'STOCK_MANAGEMENT', Product::STOCK_MANAGEMENT_ENABLED )
+                    return Product::withStockEnabled()
+                        ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+                        ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
                         ->where( 'type', '<>', Product::TYPE_GROUPED )
                         ->get();
                 }
@@ -1399,6 +1632,8 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $data );
+
+        $response->assertStatus(200);
 
         $order = (object) json_decode( $response->getContent(), true )[ 'data' ][ 'order' ];
         $order = Order::with([ 'products', 'user' ])->find( $order->id );
@@ -1519,6 +1754,10 @@ trait WithOrderTest
             config: [
                 'products'  =>  function() {
                     return Product::where( 'STOCK_MANAGEMENT', Product::STOCK_MANAGEMENT_ENABLED )
+                        ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+                        ->with( 'unit_quantities', function( $query ) {
+                            $query->where( 'quantity', '>', 100 );
+                        })
                         ->where( 'type', '<>', Product::TYPE_GROUPED )
                         ->get();
                 }
@@ -1617,6 +1856,8 @@ trait WithOrderTest
             config: [
                 'products'  =>  function() {
                     return Product::where( 'STOCK_MANAGEMENT', Product::STOCK_MANAGEMENT_ENABLED )
+                        ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+                        ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
                         ->where( 'type', '<>', Product::TYPE_GROUPED )
                         ->get();
                 }
@@ -1667,7 +1908,11 @@ trait WithOrderTest
         $firstFetchCustomer = Customer::first();
         $firstFetchCustomer->save();
 
-        $product = Product::withStockEnabled()->with( 'unit_quantities' )->first();
+        $product = Product::withStockEnabled()
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->first();
+            
         $shippingFees = 150;
         $discountRate = 3.5;
         $products = [
@@ -1846,7 +2091,10 @@ trait WithOrderTest
          */
         $orderService = app()->make( OrdersService::class );
         $faker = Factory::create();
-        $products = Product::with( 'unit_quantities' )->get()->shuffle()->take(1);
+        $products = Product::whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->get()
+            ->shuffle()->take(1);
         $shippingFees = $faker->randomElement([100, 150, 200, 250, 300, 350, 400]);
         $discountRate = $faker->numberBetween(1, 5);
 
@@ -2056,7 +2304,12 @@ trait WithOrderTest
         $customer->credit_limit_amount = 0;
         $customer->save();
 
-        $product = Product::withStockEnabled()->with( 'unit_quantities' )->first();
+        $product = Product::withStockEnabled()
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 500 )
+            ->with( 'unit_quantities', function( $query ) {
+                $query->where( 'quantity', '>', 500 );
+            })
+            ->first();
         $shippingFees = 150;
         $discountRate = 3.5;
         $products = [
@@ -2247,7 +2500,11 @@ trait WithOrderTest
         $rules = $reward->rules->sortBy( 'reward' )->reverse();
         $timesForOrders = ( $reward->target / $rules->first()->reward );
 
-        $product = Product::withStockEnabled()->get()->random();
+        $product = Product::withStockEnabled()
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->get()
+            ->random();
         $unit = $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
         $product_price = $this->faker->numberBetween( $rules->first()->from, $rules->first()->to );
         $subtotal = $product_price;
@@ -2410,7 +2667,11 @@ trait WithOrderTest
 
     private function retreiveProducts()
     {
-        $products = Product::with( 'unit_quantities' )->get()->shuffle()->take(3);
+        $products = Product::whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->get()
+            ->shuffle()
+            ->take(3);
 
         return $products->map( function( $product ) {
             $unitElement = $this->faker->randomElement( $product->unit_quantities );
