@@ -25,8 +25,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot( CoreService $coreService )
     {
-        $this->registerPolicies();
-
         $coreService->registerGatePermissions();
 
         Sanctum::usePersonalAccessTokenModel( PersonalAccessToken::class );

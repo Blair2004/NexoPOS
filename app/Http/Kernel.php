@@ -22,7 +22,6 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \App\Http\Middleware\TrustProxies::class,
-        \Fruitcake\Cors\HandleCors::class,
         \App\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
@@ -60,7 +59,7 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
-    protected $routeMiddleware = [
+    protected $middlewareAliases = [
         'ns.not-installed' => \App\Http\Middleware\NotInstalledStateMiddleware::class,
         'ns.installed' => \App\Http\Middleware\InstalledStateMiddleware::class,
         'ns.clear-cache' => \App\Http\Middleware\ClearRequestCacheMiddleware::class,
