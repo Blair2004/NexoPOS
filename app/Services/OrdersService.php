@@ -1229,26 +1229,16 @@ class OrdersService
                                  * We need a fake orderProduct
                                  * that will have necessary attributes for verification.
                                  */
-                                $unitGroup = $this->unitService->getUnitParentGroup( $orderProduct[ 'unit_id' ] );
-                                $currentUnit = $this->unitService->get( $orderProduct[ 'unit_id' ] );
-                                $baseUnit = $currentUnit;
-
-                                /**
-                                 * in case the current unit is not the base unit
-                                 */
-                                if ( ! (bool) $currentUnit->base_unit ) {
-                                    $baseUnit = $this->unitService->getBaseUnit( $unitGroup );
-                                }
+                                $parentUnit = $this->unitService->get( $orderProduct[ 'unit_id' ] );
 
                                 /**
                                  * computing the exact quantity that will be pulled
                                  * from the actual product inventory.
                                  */
                                 $quantity = $this->productService->computeSubItemQuantity(
-                                    baseUnit: $baseUnit,
-                                    currentUnit: $currentUnit,
-                                    orderProductQuantity: $orderProduct[ 'quantity' ],
-                                    subItemQuantity: (float) $subitem->quantity
+                                    subItemQuantity: (float) $subitem->quantity,
+                                    parentUnit: $parentUnit,
+                                    parentQuantity: $orderProduct[ 'quantity' ]
                                 );
 
                                 $newFakeOrderProduct = new OrderProduct;

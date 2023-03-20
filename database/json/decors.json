@@ -34,6 +34,14 @@
             "name": "Mirror Trend Framed Accent Mirror",
             "price": 58.36,
             "image": "/images/products/Mirror-Trend-Framed-Accent-Mirror.jpg"
+        }, {
+            "name": "Group Mirror + Kotter Collection",
+            "price": 500,
+            "image": "/images/products/Mirror-Trend-Framed-Accent-Mirror.jpg",
+            "groups": [
+                "Mirror Trend Framed Accent Mirror",
+                "Kotter Home Coral Reef Throw Pillow"
+            ]
         }
     ]
 }

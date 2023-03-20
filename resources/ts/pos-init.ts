@@ -78,7 +78,8 @@ export class POS {
             total_products: 0,
             shipping: 0,
             tax_value: 0,
-            products_tax_value: 0,
+            products_exclusive_tax_value: 0,
+            products_inclusive_tax_value: 0,
             total_tax_value: 0,
             shipping_rate: 0,
             shipping_type: undefined,
@@ -655,7 +656,7 @@ export class POS {
         order.total_tax_value     =  order.tax_value;
 
         if ([ 'products_variable_vat', 'products_flat_vat', 'products_vat' ].includes(posVat) && ! priceWithTax ) {
-            order.total_tax_value     =  order.products_tax_value + order.tax_value;
+            order.total_tax_value     =  order.products_exclusive_tax_value + order.tax_value;
         }
 
         return order;
@@ -668,7 +669,11 @@ export class POS {
          * retrieve all products taxes
          * and sum the total.
          */
-        const totalTaxes = products.map((product: OrderProduct) => {
+        const totalInclusiveTax = products.filter( product => product.tax_type === 'inclusive' ).map((product: OrderProduct) => {
+            return product.tax_value;
+        });
+
+        const totalExclusiveTax = products.filter( product => product.tax_type === 'exclusive' ).map((product: OrderProduct) => {
             return product.tax_value;
         });
 
@@ -676,12 +681,17 @@ export class POS {
          * tax might be computed above the tax that currently
          * applie to the items.
          */
-        order.products_tax_value    =   0;
+        order.products_exclusive_tax_value    =   0;
+        order.products_inclusive_tax_value    =   0;
 
         const posVat    =   this.options.getValue().ns_pos_vat;
 
-        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) && totalTaxes.length > 0) {
-            order.products_tax_value    +=  totalTaxes.reduce((b, a) => b + a);
+        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) && totalExclusiveTax.length > 0) {
+            order.products_exclusive_tax_value    +=  totalExclusiveTax.reduce((b, a) => b + a);
+        }
+
+        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) && totalInclusiveTax.length > 0) {
+            order.products_inclusive_tax_value    +=  totalInclusiveTax.reduce((b, a) => b + a);
         }
 
         order.products = products;

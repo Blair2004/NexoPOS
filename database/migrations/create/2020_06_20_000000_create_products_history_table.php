@@ -23,6 +23,7 @@ return new class extends Migration
                 $table->integer( 'procurement_id' )->nullable();
                 $table->integer( 'procurement_product_id' )->nullable();
                 $table->integer( 'order_id' )->nullable();
+                $table->integer( 'order_product_id' )->nullable();
                 $table->string( 'operation_type' ); // sale, procurement, adjustment, return, defective
                 $table->integer( 'unit_id' );
                 $table->float( 'before_quantity', 18, 5 )->nullable();

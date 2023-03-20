@@ -37,7 +37,7 @@ class TestService
 
             $data = array_merge([
                 'name' => $product->name,
-                'quantity' => $faker->numberBetween(1, 10),
+                'quantity' => $faker->numberBetween(1, 3),
                 'unit_price' => $unitElement->sale_price,
                 'tax_type' => 'inclusive',
                 'tax_group_id' => 1,
@@ -80,7 +80,7 @@ class TestService
                 ->divideBy( 100 )
                 ->getRaw();
         } else {
-            $discount[ 'value' ] = 10;
+            $discount[ 'value' ] = 2;
             $discount[ 'rate' ] = 0;
         }
 
@@ -165,7 +165,7 @@ class TestService
                         ];
                     });
                 })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
-                    $quantity = $faker->numberBetween(1000, 9000);
+                    $quantity = $faker->numberBetween(100000, 900000);
 
                     return [
                         'product_id' => $data->product->id,
