@@ -131,7 +131,14 @@ class Setup
     public function runMigration( $fields )
     {
         /**
-         * Let's create the tables. The DB is supposed to be set
+         * We're running this simple migration call to ensure
+         * default tables are created. Those table are located at the 
+         * root of the database folder.
+         */
+        Artisan::call( 'migrate' );
+
+        /**
+         * NexoPOS uses Sanctum, we're making sure to publish the package.
          */
         Artisan::call( 'vendor:publish', [
             '--force' => true,
@@ -149,10 +156,24 @@ class Setup
          */
         ns()->update
             ->getMigrations(
-                directories: [ 'core', 'create' ]
+                directories: [ 'core', 'create' ],
+                ignoreMigrations: true
             )
             ->each( function( $file ) {
                 ns()->update->executeMigrationFromFileName( $file );
+            });
+
+        /**
+         * The update migrations should'nt be executed. 
+         * This should improve the speed during the installation.
+         */
+        ns()->update
+            ->getMigrations(
+                directories: [ 'update' ],
+                ignoreMigrations: true
+            )
+            ->each( function( $file ) {
+                ns()->update->assumeExecuted( $file );
             });
 
         $userID = rand(1, 99);
