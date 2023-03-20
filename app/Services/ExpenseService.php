@@ -575,21 +575,23 @@ class ExpenseService
      */
     public function handleCreatedOrder( Order $order )
     {
-        $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
-
-        $expense = new Expense;
-        $expense->value = $order->total;
-        $expense->active = true;
-        $expense->operation = CashFlow::OPERATION_CREDIT;
-        $expense->author = $order->author;
-        $expense->order_id = $order->id;
-        $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
-        $expense->id = 0; // this is not assigned to an existing expense
-        $expense->category = $expenseCategory;
-        $expense->created_at = $order->created_at;
-        $expense->updated_at = $order->updated_at;
-
-        $this->recordCashFlowHistory( $expense );
+        if ( $order->payment_status === Order::PAYMENT_PAID ) {
+            $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
+    
+            $expense = new Expense;
+            $expense->value = $order->total;
+            $expense->active = true;
+            $expense->operation = CashFlow::OPERATION_CREDIT;
+            $expense->author = $order->author;
+            $expense->order_id = $order->id;
+            $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
+            $expense->id = 0; // this is not assigned to an existing expense
+            $expense->category = $expenseCategory;
+            $expense->created_at = $order->created_at;
+            $expense->updated_at = $order->updated_at;
+    
+            $this->recordCashFlowHistory( $expense );
+        }
     }
 
     /**
