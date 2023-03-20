@@ -20,7 +20,7 @@
                     <span>{{ __( 'Sign In' ) }}</span>
                 </ns-button>
             </div>
-            <div>
+            <div v-if="showRegisterButton">
                 <ns-button :link="true" :href="'/sign-up'" type="success">{{ __( 'Register' ) }}</ns-button>
             </div>
         </div>
@@ -33,7 +33,7 @@ import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-login',
-    props: [ 'showRecoveryLink' ],
+    props: [ 'showRecoveryLink', 'showRegisterButton' ],
     data() {
         return {
             fields: [],
