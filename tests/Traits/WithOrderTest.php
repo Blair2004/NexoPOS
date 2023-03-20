@@ -2669,7 +2669,6 @@ trait WithOrderTest
                     ],
                 ]);
 
-            $response->dump();
             $response->assertStatus( 200 );
         }
 
