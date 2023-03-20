@@ -872,7 +872,7 @@ class OrdersService
          * payment hasn't been deleted.
          */
         if ( $order instanceof Order ) {
-            $paymentIds = collect( $fields[ 'payments' ] )
+            $paymentIds = collect( $fields[ 'payments' ] ?? [] )
                 ->map( fn( $payment ) => $payment[ 'id' ] ?? false )
                 ->filter( fn( $payment ) => $payment !== false )
                 ->toArray();
