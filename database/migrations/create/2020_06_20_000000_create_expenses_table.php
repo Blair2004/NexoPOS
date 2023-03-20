@@ -27,8 +27,8 @@ return new class extends Migration
                 $table->boolean( 'recurring' )->default(false);
                 $table->boolean( 'active' )->default(false);
                 $table->integer( 'group_id' )->nullable();
-                $table->string( 'occurence' )->nullable(); // 1st 15th startOfMonth, endOfMonth
-                $table->string( 'occurence_value' )->nullable(); // 1st 15th startOfMonth, endOfMonth
+                $table->string( 'occurrence' )->nullable(); // 1st 15th startOfMonth, endOfMonth
+                $table->string( 'occurrence_value' )->nullable(); // 1st 15th startOfMonth, endOfMonth
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
