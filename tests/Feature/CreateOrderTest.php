@@ -42,6 +42,12 @@ class CreateOrderTest extends TestCase
         $this->attemptCreateAndEditOrderWithGreaterQuantity();
     }
 
+    public function testHoldAndCheckoutOrder()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptHoldAndCheckoutOrder();
+    }
+
     public function testDeletedVoidedOrder()
     {
         $this->attemptAuthenticate();
