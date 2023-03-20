@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
 use App\Models\Order;
-use App\Models\Permission;
+use App\Models\OrderProductRefund;
 use App\Services\BarcodeService;
 use App\Services\CashRegistersService;
 use App\Services\CoreService;
@@ -289,6 +289,13 @@ class AppServiceProvider extends ServiceProvider
             'nexopos.orders.types-labels' => collect( config( 'nexopos.orders.types' ) )
                 ->mapWithKeys( fn( $type ) => [ $type[ 'identifier' ] => $type[ 'label' ] ])
                 ->toArray(),
+        ]);
+
+        config([
+            'nexopos.orders.products.refunds' => [
+                OrderProductRefund::CONDITION_DAMAGED       =>  __( 'Damaged' ),
+                OrderProductRefund::CONDITION_UNSPOILED     =>  __( 'Good Condition' ),
+            ]
         ]);
     }
 }

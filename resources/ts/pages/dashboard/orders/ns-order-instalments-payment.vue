@@ -44,7 +44,7 @@ export default {
                     options: paymentTypes
                 }
             ],
-            print: new Print({ settings: systemSettings, options: systemOptions, type: 'payment' }),
+            print: new Print({ urls: systemUrls, options: systemOptions }),
             validation: new FormValidation,
             order: null,
             instalment: null,
@@ -85,7 +85,7 @@ export default {
                 .subscribe({
                     next: result => {
                         this.popupResolver( true );
-                        this.print.printOrder( result.data.payment.id );
+                        this.print.exec( result.data.payment.id, 'payment' );
 
                         nsSnackBar.success( result.message ).subscribe();
                     },

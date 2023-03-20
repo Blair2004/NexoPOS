@@ -101,6 +101,12 @@ class Options
     public function set( $key, $value, $expiration = null )
     {
         /**
+         * We rather like to remove unecessary spaces. That might
+         * cause unwanted behaviors.
+         */
+        $key    =   trim( strtolower( $key ) );
+
+        /**
          * if an option has been found,
          * it will save the new value and update
          * the option object.
@@ -118,7 +124,7 @@ class Options
             $option = $foundOption->first();
         }
 
-        $option->key = trim( strtolower( $key ) );
+        $option->key = $key;
         $option->array = false;
 
         if ( is_array( $value ) ) {

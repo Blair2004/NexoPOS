@@ -5,12 +5,14 @@ import { forkJoin } from "rxjs";
 import nsOrderRefund from "~/pages/dashboard/orders/ns-order-refund.vue";
 import nsPromptPopupVue from "./ns-prompt-popup.vue";
 import nsPosConfirmPopupVue from "./ns-pos-confirm-popup.vue";
+<<<<<<< HEAD
 import nsOrderPayment from "~/pages/dashboard/orders/ns-order-payment.vue";
 import nsOrderDetails from "~/pages/dashboard/orders/ns-order-details.vue";
 import nsOrderInstalments from "~/pages/dashboard/orders/ns-order-instalments.vue";
 import { __ } from "~/libraries/lang";
 import popupResolver from "~/libraries/popup-resolver";
 import popupCloser from "~/libraries/popup-closer";
+import Print from "~/libraries/print";
 
 export default {
     name: 'ns-orders-preview-popup',
@@ -22,6 +24,7 @@ export default {
             products: [],
             payments: [],
             options: null,
+            print: new Print({ urls: systemUrls, options: systemOptions }),
             settings: null,
         }
     },
@@ -51,6 +54,9 @@ export default {
         setActive( active ) {
             this.active     =   active;
         },
+        printOrder() {
+            this.print.process( this.order.id, 'sale' );
+        },
         refresh() {
             /**
              * this will notify the crud component to
@@ -63,35 +69,6 @@ export default {
              * and display updated values.
              */
             this.loadOrderDetails( this.order.id );
-        },
-        printOrder() {
-            switch (this.options.ns_pos_printing_gateway) {
-                case 'default': this.processRegularPrinting( this.order.id ); break;
-                default: this.processCustomPrinting( this.order.id, this.options.ns_pos_printing_gateway, false ); break;
-            }
-        },
-
-        async processCustomPrinting(order_id, gateway, silent = true ) {
-            const result = nsHooks.applyFilters( silent ? 'ns-order-custom-print' : 'ns-order-custom-print-aloud', { printed: false, order_id, gateway });
-
-            if ( result.printed === false ) {
-                nsSnackBar.error(__(`Unsupported print gateway.`)).subscribe();
-            }
-        },
-
-        processRegularPrinting(order_id) {
-            const item = document.querySelector('printing-section');
-
-            if (item) {
-                item.remove();
-            }
-
-            const printSection          = document.createElement('iframe');
-            printSection.id             = 'printing-section';
-            printSection.className      = 'hidden';
-            printSection.src            = this.settings.sale_printing_url.replace('{reference_id}', order_id);
-
-            document.body.appendChild(printSection);
         },
 
         loadOrderDetails( orderId ) {
@@ -171,7 +148,7 @@ export default {
     mounted() {
         this.order      =   this.$popupParams.order;
         this.options    =   systemOptions;
-        this.settings   =   systemSettings;
+        this.urls       =   systemUrls;
         this.loadOrderDetails( this.order.id );
         this.popupCloser();
     }

@@ -30,6 +30,12 @@ class CreateOrderTest extends TestCase
         }
     }
 
+    public function testDeletedVoidedOrder()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptDeleteVoidedOrder();
+    }
+
     /**
      * Will only make order using
      * the customer balance

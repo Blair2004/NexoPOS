@@ -92,7 +92,7 @@ export default {
             }, ( error ) => error );
         },
         printOrder( order ) {
-            POS.printOrder( order.id );
+            POS.print.process( order.id, 'sale' );
         },
         proceedOpenOrder( order ) {
             const products  =   POS.products.getValue();

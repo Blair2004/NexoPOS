@@ -521,6 +521,7 @@ class OrdersService
             if ( $order->payment_status !== Order::PAYMENT_HOLD ) {
                 $order->products->map( function( OrderProduct $product ) use ( $products ) {
                     $products = collect( $products )
+                            ->filter( fn( $product ) => isset( $product[ 'id' ] ) )
                             ->mapWithKeys( fn( $product ) => [ $product[ 'id' ] => $product ] )
                             ->toArray();
 
@@ -2073,7 +2074,8 @@ class OrdersService
 
         $order->change = Currency::fresh( $order->tendered )->subtractBy( $order->total )->getRaw();
 
-        $refunds = $order->refund;
+        $refunds = $order->refunds;
+
         $totalRefunds = $refunds->map( fn( $refund ) => $refund->total )->sum();
 
         /**
@@ -2130,7 +2132,12 @@ class OrdersService
 
         event( new OrderBeforeDeleteEvent( $cachedOrder ) );
 
-        $order
+        /**
+         * Because when an order is void,
+         * the stock is already returned to the inventory.
+         */
+        if ( ! in_array( $order->payment_status, [ Order::PAYMENT_VOID ] ) ) {
+            $order
             ->products()
             ->get()
             ->each( function( OrderProduct $orderProduct) {
@@ -2154,6 +2161,7 @@ class OrdersService
 
                 $orderProduct->delete();
             });
+        }
 
         OrderPayment::where( 'order_id', $order->id )->delete();
 
@@ -2274,6 +2282,11 @@ class OrdersService
     public function getPaymentLabels()
     {
         return config( 'nexopos.orders.statuses' );
+    }
+
+    public function getRefundedOrderProductLabel( $label )
+    {
+        return config( 'nexopos.orders.products.refunds' )[ $label ] ?? __( 'Unknown Product Status' );
     }
 
     /**
@@ -2508,18 +2521,24 @@ class OrdersService
      */
     public function void( Order $order, $reason )
     {
-        $order->products->each( function( OrderProduct $product ) {
-            /**
-             * we do proceed by doing an initial return
-             */
-            $this->productService->stockAdjustment( ProductHistory::ACTION_VOID_RETURN, [
-                'total_price' => $product->total_price,
-                'product_id' => $product->product_id,
-                'unit_id' => $product->unit_id,
-                'orderProduct' => $product,
-                'quantity' => $product->quantity,
-                'unit_price' => $product->unit_price,
-            ]);
+        $order->products()
+            ->get()
+            ->each( function( OrderProduct $orderProduct ) {
+                $orderProduct->load( 'product' );
+
+                if ( $orderProduct->product instanceof Product ) {
+                    /**
+                     * we do proceed by doing an initial return
+                     */
+                    $this->productService->stockAdjustment( ProductHistory::ACTION_VOID_RETURN, [
+                        'total_price' => $orderProduct->total_price,
+                        'product_id' => $orderProduct->product_id,
+                        'unit_id' => $orderProduct->unit_id,
+                        'orderProduct' => $orderProduct,
+                        'quantity' => $orderProduct->quantity,
+                        'unit_price' => $orderProduct->unit_price,
+                    ]);
+                }
         });
 
         $order->payment_status = Order::PAYMENT_VOID;

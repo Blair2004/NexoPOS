@@ -178,7 +178,7 @@
                     <a href="javascript:void(0)" @click="openRefunds()" class="border-b border-info-primary border-dashed">{{ __( 'All Refunds' ) }}</a>
                 </h3>
             </div>
-            <div :key="product.id" v-for="product of order.refunded_products" class="p-2 flex justify-between items-start elevation-surface border  mb-6">
+            <div :key="index" v-for="(product, index) of order.refunded_products" class="p-2 flex justify-between items-start elevation-surface border  mb-6">
                 <div>
                     <h4 class="text-semibold text-primary">{{ product.order_product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-secondary text-sm">{{ product.unit.name || 'N/A' }} | <span class="rounded-full px-2" :class="product.condition === 'damaged' ? 'bg-error-tertiary text-white' : 'bg-info-tertiary text-white'">{{ product.condition }}</span></p>
