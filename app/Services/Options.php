@@ -44,10 +44,12 @@ class Options
     {
         Option::truncate();
 
+        $types  =   app()->make( OrdersService::class )->getTypeLabels();
+
         $defaultOptions = [
-            'ns_registration_enabled' => 'no',
-            'ns_store_name' => 'NexoPOS',
-            'ns_pos_order_types' => [ 'takeaway', 'delivery' ],
+            'ns_registration_enabled' => false,
+            'ns_store_name' => 'NexoPOS 4.x',
+            'ns_pos_order_types' => array_keys( $types ),
         ];
 
         $options = array_merge( $defaultOptions, $options );
@@ -103,28 +105,7 @@ class Options
          * it will save the new value and update
          * the option object.
          */
-        $foundOption = collect( $this->rawOptions )->map( function( $option, $index ) use ( $value, $key, $expiration ) {
-            if ( $key === $index ) {
-                $this->hasFound = true;
-
-                $this->encodeOptionValue( $option, $value );
-
-                $option->expire_on = $expiration;
-
-                /**
-                 * this should be overridable
-                 * from a user option or any
-                 * extending this class
-                 */
-                $option = $this->beforeSave( $option );
-                $option->save();
-
-                return $option;
-            }
-
-            return false;
-        })
-        ->filter();
+        $foundOption = collect( $this->rawOptions )->filter( fn( $option, $index ) => $index === $key );
 
         /**
          * if the option hasn't been found
@@ -133,23 +114,30 @@ class Options
          */
         if ( $foundOption->isEmpty() ) {
             $option = new Option;
-            $option->key = trim( strtolower( $key ) );
-            $option->array = false;
-            
-            $this->encodeOptionValue( $option, $value );
-            
-            $option->expire_on = $expiration;
-
-            /**
-             * this should be overridable
-             * from a user option or any
-             * extending this class
-             */
-            $option = $this->beforeSave( $option );
-            $option->save();
         } else {
             $option = $foundOption->first();
         }
+
+        $option->key = trim( strtolower( $key ) );
+        $option->array = false;
+
+        if ( is_array( $value ) ) {
+            $option->value  =   json_encode( $value );
+        } else if ( empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) ) {
+            $option->value = '';
+        } else {
+            $option->value = $value;
+        }
+        
+        $option->expire_on = $expiration;
+
+        /**
+         * this should be overridable
+         * from a user option or any
+         * extending this class
+         */
+        $option = $this->beforeSave( $option );
+        $option->save();
 
         /**
          * Let's save the new option

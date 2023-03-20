@@ -1616,7 +1616,6 @@ trait WithOrderTest
             ->json( 'POST', 'api/orders', [
                 'customer_id' => $customer->id,
                 'type' => [ 'identifier' => 'takeaway' ],
-                // 'discount_type'         =>  'percentage',
                 'discount_percentage' => $discountRate,
                 'discount_type' => 'flat',
                 'discount' => $discountValue,
@@ -1836,25 +1835,32 @@ trait WithOrderTest
         $responseData = json_decode( $response->getContent(), true );
 
         /**
-         * performing the adjustment by increasing the quantity
-         * that is added to the order.
+         * Test 1: Testing Product History
+         * We should test if the records 
+         * for partially paid order was created
          */
-        $product = Product::with( 'unit_quantities' )->find(1);
+        foreach( $products as $product ) {
+            $history    =   ProductHistory::where( 'product_id', $product[ 'product_id' ] )
+                ->where( 'operation_type', ProductHistory::ACTION_SOLD )
+                ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                ->first();
 
-        $responseData[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ]++;
+            $this->assertTrue( $history instanceof ProductHistory, 'No product history was created after placing the order with partial payment.' );
+            $this->assertTrue( ( float ) $history->quantity === ( float ) $product[ 'quantity' ], 'The quantity of the product doesn\'t match the product history quantity.' );
+        }
+
+        /**
+         * Step 2: We'll here increase the 
+         * quantity of the product attached to the order.
+         */
+        $newProducts    =   $responseData[ 'data' ][ 'order' ][ 'products' ];
+        Arr::set( $newProducts, '0.quantity', $newProducts[0][ 'quantity' ] + 1 );
+
 
         $shippingFees = 150;
         $discountRate = 3.5;
-        $products = [
-            [
-                'product_id' => $product->id,
-                'quantity' => 5,
-                'unit_price' => $product->unit_quantities[0]->sale_price,
-                'unit_quantity_id' => $product->unit_quantities[0]->id,
-            ],
-        ];
 
-        $subtotal = collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
+        $subtotal = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ], [
                 'customer_id' => $responseData[ 'data' ][ 'order' ][ 'customer_id' ],
@@ -1875,7 +1881,7 @@ trait WithOrderTest
                 ],
                 'subtotal' => $subtotal,
                 'shipping' => $shippingFees,
-                'products' => $responseData[ 'data' ][ 'order' ][ 'products' ],
+                'products' => $newProducts,
                 'payments' => [],
             ]);
 
@@ -1884,6 +1890,88 @@ trait WithOrderTest
         ]);
 
         $response->assertStatus(200);
+        $json   =   $response->json();
+
+        /**
+         * Test 2: Testing Product History
+         * We should test if the records 
+         * for partially paid order was created
+         */
+        foreach( $products as $product ) {
+            $historyActionAdjustmentSale    =   ProductHistory::where( 'product_id', $product[ 'product_id' ] )
+                ->where( 'operation_type', ProductHistory::ACTION_ADJUSTMENT_SALE )
+                ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                ->first();
+
+            $this->assertTrue( $historyActionAdjustmentSale instanceof ProductHistory, 'The created history doesn\'t match what should have been created after an order modification.' );
+            $this->assertSame( 
+                ( float ) $historyActionAdjustmentSale->quantity, 
+                ( float ) $json[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ] - ( float ) $responseData[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ], 
+                'The quantity of the product doesn\'t match the new product quantity after the order modfiication.' 
+            );
+        }
+
+        /**
+         * Step 3: We'll here decrease the 
+         * quantity of the product attached to the order.
+         */
+        $newProducts    =   $responseData[ 'data' ][ 'order' ][ 'products' ];
+        Arr::set( $newProducts, '0.quantity', $newProducts[0][ 'quantity' ] - 2 );
+
+
+        $shippingFees = 150;
+        $discountRate = 3.5;
+
+        $subtotal = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ], [
+                'customer_id' => 1,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => 'percentage',
+                'discount_percentage' => $discountRate,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
+                    ],
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
+                    ],
+                ],
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => $newProducts,
+                'payments' => [],
+            ]);
+
+        $response->assertJson([
+            'status' => 'success',
+        ]);
+
+        $response->assertStatus(200);
+        $json2   =   $response->json();
+
+        /**
+         * Test 3: Testing Product History
+         * We should test if the records 
+         * for partially paid order was created
+         */
+        foreach( $products as $product ) {
+            $historyActionAdjustmentSale    =   ProductHistory::where( 'product_id', $product[ 'product_id' ] )
+                ->where( 'operation_type', ProductHistory::ACTION_ADJUSTMENT_RETURN )
+                ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                ->first();
+
+            $this->assertTrue( $historyActionAdjustmentSale instanceof ProductHistory, 'The created history doesn\'t match what should have been created after an order modification.' );
+            $this->assertSame( 
+                ( float ) $historyActionAdjustmentSale->quantity, 
+                ( float ) $json[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ] - ( float ) $json2[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ], 
+                'The quantity of the product doesn\'t match the new product quantity after the order modfiication.' 
+            );
+        }
     }
 
     protected function attemptTestRewardSystem()

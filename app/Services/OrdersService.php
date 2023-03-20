@@ -1055,12 +1055,16 @@ class OrdersService
         $gross = 0;
 
         $orderProducts = $products->map(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
+
+            $previousQuantity    =   0;
+
             /**
              * if the product id is provided
              * then we can use that id as a reference.
              */
             if ( isset( $product[ 'id' ] ) ) {
                 $orderProduct = OrderProduct::find( $product[ 'id' ] );
+                $previousQuantity    =   $orderProduct->quantity;
             } else {
                 $orderProduct = new OrderProduct;
             }
@@ -1136,7 +1140,15 @@ class OrdersService
                     'total_price' => $orderProduct->total_price,
                 ];
 
-                $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
+                /**
+                 * __deleteUntrackedProducts will delete all products that
+                 * already exists and which are edited. We'll here only records
+                 * products that doesn't exists yet.
+                 */
+                if ( $orderProduct->wasRecentlyCreated ) {
+                    $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
+                }
+
             }
 
             event( new OrderProductAfterSavedEvent( $orderProduct, $order, $product ) );
