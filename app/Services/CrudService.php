@@ -519,6 +519,7 @@ class CrudService
             $columnsLongName[] = $__name;
             $select[] = $__name . ' as ' . $column;
         }
+
         /**
          * Let's loop relation if they exists
          */

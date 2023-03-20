@@ -577,7 +577,7 @@ class ExpenseService
     {
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
             $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
-    
+
             $expense = new Expense;
             $expense->value = $order->total;
             $expense->active = true;
@@ -589,7 +589,7 @@ class ExpenseService
             $expense->category = $expenseCategory;
             $expense->created_at = $order->created_at;
             $expense->updated_at = $order->updated_at;
-    
+
             $this->recordCashFlowHistory( $expense );
         }
     }

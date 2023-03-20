@@ -2232,4 +2232,8 @@
     "Document : Profit Report": "Document : Profit Report",
     "Document : Sold Stock Report": "Document : Sold Stock Report",
     "If you see this page, this means NexoPOS 4.x is correctly installed on your system. As this page is meant to be the frontend, NexoPOS 4.x doesn't have a frontend for the meantime. This page shows useful links that will take you to the important resources.": "If you see this page, this means NexoPOS 4.x is correctly installed on your system. As this page is meant to be the frontend, NexoPOS 4.x doesn't have a frontend for the meantime. This page shows useful links that will take you to the important resources."
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> c1d110a2... fix typos and other minor translation issues
