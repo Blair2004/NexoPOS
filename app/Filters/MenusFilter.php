@@ -21,7 +21,7 @@ class MenusFilter
                             'href' => ns()->route( 'ns.dashboard.registers-create' ),
                         ],
                         'list' => [
-                            'label' => __( 'Registes List' ),
+                            'label' => __( 'Registers List' ),
                             'href' => ns()->route( 'ns.dashboard.registers-list' ),
                         ],
                     ],

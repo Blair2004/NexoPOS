@@ -22,6 +22,7 @@ return [
      */
     'languages' => [
         'en' => 'English',
+        'de' => 'Deutsch',
         'fr' => 'Français',
         'es' => 'Espanol',
         'it' => 'Italian',

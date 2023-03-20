@@ -253,7 +253,7 @@ class CustomerCrud extends CrudService
                             'label' => __( 'Gender' ),
                             'name' => 'gender',
                             'value' => $entry->gender ?? '',
-                            'description' => __( 'Provide the customer PO.Box' ),
+                            'description' => __( 'Provide the customer gender.' ),
                         ],
                     ],
                 ],
