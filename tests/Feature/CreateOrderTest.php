@@ -16,7 +16,7 @@ class CreateOrderTest extends TestCase
      *
      * @return void
      */
-    private function testPostingOrder( $callback = null )
+    public function testPostingOrder( $callback = null )
     {
         $this->count = 5;
         $this->totalDaysInterval = 14;
@@ -30,13 +30,13 @@ class CreateOrderTest extends TestCase
         }
     }
 
-    private function testCreateAndEditOrderWithLowStock()
+    public function testCreateAndEditOrderWithLowStock()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateAndEditOrderWithLowStock();
     }
 
-    private function testCreateAndEditOrderByDeductedGreaterQuantity()
+    public function testCreateAndEditOrderByDeductedGreaterQuantity()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateAndEditOrderWithGreaterQuantity();
@@ -48,7 +48,13 @@ class CreateOrderTest extends TestCase
         $this->attemptHoldAndCheckoutOrder();
     }
 
-    private function testDeletedVoidedOrder()
+    public function testHoldAndCheckoutOrderWithGroupedProducts()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptHoldOrderAndCheckoutWithGroupedProducts();
+    }
+
+    public function testDeletedVoidedOrder()
     {
         $this->attemptAuthenticate();
         $this->attemptDeleteVoidedOrder();
@@ -58,13 +64,13 @@ class CreateOrderTest extends TestCase
      * Will only make order using
      * the customer balance
      */
-    private function testOrderCreatedForCustomer()
+    public function testOrderCreatedForCustomer()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderPaidWithCustomerBalance();
     }
 
-    private function testCreateOrderWithNoPayment( $callback = null )
+    public function testCreateOrderWithNoPayment( $callback = null )
     {
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
@@ -90,7 +96,7 @@ class CreateOrderTest extends TestCase
         }
     }
 
-    private function testCreateOrderWithGroupedProducts()
+    public function testCreateOrderWithGroupedProducts()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderWithGroupedProducts();
@@ -99,7 +105,7 @@ class CreateOrderTest extends TestCase
     /**
      * @depends testCreateOrderWithGroupedProducts
      */
-    private function testRefundOrderWithGroupedProducts()
+    public function testRefundOrderWithGroupedProducts()
     {
         $this->attemptAuthenticate();
         $this->attemptRefundOrderWithGroupedProducts();
