@@ -1059,7 +1059,7 @@ export class POS {
             this.printOrder( order.id );
         } else if ( options.ns_pos_printing_enabled_for === 'partially_paid_orders' && [ 'paid', 'partially_paid' ].includes( order.payment_status ) ) {
             this.printOrder( order.id );
-        } else if ( options.ns_pos_printing_enabled_for === 'only_paid_ordes' && [ 'paid' ].includes( order.payment_status ) ) {
+        } else if ( options.ns_pos_printing_enabled_for === 'only_paid_orders' && [ 'paid' ].includes( order.payment_status ) ) {
             this.printOrder( order.id );
         } else {
             return false;
