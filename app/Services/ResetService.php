@@ -93,9 +93,8 @@ class ResetService
      * Will completely wipe the database
      * forcing a new installation to be made
      *
-     * @return void
      */
-    public function hardReset()
+    public function hardReset(): array
     {
         BeforeHardResetEvent::dispatch();
 

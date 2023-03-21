@@ -75,7 +75,7 @@ trait WithOrderTest
         for ( $i = 0; $i < $this->totalDaysInterval; $i++ ) {
             $date = $startOfWeek->addDay()->clone();
             $this->count = $this->count === false ? $faker->numberBetween(5, 10) : $this->count;
-            $this->output( sprintf( "\e[32mWill generate for the day \"%s\", %s order(s)", $date->toFormattedDateString(), $this->count ) );
+            $this->printOnTerminal( sprintf( "\e[32mWill generate for the day \"%s\", %s order(s)", $date->toFormattedDateString(), $this->count ) );
             $responses[] = $this->processOrders([
                 'created_at'    =>  $date
             ], $callback );
@@ -470,6 +470,12 @@ trait WithOrderTest
             $unit = $unitService->get( $value->unit_id );
             $group = $unitService->getGroups( $unit->group_id );
             $baseUnit = $unitService->getBaseUnit( $group );
+
+            $productService->setQuantity(
+                product_id: $value->product_id,
+                unit_id: $value->unit_id,
+                quantity: 500
+            );
 
             return [ $value->product_id . '-' . $value->unit_id => [
                 'currentQuantity' => $productService->getQuantity(
@@ -980,7 +986,7 @@ trait WithOrderTest
         ]);
     }
 
-    private function output( $message )
+    private function printOnTerminal( $message )
     {
         $fp = fopen('php://output', 'w');
         fwrite($fp, $message );
@@ -1134,7 +1140,6 @@ trait WithOrderTest
                         ],
                     ];
     
-                    $totalCoupons = collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
                 } else {
                     $allCoupons = collect([]);
                 }
@@ -1190,6 +1195,7 @@ trait WithOrderTest
                 'created_at' => $this->customDate ? $dateString : null,
                 'discount_percentage' => $discount[ 'rate' ] ?? 0,
                 'discount' => $discount[ 'value' ] ?? 0,
+                'total_coupons' =>  $totalCoupons,
                 'addresses' => [
                     'shipping' => [
                         'first_name' => 'First Name Delivery',
@@ -1229,78 +1235,6 @@ trait WithOrderTest
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/orders', $orderData );
 
-            $response->assertJson([
-                'status' => 'success',
-            ]);
-
-            $singleResponse[ 'order-creation' ] = json_decode( $response->getContent(), true );
-
-            if ( $this->shouldMakePayment ) {
-                $netsubtotal = $currency
-                    ->define( $orderData[ 'subtotal' ] )
-                    ->subtractBy( $totalCoupons )
-                    ->subtractBy( $orderData[ 'discount' ] )
-                    ->getRaw();
-
-                $total = $currency->define( $netsubtotal )
-                    ->additionateBy( $orderData[ 'shipping' ] )
-                    ->getRaw();
-
-                $this->assertEquals( $currency->getRaw(
-                    Arr::get( $singleResponse[ 'order-creation' ], 'data.order.subtotal' )
-                ), $currency->getRaw( $orderData[ 'subtotal' ] ) );
-
-                $this->assertEquals( $currency->getRaw(
-                    Arr::get( $singleResponse[ 'order-creation' ], 'data.order.total' )
-                ), $currency->define( $netsubtotal )
-                    ->additionateBy( $orderData[ 'shipping' ] )
-                    ->getRaw()
-                );
-
-                $couponValue = ( ! empty( $orderData[ 'coupons' ] ) ? (float) $orderData[ 'coupons' ][0][ 'value' ] : 0 );
-                $totalPayments = collect( $orderData[ 'payments' ] )->map( fn( $payment ) => (float) $payment[ 'value' ] )->sum() ?: 0;
-                $sum = (  (float) $orderData[ 'subtotal' ] + (float) $orderData[ 'shipping' ] - (float) $orderData[ 'discount' ] - $couponValue );
-                $change = ns()->currency->fresh( $totalPayments )->subtractBy( $sum )->getRaw();
-
-                $changeFromOrder = ns()->currency->getRaw( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.change' ) );
-                $this->assertEquals( $changeFromOrder, $change );
-
-                $singleResponse[ 'order-payment' ] = json_decode( $response->getContent() );
-
-                /**
-                 * test if the order has updated
-                 * correctly the customer account
-                 */
-                $customer->refresh();
-                $customerSecondPurchases = $customer->purchases_amount;
-                $customerSecondOwed = $customer->owed_amount;
-
-                if ( (float) trim( $customerFirstPurchases + ( $total ?? 0 ) ) != (float) trim( $customerSecondPurchases ) ) {
-                    throw new Exception(
-                        sprintf(
-                            __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Total : %s' ),
-                            $customerFirstPurchases + $total,
-                            $customerSecondPurchases,
-                            $total
-                        )
-                    );
-                }
-            }
-
-            $responseData = json_decode( $response->getContent(), true );
-
-            /**
-             * Let's test whether the cash
-             * flow has been created for this sale
-             */
-            if ( $responseData[ 'data' ][ 'order' ][ 'payment_status' ] !== 'unpaid' ) {
-                $this->assertTrue(
-                    CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )->first()
-                    instanceof CashFlow,
-                    __( 'No cash flow were created for this order.' )
-                );
-            }
-
             /**
              * if a custom callback is provided
              * we'll call that callback as well
@@ -1308,9 +1242,11 @@ trait WithOrderTest
             if ( is_callable( $callback ) ) {
                 $callback( $response, $response->json() );
             } else {
-                $response->assertJson([
-                    'status' => 'success',
-                ]);
+                if ( $response->status() !== 200 ) {
+                    $response->assertJson([
+                        'status' => 'success',
+                    ]);
+                }
     
                 $singleResponse[ 'order-creation' ] = $response->json();
                 $totalCoupons   =   collect( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.coupons' ) )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();

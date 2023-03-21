@@ -26,15 +26,13 @@ class ResetCommand extends Command
 
     /**
      * Reset service
-     *
-     * @var ResetService
      */
-    private $resetService;
+    private ResetService $resetService;
 
     /**
-     * @var DemoService
+     * Demo service
      */
-    private $demoService;
+    private DemoService $demoService;
 
     /**
      * Create a new command instance.
@@ -91,9 +89,8 @@ class ResetCommand extends Command
     /**
      * Proceed hard reset
      *
-     * @return void
      */
-    private function hardReset()
+    private function hardReset(): void
     {
         $result = $this->resetService->hardReset();
 
@@ -103,12 +100,11 @@ class ResetCommand extends Command
     /**
      * Proceed soft reset
      *
-     * @return void
      */
-    private function softReset()
+    private function softReset(): void
     {
         $result = $this->resetService->softReset();
 
-        return $this->info( $result[ 'message' ] );
+        $this->info( $result[ 'message' ] );
     }
 }
