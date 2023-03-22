@@ -300,6 +300,7 @@ trait WithOrderTest
          * and we'll create the order with 2 quantity partially paid
          */
         $product        =   Product::where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED )
+            ->where( 'type', '!=', Product::TYPE_GROUPED )
             ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
             ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
             ->get()
@@ -1056,7 +1057,12 @@ trait WithOrderTest
              * product to use on the order.
              */
             if ( ! isset( $orderDetails[ 'products' ] ) ) {
-                $products = Product::where( 'type', '<>', Product::TYPE_GROUPED )->with( 'unit_quantities' )->get()->shuffle()->take(3);
+                $products = Product::where( 'type', '<>', Product::TYPE_GROUPED )
+                    ->whereHasRelation( 'unit_quantities', 'quantity', '>', 500 )
+                    ->with( 'unit_quantities', function( $query ) {
+                        $query->where( 'quantity', '>', 500 );
+                    })->get()->shuffle()->take(3);
+
                 $products = $products->map( function( $product ) use ( $faker, $taxService ) {
                     $unitElement = $faker->randomElement( $product->unit_quantities );
                     $discountRate = 10;

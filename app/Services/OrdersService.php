@@ -1334,7 +1334,7 @@ class OrdersService
 
                 if ( isset( $orderProduct[ 'id' ] ) ) {
                     $stockWasDeducted   =   ProductHistory::where( 'order_product_id', $orderProduct[ 'id' ] )
-                        ->wnere( 'operation_type', ProductHistory::ACTION_SOLD )
+                        ->where( 'operation_type', ProductHistory::ACTION_SOLD )
                         ->count() === 1;
 
                     /**

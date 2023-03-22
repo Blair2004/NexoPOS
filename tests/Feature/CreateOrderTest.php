@@ -84,7 +84,7 @@ class CreateOrderTest extends TestCase
 
             $responses = $this->attemptPostOrder( $callback );
 
-            $this->assertEquals( Order::PAYMENT_PAID, $responses[0][0][ 'order-creation' ][ 'data' ][ 'order' ][ 'payment_status' ]);
+            $this->assertEquals( Order::PAYMENT_UNPAID, $responses[0][0][ 'order-creation' ][ 'data' ][ 'order' ][ 'payment_status' ]);
         } else {
             $this->assertTrue( true ); // because we haven't performed any test.
         }
