@@ -103,7 +103,7 @@ export default {
             labels: new Labels,
             original: [],
             instalments: [],
-            print: new Print({ settings: systemSettings, options: systemOptions, type: 'payment' }),
+            print: new Print({ urls: systemUrls, options: systemOptions, type: 'payment' }),
         }
     },
     mounted() {
@@ -139,7 +139,7 @@ export default {
                 return nsSnackBar.error( __( 'This instalment doesn\'t have any payment attached.' ) ).subscribe();
             }
 
-            this.print.printOrder( instalment.payment_id );
+            this.print.process( instalment.payment_id, 'payment' );
         },
         addInstalment() {
             this.instalments.push({

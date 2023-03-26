@@ -17,6 +17,7 @@ import { nsRawCurrency } from "./filters/currency";
 import moment from "moment";
 import { defineAsyncComponent } from "vue";
 import { nsCurrency } from "./filters/currency";
+import Print from "./libraries/print";
 
 
 /**
@@ -36,6 +37,9 @@ const nsPromptPopup             = (<any>window).nsPromptPopup = defineAsyncCompo
 const nsLayawayPopup            = (<any>window).nsLayawayPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'layaway' + '-popup.vue' ) );
 const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'shipping' + '-popup.vue' ) );
 
+declare const systemOptions;
+declare const systemUrls;
+
 export class POS {
     private _products: BehaviorSubject<OrderProduct[]>;
     private _breadcrumbs: BehaviorSubject<any[]>;
@@ -54,6 +58,9 @@ export class POS {
     private _isSubmitting = false;
     private _processingAddQueue = false;
     private _selectedPaymentType: BehaviorSubject<PaymentType>;
+    
+    public print: Print;
+
     private defaultOrder = (): Order => {
         const order: Order = {
             discount_type: null,
@@ -78,7 +85,8 @@ export class POS {
             total_products: 0,
             shipping: 0,
             tax_value: 0,
-            products_tax_value: 0,
+            products_exclusive_tax_value: 0,
+            products_inclusive_tax_value: 0,
             total_tax_value: 0,
             shipping_rate: 0,
             shipping_type: undefined,
@@ -98,6 +106,10 @@ export class POS {
 
     constructor() {
         this.initialize();
+        this.print  =   new Print({
+            urls: systemUrls,
+            options: systemOptions
+        });
     }
 
     get screen() {
@@ -659,7 +671,7 @@ export class POS {
         order.total_tax_value     =  order.tax_value;
 
         if ([ 'products_variable_vat', 'products_flat_vat', 'products_vat' ].includes(posVat) && ! priceWithTax ) {
-            order.total_tax_value     =  order.products_tax_value + order.tax_value;
+            order.total_tax_value     =  order.products_exclusive_tax_value + order.tax_value;
         }
 
         return order;
@@ -672,7 +684,11 @@ export class POS {
          * retrieve all products taxes
          * and sum the total.
          */
-        const totalTaxes = products.map((product: OrderProduct) => {
+        const totalInclusiveTax = products.filter( product => product.tax_type === 'inclusive' ).map((product: OrderProduct) => {
+            return product.tax_value;
+        });
+
+        const totalExclusiveTax = products.filter( product => product.tax_type === 'exclusive' ).map((product: OrderProduct) => {
             return product.tax_value;
         });
 
@@ -680,12 +696,17 @@ export class POS {
          * tax might be computed above the tax that currently
          * applie to the items.
          */
-        order.products_tax_value    =   0;
+        order.products_exclusive_tax_value    =   0;
+        order.products_inclusive_tax_value    =   0;
 
         const posVat    =   this.options.getValue().ns_pos_vat;
 
-        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) && totalTaxes.length > 0) {
-            order.products_tax_value    +=  totalTaxes.reduce((b, a) => b + a);
+        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) && totalExclusiveTax.length > 0) {
+            order.products_exclusive_tax_value    +=  totalExclusiveTax.reduce((b, a) => b + a);
+        }
+
+        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) && totalInclusiveTax.length > 0) {
+            order.products_inclusive_tax_value    +=  totalInclusiveTax.reduce((b, a) => b + a);
         }
 
         order.products = products;
@@ -1038,7 +1059,7 @@ export class POS {
         nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
-    printOrderReceipt( order ) {
+    printOrderReceipt( order, mode ) {
         const options = this.options.getValue();
 
         if (options.ns_pos_printing_enabled_for === 'disabled') {
@@ -1050,51 +1071,16 @@ export class POS {
          * way of writing this.
          */
         if ( options.ns_pos_printing_enabled_for === 'all_orders' ) {
-            this.printOrder( order.id );
+            this.print.process( order.id, 'sale', mode );
         } else if ( options.ns_pos_printing_enabled_for === 'partially_paid_orders' && [ 'paid', 'partially_paid' ].includes( order.payment_status ) ) {
-            this.printOrder( order.id );
-        } else if ( options.ns_pos_printing_enabled_for === 'only_paid_ordes' && [ 'paid' ].includes( order.payment_status ) ) {
-            this.printOrder( order.id );
+            this.print.process( order.id, 'sale', mode );
+        } else if ( options.ns_pos_printing_enabled_for === 'only_paid_orders' && [ 'paid' ].includes( order.payment_status ) ) {
+            this.print.process( order.id, 'sale', mode );
         } else {
             return false;
         }
     }
 
-    printOrder( order_id, silent = true ) {
-        const options = this.options.getValue();
-
-        if (options.ns_pos_printing_enabled_for === 'disabled') {
-            return false;
-        }
-
-        switch (options.ns_pos_printing_gateway) {
-            case 'default': this.processRegularPrinting(order_id); break;
-            default: this.processCustomPrinting(order_id, options.ns_pos_printing_gateway, silent ); break;
-        }
-    }
-
-    async processCustomPrinting(order_id, gateway, silent = true ) {
-        const result = nsHooks.applyFilters( silent ? 'ns-order-custom-print' : 'ns-order-custom-print-aloud', { printed: false, order_id, gateway });
-
-        if ( result.printed === false ) {
-            nsSnackBar.error(__(`Unsupported print gateway.`)).subscribe();
-        }
-    }
-
-    processRegularPrinting(order_id) {
-        const item = document.querySelector('printing-section');
-
-        if (item) {
-            item.remove();
-        }
-
-        const printSection          = document.createElement('iframe');
-        printSection.id             = 'printing-section';
-        printSection.className      = 'hidden';
-        printSection.src            = this.settings.getValue()['urls']['sale_printing_url'].replace('{id}', order_id);
-
-        document.body.appendChild(printSection);
-    }
 
     computePaid() {
         const order = this._order.getValue();
@@ -1756,6 +1742,9 @@ export class POS {
                 product.discount    =   ((product.unit_price * product.discount_percentage) / 100) * product.quantity;
                 discount_without_tax      =   ((price_without_tax * product.discount_percentage) / 100) * product.quantity;
                 discount_with_tax        =   ((price_with_tax * product.discount_percentage) / 100) * product.quantity;
+            } else {
+                discount_without_tax      =   product.discount;
+                discount_with_tax        =   product.discount;
             }
         }
 

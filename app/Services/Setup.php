@@ -24,6 +24,8 @@ use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class Setup
 {
+    public Options $options;
+    
     /**
      * Attempt database and save db informations
      *
@@ -129,18 +131,15 @@ class Setup
     public function runMigration( $fields )
     {
         /**
-         * Let's create the tables. The DB is supposed to be set
+         * We're running this simple migration call to ensure
+         * default tables are created. Those table are located at the 
+         * root of the database folder.
          */
-        Artisan::call( 'migrate', [
-            '--force' => true,
-            '--path' => '/database/migrations/core',
-        ]);
+        Artisan::call( 'migrate' );
 
-        Artisan::call( 'migrate', [
-            '--force' => true,
-            '--path' => '/database/migrations/create',
-        ]);
-
+        /**
+         * NexoPOS uses Sanctum, we're making sure to publish the package.
+         */
         Artisan::call( 'vendor:publish', [
             '--force' => true,
             '--provider' => 'Laravel\Sanctum\SanctumServiceProvider',
@@ -156,15 +155,25 @@ class Setup
          * to be integrated on "create" files.
          */
         ns()->update
-            ->getMigrations()
+            ->getMigrations(
+                directories: [ 'core', 'create' ],
+                ignoreMigrations: true
+            )
             ->each( function( $file ) {
-                $migration = Migration::where( 'migration', $file )->first();
-                if ( ! $migration instanceof Migration ) {
-                    $migration = new Migration;
-                    $migration->migration = $file;
-                    $migration->batch = 0;
-                    $migration->save();
-                }
+                ns()->update->executeMigrationFromFileName( $file );
+            });
+
+        /**
+         * The update migrations should'nt be executed. 
+         * This should improve the speed during the installation.
+         */
+        ns()->update
+            ->getMigrations(
+                directories: [ 'update' ],
+                ignoreMigrations: true
+            )
+            ->each( function( $file ) {
+                ns()->update->assumeExecuted( $file );
             });
 
         $userID = rand(1, 99);

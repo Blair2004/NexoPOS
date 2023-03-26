@@ -79,6 +79,59 @@ class DemoCoreService
             $unit->value = 1;
             $unit->save();
         }
+
+        $unit = Unit::identifier( 'small-box' )->first();
+
+        if ( ! $unit instanceof Unit ) {
+            $unit = new Unit;
+            $unit->name = __( 'Small Box' );
+            $unit->identifier = 'small-box';
+            $unit->description = '';
+            $unit->author = Auth::id();
+            $unit->group_id = $group->id;
+            $unit->base_unit = true;
+            $unit->value = 6;
+            $unit->save();
+        }
+
+        $unit = Unit::identifier( 'box' )->first();
+
+        if ( ! $unit instanceof Unit ) {
+            $unit = new Unit;
+            $unit->name = __( 'Box' );
+            $unit->identifier = 'box';
+            $unit->description = '';
+            $unit->author = Auth::id();
+            $unit->group_id = $group->id;
+            $unit->base_unit = true;
+            $unit->value = 12;
+            $unit->save();
+        }
+    }
+
+    public function createBaseSettings()
+    {
+        $orderTypes     =   app()->make( OrdersService::class )->getTypeLabels();
+
+        /**
+         * @var Options $optionService
+         */
+        $optionService  =   app()->make( Options::class );
+
+        $optionService->set(
+            'ns_pos_order_types',
+            array_values( $orderTypes )
+        );
+
+        $optionService->set( 
+            'ns_currency_symbol',
+            '$'
+        );
+
+        $optionService->set( 
+            'ns_currency_iso',
+            'USD'
+        );
     }
 
     public function createAccountingAccounts()
@@ -134,7 +187,7 @@ class DemoCoreService
             'account' => '008',
         ]);
 
-        ns()->option->set( 'ns_customer_debitting_cashflow_account', AccountType::account( '007' )->first()->id );
+        ns()->option->set( 'ns_customer_debitting_cashflow_account', AccountType::account( '008' )->first()->id );
     }
 
     public function createCustomers()

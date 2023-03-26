@@ -11,14 +11,13 @@ use Illuminate\Support\Facades\Storage;
 class UpdateService
 {
     /**
-     * returns available migrations files names
-     * as an array of strings. Might be empty if there is
-     * no migration available.
+     * returns not yet migrated files as an array of strings. 
+     * Might be empty if all migrations has run or no migration is available.
      *
-     * @param void
+     * @param bool $ignoreMigrations
      * @return Collection
      */
-    public function getMigrations( $ignoreMigrations = false ): Collection
+    public function getMigrations( $ignoreMigrations = false, $directories = [ 'create', 'update', 'core' ] ): Collection
     {
         /**
          * in case the option ignoreMigration
@@ -30,15 +29,53 @@ class UpdateService
             $migrations = Migration::get()->map( fn( $migration ) => $migration->migration );
         }
 
-        $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )
-            ->filter( fn( $file ) => pathinfo( $file )[ 'extension' ] === 'php' )
-            ->map( function( $file ) {
+        return collect( $directories )->map( function( $directory ) {
+            $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations/' . $directory ) )
+                ->filter( fn( $file ) => pathinfo( $file )[ 'extension' ] === 'php' )
+                ->map( function( $file ) {
                 $fileInfo = pathinfo( $file );
-
+    
                 return $fileInfo[ 'filename' ];
             });
 
-        return collect( $files )->diff( $migrations );
+            return $files;
+        })->flatten()->diff( $migrations );
+    }
+
+    /**
+     * execute a files by pulling the full path
+     * in order to identifiy the migration type
+     */
+    public function executeMigrationFromFileName( string $file ): void
+    {
+        $file = $this->getMatchingFullPath( $file );
+        $this->executeMigration( $file, 'up' );
+    }
+
+    /**
+     * Will mark migration file as
+     * executed while it might have not been executed
+     */
+    public function assumeExecuted( string $file )
+    {
+        $file = $this->getMatchingFullPath( $file );
+        $pathinfo = pathinfo( $file );
+        $type = collect( explode( '/', $pathinfo[ 'dirname' ]) )->last();
+
+        $class = require base_path( $file );
+
+        if ( $class instanceof MigrationsMigration ) {
+
+            $migration = new Migration;
+            $migration->migration = $pathinfo[ 'filename' ];
+            $migration->type = $type;
+            $migration->batch = 0;
+            $migration->save();
+
+            return $migration;
+        }
+
+        throw new Exception( 'Unsupported class provided for the migration.' );
     }
 
     public function getMatchingFullPath( $file )

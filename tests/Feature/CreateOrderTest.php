@@ -30,17 +30,41 @@ class CreateOrderTest extends TestCase
         }
     }
 
+    public function testCreateAndEditOrderWithLowStock()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateAndEditOrderWithLowStock();
+    }
+
+    public function testCreateAndEditOrderByDeductedGreaterQuantity()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateAndEditOrderWithGreaterQuantity();
+    }
+
+    public function testHoldAndCheckoutOrder()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptHoldAndCheckoutOrder();
+    }
+
+    public function testDeletedVoidedOrder()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptDeleteVoidedOrder();
+    }
+
     /**
      * Will only make order using
      * the customer balance
      */
-    private function testOrderCreatedForCustomer()
+    public function testOrderCreatedForCustomer()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderPaidWithCustomerBalance();
     }
 
-    private function testCreateOrderWithNoPayment( $callback = null )
+    public function testCreateOrderWithNoPayment( $callback = null )
     {
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
@@ -60,13 +84,13 @@ class CreateOrderTest extends TestCase
 
             $responses = $this->attemptPostOrder( $callback );
 
-            $this->assertEquals( Order::PAYMENT_PAID, $responses[0][0][ 'order-creation' ][ 'data' ][ 'order' ][ 'payment_status' ]);
+            $this->assertEquals( Order::PAYMENT_UNPAID, $responses[0][0][ 'order-creation' ][ 'data' ][ 'order' ][ 'payment_status' ]);
         } else {
             $this->assertTrue( true ); // because we haven't performed any test.
         }
     }
 
-    private function testCreateOrderWithGroupedProducts()
+    public function testCreateOrderWithGroupedProducts()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderWithGroupedProducts();
@@ -75,7 +99,7 @@ class CreateOrderTest extends TestCase
     /**
      * @depends testCreateOrderWithGroupedProducts
      */
-    private function testRefundOrderWithGroupedProducts()
+    public function testRefundOrderWithGroupedProducts()
     {
         $this->attemptAuthenticate();
         $this->attemptRefundOrderWithGroupedProducts();

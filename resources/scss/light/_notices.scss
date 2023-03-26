@@ -55,7 +55,7 @@
     }
     
     &.error {
-        @apply border-error-tertiary bg-error-tertiary text-white;
+        @apply border-error-secondary bg-error-primary text-white;
 
         p {
             @apply text-white;

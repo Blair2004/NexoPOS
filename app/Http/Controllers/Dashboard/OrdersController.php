@@ -95,7 +95,7 @@ class OrdersController extends DashboardController
 
     public function listOrders()
     {
-        Hook::addFilter(
+        Hook::addAction(
             'ns-crud-footer',
             fn( Output $output ) => $output
                 ->addView( 'pages.dashboard.orders.footer' )
@@ -225,6 +225,9 @@ class OrdersController extends DashboardController
 
         $order->products = Hook::filter( 'ns-receipt-products', $order->products );
 
+        $order->paymentStatus       =   $this->ordersService->getPaymentLabel( $order->payment_status );
+        $order->deliveryStatus      =   $this->ordersService->getPaymentLabel( $order->delivery_status );
+
         return $this->view( 'pages.dashboard.orders.templates.invoice', [
             'order' => $order,
             'options' => $optionsService->get(),
@@ -236,7 +239,7 @@ class OrdersController extends DashboardController
 
     public function orderRefundReceipt( OrderRefund $refund )
     {
-        $refund->load( 'order.customer', 'order.refundedProducts', 'order.refund.author', 'order.shipping_address', 'order.billing_address', 'order.user' );
+        $refund->load( 'order.customer', 'order.refundedProducts', 'order.refunds.author', 'order.shipping_address', 'order.billing_address', 'order.user' );
         $refund->load( 'refunded_products.product', 'refunded_products.unit' );
 
         $refund->refunded_products = Hook::filter( 'ns-refund-receipt-products', $refund->refunded_products );

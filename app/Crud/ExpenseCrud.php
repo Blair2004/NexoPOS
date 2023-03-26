@@ -448,7 +448,6 @@ class ExpenseCrud extends CrudService
     public function setActions( CrudEntry $entry, $namespace )
     {
         $entry->value = (string) ns()->currency->value( $entry->value );
-        // $entry->recurring = (bool) $entry->recurring ? __( 'Yes' ) : __( 'No' );        
 
         // you can make changes here
         $entry->addAction( 'edit', [

@@ -952,10 +952,17 @@ class ProcurementService
 
     public function searchProduct( $argument, $limit = 10 )
     {
-        return Product::query()->orWhere( 'name', 'LIKE', "%{$argument}%" )
+        return Product::query()
+            ->whereIn( 'type', [
+                Product::TYPE_DEMATERIALIZED,
+                Product::TYPE_MATERIALIZED
+            ])
+            ->where( function( $query ) use ( $argument ) {
+                $query->orWhere( 'name', 'LIKE', "%{$argument}%" )
+                ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
+                ->orWhere( 'barcode', 'LIKE', "%{$argument}%" );
+            })
             ->with( 'unit_quantities.unit' )
-            ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
-            ->orWhere( 'barcode', 'LIKE', "%{$argument}%" )
             ->limit( $limit )
             ->get()
             ->map( function( $product ) {

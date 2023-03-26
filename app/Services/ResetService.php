@@ -93,9 +93,8 @@ class ResetService
      * Will completely wipe the database
      * forcing a new installation to be made
      *
-     * @return void
      */
-    public function hardReset()
+    public function hardReset(): array
     {
         BeforeHardResetEvent::dispatch();
 
@@ -109,6 +108,11 @@ class ResetService
             '--force' => true,
         ]);
 
+        Artisan::call( 'migrate:reset', [
+            '--path' => '/database/migrations/update',
+            '--force' => true,
+        ]);
+
         DotenvEditor::load();
         DotenvEditor::deleteKey( 'NS_VERSION' );
         DotenvEditor::deleteKey( 'NS_AUTHORIZATION' );
@@ -116,15 +120,6 @@ class ResetService
 
         Artisan::call( 'key:generate', [ '--force' => true ] );
         Artisan::call( 'ns:cookie generate' );
-
-        /**
-         * It makes sense to truncate this
-         * only if that table exists.
-         * That will prevent unexpected error while testing.
-         */
-        if ( Schema::hasTable( 'migrations' ) ) {
-            Migration::truncate();
-        }
 
         exec( 'rm -rf public/storage' );
 

@@ -22,6 +22,7 @@ return [
      */
     'languages' => [
         'en' => 'English',
+        'de' => 'Deutsch',
         'fr' => 'Français',
         'es' => 'Espanol',
         'it' => 'Italian',
@@ -29,6 +30,7 @@ return [
         'pt' => 'Portuguese',
         'tr' => 'Türkçe',
         'vi' => 'Vietnamese',
+        'sq' => 'Shqiptare',
     ],
 
     /**
@@ -36,7 +38,7 @@ return [
      *  RTL Languages
      * --------------------------------------------------------------------
      * 
-     * Define all language which once enabled should
+     * Defines all language which once enabled should
      * turn on the RTL dashboard.
      */
     'rtl-languages' => [ 'ar' ],
@@ -46,7 +48,7 @@ return [
      *  Timezones
      * --------------------------------------------------------------------
      * 
-     * Here are defined all supported timezones.
+     * List all supported timezones.
      */
     'timezones' => [
         'America/Adak' => '(GMT-10:00) America/Adak (Hawaii-Aleutian Standard Time)',

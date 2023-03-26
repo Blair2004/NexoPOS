@@ -96,7 +96,7 @@ trait WithProcurementTest
         $procurementsDetails[ 'general' ][ 'delivery_status' ]   =   Procurement::DELIVERED;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', 'api/nexopos/v4/procurements/' . $procurementId, $procurementsDetails );
+            ->json( 'PUT', 'api/procurements/' . $procurementId, $procurementsDetails );
 
         $response->assertOk();
 

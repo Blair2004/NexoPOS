@@ -362,7 +362,6 @@ trait WithCouponTest
         
         $order              =   [
             'created_at'    =>  ns()->date->now()->toDateTimeString(),
-            'shipping'      =>  30,
             'customer_id'   =>  $customer->id,
             'products'  =>  $products,
             'coupons'   =>  [
@@ -405,7 +404,6 @@ trait WithCouponTest
          */
         $order              =   [
             'created_at'    =>  ns()->date->now()->toDateTimeString(),
-            'shipping'      =>  30,
             'customer_id'   =>  $customer->id,
             'products'  =>  $products,
             'coupons'   =>  [

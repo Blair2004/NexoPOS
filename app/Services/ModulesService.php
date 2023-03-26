@@ -1165,6 +1165,7 @@ class ModulesService
             $this->createSymLink( $namespace );
 
             ModulesAfterEnabledEvent::dispatch( $module );
+            Artisan::call( 'cache:clear' );
 
             return [
                 'status' => 'success',
