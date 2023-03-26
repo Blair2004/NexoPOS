@@ -50,7 +50,7 @@ class GenerateModuleCommand extends Command
         if ( ns()->installed() ) {
             $this->askInformations();
         } else {
-            $this->info( 'NexoPOS is not yet installed.' );
+            $this->error( 'NexoPOS is not yet installed.' );
         }
     }
 

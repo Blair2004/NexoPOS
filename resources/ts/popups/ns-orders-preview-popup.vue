@@ -5,7 +5,6 @@ import { forkJoin } from "rxjs";
 import nsOrderRefund from "~/pages/dashboard/orders/ns-order-refund.vue";
 import nsPromptPopupVue from "./ns-prompt-popup.vue";
 import nsPosConfirmPopupVue from "./ns-pos-confirm-popup.vue";
-<<<<<<< HEAD
 import nsOrderPayment from "~/pages/dashboard/orders/ns-order-payment.vue";
 import nsOrderDetails from "~/pages/dashboard/orders/ns-order-details.vue";
 import nsOrderInstalments from "~/pages/dashboard/orders/ns-order-instalments.vue";

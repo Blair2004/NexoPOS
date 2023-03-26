@@ -28,17 +28,8 @@
                 <ns-tabs-item padding="0" :label="__( 'Product Taxes' )" identifier="product_taxes" :active="false">
                     <div class="p-2" v-if="order">
                         <div class="border shadow p-2 w-full flex justify-between items-center elevation-surface">
-<<<<<<< HEAD
                             <span>{{ __( 'Product Taxes' ) }}</span>
                             <span>{{ nsCurrency( order.products_tax_value )  }}</span>
-=======
-                            <span>{{ __( 'Exclusive Taxes' ) }}</span>
-                            <span>{{ order.products_exclusive_tax_value | currency  }}</span>
-                        </div>
-                        <div class="border shadow p-2 w-full flex justify-between items-center elevation-surface">
-                            <span>{{ __( 'Inclusive Taxes' ) }}</span>
-                            <span>{{ order.products_inclusive_tax_value | currency  }}</span>
->>>>>>> 106a6f55... Changelog
                         </div>
                     </div>
                 </ns-tabs-item>

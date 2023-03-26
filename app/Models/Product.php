@@ -100,6 +100,15 @@ class Product extends NsModel
     }
 
     /**
+     * Add a scope that filter product
+     * that aren't grouped
+     */
+    public function scopeNotGrouped( QueryBuilder $query )
+    {
+        return $query->where( 'type', '!=', self::TYPE_GROUPED );
+    }
+
+    /**
      * get products having accurate tracking disabled
      *
      * @param QueryBuilder
