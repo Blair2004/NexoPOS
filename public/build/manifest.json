@@ -10,7 +10,7 @@
     ]
   },
   "resources/ts/app.ts": {
-    "file": "assets/app.59308e7c.js",
+    "file": "assets/app.7e2007b0.js",
     "src": "resources/ts/app.ts",
     "isEntry": true,
     "imports": [
@@ -601,7 +601,7 @@
     ]
   },
   "resources/ts/pages/dashboard/modules.vue": {
-    "file": "assets/modules.b6c4fd5d.js",
+    "file": "assets/modules.fac76203.js",
     "src": "resources/ts/pages/dashboard/modules.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -1439,29 +1439,9 @@
       "_runtime-core.esm-bundler.db039fbe.js"
     ]
   },
-  "resources/scss/grid.scss": {
-    "file": "assets/grid.ca8feca4.css",
-    "src": "resources/scss/grid.scss",
-    "isEntry": true
-  },
   "resources/scss/typography.scss": {
     "file": "assets/typography.2bf8c953.css",
     "src": "resources/scss/typography.scss",
-    "isEntry": true
-  },
-  "resources/scss/line-awesome/1.3.0/scss/line-awesome.scss": {
-    "file": "assets/line-awesome.d1516874.css",
-    "src": "resources/scss/line-awesome/1.3.0/scss/line-awesome.scss",
-    "isEntry": true
-  },
-  "resources/scss/app.scss": {
-    "file": "assets/app.b880cfc2.css",
-    "src": "resources/scss/app.scss",
-    "isEntry": true
-  },
-  "resources/scss/fonts.scss": {
-    "file": "assets/fonts.b0cd17ea.css",
-    "src": "resources/scss/fonts.scss",
     "isEntry": true
   },
   "resources/scss/animations.scss": {
@@ -1469,14 +1449,34 @@
     "src": "resources/scss/animations.scss",
     "isEntry": true
   },
+  "resources/scss/grid.scss": {
+    "file": "assets/grid.ca8feca4.css",
+    "src": "resources/scss/grid.scss",
+    "isEntry": true
+  },
   "resources/scss/dark.scss": {
-    "file": "assets/dark.a0ca98bd.css",
+    "file": "assets/dark.22e374db.css",
     "src": "resources/scss/dark.scss",
     "isEntry": true
   },
+  "resources/scss/fonts.scss": {
+    "file": "assets/fonts.b0cd17ea.css",
+    "src": "resources/scss/fonts.scss",
+    "isEntry": true
+  },
+  "resources/scss/app.scss": {
+    "file": "assets/app.9de17a51.css",
+    "src": "resources/scss/app.scss",
+    "isEntry": true
+  },
   "resources/scss/light.scss": {
-    "file": "assets/light.6ba4e0de.css",
+    "file": "assets/light.ba337066.css",
     "src": "resources/scss/light.scss",
+    "isEntry": true
+  },
+  "resources/scss/line-awesome/1.3.0/scss/line-awesome.scss": {
+    "file": "assets/line-awesome.d1516874.css",
+    "src": "resources/scss/line-awesome/1.3.0/scss/line-awesome.scss",
     "isEntry": true
   }
 }

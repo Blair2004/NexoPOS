@@ -555,7 +555,7 @@ class OrderCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->{ '$cssClass' } = match ( $entry->raw->payment_status ) {
+        $entry->{ '$cssClass' } = match ( $entry->__raw->payment_status ) {
             Order::PAYMENT_PAID => 'success border text-sm',
             Order::PAYMENT_UNPAID => 'danger border text-sm',
             Order::PAYMENT_PARTIALLY => 'info border text-sm',

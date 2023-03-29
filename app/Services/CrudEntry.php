@@ -10,6 +10,8 @@ class CrudEntry implements JsonSerializable
 
     public $values;
 
+    public $__raw;
+
     public function __construct( $params )
     {
         $this->original = $params;

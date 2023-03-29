@@ -6,6 +6,7 @@ namespace Database\Factories;
 
 use App\Models\Customer;
 use App\Models\CustomerGroup;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -29,5 +30,13 @@ class CustomerFactory extends Factory
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
             'group_id' => $this->faker->randomElement( CustomerGroup::get()->map( fn( $group ) => $group->id ) ),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating( function( $model ) {
+            $user   =   User::find( $model->id );
+            $user->assignRole( Role::STORECUSTOMER );
+        });
     }
 }
