@@ -239,4 +239,34 @@ class DoctorService
                 }
             });
     }
+
+    /**
+     * Check if all symbolic links available in a directory are not broken
+     * and delete the broken symbolic links
+     */
+    public function clearBrokenModuleLinks(): array
+    {
+        $dir        =   base_path( 'public/modules' );
+        $files      =   scandir($dir);
+        $deleted    =   [];
+
+        foreach($files as $file) {
+            if ($file === '.' || $file === '..') continue;
+            
+            if (is_link($dir . '/' . $file)) {
+                if (!file_exists(readlink($dir . '/' . $file))) {
+                    $deleted[]  =   $dir . '/' . $file;
+                    unlink($dir . '/' . $file);
+                }
+            }
+        }
+
+        return [
+            'status'    =>  'sucess',
+            'message'   =>  sprintf(
+                __( '%s link were deleted' ),
+                count( $deleted )
+            )
+        ];
+    }
 }

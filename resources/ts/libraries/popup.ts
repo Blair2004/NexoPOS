@@ -54,6 +54,9 @@ export class Popup {
     }
 
     async open( component, params = {} ) {
+        this.container       =   document.createElement( 'div' );
+        this.popupBody       =   document.createElement( 'div' );
+
         if ( typeof component === 'function' ) {
             try {
                 component = (await component()).default;
@@ -65,7 +68,7 @@ export class Popup {
             }
         }
 
-        const body  =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
+        const body                          =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
         this.parentWrapper.style.filter     =   'blur(4px)';
         body.style.filter                   =   'blur(6px)';
         
@@ -119,7 +122,6 @@ export class Popup {
          * can manipulate that.
          */
         this.instance        =   createApp({});
-
         this.instance.use( popupInjector, { params, $popup : this, $popupParams: params });
 
         /**

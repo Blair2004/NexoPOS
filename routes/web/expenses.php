@@ -8,7 +8,7 @@ Route::get( '/expenses', [ ExpensesController::class, 'listExpenses' ])->name( n
 Route::get( '/expenses/create', [ ExpensesController::class, 'createExpense' ])->name( ns()->routeName( 'ns.dashboard.expenses.create' ) );
 Route::get( '/expenses/edit/{expense}', [ ExpensesController::class, 'editExpense' ])->name( ns()->routeName( 'ns.dashboard.expenses.edit' ) );
 Route::get( '/expenses/history/{expense}', [ ExpensesController::class, 'getExpenseHistory' ])->name( ns()->routeName( 'ns.dashboard.expenses.history' ) );
-Route::get( '/cash-flow/history', [ ExpensesController::class, 'cashFlowHistory' ])->name( ns()->routeName( 'ns.dashboard.expenses.history' ) );
+Route::get( '/cash-flow/history', [ ExpensesController::class, 'cashFlowHistory' ])->name( ns()->routeName( 'ns.dashboard.cash-flow.history' ) );
 
 Route::get( '/accounting/accounts', [ ExpensesCategoriesController::class, 'listExpensesCategories' ])->name( ns()->routeName( 'ns.dashboard.accounting' ) );
 Route::get( '/accounting/accounts/create', [ ExpensesCategoriesController::class, 'createExpenseCategory' ])->name( ns()->routeName( 'ns.dashboard.accounting.create' ) );

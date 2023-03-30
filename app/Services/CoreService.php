@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Classes\Hook;
 use App\Enums\NotificationsEnum;
 use App\Exceptions\NotEnoughPermissionException;
+use App\Exceptions\NotFoundException;
 use App\Jobs\CheckTaskSchedulingConfigurationJob;
 use App\Models\Migration;
 use App\Models\Permission;
@@ -352,5 +353,67 @@ class CoreService
             'url' => 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
             'description' => __( 'NexoPOS is unable to schedule background tasks. This might restrict necessary features. Click here to learn how to fix it.' ),
         ])->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+    }
+
+    /**
+     * Get the asset file name from the manifest.json file of a module in Laravel.
+     *
+     * @param string $fileName
+     * @param int $moduleId
+     * @return string|null
+     * @throws NotFoundException
+     */
+    public function moduleViteAssets( $fileName, $moduleId ): string
+    {
+        $moduleService  =   app()->make( ModulesService::class );
+        $module         =   $moduleService->get( $moduleId );
+
+        if ( empty( $module ) ) {
+            throw new NotFoundException( 
+                sprintf(
+                    __( 'The requested module %s cannot be found.' ),
+                    $moduleId
+                )
+            );
+        }
+
+        $manifestPath   =   $module[ 'path' ] . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . 'manifest.json';
+
+        if ( ! file_exists( $manifestPath ) ) {
+            throw new NotFoundException( 
+                sprintf(
+                    __( 'The manifest.json can\'t be located inside the module %s.' ),
+                    $module[ 'name' ]
+                )
+            );
+        }
+
+        $manifestArray  =   json_decode( file_get_contents( $manifestPath ), true );
+
+        if ( ! isset( $manifestArray[ $fileName ] ) ) {
+            throw new NotFoundException( 
+                sprintf(
+                    __( 'the requested file "%s" can\'t be located inside the manifest.json for the module %s.' ),
+                    $fileName,
+                    $module[ 'name' ]
+                )
+            );
+        }
+
+        /**
+         * checks if a css file is declared as well
+         */
+        $jsUrl      =   asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
+        $assets     =   collect([]);        
+
+        if ( ! empty( $manifestArray[ $fileName ][ 'css' ] ) ) {
+            $assets     =   collect( $manifestArray[ $fileName ][ 'css' ] )->map( function( $url ) {
+                return '<link ref="stylesheet" href="' . $url . '"/>';
+            });
+        }
+
+        $assets->prepend( '<script type="module" src="' . $jsUrl . '"></script>' );
+
+        return $assets->join( '' );
     }
 }

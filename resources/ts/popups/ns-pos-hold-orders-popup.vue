@@ -12,7 +12,7 @@
             </div>
             <div class="p-2">
                 <div class="input-group border-2 info">
-                    <input @keyup.enter="submitHold()" v-model="title" ref="reference" type="text" placeholder="Order Reference" class="outline-none rounded border-2 p-2 w-full">
+                    <input @keyup.enter="submitHold()" v-model="title" ref="reference" type="text" :placeholder="__( 'Order Reference' )" class="outline-none rounded border-2 p-2 w-full">
                 </div>
             </div>
             <div class="p-2">
