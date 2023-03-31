@@ -18,10 +18,6 @@ class CustomerSeeder extends Seeder
     {
         return Customer::factory()
             ->count(10)
-            ->afterCreating( function( $model ) {
-                $user   =   User::find( $model->id );
-                $user->assignRole( Role::STORECUSTOMER );
-            })
             ->hasShipping(1)
             ->hasBilling(1)
             ->create();

@@ -855,8 +855,8 @@ class CrudService
              * We'll define a raw property
              * that will have default uncasted values.
              */
-            if ( ! isset( $entry->raw ) ) {
-                $entry->raw     =   new \stdClass;
+            if ( ! isset( $entry->__raw ) ) {
+                $entry->__raw     =   new \stdClass;
             }
 
             if ( ! empty( $casts ) ) {
@@ -866,7 +866,7 @@ class CrudService
 
                         // We'll keep a reference of the raw
                         // uncasted property.
-                        $entry->raw->$column    =   $entry->$column;
+                        $entry->__raw->$column    =   $entry->$column;
 
                         // We'll now cast the property.
                         $entry->$column = $castObject->get( $entry, $column, $entry->$column, []);

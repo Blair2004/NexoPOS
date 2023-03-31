@@ -89,7 +89,7 @@ const nsHooks           =   window.nsHooks;
 
 /**
  * create a screen class
- * that controls the device sizes
+ * that controls the device sizes.
  */
 const nsScreen          =   new class {
     breakpoint: string;
@@ -145,5 +145,6 @@ nsHttpClient.defineClient( axios );
 ( window as any ).nsCrudHandler         =   nsCrudHandler;
 ( window as any ).defineComponent       =   defineComponent;
 ( window as any ).defineAsyncComponent  =   defineAsyncComponent;
+( window as any ).createApp             =   createApp;
 
 export { nsSnackBar, nsNotice, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

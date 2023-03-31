@@ -407,7 +407,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
+                'label'         =>  __( 'Delete Selected Entries' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace

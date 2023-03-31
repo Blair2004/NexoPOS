@@ -4,6 +4,14 @@
 #crud-table {
     @apply bg-box-background;
 
+    * {
+        @apply text-primary;
+    }
+
+    #crud-table-header {
+        @apply border-box-edge;
+    }
+
     .ns-crud-input {
         @apply bg-input-background border-input-edge;
 

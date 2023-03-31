@@ -36,6 +36,7 @@ use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -250,6 +251,18 @@ class AppServiceProvider extends ServiceProvider
         if ( Helper::installed() ) {
             Schema::defaultStringLength(191);
         }
+
+        /**
+         * We'll register a directive
+         * that will help module loading
+         * their Vite assets
+         */
+        Blade::directive( 'moduleViteAssets', function( $expression ) {
+            $params     = explode(',', $expression);
+            $fileName   = trim($params[0], "'");
+            $module     = trim($params[1], " '");
+            return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\" ); ?>";
+        });
     }
 
     /**

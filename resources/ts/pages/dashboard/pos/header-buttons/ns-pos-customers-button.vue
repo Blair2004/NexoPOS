@@ -1,7 +1,7 @@
 <script>
 import { Popup } from '~/libraries/popup';
-import { default as nsPosCustomers } from '~/popups/ns-pos-customers.vue';
 import { __ } from '~/libraries/lang';
+import { defineAsyncComponent } from 'vue';
 
 export default {
     name: 'ns-pos-customers-button',
@@ -9,7 +9,9 @@ export default {
         __,
         openCustomerPopup() {
             const popup     =   new Popup;
-            popup.open( nsPosCustomers );
+            popup.open( defineAsyncComponent({
+                loader: () => import( '~/popups/ns-pos-customers.vue' )
+            }) );
         }
     },
     beforeDestroy() {
