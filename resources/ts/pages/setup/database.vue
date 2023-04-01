@@ -26,7 +26,6 @@
 
 <script>
 import FormValidation from '~/libraries/form-validation';
-import { nsRouter } from '~/setup';
 
 export default {
     data: () => ({
@@ -59,7 +58,7 @@ export default {
                         this.form.enableFields( this.firstPartFields );
                         this.form.enableFields( this.secondPartFields );
 
-                        nsRouter.push( '/configuration' );
+                        this.$router.push( '/configuration' );
                         nsSnackBar.success( result.message, 'OKAY', { duration: 5000 }).subscribe();
                     },
                     error => {
@@ -120,7 +119,7 @@ export default {
                 label: 'Database Name',
                 description: 'Provide the database name. Leave empty to use default file for SQLite Driver.',
                 name: 'database_name',
-                value : 'nexopos_v4',
+                value : 'nexopos_v5',
             }, {
                 label: 'Database Prefix',
                 description: 'Provide the database prefix.',

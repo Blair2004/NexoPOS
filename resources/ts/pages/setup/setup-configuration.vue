@@ -18,8 +18,6 @@
 <script>
 import FormValidation from '~/libraries/form-validation';
 import { nsHttpClient, nsSnackBar } from "~/bootstrap";
-import { nsRouter } from '~/setup';
-import { __ } from '~/libraries/lang';
 
 export default {
     data: () => ({
@@ -32,7 +30,7 @@ export default {
     }),
     methods: {
         validate() {
-            
+
         },
         verifyDBConnectivity() {
 
@@ -91,7 +89,7 @@ export default {
                         ]);
                     },
                     error: error => {
-                        nsRouter.push( '/database' );
+                        this.$router.push( '/database' );
                         nsSnackBar.error( 'You need to define database settings', 'OKAY', { duration: 3000 })
                             .subscribe();
                     }
