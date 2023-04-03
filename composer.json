@@ -13,7 +13,7 @@
         "php": "^8.0.0",
         "beyondcode/laravel-websockets": "^1.11",
         "brick/math": "^0.10.2",
-        "dekor/php-array-table": "^1.0",
+        "dekor/php-array-table": "^2.0",
         "doctrine/dbal": "^3.0",
         "fakerphp/faker": "^1.12",
         "fruitcake/laravel-cors": "^3.0",
