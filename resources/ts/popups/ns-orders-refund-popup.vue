@@ -69,8 +69,8 @@ export default {
             previewed: null,
             loaded: false,
             options: systemOptions,
-            settings: systemSettings,
-            print: new Print({ settings: systemSettings, options: systemOptions, type: 'refund' })
+            systemUrls,
+            print: new Print({ urls: systemUrls, options: systemOptions })
         }
     },
     methods: {
@@ -98,7 +98,7 @@ export default {
         },
 
         printRefundReceipt( refund ) {
-            this.print.printOrder( refund.id )
+            this.print.process( refund.id, 'refund' )
         }
     },
     mounted() {

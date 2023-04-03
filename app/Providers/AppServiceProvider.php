@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
 use App\Models\Order;
+use App\Models\OrderProductRefund;
 use App\Models\Permission;
 use App\Services\BarcodeService;
 use App\Services\CashRegistersService;
@@ -197,14 +198,15 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind( OrdersService::class, function( $app ) {
             return new OrdersService(
-                $app->make( CustomerService::class ),
-                $app->make( ProductService::class ),
-                $app->make( UnitService::class ),
-                $app->make( DateService::class ),
-                $app->make( CurrencyService::class ),
-                $app->make( Options::class ),
-                $app->make( TaxService::class ),
-                $app->make( ReportService::class ),
+                customerService: $app->make( CustomerService::class ),
+                productService: $app->make( ProductService::class ),
+                unitService: $app->make( UnitService::class ),
+                dateService: $app->make( DateService::class ),
+                currencyService: $app->make( CurrencyService::class ),
+                optionsService: $app->make( Options::class ),
+                taxService: $app->make( TaxService::class ),
+                reportService: $app->make( ReportService::class ),
+                mathService: $app->make( MathService::class ),
             );
         });
 
@@ -286,6 +288,13 @@ class AppServiceProvider extends ServiceProvider
             'nexopos.orders.types-labels' => collect( config( 'nexopos.orders.types' ) )
                 ->mapWithKeys( fn( $type ) => [ $type[ 'identifier' ] => $type[ 'label' ] ])
                 ->toArray(),
+        ]);
+
+        config([
+            'nexopos.orders.products.refunds' => [
+                OrderProductRefund::CONDITION_DAMAGED       =>  __( 'Damaged' ),
+                OrderProductRefund::CONDITION_UNSPOILED     =>  __( 'Good Condition' ),
+            ]
         ]);
     }
 }

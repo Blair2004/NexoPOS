@@ -3,7 +3,9 @@ use App\Models\Order;
 use App\Classes\Hook;
 use App\Classes\Currency;
 use App\Models\PaymentType;
+use App\Services\OrdersService;
 
+$ordersService  =   app()->make( OrdersService::class );
 ?>
 <div class="w-full h-full">
     <div class="w-full md:w-1/2 lg:w-1/3 shadow-lg bg-white p-2 mx-auto">
@@ -37,7 +39,7 @@ use App\Models\PaymentType;
                         <td colspan="2" class="p-2 border-b border-gray-700">
                             <span class="">{{ $product->product->name }} (x{{ $product->quantity }})</span>
                             <br>
-                            <span class="text-xs text-gray-600">{{ $product->unit->name }}</span>
+                            <span class="text-xs text-gray-600">{{ $product->unit->name }}</span> &mdash; <span class="text-xs text-gray-600">{{ __( 'Condition:' ) }} {{ $ordersService->getRefundedOrderProductLabel( $product->condition ) }}
                         </td>
                         <td class="p-2 border-b border-gray-800 text-right">{{ Currency::raw( $product->total_price - $product->tax_value ) }}</td>
                     </tr>

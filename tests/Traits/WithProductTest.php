@@ -258,16 +258,20 @@ trait WithProductTest
 
     protected function attemptAdjustmentByDeletion()
     {
-        $product = Product::find(1);
-        $unitQuantity = $product->unit_quantities[0];
+        $productUnitQuantity    =   ProductUnitQuantity::where( 'quantity', '>', 10 )
+            ->with( 'product' )
+            ->whereRelation( 'product', function( $query ){
+                return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
+            })
+            ->first();
 
         $response = $this->json( 'POST', '/api/nexopos/v4/products/adjustments', [
             'products' => [
                 [
-                    'id' => $product->id,
+                    'id' => $productUnitQuantity->product->id,
                     'adjust_action' => 'deleted',
-                    'name' => $product->name,
-                    'adjust_unit' => $unitQuantity,
+                    'name' => $productUnitQuantity->product->name,
+                    'adjust_unit' => $productUnitQuantity,
                     'adjust_reason' => __( 'Performing a test adjustment' ),
                     'adjust_quantity' => 1,
                 ],

@@ -48,8 +48,11 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                     const offset                    =   this.getElementOffset( parent );
                     dropdown.style.top              =   offset.top + 'px';
                     dropdown.style.left             =   offset.left + 'px';
-                    parent.classList.remove( 'relative' );
-                    parent.classList.add( 'dropdown-holder' );
+                    
+                    if ( parent !== undefined ) {
+                        parent.classList.remove( 'relative' );
+                        parent.classList.add( 'dropdown-holder' );
+                    }
                 }, 100 );
             } else {
                 const parent                    =   this.$el.querySelectorAll( '.dropdown-holder' )[0];

@@ -30,6 +30,36 @@ class CreateOrderTest extends TestCase
         }
     }
 
+    public function testCreateAndEditOrderWithLowStock()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateAndEditOrderWithLowStock();
+    }
+
+    public function testCreateAndEditOrderByDeductedGreaterQuantity()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateAndEditOrderWithGreaterQuantity();
+    }
+
+    public function testHoldAndCheckoutOrder()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptHoldAndCheckoutOrder();
+    }
+
+    public function testHoldAndCheckoutOrderWithGroupedProducts()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptHoldOrderAndCheckoutWithGroupedProducts();
+    }
+
+    public function testDeletedVoidedOrder()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptDeleteVoidedOrder();
+    }
+
     /**
      * Will only make order using
      * the customer balance

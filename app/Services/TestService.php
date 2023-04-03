@@ -25,7 +25,10 @@ class TestService
         $faker = Factory::create();
         $products = isset( $config[ 'products' ] ) ? $config[ 'products' ]() : Product::where( 'tax_group_id', '>', 0 )
             ->where( 'type', '<>', Product::TYPE_GROUPED )
-            ->with( 'unit_quantities' )
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 1000 )
+            ->with( 'unit_quantities', function( $query ) {
+                $query->where( 'quantity', '>', 3 );
+            })
             ->get()
             ->shuffle()
             ->take(3);
@@ -37,14 +40,17 @@ class TestService
 
             $data = array_merge([
                 'name' => $product->name,
-                'quantity' => $faker->numberBetween(1, 3),
+                'quantity' => $product->quantity ?? $faker->numberBetween(1, 3),
                 'unit_price' => $unitElement->sale_price,
                 'tax_type' => 'inclusive',
                 'tax_group_id' => 1,
                 'unit_id' => $unitElement->unit_id,
             ], $productDetails );
 
-            if ( $faker->randomElement([ false, true ]) || ! ( $config[ 'allow_quick_products' ] ?? true ) ) {
+            if ( 
+                ( isset( $product->id ) ) ||
+                ( $faker->randomElement([ false, true ]) && ! ( $config[ 'allow_quick_products' ] ?? true ) )
+            ) {
                 $data[ 'product_id' ] = $product->id;
                 $data[ 'unit_quantity_id' ] = $unitElement->id;
             }
@@ -88,7 +94,7 @@ class TestService
             $faker->numberBetween( 0, 23 )
         )->format( 'Y-m-d H:m:s' );
 
-        return array_merge([
+        $finalDetails   =   [
             'customer_id' => $customer->id,
             'type' => [ 'identifier' => 'takeaway' ],
             'discount_type' => $discount[ 'type' ],
@@ -112,15 +118,22 @@ class TestService
             'subtotal' => $subtotal,
             'shipping' => $shippingFees,
             'products' => $products->toArray(),
-            'payments' => [
+        ];
+
+        if ( isset( $config[ 'payments' ] ) && is_callable( $config[ 'payments' ] ) ) {
+            $finalDetails[ 'payments' ] =   $config[ 'payments' ]( $finalDetails );
+        } else {
+            $finalDetails[ 'payments' ]     =   [
                 [
                     'identifier' => 'cash-payment',
                     'value' => $currency->define( $subtotal )
                         ->additionateBy( $shippingFees )
                         ->getRaw(),
                 ],
-            ],
-        ], $orderDetails );
+            ];
+        }
+
+        return array_merge( $finalDetails, $orderDetails );
     }
 
     public function prepareProcurement( Carbon $date, array $details = [] )
@@ -165,7 +178,7 @@ class TestService
                         ];
                     });
                 })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
-                    $quantity = $faker->numberBetween(100000, 900000);
+                    $quantity = $faker->numberBetween(1000000, 9000000);
 
                     return [
                         'product_id' => $data->product->id,
