@@ -2192,8 +2192,9 @@ trait WithOrderTest
          */
         $orderService = app()->make( OrdersService::class );
         $faker = Factory::create();
-        $products = Product::whereRelation( 'unit_quantities', 'quantity', '>', 100 )
-            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+        $products = Product::whereRelation( 'unit_quantities', 'quantity', '>', 2000 )
+            ->where( 'type', '!=', Product::TYPE_GROUPED )
+            ->with([ 'unit_quantities' => fn( $query ) => $query->where( 'quantity', '>', 2000 ) ])
             ->get()
             ->shuffle()->take(1);
         $shippingFees = $faker->randomElement([100, 150, 200, 250, 300, 350, 400]);
@@ -2777,8 +2778,8 @@ trait WithOrderTest
 
     private function retreiveProducts()
     {
-        $products = Product::whereRelation( 'unit_quantities', 'quantity', '>', 100 )
-            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+        $products = Product::with([ 'unit_quantities' => fn( $query ) => $query->where( 'quantity', '>', 1000 ) ])
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 1000 )
             ->get()
             ->shuffle()
             ->take(3);
