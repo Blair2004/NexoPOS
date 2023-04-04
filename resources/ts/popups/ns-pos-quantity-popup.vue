@@ -108,9 +108,9 @@ export default {
 
             /**
              * The stock should be handled differently
-             * according to wether the stock management
+             * according to whether the stock management
              * is enabled or not.
-             */                
+             */
             if ( product.$original().stock_management === 'enabled' && product.$original().type === 'materialized' ) {
 
                 /**
@@ -124,15 +124,15 @@ export default {
 
                 /**
                  * This checks if there is enough
-                 * quantity for product that has stock 
+                 * quantity for product that has stock
                  * management enabled
                  */
-                if ( 
+                if (
                     quantity > (
                         parseFloat( data.$quantities().quantity ) -
                         /**
-                         * We'll make sure to ignore the product quantity 
-                         * already added to the cart by substracting the 
+                         * We'll make sure to ignore the product quantity
+                         * already added to the cart by substracting the
                          * provided quantity.
                          */
                         ( holdQuantity )

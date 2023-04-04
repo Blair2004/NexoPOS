@@ -21,6 +21,6 @@ class RegistrationMiddleware
             return $next($request);
         }
 
-        throw new NotAllowedException( __( 'The registration has been explicitely disabled.' ) );
+        throw new NotAllowedException( __( 'The registration has been explicitly disabled.' ) );
     }
 }

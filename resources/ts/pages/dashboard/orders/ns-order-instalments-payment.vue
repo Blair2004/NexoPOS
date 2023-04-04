@@ -44,7 +44,7 @@ export default {
                     options: paymentTypes
                 }
             ],
-            print: new Print({ settings: systemSettings, options: systemOptions, type: 'payment' }),
+            print: new Print({ urls: systemUrls, options: systemOptions }),
             validation: new FormValidation,
             order: null,
             instalment: null,
@@ -69,7 +69,7 @@ export default {
                     this.submitPayment();
                 },
                 error: error => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
                 }
             })
         },
@@ -79,13 +79,13 @@ export default {
                 return nsSnackBar.error( __m( 'The form is not valid.' ) ).subcribe();
             }
 
-            nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments/${this.instalment.id}/pay`, { 
-                    ...this.validation.extractFields( this.fields ) 
+            nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments/${this.instalment.id}/pay`, {
+                    ...this.validation.extractFields( this.fields )
                 })
                 .subscribe({
                     next: result => {
                         this.popupResolver( true );
-                        this.print.printOrder( result.data.payment.id );
+                        this.print.exec( result.data.payment.id, 'payment' );
 
                         nsSnackBar.success( result.message ).subscribe();
                     },
@@ -102,7 +102,7 @@ export default {
                             });
                         }
 
-                        nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                        nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
                     }
                 })
         }

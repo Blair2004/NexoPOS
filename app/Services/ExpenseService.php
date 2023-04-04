@@ -405,7 +405,7 @@ class ExpenseService
 
     /**
      * Process recorded expenses
-     * and check wether they are supposed to be processed
+     * and check whether they are supposed to be processed
      * on the current day.
      *
      * @return array of process results.
@@ -416,7 +416,7 @@ class ExpenseService
             ->active()
             ->get()
             ->map( function( $expense ) {
-                switch ( $expense->occurence ) {
+                switch ( $expense->occurrence ) {
                     case 'month_starts':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth() );
                         break;
@@ -427,10 +427,10 @@ class ExpenseService
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth() );
                         break;
                     case 'x_before_month_ends':
-                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
+                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurrence_value ) );
                         break;
                     case 'x_after_month_starts':
-                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
+                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurrence_value ) );
                         break;
                 }
 
@@ -580,7 +580,7 @@ class ExpenseService
     {
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
             $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
-    
+
             $expense = new Expense;
             $expense->value = $order->total;
             $expense->active = true;
@@ -592,7 +592,7 @@ class ExpenseService
             $expense->category = $expenseCategory;
             $expense->created_at = $order->created_at;
             $expense->updated_at = $order->updated_at;
-    
+
             $this->recordCashFlowHistory( $expense );
         }
     }

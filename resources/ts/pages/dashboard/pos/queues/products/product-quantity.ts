@@ -30,7 +30,7 @@ export class ProductQuantityPromise {
 
                 /**
                  * The stock should be handled differently
-                 * according to wether the stock management
+                 * according to whether the stock management
                  * is enabled or not.
                  */
                 if ( product.$original().stock_management === 'enabled' && product.$original().type === 'materialized' ) {

@@ -313,7 +313,7 @@ class ProductCrud extends CrudService
                                         'available' => __( 'On Sale' ),
                                         'unavailable' => __( 'Hidden' ),
                                     ]),
-                                    'description' => __( 'Define wether the product is available for sale.' ),
+                                    'description' => __( 'Define whether the product is available for sale.' ),
                                     'name' => 'status',
                                     'validation' => 'required',
                                     'label' => __( 'Status' ),
@@ -474,7 +474,7 @@ class ProductCrud extends CrudService
                                     'name' => 'featured',
                                     'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                                     'label' => __( 'Is Primary' ),
-                                    'description' => __( 'Define wether the image should be primary. If there are more than one primary image, one will be choosed for you.' ),
+                                    'description' => __( 'Define whether the image should be primary. If there are more than one primary image, one will be chosen for you.' ),
                                 ],
                             ],
                             'groups' => $entry ? $entry->galleries->map( function( $gallery ) {
@@ -491,7 +491,7 @@ class ProductCrud extends CrudService
                                         'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                                         'label' => __( 'Is Primary' ),
                                         'value' => (int) $gallery->featured,
-                                        'description' => __( 'Define wether the image should be primary. If there are more than one primary image, one will be choosed for you.' ),
+                                        'description' => __( 'Define whether the image should be primary. If there are more than one primary image, one will be chosen for you.' ),
                                     ],
                                 ];
                             }) : [],

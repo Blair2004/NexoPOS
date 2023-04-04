@@ -2,7 +2,7 @@
 import FormValidation from '../../libraries/form-validation';
 import { nsSnackBar, nsHttpClient } from '../../bootstrap';
 import { __ } from '@/libraries/lang';
-export default { 
+export default {
     name: 'ns-create-coupons',
     mounted() {
         this.loadForm();
@@ -80,10 +80,10 @@ export default {
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), undefined, {
+                    nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ), undefined, {
                         duration: 5000
                     }).subscribe();
-                    
+
                     if ( error.response ) {
                         this.formValidation.triggerError( this.form, error.response.data );
                     }
@@ -128,7 +128,7 @@ export default {
         },
         removeOption({ option, index }) {
             option.selected     =   false;
-        },  
+        },
         getRuleForm() {
             return this.form.ruleForm;
         },
@@ -155,11 +155,11 @@ export default {
                     </div>
                 </div>
                 <div :class="form.main.disabled ? 'disabled' : ( form.main.errors.length > 0 ? 'error' : 'info' )" class="input-group flex border-2 rounded overflow-hidden">
-                    <input v-model="form.main.value" 
-                        @blur="formValidation.checkField( form.main )" 
-                        @change="formValidation.checkField( form.main )" 
+                    <input v-model="form.main.value"
+                        @blur="formValidation.checkField( form.main )"
+                        @change="formValidation.checkField( form.main )"
                         :disabled="form.main.disabled"
-                        type="text" 
+                        type="text"
                         class="flex-auto text-primary outline-none h-10 px-2">
                     <button :disabled="form.main.disabled" @click="submit()" class="outline-none px-4 h-10 border-l border-tertia"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>

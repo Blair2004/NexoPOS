@@ -39,11 +39,11 @@
                                 </li>
                                 <li class="flex justify-between text-secondary text-sm mb-1">
                                     <span class="font-semibold">{{ __( 'Payment Status' ) }}</span>
-                                    <span>{{ order.payment_status }}</span>
+                                    <span>{{ order.paymentStatus }}</span>
                                 </li>
                                 <li v-if="order.type === 'delivery'" class="flex justify-between text-secondary text-sm mb-1">
                                     <span class="font-semibold">{{ __( 'Delivery Status' ) }}</span>
-                                    <span>{{ order.delivery_status }}</span>
+                                    <span>{{ order.deliveryStatus }}</span>
                                 </li>
                             </ul>
                         </div>

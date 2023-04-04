@@ -144,18 +144,18 @@ export default {
             handler() {
                 if ( this.options.ns_pos_force_autofocus ) {
                     clearTimeout( this.searchTimeout );
-                
+
                     this.searchTimeout  =   setTimeout( () => {
                         this.submitSearch( this.barcode );
                     }, 200 );
                 }
             },
-            deep: true            
+            deep: true
         },
         barcode() {
             if ( this.options.ns_pos_force_autofocus ) {
                 clearTimeout( this.searchTimeout );
-            
+
                 this.searchTimeout  =   setTimeout( () => {
                     this.submitSearch( this.barcode );
                 }, 200 );
@@ -176,7 +176,7 @@ export default {
         this.breadcrumbsSubsribe        =   POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
             this.breadcrumbs            =   breadcrumbs;
         });
-        
+
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection         =   section;
         });
@@ -204,11 +204,11 @@ export default {
         for( let shortcut in nsShortcuts ) {
             /**
              * let's declare only shortcuts that
-             * works on the pos grid and that doesn't 
+             * works on the pos grid and that doesn't
              * expect any popup to be visible
              */
-            if ([ 
-                    'ns_pos_keyboard_quick_search', 
+            if ([
+                    'ns_pos_keyboard_quick_search',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'search-popup' )
@@ -221,11 +221,11 @@ export default {
 
             /**
              * let's declare only shortcuts that
-             * works on the pos grid and that doesn't 
+             * works on the pos grid and that doesn't
              * expect any popup to be visible
              */
-            if ([ 
-                    'ns_pos_keyboard_toggle_merge', 
+            if ([
+                    'ns_pos_keyboard_toggle_merge',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'toggle-merge' )
@@ -245,14 +245,14 @@ export default {
         this.screenSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
         this.optionsSubscriber.unsubscribe();
-        
+
         clearInterval( this.interval );
 
         nsHotPress.destroy( 'search-popup' );
         nsHotPress.destroy( 'toggle-merge' );
     },
     methods: {
-        __, 
+        __,
 
         switchTo,
 
@@ -298,7 +298,7 @@ export default {
 
             const wrapperWidth  =   responsive[ POS.responsive.screenIs ].width;
             const wrapperHeight =   responsive[ POS.responsive.screenIs ].height;
-            const scrollWidth   =   0; // ( 50 / responsive[ POS.responsive.screenIs ].items );            
+            const scrollWidth   =   0; // ( 50 / responsive[ POS.responsive.screenIs ].items );
 
             return {
                 width: wrapperWidth - scrollWidth,
@@ -333,7 +333,7 @@ export default {
                 const popup     =   document.querySelectorAll( '.is-popup' );
 
                 /**
-                 * We don't force focus if 
+                 * We don't force focus if
                  * any popup is visible.
                  */
                 if ( popup.length === 0 ) {
@@ -341,7 +341,7 @@ export default {
                 }
             }
         },
-        
+
         loadCategories( parent ) {
             this.isLoading  =   true;
             nsHttpClient.get( `/api/nexopos/v4/categories/pos/${ parent ? parent.id : ''}` )
@@ -364,7 +364,7 @@ export default {
                     },
                     error: ( error ) => {
                         this.isLoading  =   false;
-                        return nsSnackBar.error( __( 'An unexpected error occured.' ) ).subscribe();
+                        return nsSnackBar.error( __( 'An unexpected error occurred.' ) ).subscribe();
                     }
                 });
         },
@@ -372,10 +372,10 @@ export default {
         updateBreadCrumb( parent ) {
             if ( parent ) {
                 const index     =   this.breadcrumb.filter( bread => bread.id === parent.id );
-    
+
                 /**
                  * this means, we're trying to navigate
-                 * through something that has already been 
+                 * through something that has already been
                  * added to the breadcrumb
                  */
                 if ( index.length > 0 ) {
@@ -391,15 +391,15 @@ export default {
                     this.breadcrumb     =   prior;
                 } else {
                     this.breadcrumb.push( parent );
-                } 
-    
+                }
+
             } else {
-                this.breadcrumb     =   [];    
+                this.breadcrumb     =   [];
             }
 
             POS.breadcrumbs.next( this.breadcrumb );
         },
-    
+
         addToTheCart( product ) {
             POS.addToCart( product );
         }

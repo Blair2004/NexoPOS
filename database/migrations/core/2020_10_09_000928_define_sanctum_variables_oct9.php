@@ -7,7 +7,7 @@ use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 return new class extends Migration
 {
     /**
-     * Determine wether the migration
+     * Determine whether the migration
      * should execute when we're accessing
      * a multistore instance.
      */

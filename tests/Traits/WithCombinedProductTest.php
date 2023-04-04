@@ -19,7 +19,10 @@ trait WithCombinedProductTest
             productDetails: [], 
             config: [
                 'products' => function() {
-                    $product = Product::where( 'tax_group_id', '>', 0 )->with( 'unit_quantities' )->first();
+                    $product = Product::where( 'tax_group_id', '>', 0 )
+                        ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+                        ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+                        ->first();
 
                     return collect([ $product, $product ]);
                 },

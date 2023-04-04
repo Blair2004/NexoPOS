@@ -229,7 +229,7 @@ class AuthenticationTest extends TestCase
                 'email' => $user->email,
             ]);
 
-        $response->assertSee( 'The recovery has been explicitely disabled' );
+        $response->assertSee( 'The recovery has been explicitly disabled' );
     }
 
     public function testSubmitLoginForm()
@@ -325,6 +325,6 @@ class AuthenticationTest extends TestCase
                 ]
             );
 
-        $response->assertSee( 'The recovery has been explicitely disabled.' );
+        $response->assertSee( 'The recovery has been explicitly disabled.' );
     }
 }

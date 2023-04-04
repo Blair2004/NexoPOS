@@ -27,18 +27,18 @@
                                     </div>
                                     <ul>
                                         <li @click="toggleUnitField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
-                                            <span>{{ __( 'Unit' ) }}:</span> 
+                                            <span>{{ __( 'Unit' ) }}:</span>
                                             <select @change="redefineUnit( product )" ref="unitField" type="text" v-model="product.unit_quantity_id">
                                                 <option :key="unitQuantity.id" :value="unitQuantity.id" v-for="unitQuantity of product.unit_quantities">{{ unitQuantity.unit.name }}</option>
                                             </select>
                                         </li>
                                         <li @click="toggleQuantityField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
-                                            <span>{{ __( 'Quantity' ) }}:</span> 
+                                            <span>{{ __( 'Quantity' ) }}:</span>
                                             <span v-if="! product._quantity_toggled" class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.quantity }}</span>
                                             <input ref="quantityField" type="text" v-model="product.quantity" v-if="product._quantity_toggled">
                                         </li>
                                         <li @click="togglePriceField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
-                                            <span>{{ __( 'Price' ) }}:</span> 
+                                            <span>{{ __( 'Price' ) }}:</span>
                                             <span v-if="! product._price_toggled" class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.sale_price | currency }}</span>
                                             <input ref="priceField" type="text" v-model="product.sale_price" v-if="product._price_toggled">
                                         </li>
@@ -135,7 +135,7 @@ export default {
         toggleUnitField( product ) {
             if ( ! product._unit_toggled ) {
                 product._unit_toggled   =   ! product._unit_toggled;
-            }            
+            }
 
             setTimeout( () => {
                 if ( product._unit_toggled ) {
@@ -202,7 +202,7 @@ export default {
                                 value: unitQuantity.id
                             }
                         }),
-                        resolve, 
+                        resolve,
                         reject
                     })
                 });
@@ -235,8 +235,8 @@ export default {
             }
         },
         searchProducts( search ) {
-            nsHttpClient.post( `/api/nexopos/v4/products/search`, { 
-                search, 
+            nsHttpClient.post( `/api/nexopos/v4/products/search`, {
+                search,
                 arguments: {
                     type: {
                         comparison: '<>',
@@ -248,7 +248,7 @@ export default {
                     this.results    =   results;
                 },
                 error: error => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error occured' ), __( 'Ok' ), { duration: 3000 }).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error occurred' ), __( 'Ok' ), { duration: 3000 }).subscribe();
                 }
             })
         }

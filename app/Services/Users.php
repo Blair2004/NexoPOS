@@ -113,7 +113,7 @@ class Users
 
         /**
          * Every new user comes with attributes that
-         * should be explicitely defined.
+         * should be explicitly defined.
          */
         $this->createAttribute( $user );
 

@@ -16,7 +16,7 @@ const systemOptions       =   <?php echo json_encode([
     'ns_pos_printing_gateway'       =>  ns()->option->get( 'ns_pos_printing_gateway', 'default' ),
 ]);?>
 
-const systemSettings        =  <?php echo json_encode([
+const systemUrls        =  <?php echo json_encode([
     'refund_printing_url'   =>  ns()->url( '/dashboard/orders/refund-receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
     'sale_printing_url'     =>  ns()->url( '/dashboard/orders/receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),
     'payment_printing_url'  =>  ns()->url( '/dashboard/orders/payment-receipt/{reference_id}?autoprint=true&dash-visibility=disabled' ),

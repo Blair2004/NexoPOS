@@ -16,7 +16,7 @@ if ( Auth::check() ) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{!! Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) !!}</title>
+    <title>{!! Helper::pageTitle( $title ?? __( 'Unnamed Page' ) ) !!}</title>
     <link rel="stylesheet" href="{{ loadcss( 'grid.css' ) }}">
     <link rel="stylesheet" href="{{ loadcss( 'fonts.css' ) }}">
     <link rel="stylesheet" href="{{ loadcss( 'animations.css' ) }}">
@@ -90,7 +90,7 @@ if ( Auth::check() ) {
                                         @if ( isset( $menu[ 'permissions' ] ) && Auth::user()->allowedTo( $menu[ 'permissions' ], 'some' ) || ! isset( $menu[ 'permissions' ] ) )
                                     <ns-submenu :active="{{ ( isset( $menu[ 'active' ] ) ? ( $menu[ 'active' ] ? 'true' : 'false' ) : 'false' ) }}" href="{{ $menu[ 'href' ] }}" id="submenu-{{ $identifier }}">{{ $menu[ 'label' ] }}</ns-submenu>
                                         @endif
-                                    @endforeach        
+                                    @endforeach
                                 @endif
                             </ns-menu>
                             @endif
@@ -104,7 +104,7 @@ if ( Auth::check() ) {
                     @hasSection( 'layout.dashboard.body' )
                         @yield( 'layout.dashboard.body' )
                     @endif
-                    
+
                     @hasSection( 'layout.dashboard.body.with-header' )
                         @include( 'common.dashboard.with-header' )
                     @endif
@@ -112,7 +112,7 @@ if ( Auth::check() ) {
                     @hasSection( 'layout.dashboard.with-header' )
                         @include( 'common.dashboard.with-header' )
                     @endif
-                    
+
                     @hasSection( 'layout.dashboard.body.with-title' )
                         @include( 'common.dashboard.with-title' )
                     @endif
@@ -122,7 +122,7 @@ if ( Auth::check() ) {
                     @endif
                 </div>
                 <div class="p-2 text-xs flex justify-end text-gray-500">
-                    {!! 
+                    {!!
                         Hook::filter( 'ns-footer-signature', sprintf( __( 'You\'re using <a tager="_blank" href="%s" class="hover:text-blue-400 mx-1 inline-block">NexoPOS %s</a>' ), 'https://my.nexopos.com/en', config( 'nexopos.version' ) ) )
                     !!}
                 </div>

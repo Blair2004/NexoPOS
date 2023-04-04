@@ -16,7 +16,7 @@ class CreateOrderTest extends TestCase
      *
      * @return void
      */
-    private function testPostingOrder( $callback = null )
+    public function testPostingOrder( $callback = null )
     {
         $this->count = 5;
         $this->totalDaysInterval = 14;
@@ -30,17 +30,47 @@ class CreateOrderTest extends TestCase
         }
     }
 
+    public function testCreateAndEditOrderWithLowStock()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateAndEditOrderWithLowStock();
+    }
+
+    public function testCreateAndEditOrderByDeductedGreaterQuantity()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateAndEditOrderWithGreaterQuantity();
+    }
+
+    public function testHoldAndCheckoutOrder()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptHoldAndCheckoutOrder();
+    }
+
+    public function testHoldAndCheckoutOrderWithGroupedProducts()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptHoldOrderAndCheckoutWithGroupedProducts();
+    }
+
+    public function testDeletedVoidedOrder()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptDeleteVoidedOrder();
+    }
+
     /**
      * Will only make order using
      * the customer balance
      */
-    private function testOrderCreatedForCustomer()
+    public function testOrderCreatedForCustomer()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderPaidWithCustomerBalance();
     }
 
-    private function testCreateOrderWithNoPayment( $callback = null )
+    public function testCreateOrderWithNoPayment( $callback = null )
     {
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
@@ -75,7 +105,7 @@ class CreateOrderTest extends TestCase
     /**
      * @depends testCreateOrderWithGroupedProducts
      */
-    private function testRefundOrderWithGroupedProducts()
+    public function testRefundOrderWithGroupedProducts()
     {
         $this->attemptAuthenticate();
         $this->attemptRefundOrderWithGroupedProducts();

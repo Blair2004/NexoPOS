@@ -53,7 +53,7 @@ class NotificationsController extends DashboardController
 
         return [
             'status' => 'success',
-            'message' => __( 'All the notificataions has been cleared.' ),
+            'message' => __( 'All the notifications have been cleared.' ),
         ];
     }
 }

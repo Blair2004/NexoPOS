@@ -91,7 +91,7 @@ class CustomerAccountCrud extends CrudService
 
     /**
      * Pick
-     * Restrict columns you retreive from relation.
+     * Restrict columns you retrieve from relation.
      * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
@@ -215,7 +215,7 @@ class CustomerAccountCrud extends CrudService
     public function hook( $query ): void
     {
         $query->orderBy( 'id', 'desc' );
-        $query->where( 'nexopos_customers_account_history.customer_id', request()->query( 'customer_id' ) );
+        $query->where( Hook::filter( 'ns-model-table', 'nexopos_customers_account_history.customer_id' ), request()->query( 'customer_id' ) );
     }
 
     public function addFooterSummary( CrudBeforeExportEvent $event )

@@ -20,7 +20,7 @@
                     <template>{{ __( 'Sign In' ) }}</template>
                 </ns-button>
             </div>
-            <div>
+            <div v-if="showRegisterButton">
                 <ns-button :link="true" :href="'/sign-up'" type="success">{{ __( 'Register' ) }}</ns-button>
             </div>
         </div>
@@ -33,7 +33,7 @@ import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
 export default {
     name: 'ns-login',
-    props: [ 'showRecoveryLink' ],
+    props: [ 'showRecoveryLink', 'showRegisterButton' ],
     data() {
         return {
             fields: [],
@@ -59,7 +59,7 @@ export default {
                 setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
             },
             error: ( error ) => {
-                nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), __( 'OK' ), { duration: 0 }).subscribe();
+                nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ), __( 'OK' ), { duration: 0 }).subscribe();
             }
         });
     },

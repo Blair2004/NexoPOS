@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Determine wether the migration
+     * Determine whether the migration
      * should execute when we're accessing
      * a multistore instance.
      */
@@ -34,7 +34,7 @@ return new class extends Migration
                 $table->boolean( 'locked' )->default( true ); // means the role can be edited from the frontend.
                 $table->timestamps();
             });
-        } 
+        }
 
         // Permissions Relation with Roles
         if ( ! Schema::hasTable( 'nexopos_role_permission' ) ) {
@@ -43,7 +43,7 @@ return new class extends Migration
                 $table->integer( 'role_id' );
                 $table->primary([ 'permission_id', 'role_id' ]);
             });
-        } 
+        }
     }
 
     /**

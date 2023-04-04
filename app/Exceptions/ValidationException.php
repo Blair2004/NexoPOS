@@ -17,7 +17,7 @@ class ValidationException extends MainValidationException
     {
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-allowed', [
-                'title' => __( 'An error has occured' ),
+                'title' => __( 'An error has occurred' ),
                 'message' => __( 'Unable to proceed, the submitted form is not valid.' ),
             ]);
         }

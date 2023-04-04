@@ -192,7 +192,7 @@ class CrudController extends DashboardController
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
-         * Let's check it the resource has a method to retreive an item
+         * Let's check it the resource has a method to retrieve an item
          *
          * @var CrudService
          */
@@ -201,7 +201,7 @@ class CrudController extends DashboardController
         if ( method_exists( $resource, 'getEntries' ) ) {
             return $resource->getEntries( $request );
         } else {
-            throw new Exception( __( 'Unable to retreive items. The current CRUD resource doesn\'t implement "getEntries" methods' ) );
+            throw new Exception( __( 'Unable to retrieve items. The current CRUD resource doesn\'t implement "getEntries" methods' ) );
         }
     }
 
@@ -407,7 +407,7 @@ class CrudController extends DashboardController
 
     /**
      * Can Access
-     * Check wether the logged user has
+     * Check whether the logged user has
      * the right to access to the requested resource
      *
      * @return AsyncResponse
