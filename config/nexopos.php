@@ -6,6 +6,7 @@ return [
         'en' => 'English',
         'de' => 'Deutsch',
         'fr' => 'Français',
+        'nl' => 'Nederlands',
         'es' => 'Espanol',
         'it' => 'Italian',
         'ar' => 'Arabic',
