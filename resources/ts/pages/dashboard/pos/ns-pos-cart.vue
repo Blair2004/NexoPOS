@@ -314,7 +314,6 @@ export default {
     mounted() {
         this.optionsSubscriber  =   POS.options.subscribe( options => {
             this.options    =   options;
-            console.log( options );
         });
         this.typeSubscribe  =   POS.types.subscribe( types => this.types = types );
         this.orderSubscribe  =   POS.order.subscribe( order => {
@@ -539,7 +538,7 @@ export default {
                 POS.refreshCart();
 
             } catch( exception ) {
-                console.log( exception );
+                console.error( exception );
             }
         },
 
