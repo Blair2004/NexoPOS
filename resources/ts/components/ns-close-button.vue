@@ -5,6 +5,7 @@
 </template>
 <script>
 export default {
+    name: 'ns-close-button',
     methods: {
         // ...
     }

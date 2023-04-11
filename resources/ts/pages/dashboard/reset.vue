@@ -12,7 +12,7 @@
                         <ns-field :field="field"></ns-field>
                     </div>
                 </div>
-                <div class="card-body ns-box-footer border-t p-2 flex">
+                <div class="card-body p-2 flex">
                     <div> 
                         <ns-button type="info" @click="submit()">{{ __( 'Proceed' ) }}</ns-button>
                     </div>

@@ -1,10 +1,10 @@
 <template>
-    <div class="flex items-center justify-center cursor-pointer" @click="toggleIt()">
+    <div class="flex ns-checkbox items-center justify-center cursor-pointer" @click="toggleIt()">
         <div class="w-6 h-6 flex bg-input-background border-input-edge border-2 items-center justify-center cursor-pointer">
             <i v-if="isChecked" class="las la-check"></i>   
         </div>
-        <span v-if="label" class="mx-2">{{ label }}</span>
-        <span v-if="field" class="mx-2">{{ field.label }}</span>
+        <label :class="hasError ? 'has-error': 'is-pristine'" v-if="label" class="mx-2">{{ label }}</label>
+        <label :class="hasError ? 'has-error': 'is-pristine'" v-if="field" class="mx-2">{{ field.label }}</label>
     </div>
 </template>
 <script>
@@ -16,6 +16,12 @@ export default {
     computed: {
         isChecked() {
             return this.field ? this.field.value : this.checked;
+        },
+        hasError() {
+            if ( this.field.errors !== undefined && this.field.errors.length > 0 ) {
+                return true;
+            }
+            return false;
         },
     },
     methods: {

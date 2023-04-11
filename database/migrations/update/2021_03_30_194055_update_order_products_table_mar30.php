@@ -20,9 +20,12 @@ return new class extends Migration
             }
         });
 
-        OrderProduct::get()->each( function( $product ) {
-            $product->product_category_id = $product->product->category->id ?? 0;
-            $product->save();
+        OrderProduct::with( 'product' )
+            ->where( 'product_category_id', 0 )
+            ->get()
+            ->each( function( $product ) {
+                $product->product_category_id = $product->product->category->id ?? 0;
+                $product->save();
         });
     }
 
