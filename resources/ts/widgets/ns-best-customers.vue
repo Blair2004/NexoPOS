@@ -18,7 +18,7 @@
                 <table class="table w-full" v-if="customers.length > 0">
                     <thead>
                         <tr v-for="customer of customers" :key="customer.id" class="entry border-b text-sm">
-                            <th class="p-2"> 
+                            <th class="p-2">
                                 <div class="-mx-1 flex justify-start items-center">
                                     <div class="px-1">
                                         <div class="rounded-full">
@@ -26,7 +26,7 @@
                                         </div>
                                     </div>
                                     <div class="px-1 justify-center">
-                                        <h3 class="font-semibold  items-center">{{ customer.first_name }}</h3>
+                                        <h3 class="font-semibold  items-center">{{ customer.first_name }} {{ customer.last_name }}</h3>
                                     </div>
                                 </div>
                             </th>

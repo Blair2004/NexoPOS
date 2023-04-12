@@ -16,11 +16,11 @@
             <div class="p-2 border-b ns-box-body flex justify-between text-primary">
                 <div class="input-group flex-auto border-2 rounded">
                     <input
-                        ref="searchField" 
+                        ref="searchField"
                         @keydown.enter="attemptToChoose()"
                         v-model="searchCustomerValue"
-                        placeholder="Search Customer" 
-                        type="text" 
+                        placeholder="Search Customer"
+                        type="text"
                         class="outline-none w-full p-2">
                 </div>
             </div>
@@ -33,7 +33,7 @@
                         <span class="border-b border-dashed border-info-primary">{{ __( 'Create a customer' ) }}</span>
                     </li>
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
-                        <span>{{ customer.first_name }}</span>
+                        <span>{{ customer.first_name }} {{ customer.last_name }}</span>
                         <p class="flex items-center">
                             <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owe_amount ) }}</span>
                             <span v-if="customer.owe_amount > 0">/</span>
@@ -104,7 +104,7 @@ export default {
     methods: {
         __,
         nsCurrency,
-        
+
         /**
          * if the popup is likely to be used
          * on a queue, using the resolveIfQueued

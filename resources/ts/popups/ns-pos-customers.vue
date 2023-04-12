@@ -37,13 +37,13 @@
                         <div class="flex-auto p-2 flex flex-col">
                             <div class="-mx-4 flex flex-wrap ns-tab-cards">
                                 <div class="px-4 mb-4 w-full">
-                                    <h2 class="font-semibold">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
+                                    <h2 class="font-semibold text-primary">{{ __( 'Summary For' ) }} : {{ customer.first_name }} {{ customer.last_name }}</h2>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-success-secondary to-green-700 p-2 flex flex-col text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="font-bold">{{ nsCurrency( amount ) }}</h2>
+                                            <h2 class="font-bold">{{ nsCurrency( customer.purchases_amount ) }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -51,7 +51,7 @@
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-error-secondary to-red-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Owed' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ nsCurrency( amount ) }}</h2>
+                                            <h2 class="text-2xl font-bold">{{ nsCurrency( customer.owed_amount ) }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Wallet Amount' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ nsCurrency( amount ) }}</h2>
+                                            <h2 class="text-2xl font-bold">{{ nsCurrency( customer.account_amount ) }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -67,7 +67,7 @@
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-teal-500 to-teal-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Credit Limit' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ nsCurrency( amount ) }}</h2>
+                                            <h2 class="text-2xl font-bold">{{ nsCurrency( customer.credit_limit_amount ) }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +101,7 @@
                                                                         <h3 class="font-bold">{{ __( 'Code' ) }}: {{ order.code }}</h3>
                                                                         <div class="md:-mx-2 w-full flex flex-col md:flex-row">
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/4">
-                                                                                <small>{{ __( 'Total' ) }}: {{ nsCurrency( total ) }}</small>
+                                                                                <small>{{ __( 'Total' ) }}: {{ nsCurrency( order.total ) }}</small>
                                                                             </div>
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/4">
                                                                                 <small>{{ __( 'Status' ) }}: {{ order.human_status }}</small>
@@ -151,7 +151,7 @@
                                                                         <h3 class="font-bold">{{ __( 'Transaction' ) }}: {{ getWalletHistoryLabel( history.operation ) }}</h3>
                                                                         <div class="md:-mx-2 w-full flex flex-col md:flex-row">
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/3">
-                                                                                <small>{{ __( 'Amount' ) }}: {{ nsCurrency( amount ) }}</small>
+                                                                                <small>{{ __( 'Amount' ) }}: {{ nsCurrency( history.amount ) }}</small>
                                                                             </div>
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/3">
                                                                                 <small>{{ __( 'Date' ) }}: {{ history.created_at }}</small>
@@ -203,7 +203,7 @@
                                                                         ({{ coupon.coupon.discount_value }}%)
                                                                     </span>
                                                                     <span v-if="coupon.coupon.type === 'flat_discount'">
-                                                                        ({{ nsCurrency( value ) }})
+                                                                        ({{ nsCurrency( coupon.coupon.discount_value ) }})
                                                                     </span>
                                                                 </td>
                                                                 <td class="border p-2 text-right">
@@ -442,7 +442,7 @@ export default {
                     }
                 });
         },
-        
+
         loadRewards( url = `/api/customers/${this.customer.id}/rewards` ) {
             this.isLoadingRewards   =   true;
             nsHttpClient.get( url )

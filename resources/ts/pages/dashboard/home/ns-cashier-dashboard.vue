@@ -97,6 +97,7 @@ export default {
         }
     },
     methods: {
+        nsCurrency,
         __,
         refreshReport() {
             Cashier.refreshReport();
@@ -119,15 +120,15 @@ export default {
             this.report     =   report;
         });
 
-        const button    =   
+        const button    =
         document.createRange().createContextualFragment(
         `<div clss="px-2">
             <div class="mr-2">
-                <div 
-                    id="refresh-button" 
+                <div
+                    id="refresh-button"
                     class="hover:bg-white hover:text-gray-700 hover:shadow-lg hover:border-opacity-0 rounded-full h-12 w-12 cursor-pointer font-bold text-2xl justify-center items-center flex text-gray-800 border border-gray-400">
                     <i class="las la-sync-alt"></i>
-                </div>             
+                </div>
             </div>
         </div>`);
 
