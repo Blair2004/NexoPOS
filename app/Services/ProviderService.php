@@ -190,13 +190,12 @@ class ProviderService
         $provider = Provider::find( $procurement->provider_id );
 
         if ( $provider instanceof Provider ) {
-            
             if ( $procurement->payment_status === 'paid' ) {
                 $provider->amount_paid -= $procurement->cost;
             } else {
                 $provider->amount_due -= $procurement->cost;
             }
-    
+
             $provider->save();
         }
 

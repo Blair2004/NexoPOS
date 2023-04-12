@@ -519,7 +519,6 @@ class CrudService
          * Let's loop relation if they exists
          */
         if ( $this->getRelations() ) {
-
             /**
              * we're extracting the joined table
              * to make sure building the alias works

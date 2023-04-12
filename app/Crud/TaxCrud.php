@@ -253,7 +253,7 @@ class TaxCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

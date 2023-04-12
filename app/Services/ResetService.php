@@ -6,7 +6,6 @@ use App\Classes\Hook;
 use App\Classes\Schema;
 use App\Events\AfterHardResetEvent;
 use App\Events\BeforeHardResetEvent;
-use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;

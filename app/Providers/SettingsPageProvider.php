@@ -36,23 +36,23 @@ class SettingsPageProvider extends ServiceProvider
         Hook::addFilter( 'ns.settings', function( $class, $identifier ) {
             switch ( $identifier ) {
                 case 'ns.general': return new GeneralSettings;
-                break;
+                    break;
                 case 'ns.pos': return new PosSettings;
-                break;
+                    break;
                 case 'ns.customers': return new CustomersSettings;
-                break;
+                    break;
                 case 'ns.supplies-deliveries': return new SuppliesDeliveriesSettings;
-                break;
+                    break;
                 case 'ns.orders': return new OrdersSettings;
-                break;
+                    break;
                 case 'ns.invoice-settings': return new InvoiceSettings;
-                break;
+                    break;
                 case 'ns.workers': return new WorkersSettings;
-                break;
+                    break;
                 case 'ns.reports': return new ReportsSettings;
-                break;
+                    break;
                 case 'ns.accounting': return new AccountingSettings;
-                break;
+                    break;
             }
 
             return $class;

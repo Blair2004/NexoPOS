@@ -22,7 +22,7 @@ trait WithProcurementTest
         $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => 'unpaid',
             'general.provider_id' => $provider->id,
-            'general.delivery_status' => Procurement::DELIVERED
+            'general.delivery_status' => Procurement::DELIVERED,
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
@@ -68,8 +68,8 @@ trait WithProcurementTest
 
         $currentExpenseValue = CashFlow::where( 'expense_category_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
-            'general.payment_status'    =>  Procurement::PAYMENT_UNPAID,
-            'general.delivery_status'   =>  Procurement::PENDING
+            'general.payment_status' => Procurement::PAYMENT_UNPAID,
+            'general.delivery_status' => Procurement::PENDING,
         ]);
 
         /**
@@ -80,7 +80,7 @@ trait WithProcurementTest
 
         $response->assertOk();
 
-        $procurementId  =   $response->json()[ 'data' ][ 'procurement' ][ 'id' ];
+        $procurementId = $response->json()[ 'data' ][ 'procurement' ][ 'id' ];
 
         /**
          * Check: at the point, there shouldn't be any expense recorded.
@@ -92,8 +92,8 @@ trait WithProcurementTest
         /**
          * Query: we store the procurement now with a paid status
          */
-        $procurementsDetails[ 'general' ][ 'payment_status' ]   =   Procurement::PAYMENT_PAID;
-        $procurementsDetails[ 'general' ][ 'delivery_status' ]   =   Procurement::DELIVERED;
+        $procurementsDetails[ 'general' ][ 'payment_status' ] = Procurement::PAYMENT_PAID;
+        $procurementsDetails[ 'general' ][ 'delivery_status' ] = Procurement::DELIVERED;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/nexopos/v4/procurements/' . $procurementId, $procurementsDetails );

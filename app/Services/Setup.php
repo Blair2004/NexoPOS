@@ -15,7 +15,7 @@ use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 class Setup
 {
     public Options $options;
-    
+
     /**
      * Attempt database and save db informations
      *
@@ -122,7 +122,7 @@ class Setup
     {
         /**
          * We're running this simple migration call to ensure
-         * default tables are created. Those table are located at the 
+         * default tables are created. Those table are located at the
          * root of the database folder.
          */
         Artisan::call( 'migrate' );
@@ -154,7 +154,7 @@ class Setup
             });
 
         /**
-         * The update migrations should'nt be executed. 
+         * The update migrations should'nt be executed.
          * This should improve the speed during the installation.
          */
         ns()->update

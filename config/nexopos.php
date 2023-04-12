@@ -12,7 +12,7 @@ return [
         'pt' => 'Portuguese',
         'tr' => 'Türkçe',
         'vi' => 'Vietnamese',
-        'sq' => 'Shqiptare'
+        'sq' => 'Shqiptare',
     ],
     'rtl-languages' => [ 'ar' ],
     'timezones' => [

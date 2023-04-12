@@ -1166,22 +1166,22 @@ class ProductService
      * @param Unit $unit
      * @return EloquentCollection
      */
-    private function handleStockAdjustmentsForGroupedProducts( 
-        $action, 
-        $orderProductQuantity, 
-        Product $product, 
-        Unit $parentUnit, 
+    private function handleStockAdjustmentsForGroupedProducts(
+        $action,
+        $orderProductQuantity,
+        Product $product,
+        Unit $parentUnit,
         OrderProduct $orderProduct = null  ): EloquentCollection
     {
         $product->load( 'sub_items' );
 
-        $products   =   $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $parentUnit, $orderProduct ) {            
+        $products = $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $parentUnit, $orderProduct ) {
             $finalQuantity = $this->computeSubItemQuantity(
                 subItemQuantity: $subItem->quantity,
                 parentUnit: $parentUnit,
                 parentQuantity: $orderProductQuantity
             );
-            
+
             /**
              * Let's retrieve the old item quantity.
              */
@@ -1367,16 +1367,16 @@ class ProductService
      * @param float $old_quantity
      * @param float $new_quantity
      */
-    public function recordStockHistory( 
-        $product_id, 
-        $action, 
-        $unit_id, 
-        $unit_price, 
-        $quantity, 
-        $total_price, 
-        $order_id = null, 
+    public function recordStockHistory(
+        $product_id,
+        $action,
+        $unit_id,
+        $unit_price,
+        $quantity,
+        $total_price,
+        $order_id = null,
         $order_product_id = null,
-        $old_quantity = 0, 
+        $old_quantity = 0,
         $new_quantity = 0 )
     {
         $history = new ProductHistory;
@@ -1411,15 +1411,16 @@ class ProductService
         }
 
         $unit->load( 'group.units' );
+
         return $unit->group->units->filter( fn( $unit ) => $unit->base_unit )->first();
     }
 
-    public function computeSubItemQuantity( 
+    public function computeSubItemQuantity(
         float $subItemQuantity,
         Unit $parentUnit,
         float $parentQuantity )
     {
-        return ( ( $subItemQuantity * $parentUnit->value ) * $parentQuantity );
+        return  ( $subItemQuantity * $parentUnit->value ) * $parentQuantity;
     }
 
     /**

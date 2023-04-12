@@ -955,7 +955,7 @@ class ProcurementService
         return Product::query()
             ->whereIn( 'type', [
                 Product::TYPE_DEMATERIALIZED,
-                Product::TYPE_MATERIALIZED
+                Product::TYPE_MATERIALIZED,
             ])
             ->where( function( $query ) use ( $argument ) {
                 $query->orWhere( 'name', 'LIKE', "%{$argument}%" )

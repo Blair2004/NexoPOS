@@ -258,9 +258,9 @@ trait WithProductTest
 
     protected function attemptAdjustmentByDeletion()
     {
-        $productUnitQuantity    =   ProductUnitQuantity::where( 'quantity', '>', 10 )
+        $productUnitQuantity = ProductUnitQuantity::where( 'quantity', '>', 10 )
             ->with( 'product' )
-            ->whereRelation( 'product', function( $query ){
+            ->whereRelation( 'product', function( $query ) {
                 return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
             })
             ->first();
