@@ -76,7 +76,7 @@
                                 <ns-tabs :active="selectedTab" @changeTab="doChangeTab( $event )">
                                     <ns-tabs-item identifier="orders" :label="__( 'Orders' )">
                                         <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingOrders">
-                                            <ns-spinner size="36"></ns-spinner>
+                                            <ns-spinner size="36" class="m-5"></ns-spinner>
                                         </div>
                                         <template  v-if="! isLoadingOrders">
                                             <div class="py-2 w-full">
@@ -127,7 +127,7 @@
                                     </ns-tabs-item>
                                     <ns-tabs-item identifier="wallet-history" :label="__( 'Wallet History' )">
                                         <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingHistory">
-                                            <ns-spinner size="36"></ns-spinner>
+                                            <ns-spinner size="36" class="m-5"></ns-spinner>
                                         </div>
                                         <template v-if="! isLoadingHistory">
                                             <div class="py-2 w-full">
@@ -168,7 +168,7 @@
                                     </ns-tabs-item>
                                     <ns-tabs-item identifier="coupons" :label="__( 'Coupons' )">
                                         <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingCoupons">
-                                            <ns-spinner size="36"></ns-spinner>
+                                            <ns-spinner size="36" class="m-5"></ns-spinner>
                                         </div>
                                         <template v-if="! isLoadingCoupons">
                                             <div class="py-2 w-full">
@@ -218,7 +218,7 @@
                                     </ns-tabs-item>
                                     <ns-tabs-item identifier="rewards" :label="__( 'Rewards' )">
                                         <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingRewards">
-                                            <ns-spinner size="36"></ns-spinner>
+                                            <ns-spinner size="36" class="m-5"></ns-spinner>
                                         </div>
                                         <template v-if="! isLoadingRewards">
                                             <div class="py-2 w-full">
