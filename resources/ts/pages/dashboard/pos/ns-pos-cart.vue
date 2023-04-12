@@ -20,14 +20,16 @@
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Comments' ) }}</span>
                                 </button>
                             </div>
-                            <hr class="h-10" style="width: 1px">
-                            <div class="ns-button">
-                                <button @click="selectTaxGroup()" class="w-full h-10 px-3 outline-none flex items-center">
-                                    <i class="las la-balance-scale-left"></i>
-                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Taxes' ) }}</span>
-                                    <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-secondary text-white">{{ order.taxes.length }}</span>
-                                </button>
-                            </div>
+                            <template v-if="options.ns_pos_vat !== 'disabled'">
+                                <hr class="h-10" style="width: 1px">
+                                <div class="ns-button">
+                                    <button @click="selectTaxGroup()" class="w-full h-10 px-3 outline-none flex items-center">
+                                        <i class="las la-balance-scale-left"></i>
+                                        <span class="ml-1 hidden md:inline-block">{{ __( 'Taxes' ) }}</span>
+                                        <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-secondary text-white">{{ order.taxes.length }}</span>
+                                    </button>
+                                </div>
+                            </template>
                             <hr class="h-10" style="width: 1px">
                             <div class="ns-button">
                                 <button @click="selectCoupon()" class="w-full h-10 px-3 outline-none flex items-center">
