@@ -230,6 +230,7 @@ class OrdersController extends DashboardController
         $order->load( 'shipping_address' );
         $order->load( 'billing_address' );
         $order->load( 'user' );
+        $order->load( 'taxes' );
 
         $order->products = Hook::filter( 'ns-receipt-products', $order->products );
 

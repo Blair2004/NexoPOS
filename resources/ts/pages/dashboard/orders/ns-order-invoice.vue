@@ -130,6 +130,11 @@
                             <td class="p-2 border text-primary text-left">{{ __( 'Shipping' ) }}</td>
                             <td class="p-2 border text-right text-primary">{{ order.shipping | currency }}</td>
                         </tr>
+                        <tr :key="tax.id" v-for="tax of order.taxes">
+                            <td class="p-2 border text-center text-primary" colspan="4"></td>
+                            <td class="p-2 border text-primary text-left">{{ tax.tax_name }} &mdash; {{ order.tax_type === 'inclusive' ? __( 'Inclusive' ) : __( 'Exclusive' )  }}</td>
+                            <td class="p-2 border text-right text-primary">{{ order.tax_value | currency }}</td>
+                        </tr>
                         <tr>
                             <td class="p-2 border text-center text-primary" colspan="4"></td>
                             <td class="p-2 border text-primary text-left">{{ __( 'Total' ) }}</td>
