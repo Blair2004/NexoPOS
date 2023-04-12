@@ -1,6 +1,7 @@
 import { Subject } from "rxjs";
 import { createApp } from "vue/dist/vue.esm-bundler";
 import popupInjector from "./popup-injector";
+import {nextTick} from "vue";
 
 declare const document;
 declare const window;
@@ -167,13 +168,15 @@ export class Popup {
         this.container.classList.remove( 'is-popup' );
 
         /**
-         * Let's start by destorying the
+         * Let's start by destroying the
          * Vue component attached to the popup
          */
 
         if (immediately) {
-            this.instance.unmount();
-            this.container.remove();
+            nextTick(() => {
+                this.instance.unmount();
+                this.container.remove();
+            });
         } else {
             setTimeout( () => {
                 this.instance.unmount();
