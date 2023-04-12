@@ -95,11 +95,13 @@ export default {
             this.finalValue     =   quantity;
         },
 
-        defineQuantity( quantity ) {
+        defineQuantity( quantityString ) {
             /**
              * resolve is provided only on the addProductQueue
              */
             const { product, data }         =   this.$popupParams;
+
+            const quantity = parseFloat(quantityString) || 0;
 
             if ( quantity === 0 ) {
                 return nsSnackBar.error( __( 'Please provide a quantity' ) )
