@@ -282,6 +282,7 @@ import nsPosOrderSettingsVue from '~/popups/ns-pos-order-settings.vue';
 import nsPosProductPricePopupVue from '~/popups/ns-pos-product-price-popup.vue';
 import nsPosQuickProductPopupVue from '~/popups/ns-pos-quick-product-popup.vue';
 import { ref } from '@vue/reactivity';
+import {toRaw} from "vue";
 
 export default {
     name: 'ns-pos-cart',
@@ -671,7 +672,7 @@ export default {
                 message: __( 'Would you like to delete this product ?' ),
                 onAction( action ) {
                     if ( action ) {
-                        POS.removeProduct( product );
+                        POS.removeProduct( toRaw(product) );
                     }
                 }
             });
