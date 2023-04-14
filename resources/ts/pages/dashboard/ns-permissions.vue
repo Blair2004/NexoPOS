@@ -102,7 +102,7 @@ export default {
 
             if ( 
                 ! role.locked ||
-                ( role.locked && confirm( this.$slots[ 'bulk-edit-system-role' ] ? this.$slots[ 'bulk-edit-system-role' ][0].text : 'No message has been provided for "bulk-edit-system-role"' ) )
+                ( role.locked && confirm( __( 'Would you like to bulk edit system roles ?' ) ) )
                 
             ) {    
                 for( let permission in role.fields ) {

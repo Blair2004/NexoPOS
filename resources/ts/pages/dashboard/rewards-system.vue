@@ -21,26 +21,26 @@ export default {
         __,
         submit() {
             if ( this.form.rules.length === 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-rules' ] ? this.$slots[ 'error-no-rules' ] : __( 'No rules has been provided.' ) )
+                return nsSnackBar.error( __( 'No rules has been provided.' ) )
                     .subscribe();
             }
 
             if ( this.form.rules.filter( rule => {
                 return rule.filter( field => ! ( field.value >= 0 ) && field.type !== 'hidden' ).length > 0;
             }).length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-valid-rules' ] ? this.$slots[ 'error-no-valid-rules' ] : __( 'No valid run were provided.' ) )
+                return nsSnackBar.error( __( 'No valid run were provided.' ) )
                     .subscribe();
             }
 
             if ( this.formValidation.validateForm( this.form ).length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : __( 'Unable to proceed, the form is invalid.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
+                return nsSnackBar.error( __( 'Unable to proceed, the form is invalid.' ), __( 'OK' ) )
                     .subscribe();
             }
 
             this.formValidation.disableForm( this.form );
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-submit-url' ] ? this.$slots[ 'error-no-submit-url' ][0].text : __( 'Unable to proceed, no valid submit URL is defined.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
+                return nsSnackBar.error( __( 'Unable to proceed, no valid submit URL is defined.' ), __( 'OK' ) )
                     .subscribe();
             }
 

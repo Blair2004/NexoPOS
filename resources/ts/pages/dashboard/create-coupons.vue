@@ -58,12 +58,12 @@ export default {
         },
         submit() {
             if ( this.formValidation.validateForm( this.form ).length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.'), __( 'Okay' ) )
                     .subscribe();
             }
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-submit-url' ] ? this.$slots[ 'error-no-submit-url' ][0].text : 'No error message provided for not having a valid submit url.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                return nsSnackBar.error( __( 'No submit URL was provided' ), __( 'Okay' ) )
                     .subscribe();
             }
 

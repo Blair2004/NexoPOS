@@ -385,7 +385,7 @@ export default {
             }).filter( v => v.length > 0 );
 
             if ( validity.length > 0 || Object.values( this.form.main.errors ).length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-form-invalid' ] ? this.$slots[ 'error-form-invalid' ][0].text : __( 'Unable to proceed the form is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
 
             /**
@@ -399,7 +399,7 @@ export default {
             })
 
             if ( images[0] && images[0].length > 1 ) {
-                return nsSnackBar.error( this.$slots[ 'error-multiple-primary' ] ? this.$slots[ 'error-multiple-primary' ][0].text : __( 'Unable to proceed, more than one product is set as featured' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed, more than one product is set as featured' ) ).subscribe();
             }
 
             const validation        =   [];
@@ -416,12 +416,12 @@ export default {
             });
 
             if ( validation.length === 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-units-groups' ] ? this.$slots[ 'error-no-units-groups' ][0].text : __( 'Either Selling or Purchase unit isn\'t defined. Unable to proceed.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Either Selling or Purchase unit isn\'t defined. Unable to proceed.' ) ).subscribe();
             }
 
             if ( validation.filter( v => v === false ).length > 0 ) {
                 this.$forceUpdate();
-                return nsSnackBar.error( this.$slots[ 'error-invalid-unit-group' ] ? this.$slots[ 'error-invalid-unit-group' ][0].text : __( 'Unable to proceed as one of the unit group field is invalid' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed as one of the unit group field is invalid' ) ).subscribe();
             }
 
             /**
@@ -486,7 +486,7 @@ export default {
                 })
         },
         deleteVariation( index ) {
-            if ( confirm( this.$slots[ 'delete-variation' ] ? this.$slots[ 'delete-variation' ][0].text : __( 'Would you like to delete this variation ?' ) ) ) {
+            if ( confirm( __( 'Would you like to delete this variation ?' ) ) ) {
                 this.form.variations.splice( index, 1 );
             }
         },
