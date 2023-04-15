@@ -7,7 +7,7 @@
             <div class="p-2 border-b ns-box-body items-center flex justify-between">
                 <span>{{ __( 'Selected' ) }} : </span>
                 <div class="flex items-center justify-between">
-                    <span>{{ order.customer ? order.customer.name : 'N/A' }}</span>
+                    <span>{{ order.customer ? getCustomerName(order.customer) : 'N/A' }}</span>
                     <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button hover:border-transparent">
                         <i class="las la-eye"></i>
                     </button>
@@ -33,10 +33,10 @@
                         <span class="border-b border-dashed border-info-primary">{{ __( 'Create a customer' ) }}</span>
                     </li>
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
-                        <span>{{ customer.first_name }} {{ customer.last_name }}</span>
+                        <span>{{ getCustomerName(customer) }}</span>
                         <p class="flex items-center">
-                            <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owe_amount ) }}</span>
-                            <span v-if="customer.owe_amount > 0">/</span>
+                            <span v-if="customer.owed_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owed_amount ) }}</span>
+                            <span v-if="customer.owed_amount > 0">/</span>
                             <span class="purchase-amount">{{ nsCurrency( customer.purchases_amount ) }}</span>
                             <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button info">
                                 <i class="las la-eye"></i>
@@ -51,22 +51,24 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import resolveIfQueued from "~/libraries/popup-resolver";
 import { Popup } from '~/libraries/popup';
 import nsPosCustomersVue from './ns-pos-customers.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
+import {Customer} from "~/interfaces/customer";
+import {Order} from "~/interfaces/order";
 
 export default {
     data() {
         return {
             searchCustomerValue: '',
             orderSubscription: null,
-            order: {},
+            order: {} as Order,
             debounceSearch: null,
-            customers: [],
+            customers: [] as Customer[],
             isLoading: false,
         }
     },
@@ -170,6 +172,10 @@ export default {
                         this.isLoading  =   false;
                     }
                 });
+        },
+
+        getCustomerName(customer: Customer) {
+            return customer.first_name + ' ' + customer.last_name;
         }
     }
 }
