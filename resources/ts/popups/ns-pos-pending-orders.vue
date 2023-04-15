@@ -41,6 +41,7 @@
 <script>
 import { nsHooks } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
+import {nsCurrency} from "~/filters/currency";
 export default {
     props: [ 'orders' ],
     data() {
@@ -67,10 +68,10 @@ export default {
                 value: ( order ) => order.nexopos_users_username
             }, {
                 label: __( 'Total' ),
-                value: ( order ) => order.total
+                value: ( order ) => nsCurrency(order.total)
             }, {
                 label: __( 'Tendered' ),
-                value: ( order ) => order.tendered
+                value: ( order ) => nsCurrency(order.tendered)
             },
         ]);
 
@@ -84,13 +85,13 @@ export default {
             }, {
                 label: __( 'Type' ),
                 value: ( order ) => order.type
-            }, 
+            },
         ]);
     },
     name: "ns-pos-pending-order",
     methods: {
         __,
-        
+
         previewOrder( order ) {
             this.$emit( 'previewOrder', order );
         },

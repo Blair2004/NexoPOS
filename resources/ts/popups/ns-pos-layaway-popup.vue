@@ -75,7 +75,7 @@
 import FormValidation from '~/libraries/form-validation';
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
-import { nsCurrency } from '~/filters/currency';
+import {nsCurrency, nsRawCurrency} from '~/filters/currency';
 
 export default {
     name: 'ns-pos-layaway-popup',
