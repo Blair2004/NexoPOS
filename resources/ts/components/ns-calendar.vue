@@ -25,7 +25,7 @@
                         <i class="las la-plus"></i>
                     </button>
                 </div>
-            </div>            
+            </div>
             <div class="p-2">
                 <button @click="toggleView( 'days' )" class="p-2 w-full ns-inset-button border text-sm error hover:text-white rounded flex items-center justify-center">
                     {{ __( 'Return To Calendar' ) }}
@@ -132,9 +132,9 @@ export default {
                 [], // first week
             ],
             currentDay: moment(),
-            daysOfWeek: (new Array(7)).fill('').map( ( _, i ) => i ),  
+            daysOfWeek: (new Array(7)).fill('').map( ( _, i ) => i ),
             hours: 0,
-            minutes: 0,            
+            minutes: 0,
             currentView: 'days',
             clickedOnCalendar: false,
 
@@ -150,10 +150,11 @@ export default {
     beforeUnmount() {
         document.removeEventListener( 'click', this.checkClickedItem );
     },
-    mounted() {        
+    mounted() {
         document.addEventListener( 'click', this.checkClickedItem );
 
-        this.currentDay     =   [ undefined, null, '' ].includes( this.date ) ? moment() : moment( this.date );
+        const parsedDate = moment( this.date );
+        this.currentDay     =   parsedDate.isValid() ? parsedDate : moment();
         this.hours          =   this.currentDay.hours();
         this.minutes        =   this.currentDay.minutes();
         this.build();
@@ -238,8 +239,8 @@ export default {
             this.selectDate({ date: this.currentDay.clone() });
         },
         toggleView( currentView ) {
-            this.currentView = currentView;  
-            
+            this.currentView = currentView;
+
             if ( this.currentView === 'years' ) {
                 setTimeout( () => {
                     this.$refs.year.select();
@@ -275,7 +276,7 @@ export default {
              */
             if ( this.$parent.$el.getAttribute( 'class' ).split( ' ' ).includes( 'picker' ) ) {
                 let clickChildrens        =   this.$parent.$el.contains( event.srcElement );
-                
+
                 if ( ! clickChildrens && ! this.clickedOnCalendar && this.visible ) {
                     this.$emit( 'onClickOut', true );
                 }
@@ -297,9 +298,9 @@ export default {
                  * the date we want to set is beyond the right side date
                  * we'll stop and display an error.
                  */
-                if ( 
-                    this.side === 'left' && 
-                    moment( this.selectedRange.endDate ).isValid() && 
+                if (
+                    this.side === 'left' &&
+                    moment( this.selectedRange.endDate ).isValid() &&
                     calendar.date.isAfter( this.selectedRange.endDate ) ) {
                     nsSnackBar.error( __( 'The left range will be invalid.' ) ).subscribe();
                     return false;
@@ -310,9 +311,9 @@ export default {
                  * the date we want to set is beyond the left side date
                  * we'll stop and display an error.
                  */
-                if ( 
-                    this.side === 'right' && 
-                    moment( this.selectedRange.startDate ).isValid() && 
+                if (
+                    this.side === 'right' &&
+                    moment( this.selectedRange.startDate ).isValid() &&
                     calendar.date.isBefore( this.selectedRange.startDate ) ) {
                     nsSnackBar.error( __( 'The right range will be invalid.' ) ).subscribe();
                     return false;
@@ -340,7 +341,7 @@ export default {
         resetCalendar() {
             this.calendar   =   [[]];
         },
-        
+
         build() {
 
             this.resetCalendar();
@@ -348,7 +349,7 @@ export default {
             const startOfMonth      =   this.currentDay.clone().startOf( 'month' );
             const currentDay     =   this.currentDay.clone().startOf( 'month' );
             const endOfMonth        =   this.currentDay.clone().endOf( 'month' );
-            
+
             while( true ) {
                 if ( currentDay.day() === 0 ) {
                     if ( this.calendar[0].length > 0 ) {
@@ -382,7 +383,7 @@ export default {
                 const diff              =   7 - this.calendar[0].length;
                 const firstDayOfWeek    =  this.calendar[0][0].date.clone();
                 const offMonthDays      =   [];
-                
+
                 for( let i = 0; i < diff ; i++ ) {
                     firstDayOfWeek.subtract( 1, 'day' );
                     offMonthDays.unshift({
@@ -407,7 +408,7 @@ export default {
                 const diff              =   7 - this.calendar[index].length;
                 const lastDayOfWeek     =  this.calendar[index][ this.calendar[index].length - 1 ].date.clone();
                 const offMonthDays      =   [];
-                
+
                 for( let i = 0; i < diff ; i++ ) {
                     lastDayOfWeek.add( 1, 'day' );
                     offMonthDays.push({
