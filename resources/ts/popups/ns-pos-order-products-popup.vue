@@ -2,8 +2,12 @@
 import { nsCurrency } from '~/filters/currency';
 import { nsHttpClient } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
+import NsSpinner from "~/components/ns-spinner.vue";
+import NsCloseButton from "~/components/ns-close-button.vue";
+import NsButton from "~/components/ns-button.vue";
 
 export default {
+    components: {NsButton, NsCloseButton, NsSpinner},
     data() {
         return {
             products: [],
@@ -61,7 +65,7 @@ export default {
                     <div class="flex-col border-b border-info-primary py-2">
                         <div class="title font-semibold text-primary flex justify-between">
                             <span>{{ product.name }} (x{{ product.quantity }})</span>
-                            <span>{{ nsCurrency( price ) }}</span>
+                            <span>{{ nsCurrency( product.total_price ) }}</span>
                         </div>
                         <div class="text-sm text-primary">
                             <ul>
