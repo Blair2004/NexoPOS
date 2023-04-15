@@ -72,7 +72,7 @@ export default {
         });
         this.loadFields();
     },
-    destroyed() {
+    unmounted() {
         this.settingsSubscription.unsubscribe();
     },
     methods: {

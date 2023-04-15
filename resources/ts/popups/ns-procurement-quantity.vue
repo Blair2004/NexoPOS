@@ -10,10 +10,10 @@
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
         <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
-            <div 
+            <div
                 @click="inputValue( key )"
-                :key="index" 
-                v-for="(key,index) of keys" 
+                :key="index"
+                v-for="(key,index) of keys"
                 class="text-xl font-bold border ns-numpad-key h-24 flex items-center justify-center cursor-pointer">
                 <span v-if="key.value !== undefined">{{ key.value }}</span>
                 <i v-if="key.icon" class="las" :class="key.icon"></i>
@@ -56,7 +56,7 @@ export default {
 
         document.addEventListener( 'keyup', this.handleKeyPress );
     },
-    destroyed() {
+    unmounted() {
         document.removeEventListener( 'keypress', this.handleKeyPress );
     },
     methods: {
@@ -82,7 +82,7 @@ export default {
              */
             this.$popup.close();
         },
-        
+
         inputValue( key ) {
             if ( key.identifier === 'next' ) {
                 /**
@@ -115,7 +115,7 @@ export default {
                     this.finalValue     +=  '' + key.value;
                     this.finalValue     =   parseFloat( this.finalValue );
                 }
-            } 
+            }
         },
 
         resolve( params ) {

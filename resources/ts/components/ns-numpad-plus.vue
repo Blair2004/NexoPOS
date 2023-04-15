@@ -2,11 +2,11 @@
     <div id="numpad-holder" class="border-t border-numpad-edge">
         <div v-for="(keys,index) of keyRows" :key="index">
             <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-1 text-lg border-r border-numpad-edge">
-                    <div 
+                    <div
                     @click="inputValue( key )"
-                    :key="index" 
+                    :key="index"
                     :class="keys.length === 1 ? 'col-span-3' : ''"
-                    v-for="(key,index) of keys" 
+                    v-for="(key,index) of keys"
                     class="select-none ns-numpad-key border-l border-b h-24 font-bold flex items-center justify-center cursor-pointer">
                         <span v-if="key.value !== undefined">{{ key.value }}</span>
                         <i v-if="key.icon" class="las" :class="key.icon"></i>
@@ -74,7 +74,7 @@ export default {
             .whenVisible([ '.is-popup' ])
             .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
-    beforeDestroy() {
+    beforeUnmount() {
         nsHotPress.destroy( 'numpad-backspace' );
         nsHotPress.destroy( 'numpad-increase' );
         nsHotPress.destroy( 'numpad-reduce' );
@@ -89,7 +89,7 @@ export default {
 
         inputValue( key ) {
             let value   =   this.value;
-            
+
             if ( key.identifier === 'next' ) {
                 this.$emit( 'next', this.value );
                 return;
@@ -113,7 +113,7 @@ export default {
                 if ( this.limit > 0 && this.value.length >= this.limit ) {
                     return;
                 }
-                
+
                 if ( this.allSelected ) {
                     value      =   key.value.toString();
                     this.allSelected    =   false;
@@ -124,7 +124,7 @@ export default {
                         value = this.value > 100 ? 100 : this.value;
                     }
                 }
-            } 
+            }
 
             this.$emit( 'changed', value );
         }

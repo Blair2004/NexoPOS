@@ -69,7 +69,7 @@ export default {
 
         this.popupCloser();
     },
-    destroyed() {
+    unmounted() {
         this.typeSubscription.unsubscribe();
     },
     methods: {

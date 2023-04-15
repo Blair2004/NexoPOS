@@ -129,7 +129,7 @@ export default {
             .whenPressed( 'enter', () => {
                 /**
                  * if the actual amount on the screen is "0",
-                 * and the key "enter" is pressed (we assume twice), we'll 
+                 * and the key "enter" is pressed (we assume twice), we'll
                  * emit the event "submit" to speed up the process.
                  */
                 if ( this.backValue === '' ) {
@@ -140,12 +140,12 @@ export default {
                 }
             })
     },
-    beforeDestroy() {
+    beforeUnmount() {
         nsHotPress.destroy( 'numpad-keys' );
         nsHotPress.destroy( 'numpad-backspace' );
         nsHotPress.destroy( 'numpad-save' );
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscription.unsubscribe();
     },
     methods: {

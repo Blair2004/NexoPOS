@@ -42,14 +42,14 @@ export default {
         const loader    =   document.getElementById( 'loader' );
         loader.classList.remove( 'fade-in-entrance' );
         loader.classList.add( 'fade-out-exit' );
-        
+
         setTimeout( () => {
             loader.remove();
             POS.reset();
-        }, 500 ); 
-        
+        }, 500 );
+
     },
-    destroyed() {
+    unmounted() {
         this.visibleSectionSubscriber.unsubscribe();
     },
     data() {

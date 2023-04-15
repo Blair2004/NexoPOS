@@ -15,7 +15,7 @@ export default {
             popup.open( nsPosOrderTypePopupVue );
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         nsHotPress.destroy( 'ns_pos_keyboard_order_type' );
     },
     mounted() {
@@ -25,11 +25,11 @@ export default {
         for( let shortcut in nsShortcuts ) {
             /**
              * let's declare only shortcuts that
-             * works on the pos grid and that doesn't 
+             * works on the pos grid and that doesn't
              * expect any popup to be visible
              */
-            if ([ 
-                    'ns_pos_keyboard_order_type', 
+            if ([
+                    'ns_pos_keyboard_order_type',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'ns_pos_keyboard_order_type' )

@@ -42,17 +42,17 @@
                 </div>
                 <div class="w-1/2 md:w-72 pr-2 pl-1">
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
-                        <div 
+                        <div
                             @click="increaseBy({ value : 100 })"
                             class="elevation-surface border hoverable text-2xl text-primary h-16 flex items-center justify-center cursor-pointer">
                             <span>{{ nsCurrency( 100 ) }}</span>
                         </div>
-                        <div 
+                        <div
                             @click="increaseBy({ value : 500 })"
                             class="elevation-surface border hoverable text-2xl text-primary h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ nsCurrency( 500 ) }}</span>
                         </div>
-                        <div 
+                        <div
                             @click="increaseBy({ value : 1000 })"
                             class="elevation-surface border hoverable text-2xl text-primary h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ nsCurrency( 1000 ) }}</span>
@@ -105,8 +105,8 @@ export default {
 
             if ( value > this.order.customer.account_amount ) {
                 return nsSnackBar.error( __( 'Not enough funds to add {amount} as a payment. Available balance {balance}.' )
-                    .replace( '{amount}', this.$options.filters.currency( value ) ) 
-                    .replace( '{balance}', this.$options.filters.currency( this.order.customer.account_amount ) ) 
+                    .replace( '{amount}', this.$options.filters.currency( value ) )
+                    .replace( '{balance}', this.$options.filters.currency( this.order.customer.account_amount ) )
                 ).subscribe();
             }
 
@@ -141,7 +141,7 @@ export default {
     mounted() {
         this.subscription   =   POS.order.subscribe( order => this.order = order );
     },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
     }
 }

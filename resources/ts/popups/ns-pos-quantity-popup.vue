@@ -40,7 +40,7 @@ export default {
             isLoading: false,
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.optionsSubscription.unsubscribe();
     },
     mounted() {
@@ -76,7 +76,7 @@ export default {
 
         this.popupCloser();
     },
-    destroyed() {
+    unmounted() {
         nsHotPress.destroy( 'pos-quantity-numpad');
         nsHotPress.destroy( 'pos-quantity-backspace' );
         nsHotPress.destroy( 'pos-quantity-enter');

@@ -56,7 +56,7 @@ export default {
             return this.tabs !== null ? this.tabs.shipping.fields[0].value : new Object;
         }
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscription.unsubscribe();
     },
     mounted() {
@@ -66,7 +66,7 @@ export default {
             }
         });
 
-        this.orderSubscription  =   POS.order.subscribe( order => this.order = order ); 
+        this.orderSubscription  =   POS.order.subscribe( order => this.order = order );
 
         this.loadForm();
     },
@@ -100,7 +100,7 @@ export default {
     },
     methods: {
         __,
-        
+
         resolveIfQueued,
 
         submitInformations() {
@@ -115,11 +115,11 @@ export default {
                     form.general[ index ]   =   parseFloat( form.general[ index ] );
                 }
             }
-            
+
             this.order  =   { ...this.order, ...form.general };
-            
+
             /**
-             * delete the information as we don't want 
+             * delete the information as we don't want
              * to add it to the addresses
              */
             delete form.general;
@@ -127,10 +127,10 @@ export default {
             delete form.billing._use_customer_billing;
 
             this.order.addresses    =   form;
-            
+
             POS.order.next( this.order );
             POS.refreshCart();
-            
+
             this.resolveIfQueued( true );
         },
 

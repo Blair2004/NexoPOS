@@ -313,7 +313,7 @@ export default {
     components: {
         nsPaginate
     },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
         this.optionsSubscriber.unsubscribe();
     },

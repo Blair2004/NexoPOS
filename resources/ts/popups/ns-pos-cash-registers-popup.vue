@@ -30,7 +30,7 @@ export default {
             this.settings    =   settings;
         });
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.settingsSubscription.unsubscribe();
     },
     computed: {

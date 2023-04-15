@@ -104,15 +104,14 @@ export default {
             this.options    =   options;
 
             /**
-             * only if the options allow it, the change 
-             * on the vat used is allowed.
+             * only if the options allow it, the change on the vat used is allowed.
              */
             if ( [ 'variable_vat', 'products_variable_vat' ].includes( this.options.ns_pos_vat ) ) {
                 this.group_fields.forEach( field => field.disabled = false );
             }
         });
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
         this.optionsSubscriber.unsubscribe();
     },
@@ -137,7 +136,7 @@ export default {
 
             const fields    =   this.validation.extractFields( this.group_fields );
             this.popupResolver( fields );
-        },  
+        },
         loadGroups() {
             nsHttpClient.get( `/api/taxes/groups` )
                 .subscribe( groups => {

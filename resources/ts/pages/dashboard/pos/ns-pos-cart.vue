@@ -395,7 +395,7 @@ export default {
             }
         }
     },
-    destroyed() {
+    unmounted() {
         this.visibleSectionSubscriber.unsubscribe();
         this.typeSubscribe.unsubscribe();
         this.orderSubscribe.unsubscribe();

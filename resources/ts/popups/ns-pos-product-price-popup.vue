@@ -46,7 +46,7 @@ export default {
             this.options    =   ref(options);
         });
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.optionsSubscription.unsubscribe();
     },
     methods: {

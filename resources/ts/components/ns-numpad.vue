@@ -1,9 +1,9 @@
 <template>
     <div id="numpad" class="grid grid-flow-row divide-x divide-y border-r border-b border-input-edge grid-cols-3 grid-rows-3">
-        <div 
+        <div
             @click="inputValue( key )"
-            :key="index" 
-            v-for="(key,index) of keys" 
+            :key="index"
+            v-for="(key,index) of keys"
             :class="index === 0 ? 'border-l border-t' : ''"
             class="select-none ns-numpad-key h-24 font-bold flex items-center justify-center cursor-pointer">
             <span v-if="key.value !== undefined">{{ key.value }}</span>
@@ -19,11 +19,11 @@ export default {
     props: [ 'value', 'currency', 'floating', 'limit' ],
     data() {
         return {
-            number: parseInt( 
+            number: parseInt(
                 1 + ( new Array( parseInt( ns.currency.ns_currency_precision ) ) )
                 .fill('')
                 .map( _ => 0 )
-                .join('') 
+                .join('')
             ),
             screenValue: 0,
             order: null,
@@ -78,7 +78,7 @@ export default {
             .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
     watch: {
-        value() {        
+        value() {
             if ( this.value.toString().length > 0 ) {
                 if ( this.floating ) {
                     this.screenValue    =   Math.round( this.value * this.number ).toString();
@@ -90,7 +90,7 @@ export default {
             }
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         nsHotPress.destroy( 'numpad-backspace' );
         nsHotPress.destroy( 'numpad-increase' );
         nsHotPress.destroy( 'numpad-reduce' );
@@ -98,11 +98,11 @@ export default {
     },
     methods: {
         increaseBy( key ) {
-            let number    =   parseInt( 
+            let number    =   parseInt(
                 1 + ( new Array( this.cursor ) )
                 .fill('')
                 .map( _ => 0 )
-                .join('') 
+                .join('')
             );
 
             this.screenValue      =   (( parseFloat( key.value ) * number ) + ( parseFloat( this.screenValue ) || 0 ) ).toString();
@@ -110,11 +110,11 @@ export default {
         },
 
         inputValue( key ) {
-            let number    =   parseInt( 
+            let number    =   parseInt(
                 1 + ( new Array( this.cursor ) )
                 .fill('')
                 .map( _ => 0 )
-                .join('') 
+                .join('')
             );
 
             if ( key.identifier === 'next' ) {
@@ -131,7 +131,7 @@ export default {
                 if ( this.limit > 0 && this.screenValue.length >= this.limit ) {
                     return;
                 }
-                
+
                 if ( this.allSelected ) {
                     this.screenValue      =   key.value.toString();
                     this.allSelected    =   false;
@@ -142,7 +142,7 @@ export default {
                         this.screenValue = this.screenValue > 100 ? 100 : this.screenValue;
                     }
                 }
-            } 
+            }
 
             const emitted   =   this.floating && this.screenValue.length > 0 && this.screenValue !== '0' ? parseFloat( this.screenValue / this.number ) : this.screenValue;
 

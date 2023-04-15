@@ -63,7 +63,7 @@ export default {
             this.loadPaymentComponent( value );
         }
     },
-    destroyed() {
+    unmounted() {
         this.paymentTypesSubscription.unsubscribe();
         this.orderSubscription.unsubscribe();
 

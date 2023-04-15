@@ -37,7 +37,7 @@ export default {
                     delete this.settings.register;
                     POS.settings.next( this.settings );
                     POS.reset();
-                } 
+                }
             } catch( error ) {
                 if ( Object.keys( error ).length > 0 ) {
                     nsSnackBar.error( error.message ).subscribe();
@@ -57,7 +57,7 @@ export default {
                      * we define here the register that will be used
                      * throughout the orders send to the server
                      */
-                    POS.set( 'register', response.data.register ); 
+                    POS.set( 'register', response.data.register );
                     this.setRegister( response.data.register );
 
                     return response;
@@ -80,12 +80,12 @@ export default {
                  * successfully loaded the opened cash register
                  */
                 const order             =   POS.order.getValue();
-                order.register_id       =   register.id; 
+                order.register_id       =   register.id;
                 POS.order.next( order );
             }
         }
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
     },
@@ -99,7 +99,7 @@ export default {
         this.settingsSubscriber     =   POS.settings.subscribe( settings => {
             this.settings           =   settings;
 
-            this.setRegister( this.settings.register );   
+            this.setRegister( this.settings.register );
 
             this.setButtonName();
         });

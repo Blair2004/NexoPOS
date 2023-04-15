@@ -158,7 +158,7 @@ export default {
             return this.$popupParams.order;
         },
     },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
     },
     methods: {

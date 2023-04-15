@@ -64,7 +64,7 @@ export default {
     },
     mounted() {
         document.addEventListener( 'click', this.checkClickedItem );
-        
+
         if ( ns.websocket.enabled ) {
             Echo.private( `ns.private-channel` )
                 .listen( 'App\\Events\\NotificationDispatchedEvent', (e) => {
@@ -81,7 +81,7 @@ export default {
 
         this.loadNotifications();
     },
-    destroyed() {
+    unmounted() {
         clearInterval( this.interval );
     },
     methods: {
@@ -125,7 +125,7 @@ export default {
             } else {
                 clickChildrens        =   false;
             }
-            
+
             const isNotificationButton  =   document.getElementById( 'notification-button' ).contains( event.srcElement );
 
             if ( ! clickChildrens && ! isNotificationButton && this.visible ) {

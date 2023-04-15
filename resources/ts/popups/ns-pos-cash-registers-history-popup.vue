@@ -59,7 +59,7 @@ export default {
 
         this.getHistory();
     },
-    destroyed() {
+    unmounted() {
         this.settingsSubscription.unsubscribe();
     },
     methods: {

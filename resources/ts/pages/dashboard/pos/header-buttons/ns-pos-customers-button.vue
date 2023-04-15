@@ -14,7 +14,7 @@ export default {
             }) );
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         nsHotPress.destroy( 'ns_pos_keyboard_create_customer' );
     },
     mounted() {
@@ -24,11 +24,11 @@ export default {
         for( let shortcut in nsShortcuts ) {
             /**
              * let's declare only shortcuts that
-             * works on the pos grid and that doesn't 
+             * works on the pos grid and that doesn't
              * expect any popup to be visible
              */
-            if ([ 
-                    'ns_pos_keyboard_create_customer', 
+            if ([
+                    'ns_pos_keyboard_create_customer',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'ns_pos_keyboard_create_customer' )

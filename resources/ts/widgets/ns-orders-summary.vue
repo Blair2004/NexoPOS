@@ -38,8 +38,8 @@
                     </div>
                 </div>
                 <div>
-                    <h2 
-                        :class="order.payment_status === 'paid' ? 'paid-currency' : 'unpaid-currency'" 
+                    <h2
+                        :class="order.payment_status === 'paid' ? 'paid-currency' : 'unpaid-currency'"
                         class="text-xl font-bold">{{ nsCurrency( order.total ) }}</h2>
                 </div>
             </div>
@@ -47,7 +47,6 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '~/bootstrap';
 import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
 export default {
@@ -67,7 +66,7 @@ export default {
         });
     },
     methods: { __, nsCurrency },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
     }
 }

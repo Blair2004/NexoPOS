@@ -100,7 +100,7 @@ export default {
 
         this.$refs.searchField.focus();
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscription.unsubscribe();
     },
     methods: {
