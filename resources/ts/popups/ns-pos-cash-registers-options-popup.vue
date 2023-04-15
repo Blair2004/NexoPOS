@@ -1,12 +1,17 @@
-<script>
+<script lang="ts">
 import popupCloser from '~/libraries/popup-closer';
 import nsPosCashRegistersActionPopupVue from './ns-pos-cash-registers-action-popup.vue';
 import nsPosCashRegistersHistoryVue from './ns-pos-cash-registers-history-popup.vue';
 import popupResolver from '~/libraries/popup-resolver';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
+import {Popup} from "~/libraries/popup";
+import {Register} from "~/interfaces/register";
+import NsCloseButton from "~/components/ns-close-button.vue";
+import NsSpinner from "~/components/ns-spinner.vue";
 
 export default {
+    components: {NsSpinner, NsCloseButton},
     mounted() {
         this.settingsSubscriber     =   POS.settings.subscribe( settings => {
             this.settings   =   settings;
@@ -23,12 +28,13 @@ export default {
         return {
             settings: null,
             settingsSubscriber: null,
-            register: {}
+            register: {} as Register
         }
     },
     methods: {
+        nsCurrency,
         __,
-        
+
         popupResolver,
 
         popupCloser,
@@ -55,7 +61,7 @@ export default {
                         action: 'close',
                         identifier: 'ns.cash-registers-closing',
                         register,
-                        resolve, 
+                        resolve,
                         reject
                     })
                 });
@@ -65,7 +71,7 @@ export default {
                  * closed, we need to delete the registe reference
                  */
                 POS.unset( 'register' );
-                
+
                 this.popupResolver({
                     button: 'close_register',
                     ...response
@@ -83,7 +89,7 @@ export default {
                         action: 'register-cash-in',
                         register,
                         identifier: 'ns.cash-registers-cashing',
-                        resolve, 
+                        resolve,
                         reject
                     })
                 });
@@ -109,7 +115,7 @@ export default {
                         action: 'register-cash-out',
                         register,
                         identifier: 'ns.cash-registers-cashout',
-                        resolve, 
+                        resolve,
                         reject
                     })
                 });

@@ -25,15 +25,26 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import FormValidation from '~/libraries/form-validation';
 import popupCloser from '~/libraries/popup-closer';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';
+import {nsCurrency} from "../filters/currency";
+import {Register} from "~/interfaces/register";
+import {Popup} from "~/libraries/popup";
+import {nsSnackBar} from "~/bootstrap";
+import NsNumpad from "~/components/ns-numpad.vue";
+import NsField from "~/components/ns-field.vue";
+import NsSpinner from "~/components/ns-spinner.vue";
+import NsCloseButton from "~/components/ns-close-button.vue";
 
 export default {
     components: {
-        // ...
+        NsCloseButton,
+        NsSpinner,
+        NsField,
+        NsNumpad
     },
     data() {
         return {
@@ -43,7 +54,7 @@ export default {
             settingsSubscription: null,
             settings: null,
             action: null,
-            register: null,
+            register: null as Register,
             loaded: false,
             register_id: null, // conditionnally provider
             validation: new FormValidation,
@@ -65,6 +76,7 @@ export default {
         this.settingsSubscription.unsubscribe();
     },
     methods: {
+        nsCurrency,
         popupCloser,
         __,
 
@@ -106,7 +118,7 @@ export default {
                         this.$popupParams.resolve( result );
                         this.$popup.close();
                         nsSnackBar.success( result.message ).subscribe();
-                    }, 
+                    },
                     error: ( error ) => {
                         nsSnackBar.error( error.message ).subscribe();
                     }
