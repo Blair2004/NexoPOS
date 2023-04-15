@@ -21,6 +21,7 @@ use App\Models\RewardSystem;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerService
@@ -97,9 +98,18 @@ class CustomerService
      */
     public function search( int | string $argument ): Collection
     {
+        $parts = preg_split('/\s+/', str($argument));
         $customers = Customer::with( 'billing' )
             ->with( 'shipping' )
-            ->where( 'first_name', 'like', '%' . $argument . '%' )
+            ->where(function(Builder $query) use ($parts) {
+                foreach ($parts as $part) {
+                    $query->where(function(Builder $subquery) use ($part) {
+                        $subquery
+                            ->where( 'first_name', 'like', '%' . $part . '%' )
+                            ->orWhere( 'last_name', 'like', '%' . $part . '%' );
+                    });
+                }
+            })
             ->orWhere( 'email', 'like', '%' . $argument . '%' )
             ->orWhere( 'phone', 'like', '%' . $argument . '%' )
             ->notBanned()
@@ -528,7 +538,7 @@ class CustomerService
             ->with( 'groups' )
             ->first();
 
-        if ( $coupon instanceof Coupon ) {            
+        if ( $coupon instanceof Coupon ) {
             if ( $coupon->customers()->count() > 0 ) {
                 $customers_id    =   $coupon->customers()
                     ->get( 'customer_id' )
@@ -745,28 +755,28 @@ class CustomerService
         /**
          * We'll now check if we're about to use
          * the coupon during a period is supposed to be active.
-         * 
+         *
          * @todo Well we're doing this because we don't yet have a proper time picker. As we're using a date time picker
          * we're extracting the hours from it :(.
          */
         $hourStarts     =   ! empty( $coupon->valid_hours_start ) ? Carbon::parse( $coupon->valid_hours_start )->format( 'H:i' ) : null;
         $hoursEnds      =   ! empty( $coupon->valid_hours_end ) ? Carbon::parse( $coupon->valid_hours_end )->format( 'H:i' ) : null;
 
-        if ( 
-            $hourStarts !== null && 
+        if (
+            $hourStarts !== null &&
             $hoursEnds !== null ) {
 
             $todayStartDate =   ns()->date->format( 'Y-m-d' ) . ' ' . $hourStarts;
             $todayEndDate   =   ns()->date->format( 'Y-m-d' ) . ' ' . $hoursEnds;
 
             if (
-                ns()->date->between( 
-                    date1: Carbon::parse( $todayStartDate ), 
-                    date2: Carbon::parse( $todayEndDate ) 
+                ns()->date->between(
+                    date1: Carbon::parse( $todayStartDate ),
+                    date2: Carbon::parse( $todayEndDate )
                 )
             ) {
                 throw new NotAllowedException( sprintf( __( 'Unable to use the coupon %s at this moment.' ), $coupon->name ) );
-            }  
+            }
         }
 
         /**
@@ -781,7 +791,7 @@ class CustomerService
             if ( ! $customerCoupon->active ) {
                 throw new NotAllowedException( sprintf( __( 'You\'re not allowed to use this coupon as it\'s no longer active' ) ) );
             }
-    
+
             /**
              * We're trying to use a coupon that is already exhausted
              * this should be prevented here.

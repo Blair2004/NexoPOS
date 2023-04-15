@@ -2,10 +2,10 @@
     <div id="report-section">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :field="startDateField"></ns-date-time-picker>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :field="endDateField"></ns-date-time-picker>
             </div>
             <div class="px-2" v-if="selectedCustomer">
                 <div class="ns-button">
@@ -27,7 +27,7 @@
         <div>
             <ns-search
                 :placeholder="__( 'Search Customer...' )"
-                label="name"
+                :label="c => c.first_name + ' ' + c.last_name"
                 value="id"
                 @select="handleSelectedCustomer( $event )"
                 :url="searchUrl"
@@ -68,11 +68,11 @@
                                 <tr class="">
                                     <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white print:text-black">{{ __( 'Wallet Balance' ) }}</td>
                                     <td class="p-2 border text-right border-info-primary">{{ nsCurrency( report.account_amount ) }}</td>
-                                </tr>                                   
+                                </tr>
                                 <tr class="">
                                     <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Credit Limit' ) }}</td>
                                     <td class="p-2 border text-right border-info-primary">{{ nsCurrency( report.credit_limit_amount ) }}</td>
-                                </tr>                             
+                                </tr>
                                 <tr class="">
                                     <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Total Orders' ) }}</td>
                                     <td class="p-2 border text-right border-info-primary">{{ report.total_orders }}</td>
@@ -112,14 +112,27 @@
 <script>
 import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
+import moment from "moment";
+import NsDateTimePicker from "~/components/ns-date-time-picker.vue";
+import NsSearch from "~/components/ns-search.vue";
+import {nsSnackBar} from "~/bootstrap";
 
 export default {
     name: 'ns-customers-statement-report',
+    components: {NsSearch, NsDateTimePicker},
     props: [ 'store-logo', 'store-name', 'search-url' ],
     data() {
         return {
-            startDate: moment().startOf( 'day' ),
-            endDate: moment().endOf( 'day' ),
+            startDateField: {
+                name: 'start_date',
+                type: 'datetime',
+                value: moment().startOf( 'day' ),
+            },
+            endDateField: {
+                name: 'end_date',
+                type: 'datetime',
+                value: moment().endOf( 'day' ),
+            },
             selectedCustomer: null,
             ns: window.ns,
             report: {
@@ -142,7 +155,7 @@ export default {
                 return __( 'N/A' );
             }
 
-            return this.selectedCustomer.name;
+            return this.selectedCustomer.first_name + ' ' + this.selectedCustomer.last_name;
         },
     },
     methods: {
@@ -151,18 +164,12 @@ export default {
         printSaleReport() {
             this.$htmlToPaper( 'report' );
         },
-        setStartDate( date ) {
-            this.startDate  =   date;
-        },
-        setEndDate( date ) {
-            this.endDate    =   date;
-        },
         handleSelectedCustomer( customer ) {
             this.selectedCustomer   =   customer;
 
             nsHttpClient.post( `/api/reports/customers-statement/${customer.id}`, {
-                rangeStarts: this.startDate.format( 'YYYY-MM-DD HH:mm:ss' ),
-                rangeEnds: this.endDate.format( 'YYYY-MM-DD HH:mm:ss' ),
+                rangeStarts: this.startDateField.value,
+                rangeEnds: this.endDateField.value,
             }).subscribe({
                 next: report => {
                     this.report     =   report;

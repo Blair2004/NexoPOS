@@ -246,8 +246,8 @@ class CustomersController extends DashboardController
 
     public function searchCustomer( Request $request )
     {
-        $search = $request->input( 'search' );
-        
+        $search = $request->input( 'search' ) ?? '';
+
         return $this->customerService->search( $search );
     }
 

@@ -13,10 +13,10 @@
         <p class="text-sm text-secondary py-1" v-if="field">{{ field.description }}</p>
         <div class="relative z-10 h-0 w-0" v-if="visible">
             <div :class="field.label && field.label.length > 0 ? '-mt-4' : 'mt-2'" class="absolute w-72 shadow-xl rounded ns-box anim-duration-300 zoom-in-entrance flex flex-col">
-                <ns-calendar 
+                <ns-calendar
                     @onClickOut="visible = false"
                     @set="setDate( $event )"
-                    :visible="visible" 
+                    :visible="visible"
                     :date="field.value"></ns-calendar>
             </div>
         </div>

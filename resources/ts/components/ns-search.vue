@@ -6,13 +6,15 @@
         <div class="relative">
             <div class="w-full absolute shadow-lg">
                 <ul class="ns-vertical-menu" v-if="results.length > 0 && searchText.length > 0">
-                    <li class="border-b p-2 cursor-pointer" v-for="( result, index ) of results" @click="selectOption( result )" :key="index">{{ result[ label ] }}</li>
+                    <li class="border-b p-2 cursor-pointer" v-for="( result, index ) of results" @click="selectOption( result )" :key="index">
+                        {{ getLabel(result) }}
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { __ } from '~/libraries/lang';
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 export default {
@@ -31,6 +33,10 @@ export default {
             this.$emit( 'select', result );
             this.searchText     =   '';
             this.results        =   [];
+        },
+        getLabel( value: Function | string ): string {
+            if (typeof this.label === 'function') return this.label(value);
+            return value[label];
         }
     },
     watch: {
