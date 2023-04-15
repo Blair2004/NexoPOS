@@ -129,7 +129,7 @@ export default {
         makeFullPayment() {
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Confirm Full Payment' ),
-                message: __( 'You\'re about to use {amount} from the customer account to make a payment. Would you like to proceed ?' ).replace( '{amount}', this.$options.filters.currency( this.order.total ) ),
+                message: __( 'You\'re about to use {amount} from the customer account to make a payment. Would you like to proceed ?' ).replace( '{amount}', nsCurrency( this.order.total ) ),
                 onAction: ( action ) => {
                     if ( action ) {
                         this.proceedFullPayment();
