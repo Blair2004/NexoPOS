@@ -8,12 +8,7 @@
         @include( 'common.dashboard.title' )
         </div>
         <div>
-            <ns-settings
-                url="{{ ns()->url( '/api/settings/ns.workers' ) }}"
-                
-                >
-                <template v-slot:error-form-invalid>{{ __( 'Unable to proceed the form is not valid.' ) }}</template>
-            </ns-settings>
+            <ns-settings url="{{ ns()->url( '/api/settings/ns.workers' ) }}"></ns-settings>
         </div>
     </div>
 </div>

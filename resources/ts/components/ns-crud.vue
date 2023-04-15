@@ -377,7 +377,7 @@ export default {
         bulkDo() {
             if ( this.bulkAction ) {
                 if ( this.selectedEntries.length > 0 ) {
-                    if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || __( 'Would you like to perform the selected bulk action on the selected entries ?' ) ) ) {
+                    if ( confirm( this.getSelectedAction.confirm || __( 'Would you like to perform the selected bulk action on the selected entries ?' ) ) ) {
                         return nsHttpClient.post( `${this.src}/bulk-actions`, {
                             action: this.bulkAction,
                             entries: this.selectedEntries.map( r => r.$id )
@@ -394,11 +394,11 @@ export default {
                         })
                     }
                 } else {
-                    return nsSnackBar.error( this.$slots[ 'error-no-selection' ] ? this.$slots[ 'error-no-selection' ][0].text : __( 'No selection has been made.' ) )
+                    return nsSnackBar.error( __( 'No selection has been made.' ) )
                         .subscribe();
                 }
             } else {
-                return nsSnackBar.error( this.$slots[ 'error-no-action' ] ? this.$slots[ 'error-no-action' ][0].text : __( 'No action has been selected.' ) )
+                return nsSnackBar.error( __( 'No action has been selected.' ) )
                     .subscribe();
             }
 

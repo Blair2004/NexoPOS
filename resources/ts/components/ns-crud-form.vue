@@ -54,7 +54,7 @@ export default {
             this.formValidation.disableForm( this.form );
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-submit-url' ] ? this.$slots[ 'error-no-submit-url' ][0].text : 'No error message provided for not having a valid submit url.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                return nsSnackBar.error( __( 'No submit URL was provided' ), __( 'Okay' ) )
                     .subscribe();
             }
 

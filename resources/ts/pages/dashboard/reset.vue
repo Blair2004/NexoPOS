@@ -12,7 +12,7 @@
                         <ns-field :field="field"></ns-field>
                     </div>
                 </div>
-                <div class="card-body ns-box-footer border-t p-2 flex">
+                <div class="card-body p-2 flex">
                     <div> 
                         <ns-button type="info" @click="submit()">{{ __( 'Proceed' ) }}</ns-button>
                     </div>
@@ -38,12 +38,12 @@ export default {
 
             if ( ! this.validation.validateFields( this.fields ) ) {
                 this.$forceUpdate();
-                return nsSnackBar.error( this.$slots[ 'error-form-invalid' ] ? this.$slots[ 'error-form-invalid' ][0].text : 'Invalid Form' ).subscribe(); 
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe(); 
             }
 
             const fields   =   this.validation.getValue( this.fields );
 
-            if ( confirm( this.$slots[ 'confirm-message' ] ? this.$slots[ 'confirm-message' ][0].text : __( 'Would you like to proceed ?' ) ) ) {
+            if ( confirm( __( 'Would you like to proceed ?' ) ) ) {
                 nsHttpClient.post( '/api/reset', fields )
                     .subscribe({
                         next: result => {

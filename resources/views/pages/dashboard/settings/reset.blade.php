@@ -14,7 +14,7 @@ use App\Services\Helper;
         @include( 'common.dashboard.title' )
         </div>
         <div>
-            <ns-reset></ns-reset>
+            <ns-settings url="{{ ns()->url( '/api/settings/ns.reset' ) }}"></ns-settings>
         </div>
     </div>
 </div>
@@ -23,11 +23,6 @@ use App\Services\Helper;
 @section( 'layout.dashboard.footer' )
     @parent
 <script>
-    const ResetData     =   {
-        options: <?php echo json_encode( Helper::kvToJsOptions( Hook::filter( 'ns-reset-options', [
-            'wipe_all'              =>  __( 'Wipe All' ),
-            'wipe_plus_grocery'     =>  __( 'Wipe Plus Grocery' ),
-        ])));?>
-    }
+    
 </script>
 @endsection

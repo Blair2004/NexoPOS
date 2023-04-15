@@ -18,7 +18,6 @@ use App\Fields\PosOrderSettingsFields;
 use App\Fields\ProcurementFields;
 use App\Fields\RecurringExpenseFields;
 use App\Fields\RefundProductFields;
-use App\Fields\ResetFields;
 use App\Fields\SalaryExpenseFields;
 use App\Fields\ScheduledExpenseField;
 use App\Fields\UnitsFields;
@@ -107,9 +106,6 @@ class FormsProvider extends ServiceProvider
                     break;
                 case ProcurementFields::getIdentifier():
                     return new ProcurementFields;
-                    break;
-                case ResetFields::getIdentifier():
-                    return new ResetFields;
                     break;
                 case UnitsFields::getIdentifier():
                     return new UnitsFields;

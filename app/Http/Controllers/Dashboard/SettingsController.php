@@ -8,13 +8,12 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Exceptions\NotAllowedException;
+use App\Classes\Output;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\SettingsRequest;
 use App\Services\Options;
 use App\Services\SettingsPage;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class SettingsController extends DashboardController
@@ -198,6 +197,8 @@ class SettingsController extends DashboardController
          * reset the system.
          */
         ns()->restrict([ 'manage.options' ]);
+
+        Hook::addAction( 'ns-dashboard-footer', fn( Output $output ) => $output->addView( 'pages.dashboard.settings.reset-footer' ) );
 
         return $this->view( 'pages.dashboard.settings.reset', [
             'title' => __( 'Reset Settings' ),

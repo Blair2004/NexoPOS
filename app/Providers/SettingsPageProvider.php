@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Forms\ResetForm;
 use App\Settings\AccountingSettings;
 use App\Settings\CustomersSettings;
 use App\Settings\GeneralSettings;
@@ -52,6 +53,9 @@ class SettingsPageProvider extends ServiceProvider
                 case 'ns.reports': return new ReportsSettings;
                     break;
                 case 'ns.accounting': return new AccountingSettings;
+                    break;
+                case 'ns.reset':
+                    return new ResetForm;
                     break;
             }
 

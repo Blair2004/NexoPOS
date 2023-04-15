@@ -25,8 +25,8 @@
                 </div>
             </div>
             <div class="header-tabs flex -mx-4 flex-wrap">
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ $slots[ 'enabled' ] ? $slots[ 'enabled' ][0].text : __( 'Enabled' ) }}({{ total_enabled }})</a></div>
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ $slots[ 'disabled' ] ? $slots[ 'disabled' ][0].text : __( 'Disabled' ) }} ({{ total_disabled }})</a></div>
+                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ __( 'Enabled' ) }}({{ total_enabled }})</a></div>
+                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ __( 'Disabled' ) }} ({{ total_disabled }})</a></div>
             </div>
         </div>
         <div class="module-section flex-auto flex flex-wrap -mx-4">

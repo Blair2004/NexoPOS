@@ -24,7 +24,7 @@
                         <component v-bind:is="loadComponent( activeTab.component ).value"></component>
                     </div>
                 </div>
-                <div v-if="activeTab.fields && activeTab.fields.length > 0" class="border-t border-gray-400 dark:border-slate-600 p-2 flex justify-end">
+                <div v-if="activeTab.fields && activeTab.fields.length > 0" class="ns-tab-item-footer border-t p-2 flex justify-end">
                     <ns-button @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
                 </div>
             </div>
@@ -72,45 +72,63 @@ export default {
         loadComponent( componentName ) {
             return shallowRef( nsExtraComponents[ componentName ] );
         },
-        submitForm() {
-            if ( this.validation.validateForm( this.form ).length === 0 ) {
-                this.validation.disableForm( this.form );
-                
-                const form  =   this.validation.extractForm( this.form );
+        async submitForm() {
+            if ( this.validation.validateForm( this.form ).length > 0 ) {
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) )
+                    .subscribe();
+            }
+            
+            this.validation.disableForm( this.form );
+            const form  =   this.validation.extractForm( this.form );
 
+            /**
+             * This wil allow any external to hook into saving process
+             * and prevent the regular process to run.
+             */
+            const beforeSaveHook    =   nsHooks.applyFilters( 'ns-before-saved', () => new Promise( ( resolve, reject ) => {
+                console.log( 'foo' );
                 return nsHttpClient.post( this.url, form )
                     .subscribe({
                         next: result => {
-                            this.validation.enableForm( this.form );
-                            this.loadSettingsForm();
-
-                            if ( result.data && result.data.results ) {
-                                result.data.results.forEach( response => {
-                                    if ( response.status === 'failed' ) {
-                                        nsSnackBar.error( response.message ).subscribe();
-                                    } else {
-                                        nsSnackBar.success( response.message ).subscribe();
-                                    }
-                                });
-                            }
-
-                            nsHooks.doAction( 'ns-settings-saved', { result, instance: this });
-                            nsSnackBar.success( result.message ).subscribe();
+                            resolve( result );
                         },
                         error: ( error ) => {
-                            this.validation.enableForm( this.form );
-                            this.validation.triggerFieldsErrors( this.form, error );
-                            
-                            nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
-
-                            nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) )
-                                .subscribe();
+                            reject( error )
                         }
                     })
-            }
+            } ) );
 
-            nsSnackBar.error( this.$slots[ 'error-form-invalid' ][0].text || __( 'Unable to proceed the form is not valid.' ) )
-                .subscribe();
+            try {
+                console.log( beforeSaveHook );
+                const result    =   await beforeSaveHook( form );
+
+                this.validation.enableForm( this.form );
+                this.loadSettingsForm();
+
+                if ( result.data && result.data.results ) {
+                    result.data.results.forEach( response => {
+                        if ( response.status === 'failed' ) {
+                            nsSnackBar.error( response.message ).subscribe();
+                        } else {
+                            nsSnackBar.success( response.message ).subscribe();
+                        }
+                    });
+                }
+
+                nsHooks.doAction( 'ns-settings-saved', { result, instance: this });
+                nsSnackBar.success( result.message ).subscribe();
+
+            } catch( error ) {
+                this.validation.enableForm( this.form );
+                this.validation.triggerFieldsErrors( this.form, error );
+                
+                nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
+
+                console.log( error );
+
+                nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) )
+                    .subscribe();
+            }                
         },
         setActive( tab ) {
             for( let tab in this.form.tabs ) {
