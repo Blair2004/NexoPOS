@@ -114,7 +114,7 @@ export default {
             if ( parseFloat( value ) == 0 ) {
                 return nsSnackBar.error( __( 'Please provide a valid value' ) ).subscribe();
             }
-        
+
             value   =   parseFloat( value );
 
             const form  =   {
@@ -124,7 +124,7 @@ export default {
 
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Confirm Your Action' ),
-                message: __( 'You make a payment for {amount}. A payment can\'t be canceled. Would you like to proceed ?' ).replace( '{amount}', this.$options.filters.currency( value ) ),
+                message: __( 'You make a payment for {amount}. A payment can\'t be canceled. Would you like to proceed ?' ).replace( '{amount}', nsCurrency( value ) ),
                 onAction:  ( action ) => {
                     if ( action ) {
                         nsHttpClient.post( `/api/orders/${this.order.id}/payments`, form )

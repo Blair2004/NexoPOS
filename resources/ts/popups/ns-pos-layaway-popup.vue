@@ -43,13 +43,16 @@
                             </div>
                         </div>
                         <div class="flex items-center">
-                            <button @click="removeInstalment( instalment )" class="items-center flex justify-center h-8 w-8 rounded border text-primary ns-inset-button error">
+                            <button @click="removeInstalment( instalment )"
+                                    class="items-center flex justify-center h-8 w-8 rounded border text-primary ns-inset-button error">
                                 <i class="las la-times"></i>
                             </button>
                         </div>
                     </div>
                     <div class="my-2" v-if="order.instalments.length === 0">
-                        <p class="p-2 elevation-surface border text-primary text-center">{{ __( 'There is no instalment defined. Please set how many instalments are allowed for this order' ) }}</p>
+                        <p class="p-2 elevation-surface border text-primary text-center">
+                            {{ __( 'There is no instalment defined. Please set how many instalments are allowed for this order' ) }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -73,12 +76,18 @@
 </template>
 <script>
 import FormValidation from '~/libraries/form-validation';
-import { nsHttpClient, nsSnackBar } from '~/bootstrap';
-import { __ } from '~/libraries/lang';
+import {nsHttpClient, nsSnackBar} from '~/bootstrap';
+import {__} from '~/libraries/lang';
 import {nsCurrency, nsRawCurrency} from '~/filters/currency';
+import moment from "moment";
+import NsCloseButton from "~/components/ns-close-button.vue";
+import NsSpinner from "~/components/ns-spinner.vue";
+import NsField from "~/components/ns-field.vue";
+import NsButton from "~/components/ns-button.vue";
 
 export default {
     name: 'ns-pos-layaway-popup',
+    components: {NsButton, NsField, NsSpinner, NsCloseButton},
     data() {
         return {
             fields: [],
@@ -121,33 +130,27 @@ export default {
                      */
                     if ( typeof instalment[ name ] !== 'object' ) {
                         if ( name === 'date' ) {
-                            const field    =   {
+                            instalment[ name ]    =   {
                                 type: 'date',
                                 name,
-                                label: __( 'Date' ),
-                                disabled: instalment.paid === 1 ? true : false,
-                                value: moment( instalment.date ).format( 'YYYY-MM-DD' )
+                                label: __('Date'),
+                                disabled: instalment.paid === 1,
+                                value: moment(instalment.date).format('YYYY-MM-DD')
                             };
-
-                            instalment[ name ]    =   field;
                         } else if ( name === 'amount' ) {
-                            const field    =   {
+                            instalment[ name ]    =   {
                                 type: 'number',
                                 name,
-                                label: __( 'Amount' ),
-                                disabled: instalment.paid === 1 ? true : false,
+                                label: __('Amount'),
+                                disabled: instalment.paid === 1,
                                 value: instalment.amount
                             };
-
-                            instalment[ name ]    =   field;
                         } else if ( ! [ 'paid', 'id' ].includes( name ) ) {
-                            const field    =   {
+                            instalment[ name ]    =   {
                                 type: 'hidden',
                                 name,
-                                value: instalment[ name ]
+                                value: instalment[name]
                             };
-
-                            instalment[ name ]    =   field;
                         }
                     }
                 }
@@ -201,7 +204,7 @@ export default {
                         readonly : {
                             type: 'hidden',
                             name: 'readonly',
-                            value: this.expectedPayment > 0 && index === 0 ? true: false
+                            value: this.expectedPayment > 0 && index === 0
                         },
                     }
                 });

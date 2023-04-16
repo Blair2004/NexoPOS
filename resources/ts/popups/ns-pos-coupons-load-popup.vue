@@ -114,6 +114,7 @@ import { __ } from "~/libraries/lang";
 import nsPosCustomerSelectPopupVue from './ns-pos-customer-select-popup.vue';
 import nsNotice from '~/components/ns-notice.vue';
 import { ref } from "vue";
+import {nsCurrency} from "~/filters/currency";
 
 export default {
     name: 'ns-pos-coupons-load-popup',
@@ -273,7 +274,7 @@ export default {
             console.log( coupon );
             switch( coupon.type ) {
                 case 'percentage_discount': return coupon.discount_value + '%';
-                case 'flat_discount': return this.$options.filters.currency( coupon.discount_value );
+                case 'flat_discount': return nsCurrency( coupon.discount_value );
             }
         },
 

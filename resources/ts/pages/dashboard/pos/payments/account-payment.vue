@@ -105,8 +105,8 @@ export default {
 
             if ( value > this.order.customer.account_amount ) {
                 return nsSnackBar.error( __( 'Not enough funds to add {amount} as a payment. Available balance {balance}.' )
-                    .replace( '{amount}', this.$options.filters.currency( value ) )
-                    .replace( '{balance}', this.$options.filters.currency( this.order.customer.account_amount ) )
+                    .replace( '{amount}', nsCurrency( value ) )
+                    .replace( '{balance}', nsCurrency( this.order.customer.account_amount ) )
                 ).subscribe();
             }
 
