@@ -26,7 +26,7 @@
                     </div>
                     <div class="pt-2" v-if="order && order.customer_id !== undefined">
                         <ns-notice color="success">
-                            <template v-slot:description>{{ __( 'Loading Coupon For : ' ) + `${order.customer.first_name} ${order.customer.last_name}` }}</template>
+                            <template v-slot:description>{{ __( 'Loading Coupon For : ' ) + order.customer.name }}</template>
                         </ns-notice>
                     </div>
                     <div class="overflow-hidden">

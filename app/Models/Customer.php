@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,8 @@ class Customer extends UserScope
 
     protected $table = 'nexopos_' . 'users';
 
+    protected $appends = [ 'name' ];
+
     protected $isDependencyFor = [
         Order::class => [
             'local_name' => 'first_name',
@@ -50,6 +53,13 @@ class Customer extends UserScope
 
             $builder->whereIn( 'id', $userRoleRelations->map( fn( $role ) => $role->user_id )->toArray() );
         });
+    }
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => "{$attributes['first_name']} {$attributes['last_name']}",
+        )->withoutObjectCaching();
     }
 
     /**

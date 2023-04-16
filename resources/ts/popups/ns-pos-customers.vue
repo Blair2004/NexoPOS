@@ -37,7 +37,7 @@
                         <div class="flex-auto p-2 flex flex-col">
                             <div class="-mx-4 flex flex-wrap ns-tab-cards">
                                 <div class="px-4 mb-4 w-full">
-                                    <h2 class="font-semibold text-primary">{{ __( 'Summary For' ) }} : {{ customer.first_name }} {{ customer.last_name }}</h2>
+                                    <h2 class="font-semibold text-primary">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-success-secondary to-green-700 p-2 flex flex-col text-white">

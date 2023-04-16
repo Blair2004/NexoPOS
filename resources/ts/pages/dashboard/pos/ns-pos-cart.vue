@@ -311,7 +311,7 @@ export default {
             return this.visibleSection === 'cart';
         },
         customerName() {
-            return this.order.customer ? this.order.customer.first_name + ' ' + this.order.customer.last_name : 'N/A';
+            return this.order.customer ? this.order.customer.name : 'N/A';
         },
         couponName() {
             return __( 'Apply Coupon' );

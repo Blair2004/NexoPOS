@@ -7,7 +7,7 @@
             <div class="p-2 border-b ns-box-body items-center flex justify-between">
                 <span>{{ __( 'Selected' ) }} : </span>
                 <div class="flex items-center justify-between">
-                    <span>{{ order.customer ? getCustomerName(order.customer) : 'N/A' }}</span>
+                    <span>{{ order.customer ? order.customer.name : 'N/A' }}</span>
                     <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button hover:border-transparent">
                         <i class="las la-eye"></i>
                     </button>
@@ -33,7 +33,7 @@
                         <span class="border-b border-dashed border-info-primary">{{ __( 'Create a customer' ) }}</span>
                     </li>
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
-                        <span>{{ getCustomerName(customer) }}</span>
+                        <span>{{ customer.name }}</span>
                         <p class="flex items-center">
                             <span v-if="customer.owed_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owed_amount ) }}</span>
                             <span v-if="customer.owed_amount > 0">/</span>
@@ -173,10 +173,6 @@ export default {
                     }
                 });
         },
-
-        getCustomerName(customer: Customer) {
-            return customer.first_name + ' ' + customer.last_name;
-        }
     }
 }
 </script>

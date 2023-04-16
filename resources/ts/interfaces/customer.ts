@@ -1,6 +1,7 @@
 export interface Customer {
     first_name: string;
     id: number;
+    name: string;
     owed_amount?: number;
     purchases_amount?: number;
     account_amount?: number;
