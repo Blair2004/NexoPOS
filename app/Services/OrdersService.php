@@ -2922,4 +2922,32 @@ class OrdersService
 
         return $order;
     }
+
+
+    public function getPaymentStatus( $status ): string
+    {
+        $process = $this->getPaymentStatuses();
+
+        return $process[ $status ] ?? $status;
+    }
+
+    /**
+     * Returns the payment statuses
+     *
+     * @return array $statuses
+     */
+    public function getPaymentStatuses(): array
+    {
+        return [
+            Order::PAYMENT_HOLD => __( 'Hold' ),
+            Order::PAYMENT_UNPAID => __( 'Unpaid' ),
+            Order::PAYMENT_PARTIALLY => __( 'Partially Paid' ),
+            Order::PAYMENT_PAID => __( 'Paid' ),
+            Order::PAYMENT_VOID => __( 'Voided' ),
+            Order::PAYMENT_REFUNDED => __( 'Refunded' ),
+            Order::PAYMENT_PARTIALLY_REFUNDED => __( 'Partially Refunded' ),
+            Order::PAYMENT_DUE => __( 'Due' ),
+            Order::PAYMENT_PARTIALLY_DUE => __( 'Partially Due' ),
+        ];
+    }
 }

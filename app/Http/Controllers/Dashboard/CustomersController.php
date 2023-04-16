@@ -164,17 +164,7 @@ class CustomersController extends DashboardController
             ->orderBy( 'created_at', 'desc' )
             ->get()
             ->map( function( Order $order ) {
-                $order->human_status =  match( $order->payment_status ) {
-                    Order::PAYMENT_HOLD                 => __( 'Hold' ),
-                    Order::PAYMENT_PAID                 => __( 'Paid' ),
-                    Order::PAYMENT_PARTIALLY            => __( 'Partially Paid' ),
-                    Order::PAYMENT_REFUNDED             => __( 'Refunded' ),
-                    Order::PAYMENT_UNPAID               => __( 'Unpaid' ),
-                    Order::PAYMENT_PARTIALLY_REFUNDED   => __( 'Partially Refunded' ),
-                    Order::PAYMENT_VOID                 => __( 'Void' ),
-                    default                             => $order->payment_status,
-                };
-
+                $order->human_status =  $this->ordersService->getPaymentStatus( $order->payment_status );
                 $order->human_delivery_status = $this->ordersService->getDeliveryStatus( $order->delivery_status );
 
                 return $order;
