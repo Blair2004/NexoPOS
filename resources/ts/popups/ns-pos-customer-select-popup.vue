@@ -35,7 +35,7 @@
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
                         <span>{{ customer.name }}</span>
                         <p class="flex items-center">
-                            <span v-if="customer.owed_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owed_amount ) }}</span>
+                            <span v-if="customer.owed_amount > 0" class="text-error-tertiary">-{{ nsCurrency( customer.owed_amount ) }}</span>
                             <span v-if="customer.owed_amount > 0">/</span>
                             <span class="purchase-amount">{{ nsCurrency( customer.purchases_amount ) }}</span>
                             <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button info">
