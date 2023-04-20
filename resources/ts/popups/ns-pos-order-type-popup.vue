@@ -43,12 +43,6 @@ export default {
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.resolveIfQueued( false );
-            }
-        });
-
         this.settingsSubscription   =   POS.settings.subscribe( settings => {
             this.urls    =   settings.urls;
         });
@@ -68,7 +62,7 @@ export default {
 
         this.popupCloser();
     },
-    destroyed() {
+    unmounted() {
         this.typeSubscription.unsubscribe();
     },
     methods: {

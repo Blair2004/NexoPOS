@@ -3,7 +3,7 @@
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3 class="text-primary">{{ __( 'Search Product' ) }}</h3>
             <div>
-                <ns-close-button @click="$popup.close()"></ns-close-button>
+                <ns-close-button @click="popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="flex-auto overflow-hidden flex flex-col">
@@ -78,7 +78,7 @@ export default {
         popupResolver,
 
         addToCart( product ) {
-            this.$popup.close();
+            this.popup.close();
 
             if ( parseInt( product.accurate_tracking ) === 1 ) {
                 return Popup.show( nsPosConfirmPopupVue, {

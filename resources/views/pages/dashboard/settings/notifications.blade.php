@@ -9,10 +9,7 @@
         </div>
         <div>
             <ns-settings
-                url="{{ ns()->url( '/api/settings/ns.notifications' ) }}"
-                
-                >
-                <template v-slot:error-form-invalid>{{ __( 'Unable to proceed the form is not valid.' ) }}</template>
+                url="{{ ns()->url( '/api/settings/ns.notifications' ) }}">
             </ns-settings>
         </div>
     </div>

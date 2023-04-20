@@ -18,31 +18,23 @@ export default {
             message: ''
         }
     },
+    props: [ 'popup' ],
     computed: {
         size() {
-            return this.$popupParams.size || 'h-full w-full'
+            return this.popup.params.size || 'h-full w-full'
         }
     },
     mounted() {
-        this.title          =   this.$popupParams.title;
-        this.message        =   this.$popupParams.message;
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                if (this.$popupParams.onAction !== undefined ) {
-                    this.$popupParams.onAction( false );
-                }
-
-                this.$popup.close();
-            }
-        })
+        this.title          =   this.popup.params.title;
+        this.message        =   this.popup.params.message;
     },
     methods: {
         __,
         emitAction( action ) {
-            if ( this.$popupParams.onAction !== undefined ) {
-                this.$popupParams.onAction( action );
+            if ( this.popup.params.onAction !== undefined ) {
+                this.popup.params.onAction( action );
             }
-            this.$popup.close();
+            this.popup.close();
         }
     }
 }

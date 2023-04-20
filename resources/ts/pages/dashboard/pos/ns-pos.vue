@@ -49,7 +49,7 @@ export default {
         }, 500 ); 
         
     },
-    destroyed() {
+    unmounted() {
         this.visibleSectionSubscriber.unsubscribe();
     },
     data() {

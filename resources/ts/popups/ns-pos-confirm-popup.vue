@@ -17,6 +17,7 @@ import popupResolver from '~/libraries/popup-resolver';
 import popupCloser from '~/libraries/popup-closer';
 
 export default {
+    props: [ 'popup' ],
     data() {
         return {
             title: '',
@@ -25,12 +26,12 @@ export default {
     },
     computed: {
         size() {
-            return this.$popupParams.size || 'h-full w-full'
+            return this.popup.params.size || 'h-full w-full'
         }
     },
     mounted() {
-        this.title          =   this.$popupParams.title;
-        this.message        =   this.$popupParams.message;
+        this.title          =   this.popup.params.title;
+        this.message        =   this.popup.params.message;
         
         this.popupCloser();
     },
@@ -40,8 +41,8 @@ export default {
         popupCloser,
         
         emitAction( action ) {
-            this.$popupParams.onAction( action );
-            this.$popup.close();
+            this.popup.params.onAction( action );
+            this.popup.close();
         }
     }
 }

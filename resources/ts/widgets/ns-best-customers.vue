@@ -62,7 +62,7 @@ export default {
             hasLoaded: false,
         }
     },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
     }
 }

@@ -60,6 +60,7 @@ import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
 
 export default {
+    props: [ 'popup' ],
     data() {
         return {
             searchCustomerValue: '',
@@ -84,12 +85,6 @@ export default {
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.resolveIfQueued( false );
-            }
-        });
-
         this.orderSubscription  =   POS.order.subscribe( order => {
             this.order      =   order;
         });
@@ -98,7 +93,7 @@ export default {
 
         this.$refs.searchField.focus();
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscription.unsubscribe();
     },
     methods: {
@@ -121,7 +116,7 @@ export default {
 
         openCustomerHistory( customer, event ) {
             event.stopImmediatePropagation();
-            this.$popup.close();
+            this.popup.close();
             Popup.show( nsPosCustomersVue, { customer, activeTab: 'account-payment' });
         },
 

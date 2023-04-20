@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helper;
 use Exception;
 
 class CoreVersionMismatchException extends Exception
@@ -13,11 +14,12 @@ class CoreVersionMismatchException extends Exception
         $this->message = $message ?: __('There\'s is mismatch with the core version.' );
     }
 
-    public function render()
+    public function render( $request )
     {
         $message = $this->getMessage();
         $title = $this->title ?: __( 'Incompatibility Exception' );
+        $back   = Helper::getValidPreviousUrl( $request );
 
-        return response()->view( 'pages.errors.core-exception', compact( 'message', 'title' ), 500 );
+        return response()->view( 'pages.errors.core-exception', compact( 'message', 'title', 'back' ), 500 );
     }
 }

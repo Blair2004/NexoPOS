@@ -5,7 +5,7 @@
                 {{ __( 'Previewing :' ) }} {{ product.name }}
             </div>
             <div>
-                <ns-close-button @click="$popup.close()"></ns-close-button>
+                <ns-close-button @click="popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="flex-auto overflow-y-auto ns-box-body">
@@ -44,9 +44,10 @@ import { __ } from '~/libraries/lang';
 
 export default {
     name: 'ns-products-preview',
+    props: [ 'popup' ],
     computed: {
         product() {
-            return this.$popupParams.product
+            return this.popup.params.product
         }
     },
     methods: {
@@ -77,11 +78,6 @@ export default {
     },
     mounted() {
         this.loadProductQuantities();
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.$popup.close();
-            }
-        });
     }
 }
 </script>

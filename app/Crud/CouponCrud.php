@@ -59,10 +59,10 @@ class CouponCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create' => true,
-        'read' => true,
-        'update' => true,
-        'delete' => true,
+        'create' => 'nexopos.create.coupons',
+        'read' => 'nexopos.read.coupons',
+        'update' => 'nexopos.update.coupons',
+        'delete' => 'nexopos.delete.coupons',
     ];
 
     /**
@@ -413,9 +413,9 @@ class CouponCrud extends CrudService
      */
     public function beforePost( $inputs )
     {
+        $this->allowedTo( 'create' );
+        
         if ( $this->permissions[ 'create' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'create' ] );
-
             if ( isset( $inputs[ 'products' ] ) && ! empty( $inputs[ 'products' ] ) ) {
                 foreach ( $inputs[ 'products' ] as $product_id ) {
                     $product = Product::find( $product_id );
@@ -636,10 +636,8 @@ class CouponCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [

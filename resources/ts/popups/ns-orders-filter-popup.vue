@@ -32,6 +32,7 @@ export default {
             validation: new FormValidation
         }
     },
+    props: [ 'popup' ],
     methods: {
         __,
         popupCloser,
@@ -48,7 +49,7 @@ export default {
         }
     },
     mounted() {
-        this.fields     =   this.validation.createFields( this.$popupParams.queryFilters );
+        this.fields     =   this.validation.createFields( this.popup.params.queryFilters );
         this.popupCloser();
     }
 }

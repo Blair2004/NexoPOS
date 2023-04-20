@@ -19,6 +19,7 @@
 <script>
 import { __ } from '~/libraries/lang';
 export default {
+    props: [ 'popup' ],
     data() {
         return {
             title: '',
@@ -28,32 +29,26 @@ export default {
     },
     computed: {
         size() {
-            return this.$popupParams.size || 'h-full w-full'
+            return this.popup.params.size || 'h-full w-full'
         }
     },
     mounted() {
-        this.input          =   this.$popupParams.input || '';
-        this.title          =   this.$popupParams.title;
-        this.message        =   this.$popupParams.message;
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.$popupParams.reject( false );
-                this.$popup.close();
-            }
-        })
+        this.input          =   this.popup.params.input || '';
+        this.title          =   this.popup.params.title;
+        this.message        =   this.popup.params.message;
     },
     methods: {
         __,
         emitAction( action ) {
-            this.$popupParams.onAction( action ? this.input : action );
-            this.$popup.close();
+            this.popup.params.onAction( action ? this.input : action );
+            this.popup.close();
         },
         reject( action ) {
-            if( this.$popupParams.reject !== undefined ) {
-                this.$popupParams.reject( action );
+            if( this.popup.params.reject !== undefined ) {
+                this.popup.params.reject( action );
             }
             
-            this.$popup.close();
+            this.popup.close();
         }
     }
 }

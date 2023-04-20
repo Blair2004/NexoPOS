@@ -79,6 +79,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-layaway-popup',
+    props: [ 'popup' ],
     data() {
         return {
             fields: [],
@@ -90,11 +91,6 @@ export default {
     },
     mounted() {
         this.loadFields();
-        this.subscription   =   this.$popup.event.subscribe( action => {
-            if ([ 'click-overlay', 'press-esc' ].includes( action.event ) ) {
-                this.close();
-            }
-        });
     },
     updated() {
         setTimeout( () => {
@@ -113,7 +109,7 @@ export default {
             return nsRawCurrency( ( this.order.total * minimalPaymentPercent ) / 100 );
         },
         order() {
-            this.$popupParams.order.instalments     =   this.$popupParams.order.instalments.map( instalment => {
+            this.popup.params.order.instalments     =   this.popup.params.order.instalments.map( instalment => {
                 for( let name in instalment ) {
                     /**
                      * to avoid performing
@@ -155,10 +151,10 @@ export default {
                 return instalment;
             });
 
-            return this.$popupParams.order;
+            return this.popup.params.order;
         },
     },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
     },
     methods: {
@@ -210,8 +206,8 @@ export default {
             this.refreshTotalPayments();
         },
         close() {
-            this.$popupParams.reject({ status: 'failed', message: __( 'You must define layaway settings before proceeding.' ) });
-            this.$popup.close();
+            this.popup.params.reject({ status: 'failed', message: __( 'You must define layaway settings before proceeding.' ) });
+            this.popup.close();
         },
         skipInstalments() {
             /**
@@ -238,11 +234,11 @@ export default {
             }
 
 
-            this.$popup.close();
+            this.popup.close();
 
             POS.order.next( this.order );
 
-            const { resolve, reject }   =   this.$popupParams;
+            const { resolve, reject }   =   this.popup.params;
 
             return resolve({ order: this.order, skip_layaway: true });
         },
@@ -316,10 +312,10 @@ export default {
             fields.final_payment_date   =   instalments.reverse()[0].date;
             fields.total_instalments    =   instalments.length;
 
-            const order                 =   { ...this.$popupParams.order, ...fields, instalments };
-            const { resolve, reject }   =   this.$popupParams;
+            const order                 =   { ...this.popup.params.order, ...fields, instalments };
+            const { resolve, reject }   =   this.popup.params;
 
-            this.$popup.close();
+            this.popup.close();
 
             POS.order.next( order );
 

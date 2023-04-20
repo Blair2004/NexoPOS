@@ -67,7 +67,7 @@ export default {
         });
     },
     methods: { __, nsCurrency },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
     }
 }

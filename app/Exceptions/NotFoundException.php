@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helper;
 use Exception;
 
 class NotFoundException extends Exception
@@ -17,6 +18,7 @@ class NotFoundException extends Exception
             return response()->view( 'pages.errors.not-allowed', [
                 'title' => __( 'Not Found Exception' ),
                 'message' => $this->getMessage(),
+                'back'  =>  Helper::getValidPreviousUrl( $request ),
             ]);
         }
 

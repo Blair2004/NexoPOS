@@ -117,6 +117,7 @@ import { ref } from "vue";
 
 export default {
     name: 'ns-pos-coupons-load-popup',
+    props: [ 'popup' ],
     components: {
         nsNotice
     },
@@ -141,14 +142,14 @@ export default {
             }
         });
 
-        if ( this.$popupParams ) {
+        if ( this.popup.params ) {
 
             /**
              * We want to add a way to quickly
              * apply a coupon while loading the popup
              */
-            if ( this.$popupParams.apply_coupon ) {
-                this.couponCode     =   this.$popupParams.apply_coupon;
+            if ( this.popup.params.apply_coupon ) {
+                this.couponCode     =   this.popup.params.apply_coupon;
                 this.getCoupon( this.couponCode )
                     .subscribe({
                         next: ( coupon ) => {
@@ -159,7 +160,7 @@ export default {
             }
         }
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
     },
     methods: {

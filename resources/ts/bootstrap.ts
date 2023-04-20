@@ -15,6 +15,7 @@ import countdown from "./libraries/countdown";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
 import { __, __m } from "./libraries/lang";
+import { insertAfterKey, insertBeforeKey } from "./libraries/object";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
 import { timespan } from "./libraries/timespan";
@@ -146,5 +147,7 @@ nsHttpClient.defineClient( axios );
 ( window as any ).defineComponent       =   defineComponent;
 ( window as any ).defineAsyncComponent  =   defineAsyncComponent;
 ( window as any ).createApp             =   createApp;
+( window as any ).ns.insertAfterKey     =   insertAfterKey;
+( window as any ).ns.insertBeforeKey    =   insertBeforeKey;
 
 export { nsSnackBar, nsNotice, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

@@ -73,8 +73,7 @@ if ( Auth::check() ) {
          */
         window.ns.user              =   <?php echo json_encode( ns()->getUserDetails() );?>;
         window.ns.user.attributes   =   <?php echo json_encode( Auth::user()->attribute->first() );?>;
-
-        window.ns.cssFiles      =   <?php echo json_encode( ns()->simplifyManifest() );?>;
+        window.ns.cssFiles          =   <?php echo json_encode( ns()->simplifyManifest() );?>;
     </script>
     @vite([ 'resources/ts/lang-loader.ts' ])
 @include( 'common.header-socket' )
@@ -142,8 +141,8 @@ if ( Auth::check() ) {
         </div>
     </div>
     @section( 'layout.dashboard.footer' )
-        @include( '../common/footer' )
-        @vite([ 'resources/ts/popups.ts' ])
+        @include( 'common.popups' )
+        @include( 'common.footer' )
         @vite([ 'resources/ts/app.ts' ])
     @show
 </body>

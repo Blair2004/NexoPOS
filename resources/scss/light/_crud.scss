@@ -4,10 +4,6 @@
 #crud-table {
     @apply bg-box-background;
 
-    * {
-        @apply text-primary;
-    }
-
     #crud-table-header {
         @apply border-box-edge;
     }
@@ -57,10 +53,14 @@
 
         &:hover {
             @apply border-transparent bg-info-tertiary text-white;
-            i {
+            i, span {
                 @apply text-white;
             }
         }
+    }
+
+    .footer {
+        @apply border-box-edge;
     }
 }
 

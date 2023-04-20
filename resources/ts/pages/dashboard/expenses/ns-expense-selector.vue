@@ -25,6 +25,7 @@ import popupResolver from '~/libraries/popup-resolver';
 
 export default {
     name: 'ns-expense-selector',
+    props: [ 'popup' ],
     data() {
         return {
             configurations: [],
@@ -33,9 +34,9 @@ export default {
         }
     },
     mounted() {
-        this.configurations     =   this.$popupParams.configurations;
-        this.warningMessage     =   this.$popupParams.warningMessage;
-        this.type   =   this.$popupParams.type
+        this.configurations     =   this.popup.params.configurations;
+        this.warningMessage     =   this.popup.params.warningMessage;
+        this.type   =   this.popup.params.type
     },
     methods: {
         __,

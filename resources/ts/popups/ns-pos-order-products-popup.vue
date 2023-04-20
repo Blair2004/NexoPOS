@@ -10,9 +10,10 @@ export default {
             isLoading: false,
         }
     },
+    props: [ 'popup' ],
     computed: {
         order() {
-            return this.$popupParams.order;
+            return this.popup.params.order;
         }
     },
     mounted() {
@@ -22,12 +23,12 @@ export default {
         __,
         nsCurrency,
         close() {
-            this.$popupParams.reject( false );
-            this.$popup.close();
+            this.popup.params.reject( false );
+            this.popup.close();
         },
         loadProducts() {
             this.isLoading  =   true;
-            const id    =   this.$popupParams.order.id;
+            const id    =   this.popup.params.order.id;
 
             nsHttpClient.get( `/api/orders/${id}/products` )
                 .subscribe( result => {
@@ -36,8 +37,8 @@ export default {
                 })
         },
         openOrder() {
-            this.$popup.close();
-            this.$popupParams.resolve( this.order );
+            this.popup.close();
+            this.popup.params.resolve( this.order );
         }
     }
 }

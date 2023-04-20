@@ -246,21 +246,7 @@ class ExpenseCategoryCrud extends CrudService
     {
         return $request;
     }
-
-    /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        return [
-            'status' => 'success',
-            'message' => __( 'The access is granted.' ), 
-        ];
-    }
-
+    
     /**
      * Before Delete
      *
@@ -275,10 +261,8 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [

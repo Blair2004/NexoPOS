@@ -357,10 +357,8 @@ class RegisterHistoryCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             // 'register_name'  =>  [

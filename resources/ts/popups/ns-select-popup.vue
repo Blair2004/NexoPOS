@@ -33,6 +33,8 @@
 import popupCloser from "~/libraries/popup-closer";
 import { __ } from '~/libraries/lang';
 export default {
+    name: 'ns-select-popup',
+    props: [ 'popup' ],
     data() {
         return {
             value: [],
@@ -46,11 +48,11 @@ export default {
     },
     mounted() {
         this.popupCloser();
-        this.value       =   this.$popupParams.value  || [];
-        this.options     =   this.$popupParams.options;
-        this.label       =   this.$popupParams.label;
-        this.description =   this.$popupParams.description || '';
-        this.type        =   this.$popupParams.type || this.type;
+        this.value       =   this.popup.params.value  || [];
+        this.options     =   this.popup.params.options;
+        this.label       =   this.popup.params.label;
+        this.description =   this.popup.params.description || '';
+        this.type        =   this.popup.params.type || this.type;
     },
     methods: {
         popupCloser,
@@ -71,8 +73,8 @@ export default {
         },
 
         close() {
-            this.$popupParams.reject( false );
-            this.$popup.close();
+            this.popup.params.reject( false );
+            this.popup.close();
         },
 
         select( option ) {
@@ -80,7 +82,7 @@ export default {
                 this.value  =   [ option ];
             }
 
-            this.$popupParams.resolve( this.value );
+            this.popup.params.resolve( this.value );
             this.close();
         }
     }

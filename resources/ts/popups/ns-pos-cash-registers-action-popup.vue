@@ -35,6 +35,7 @@ export default {
     components: {
         // ...
     },
+    props: [ 'popup' ],
     data() {
         return {
             amount: 0,
@@ -51,17 +52,17 @@ export default {
         }
     },
     mounted() {
-        this.title                  =   this.$popupParams.title;
-        this.identifier             =   this.$popupParams.identifier;
-        this.register               =   this.$popupParams.register;
-        this.action                 =   this.$popupParams.action;
-        this.register_id            =   this.$popupParams.register_id;
+        this.title                  =   this.popup.params.title;
+        this.identifier             =   this.popup.params.identifier;
+        this.register               =   this.popup.params.register;
+        this.action                 =   this.popup.params.action;
+        this.register_id            =   this.popup.params.register_id;
         this.settingsSubscription   =   POS.settings.subscribe( settings => {
             this.settings           =   settings;
         });
         this.loadFields();
     },
-    destroyed() {
+    unmounted() {
         this.settingsSubscription.unsubscribe();
     },
     methods: {
@@ -72,7 +73,7 @@ export default {
             this.amount     =   value;
         },
         close() {
-            this.$popup.close();
+            this.popup.close();
         },
         loadFields() {
             this.loaded     =   false;
@@ -88,7 +89,7 @@ export default {
         submit( amount ) {
             Popup.show( nsPosConfirmPopupVue, {
                 title: 'Confirm Your Action',
-                message: this.$popupParams.confirmMessage || 'Would you like to confirm your action.',
+                message: this.popup.params.confirmMessage || 'Would you like to confirm your action.',
                 onAction: ( action ) => {
                     if ( action ) {
                         this.triggerSubmit();
@@ -103,8 +104,8 @@ export default {
             nsHttpClient.post( `/api/cash-registers/${this.action}/${this.register_id || this.settings.register.id}`, fields )
                 .subscribe({
                     next: result => {
-                        this.$popupParams.resolve( result );
-                        this.$popup.close();
+                        this.popup.params.resolve( result );
+                        this.popup.close();
                         nsSnackBar.success( result.message ).subscribe();
                     }, 
                     error: ( error ) => {

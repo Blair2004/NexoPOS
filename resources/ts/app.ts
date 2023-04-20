@@ -27,7 +27,6 @@ const nsNotifications               =   defineAsyncComponent( () => import( './p
 const nsMedia                       =   defineAsyncComponent( () => import( './pages/dashboard/ns-media.vue' ) );
 const nsExpense                     =   defineAsyncComponent( () => import( './pages/dashboard/expenses/ns-expense.vue' ) );
 const nsDashboard                   =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-dashboard.vue' ) );
-
 const nsLowStockReport              =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-low-stock-report.vue' ) );
 const nsSaleReport                  =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sale-report.vue' ) );
 const nsSoldStockReport             =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sold-stock-report.vue' ) );
@@ -37,7 +36,6 @@ const nsYearlyReport                =   defineAsyncComponent( () => import( './p
 const nsBestProductsReport          =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-best-products-report.vue' ) );
 const nsPaymentTypesReport          =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-payment-types-report.vue' ) );
 const nsCustomersStatementReport    =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-customers-statement-report.vue' ) );
-
 const nsStockAdjustment             =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-stock-adjustment.vue' ) );
 const nsOrderInvoice                =   defineAsyncComponent( () => import( './pages/dashboard/orders/ns-order-invoice.vue' ) );
 
@@ -85,6 +83,7 @@ window.nsDashboardAside     =   createApp({
     data() {
         return {
             sidebar: 'visible',
+            popups: [],
         }
     },
     components: {
@@ -92,8 +91,10 @@ window.nsDashboardAside     =   createApp({
         nsSubmenu : baseComponents.nsSubmenu,
     },
     mounted() {
-        nsState.behaviorState.subscribe(({ object }:any) => {
-            this.sidebar    =   object.sidebar;
+        nsState.subscribe(( state ) => {
+            if ( state.sidebar ) {
+                this.sidebar    =   state.sidebar;
+            }
         });
     }
 });
@@ -101,14 +102,17 @@ window.nsDashboardAside     =   createApp({
 window.nsDashboardOverlay   =   createApp({
     data() {
         return {
-            sidebar: null
+            sidebar: null,
+            popups: []
         }
     },
     components: allComponents,
     mounted() {
-        nsState.behaviorState.subscribe(({ object }) => {
-            this.sidebar    =   object.sidebar;
-        })
+        nsState.subscribe( state => {
+            if ( state.sidebar ) {
+                this.sidebar    =   state.sidebar;
+            }
+        });
     },
     methods: {
         /**
@@ -119,7 +123,7 @@ window.nsDashboardOverlay   =   createApp({
             nsState.setState({
                 sidebar: this.sidebar === 'hidden' ? 'visible' : 'hidden'
             });
-        }
+        },
     }
 });
 
@@ -127,7 +131,7 @@ window.nsDashboardHeader    =   createApp({
     data() {
         return {
             menuToggled: false,
-            sidebar: 'visible',
+            sidebar: null,
         }
     },
     components: allComponents,
@@ -144,8 +148,10 @@ window.nsDashboardHeader    =   createApp({
         }
     },
     mounted() {
-        nsState.behaviorState.subscribe( ({ object }) => {
-            this.sidebar    =   object.sidebar;
+        nsState.subscribe( ( state ) => {
+            if ( state.sidebar ) {
+                this.sidebar    =   state.sidebar;
+            }
         })
     }
 });

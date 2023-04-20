@@ -13,7 +13,7 @@
             <div class="flex md:flex-row flex-col -mx-4 my-4 flex-wrap w-56 lg:w-auto">
                 <div class="px-4 mb-4">
                     <div class="ns-button hover-info">
-                        <a class="shadow px-2 py-1 rounded block w-full lg:w-auto" href="{{ ! empty( request()->query( 'back' ) ) ? urldecode( request()->query( 'back' ) ) : url()->previous() }}"><i class="las la-angle-left"></i> {{ __( 'Go Back' ) }}</a>
+                        <a class="shadow px-2 py-1 rounded block w-full lg:w-auto" href="{{ $back }}"><i class="las la-angle-left"></i> {{ __( 'Go Back' ) }}</a>
                     </div>
                 </div>
                 <div class="px-4 mb-4">

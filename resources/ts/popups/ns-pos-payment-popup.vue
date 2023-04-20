@@ -14,6 +14,7 @@ import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-payment',
+    props: [ 'popup' ],
     data() {
         return { 
             paymentTypesSubscription: null,
@@ -35,15 +36,7 @@ export default {
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            switch( action.event ) {
-                case 'click-overlay': 
-                    this.closePopup();
-                break;
-            }
-        });
-
-        this.order                      =   this.$popupParams.order;
+        this.order                      =   this.popup.params.order;
         this.paymentTypesSubscription   =   POS.paymentsType.subscribe( paymentsType => {
             this.paymentsType   =   paymentsType;
             paymentsType.filter( payment => {
@@ -60,7 +53,7 @@ export default {
             this.loadPaymentComponent( value );
         }
     },
-    destroyed() {
+    unmounted() {
         this.paymentTypesSubscription.unsubscribe();
 
         nsHooks.doAction( 'ns-pos-payment-destroyed', this );
@@ -116,7 +109,7 @@ export default {
             POS.setPaymentActive( payment );
         },
         closePopup() {
-            this.$popup.close();
+            this.popup.close();
             POS.selectedPaymentType.next( null );
         },
         deletePayment( payment ) {
@@ -141,7 +134,7 @@ export default {
                     POS.printOrderReceipt( result.data.order, 'silent' );
     
                     // close payment popup
-                    this.$popup.close();
+                    this.popup.close();
                 }, ( error ) => {
                     // close loading popup
                     popup.close();

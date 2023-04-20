@@ -145,7 +145,7 @@ export default {
         nsHotPress.destroy( 'numpad-backspace' );
         nsHotPress.destroy( 'numpad-save' );
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscription.unsubscribe();
     },
     methods: {

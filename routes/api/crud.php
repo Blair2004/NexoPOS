@@ -12,5 +12,4 @@ Route::put( 'crud/{namespace}/{id}', [ CrudController::class, 'crudPut' ])->wher
 Route::post( 'crud/{namespace}', [ CrudController::class, 'crudPost' ]);
 Route::post( 'crud/{namespace}/export', [ CrudController::class, 'exportCrud' ]);
 Route::post( 'crud/{namespace}/bulk-actions', [ CrudController::class, 'crudBulkActions' ])->name( Hook::filter( 'ns-route-name', 'ns.api.crud-bulk-actions' ) );
-Route::post( 'crud/{namespace}/can-access', [ CrudController::class, 'canAccess' ]);
 Route::delete( 'crud/{namespace}/{id}', [ CrudController::class, 'crudDelete' ]);

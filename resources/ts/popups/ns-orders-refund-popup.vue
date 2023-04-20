@@ -62,6 +62,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-orders-refund-popup',
+    props: [ 'popup' ],
     data() {
         return {
             order: null,
@@ -96,7 +97,7 @@ export default {
         },
 
         close() {
-            this.$popup.close();
+            this.popup.close();
         },
 
         printRefundReceipt( refund ) {
@@ -104,7 +105,7 @@ export default {
         }
     },
     mounted() {
-        this.order      =   this.$popupParams.order;
+        this.order      =   this.popup.params.order;
         this.popupCloser();
         this.loadOrderRefunds();
     }

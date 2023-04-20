@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helper;
 use Exception;
 
 class MethodNotAllowedHttpException extends Exception
@@ -11,11 +12,12 @@ class MethodNotAllowedHttpException extends Exception
         $this->message = $message ?: __('The request method is not allowed.' );
     }
 
-    public function render()
+    public function render( $request )
     {
         $message = $this->getMessage();
         $title = __( 'Method Not Allowed' );
+        $back   = Helper::getValidPreviousUrl( $request );
 
-        return response()->view( 'pages.errors.http-exception', compact( 'message', 'title' ), 500 );
+        return response()->view( 'pages.errors.http-exception', compact( 'message', 'title', 'back' ), 500 );
     }
 }

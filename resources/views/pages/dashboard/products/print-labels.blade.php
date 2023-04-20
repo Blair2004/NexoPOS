@@ -5,6 +5,7 @@
     @parent
 <script>
 const nsLabelsProductSettings   =   Vue.component( 'ns-labels-product-settings', {
+    props: [ 'popup' ],
     template: `
     <div>
         <div class="shadow-lg ns-box w-95vw md:w-2/5-screen">
@@ -35,17 +36,17 @@ const nsLabelsProductSettings   =   Vue.component( 'ns-labels-product-settings',
     methods: {
         __,
         saveSettings() {
-            this.$popup.close();
+            this.popup.close();
             const form  =   this.validation.extractFields( this.fields );
-            this.$popupParams.resolve( form )
+            this.popup.params.resolve( form )
         },
         closePopup() {
-            this.$popup.close();
-            this.$popupParams.reject( false );
+            this.popup.close();
+            this.popup.params.reject( false );
         }
     },
     mounted() {
-        const product       =   this.$popupParams.product;
+        const product       =   this.popup.params.product;
 
         this.fields         =   this.validation.createFields([
             {

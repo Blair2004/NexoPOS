@@ -50,7 +50,7 @@ export default {
 
         this.loadCoupons();
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
     },
     methods: {

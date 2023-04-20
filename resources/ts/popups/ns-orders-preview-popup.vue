@@ -15,7 +15,7 @@ import Print from "~/libraries/print";
 
 export default {
     name: 'ns-orders-preview-popup',
-    props: [ 'orderData' ],
+    props: [ 'popup' ],
     data() {
         return {
             active: 'details',
@@ -61,7 +61,7 @@ export default {
              * this will notify the crud component to
              * refresh the list of result as a row state has changed.
              */
-            this.$popupParams.component.$emit( 'updated' );
+            this.popup.params.component.$emit( 'updated' );
 
             /**
              * Withn the popup let's refresh the order
@@ -134,7 +134,7 @@ export default {
             }
         },
         refreshCrudTable() {
-            this.$popupParams.component.$emit( 'updated', true );
+            this.popup.params.component.$emit( 'updated', true );
         }
     },
     watch: {
@@ -145,7 +145,7 @@ export default {
         }
     },
     mounted() {
-        this.order      =   this.$popupParams.order;
+        this.order      =   this.popup.params.order;
         this.options    =   systemOptions;
         this.urls       =   systemUrls;
         this.loadOrderDetails( this.order.id );

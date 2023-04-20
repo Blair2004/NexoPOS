@@ -9,7 +9,7 @@
 export default {
     data() {
         return {
-            selectedTab: '',
+            selectedTab: {},
             tabStateSubscriber: null
         }
     },
@@ -21,7 +21,7 @@ export default {
             this.selectedTab    =   tab;
         })
     },
-    beforeUnmount() {
+    unmounted() {
         this.tabStateSubscriber.unsubscribe();
     },
     props: [ 'label', 'identifier', 'padding' ],

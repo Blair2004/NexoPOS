@@ -314,20 +314,6 @@ class RewardSystemCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        return [
-            'status' => 'success',
-            'message' => __( 'The access is granted.' ), 
-        ];
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -361,10 +347,8 @@ class RewardSystemCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [

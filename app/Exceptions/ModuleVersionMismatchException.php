@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helper;
 use Exception;
 
 class ModuleVersionMismatchException extends Exception
@@ -11,11 +12,12 @@ class ModuleVersionMismatchException extends Exception
         $this->message = $message ?: __('A database issue has occurred.' );
     }
 
-    public function render()
+    public function render( $request )
     {
         $message = $this->getMessage();
-        $title = $this->title ?? __( 'Module Version Mismatch' );
+        $title = __( 'Module Version Mismatch' );
+        $back   = Helper::getValidPreviousUrl( $request );
 
-        return response()->view( 'pages.errors.module-exception', compact( 'message', 'title' ), 500 );
+        return response()->view( 'pages.errors.module-exception', compact( 'message', 'title', 'back' ), 500 );
     }
 }

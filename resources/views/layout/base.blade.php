@@ -69,7 +69,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
 <body>
     @yield( 'layout.base.body' )
     @section( 'layout.base.footer' )
-        @include( '../common/footer' )
+        @include( 'common.footer' )
     @show
 </body>
 </html>

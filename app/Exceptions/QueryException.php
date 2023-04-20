@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helper;
 use Exception;
 
 class QueryException extends Exception
@@ -11,11 +12,12 @@ class QueryException extends Exception
         $this->message = $message ?: __('A Database Exception Occurred.' );
     }
 
-    public function render()
+    public function render( $request )
     {
         $message = $this->getMessage();
         $title = __( 'Query Exception' );
+        $back   = Helper::getValidPreviousUrl( $request );
 
-        return response()->view( 'pages.errors.db-exception', compact( 'message', 'title' ), 500 );
+        return response()->view( 'pages.errors.db-exception', compact( 'message', 'title', 'back' ), 500 );
     }
 }

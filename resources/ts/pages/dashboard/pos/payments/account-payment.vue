@@ -141,7 +141,7 @@ export default {
     mounted() {
         this.subscription   =   POS.order.subscribe( order => this.order = order );
     },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
     }
 }

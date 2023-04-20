@@ -85,7 +85,7 @@ export default {
             }
         }
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
     },

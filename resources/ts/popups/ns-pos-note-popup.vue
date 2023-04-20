@@ -22,6 +22,7 @@ import { nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 export default {
     name: "ns-pos-note-popup",
+    props: [ 'popup' ],
     data() {
         return {
             validation: new FormValidation,
@@ -53,9 +54,9 @@ export default {
         this.popupCloser();
         this.fields.forEach( field => {
             if ( field.name === 'note' ) {
-                field.value     =   this.$popupParams.note;
+                field.value     =   this.popup.params.note;
             } else if ( field.name === 'note_visibility' ) {
-                field.value     =   this.$popupParams.note_visibility;
+                field.value     =   this.popup.params.note_visibility;
             }
         });
     },

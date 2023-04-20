@@ -64,7 +64,7 @@ export default {
         __,
         nsCurrency,
     },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
     }
 }

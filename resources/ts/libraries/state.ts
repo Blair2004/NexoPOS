@@ -7,18 +7,26 @@ export class State {
      */
     behaviorState: BehaviorSubject<{}>;
 
-    state: {}   =   {};
+    stateStore: {}   =   {};
 
     constructor( state ) {
         this.behaviorState   =  new BehaviorSubject({});
         this.behaviorState.subscribe( state => {
-            this.state  =   state;
+            this.stateStore  =   state;
         });
 
         this.setState( state );
     }
 
     setState(object) {
-        this.behaviorState.next({ ...this.state, object });
+        this.behaviorState.next({ ...this.stateStore, ...object });
+    }
+
+    get state() {
+        return this.behaviorState;
+    }
+
+    subscribe( callback ) {
+        this.behaviorState.subscribe( callback );
     }
 }

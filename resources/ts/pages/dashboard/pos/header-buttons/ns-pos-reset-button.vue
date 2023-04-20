@@ -5,7 +5,7 @@ import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import popupCloser from "~/libraries/popup-closer";
 
 export default {
-    name: 'ns-pos-customers-button',
+    name: 'ns-pos-reset-button',
     mounted() {
         this.popupCloser();
     },

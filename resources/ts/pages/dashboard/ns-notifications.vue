@@ -81,7 +81,7 @@ export default {
 
         this.loadNotifications();
     },
-    destroyed() {
+    unmounted() {
         clearInterval( this.interval );
     },
     methods: {

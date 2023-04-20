@@ -62,8 +62,8 @@ export default {
             nsHttpClient.get( `/api/cash-registers/used` )
                 .subscribe({
                     next: result => {
-                        this.$popupParams.resolve( result );
-                        this.$popup.close();
+                        this.popup.params.resolve( result );
+                        this.popup.close();
                     },
                     error: ( error ) => {
                         this.priorVerification  =   true;

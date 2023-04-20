@@ -12,9 +12,7 @@ use App\Classes\Output;
         <div>
             <ns-settings
                 url="{{ $src ?? '#' }}"
-                submit-url="{{ $submitUrl }}"
-                >
-                <template v-slot:error-form-invalid>{{ __( 'Unable to proceed the form is not valid.' ) }}</template>
+                submit-url="{{ $submitUrl }}">
             </ns-settings>
         </div>
     </div>

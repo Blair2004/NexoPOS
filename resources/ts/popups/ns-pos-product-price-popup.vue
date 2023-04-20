@@ -22,6 +22,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-product-price-product',
+    props: [ 'popup' ],
     components: {
         nsNumpad,
         nsNumpadPlus
@@ -40,7 +41,7 @@ export default {
     mounted() {
         this.popupCloser();
 
-        this.product    =   this.$popupParams.product;
+        this.product    =   this.popup.params.product;
 
         this.optionsSubscription    =   POS.options.subscribe( options => {
             this.options    =   ref(options);

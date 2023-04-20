@@ -231,22 +231,13 @@
                     </table>
                 </div>
                 <div class="h-16 flex flex-shrink-0 border-t border-box-edge" id="cart-bottom-buttons">
-                    <div @click="payOrder()" id="pay-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
-                        <i class="mr-2 text-2xl lg:text-xl las la-cash-register"></i> 
-                        <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Pay' ) }}</span>
-                    </div>
-                    <div @click="holdOrder()" id="hold-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
-                        <i class="mr-2 text-2xl lg:text-xl las la-pause"></i> 
-                        <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Hold' ) }}</span>
-                    </div>
-                    <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center border-r border-box-edge flex-auto">
-                        <i class="mr-2 text-2xl lg:text-xl las la-percent"></i> 
-                        <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Discount' ) }}</span>
-                    </div>
-                    <div @click="voidOngoingOrder( order )" id="void-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-box-edge hover:bg-red-600 flex-auto">
-                        <i class="mr-2 text-2xl lg:text-xl las la-trash"></i> 
-                        <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Void' ) }}</span>
-                    </div>
+                    <template v-for="component of cartButtons">
+                        <component :is="component" :order="order" :settings="settings"></component>
+                    </template>
+                    <!-- <ns-pos-pay-button :order="order" :settings="settings"></ns-pos-pay-button>
+                    <ns-pos-hold-button :order="order" :settings="settings"></ns-pos-hold-button>
+                    <ns-pos-discount-button :order="order" :settings="settings"></ns-pos-discount-button>
+                    <ns-pos-void-button :order="order" :settings="settings"></ns-pos-void-button> -->
                 </div>
             </div>
         </div>
@@ -264,14 +255,17 @@ import { CustomerQueue } from "./queues/order/customer-queue";
 import { PaymentQueue } from "./queues/order/payment-queue";
 import { TypeQueue } from "./queues/order/type-queue";
 
+import nsPosPayButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-pay-button.vue';
+import nsPosHoldButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-hold-button.vue';
+import nsPosDiscountButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-discount-button.vue';
+import nsPosVoidButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-void-button.vue';
+
 import PosPaymentPopup from '~/popups/ns-pos-payment-popup.vue';
 import PosConfirmPopup from '~/popups/ns-pos-confirm-popup.vue';
 import nsPosQuantityPopupVue from '~/popups/ns-pos-quantity-popup.vue';
-import nsPosDiscountPopupVue from '~/popups/ns-pos-discount-popup.vue';
 import nsPosOrderTypePopupVue from '~/popups/ns-pos-order-type-popup.vue';
 import nsPosCustomerPopupVue from '~/popups/ns-pos-customer-select-popup.vue';
 import nsPosShippingPopupVue from '~/popups/ns-pos-shipping-popup.vue';
-import nsPosHoldOrdersPopupVue from '~/popups/ns-pos-hold-orders-popup.vue';
 import nsPosLoadingPopupVue from '~/popups/ns-pos-loading-popup.vue';
 import nsPosNotePopupVue from '~/popups/ns-pos-note-popup.vue';
 import nsPosTaxPopupVue from '~/popups/ns-pos-tax-popup.vue';
@@ -279,16 +273,24 @@ import nsPosCouponsLoadPopupVue from '~/popups/ns-pos-coupons-load-popup.vue';
 import nsPosOrderSettingsVue from '~/popups/ns-pos-order-settings.vue';
 import nsPosProductPricePopupVue from '~/popups/ns-pos-product-price-popup.vue';
 import nsPosQuickProductPopupVue from '~/popups/ns-pos-quick-product-popup.vue';
-import { ref } from '@vue/reactivity';
+import { ref, markRaw } from '@vue/reactivity';
 
 export default {
     name: 'ns-pos-cart',
     data: () => {
         return {
             popup : null,
+            cartButtons: {},
             products: [],
+            defaultCartButtons: {
+                nsPosPayButton: markRaw( nsPosPayButton ),
+                nsPosHoldButton: markRaw( nsPosHoldButton ),
+                nsPosDiscountButton: markRaw( nsPosDiscountButton ),
+                nsPosVoidButton: markRaw( nsPosVoidButton ),
+            },
             visibleSection: null,
             visibleSectionSubscriber: null,
+            cartButtonsSubscriber: null,
             optionsSubscriber: null,
             options: {},
             typeSubscribe: null,
@@ -315,13 +317,20 @@ export default {
         }
     },
     mounted() {
+        this.cartButtonsSubscriber  =   POS.cartButtons.subscribe( cartButtons => {
+            this.cartButtons    =   cartButtons;
+        });
+
         this.optionsSubscriber  =   POS.options.subscribe( options => {
             this.options    =   options;
         });
+
         this.typeSubscribe  =   POS.types.subscribe( types => this.types = types );
+
         this.orderSubscribe  =   POS.order.subscribe( order => {
             this.order   =   ref(order);
         });
+
         this.productSubscribe  =   POS.products.subscribe( products => {
             this.products = ref(products);
         });
@@ -335,38 +344,17 @@ export default {
         });
 
         /**
+         * everytime the cart reset
+         * we restore original buttons.
+         */
+        nsHooks.addAction( 'ns-after-cart-reset', 'ns-pos-cart-buttons', () => {
+            POS.cartButtons.next( this.defaultCartButtons );
+        });
+
+        /**
          * let's register hotkeys
          */
         for( let shortcut in nsShortcuts ) {
-            /**
-             * let's declare only shortcuts that
-             * works on the pos grid and that doesn't 
-             * expect any popup to be visible
-             */
-            if ([ 
-                    'ns_pos_keyboard_hold_order', 
-                ].includes( shortcut ) ) {
-                nsHotPress
-                    .create( 'ns_pos_keyboard_hold_order' )
-                    .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
-                        event.preventDefault();
-                        this.holdOrder();
-                });
-            }
-
-            if ([ 
-                    'ns_pos_keyboard_payment', 
-                ].includes( shortcut ) ) {
-                nsHotPress
-                    .create( 'ns_pos_keyboard_payment' )
-                    .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
-                        event.preventDefault();
-                        this.payOrder();
-                });
-            }
-
             if ([ 
                     'ns_pos_keyboard_shipping', 
                 ].includes( shortcut ) ) {
@@ -392,16 +380,15 @@ export default {
             }
         }
     },
-    destroyed() {
+    unmounted() {
         this.visibleSectionSubscriber.unsubscribe();
         this.typeSubscribe.unsubscribe();
         this.orderSubscribe.unsubscribe();
         this.productSubscribe.unsubscribe();
         this.settingsSubscribe.unsubscribe();
         this.optionsSubscriber.unsubscribe();
+        this.cartButtonsSubscriber.unsubscribe();
         
-        nsHotPress.destroy( 'ns_pos_keyboard_hold_order' );
-        nsHotPress.destroy( 'ns_pos_keyboard_payment' );
         nsHotPress.destroy( 'ns_pos_keyboard_shipping' );
         nsHotPress.destroy( 'ns_pos_keyboard_note' );
     },
@@ -549,89 +536,6 @@ export default {
             this.selectTaxGroup( 'summary' );
         },
 
-        voidOngoingOrder() {
-            POS.voidOrder( this.order );
-        },
-
-        async holdOrder() {
-
-            if ( this.order.payment_status !== 'hold' && this.order.payments.length > 0 ) {
-                return nsSnackBar.error( __( 'Unable to hold an order which payment status has been updated already.' ) ).subscribe();
-            }
-
-            const queues    =   nsHooks.applyFilters( 'ns-hold-queue', [
-                ProductsQueue,
-                CustomerQueue,
-                TypeQueue,
-            ]);
-            
-            for( let index in queues ) {
-                try {
-                    const promise   =   new queues[ index ]( this.order );
-                    const response  =   await promise.run();
-                } catch( exception ) {
-                    /**
-                     * in case there is something broken
-                     * on the promise, we just stop the queue.
-                     */
-                    return false;    
-                }
-            }
-
-            /**
-             * overriding hold popup
-             * This will be useful to inject custom 
-             * hold popup.
-             */
-            const popup     =   nsHooks.applyFilters( 'ns-override-hold-popup', () => {
-                const promise   =   new Promise( ( resolve, reject ) => {
-                    Popup.show( nsPosHoldOrdersPopupVue, { resolve, reject, order : this.order });
-                });
-
-                promise.then( result => {
-                    this.order.title            =   result.title;
-                    this.order.payment_status   =   'hold';
-                    POS.order.next( this.order );
-
-                    const popup     =   Popup.show( nsPosLoadingPopupVue );
-                    
-                    POS.submitOrder().then( result => {
-                        popup.close();
-                        nsSnackBar.success( result.message ).subscribe();
-                    }, ( error ) => {
-                        popup.close();
-                        nsSnackBar.error( error.message ).subscribe();
-                    });
-                })
-            });
-
-            popup();
-        },
-
-        openDiscountPopup( reference, type, productIndex = null ) {
-            if ( ! this.settings.products_discount && type === 'product' ) {
-                return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) ).subscribe();
-            }
-
-            if ( ! this.settings.cart_discount && type === 'cart' ) {
-                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
-            }
-
-            Popup.show( nsPosDiscountPopupVue, { 
-                reference,
-                type,
-                onSubmit( response ) {
-                    if ( type === 'product' ) {
-                        POS.updateProduct( reference, response, productIndex );
-                    } else if ( type === 'cart' ) {
-                        POS.updateCart( reference, response );
-                    }
-                }
-            }, {
-                popupClass: 'bg-white h:2/3 shadow-lg xl:w-1/4 lg:w-2/5 md:w-2/3 w-full'
-            })
-        },
-
         selectCustomer() {
             Popup.show( nsPosCustomerPopupVue );
         },
@@ -693,28 +597,6 @@ export default {
                 }).then( result => {
                     POS.updateProduct( product, result, index );
                 });
-            }
-        },
-
-        async payOrder() {
-            const queues    =   nsHooks.applyFilters( 'ns-pay-queue', [
-                ProductsQueue,
-                CustomerQueue,
-                TypeQueue,
-                PaymentQueue
-            ]);
-
-            for( let index in queues ) {
-                try {
-                    const promise   =   new queues[ index ]( this.order );
-                    const response  =   await promise.run();
-                } catch( exception ) {
-                    /**
-                     * in case there is something broken
-                     * on the promise, we just stop the queue.
-                     */
-                    return false;    
-                }
             }
         },
 

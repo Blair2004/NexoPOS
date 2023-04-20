@@ -3,7 +3,7 @@
         <div class="header ml-4 flex justify-between" style="margin-bottom: -1px;">
             <div class="flex flex-auto">
                 <div 
-                    :key="identifier" 
+                    :key="tab.identifier" 
                     v-for="( tab , identifier ) of childrens" 
                     @click="toggle( tab )" 
                     :class="active === tab.identifier ? 'border-b-0 active z-10' : 'border inactive'" 
@@ -19,6 +19,7 @@
 </template>
 <script lang="ts">
 import { Subject } from 'rxjs';
+import { __ } from '~/libraries/lang';
 export default {
     data() {
         return {
@@ -40,13 +41,22 @@ export default {
         this.tabState.unsubscribe();
     },
     watch: {
-        active( before, after ) {
+        active( newValue, oldValue ) {
             this.childrens.forEach( children => {
-                children.active     =   children.identifier === after ? true : false;
-            })
+                children.active     =   children.identifier === newValue ? true : false;
+
+                if ( children.active ) {
+                    this.toggle( children );
+                }
+            });
         }
+    },    
+    mounted() {
+        console.log( this.active );
+        this.buildChildrens( this.active ); 
     },
     methods: {
+        __,
         toggle( tab ) {
             this.$emit( 'active', tab.identifier );
             this.$emit( 'changeTab', tab.identifier );
@@ -89,9 +99,6 @@ export default {
                 }
             });
         }
-    },
-    mounted() {
-        this.buildChildrens( this.active ); 
     },
 }
 </script>
