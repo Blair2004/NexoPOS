@@ -2,7 +2,7 @@
     <div class="flex flex-col ns-multiselect">
         <label :for="field.name" :class="hasError ? 'text-error-secondary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
-            <div @click="showPanel = !showPanel" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-input-option-hover p-2 items-center">
+            <div @click="togglePanel()" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-input-option-hover p-2 items-center">
                 <div class="flex -mx-1 -my-1 flex-wrap">
                     <div :key="index" class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded bg-info-secondary text-white flex justify-between p-1 items-center">
@@ -13,7 +13,7 @@
                         </div>
                     </div>
                 </div>
-                <div>
+                <div class="arrows">
                     <i class="las la-angle-down" v-if="showPanel"></i>
                     <i class="las la-angle-up" v-if="!showPanel"></i>
                 </div>
@@ -54,6 +54,7 @@ export default {
         return {
             showPanel: false,
             search: '',
+            eventListener: null,
         }
     },
     props: [ 'field' ],
@@ -76,6 +77,9 @@ export default {
     },
     methods: {
         __,
+        togglePanel() {
+            this.showPanel = !this.showPanel;
+        },
         addOption( option ) {
             if ( ! this.field.disabled ) {
                 this.$emit( 'addOption', option );
@@ -104,11 +108,29 @@ export default {
             values.forEach( value => {
                 const option     =   this.field.options.filter( option => option.value === value );
 
-                if ( option.length >= 0 ) {
+                if ( option.length > 0 ) {
                     this.addOption( option[0] );
                 }
-            })
+            });
         }
+
+        this.eventListener  =   document.addEventListener( 'click', (e) => {
+            const element = e.target;
+            let ancestor = element.parentElement;
+            let isSelect    =   false;
+            
+            while (ancestor) {
+                if ( ancestor && ancestor.classList.contains('ns-multiselect') && ! ancestor.classList.contains('arrows')  ) {
+                    isSelect    =   true;
+                    break;
+                }
+                ancestor = ancestor.parentElement;
+            }
+
+            if (!isSelect) {
+                this.togglePanel();
+            }
+        })
     },
 }
 </script>

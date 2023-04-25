@@ -329,7 +329,6 @@ export default {
 
         this.subscription   =   POS.order.subscribe( order => {
             this.order  =   order;
-            console.log( order );
 
             if ( this.popup.params.customer !== undefined ) {
                 this.activeTab  =   'account-payment';

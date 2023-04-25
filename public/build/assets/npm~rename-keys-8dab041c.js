@@ -1,0 +1,1 @@
+var o={},p={get exports(){return o},set exports(t){o=t}};(function(t){(function(){function n(r,s){if(typeof s!="function")return r;var a={};for(var e in r)Object.prototype.hasOwnProperty.call(r,e)&&(a[s(e,r[e])||e]=r[e]);return a}t.exports?t.exports=n:window.rename=n})()})(p);export{o as r};

@@ -83,8 +83,6 @@ export default {
                         .filter( history => [ 'register-closing', 'register-refund', 'register-cash-out' ].includes( history.action ) )
                         .map( history => parseFloat( history.value ) )
                         .reduce( ( before, after ) => before + after, 0 );
-
-                    console.log( this.totalOut );
                 });
         }
     }

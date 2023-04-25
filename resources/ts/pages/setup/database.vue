@@ -44,9 +44,6 @@ export default {
                 this.form.disableFields( this.firstPartFields );
                 this.form.disableFields( this.secondPartFields );
 
-                this.firstPartFields.forEach( f => console.log( f ) );
-                this.secondPartFields.forEach( f => console.log( f ) );
-
                 const form      =   {
                     ...this.form.getValue( this.firstPartFields ),
                     ...this.form.getValue( this.secondPartFields ),
@@ -78,7 +75,6 @@ export default {
         sliceRange( entries, slices, index ) {
             const length    =   entries.length;
             const part      =   Math.ceil( length / slices );
-            console.log( entries );
             return entries.splice( index * part, part );
         }
     },

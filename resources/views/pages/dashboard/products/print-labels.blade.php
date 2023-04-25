@@ -284,7 +284,7 @@ Vue.component( 'label-printing', {
 
 @section( 'layout.dashboard.body' )
 <div class="h-full flex-auto flex flex-col">
-    @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
+    @include( Hook::filter( 'ns-dashboard-header-file', '../common/dashboard-header' ) )
     <div class="flex-auto flex flex-col overflow-hidden" id="dashboard-content">
         <label-printing inline-template>
             <div class="flex flex-auto overflow-hidden" v-cloak>

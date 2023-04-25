@@ -9,8 +9,7 @@ export default {
         __,
 
         openPendingOrdersPopup() {
-            const popup     =   new Popup;
-            popup.open( nsPosPendingOrdersPopup );
+            Popup.show( nsPosPendingOrdersPopup );
         }
     },
 }

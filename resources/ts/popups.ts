@@ -43,12 +43,11 @@ const nsPopups      =   createApp({
         nsState.subscribe( state => {
             if ( state.popups !== undefined ) {
                 this.popups     =   shallowRef( state.popups );
-                console.log( this.popups );
                 this.$forceUpdate();
             }
         })
     },
-    methods: {       
+    methods: { 
         closePopup( popup, event ) {
             /**
              * This means we've strictly clicked on the container

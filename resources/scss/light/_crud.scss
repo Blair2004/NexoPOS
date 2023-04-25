@@ -11,7 +11,7 @@
     .ns-crud-input {
         @apply bg-input-background border-input-edge;
 
-        input {
+        input, select {
             @apply text-primary;
         }
     }

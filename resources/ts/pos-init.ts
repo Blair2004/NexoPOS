@@ -1105,11 +1105,15 @@ export class POS {
         this._order.next(order);
     }
 
-    setPaymentActive(payment) {
+    setPaymentActive( payment: PaymentType ) {
         const payments = this._paymentsType.getValue();
-        const index = payments.indexOf(payment);
-        payments.forEach(p => p.selected = false);
-        payments[index].selected = true;
+        payments.forEach(p => {
+            if ( p.identifier === payment.identifier ) {
+                p.selected = true;
+            } else {
+                p.selected = false;
+            }
+        });
         this._paymentsType.next(payments);
     }
 
@@ -1570,8 +1574,6 @@ export class POS {
         const products = this._products.getValue();
         index = index === null ? products.indexOf(product) : index;
         index = index === -1 ? 0 : index;
-
-        console.log( product, data, index );
 
         /**
          * to ensure Vue updates accordingly.

@@ -57,7 +57,7 @@
         }
 
         .ns-inset-button {
-            @apply border-gray-700;
+            @apply border-table-th-edge;
             &.active, &:hover {
                 @apply border-transparent;
             }

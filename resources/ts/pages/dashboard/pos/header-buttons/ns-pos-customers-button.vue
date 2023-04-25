@@ -8,8 +8,7 @@ export default {
     methods: {
         __,
         openCustomerPopup() {
-            const popup     =   new Popup;
-            popup.open( defineAsyncComponent({
+            Popup.show( defineAsyncComponent({
                 loader: () => import( '~/popups/ns-pos-customers.vue' )
             }) );
         }

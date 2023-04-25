@@ -1,4 +1,5 @@
 import { Subject } from "rxjs";
+import { shallowRef } from "vue";
 
 declare const document;
 declare const nsState;
@@ -32,8 +33,7 @@ export class Popup {
 
     static show( component, params = {}, config = {}) {
         const popup     =   new Popup( config );
-        popup.open( component, params );
-        return popup;
+        return popup.open( component, params );
     }
 
     private hash() {
@@ -47,12 +47,12 @@ export class Popup {
         return text.toLocaleLowerCase();
     }
 
-    async open( component, params = {}, config = {} ) {
+    open( component, params = {}, config = {} ) {
         this.popupBody       =   document.createElement( 'div' );
 
         if ( typeof component === 'function' ) {
             try {
-                component = (await component()).default;
+                component = (async() => (await component()).default)();
             } catch( exception ) {
                 /**
                  * it has failed, maybe it's an inline-component.
@@ -78,7 +78,7 @@ export class Popup {
          */
         const popup     =   {
             hash: `popup-${this.hash()}-${this.hash()}`,
-            component,
+            component: shallowRef( component ),
             close: ( callback ) => this.close( popup, callback ),
             params,
             config,
@@ -87,6 +87,8 @@ export class Popup {
         popups.push( popup );
 
         nsState.setState({ popups });
+
+        return popup;
     }
 
     close( popup, callback = null ) {

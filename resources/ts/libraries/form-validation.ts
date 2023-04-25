@@ -244,7 +244,6 @@ export default class FormValidation {
      * @param {Object} data 
      */
     triggerError( form, data ) {
-        console.log( data );
         if ( data.errors ) {
             for( let index in data.errors ) {
                 let path    =   index.split( '.' ).filter( exp => {

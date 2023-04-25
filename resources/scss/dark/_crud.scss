@@ -9,9 +9,9 @@
     }
 
     .ns-crud-input {
-        @apply bg-crud-button-edge;
+        @apply bg-crud-input-background;
 
-        input {
+        input, select {
             @apply text-primary;
         }
     }

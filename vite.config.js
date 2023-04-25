@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 
+import esmifyPlugin from './esmify';
 import fs from 'fs';
 import laravel from 'laravel-vite-plugin';
 import path from 'path';
@@ -34,6 +35,7 @@ export default ({ mode }) => {
             ]
         },
         plugins: [
+            esmifyPlugin(),
             vuePlugin({
                 template: {
                     transformAssetUrls: {

@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="bg-gray-200 p-3 flex justify-end">
-            <ns-link to="/database" type="info"><i class="las la-database"></i> Database Configuration</ns-link>
+            <router-link class="hover:underline rounded cursor-pointer py-2 px-3 font-semibold" to="/database" type="info"><i class="las la-database"></i> Database Configuration</router-link>
         </div>
     </div>
 </template>

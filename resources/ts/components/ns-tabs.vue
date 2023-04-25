@@ -52,7 +52,6 @@ export default {
         }
     },    
     mounted() {
-        console.log( this.active );
         this.buildChildrens( this.active ); 
     },
     methods: {

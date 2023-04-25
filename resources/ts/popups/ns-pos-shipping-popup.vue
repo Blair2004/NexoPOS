@@ -38,6 +38,7 @@ import resolveIfQueued from "~/libraries/popup-resolver";
 import FormValidation from '~/libraries/form-validation';
 export default {
     name: 'ns-pos-shipping-popup',
+    props: [ 'popup' ],
     computed: {
         activeTabFields() {
             if ( this.tabs !== null ) {

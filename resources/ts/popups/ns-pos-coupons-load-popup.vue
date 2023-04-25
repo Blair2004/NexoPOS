@@ -271,7 +271,6 @@ export default {
         },
 
         getDiscountValue( coupon ) {
-            console.log( coupon );
             switch( coupon.type ) {
                 case 'percentage_discount': return coupon.discount_value + '%';
                 case 'flat_discount': return this.$options.filters.currency( coupon.discount_value );

@@ -23,13 +23,10 @@ export default {
             showPayment: false,
             orderSubscription: null,
             currentPaymentComponent: null,
+            activePaymentSubscription: null,
         } 
     },
     computed: {
-        activePayment() {
-            let payment;
-            return ( payment = this.paymentsType.filter( p => p.selected ) ).length > 0 ? payment[0] : false;
-        },
         expectedPayment() {
             const minimalPaymentPercent     =   this.order.customer.group.minimal_credit_payment;
             return ( this.order.total * minimalPaymentPercent ) / 100;
@@ -37,6 +34,12 @@ export default {
     },
     mounted() {
         this.order                      =   this.popup.params.order;
+        this.activePaymentSubscription  =   POS.selectedPaymentType.subscribe( activePayment => {
+            this.activePayment = activePayment;
+            if ( activePayment !== null ) {
+                this.loadPaymentComponent( activePayment );
+            }
+        });
         this.paymentTypesSubscription   =   POS.paymentsType.subscribe( paymentsType => {
             this.paymentsType   =   paymentsType;
             paymentsType.filter( payment => {
@@ -48,12 +51,8 @@ export default {
 
         nsHooks.doAction( 'ns-pos-payment-mounted', this );
     },
-    watch: {
-        activePayment( value ) {
-            this.loadPaymentComponent( value );
-        }
-    },
     unmounted() {
+        this.activePaymentSubscription.unsubscribe();
         this.paymentTypesSubscription.unsubscribe();
 
         nsHooks.doAction( 'ns-pos-payment-destroyed', this );
@@ -67,19 +66,19 @@ export default {
         loadPaymentComponent( payment ) {
             switch( payment.identifier ) {
                 case 'cash-payment':
-                    this.currentPaymentComponent    =   CashPayment;
+                    this.currentPaymentComponent    =   shallowRef( CashPayment );
                 break;
                 case 'creditcard-payment':
-                    this.currentPaymentComponent    =   CreditCardPayment;
+                    this.currentPaymentComponent    =   shallowRef( CreditCardPayment );
                 break;
                 case 'bank-payment':
-                    this.currentPaymentComponent    =   BankPayment;
+                    this.currentPaymentComponent    =   shallowRef( BankPayment );
                 break;
                 case 'account-payment':
-                    this.currentPaymentComponent    =   AccountPayment;
+                    this.currentPaymentComponent    =   shallowRef( AccountPayment );
                 break;
                 default: 
-                    this.currentPaymentComponent    =   samplePaymentVue;
+                    this.currentPaymentComponent    =   shallowRef( samplePaymentVue );
                 break;
             }
         },

@@ -53,7 +53,6 @@ export default {
         },
         setStartDate( moment ) {
             this.startDate  =   moment.format();
-            console.log( this.startDate );
         },
 
         loadReport() {

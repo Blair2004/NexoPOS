@@ -411,8 +411,6 @@ export default {
 
         async openQueryFilter() {
             try {
-                console.log( nsOrdersFilterPopupVue );
-
                 const result    =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsOrdersFilterPopupVue, { resolve, reject, queryFilters: this.queryFilters });
                 });

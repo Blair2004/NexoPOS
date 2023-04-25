@@ -182,7 +182,6 @@ export default {
                     next: result => {
                         result.current.products     =   Object.values( result.current.products );
                         this.report     =   result;
-                        console.log( this.report );
                     }, 
                     error: ( error ) => {
                         nsSnackBar

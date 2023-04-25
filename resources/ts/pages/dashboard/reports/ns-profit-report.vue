@@ -179,7 +179,6 @@ export default {
         },
 
         setEndDate( moment ) {
-            console.log( moment );
             this.endDate    =   moment.format();
         },
     }

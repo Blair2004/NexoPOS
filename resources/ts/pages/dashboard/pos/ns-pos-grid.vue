@@ -212,7 +212,6 @@ export default {
         this.orderSubscription.unsubscribe();
         this.breadcrumbsSubsribe.unsubscribe();
         this.visibleSectionSubscriber.unsubscribe();
-        this.screenSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
         this.optionsSubscriber.unsubscribe();
 

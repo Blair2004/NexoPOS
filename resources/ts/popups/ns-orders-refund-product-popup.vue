@@ -56,7 +56,6 @@ export default {
                 const fields    =   this.formValidation.extractFields( this.fields );
                 const product   =   { ...this.product, ...fields };
                 this.popup.params.resolve( product );
-                console.log( fields, product );
                 return this.close();
             }
 

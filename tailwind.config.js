@@ -103,6 +103,7 @@ module.exports = {
 
         'option-hover': withOpacityValue('--option-hover'),
         'crud-button-edge': withOpacityValue('--crud-button-edge'),
+        'crud-input-background': withOpacityValue('--crud-input-background'),
         'pos-button-edge': withOpacityValue('--pos-button-edge'),
 
         'numpad-typography': withOpacityValue('--numpad-typography'),

@@ -151,8 +151,8 @@ class Handler extends ExceptionHandler
                 ],
             ]);
 
-            $exceptionResponse = $exceptions->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
-                if ( $exception instanceof $class ) {
+            $exceptionResponse = $exceptions->map( function( $exceptionConfig, $class = null ) use ( $exception, $request ) {
+                if ( $class !== null && $exception instanceof $class ) {
                     if ( $request->expectsJson() ) {
                         Log::error( $exception->getMessage() );
 

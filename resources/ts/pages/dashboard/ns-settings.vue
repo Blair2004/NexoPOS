@@ -86,7 +86,6 @@ export default {
              * and prevent the regular process to run.
              */
             const beforeSaveHook    =   nsHooks.applyFilters( 'ns-before-saved', () => new Promise( ( resolve, reject ) => {
-                console.log( 'foo' );
                 return nsHttpClient.post( this.url, form )
                     .subscribe({
                         next: result => {
@@ -99,7 +98,6 @@ export default {
             } ) );
 
             try {
-                console.log( beforeSaveHook );
                 const result    =   await beforeSaveHook( form );
 
                 this.validation.enableForm( this.form );
@@ -123,8 +121,6 @@ export default {
                 this.validation.triggerFieldsErrors( this.form, error );
                 
                 nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
-
-                console.log( error );
 
                 nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) )
                     .subscribe();

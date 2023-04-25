@@ -128,8 +128,6 @@ export default {
                     return false;
                 });
 
-                console.log( filteredModules );
-
                 const modules           =   new Object;
 
                 for( let index = 0; index < filteredModules.length ; index++ ) {

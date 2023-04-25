@@ -42,6 +42,7 @@ export default {
             urls: {}
         }
     },
+    props: [ 'popup' ],
     mounted() {
         this.settingsSubscription   =   POS.settings.subscribe( settings => {
             this.urls    =   settings.urls;

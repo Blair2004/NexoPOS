@@ -6,7 +6,6 @@ export default {
     name: 'ns-rewards-system',
     mounted() {
         this.loadForm();
-        console.log( this.rules );
     },
     data: () => {
         return {
