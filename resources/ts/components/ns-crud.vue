@@ -207,8 +207,8 @@ export default {
         },
         resultInfo() {
             return __( 'displaying {perPage} on {items} items' )
-                .replace( '{perPage}', this.result.total )
-                .replace( '{items}', this.result.total )
+                .replace( '{perPage}', this.result.per_page || 0 )
+                .replace( '{items}', this.result.total || 0 )
         },
         headerButtonsComponents() {
             return this.headerButtons.map( buttonComponent => {
