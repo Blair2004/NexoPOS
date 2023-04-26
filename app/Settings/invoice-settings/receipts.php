@@ -32,6 +32,16 @@ return [
             'value' => ns()->option->get( 'ns_invoice_merge_similar_products' ),
             'description' => __( 'All similar products will be merged to avoid a paper waste for the receipt/invoice.' ),
         ], [
+            'label' => __( 'Show Tax Breakdown' ),
+            'type' => 'switch',
+            'options' => Helper::kvToJsOptions([
+                'no' => __( 'No' ),
+                'yes' => __( 'Yes' ),
+            ]),
+            'name' => 'ns_invoice_display_tax_breakdown',
+            'value' => ns()->option->get( 'ns_invoice_display_tax_breakdown' ),
+            'description' => __( 'Will display the tax breakdown on the receipt/invoice.' ),
+        ], [
             'label' => __( 'Receipt Footer' ),
             'type' => 'textarea',
             'name' => 'ns_invoice_receipt_footer',
