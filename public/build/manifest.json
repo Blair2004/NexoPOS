@@ -2499,7 +2499,7 @@
     "src": "resources/ts/pages/dashboard/rewards-system.vue"
   },
   "resources/ts/pages/setup/database.vue": {
-    "file": "assets/database-adaa77d0.js",
+    "file": "assets/database-efe3d479.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/setup.ts",
@@ -2566,7 +2566,7 @@
     "src": "resources/ts/pages/setup/database.vue"
   },
   "resources/ts/pages/setup/setup-configuration.vue": {
-    "file": "assets/setup-configuration-50d39783.js",
+    "file": "assets/setup-configuration-04d0d2f7.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/setup.ts",
@@ -2633,7 +2633,7 @@
     "src": "resources/ts/pages/setup/setup-configuration.vue"
   },
   "resources/ts/pages/setup/welcome.vue": {
-    "file": "assets/welcome-d30a2be2.js",
+    "file": "assets/welcome-95bdd69b.js",
     "imports": [
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
@@ -3024,7 +3024,7 @@
       "resources/ts/pages/setup/database.vue",
       "resources/ts/pages/setup/setup-configuration.vue"
     ],
-    "file": "assets/setup-4ea09dfc.js",
+    "file": "assets/setup-eae2cdb7.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_components-325eb074.js",

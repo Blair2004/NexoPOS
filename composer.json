@@ -18,7 +18,6 @@
         "fakerphp/faker": "^1.12",
         "gumlet/php-image-resize": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "jackiedo/dotenv-editor": "^2.0",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/telescope": "^4.0",
@@ -44,7 +43,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "extra": {
         "laravel": {

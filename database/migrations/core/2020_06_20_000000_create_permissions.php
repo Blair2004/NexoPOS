@@ -8,6 +8,9 @@ use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
+    protected $options;
+    protected $permission;
+
     /**
      * Determine whether the migration
      * should execute when we're accessing

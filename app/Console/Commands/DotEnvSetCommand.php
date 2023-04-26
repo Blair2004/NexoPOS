@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class DotEnvSetCommand extends Command
 {
@@ -42,8 +41,7 @@ class DotEnvSetCommand extends Command
             return $this->error( __( 'The authorization token can\'t be changed manually.' ) );
         }
 
-        DotenvEditor::setKey( strtoupper( $this->argument( 'key' ) ), $this->option( 'v' ) );
-        DotEnvEditor::save();
+        ns()->envEditor->set( strtoupper( $this->argument( 'key' ) ), $this->option( 'v' ) );
 
         $this->info( 'The environment value has been set.' );
     }

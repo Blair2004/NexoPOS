@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class ResetSessionCookieCommand extends Command
 {
@@ -31,9 +30,7 @@ class ResetSessionCookieCommand extends Command
     {
         switch ( $this->argument( 'action' ) ) {
             case 'generate':
-                DotenvEditor::load();
-                DotenvEditor::setKey( 'SESSION_COOKIE', strtolower( 'nexopos_' . Str::random(5) ) );
-                DotenvEditor::save();
+                ns()->envEditor->set( 'SESSION_COOKIE', strtolower( 'nexopos_' . Str::random(5) ) );
                 break;
         }
     }
