@@ -125,10 +125,10 @@ class DoctorService
          */
         $domain = Str::replaceFirst( 'http://', '', url( '/' ) );
         $domain = Str::replaceFirst( 'https://', '', $domain );
-        $domain = explode( ':', $domain )[0];
+        $withoutPort = explode( ':', $domain )[0];
 
         if ( ! env( 'SESSION_DOMAIN', false ) ) {
-            ns()->envEditor->set( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', explode( ':', $domain )[0] ) );
+            ns()->envEditor->set( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', $withoutPort ) );
         }
 
         if ( ! env( 'SANCTUM_STATEFUL_DOMAINS', false ) ) {
