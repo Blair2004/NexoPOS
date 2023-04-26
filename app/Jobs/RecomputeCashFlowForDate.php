@@ -41,8 +41,8 @@ class RecomputeCashFlowForDate implements ShouldQueue
             Auth::login( $user );
         }
 
-        $this->fromDate     =   Carbon::parse( $this->fromDate );
-        $this->toDate     =   Carbon::parse( $this->toDate );
+        $this->fromDate = Carbon::parse( $this->fromDate );
+        $this->toDate = Carbon::parse( $this->toDate );
 
         /**
          * @var ReportService $reportService

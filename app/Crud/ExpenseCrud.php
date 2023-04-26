@@ -310,7 +310,7 @@ class ExpenseCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -434,17 +434,17 @@ class ExpenseCrud extends CrudService
 
         switch ( $entry->occurrence ) {
             case 'month_start' : $entry->occurrence = __( 'Month Starts' );
-            break;
+                break;
             case 'month_mid' : $entry->occurrence = __( 'Month Middle' );
-            break;
+                break;
             case 'month_end' : $entry->occurrence = __( 'Month Ends' );
-            break;
+                break;
             case 'x_after_month_starts' : $entry->occurrence = __( 'X Days Before Month Starts' );
-            break;
+                break;
             case 'x_before_month_ends' : $entry->occurrence = __( 'X Days Before Month Ends' );
-            break;
+                break;
             default: $entry->occurrence = __( 'Unknown Occurrence' );
-            break;
+                break;
         }
 
         // you can make changes here

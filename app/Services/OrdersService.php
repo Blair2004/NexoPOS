@@ -497,12 +497,12 @@ class OrdersService
              */
             if ( $order->payment_status !== Order::PAYMENT_HOLD ) {
                 $order->products->map( function( OrderProduct $product ) use ( $products ) {
-                    $productHistory   =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_SOLD )
+                    $productHistory = ProductHistory::where( 'operation_type', ProductHistory::ACTION_SOLD )
                         ->where( 'order_product_id', $product->id )
                         ->first();
 
                     /**
-                     * We should restore or retreive quantities when the 
+                     * We should restore or retreive quantities when the
                      * product has initially be marked as sold.
                      */
                     if ( $productHistory instanceof ProductHistory ) {
@@ -510,7 +510,7 @@ class OrdersService
                                 ->filter( fn( $product ) => isset( $product[ 'id' ] ) )
                                 ->mapWithKeys( fn( $product ) => [ $product[ 'id' ] => $product ] )
                                 ->toArray();
-    
+
                         if ( in_array( $product->id, array_keys( $products ) ) ) {
                             if ( $product->quantity < $products[ $product->id ][ 'quantity' ] ) {
                                 return [
@@ -1043,7 +1043,6 @@ class OrdersService
         $gross = 0;
 
         $orderProducts = $products->map(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
-
             /**
              * if the product id is provided
              * then we can use that id as a reference.
@@ -1130,7 +1129,7 @@ class OrdersService
                  * already exists and which are edited. We'll here only records
                  * products that doesn't exists yet.
                  */
-                $stockHistoryExists     =   ProductHistory::where( 'order_product_id', $orderProduct->id )
+                $stockHistoryExists = ProductHistory::where( 'order_product_id', $orderProduct->id )
                     ->where( 'operation_type', ProductHistory::ACTION_SOLD )
                     ->count() === 1;
 
@@ -1300,17 +1299,17 @@ class OrdersService
                     ->withUnitQuantity( $orderProduct[ 'unit_quantity_id' ] )
                     ->sum( 'quantity' );
 
-                $orderProductQuantity       =   $orderProduct[ 'quantity' ];
-                    
+                $orderProductQuantity = $orderProduct[ 'quantity' ];
+
                 /**
                  * If the orderProduct has an id, that means we're editing an order. In order to extract what is the exact quantity
-                 * we want to deduct from the stock, we need to know wether the quantity has changed (greater or not). We then need to pull 
+                 * we want to deduct from the stock, we need to know wether the quantity has changed (greater or not). We then need to pull
                  * the original reference of the orderProduct to compute the new quantity that will be deducted from inventory.
                  */
-                $quantityToIgnore       =   0;
+                $quantityToIgnore = 0;
 
                 if ( isset( $orderProduct[ 'id' ] ) ) {
-                    $stockWasDeducted   =   ProductHistory::where( 'order_product_id', $orderProduct[ 'id' ] )
+                    $stockWasDeducted = ProductHistory::where( 'order_product_id', $orderProduct[ 'id' ] )
                         ->where( 'operation_type', ProductHistory::ACTION_SOLD )
                         ->count() === 1;
 
@@ -1319,10 +1318,10 @@ class OrdersService
                      * that is currently in use by the order product.
                      */
                     if ( $stockWasDeducted ) {
-                        $orderProductRerefence  =   OrderProduct::find( $orderProduct[ 'id' ] );
-                        $quantityToIgnore       =   $orderProductRerefence->quantity;
+                        $orderProductRerefence = OrderProduct::find( $orderProduct[ 'id' ] );
+                        $quantityToIgnore = $orderProductRerefence->quantity;
                     }
-                } 
+                }
 
                 if ( ( $productUnitQuantity->quantity + $quantityToIgnore ) - $storageQuantity < abs( $orderProductQuantity ) ) {
                     throw new \Exception(
@@ -2172,7 +2171,7 @@ class OrdersService
             ->get()
             ->each( function( OrderProduct $orderProduct) {
                 $orderProduct->load( 'product' );
-                $product    =   $orderProduct->product;
+                $product = $orderProduct->product;
                 /**
                  * we do proceed by doing an initial return
                  * only if the product is not a quick product/service
@@ -2569,7 +2568,7 @@ class OrdersService
                         'unit_price' => $orderProduct->unit_price,
                     ]);
                 }
-        });
+            });
 
         $order->payment_status = Order::PAYMENT_VOID;
         $order->voidance_reason = $reason;

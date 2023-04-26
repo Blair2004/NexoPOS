@@ -11,7 +11,6 @@ namespace App\Http\Controllers\Dashboard;
 use App\Classes\Hook;
 use App\Crud\ProcurementCrud;
 use App\Crud\ProcurementProductCrud;
-use App\Events\ProcurementAfterUpdateEvent;
 use App\Exceptions\NotAllowedException;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\ProcurementRequest;

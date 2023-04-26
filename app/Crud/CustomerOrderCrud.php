@@ -314,7 +314,7 @@ class CustomerOrderCrud extends OrderCrud
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

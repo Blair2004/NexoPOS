@@ -690,21 +690,21 @@ class ExpenseService
              */
             switch ( $type ) {
                 case CashFlow::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_SALES: $label = __( 'Sales Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' );
-                break;
+                    break;
             }
 
             return $this->getDefinedAccountType( $account[ 'option' ], [

@@ -98,10 +98,10 @@ class DoctorService
 
     public function fixOrphanOrderProducts()
     {
-        $orderIds   =   Order::get( 'id' );
+        $orderIds = Order::get( 'id' );
 
-        $query  =   OrderProduct::whereNotIn( 'order_id', $orderIds );
-        $total  =   $query->count();
+        $query = OrderProduct::whereNotIn( 'order_id', $orderIds );
+        $total = $query->count();
         $query->delete();
 
         return sprintf( __( '%s products were freed' ), $total );
@@ -118,16 +118,16 @@ class DoctorService
         /**
          * Set version to close setup
          */
-        $domain         =   Str::replaceFirst( 'http://', '', url( '/' ) );
-        $domain         =   Str::replaceFirst( 'https://', '', $domain );
-        $withoutPort    =   explode( ':', $domain )[0];
-        
+        $domain = Str::replaceFirst( 'http://', '', url( '/' ) );
+        $domain = Str::replaceFirst( 'https://', '', $domain );
+        $withoutPort = explode( ':', $domain )[0];
+
         if ( ! env( 'SESSION_DOMAIN', false ) ) {
             DotenvEditor::load();
             DotenvEditor::setKey( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', $withoutPort ) );
             DotenvEditor::save();
         }
-        
+
         if ( ! env( 'SANCTUM_STATEFUL_DOMAINS', false ) ) {
             DotenvEditor::load();
             DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'localhost', '127.0.0.1' ])->unique()->join(',') );
@@ -144,7 +144,7 @@ class DoctorService
         /**
          * @var ExpenseService $expenseService
          */
-        $expenseService     =   app()->make( ExpenseService::class );
+        $expenseService = app()->make( ExpenseService::class );
 
         CashFlow::where( 'order_id', '>', 0 )->delete();
         CashFlow::where( 'order_refund_id', '>', 0 )->delete();
@@ -152,10 +152,10 @@ class DoctorService
         /**
          * Step 1: Recompute from order sales
          */
-        $orders     =   Order::paymentStatus( Order::PAYMENT_PAID )->get();
-        
+        $orders = Order::paymentStatus( Order::PAYMENT_PAID )->get();
+
         $command->info( __( 'Restoring cash flow from paid orders...' ) );
-        
+
         $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
             $expenseService->handleCreatedOrder( $order );
         });
@@ -166,10 +166,10 @@ class DoctorService
          * Step 2: Recompute from refund
          */
         $command->info( __( 'Restoring cash flow from refunded orders...' ) );
-        
-        $orders     =   Order::paymentStatusIn([
+
+        $orders = Order::paymentStatusIn([
             Order::PAYMENT_REFUNDED,
-            Order::PAYMENT_PARTIALLY_REFUNDED
+            Order::PAYMENT_PARTIALLY_REFUNDED,
         ])->get();
 
         $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
