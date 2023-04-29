@@ -285,8 +285,8 @@ class CrudService
              */
             if ( ! empty( $entry->created_at ) || ! empty( $entry->updated_at ) ) {
                 $entry->timestamps = false;
-                $entry->created_at = $entry->created_at ?: ns()->date->getNowFormatted();
-                $entry->updated_at = $entry->updated_at ?: ns()->date->getNowFormatted();
+                $entry->created_at = $entry->created_at ?: ns()->date->toDateTimeString();
+                $entry->updated_at = $entry->updated_at ?: ns()->date->toDateTimeString();
             }
 
             $entry->save();
@@ -1117,7 +1117,7 @@ class CrudService
      */
     public function getPlainData( $crud, Request $request, $model = null )
     {
-        $fields = $request->all();
+        $fields = $request->post();
 
         return $this->getFlatForm( $crud, $fields, $model );
     }
