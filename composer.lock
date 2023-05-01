@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81d23330d74648fcfc84de11c1e11160",
+    "content-hash": "ed1ca64f656a04202b0179ee53524b4d",
     "packages": [
         {
             "name": "beyondcode/laravel-websockets",
@@ -90,26 +90,25 @@
         },
         {
             "name": "brick/math",
-            "version": "0.10.2",
+            "version": "0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "459f2781e1a08d52ee56b0b1444086e038561e3f"
+                "reference": "0ad82ce168c82ba30d1c01ec86116ab52f589478"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/459f2781e1a08d52ee56b0b1444086e038561e3f",
-                "reference": "459f2781e1a08d52ee56b0b1444086e038561e3f",
+                "url": "https://api.github.com/repos/brick/math/zipball/0ad82ce168c82ba30d1c01ec86116ab52f589478",
+                "reference": "0ad82ce168c82ba30d1c01ec86116ab52f589478",
                 "shasum": ""
             },
             "require": {
-                "ext-json": "*",
-                "php": "^7.4 || ^8.0"
+                "php": "^8.0"
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "^2.2",
                 "phpunit/phpunit": "^9.0",
-                "vimeo/psalm": "4.25.0"
+                "vimeo/psalm": "5.0.0"
             },
             "type": "library",
             "autoload": {
@@ -134,7 +133,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.10.2"
+                "source": "https://github.com/brick/math/tree/0.11.0"
             },
             "funding": [
                 {
@@ -142,7 +141,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-10T22:54:19+00:00"
+            "time": "2023-01-15T23:15:59+00:00"
         },
         {
             "name": "cboden/ratchet",
