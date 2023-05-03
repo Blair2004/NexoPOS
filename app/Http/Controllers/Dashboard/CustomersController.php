@@ -364,11 +364,11 @@ class CustomersController extends DashboardController
             'createUrl' => ns()->url( '/dashboard/customers/' . $customer->id . '/account-history/create' ),
             'description' => sprintf(
                 __( 'Displays the customer account history for %s' ),
-                $customer->name
+                $customer->first_name . ' ' . $customer->last_name
             ),
             'title' => sprintf(
                 __( 'Account History : %s' ),
-                $customer->name
+                $customer->first_name . ' ' . $customer->last_name
             ),
         ]);
     }

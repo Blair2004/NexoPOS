@@ -12,6 +12,7 @@ import NsSpinner from "~/components/ns-spinner.vue";
 
 export default {
     components: {NsSpinner, NsCloseButton},
+    props: [ 'popup' ],
     mounted() {
         this.settingsSubscriber     =   POS.settings.subscribe( settings => {
             this.settings   =   settings;

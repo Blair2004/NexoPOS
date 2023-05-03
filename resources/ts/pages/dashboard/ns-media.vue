@@ -7,7 +7,7 @@ import VueUpload from 'vue-upload-component';
 
 export default {
     name: 'ns-media',
-    props: [ '$popup' ],
+    props: [ 'popup' ],
     components: {
         VueUpload
     },
@@ -101,16 +101,16 @@ export default {
             return ns.authentication.csrf;
         },
         isPopup() {
-            return typeof this.$popup !== 'undefined';
+            return typeof this.popup !== 'undefined';
         },
         user_id() {
-            return this.isPopup ? ( this.$popupParams.user_id || 0 ) : 0;
+            return this.isPopup ? ( this.popup.params.user_id || 0 ) : 0;
         },
         panelOpened() {
             return ! this.bulkSelect && this.hasOneSelected;
         },
         popupInstance() {
-            return this.$popup;
+            return this.popup;
         }
     },
     methods: {
@@ -316,11 +316,11 @@ export default {
          * @return void
          */
         useSelectedEntries() {
-            this.$popupParams.resolve({
+            this.popup.params.resolve({
                 event: 'use-selected',
                 value: this.response.data.filter( entry => entry.selected )
             });
-            this.$popup.close();
+            this.popup.close();
         },
 
         /**

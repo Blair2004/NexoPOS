@@ -31,13 +31,13 @@ class MenuService
             ],
             'orders' => [
                 'label' => __( 'Orders' ),
-                'permissions' => [ 'nexopos.update.orders', 'nexopos.read.orders' ],
+                'permissions' => [ 'nexopos.read.orders' ],
                 'icon' => 'la-list-ol',
                 'childrens' => [
                     'order-list' => [
                         'label' => __( 'Orders List' ),
                         'href' => ns()->url( '/dashboard/orders' ),
-                        'permissions' => [ 'nexopos.update.orders', 'nexopos.read.orders' ],
+                        'permissions' => [ 'nexopos.read.orders' ],
                     ],
                     'payment-type' => [
                         'label' => __( 'Payment Types' ),

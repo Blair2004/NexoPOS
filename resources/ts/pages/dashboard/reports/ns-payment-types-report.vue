@@ -103,7 +103,6 @@ export default {
             this.$htmlToPaper( 'sale-report' );
         },
         setStartDate( moment ) {
-            console.log( moment );
             this.startDate  =   moment.format();
         },
 
@@ -133,7 +132,6 @@ export default {
         },
 
         setEndDate( moment ) {
-            console.log( moment );
             this.endDate    =   moment.format();
         },
     }

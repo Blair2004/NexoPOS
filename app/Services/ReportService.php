@@ -1076,8 +1076,8 @@ class ReportService
     {
         $date = ns()->date->copy();
         $date->year = $year;
-        $startOfYear = $date->startOfYear();
-        $endOfYear = $date->endOfYear();
+        $startOfYear = $date->copy()->startOfYear();
+        $endOfYear = $date->copy()->endOfYear();
 
         while ( ! $startOfYear->isSameMonth( $endOfYear ) ) {
             $this->computeDashboardMonth( $startOfYear->copy() );

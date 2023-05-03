@@ -66,13 +66,24 @@ use Illuminate\Support\Facades\View;
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->total_coupons ) }}</td>
                     </tr>
                     @endif
-                    @if ( $order->tax_value > 0 )
-                    <tr>
-                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
-                            <span>{{ __( 'Taxes' ) }}</span>
-                        </td>
-                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tax_value ) }}</td>
-                    </tr>
+                    @if ( ns()->option->get( 'ns_invoice_display_tax_breakdown' ) === 'yes' ) 
+                        @foreach( $order->taxes as $tax )
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
+                                <span>{{ $tax->tax_name }} &mdash; {{ $order->tax_type === 'inclusive' ? __( 'Inclusive' ) : __( 'Exclusive' ) }}</span>
+                            </td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $tax->tax_value ) }}</td>
+                        </tr>
+                        @endforeach
+                    @else                     
+                        @if ( $order->tax_value > 0 )
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
+                                <span>{{ __( 'Taxes' ) }}</span>
+                            </td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tax_value ) }}</td>
+                        </tr>
+                        @endif
                     @endif
                     @if ( $order->shipping > 0 )
                     <tr>

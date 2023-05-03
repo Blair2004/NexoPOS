@@ -22,6 +22,7 @@ import QRCode from 'qrcode';
 
 export default {
     name: 'ns-token-output',
+    props: [ 'popup' ],
     data() {
         return {
             accessToken: '',
@@ -29,7 +30,7 @@ export default {
         }
     },
     mounted() {
-        this.accessToken    =   this.$popupParams.result.data.token.plainTextToken;
+        this.accessToken    =   this.popup.params.result.data.token.plainTextToken;
         this.popupCloser();
         setTimeout( () => {
             this.$refs[ 'token' ].select();

@@ -41,6 +41,7 @@ declare const systemOptions;
 declare const systemUrls;
 
 export class POS {
+    private _cartButtons: BehaviorSubject<{ [key: string]: any }>;
     private _products: BehaviorSubject<OrderProduct[]>;
     private _breadcrumbs: BehaviorSubject<any[]>;
     private _customers: BehaviorSubject<Customer[]>;
@@ -172,6 +173,10 @@ export class POS {
         return this._processingAddQueue;
     }
 
+    get cartButtons() {
+        return this._cartButtons;
+    }
+
     async reset() {
         this._isSubmitting = false;
 
@@ -182,12 +187,14 @@ export class POS {
         this.products.next([]);
         this._customers.next([]);
         this._breadcrumbs.next([]);
+        this._cartButtons.next({});
         this.defineCurrentScreen();
         this.setHoldPopupEnabled(true);
 
         await this.processInitialQueue();
 
         nsHooks.doAction( 'ns-after-cart-changed' );
+        nsHooks.doAction( 'ns-after-cart-reset' );
     }
 
     public initialize() {
@@ -202,6 +209,7 @@ export class POS {
         this._settings = new BehaviorSubject<{ [key: string]: any }>({});
         this._order = new BehaviorSubject<Order>(this.defaultOrder());
         this._selectedPaymentType = new BehaviorSubject<PaymentType>(null);
+        this._cartButtons = new BehaviorSubject<{ [key: string]: any }>({})
         this._orderTypeProcessQueue = [
             {
                 identifier: 'handle.delivery-order',
@@ -1101,11 +1109,15 @@ export class POS {
         this._order.next(order);
     }
 
-    setPaymentActive(payment) {
+    setPaymentActive( payment: PaymentType ) {
         const payments = this._paymentsType.getValue();
-        const index = payments.indexOf(payment);
-        payments.forEach(p => p.selected = false);
-        payments[index].selected = true;
+        payments.forEach(p => {
+            if ( p.identifier === payment.identifier ) {
+                p.selected = true;
+            } else {
+                p.selected = false;
+            }
+        });
         this._paymentsType.next(payments);
     }
 
@@ -1566,8 +1578,6 @@ export class POS {
         const products = this._products.getValue();
         index = index === null ? products.indexOf(product) : index;
         index = index === -1 ? 0 : index;
-
-        console.log( product, data, index );
 
         /**
          * to ensure Vue updates accordingly.

@@ -120,7 +120,7 @@ class DemoCoreService
 
         $optionService->set(
             'ns_pos_order_types',
-            array_values( $orderTypes )
+            array_keys( $orderTypes )
         );
 
         $optionService->set( 

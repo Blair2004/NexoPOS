@@ -5,9 +5,9 @@
  * @param state
  */
 export default function( state: any ) {
-    if ( this.$popupParams.resolve !== undefined && this.$popupParams.reject ) {
-        state !== false ? this.$popupParams.resolve( state ) : this.$popupParams.reject( state );
+    if ( this.popup.params.resolve !== undefined && this.popup.params.reject ) {
+        state !== false ? this.popup.params.resolve( state ) : this.popup.params.reject( state );
     }
     
-    this.$popup.close();
+    this.popup.close();
 }

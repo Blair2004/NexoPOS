@@ -95,7 +95,6 @@ export default {
         nsCurrency,
 
         updateValue( value ) {
-            console.log( value );
             this.inputValue     =   value;
         },
         loadPaymentFields() {

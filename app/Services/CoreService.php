@@ -40,7 +40,8 @@ class CoreService
         public NotificationService $notification,
         public ProcurementService $procurement,
         public Options $option,
-        public MathService $math
+        public MathService $math,
+        public EnvEditor $envEditor,
     ) {
         // ...
     }
@@ -113,7 +114,7 @@ class CoreService
         }
 
         if ( ! $passed ) {
-            throw new NotEnoughPermissionException( $message ?: __( 'Your don\'t have enough permissions to see this page.' ) );
+            throw new NotEnoughPermissionException( $message ?: __( 'Your don\'t have enough permissions to perform this action.' ) );
         }
     }
 
@@ -407,8 +408,8 @@ class CoreService
         $assets     =   collect([]);        
 
         if ( ! empty( $manifestArray[ $fileName ][ 'css' ] ) ) {
-            $assets     =   collect( $manifestArray[ $fileName ][ 'css' ] )->map( function( $url ) {
-                return '<link ref="stylesheet" href="' . $url . '"/>';
+            $assets     =   collect( $manifestArray[ $fileName ][ 'css' ] )->map( function( $url ) use ( $moduleId ) {
+                return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $url ) . '"/>';
             });
         }
 

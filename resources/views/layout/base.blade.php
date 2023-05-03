@@ -1,6 +1,7 @@
 <?php
 
 use App\Classes\Hook;
+use App\Classes\Output;
 use App\Models\UserAttribute;
 use App\Services\DateService;
 use App\Services\Helper;
@@ -18,6 +19,11 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! $title ?? __( 'Unamed Page' ) !!}</title>
+    <?php 
+        $output     =   new Output;
+        Hook::action( "ns-dashboard-header", $output );
+        echo ( string ) $output;
+    ?>
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
         'resources/scss/grid.scss',
@@ -27,7 +33,6 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
         'resources/scss/app.scss',
         'resources/scss/' . $theme . '.scss'
     ])
-
     @yield( 'layout.base.header' )
     <script>
         /**
@@ -69,7 +74,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
 <body>
     @yield( 'layout.base.body' )
     @section( 'layout.base.footer' )
-        @include( '../common/footer' )
+        @include( 'common.footer' )
     @show
 </body>
 </html>

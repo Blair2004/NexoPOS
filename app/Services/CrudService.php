@@ -138,6 +138,36 @@ class CrudService
     protected $casts   =    [];
 
     /**
+     * Define permissions for using
+     * the current resource
+     */
+    protected $permissions  =   [];
+
+    /**
+     * Store the bulk messages for either successful
+     * and unsuccessful operations.
+     */
+    protected $bulkDeleteSuccessMessage;
+    protected $bulkDeleteDangerMessage;
+
+    /**
+     * Store the values that should be 
+     * picked from relations
+     */
+    protected $pick;
+
+    /**
+     * Store relations that should be joined to every
+     * request made to the database using the model provided
+     */
+    protected $relations;
+
+    /**
+     * Keeps the table name for the provided model
+     */
+    protected $table;
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -268,14 +298,14 @@ class CrudService
                         } else {
                             $entry->$name = $value;
                         }
-                    }
 
-                    /**
-                     * sanitizing input to remove
-                     * all script tags
-                     */
-                    if ( ! empty( $entry->$name ) && ! [ $entry->$name ] ) {
-                        $entry->$name = strip_tags( $entry->$name );
+                        /**
+                         * sanitizing input to remove
+                         * all script tags
+                         */
+                        if ( ! empty( $entry->$name ) ) {
+                            $entry->$name = strip_tags( $entry->$name );
+                        }
                     }
                 }
             }
@@ -578,7 +608,7 @@ class CrudService
                     $table = $relation[0];
 
                     /**
-                     * If the CRUD instance has osme entries
+                     * If the CRUD instance has some entries
                      * that are picked, we'll allow extensibility
                      * using the filter "getPicked".
                      */
@@ -814,6 +844,23 @@ class CrudService
          * means the user has clicked on "reorder"
          */
         if ( $request->query( 'direction' ) && $request->query( 'active' ) ) {
+            $columns    =   $this->getColumns();
+
+            $cannotSort    =   
+                array_key_exists( $request->query( 'active' ), array_keys( $columns ) ) && 
+                $columns[ $request->query( 'active' ) ][ '$sort' ] === false;
+
+            /**
+             * If for some reason, we're trying to sort
+             * custom columns that doesn't have any reference on the database.
+             */
+            if ( $cannotSort ) {
+                throw new NotAllowedException( sprintf(
+                    __( 'Sorting is explicitely disabled for the column "%s".' ),
+                    $columns[ $request->query( 'active' ) ][ 'label' ]
+                ) );
+            }
+
             $query->orderBy(
                 $request->query( 'active' ),
                 $request->query( 'direction' )
@@ -895,6 +942,11 @@ class CrudService
     public function hook( $query ): void
     {
         //
+    }
+
+    public function getColumns(): array 
+    {
+        return [];
     }
 
     /**
@@ -1066,15 +1118,10 @@ class CrudService
         }
 
         /**
-         * "manage.profile" is the default permission
-         * granted to every user. If a permission check return "false"
+         * If a permission check return "false"
          * that means performing that action is disabled.
          */
-        if ( $instance->getPermission( 'read' ) !== false ) {
-            ns()->restrict([ $instance->getPermission( 'read' ) ]);
-        } else {
-            throw new NotAllowedException;
-        }
+        $instance->allowedTo( 'read' );
 
         return View::make( 'pages.dashboard.crud.table', array_merge([
             /**
@@ -1127,11 +1174,7 @@ class CrudService
          * if a permission for creating or updating is
          * not disabled let's make a validation.
          */
-        if ( $instance->getPermission( $permissionType ) !== false ) {
-            ns()->restrict([ $instance->getPermission( $permissionType ) ]);
-        } else {
-            throw new NotAllowedException( __( 'You\'re not allowed to see this page.' ) );
-        }
+        $instance->allowedTo( $permissionType );
 
         /**
          * use crud form to render
@@ -1203,7 +1246,7 @@ class CrudService
      * retrieve one of the declared permissions
      * the name must either be "create", "read", "update", "delete".
      */
-    public function getPermission( string|null $name ): bool
+    public function getPermission( string|null $name ): bool | string
     {
         return $this->permissions[ $name ] ?? false;
     }

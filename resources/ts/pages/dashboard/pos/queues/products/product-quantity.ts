@@ -1,7 +1,7 @@
-import { nsSnackBar } from '~/bootstrap';
-import { __ } from '~/libraries/lang';
 import { Popup } from '~/libraries/popup';
+import { __ } from '~/libraries/lang';
 import nsPosQuantityPopup from '~/popups/ns-pos-quantity-popup.vue';
+import { nsSnackBar } from '~/bootstrap';
 
 declare const POS;
 
@@ -12,10 +12,6 @@ export class ProductQuantityPromise {
 
     run( data ) {
         return new Promise( ( resolve, reject ) => {
-            const popup     =   new Popup({
-                popupClass: 'shadow-lg h-1/2-screen w-3/4 md:w-1/2 lg:w-2/5 xl:w-1/4 bg-white'
-            });
-
             const product   =   this.product;
             const options   =   POS.options.getValue();
 
@@ -24,7 +20,7 @@ export class ProductQuantityPromise {
              * processing the addQueue. Otherwise, it will open the POPUP.
              */
             if ( options.ns_pos_show_quantity !== false || ! POS.processingAddQueue ) {
-                popup.open( nsPosQuantityPopup, { resolve, reject, product, data });
+                Popup.show( nsPosQuantityPopup, { resolve, reject, product, data });
             } else {
                 const quantity      =       1;
 

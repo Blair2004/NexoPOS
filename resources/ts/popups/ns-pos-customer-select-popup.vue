@@ -62,6 +62,7 @@ import {Customer} from "~/interfaces/customer";
 import {Order} from "~/interfaces/order";
 
 export default {
+    props: [ 'popup' ],
     data() {
         return {
             searchCustomerValue: '',
@@ -86,12 +87,6 @@ export default {
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.resolveIfQueued( false );
-            }
-        });
-
         this.orderSubscription  =   POS.order.subscribe( order => {
             this.order      =   order;
         });
@@ -118,12 +113,12 @@ export default {
             if ( this.customers.length === 1 ) {
                 return this.selectCustomer( this.customers[0] );
             }
-            nsSnackBar.info( 'Too many result.' ).subscribe();
+            nsSnackBar.info( __( 'Too many results.' ) ).subscribe();
         },
 
         openCustomerHistory( customer, event ) {
             event.stopImmediatePropagation();
-            this.$popup.close();
+            this.popup.close();
             Popup.show( nsPosCustomersVue, { customer, activeTab: 'account-payment' });
         },
 

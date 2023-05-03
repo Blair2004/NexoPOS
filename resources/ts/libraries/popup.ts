@@ -1,10 +1,9 @@
 import { Subject } from "rxjs";
-import { createApp } from "vue/dist/vue.esm-bundler";
-import popupInjector from "./popup-injector";
-import {nextTick} from "vue";
+import { shallowRef } from "vue";
+import { nextTick } from "vue";
 
 declare const document;
-declare const window;
+declare const nsState;
 
 export class Popup {
     private config  =   {
@@ -14,9 +13,6 @@ export class Popup {
 
     private container       =   document.createElement( 'div' );
     private popupBody       =   document.createElement( 'div' );
-    private popupSelector   =   '';
-    private event: Subject<{ event: string, value: any }>;
-    private instance: any;
     private parentWrapper: HTMLDivElement | HTMLBodyElement;
 
     constructor( config: {
@@ -34,33 +30,30 @@ export class Popup {
         } else {
             this.parentWrapper      =   <HTMLDivElement>document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
         }
-
-        this.event              =   new Subject;
     }
 
     static show( component, params = {}, config = {}) {
         const popup     =   new Popup( config );
-        popup.open( component, params );
-        return popup;
+        return popup.open( component, params );
     }
 
     private hash() {
         let text    = "";
         let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        for (let i = 0; i < 10; i++)
+        for (let i = 0; i < 10; i++) {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
 
-        return text;
+        return text.toLocaleLowerCase();
     }
 
-    async open( component, params = {} ) {
-        this.container       =   document.createElement( 'div' );
+    open( component, params = {}, config = {} ) {
         this.popupBody       =   document.createElement( 'div' );
 
         if ( typeof component === 'function' ) {
             try {
-                component = (await component()).default;
+                component = (async() => (await component()).default)();
             } catch( exception ) {
                 /**
                  * it has failed, maybe it's an inline-component.
@@ -73,80 +66,33 @@ export class Popup {
         this.parentWrapper.style.filter     =   'blur(4px)';
         body.style.filter                   =   'blur(6px)';
 
-        this.container.setAttribute( 'class', 'absolute top-0 left-0 w-full h-full flex items-center justify-center is-popup' );
+        let popups              =   [];
+        const currentState      =   <{ popups: {}[]}>nsState.state.getValue();
 
-        /**
-         * We need to listen to click even on the container
-         * as it might be used to close the popup
-         */
-        this.container.addEventListener( 'click', ( event ) => {
-            /**
-             * This means we've strictly clicked on the container
-             */
-            if ( Object.values( event.target.classList ).includes( 'is-popup' ) ) {
-                /**
-                 * this will emit an even
-                 * when the overlay is clicked
-                 */
-                this.event.next({
-                    event: 'click-overlay',
-                    value: true
-                });
-
-                event.stopPropagation();
-            }
-        });
-
-        /**
-         * We don't want to propagate to the
-         * overlay, that closes the popup
-         */
-        this.popupBody.addEventListener( 'click', ( event ) => {
-            event.stopImmediatePropagation();
-        });
-
-        const actualLength      =   document.querySelectorAll( '.is-popup' ).length;
-
-        this.container.id                   =   'popup-container-' + this.hash();
-        this.popupSelector                  =   `#${this.container.id}`;
-
-        this.popupBody.setAttribute( 'class', 'zoom-out-entrance popup-body' );
-        this.popupBody.setAttribute( 'data-index', actualLength );
-        this.popupBody.innerHTML            =   '<ns-popup-component></ns-popup-component>';
-        this.container.appendChild( this.popupBody );
-
-        document.body.appendChild( this.container );
-
-        /**
-         * We'll provide a reference of the
-         * wrapper so that the component
-         * can manipulate that.
-         */
-        this.instance        =   createApp({});
-        this.instance.use( popupInjector, { params, $popup : this, $popupParams: params });
-
-        /**
-         * Registering the custom components
-         */
-        for( let name in window.nsComponents ) {
-            this.instance.component( name, window.nsComponents[ name ] );
+        if ( currentState.popups !== undefined ) {
+            popups  =   currentState.popups;
         }
 
-        this.instance.component( 'ns-popup-component', component );
-
         /**
-         * Mounting the final app.
+         * We'll add the new popups
+         * to the popups stack.
          */
-        this.instance.mount( `#${this.container.id}` );
+        const popup     =   {
+            hash: `popup-${this.hash()}-${this.hash()}`,
+            component: shallowRef( component ),
+            close: ( callback, immediately ) => this.close( popup, callback, immediately ),
+            params,
+            config,
+        };
+
+        popups.push( popup );
+
+        nsState.setState({ popups });
+
+        return popup;
     }
 
-    close(immediately: boolean = false) {
-        /**
-         * The Subject we've initialized earlier
-         * need to be closed
-         */
-        this.event.unsubscribe();
-
+    close( popup, callback = null, immediately: boolean = false ) {
         /**
          * For some reason we need to fetch the
          * primary selector once again.
@@ -158,30 +104,30 @@ export class Popup {
             body.style.filter   =   'blur(0px)';
         }
 
-        const selector          =   `${this.popupSelector} .popup-body`;
+        const selector          =   `#${popup.hash} .popup-body`;
+        const popupBody          =   document.querySelector( selector );
+        popupBody.classList.remove( 'zoom-out-entrance' );
+        popupBody.classList.add( 'zoom-in-exit' );
 
-        this.popupBody          =   document.querySelector( selector );
-        this.popupBody.classList.remove( 'zoom-out-entrance' );
-        this.popupBody.classList.add( 'zoom-in-exit' );
+        const container          =   document.querySelector( `#${popup.hash}` );
+        container.classList.remove( 'is-popup' );
 
-        this.container          =   document.querySelector( `${this.popupSelector}` );
-        this.container.classList.remove( 'is-popup' );
+        const executeLater =
+            immediately ? nextTick :
+            function(body) {
+                // because the remove animation last 250ms
+                setTimeout(body, 250);
+            }
 
-        /**
-         * Let's start by destroying the
-         * Vue component attached to the popup
-         */
+        executeLater( () => {
+            const { popups }    =   nsState.state.getValue();
+            const index         =   popups.indexOf( popup );
+            popups.splice( index, 1 );
+            nsState.setState({ popups });
 
-        if (immediately) {
-            nextTick(() => {
-                this.instance.unmount();
-                this.container.remove();
-            });
-        } else {
-            setTimeout( () => {
-                this.instance.unmount();
-                this.container.remove();
-            }, 250 ); // as by default the animation is set to 500ms
-        }
+            if ( callback !== null ) {
+                return callback( popup );
+            }
+        });
     }
 }

@@ -303,10 +303,8 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'customer_name' => [

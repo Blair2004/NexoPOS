@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class GenerateAuthorizationToken extends Command
 {
@@ -39,9 +38,7 @@ class GenerateAuthorizationToken extends Command
      */
     public function handle()
     {
-        DotenvEditor::load();
-        DotenvEditor::setKey( 'NS_AUTHORIZATION', Str::random(20) );
-        DotEnvEditor::save();
+        ns()->envEditor->set( 'NS_AUTHORIZATION', Str::random(20) );
         $this->info( 'The authorization token has been refreshed.' );
     }
 }

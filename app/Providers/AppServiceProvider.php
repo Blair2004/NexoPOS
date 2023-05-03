@@ -14,6 +14,7 @@ use App\Services\CurrencyService;
 use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\DemoService;
+use App\Services\EnvEditor;
 use App\Services\ExpenseService;
 use App\Services\Helper;
 use App\Services\MathService;
@@ -81,6 +82,10 @@ class AppServiceProvider extends ServiceProvider
             return new DateService( 'now', $timeZone );
         });
 
+        $this->app->singleton( EnvEditor::class, function() {
+            return new EnvEditor( base_path( '.env' ) );
+        });
+
         // save Singleton for options
         $this->app->singleton( UserOptions::class, function() {
             return new UserOptions( Auth::id() );
@@ -129,7 +134,8 @@ class AppServiceProvider extends ServiceProvider
                 app()->make( NotificationService::class ),
                 app()->make( ProcurementService::class ),
                 app()->make( Options::class ),
-                app()->make( MathService::class )
+                app()->make( MathService::class ),
+                app()->make( EnvEditor::class ),
             );
         });
 

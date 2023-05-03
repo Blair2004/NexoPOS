@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Str;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 return new class extends Migration
 {
@@ -25,9 +24,8 @@ return new class extends Migration
     {
         $domain = Str::replaceFirst( 'http://', '', url( '/' ) );
         $domain = Str::replaceFirst( 'https://', '', $domain );
-        DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', $domain );
-        DotenvEditor::setKey( 'SESSION_DOMAIN', $domain );
-        DotenvEditor::save();
+        ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', $domain );
+        ns()->envEditor->set( 'SESSION_DOMAIN', $domain );
     }
 
     /**
@@ -37,8 +35,7 @@ return new class extends Migration
      */
     public function down()
     {
-        DotenvEditor::deleteKey( 'SANCTUM_STATEFUL_DOMAINS' );
-        DotenvEditor::deleteKey( 'SESSION_DOMAIN' );
-        DotenvEditor::save();
+        ns()->envEditor->delete( 'SANCTUM_STATEFUL_DOMAINS' );
+        ns()->envEditor->delete( 'SESSION_DOMAIN' );
     }
 };

@@ -17,7 +17,6 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class DoctorService
 {
@@ -126,18 +125,14 @@ class DoctorService
          */
         $domain = Str::replaceFirst( 'http://', '', url( '/' ) );
         $domain = Str::replaceFirst( 'https://', '', $domain );
-        $domain = explode( ':', $domain )[0];
+        $withoutPort = explode( ':', $domain )[0];
 
         if ( ! env( 'SESSION_DOMAIN', false ) ) {
-            DotenvEditor::load();
-            DotenvEditor::setKey( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', explode( ':', $domain )[0] ) );
-            DotenvEditor::save();
+            ns()->envEditor->set( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', $withoutPort ) );
         }
 
         if ( ! env( 'SANCTUM_STATEFUL_DOMAINS', false ) ) {
-            DotenvEditor::load();
-            DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'localhost', '127.0.0.1' ])->unique()->join(',') );
-            DotenvEditor::save();
+            ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'localhost', '127.0.0.1' ])->unique()->join(',') );
         }
     }
 

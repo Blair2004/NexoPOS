@@ -3,7 +3,7 @@
         <div class="border-b p-2 flex items-center justify-between ns-box-header">
             <h3>{{ __( 'Order Refunds' ) }}</h3>
             <div class="flex">
-                <div v-if="view === 'details'" @click="view = 'summary'" class="flex items-center justify-center cursor-pointer rounded-full px-3 border hover:bg-info-primary hover:text-white mr-1">{{ __( 'Go Back' ) }}</div>
+                <div v-if="view === 'details'" @click="view = 'summary'" class="flex items-center justify-center cursor-pointer rounded-full px-3 border ns-inset-button mr-1">{{ __( 'Go Back' ) }}</div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>            
@@ -16,7 +16,7 @@
                     <i class="lar la-frown-open"></i>
                 </div>
                 <template v-if="loaded && refunds.length > 0">
-                    <div class="border-b flex flex-col md:flex-row" :key="refund.id" v-for="refund of refunds">
+                    <div class="border-b border-box-edge flex flex-col md:flex-row" :key="refund.id" v-for="refund of refunds">
                         <div class="w-full md:flex-auto p-2">
                             <h3 class="font-semibold mb-1">{{ order.code }}</h3>
                             <div>
@@ -26,17 +26,17 @@
                                 </ul>
                             </div>
                         </div>
-                        <div @click="toggleProductView( refund )" class="w-full md:w-16 cursor-pointer hover:bg-info-primary hover:border-info-primary hover:text-white text-lg flex items-center justify-center md:border-l">
+                        <div @click="toggleProductView( refund )" class="w-full md:w-16 cursor-pointer hover:bg-info-secondary hover:border-info-primary hover:text-white text-lg flex items-center justify-center border-box-edge md:border-l">
                             <i class="las la-eye"></i>
                         </div>
-                        <div @click="printRefundReceipt( refund )" class="w-full md:w-16 cursor-pointer hover:bg-info-primary hover:border-info-primary hover:text-white text-lg flex items-center justify-center md:border-l">
+                        <div @click="printRefundReceipt( refund )" class="w-full md:w-16 cursor-pointer hover:bg-info-secondary hover:border-info-primary hover:text-white text-lg flex items-center justify-center border-box-edge md:border-l">
                             <i class="las la-print"></i>
                         </div>
                     </div>
                 </template>
             </template>
             <template v-if="view === 'details'">
-                <div class="border-b flex flex-col md:flex-row" :key="product.id" v-for="product of previewed.refunded_products">
+                <div class="border-b border-box-edge flex flex-col md:flex-row" :key="product.id" v-for="product of previewed.refunded_products">
                     <div class="w-full md:flex-auto p-2">
                         <h3 class="font-semibold mb-1">{{ product.product.name }}</h3>
                         <div>
@@ -62,6 +62,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-orders-refund-popup',
+    props: [ 'popup' ],
     data() {
         return {
             order: null,
@@ -96,7 +97,7 @@ export default {
         },
 
         close() {
-            this.$popup.close();
+            this.popup.close();
         },
 
         printRefundReceipt( refund ) {
@@ -104,7 +105,7 @@ export default {
         }
     },
     mounted() {
-        this.order      =   this.$popupParams.order;
+        this.order      =   this.popup.params.order;
         this.popupCloser();
         this.loadOrderRefunds();
     }

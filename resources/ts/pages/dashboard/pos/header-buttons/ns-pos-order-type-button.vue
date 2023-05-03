@@ -8,11 +8,7 @@ export default {
     methods: {
         __,
         openOrderTypeSelection() {
-            const popup     =   new Popup({
-                primarySelector: '#pos-app',
-                popupClass : 'shadow-lg bg-white w-3/5 md:w-2/3 lg:w-2/5 xl:w-2/4',
-            });
-            popup.open( nsPosOrderTypePopupVue );
+            Popup.show( nsPosOrderTypePopupVue );
         }
     },
     beforeUnmount() {

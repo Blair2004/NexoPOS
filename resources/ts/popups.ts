@@ -1,3 +1,7 @@
+import * as baseComponents  from './components/components';
+
+import { createApp, markRaw, shallowRef } from 'vue';
+
 import nsAlertPopup from '~/popups/ns-alert-popup.vue';
 import nsConfirmPopup from '~/popups/ns-pos-confirm-popup.vue';
 import nsMediaPopup from '~/pages/dashboard/ns-media.vue';
@@ -25,3 +29,50 @@ const popups    =   {
 for( let index in popups ) {
     window[ index ]     =   popups[ index ];
 }
+
+declare const nsState;
+
+const nsPopups      =   createApp({
+    data() {
+        return {
+            popups: [],
+            defaultClass: 'absolute top-0 left-0 w-full h-full flex items-center justify-center is-popup'
+        }
+    },
+    mounted() {
+        nsState.subscribe( state => {
+            if ( state.popups !== undefined ) {
+                this.popups     =   shallowRef( state.popups );
+                this.$forceUpdate();
+            }
+        })
+    },
+    methods: { 
+        closePopup( popup, event ) {
+            /**
+             * This means we've strictly clicked on the container
+             */
+            if ( Object.values( event.target.classList ).includes( 'is-popup' ) && 
+                (
+                    popup.config !== undefined &&
+                    [ undefined, true ].includes( popup.config.closeOnOverlayClick )
+                )
+            ) {
+                event.stopPropagation();
+                popup.close();
+            }
+        },
+        preventPropagation( event ) {
+            event.stopImmediatePropagation();
+        }
+    }
+});
+
+for( let name in baseComponents ) {
+    nsPopups.component( name, baseComponents[ name ] );
+}
+
+document.addEventListener( 'DOMContentLoaded', () => {
+    nsPopups.mount( '#dashboard-popups' );
+    ( window as any ).nsPopups  =   nsPopups;
+});

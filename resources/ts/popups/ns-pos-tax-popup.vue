@@ -47,6 +47,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-tax-popup',
+    props: [ 'popup' ],
     data() {
         return {
             validation: new FormValidation,
@@ -90,10 +91,10 @@ export default {
         this.loadGroups();
         this.popupCloser();
 
-        this.activeTab      =   this.$popupParams.activeTab || 'settings';
+        this.activeTab      =   this.popup.params.activeTab || 'settings';
 
         this.group_fields.forEach( field => {
-            field.value     =   this.$popupParams[ field.name ] || undefined;
+            field.value     =   this.popup.params[ field.name ] || undefined;
         });
 
         this.orderSubscriber    =   POS.order.subscribe( order => {

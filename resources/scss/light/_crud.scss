@@ -4,10 +4,6 @@
 #crud-table {
     @apply bg-box-background;
 
-    * {
-        @apply text-primary;
-    }
-
     #crud-table-header {
         @apply border-box-edge;
     }
@@ -15,7 +11,7 @@
     .ns-crud-input {
         @apply bg-input-background border-input-edge;
 
-        input {
+        input, select {
             @apply text-primary;
         }
     }
@@ -57,10 +53,14 @@
 
         &:hover {
             @apply border-transparent bg-info-tertiary text-white;
-            i {
+            i, span {
                 @apply text-white;
             }
         }
+    }
+
+    .footer {
+        @apply border-box-edge;
     }
 }
 

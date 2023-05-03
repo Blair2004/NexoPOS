@@ -23,6 +23,14 @@ export default {
                 }
             }
             return [];
+        },
+        activeTabIdentifier() {
+            for( let identifier in this.form.tabs ) {
+                if ( this.form.tabs[ identifier ].active ) {
+                    return identifier;
+                }
+            }
+            return {};
         }
     },
     methods: {
@@ -143,7 +151,7 @@ export default {
                             :disabled="form.main.disabled"
                             type="text" 
                             class="flex-auto outline-none h-10 px-2">
-                        <button :disabled="form.main.disabled" :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : ''" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
+                        <button :disabled="form.main.disabled" :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : ''" @click="submit()" class="outline-none px-4 h-10 text-white">{{ __( 'Save' ) }}</button>
                     </div>
                     <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                     <p :key="index" class="text-xs py-1 text-error-tertiary" v-for="(error,index) of form.main.errors">
@@ -162,13 +170,13 @@ export default {
                 <div class="ns-tab-item">
                     <div class="border p-4 rounded">
                         <div class="-mx-4 flex flex-wrap">
-                            <div :key="key" :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,key) of activeTabFields">
+                            <div :key="`${activeTabIdentifier}-${key}`" :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,key) of activeTabFields">
                                 <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>
                             </div>
                         </div>
                         <div class="flex justify-end" v-if="! form.main.name">
                             <div class="ns-button" :class="form.main.disabled ? 'default' : ( form.main.errors.length > 0 ? 'error' : 'info' )">
-                                <button :disabled="form.main.disabled" @click="submit()" class="outline-none px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                                <button :disabled="form.main.disabled" @click="submit()" class="outline-none px-4 h-10 border-l">{{ __( 'Save' ) }}</button>
                             </div>
                         </div>
                     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helper;
 use Exception;
 
 class CoreException extends Exception
@@ -11,11 +12,12 @@ class CoreException extends Exception
         $this->message = $message ?: __('An exception has occurred.' );
     }
 
-    public function render()
+    public function render( $request )
     {
         $message = $this->getMessage();
         $title = __( 'An Error Occurred' );
+        $back   = Helper::getValidPreviousUrl( $request );
 
-        return response()->view( 'pages.errors.exception', compact( 'message', 'title' ), 503 );
+        return response()->view( 'pages.errors.exception', compact( 'message', 'title', 'back' ), 503 );
     }
 }

@@ -26,6 +26,8 @@ import nsNumpadVue from '~/components/ns-numpad.vue';
 import nsNumpadPlusVue from '~/components/ns-numpad-plus.vue';
 
 export default {
+    name: 'ns-pos-quantity-popup',
+    props: [ 'popup' ],
     components: {
         nsNumpad: nsNumpadVue,
         nsNumpadPlus: nsNumpadPlusVue
@@ -48,30 +50,12 @@ export default {
             this.options    =   options;
         });
 
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                /**
-                 * as this runs under a Promise
-                 * we need to make sure that
-                 * it resolve false using the "resolve" function
-                 * provided as $popupParams.
-                 * Here we resolve "false" as the user has broken the Promise
-                 */
-                this.$popupParams.reject( false );
-
-                /**
-                 * we can safely close the popup.
-                 */
-                this.$popup.close();
-            }
-        });
-
         /**
          * if the quantity is defined, then probably
          * we're already trying to edit an existing product
          */
-        if ( this.$popupParams.product.quantity ) {
-            this.finalValue     =   this.$popupParams.product.quantity;
+        if ( this.popup.params.product.quantity ) {
+            this.finalValue     =   this.popup.params.product.quantity;
         }
 
         this.popupCloser();
@@ -87,8 +71,8 @@ export default {
         popupCloser,
 
         closePopup() {
-            this.$popupParams.reject( false );
-            this.$popup.close();
+            this.popup.params.reject( false );
+            this.popup.close();
         },
 
         updateQuantity( quantity ) {
@@ -99,7 +83,7 @@ export default {
             /**
              * resolve is provided only on the addProductQueue
              */
-            const { product, data }         =   this.$popupParams;
+            const { product, data }         =   this.popup.params;
 
             const quantity = parseFloat(quantityString) || 0;
 
@@ -149,8 +133,8 @@ export default {
         },
 
         resolve( params ) {
-            this.$popupParams.resolve( params );
-            this.$popup.close();
+            this.popup.params.resolve( params );
+            this.popup.close();
         }
     }
 }

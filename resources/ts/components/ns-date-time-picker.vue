@@ -44,7 +44,7 @@ export default {
         }
     },
     mounted() {
-        this.setDate( moment( this.field.value ).format( 'YYYY-MM-DD HH:mm:ss' ) )
+        this.setDate( this.fieldDate.format( 'YYYY-MM-DD HH:mm:ss' ) );
     },
     methods: {
         __,

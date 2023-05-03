@@ -38,6 +38,7 @@ import resolveIfQueued from "~/libraries/popup-resolver";
 import FormValidation from '~/libraries/form-validation';
 export default {
     name: 'ns-pos-shipping-popup',
+    props: [ 'popup' ],
     computed: {
         activeTabFields() {
             if ( this.tabs !== null ) {
@@ -60,12 +61,6 @@ export default {
         this.orderSubscription.unsubscribe();
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.resolveIfQueued( false );
-            }
-        });
-
         this.orderSubscription  =   POS.order.subscribe( order => this.order = order );
 
         this.loadForm();

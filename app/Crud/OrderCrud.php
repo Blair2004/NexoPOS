@@ -157,7 +157,7 @@ class OrderCrud extends CrudService
                 'label' => __( 'Customer' ),
                 'name' => 'customer_id',
                 'description' => __( 'Restrict the orders by the customer.' ),
-                'options' => Helper::toJsOptions( Customer::get(), [ 'id', 'name' ]),
+                'options' => Helper::toJsOptions( Customer::get(), [ 'id', 'first_name' ]),
             ], [
                 'type' => 'text',
                 'label' => __( 'Customer Phone' ),
@@ -439,20 +439,6 @@ class OrderCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        return [
-            'status' => 'success',
-            'message' => __( 'The access is granted.' ), 
-        ];
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -477,10 +463,8 @@ class OrderCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'code' => [

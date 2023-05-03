@@ -117,6 +117,10 @@ class CustomerCrud extends CrudService
         'delete' => 'nexopos.delete.customers',
     ];
 
+    private Options $options;
+
+    private CustomerService $customerService;
+
     /**
      * Define Constructor
      *
@@ -126,7 +130,8 @@ class CustomerCrud extends CrudService
     {
         parent::__construct();
 
-        $this->options = app()->make( Options::class );
+        $this->options          =   app()->make( Options::class );
+        $this->customerService  =   app()->make( CustomerService::class );
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
@@ -259,137 +264,12 @@ class CustomerCrud extends CrudService
                 ],
                 'billing' => [
                     'label' => __( 'Billing Address' ),
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'name' => 'first_name',
-                            'value' => $entry->billing->first_name ?? '',
-                            'label' => __( 'First Name' ),
-                            'description' => __( 'Provide the billing first name.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'last_name',
-                            'value' => $entry->billing->last_name ?? '',
-                            'label' => __( 'Last Name' ),
-                            'description' => __( 'Provide the billing last name.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'phone',
-                            'value' => $entry->billing->phone ?? '',
-                            'label' => __( 'Phone' ),
-                            'description' => __( 'Billing phone number.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'address_1',
-                            'value' => $entry->billing->address_1 ?? '',
-                            'label' => __( 'Address 1' ),
-                            'description' => __( 'Billing First Address.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'address_2',
-                            'value' => $entry->billing->address_2 ?? '',
-                            'label' => __( 'Address 2' ),
-                            'description' => __( 'Billing Second Address.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'country',
-                            'value' => $entry->billing->country ?? '',
-                            'label' => __( 'Country' ),
-                            'description' => __( 'Billing Country.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'city',
-                            'value' => $entry->billing->city ?? '',
-                            'label' => __( 'City' ),
-                            'description' => __( 'City' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'pobox',
-                            'value' => $entry->billing->pobox ?? '',
-                            'label' => __( 'PO.Box' ),
-                            'description' => __( 'Postal Address' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'company',
-                            'value' => $entry->billing->company ?? '',
-                            'label' => __( 'Company' ),
-                            'description' => __( 'Company' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'email',
-                            'value' => $entry->billing->email ?? '',
-                            'label' => __( 'Email' ),
-                            'description' => __( 'Email' ),
-                        ],
-                    ],
+                    'fields' => $this->customerService->getAddressFields( $entry->billing ?? null ),
                 ],
                 'shipping' => [
                     'label' => __( 'Shipping Address' ),
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'name' => 'first_name',
-                            'value' => $entry->shipping->first_name ?? '',
-                            'label' => __( 'First Name' ),
-                            'description' => __( 'Provide the shipping First Name.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'last_name',
-                            'value' => $entry->shipping->last_name ?? '',
-                            'label' => __( 'Last Name' ),
-                            'description' => __( 'Provide the shipping Last Name.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'phone',
-                            'value' => $entry->shipping->phone ?? '',
-                            'label' => __( 'Phone' ),
-                            'description' => __( 'Shipping phone number.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'address_1',
-                            'value' => $entry->shipping->address_1 ?? '',
-                            'label' => __( 'Address 1' ),
-                            'description' => __( 'Shipping First Address.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'address_2',
-                            'value' => $entry->shipping->address_2 ?? '',
-                            'label' => __( 'Address 2' ),
-                            'description' => __( 'Shipping Second Address.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'country',
-                            'value' => $entry->shipping->country ?? '',
-                            'label' => __( 'Country' ),
-                            'description' => __( 'Shipping Country.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'city',
-                            'value' => $entry->shipping->city ?? '',
-                            'label' => __( 'City' ),
-                            'description' => __( 'City' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'pobox',
-                            'value' => $entry->shipping->pobox ?? '',
-                            'label' => __( 'PO.Box' ),
-                            'description' => __( 'Postal Address' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'company',
-                            'value' => $entry->shipping->company ?? '',
-                            'label' => __( 'Company' ),
-                            'description' => __( 'Company' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'email',
-                            'value' => $entry->shipping->email ?? '',
-                            'label' => __( 'Email' ),
-                            'description' => __( 'Email' ),
-                        ],
-                    ],
+                    'fields' => $this->customerService->getAddressFields( $entry->shipping ?? null ),
                 ],
-
             ],
         ];
     }
@@ -528,17 +408,6 @@ class CustomerCrud extends CrudService
         CustomerAfterUpdatedEvent::dispatch( $customer );
 
         return $inputs;
-    }
-
-    /**
-     * Protect an access to a specific crud UI
-     **/
-    public function canAccess( array $fields ): array
-    {
-        return [
-            'status' => 'success',
-            'message' => __( 'The access is granted.' ), 
-        ];
     }
 
     /**

@@ -9,7 +9,7 @@
                     <div class="rounded-full p-1 ns-crud-input flex">
                         <input @keypress.enter="search()" v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-none px-2">
                         <button @click="search()" class="rounded-full w-8 h-8 outline-none ns-crud-input-button"><i class="las la-search"></i></button>
-                        <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-secondary text-white outline-none hover:bg-error-tertiary"><i class="las la-times"></i></button>
+                        <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-secondary outline-none hover:bg-error-tertiary"><i class="las la-times text-white"></i></button>
                     </div>
                 </div>
                 <div class="px-2 flex items-center justify-center">
@@ -207,8 +207,8 @@ export default {
         },
         resultInfo() {
             return __( 'displaying {perPage} on {items} items' )
-                .replace( '{perPage}', this.result.total )
-                .replace( '{items}', this.result.total )
+                .replace( '{perPage}', this.result.per_page || 0 )
+                .replace( '{items}', this.result.total || 0 )
         },
         headerButtonsComponents() {
             return this.headerButtons.map( buttonComponent => {
@@ -273,6 +273,7 @@ export default {
                 onAction: ( action ) => {
                     if ( action ) {
                         this.selectedEntries    =   [];
+                        this.handleGlobalChange( false );
                     }
                 }
             });
@@ -343,6 +344,9 @@ export default {
             this.refresh();
         },
         sort( identifier ) {
+            if ( this.columns[ identifier ].$sort === false ) {
+                return nsSnackBar.error( __( 'Sorting is explicitely disabled on this column' ) ).subscribe();
+            }
 
             for ( let key in this.columns ) {
                 if ( key !== identifier ) {
@@ -361,6 +365,7 @@ export default {
                     this.columns[ identifier ].$direction   =   '';
                 break;
                 case '':
+                default:
                     this.columns[ identifier ].$direction   =   'asc';
                 break;
             }
@@ -406,8 +411,6 @@ export default {
 
         async openQueryFilter() {
             try {
-                console.log( nsOrdersFilterPopupVue );
-
                 const result    =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsOrdersFilterPopupVue, { resolve, reject, queryFilters: this.queryFilters });
                 });

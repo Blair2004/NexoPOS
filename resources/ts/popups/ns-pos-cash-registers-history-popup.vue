@@ -43,6 +43,7 @@ import NsCloseButton from "~/components/ns-close-button.vue";
 
 export default {
     components: {NsCloseButton},
+    props: [ 'popup' ],
     data() {
         return {
             totalIn: 0,
@@ -85,8 +86,6 @@ export default {
                         .filter( history => [ 'register-closing', 'register-refund', 'register-cash-out' ].includes( history.action ) )
                         .map( history => parseFloat( history.value ) )
                         .reduce( ( before, after ) => before + after, 0 );
-
-                    console.log( this.totalOut );
                 });
         }
     }

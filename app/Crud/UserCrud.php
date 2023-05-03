@@ -527,19 +527,6 @@ class UserCrud extends CrudService
     }
 
     /**
-     * Before saving a record
-     *
-     * @param  Request $request
-     * @return  void
-     */
-    public function beforePost( $request )
-    {
-        $this->allowedTo( 'create' );
-
-        return $request;
-    }
-
-    /**
      * After saving a record
      *
      * @param  Request $request
@@ -637,22 +624,6 @@ class UserCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( UsersService::class );
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The access is granted.' ),
-        ];
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -670,46 +641,44 @@ class UserCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'username' => [
                 'label' => __( 'Username' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'active' => [
                 'label' => __( 'Active' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'group_name' => [
                 'label' => __( 'Group Name' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'account_amount' => [
                 'label' => __( 'Wallet Balance' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'owed_amount' => [
                 'label' => __( 'Owed Amount' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'purchases_amount' => [
                 'label' => __( 'Total Purchases' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'email' => [
                 'label' => __( 'Email' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'rolesNames' => [
                 'label' => __( 'Roles' ),
@@ -719,7 +688,7 @@ class UserCrud extends CrudService
             'created_at' => [
                 'label' => __( 'Created At' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
         ];
     }

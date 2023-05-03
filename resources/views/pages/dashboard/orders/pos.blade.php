@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Gate;
 
 @section( 'layout.base.footer' )
     @parent
+    @include( 'common.popups' )
     @vite([ 'resources/ts/pos-init.ts' ])
     <script>
         const nsShortcuts   =   <?php echo json_encode([

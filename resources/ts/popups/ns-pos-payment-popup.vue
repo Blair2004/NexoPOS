@@ -15,6 +15,7 @@ import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-payment',
+    props: [ 'popup' ],
     data() {
         return {
             paymentTypesSubscription: null,
@@ -23,30 +24,23 @@ export default {
             showPayment: false,
             orderSubscription: null,
             currentPaymentComponent: null,
+            activePaymentSubscription: null,
         }
     },
     computed: {
-        activePayment() {
-            let payment;
-            return ( payment = this.paymentsType.filter( p => p.selected ) ).length > 0 ? payment[0] : false;
-        },
         expectedPayment() {
             const minimalPaymentPercent     =   this.order.customer.group.minimal_credit_payment;
             return ( this.order.total * minimalPaymentPercent ) / 100;
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            switch( action.event ) {
-                case 'click-overlay':
-                    this.closePopup();
-                break;
+        this.order                      =   this.popup.params.order;
+        this.activePaymentSubscription  =   POS.selectedPaymentType.subscribe( activePayment => {
+            this.activePayment = activePayment;
+            if ( activePayment !== null ) {
+                    this.loadPaymentComponent( activePayment );
             }
         });
-
-        this.orderSubscription = POS.order.subscribe( order => {
-            this.order = ref(order);
-        })
         this.paymentTypesSubscription   =   POS.paymentsType.subscribe( paymentsType => {
             this.paymentsType   =   ref(paymentsType);
             paymentsType.filter( payment => {
@@ -58,14 +52,9 @@ export default {
 
         nsHooks.doAction( 'ns-pos-payment-mounted', this );
     },
-    watch: {
-        activePayment( value ) {
-            this.loadPaymentComponent( value );
-        }
-    },
     unmounted() {
+        this.activePaymentSubscription.unsubscribe();
         this.paymentTypesSubscription.unsubscribe();
-        this.orderSubscription.unsubscribe();
 
         nsHooks.doAction( 'ns-pos-payment-destroyed', this );
     },
@@ -78,19 +67,19 @@ export default {
         loadPaymentComponent( payment ) {
             switch( payment.identifier ) {
                 case 'cash-payment':
-                    this.currentPaymentComponent    =   CashPayment;
+                    this.currentPaymentComponent    =   shallowRef( CashPayment );
                 break;
                 case 'creditcard-payment':
-                    this.currentPaymentComponent    =   CreditCardPayment;
+                    this.currentPaymentComponent    =   shallowRef( CreditCardPayment );
                 break;
                 case 'bank-payment':
-                    this.currentPaymentComponent    =   BankPayment;
+                    this.currentPaymentComponent    =   shallowRef( BankPayment );
                 break;
                 case 'account-payment':
-                    this.currentPaymentComponent    =   AccountPayment;
+                    this.currentPaymentComponent    =   shallowRef( AccountPayment );
                 break;
                 default:
-                    this.currentPaymentComponent    =   samplePaymentVue;
+                    this.currentPaymentComponent    =   shallowRef( samplePaymentVue );
                 break;
             }
         },
@@ -117,14 +106,14 @@ export default {
         },
         select( payment ) {
             this.showPayment    =   false;
-            POS.setPaymentActive( toRaw(payment) );
+            POS.setPaymentActive( payment );
         },
         closePopup() {
-            this.$popup.close();
+            this.popup.close();
             POS.selectedPaymentType.next( null );
         },
         deletePayment( payment ) {
-            POS.removePayment( toRaw(payment) );
+            POS.removePayment( payment );
         },
         selectPaymentAsActive( event ) {
             this.select( this.paymentsType.filter( payment => payment.identifier === event.target.value )[0] );
@@ -144,7 +133,7 @@ export default {
 
                     POS.printOrderReceipt( result.data.order, 'silent' );
                     // close payment popup
-                    this.$popup.close();
+                    this.popup.close();
                 }, ( error ) => {
                     // close loading popup
                     popup.close();

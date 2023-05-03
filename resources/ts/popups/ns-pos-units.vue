@@ -32,6 +32,7 @@ import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 
 export default {
+    props: [ 'popup' ],
     data() {
         return {
             unitsQuantities: [],
@@ -46,24 +47,6 @@ export default {
     },
 
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                /**
-                 * as this runs under a Promise
-                 * we need to make sure that
-                 * it resolve false using the "resolve" function
-                 * provided as $popupParams.
-                 * Here we resolve "false" as the user has broken the Promise
-                 */
-                this.$popupParams.reject( false );
-
-                /**
-                 * we can safely close the popup.
-                 */
-                this.$popup.close();
-            }
-        });
-
         this.optionsSubscriber     =   POS.options.subscribe( options => {
             this.options   =   options;
         })
@@ -73,13 +56,13 @@ export default {
          * provided, we assume the product was added using the unit
          * quantity barcode.
          */
-        if ( this.$popupParams.product.$original().selectedUnitQuantity !== undefined ) {
-            this.selectUnit( this.$popupParams.product.$original().selectedUnitQuantity, true );
+        if ( this.popup.params.product.$original().selectedUnitQuantity !== undefined ) {
+            this.selectUnit( this.popup.params.product.$original().selectedUnitQuantity, true );
         } else if (
-                this.$popupParams.product.$original().unit_quantities !== undefined &&
-                this.$popupParams.product.$original().unit_quantities.length === 1
+                this.popup.params.product.$original().unit_quantities !== undefined &&
+                this.popup.params.product.$original().unit_quantities.length === 1
             ) {
-                this.selectUnit( this.$popupParams.product.$original().unit_quantities[0], true );
+                this.selectUnit( this.popup.params.product.$original().unit_quantities[0], true );
         } else {
             this.loadsUnits     =   true;
             this.loadUnits();
@@ -90,15 +73,15 @@ export default {
         nsCurrency,
 
         displayRightPrice( item ){
-            return POS.getSalePrice( item, this.$popupParams.product.$original() );
+            return POS.getSalePrice( item, this.popup.params.product.$original() );
         },
 
         loadUnits() {
-            nsHttpClient.get( `/api/products/${this.$popupParams.product.$original().id}/units/quantities` )
+            nsHttpClient.get( `/api/products/${this.popup.params.product.$original().id}/units/quantities` )
                 .subscribe( result => {
 
                     if ( result.length === 0 ) {
-                        this.$popup.close(true);
+                        this.popup.close( null, true );
                         return nsSnackBar.error( __( 'This product doesn\'t have any unit defined for selling.' ) ).subscribe();
                     }
 
@@ -117,22 +100,21 @@ export default {
          * we'll resolve a value that
          * will be added to the object
          * built at the end
-         * @param Unit
          */
         selectUnit( unitQuantity, immediate ) {
             if ( unitQuantity.unit === null ) {
                 nsSnackBar.error( __( 'The unit attached to this product is missing or not assigned. Please review the "Unit" tab for this product.' ) ).subscribe();
 
-                return this.$popup.close(true);
+                return this.popup.close( null, true );
             }
 
-            this.$popupParams.resolve({
+            this.popup.params.resolve({
                 unit_quantity_id    :   unitQuantity.id,
                 unit_name           :   unitQuantity.unit.name,
                 $quantities         :   () => unitQuantity
             });
 
-            this.$popup.close(immediate);
+            this.popup.close( null, immediate );
         }
     }
 }

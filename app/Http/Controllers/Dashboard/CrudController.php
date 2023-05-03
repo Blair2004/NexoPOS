@@ -128,7 +128,11 @@ class CrudController extends DashboardController
             throw new Exception( sprintf( __( 'Unable to load the CRUD resource : %s.' ), $crudClass ) );
         }
 
+        /**
+         * @var CrudService
+         */
         $resource = new $crudClass;
+        $resource->allowedTo( 'read' );
 
         return $resource->getEntries();
     }
@@ -198,6 +202,7 @@ class CrudController extends DashboardController
          * @var CrudService
          */
         $resource = new $crudClass;
+        $resource->allowedTo( 'read' );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             return $resource->getEntries( $request );
@@ -216,6 +221,7 @@ class CrudController extends DashboardController
     {
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
         $resource = new $crudClass;
+        $resource->allowedTo( 'read' );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             return Hook::filter(
@@ -247,6 +253,7 @@ class CrudController extends DashboardController
         }
 
         $resource = new $crudClass;
+        $resource->allowedTo( 'read' );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             return [
@@ -281,6 +288,7 @@ class CrudController extends DashboardController
     {
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
         $resource = new $crudClass( compact( 'namespace', 'id' ) );
+        $resource->allowedTo( 'read' );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             $model = $resource->get( 'model' );
@@ -317,9 +325,16 @@ class CrudController extends DashboardController
     public function exportCrud( $namespace, Request $request )
     {
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+        
         $resource = new $crudClass;
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
+
+        /**
+         * only users having read capability
+         * can download a CSV file.
+         */
+        $resource->allowedTo( 'read' );
 
         $columns = Hook::filter(
             get_class( $resource ) . '@getColumns',
@@ -423,45 +438,13 @@ class CrudController extends DashboardController
         ];
     }
 
-    /**
-     * Can Access
-     * Check whether the logged user has
-     * the right to access to the requested resource
-     *
-     * @return AsyncResponse
-     */
-    public function canAccess( $namespace, Request $request )
-    {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
-        $resource = new $crudClass;
-
-        if ( method_exists( $resource, 'canAccess' ) ) {
-            if ( $resource->canAccess([
-                'type' => $request->input( 'type' ),
-                'namespace' => $request->input( 'namespace' ),
-                'id' => $request->input( 'id' ),
-            ]) ) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => __( 'You\'re allowed to access to that page' ),
-                ]);
-            }
-
-            return response()->json([
-                'status' => 'failed',
-                'message' => __( 'You don\'t have the right to access to the requested page.' ),
-            ], 403 );
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => __( 'This resource is not protected. The access is granted.' ),
-        ]);
-    }
-
     public function downloadSavedFile( $hash )
     {
         $relativePath = Cache::pull( $hash );
+
+        if( $relativePath === null ) {
+            throw new NotAllowedException( __( 'This link has expired.' ) );
+        }
 
         if ( Storage::disk( 'public' )->exists( $relativePath ) ) {
             return Storage::disk( 'public' )->download( $relativePath );

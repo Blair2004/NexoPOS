@@ -8,6 +8,7 @@ use App\Http\Middleware\KillSessionIfNotInstalledMiddleware;
 use App\Http\Middleware\LoadLangMiddleware;
 use App\Http\Middleware\ProtectRoutePermissionMiddleware;
 use App\Http\Middleware\ProtectRouteRoleMiddleware;
+use App\Http\Middleware\SanitizePostFieldsMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
@@ -78,5 +79,6 @@ class Kernel extends HttpKernel
         'ns.check-application-health' => CheckApplicationHealthMiddleware::class,
         'ns.restrict' => ProtectRoutePermissionMiddleware::class,
         'ns.restrict-role' => ProtectRouteRoleMiddleware::class,
+        'ns.sanitize-inputs' => SanitizePostFieldsMiddleware::class,
     ];
 }

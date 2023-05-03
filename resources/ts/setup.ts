@@ -27,7 +27,6 @@ nsRouterApp.use( nsRouter );
     nsRouterApp.component( name, components[ name ] );
 }
 
-console.log( 'mount' );
 nsRouterApp.mount( '#nexopos-setup' );
 
 export { nsRouter };

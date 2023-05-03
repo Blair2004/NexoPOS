@@ -17,6 +17,7 @@ import { nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-procurement-product-options',
+    props: [ 'popup' ],
     data() {
         return {
             validation: new FormValidation,
@@ -59,8 +60,8 @@ export default {
             if ( validation ) {
                 const fields    =   this.validation.extractFields( this.fields );
 
-                this.$popupParams.resolve( fields );
-                return this.$popup.close();
+                this.popup.params.resolve( fields );
+                return this.popup.close();
             }
 
             return nsSnackBar.error( __( 'Unable to proceed. The form is not valid.' ) )
@@ -68,23 +69,17 @@ export default {
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.$popup.close();
-            }
-        });
-
         const fields    =   this.rawFields.map( field => {
             if ( field.name === 'expiration_date' ) {
-                field.value    =   this.$popupParams.product.procurement.expiration_date
+                field.value    =   this.popup.params.product.procurement.expiration_date
             }
 
             if ( field.name === 'tax_type' ) {
-                field.value    =   this.$popupParams.product.procurement.tax_type
+                field.value    =   this.popup.params.product.procurement.tax_type
             }
 
             if ( field.name === 'barcode' ) {
-                field.value    =   this.$popupParams.product.procurement.barcode
+                field.value    =   this.popup.params.product.procurement.barcode
             }
 
             return field;

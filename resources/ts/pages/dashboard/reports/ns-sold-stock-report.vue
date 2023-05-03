@@ -118,7 +118,6 @@ export default {
             return 0;
         },
         totalPrice() {
-            console.log( this.products );
             if ( this.products.length > 0 ) {
                 return this.products
                     .map( product => product.total_price )

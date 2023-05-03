@@ -43,6 +43,7 @@ export default {
         this.closeWithOverlayClicked();
         this.loadTransactionFields();
     },
+    props: [ 'popup' ],
     data() {
         return {
             fields: [],
@@ -56,7 +57,7 @@ export default {
         closeWithOverlayClicked,
 
         proceed() {
-            const customer      =   this.$popupParams.customer;
+            const customer      =   this.popup.params.customer;
             const form          =   this.formValidation.extractFields( this.fields );
             this.isSubmiting    =   true;
 
@@ -65,20 +66,20 @@ export default {
                     next: result => {
                         this.isSubmiting    =   false;
                         nsSnackBar.success( result.message ).subscribe();
-                        this.$popupParams.resolve( result );
-                        this.$popup.close();
+                        this.popup.params.resolve( result );
+                        this.popup.close();
                     },
                     error: ( error ) => {
                         this.isSubmiting    =   false;
                         nsSnackBar.error( error.message ).subscribe();
-                        this.$popupParams.reject( error );
+                        this.popup.params.reject( error );
                     }
                 })
         },
 
         close() {
-            this.$popup.close();
-            this.$popupParams.reject( false );
+            this.popup.close();
+            this.popup.params.reject( false );
         },
 
         loadTransactionFields() {

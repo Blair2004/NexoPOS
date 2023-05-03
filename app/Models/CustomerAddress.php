@@ -27,7 +27,7 @@ class CustomerAddress extends NsModel
         return $this->belongsTo( Customer::class, 'customer_id' );
     }
 
-    public function scopefrom( $query, $id, $type )
+    public function scopeFrom( $query, $id, $type )
     {
         return $query->where( 'customer_id', $id )
             ->where( 'type', $type );

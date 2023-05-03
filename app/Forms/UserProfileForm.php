@@ -3,8 +3,10 @@
 namespace App\Forms;
 
 use App\Classes\Hook;
+use App\Models\CustomerAddress;
 use App\Models\User;
 use App\Models\UserAttribute;
+use App\Services\CustomerService;
 use App\Services\SettingsPage;
 use App\Services\UserOptions;
 use Illuminate\Http\Request;
@@ -40,6 +42,7 @@ class UserProfileForm extends SettingsPage
         $results = [];
         $results[] = $this->processCredentials( $request, $validator );
         $results[] = $this->processOptions( $request );
+        $results[] = $this->processAddresses( $request );
         $results[] = $this->processAttribute( $request );
         $results = collect( $results )->filter( fn( $result ) => ! empty( $result ) )->values();
 
@@ -129,5 +132,45 @@ class UserProfileForm extends SettingsPage
         }
 
         return [];
+    }
+
+    /**
+     * Saves address for the logged user.
+     */
+    public function processAddresses( Request $request ): array
+    {
+        /**
+         * @var CustomerService $customerService
+         */
+        $customerService    =   app()->make( CustomerService::class );
+        $validFields        =   collect( $customerService->getAddressFields() )
+            ->map( fn( $field ) => $field[ 'name' ] )
+            ->toArray();
+
+        $billing            =   $request->input( 'billing' );
+        $shipping           =   $request->input( 'shipping' );
+
+        $currentBilling     =   CustomerAddress::from( Auth::id(), 'billing' )->firstOrNew();
+        $currentShipping    =   CustomerAddress::from( Auth::id(), 'shipping' )->firstOrNew();
+        
+        foreach( $validFields as $field ) {
+            $currentBilling->$field     =   $billing[ $field ];
+            $currentShipping->$field    =   $shipping[ $field ];
+        }
+
+        $currentBilling->customer_id    = Auth::id();
+        $currentBilling->type           = 'billing';
+        $currentBilling->author         = Auth::id();
+        $currentBilling->save();
+        
+        $currentShipping->customer_id   = Auth::id();
+        $currentShipping->type          = 'shipping';
+        $currentShipping->author        = Auth::id();
+        $currentShipping->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The customer addresses were successfully updated.' )
+        ];
     }
 }

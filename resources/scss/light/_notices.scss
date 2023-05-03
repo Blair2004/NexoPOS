@@ -55,12 +55,15 @@
     }
 
     &.error {
-        @apply border-error-secondary bg-error-primary;
+        @apply border-error-secondary bg-error-tertiary text-white;
 
-        p > a {
-            @apply text-error-tertiary;
-            &:hover {
-                @apply underline;
+        p {
+            @apply text-white;
+            a {
+                @apply text-error-tertiary;
+                &:hover {
+                    @apply underline;
+                }
             }
         }
 

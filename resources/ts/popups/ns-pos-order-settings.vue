@@ -18,11 +18,12 @@
 import FormValidation from '~/libraries/form-validation';
 export default {
     name: 'ns-pos-order-settings',
+    props: [ 'popup' ],
     mounted() {
         nsHttpClient.get( '/api/fields/ns.pos-order-settings' )
             .subscribe( fields => {
                 fields.forEach( field => {
-                    field.value     =   this.$popupParams.order[ field.name ] || '';
+                    field.value     =   thsi.popup.params.order[ field.name ] || '';
                 });
                 
                 this.fields     =   this.validation.createFields( fields );

@@ -6,7 +6,7 @@ use App\Classes\Output;
 
 @section( 'layout.dashboard.body' )
     <div>
-        @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
+        @include( Hook::filter( 'ns-dashboard-header-file', '../common/dashboard-header' ) )
         @include( 'pages.dashboard.store-dashboard' )
     </div>
 @endsection

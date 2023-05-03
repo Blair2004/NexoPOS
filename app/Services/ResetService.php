@@ -9,7 +9,6 @@ use App\Events\BeforeHardResetEvent;
 use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class ResetService
 {
@@ -113,10 +112,8 @@ class ResetService
             '--force' => true,
         ]);
 
-        DotenvEditor::load();
-        DotenvEditor::deleteKey( 'NS_VERSION' );
-        DotenvEditor::deleteKey( 'NS_AUTHORIZATION' );
-        DotenvEditor::save();
+        ns()->envEditor->delete( 'NS_VERSION' );
+        ns()->envEditor->delete( 'NS_AUTHORIZATION' );
 
         Artisan::call( 'key:generate', [ '--force' => true ] );
         Artisan::call( 'ns:cookie generate' );

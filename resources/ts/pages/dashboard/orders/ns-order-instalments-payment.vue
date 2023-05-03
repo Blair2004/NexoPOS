@@ -28,6 +28,7 @@ import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue'
 
 export default {
     name: 'ns-order-instalments-payment',
+    props: [ 'popup' ],
     components: {
         nsNotice,
     },
@@ -111,8 +112,8 @@ export default {
     mounted() {
         this.popupCloser();
 
-        this.order      =   this.$popupParams.order;
-        this.instalment =   this.$popupParams.instalment;
+        this.order      =   this.popup.params.order;
+        this.instalment =   this.popup.params.instalment;
 
         this.fields     =   this.validation.createFields( this.fields );
     }

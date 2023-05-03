@@ -2,9 +2,12 @@
  * will bootstrap time
  */
 import './shared/time';
+
 import * as baseComponents from './components/components';
-import { NsHotPress } from './libraries/ns-hotpress';
+
 import { createApp, defineAsyncComponent } from 'vue/dist/vue.esm-bundler';
+
+import { NsHotPress } from './libraries/ns-hotpress';
 
 ( window as any ).nsComponents  =   { ...baseComponents };
 ( window as any ).nsHotPress    =   new NsHotPress;
@@ -24,3 +27,5 @@ for( let name in baseComponents ) {
 }
 
 posApp.mount( '#pos-app' );
+
+( window as any ).posApp    =   posApp;

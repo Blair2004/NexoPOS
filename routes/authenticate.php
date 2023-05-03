@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\PasswordRecoveryMiddleware;
 use App\Http\Middleware\RegistrationMiddleware;
+use App\Http\Middleware\SanitizePostFieldsMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '/sign-in', [ AuthController::class, 'signIn' ])->name( ns()->routeName( 'ns.login' ) );
@@ -18,6 +19,7 @@ Route::post( '/auth/sign-in', [ AuthController::class, 'postSignIn' ])->name( ns
  */
 Route::middleware([
     RegistrationMiddleware::class,
+    SanitizePostFieldsMiddleware::class,
 ])->group( function() {
     Route::post( '/auth/sign-up', [ AuthController::class, 'postSignUp' ])->name( ns()->routeName( 'ns.register.post' ) );
 });

@@ -3,7 +3,7 @@
         <div class="p-2 flex ns-box-header justify-between border-b items-center">
             <h3 class="font-semibold">{{ __( 'Hold Order' ) }}</h3>
             <div>
-                <ns-close-button @click="$popup.close()"></ns-close-button>
+                <ns-close-button @click="popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="flex-auto ns-box-body">
@@ -25,7 +25,7 @@
             <div @click="submitHold()" class=" cursor-pointer w-1/2 py-3 flex justify-center items-center bg-green-500 text-white font-semibold">
                 {{ __( 'Confirm' ) }}
             </div>
-            <div @click="$popup.close()" class="cursor-pointer w-1/2 py-3 flex justify-center items-center bg-error-secondary text-white font-semibold">
+            <div @click="popup.close()" class="cursor-pointer w-1/2 py-3 flex justify-center items-center bg-error-secondary text-white font-semibold">
                 {{ __( 'Cancel' ) }}
             </div>
         </div>
@@ -38,6 +38,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-hold-orders',
+    props: [ 'popup' ],
     data() {
         return {
             order: {},
@@ -55,14 +56,14 @@ export default {
          * we'll resolve immediately
          */
         if ( ! this.show ) {
-            this.$popupParams.resolve({ title: this.title });
+            this.popup.params.resolve({ title: this.title });
         }
 
         this.$refs[ 'reference' ].focus();
         this.$refs[ 'reference' ].select();
 
-        this.order  =   this.$popupParams.order;
-        this.title  =   this.$popupParams.order.title || '';
+        this.order  =   this.popup.params.order;
+        this.title  =   this.popup.params.order.title || '';
     },
     methods: {
         __,
@@ -71,8 +72,8 @@ export default {
         popupCloser,
 
         submitHold() {
-            this.$popup.close();
-            this.$popupParams.resolve({ title: this.title });
+            this.popup.close();
+            this.popup.params.resolve({ title: this.title });
         }
     }
 }

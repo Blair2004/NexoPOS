@@ -226,7 +226,6 @@ export default {
         },
 
         getReportForMonth( month ) {
-            console.log( this.report, month );
             return this.report[ month ];
         },
 

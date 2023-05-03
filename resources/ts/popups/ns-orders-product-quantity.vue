@@ -24,6 +24,7 @@ export default {
     components: {
         nsNumpad
     },
+    props: [ 'popup' ],
     data() {
         return {
             product: null,
@@ -32,8 +33,8 @@ export default {
         }
     },
     mounted() {
-        this.product            =   this.$popupParams.product;
-        this.availableQuantity  =   this.$popupParams.availableQuantity;
+        this.product            =   this.popup.params.product;
+        this.availableQuantity  =   this.popup.params.availableQuantity;
         this.seeValue           =   this.product.quantity;
     },
     methods: {
@@ -42,8 +43,8 @@ export default {
         popupResolver,
 
         close() {
-            this.$popupParams.reject( false );
-            this.$popup.close();
+            this.popup.params.reject( false );
+            this.popup.close();
         },
 
         setChangedValue( quantity ) {
@@ -56,8 +57,8 @@ export default {
             }
 
             this.product.quantity   =   parseFloat( quantity );
-            this.$popupParams.resolve( this.product );
-            this.$popup.close();
+            this.popup.params.resolve( this.product );
+            this.popup.close();
         },        
     }
 }

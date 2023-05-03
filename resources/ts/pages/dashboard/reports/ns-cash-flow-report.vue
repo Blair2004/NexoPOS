@@ -138,7 +138,6 @@ export default {
                 .subscribe({
                     next: result => {
                         this.report     =   result;
-                        console.log( this.report );
                     },
                     error: ( error ) => {
                         nsSnackBar

@@ -224,8 +224,6 @@ export default {
             if ( tabs[ 'groups' ] ) {
                 const products  =   tabs.groups.fields.filter( field => field.name === 'products_subitems' );
 
-                console.log( products );
-
                 if ( products.length > 0 ) {
                     return products[0].value;
                 }
@@ -241,7 +239,7 @@ export default {
             });
         },
         triggerRecompute( value ) {
-            console.log( this.form );
+            // @todo check if it's still useful
         },
         getUnitQuantity( fields ) {
             const quantity  =   fields.filter( f => f.name === 'quantity' ).map( f => f.value );
@@ -328,7 +326,6 @@ export default {
                             field.options   =   result;
                             field.fields.forEach( _field => {
                                 if ( _field.name === 'unit_id' ) {
-                                    console.log( _field );
                                     _field.options  =   result.map( option => {
                                         return {
                                             label: option.name,

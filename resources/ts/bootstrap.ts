@@ -5,7 +5,7 @@ import axios from "axios";
 import * as ChartJS from "chart.js";
 import { fromEvent } from "rxjs";
 import * as RxJS from 'rxjs';
-import * as moment from 'moment';
+import { default as moment } from 'moment';
 import { createApp } from "vue/dist/vue.esm-bundler";
 import { Popup } from "~/libraries/popup";
 import { EventEmitter, HttpClient, SnackBar, State, FloatingNotice } from "./libraries/libraries";
@@ -15,10 +15,14 @@ import countdown from "./libraries/countdown";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
 import { __, __m } from "./libraries/lang";
+import { insertAfterKey, insertBeforeKey } from "./libraries/object";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
 import { timespan } from "./libraries/timespan";
-import { defineAsyncComponent, defineComponent } from "vue";
+import { defineAsyncComponent, defineComponent, markRaw, shallowRef } from "vue";
+import { nsCurrency, nsRawCurrency } from "./filters/currency";
+import { nsAbbreviate } from "./filters/abbreviate";
+import { nsTruncate } from "./filters/truncate";
 
 
 declare global {
@@ -145,6 +149,14 @@ nsHttpClient.defineClient( axios );
 ( window as any ).nsCrudHandler         =   nsCrudHandler;
 ( window as any ).defineComponent       =   defineComponent;
 ( window as any ).defineAsyncComponent  =   defineAsyncComponent;
+( window as any ).markRaw               =   markRaw;
+( window as any ).shallowRef            =   shallowRef;
 ( window as any ).createApp             =   createApp;
+( window as any ).ns.insertAfterKey     =   insertAfterKey;
+( window as any ).ns.insertBeforeKey    =   insertBeforeKey;
+( window as any ).nsCurrency            =   nsCurrency;
+( window as any ).nsAbbreviate          =   nsAbbreviate;
+( window as any ).nsRawCurrency         =   nsRawCurrency;
+( window as any ).nsTruncate            =   nsTruncate;
 
 export { nsSnackBar, nsNotice, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

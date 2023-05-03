@@ -96,19 +96,49 @@ export default {
          * @param {object} role
          * @return void
          */
-        selectAllPermissions( role ) {
+        async selectAllPermissions( role ) {
             const roles   =   new Object;
             roles[ role.namespace ]                     =   new Object;
 
+            let confirmed   =   false;
+
+            /**
+             * If we're attempting to edit a system role
+             * we should warn the user about that.
+             */
+            if ( role.locked ) {
+                confirmed   =   await new Promise( ( resolve, reject) => {
+                    Popup.show( nsConfirmPopup, { 
+                        title: __( 'Confirm Your Action' ), 
+                        message: __( 'Would you like to bulk edit a system role ?' ),
+                        onAction: action => {
+                            if ( action ) {
+                                return resolve( true );
+                            }
+                            return resolve( false );
+                        }
+                    })
+                });
+            }
+
             if ( 
                 ! role.locked ||
-                ( role.locked && confirm( __( 'Would you like to bulk edit system roles ?' ) ) )
-                
+                ( role.locked && confirmed )
             ) {    
-                for( let permission in role.fields ) {
+                const editedRoles   =   this.filterObjectByKeys( role.fields, this.filteredPermissions.map( permission => permission.namespace ) );
+
+                for( let permission in editedRoles ) {
                     role.fields[ permission ].value             =   role.field.value;
                     roles[ role.namespace ][ permission ]       =   role.field.value;
                 }    
+
+                /**
+                 * This will only update the currently
+                 * filtered permissions.
+                 */
+                const filtredRoles    =   this.arrayToObject( this.filteredPermissions, 'namespace', ( permission ) => {
+                    return roles[ role.namespace ][ permission.namespace ];
+                });
 
                 nsHttpClient.put( '/api/users/roles', roles )
                     .subscribe( result => {
@@ -124,6 +154,29 @@ export default {
                  */
                 role.field.value    =   ! role.field.value;
             }
+        },
+
+        filterObjectByKeys( object, keys ) {
+            return Object.fromEntries(
+                Object.entries(object).filter(([key]) => keys.includes(key))
+            );
+        },
+
+        /**
+         * Maps an array to convert it into an object
+         * @param {collect} array 
+         * @param {string} key 
+         * @param {any} value 
+         */
+        arrayToObject( array, key, valueCallback ) {
+            return Object.assign(
+                {}, 
+                ...array.map(item => {
+                    return {
+                        [item[ key ]]: valueCallback( item )
+                    };
+                })
+            );
         },
 
         /**

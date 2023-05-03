@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helper;
 use Exception;
 
 class MissingDependencyException extends Exception
@@ -17,6 +18,7 @@ class MissingDependencyException extends Exception
             return response()->view( 'pages.errors.missing-dependency', [
                 'title' => __( 'Missing Dependency' ),
                 'message' => $this->getMessage(),
+                'back'  =>  Helper::getValidPreviousUrl( $request ),
             ]);
         }
 

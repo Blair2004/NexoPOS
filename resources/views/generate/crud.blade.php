@@ -222,11 +222,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function beforePost( array $request ): array
     {
-        if ( $this->permissions[ 'create' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'create' ] );
-        } else {
-            throw new NotAllowedException;
-        }
+        $this->allowedTo( 'create' );
 
         return $request;
     }
@@ -258,11 +254,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function beforePut( array $request, {{ trim( $lastClassName ) }} $entry ): array
     {
-        if ( $this->permissions[ 'update' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'update' ] );
-        } else {
-            throw new NotAllowedException;
-        }
+        $this->allowedTo( 'update' );
 
         return $request;
     }
@@ -301,7 +293,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     }
 
     /**
-     * Define Columns and how it is structured.
+     * Define columns and how it is structured.
      */
     public function getColumns(): array
     {

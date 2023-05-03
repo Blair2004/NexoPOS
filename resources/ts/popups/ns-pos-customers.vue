@@ -3,12 +3,12 @@
         <div class="ns-header p-2 flex justify-between items-center border-b">
             <h3 class="font-semibold">{{ __( 'Customers' ) }}</h3>
             <div>
-                <ns-close-button @click="$popup.close()"></ns-close-button>
+                <ns-close-button @click="popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="ns-body flex-auto flex p-2 overflow-y-auto">
             <ns-tabs :active="activeTab" @active="activeTab = $event">
-                <ns-tabs-item identifier="create-customers" label="New Customer">
+                <ns-tabs-item identifier="create-customers" :label="__( 'New Customer' )">
                     <ns-crud-form
                         v-if="options.ns_pos_customers_creation_enabled === 'yes'"
                         @updated="prefillForm( $event )"
@@ -24,7 +24,7 @@
                         <p>{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
                     </div>
                 </ns-tabs-item>
-                <ns-tabs-item identifier="account-payment" :label="__( 'Customer Account' )" class="flex" style="padding:0!important">
+                <ns-tabs-item identifier="account-payment" :label="__( 'Customer Account' )" class="flex" padding="p-0 flex">
                     <div class="flex-auto w-full flex items-center justify-center flex-col p-4" v-if="customer === null">
                         <i class="lar la-frown text-6xl"></i>
                         <h3 class="font-medium text-2xl">{{ __( 'No Customer Selected' ) }}</h3>
@@ -35,39 +35,41 @@
                     </div>
                     <div v-if="customer" class="flex flex-col flex-auto">
                         <div class="flex-auto p-2 flex flex-col">
-                            <div class="-mx-4 flex flex-wrap ns-tab-cards">
+                            <div class="flex flex-wrap">
                                 <div class="px-4 mb-4 w-full">
                                     <h2 class="font-semibold text-primary">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
                                 </div>
-                                <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-success-secondary to-green-700 p-2 flex flex-col text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
-                                        <div class="w-full flex justify-end">
-                                            <h2 class="font-bold">{{ nsCurrency( customer.purchases_amount ) }}</h2>
+                                <div class="flex flex-wrap ns-tab-cards -mx-2 w-full">
+                                    <div class="px-2 mb-4 w-full md:w-1/4 flex">
+                                        <div class="rounded-lg shadow w-full bg-transparent bg-gradient-to-br from-success-secondary to-green-700 p-2 flex flex-col text-white">
+                                            <h3 class="font-medium text-lg">{{ __( 'Purchases' ) }}</h3>
+                                            <div class="w-full flex justify-end">
+                                                <h2 class="font-bold">{{ nsCurrency( customer.purchases_amount ) }}</h2>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-error-secondary to-red-700 p-2 text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Total Owed' ) }}</h3>
-                                        <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ nsCurrency( customer.owed_amount ) }}</h2>
+                                    <div class="px-2 mb-4 w-full md:w-1/4 flex">
+                                        <div class="rounded-lg shadow w-full bg-transparent bg-gradient-to-br from-error-secondary to-red-700 p-2 text-white">
+                                            <h3 class="font-medium text-lg">{{ __( 'Owed' ) }}</h3>
+                                            <div class="w-full flex justify-end">
+                                                <h2 class="font-bold">{{ nsCurrency( customer.owed_amount ) }}</h2>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Wallet Amount' ) }}</h3>
-                                        <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ nsCurrency( customer.account_amount ) }}</h2>
+                                    <div class="px-2 mb-4 w-full md:w-1/4 flex">
+                                        <div class="rounded-lg shadow w-full bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
+                                            <h3 class="font-medium text-lg">{{ __( 'Wallet Amount' ) }}</h3>
+                                            <div class="w-full flex justify-end">
+                                                <h2 class="font-bold">{{ nsCurrency( customer.account_amount ) }}</h2>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-teal-500 to-teal-700 p-2 text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Credit Limit' ) }}</h3>
-                                        <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ nsCurrency( customer.credit_limit_amount ) }}</h2>
+                                    <div class="px-2 mb-4 w-full md:w-1/4 flex">
+                                        <div class="rounded-lg shadow w-full bg-transparent bg-gradient-to-br from-teal-500 to-teal-700 p-2 text-white">
+                                            <h3 class="font-medium text-lg">{{ __( 'Credit Limit' ) }}</h3>
+                                            <div class="w-full flex justify-end">
+                                                <h2 class="font-bold">{{ nsCurrency( customer.credit_limit_amount ) }}</h2>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -291,6 +293,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-customers',
+    props: [ 'popup' ],
     data() {
         return {
             activeTab: 'create-customers',
@@ -325,12 +328,11 @@ export default {
         });
 
         this.subscription   =   POS.order.subscribe( order => {
-
             this.order  =   order;
 
-            if ( this.$popupParams.customer !== undefined ) {
+            if ( this.popup.params.customer !== undefined ) {
                 this.activeTab  =   'account-payment';
-                this.customer   =   this.$popupParams.customer;
+                this.customer   =   this.popup.params.customer;
                 this.loadCustomerOrders();
             } else if ( order.customer !== undefined ) {
                 this.activeTab  =   'account-payment';
@@ -458,14 +460,15 @@ export default {
         },
 
         prefillForm( event ) {
-            if ( this.$popupParams.name !== undefined ) {
-                event.main.value     =   this.$popupParams.name;
+            if ( this.popup.params.name !== undefined ) {
+                event.main.value     =   this.popup.params.name;
             }
         },
 
         openCustomerSelection() {
-            this.$popup.close();
-            Popup.show( nsPosCustomerSelectPopupVue );
+            this.popup.close( _ => {
+                Popup.show( nsPosCustomerSelectPopupVue );
+            });
         },
 
         loadCustomerOrders() {
@@ -544,7 +547,7 @@ export default {
         handleSavedCustomer( response ) {
             nsSnackBar.success( response.message ).subscribe();
             POS.selectCustomer( response.entry );
-            this.$popup.close();
+            this.popup.close();
         }
     }
 }
