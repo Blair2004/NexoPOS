@@ -49,7 +49,7 @@ export default {
             this.urls    =   settings.urls;
         });
 
-        this.typeSubscription   =   POS.types.pipe(take(1)).subscribe( types => {
+        this.typeSubscription   =   POS.types.subscribe( types => {
             this.types  =   types;
 
             if ( Object.values( this.types ).length === 1 ) {
