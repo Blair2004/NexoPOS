@@ -392,7 +392,7 @@ export default {
         this.productSubscribe.unsubscribe();
         this.settingsSubscribe.unsubscribe();
         this.optionsSubscriber.unsubscribe();
-this.cartButtonsSubscriber.unsubscribe();
+        this.cartButtonsSubscriber.unsubscribe();
 
         nsHotPress.destroy( 'ns_pos_keyboard_shipping' );
         nsHotPress.destroy( 'ns_pos_keyboard_note' );
