@@ -15,7 +15,6 @@ class UpdateService
      * Might be empty if all migrations has run or no migration is available.
      *
      * @param bool $ignoreMigrations
-     * @return Collection
      */
     public function getMigrations( $ignoreMigrations = false, $directories = [ 'create', 'update', 'core' ] ): Collection
     {

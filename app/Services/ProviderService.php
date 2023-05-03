@@ -182,7 +182,6 @@ class ProviderService
      * we'll consider editing the provide payments
      * to avoid having the payment made twice for the same procurement
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function cancelPaymentForProcurement( Procurement $procurement )

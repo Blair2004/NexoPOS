@@ -126,6 +126,7 @@ class ExpenseService
 
     /**
      * @deprecated
+     *
      * @use getAccountType
      */
     public function getCategories( $id = null )
@@ -489,7 +490,6 @@ class ExpenseService
     /**
      * Will record an expense resulting from a paid procurement
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function handleProcurementExpense( Procurement $procurement )
@@ -522,7 +522,6 @@ class ExpenseService
     /**
      * Will record an expense for every refund performed
      *
-     * @param OrderProduct $orderProduct
      * @return void
      */
     public function createExpenseFromRefund( Order $order, OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
@@ -573,7 +572,6 @@ class ExpenseService
      * created and the payment status is PAID
      * we'll store the total as a cash flow transaction.
      *
-     * @param Order $order
      * @return void
      */
     public function handleCreatedOrder( Order $order )
@@ -863,7 +861,6 @@ class ExpenseService
      * Will add customer credit operation
      * to the cash flow history
      *
-     * @param CustomerAccountHistory $customerHistory
      * @return void
      */
     public function handleCustomerCredit( CustomerAccountHistory $customerHistory )

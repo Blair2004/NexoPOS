@@ -369,7 +369,6 @@ class ProductService
      * consist of valid items (not gruoped items).
      *
      * @param array $fields
-     * @return void
      */
     public function checkGroupProduct( $fields ): void
     {
@@ -472,7 +471,6 @@ class ProductService
     /**
      * Saves the sub items by binding that to a product
      *
-     * @param Product $product
      * @param array $subItems
      * @return array response
      */
@@ -576,7 +574,6 @@ class ProductService
     /**
      * Update a variable product
      *
-     * @param Product $product
      * @param array fields to save
      * @return array response of the process
      */
@@ -1071,7 +1068,6 @@ class ProductService
      *
      * @param string operation : deducted, sold, procured, deleted, adjusted, damaged
      * @param mixed[]<$unit_id,$product_id,$unit_price,?$total_price,?$procurement_id,?$procurement_product_id,?$sale_id,?$quantity> $data to manage
-     * @return ProductHistory|EloquentCollection|bool
      */
     public function stockAdjustment( $action, $data ): ProductHistory|EloquentCollection|bool
     {
@@ -1162,9 +1158,7 @@ class ProductService
      *
      * @param string $action
      * @param float $quantity
-     * @param Product $product
      * @param Unit $unit
-     * @return EloquentCollection
      */
     private function handleStockAdjustmentsForGroupedProducts(
         $action,
@@ -1523,7 +1517,6 @@ class ProductService
      * add a stock entry to a product
      * history using the provided informations
      *
-     * @param ProcurementProduct $product
      * @param array<$quantity,$unit_id,$purchase_price,$product_id>
      */
     public function procurementStockEntry( ProcurementProduct $product, $fields )
@@ -1744,7 +1737,6 @@ class ProductService
      * Will return the Product Unit Quantities
      * for the provided product
      *
-     * @param Product $product
      * @return array
      */
     public function getProductUnitQuantities( Product $product )
@@ -1758,7 +1750,6 @@ class ProductService
      * Generate product barcode using product
      * configurations.
      *
-     * @param Product $product
      * @return void
      */
     public function generateProductBarcode( Product $product )

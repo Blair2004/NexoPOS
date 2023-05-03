@@ -113,8 +113,6 @@ class RegisterHistoryCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -158,7 +156,6 @@ class RegisterHistoryCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -278,7 +275,6 @@ class RegisterHistoryCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  RegisterHistory $entry
      * @return  void
      */
     public function afterPost( $request, RegisterHistory $entry )

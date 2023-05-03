@@ -218,7 +218,6 @@ class OrdersService
      * Will save order installments if
      * it's provider
      *
-     * @param Order $order
      * @param array $instalments
      * @return void
      */
@@ -345,7 +344,6 @@ class OrdersService
     /**
      * Save the coupons by attaching them to the processed order
      *
-     * @param Order $order
      * @param array $coupons
      * @return void
      */
@@ -449,7 +447,6 @@ class OrdersService
     /**
      * Assign taxes to the processed order
      *
-     * @param Order $order
      * @param array $taxes
      * @return void
      */
@@ -755,7 +752,6 @@ class OrdersService
      * and ensure to display relevant events
      *
      * @param array $payment
-     * @param Order $order
      * @return array
      */
     public function makeOrderSinglePayment( $payment, Order $order )
@@ -797,8 +793,6 @@ class OrdersService
      * account if "account payment" is used.
      *
      * @param array $payment
-     * @param Order $order
-     * @return OrderPayment
      */
     private function __saveOrderSinglePayment( $payment, Order $order ): OrderPayment
     {
@@ -1181,7 +1175,6 @@ class OrdersService
     }
 
     /**
-     * @param SupportCollection $items
      * @return SupportCollection $items
      */
     private function __checkProductStock( SupportCollection $items, Order $order = null )
@@ -1515,7 +1508,6 @@ class OrdersService
     /**
      * Will update the prodcess status of an order
      *
-     * @param Order $order
      * @return void
      */
     public function updateProcessStatus( Order $order )
@@ -1534,7 +1526,6 @@ class OrdersService
     /**
      * Will order the delivery status of an order
      *
-     * @param Order $order
      * @return void
      */
     public function updateDeliveryStatus( Order $order )
@@ -1576,7 +1567,6 @@ class OrdersService
      * Will compute a tax value using
      * the taxes assigned to an order
      *
-     * @param Order $order
      * @param float $value
      * @param string $type
      * @return float value
@@ -1595,7 +1585,6 @@ class OrdersService
     /**
      * Will return the tax values from the order taxes
      *
-     * @param Order $order
      * @param float $value
      * @param string $type
      * @return float
@@ -1616,8 +1605,6 @@ class OrdersService
     /**
      * will compute the taxes based
      * on the configuration and the products
-     *
-     * @param Order $order
      */
     public function computeOrderTaxes( Order $order )
     {
@@ -1882,7 +1869,6 @@ class OrdersService
      * this method computes total for the current provided
      * order product
      *
-     * @param OrderProduct $orderProduct
      * @return void
      */
     public function computeOrderProduct( OrderProduct $orderProduct )
@@ -2430,7 +2416,6 @@ class OrdersService
      * based on the provided values
      *
      * @param array options
-     * @param Order $order
      * @return string
      */
     public function orderTemplateMapping( $option, Order $order )
@@ -2650,7 +2635,6 @@ class OrdersService
     /**
      * Will resolve instalments attached to an order
      *
-     * @param Order $order
      * @return void
      */
     public function resolveInstalments( Order $order )
@@ -2686,7 +2670,6 @@ class OrdersService
     /**
      * Will update an existing instalment
      *
-     * @param Order $order
      * @param OrderInstalment $orderInstalement
      * @param array $fields
      * @return array
@@ -2715,8 +2698,6 @@ class OrdersService
     /**
      * Will make an instalment as paid
      *
-     * @param Order $order
-     * @param OrderInstalment $instalment
      * @return array
      */
     public function markInstalmentAsPaid( Order $order, OrderInstalment $instalment, $paymentType = OrderPayment::PAYMENT_CASH )
@@ -2775,7 +2756,6 @@ class OrdersService
     /**
      * Creates an instalments
      *
-     * @param Order $order
      * @param array $fields
      * @return array
      */
@@ -2813,7 +2793,6 @@ class OrdersService
     /**
      * Changes the order processing status
      *
-     * @param Order $order
      * @param string $status
      * @return array
      */
@@ -2842,7 +2821,6 @@ class OrdersService
     /**
      * Changes the order processing status
      *
-     * @param Order $order
      * @param string $status
      * @return array
      */
@@ -2902,7 +2880,6 @@ class OrdersService
      * Will return the product that
      * that has been refunded
      *
-     * @param Order $order
      * @return array
      */
     public function getOrderRefundedProducts( Order $order )
@@ -2914,7 +2891,6 @@ class OrdersService
      * Will return the order refund along
      * with the product refunded
      *
-     * @param Order $order
      * @return OrderRefund
      */
     public function getOrderRefunds( Order $order )

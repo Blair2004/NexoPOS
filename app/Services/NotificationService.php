@@ -81,8 +81,6 @@ class NotificationService
     /**
      * Dispatch notification for specific
      * groups using array of group namespace provided
-     *
-     * @param array $namespaces
      */
     public function dispatchForGroupNamespaces( array $namespaces )
     {
@@ -173,7 +171,6 @@ class NotificationService
     /**
      * Deletes a notification if the socket are disabled
      *
-     * @param Notification $notification
      * @return void
      */
     public function proceedDeleteNotification( Notification $notification )

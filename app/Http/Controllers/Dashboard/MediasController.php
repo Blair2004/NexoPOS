@@ -29,7 +29,6 @@ class MediasController extends DashboardController
     /**
      * perform
      *
-     * @param
      * @return json
      */
     public function getMedias()
@@ -40,7 +39,6 @@ class MediasController extends DashboardController
     /**
      * perform
      *
-     * @param
      * @return json
      */
     public function deleteMedia()
@@ -50,7 +48,6 @@ class MediasController extends DashboardController
     /**
      * perform
      *
-     * @param
      * @return json
      */
     public function updateMedia()

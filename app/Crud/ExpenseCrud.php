@@ -83,8 +83,6 @@ class ExpenseCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -117,7 +115,6 @@ class ExpenseCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -285,7 +282,6 @@ class ExpenseCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Expense $entry
      * @return  void
      */
     public function afterPost( $inputs, Expense $entry )

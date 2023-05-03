@@ -362,7 +362,7 @@ class CrudService
      * @param string feature name
      * @return boolean/null
      */
-    public function isEnabled( $feature ): bool| null
+    public function isEnabled( $feature ): bool|null
     {
         return @$this->features[ $feature ];
     }
@@ -398,8 +398,6 @@ class CrudService
 
     /**
      * Will return picked array
-     *
-     * @return array
      */
     public function getPicked(): array
     {
@@ -412,7 +410,6 @@ class CrudService
      * @param Builder $query
      * @param array $definition
      * @param array $searchKeyValue
-     * @return void
      */
     public function handleDefinitionOperator( $query, $definition, $searchKeyValue ): void
     {
@@ -430,8 +427,6 @@ class CrudService
 
     /**
      * Returns the available query filters
-     *
-     * @return array
      */
     public function getQueryFilters(): array
     {
@@ -461,8 +456,6 @@ class CrudService
 
     /**
      * Will returns the CRUD component slug
-     *
-     * @return string
      */
     public function getSlug(): string
     {
@@ -901,8 +894,6 @@ class CrudService
 
     /**
      * Get route
-     *
-     * @return string
      */
     public function getMainRoute(): string
     {
@@ -1045,7 +1036,6 @@ class CrudService
      * @param CrudService
      * @param array $fields
      * @param Model|null $model
-     * @return array
      */
     public function getFlatForm( $crud, $fields, $model = null ): array
     {
@@ -1112,7 +1102,6 @@ class CrudService
      * form on the Request
      *
      * @param Crud $resource
-     * @param Request $request
      * @return array
      */
     public function getPlainData( $crud, Request $request, $model = null )
@@ -1124,8 +1113,6 @@ class CrudService
 
     /**
      * To pull out the tabs relations
-     *
-     * @return array
      */
     public function getTabsRelations(): array
     {
@@ -1136,7 +1123,6 @@ class CrudService
      * Isolate Rules that use the Rule class
      *
      * @param array
-     * @return array
      */
     public function isolateArrayRules( $arrayRules, $parentKey = '' ): array
     {

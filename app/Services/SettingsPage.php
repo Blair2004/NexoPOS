@@ -88,7 +88,6 @@ class SettingsPage
      * Validate a form using a provided
      * request. Based on the actual settings page rules
      *
-     * @param Request $request
      * @return array
      */
     public function validateForm( Request $request )
@@ -116,7 +115,6 @@ class SettingsPage
      * Get form plain data, by excaping the tabs
      * identifiers
      *
-     * @param Request $request
      * @return array
      */
     public function getPlainData( Request $request )
@@ -130,7 +128,6 @@ class SettingsPage
      * Proceed to a saving using te provided
      * request along with the plain data
      *
-     * @param Request $request
      * @return array
      */
     public function saveForm( Request $request )

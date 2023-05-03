@@ -13,9 +13,9 @@ class OrderTax extends NsModel
 
     public $timestamps = false;
 
-    public $casts   =   [
-        'tax_value' =>  FloatConvertCasting::class,
-        'rate'      =>  FloatConvertCasting::class,
+    public $casts = [
+        'tax_value' => FloatConvertCasting::class,
+        'rate' => FloatConvertCasting::class,
     ];
 
     public function order()

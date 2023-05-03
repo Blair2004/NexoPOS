@@ -127,7 +127,6 @@ class Users
     /**
      * We'll define user role
      *
-     * @param User $user
      * @param array $roles
      */
     public function setUserRole( User $user, $roles )
@@ -216,7 +215,6 @@ class Users
     /**
      * Clone a role assigning same permissions
      *
-     * @param Role $role
      * @return array
      */
     public function cloneRole( Role $role )
@@ -258,9 +256,6 @@ class Users
      * Will create the user attribute
      * for the provided user if that doesn't
      * exist yet.
-     *
-     * @param User $user
-     * @return void
      */
     public function createAttribute( User $user ): void
     {

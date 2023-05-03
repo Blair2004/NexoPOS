@@ -224,7 +224,6 @@ class CashRegistersService
      * Will increase the register balance if it's assigned
      * to the right store
      *
-     * @param Order $order
      * @return void
      */
     public function recordCashRegisterHistorySale( Order $order )
@@ -429,7 +428,6 @@ class CashRegistersService
     /**
      * Update the register with various details
      *
-     * @param Register $register
      * @return void
      */
     public function getRegisterDetails( Register $register )

@@ -139,7 +139,6 @@ class UnitsController extends DashboardController
     /**
      * Edit existing unit group
      *
-     * @param UnitGroup $group
      * @return View
      */
     public function editUnitGroup( UnitGroup $group )

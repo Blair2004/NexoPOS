@@ -20,7 +20,6 @@ class CashFlowHistoryAfterDeletedEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\CashFlowHistoryAfterDeletedEvent  $event
      * @return void
      */
     public function handle(CashFlowHistoryAfterDeletedEvent $event)

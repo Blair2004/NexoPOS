@@ -76,7 +76,6 @@ class CurrencyService
      * Set a value for the current instance
      *
      * @param int|float $amount
-     * @return CurrencyService
      */
     private static function __defineAmount( $amount ): CurrencyService
     {

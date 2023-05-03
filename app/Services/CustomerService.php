@@ -422,7 +422,6 @@ class CustomerService
      * compute a reward assigned to a customer group
      * and issue a coupon if necessary
      *
-     * @param Order $order
      * @return void
      */
     public function computeReward( Order $order )

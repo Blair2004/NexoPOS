@@ -143,7 +143,6 @@ class ModulesController extends DashboardController
     /**
      * Upload a module. Except a "module" provided as a file input
      *
-     * @param ModuleUploadRequest $request
      * @return Json|Redirect response
      */
     public function uploadModule( ModuleUploadRequest $request )

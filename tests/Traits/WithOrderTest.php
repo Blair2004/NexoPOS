@@ -758,7 +758,6 @@ trait WithOrderTest
     /**
      * Will disburse the cash register
      *
-     * @param Register $cashRegister
      * @param CashRegistersService $cashRegisterService
      * @return void
      */
@@ -770,7 +769,6 @@ trait WithOrderTest
     /**
      * Will disburse the cash register
      *
-     * @param Register $cashRegister
      * @param CashRegistersService $cashRegisterService
      * @return void
      */

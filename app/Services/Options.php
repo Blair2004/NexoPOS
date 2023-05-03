@@ -38,7 +38,6 @@ class Options
      * Will reset the default options
      *
      * @param array $options
-     * @return void
      */
     public function setDefault( $options = [] ): void
     {

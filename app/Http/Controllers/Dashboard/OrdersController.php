@@ -299,7 +299,6 @@ class OrdersController extends DashboardController
     /**
      * Will perform a payment on a specific order
      *
-     * @param Order $order
      * @param Request $request
      * @return array
      */
@@ -380,8 +379,6 @@ class OrdersController extends DashboardController
     /**
      * Will change the order processing status
      *
-     * @param Request $request
-     * @param Order $order
      * @return string json response
      */
     public function changeOrderProcessingStatus( Request $request, Order $order )
@@ -392,8 +389,6 @@ class OrdersController extends DashboardController
     /**
      * Will change the order processing status
      *
-     * @param Request $request
-     * @param Order $order
      * @return string json response
      */
     public function changeOrderDeliveryStatus( Request $request, Order $order )

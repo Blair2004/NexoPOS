@@ -211,7 +211,6 @@ class UnitService
      * get the single base unit defined
      * for a specific group
      *
-     * @param UnitGroup $group
      * @return Unit
      */
     public function getBaseUnit( UnitGroup $group )
@@ -238,9 +237,7 @@ class UnitService
      * return what is the exact total base unit
      * value of 2 Unit instance provided
      *
-     * @param Unit $unit
      * @param Unit base unit
-     * @param
      */
     public function computeBaseUnit( Unit $unit, Unit $base, $quantity )
     {
