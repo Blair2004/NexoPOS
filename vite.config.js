@@ -18,14 +18,10 @@ export default ({ mode }) => {
                 protocol: 'wss',
                 host: 'localhost',
             },
-            // https: {
-            //     key: fs.readFileSync( process.env.VITE_LOCAL_KEY ),
-            //     cert: fs.readFileSync( process.env.VITE_LOCAL_CRT ),
-            // },
+            https: {
+                key: fs.readFileSync( process.env.VITE_LOCAL_KEY ),
+                cert: fs.readFileSync( process.env.VITE_LOCAL_CRT ),
         },
-        build: {
-            sourcemap: true,
-            minify: false,
         },
         resolve: {
             alias: [
@@ -47,7 +43,6 @@ export default ({ mode }) => {
                         includeAbsolute: false,
                     },
                 },
-                isProduction: false,
             }),
             laravel({
                 input: [
