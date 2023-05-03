@@ -33,6 +33,7 @@ import { forkJoin } from 'rxjs';
 import { nsSnackBar } from '~/bootstrap';
 export default {
     name: 'ns-pos-quick-product-popup',
+    props: [ 'popup' ],
     methods: {
         __,
         popupCloser,
@@ -43,7 +44,7 @@ export default {
         },
 
         async addProduct() {
-            
+
             const extractedFields   =   this.validation.extractFields( this.fields );
             const fields =   this.fields.filter( field => typeof field.show === 'undefined' || ( typeof field.show === 'function' && field.show( extractedFields ) ) );
             const valid =   this.validation.validateFields( fields );
@@ -53,7 +54,7 @@ export default {
             }
 
             let product       =   this.validation.extractFields( fields );
-            
+
             product.$original   =   () => {
                 return {
                     stock_management: 'disabled',
@@ -86,7 +87,7 @@ export default {
              * tax before adding that to the cart.
              */
             product     =   POS.computeProductTax( product );
-            
+
             POS.addToCart( product );
 
             this.close();
@@ -205,10 +206,10 @@ export default {
                         // ...
                     ],
                     description: __( 'Assign a unit to the product.' ),
-                    validation: '',  
+                    validation: '',
                     show( form ) {
                         return form.product_type === 'product';
-                    }                  
+                    }
                 }, {
                     label: __( 'Tax Type' ),
                     name: 'tax_type',
@@ -225,10 +226,10 @@ export default {
                             value: 'exclusive'
                         }
                     ],
-                    description: __( 'Define what is tax type of the item.' ),  
+                    description: __( 'Define what is tax type of the item.' ),
                     show( form ) {
                         return form.product_type === 'product';
-                    }             
+                    }
                 }, {
                     label: __( 'Tax Group' ),
                     name: 'tax_group_id',
@@ -236,10 +237,10 @@ export default {
                     options: [
                         // ...
                     ],
-                    description: __( 'Choose the tax group that should apply to the item.' ),  
+                    description: __( 'Choose the tax group that should apply to the item.' ),
                     show( form ) {
                         return form.product_type === 'product';
-                    }                 
+                    }
                 }
             ]
         }

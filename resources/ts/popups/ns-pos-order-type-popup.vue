@@ -49,7 +49,7 @@ export default {
             this.urls    =   settings.urls;
         });
 
-        this.typeSubscription   =   POS.types.subscribe( types => {
+        this.typeSubscription   =   POS.types.pipe(take(1)).subscribe( types => {
             this.types  =   types;
 
             if ( Object.values( this.types ).length === 1 ) {
@@ -89,8 +89,7 @@ export default {
             try {
                 const result    =   await POS.triggerOrderTypeSelection( selectedType );
                 POS.types.next( this.types );
-                this.resolveIfQueued( selectedType );
-                if (immediate) this.popup.close( null, true );
+                this.resolveIfQueued( selectedType, immediate );
             } catch( exception ) {
                 // ...
             }
