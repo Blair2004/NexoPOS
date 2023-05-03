@@ -47,10 +47,12 @@ export default {
         registerInitialQueue() {
             POS.initialQueue.push( async () => {
                 try {
+                    if (this.settings.register !== undefined) {
+                        return;
+                    }
+
                     const response  =   await new Promise( ( resolve, reject ) => {
-                        if ( this.settings.register === undefined ) {
-                            Popup.show( nsPosCashRegistersPopupVue, { resolve, reject });
-                        }
+                        Popup.show( nsPosCashRegistersPopupVue, { resolve, reject });
                     });
 
                     /**

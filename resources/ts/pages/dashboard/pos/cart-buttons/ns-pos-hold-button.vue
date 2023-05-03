@@ -1,12 +1,15 @@
 <template>
     <div @click="holdOrder()" id="hold-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
-        <i class="mr-2 text-2xl lg:text-xl las la-pause"></i> 
+        <i class="mr-2 text-2xl lg:text-xl las la-pause"></i>
         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Hold' ) }}</span>
     </div>
 </template>
 
 <script>
 import nsPosHoldOrdersPopupVue from '~/popups/ns-pos-hold-orders-popup.vue';
+import {ProductsQueue} from "~/pages/dashboard/pos/queues/order/products-queue";
+import {CustomerQueue} from "~/pages/dashboard/pos/queues/order/customer-queue";
+import {TypeQueue} from "~/pages/dashboard/pos/queues/order/type-queue";
 export default {
     props: [ 'order' ],
     methods: {
@@ -31,13 +34,13 @@ export default {
                      * in case there is something broken
                      * on the promise, we just stop the queue.
                      */
-                    return false;    
+                    return false;
                 }
             }
 
             /**
              * overriding hold popup
-             * This will be useful to inject custom 
+             * This will be useful to inject custom
              * hold popup.
              */
             const popup     =   nsHooks.applyFilters( 'ns-override-hold-popup', () => {
@@ -51,7 +54,7 @@ export default {
                     POS.order.next( this.order );
 
                     const popup     =   Popup.show( nsPosLoadingPopupVue );
-                    
+
                     POS.submitOrder().then( result => {
                         popup.close();
                         nsSnackBar.success( result.message ).subscribe();
@@ -72,11 +75,11 @@ export default {
          for( let shortcut in nsShortcuts ) {
             /**
              * let's declare only shortcuts that
-             * works on the pos grid and that doesn't 
+             * works on the pos grid and that doesn't
              * expect any popup to be visible
              */
-            if ([ 
-                    'ns_pos_keyboard_hold_order', 
+            if ([
+                    'ns_pos_keyboard_hold_order',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'ns_pos_keyboard_hold_order' )

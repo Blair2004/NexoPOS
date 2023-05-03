@@ -234,12 +234,8 @@
                 </div>
                 <div class="h-16 flex flex-shrink-0 border-t border-box-edge" id="cart-bottom-buttons">
                     <template v-for="component of cartButtons">
-                        <component :is="component" :order="order" :settings="settings"></component>
-                        </template>
-                    <!-- <ns-pos-pay-button :order="order" :settings="settings"></ns-pos-pay-button>
-                    <ns-pos-hold-button :order="order" :settings="settings"></ns-pos-hold-button>
-                    <ns-pos-discount-button :order="order" :settings="settings"></ns-pos-discount-button>
-                    <ns-pos-void-button :order="order" :settings="settings"></ns-pos-void-button> -->
+                        <component :is="component" :order="order" :settings="settings" />
+                    </template>
                 </div>
             </div>
         </div>
@@ -252,23 +248,16 @@ import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
 import switchTo from "~/libraries/pos-section-switch";
 import { ProductQuantityPromise } from "./queues/products/product-quantity";
-import { ProductsQueue } from "./queues/order/products-queue";
-import { CustomerQueue } from "./queues/order/customer-queue";
-import { PaymentQueue } from "./queues/order/payment-queue";
-import { TypeQueue } from "./queues/order/type-queue";
 
 import nsPosPayButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-pay-button.vue';
 import nsPosHoldButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-hold-button.vue';
 import nsPosDiscountButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-discount-button.vue';
 import nsPosVoidButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-void-button.vue';
 
-import PosPaymentPopup from '~/popups/ns-pos-payment-popup.vue';
 import PosConfirmPopup from '~/popups/ns-pos-confirm-popup.vue';
-import nsPosQuantityPopupVue from '~/popups/ns-pos-quantity-popup.vue';
 import nsPosOrderTypePopupVue from '~/popups/ns-pos-order-type-popup.vue';
 import nsPosCustomerPopupVue from '~/popups/ns-pos-customer-select-popup.vue';
 import nsPosShippingPopupVue from '~/popups/ns-pos-shipping-popup.vue';
-import nsPosLoadingPopupVue from '~/popups/ns-pos-loading-popup.vue';
 import nsPosNotePopupVue from '~/popups/ns-pos-note-popup.vue';
 import nsPosTaxPopupVue from '~/popups/ns-pos-tax-popup.vue';
 import nsPosCouponsLoadPopupVue from '~/popups/ns-pos-coupons-load-popup.vue';

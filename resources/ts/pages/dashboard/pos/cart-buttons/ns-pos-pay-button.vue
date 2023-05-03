@@ -1,10 +1,15 @@
 <template>
     <div @click="payOrder()" id="pay-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
-        <i class="mr-2 text-2xl lg:text-xl las la-cash-register"></i> 
+        <i class="mr-2 text-2xl lg:text-xl las la-cash-register"></i>
         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Pay' ) }}</span>
     </div>
 </template>
 <script>
+import {ProductsQueue} from "~/pages/dashboard/pos/queues/order/products-queue";
+import {CustomerQueue} from "~/pages/dashboard/pos/queues/order/customer-queue";
+import {TypeQueue} from "~/pages/dashboard/pos/queues/order/type-queue";
+import {PaymentQueue} from "~/pages/dashboard/pos/queues/order/payment-queue";
+
 export default {
     props: [ 'order' ],
     methods: {
@@ -26,7 +31,7 @@ export default {
                      * in case there is something broken
                      * on the promise, we just stop the queue.
                      */
-                    return false;    
+                    return false;
                 }
             }
         },
@@ -36,8 +41,8 @@ export default {
          * let's register hotkeys
          */
          for( let shortcut in nsShortcuts ) {
-            if ([ 
-                    'ns_pos_keyboard_payment', 
+            if ([
+                    'ns_pos_keyboard_payment',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'ns_pos_keyboard_payment' )
