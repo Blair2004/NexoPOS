@@ -1,5 +1,4 @@
 <script>
-import { ref, toRaw } from 'vue'
 import { nsSnackBar } from '~/bootstrap';
 import resolveIfQueued from "~/libraries/popup-resolver";
 import { Popup } from '~/libraries/popup';
@@ -12,6 +11,7 @@ import nsPosLoadingPopupVue from './ns-pos-loading-popup.vue';
 import samplePaymentVue from '~/pages/dashboard/pos/payments/sample-payment.vue';
 import nsSelectPopupVue from './ns-select-popup.vue';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+import { shallowRef } from "vue";
 
 export default {
     name: 'ns-pos-payment',
@@ -42,7 +42,7 @@ export default {
             }
         });
         this.paymentTypesSubscription   =   POS.paymentsType.subscribe( paymentsType => {
-            this.paymentsType   =   ref(paymentsType);
+            this.paymentsType   =   paymentsType;
             paymentsType.filter( payment => {
                 if ( payment.selected ) {
                     POS.selectedPaymentType.next( payment );
