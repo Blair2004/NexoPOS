@@ -15,9 +15,9 @@ trait App
      *
      * @return bool
      */
-    public static function installed( $force = false )
+    public static function installed( $forceCheck = false )
     {
-        if ( $force ) {
+        if ( $forceCheck ) {
             $state = self::checkDatabaseExistence();
             Cache::set( 'ns-core-installed', $state );
 
