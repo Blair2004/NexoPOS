@@ -3,8 +3,6 @@ import { Customer } from "./customer";
 import { OrderProduct } from "./order-product";
 import { OrderType } from "./order-type";
 import { Payment } from "./payment";
-import { Product } from "./product";
-import { Tax } from "@/libraries/tax";
 
 export interface Order {
     id?: number;
