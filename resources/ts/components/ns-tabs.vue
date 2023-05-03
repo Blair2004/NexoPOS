@@ -44,7 +44,7 @@ export default {
     },
     watch: {
         active( newValue, oldValue ) {
-            this.childrens.forEach( child => {
+            this.children.forEach( child => {
                 child.active     =   child.identifier === newValue;
 
                 if ( child.active ) {
