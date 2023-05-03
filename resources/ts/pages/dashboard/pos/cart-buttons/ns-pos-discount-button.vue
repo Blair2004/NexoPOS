@@ -1,6 +1,6 @@
 <template>
     <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center border-r border-box-edge flex-auto">
-        <i class="mr-2 text-2xl lg:text-xl las la-percent"></i> 
+        <i class="mr-2 text-2xl lg:text-xl las la-percent"></i>
         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Discount' ) }}</span>
     </div>
 </template>
@@ -10,6 +10,8 @@ export default {
     props: [ 'order', 'settings' ],
     methods: {
         __,
+
+        // TODO: duplicated functionality in ns-pos-cart.vue
         openDiscountPopup( reference, type, productIndex = null ) {
             if ( ! this.settings.products_discount && type === 'product' ) {
                 return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) ).subscribe();
@@ -19,7 +21,7 @@ export default {
                 return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
             }
 
-            Popup.show( nsPosDiscountPopupVue, { 
+            Popup.show( nsPosDiscountPopupVue, {
                 reference,
                 type,
                 onSubmit( response ) {

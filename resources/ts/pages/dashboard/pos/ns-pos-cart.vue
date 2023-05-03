@@ -266,6 +266,7 @@ import nsPosProductPricePopupVue from '~/popups/ns-pos-product-price-popup.vue';
 import nsPosQuickProductPopupVue from '~/popups/ns-pos-quick-product-popup.vue';
 import { ref, markRaw } from '@vue/reactivity';
 import {toRaw} from "vue";
+import nsPosDiscountPopupVue from "~/popups/ns-pos-discount-popup.vue";
 
 export default {
     name: 'ns-pos-cart',
@@ -600,7 +601,31 @@ export default {
 
         openShippingPopup() {
             Popup.show( nsPosShippingPopupVue );
-        }
+        },
+
+        openDiscountPopup( reference, type, productIndex = null ) {
+            if ( ! this.settings.products_discount && type === 'product' ) {
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) ).subscribe();
+            }
+
+            if ( ! this.settings.cart_discount && type === 'cart' ) {
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
+            }
+
+            Popup.show( nsPosDiscountPopupVue, {
+                reference,
+                type,
+                onSubmit( response ) {
+                    if ( type === 'product' ) {
+                        POS.updateProduct( reference, response, productIndex );
+                    } else if ( type === 'cart' ) {
+                        POS.updateCart( reference, response );
+                    }
+                }
+            }, {
+                popupClass: 'bg-white h:2/3 shadow-lg xl:w-1/4 lg:w-2/5 md:w-2/3 w-full'
+            })
+        },
     }
 }
 </script>
