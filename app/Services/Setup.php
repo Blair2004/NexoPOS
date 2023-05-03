@@ -138,6 +138,14 @@ class Setup
             '--symlink' => true,
         ]);
 
+        $domain = pathinfo( url()->to( '/' ) );
+        ns()->envEditor->set( 'NS_VERSION', config( 'nexopos.version' ) );
+        ns()->envEditor->set( 'NS_AUTHORIZATION', Str::random(20) );
+        ns()->envEditor->set( 'NS_SOCKET_PORT', 6001 );
+        ns()->envEditor->set( 'NS_SOCKET_DOMAIN', $domain[ 'basename' ] );
+        ns()->envEditor->set( 'NS_SOCKET_ENABLED', 'false' );
+        ns()->envEditor->set( 'NS_ENV', 'production' );
+        
         /**
          * we'll register all "update" migration
          * as already run as these migration are supposed
@@ -165,8 +173,13 @@ class Setup
                 ns()->update->assumeExecuted( $file );
             });
 
-        $userID = rand(1, 99);
+        /**
+         * From this moment, new permissions has been created.
+         * However Laravel gates aren't aware of them. We'll fix this here.
+         */
+        ns()->registerGatePermissions();
 
+        $userID = rand(1, 99);
         $user = new User;
         $user->id = $userID;
         $user->username = $fields[ 'admin_username' ];
@@ -187,15 +200,6 @@ class Setup
         UserAfterActivationSuccessfulEvent::dispatch( $user );
                 
         $this->createDefaultPayment( $user );
-
-        $domain = pathinfo( url()->to( '/' ) );
-
-        ns()->envEditor->set( 'NS_VERSION', config( 'nexopos.version' ) );
-        ns()->envEditor->set( 'NS_AUTHORIZATION', Str::random(20) );
-        ns()->envEditor->set( 'NS_SOCKET_PORT', 6001 );
-        ns()->envEditor->set( 'NS_SOCKET_DOMAIN', $domain[ 'basename' ] );
-        ns()->envEditor->set( 'NS_SOCKET_ENABLED', 'false' );
-        ns()->envEditor->set( 'NS_ENV', 'production' );
 
         /**
          * We assume so far the application is installed

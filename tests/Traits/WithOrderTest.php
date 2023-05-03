@@ -2334,7 +2334,7 @@ trait WithOrderTest
                 'total_instalments' => $initialTotalInstallment,
                 'instalments' => [
                     [
-                        'date' => ns()->date->getNowFormatted(),
+                        'date' => ns()->date->toDateTimeString(),
                         'amount' => $instalmentPayment,
                     ], [
                         'date' => ns()->date->copy()->addDays(2)->toDateTimeString(),

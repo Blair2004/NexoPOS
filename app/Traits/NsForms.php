@@ -121,7 +121,7 @@ trait NsForms
      */
     public function getPlainData( $crud, Request $request, $model = null ): array
     {
-        $fields = $request->all();
+        $fields = $request->post();
 
         return $this->getFlatForm( $crud, $fields, $model );
     }
