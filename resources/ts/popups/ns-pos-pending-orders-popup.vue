@@ -9,7 +9,7 @@
         <div class="p-2 flex overflow-hidden flex-auto ns-box-body">
             <ns-tabs :active="active" @changeTab="setActiveTab( $event )">
                 <ns-tabs-item identifier="ns.hold-orders" :label="__( 'On Hold' )" padding="p-0" class="flex flex-col overflow-hidden">
-                    <ns-pos-pending-orders :orders="orders" 
+                    <ns-pos-pending-orders :orders="orders"
                         @searchOrder="searchOrder( $event )"
                         @previewOrder="previewOrder( $event )"
                         @printOrder="printOrder( $event )"
@@ -17,7 +17,7 @@
                     </ns-pos-pending-orders>
                 </ns-tabs-item>
                 <ns-tabs-item identifier="ns.unpaid-orders" :label="__( 'Unpaid' )" padding="p-0" class="flex flex-col overflow-hidden">
-                    <ns-pos-pending-orders :orders="orders" 
+                    <ns-pos-pending-orders :orders="orders"
                         @searchOrder="searchOrder( $event )"
                         @previewOrder="previewOrder( $event )"
                         @printOrder="printOrder( $event )"
@@ -25,7 +25,7 @@
                     </ns-pos-pending-orders>
                 </ns-tabs-item>
                 <ns-tabs-item identifier="ns.partially-paid-orders" :label="__( 'Partially Paid' )" padding="p-0" class="flex flex-col overflow-hidden">
-                    <ns-pos-pending-orders :orders="orders" 
+                    <ns-pos-pending-orders :orders="orders"
                         @searchOrder="searchOrder( $event )"
                         @previewOrder="previewOrder( $event )"
                         @printOrder="printOrder( $event )"
@@ -59,7 +59,7 @@ export default {
         __,
         popupResolver,
         popupCloser,
-        
+
         searchOrder( search ) {
             nsHttpClient.get( `/api/crud/${this.active}?search=${search}` )
                 .subscribe( (result) => {
@@ -122,6 +122,7 @@ export default {
     },
     mounted() {
         this.loadOrderFromType( this.active );
+        this.popupCloser();
     }
 }
 </script>

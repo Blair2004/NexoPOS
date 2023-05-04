@@ -16,6 +16,8 @@
 </template>
 <script>
 import FormValidation from '~/libraries/form-validation';
+import popupCloser from "~/libraries/popup-closer";
+import popupResolver from "~/libraries/popup-resolver";
 export default {
     name: 'ns-pos-order-settings',
     props: [ 'popup' ],

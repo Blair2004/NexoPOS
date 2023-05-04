@@ -37,6 +37,7 @@ export default {
         this.configurations     =   this.popup.params.configurations;
         this.warningMessage     =   this.popup.params.warningMessage;
         this.type   =   this.popup.params.type
+        this.popupCloser();
     },
     methods: {
         __,
