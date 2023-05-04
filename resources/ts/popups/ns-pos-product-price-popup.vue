@@ -1,29 +1,36 @@
 <template>
     <div class="ns-box shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
         <div class="popup-heading ns-box-header">
-            <h3>{{ __( 'Product Price' ) }}</h3>
+            <h3>{{ __('Product Price') }}</h3>
             <div>
                 <ns-close-button @click="popupResolver( false )"></ns-close-button>
             </div>
         </div>
         <div class="flex flex-col ns-box-body">
             <div class="h-16 flex items-center justify-center elevation-surface info font-bold">
-                <h2 class="text-2xl">{{ nsCurrency( product.unit_price ) }}</h2>
+                <h2 class="text-2xl">{{ nsCurrency(price) }}</h2>
             </div>
-            <ns-numpad v-if="options.ns_pos_numpad === 'default'" :floating="options.ns_pos_allow_decimal_quantities" @changed="updateProductPrice( $event )" @next="resolveProductPrice( $event )" :value="product.unit_price"></ns-numpad>
-            <ns-numpad-plus v-if="options.ns_pos_numpad === 'advanced'" @changed="updateProductPrice( $event )" @next="resolveProductPrice( $event )" :value="product.unit_price"></ns-numpad-plus>
+            <ns-numpad v-if="options.ns_pos_numpad === 'default'" :floating="options.ns_pos_allow_decimal_quantities"
+                       @changed="updateProductPrice( $event )" @next="resolveProductPrice( $event )"
+                       :value="rawPrice"></ns-numpad>
+            <ns-numpad-plus v-if="options.ns_pos_numpad === 'advanced'" @changed="updateProductPrice( $event )"
+                            @next="resolveProductPrice( $event )" :value="rawPrice"></ns-numpad-plus>
         </div>
     </div>
 </template>
 <script>
-import { ref } from '@vue/reactivity';
-import { nsNumpad, nsNumpadPlus } from '~/components/components';
-import { nsCurrency } from '~/filters/currency';
+import {ref} from '@vue/reactivity';
+import {nsNumpad, nsNumpadPlus} from '~/components/components';
+import {nsCurrency} from '~/filters/currency';
+import popupResolver from "~/libraries/popup-resolver";
+import popupCloser from "~/libraries/popup-closer";
+import NsCloseButton from "~/components/ns-close-button.vue";
 
 export default {
     name: 'ns-pos-product-price-product',
-    props: [ 'popup' ],
+    props: ['popup'],
     components: {
+        NsCloseButton,
         nsNumpad,
         nsNumpadPlus
     },
@@ -36,15 +43,17 @@ export default {
             optionsSubscription: null,
             options: {},
             price: 0,
+            rawPrice: '',
         }
     },
     mounted() {
         this.popupCloser();
 
-        this.product    =   this.popup.params.product;
+        this.product = this.popup.params.product;
+        this.updateProductPrice(null);
 
-        this.optionsSubscription    =   POS.options.subscribe( options => {
-            this.options    =   ref(options);
+        this.optionsSubscription = POS.options.subscribe(options => {
+            this.options = ref(options);
         });
     },
     beforeUnmount() {
@@ -56,12 +65,13 @@ export default {
         nsCurrency,
         __,
 
-        updateProductPrice( price ) {
-            this.product.unit_price     =   price;
+        updateProductPrice(price) {
+            this.rawPrice = price;
+            this.price = (price === null || price === undefined) ? this.product.unit_price : (parseFloat(price) || 0);
         },
 
-        resolveProductPrice( price ) {
-            this.popupResolver( this.product.unit_price );
+        resolveProductPrice(price) {
+            this.popupResolver(this.price);
         }
     }
 }

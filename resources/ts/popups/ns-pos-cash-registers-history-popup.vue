@@ -40,6 +40,7 @@ import { nsHttpClient } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
 import NsCloseButton from "~/components/ns-close-button.vue";
+import popupCloser from "~/libraries/popup-closer";
 
 export default {
     components: {NsCloseButton},
@@ -58,6 +59,8 @@ export default {
             this.settings   =   settings;
         });
 
+        this.popupCloser();
+
         this.getHistory();
     },
     unmounted() {
@@ -67,6 +70,7 @@ export default {
         __,
         nsCurrency,
         popupResolver,
+        popupCloser,
 
         closePopup() {
             this.popupResolver({
