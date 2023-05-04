@@ -86,6 +86,16 @@ trait WithAccountingTest
         ns()->option->set( 'ns_stock_return_unspoiled_account', AccountType::where( 'account', '000007' )->first()->id );
         ns()->option->set( 'ns_cashregister_cashin_cashflow_account', AccountType::where( 'account', '000008' )->first()->id );
         ns()->option->set( 'ns_cashregister_cashout_cashflow_account', AccountType::where( 'account', '000009' )->first()->id );
+
+        $this->assertEquals( ns()->option->get( 'ns_procurement_cashflow_account' ), AccountType::where( 'account', '000001' )->first()->id );
+        $this->assertEquals( ns()->option->get( 'ns_sales_cashflow_account' ), AccountType::where( 'account', '000002' )->first()->id );
+        $this->assertEquals( ns()->option->get( 'ns_customer_crediting_cashflow_account' ), AccountType::where( 'account', '000003' )->first()->id );
+        $this->assertEquals( ns()->option->get( 'ns_customer_debitting_cashflow_account' ), AccountType::where( 'account', '000004' )->first()->id );
+        $this->assertEquals( ns()->option->get( 'ns_sales_refunds_account' ), AccountType::where( 'account', '000005' )->first()->id );
+        $this->assertEquals( ns()->option->get( 'ns_stock_return_spoiled_account' ), AccountType::where( 'account', '000006' )->first()->id );
+        $this->assertEquals( ns()->option->get( 'ns_stock_return_unspoiled_account' ), AccountType::where( 'account', '000007' )->first()->id );
+        $this->assertEquals( ns()->option->get( 'ns_cashregister_cashin_cashflow_account' ), AccountType::where( 'account', '000008' )->first()->id );
+        $this->assertEquals( ns()->option->get( 'ns_cashregister_cashout_cashflow_account' ), AccountType::where( 'account', '000009' )->first()->id );
     }
 
     protected function attemptCheckSalesTaxes()
