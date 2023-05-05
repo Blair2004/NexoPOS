@@ -4,7 +4,7 @@ import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
 import { nsSnackBar, nsHttpClient } from '~/bootstrap';
 import nsManageProducts from '~/pages/dashboard/procurements/manage-products.vue';
-import { Tax } from "~/libraries/tax";
+import Tax from "~/libraries/tax";
 import nsProcurementProductOptionsVue from '~/popups/ns-procurement-product-options.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';

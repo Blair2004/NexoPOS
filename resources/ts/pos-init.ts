@@ -18,6 +18,7 @@ import moment from "moment";
 import { defineAsyncComponent } from "vue";
 import { nsCurrency } from "./filters/currency";
 import Print from "./libraries/print";
+import Tax from "./libraries/tax";
 
 
 /**
@@ -531,7 +532,7 @@ export class POS {
 
     getPriceWithoutTax(value, rate, type) {
         if (type === 'inclusive') {
-            return (value / (rate + 100)) * 100;
+            return Tax.computeInclusive( value, rate );
         } else if (type === 'exclusive') {
             return value;
         }
@@ -541,7 +542,7 @@ export class POS {
         if (type === 'inclusive') {
             return value;
         } else if (type === 'exclusive') {
-            return ((value / 100) * (rate + 100));
+            return Tax.computeExclusive( value, rate )
         }
     }
 

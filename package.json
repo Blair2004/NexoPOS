@@ -58,6 +58,7 @@
     "dayjs": "^1.11.5",
     "jspdf": "^2.1.1",
     "laravel-vite-plugin": "^0.7.4",
+    "mathjs": "^11.8.0",
     "mini-css-extract-plugin": "^2.6.1",
     "moment": "^2.29.4",
     "normalize.css": "^8.0.1",
