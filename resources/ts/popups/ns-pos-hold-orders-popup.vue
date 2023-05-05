@@ -8,7 +8,7 @@
         </div>
         <div class="flex-auto ns-box-body">
             <div class="border-b h-16 flex items-center justify-center">
-                <span class="text-5xl text-primary">{{ nsCurrency( total ) }}</span>
+                <span class="text-5xl text-primary">{{ nsCurrency( order.total ) }}</span>
             </div>
             <div class="p-2">
                 <div class="input-group border-2 info">

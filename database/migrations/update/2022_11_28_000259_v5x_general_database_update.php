@@ -16,6 +16,7 @@ use App\Services\DoctorService;
 use App\Services\UsersService;
 use App\Services\WidgetService;
 use App\Widgets\ProfileWidget;
+use Faker\Factory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -179,24 +180,25 @@ return new class extends Migration
          * Let's convert customers into users
          */
         $firstAdministrator     =   Role::namespace( Role::ADMIN )->users()->first();
+        $faker                  =   (new Factory)->create();
 
-        $users  =   DB::table( 'nexopos_customers' )->get( '*' )->map( function( $customer ) use ( $usersService, $doctorService, $firstAdministrator ) {
+        $users  =   DB::table( 'nexopos_customers' )->get( '*' )->map( function( $customer ) use ( $faker, $usersService, $doctorService, $firstAdministrator ) {
             $user   =   User::where( 'email', $customer->email )
                 ->orWhere( 'username', $customer->email )
                 ->firstOrNew();
 
             $user->birth_date           =   $customer->birth_date;
-            $user->username             =   $customer->email;
-            $user->email                =   $customer->email;
-            $user->purchases_amount     =   $customer->purchases_amount;
-            $user->owed_amount          =   $customer->owed_amount;
-            $user->credit_limit_amount  =   $customer->credit_limit_amount;
-            $user->account_amount       =   $customer->account_amount;
-            $user->first_name           =   $customer->name;
-            $user->last_name            =   $customer->surname;
-            $user->gender               =   $customer->gender;
-            $user->phone                =   $customer->phone;
-            $user->pobox                =   $customer->pobox;
+            $user->username             =   $customer->email ?? 'user-' . $faker->randomNumber(5);
+            $user->email                =   $customer->email ?? $user->username . '@nexopos.com';
+            $user->purchases_amount     =   $customer->purchases_amount ?: 0;
+            $user->owed_amount          =   $customer->owed_amount ?: 0;
+            $user->credit_limit_amount  =   $customer->credit_limit_amount ?: 0;
+            $user->account_amount       =   $customer->account_amount ?: 0;
+            $user->first_name           =   $customer->name ?: '';
+            $user->last_name            =   $customer->surname ?: '';
+            $user->gender               =   $customer->gender ?: '';
+            $user->phone                =   $customer->phone ?: '';
+            $user->pobox                =   $customer->pobox ?: '';
             $user->group_id             =   $customer->group_id;
             $user->author               =   $firstAdministrator->id;
             $user->password             =   Hash::make( Str::random(10) ); // every customer has a random password. 

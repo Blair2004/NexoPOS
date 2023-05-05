@@ -7,6 +7,7 @@
 
 <script>
 import nsPosHoldOrdersPopupVue from '~/popups/ns-pos-hold-orders-popup.vue';
+import nsPosLoadingPopupVue from "~/popups/ns-pos-loading-popup.vue";
 export default {
     props: [ 'order' ],
     methods: {
@@ -59,6 +60,8 @@ export default {
                         popup.close();
                         nsSnackBar.error( error.message ).subscribe();
                     });
+                }).catch( exception => {
+                    console.log( exception );
                 })
             });
 
