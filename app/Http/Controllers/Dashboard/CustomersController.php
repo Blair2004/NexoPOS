@@ -245,7 +245,7 @@ class CustomersController extends DashboardController
     {
         $validation = Validator::make( $request->all(), [
             'operation' => 'required',
-            'amount' => 'required|integer',
+            'amount' => 'required|numeric',
         ]);
 
         if ( $validation->fails() ) {
