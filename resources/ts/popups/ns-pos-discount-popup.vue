@@ -20,41 +20,36 @@
             <hr class="border-r border-box-edge">
             <button @click="setPercentageType('percentage')" :class="mode === 'percentage' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Percentage' ) }}</button>
         </div>
-        <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
-            <div
-                @click="inputValue( key )"
-                :key="index"
-                v-for="(key,index) of keys"
-                class="text-primary ns-numpad-key info text-xl font-bold border h-24 flex items-center justify-center cursor-pointer">
-                <span v-if="key.value !== undefined">{{ key.value }}</span>
-                <i v-if="key.icon" class="las" :class="key.icon"></i>
-            </div>
-        </div>
+        <ns-numpad v-if="options.ns_pos_numpad === 'default'" :floating="options.ns_pos_allow_decimal_quantities"
+                   @changed="updateValue( $event )" @next="resolveValue( $event )"
+                   :value="rawValue"></ns-numpad>
+        <ns-numpad-plus v-if="options.ns_pos_numpad === 'advanced'" @changed="updateValue( $event )"
+                        @next="resolveValue( $event )" :value="rawValue"></ns-numpad-plus>
     </div>
 </template>
 <script>
 import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
 import popupCloser from "~/libraries/popup-closer";
+import {nsNumpad, nsNumpadPlus} from "~/components/components";
+import {ref} from "@vue/reactivity";
+import NsCloseButton from "~/components/ns-close-button.vue";
 
 export default {
     name: 'ns-pos-discount-popup',
+    components: {NsCloseButton, nsNumpadPlus, nsNumpad},
     props: [ 'popup' ],
     data() {
         return {
             finalValue: 1,
+            rawValue: 0,
             virtualStock: null,
             popupSubscription: null,
             mode: '',
             type: '',
-            allSelected: true,
             isLoading: false,
-            keys: [
-                ...([7,8,9].map( key => ({ identifier: key, value: key }))),
-                ...([4,5,6].map( key => ({ identifier: key, value: key }))),
-                ...([1,2,3].map( key => ({ identifier: key, value: key }))),
-                ...[{ identifier: 'backspace', icon : 'la-backspace' },{ identifier: 0, value: 0 }, { identifier: 'next', icon: 'la-share' }],
-            ]
+            optionsSubscription: null,
+            options: {},
         }
     },
     mounted() {
@@ -66,7 +61,15 @@ export default {
         } else {
             this.finalValue     =   this.popup.params.reference.discount || 1;
         }
+
+        this.optionsSubscription = POS.options.subscribe(options => {
+            this.options = ref(options);
+        });
+
         this.popupCloser();
+    },
+    beforeUnmount() {
+        this.optionsSubscription.unsubscribe();
     },
     methods: {
         __,
@@ -80,36 +83,18 @@ export default {
             this.popup.close();
         },
 
-        inputValue( key ) {
-            if ( key.identifier === 'next' ) {
-                this.popup.params.onSubmit({
-                    discount_type           :   this.mode,
-                    discount_percentage     :   this.mode === 'percentage' ? this.finalValue : undefined,
-                    discount                :   this.mode === 'flat' ? this.finalValue : undefined
-                });
-                this.popup.close();
-            } else if ( key.identifier === 'backspace' ) {
-                if ( this.allSelected ) {
-                    this.finalValue     =   0;
-                    this.allSelected    =   false;
-                } else {
-                    this.finalValue     =   this.finalValue.toString();
-                    this.finalValue     =   this.finalValue.substr(0, this.finalValue.length - 1 ) || 0;
-                }
-            } else {
-                if ( this.allSelected ) {
-                    this.finalValue     =   key.value;
-                    this.finalValue     =   parseFloat( this.finalValue );
-                    this.allSelected    =   false;
-                } else {
-                    this.finalValue     +=  '' + key.value;
-                    this.finalValue     =   parseFloat( this.finalValue );
+        updateValue(value) {
+            this.rawValue = value;
+            this.finalValue = parseFloat(value) || 0;
+        },
 
-                    if ( this.mode === 'percentage' ) {
-                        this.finalValue = this.finalValue > 100 ? 100 : this.finalValue;
-                    }
-                }
-            }
+        resolveValue(value) {
+            this.popup.params.onSubmit({
+                discount_type           :   this.mode,
+                discount_percentage     :   this.mode === 'percentage' ? this.finalValue : undefined,
+                discount                :   this.mode === 'flat' ? this.finalValue : undefined
+            });
+            this.popup.close();
         }
     }
 }
