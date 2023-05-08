@@ -56,7 +56,7 @@ class OrderCrud extends CrudService
 
     public $pick = [
         'author' => [ 'username' ],
-        'customer' => [ 'first_name', 'phone' ],
+        'customer' => [ 'first_name', 'last_name', 'phone' ],
     ];
 
     public $queryFilters = [];
@@ -154,10 +154,16 @@ class OrderCrud extends CrudService
                 'options' => Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ]),
             ], [
                 'type' => 'select',
-                'label' => __( 'Customer' ),
+                'label' => __( 'Customer First Name' ),
                 'name' => 'customer_id',
-                'description' => __( 'Restrict the orders by the customer.' ),
+                'description' => __( 'Restrict the orders by the customer first name.' ),
                 'options' => Helper::toJsOptions( Customer::get(), [ 'id', 'first_name' ]),
+            ], [
+                'type' => 'select',
+                'label' => __( 'Customer Last Name' ),
+                'name' => 'customer_id',
+                'description' => __( 'Restrict the orders by the customer last name.' ),
+                'options' => Helper::toJsOptions( Customer::get(), [ 'id', 'last_name' ]),
             ], [
                 'type' => 'text',
                 'label' => __( 'Customer Phone' ),
@@ -473,7 +479,7 @@ class OrderCrud extends CrudService
                 '$sort' => false,
                 'width' => '120px',
             ],
-            'customer_first_name' => [
+            'customer_name' => [
                 'label' => __( 'Customer' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -539,6 +545,8 @@ class OrderCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
+        $entry->{ 'customer_name' } = $entry->customer_first_name . ' ' . $entry->customer_last_name;
+
         $entry->{ '$cssClass' } = match ( $entry->__raw->payment_status ) {
             Order::PAYMENT_PAID => 'success border text-sm',
             Order::PAYMENT_UNPAID => 'danger border text-sm',
@@ -552,7 +560,7 @@ class OrderCrud extends CrudService
             default => ''
         };
 
-        $entry->action( 
+        $entry->action(
             identifier: 'ns.order-options',
             label: '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
             type: 'POPUP',
@@ -578,19 +586,19 @@ class OrderCrud extends CrudService
             );
         }
 
-        $entry->action( 
+        $entry->action(
             identifier: 'invoice',
             label: '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
             url: ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'receipt',
             label: '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
             url: ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'delete',
             label: '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
             type: 'DELETE',
