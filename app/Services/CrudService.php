@@ -22,7 +22,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class CrudService
 {
     use NsForms;
-    
+
     /**
      * Toggle feature array
      *
@@ -151,7 +151,7 @@ class CrudService
     protected $bulkDeleteDangerMessage;
 
     /**
-     * Store the values that should be 
+     * Store the values that should be
      * picked from relations
      */
     protected $pick;
@@ -537,7 +537,7 @@ class CrudService
          * We're caching the table columns, since we would like to
          * avoid many DB Calls
          */
-        if ( ! empty( Cache::get( 'table-columns-' . $table ) ) && true === false ) {
+        if ( ! empty( Cache::get( 'table-columns-' . $table ) ) ) {
             $columns = Cache::get( 'table-columns-' . $table );
         } else {
             $columns = Schema::getColumnListing( $table );
@@ -846,8 +846,8 @@ class CrudService
         if ( $request->query( 'direction' ) && $request->query( 'active' ) ) {
             $columns    =   $this->getColumns();
 
-            $cannotSort    =   
-                array_key_exists( $request->query( 'active' ), array_keys( $columns ) ) && 
+            $cannotSort    =
+                array_key_exists( $request->query( 'active' ), array_keys( $columns ) ) &&
                 $columns[ $request->query( 'active' ) ][ '$sort' ] === false;
 
             /**
@@ -944,7 +944,7 @@ class CrudService
         //
     }
 
-    public function getColumns(): array 
+    public function getColumns(): array
     {
         return [];
     }
