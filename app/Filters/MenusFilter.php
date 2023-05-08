@@ -11,6 +11,7 @@ class MenusFilter
                 'registers' => [
                     'label' => __( 'POS' ),
                     'icon' => 'la-cash-register',
+                    'permissions' => [ 'nexopos.create.orders' ],
                     'childrens' => [
                         'pos' => [
                             'label' => __( 'Open POS' ),
