@@ -3,6 +3,7 @@
 use App\Events\WebRoutesLoadedEvent;
 use App\Http\Controllers\Dashboard\CrudController;
 use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\UpdateController;
 use App\Http\Middleware\Authenticate;
@@ -36,6 +37,8 @@ Route::middleware([
     Route::get( '/database-update', [ UpdateController::class, 'updateDatabase' ])
         ->withoutMiddleware([ CheckMigrationStatus::class ])
         ->name( 'ns.database-update' );
+
+    Route::get('/lang/{locale}', [ LocalizationController::class, 'getLocalization' ]);
 
     Route::middleware([
         Authenticate::class,
