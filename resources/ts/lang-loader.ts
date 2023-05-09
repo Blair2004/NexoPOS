@@ -11,44 +11,23 @@ class NsLanguage {
     }
 
     loadJson() {
-        const promises  =   [];
-
-        /**
-         * the language for NexoPOS is
-         * fetched in priority
-         */
-        promises.push( this.fetchLang( 'NexoPOS', ns.langFiles ) );
-        
-        for( let namespace in ns.langFiles ) {
-            if ( namespace !== 'NexoPOS' ) {
-                promises.push( this.fetchLang( namespace, ns.langFiles ) );
-            }
-        }
-
-        Promise.all( promises ).then( () => {
+        this.fetchLang( `/lang/${ns.language}` )
+        .then( () => {
             this.loadReadyScripts();
             this.loadReadyCallbacks();
         });
     }
 
-    fetchLang( namespace, files ) {
+    fetchLang( file ) {
         return new Promise( ( resolve, reject ) => {
             const xhttp                 =   new XMLHttpRequest();
             xhttp.onreadystatechange    =   ( e ) => {
                 if ( (<XMLHttpRequest>e.target).readyState == 4 && (<XMLHttpRequest>e.target).status == 200) {
-                    const result   =   JSON.parse( xhttp.responseText );
-                    
-                    for( let key in result ) {
-                        if ( this.languages[ namespace ] === undefined ) {
-                            this.languages[ namespace ]     =   new Object;
-                        }
-
-                        this.languages[ namespace ][ key ]   =   result[ key ]
-                    }
+                    this.languages = JSON.parse(xhttp.responseText);
                     resolve( this.languages );
                 }
             };
-            xhttp.open("GET", files[namespace], true);
+            xhttp.open("GET", file, true);
             xhttp.send();
         });
     }
@@ -85,8 +64,9 @@ class NsLanguage {
         }
     }
 
-    getEntries( namespace ) {
-        return this.languages[ namespace ] || false;
+    getEntry(text, namespace) {
+        const key = namespace ? `${namespace}.${text}` : text;
+        return this.languages[key];
     }
 }
 
