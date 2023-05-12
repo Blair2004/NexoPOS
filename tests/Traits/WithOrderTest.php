@@ -1013,7 +1013,7 @@ trait WithOrderTest
             $products = $products->map( function( $product ) use ( $faker, $taxService ) {
                 $unitElement = $faker->randomElement( $product->unit_quantities );
                 $discountRate = 10;
-                $quantity = $faker->numberBetween(1, 10);
+                $quantity = $faker->numberBetween(1, 5);
                 $data = array_merge([
                     'name' => $product->name,
                     'discount' => $taxService->getPercentageOf( $unitElement->sale_price * $quantity, $discountRate ),
