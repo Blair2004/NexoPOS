@@ -98,8 +98,6 @@ class ProductHistoryCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -132,7 +130,6 @@ class ProductHistoryCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -287,7 +284,6 @@ class ProductHistoryCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  ProductHistory $entry
      * @return  void
      */
     public function afterPost( $request, ProductHistory $entry )
@@ -305,7 +301,7 @@ class ProductHistoryCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -473,7 +469,7 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_TRANSFER_IN:
                 $entry->{ '$cssClass' } = 'bg-blue-100 border-blue-200 border text-sm dark:text-slate-300 dark:bg-blue-600 dark:border-blue-700';
                 break;
-            case ProductHistory::ACTION_RETURNED:                
+            case ProductHistory::ACTION_RETURNED:
             case ProductHistory::ACTION_ADJUSTMENT_RETURN:
             case ProductHistory::ACTION_TRANSFER_REJECTED:
             case ProductHistory::ACTION_TRANSFER_CANCELED:
@@ -484,37 +480,37 @@ class ProductHistoryCrud extends CrudService
 
         switch ( $entry->operation_type ) {
             case ProductHistory::ACTION_STOCKED :           $entry->operation_type = __( 'Stocked' );
-            break;
+                break;
             case ProductHistory::ACTION_DEFECTIVE :         $entry->operation_type = __( 'Defective' );
-            break;
+                break;
             case ProductHistory::ACTION_DELETED :           $entry->operation_type = __( 'Deleted' );
-            break;
+                break;
             case ProductHistory::ACTION_REMOVED :           $entry->operation_type = __( 'Removed' );
-            break;
+                break;
             case ProductHistory::ACTION_RETURNED :          $entry->operation_type = __( 'Returned' );
-            break;
+                break;
             case ProductHistory::ACTION_SOLD :              $entry->operation_type = __( 'Sold' );
-            break;
+                break;
             case ProductHistory::ACTION_LOST :              $entry->operation_type = __( 'Lost' );
-            break;
+                break;
             case ProductHistory::ACTION_ADDED :             $entry->operation_type = __( 'Added' );
-            break;
+                break;
             case ProductHistory::ACTION_TRANSFER_IN :       $entry->operation_type = __( 'Incoming Transfer' );
-            break;
+                break;
             case ProductHistory::ACTION_TRANSFER_OUT :      $entry->operation_type = __( 'Outgoing Transfer' );
-            break;
+                break;
             case ProductHistory::ACTION_TRANSFER_REJECTED : $entry->operation_type = __( 'Transfer Rejected' );
-            break;
+                break;
             case ProductHistory::ACTION_TRANSFER_CANCELED : $entry->operation_type = __( 'Transfer Canceled' );
-            break;
+                break;
             case ProductHistory::ACTION_VOID_RETURN :       $entry->operation_type = __( 'Void Return' );
-            break;
+                break;
             case ProductHistory::ACTION_ADJUSTMENT_RETURN : $entry->operation_type = __( 'Adjustment Return' );
-            break;
+                break;
             case ProductHistory::ACTION_ADJUSTMENT_SALE :   $entry->operation_type = __( 'Adjustment Sale' );
-            break;
+                break;
             default: Hook::filter( 'ns-products-history-operation', $entry->operation_type );
-            break;
+                break;
         }
 
         // you can make changes here

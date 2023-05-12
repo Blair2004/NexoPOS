@@ -594,9 +594,11 @@ export default {
                     
                     POS.submitOrder().then( result => {
                         popup.close();
+                        POS.printOrderReceipt( result.data.order, 'silent' );
                         nsSnackBar.success( result.message ).subscribe();
                     }, ( error ) => {
                         popup.close();
+                        POS.printOrderReceipt( result.data.order, 'silent' );
                         nsSnackBar.error( error.message ).subscribe();
                     });
                 })

@@ -364,7 +364,6 @@ class TaxService
      * Compute tax for a provided unit group
      *
      * @param string $type inclusive or exclusive
-     * @param TaxGroup $group
      * @param float|int $value
      * @return float
      *
@@ -462,7 +461,6 @@ class TaxService
      * using the tax group rate
      *
      * @param float $price
-     * @param TaxGroup $group
      * @return float
      */
     public function getPriceWithoutTaxUsingGroup( $type, TaxGroup $group, $price )
@@ -478,7 +476,6 @@ class TaxService
      *
      * @param string $type
      * @param float $price
-     * @param TaxGroup $group
      * @return float
      */
     public function getPriceWithTaxUsingGroup( $type, TaxGroup $group, $price )
@@ -493,9 +490,6 @@ class TaxService
      * and a tax type provided
      *
      * @param string $type
-     * @param float $rate
-     * @param float $value
-     * @return
      *
      * @todo rename
      */
@@ -513,9 +507,6 @@ class TaxService
      * and a tax type provided
      *
      * @param string $type
-     * @param float $rate
-     * @param float $value
-     * @return
      *
      * @todo rename
      */
@@ -557,7 +548,6 @@ class TaxService
      *
      * @param string type
      * @param TaxGroup
-     * @param float $value
      * @return float
      */
     public function getTaxGroupVatValue( $type, TaxGroup $group, float $value )

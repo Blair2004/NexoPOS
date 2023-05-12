@@ -23,7 +23,6 @@ class ProcurementAfterUpdateProductEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\ProcurementAfterUpdateProductEvent  $event
      * @return void
      */
     public function handle(ProcurementAfterUpdateProductEvent $event)

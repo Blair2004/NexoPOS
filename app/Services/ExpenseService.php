@@ -126,6 +126,7 @@ class ExpenseService
 
     /**
      * @deprecated
+     *
      * @use getAccountType
      */
     public function getCategories( $id = null )
@@ -489,7 +490,6 @@ class ExpenseService
     /**
      * Will record an expense resulting from a paid procurement
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function handleProcurementExpense( Procurement $procurement )
@@ -522,7 +522,6 @@ class ExpenseService
     /**
      * Will record an expense for every refund performed
      *
-     * @param OrderProduct $orderProduct
      * @return void
      */
     public function createExpenseFromRefund( Order $order, OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
@@ -573,7 +572,6 @@ class ExpenseService
      * created and the payment status is PAID
      * we'll store the total as a cash flow transaction.
      *
-     * @param Order $order
      * @return void
      */
     public function handleCreatedOrder( Order $order )
@@ -690,21 +688,21 @@ class ExpenseService
              */
             switch ( $type ) {
                 case CashFlow::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_SALES: $label = __( 'Sales Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' );
-                break;
+                    break;
             }
 
             return $this->getDefinedAccountType( $account[ 'option' ], [
@@ -863,7 +861,6 @@ class ExpenseService
      * Will add customer credit operation
      * to the cash flow history
      *
-     * @param CustomerAccountHistory $customerHistory
      * @return void
      */
     public function handleCustomerCredit( CustomerAccountHistory $customerHistory )

@@ -369,7 +369,6 @@ class ProductService
      * consist of valid items (not gruoped items).
      *
      * @param array $fields
-     * @return void
      */
     public function checkGroupProduct( $fields ): void
     {
@@ -472,7 +471,6 @@ class ProductService
     /**
      * Saves the sub items by binding that to a product
      *
-     * @param Product $product
      * @param array $subItems
      * @return array response
      */
@@ -576,7 +574,6 @@ class ProductService
     /**
      * Update a variable product
      *
-     * @param Product $product
      * @param array fields to save
      * @return array response of the process
      */
@@ -1071,7 +1068,6 @@ class ProductService
      *
      * @param string operation : deducted, sold, procured, deleted, adjusted, damaged
      * @param mixed[]<$unit_id,$product_id,$unit_price,?$total_price,?$procurement_id,?$procurement_product_id,?$sale_id,?$quantity> $data to manage
-     * @return ProductHistory|EloquentCollection|bool
      */
     public function stockAdjustment( $action, $data ): ProductHistory|EloquentCollection|bool
     {
@@ -1162,26 +1158,24 @@ class ProductService
      *
      * @param string $action
      * @param float $quantity
-     * @param Product $product
      * @param Unit $unit
-     * @return EloquentCollection
      */
-    private function handleStockAdjustmentsForGroupedProducts( 
-        $action, 
-        $orderProductQuantity, 
-        Product $product, 
-        Unit $parentUnit, 
+    private function handleStockAdjustmentsForGroupedProducts(
+        $action,
+        $orderProductQuantity,
+        Product $product,
+        Unit $parentUnit,
         OrderProduct $orderProduct = null  ): EloquentCollection
     {
         $product->load( 'sub_items' );
 
-        $products   =   $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $parentUnit, $orderProduct ) {            
+        $products = $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $parentUnit, $orderProduct ) {
             $finalQuantity = $this->computeSubItemQuantity(
                 subItemQuantity: $subItem->quantity,
                 parentUnit: $parentUnit,
                 parentQuantity: $orderProductQuantity
             );
-            
+
             /**
              * Let's retrieve the old item quantity.
              */
@@ -1367,16 +1361,16 @@ class ProductService
      * @param float $old_quantity
      * @param float $new_quantity
      */
-    public function recordStockHistory( 
-        $product_id, 
-        $action, 
-        $unit_id, 
-        $unit_price, 
-        $quantity, 
-        $total_price, 
-        $order_id = null, 
+    public function recordStockHistory(
+        $product_id,
+        $action,
+        $unit_id,
+        $unit_price,
+        $quantity,
+        $total_price,
+        $order_id = null,
         $order_product_id = null,
-        $old_quantity = 0, 
+        $old_quantity = 0,
         $new_quantity = 0 )
     {
         $history = new ProductHistory;
@@ -1411,15 +1405,16 @@ class ProductService
         }
 
         $unit->load( 'group.units' );
+
         return $unit->group->units->filter( fn( $unit ) => $unit->base_unit )->first();
     }
 
-    public function computeSubItemQuantity( 
+    public function computeSubItemQuantity(
         float $subItemQuantity,
         Unit $parentUnit,
         float $parentQuantity )
     {
-        return ( ( $subItemQuantity * $parentUnit->value ) * $parentQuantity );
+        return  ( $subItemQuantity * $parentUnit->value ) * $parentQuantity;
     }
 
     /**
@@ -1522,7 +1517,6 @@ class ProductService
      * add a stock entry to a product
      * history using the provided informations
      *
-     * @param ProcurementProduct $product
      * @param array<$quantity,$unit_id,$purchase_price,$product_id>
      */
     public function procurementStockEntry( ProcurementProduct $product, $fields )
@@ -1743,7 +1737,6 @@ class ProductService
      * Will return the Product Unit Quantities
      * for the provided product
      *
-     * @param Product $product
      * @return array
      */
     public function getProductUnitQuantities( Product $product )
@@ -1757,7 +1750,6 @@ class ProductService
      * Generate product barcode using product
      * configurations.
      *
-     * @param Product $product
      * @return void
      */
     public function generateProductBarcode( Product $product )

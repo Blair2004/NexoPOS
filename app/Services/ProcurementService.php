@@ -272,8 +272,6 @@ class ProcurementService
     /**
      * Attempt a product stock removal
      * if the procurement has been stocked
-     *
-     * @param Procurement $procurement
      */
     public function attemptProductsStockRemoval( Procurement $procurement )
     {
@@ -373,8 +371,6 @@ class ProcurementService
      * This only save the product
      * but doesn't affect the stock
      *
-     * @param Procurement $procurement
-     * @param Collection $products
      * @return Collection $products
      */
     public function saveProducts( Procurement $procurement, Collection $products )
@@ -833,7 +829,6 @@ class ProcurementService
      * this will actually save the history and update
      * the product stock
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function handleProcurement( Procurement $procurement )
@@ -955,7 +950,7 @@ class ProcurementService
         return Product::query()
             ->whereIn( 'type', [
                 Product::TYPE_DEMATERIALIZED,
-                Product::TYPE_MATERIALIZED
+                Product::TYPE_MATERIALIZED,
             ])
             ->where( function( $query ) use ( $argument ) {
                 $query->orWhere( 'name', 'LIKE', "%{$argument}%" )

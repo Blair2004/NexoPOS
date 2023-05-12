@@ -112,8 +112,6 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -146,7 +144,6 @@ class OrderInstalmentCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -246,7 +243,6 @@ class OrderInstalmentCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  OrderInstalment $entry
      * @return  void
      */
     public function afterPost( $request, OrderInstalment $entry )
@@ -264,7 +260,7 @@ class OrderInstalmentCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

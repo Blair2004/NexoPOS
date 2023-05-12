@@ -105,8 +105,6 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -139,7 +137,6 @@ class CustomerRewardCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -225,7 +222,6 @@ class CustomerRewardCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  CustomerReward $entry
      * @return  void
      */
     public function afterPost( $request, CustomerReward $entry )
@@ -243,7 +239,7 @@ class CustomerRewardCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

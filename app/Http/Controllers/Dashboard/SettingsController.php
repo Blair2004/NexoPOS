@@ -37,31 +37,31 @@ class SettingsController extends DashboardController
 
         switch ( $identifier ) {
             case 'customers': return $this->customersSettings();
-            break;
+                break;
             case 'general': return $this->generalSettings();
-            break;
+                break;
             case 'invoices': return $this->invoiceSettings();
-            break;
+                break;
             case 'orders': return $this->ordersSettings();
-            break;
+                break;
             case 'pos': return $this->posSettings();
-            break;
+                break;
             case 'reports': return $this->reportsSettings();
-            break;
+                break;
             case 'invoice-settings': return $this->invoiceSettings();
-            break;
+                break;
             case 'expenses-settings': return $this->expenseSettings();
-            break;
+                break;
             case 'reset': return $this->resetSettings();
-            break;
+                break;
             case 'workers': return $this->workersSettings();
-            break;
+                break;
             case 'accounting': return $this->accountingSettings();
-            break;
+                break;
             case 'about': return $this->aboutSettings();
-            break;
+                break;
             default: return $this->handleDefaultSettings( $identifier );
-            break;
+                break;
         }
     }
 

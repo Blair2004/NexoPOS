@@ -82,8 +82,6 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -116,7 +114,6 @@ class ProductCategoryCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -221,7 +218,6 @@ class ProductCategoryCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  ProductCategory $entry
      * @return  void
      */
     public function afterPost( $request, ProductCategory $entry )
@@ -241,7 +237,7 @@ class ProductCategoryCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

@@ -1,15 +1,15 @@
 {
-    "/js/bootstrap.min/bootstrap.js": "/js/bootstrap.min/bootstrap.js?id=9cc5bf1fa7faf034954f0ac8a70f50fc",
-    "/js/lang-loader.min.js": "/js/lang-loader.min.js?id=c4a4bd023b75001d83886706c8ccc728",
-    "/js/app.min.js": "/js/app.min.js?id=196635ff2d4a7ecd6398a1498364d3be",
-    "/js/dashboard.min.js": "/js/dashboard.min.js?id=f014a3e76d70d5e5367139b85e07d702",
-    "/js/cashier.min.js": "/js/cashier.min.js?id=adb697b7a3a6e1466c7889c3e7bb5c1a",
-    "/js/update.min.js": "/js/update.min.js?id=19d792bd7c82769812a4ad1566504734",
-    "/js/pos-init.min.js": "/js/pos-init.min.js?id=ee0cc747830fcd6e7340eef817a3a95a",
-    "/js/pos.min.js": "/js/pos.min.js?id=1ca178f5a68b59148440e968d9db505a",
-    "/js/auth.min.js": "/js/auth.min.js?id=089c855f75e35fec3190b25e0acdfe39",
-    "/js/setup.min.js": "/js/setup.min.js?id=8c7f8810fb084ae3057a03c5485c29e4",
-    "/js/popups.min.js": "/js/popups.min.js?id=d2e06ae9c4f682f42fa522aaf2dc8ead",
-    "/js/manifest.js": "/js/manifest.js?id=40055c8e0478d68e5fe60f6603bc07fe",
-    "/js/vendor.js": "/js/vendor.js?id=f31a511f96363008a2a2ad3641cb4545"
+    "/js/bootstrap.min/bootstrap.js": "/js/bootstrap.min/bootstrap.js?id=2776b94146f60a4377139dc08cfe5414",
+    "/js/lang-loader.min.js": "/js/lang-loader.min.js?id=d78760ef0c57f805a15ff2d81896b2b4",
+    "/js/app.min.js": "/js/app.min.js?id=527279dd2baa1aa89e867f0843287b9d",
+    "/js/dashboard.min.js": "/js/dashboard.min.js?id=558764b0080981d688965302a88caf50",
+    "/js/cashier.min.js": "/js/cashier.min.js?id=bbd4f4ce44146b69097ebda41eca6230",
+    "/js/update.min.js": "/js/update.min.js?id=808b4866f75e6e9cb1a8ab3eb090a116",
+    "/js/pos-init.min.js": "/js/pos-init.min.js?id=8b41b93cd57f6e37dd0539da30391594",
+    "/js/pos.min.js": "/js/pos.min.js?id=c596fe507b57981b97377b0c28bddc57",
+    "/js/auth.min.js": "/js/auth.min.js?id=1def9d1d4a8a1ca20d6f917bb1297984",
+    "/js/setup.min.js": "/js/setup.min.js?id=360499e2e5d598457d34bc89b193b76f",
+    "/js/popups.min.js": "/js/popups.min.js?id=04b4f59120c07195333bc827481608c7",
+    "/js/manifest.js": "/js/manifest.js?id=305dedb58f4c11ec82e66aad54ad638a",
+    "/js/vendor.js": "/js/vendor.js?id=4aefb2100af1fc3f65974db3879dfc1b"
 }

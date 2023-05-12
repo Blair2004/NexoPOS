@@ -17,6 +17,7 @@ import { ProductUnitQuantity } from "./interfaces/product-unit-quantity";
 import { nsRawCurrency } from "./filters/currency";
 import moment from "moment";
 import Print from "./libraries/print";
+import Tax from "./libraries/tax";
 
 
 /**
@@ -507,7 +508,7 @@ export class POS {
 
     getPriceWithoutTax(value, rate, type) {
         if (type === 'inclusive') {
-            return (value / (rate + 100)) * 100;
+            return Tax.computeInclusive( value, rate );
         } else if (type === 'exclusive') {
             return value;
         }
@@ -517,7 +518,7 @@ export class POS {
         if (type === 'inclusive') {
             return value;
         } else if (type === 'exclusive') {
-            return ((value / 100) * (rate + 100));
+            return Tax.computeExclusive( value, rate )
         }
     }
 

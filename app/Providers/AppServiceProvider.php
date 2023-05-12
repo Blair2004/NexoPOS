@@ -292,9 +292,9 @@ class AppServiceProvider extends ServiceProvider
 
         config([
             'nexopos.orders.products.refunds' => [
-                OrderProductRefund::CONDITION_DAMAGED       =>  __( 'Damaged' ),
-                OrderProductRefund::CONDITION_UNSPOILED     =>  __( 'Good Condition' ),
-            ]
+                OrderProductRefund::CONDITION_DAMAGED => __( 'Damaged' ),
+                OrderProductRefund::CONDITION_UNSPOILED => __( 'Good Condition' ),
+            ],
         ]);
     }
 }

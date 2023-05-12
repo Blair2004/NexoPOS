@@ -168,7 +168,6 @@ class ReportService
     /**
      * will update wasted goods report
      *
-     * @param ProductHistory $history
      * @return void
      */
     public function handleStockAdjustment( ProductHistory $history )
@@ -296,7 +295,6 @@ class ReportService
      * Will delete all cash flow
      * related to the specific order
      *
-     * @param Order $order
      * @return void
      */
     public function deleteOrderCashFlow( Order $order )
@@ -308,7 +306,6 @@ class ReportService
      * Will delete all procurement
      * related to a specific cash flow
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function deleteProcurementCashFlow( Procurement $procurement )
@@ -1049,8 +1046,8 @@ class ReportService
     {
         $date = ns()->date->copy();
         $date->year = $year;
-        $startOfYear = $date->startOfYear();
-        $endOfYear = $date->endOfYear();
+        $startOfYear = $date->copy()->startOfYear();
+        $endOfYear = $date->copy()->endOfYear();
 
         while ( ! $startOfYear->isSameMonth( $endOfYear ) ) {
             $this->computeDashboardMonth( $startOfYear->copy() );
@@ -1112,7 +1109,6 @@ class ReportService
     /**
      * Will return the actual customer statement
      *
-     * @param Customer $customer
      * @return array
      */
     public function getCustomerStatement( Customer $customer, $rangeStarts = null, $rangeEnds = null )

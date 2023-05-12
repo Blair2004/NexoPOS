@@ -33,8 +33,6 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -65,7 +63,6 @@ class CustomerOrderCrud extends OrderCrud
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -296,7 +293,6 @@ class CustomerOrderCrud extends OrderCrud
      * After saving a record
      *
      * @param  Request $request
-     * @param  Order $entry
      * @return  void
      */
     public function afterPost( $request, Order $entry )
@@ -314,7 +310,7 @@ class CustomerOrderCrud extends OrderCrud
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

@@ -38,13 +38,12 @@ class Options
      * Will reset the default options
      *
      * @param array $options
-     * @return void
      */
     public function setDefault( $options = [] ): void
     {
         Option::truncate();
 
-        $types  =   app()->make( OrdersService::class )->getTypeLabels();
+        $types = app()->make( OrdersService::class )->getTypeLabels();
 
         $defaultOptions = [
             'ns_registration_enabled' => false,
@@ -104,7 +103,7 @@ class Options
          * We rather like to remove unecessary spaces. That might
          * cause unwanted behaviors.
          */
-        $key    =   trim( strtolower( $key ) );
+        $key = trim( strtolower( $key ) );
 
         /**
          * if an option has been found,
@@ -128,13 +127,13 @@ class Options
         $option->array = false;
 
         if ( is_array( $value ) ) {
-            $option->value  =   json_encode( $value );
-        } else if ( empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) ) {
+            $option->value = json_encode( $value );
+        } elseif ( empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) ) {
             $option->value = '';
         } else {
             $option->value = $value;
         }
-        
+
         $option->expire_on = $expiration;
 
         /**

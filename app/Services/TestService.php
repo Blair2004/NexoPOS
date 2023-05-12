@@ -47,7 +47,7 @@ class TestService
                 'unit_id' => $unitElement->unit_id,
             ], $productDetails );
 
-            if ( 
+            if (
                 ( isset( $product->id ) ) ||
                 ( $faker->randomElement([ false, true ]) && ! ( $config[ 'allow_quick_products' ] ?? true ) )
             ) {
@@ -94,7 +94,7 @@ class TestService
             $faker->numberBetween( 0, 23 )
         )->format( 'Y-m-d H:m:s' );
 
-        $finalDetails   =   [
+        $finalDetails = [
             'customer_id' => $customer->id,
             'type' => [ 'identifier' => 'takeaway' ],
             'discount_type' => $discount[ 'type' ],
@@ -121,9 +121,9 @@ class TestService
         ];
 
         if ( isset( $config[ 'payments' ] ) && is_callable( $config[ 'payments' ] ) ) {
-            $finalDetails[ 'payments' ] =   $config[ 'payments' ]( $finalDetails );
+            $finalDetails[ 'payments' ] = $config[ 'payments' ]( $finalDetails );
         } else {
-            $finalDetails[ 'payments' ]     =   [
+            $finalDetails[ 'payments' ] = [
                 [
                     'identifier' => 'cash-payment',
                     'value' => $currency->define( $subtotal )
@@ -154,7 +154,7 @@ class TestService
         $taxGroup = TaxGroup::get()->random();
         $margin = 25;
 
-        $config     =   [
+        $config = [
             'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
             'general' => [
                 'provider_id' => Provider::get()->random()->id,
@@ -216,7 +216,7 @@ class TestService
                 }),
         ];
 
-        foreach( $details as $key => $value ) {
+        foreach ( $details as $key => $value ) {
             Arr::set( $config, $key, $value );
         }
 

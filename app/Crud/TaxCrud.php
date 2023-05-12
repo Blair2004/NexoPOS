@@ -103,8 +103,6 @@ class TaxCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -137,7 +135,6 @@ class TaxCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -235,7 +232,6 @@ class TaxCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Tax $entry
      * @return  void
      */
     public function afterPost( $request, Tax $entry )
@@ -253,7 +249,7 @@ class TaxCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

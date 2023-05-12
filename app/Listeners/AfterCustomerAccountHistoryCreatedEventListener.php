@@ -23,7 +23,6 @@ class AfterCustomerAccountHistoryCreatedEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\AfterCustomerAccountHistoryCreatedEvent  $event
      * @return void
      */
     public function handle(AfterCustomerAccountHistoryCreatedEvent $event)

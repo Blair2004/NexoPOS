@@ -82,8 +82,6 @@ class CrudController extends DashboardController
      * Dashboard Crud POST
      * receive and treat POST request for CRUD Resource
      *
-     * @param string $namespace
-     * @param CrudPostRequest $request
      * @return void
      */
     public function crudPost( string $namespace, CrudPostRequest $request )
@@ -100,7 +98,6 @@ class CrudController extends DashboardController
      *
      * @param string $namespace
      * @param int $id primary key
-     * @param CrudPutRequest $request
      * @return void
      */
     public function crudPut( $namespace, $id, CrudPutRequest $request )
@@ -314,7 +311,6 @@ class CrudController extends DashboardController
      * Export the entries as a CSV file
      *
      * @param string $namespace
-     * @param Request $request
      * @return array $response
      */
     public function exportCrud( $namespace, Request $request )

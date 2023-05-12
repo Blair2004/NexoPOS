@@ -17,6 +17,7 @@ import { __, __m } from "./libraries/lang";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
 import Echo from "laravel-echo";
+import Tax from "./libraries/tax";
 const Pusher    =   require('pusher-js');
 
 
@@ -140,5 +141,6 @@ nsHttpClient.defineClient( axios );
 ( window as any ).RxJS               =   RxJS;
 ( window as any ).FormValidation     =   FormValidation;
 ( window as any ).nsCrudHandler      =   nsCrudHandler;
+( window as any ).nsTax              =   Tax;
 
 export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

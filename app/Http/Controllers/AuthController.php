@@ -239,8 +239,6 @@ class AuthController extends Controller
 
     /**
      * Process user registration
-     *
-     * @param SignUpRequest $request
      */
     public function postSignUp( SignUpRequest $request )
     {

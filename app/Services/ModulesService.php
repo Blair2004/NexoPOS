@@ -459,8 +459,6 @@ class ModulesService
 
     /**
      * Return the list of module as an array
-     *
-     * @return array|null
      */
     public function get($namespace = null): array|null
     {

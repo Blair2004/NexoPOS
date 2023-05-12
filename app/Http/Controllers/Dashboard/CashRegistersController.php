@@ -174,7 +174,6 @@ class CashRegistersController extends DashboardController
     /**
      * returns the cahs register instance
      *
-     * @param Register $register
      * @return string
      */
     public function getRegisterHistory( Register $register )

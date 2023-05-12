@@ -26,7 +26,6 @@ class ProductAfterCreatedEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\ProductAfterCreatedEvent  $event
      * @return void
      */
     public function handle(ProductAfterCreatedEvent $event)

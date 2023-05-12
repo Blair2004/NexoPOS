@@ -73,8 +73,6 @@ class UnitGroupCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -107,7 +105,6 @@ class UnitGroupCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -185,7 +182,6 @@ class UnitGroupCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  UnitGroup $entry
      * @return  void
      */
     public function afterPost( $request, UnitGroup $entry )
@@ -203,7 +199,7 @@ class UnitGroupCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

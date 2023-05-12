@@ -83,8 +83,6 @@ class RolesCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -124,7 +122,6 @@ class RolesCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -256,7 +253,6 @@ class RolesCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Role $entry
      * @return  void
      */
     public function afterPost( $request, Role $entry )
@@ -274,7 +270,7 @@ class RolesCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

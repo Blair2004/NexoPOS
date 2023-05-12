@@ -111,24 +111,24 @@ class DemoCoreService
 
     public function createBaseSettings()
     {
-        $orderTypes     =   app()->make( OrdersService::class )->getTypeLabels();
+        $orderTypes = app()->make( OrdersService::class )->getTypeLabels();
 
         /**
          * @var Options $optionService
          */
-        $optionService  =   app()->make( Options::class );
+        $optionService = app()->make( Options::class );
 
         $optionService->set(
             'ns_pos_order_types',
-            array_values( $orderTypes )
+            array_keys( $orderTypes )
         );
 
-        $optionService->set( 
+        $optionService->set(
             'ns_currency_symbol',
             '$'
         );
 
-        $optionService->set( 
+        $optionService->set(
             'ns_currency_iso',
             'USD'
         );

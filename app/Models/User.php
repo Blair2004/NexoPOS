@@ -62,7 +62,6 @@ class User extends Authenticatable
      */
     public $options;
 
-    /** @var */
     public $user_id;
 
     /**

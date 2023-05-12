@@ -19,7 +19,6 @@ class OrderBeforeDeleteEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\OrderBeforeDeleteEvent  $event
      * @return void
      */
     public function handle(OrderBeforeDeleteEvent $event)

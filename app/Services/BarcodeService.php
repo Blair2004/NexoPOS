@@ -31,9 +31,6 @@ class BarcodeService
     /**
      * Will generate code
      * for provided barcode type
-     *
-     * @param string $type
-     * @return string
      */
     public function generate( string $type ): string
     {
@@ -95,23 +92,23 @@ class BarcodeService
 
         switch ( $type ) {
             case 'ean8': $realType = $generator::TYPE_EAN_8;
-            break;
+                break;
             case 'ean13': $realType = $generator::TYPE_EAN_13;
-            break;
+                break;
             case 'codabar': $realType = $generator::TYPE_CODABAR;
-            break;
+                break;
             case 'code128': $realType = $generator::TYPE_CODE_128;
-            break;
+                break;
             case 'code39': $realType = $generator::TYPE_CODE_39;
-            break;
+                break;
             case 'code11': $realType = $generator::TYPE_CODE_11;
-            break;
+                break;
             case 'upca': $realType = $generator::TYPE_UPC_A;
-            break;
+                break;
             case 'upce': $realType = $generator::TYPE_UPC_E;
-            break;
+                break;
             default: $realType = $generator::TYPE_EAN_8;
-            break;
+                break;
         }
 
         try {

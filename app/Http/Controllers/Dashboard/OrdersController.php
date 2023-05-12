@@ -234,8 +234,8 @@ class OrdersController extends DashboardController
 
         $order->products = Hook::filter( 'ns-receipt-products', $order->products );
 
-        $order->paymentStatus       =   $this->ordersService->getPaymentLabel( $order->payment_status );
-        $order->deliveryStatus      =   $this->ordersService->getPaymentLabel( $order->delivery_status );
+        $order->paymentStatus = $this->ordersService->getPaymentLabel( $order->payment_status );
+        $order->deliveryStatus = $this->ordersService->getPaymentLabel( $order->delivery_status );
 
         return $this->view( 'pages.dashboard.orders.templates.invoice', [
             'order' => $order,
@@ -299,7 +299,6 @@ class OrdersController extends DashboardController
     /**
      * Will perform a payment on a specific order
      *
-     * @param Order $order
      * @param Request $request
      * @return array
      */
@@ -380,8 +379,6 @@ class OrdersController extends DashboardController
     /**
      * Will change the order processing status
      *
-     * @param Request $request
-     * @param Order $order
      * @return string json response
      */
     public function changeOrderProcessingStatus( Request $request, Order $order )
@@ -392,8 +389,6 @@ class OrdersController extends DashboardController
     /**
      * Will change the order processing status
      *
-     * @param Request $request
-     * @param Order $order
      * @return string json response
      */
     public function changeOrderDeliveryStatus( Request $request, Order $order )

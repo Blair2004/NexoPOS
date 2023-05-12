@@ -70,7 +70,6 @@ class ProvidersController extends DashboardController
      * Will return the list of procurements
      * made by the provider
      *
-     * @param Provider $provider
      * @return string
      */
     public function listProvidersProcurements( Provider $provider )
@@ -90,7 +89,6 @@ class ProvidersController extends DashboardController
      * Will list all products
      * provided by that provider
      *
-     * @param Provider $provider
      * @return array
      */
     public function listProvidersProducts( Provider $provider )

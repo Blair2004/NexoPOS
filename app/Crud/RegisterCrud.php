@@ -109,8 +109,6 @@ class RegisterCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -143,7 +141,6 @@ class RegisterCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -238,7 +235,6 @@ class RegisterCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Register $entry
      * @return  void
      */
     public function afterPost( $request, Register $entry )
@@ -256,7 +252,7 @@ class RegisterCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
