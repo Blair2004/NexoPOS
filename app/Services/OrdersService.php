@@ -2855,6 +2855,7 @@ class OrdersService
         $payments = OrderPayment::where( 'created_at', '>=', $startRange )
             ->where( 'created_at', '<=', $endRange )
             ->whereIn( 'identifier', $paymentsIdentifier )
+            ->whereRelation('order', 'payment_status', Order::PAYMENT_PAID)
             ->get();
 
         $total = $payments->map( fn( $payment ) => $payment->value )->sum();
