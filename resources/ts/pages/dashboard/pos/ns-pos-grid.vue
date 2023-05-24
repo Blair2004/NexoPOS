@@ -35,7 +35,7 @@
                     <li><a @click="loadCategories( bread )" v-for="bread of breadcrumbs" :key="bread.id" href="javascript:void(0)" class="px-3">{{ bread.name }} <i class="las la-angle-right"></i></a></li>
                 </ul>
             </div>
-            <div id="grid-items" class="overflow-hidden h-full flex-col flex">
+            <div id="grid-items" class="overflow-y-auto h-full flex-col flex">
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                     <div @click="loadCategories( category )" v-for="category of categories" :key="category.id"
                         class="cell-item w-full h-36 cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative">
