@@ -31,6 +31,9 @@ export default {
             return this.url.length === 0 ? '' : this.url;
         }
     },
-    props: [ 'url', 'display-name' ]
+    props: {
+        url: String,
+        displayName: String,
+    },
 }
 </script>
