@@ -12,7 +12,11 @@ export default class Tax {
     }
 
     static computeInclusive( value, rate ) {
-        return math.chain(rate).add(100).divide(value).multiply(100).done();
+        return math.chain( 
+            math.chain( value ).divide(
+                math.chain( rate ).add( 100 ).done()
+            ).done() 
+        ).multiply( 100 ).done();
     }
 
     static computeExclusive( value, rate ) {

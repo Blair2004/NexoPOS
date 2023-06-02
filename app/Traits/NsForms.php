@@ -21,9 +21,9 @@ trait NsForms
     /**
      * Extracts validation from either a crud form or setting page.
      */
-    public function extractValidation( CrudService|SettingsPage $formObject, $model = null ): array
+    public function extractValidation( $model = null ): array
     {
-        $form   =   $this->getFormObject( formObject: $formObject, model: $model );
+        $form   =   $this->getFormObject( model: $model );
 
         $rules = [];
 
@@ -48,21 +48,41 @@ trait NsForms
      * Returns the array that represent the
      * form object for either the CrudService or the SettingsPage.
      */
-    private function getFormObject( CrudService|SettingsPage $formObject, $model ): array
+    private function getFormObject( $model = null ): array
     {
-        if ( is_subclass_of( $formObject, CrudService::class ) || is_subclass_of( $formObject, SettingsPage::class ) ) {
-            return Hook::filter( get_class( $formObject )::method( 'getForm' ), $formObject->getForm( $model ), compact( 'model' ) );
+        if ( is_subclass_of( $this, CrudService::class ) || is_subclass_of( $this, SettingsPage::class ) ) {
+            return Hook::filter( get_class( $this )::method( 'getForm' ), $this->getForm( $model ), compact( 'model' ) );
         }
 
         return [];
     }
 
     /**
+     * Isolate Rules that use the Rule class
+     */
+    public function isolateArrayRules( array $arrayRules, string $parentKey = '' ): array
+    {
+        $rules = [];
+
+        foreach ( $arrayRules as $key => $value ) {
+            if ( is_array( $value ) && collect( array_keys( $value ) )->filter( function( $key ) {
+                return is_string( $key );
+            })->count() > 0 ) {
+                $rules = array_merge( $rules, $this->isolateArrayRules( $value, $key ) );
+            } else {
+                $rules[] = [ ( ! empty( $parentKey ) ? $parentKey . '.' : '' ) . $key, $value ];
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
      * Return flat fields for the crud form provided
      */
-    public function getFlatForm( CrudService|SettingsPage $crud, $fields, $model = null ): array
+    public function getFlatForm( array $fields, $model = null ): array
     {
-        $form   =   $this->getFormObject( formObject: $crud, model: $model );
+        $form   =   $this->getFormObject( model: $model );
         $data   = [];
 
         if ( isset( $form[ 'main' ][ 'name' ] ) ) {
@@ -76,8 +96,8 @@ trait NsForms
              * this.
              */
             $keys = [];
-            if ( method_exists( $crud, 'getTabsRelations' ) ) {
-                $keys = array_keys( $crud->getTabsRelations() );
+            if ( method_exists( $this, 'getTabsRelations' ) ) {
+                $keys = array_keys( $this->getTabsRelations() );
             }
 
             /**
@@ -119,10 +139,42 @@ trait NsForms
      * for inserting. The data is parsed from the defined
      * form on the Request.
      */
-    public function getPlainData( $crud, Request $request, $model = null ): array
+    public function getPlainData( Request $request, $model = null ): array
     {
         $fields = $request->post();
 
-        return $this->getFlatForm( $crud, $fields, $model );
+        return $this->getFlatForm( $fields, $model );
+    }
+
+    /**
+     * The PHP version of FormValidation.extractForm.
+     * This returns a flattened version of a Form.
+     */
+    public function extractForm($form): array {
+        $formValue = [];
+    
+        if (isset($form['main'])) {
+            $formValue[$form['main']['name']] = $form['main']['value'];
+        }
+    
+        if (isset($form['tabs'])) {
+            foreach ($form['tabs'] as $tabIdentifier => $tab) {
+                if (!isset($formValue[$tabIdentifier])) {
+                    $formValue[$tabIdentifier] = [];
+                }
+    
+                $formValue[$tabIdentifier] = $this->extractFields( $tab[ 'fields' ] );
+            }
+        }
+    
+        return $formValue;
+    }
+
+    function extractFields($fields, $formValue = []) {
+        foreach ($fields as $field) {
+            $formValue[$field['name']] = $field['value'] ?? '';
+        }
+    
+        return $formValue;
     }
 }

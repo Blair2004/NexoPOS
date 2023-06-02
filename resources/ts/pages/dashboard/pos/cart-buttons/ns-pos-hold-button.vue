@@ -55,9 +55,11 @@ export default {
                     
                     POS.submitOrder().then( result => {
                         popup.close();
+                        // @todo add a print snipped here
                         nsSnackBar.success( result.message ).subscribe();
                     }, ( error ) => {
                         popup.close();
+                        // @todo add a print snipped here
                         nsSnackBar.error( error.message ).subscribe();
                     });
                 }).catch( exception => {

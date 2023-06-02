@@ -66,7 +66,7 @@ export default {
                     .subscribe( result => {
                         // ...
                     }, error => {
-                        return nsSnackBar.error( __( 'An unpexpected error occured while creating the snackbar.' ) ).subscribe();
+                        return nsSnackBar.error( error.message || __( 'An unpexpected error occured while using the widget.' ) ).subscribe();
                     })
             }, 100 );
         },

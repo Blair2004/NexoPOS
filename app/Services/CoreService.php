@@ -364,7 +364,7 @@ class CoreService
      * @return string|null
      * @throws NotFoundException
      */
-    public function moduleViteAssets( $fileName, $moduleId ): string
+    public function moduleViteAssets( string $fileName, $moduleId ): string
     {
         $moduleService  =   app()->make( ModulesService::class );
         $module         =   $moduleService->get( $moduleId );

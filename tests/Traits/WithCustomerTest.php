@@ -89,7 +89,7 @@ trait WithCustomerTest
                 ],
             ]);
 
-        $this->attemptTestCustomerGroup( $response->json() );
+        $this->attemptTestCustomerGroup( Customer::find( $response->json()[ 'data' ][ 'entry' ][ 'id' ] ) );
 
         $response->assertJson([
             'status' => 'success',
@@ -126,7 +126,9 @@ trait WithCustomerTest
             'status' => 'success',
         ]);
 
-        $this->attemptTestCustomerGroup( $response->json() );
+        $customer   =   Customer::find( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
+
+        $this->attemptTestCustomerGroup( $customer );
 
         /**
          * The second should fail as we're
@@ -151,106 +153,107 @@ trait WithCustomerTest
         ]);
     }
 
-    public function attemptTestCustomerGroup( $json )
+    public function attemptTestCustomerGroup( Customer $customer )
     {
-        $customer   =   Customer::with( 'group' )->find( $json[ 'data' ][ 'entry' ][ 'id' ] );
-
         $this->assertTrue( $customer->group instanceof CustomerGroup );
     }
 
     protected function attemptCreateCustomer()
     {
         $faker = Factory::create();
+        $group = CustomerGroup::first();
 
+        /**
+         * Creating a first customer
+         */
+        $email = $faker->email;
+        $firstName = $faker->firstName;
+        $lastName = $faker->lastName;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/crud/ns.customers', [
+                'first_name' => $firstName,
+                'general' => [
+                    'group_id' => $group->id,
+                    'last_name' => $faker->lastName,
+                    'email' => $email,
+                ],
+                'shipping' => [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                ],
+                'billing' => [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                ],
+            ]);
+
+        $response->assertJson([
+            'status' => 'success',
+        ]);
+
+        return Customer::with( 'group' )->findOrFail( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
+    }
+
+    protected function attemptCreateCustomerWithInitialTransactions()
+    {
         /**
          * @var CustomerService $customerService
          */
         $customerService = app()->make( CustomerService::class );
-        $group = CustomerGroup::first();
 
-        for ( $i = 0; $i < 10; $i++ ) {
-            /**
-             * Creating a first customer
-             */
-            $email = $faker->email;
-            $firstName = $faker->firstName;
-            $lastName = $faker->lastName;
+        $customer   =   $this->attemptCreateCustomer();
 
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/crud/ns.customers', [
-                    'first_name' => $firstName,
-                    'general' => [
-                        'group_id' => $group->id,
-                        'last_name' => $faker->lastName,
-                        'email' => $email,
-                    ],
-                    'shipping' => [
-                        'first_name' => $firstName,
-                        'last_name' => $lastName,
-                        'email' => $email,
-                    ],
-                    'billing' => [
-                        'first_name' => $firstName,
-                        'last_name' => $lastName,
-                        'email' => $email,
-                    ],
-                ]);
+        $this->attemptTestCustomerGroup( $customer );
 
-            $response->assertJson([
-                'status' => 'success',
-            ]);
-
-            $this->attemptTestCustomerGroup( $response->json() );
-
-            $lastCustomer = Customer::orderBy( 'id', 'desc' )->first();
+        /**
+         * For each customer
+         * let's create a crediting operation
+         */
+        if ( $this->faker->randomElement([ true, false ]) ) {
+            $randomAmount = $this->faker->randomNumber(3, true);
 
             /**
-             * For each customer
-             * let's create a crediting operation
+             * Step 1: we'll make some transaction
+             * and verify how it goes.
              */
-            if ( $this->faker->randomElement([ true, false ]) ) {
-                $randomAmount = $this->faker->randomNumber(3, true);
+            $result = $customerService->saveTransaction(
+                $customer,
+                CustomerAccountHistory::OPERATION_ADD,
+                $randomAmount,
+                'Created from tests',
+            );
 
-                /**
-                 * Step 1: we'll make some transaction
-                 * and verify how it goes.
-                 */
-                $result = $customerService->saveTransaction(
-                    $lastCustomer,
-                    CustomerAccountHistory::OPERATION_ADD,
-                    $randomAmount,
-                    'Created from tests',
-                );
+            $history = $result[ 'data' ][ 'customerAccountHistory' ];
 
-                $history = $result[ 'data' ][ 'customerAccountHistory' ];
+            $this->assertSame( (float) $history->amount, (float) $randomAmount, 'The amount is not refected on the history.' );
+            $this->assertSame( (float) $history->next_amount, (float) $randomAmount, 'The amount is not refected on the history.' );
+            $this->assertSame( (float) $history->previous_amount, (float) 0, 'The previous amount is not accurate.' );
 
-                $this->assertSame( (float) $history->amount, (float) $randomAmount, 'The amount is not refected on the history.' );
-                $this->assertSame( (float) $history->next_amount, (float) $randomAmount, 'The amount is not refected on the history.' );
-                $this->assertSame( (float) $history->previous_amount, (float) 0, 'The previous amount is not accurate.' );
+            $customer->refresh();
 
-                $lastCustomer->refresh();
+            $this->assertSame( (float) $randomAmount, (float) $customer->account_amount, 'The customer account hasn\'t been updated.' );
 
-                $this->assertSame( (float) $randomAmount, (float) $lastCustomer->account_amount, 'The customer account hasn\'t been updated.' );
+            /**
+             * Step 2: second control and verification on
+             * how it goes.
+             */
+            $result = $customerService->saveTransaction(
+                $customer,
+                CustomerAccountHistory::OPERATION_DEDUCT,
+                $randomAmount,
+                'Created from tests',
+            );
 
-                /**
-                 * Step 2: second control and verification on
-                 * how it goes.
-                 */
-                $result = $customerService->saveTransaction(
-                    $lastCustomer,
-                    CustomerAccountHistory::OPERATION_DEDUCT,
-                    $randomAmount,
-                    'Created from tests',
-                );
+            $customer->refresh();
 
-                $lastCustomer->refresh();
+            $history = $result[ 'data' ][ 'customerAccountHistory' ];
 
-                $history = $result[ 'data' ][ 'customerAccountHistory' ];
-
-                $this->assertSame( (float) $history->amount, (float) $randomAmount, 'The amount is not refected on the history.' );
-                $this->assertSame( (float) $history->next_amount, (float) 0, 'The amount is not refected on the history.' );
-                $this->assertSame( (float) $history->previous_amount, (float) $randomAmount, 'The previous amount is not accurate.' );
-            }
+            $this->assertSame( (float) $history->amount, (float) $randomAmount, 'The amount is not refected on the history.' );
+            $this->assertSame( (float) $history->next_amount, (float) 0, 'The amount is not refected on the history.' );
+            $this->assertSame( (float) $history->previous_amount, (float) $randomAmount, 'The previous amount is not accurate.' );
         }
     }
 
@@ -340,7 +343,7 @@ trait WithCustomerTest
             'status' => 'success',
         ]);
 
-        $lastCustomer = Customer::orderBy( 'id', 'desc' )->first();
+        $lastCustomer = Customer::where( 'first_name', '!=', null )->orderBy( 'id', 'desc' )->first();
 
         /**
          * let's now search

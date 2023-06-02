@@ -138,12 +138,6 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_users', 'group_id' ) ) {
                 $table->integer( 'group_id' )->nullable();
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'banned' ) ) {
-                $table->boolean( 'banned' )->default( false )->after( 'active' );
-            }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'banned_since' ) ) {
-                $table->datetime( 'banned_since' )->nullable()->after( 'banned' );
-            }
         });
 
         /**
@@ -188,8 +182,8 @@ return new class extends Migration
                 ->firstOrNew();
 
             $user->birth_date           =   $customer->birth_date;
-            $user->username             =   $customer->email ?? 'user-' . $faker->randomNumber(5);
-            $user->email                =   $customer->email ?? $user->username . '@nexopos.com';
+            $user->username             =   ( $customer->email ?? 'user-' ) . $faker->randomNumber(5);
+            $user->email                =   ( $customer->email ?? $user->username ) . '@nexopos.com';
             $user->purchases_amount     =   $customer->purchases_amount ?: 0;
             $user->owed_amount          =   $customer->owed_amount ?: 0;
             $user->credit_limit_amount  =   $customer->credit_limit_amount ?: 0;
@@ -201,6 +195,7 @@ return new class extends Migration
             $user->pobox                =   $customer->pobox ?: '';
             $user->group_id             =   $customer->group_id;
             $user->author               =   $firstAdministrator->id;
+            $user->active               =   true;
             $user->password             =   Hash::make( Str::random(10) ); // every customer has a random password. 
             $user->save();
 

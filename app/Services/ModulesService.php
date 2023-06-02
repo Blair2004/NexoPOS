@@ -1338,7 +1338,7 @@ class ModulesService
     /**
      * Executes module migration.
      */
-    public function runMigration( $namespace, $file )
+    public function runMigration( string $namespace, string $file )
     {
         $result = $this->__runSingleFile( 
             method: 'up', 
@@ -1504,7 +1504,7 @@ class ModulesService
     }
 
     /**
-     * Scream Content
+     * Stream Content
      *
      * @return string content
      */

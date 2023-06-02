@@ -7,6 +7,7 @@ use App\Events\ProductAfterDeleteEvent;
 use App\Events\ProductAfterStockAdjustmentEvent;
 use App\Events\ProductAfterUpdatedEvent;
 use App\Events\ProductBeforeDeleteEvent;
+use App\Events\ProductBeforeUpdatedEvent;
 use App\Events\ProductResetEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
@@ -320,7 +321,7 @@ class ProductService
      * @param array fields
      * @return array response
      */
-    public function update( Product $product, $data )
+    public function update( Product $product, array $data ): array
     {
         /**
          * check if the provided category
@@ -403,6 +404,9 @@ class ProductService
          * and not an instance of Product
          */
         $product = $this->getProductUsingArgument( 'id', $id );
+        
+        ProductBeforeUpdatedEvent::dispatch( $product );
+
         $mode = 'update';
 
         $this->releaseProductTaxes( $product );

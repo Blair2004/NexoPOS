@@ -2,8 +2,8 @@
   "__plugin-vue_export-helper-c27b6911.js": {
     "file": "assets/_plugin-vue_export-helper-c27b6911.js"
   },
-  "_components-325eb074.js": {
-    "file": "assets/components-325eb074.js",
+  "_components-7a04ba45.js": {
+    "file": "assets/components-7a04ba45.js",
     "imports": [
       "resources/ts/popups/ns-alert-popup.vue",
       "_currency-47ec5b79.js",
@@ -19,7 +19,7 @@
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~vuedraggable-90a90e9d.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_npm~lodash-f7a36ac5.js",
       "_ns-numpad-plus-f3ffaa01.js",
@@ -35,6 +35,9 @@
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ]
+  },
+  "_npm~@babel~runtime_-34ca84e8.js": {
+    "file": "assets/npm~@babel~runtime_-34ca84e8.js"
   },
   "_npm~@ckeditor~ckeditor5-build-classic_-a8abd726.js": {
     "file": "assets/npm~@ckeditor~ckeditor5-build-classic_-a8abd726.js"
@@ -114,8 +117,17 @@
   "_npm~chart.js-3fed1729.js": {
     "file": "assets/npm~chart.js-3fed1729.js"
   },
+  "_npm~complex.js-15c479db.js": {
+    "file": "assets/npm~complex.js-15c479db.js",
+    "imports": [
+      "_npm~@ckeditor~ckeditor5-build-classic_-a8abd726.js"
+    ]
+  },
   "_npm~currency.js-57f74176.js": {
     "file": "assets/npm~currency.js-57f74176.js"
+  },
+  "_npm~decimal.js-d133ee8e.js": {
+    "file": "assets/npm~decimal.js-d133ee8e.js"
   },
   "_npm~deep-rename-keys-9802c842.js": {
     "file": "assets/npm~deep-rename-keys-9802c842.js",
@@ -130,11 +142,20 @@
   "_npm~encode-utf8-f813de00.js": {
     "file": "assets/npm~encode-utf8-f813de00.js"
   },
+  "_npm~escape-latex-404addb9.js": {
+    "file": "assets/npm~escape-latex-404addb9.js"
+  },
   "_npm~eventemitter3-c7e30f9c.js": {
     "file": "assets/npm~eventemitter3-c7e30f9c.js"
   },
   "_npm~form-data-87061074.js": {
     "file": "assets/npm~form-data-87061074.js"
+  },
+  "_npm~fraction.js-52b397f9.js": {
+    "file": "assets/npm~fraction.js-52b397f9.js",
+    "imports": [
+      "_npm~@ckeditor~ckeditor5-build-classic_-a8abd726.js"
+    ]
   },
   "_npm~get-value-efae0488.js": {
     "file": "assets/npm~get-value-efae0488.js"
@@ -168,6 +189,9 @@
       "_npm~isarray-980812a4.js"
     ]
   },
+  "_npm~javascript-natural-sort-11e7fc54.js": {
+    "file": "assets/npm~javascript-natural-sort-11e7fc54.js"
+  },
   "_npm~kind-of-f578382b.js": {
     "file": "assets/npm~kind-of-f578382b.js",
     "imports": [
@@ -181,6 +205,19 @@
     "file": "assets/npm~lodash-f7a36ac5.js",
     "imports": [
       "_npm~@ckeditor~ckeditor5-build-classic_-a8abd726.js"
+    ]
+  },
+  "_npm~mathjs-1dff8408.js": {
+    "file": "assets/npm~mathjs-1dff8408.js",
+    "imports": [
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js"
     ]
   },
   "_npm~moment-fbc5633a.js": {
@@ -230,6 +267,12 @@
       "_npm~tslib-f3101d7c.js"
     ]
   },
+  "_npm~seedrandom-b246f2f9.js": {
+    "file": "assets/npm~seedrandom-b246f2f9.js",
+    "imports": [
+      "_npm~@ckeditor~ckeditor5-build-classic_-a8abd726.js"
+    ]
+  },
   "_npm~sortablejs-9be29f79.js": {
     "file": "assets/npm~sortablejs-9be29f79.js",
     "imports": [
@@ -244,8 +287,14 @@
       "_npm~xml-reader-1784d248.js"
     ]
   },
+  "_npm~tiny-emitter-4ed993c7.js": {
+    "file": "assets/npm~tiny-emitter-4ed993c7.js"
+  },
   "_npm~tslib-f3101d7c.js": {
     "file": "assets/npm~tslib-f3101d7c.js"
+  },
+  "_npm~typed-function-e88d1f37.js": {
+    "file": "assets/npm~typed-function-e88d1f37.js"
   },
   "_npm~unset-value-cf896816.js": {
     "file": "assets/npm~unset-value-cf896816.js",
@@ -341,8 +390,8 @@
       "_npm~@vue~shared_-82b01912.js"
     ]
   },
-  "_ns-orders-preview-popup-86a40fe6.js": {
-    "file": "assets/ns-orders-preview-popup-86a40fe6.js",
+  "_ns-orders-preview-popup-996b8fa5.js": {
+    "file": "assets/ns-orders-preview-popup-996b8fa5.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -350,7 +399,7 @@
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~shared_-82b01912.js",
       "_ns-numpad-plus-f3ffaa01.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "_print-3c0412fa.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
@@ -366,8 +415,8 @@
       "_npm~rxjs-a7e91008.js"
     ]
   },
-  "_ns-paginate-19e98260.js": {
-    "file": "assets/ns-paginate-19e98260.js",
+  "_ns-paginate-965aeeab.js": {
+    "file": "assets/ns-paginate-965aeeab.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -376,8 +425,8 @@
       "_npm~@vue~shared_-82b01912.js"
     ]
   },
-  "_ns-pos-customer-select-popup-515e845b.js": {
-    "file": "assets/ns-pos-customer-select-popup-515e845b.js",
+  "_ns-pos-customer-select-popup-1475a04a.js": {
+    "file": "assets/ns-pos-customer-select-popup-1475a04a.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -385,15 +434,15 @@
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~shared_-82b01912.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~@vue~reactivity_-481192b6.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_ns-orders-preview-popup-86a40fe6.js"
+      "_ns-orders-preview-popup-996b8fa5.js"
     ],
     "isDynamicEntry": true
   },
-  "_ns-pos-order-type-popup-8108b393.js": {
-    "file": "assets/ns-pos-order-type-popup-8108b393.js",
+  "_ns-pos-order-type-popup-29b125bb.js": {
+    "file": "assets/ns-pos-order-type-popup-29b125bb.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -402,8 +451,8 @@
       "_npm~@vue~shared_-82b01912.js"
     ]
   },
-  "_ns-procurement-quantity-1f18492b.js": {
-    "file": "assets/ns-procurement-quantity-1f18492b.js",
+  "_ns-procurement-quantity-69acfea5.js": {
+    "file": "assets/ns-procurement-quantity-69acfea5.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -432,8 +481,8 @@
   "_print-3c0412fa.js": {
     "file": "assets/print-3c0412fa.js"
   },
-  "_product-quantity-bc6a11af.js": {
-    "file": "assets/product-quantity-bc6a11af.js",
+  "_product-quantity-e41075e8.js": {
+    "file": "assets/product-quantity-e41075e8.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -477,7 +526,7 @@
     "src": "resources/scss/animations.scss"
   },
   "resources/scss/app.scss": {
-    "file": "assets/app-5a68bbd2.css",
+    "file": "assets/app-d7b4a324.css",
     "isEntry": true,
     "src": "resources/scss/app.scss"
   },
@@ -583,7 +632,7 @@
       "resources/ts/pages/dashboard/procurements/manage-products.vue",
       "resources/ts/pages/dashboard/procurements/ns-procurement-invoice.vue",
       "resources/ts/pages/dashboard/ns-notifications.vue",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/pages/dashboard/expenses/ns-expense.vue",
       "resources/ts/pages/dashboard/home/ns-dashboard.vue",
       "resources/ts/pages/dashboard/reports/ns-low-stock-report.vue",
@@ -599,11 +648,11 @@
       "resources/ts/pages/dashboard/orders/ns-order-invoice.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ],
-    "file": "assets/app-4337dca0.js",
+    "file": "assets/app-f3977322.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_ns-hotpress-3da57d7a.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "_npm~vue-6a0d7c4c.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
@@ -647,13 +696,22 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_ns-switch-0a4d4345.js",
       "_npm~@ckeditor~ckeditor5-vue_-b5744b68.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -671,12 +729,12 @@
       "resources/ts/pages/auth/ns-password-lost.vue",
       "resources/ts/pages/auth/ns-new-password.vue"
     ],
-    "file": "assets/auth-bd8a7304.js",
+    "file": "assets/auth-2cd333f0.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
       "_npm~vue-6a0d7c4c.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~shared_-82b01912.js",
       "_npm~@vue~reactivity_-481192b6.js",
@@ -720,13 +778,22 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_ns-switch-0a4d4345.js",
       "_npm~@ckeditor~ckeditor5-vue_-b5744b68.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -736,7 +803,7 @@
     "src": "resources/ts/auth.ts"
   },
   "resources/ts/bootstrap.ts": {
-    "file": "assets/bootstrap-0aabbab9.js",
+    "file": "assets/bootstrap-f2d81cbc.js",
     "imports": [
       "_npm~lodash-f7a36ac5.js",
       "_npm~laravel-echo-7ac8f47a.js",
@@ -751,6 +818,7 @@
       "_npm~@wordpress~hooks_-18172e20.js",
       "_currency-47ec5b79.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
+      "_npm~mathjs-1dff8408.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@ckeditor~ckeditor5-build-classic_-a8abd726.js",
       "_npm~form-data-87061074.js",
@@ -759,13 +827,21 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~@vue~shared_-82b01912.js",
       "_npm~numeral-faf61dd1.js",
-      "_npm~currency.js-57f74176.js"
+      "_npm~currency.js-57f74176.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js"
     ],
     "isEntry": true,
     "src": "resources/ts/bootstrap.ts"
   },
   "resources/ts/cashier.ts": {
-    "file": "assets/cashier-343bd283.js",
+    "file": "assets/cashier-943771b6.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -787,6 +863,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
       "_npm~tslib-f3101d7c.js"
@@ -795,7 +880,7 @@
     "src": "resources/ts/cashier.ts"
   },
   "resources/ts/dashboard.ts": {
-    "file": "assets/dashboard-34687a29.js",
+    "file": "assets/dashboard-2ceada39.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_npm~rxjs-a7e91008.js",
@@ -819,15 +904,24 @@
       "_currency-47ec5b79.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~tslib-f3101d7c.js"
     ],
     "isEntry": true,
     "src": "resources/ts/dashboard.ts"
   },
   "resources/ts/dev.ts": {
-    "file": "assets/dev-c65e01a1.js",
+    "file": "assets/dev-b9539f46.js",
     "imports": [
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
       "_npm~vue-router-64deb50a.js",
       "_npm~moment-fbc5633a.js",
@@ -850,7 +944,7 @@
       "_ns-avatar-image-b0a3f8ba.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "_npm~@vue~reactivity_-481192b6.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
       "resources/ts/popups/ns-prompt-popup.vue",
@@ -883,6 +977,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~@ckeditor~ckeditor5-vue_-b5744b68.js",
       "_npm~sortablejs-9be29f79.js"
     ],
@@ -895,7 +998,7 @@
     "src": "resources/ts/lang-loader.ts"
   },
   "resources/ts/pages/auth/ns-login.vue": {
-    "file": "assets/ns-login-4152c478.js",
+    "file": "assets/ns-login-b1ae6340.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -918,6 +1021,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~tslib-f3101d7c.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
@@ -926,7 +1038,7 @@
     "src": "resources/ts/pages/auth/ns-login.vue"
   },
   "resources/ts/pages/auth/ns-new-password.vue": {
-    "file": "assets/ns-new-password-59bb1122.js",
+    "file": "assets/ns-new-password-ced92a5a.js",
     "imports": [
       "_currency-47ec5b79.js",
       "resources/ts/bootstrap.ts",
@@ -951,13 +1063,22 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~tslib-f3101d7c.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/auth/ns-new-password.vue"
   },
   "resources/ts/pages/auth/ns-password-lost.vue": {
-    "file": "assets/ns-password-lost-e916d022.js",
+    "file": "assets/ns-password-lost-c0fefabc.js",
     "imports": [
       "_currency-47ec5b79.js",
       "resources/ts/bootstrap.ts",
@@ -982,13 +1103,22 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~tslib-f3101d7c.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/auth/ns-password-lost.vue"
   },
   "resources/ts/pages/auth/ns-register.vue": {
-    "file": "assets/ns-register-475d1de4.js",
+    "file": "assets/ns-register-866d01a0.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -1011,6 +1141,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~tslib-f3101d7c.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
@@ -1019,7 +1158,7 @@
     "src": "resources/ts/pages/auth/ns-register.vue"
   },
   "resources/ts/pages/dashboard/create-coupons.vue": {
-    "file": "assets/create-coupons-8cba68f2.js",
+    "file": "assets/create-coupons-6cbe6664.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -1043,6 +1182,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -1050,7 +1198,7 @@
     "src": "resources/ts/pages/dashboard/create-coupons.vue"
   },
   "resources/ts/pages/dashboard/expenses/ns-expense.vue": {
-    "file": "assets/ns-expense-65965dd0.js",
+    "file": "assets/ns-expense-e3f7ea0f.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/popups/ns-alert-popup.vue",
@@ -1082,6 +1230,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
       "_npm~pure-color-28f75675.js",
@@ -1108,7 +1265,7 @@
     "src": "resources/ts/pages/dashboard/expenses/ns-expense.vue"
   },
   "resources/ts/pages/dashboard/home/ns-dashboard.vue": {
-    "file": "assets/ns-dashboard-5e2920f0.js",
+    "file": "assets/ns-dashboard-f0f3b80b.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -1132,6 +1289,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -1139,7 +1305,7 @@
     "src": "resources/ts/pages/dashboard/home/ns-dashboard.vue"
   },
   "resources/ts/pages/dashboard/modules.vue": {
-    "file": "assets/modules-0f8a328b.js",
+    "file": "assets/modules-f81a9932.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -1169,6 +1335,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
       "_npm~pure-color-28f75675.js",
@@ -1196,12 +1371,12 @@
     "src": "resources/ts/pages/dashboard/modules.vue"
   },
   "resources/ts/pages/dashboard/ns-notifications.vue": {
-    "file": "assets/ns-notifications-43df9cdc.js",
+    "file": "assets/ns-notifications-2ea5b015.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~shared_-82b01912.js",
@@ -1222,6 +1397,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
       "resources/ts/popups/ns-alert-popup.vue",
@@ -1250,7 +1434,7 @@
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -1260,7 +1444,7 @@
     "src": "resources/ts/pages/dashboard/ns-notifications.vue"
   },
   "resources/ts/pages/dashboard/ns-permissions.vue": {
-    "file": "assets/ns-permissions-d43e54af.js",
+    "file": "assets/ns-permissions-00000776.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -1283,6 +1467,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
       "_npm~tslib-f3101d7c.js"
@@ -1291,11 +1484,11 @@
     "src": "resources/ts/pages/dashboard/ns-permissions.vue"
   },
   "resources/ts/pages/dashboard/ns-settings.vue": {
-    "file": "assets/ns-settings-529ea5dc.js",
+    "file": "assets/ns-settings-e49540c7.js",
     "imports": [
       "_currency-47ec5b79.js",
       "resources/ts/bootstrap.ts",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "_npm~@vue~reactivity_-481192b6.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
@@ -1318,6 +1511,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "resources/ts/popups/ns-alert-popup.vue",
       "_ns-avatar-image-b0a3f8ba.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
@@ -1345,7 +1547,7 @@
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -1355,7 +1557,7 @@
     "src": "resources/ts/pages/dashboard/ns-settings.vue"
   },
   "resources/ts/pages/dashboard/orders/ns-order-invoice.vue": {
-    "file": "assets/ns-order-invoice-d98b691b.js",
+    "file": "assets/ns-order-invoice-6222468a.js",
     "imports": [
       "_currency-47ec5b79.js",
       "__plugin-vue_export-helper-c27b6911.js",
@@ -1371,9 +1573,9 @@
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-customers-button.vue": {
     "dynamicImports": [
-      "_ns-pos-customer-select-popup-515e845b.js"
+      "_ns-pos-customer-select-popup-1475a04a.js"
     ],
-    "file": "assets/ns-pos-customers-button-95867818.js",
+    "file": "assets/ns-pos-customers-button-db26195e.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "resources/ts/bootstrap.ts",
@@ -1398,6 +1600,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -1420,10 +1631,10 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-dashboard-button.vue"
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-order-type-button.vue": {
-    "file": "assets/ns-pos-order-type-button-2d8ceb18.js",
+    "file": "assets/ns-pos-order-type-button-956518ac.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_ns-pos-order-type-popup-8108b393.js",
+      "_ns-pos-order-type-popup-29b125bb.js",
       "_currency-47ec5b79.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
@@ -1445,6 +1656,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -1452,7 +1672,7 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-order-type-button.vue"
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-pending-orders-button.vue": {
-    "file": "assets/ns-pos-pending-orders-button-997a156c.js",
+    "file": "assets/ns-pos-pending-orders-button-03066638.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
@@ -1477,6 +1697,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -1484,7 +1713,7 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-pending-orders-button.vue"
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue": {
-    "file": "assets/ns-pos-registers-button-4de98ae6.js",
+    "file": "assets/ns-pos-registers-button-59c21903.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
@@ -1509,6 +1738,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -1516,7 +1754,7 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue"
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-reset-button.vue": {
-    "file": "assets/ns-pos-reset-button-62f94a2e.js",
+    "file": "assets/ns-pos-reset-button-a5ca05ac.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -1547,6 +1785,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
       "_npm~pure-color-28f75675.js",
@@ -1573,21 +1820,21 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-reset-button.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos-cart.vue": {
-    "file": "assets/ns-pos-cart-b9e89be4.js",
+    "file": "assets/ns-pos-cart-3e89bbe6.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
       "_pos-section-switch-0869c4e1.js",
-      "_product-quantity-bc6a11af.js",
-      "_ns-pos-customer-select-popup-515e845b.js",
+      "_product-quantity-e41075e8.js",
+      "_ns-pos-customer-select-popup-1475a04a.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~shared_-82b01912.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
-      "_ns-paginate-19e98260.js",
-      "_ns-pos-order-type-popup-8108b393.js",
+      "_ns-paginate-965aeeab.js",
+      "_ns-pos-order-type-popup-29b125bb.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
       "resources/ts/popups/ns-pos-shipping-popup.vue",
       "_npm~@vue~reactivity_-481192b6.js",
@@ -1611,10 +1858,19 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~tslib-f3101d7c.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
-      "_ns-orders-preview-popup-86a40fe6.js",
+      "_ns-orders-preview-popup-996b8fa5.js",
       "_print-3c0412fa.js",
       "resources/ts/popups/ns-prompt-popup.vue",
       "_npm~pure-color-28f75675.js",
@@ -1641,7 +1897,7 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos-cart.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos-grid.vue": {
-    "file": "assets/ns-pos-grid-c87a2a94.js",
+    "file": "assets/ns-pos-grid-88dab3f2.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_pos-section-switch-0869c4e1.js",
@@ -1667,6 +1923,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -1674,7 +1939,7 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos.vue": {
-    "file": "assets/ns-pos-8cb9901a.js",
+    "file": "assets/ns-pos-351221dc.js",
     "imports": [
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue",
@@ -1702,13 +1967,22 @@
       "_currency-47ec5b79.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_pos-section-switch-0869c4e1.js",
-      "_product-quantity-bc6a11af.js",
+      "_product-quantity-e41075e8.js",
       "_ns-numpad-plus-f3ffaa01.js",
-      "_ns-pos-customer-select-popup-515e845b.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-pos-customer-select-popup-1475a04a.js",
+      "_ns-paginate-965aeeab.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_ns-orders-preview-popup-86a40fe6.js",
+      "_ns-orders-preview-popup-996b8fa5.js",
       "_print-3c0412fa.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
       "_npm~pure-color-28f75675.js",
@@ -1737,19 +2011,19 @@
       "_npm~vue-upload-component-9e5d4563.js",
       "resources/ts/popups/ns-prompt-popup.vue",
       "resources/ts/popups/ns-pos-loading-popup.vue",
-      "_ns-pos-order-type-popup-8108b393.js",
+      "_ns-pos-order-type-popup-29b125bb.js",
       "resources/ts/popups/ns-pos-shipping-popup.vue"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/pos/ns-pos.vue"
   },
   "resources/ts/pages/dashboard/procurements/manage-products.vue": {
-    "file": "assets/manage-products-e77b8ebe.js",
+    "file": "assets/manage-products-93b9458a.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "_currency-47ec5b79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
@@ -1770,6 +2044,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -1782,7 +2065,7 @@
     "src": "resources/ts/pages/dashboard/procurements/ns-procurement-invoice.vue"
   },
   "resources/ts/pages/dashboard/procurements/ns-procurement.vue": {
-    "file": "assets/ns-procurement-82e9d5dd.js",
+    "file": "assets/ns-procurement-0503b890.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/pages/dashboard/procurements/manage-products.vue",
@@ -1806,8 +2089,17 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
       "_npm~tslib-f3101d7c.js"
@@ -1816,10 +2108,10 @@
     "src": "resources/ts/pages/dashboard/procurements/ns-procurement.vue"
   },
   "resources/ts/pages/dashboard/products/ns-stock-adjustment.vue": {
-    "file": "assets/ns-stock-adjustment-9c2e35f6.js",
+    "file": "assets/ns-stock-adjustment-2c29d315.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_ns-procurement-quantity-1f18492b.js",
+      "_ns-procurement-quantity-69acfea5.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "resources/ts/popups/ns-prompt-popup.vue",
       "_currency-47ec5b79.js",
@@ -1842,6 +2134,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~tslib-f3101d7c.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
@@ -1850,7 +2151,7 @@
     "src": "resources/ts/pages/dashboard/products/ns-stock-adjustment.vue"
   },
   "resources/ts/pages/dashboard/profile/ns-token.vue": {
-    "file": "assets/ns-token-244d8372.js",
+    "file": "assets/ns-token-b4e50a2d.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -1882,6 +2183,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
       "_npm~pure-color-28f75675.js",
@@ -1910,10 +2220,10 @@
     "src": "resources/ts/pages/dashboard/profile/ns-token.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-best-products-report.vue": {
-    "file": "assets/ns-best-products-report-dbf97da2.js",
+    "file": "assets/ns-best-products-report-00fadbc4.js",
     "imports": [
       "_npm~moment-fbc5633a.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
@@ -1961,10 +2271,19 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -1974,10 +2293,10 @@
     "src": "resources/ts/pages/dashboard/reports/ns-best-products-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-cash-flow-report.vue": {
-    "file": "assets/ns-cash-flow-report-4379bda8.js",
+    "file": "assets/ns-cash-flow-report-d217d7b8.js",
     "imports": [
       "_npm~moment-fbc5633a.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
       "__plugin-vue_export-helper-c27b6911.js",
@@ -2025,10 +2344,19 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -2053,13 +2381,13 @@
     "src": "resources/ts/pages/dashboard/reports/ns-customers-statement-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-low-stock-report.vue": {
-    "file": "assets/ns-low-stock-report-b8fca3cf.js",
+    "file": "assets/ns-low-stock-report-3f287db0.js",
     "imports": [
       "_npm~moment-fbc5633a.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~shared_-82b01912.js",
@@ -2105,6 +2433,15 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
@@ -2117,10 +2454,10 @@
     "src": "resources/ts/pages/dashboard/reports/ns-low-stock-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-payment-types-report.vue": {
-    "file": "assets/ns-payment-types-report-0ba1898c.js",
+    "file": "assets/ns-payment-types-report-dd833f46.js",
     "imports": [
       "_npm~moment-fbc5633a.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
       "__plugin-vue_export-helper-c27b6911.js",
@@ -2168,10 +2505,19 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -2181,10 +2527,10 @@
     "src": "resources/ts/pages/dashboard/reports/ns-payment-types-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-profit-report.vue": {
-    "file": "assets/ns-profit-report-39af4107.js",
+    "file": "assets/ns-profit-report-cff5bfda.js",
     "imports": [
       "_npm~moment-fbc5633a.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
       "__plugin-vue_export-helper-c27b6911.js",
@@ -2232,10 +2578,19 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -2245,13 +2600,13 @@
     "src": "resources/ts/pages/dashboard/reports/ns-profit-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-sale-report.vue": {
-    "file": "assets/ns-sale-report-eb168c0e.js",
+    "file": "assets/ns-sale-report-0a7dc507.js",
     "imports": [
       "_npm~moment-fbc5633a.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~shared_-82b01912.js",
@@ -2297,6 +2652,15 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
@@ -2309,10 +2673,10 @@
     "src": "resources/ts/pages/dashboard/reports/ns-sale-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-sold-stock-report.vue": {
-    "file": "assets/ns-sold-stock-report-4901cc0a.js",
+    "file": "assets/ns-sold-stock-report-c5f5a579.js",
     "imports": [
       "_npm~moment-fbc5633a.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
       "__plugin-vue_export-helper-c27b6911.js",
@@ -2360,10 +2724,19 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -2373,11 +2746,11 @@
     "src": "resources/ts/pages/dashboard/reports/ns-sold-stock-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-yearly-report.vue": {
-    "file": "assets/ns-yearly-report-0028045c.js",
+    "file": "assets/ns-yearly-report-27ce655b.js",
     "imports": [
       "_npm~moment-fbc5633a.js",
-      "_components-325eb074.js",
-      "_ns-paginate-19e98260.js",
+      "_components-7a04ba45.js",
+      "_ns-paginate-965aeeab.js",
       "resources/ts/bootstrap.ts",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "_currency-47ec5b79.js",
@@ -2431,13 +2804,22 @@
       "_npm~form-data-87061074.js",
       "_npm~chart.js-3fed1729.js",
       "_npm~rx-1641e2f8.js",
-      "_npm~@wordpress~hooks_-18172e20.js"
+      "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/reports/ns-yearly-report.vue"
   },
   "resources/ts/pages/dashboard/reset.vue": {
-    "file": "assets/reset-191f5567.js",
+    "file": "assets/reset-4e4a73a4.js",
     "imports": [
       "_currency-47ec5b79.js",
       "resources/ts/bootstrap.ts",
@@ -2462,13 +2844,22 @@
       "_npm~@vue~compiler-dom_-04241bb4.js",
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
-      "_npm~@wordpress~hooks_-18172e20.js"
+      "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/reset.vue"
   },
   "resources/ts/pages/dashboard/rewards-system.vue": {
-    "file": "assets/rewards-system-e20c32ea.js",
+    "file": "assets/rewards-system-cb928d02.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -2492,6 +2883,15 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -2499,7 +2899,7 @@
     "src": "resources/ts/pages/dashboard/rewards-system.vue"
   },
   "resources/ts/pages/setup/database.vue": {
-    "file": "assets/database-efe3d479.js",
+    "file": "assets/database-1b4f4728.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/setup.ts",
@@ -2526,8 +2926,17 @@
       "_currency-47ec5b79.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_preload-helper-41c905a7.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/popups/ns-alert-popup.vue",
       "_ns-avatar-image-b0a3f8ba.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
@@ -2555,7 +2964,7 @@
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -2566,7 +2975,7 @@
     "src": "resources/ts/pages/setup/database.vue"
   },
   "resources/ts/pages/setup/setup-configuration.vue": {
-    "file": "assets/setup-configuration-04d0d2f7.js",
+    "file": "assets/setup-configuration-87733290.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/setup.ts",
@@ -2593,8 +3002,17 @@
       "_currency-47ec5b79.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_preload-helper-41c905a7.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "resources/ts/popups/ns-alert-popup.vue",
       "_ns-avatar-image-b0a3f8ba.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
@@ -2622,7 +3040,7 @@
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -2633,8 +3051,9 @@
     "src": "resources/ts/pages/setup/setup-configuration.vue"
   },
   "resources/ts/pages/setup/welcome.vue": {
-    "file": "assets/welcome-95bdd69b.js",
+    "file": "assets/welcome-e645bc5c.js",
     "imports": [
+      "_currency-47ec5b79.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
       "_npm~@dicebear~avatars-avataaars-sprites_-e47afe24.js",
@@ -2643,10 +3062,14 @@
       "_ns-switch-0a4d4345.js",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_npm~lodash-f7a36ac5.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
+      "_npm~@vue~shared_-82b01912.js",
+      "_npm~numeral-faf61dd1.js",
+      "_npm~@ckeditor~ckeditor5-build-classic_-a8abd726.js",
+      "_npm~currency.js-57f74176.js",
       "_npm~pure-color-28f75675.js",
       "_npm~svgson-a2b86d8a.js",
       "_npm~omit-deep-3a616dcc.js",
@@ -2666,7 +3089,6 @@
       "_npm~xml-lexer-6516179a.js",
       "_npm~laravel-echo-7ac8f47a.js",
       "_npm~pusher-js-7b18aad5.js",
-      "_npm~@ckeditor~ckeditor5-build-classic_-a8abd726.js",
       "_npm~axios-0ec1b34a.js",
       "_npm~form-data-87061074.js",
       "_npm~chart.js-3fed1729.js",
@@ -2674,21 +3096,26 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~vue-6a0d7c4c.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
-      "_npm~@vue~shared_-82b01912.js",
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~@vue~compiler-dom_-04241bb4.js",
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
-      "_currency-47ec5b79.js",
-      "_npm~numeral-faf61dd1.js",
-      "_npm~currency.js-57f74176.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~@ckeditor~ckeditor5-vue_-b5744b68.js",
       "_npm~sortablejs-9be29f79.js",
       "resources/ts/popups/ns-alert-popup.vue",
       "_ns-avatar-image-b0a3f8ba.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
       "resources/ts/popups/ns-prompt-popup.vue"
@@ -2697,22 +3124,22 @@
     "src": "resources/ts/pages/setup/welcome.vue"
   },
   "resources/ts/popups.ts": {
-    "file": "assets/popups-e8796685.js",
+    "file": "assets/popups-ac533b35.js",
     "imports": [
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
       "resources/ts/popups/ns-alert-popup.vue",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_ns-orders-preview-popup-86a40fe6.js",
+      "_ns-orders-preview-popup-996b8fa5.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
-      "_ns-procurement-quantity-1f18492b.js",
+      "_ns-procurement-quantity-69acfea5.js",
       "_currency-47ec5b79.js",
       "resources/ts/bootstrap.ts",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~shared_-82b01912.js",
       "resources/ts/popups/ns-prompt-popup.vue",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~@vue~reactivity_-481192b6.js",
       "_ns-avatar-image-b0a3f8ba.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
@@ -2758,7 +3185,16 @@
       "_npm~form-data-87061074.js",
       "_npm~chart.js-3fed1729.js",
       "_npm~rx-1641e2f8.js",
-      "_npm~@wordpress~hooks_-18172e20.js"
+      "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js"
     ],
     "isEntry": true,
     "src": "resources/ts/popups.ts"
@@ -2779,7 +3215,7 @@
     "src": "resources/ts/popups/ns-alert-popup.vue"
   },
   "resources/ts/popups/ns-pos-confirm-popup.vue": {
-    "file": "assets/ns-pos-confirm-popup-07a76865.js",
+    "file": "assets/ns-pos-confirm-popup-268ffc19.js",
     "imports": [
       "_currency-47ec5b79.js",
       "resources/ts/bootstrap.ts",
@@ -2804,13 +3240,22 @@
       "_npm~@vue~compiler-dom_-04241bb4.js",
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
-      "_npm~@wordpress~hooks_-18172e20.js"
+      "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/popups/ns-pos-confirm-popup.vue"
   },
   "resources/ts/popups/ns-pos-layaway-popup.vue": {
-    "file": "assets/ns-pos-layaway-popup-8c779e21.js",
+    "file": "assets/ns-pos-layaway-popup-7158b785.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -2834,6 +3279,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],
@@ -2852,7 +3306,7 @@
     "src": "resources/ts/popups/ns-pos-loading-popup.vue"
   },
   "resources/ts/popups/ns-pos-shipping-popup.vue": {
-    "file": "assets/ns-pos-shipping-popup-fc6689b1.js",
+    "file": "assets/ns-pos-shipping-popup-4d022d03.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "__plugin-vue_export-helper-c27b6911.js",
@@ -2877,7 +3331,16 @@
       "_npm~@wordpress~hooks_-18172e20.js",
       "_currency-47ec5b79.js",
       "_npm~numeral-faf61dd1.js",
-      "_npm~currency.js-57f74176.js"
+      "_npm~currency.js-57f74176.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/popups/ns-pos-shipping-popup.vue"
@@ -2913,10 +3376,10 @@
       "resources/ts/popups/ns-pos-layaway-popup.vue",
       "resources/ts/popups/ns-pos-shipping-popup.vue"
     ],
-    "file": "assets/pos-init-8bb07d54.js",
+    "file": "assets/pos-init-335c57dc.js",
     "imports": [
       "_preload-helper-41c905a7.js",
-      "_product-quantity-bc6a11af.js",
+      "_product-quantity-e41075e8.js",
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
       "__plugin-vue_export-helper-c27b6911.js",
@@ -2940,6 +3403,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
       "_npm~tslib-f3101d7c.js"
@@ -2953,11 +3425,11 @@
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
     ],
-    "file": "assets/pos-6241e301.js",
+    "file": "assets/pos-f231bd40.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_ns-hotpress-3da57d7a.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "_npm~vue-6a0d7c4c.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
@@ -3001,13 +3473,22 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_ns-switch-0a4d4345.js",
       "_npm~@ckeditor~ckeditor5-vue_-b5744b68.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -3024,10 +3505,10 @@
       "resources/ts/pages/setup/database.vue",
       "resources/ts/pages/setup/setup-configuration.vue"
     ],
-    "file": "assets/setup-eae2cdb7.js",
+    "file": "assets/setup-74b6a691.js",
     "imports": [
       "_preload-helper-41c905a7.js",
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "_npm~vue-router-64deb50a.js",
       "_npm~vue-6a0d7c4c.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
@@ -3072,13 +3553,22 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_ns-switch-0a4d4345.js",
       "_npm~@ckeditor~ckeditor5-vue_-b5744b68.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
       "_npm~vue2-daterange-picker-f17f6b76.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_ns-numpad-plus-f3ffaa01.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
@@ -3090,9 +3580,9 @@
     "src": "resources/ts/setup.ts"
   },
   "resources/ts/update.ts": {
-    "file": "assets/update-d8b597a6.js",
+    "file": "assets/update-9c5cebfe.js",
     "imports": [
-      "_components-325eb074.js",
+      "_components-7a04ba45.js",
       "_npm~vue-6a0d7c4c.js",
       "_currency-47ec5b79.js",
       "resources/ts/bootstrap.ts",
@@ -3130,7 +3620,7 @@
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~sortablejs-9be29f79.js",
-      "_ns-paginate-19e98260.js",
+      "_ns-paginate-965aeeab.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_npm~lodash-f7a36ac5.js",
       "_ns-numpad-plus-f3ffaa01.js",
@@ -3148,7 +3638,16 @@
       "_npm~form-data-87061074.js",
       "_npm~chart.js-3fed1729.js",
       "_npm~rx-1641e2f8.js",
-      "_npm~@wordpress~hooks_-18172e20.js"
+      "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js"
     ],
     "isEntry": true,
     "src": "resources/ts/update.ts"
@@ -3164,7 +3663,7 @@
       "resources/ts/widgets/ns-incomplete-sale-card-widget.vue",
       "resources/ts/widgets/ns-expense-card-widget.vue"
     ],
-    "file": "assets/widgets-f8990d77.js",
+    "file": "assets/widgets-e99d91d5.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
@@ -3256,7 +3755,7 @@
     "src": "resources/ts/widgets/ns-orders-chart.vue"
   },
   "resources/ts/widgets/ns-orders-summary.vue": {
-    "file": "assets/ns-orders-summary-50a70a2c.js",
+    "file": "assets/ns-orders-summary-f2c27fc4.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -3280,6 +3779,15 @@
       "_npm~@vue~compiler-core_-2a2ce8c7.js",
       "_npm~rx-1641e2f8.js",
       "_npm~@wordpress~hooks_-18172e20.js",
+      "_npm~mathjs-1dff8408.js",
+      "_npm~@babel~runtime_-34ca84e8.js",
+      "_npm~decimal.js-d133ee8e.js",
+      "_npm~complex.js-15c479db.js",
+      "_npm~fraction.js-52b397f9.js",
+      "_npm~typed-function-e88d1f37.js",
+      "_npm~seedrandom-b246f2f9.js",
+      "_npm~javascript-natural-sort-11e7fc54.js",
+      "_npm~escape-latex-404addb9.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js"
     ],

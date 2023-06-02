@@ -9,6 +9,7 @@ use App\Models\CustomerGroup;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerFactory extends Factory
 {
@@ -22,8 +23,9 @@ class CustomerFactory extends Factory
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'username' => $this->faker->userName(),
-            'password' => $this->faker->password(),
+            'password' => Hash::make( $this->faker->password() ),
             'email' => $this->faker->email(),
+            'active'    =>  true,
             'gender' => $this->faker->randomElement([ 'male', 'female', '' ]),
             'phone' => $this->faker->phoneNumber(),
             'pobox' => $this->faker->postcode(),

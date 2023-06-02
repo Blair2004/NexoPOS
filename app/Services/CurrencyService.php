@@ -15,6 +15,8 @@ class CurrencyService
 
     private $currency_symbol;
 
+    private $currency_position;
+
     private $format;
 
     private $decimal_precision;
