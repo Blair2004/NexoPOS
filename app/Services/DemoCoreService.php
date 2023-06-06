@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\AccountType;
+use App\Models\TransactionAccount;
 use App\Models\Customer;
 use App\Models\CustomerCoupon;
 use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\Provider;
+use App\Models\Register;
 use App\Models\Tax;
 use App\Models\TaxGroup;
 use App\Models\Unit;
@@ -134,6 +135,21 @@ class DemoCoreService
         );
     }
 
+    public function createRegisters()
+    {
+        $register           =   new Register;
+        $register->name     =   __( 'Terminal A' );
+        $register->status   =   Register::STATUS_CLOSED;
+        $register->author   =   ns()->getValidAuthor();
+        $register->save();
+
+        $register           =   new Register;
+        $register->name     =   __( 'Terminal B' );
+        $register->status   =   Register::STATUS_CLOSED;
+        $register->author   =   ns()->getValidAuthor();
+        $register->save();
+    }
+
     public function createAccountingAccounts()
     {
         /**
@@ -147,7 +163,7 @@ class DemoCoreService
             'account' => '001',
         ]);
 
-        ns()->option->set( 'ns_sales_cashflow_account', AccountType::account( '001' )->first()->id );
+        ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::account( '001' )->first()->id );
 
         $expenseService->createAccount([
             'name' => __( 'Procurements Account' ),
@@ -155,7 +171,7 @@ class DemoCoreService
             'account' => '002',
         ]);
 
-        ns()->option->set( 'ns_procurement_cashflow_account', AccountType::account( '002' )->first()->id );
+        ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::account( '002' )->first()->id );
 
         $expenseService->createAccount([
             'name' => __( 'Sale Refunds Account' ),
@@ -163,7 +179,7 @@ class DemoCoreService
             'account' => '003',
         ]);
 
-        ns()->option->set( 'ns_sales_refunds_account', AccountType::account( '003' )->first()->id );
+        ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::account( '003' )->first()->id );
 
         $expenseService->createAccount([
             'name' => __( 'Spoiled Goods Account' ),
@@ -171,7 +187,7 @@ class DemoCoreService
             'account' => '006',
         ]);
 
-        ns()->option->set( 'ns_stock_return_spoiled_account', AccountType::account( '006' )->first()->id );
+        ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::account( '006' )->first()->id );
 
         $expenseService->createAccount([
             'name' => __( 'Customer Crediting Account' ),
@@ -179,7 +195,7 @@ class DemoCoreService
             'account' => '007',
         ]);
 
-        ns()->option->set( 'ns_customer_crediting_cashflow_account', AccountType::account( '007' )->first()->id );
+        ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::account( '007' )->first()->id );
 
         $expenseService->createAccount([
             'name' => __( 'Customer Debiting Account' ),
@@ -187,7 +203,7 @@ class DemoCoreService
             'account' => '008',
         ]);
 
-        ns()->option->set( 'ns_customer_debitting_cashflow_account', AccountType::account( '008' )->first()->id );
+        ns()->option->set( 'ns_customer_debitting_cashflow_account', TransactionAccount::account( '008' )->first()->id );
     }
 
     public function createCustomers()

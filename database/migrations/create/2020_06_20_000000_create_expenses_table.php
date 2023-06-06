@@ -16,11 +16,11 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_expenses' ) ) {
-            Schema::createIfMissing( 'nexopos_expenses', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( 'nexopos_transactions' ) ) {
+            Schema::createIfMissing( 'nexopos_transactions', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
-                $table->integer( 'category_id' );
+                $table->integer( 'account_id' );
                 $table->text( 'description' )->nullable();
                 $table->integer( 'media_id' )->default(0);
                 $table->float( 'value', 18, 5 )->default(0);
@@ -45,6 +45,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( 'nexopos_expenses' );
+        Schema::dropIfExists( 'nexopos_transactions' );
     }
 };

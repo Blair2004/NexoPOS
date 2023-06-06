@@ -33,6 +33,7 @@ import { __ } from '~/libraries/lang';
 
 export default {
     name: "ns-pos-coupons-popup",
+    props: [ 'popup' ],
     data() {
         return {
             orderSubscriber: null,

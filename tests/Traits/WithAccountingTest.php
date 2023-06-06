@@ -6,6 +6,7 @@ use App\Classes\Currency;
 use App\Models\AccountType;
 use App\Models\CashFlow;
 use App\Models\DashboardDay;
+use App\Models\Procurement;
 use App\Services\ReportService;
 use App\Services\TestService;
 use Illuminate\Support\Facades\Auth;
@@ -84,8 +85,26 @@ trait WithAccountingTest
         ns()->option->set( 'ns_sales_refunds_account', AccountType::where( 'account', '000005' )->first()->id );
         ns()->option->set( 'ns_stock_return_spoiled_account', AccountType::where( 'account', '000006' )->first()->id );
         ns()->option->set( 'ns_stock_return_unspoiled_account', AccountType::where( 'account', '000007' )->first()->id );
-        ns()->option->set( 'ns_cashregister_cashin_cashflow_account', AccountType::where( 'account', '000008' )->first()->id );
-        ns()->option->set( 'ns_cashregister_cashout_cashflow_account', AccountType::where( 'account', '000009' )->first()->id );
+    }
+
+    protected function attemptCheckProcurementRecord( $procurement_id )
+    {
+        /**
+         * @var Procurement
+         */
+        $procurement    =   Procurement::find( $procurement_id );
+
+        /**
+         * @var CashFlow
+         */
+        $cashFlow       =   CashFlow::where( 'procurement', $procurement_id )->first();
+
+        $assignedCategoryID     =   ns()->option->get( 'ns_procurement_cashflow_account' );
+
+        $this->assertTrue( $procurement instanceof Procurement, __( 'Unable to retreive the procurement using the id provided.' ) );
+        $this->assertTrue( $cashFlow instanceof CashFlow, __( 'Unable to retreive the cashflow using the provided procurement id' ) );
+        $this->assertTrue( $cashFlow->expense_category_id == $assignedCategoryID, __( 'The assigned category doens\'t match what was set for procurement cash flow.' ) );
+        $this->assertEquals( $procurement->cost, $cashFlow->value, __( 'The cash flow records doesn\'t match the procurement cost.' ) );
     }
 
     protected function attemptCheckSalesTaxes()

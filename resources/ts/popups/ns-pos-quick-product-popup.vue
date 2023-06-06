@@ -33,6 +33,7 @@ import { forkJoin } from 'rxjs';
 import { nsSnackBar } from '~/bootstrap';
 export default {
     name: 'ns-pos-quick-product-popup',
+    props: [ 'popup' ],
     methods: {
         __,
         popupCloser,

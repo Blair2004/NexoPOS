@@ -37,7 +37,7 @@ if ( ns()->option->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
         'label' => __( 'Cash Disbursement' ),
         'name' => 'ns_pos_disbursement',
         'type' => 'select',
-        'value' => ns()->option->get( 'ns_pos_disbursement_enabled' ),
+        'value' => ns()->option->get( 'ns_pos_disbursement' ),
         'description' => __( 'Allow cash disbursement by the cashier.' ),
         'options' => Helper::kvToJsOptions([
             'yes' => __( 'Yes' ),

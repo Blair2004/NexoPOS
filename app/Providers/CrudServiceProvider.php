@@ -34,6 +34,8 @@ use App\Crud\RewardSystemCrud;
 use App\Crud\RolesCrud;
 use App\Crud\TaxCrud;
 use App\Crud\TaxesGroupCrud;
+use App\Crud\TransactionCrud;
+use App\Crud\TransactionHistoryCrud;
 use App\Crud\UnitCrud;
 use App\Crud\UnitGroupCrud;
 use App\Crud\UnpaidOrderCrud;
@@ -100,9 +102,9 @@ class CrudServiceProvider extends ServiceProvider
                 'ns.customers-coupons' => CustomerCouponCrud::class,
                 'ns.rewards-system' => RewardSystemCrud::class,
                 'ns.providers' => ProviderCrud::class,
-                'ns.accounting-accounts' => ExpenseCategoryCrud::class,
+                'ns.transactions-accounts' => ExpenseCategoryCrud::class,
                 'ns.cash-flow-history' => CashFlowHistoryCrud::class,
-                'ns.expenses' => ExpenseCrud::class,
+                'ns.transactions' => TransactionCrud::class,
                 'ns.units-groups' => UnitGroupCrud::class,
                 'ns.units' => UnitCrud::class,
                 'ns.products' => ProductCrud::class,
@@ -121,7 +123,7 @@ class CrudServiceProvider extends ServiceProvider
                 'ns.providers-procurements' => ProviderProcurementsCrud::class,
                 'ns.customers-account-history' => CustomerAccountCrud::class,
                 'ns.providers-products' => ProviderProductsCrud::class,
-                'ns.expense-history' => ExpenseHistoryCrud::class,
+                'ns.transactions-history' => TransactionHistoryCrud::class,
                 default => $namespace,
             };
         });

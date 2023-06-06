@@ -9,9 +9,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property integer $id
- * @property integer $author
- * @property string $status
+ * @property integer $expense_id
+ * @property mixed $operation
+ * @property integer $expense_category_id
+ * @property integer $procurement_id
+ * @property integer $order_refund_id
+ * @property integer $order_id
+ * @property integer $register_history_id
+ * @property integer $customer_account_history_id
+ * @property mixed $name
+ * @property mixed $status
  * @property float $value
+ * @property integer $author
+ * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
 */
 class CashFlow extends NsModel

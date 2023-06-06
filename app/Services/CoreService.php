@@ -13,6 +13,7 @@ use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
@@ -354,6 +355,20 @@ class CoreService
             'url' => 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
             'description' => __( 'NexoPOS is unable to schedule background tasks. This might restrict necessary features. Click here to learn how to fix it.' ),
         ])->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+    }
+
+    public function getValidAuthor()
+    {
+        if ( Auth::check() ) {
+            return Auth::id();
+        }
+
+        if ( App::runningInConsole() ) {
+            $firstAdministrator   =   User::where( 'active', true )->
+                whereRelation( 'roles', 'namespace', Role::ADMIN )->first();
+
+            return $firstAdministrator->id;
+        }
     }
 
     /**

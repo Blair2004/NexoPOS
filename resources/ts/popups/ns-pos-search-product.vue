@@ -40,6 +40,7 @@ import { __ } from '~/libraries/lang';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 export default {
     name: 'ns-pos-search-product',
+    props: [ 'popup' ],
     data() {
         return {
             searchValue: '',

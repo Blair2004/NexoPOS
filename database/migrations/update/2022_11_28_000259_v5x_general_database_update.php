@@ -63,10 +63,19 @@ return new class extends Migration
         }
 
         /**
+         * We're deleting here all permissions that are
+         * no longer used by the system.
+         */
+        Permission::where( 'namespace', 'like', '%.expense' )->each( function( Permission $permission ) {
+            $permission->removeFromRoles();
+        });
+
+        /**
          * let's include the files that will create permissions
          * for all the declared widgets.
          */
         include_once( base_path() . '/database/permissions/widgets.php' );
+        include_once( base_path() . '/database/permissions/transactions.php' );
 
         /**
          * We'll now defined default permissions
@@ -221,6 +230,18 @@ return new class extends Migration
             }
             if ( Schema::hasColumn( 'nexopos_providers', 'surname' ) ) {
                 $table->renameColumn( 'surname', 'last_name' );
+            }
+        });
+
+        Schema::table( 'nexopos_cash_flow', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'order_refund_product_id' ) ) {
+                $table->integer( 'order_refund_product_id' );
+            }
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'order_product_id' ) ) {
+                $table->integer( 'order_product_id' );
+            }
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'expense_id' ) ) {
+                $table->renameColumn( 'expense_id', 'transaction_id' );
             }
         });
 

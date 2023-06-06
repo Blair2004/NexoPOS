@@ -10,28 +10,28 @@ use App\Services\CrudService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
-class ExpenseHistoryCrud extends CrudService
+class TransactionHistoryCrud extends CrudService
 {
     /**
      * define the base table
      *
      * @param string
      */
-    protected $table = 'nexopos_cash_flow';
+    protected $table = 'nexopos_transactions_histories';
 
     /**
      * default slug
      *
      * @param string
      */
-    protected $slug = 'expenses/history';
+    protected $slug = 'accounting/transactions/histories';
 
     /**
      * Define namespace
      *
      * @param string
      */
-    protected $namespace = 'ns.expense-history';
+    protected $namespace = 'ns.transactions-history';
 
     /**
      * Model Used
@@ -59,9 +59,9 @@ class ExpenseHistoryCrud extends CrudService
      * @param array
      */
     public $relations = [
-        [ 'nexopos_expenses as expense', 'expense.id', '=', 'nexopos_cash_flow.expense_id' ],
+        [ 'nexopos_transactions as transaction', 'transaction.id', '=', 'nexopos_cash_flow.transaction_id' ],
         [ 'nexopos_users as users', 'users.id', '=', 'nexopos_cash_flow.author' ],
-        [ 'nexopos_expenses_categories as expense_category', 'expense_category.id', '=', 'nexopos_cash_flow.expense_category_id' ],
+        [ 'nexopos_transactions_accounts as transactions_accounts', 'transactions_accounts.id', '=', 'nexopos_cash_flow.transactions_accounts_id' ],
     ];
 
     /**
@@ -89,7 +89,7 @@ class ExpenseHistoryCrud extends CrudService
      */
     public $pick = [
         'expense' => [ 'name' ],
-        'expense_category' => [ 'name' ],
+        'transactions_accounts' => [ 'name' ],
     ];
 
     /**
@@ -187,94 +187,7 @@ class ExpenseHistoryCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' => [
-                'label' => __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
-                'description' => __( 'Provide a name to the resource.' ),
-            ],
-            'tabs' => [
-                'general' => [
-                    'label' => __( 'General' ),
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'name' => 'id',
-                            'label' => __( 'Id' ),
-                            'value' => $entry->id ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'expense_category_name',
-                            'label' => __( 'Category Name' ),
-                            'value' => $entry->expense_id ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'operation',
-                            'label' => __( 'Operation' ),
-                            'value' => $entry->operation ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'expense_category_id',
-                            'label' => __( 'Expense_category_id' ),
-                            'value' => $entry->expense_category_id ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'procurement_id',
-                            'label' => __( 'Procurement_id' ),
-                            'value' => $entry->procurement_id ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'order_refund_id',
-                            'label' => __( 'Order_refund_id' ),
-                            'value' => $entry->order_refund_id ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'order_id',
-                            'label' => __( 'Order_id' ),
-                            'value' => $entry->order_id ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'register_history_id',
-                            'label' => __( 'Register_history_id' ),
-                            'value' => $entry->register_history_id ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'customer_account_history_id',
-                            'label' => __( 'Customer_account_history_id' ),
-                            'value' => $entry->customer_account_history_id ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'name',
-                            'label' => __( 'Name' ),
-                            'value' => $entry->name ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'status',
-                            'label' => __( 'Status' ),
-                            'value' => $entry->status ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'value',
-                            'label' => __( 'Value' ),
-                            'value' => $entry->value ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'author',
-                            'label' => __( 'Author' ),
-                            'value' => $entry->author ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'created_at',
-                            'label' => __( 'Created_at' ),
-                            'value' => $entry->created_at ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'updated_at',
-                            'label' => __( 'Updated_at' ),
-                            'value' => $entry->updated_at ?? '',
-                        ],                     ],
-                ],
-            ],
+            // ...
         ];
     }
 
@@ -380,7 +293,7 @@ class ExpenseHistoryCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model )
     {
-        if ( $namespace == 'ns.expense-history' ) {
+        if ( $namespace == 'ns.transactions-history' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -409,7 +322,7 @@ class ExpenseHistoryCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'expense_category_name' => [
+            'transactions_accounts_name' => [
                 'label' => __( 'Account Name' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -501,8 +414,8 @@ class ExpenseHistoryCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'history' ),
             'create' => ns()->url( 'dashboard/' . 'history/create' ),
             'edit' => ns()->url( 'dashboard/' . 'history/edit/' ),
-            'post' => ns()->url( 'api/crud/' . 'ns.expense-history' ),
-            'put' => ns()->url( 'api/crud/' . 'ns.expense-history/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.transactions-history' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.transactions-history/{id}' . '' ),
         ];
     }
 

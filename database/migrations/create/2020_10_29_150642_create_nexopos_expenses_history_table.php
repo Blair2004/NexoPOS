@@ -14,15 +14,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::createIfMissing( 'nexopos_cash_flow', function (Blueprint $table) {
+        Schema::createIfMissing( 'nexopos_transactions_histories', function (Blueprint $table) {
             $table->id();
-            $table->integer( 'expense_id' )->nullable();
+            $table->integer( 'transaction_id' )->nullable();
             $table->string( 'operation' ); // credit or debit
-            $table->integer( 'expense_category_id' )->nullable();
-            $table->integer( 'procurement_id' )->nullable(); // when the procurement is deleted the expense history will be deleted automatically as well.
-            $table->integer( 'order_refund_id' )->nullable(); // to link an expense to an order refund.
-            $table->integer( 'order_id' )->nullable(); // to link an expense to an order refund.
-            $table->integer( 'register_history_id' )->nullable(); // if an expenses has been created from a register transaction
+            $table->integer( 'transaction_account_id' )->nullable();
+            $table->integer( 'procurement_id' )->nullable(); // when the procurement is deleted the transaction history will be deleted automatically as well.
+            $table->integer( 'order_refund_id' )->nullable(); // to link an transaction to an order refund.
+            $table->integer( 'order_refund_product_id' )->nullable(); // link the refund to an order refund product
+            $table->integer( 'order_id' )->nullable(); // to link an transaction to an order.
+            $table->integer( 'order_product_id' )->nullable(); // link the refund to an order product
+            $table->integer( 'register_history_id' )->nullable(); // if an transactions has been created from a register transaction
             $table->integer( 'customer_account_history_id' )->nullable(); // if a customer credit is generated
             $table->string( 'name' );
             $table->string( 'status' )->default( CashFlow::STATUS_ACTIVE );
@@ -39,6 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( 'nexopos_cash_flow' );
+        Schema::dropIfExists( 'nexopos_transactions_histories' );
     }
 };

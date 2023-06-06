@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\FloatConvertCasting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -47,6 +48,12 @@ class ProductHistory extends NsModel
     const ACTION_ADJUSTMENT_RETURN = 'return-adjustment';
 
     const ACTION_ADJUSTMENT_SALE = 'sale-adjustment';
+
+    public $casts    =  [
+        'before_quantity'   =>  FloatConvertCasting::class,
+        'quantity'          =>  FloatConvertCasting::class,
+        'after_quantity'    =>  FloatConvertCasting::class,
+    ];
 
     /**
      * actions that reduce stock

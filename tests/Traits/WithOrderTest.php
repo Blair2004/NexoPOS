@@ -92,6 +92,9 @@ trait WithOrderTest
             'balance' => 0,
         ]);
 
+        /**
+         * @var Register
+         */
         $cashRegister = Register::first();
 
         $previousValue = $cashRegister->balance;
@@ -117,7 +120,15 @@ trait WithOrderTest
         $specificMoment = ns()->date->now()->toDateTimeString();
 
         /**
-         * Step 1 : let's prepare the order
+         * Step 1 : let's make sure
+         * the cash register has the correct amount set
+         * after the opening.
+         */
+        $newCashRegister    =   $cashRegister->fresh();
+        $this->assertEquals( $newCashRegister->balance, $cashRegister->balance + 100, __( 'The cash register balance after opening is not correct' ) );
+
+        /**
+         * Step 2 : let's prepare the order
          * before submitting that.
          */
         $response = $this->registerOrderForCashRegister( $cashRegister, $data[ 'orderData' ] ?? [] );
@@ -171,7 +182,7 @@ trait WithOrderTest
         $this->assertTrue( $historyCount == count( $response[ 'data' ][ 'order' ][ 'payments' ] ), 'The cash register history is not accurate' );
 
         /**
-         * Step 2: We'll try here to delete order
+         * Step 3: We'll try here to delete order
          * from the register and see if the balance is updated
          */
         $this->createAndDeleteOrderFromRegister( $cashRegister, $data[ 'orderData' ] ?? [] );
@@ -189,10 +200,20 @@ trait WithOrderTest
         $previousValue = (float) $cashRegister->balance;
 
         /**
-         * Step 3 : disburse (cash-out) some cash
+         * Step 4 : disburse (cash-out) some cash
          * from the provided register
          */
-        $this->disburseCashFromRegister( $cashRegister, $cashRegisterService );
+        $result     =   $this->disburseCashFromRegister( $cashRegister, $cashRegisterService );
+
+        /**
+         * @var CashFlow
+         */
+        $cashFlow   =   CashFlow::where( 'register_history_id', $result[ 'data' ][ 'history' ]->id )
+            ->where( 'operation', CashFlow::OPERATION_DEBIT )
+            ->first();
+
+        $this->assertTrue( $cashFlow instanceof CashFlow, __( 'No cash flow was created for cash disbursement.' ) );
+        $this->assertTrue( $cashFlow->value == $result[ 'data' ][ 'history' ]->value, __( 'The register history value doesn\'t match the cash flow value.' ) );
 
         /**
          * between each operation
@@ -209,9 +230,19 @@ trait WithOrderTest
         $previousValue = (float) $cashRegister->balance;
 
         /**
-         * Step 4 : cash in some cash
+         * Step 5 : cash in some cash
          */
-        $this->cashInOnRegister( $cashRegister, $cashRegisterService );
+        $result     =   $this->cashInOnRegister( $cashRegister, $cashRegisterService );
+
+        /**
+         * @var CashFlow
+         */
+        $cashFlow   =   CashFlow::where( 'register_history_id', $result[ 'data' ][ 'history' ]->id )
+            ->where( 'operation', CashFlow::OPERATION_CREDIT )
+            ->first();
+
+        $this->assertTrue( $cashFlow instanceof CashFlow, __( 'No cash flow was created for cash in.' ) );
+        $this->assertTrue( $cashFlow->value == $result[ 'data' ][ 'history' ]->value, __( 'The register history value doesn\'t match the cash flow value.' ) );
 
         /**
          * We neet to refresh the register
@@ -236,31 +267,31 @@ trait WithOrderTest
          */
         $openingBalance = (float) $opening->value;
 
-        $totalCashing = RegisterHistory::register( $cashRegister )
+        $totalCashing = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_CASHING )->sum( 'value' );
 
-        $totalSales = RegisterHistory::register( $cashRegister )
+        $totalSales = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_SALE )->sum( 'value' );
 
-        $totalClosing = RegisterHistory::register( $cashRegister )
+        $totalClosing = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_CLOSING )->sum( 'value' );
 
-        $totalCashOut = RegisterHistory::register( $cashRegister )
+        $totalCashOut = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_CASHOUT )->sum( 'value' );
 
-        $totalChange = RegisterHistory::register( $cashRegister )
+        $totalChange = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_CHANGE )->sum( 'value' );
 
-        $totalRefunds = RegisterHistory::register( $cashRegister )
+        $totalRefunds = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_REFUND )->sum( 'value' );
 
-        $totalDelete = RegisterHistory::register( $cashRegister )
+        $totalDelete = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_DELETE )->sum( 'value' );
 
@@ -768,7 +799,7 @@ trait WithOrderTest
      */
     private function disburseCashFromRegister( Register $cashRegister, CashRegistersService $cashRegistersService )
     {
-        $cashRegistersService->cashOut( $cashRegister, $cashRegister->balance / 1.5, __( 'Test disbursing the cash register' ) );
+        return $cashRegistersService->cashOut( $cashRegister, $cashRegister->balance / 1.5, __( 'Test disbursing the cash register' ) );
     }
 
     /**
@@ -780,7 +811,7 @@ trait WithOrderTest
      */
     private function cashInOnRegister( Register $cashRegister, CashRegistersService $cashRegistersService )
     {
-        $cashRegistersService->cashIn( $cashRegister, ( $cashRegister->balance / 2 ), __( 'Test disbursing the cash register' ) );
+        return $cashRegistersService->cashIn( $cashRegister, ( $cashRegister->balance / 2 ), __( 'Test disbursing the cash register' ) );
     }
 
     protected function attemptCreateCustomerOrder()
@@ -2167,7 +2198,7 @@ trait WithOrderTest
             'status' => 'success',
         ]);
 
-        $responseData = json_decode( $response->getContent(), true );
+        $responseData = $response->json();
 
         $secondFetchCustomer = $firstFetchCustomer->fresh();
 
@@ -2204,8 +2235,20 @@ trait WithOrderTest
                 'products' => $responseData[ 'data' ][ 'order' ][ 'products' ],
             ]);
 
+            
         $response->assertStatus(200);
-        $responseData = json_decode( $response->getContent(), true );
+        $responseData = $response->json();
+        
+        /**
+         * Assert: We'll check if a refund record was created as a cash flow
+         * for the products linked to the order.
+         */
+        collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->each( function( $product ) {
+            $cashFlow   =   CashFlow::where( 'order_id', $product[ 'order_id' ] )
+                ->where( 'order_product_id', $product[ 'id' ] )
+                ->where( 'operation', CashFlow::OPERATION_DEBIT )
+                ->first();
+        });
 
         /**
          * We need to check if the order
