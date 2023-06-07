@@ -76,7 +76,11 @@ export default {
             }
         },
         printSaleReport() {
+          if (window.ns.language === 'ar') {
+            this.$htmlToPaper( 'low-stock-report' , {rtl: true});
+          } else {
             this.$htmlToPaper( 'low-stock-report' );
+          }
         },
         loadStockReport( url = null ) {
             nsHttpClient.get( url || '/api/nexopos/v4/reports/stock-report' )
