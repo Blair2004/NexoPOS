@@ -36,8 +36,10 @@ export default {
         setEndDate( moment ) {
             this.endDate    =   moment.format();
         },
-        printSaleReport() {
-            this.$htmlToPaper( 'best-products-report' );
+        if (window.ns.language === 'ar') {
+              this.$htmlToPaper( 'best-products-report' , {rtl: true});
+            } else {
+              this.$htmlToPaper( 'best-products-report' );
         },
         loadReport() {
             const startDate     =   moment( this.startDate );
