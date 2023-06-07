@@ -148,6 +148,11 @@
         methods: {
             printSaleReport() {
                 this.$htmlToPaper( 'report' );
+                if (window.ns.language === 'ar') {
+                    this.$htmlToPaper( 'report' , {rtl: true});
+                } else {
+                    this.$htmlToPaper( 'report' );
+                }
             },
             setStartDate( date ) {
                 this.startDate  =   date;
