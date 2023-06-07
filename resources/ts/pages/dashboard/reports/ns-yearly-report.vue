@@ -45,7 +45,11 @@ export default {
             this.endDate    =   moment.format();
         },
         printSaleReport() {
+          if (window.ns.language === 'ar') {
+            this.$htmlToPaper( 'annual-report' , {rtl: true});
+          } else {
             this.$htmlToPaper( 'annual-report' );
+          }
         },
         sumOf( label ) {
             if ( Object.values( this.report ).length > 0 ) {
