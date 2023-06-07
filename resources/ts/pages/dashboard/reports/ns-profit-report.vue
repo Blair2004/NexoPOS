@@ -64,7 +64,11 @@ export default {
     },
     methods: {
         printSaleReport() {
+          if (window.ns.language === 'ar') {
+            this.$htmlToPaper( 'profit-report' , {rtl: true});
+          } else {
             this.$htmlToPaper( 'profit-report' );
+          }
         },
         setStartDate( moment ) {
             this.startDate  =   moment.format();
