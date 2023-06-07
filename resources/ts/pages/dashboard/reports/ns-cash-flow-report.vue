@@ -32,6 +32,13 @@ export default {
         }
     },
     methods: {
+        printSaleReport() {
+          if (window.ns.language === 'ar') {
+            this.$htmlToPaper( 'sale-report' , {rtl: true});
+          } else {
+            this.$htmlToPaper( 'sale-report' );
+          }
+        },
         setStartDate( moment ) {
             this.startDate  =   moment.format( 'YYYY/MM/DD HH:mm' );
         },
