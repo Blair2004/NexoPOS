@@ -50,7 +50,11 @@ export default {
     },
     methods: {
         printSaleReport() {
+          if (window.ns.language === 'ar') {
+            this.$htmlToPaper( 'report-printable' , {rtl: true});
+          } else {
             this.$htmlToPaper( 'report-printable' );
+          }
         },
         setStartDate( moment ) {
             this.startDate  =   moment.format();
