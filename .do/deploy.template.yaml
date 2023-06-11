@@ -11,7 +11,7 @@ spec:
   - environment_slug: php
     name: nexopos
     git:
-      repo_clone_url: https://github.com/blair2004/NexoPOS-4x
+      repo_clone_url: https://github.com/blair2004/AviPOS-4x
       branch: v4.7.x
     build_command: npm run prod
     run_command: heroku-php-apache2 public/

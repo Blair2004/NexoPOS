@@ -139,7 +139,7 @@ export default {
             const fields    =   this.validation.extractFields( this.group_fields );
 
             /**
-             * When we save tax, we should instruct NexoPOS to 
+             * When we save tax, we should instruct AviPOS to 
              * ignore previously cached tax and fetch new taxes. 
              * This will be done by overwriting the tax_groups.
              */

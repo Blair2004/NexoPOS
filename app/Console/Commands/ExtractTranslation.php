@@ -24,7 +24,7 @@ class ExtractTranslation extends Command
      *
      * @var string
      */
-    protected $description = 'Will perform various operation regarding translation for NexoPOS 4.x and it\'s modules';
+    protected $description = 'Will perform various operation regarding translation for AviPOS 4.x and it\'s modules';
 
     /**
      * Create a new command instance.

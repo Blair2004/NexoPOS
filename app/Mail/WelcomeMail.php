@@ -31,7 +31,7 @@ class WelcomeMail extends Mailable
     public function build()
     {
         return $this
-            ->subject( ns()->option->get( 'ns_notifications_registrations_user_email_title', __( '[NexoPOS] Your Account Has Been Created' ) ) )
+            ->subject( ns()->option->get( 'ns_notifications_registrations_user_email_title', __( '[AviPOS] Your Account Has Been Created' ) ) )
             ->from( ns()->option->get( 'ns_store_email', 'notifications@nexopos.com' ) )
             ->markdown('mails/welcome-mail');
     }

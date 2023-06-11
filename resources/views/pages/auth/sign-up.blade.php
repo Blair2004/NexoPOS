@@ -12,9 +12,9 @@ use App\Classes\Hook;
             <div id="sign-in-box" class="w-full md:w-3/5 lg:w-2/5">
                 <div class="flex justify-center items-center py-6">
                     @if ( ! ns()->option->get( 'ns_store_square_logo', false ) )
-                    <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="NexoPOS">
+                    <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="AviPOS">
                     @else
-                    <img src="{{ ns()->option->get( 'ns_store_square_logo' ) }}" alt="NexoPOS">
+                    <img src="{{ ns()->option->get( 'ns_store_square_logo' ) }}" alt="AviPOS">
                     @endif
                 </div>
                 <ns-register></ns-register>

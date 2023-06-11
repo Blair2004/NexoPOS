@@ -1,7 +1,7 @@
 <?php
 
 /**
- * NexoPOS Controller
+ * AviPOS Controller
  *
  * @since  1.0
  **/
@@ -32,7 +32,7 @@ class ExpensesCategoriesController extends DashboardController
      **/
     public function index()
     {
-        return View::make( 'NexoPOS::index' );
+        return View::make( 'AviPOS::index' );
     }
 
     /**

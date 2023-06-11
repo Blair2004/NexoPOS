@@ -19,7 +19,7 @@ class SetupCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Install NexoPOS from the command line.';
+    protected $description = 'Install AviPOS from the command line.';
 
     private $ns_store_name;
 
@@ -97,7 +97,7 @@ class SetupCommand extends Command
                 'ns_store_name' => $this->ns_store_name,
             ]);
 
-            return $this->info( 'Thank you, NexoPOS 4.x has been successfully installed.' );
+            return $this->info( 'Thank you, AviPOS 4.x has been successfully installed.' );
         } else {
             return $this->info( 'The installation has been aborded.' );
         }

@@ -35,7 +35,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
         window.nsExtraComponents     =   new Object;
 
         /**
-         * describe a global NexoPOS object
+         * describe a global AviPOS object
          * @param {object} ns
          */
         window.ns =   { nsExtraComponents };
@@ -57,7 +57,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
          */
         window.ns.language     =   '{{ app()->getLocale() }}';
         window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
-            'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
+            'AviPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
         ]));?>
     </script>
     <script src="{{ asset( ns()->isProduction() ? 'js/lang-loader.min.js' : 'js/lang-loader.js' ) }}"></script>
