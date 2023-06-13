@@ -19,7 +19,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! $title ?? __( 'Unamed Page' ) !!}</title>
-    <?php 
+    <?php
         $output     =   new Output;
         Hook::action( "ns-dashboard-header", $output );
         echo ( string ) $output;
@@ -64,9 +64,6 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
          * the language that applies to the system by default.
          */
         window.ns.language      =   '{{ app()->getLocale() }}';
-        window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
-            'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
-        ]));?>
     </script>
     @vite([ 'resources/ts/lang-loader.ts' ])
 @include( 'common.header-socket' )

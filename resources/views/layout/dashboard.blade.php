@@ -19,7 +19,7 @@ if ( Auth::check() ) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) !!}</title>
-    <?php 
+    <?php
         $output     =   new Output;
         Hook::action( "ns-dashboard-header", $output );
         echo ( string ) $output;
@@ -69,9 +69,6 @@ if ( Auth::check() ) {
          * the language that applies to the system by default.
          */
         window.ns.language      =   '{{ app()->getLocale() }}';
-        window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
-            'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
-        ]));?>
 
         /**
          * We display only fillable values for the
@@ -106,7 +103,7 @@ if ( Auth::check() ) {
                                             @if ( isset( $menu[ 'permissions' ] ) && Gate::allows( $menu[ 'permissions' ], 'some' ) || ! isset( $menu[ 'permissions' ] ) )
                                         <ns-submenu :active="{{ ( isset( $menu[ 'active' ] ) ? ( $menu[ 'active' ] ? 'true' : 'false' ) : 'false' ) }}" href="{{ $menu[ 'href' ] }}" id="submenu-{{ $identifier }}">{{ $menu[ 'label' ] }}</ns-submenu>
                                             @endif
-                                        @endforeach        
+                                        @endforeach
                                     @endif
                                 </ns-menu>
                                 @endif

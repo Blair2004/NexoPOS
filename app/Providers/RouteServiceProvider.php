@@ -39,6 +39,9 @@ class RouteServiceProvider extends ServiceProvider
         }
 
         parent::boot();
+
+        // pattern taken from https://stackoverflow.com/a/48300605/4181989
+        Route::pattern('locale', '^[A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?$');
     }
 
     /**

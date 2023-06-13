@@ -17,7 +17,7 @@ class ExtractTranslation extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:translate {module?} {--extract} {--lang=en} {--symlink}';
+    protected $signature = 'ns:translate {module?} {--extract} {--lang=en}';
 
     /**
      * The console command description.
@@ -48,26 +48,7 @@ class ExtractTranslation extends Command
     {
         if ( $this->option( 'extract' ) ) {
             $this->extracting();
-        } elseif ( $this->option( 'symlink' ) ) {
-            $this->createSymlink();
         }
-    }
-
-    /**
-     * Create symbolic link
-     */
-    private function createSymLink()
-    {
-        if ( ! \windows_os() ) {
-            $link = @\symlink( base_path( 'lang' ), public_path( '/lang' ) );
-        } else {
-            $mode = 'J';
-            $link = public_path( 'lang' );
-            $target = base_path( 'lang' );
-            $link = exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
-        }
-
-        return $this->info( 'Language Symbolic Link has been created !' );
     }
 
     /**
@@ -156,7 +137,7 @@ class ExtractTranslation extends Command
         $finalArray = $this->extractLocalization( $files );
         $finalArray = $this->flushTranslation( $finalArray, $filePath );
 
-        Storage::disk( 'ns' )->put( 'lang/' . $lang . '.json', json_encode( $finalArray ) );
+        Storage::disk( 'ns' )->put( 'lang/' . $lang . '.json', json_encode( $finalArray, JSON_PRETTY_PRINT ) );
 
         $this->newLine();
         $this->info( 'Extraction complete for language : ' . config( 'nexopos.languages' )[ $lang ] );
@@ -203,9 +184,13 @@ class ExtractTranslation extends Command
     private function extractLocalization( $files )
     {
         $supportedExtensions = [ 'vue', 'php', 'ts', 'js' ];
+        $excludedDirectories = [ 'resources/views/generate' ];
 
-        $filtered = collect( $files )->filter( function( $file ) use ( $supportedExtensions ) {
+        $filtered = collect( $files )->filter( function( $file ) use ( $supportedExtensions, $excludedDirectories ) {
             $info = pathinfo( $file );
+            foreach ( $excludedDirectories as $excludedDir ) {
+                if (str_starts_with($info['dirname'], $excludedDir)) return false;
+            }
 
             return in_array( $info[ 'extension' ], $supportedExtensions );
         });
@@ -213,15 +198,16 @@ class ExtractTranslation extends Command
         $exportable = [];
 
         /**
-         * we'll extract all the string that can be translated
+         * we'll extract all the strings that can be translated
          * and save them within an array.
          */
         $this->withProgressBar( $filtered, function( $file ) use ( &$exportable ) {
             $fileContent = Storage::disk( 'ns' )->get( $file );
-            preg_match_all('/\_\_[m]?\(\s*[\'\"\`]([\w\s\+\"\\/\d\-é&\[\]\@*$#\.\?\%,;)\{\}]*)[\'\"\`]\s*(\,?\s*[\'\"\`]?(\w)*[\'\"\`]?\s*)?\)/', $fileContent, $output_array);
+            $contentWithoutCommentBlocks = preg_replace('/(\/\*.*?\*\/)/is',' ', $fileContent );
+            preg_match_all('/\_\_[m]?\(\s*([\'"`])(?<text>(?:\\\1|(?!\1|{{).)*)(\1)\s*(?:,\s*[\'"`]?(?<arg>\w*)[\'"`]?\s*)?\)/', $contentWithoutCommentBlocks, $output_array);
 
-            if ( isset( $output_array[1] ) ) {
-                foreach ( $output_array[1] as $string ) {
+            if ( isset( $output_array['text'] ) ) {
+                foreach ( $output_array['text'] as $string ) {
                     $exportable[ $string ] = compact( 'file', 'string' );
                 }
             }
