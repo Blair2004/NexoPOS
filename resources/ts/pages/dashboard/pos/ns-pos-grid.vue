@@ -176,7 +176,6 @@ export default {
         this.breadcrumbsSubsribe        =   POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
             this.breadcrumbs            =   breadcrumbs;
         });
-
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection         =   section;
         });
