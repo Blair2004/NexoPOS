@@ -125,7 +125,9 @@ class Setup
          * default tables are created. Those table are located at the
          * root of the database folder.
          */
-        Artisan::call( 'migrate' );
+        Artisan::call( 'migrate', [
+            '--force'   =>  true
+        ]);
 
         /**
          * NexoPOS uses Sanctum, we're making sure to publish the package.
