@@ -14,23 +14,25 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_transactions', function( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_transactions', 'type' ) ) {
-                $table->string( 'type' )->nullable();
-            }
-        });
-
-        Transaction::get()->each( function( $transaction ) {
-            if ( $transaction->recurring ) {
-                $transaction->type = Transaction::TYPE_RECURRING;
-            } elseif ( $transaction->group_id > 0 ) {
-                $transaction->type = Transaction::TYPE_ENTITY;
-            } else {
-                $transaction->type = Transaction::TYPE_DIRECT;
-            }
-
-            $transaction->save();
-        });
+        if ( Schema::hasTable( 'nexopos_transacations' ) ) {
+            Schema::table( 'nexopos_transactions', function( Blueprint $table ) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions', 'type' ) ) {
+                    $table->string( 'type' )->nullable();
+                }
+            });
+    
+            Transaction::get()->each( function( $transaction ) {
+                if ( $transaction->recurring ) {
+                    $transaction->type = Transaction::TYPE_RECURRING;
+                } elseif ( $transaction->group_id > 0 ) {
+                    $transaction->type = Transaction::TYPE_ENTITY;
+                } else {
+                    $transaction->type = Transaction::TYPE_DIRECT;
+                }
+    
+                $transaction->save();
+            });
+        }
     }
 
     /**

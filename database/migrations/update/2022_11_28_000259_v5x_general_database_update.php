@@ -85,7 +85,11 @@ return new class extends Migration
         $storeCashier   =   Role::namespace( Role::STORECASHIER );
         
         $admin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $admin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        
         $storeAdmin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        
         $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
             ( new ProfileWidget )->getPermission()
         ])->get()->map( fn( $permission ) => $permission->namespace ) );
@@ -97,7 +101,7 @@ return new class extends Migration
         $coreService->registerGatePermissions();
 
         /**
-         * We're introducing a driver role
+         * We're introducing a customer role.
          */
         include_once( base_path() . '/database/permissions/store-customer-role.php' );
 
