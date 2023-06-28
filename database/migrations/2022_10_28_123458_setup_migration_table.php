@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'migrations', function( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'migrations', 'type' ) ) {
-                $table->string( 'type' )->nullable();
-            }
-        });
+        if ( Schema::hasTable( 'migrations' ) ) {
+            Schema::table( 'migrations', function( Blueprint $table ) {
+                if ( ! Schema::hasColumn( 'migrations', 'type' ) ) {
+                    $table->string( 'type' )->default( 'core' );
+                }
+            });
+        }
     }
 
     /**
@@ -27,6 +29,12 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        if ( Schema::hasTable( 'migrations' ) ) {
+            Schema::table( 'migrations', function( Blueprint $table ) {
+                if ( Schema::hasColumn( 'migrations', 'type' ) ) {
+                    $table->dropColumn( 'type' );
+                }
+            });
+        }
     }
 };

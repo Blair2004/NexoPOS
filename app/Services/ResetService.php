@@ -6,6 +6,7 @@ use App\Classes\Hook;
 use App\Classes\Schema;
 use App\Events\AfterHardResetEvent;
 use App\Events\BeforeHardResetEvent;
+use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
@@ -97,6 +98,13 @@ class ResetService
     public function hardReset()
     {
         BeforeHardResetEvent::dispatch();
+
+        Migration::truncate();
+
+        Artisan::call( 'migrate:reset', [
+            '--path' => 'database/migrations/2022_10_28_123458_setup_migration_table.php',
+            '--force' => true,
+        ]);
 
         Artisan::call( 'migrate:reset', [
             '--path' => '/database/migrations/core',

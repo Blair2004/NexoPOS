@@ -126,7 +126,8 @@ class Setup
          * root of the database folder.
          */
         Artisan::call( 'migrate', [
-            '--force'   =>  true
+            '--force'   =>  true,
+            '--path'    =>  'database/migrations/2022_10_28_123458_setup_migration_table.php'
         ]);
 
         /**
