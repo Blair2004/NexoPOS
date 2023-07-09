@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
-use App\Models\AccountType;
+use App\Models\TransactionAccount;
 use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Services\OrdersService;
@@ -129,30 +129,30 @@ class ReportsController extends DashboardController
 
         $entries = $this->reportService->getFromTimeRange( $rangeStarts, $rangeEnds );
         $total = $entries->count() > 0 ? $entries->first()->toArray() : [];
-        $creditCashFlow = AccountType::where( 'operation', CashFlow::OPERATION_CREDIT )->with([
+        $creditCashFlow = TransactionAccount::where( 'operation', CashFlow::OPERATION_CREDIT )->with([
             'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
-        ->map( function( $accountType ) {
-            $accountType->total = $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
+        ->map( function( $transactionAccount ) {
+            $transactionAccount->total = $transactionAccount->cashFlowHistories->count() > 0 ? $transactionAccount->cashFlowHistories->sum( 'value' ) : 0;
 
-            return $accountType;
+            return $transactionAccount;
         });
 
-        $debitCashFlow = AccountType::where( 'operation', CashFlow::OPERATION_DEBIT )->with([
+        $debitCashFlow = TransactionAccount::where( 'operation', CashFlow::OPERATION_DEBIT )->with([
             'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
-        ->map( function( $accountType ) {
-            $accountType->total = $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
+        ->map( function( $transactionAccount ) {
+            $transactionAccount->total = $transactionAccount->cashFlowHistories->count() > 0 ? $transactionAccount->cashFlowHistories->sum( 'value' ) : 0;
 
-            return $accountType;
+            return $transactionAccount;
         });
 
         return [

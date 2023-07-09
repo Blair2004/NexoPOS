@@ -6,6 +6,7 @@ use App\Classes\Hook;
 use App\Classes\Schema;
 use App\Events\AfterHardResetEvent;
 use App\Events\BeforeHardResetEvent;
+use App\Models\Customer;
 use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -81,6 +82,12 @@ class ResetService
                 DB::table( Hook::filter( 'ns-table-name', $table ) )->truncate();
             }
         }
+
+        /**
+         * Customers stills needs to be cleared
+         * so we'll remove them manually.
+         */
+        Customer::get()->each( fn( $customer ) => app()->make( CustomerService::class )->delete( $customer ) );
 
         return [
             'status' => 'success',

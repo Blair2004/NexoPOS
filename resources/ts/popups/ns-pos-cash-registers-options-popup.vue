@@ -7,6 +7,7 @@ import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
 
 export default {
+    props: [ 'popup' ],
     mounted() {
         this.settingsSubscriber     =   POS.settings.subscribe( settings => {
             this.settings   =   settings;
@@ -28,9 +29,8 @@ export default {
     },
     methods: {
         __,
-        
+        nsCurrency,
         popupResolver,
-
         popupCloser,
 
         loadRegisterSummary() {

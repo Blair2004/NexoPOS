@@ -164,14 +164,14 @@ class CashFlowHistoryCrud extends CrudService
                     'fields' => [
                         [
                             'type' => 'text',
-                            'name' => 'expense_id',
-                            'label' => __( 'Expense ID' ),
-                            'value' => $entry->expense_id ?? '',
+                            'name' => 'transaction_id',
+                            'label' => __( 'Transaction ID' ),
+                            'value' => $entry->transaction_id ?? '',
                         ], [
                             'type' => 'text',
-                            'name' => 'expense_name',
-                            'label' => __( 'Expense Name' ),
-                            'value' => $entry->expense_name ?? '',
+                            'name' => 'transaction_name',
+                            'label' => __( 'Transaction Name' ),
+                            'value' => $entry->transaction_name ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'value',

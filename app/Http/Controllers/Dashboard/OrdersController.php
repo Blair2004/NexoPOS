@@ -39,6 +39,9 @@ class OrdersController extends DashboardController
         parent::__construct();
 
         $this->middleware( function( $request, $next ) {
+            /**
+             * @todo must be refactored
+             */
             $this->paymentTypes = PaymentType::orderBy( 'priority', 'asc' )
                 ->active()
                 ->get()
@@ -54,12 +57,12 @@ class OrdersController extends DashboardController
 
     public function create( Request $request )
     {
-        return $this->ordersService->create( $request->all() );
+        return $this->ordersService->create( $request->post() );
     }
 
     public function updateOrder( Order $id, Request $request )
     {
-        return $this->ordersService->create( $request->all(), $id );
+        return $this->ordersService->create( $request->post(), $id );
     }
 
     public function addProductToOrder( $order_id, Request $request )

@@ -104,18 +104,6 @@ class Role extends NsRootModel
     }
 
     /**
-     * @param string namespace
-     *
-     * @deprecated
-     *
-     * @return Role
-     */
-    public static function withNamespace( $name )
-    {
-        return self::where( 'namespace', $name );
-    }
-
-    /**
      * Filter group matching the array provided as an argument
      *
      * @param Query

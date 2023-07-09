@@ -37,8 +37,7 @@ class User extends Authenticatable
     protected $table = 'nexopos_users';
 
     protected $casts = [
-        'active' => 'boolean',
-        'banned' => 'boolean'
+        'active' => 'boolean'
     ];
 
     /**

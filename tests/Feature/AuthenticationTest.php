@@ -152,15 +152,18 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
+        $username   =   $this->faker->userName();
+        $email      =   $this->faker->email();
+
         $response = $this
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 '/auth/sign-up', [
-                    'username' => $this->faker->userName(),
+                    'username' => $username,
                     'password' => $password,
                     'password_confirm' => $password,
-                    'email' => $this->faker->email(),
+                    'email' => $email,
                 ]
             );
 
@@ -172,7 +175,15 @@ class AuthenticationTest extends TestCase
         ]) );
 
         /**
-         * Step 1: test with invalid password and email
+         * Step 1: we'll verify if the user
+         * attribute are created after his registration.
+         */
+        $user   =   User::where( 'email', $email )->first();
+
+        $this->assertTrue( $user->attribute()->count() > 0, 'The created user doesn\'t have any attribute.' );
+
+        /**
+         * Step 2: test with invalid password and email
          * valid informations
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );

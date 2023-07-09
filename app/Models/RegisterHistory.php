@@ -57,7 +57,16 @@ class RegisterHistory extends NsModel
         'created' => CashRegisterHistoryAfterCreatedEvent::class,
     ];
 
-    public function scopeRegister( $query, Register $register )
+    public function register()
+    {
+        return $this->hasOne(
+            related: Register::class,
+            foreignKey: 'id',
+            localKey: 'register_id'
+        );
+    }
+
+    public function scopeWithRegister( $query, Register $register )
     {
         return $query->where( 'register_id', $register->id );
     }

@@ -30,6 +30,7 @@ import FormValidation from '~/libraries/form-validation';
 import popupCloser from '~/libraries/popup-closer';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';
+import { nsCurrency } from "~/filters/currency";
 
 export default {
     components: {
@@ -67,6 +68,7 @@ export default {
     },
     methods: {
         popupCloser,
+        nsCurrency,
         __,
 
         definedValue( value ) {

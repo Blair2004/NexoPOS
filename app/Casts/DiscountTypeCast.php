@@ -2,7 +2,6 @@
 
 namespace App\Casts;
 
-use App\Models\Expense;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class DiscountTypeCast implements CastsAttributes

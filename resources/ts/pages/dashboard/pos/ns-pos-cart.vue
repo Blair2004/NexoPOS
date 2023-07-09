@@ -234,10 +234,6 @@
                     <template v-for="component of cartButtons">
                         <component :is="component" :order="order" :settings="settings"></component>
                     </template>
-                    <!-- <ns-pos-pay-button :order="order" :settings="settings"></ns-pos-pay-button>
-                    <ns-pos-hold-button :order="order" :settings="settings"></ns-pos-hold-button>
-                    <ns-pos-discount-button :order="order" :settings="settings"></ns-pos-discount-button>
-                    <ns-pos-void-button :order="order" :settings="settings"></ns-pos-void-button> -->
                 </div>
             </div>
         </div>
@@ -249,6 +245,7 @@ import { Popup } from '~/libraries/popup';
 import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
 import switchTo from "~/libraries/pos-section-switch";
+
 import { ProductQuantityPromise } from "./queues/products/product-quantity";
 import { ProductsQueue } from "./queues/order/products-queue";
 import { CustomerQueue } from "./queues/order/customer-queue";
@@ -273,6 +270,7 @@ import nsPosCouponsLoadPopupVue from '~/popups/ns-pos-coupons-load-popup.vue';
 import nsPosOrderSettingsVue from '~/popups/ns-pos-order-settings.vue';
 import nsPosProductPricePopupVue from '~/popups/ns-pos-product-price-popup.vue';
 import nsPosQuickProductPopupVue from '~/popups/ns-pos-quick-product-popup.vue';
+
 import { ref, markRaw } from '@vue/reactivity';
 
 export default {

@@ -63,10 +63,19 @@ return new class extends Migration
         }
 
         /**
+         * We're deleting here all permissions that are
+         * no longer used by the system.
+         */
+        Permission::where( 'namespace', 'like', '%.expense' )->each( function( Permission $permission ) {
+            $permission->removeFromRoles();
+        });
+
+        /**
          * let's include the files that will create permissions
          * for all the declared widgets.
          */
         include_once( base_path() . '/database/permissions/widgets.php' );
+        include_once( base_path() . '/database/permissions/transactions.php' );
 
         /**
          * We'll now defined default permissions
@@ -76,7 +85,11 @@ return new class extends Migration
         $storeCashier   =   Role::namespace( Role::STORECASHIER );
         
         $admin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $admin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        
         $storeAdmin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        
         $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
             ( new ProfileWidget )->getPermission()
         ])->get()->map( fn( $permission ) => $permission->namespace ) );
@@ -88,7 +101,7 @@ return new class extends Migration
         $coreService->registerGatePermissions();
 
         /**
-         * We're introducing a driver role
+         * We're introducing a customer role.
          */
         include_once( base_path() . '/database/permissions/store-customer-role.php' );
 
@@ -138,12 +151,6 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_users', 'group_id' ) ) {
                 $table->integer( 'group_id' )->nullable();
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'banned' ) ) {
-                $table->boolean( 'banned' )->default( false )->after( 'active' );
-            }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'banned_since' ) ) {
-                $table->datetime( 'banned_since' )->nullable()->after( 'banned' );
-            }
         });
 
         /**
@@ -188,8 +195,8 @@ return new class extends Migration
                 ->firstOrNew();
 
             $user->birth_date           =   $customer->birth_date;
-            $user->username             =   $customer->email ?? 'user-' . $faker->randomNumber(5);
-            $user->email                =   $customer->email ?? $user->username . '@nexopos.com';
+            $user->username             =   ( $customer->email ?? 'user-' ) . $faker->randomNumber(5);
+            $user->email                =   ( $customer->email ?? $user->username ) . '@nexopos.com';
             $user->purchases_amount     =   $customer->purchases_amount ?: 0;
             $user->owed_amount          =   $customer->owed_amount ?: 0;
             $user->credit_limit_amount  =   $customer->credit_limit_amount ?: 0;
@@ -201,6 +208,7 @@ return new class extends Migration
             $user->pobox                =   $customer->pobox ?: '';
             $user->group_id             =   $customer->group_id;
             $user->author               =   $firstAdministrator->id;
+            $user->active               =   true;
             $user->password             =   Hash::make( Str::random(10) ); // every customer has a random password. 
             $user->save();
 
@@ -226,6 +234,18 @@ return new class extends Migration
             }
             if ( Schema::hasColumn( 'nexopos_providers', 'surname' ) ) {
                 $table->renameColumn( 'surname', 'last_name' );
+            }
+        });
+
+        Schema::table( 'nexopos_cash_flow', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'order_refund_product_id' ) ) {
+                $table->integer( 'order_refund_product_id' );
+            }
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'order_product_id' ) ) {
+                $table->integer( 'order_product_id' );
+            }
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'expense_id' ) ) {
+                $table->renameColumn( 'expense_id', 'transaction_id' );
             }
         });
 

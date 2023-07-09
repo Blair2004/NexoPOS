@@ -28,8 +28,6 @@ return new class extends Migration
                 $table->increments('id');
                 $table->string( 'username' );
                 $table->boolean( 'active' )->default( false );
-                $table->boolean( 'banned' )->default( false );
-                $table->datetime( 'banned_since' )->nullable();
                 $table->integer( 'author' )->nullable(); // the first user is created by him self
                 $table->string( 'email' )->unique();
                 $table->string('password');

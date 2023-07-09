@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
+use App\Jobs\CreateCashFlowFromRegisterActionsJob;
 use App\Jobs\UpdateCashRegisterBalanceFromHistoryJob;
 
 class CashRegisterHistoryAfterCreatedEventListener
@@ -23,5 +24,6 @@ class CashRegisterHistoryAfterCreatedEventListener
     public function handle( CashRegisterHistoryAfterCreatedEvent $event): void
     {
         UpdateCashRegisterBalanceFromHistoryJob::dispatch( $event->registerHistory );
+        CreateCashFlowFromRegisterActionsJob::dispatch( $event->registerHistory );
     }
 }

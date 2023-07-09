@@ -18,7 +18,7 @@ Route::middleware([
         include dirname( __FILE__ ) . '/api/dashboard.php';
         include dirname( __FILE__ ) . '/api/categories.php';
         include dirname( __FILE__ ) . '/api/customers.php';
-        include dirname( __FILE__ ) . '/api/expenses.php';
+        include dirname( __FILE__ ) . '/api/transactions.php';
         include dirname( __FILE__ ) . '/api/modules.php';
         include dirname( __FILE__ ) . '/api/medias.php';
         include dirname( __FILE__ ) . '/api/notifications.php';

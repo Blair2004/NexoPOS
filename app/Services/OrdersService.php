@@ -213,7 +213,7 @@ class OrdersService
 
         return [
             'status' => 'success',
-            'message' => __( 'The order has been placed.' ),
+            'message' => $isNew ? __( 'The order has been placed.' ) : __( 'The order has been updated' ),
             'data' => compact( 'order' ),
         ];
     }
@@ -366,7 +366,7 @@ class OrdersService
         $order->total_coupons = 0;
 
         foreach ( $coupons as $arrayCoupon ) {  
-            $coupon     =   Coupon::find( $arrayCoupon[ 'id' ] );
+            $coupon     =   Coupon::find( $arrayCoupon[ 'coupon_id' ] );
              
             OrderCouponBeforeCreatedEvent::dispatch( $coupon, $order );
 

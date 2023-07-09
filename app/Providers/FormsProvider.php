@@ -18,12 +18,14 @@ use App\Fields\PosOrderSettingsFields;
 use App\Fields\ProcurementFields;
 use App\Fields\RecurringExpenseFields;
 use App\Fields\RefundProductFields;
+use App\Fields\ResetFields;
 use App\Fields\SalaryExpenseFields;
 use App\Fields\ScheduledExpenseField;
 use App\Fields\UnitsFields;
 use App\Fields\UnitsGroupsFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
+use App\Forms\ResetForm;
 use App\Forms\UserProfileForm;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -57,6 +59,9 @@ class FormsProvider extends ServiceProvider
                     break;
                 case 'ns.pos-addresses':
                     return new POSAddressesForm;
+                    break;
+                case 'ns.reset':
+                    return new ResetForm;
                     break;
             }
 
@@ -124,6 +129,9 @@ class FormsProvider extends ServiceProvider
                     break;
                 case UnitsGroupsFields::getIdentifier():
                     return new UnitsGroupsFields;
+                    break;
+                case ResetFields::getIdentifier():
+                    return new ResetFields;
                     break;
                 default:
                     return $class;

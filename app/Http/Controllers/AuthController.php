@@ -26,6 +26,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserRoleRelation;
 use App\Services\Options;
+use App\Services\UsersService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -38,6 +39,11 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+    public function __construct( private UsersService $userService )
+    {
+        
+    }
+
     public function signIn()
     {
         return view( Hook::filter( 'ns-views:pages.sign-in', 'pages.auth.sign-in' ), [
@@ -246,87 +252,18 @@ class AuthController extends Controller
     {
         Hook::action( 'ns-register-form', $request );
 
-        /**
-         * check user existence
-         */
-        $user = User::where( 'email', $request->input( 'email' ) )->first();
-        if ( $user instanceof User ) {
-            throw new NotAllowedException( __( 'Unable to register using this email.' ) );
-        }
-
-        /**
-         * check user existence
-         */
-        $user = User::where( 'username', $request->input( 'username' ) )->first();
-        if ( $user instanceof User ) {
-            throw new NotAllowedException( __( 'Unable to register using this username.' ) );
-        }
-
-        $defaultRole = Role::namespace( Role::USER )->firstOrFail();
-
-        $options = app()->make( Options::class );
-        $role = $options->get( 'ns_registration_role', $defaultRole->id );
-        $registration_validated = $options->get( 'ns_registration_validated', 'yes' );
-
-        if ( empty( $role ) ) {
-            throw new Exception( __( 'No role has been defined for registration. Please contact the administrators.' ) );
-        }
-
-        $user = new User;
-        $user->username = $request->input( 'username' );
-        $user->email = $request->input( 'email' );
-        $user->password = Hash::make( $request->input( 'password' ) );
-        $user->activation_token = Str::random(20);
-        $user->activation_expiration = now()->addMinutes(30);
-
-        if ( $registration_validated === 'no' ) {
-            $user->active = true;
-        }
-
-        $user->save();
-
-        /**
-         * We'll assign this user to the first relation
-         */
-        $relation = new UserRoleRelation;
-        $relation->user_id = $user->id;
-        $relation->role_id = $role;
-        $relation->save();
-
-        /**
-         * let's try to email the new user with
-         * the details regarding his new created account.
-         */
-        try {
-            /**
-             * if the account validation is required, we'll
-             * send an email to ask the user to validate his account.
-             * Otherwise, we'll notify him about his new account.
-             */
-            if ( $registration_validated === 'no' ) {
-                Mail::to( $user->email )
-                    ->queue( new WelcomeMail( $user ) );
-            } else {
-                Mail::to( $user->email )
-                    ->queue( new ActivateYourAccountMail( $user ) );
-            }
-
-            /**
-             * The administrator might be aware
-             * of the user having created their account.
-             */
-            Role::namespace( 'admin' )->users->each( function( $admin ) use ( $user ) {
-                Mail::to( $admin->email )
-                    ->queue( new UserRegisteredMail( $admin, $user ) );
-            });
-        } catch ( Exception $exception ) {
-            Log::error( $exception->getMessage() );
-        }
+        $validation_required    =   ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
+        
+        $this->userService->setUser( $request->only([
+            'username',
+            'email',
+            'password'
+        ]));
 
         if ( $request->expectsJson() ) {
             return [
                 'status' => 'success',
-                'message' => $registration_validated === 'no' ?
+                'message' => $validation_required ?
                     __( 'Your Account has been successfully created.' ) :
                     __( 'Your Account has been created but requires email validation.' ),
                 'data' => [
@@ -336,7 +273,7 @@ class AuthController extends Controller
         } else {
             return redirect()->route( 'ns.login', [
                 'status' => 'success',
-                'message' => $registration_validated === 'no' ?
+                'message' => ! $validation_required ?
                     __( 'Your Account has been successfully created.' ) :
                     __( 'Your Account has been created but requires email validation.' ),
             ]);

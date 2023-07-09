@@ -2,7 +2,7 @@
     <div class="flex flex-col ns-multiselect">
         <label :for="field.name" :class="hasError ? 'text-error-secondary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
-            <div @click="togglePanel()" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-input-option-hover p-2 items-center">
+            <div @click="togglePanel()" :class="showPanel ? '' : ''" style="max-height: 150px;" class="overflow-y-auto flex select-preview justify-between rounded border-2 border-input-option-hover p-2 items-start">
                 <div class="flex -mx-1 -my-1 flex-wrap">
                     <div :key="index" class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded bg-info-secondary text-white flex justify-between p-1 items-center">
@@ -13,9 +13,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="arrows">
-                    <i class="las la-angle-down" v-if="showPanel"></i>
-                    <i class="las la-angle-up" v-if="!showPanel"></i>
+                <div class="arrows ml-1">
+                    <i class="las la-angle-down" :class=" showPanel ? 'hidden' : ''"></i>
+                    <i class="las la-angle-up" :class=" !showPanel ? 'hidden' : ''"></i>
                 </div>
             </div>
             <div class="h-0 z-10" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
@@ -24,7 +24,7 @@
                         <input v-model="search" class="p-2 w-full bg-transparent text-primary outline-none" placeholder="Search">
                     </div>
                     <div class="h-40 overflow-y-auto">
-                        <div @click="addOption( option )" :key="index" v-for="(option, index) of _options" :class="option.selected ? 'bg-info-secondary text-white' : 'text-primary'" class="option p-2 flex justify-between cursor-pointer hover:bg-info-secondary hover:text-white">
+                        <div @click="addOption( option )" :key="index" v-for="(option, index) of _filtredOptions" :class="option.selected ? 'bg-info-secondary text-white' : 'text-primary'" class="option p-2 flex justify-between cursor-pointer hover:bg-info-secondary hover:text-white">
                             <span>{{ option.label }}</span>
                             <span>
                                 <i v-if="option.checked" class="las la-check"></i>
@@ -65,6 +65,17 @@ export default {
             }
             return false;
         },
+        _filtredOptions() {
+            let options     =   this._options;
+
+            if ( this.search.length > 0 ) {
+                options     =   this._options.filter( options => {
+                    return options.label.toLowerCase().search( this.search.toLowerCase() ) !== -1;
+                });
+            }
+            
+            return options.filter( option => option.selected === false );
+        },
         _options() {
             return this.field.options.map( option => {
                 option.selected     =   option.selected === undefined ? false : option.selected;
@@ -84,8 +95,9 @@ export default {
             if ( ! this.field.disabled ) {
                 this.$emit( 'addOption', option );
                 this.$forceUpdate();
+
                 setTimeout( () => {
-                    // this.search     =   '';
+                    this.search     =   '';
                 }, 100 );
             }
         },
@@ -115,20 +127,26 @@ export default {
         }
 
         this.eventListener  =   document.addEventListener( 'click', (e) => {
+            /**
+             * applicable only if the panel is toggled
+             */
             const element = e.target;
             let ancestor = element.parentElement;
             let isSelect    =   false;
-            
-            while (ancestor) {
-                if ( ancestor && ancestor.classList.contains('ns-multiselect') && ! ancestor.classList.contains('arrows')  ) {
-                    isSelect    =   true;
-                    break;
-                }
-                ancestor = ancestor.parentElement;
-            }
 
-            if (!isSelect) {
-                this.togglePanel();
+            if ( this.showPanel ) {
+                
+                while (ancestor) {
+                    if ( ancestor && ancestor.classList.contains('ns-multiselect') && ! ancestor.classList.contains('arrows')  ) {
+                        isSelect    =   true;
+                        break;
+                    }
+                    ancestor = ancestor.parentElement;
+                }
+
+                if ( isSelect === false ) {
+                    this.togglePanel();
+                }
             }
         })
     },

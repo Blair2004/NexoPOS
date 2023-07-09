@@ -2,10 +2,10 @@
     <div id="report-section" class="px-4">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :date="startDate" @onSet="setStartDate( $event )"></ns-date-time-picker>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :date="endDate" @onSet="setEndDate( $event )"></ns-date-time-picker>
             </div>
             <div class="px-2">
                 <div class="ns-button">
@@ -101,8 +101,8 @@ export default {
     },
     data() {
         return {
-            startDate: moment(),
-            endDate: moment(),
+            startDate: moment().format( 'YYYY-MM-DD HH:mm:ss' ),
+            endDate: moment().format( 'YYYY-MM-DD HH:mm:ss' ),
             report: new Object,
             ns: window.ns
         }
@@ -124,11 +124,11 @@ export default {
         printSaleReport() {
             this.$htmlToPaper( 'report' );
         },
-        setStartDate( moment ) {
-            this.startDate  =   moment.format( 'YYYY/MM/DD HH:mm' );
+        setStartDate( date ) {
+            this.startDate  =   date;
         },
-        setEndDate( moment ) {
-            this.endDate    =   moment.format( 'YYYY/MM/DD HH:mm' );
+        setEndDate( date ) {
+            this.endDate    =   date;
         },
         loadReport() {
             const startDate     =   this.startDate;

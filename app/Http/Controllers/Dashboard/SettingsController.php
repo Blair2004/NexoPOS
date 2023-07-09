@@ -49,7 +49,7 @@ class SettingsController extends DashboardController
                 break;
             case 'invoice-settings': return $this->invoiceSettings();
                 break;
-            case 'expenses-settings': return $this->expenseSettings();
+            case 'transactions-settings': return $this->transactionSettings();
                 break;
             case 'reset': return $this->resetSettings();
                 break;
@@ -142,11 +142,11 @@ class SettingsController extends DashboardController
         ]);
     }
 
-    public function expenseSettings()
+    public function transactionSettings()
     {
-        return $this->view( 'pages.dashboard.settings.expenses', [
-            'title' => __( 'Expenses Settings' ),
-            'description' => __( 'Configure the expenses settings of the application.' ),
+        return $this->view( 'pages.dashboard.settings.transactions', [
+            'title' => __( 'Transactions Settings' ),
+            'description' => __( 'Configure the transactions settings of the application.' ),
         ]);
     }
 
