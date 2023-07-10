@@ -7,6 +7,7 @@ use App\Models\Migration;
 use App\Models\PaymentType;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -119,6 +120,15 @@ class Setup
      */
     public function runMigration( $fields )
     {
+
+        /**
+         * We assume so far the application is installed
+         * then we can launch option service
+         */
+        $configuredLanguage     =   $fields[ 'language' ] ?? 'en';
+
+        App::setLocale( $configuredLanguage );
+        
         /**
          * We're running this simple migration call to ensure
          * default tables are created. Those table are located at the 
@@ -145,6 +155,10 @@ class Setup
         ns()->envEditor->set( 'NS_SOCKET_DOMAIN', $domain[ 'basename' ] );
         ns()->envEditor->set( 'NS_SOCKET_ENABLED', 'false' );
         ns()->envEditor->set( 'NS_ENV', 'production' );
+
+        $this->options = app()->make( Options::class );
+        $this->options->setDefault();
+        $this->options->set( 'ns_store_language', $configuredLanguage );        
         
         /**
          * we'll register all "update" migration
@@ -194,19 +208,12 @@ class Setup
          * define default user language
          */
         $user->attribute()->create([
-            'language' => 'en',
+            'language' => $fields[ 'language' ] ?? 'en',
         ]);
 
         UserAfterActivationSuccessfulEvent::dispatch( $user );
                 
         $this->createDefaultPayment( $user );
-
-        /**
-         * We assume so far the application is installed
-         * then we can launch option service
-         */
-        $this->options = app()->make( Options::class );
-        $this->options->setDefault();
 
         return [
             'status' => 'success',

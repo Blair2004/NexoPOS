@@ -19,14 +19,14 @@
             </div>
         </div>
         <div class="bg-gray-200 p-3 flex justify-end">
-            <ns-button @click="validate()" type="info">Save Database</ns-button>
+            <ns-button @click="validate()" type="info">{{ __( 'Save Settings' ) }}</ns-button>
         </div>
     </div>
 </template>
 
 <script>
 import FormValidation from '~/libraries/form-validation';
-import { nsRouter } from '~/setup';
+import { __ } from '~/libraries/lang';
 
 export default {
     data: () => ({
@@ -34,6 +34,7 @@ export default {
         firstPartFields: [],
         secondPartFields: [],
         fields: [],
+        __,
     }),
     methods: {
         validate() {
@@ -81,8 +82,8 @@ export default {
     mounted() {
         const fields     =   this.form.createFields([
             {
-                label: 'Driver',
-                description: 'Set the database driver',
+                label: __( 'Driver' ),
+                description: __( 'Set the database driver'),
                 name: 'database_driver',
                 value : 'mysql',
                 type: 'select',
@@ -98,34 +99,34 @@ export default {
                 }],
                 validation: 'required',
             }, {
-                label: 'Hostname',
-                description: 'Provide the database hostname',
+                label: __( 'Hostname' ),
+                description: __( 'Provide the database hostname' ),
                 name: 'hostname',
                 value : 'localhost',
             }, {
-                label: 'Username',
-                description: 'Username required to connect to the database.',
+                label: __( 'Username' ),
+                description: __( 'Username required to connect to the database.' ),
                 name: 'username',
                 value : 'root',
             }, {
-                label: 'Password',
-                description: 'The username password required to connect.',
+                label: __( 'Password' ),
+                description: __( 'The username password required to connect.' ),
                 name: 'password',
                 value : '',
             }, {
-                label: 'Database Name',
-                description: 'Provide the database name. Leave empty to use default file for SQLite Driver.',
+                label: __( 'Database Name' ),
+                description: __( 'Provide the database name. Leave empty to use default file for SQLite Driver.' ),
                 name: 'database_name',
                 value : 'nexopos_v4',
             }, {
-                label: 'Database Prefix',
-                description: 'Provide the database prefix.',
+                label: __( 'Database Prefix' ),
+                description: __( 'Provide the database prefix.' ),
                 name: 'database_prefix',
                 value : 'ns_',
                 validation: 'required',
             }, {
-                label: 'Port',
-                description: 'Provide the hostname port.',
+                label: __( 'Port' ),
+                description: __( 'Provide the hostname port.' ),
                 name: 'database_port',
                 value : '3306',
                 validation: 'required',
