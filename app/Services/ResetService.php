@@ -104,20 +104,14 @@ class ResetService
     {
         BeforeHardResetEvent::dispatch();
 
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/core',
-            '--force' => true,
-        ]);
+        $tables = DB::select('SHOW TABLES');
 
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/create',
-            '--force' => true,
-        ]);
-
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/update',
-            '--force' => true,
-        ]);
+        foreach( $tables as $table ) {
+            $table_name = array_values( ( array ) $table )[0];
+            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+            DB::statement("DROP TABLE `$table_name`");
+            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        }
 
         ns()->envEditor->delete( 'NS_VERSION' );
         ns()->envEditor->delete( 'NS_AUTHORIZATION' );
