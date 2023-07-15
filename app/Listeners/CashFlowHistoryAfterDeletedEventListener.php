@@ -25,6 +25,6 @@ class CashFlowHistoryAfterDeletedEventListener
      */
     public function handle(CashFlowHistoryAfterDeletedEvent $event)
     {
-        RefreshReportJob::dispatch( $event->cashFlow->created_at );
+        RefreshReportJob::dispatch( $event->transaction->created_at );
     }
 }

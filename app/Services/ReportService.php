@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Classes\Currency;
 use App\Classes\Hook;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\DashboardDay;
@@ -230,7 +230,7 @@ class ReportService
      */
     public function clearUnassignedCashFlow( $startAt, $endsAt )
     {
-        $cashFlows = CashFlow::where( 'created_at', '>=', $startAt )
+        $cashFlows = TransactionHistory::where( 'created_at', '>=', $startAt )
             ->where( 'created_at', '<=', $endsAt )
             ->get();
 
@@ -238,7 +238,7 @@ class ReportService
             /**
              * let's clear unassigned to orders
              */
-            if ( $cashFlow->operation === CashFlow::OPERATION_CREDIT && ! empty( $cashFlow->order_id ) ) {
+            if ( $cashFlow->operation === TransactionHistory::OPERATION_CREDIT && ! empty( $cashFlow->order_id ) ) {
                 $order = Order::find( $cashFlow->order_id );
 
                 if ( ! $order instanceof Order ) {
@@ -249,7 +249,7 @@ class ReportService
             /**
              * let's clear unassigned to procurements
              */
-            if ( $cashFlow->operation === CashFlow::OPERATION_DEBIT && ! empty( $cashFlow->procurement_id ) ) {
+            if ( $cashFlow->operation === TransactionHistory::OPERATION_DEBIT && ! empty( $cashFlow->procurement_id ) ) {
                 $order = Procurement::find( $cashFlow->procurement_id );
 
                 if ( ! $order instanceof Procurement ) {
@@ -301,7 +301,7 @@ class ReportService
      */
     public function deleteOrderCashFlow( Order $order )
     {
-        CashFlow::where( 'order_id', $order->id )->delete();
+        TransactionHistory::where( 'order_id', $order->id )->delete();
     }
 
     /**
@@ -313,19 +313,19 @@ class ReportService
      */
     public function deleteProcurementCashFlow( Procurement $procurement )
     {
-        CashFlow::where( 'procurement_id', $procurement->id )->delete();
+        TransactionHistory::where( 'procurement_id', $procurement->id )->delete();
     }
 
     public function computeIncome( $previousReport, $todayReport )
     {
-        $totalIncome = CashFlow::from( $this->dayStarts )
+        $totalIncome = TransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( CashFlow::OPERATION_CREDIT )
+            ->operation( TransactionHistory::OPERATION_CREDIT )
             ->sum( 'value' );
 
-        $totalExpenses = CashFlow::from( $this->dayStarts )
+        $totalExpenses = TransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( CashFlow::OPERATION_DEBIT )
+            ->operation( TransactionHistory::OPERATION_DEBIT )
             ->sum( 'value' );
 
         $todayReport->day_expenses = $totalExpenses;
@@ -450,12 +450,12 @@ class ReportService
     /**
      * @deprecated
      */
-    public function increaseDailyExpenses( CashFlow $cashFlow, $today = null )
+    public function increaseDailyExpenses( TransactionHistory $cashFlow, $today = null )
     {
         $today = $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
-            if ( $cashFlow->operation === CashFlow::OPERATION_DEBIT ) {
+            if ( $cashFlow->operation === TransactionHistory::OPERATION_DEBIT ) {
                 $yesterday = DashboardDay::forLastRecentDay( $today );
                 $today->day_expenses += $cashFlow->getRawOriginal( 'value' );
                 $today->total_expenses = ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
@@ -479,12 +479,12 @@ class ReportService
     /**
      * @deprecated
      */
-    public function reduceDailyExpenses( CashFlow $cashFlow, $today = null )
+    public function reduceDailyExpenses( TransactionHistory $cashFlow, $today = null )
     {
         $today = $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
-            if ( $cashFlow->operation === CashFlow::OPERATION_CREDIT ) {
+            if ( $cashFlow->operation === TransactionHistory::OPERATION_CREDIT ) {
                 $yesterday = DashboardDay::forLastRecentDay( $today );
                 $today->day_income -= $cashFlow->getRawOriginal( 'value' );
                 $today->total_income = ( $yesterday->total_income ?? 0 ) + $today->day_income;
@@ -1107,7 +1107,7 @@ class ReportService
 
     public function recomputeCashFlow( $fromDate, $toDate )
     {
-        CashFlow::truncate();
+        TransactionHistory::truncate();
         DashboardDay::truncate();
         DashboardMonth::truncate();
 

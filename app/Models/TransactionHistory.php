@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property integer $id
- * @property integer $expense_id
+ * @property integer $transaction_id
  * @property mixed $operation
  * @property integer $expense_category_id
  * @property integer $procurement_id
@@ -24,11 +24,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
 */
-class CashFlow extends NsModel
+class TransactionHistory extends NsModel
 {
     use HasFactory;
 
-    protected $table = 'nexopos_' . 'cash_flow';
+    protected $table = 'nexopos_' . 'transactions_histories';
 
     const STATUS_ACTIVE = 'active';
 
@@ -84,9 +84,9 @@ class CashFlow extends NsModel
         'deleted' => CashFlowHistoryAfterDeletedEvent::class,
     ];
 
-    public function expense()
+    public function transaction()
     {
-        return $this->belongsTo( Expense::class, 'expense_id' );
+        return $this->belongsTo( Transaction::class, 'transaction_id' );
     }
 
     public function scopeFrom( $query, $date )

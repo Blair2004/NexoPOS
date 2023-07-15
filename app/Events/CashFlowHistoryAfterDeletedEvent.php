@@ -15,7 +15,7 @@ class CashFlowHistoryAfterDeletedEvent
      * @return void
      */
     public function __construct(
-        public $cashFlow
+        public $transaction
     ) {
         // ...
     }

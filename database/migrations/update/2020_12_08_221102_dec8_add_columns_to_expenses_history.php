@@ -1,7 +1,7 @@
 <?php
 
 use App\Classes\Schema;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -17,7 +17,7 @@ return new class extends Migration
         if ( Schema::hasTable( 'nexopos_expenses_history' ) ) {
             Schema::table('nexopos_expenses_history', function (Blueprint $table) {
                 if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'status' ) ) {
-                    $table->string( 'status' )->default( CashFlow::STATUS_ACTIVE );
+                    $table->string( 'status' )->default( TransactionHistory::STATUS_ACTIVE );
                 }
             });
         }

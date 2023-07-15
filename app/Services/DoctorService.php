@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Console\Commands\DoctorCommand;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerShippingAddress;
@@ -147,8 +147,8 @@ class DoctorService
          */
         $transactionService     =   app()->make( TransactionService::class );
 
-        CashFlow::where( 'order_id', '>', 0 )->delete();
-        CashFlow::where( 'order_refund_id', '>', 0 )->delete();
+        TransactionHistory::where( 'order_id', '>', 0 )->delete();
+        TransactionHistory::where( 'order_refund_id', '>', 0 )->delete();
 
         /**
          * Step 1: Recompute from order sales

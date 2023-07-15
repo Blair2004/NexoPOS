@@ -4,8 +4,7 @@ namespace Tests\Traits;
 
 use App\Classes\Currency;
 use App\Exceptions\NotAllowedException;
-use App\Models\AccountType;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
@@ -23,6 +22,7 @@ use App\Models\Register;
 use App\Models\RegisterHistory;
 use App\Models\RewardSystem;
 use App\Models\TaxGroup;
+use App\Models\TransactionAccount;
 use App\Models\Unit;
 use App\Models\User;
 use App\Services\CashRegistersService;
@@ -206,14 +206,14 @@ trait WithOrderTest
         $result     =   $this->disburseCashFromRegister( $cashRegister, $cashRegisterService );
 
         /**
-         * @var CashFlow
+         * @var TransactionHistory
          */
-        $cashFlow   =   CashFlow::where( 'register_history_id', $result[ 'data' ][ 'history' ]->id )
-            ->where( 'operation', CashFlow::OPERATION_DEBIT )
+        $transactionHistory   =   TransactionHistory::where( 'register_history_id', $result[ 'data' ][ 'history' ]->id )
+            ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
             ->first();
 
-        $this->assertTrue( $cashFlow instanceof CashFlow, __( 'No cash flow was created for cash disbursement.' ) );
-        $this->assertTrue( $cashFlow->value == $result[ 'data' ][ 'history' ]->value, __( 'The register history value doesn\'t match the cash flow value.' ) );
+        $this->assertTrue( $transactionHistory instanceof TransactionHistory, __( 'No cash flow was created for cash disbursement.' ) );
+        $this->assertTrue( $transactionHistory->value == $result[ 'data' ][ 'history' ]->value, __( 'The register history value doesn\'t match the cash flow value.' ) );
 
         /**
          * between each operation
@@ -235,14 +235,14 @@ trait WithOrderTest
         $result     =   $this->cashInOnRegister( $cashRegister, $cashRegisterService );
 
         /**
-         * @var CashFlow
+         * @var TransactionHistory
          */
-        $cashFlow   =   CashFlow::where( 'register_history_id', $result[ 'data' ][ 'history' ]->id )
-            ->where( 'operation', CashFlow::OPERATION_CREDIT )
+        $transactionHistory   =   TransactionHistory::where( 'register_history_id', $result[ 'data' ][ 'history' ]->id )
+            ->where( 'operation', TransactionHistory::OPERATION_CREDIT )
             ->first();
 
-        $this->assertTrue( $cashFlow instanceof CashFlow, __( 'No cash flow was created for cash in.' ) );
-        $this->assertTrue( $cashFlow->value == $result[ 'data' ][ 'history' ]->value, __( 'The register history value doesn\'t match the cash flow value.' ) );
+        $this->assertTrue( $transactionHistory instanceof TransactionHistory, __( 'No cash flow was created for cash in.' ) );
+        $this->assertTrue( $transactionHistory->value == $result[ 'data' ][ 'history' ]->value, __( 'The register history value doesn\'t match the cash flow value.' ) );
 
         /**
          * We neet to refresh the register
@@ -973,11 +973,11 @@ trait WithOrderTest
 
         $this->assertTrue( (float) $history->amount === (float) $subtotal + $shippingFees, 'The customer account history transaction is not valid.' );
 
-        $cashFlow = CashFlow::where( 'customer_account_history_id', $history->id )
-            ->operation( CashFlow::OPERATION_DEBIT )
+        $transactionHistory = TransactionHistory::where( 'customer_account_history_id', $history->id )
+            ->operation( TransactionHistory::OPERATION_DEBIT )
             ->first();
 
-        $this->assertTrue( $cashFlow instanceof CashFlow, 'No cash flow were found after the customer account payment.' );
+        $this->assertTrue( $transactionHistory instanceof TransactionHistory, 'No cash flow were found after the customer account payment.' );
     }
 
     protected function attemptCreateCustomPaymentType()
@@ -1331,8 +1331,8 @@ trait WithOrderTest
                  */
                 if ( $responseData[ 'data' ][ 'order' ][ 'payment_status' ] !== 'unpaid' ) {
                     $this->assertTrue(
-                        CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )->first()
-                        instanceof CashFlow,
+                        TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )->first()
+                        instanceof TransactionHistory,
                         __( 'No cash flow were created for this order.' )
                     );
                 }
@@ -1384,8 +1384,8 @@ trait WithOrderTest
                      * A single cash flow should be
                      * created for that order for the sale account
                      */
-                    $totalCashFlow = CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-                        ->where( 'operation', CashFlow::OPERATION_CREDIT )
+                    $totalCashFlow = TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                        ->where( 'operation', TransactionHistory::OPERATION_CREDIT )
                         ->where( 'expense_category_id', ns()->option->get( 'ns_sales_cashflow_account' ) )
                         ->count();
     
@@ -1395,8 +1395,8 @@ trait WithOrderTest
                      * all refund transaction give a stock flow record.
                      * We need to check if it has been created.
                      */
-                    $totalRefundedCashFlow = CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-                        ->where( 'operation', CashFlow::OPERATION_DEBIT )
+                    $totalRefundedCashFlow = TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                        ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
                         ->where( 'expense_category_id', ns()->option->get( 'ns_sales_refunds_account' ) )
                         ->count();
     
@@ -1408,8 +1408,8 @@ trait WithOrderTest
                      * the waste expense has been created.
                      */
                     if ( $productCondition === OrderProductRefund::CONDITION_DAMAGED ) {
-                        $totalSpoiledCashFlow = CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-                            ->where( 'operation', CashFlow::OPERATION_DEBIT )
+                        $totalSpoiledCashFlow = TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                            ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
                             ->where( 'expense_category_id', ns()->option->get( 'ns_stock_return_spoiled_account' ) )
                             ->count();
     
@@ -1859,7 +1859,7 @@ trait WithOrderTest
         /**
          * let's check if the order has a cash flow entry
          */
-        $this->assertTrue( CashFlow::where( 'order_id', $order->id )->first() instanceof CashFlow, 'No cash flow created for the order.' );
+        $this->assertTrue( TransactionHistory::where( 'order_id', $order->id )->first() instanceof TransactionHistory, 'No cash flow created for the order.' );
 
         if ( $order instanceof Order ) {
             $order_id = $order->id;
@@ -1890,7 +1890,7 @@ trait WithOrderTest
             /**
              * let's check if flow entry has been removed
              */
-            $this->assertTrue( ! CashFlow::where( 'order_id', $order->id )->first() instanceof CashFlow, 'The cash flow hasn\'t been deleted.' );
+            $this->assertTrue( ! TransactionHistory::where( 'order_id', $order->id )->first() instanceof TransactionHistory, 'The cash flow hasn\'t been deleted.' );
 
             $products->each( function( OrderProduct $orderProduct ) use ( $productService ) {
                 $originalProduct = $orderProduct->product;
@@ -2244,9 +2244,9 @@ trait WithOrderTest
          * for the products linked to the order.
          */
         collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->each( function( $product ) {
-            $cashFlow   =   CashFlow::where( 'order_id', $product[ 'order_id' ] )
+            $cashFlow   =   TransactionHistory::where( 'order_id', $product[ 'order_id' ] )
                 ->where( 'order_product_id', $product[ 'id' ] )
-                ->where( 'operation', CashFlow::OPERATION_DEBIT )
+                ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
                 ->first();
         });
 
@@ -2277,9 +2277,9 @@ trait WithOrderTest
          * let's check if an expense has been created accordingly
          */
         // ns_sales_refunds_cashflow_account
-        $expenseCategory = AccountType::find( ns()->option->get( 'ns_sales_refunds_account' ) );
+        $expenseCategory = TransactionAccount::find( ns()->option->get( 'ns_sales_refunds_account' ) );
 
-        if ( ! $expenseCategory instanceof AccountType ) {
+        if ( ! $expenseCategory instanceof TransactionAccount ) {
             throw new Exception( __( 'An expense hasn\'t been created after the refund.' ) );
         }
 

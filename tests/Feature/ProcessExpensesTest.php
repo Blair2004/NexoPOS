@@ -6,7 +6,7 @@ use App\Fields\ReccurringTransactionFields;
 use App\Fields\ScheduledTransactionFields;
 use App\Jobs\DetectScheduledTransactionsJob;
 use App\Models\TransactionAccount;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Models\Transaction;
 use App\Services\DateService;
 use Carbon\Carbon;
@@ -66,9 +66,9 @@ class ProcessExpensesTest extends TestCase
 
         DetectScheduledTransactionsJob::dispatchSync();
 
-        $cashFlow = CashFlow::where( 'transaction_id', $expense->id )->first();
+        $cashFlow = TransactionHistory::where( 'transaction_id', $expense->id )->first();
 
-        $this->assertTrue( $cashFlow instanceof CashFlow, 'No cash flow record were saved after the scheduled expense.' );
+        $this->assertTrue( $cashFlow instanceof TransactionHistory, 'No cash flow record were saved after the scheduled expense.' );
     }
 
     /**

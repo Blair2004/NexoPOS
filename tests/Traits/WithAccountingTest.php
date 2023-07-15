@@ -3,8 +3,8 @@
 namespace Tests\Traits;
 
 use App\Classes\Currency;
-use App\Models\AccountType;
-use App\Models\CashFlow;
+use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
 use App\Models\DashboardDay;
 use App\Models\Procurement;
 use App\Services\ReportService;
@@ -19,51 +19,51 @@ trait WithAccountingTest
             [
                 'name' => __( 'Stock Procurement' ),
                 'account' => '000001',
-                'operation' => CashFlow::OPERATION_DEBIT,
+                'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
                 'name' => __( 'Sales' ),
                 'account' => '000002',
-                'operation' => CashFlow::OPERATION_CREDIT,
+                'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Customer Credit (cash-in)' ),
                 'account' => '000003',
-                'operation' => CashFlow::OPERATION_CREDIT,
+                'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Customer Credit (cash-out)' ),
                 'account' => '000004',
-                'operation' => CashFlow::OPERATION_DEBIT,
+                'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
                 'name' => __( 'Sale Refunds' ),
                 'account' => '000005',
-                'operation' => CashFlow::OPERATION_DEBIT,
+                'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
                 'name' => __( 'Stock Return (spoiled items)' ),
                 'account' => '000006',
-                'operation' => CashFlow::OPERATION_DEBIT,
+                'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
                 'name' => __( 'Stock Return (unspoiled items)' ),
                 'account' => '000007',
-                'operation' => CashFlow::OPERATION_CREDIT,
+                'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Cash Register (cash-in)' ),
                 'account' => '000008',
-                'operation' => CashFlow::OPERATION_CREDIT,
+                'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Cash Register (cash-out)' ),
                 'account' => '000009',
-                'operation' => CashFlow::OPERATION_DEBIT,
+                'operation' => TransactionHistory::OPERATION_DEBIT,
             ],
         ];
 
         foreach ( $accounts as $account ) {
-            $AccountType = AccountType::where( 'account', $account[ 'account' ] )
+            $transactionAccount = TransactionAccount::where( 'account', $account[ 'account' ] )
                 ->first();
 
             /**
              * in case the test is executed twice, we don't want to repeatedly
              * record the same account on the database.
              */
-            if ( ! $AccountType instanceof AccountType ) {
+            if ( ! $transactionAccount instanceof TransactionAccount ) {
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
                     ->json( 'POST', 'api/crud/ns.accounting-accounts', [
                         'name' => $account[ 'name' ],
@@ -78,13 +78,13 @@ trait WithAccountingTest
             }
         }
 
-        ns()->option->set( 'ns_procurement_cashflow_account', AccountType::where( 'account', '000001' )->first()->id );
-        ns()->option->set( 'ns_sales_cashflow_account', AccountType::where( 'account', '000002' )->first()->id );
-        ns()->option->set( 'ns_customer_crediting_cashflow_account', AccountType::where( 'account', '000003' )->first()->id );
-        ns()->option->set( 'ns_customer_debitting_cashflow_account', AccountType::where( 'account', '000004' )->first()->id );
-        ns()->option->set( 'ns_sales_refunds_account', AccountType::where( 'account', '000005' )->first()->id );
-        ns()->option->set( 'ns_stock_return_spoiled_account', AccountType::where( 'account', '000006' )->first()->id );
-        ns()->option->set( 'ns_stock_return_unspoiled_account', AccountType::where( 'account', '000007' )->first()->id );
+        ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::where( 'account', '000001' )->first()->id );
+        ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::where( 'account', '000002' )->first()->id );
+        ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::where( 'account', '000003' )->first()->id );
+        ns()->option->set( 'ns_customer_debitting_cashflow_account', TransactionAccount::where( 'account', '000004' )->first()->id );
+        ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::where( 'account', '000005' )->first()->id );
+        ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::where( 'account', '000006' )->first()->id );
+        ns()->option->set( 'ns_stock_return_unspoiled_account', TransactionAccount::where( 'account', '000007' )->first()->id );
     }
 
     protected function attemptCheckProcurementRecord( $procurement_id )
@@ -95,16 +95,16 @@ trait WithAccountingTest
         $procurement    =   Procurement::find( $procurement_id );
 
         /**
-         * @var CashFlow
+         * @var TransactionHistory
          */
-        $cashFlow       =   CashFlow::where( 'procurement', $procurement_id )->first();
+        $transactionHistory       =   TransactionHistory::where( 'procurement', $procurement_id )->first();
 
         $assignedCategoryID     =   ns()->option->get( 'ns_procurement_cashflow_account' );
 
         $this->assertTrue( $procurement instanceof Procurement, __( 'Unable to retreive the procurement using the id provided.' ) );
-        $this->assertTrue( $cashFlow instanceof CashFlow, __( 'Unable to retreive the cashflow using the provided procurement id' ) );
-        $this->assertTrue( $cashFlow->expense_category_id == $assignedCategoryID, __( 'The assigned category doens\'t match what was set for procurement cash flow.' ) );
-        $this->assertEquals( $procurement->cost, $cashFlow->value, __( 'The cash flow records doesn\'t match the procurement cost.' ) );
+        $this->assertTrue( $transactionHistory instanceof TransactionHistory, __( 'Unable to retreive the cashflow using the provided procurement id' ) );
+        $this->assertTrue( $transactionHistory->expense_category_id == $assignedCategoryID, __( 'The assigned category doens\'t match what was set for procurement cash flow.' ) );
+        $this->assertEquals( $procurement->cost, $transactionHistory->value, __( 'The cash flow records doesn\'t match the procurement cost.' ) );
     }
 
     protected function attemptCheckSalesTaxes()
@@ -145,7 +145,7 @@ trait WithAccountingTest
         $currentDashboardDay = DashboardDay::forToday();
 
         $expenseCategoryID = ns()->option->get( 'ns_procurement_cashflow_account' );
-        $totalExpenses = CashFlow::where( 'created_at', '>=', $dashboardDay->range_starts )
+        $totalExpenses = TransactionHistory::where( 'created_at', '>=', $dashboardDay->range_starts )
             ->where( 'created_at', '<=', $dashboardDay->range_ends )
             ->where( 'expense_category_id', $expenseCategoryID )
             ->where( 'procurement_id', $procurement[ 'id' ] )

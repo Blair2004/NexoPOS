@@ -28,7 +28,7 @@ class ProcurementAfterUpdateProductEventListener
      */
     public function handle(ProcurementAfterUpdateProductEvent $event)
     {
-        $this->productService->procurementStockEntry( $event->product, $event->fields );
+        $this->procurementService->procurementStockEntry( $event->product, $event->fields );
         $this->procurementService->refresh( $event->product->procurement );
     }
 }

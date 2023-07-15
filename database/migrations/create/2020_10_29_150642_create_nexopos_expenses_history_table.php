@@ -1,7 +1,7 @@
 <?php
 
 use App\Classes\Schema;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer( 'register_history_id' )->nullable(); // if an transactions has been created from a register transaction
             $table->integer( 'customer_account_history_id' )->nullable(); // if a customer credit is generated
             $table->string( 'name' );
-            $table->string( 'status' )->default( CashFlow::STATUS_ACTIVE );
+            $table->string( 'status' )->default( TransactionHistory::STATUS_ACTIVE );
             $table->float( 'value', 18, 5 )->default(0);
             $table->integer( 'author' );
             $table->timestamps();

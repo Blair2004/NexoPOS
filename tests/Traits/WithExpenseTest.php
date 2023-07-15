@@ -3,7 +3,7 @@
 namespace Tests\Traits;
 
 use App\Models\AccountType;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +16,7 @@ trait WithExpenseTest
                 'name' => __( 'Exploitation Expenses' ),
                 'author' => Auth::id(),
                 'account' => '000010',
-                'operation' => CashFlow::OPERATION_DEBIT,
+                'operation' => TransactionHistory::OPERATION_DEBIT,
             ]);
 
         $response->assertStatus(200);
@@ -26,7 +26,7 @@ trait WithExpenseTest
                 'name' => __( 'Employee Salaries' ),
                 'author' => Auth::id(),
                 'account' => '000011',
-                'operation' => CashFlow::OPERATION_DEBIT,
+                'operation' => TransactionHistory::OPERATION_DEBIT,
             ]);
 
         $response->assertStatus(200);
@@ -36,7 +36,7 @@ trait WithExpenseTest
                 'name' => __( 'Random Expenses' ),
                 'author' => Auth::id(),
                 'account' => '000012',
-                'operation' => CashFlow::OPERATION_DEBIT,
+                'operation' => TransactionHistory::OPERATION_DEBIT,
             ]);
 
         $response->assertStatus(200);

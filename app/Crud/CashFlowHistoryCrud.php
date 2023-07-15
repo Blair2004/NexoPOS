@@ -3,7 +3,7 @@
 namespace App\Crud;
 
 use App\Exceptions\NotAllowedException;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use Illuminate\Http\Request;
@@ -37,7 +37,7 @@ class CashFlowHistoryCrud extends CrudService
      *
      * @param  string
      */
-    protected $model = CashFlow::class;
+    protected $model = TransactionHistory::class;
 
     /**
      * Define permissions
@@ -201,7 +201,7 @@ class CashFlowHistoryCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, CashFlow $entry )
+    public function filterPutInputs( $inputs, TransactionHistory $entry )
     {
         return $inputs;
     }
@@ -232,10 +232,10 @@ class CashFlowHistoryCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  CashFlow $entry
+     * @param  TransactionHistory $entry
      * @return  void
      */
-    public function afterPost( $request, CashFlow $entry )
+    public function afterPost( $request, TransactionHistory $entry )
     {
         return $request;
     }
@@ -307,7 +307,7 @@ class CashFlowHistoryCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            if ( $model->status !== CashFlow::STATUS_ACTIVE ) {
+            if ( $model->status !== TransactionHistory::STATUS_ACTIVE ) {
                 throw new NotAllowedException( __( 'This expense history does\'nt have a status that allow deletion.' ) );
             }
         }
@@ -360,19 +360,19 @@ class CashFlowHistoryCrud extends CrudService
         $entry->value = ns()->currency->define( $entry->value )->format();
 
         switch ( $entry->operation ) {
-            case CashFlow::OPERATION_CREDIT:
+            case TransactionHistory::OPERATION_CREDIT:
                 $entry->{ '$cssClass' } = 'success border text-sm';
                 break;
-            case CashFlow::OPERATION_DEBIT:
+            case TransactionHistory::OPERATION_DEBIT:
                 $entry->{ '$cssClass' } = 'error border text-sm';
                 break;
         }
 
         switch ( $entry->operation ) {
-            case CashFlow::OPERATION_CREDIT:
+            case TransactionHistory::OPERATION_CREDIT:
                 $entry->operation = "<span class='bg-green-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Credit' ) . '</span>';
                 break;
-            case CashFlow::OPERATION_DEBIT:
+            case TransactionHistory::OPERATION_DEBIT:
                 $entry->operation = "<span class='bg-red-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Debit' ) . '</span>';
                 break;
         }
@@ -420,7 +420,7 @@ class CashFlowHistoryCrud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity = $this->model::find( $id );
-                if ( $entity instanceof CashFlow ) {
+                if ( $entity instanceof TransactionHistory ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {

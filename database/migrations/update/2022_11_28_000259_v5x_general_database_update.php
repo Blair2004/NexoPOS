@@ -244,8 +244,8 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_cash_flow', 'order_product_id' ) ) {
                 $table->integer( 'order_product_id' );
             }
-            if ( Schema::hasColumn( 'nexopos_cash_flow', 'expense_id' ) ) {
-                $table->renameColumn( 'expense_id', 'transaction_id' );
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'transaction_id' ) ) {
+                $table->renameColumn( 'transaction_id', 'transaction_id' );
             }
         });
 

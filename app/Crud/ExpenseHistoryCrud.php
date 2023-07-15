@@ -3,7 +3,7 @@
 namespace App\Crud;
 
 use App\Exceptions\NotAllowedException;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
@@ -38,7 +38,7 @@ class TransactionHistoryCrud extends CrudService
      *
      * @param string
      */
-    protected $model = CashFlow::class;
+    protected $model = TransactionHistory::class;
 
     /**
      * Define permissions
@@ -165,7 +165,7 @@ class TransactionHistoryCrud extends CrudService
 
     public function hook( $query ): void
     {
-        $query->where( 'expense_id', request()->query( 'expense_id' ) );
+        $query->where( 'transaction_id', request()->query( 'transaction_id' ) );
     }
 
     /**
@@ -208,7 +208,7 @@ class TransactionHistoryCrud extends CrudService
      * @param array of fields
      * @return array of fields
      */
-    public function filterPutInputs( $inputs, CashFlow $entry )
+    public function filterPutInputs( $inputs, TransactionHistory $entry )
     {
         return $inputs;
     }
@@ -234,10 +234,10 @@ class TransactionHistoryCrud extends CrudService
      * After saving a record
      *
      * @param Request $request
-     * @param CashFlow $entry
+     * @param TransactionHistory $entry
      * @return void
      */
-    public function afterPost( $request, CashFlow $entry )
+    public function afterPost( $request, TransactionHistory $entry )
     {
         return $request;
     }
@@ -389,7 +389,7 @@ class TransactionHistoryCrud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity = $this->model::find( $id );
-                if ( $entity instanceof CashFlow ) {
+                if ( $entity instanceof TransactionHistory ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {

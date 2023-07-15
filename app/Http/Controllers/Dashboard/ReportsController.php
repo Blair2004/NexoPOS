@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
 use App\Models\TransactionAccount;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Services\OrdersService;
 use App\Services\ReportService;
@@ -129,7 +129,7 @@ class ReportsController extends DashboardController
 
         $entries = $this->reportService->getFromTimeRange( $rangeStarts, $rangeEnds );
         $total = $entries->count() > 0 ? $entries->first()->toArray() : [];
-        $creditCashFlow = TransactionAccount::where( 'operation', CashFlow::OPERATION_CREDIT )->with([
+        $creditCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_CREDIT )->with([
             'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
@@ -142,7 +142,7 @@ class ReportsController extends DashboardController
             return $transactionAccount;
         });
 
-        $debitCashFlow = TransactionAccount::where( 'operation', CashFlow::OPERATION_DEBIT )->with([
+        $debitCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_DEBIT )->with([
             'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );

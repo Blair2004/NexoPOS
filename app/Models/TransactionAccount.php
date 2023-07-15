@@ -29,6 +29,6 @@ class TransactionAccount extends NsModel
 
     public function cashFlowHistories()
     {
-        return $this->hasMany( CashFlow::class, 'expense_category_id' );
+        return $this->hasMany( TransactionHistory::class, 'expense_category_id' );
     }
 }
