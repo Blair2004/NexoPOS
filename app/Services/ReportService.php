@@ -1115,11 +1115,11 @@ class ReportService
         $endDateString = $toDate->endOfDay()->toDateTimeString();
 
         /**
-         * @var ExpenseService
+         * @var TransactionService
          */
-        $expenseService = app()->make( ExpenseService::class );
+        $transactionService = app()->make( TransactionService::class );
 
-        $expenseService->recomputeCashFlow(
+        $transactionService->recomputeCashFlow(
             $startDateString,
             $endDateString
         );

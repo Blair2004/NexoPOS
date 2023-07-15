@@ -153,11 +153,11 @@ class DemoCoreService
     public function createAccountingAccounts()
     {
         /**
-         * @var ExpenseService $expenseService
+         * @var TransactionService $transactionService
          */
-        $expenseService = app()->make( ExpenseService::class );
+        $transactionService = app()->make( TransactionService::class );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount([
             'name' => __( 'Sales Account' ),
             'operation' => 'credit',
             'account' => '001',
@@ -165,7 +165,7 @@ class DemoCoreService
 
         ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::account( '001' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount([
             'name' => __( 'Procurements Account' ),
             'operation' => 'debit',
             'account' => '002',
@@ -173,7 +173,7 @@ class DemoCoreService
 
         ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::account( '002' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount([
             'name' => __( 'Sale Refunds Account' ),
             'operation' => 'debit',
             'account' => '003',
@@ -181,7 +181,7 @@ class DemoCoreService
 
         ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::account( '003' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount([
             'name' => __( 'Spoiled Goods Account' ),
             'operation' => 'debit',
             'account' => '006',
@@ -189,7 +189,7 @@ class DemoCoreService
 
         ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::account( '006' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount([
             'name' => __( 'Customer Crediting Account' ),
             'operation' => 'credit',
             'account' => '007',
@@ -197,7 +197,7 @@ class DemoCoreService
 
         ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::account( '007' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount([
             'name' => __( 'Customer Debiting Account' ),
             'operation' => 'credit',
             'account' => '008',

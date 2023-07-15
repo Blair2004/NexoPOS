@@ -143,9 +143,9 @@ class DoctorService
     public function fixCashFlowOrders()
     {
         /**
-         * @var ExpenseService $expenseService
+         * @var TransactionService $transactionService
          */
-        $expenseService     =   app()->make( ExpenseService::class );
+        $transactionService     =   app()->make( TransactionService::class );
 
         CashFlow::where( 'order_id', '>', 0 )->delete();
         CashFlow::where( 'order_refund_id', '>', 0 )->delete();
@@ -157,8 +157,8 @@ class DoctorService
         
         $this->command->info( __( 'Restoring cash flow from paid orders...' ) );
         
-        $this->command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
-            $expenseService->handleCreatedOrder( $order );
+        $this->command->withProgressBar( $orders, function( $order ) use ( $transactionService ) {
+            $transactionService->handleCreatedOrder( $order );
         });
 
         $this->command->newLine();
@@ -173,9 +173,9 @@ class DoctorService
             Order::PAYMENT_PARTIALLY_REFUNDED
         ])->get();
 
-        $this->command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
-            $order->refundedProducts()->with( 'orderProduct' )->get()->each( function( $orderRefundedProduct ) use ( $order, $expenseService ) {
-                $expenseService->createExpenseFromRefund(
+        $this->command->withProgressBar( $orders, function( $order ) use ( $transactionService ) {
+            $order->refundedProducts()->with( 'orderProduct' )->get()->each( function( $orderRefundedProduct ) use ( $order, $transactionService ) {
+                $transactionService->createTransactionFromRefund(
                     order: $order,
                     orderProductRefund: $orderRefundedProduct,
                     orderProduct: $orderRefundedProduct->orderProduct

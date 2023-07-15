@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Models\Expense;
 use App\Models\Transaction;
 use App\Services\DateService;
-use App\Services\ExpenseService;
+use App\Services\TransactionService;
 use App\Traits\NsSerialize;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -32,7 +32,7 @@ class ProcessTransactionJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( ExpenseService $expenseService )
+    public function handle( TransactionService $transactionService )
     {
         /**
          * @var DateService $date
@@ -44,7 +44,7 @@ class ProcessTransactionJob implements ShouldQueue
              * if the expense is not recurring and not scheduled
              * we'll immediately trigger it.
              */
-            $expenseService->triggerExpense( $this->transaction );
+            $transactionService->triggerTransaction( $this->transaction );
         }
     }
 }

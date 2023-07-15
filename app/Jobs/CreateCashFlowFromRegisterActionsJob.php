@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\RegisterHistory;
-use App\Services\ExpenseService;
+use App\Services\TransactionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,8 +26,8 @@ class CreateCashFlowFromRegisterActionsJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle( ExpenseService $expenseService ): void
+    public function handle( TransactionService $transactionService ): void
     {
-        $expenseService->handleCashOperation( $this->registerHistory );
+        $transactionService->handleCashOperation( $this->registerHistory );
     }
 }

@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Services\CustomerService;
-use App\Services\ExpenseService;
+use App\Services\TransactionService;
 
 class AfterCustomerAccountHistoryCreatedEventListener
 {
@@ -15,7 +15,7 @@ class AfterCustomerAccountHistoryCreatedEventListener
      */
     public function __construct(
         public CustomerService $customerService,
-        public ExpenseService $expenseService
+        public TransactionService $transactionService
     ) {
         //
     }
@@ -28,7 +28,7 @@ class AfterCustomerAccountHistoryCreatedEventListener
      */
     public function handle(AfterCustomerAccountHistoryCreatedEvent $event)
     {
-        $this->expenseService->handleCustomerCredit( $event->customerAccount );
+        $this->transactionService->handleCustomerCredit( $event->customerAccount );
         $this->customerService->updateCustomerAccount( $event->customerAccount );
     }
 }

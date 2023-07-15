@@ -15,7 +15,6 @@ use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\EnvEditor;
-use App\Services\ExpenseService;
 use App\Services\Helper;
 use App\Services\MathService;
 use App\Services\MediaService;
@@ -30,6 +29,7 @@ use App\Services\ProviderService;
 use App\Services\ReportService;
 use App\Services\ResetService;
 use App\Services\TaxService;
+use App\Services\TransactionService;
 use App\Services\UnitService;
 use App\Services\UpdateService;
 use App\Services\UserOptions;
@@ -193,8 +193,8 @@ class AppServiceProvider extends ServiceProvider
             return new CustomerService;
         });
 
-        $this->app->bind( ExpenseService::class, function( $app ) {
-            return new ExpenseService(
+        $this->app->bind( TransactionService::class, function( $app ) {
+            return new TransactionService(
                 app()->make( DateService::class )
             );
         });

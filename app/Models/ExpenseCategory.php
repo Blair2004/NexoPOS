@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @deprecated App\Models\AccountType is the replacement.
+ * @deprecated App\Models\TransactionAccount is the replacement.
  */
 class ExpenseCategory extends NsModel
 {

@@ -154,11 +154,7 @@ class Setup
         ns()->envEditor->set( 'NS_SOCKET_PORT', 6001 );
         ns()->envEditor->set( 'NS_SOCKET_DOMAIN', $domain[ 'basename' ] );
         ns()->envEditor->set( 'NS_SOCKET_ENABLED', 'false' );
-        ns()->envEditor->set( 'NS_ENV', 'production' );
-
-        $this->options = app()->make( Options::class );
-        $this->options->setDefault();
-        $this->options->set( 'ns_store_language', $configuredLanguage );        
+        ns()->envEditor->set( 'NS_ENV', 'production' );       
         
         /**
          * we'll register all "update" migration
@@ -185,7 +181,11 @@ class Setup
             )
             ->each( function( $file ) {
                 ns()->update->assumeExecuted( $file );
-            });
+            });        
+
+        $this->options = app()->make( Options::class );
+        $this->options->setDefault();
+        $this->options->set( 'ns_store_language', $configuredLanguage ); 
 
         /**
          * From this moment, new permissions has been created.

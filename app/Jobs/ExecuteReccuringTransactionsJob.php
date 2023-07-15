@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Services\ExpenseService;
+use App\Services\TransactionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,9 +31,9 @@ class ExecuteReccuringTransactionsJob implements ShouldQueue
     public function handle()
     {
         /**
-         * @var ExpenseService
+         * @var TransactionService
          */
-        $expenses = app()->make( ExpenseService::class );
-        $expenses->handleRecurringExpenses();
+        $transactionService = app()->make( TransactionService::class );
+        $transactionService->handleRecurringTransactions();
     }
 }

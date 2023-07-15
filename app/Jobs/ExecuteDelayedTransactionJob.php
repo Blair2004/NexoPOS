@@ -6,7 +6,7 @@ use App\Models\Expense;
 use App\Models\Role;
 use App\Models\Transaction;
 use App\Services\DateService;
-use App\Services\ExpenseService;
+use App\Services\TransactionService;
 use App\Services\NotificationService;
 use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
@@ -42,16 +42,16 @@ class ExecuteDelayedTransactionJob implements ShouldQueue
         $dateService = app()->make( DateService::class );
 
         /**
-         * @var ExpenseService $expenseService
+         * @var TransactionService $transactionService
          */
-        $expenseService = app()->make( ExpenseService::class );
+        $transactionService = app()->make( TransactionService::class );
 
         /**
          * @var NotificationService $notificationService
          */
         $notificationService = app()->make( NotificationService::class );
 
-        $expenseService->triggerExpense( $this->transaction );
+        $transactionService->triggerTransaction( $this->transaction );
 
         $notificationService->create([
             'title' => __( 'Scheduled Transactions' ),
