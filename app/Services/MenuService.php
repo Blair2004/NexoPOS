@@ -135,8 +135,8 @@ class MenuService
                 'permissions' => [
                     'nexopos.read.transactions',
                     'nexopos.create.transactions',
-                    'nexopos.read.transactions-categories',
-                    'nexopos.create.transactions-categories',
+                    'nexopos.read.transactions-account',
+                    'nexopos.create.transactions-account',
                 ],
                 'childrens' => [
                     'transactions' => [
@@ -154,14 +154,14 @@ class MenuService
                         'permissions' => [ 'nexopos.read.transactions-history' ],
                         'href' => ns()->url( '/dashboard/accounting/transactions/history' ),
                     ],
-                    'transactions-categories' => [
+                    'transactions-account' => [
                         'label' => __( 'Accounts' ),
-                        'permissions' => [ 'nexopos.read.transactions-categories' ],
+                        'permissions' => [ 'nexopos.read.transactions-account' ],
                         'href' => ns()->url( '/dashboard/accounting/accounts' ),
                     ],
-                    'create-transactions-categories' => [
+                    'create-transactions-account' => [
                         'label' => __( 'Create Account' ),
-                        'permissions' => [ 'nexopos.create.transactions-categories' ],
+                        'permissions' => [ 'nexopos.create.transactions-account' ],
                         'href' => ns()->url( '/dashboard/accounting/accounts/create' ),
                     ],
                 ],
