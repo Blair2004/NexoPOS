@@ -10,6 +10,6 @@ Route::get( '/accounting/transactions/edit/{transaction}', [ TransactionControll
 Route::get( '/accounting/transactions/history/{transaction}', [ TransactionController::class, 'getTransactionHistory' ])->name( ns()->routeName( 'ns.dashboard.transactions.history' ) );
 Route::get( '/accounting/cash-flow/history', [ TransactionController::class, 'transactionsHistory' ])->name( ns()->routeName( 'ns.dashboard.cash-flow.history' ) );
 
-Route::get( '/accounting/accounts', [ TransactionsAccountController::class, 'listExpensesCategories' ])->name( ns()->routeName( 'ns.dashboard.accounting' ) );
-Route::get( '/accounting/accounts/create', [ TransactionsAccountController::class, 'createExpenseCategory' ])->name( ns()->routeName( 'ns.dashboard.accounting.create' ) );
-Route::get( '/accounting/accounts/edit/{category}', [ TransactionsAccountController::class, 'editExpenseCategory' ])->name( ns()->routeName( 'ns.dashboard.accounting.edit' ) );
+Route::get( '/accounting/accounts', [ TransactionsAccountController::class, 'listTransactionsAccounts' ])->name( ns()->routeName( 'ns.dashboard.transactions-account' ) );
+Route::get( '/accounting/accounts/create', [ TransactionsAccountController::class, 'createTransactionsAccounts' ])->name( ns()->routeName( 'ns.dashboard.transactions-account.create' ) );
+Route::get( '/accounting/accounts/edit/{category}', [ TransactionsAccountController::class, 'editTransactionsAccounts' ])->name( ns()->routeName( 'ns.dashboard.transactions-account.edit' ) );

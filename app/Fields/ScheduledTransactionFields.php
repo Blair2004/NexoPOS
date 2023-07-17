@@ -3,8 +3,6 @@
 namespace App\Fields;
 
 use App\Classes\Hook;
-use App\Models\AccountType;
-use App\Models\Expense;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Services\FieldsService;
@@ -19,13 +17,13 @@ class ScheduledTransactionFields extends FieldsService
         $this->fields = Hook::filter( 'ns-scheduled-transactions-fields', [
             [
                 'label' => __( 'Name' ),
-                'description' => __( 'Describe the direct expense.' ),
+                'description' => __( 'Describe the direct transaction.' ),
                 'validation' => 'required|min:5',
                 'name' => 'name',
                 'type' => 'text',
             ], [
                 'label' => __( 'Scheduled On' ),
-                'description' => __( 'Set when the expense should be executed.' ),
+                'description' => __( 'Set when the transaction should be executed.' ),
                 'validation' => 'required',
                 'name' => 'scheduled_date',
                 'type' => 'datetimepicker',
@@ -33,25 +31,25 @@ class ScheduledTransactionFields extends FieldsService
                 'label' => __( 'Activated' ),
                 'validation' => 'required',
                 'name' => 'active',
-                'description' => __( 'If set to yes, the expense will be eligible for an execution.' ),
+                'description' => __( 'If set to yes, the transaction will be eligible for an execution.' ),
                 'options' => Helper::kvToJsOptions([ false => __( 'No' ), true => __( 'Yes' )]),
                 'type' => 'switch',
             ], [
                 'label' => __( 'Category' ),
-                'description' => __( 'Assign the expense to a category.' ),
+                'description' => __( 'Assign the transaction to a category.' ),
                 'validation' => 'required',
                 'name' => 'category_id',
                 'options' => Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ]),
                 'type' => 'select',
             ], [
                 'label' => __( 'Value' ),
-                'description' => __( 'set the value of the expense.' ),
+                'description' => __( 'set the value of the transaction.' ),
                 'validation' => 'required',
                 'name' => 'value',
                 'type' => 'number',
             ], [
                 'label' => __( 'Description' ),
-                'description' => __( 'Further details on the expense.' ),
+                'description' => __( 'Further details on the transaction.' ),
                 'name' => 'description',
                 'type' => 'textarea',
             ], [

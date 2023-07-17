@@ -51,7 +51,7 @@ class TransactionController extends DashboardController
     public function createTransaction()
     {
         if ( ! ns()->canPerformAsynchronousOperations() ) {
-            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Salary expenses as tasks aren\'t configured correctly.' ) );
+            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Salary Transactions as tasks aren\'t configured correctly.' ) );
         }
 
         return $this->view( 'pages.dashboard.transactions.create', [
@@ -63,7 +63,7 @@ class TransactionController extends DashboardController
     public function editTransaction( Transaction $transaction )
     {
         if ( ! ns()->canPerformAsynchronousOperations() ) {
-            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Salary expenses as tasks aren\'t configured correctly.' ) );
+            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Salary Transactions as tasks aren\'t configured correctly.' ) );
         }
 
         return $this->view( 'pages.dashboard.transactions.update', [
@@ -113,7 +113,7 @@ class TransactionController extends DashboardController
             'account',
         ]);
 
-        return $this->transactionService->editCategory( $id, $fields );
+        return $this->transactionService->editTransactionAccount( $id, $fields );
     }
 
     /**
@@ -157,7 +157,7 @@ class TransactionController extends DashboardController
      */
     public function getExpensesCategories( $id = null )
     {
-        return $this->transactionService->getTransactionAccount( $id );
+        return $this->transactionService->getTransactionAccountByID( $id );
     }
 
     /**

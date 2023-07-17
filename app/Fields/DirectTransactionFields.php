@@ -4,7 +4,6 @@ namespace App\Fields;
 
 use App\Classes\Hook;
 use App\Models\TransactionAccount;
-use App\Models\Expense;
 use App\Models\Transaction;
 use App\Services\FieldsService;
 use App\Services\Helper;

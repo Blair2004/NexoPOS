@@ -36,28 +36,24 @@ class TransactionsAccountController extends DashboardController
     }
 
     /**
-     * Show expenses
-     * categories
-     *
+     * List transactions accounts
      * @return view
      */
-    public function listExpensesCategories()
+    public function listTransactionsAccounts()
     {
         return TransactionAccountCrud::table();
     }
 
     /**
-     * Show expenses
-     * categories
-     *
+     *  Show transactions account form.
      * @return view
      */
-    public function createExpenseCategory()
+    public function createTransactionsAccounts()
     {
         return TransactionAccountCrud::form();
     }
 
-    public function editExpenseCategory( TransactionAccount $account )
+    public function editTransactionsAccounts( TransactionAccount $account )
     {
         return TransactionAccountCrud::form( $account );
     }

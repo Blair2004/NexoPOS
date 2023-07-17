@@ -17,7 +17,7 @@ class ReccurringTransactionFields extends FieldsService
         $this->fields = Hook::filter( 'ns-direct-transactions-fields', [
             [
                 'label' => __( 'Name' ),
-                'description' => __( 'Describe the direct expense.' ),
+                'description' => __( 'Describe the direct transactions.' ),
                 'validation' => 'required|min:5',
                 'name' => 'name',
                 'type' => 'text',
@@ -25,25 +25,25 @@ class ReccurringTransactionFields extends FieldsService
                 'label' => __( 'Activated' ),
                 'validation' => 'required|min:5',
                 'name' => 'active',
-                'description' => __( 'If set to yes, the expense will be eligible for an execution.' ),
+                'description' => __( 'If set to yes, the transaction will be eligible for an execution.' ),
                 'options' => Helper::kvToJsOptions([ false => __( 'No' ), true => __( 'Yes' )]),
                 'type' => 'switch',
             ], [
-                'label' => __( 'Category' ),
-                'description' => __( 'Assign the expense to a category.' ),
+                'label' => __( 'Account' ),
+                'description' => __( 'Assign the transaction to an account.' ),
                 'validation' => 'required',
-                'name' => 'category_id',
+                'name' => 'account_id',
                 'options' => Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ]),
                 'type' => 'select',
             ], [
                 'label' => __( 'Value' ),
-                'description' => __( 'set the value of the expense.' ),
+                'description' => __( 'set the value of the transaction.' ),
                 'validation' => 'required',
                 'name' => 'value',
                 'type' => 'number',
             ], [
                 'label' => __( 'Description' ),
-                'description' => __( 'Further details on the expense.' ),
+                'description' => __( 'Further details on the transaction.' ),
                 'name' => 'description',
                 'type' => 'textarea',
             ], [
@@ -68,7 +68,7 @@ class ReccurringTransactionFields extends FieldsService
         }
     }
 
-    public function get( $expense = null )
+    public function get( $transaction = null )
     {
         return $this->fields;
     }
