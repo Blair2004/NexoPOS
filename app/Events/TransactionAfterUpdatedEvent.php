@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Expense;
 use App\Models\Transaction;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
