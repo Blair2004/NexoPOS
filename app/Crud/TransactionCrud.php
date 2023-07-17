@@ -12,7 +12,6 @@ use App\Events\TransactionAfterCreatedEvent;
 use App\Events\TransactionAfterUpdatedEvent;
 use App\Events\TransactionBeforeCreatedEvent;
 use App\Models\TransactionAccount;
-use App\Models\Expense;
 use App\Models\Role;
 use App\Models\Transaction;
 use App\Services\CrudEntry;
@@ -45,7 +44,7 @@ class TransactionCrud extends CrudService
     /**
      * Model Used
      */
-    protected $model = Expense::class;
+    protected $model = Transaction::class;
 
     /**
      * Adding relation
@@ -232,7 +231,7 @@ class TransactionCrud extends CrudService
                             ],
                             'name' => 'occurrence',
                             'label' => __( 'Occurrence' ),
-                            'description' => __( 'Define how often this expenses occurs' ),
+                            'description' => __( 'Define how often this transaction occurs' ),
                             'value' => $entry->occurrence ?? '',
                         ], [
                             'type' => 'text',
@@ -250,7 +249,7 @@ class TransactionCrud extends CrudService
                             'type' => 'select',
                             'name' => 'type',
                             'label' => __( 'Type' ),
-                            'description' => __( 'Define what is the type of the expense.' ),
+                            'description' => __( 'Define what is the type of the transactions.' ),
                             'value' => $entry->type ?? '',
                         ], [
                             'type' => 'textarea',
@@ -303,12 +302,8 @@ class TransactionCrud extends CrudService
 
     /**
      * After saving a record
-     *
-     * @param  Request $request
-     * @param  Expense $entry
-     * @return  void
      */
-    public function afterPost( $inputs, Transaction $entry )
+    public function afterPost( array $inputs, Transaction $entry ): array
     {
         TransactionAfterCreatedEvent::dispatch( $entry, $inputs );
 
@@ -394,8 +389,8 @@ class TransactionCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'expense_category_name' => [
-                'label' => __( 'Category' ),
+            'transaction_account_name' => [
+                'label' => __( 'Account Name' ),
                 '$direction' => '',
                 '$sort' => false,
             ],
@@ -512,9 +507,9 @@ class TransactionCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list' => ns()->url( 'dashboard/' . 'expenses' ),
-            'create' => ns()->url( 'dashboard/' . 'expenses/create' ),
-            'edit' => ns()->url( 'dashboard/' . 'expenses/edit/{id}' ),
+            'list' => ns()->url( 'dashboard/' . 'accounting/transactions' ),
+            'create' => ns()->url( 'dashboard/' . 'accounting/transactions/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'accounting/transactions/edit/{id}' ),
             'post' => ns()->url( 'api/crud/' . 'ns.transactions' ),
             'put' => ns()->url( 'api/crud/' . 'ns.transactions/' . '{id}' ),
         ];

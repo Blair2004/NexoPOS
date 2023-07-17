@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use App\Events\CashFlowHistoryAfterCreatedEvent;
-use App\Events\CashFlowHistoryAfterDeletedEvent;
-use App\Events\CashFlowHistoryAfterUpdatedEvent;
+use App\Events\TransactionsHistoryAfterCreatedEvent;
+use App\Events\TransactionsHistoryAfterDeletedEvent;
+use App\Events\TransactionsHistoryAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property integer $id
  * @property integer $transaction_id
  * @property mixed $operation
- * @property integer $expense_category_id
+ * @property integer $transaction_account_id
  * @property integer $procurement_id
  * @property integer $order_refund_id
  * @property integer $order_id
@@ -79,9 +79,9 @@ class TransactionHistory extends NsModel
     const ACCOUNT_CUSTOMER_DEBIT = '008';
 
     protected $dispatchesEvents = [
-        'created' => CashFlowHistoryAfterCreatedEvent::class,
-        'updated' => CashFlowHistoryAfterUpdatedEvent::class,
-        'deleted' => CashFlowHistoryAfterDeletedEvent::class,
+        'created' => TransactionsHistoryAfterCreatedEvent::class,
+        'updated' => TransactionsHistoryAfterUpdatedEvent::class,
+        'deleted' => TransactionsHistoryAfterDeletedEvent::class,
     ];
 
     public function transaction()

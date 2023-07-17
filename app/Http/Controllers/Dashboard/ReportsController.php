@@ -63,10 +63,10 @@ class ReportsController extends DashboardController
         ]);
     }
 
-    public function cashFlow()
+    public function transactionsReport()
     {
-        return $this->view( 'pages.dashboard.reports.cash-flow', [
-            'title' => __( 'Cash Flow Report' ),
+        return $this->view( 'pages.dashboard.reports.transactions', [
+            'title' => __( 'Transactions Report' ),
             'description' => __( 'Provides an overview on the activity for a specific period.' ),
         ]);
     }

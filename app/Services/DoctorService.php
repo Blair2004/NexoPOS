@@ -140,7 +140,7 @@ class DoctorService
      * clear current cash flow and recompute
      * them using the current information.
      */
-    public function fixCashFlowOrders()
+    public function fixTransactionsOrders()
     {
         /**
          * @var TransactionService $transactionService

@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Crud\CashFlowHistoryCrud;
 use App\Crud\CouponCrud;
 use App\Crud\CustomerAccountCrud;
 use App\Crud\CustomerCouponCrud;
@@ -11,8 +10,6 @@ use App\Crud\CustomerGroupCrud;
 use App\Crud\CustomerOrderCrud;
 use App\Crud\CustomerRewardCrud;
 use App\Crud\ExpenseCategoryCrud;
-use App\Crud\ExpenseCrud;
-use App\Crud\ExpenseHistoryCrud;
 use App\Crud\GlobalProductHistoryCrud;
 use App\Crud\HoldOrderCrud;
 use App\Crud\OrderCrud;
@@ -36,6 +33,7 @@ use App\Crud\TaxCrud;
 use App\Crud\TaxesGroupCrud;
 use App\Crud\TransactionCrud;
 use App\Crud\TransactionHistoryCrud;
+use App\Crud\TransactionsHistoryCrud;
 use App\Crud\UnitCrud;
 use App\Crud\UnitGroupCrud;
 use App\Crud\UnpaidOrderCrud;
@@ -103,7 +101,7 @@ class CrudServiceProvider extends ServiceProvider
                 'ns.rewards-system' => RewardSystemCrud::class,
                 'ns.providers' => ProviderCrud::class,
                 'ns.transactions-accounts' => ExpenseCategoryCrud::class,
-                'ns.cash-flow-history' => CashFlowHistoryCrud::class,
+                'ns.transactions-history' => TransactionsHistoryCrud::class,
                 'ns.transactions' => TransactionCrud::class,
                 'ns.units-groups' => UnitGroupCrud::class,
                 'ns.units' => UnitCrud::class,
@@ -123,7 +121,6 @@ class CrudServiceProvider extends ServiceProvider
                 'ns.providers-procurements' => ProviderProcurementsCrud::class,
                 'ns.customers-account-history' => CustomerAccountCrud::class,
                 'ns.providers-products' => ProviderProductsCrud::class,
-                'ns.transactions-history' => TransactionHistoryCrud::class,
                 default => $namespace,
             };
         });

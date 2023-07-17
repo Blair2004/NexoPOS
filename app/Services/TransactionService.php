@@ -406,7 +406,7 @@ class TransactionService
 
                 if ( isset( $transactionScheduledDate ) && $transactionScheduledDate instanceof Carbon ) {
                     /**
-                     * Checks if the recurring expenses about to be saved has been
+                     * Checks if the recurring transactions about to be saved has been
                      * already issued on the occuring day.
                      */
                     if ( $date->isSameDay( $transactionScheduledDate ) ) {
@@ -415,21 +415,21 @@ class TransactionService
 
                             return [
                                 'status' => 'success',
-                                'data' => compact( 'expense', 'histories' ),
-                                'message' => sprintf( __( 'The expense "%s" has been processed on day "%s".' ), $expense->name, $date->toDateTimeString() ),
+                                'data' => compact( 'transaction', 'histories' ),
+                                'message' => sprintf( __( 'The transaction "%s" has been processed on day "%s".' ), $transaction->name, $date->toDateTimeString() ),
                             ];
                         }
 
                         return [
                             'status' => 'failed',
-                            'message' => sprintf( __( 'The expense "%s" has already been processed.' ), $expense->name ),
+                            'message' => sprintf( __( 'The transaction "%s" has already been processed.' ), $transaction->name ),
                         ];
                     }
                 }
 
                 return [
                     'status' => 'failed',
-                    'message' => sprintf( __( 'The expenses "%s" hasn\'t been proceesed, as it\'s out of date.' ), $expense->name ),
+                    'message' => sprintf( __( 'The transactions "%s" hasn\'t been proceesed, as it\'s out of date.' ), $transaction->name ),
                 ];
             });
 

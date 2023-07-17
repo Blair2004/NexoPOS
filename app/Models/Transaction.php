@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property integer $media_id
  * @property float $value
  * @property bool $recurring
- * @property mixed $type
+ * @property mixed $type / "income" or "expense"
  * @property bool $active
  * @property integer $group_id
  * @property mixed $occurrence

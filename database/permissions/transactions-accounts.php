@@ -3,27 +3,27 @@
 use App\Models\Permission;
 
 if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
-    $expensesCategories = Permission::firstOrNew([ 'namespace' => 'nexopos.create.expenses-categories' ]);
-    $expensesCategories->name = __( 'Create Expenses Categories' );
-    $expensesCategories->namespace = 'nexopos.create.expenses-categories';
-    $expensesCategories->description = __( 'Let the user create expenses-categories' );
-    $expensesCategories->save();
+    $transactionAccount = Permission::firstOrNew([ 'namespace' => 'nexopos.create.transactions-account' ]);
+    $transactionAccount->name = __( 'Create Transaction Account' );
+    $transactionAccount->namespace = 'nexopos.create.transactions-account';
+    $transactionAccount->description = __( 'Let the user create transactions account' );
+    $transactionAccount->save();
 
-    $expensesCategories = Permission::firstOrNew([ 'namespace' => 'nexopos.delete.expenses-categories' ]);
-    $expensesCategories->name = __( 'Delete Expenses Categories' );
-    $expensesCategories->namespace = 'nexopos.delete.expenses-categories';
-    $expensesCategories->description = __( 'Let the user delete expenses-categories' );
-    $expensesCategories->save();
+    $transactionAccount = Permission::firstOrNew([ 'namespace' => 'nexopos.delete.transactions-account' ]);
+    $transactionAccount->name = __( 'Delete Transactions Account' );
+    $transactionAccount->namespace = 'nexopos.delete.transactions-account';
+    $transactionAccount->description = __( 'Let the user delete Transaction Account' );
+    $transactionAccount->save();
 
-    $expensesCategories = Permission::firstOrNew([ 'namespace' => 'nexopos.update.expenses-categories' ]);
-    $expensesCategories->name = __( 'Update Expenses Categories' );
-    $expensesCategories->namespace = 'nexopos.update.expenses-categories';
-    $expensesCategories->description = __( 'Let the user update expenses-categories' );
-    $expensesCategories->save();
+    $transactionAccount = Permission::firstOrNew([ 'namespace' => 'nexopos.update.transactions-account' ]);
+    $transactionAccount->name = __( 'Update Transactions Account' );
+    $transactionAccount->namespace = 'nexopos.update.transactions-account';
+    $transactionAccount->description = __( 'Let the user update Transaction Account' );
+    $transactionAccount->save();
 
-    $expensesCategories = Permission::firstOrNew([ 'namespace' => 'nexopos.read.expenses-categories' ]);
-    $expensesCategories->name = __( 'Read Expenses Categories' );
-    $expensesCategories->namespace = 'nexopos.read.expenses-categories';
-    $expensesCategories->description = __( 'Let the user read expenses-categories' );
-    $expensesCategories->save();
+    $transactionAccount = Permission::firstOrNew([ 'namespace' => 'nexopos.read.transactions-account' ]);
+    $transactionAccount->name = __( 'Read Transactions Account' );
+    $transactionAccount->namespace = 'nexopos.read.transactions-account';
+    $transactionAccount->description = __( 'Let the user read Transaction Account' );
+    $transactionAccount->save();
 }

@@ -149,10 +149,10 @@ class MenuService
                         'permissions' => [ 'nexopos.create.transactions' ],
                         'href' => ns()->url( '/dashboard/accounting/transactions/create' ),
                     ],
-                    'cash-flow-history' => [
-                        'label' => __( 'Cash Flow History' ),
-                        'permissions' => [ 'nexopos.read.transactions' ],
-                        'href' => ns()->url( '/dashboard/accounting/cash-flow/history' ),
+                    'transactions-history' => [
+                        'label' => __( 'History' ),
+                        'permissions' => [ 'nexopos.read.transactions-history' ],
+                        'href' => ns()->url( '/dashboard/accounting/transactions/history' ),
                     ],
                     'transactions-categories' => [
                         'label' => __( 'Accounts' ),
@@ -391,10 +391,10 @@ class MenuService
                         'label' => __( 'Incomes & Loosses' ),
                         'href' => ns()->url( '/dashboard/reports/profit' ),
                     ],
-                    'cash-flow' => [
-                        'label' => __( 'Cash Flow' ),
-                        'permissions' => [ 'nexopos.reports.cash_flow' ],
-                        'href' => ns()->url( '/dashboard/reports/cash-flow' ),
+                    'transactions' => [
+                        'label' => __( 'Transactions' ),
+                        'permissions' => [ 'nexopos.reports.transactions' ],
+                        'href' => ns()->url( '/dashboard/reports/transactions' ),
                     ],
                     'annulal-sales' => [
                         'label' => __( 'Annual Report' ),
