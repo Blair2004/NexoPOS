@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\CashFlow;
 use App\Models\TransactionHistory;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;

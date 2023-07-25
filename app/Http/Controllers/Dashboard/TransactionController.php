@@ -79,7 +79,7 @@ class TransactionController extends DashboardController
     }
 
     /**
-     * Implement an expense registration
+     * Implement a transaction registration
      *
      * @param Request
      * @return json
@@ -104,7 +104,7 @@ class TransactionController extends DashboardController
         return $this->transactionService->create( $fields );
     }
 
-    public function putExpenseCategory( Request $request, $id )
+    public function putTransactionAccount( Request $request, $id )
     {
         $fields = $request->only([
             'name',
@@ -177,7 +177,7 @@ class TransactionController extends DashboardController
      * @param Request
      * @return json
      */
-    public function psotTransactionAccount( Request $request )
+    public function postTransactionsAccount( Request $request )
     {
         $fields = $request->only([
             'name',
@@ -188,21 +188,6 @@ class TransactionController extends DashboardController
 
         return $this->transactionService->createAccount( $fields );
     }
-
-    /**
-     * Edit an expense cateogry
-     *
-     * @param Request
-     * @param int expense category id
-     * @return json
-     */
-    public function putTransactionAccount( Request $request, $id )
-    {
-        $fields = $request->only([ 'name', 'description' ]);
-
-        return $this->transactionService->editTransactionAccount( $id, $fields );
-    }
-
     /**
      * Get expenses entries under a specific
      * expense category

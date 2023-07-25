@@ -2,17 +2,17 @@
 
 namespace Tests\Traits;
 
-use App\Models\AccountType;
+use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 
-trait WithExpenseTest
+trait WithTransactionTest
 {
-    protected function attemptCreateExpensesCategories()
+    protected function attemptCreateTransactionAccount()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/expenses-categories', [
+            ->json( 'POST', 'api/transactions-accounts', [
                 'name' => __( 'Exploitation Expenses' ),
                 'author' => Auth::id(),
                 'account' => '000010',
@@ -22,7 +22,7 @@ trait WithExpenseTest
         $response->assertStatus(200);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/expenses-categories', [
+            ->json( 'POST', 'api/transactions-accounts', [
                 'name' => __( 'Employee Salaries' ),
                 'author' => Auth::id(),
                 'account' => '000011',
@@ -32,7 +32,7 @@ trait WithExpenseTest
         $response->assertStatus(200);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/expenses-categories', [
+            ->json( 'POST', 'api/transactions-accounts', [
                 'name' => __( 'Random Expenses' ),
                 'author' => Auth::id(),
                 'account' => '000012',
@@ -42,12 +42,12 @@ trait WithExpenseTest
         $response->assertStatus(200);
     }
 
-    protected function attemptCreateExpenses()
+    protected function attemptCreateTransaction()
     {
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
-        $category = AccountType::find(1);
+        $category = TransactionAccount::find(1);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/crud/ns.expenses', [
@@ -67,7 +67,7 @@ trait WithExpenseTest
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
-        $category = AccountType::find(1);
+        $category = TransactionAccount::find(1);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/crud/ns.expenses', [
@@ -87,7 +87,7 @@ trait WithExpenseTest
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
-        $category = AccountType::find(2);
+        $category = TransactionAccount::find(2);
 
         $role = Role::get()->shuffle()->first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )

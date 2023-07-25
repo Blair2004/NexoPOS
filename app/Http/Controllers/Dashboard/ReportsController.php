@@ -130,27 +130,27 @@ class ReportsController extends DashboardController
         $entries = $this->reportService->getFromTimeRange( $rangeStarts, $rangeEnds );
         $total = $entries->count() > 0 ? $entries->first()->toArray() : [];
         $creditCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_CREDIT )->with([
-            'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
+            'histories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
         ->map( function( $transactionAccount ) {
-            $transactionAccount->total = $transactionAccount->cashFlowHistories->count() > 0 ? $transactionAccount->cashFlowHistories->sum( 'value' ) : 0;
+            $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
 
             return $transactionAccount;
         });
 
         $debitCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_DEBIT )->with([
-            'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
+            'histories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
         ->map( function( $transactionAccount ) {
-            $transactionAccount->total = $transactionAccount->cashFlowHistories->count() > 0 ? $transactionAccount->cashFlowHistories->sum( 'value' ) : 0;
+            $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
 
             return $transactionAccount;
         });

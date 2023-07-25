@@ -1105,7 +1105,7 @@ class ReportService
         return ProductUnitQuantity::with( 'product', 'unit' )->whereRaw( 'low_quantity > quantity' )->get();
     }
 
-    public function recomputeCashFlow( $fromDate, $toDate )
+    public function recomputeTransactions( $fromDate, $toDate )
     {
         TransactionHistory::truncate();
         DashboardDay::truncate();

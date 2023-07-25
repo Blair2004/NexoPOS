@@ -8,7 +8,7 @@ Route::get( 'transactions/configurations/{transaction?}', [ TransactionControlle
 Route::get( 'transactions-accounts/{id?}', [ TransactionController::class, 'getExpensesCategories' ])->where('id', '[0-9]+');
 Route::get( 'transactions-accounts/{id}/history', [ TransactionController::class, 'getTransactionAccountsHistory' ]);
 Route::post( 'transactions', [ TransactionController::class, 'post' ]);
-Route::post( 'transactions-accounts', [ TransactionController::class, 'psotTransactionAccount' ]);
+Route::post( 'transactions-accounts', [ TransactionController::class, 'postTransactionsAccount' ]);
 Route::put( 'transactions/{id}', [ TransactionController::class, 'put' ])->where( 'id', '[0-9]+');
 Route::put( 'transactions-accounts/{id}', [ TransactionController::class, 'putTransactionAccount' ])->where( 'id', '[0-9]+');
 Route::delete( 'transactions/{id}', [ TransactionController::class, 'delete' ])->where('id', '[0-9]+');

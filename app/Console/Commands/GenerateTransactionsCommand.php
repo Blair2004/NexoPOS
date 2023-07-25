@@ -51,7 +51,7 @@ class GenerateTransactionsCommand extends Command
          * @var ReportService $reportService
          */
         $reportService = app()->make( ReportService::class );
-        $reportService->recomputeCashFlow( $fromDate, $toDate );
+        $reportService->recomputeTransactions( $fromDate, $toDate );
 
         $this->info( 'The cash flow has been generated.' );
     }

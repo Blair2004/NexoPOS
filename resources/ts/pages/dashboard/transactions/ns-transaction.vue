@@ -106,7 +106,7 @@ export default {
         },
         saveExpense() {
             const verb              =   this.expense.id !== undefined ? 'put' : 'post';
-            const url               =   this.expense.id !== undefined ? `/api/crud/ns.expenses/${this.expense.id}` : `/api/crud/ns.expenses`;
+            const url               =   this.expense.id !== undefined ? `/api/crud/ns.transactions/${this.expense.id}` : `/api/crud/ns.transactions`;
             const correctConfig     =   this.configurations.filter( config => config.identifier === this.selectedConfiguration.identifier );
 
             /**
@@ -203,7 +203,7 @@ export default {
              * for the expense we know supports
              * recurring behavior
              */
-            if ( [ 'ns.recurring-expenses', 'ns.salary-expenses' ].includes( this.selectedConfiguration.identifier ) ) {
+            if ( [ 'ns.recurring-transactions', 'ns.salary-transactions' ].includes( this.selectedConfiguration.identifier ) ) {
                 tabs.push({
                     label: __( 'Conditions' ),
                     identifier: 'recurrence'
@@ -258,7 +258,7 @@ export default {
              */
             result.fields.forEach( field => {
                 if ( field.name === 'recurring' ) {
-                    if ([ 'ns.recurring-expenses', 'ns.salary-expenses' ].includes( result.identifier ) ) {
+                    if ([ 'ns.recurring-transactions', 'ns.salary-transactions' ].includes( result.identifier ) ) {
                         field.value =   true;
                     } else {
                         field.value =   false;
@@ -318,7 +318,7 @@ export default {
 
         loadConfiguration() {
             return new Promise( ( resolve, reject ) => {
-                nsHttpClient.get( `/api/expenses/configurations/${this.expense.id ? this.expense.id : ''}` )
+                nsHttpClient.get( `/api/transactions/configurations/${this.expense.id ? this.expense.id : ''}` )
                     .subscribe({
                         next: result => {
                             resolve( result );
