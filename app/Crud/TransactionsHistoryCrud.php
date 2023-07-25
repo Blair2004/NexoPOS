@@ -61,7 +61,7 @@ class TransactionsHistoryCrud extends CrudService
     public $relations = [
         [ 'nexopos_transactions as transaction', 'transaction.id', '=', 'nexopos_transactions_histories.transaction_id' ],
         [ 'nexopos_users as users', 'users.id', '=', 'nexopos_transactions_histories.author' ],
-        [ 'nexopos_transactions_accounts as transactions_accounts', 'transactions_accounts.id', '=', 'nexopos_transactions_histories.transactions_accounts_id' ],
+        [ 'nexopos_transactions_accounts as transactions_accounts', 'transactions_accounts.id', '=', 'nexopos_transactions_histories.transaction_account_id' ],
     ];
 
     /**

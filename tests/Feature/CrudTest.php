@@ -86,7 +86,9 @@ class CrudTest extends TestCase
                                 'action' => 'unknown',
                             ]);
 
-                        $response->assertOk();
+                        if( $response->status() !== 200 ) {
+                            $response->assertOk();
+                        }
                     }
                 }
             }

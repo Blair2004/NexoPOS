@@ -37,10 +37,12 @@ class FieldsTest extends TestCase
 
             $result = collect( json_decode( $response->getContent() ) );
 
-            $this->assertTrue(
-                $result->filter( fn( $field ) => isset( $field->name ) )->count() === $result->count(),
-                sprintf( 'Some fields aren\'t corretly defined for the class %s.', $class )
-            );
+            if ( $result->filter( fn( $field ) => isset( $field->name ) )->count() !== $result->count() ) {
+                $this->assertTrue(
+                    $result->filter( fn( $field ) => isset( $field->name ) )->count() === $result->count(),
+                    sprintf( 'Some fields aren\'t corretly defined for the class %s.', $class )
+                );
+            }
         }
 
         $files = Storage::disk( 'ns' )->files( 'app/Forms' );

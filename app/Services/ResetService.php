@@ -104,13 +104,19 @@ class ResetService
     {
         BeforeHardResetEvent::dispatch();
 
-        $tables = DB::select('SHOW TABLES');
-
-        foreach( $tables as $table ) {
-            $table_name = array_values( ( array ) $table )[0];
-            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-            DB::statement("DROP TABLE `$table_name`");
-            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        /**
+         * this will only apply clearing all tables
+         * when we're not using sqlite.
+         */
+        if ( env( 'DB_CONNECTION' ) !== 'sqlite' ) {
+            $tables = DB::select('SHOW TABLES');
+    
+            foreach( $tables as $table ) {
+                $table_name = array_values( ( array ) $table )[0];
+                DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+                DB::statement("DROP TABLE `$table_name`");
+                DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            }
         }
 
         ns()->envEditor->delete( 'NS_VERSION' );

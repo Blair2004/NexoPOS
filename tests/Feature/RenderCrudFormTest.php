@@ -29,7 +29,7 @@ class RenderCrudFormTest extends TestCase
             'customers/coupons',
             'procurements',
             'providers',
-            'expenses',
+            'accounting/transactions',
             'accounting/accounts',
             'products',
             'products/categories',

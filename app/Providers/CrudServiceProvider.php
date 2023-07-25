@@ -31,8 +31,8 @@ use App\Crud\RewardSystemCrud;
 use App\Crud\RolesCrud;
 use App\Crud\TaxCrud;
 use App\Crud\TaxesGroupCrud;
+use App\Crud\TransactionAccountCrud;
 use App\Crud\TransactionCrud;
-use App\Crud\TransactionHistoryCrud;
 use App\Crud\TransactionsHistoryCrud;
 use App\Crud\UnitCrud;
 use App\Crud\UnitGroupCrud;
@@ -100,7 +100,7 @@ class CrudServiceProvider extends ServiceProvider
                 'ns.customers-coupons' => CustomerCouponCrud::class,
                 'ns.rewards-system' => RewardSystemCrud::class,
                 'ns.providers' => ProviderCrud::class,
-                'ns.transactions-accounts' => ExpenseCategoryCrud::class,
+                'ns.transactions-accounts' => TransactionAccountCrud::class,
                 'ns.transactions-history' => TransactionsHistoryCrud::class,
                 'ns.transactions' => TransactionCrud::class,
                 'ns.units-groups' => UnitGroupCrud::class,

@@ -61,10 +61,10 @@ class TransactionAccountCrud extends CrudService
     public $fillable = [];
 
     protected $permissions = [
-        'create' => 'nexopos.create.transaction-categories',
-        'read' => 'nexopos.read.transaction-categories',
-        'update' => 'nexopos.update.transaction-categories',
-        'delete' => 'nexopos.delete.transaction-categories',
+        'create' => 'nexopos.create.transactions-account',
+        'read' => 'nexopos.read.transactions-account',
+        'update' => 'nexopos.update.transactions-account',
+        'delete' => 'nexopos.delete.transactions-account',
     ];
 
     /**
