@@ -1,12 +1,12 @@
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body.with-title' )
-    <ns-expense></ns-expense>
+    <ns-transaction></ns-transaction>
 @endsection
 
 @section( 'layout.dashboard.footer' )
     <script>
-        window.nsExpenseData     =   @json( $transaction );
+        window.nsTransactionData     =   @json( $transaction );
     </script>
     @parent
 @endsection

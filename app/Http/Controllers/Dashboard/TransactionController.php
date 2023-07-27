@@ -51,7 +51,7 @@ class TransactionController extends DashboardController
     public function createTransaction()
     {
         if ( ! ns()->canPerformAsynchronousOperations() ) {
-            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Salary Transactions as tasks aren\'t configured correctly.' ) );
+            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Entity Transactions as tasks aren\'t configured correctly.' ) );
         }
 
         return $this->view( 'pages.dashboard.transactions.create', [
@@ -63,7 +63,7 @@ class TransactionController extends DashboardController
     public function editTransaction( Transaction $transaction )
     {
         if ( ! ns()->canPerformAsynchronousOperations() ) {
-            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Salary Transactions as tasks aren\'t configured correctly.' ) );
+            session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Entity Transactions as tasks aren\'t configured correctly.' ) );
         }
 
         return $this->view( 'pages.dashboard.transactions.update', [

@@ -1,12 +1,12 @@
 <template>
     <div class="w-6/7-screen md:w-4/7-screen lg:w-3/7-screen flex flex-col shadow-lg ns-box">
         <div class="ns-box-header p-2 border-b flex justify-between items-center">
-            <h3 class="font-bold text-xl">{{ __( 'Expense Type' ) }}</h3>
+            <h3 class="font-bold text-xl">{{ __( 'Transaction Type' ) }}</h3>
         </div>
         <div class="p-2" v-if="warningMessage">
             <ns-notice color="info">
                 <template #title>{{ __( 'Warning' ) }}</template>
-                <span v-html="warningMessage"></span>
+                <p v-html="warningMessage"></p>
             </ns-notice>
         </div>
         <div class="grid grid-cols-2">
@@ -24,7 +24,7 @@ import popupCloser from '~/libraries/popup-closer';
 import popupResolver from '~/libraries/popup-resolver';
 
 export default {
-    name: 'ns-expense-selector',
+    name: 'ns-transaction-selector',
     props: [ 'popup' ],
     data() {
         return {

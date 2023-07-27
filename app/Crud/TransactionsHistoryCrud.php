@@ -164,7 +164,9 @@ class TransactionsHistoryCrud extends CrudService
 
     public function hook( $query ): void
     {
-        $query->where( 'transaction_id', request()->query( 'transaction_id' ) );
+        if ( ! empty( request()->query( 'transaction_id' ) ) ) {
+            $query->where( 'transaction_id', request()->query( 'transaction_id' ) );
+        }
     }
 
     /**

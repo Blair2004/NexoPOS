@@ -2,9 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Events\ExpenseAfterUpdateEvent;
 use App\Events\TransactionAfterUpdatedEvent;
-use App\Jobs\ProcessExpenseJob;
+use App\Jobs\ProcessTransactionJob;
 
 class TransactionAfterUpdatedEventListener
 {
@@ -23,6 +22,6 @@ class TransactionAfterUpdatedEventListener
      */
     public function handle( TransactionAfterUpdatedEvent $event)
     {
-        ProcessExpenseJob::dispatch( $event->transaction );
+        ProcessTransactionJob::dispatch( $event->transaction );
     }
 }

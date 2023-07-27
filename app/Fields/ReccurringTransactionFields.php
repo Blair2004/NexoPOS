@@ -25,7 +25,7 @@ class ReccurringTransactionFields extends FieldsService
                 'label' => __( 'Activated' ),
                 'validation' => 'required|min:5',
                 'name' => 'active',
-                'description' => __( 'If set to yes, the transaction will be eligible for an execution.' ),
+                'description' => __( 'If set to yes, the transaction will take effect immediately and be saved on the history.' ),
                 'options' => Helper::kvToJsOptions([ false => __( 'No' ), true => __( 'Yes' )]),
                 'type' => 'switch',
             ], [

@@ -57,7 +57,7 @@ export default {
                         this.form.enableFields( this.firstPartFields );
                         this.form.enableFields( this.secondPartFields );
 
-                        nsRouter.push( '/configuration' );
+                        nsRouter.push( 'configuration' );
                         nsSnackBar.success( result.message, 'OKAY', { duration: 5000 }).subscribe();
                     },
                     error => {

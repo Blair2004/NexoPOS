@@ -181,11 +181,11 @@ class TransactionCrud extends CrudService
                         ], [
                             'type' => 'select',
                             'options' => Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ]),
-                            'name' => 'category_id',
+                            'name' => 'account_id',
                             'label' => __( 'Transaction Account' ),
-                            'description' => __( 'Assign the transaction to a category' ),
+                            'description' => __( 'Assign the transaction to an account430' ),
                             'validation' => 'required',
-                            'value' => $entry->category_id ?? '',
+                            'value' => $entry->account_id ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'value',
@@ -389,7 +389,7 @@ class TransactionCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'transaction_account_name' => [
+            'transactions_accounts_name' => [
                 'label' => __( 'Account Name' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -427,8 +427,6 @@ class TransactionCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->value = (string) ns()->currency->value( $entry->value );
-
         // you can make changes here
         $entry->action(
             identifier: 'edit',

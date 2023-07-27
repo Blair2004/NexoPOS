@@ -23,7 +23,7 @@ class TransactionTypeCast implements CastsAttributes
             Transaction::TYPE_RECURRING    =>  __( 'Recurring Transaction' ),
             Transaction::TYPE_ENTITY    =>  __( 'Entity Transaction' ),
             Transaction::TYPE_SCHEDULED    =>  __( 'Scheduled Transaction' ),
-            default => __( 'Unknown Type' ),
+            default => sprintf( __( 'Unknown Type (%s)' ), $value ),
         };
     }
 
