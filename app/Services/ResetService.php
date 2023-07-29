@@ -32,9 +32,9 @@ class ResetService
             'nexopos_dashboard_weeks',
             'nexopos_dashboard_months',
 
-            'nexopos_expenses',
-            'nexopos_expenses_categories',
-            'nexopos_cash_flow',
+            'nexopos_transactions',
+            'nexopos_transactions_accounts',
+            'nexopos_transactions_histories',
 
             'nexopos_medias',
             'nexopos_notifications',
