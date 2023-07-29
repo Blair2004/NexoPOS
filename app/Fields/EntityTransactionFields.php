@@ -26,14 +26,14 @@ class EntityTransactionFields extends FieldsService
                 'label' => __( 'Activated' ),
                 'validation' => 'required|min:5',
                 'name' => 'active',
-                'description' => __( 'If set to yes, the transaction will be eligible for an execution.' ),
+                'description' => __( 'If set to yes, the transaction will take effect immediately and be saved on the history.' ),
                 'options' => Helper::kvToJsOptions([ false => __( 'No' ), true => __( 'Yes' )]),
                 'type' => 'switch',
             ], [
-                'label' => __( 'Category' ),
-                'description' => __( 'Assign the transaction to a category.' ),
+                'label' => __( 'Account' ),
+                'description' => __( 'Assign the transaction to an account.' ),
                 'validation' => 'required',
-                'name' => 'category_id',
+                'name' => 'account_id',
                 'options' => Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ]),
                 'type' => 'select',
             ], [

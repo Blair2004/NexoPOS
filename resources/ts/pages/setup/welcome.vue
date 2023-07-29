@@ -34,7 +34,7 @@ export default {
                 label: __( 'Language Selection' ),
                 description: __( 'Select what will be the default language of NexoPOS.' ),
                 name: 'language',
-                value: 'en', // default language
+                value: nsLang || 'en', // default language
                 options: Object.values( nsLanguages ).map( (value, index) => {
                     return {
                         value: Object.keys( nsLanguages )[ index ],

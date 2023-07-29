@@ -1,12 +1,17 @@
 <template>
     <div v-if="isLoading && ! unavailableType" class="h-half w-full flex items-center justify-center">
-        <ns-spinner></ns-spinner>
+        <div class="flex flex-col">
+            <ns-spinner></ns-spinner>
+            <div class="py-4">
+                <a @click="init()" class="text-info-tertiary hover:underline" href="javascript:void(0)">{{ __( 'Change Type' ) }}</a>
+            </div>
+        </div>
     </div>
     <div v-if="unavailableType && ! isLoading" class="flex items-center justify-center">
         <ns-notice color="warning">
-            <template #title>{{ __( 'Unable to edit this expense' ) }}</template>
+            <template #title>{{ __( 'Unable to edit this transaction' ) }}</template>
             <template #description>
-                {{ __( 'This expense was created with a type that is no longer available. This type is no longer available because NexoPOS is unable to perform background requests.' ) }}
+                {{ __( 'This transaction was created with a type that is no longer available. This type is no longer available because NexoPOS is unable to perform background requests.' ) }}
             </template>
             <template #controls>
                 <ns-button target="_blank" href="https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app" type="warning">{{ __( 'Learn More' ) }}</ns-button>
@@ -21,15 +26,15 @@
                         <div class="ns-button info"><button @click="confirmTypeChange()" class="py-1 px-2 text-sm rounded">{{ __( 'Change Type' ) }}</button></div>
                     </div>
                     <div class="px-2">
-                        <div class="ns-button success"><button @click="confirmBeforeSave()" class="py-1 px-2 text-sm rounded">{{ __( 'Save Expense' ) }}</button></div>
+                        <div class="ns-button success"><button @click="confirmBeforeSave()" class="py-1 px-2 text-sm rounded">{{ __( 'Save Transaction' ) }}</button></div>
                     </div>
                 </div>
             </template>
             <ns-tabs-item v-for="tab of tabs" :key="tab.identifier" :identifier="tab.identifier" :label="tab.label">
                 <template v-if="tab.fields">
-                    <ns-notice class="mb-2" color="info" v-if="selectedConfiguration.identifier === 'ns.salary-expenses'">
+                    <ns-notice class="mb-2" color="info" v-if="selectedConfiguration.identifier === 'ns.entity-transaction'">
                         <template #title>{{ __( 'Warning' ) }}</template>
-                        <template #description>{{ __( 'While selecting salary expense, the amount defined will be multiplied by the total user assigned to the User group selected.' ) }}</template>
+                        <template #description>{{ __( 'While selecting entity transaction, the amount defined will be multiplied by the total user assigned to the User group selected.' ) }}</template>
                     </ns-notice>
                     <ns-field v-for="field of tab.fields" :key="field.name" :field="field"></ns-field>
                 </template>
@@ -58,7 +63,7 @@ import { nsAlertPopup, nsConfirmPopup } from '~/components/components';
 import { nsCurrency } from '~/filters/currency';
 import FormValidation from '~/libraries/form-validation';
 import { __ } from '~/libraries/lang';
-import nsExpenseSelectorVue from './ns-expense-selector.vue';
+import nsTransactionSelector from './ns-transaction-selector.vue';
 
 export default {
     props: [],
@@ -70,7 +75,7 @@ export default {
             isLoading: false,
             tabs: [],
             unavailableType: false,
-            expense: {},
+            transaction: {},
             originalRecurrence: [],
             validation: new FormValidation,
             recurrence: [],
@@ -81,8 +86,8 @@ export default {
         // ...
     },
     mounted() {
-        if ( window.nsExpenseData !== undefined ) {
-            this.expense    =   window.nsExpenseData;
+        if ( window.nsTransactionData !== undefined ) {
+            this.transaction    =   window.nsTransactionData;
         }
 
         this.init();
@@ -96,17 +101,17 @@ export default {
         confirmBeforeSave() {
             Popup.show( nsConfirmPopup, {
                 title: __( 'Confirm Your Action' ),
-                message: __( 'The expense is about to be saved. Would you like to confirm your action ?' ),
+                message: __( 'The transaction is about to be saved. Would you like to confirm your action ?' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        this.saveExpense();
+                        this.saveTransaction();
                     }
                 }
             })
         },
-        saveExpense() {
-            const verb              =   this.expense.id !== undefined ? 'put' : 'post';
-            const url               =   this.expense.id !== undefined ? `/api/crud/ns.transactions/${this.expense.id}` : `/api/crud/ns.transactions`;
+        saveTransaction() {
+            const verb              =   this.transaction.id !== undefined ? 'put' : 'post';
+            const url               =   this.transaction.id !== undefined ? `/api/crud/ns.transactions/${this.transaction.id}` : `/api/crud/ns.transactions`;
             const correctConfig     =   this.configurations.filter( config => config.identifier === this.selectedConfiguration.identifier );
 
             /**
@@ -222,18 +227,18 @@ export default {
                 this.warningMessage         =   warningMessage;
                 this.originalRecurrence     =   JSON.parse( JSON.stringify(recurrence) );
 
-                if ( this.expense.type === undefined ) {
-                    await this.selectExpenseType();
+                if ( this.transaction.type === undefined ) {
+                    await this.selectTransactionType();
                 } else {
-                    const expenseConfiguration  =   this.configurations.filter( configuration => configuration.identifier === this.expense.type );
+                    const expenseConfiguration  =   this.configurations.filter( configuration => configuration.identifier === this.transaction.type );
 
                     if ( expenseConfiguration.length == 0 ) {
                         this.unavailableType    =   true;
                         this.isLoading          =   false;
 
                         return Popup.show( nsAlertPopup, {
-                            title: __( 'Unable to load the Expense' ),
-                            message: __( 'You cannot edit this expense if NexoPOS cannot perform background requests.' )
+                            title: __( 'Unable to load the transaction' ),
+                            message: __( 'You cannot edit this transaction if NexoPOS cannot perform background requests.' )
                         });
                     }
 
@@ -254,7 +259,7 @@ export default {
             result.fields   =   this.validation.createFields( result.fields );
 
             /**
-             * let's define if the expense is recurring or not
+             * let's define if the transaction is recurring or not
              */
             result.fields.forEach( field => {
                 if ( field.name === 'recurring' ) {
@@ -276,10 +281,10 @@ export default {
              */
             this.selectedConfiguration  =   result;
         },
-        async selectExpenseType() {
+        async selectTransactionType() {
             try {
                 const result    =   await new Promise( ( resolve, reject ) => {
-                    Popup.show( nsExpenseSelectorVue, { resolve, reject, configurations: this.configurations, type: this.expense.type, warningMessage: this.warningMessage });
+                    Popup.show( nsTransactionSelector, { resolve, reject, configurations: this.configurations, type: this.transaction.type, warningMessage: this.warningMessage });
                 });
 
                 this.processSelectedConfiguration( result );
@@ -294,7 +299,7 @@ export default {
                 message: __( 'By proceeding the current for and all your entries will be cleared. Would you like to proceed?' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        delete this.expense.type;
+                        delete this.transaction.type;
                         this.init();
                     }
                 }
@@ -318,7 +323,7 @@ export default {
 
         loadConfiguration() {
             return new Promise( ( resolve, reject ) => {
-                nsHttpClient.get( `/api/transactions/configurations/${this.expense.id ? this.expense.id : ''}` )
+                nsHttpClient.get( `/api/transactions/configurations/${this.transaction.id ? this.transaction.id : ''}` )
                     .subscribe({
                         next: result => {
                             resolve( result );

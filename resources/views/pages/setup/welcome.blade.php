@@ -17,6 +17,7 @@
     @parent
     <script>
         const nsLanguages   =   @json( $languages );
+        const nsLang = '{{ $lang }}';
     </script>
     @vite([ 'resources/ts/setup.ts' ])
 @endsection

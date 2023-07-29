@@ -84,7 +84,7 @@
         p {
             @apply text-white;
             & > a {
-                @apply text-info-tertiary;
+                @apply text-info-primary;
                 &:hover {
                     @apply underline;
                 }

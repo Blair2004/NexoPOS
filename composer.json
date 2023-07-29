@@ -84,7 +84,8 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi",
-            "@php artisan storage:link --ansi"
+            "@php artisan storage:link --ansi",
+            "@php artisan ns:translate --symlink"
         ]
     }
 }
