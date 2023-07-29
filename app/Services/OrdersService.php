@@ -1064,6 +1064,8 @@ class OrdersService
             $orderProduct->product_category_id = $product[ 'product' ]->category_id ?? 0;
             $orderProduct->name = $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unnamed Product' );
             $orderProduct->quantity = $product[ 'quantity' ];
+            $orderProduct->price_with_tax = $product[ 'price_with_tax' ];
+            $orderProduct->price_without_tax = $product[ 'price_without_tax' ];
 
             /**
              * We might need to have another consideration
@@ -1088,8 +1090,8 @@ class OrdersService
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price = $this->currencyService->define(
-                $product[ 'total_purchase_price' ] ?? $this->productService->getLastPurchasePrice( $product[ 'product' ] )
-            )
+                    $product[ 'total_purchase_price' ] ?? $this->productService->getLastPurchasePrice( $product[ 'product' ] )
+                )
                 ->getRaw();
 
             $this->computeOrderProduct( $orderProduct );

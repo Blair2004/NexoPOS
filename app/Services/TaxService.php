@@ -420,19 +420,23 @@ class TaxService
          * then probably it's not assigned to the product.
          */
         if ( $taxGroup instanceof TaxGroup ) {
-            $orderProduct->price_with_tax = $this->getPriceWithTaxUsingGroup(
-                type: $type,
-                price: $orderProduct->unit_price - $discount,
-                group: $taxGroup
-            );
+            if ( $orderProduct->tax_type === 'exclusive' ) {
+                $orderProduct->price_with_tax   =   $orderProduct->unit_price;
+                $orderProduct->price_without_tax    =   $this->getPriceWithoutTaxUsingGroup(
+                    type: 'inclusive',
+                    price: $orderProduct->price_with_tax - $discount,
+                    group: $taxGroup
+                );
+            } else {
+                $orderProduct->price_without_tax    =   $orderProduct->unit_price;
+                $orderProduct->price_with_tax       =   $this->getPriceWithTaxUsingGroup(
+                    type: 'exclusive',
+                    price: $orderProduct->price_without_tax - $discount,
+                    group: $taxGroup
+                );
+            }
 
-            $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
-                type: $type,
-                price: $orderProduct->unit_price - $discount,
-                group: $taxGroup
-            );
-
-            $orderProduct->tax_value = ( $orderProduct->price_without_tax - $orderProduct->price_with_tax ) * $orderProduct->quantity;
+            $orderProduct->tax_value = ( $orderProduct->price_with_tax - $orderProduct->price_without_tax ) * $orderProduct->quantity;
         }
 
         $orderProduct->discount = $discount;

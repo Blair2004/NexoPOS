@@ -868,6 +868,7 @@ export class POS {
     defineQuantities( product, units = [] ) {
         return new Promise ( ( resolve, reject ) => { 
             const unit  =   units.filter( unit => unit.id === product.unit_id );
+
             const quantities    =   {
                 unit: unit[0] || {},
                 
@@ -968,7 +969,7 @@ export class POS {
                              * in case the orderProduct is a quick product
                              * we need to fill back the $quantities function
                              */
-                             if ( orderProduct.product === null ) {
+                            if ( orderProduct.product === null ) {
                                 orderProduct.product    =   {
                                     mode: 'custom',
                                     name: orderProduct.name,
@@ -986,9 +987,14 @@ export class POS {
                                     .unit_quantities
                                     .filter(unitQuantity => +unitQuantity.id === +orderProduct.unit_quantity_id || unitQuantity.id === undefined )[0];
 
-                                if ( orderProduct.mode === 'custom' && options.ns_pos_price_with_tax === 'yes' ) {
-                                    unitQuantity.custom_price_edit = orderProduct.unit_price;
+                                if ( orderProduct.mode === 'custom' ) {
+                                    unitQuantity.custom_price_edit = orderProduct.unit_price; 
+                                    unitQuantity.custom_price_with_tax = orderProduct.price_with_tax;
+                                    unitQuantity.custom_price_without_tax = orderProduct.price_without_tax;
+                                    unitQuantity.custom_price_tax = orderProduct.tax_value;
                                 }
+
+                                console.log( unitQuantity );
 
                                 return unitQuantity;
                             }
@@ -1024,6 +1030,8 @@ export class POS {
                         await this.selectCustomer(order.customer);
 
                         resolve(order);
+
+                        // console.log( order )
                     }, 
                     error: error => reject(error)
                 });
