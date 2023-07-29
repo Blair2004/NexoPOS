@@ -1064,6 +1064,8 @@ class OrdersService
             $orderProduct->product_category_id = $product[ 'product' ]->category_id ?? 0;
             $orderProduct->name = $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unnamed Product' );
             $orderProduct->quantity = $product[ 'quantity' ];
+            $orderProduct->price_with_tax = $product[ 'price_with_tax' ];
+            $orderProduct->price_without_tax = $product[ 'price_without_tax' ];
 
             /**
              * We might need to have another consideration
