@@ -432,7 +432,7 @@ class TaxService
                 group: $taxGroup
             );
 
-            $orderProduct->tax_value = ( $orderProduct->price_without_tax - $orderProduct->price_with_tax ) * $orderProduct->quantity;
+            $orderProduct->tax_value = ( $orderProduct->price_with_tax - $orderProduct->price_without_tax ) * $orderProduct->quantity;
         }
 
         $orderProduct->discount = $discount;
