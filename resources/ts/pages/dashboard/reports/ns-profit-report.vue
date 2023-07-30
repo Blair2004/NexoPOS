@@ -24,7 +24,7 @@ export default {
         totalQuantities() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.quantity )
+                    .map( product => product.quantity )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -32,7 +32,7 @@ export default {
         totalPurchasePrice() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.total_purchase_price )
+                    .map( product => product.total_purchase_price )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -40,7 +40,7 @@ export default {
         totalSalePrice() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.total_price )
+                    .map( product => product.total_price )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -48,7 +48,7 @@ export default {
         totalProfit() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.total_price - order.total_purchase_price )
+                    .map( product => product.total_price - product.total_purchase_price )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -56,7 +56,7 @@ export default {
         totalTax() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.tax_value )
+                    .map( product => product.tax_value )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
