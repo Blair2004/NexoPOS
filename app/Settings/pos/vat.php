@@ -46,6 +46,18 @@ if ( in_array( ns()->option->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_vat', 
     ];
 }
 
+$fields[] = [
+    'type' => 'select',
+    'name' => 'ns_pos_tax_compute_group_separately',
+    'value' => ns()->option->get( 'ns_pos_tax_compute_group_separately', 'no' ),
+    'options' => Helper::kvToJsOptions([
+        'yes' => __( 'Yes' ),
+        'no' => __( 'No' )
+    ]),
+    'label' => __( 'Tax Group Computing' ),
+    'description' => __( 'If disabled, the rates are summed and computed. Otherwise it\'s computed separately.' ),
+];
+
 return [
     'label' => __( 'VAT Settings' ),
     'fields' => $fields,

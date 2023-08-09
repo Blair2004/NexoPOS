@@ -561,6 +561,7 @@ class ProductsController extends DashboardController
 
         if ( $procurementProduct instanceof ProcurementProduct ) {
             $product = $procurementProduct->product;
+            $product->load( 'tax_group.taxes' );
 
             /**
              * check if the product has expired
@@ -588,9 +589,11 @@ class ProductsController extends DashboardController
 
             $product = Product::find( $productUnitQuantity->product_id );
             $product->load( 'unit_quantities.unit' );
+            $product->load( 'tax_group.taxes' );
             $product->selectedUnitQuantity = $productUnitQuantity;
         } elseif ( $product instanceof Product ) {
             $product->load( 'unit_quantities.unit' );
+            $product->load( 'tax_group.taxes' );
 
             if ( $product->accurate_tracking ) {
                 throw new NotAllowedException( __( 'Unable to add a product that has accurate tracking enabled, using an ordinary barcode.' ) );

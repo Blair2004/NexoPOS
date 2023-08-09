@@ -994,8 +994,6 @@ export class POS {
                                     unitQuantity.custom_price_tax = orderProduct.tax_value;
                                 }
 
-                                console.log( unitQuantity );
-
                                 return unitQuantity;
                             }
 
@@ -1030,8 +1028,6 @@ export class POS {
                         await this.selectCustomer(order.customer);
 
                         resolve(order);
-
-                        // console.log( order )
                     }, 
                     error: error => reject(error)
                 });
@@ -1625,9 +1621,13 @@ export class POS {
                 break;
             }
 
+            // continue here....
+
             const vatValues     =   taxGroup.taxes.map( tax => {
+                console.log( price, tax.rate, originalProduct.tax_type );
                 return this.getVatValue( price, tax.rate, originalProduct.tax_type )
             });
+
 
             if ( vatValues.length > 0 ) {
                 tax_value    =   vatValues.reduce( ( b, a ) => b+a );
@@ -1641,6 +1641,8 @@ export class POS {
         const originalProduct   =   product.$original();
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
+
+        console.log( result );
 
         quantities.custom_price_without_tax =   result.price_without_tax;
         quantities.custom_price_with_tax =   result.price_with_tax;

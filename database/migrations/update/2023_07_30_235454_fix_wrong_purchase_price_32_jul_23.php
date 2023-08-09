@@ -28,7 +28,7 @@ return new class extends Migration
          */
         $cached     =   json_decode( Cache::get( 'fix_wrong_purchase_prices', '[]' ) );
 
-        OrderProduct::whereNoIn( 'id', $cached )->get()->each( function( OrderProduct $orderProduct ) use ( $cached ) {
+        OrderProduct::whereNotIn( 'id', $cached )->get()->each( function( OrderProduct $orderProduct ) use ( $cached ) {
             $product    =   Product::find( $orderProduct->product_id );
             $lastPurchasePrice  =   $this->productService->getLastPurchasePrice( $product, $orderProduct->created_at );
             $orderProduct->total_purchase_price     =   Currency::fresh( $lastPurchasePrice )->multipliedBy( $orderProduct->quantity )->getRaw();
