@@ -18,6 +18,7 @@ import { nsRawCurrency } from "./filters/currency";
 import moment from "moment";
 import Print from "./libraries/print";
 import Tax from "./libraries/tax";
+import * as math from "mathjs"
 
 
 /**
@@ -1621,17 +1622,7 @@ export class POS {
                 break;
             }
 
-            // continue here....
-
-            const vatValues     =   taxGroup.taxes.map( tax => {
-                console.log( price, tax.rate, originalProduct.tax_type );
-                return this.getVatValue( price, tax.rate, originalProduct.tax_type )
-            });
-
-
-            if ( vatValues.length > 0 ) {
-                tax_value    =   vatValues.reduce( ( b, a ) => b+a );
-            }
+            tax_value     =   this.getVatValue( price, summarizedRates, originalProduct.tax_type );
         }
         
         return { price_without_tax, tax_value, price_with_tax };
@@ -1641,9 +1632,7 @@ export class POS {
         const originalProduct   =   product.$original();
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
-
-        console.log( result );
-
+        
         quantities.custom_price_without_tax =   result.price_without_tax;
         quantities.custom_price_with_tax =   result.price_with_tax;
         quantities.custom_price_tax =   result.tax_value;
@@ -1663,6 +1652,8 @@ export class POS {
         quantities.sale_price_without_tax         =   result.price_without_tax;
         quantities.sale_price_with_tax           =   result.price_with_tax;
         quantities.sale_price_tax           =   result.tax_value;
+
+        console.log({ quantities });
 
         product.$quantities     =   () => {
             return <ProductUnitQuantity>quantities
@@ -1703,13 +1694,13 @@ export class POS {
         if ( product.product_type === 'product' ) {
             if (product.mode === 'normal') {
                 product.unit_price = this.getSalePrice(product.$quantities(), product.$original());
-                product.tax_value = product.$quantities().sale_price_tax * product.quantity;
+                product.tax_value = math.chain( product.$quantities().sale_price_tax ).multiply( product.quantity ).done();
             } else if (product.mode === 'wholesale') {
                 product.unit_price = this.getWholesalePrice(product.$quantities(), product.$original());
-                product.tax_value = product.$quantities().wholesale_price_tax * product.quantity;
+                product.tax_value = math.chain( product.$quantities().wholesale_price_tax ).multiply( product.quantity ).done();
             } if (product.mode === 'custom') {
                 product.unit_price = this.getCustomPrice(product.$quantities(), product.$original());
-                product.tax_value = product.$quantities().custom_price_tax * product.quantity;
+                product.tax_value = math.chain( product.$quantities().custom_price_tax ).multiply( product.quantity ).done();
             }
         }
 
@@ -1718,27 +1709,53 @@ export class POS {
          * based on a percentage. @todo While we believe discount
          * shouldn't be calculated after taxes
          */
-        let discount_without_tax    =   0;
-        let discount_with_tax       =   0;
-        let price_with_tax          =   this.getPrice( product.$quantities(), product.mode, 'with_tax' );
-        let price_without_tax       =   this.getPrice( product.$quantities(), product.mode, 'without_tax' );
+        let discount_without_tax:number   =   0;
+        let discount_with_tax:number      =   0;
+        let price_with_tax:number         =   this.getPrice( product.$quantities(), product.mode, 'with_tax' );
+        let price_without_tax:number      =   this.getPrice( product.$quantities(), product.mode, 'without_tax' );
 
         if (['flat', 'percentage'].includes(product.discount_type)) {
             if (product.discount_type === 'percentage') {
-                product.discount    =   ((product.unit_price * product.discount_percentage) / 100) * product.quantity;
-                discount_without_tax      =   ((price_without_tax * product.discount_percentage) / 100) * product.quantity;
-                discount_with_tax        =   ((price_with_tax * product.discount_percentage) / 100) * product.quantity;
+                product.discount        =   math.chain(
+                    math.chain(
+                        math.chain( product.unit_price ).multiply( product.discount_percentage ).done()
+                    ).divide( 100 ).done()
+                ).multiply( product.quantity ).done();
+
+                discount_without_tax    =   math.chain(
+                    math.chain(
+                        math.chain( price_without_tax ).multiply( product.discount_percentage ).done()
+                    ).divide( 100 ).done()
+                ).multiply( product.quantity ).done();
+
+                discount_with_tax       =   math.chain(
+                    math.chain(
+                        math.chain( price_with_tax ).multiply( product.discount_percentage ).done()
+                    ).divide( 100 ).done()
+                ).multiply( product.quantity ).done();
+
             } else {
-                discount_without_tax      =   product.discount;
-                discount_with_tax        =   product.discount;
+                discount_without_tax        =   product.discount;
+                discount_with_tax           =   product.discount;
             }
         }
 
         product.price_with_tax              =   price_with_tax;
         product.price_without_tax           =   price_without_tax;
-        product.total_price                 =   ( product.unit_price * product.quantity ) - product.discount;
-        product.total_price_with_tax        =   ( price_with_tax * product.quantity ) - discount_with_tax;
-        product.total_price_without_tax     =   ( price_without_tax * product.quantity ) - discount_without_tax;
+
+        product.total_price                 =   math.chain(
+            math.chain( product.unit_price ).multiply( product.quantity ).done()
+        ).subtract( product.discount ).done();
+
+        product.total_price_with_tax        =   math.chain(
+            math.chain( price_with_tax ).multiply( product.quantity ).done()
+        ).subtract( discount_with_tax ).done();
+
+        product.total_price_without_tax     =   math.chain(
+            math.chain( price_without_tax ).multiply( product.quantity ).done()
+        ).subtract( discount_without_tax ).done();
+
+        console.log( product );
 
         nsHooks.doAction('ns-after-product-computed', product);
     }
