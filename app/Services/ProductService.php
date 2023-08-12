@@ -692,7 +692,7 @@ class ProductService
                 }
 
                 /**
-                 * We don't need tos ave all the informations
+                 * We don't need to save all the information
                  * available on the group variable, that's why we define
                  * explicitly how everything is saved here.
                  */
@@ -1785,7 +1785,10 @@ class ProductService
                 ->orWhere( 'sku', 'LIKE', "%{$search}%" )
                 ->orWhere( 'barcode', 'LIKE', "%{$search}%" );
             })
-            ->with( 'unit_quantities.unit' )
+            ->with([ 
+                'unit_quantities.unit',
+                'tax_group.taxes'
+            ])
             ->limit( $limit );
 
         /**
