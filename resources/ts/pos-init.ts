@@ -558,19 +558,8 @@ export class POS {
                  * order we should then get the real VAT value.
                  */
                 if ( groups[order.tax_group_id] !== undefined ) {
-                    order.taxes = groups[order.tax_group_id].taxes.map(tax => {
-                        /**
-                         * @todo tax should be computed 
-                         * on the discounted price
-                         * should deduct "subtotal" with "discount"
-                         */
-                        tax.tax_value = this.getVatValue(order.subtotal - order.discount, tax.rate, order.tax_type);
-
-                        return tax;
-                    });
+                    order   =   this.computeOrderTaxGroup( order, groups[order.tax_group_id] );
                 }
-
-                order       =   this.computeOrderTaxes( order );
 
                 return resolve({
                     status: 'success',
@@ -604,15 +593,23 @@ export class POS {
 
     computeOrderTaxGroup( order, tax ) {
 
-        const posVat    =   this.options.getValue().ns_pos_vat;
-        const priceWithTax    =   this.options.getValue().ns_pos_price_with_tax === 'yes';
+        const posVat            =   this.options.getValue().ns_pos_vat;
+        const priceWithTax      =   this.options.getValue().ns_pos_price_with_tax === 'yes';
+        const summarizedRates   =   <number>tax.taxes.map( tax => parseFloat( tax.rate ) ).reduce( ( b, a ) => b + a );
+        const currentVatValue   =   this.getVatValue( order.subtotal - order.discount, summarizedRates, order.tax_type );
 
-        tax.taxes   =   tax.taxes.map(_tax => {
+        tax.taxes   =   tax.taxes.map( _tax => {
+            const currentPercentage     =   math.chain( 
+                math.chain( _tax.rate ).divide( summarizedRates ).done()
+            ).multiply( 100 ).done();
+
             return {
-                tax_id: _tax.id,
-                tax_name: _tax.name,
+                id: _tax.id,
+                name: _tax.name,
                 rate: parseFloat(_tax.rate),
-                tax_value: this.getVatValue(order.subtotal - order.discount, _tax.rate, order.tax_type)
+                tax_value: math.chain(
+                    math.chain( currentVatValue ).multiply( currentPercentage ).done()
+                ).divide(100).done()
             };
         });
 
@@ -1645,15 +1642,12 @@ export class POS {
     }
 
     computeNormalProductTax( product: OrderProduct ) {
-        const originalProduct   =   product.$original();
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.sale_price_edit );
 
-        quantities.sale_price_without_tax         =   result.price_without_tax;
-        quantities.sale_price_with_tax           =   result.price_with_tax;
+        quantities.sale_price_without_tax   =   result.price_without_tax;
+        quantities.sale_price_with_tax      =   result.price_with_tax;
         quantities.sale_price_tax           =   result.tax_value;
-
-        console.log({ quantities });
 
         product.$quantities     =   () => {
             return <ProductUnitQuantity>quantities
@@ -1663,12 +1657,11 @@ export class POS {
     }
 
     computeWholesaleProductTax( product: OrderProduct ) {
-        const originalProduct   =   product.$original();
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.wholesale_price_edit );
 
-        quantities.wholesale_price_without_tax        =   result.price_without_tax;
-        quantities.wholesale_price_with_tax          =   result.price_with_tax;
+        quantities.wholesale_price_without_tax  =   result.price_without_tax;
+        quantities.wholesale_price_with_tax     =   result.price_with_tax;
         quantities.wholesale_price_tax          =   result.tax_value;
 
         product.$quantities     =   () => {
@@ -1754,8 +1747,6 @@ export class POS {
         product.total_price_without_tax     =   math.chain(
             math.chain( price_without_tax ).multiply( product.quantity ).done()
         ).subtract( discount_without_tax ).done();
-
-        console.log( product );
 
         nsHooks.doAction('ns-after-product-computed', product);
     }
