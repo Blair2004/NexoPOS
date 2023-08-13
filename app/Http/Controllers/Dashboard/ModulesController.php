@@ -29,7 +29,7 @@ class ModulesController extends DashboardController
     ) {
         parent::__construct();
 
-        $this->middleware( function( $request, $next ) {
+        $this->middleware( function ( $request, $next ) {
             ns()->restrict([ 'manage.modules' ]);
 
             return $next( $request );

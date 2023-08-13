@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders', 'discount_rate' ) ) {
                 $table->renameColumn( 'discount_rate', 'discount_percentage' );
             }
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders', 'discount_percentage' ) ) {
                 $table->renameColumn( 'discount_percentage', 'discount_rate' );
             }

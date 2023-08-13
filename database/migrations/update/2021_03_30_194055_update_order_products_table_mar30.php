@@ -14,13 +14,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_orders_products', 'product_category_id' ) ) {
                 $table->integer( 'product_category_id' )->default(0);
             }
         });
 
-        OrderProduct::get()->each( function( $product ) {
+        OrderProduct::get()->each( function ( $product ) {
             $product->product_category_id = $product->product->category->id ?? 0;
             $product->save();
         });
@@ -33,7 +33,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'neoxpos_orders_products', 'product_category_id' ) ) {
                 $table->dropColumn( 'product_category_id' );
             }

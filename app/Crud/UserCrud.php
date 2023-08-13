@@ -480,7 +480,7 @@ class UserCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'users' ),
             'create' => ns()->url( 'dashboard/' . 'users/create' ),
             'edit' => ns()->url( 'dashboard/' . 'users/edit/' ),

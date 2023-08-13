@@ -514,7 +514,7 @@ class ExpenseCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'expenses' ),
             'create' => ns()->url( 'dashboard/' . 'expenses/create' ),
             'edit' => ns()->url( 'dashboard/' . 'expenses/edit/{id}' ),

@@ -21,10 +21,10 @@ class SettingsPage
      */
     public function getForm()
     {
-        return collect( $this->form )->mapWithKeys( function( $tab, $key ) {
+        return collect( $this->form )->mapWithKeys( function ( $tab, $key ) {
             if ( $tab === 'tabs' ) {
                 return [
-                    $key => collect( $tab )->mapWithKeys( function( $tab, $key ) {
+                    $key => collect( $tab )->mapWithKeys( function ( $tab, $key ) {
                         /**
                          * in case not fields is provided
                          * let's save the tab with no fields.
@@ -104,7 +104,7 @@ class SettingsPage
         /**
          * Let's properly flat everything.
          */
-        $flatRules = collect( $isolatedRules )->mapWithKeys( function( $rule ) {
+        $flatRules = collect( $isolatedRules )->mapWithKeys( function ( $rule ) {
             return [ $rule[0] => $rule[1] ];
         })->toArray();
 

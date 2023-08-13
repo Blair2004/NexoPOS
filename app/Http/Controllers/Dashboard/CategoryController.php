@@ -253,7 +253,7 @@ class CategoryController extends DashboardController
                     ->onSale()
                     ->trackingDisabled()
                     ->get()
-                    ->map( function( $product ) {
+                    ->map( function ( $product ) {
                         if ( $product->unit_quantities()->count() === 1 ) {
                             $product->load( 'unit_quantities.unit' );
                         }
@@ -273,7 +273,7 @@ class CategoryController extends DashboardController
             'products' => [],
             'previousCategory' => false,
             'currentCategory' => false,
-            'categories' => ProductCategory::where(function( $query ) {
+            'categories' => ProductCategory::where(function ( $query ) {
                 $query->where( 'parent_id', null )
                         ->orWhere( 'parent_id', 0 );
             })

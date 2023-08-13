@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+        Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_registers_history', 'balance_before' ) ) {
                 $table->float( 'balance_before' )->default(0);
             }
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+        Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_registers_history', 'balance_before' ) ) {
                 $table->dropColumn( 'balance_before' );
             }

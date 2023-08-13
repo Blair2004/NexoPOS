@@ -25,7 +25,7 @@ class CrudController extends DashboardController
 {
     public function __construct()
     {
-        $this->middleware( function( $request, $next ) {
+        $this->middleware( function ( $request, $next ) {
             return $next( $request );
         });
     }

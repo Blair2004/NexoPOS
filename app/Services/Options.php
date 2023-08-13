@@ -81,7 +81,7 @@ class Options
         if ( Helper::installed() && empty( $this->rawOptions ) ) {
             $this->rawOptions = $this->option()
                 ->get()
-                ->mapWithKeys( function( $option ) {
+                ->mapWithKeys( function ( $option ) {
                     return [
                         $option->key => $option,
                     ];
@@ -175,11 +175,11 @@ class Options
             return $this->rawOptions;
         }
 
-        $filtredOptions = collect( $this->rawOptions )->filter( function( $option ) use ( $key  ) {
+        $filtredOptions = collect( $this->rawOptions )->filter( function ( $option ) use ( $key  ) {
             return is_array( $key ) ? in_array( $option->key, $key ) : $option->key === $key;
         });
 
-        $options = $filtredOptions->map( function( $option ) {
+        $options = $filtredOptions->map( function ( $option ) {
             /**
              * We should'nt run this everytime we
              * try to pull an option from the database or from the array
@@ -219,7 +219,7 @@ class Options
      **/
     public function delete( $key ): void
     {
-        $this->rawOptions = collect( $this->rawOptions )->filter( function( Option $option ) use ( $key ) {
+        $this->rawOptions = collect( $this->rawOptions )->filter( function ( Option $option ) use ( $key ) {
             if ( $option->key === $key ) {
                 $option->delete();
 

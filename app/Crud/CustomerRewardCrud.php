@@ -420,7 +420,7 @@ class CustomerRewardCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => 'javascript:void(0)',
             'create' => 'javascript:void(0)',
             'edit' => ns()->url( 'dashboard/' . $this->getSlug() . '/edit/' ),

@@ -68,7 +68,7 @@ class ProductCommand extends Command
          */
         $taxService = app()->make( TaxService::class );
 
-        $this->withProgressBar( ProductUnitQuantity::with( 'product.tax_group' )->get(), function( ProductUnitQuantity $productUnitQuantity ) use ( $taxService ) {
+        $this->withProgressBar( ProductUnitQuantity::with( 'product.tax_group' )->get(), function ( ProductUnitQuantity $productUnitQuantity ) use ( $taxService ) {
             $taxService->computeTax(
                 product: $productUnitQuantity,
                 tax_group_id: $productUnitQuantity->product->tax_group_id,
@@ -85,7 +85,7 @@ class ProductCommand extends Command
     {
         $queryBuilder = $this->queryBuilder();
 
-        $products = $this->withProgressBar( $queryBuilder->get(), function( $product ) {
+        $products = $this->withProgressBar( $queryBuilder->get(), function ( $product ) {
             $this->productService->generateProductBarcode( $product );
         });
 
@@ -105,7 +105,7 @@ class ProductCommand extends Command
     {
         $queryBuilder = $this->queryBuilder();
 
-        $this->perform( $queryBuilder, function( $product ) {
+        $this->perform( $queryBuilder, function ( $product ) {
             $gallery = ProductGallery::where( 'product_id', $product->id )->get();
             $units = ProductUnitQuantity::where( 'product_id', $product->id )->get();
             $subItems = ProductSubItem::where( 'product_id', $product->id )->get();

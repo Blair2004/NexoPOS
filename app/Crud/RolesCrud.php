@@ -470,7 +470,7 @@ class RolesCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'users/roles' ),
             'create' => ns()->url( 'dashboard/' . 'users/roles/create' ),
             'edit' => ns()->url( 'dashboard/' . 'users/roles/edit/{id}' ),

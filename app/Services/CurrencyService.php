@@ -229,7 +229,7 @@ class CurrencyService
         } else {
             return BigDecimal::of( $value )->dividedBy( 1, $this->decimal_precision, RoundingMode::HALF_UP )->toFloat();
         }
-        
+
         return 0;
     }
 

@@ -15,7 +15,7 @@ return [
                 'no' => __( 'No' ),
                 'await_confirm' => __( 'Test' ),
                 'yes' => __( 'Yes' ),
-            ]) )->map( function( $option ) {
+            ]) )->map( function ( $option ) {
                 $option[ 'disabled' ] = false;
                 if ( $option[ 'value' ] === 'yes' ) {
                     $option[ 'disabled' ] = true;

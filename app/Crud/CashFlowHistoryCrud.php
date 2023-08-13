@@ -439,7 +439,7 @@ class CashFlowHistoryCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'cash-flow/history' ),
             'create' => ns()->url( 'dashboard/' . 'cash-flow/history/create' ),
             'edit' => ns()->url( 'dashboard/' . 'cash-flow/history/edit/' ),

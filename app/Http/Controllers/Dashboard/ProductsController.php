@@ -305,7 +305,7 @@ class ProductsController extends DashboardController
         /** @var Product */
         $product = $this->singleProduct( $product_id );
 
-        $results = $product->variations->map( function( $variation ) use ( $variation_id ) {
+        $results = $product->variations->map( function ( $variation ) use ( $variation_id ) {
             if ( $variation->id === $variation_id ) {
                 $variation->delete();
 
@@ -315,7 +315,7 @@ class ProductsController extends DashboardController
             return 0;
         });
 
-        $opResult = $results->reduce( function( $before, $after ) {
+        $opResult = $results->reduce( function ( $before, $after ) {
             return $before + $after;
         });
 
@@ -357,7 +357,7 @@ class ProductsController extends DashboardController
     {
         ns()->restrict([ 'nexopos.read.products' ]);
 
-        Hook::addFilter( 'ns-crud-footer', function( Output $output ) {
+        Hook::addFilter( 'ns-crud-footer', function ( Output $output ) {
             $output->addView( 'pages.dashboard.products.quantity-popup' );
 
             return $output;
@@ -423,7 +423,7 @@ class ProductsController extends DashboardController
      */
     public function productHistory( $identifier )
     {
-        Hook::addFilter( 'ns-crud-footer', function( Output $output, $identifier ) {
+        Hook::addFilter( 'ns-crud-footer', function ( Output $output, $identifier ) {
             $output->addView( 'pages.dashboard.products.history' );
 
             return $output;
@@ -620,7 +620,7 @@ class ProductsController extends DashboardController
 
     public function getProcuredProducts( Product $product )
     {
-        return $product->procurementHistory->map( function( $procurementProduct ) {
+        return $product->procurementHistory->map( function ( $procurementProduct ) {
             $procurementProduct->procurement = $procurementProduct->procurement()->select( 'name' )->first();
 
             return $procurementProduct;

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_products_histories', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_histories', function ( Blueprint $table ) {
             $table->text( 'description' )->nullable()->change();
         });
     }

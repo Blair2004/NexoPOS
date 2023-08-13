@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         if ( Schema::hasTable( 'nexopos_registers_history' ) ) {
-            Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+            Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_registers_history', 'payment_id' ) ) {
                     $table->integer( 'payment_id' )->nullable();
                 }

@@ -183,14 +183,14 @@ class ExtractTranslation extends Command
              * delete all keys that doesn't exists
              */
             $purgedTranslation = collect( $existingTranslation )
-                ->filter( function( $translation, $key ) use ( $newTranslation ) {
+                ->filter( function ( $translation, $key ) use ( $newTranslation ) {
                     return in_array( $key, array_keys( $newTranslation ) );
                 });
 
             /**
              * pull new keys
              */
-            $newKeys = collect( $newTranslation )->filter( function( $translation, $key ) use ( $existingTranslation ) {
+            $newKeys = collect( $newTranslation )->filter( function ( $translation, $key ) use ( $existingTranslation ) {
                 return ! in_array( $key, array_keys( $existingTranslation ) );
             });
 
@@ -204,7 +204,7 @@ class ExtractTranslation extends Command
     {
         $supportedExtensions = [ 'vue', 'php', 'ts', 'js' ];
 
-        $filtered = collect( $files )->filter( function( $file ) use ( $supportedExtensions ) {
+        $filtered = collect( $files )->filter( function ( $file ) use ( $supportedExtensions ) {
             $info = pathinfo( $file );
 
             return in_array( $info[ 'extension' ], $supportedExtensions );
@@ -216,7 +216,7 @@ class ExtractTranslation extends Command
          * we'll extract all the string that can be translated
          * and save them within an array.
          */
-        $this->withProgressBar( $filtered, function( $file ) use ( &$exportable ) {
+        $this->withProgressBar( $filtered, function ( $file ) use ( &$exportable ) {
             $fileContent = Storage::disk( 'ns' )->get( $file );
             preg_match_all('/\_\_[m]?\(\s*[\'\"\`]([\w\s\+\"\\/\d\-é&\[\]\@*$#\.\?\%,;)\{\}]*)[\'\"\`]\s*(\,?\s*[\'\"\`]?(\w)*[\'\"\`]?\s*)?\)/', $fileContent, $output_array);
 
@@ -227,7 +227,7 @@ class ExtractTranslation extends Command
             }
         });
 
-        return collect( $exportable )->mapWithKeys( function( $exportable ) {
+        return collect( $exportable )->mapWithKeys( function ( $exportable ) {
             return [ $exportable[ 'string' ] => $exportable[ 'string' ] ];
         })->toArray();
     }

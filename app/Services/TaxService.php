@@ -254,6 +254,7 @@ class TaxService
 
         if ( $taxGroup instanceof TaxGroup ) {
             $summarizedRate = $taxGroup->taxes->sum( 'rate' );
+
             return $this->getVatValue( $tax_type, $summarizedRate, $price );
         }
 
@@ -289,7 +290,7 @@ class TaxService
          */
         if ( $taxGroup instanceof TaxGroup ) {
             $taxRate = $taxGroup->taxes
-                ->map( function( $tax ) {
+                ->map( function ( $tax ) {
                     return floatval( $tax[ 'rate' ] );
                 })
                 ->sum();
@@ -321,7 +322,7 @@ class TaxService
          */
         if ( $taxGroup instanceof TaxGroup ) {
             $taxRate = $taxGroup->taxes
-                ->map( function( $tax ) {
+                ->map( function ( $tax ) {
                     return floatval( $tax[ 'rate' ] );
                 })
                 ->sum();
@@ -411,15 +412,15 @@ class TaxService
          */
         if ( $taxGroup instanceof TaxGroup ) {
             if ( $orderProduct->tax_type === 'exclusive' ) {
-                $orderProduct->price_with_tax   =   $orderProduct->unit_price;
-                $orderProduct->price_without_tax    =   $this->getPriceWithoutTaxUsingGroup(
+                $orderProduct->price_with_tax = $orderProduct->unit_price;
+                $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
                     type: 'inclusive',
                     price: $orderProduct->price_with_tax - $discount,
                     group: $taxGroup
                 );
             } else {
-                $orderProduct->price_without_tax    =   $orderProduct->unit_price;
-                $orderProduct->price_with_tax       =   $this->getPriceWithTaxUsingGroup(
+                $orderProduct->price_without_tax = $orderProduct->unit_price;
+                $orderProduct->price_with_tax = $this->getPriceWithTaxUsingGroup(
                     type: 'exclusive',
                     price: $orderProduct->price_without_tax - $discount,
                     group: $taxGroup

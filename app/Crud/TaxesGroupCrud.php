@@ -360,7 +360,7 @@ class TaxesGroupCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'taxes/groups' ),
             'create' => ns()->url( 'dashboard/' . 'taxes/groups/create' ),
             'edit' => ns()->url( 'dashboard/' . 'taxes/groups/edit/{id}' ),

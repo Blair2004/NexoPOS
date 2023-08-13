@@ -20,13 +20,13 @@ class CrudEditEntitiesTest extends TestCase
         $this->attemptAuthenticate();
 
         collect( Storage::disk( 'ns' )->files( 'app/Crud' ) )
-            ->map( function( $fileName ) {
+            ->map( function ( $fileName ) {
                 $fileName = collect( explode( '/', $fileName ) );
                 $file = pathinfo( $fileName->last() );
 
                 return 'App\\Crud\\' . $file[ 'filename' ];
             })
-            ->each( function( $class ) {
+            ->each( function ( $class ) {
                 $object = new $class;
 
                 if ( ! empty( $object->getNamespace() ) ) {

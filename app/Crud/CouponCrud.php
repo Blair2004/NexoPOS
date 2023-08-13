@@ -273,7 +273,7 @@ class CouponCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
-        $inputs = collect( $inputs )->map( function( $field, $key ) {
+        $inputs = collect( $inputs )->map( function ( $field, $key ) {
             if ( ( in_array( $key, [
                 'minimum_cart_value',
                 'maximum_cart_value',
@@ -286,7 +286,7 @@ class CouponCrud extends CrudService
             return $field;
         })->toArray();
 
-        $inputs = collect( $inputs )->filter( function( $field, $key ) {
+        $inputs = collect( $inputs )->filter( function ( $field, $key ) {
             if ( ( in_array( $key, [
                 'minimum_cart_value',
                 'maximum_cart_value',
@@ -318,7 +318,7 @@ class CouponCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Coupon $entry )
     {
-        $inputs = collect( $inputs )->map( function( $field, $key ) {
+        $inputs = collect( $inputs )->map( function ( $field, $key ) {
             if ( ( in_array( $key, [
                 'minimum_cart_value',
                 'maximum_cart_value',
@@ -331,7 +331,7 @@ class CouponCrud extends CrudService
             return $field;
         })->toArray();
 
-        $inputs = collect( $inputs )->filter( function( $field, $key ) {
+        $inputs = collect( $inputs )->filter( function ( $field, $key ) {
             if ( ( in_array( $key, [
                 'minimum_cart_value',
                 'maximum_cart_value',
@@ -481,13 +481,13 @@ class CouponCrud extends CrudService
      */
     public function afterPut( $inputs, $coupon )
     {
-        $coupon->categories->each( function( $category ) use ( $inputs ) {
+        $coupon->categories->each( function ( $category ) use ( $inputs ) {
             if ( ! in_array( $category->category_id, $inputs[ 'categories' ] ) ) {
                 $category->delete();
             }
         });
 
-        $coupon->products->each( function( $product ) use ( $inputs ) {
+        $coupon->products->each( function ( $product ) use ( $inputs ) {
             if ( ! in_array( $product->product_id, $inputs[ 'products' ] ) ) {
                 $product->delete();
             }
@@ -698,7 +698,7 @@ class CouponCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'customers/coupons' ),
             'create' => ns()->url( 'dashboard/' . 'customers/coupons/create' ),
             'edit' => ns()->url( 'dashboard/' . 'customers/coupons/edit/' ),

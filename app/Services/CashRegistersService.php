@@ -244,7 +244,7 @@ class CashRegistersService
              * We'll only track on that cash register
              * payment that was recorded on the current register
              */
-            $payments->each( function( OrderPayment $payment ) use ( $order, $register ) {
+            $payments->each( function ( OrderPayment $payment ) use ( $order, $register ) {
                 $isRecorded = RegisterHistory::where( 'order_id', $order->id )
                     ->where( 'payment_id', $payment->id )
                     ->where( 'register_id', $register->id )

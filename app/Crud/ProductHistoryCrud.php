@@ -586,7 +586,7 @@ class ProductHistoryCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'products/histories' ),
             'create' => false,
             'edit' => false,

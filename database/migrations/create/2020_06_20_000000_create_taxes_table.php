@@ -17,7 +17,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_taxes' ) ) {
-            Schema::createIfMissing( 'nexopos_taxes', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_taxes', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration
         }
 
         if ( ! Schema::hasTable( 'nexopos_taxes_groups' ) ) {
-            Schema::createIfMissing( 'nexopos_taxes_groups', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_taxes_groups', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();

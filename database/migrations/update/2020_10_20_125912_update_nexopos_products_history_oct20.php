@@ -15,7 +15,7 @@ return new class extends Migration
     {
         if ( Schema::hasTable( 'nexopos_products_histories' ) ) {
             if ( ! Schema::hasColumn( 'nexopos_products_histories', 'description' ) ) {
-                Schema::table( 'nexopos_products_histories', function( Blueprint $table ) {
+                Schema::table( 'nexopos_products_histories', function ( Blueprint $table ) {
                     $table->text( 'description' )->nullable();
                 });
             }
@@ -31,7 +31,7 @@ return new class extends Migration
     {
         if ( Schema::hasTable( 'nexopos_products_histories' ) ) {
             if ( Schema::hasColumn( 'nexopos_products_histories', 'description' ) ) {
-                Schema::table( 'nexopos_products_histories', function( Blueprint $table ) {
+                Schema::table( 'nexopos_products_histories', function ( Blueprint $table ) {
                     $table->dropColumn( 'description' );
                 });
             }

@@ -33,7 +33,7 @@ class Validation
         if ( class_exists( $this->class ) ) {
             $object = new $this->class;
             $fields = $object->$method( $model );
-            $validation = collect( $fields )->mapWithKeys( function( $field ) {
+            $validation = collect( $fields )->mapWithKeys( function ( $field ) {
                 return [
                     $field->name => ! empty( $field->validation ) ? $field->validation : '',
                 ];

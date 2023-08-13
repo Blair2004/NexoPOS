@@ -374,7 +374,7 @@ class CustomerCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
-        return collect( $inputs )->map( function( $value, $key ) {
+        return collect( $inputs )->map( function ( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
                 $value = $this->options->get( 'ns_customers_default_group', false );
                 $group = CustomerGroup::find( $value );
@@ -396,7 +396,7 @@ class CustomerCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Customer $entry )
     {
-        return collect( $inputs )->map( function( $value, $key ) {
+        return collect( $inputs )->map( function ( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
                 $value = $this->options->get( 'ns_customers_default_group', false );
                 $group = CustomerGroup::find( $value );
@@ -685,7 +685,7 @@ class CustomerCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( '/dashboard/customers' ),
             'create' => ns()->url( '/dashboard/customers/create' ),
             'edit' => ns()->url( '/dashboard/customers/edit/{id}' ),

@@ -436,7 +436,7 @@ class ProviderCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'providers' ),
             'create' => ns()->url( 'dashboard/' . 'providers/create' ),
             'edit' => ns()->url( 'dashboard/' . 'providers/edit/' ),

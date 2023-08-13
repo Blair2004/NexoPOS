@@ -161,7 +161,7 @@ class CustomersController extends DashboardController
             ->orders()
             ->orderBy( 'created_at', 'desc' )
             ->get()
-            ->map( function( Order $order ) {
+            ->map( function ( Order $order ) {
                 switch ( $order->payment_status ) {
                     case Order::PAYMENT_HOLD : $order->human_status = __( 'Hold' );
                         break;

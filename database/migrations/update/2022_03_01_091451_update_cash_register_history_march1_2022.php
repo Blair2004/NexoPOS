@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         if ( Schema::hasTable( 'nexopos_registers_history' ) ) {
-            Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+            Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_registers_history', 'transaction_type' ) ) {
                     $table->string( 'transaction_type' )->nullable(); // can be "negative", "positive".
                 }
@@ -34,7 +34,7 @@ return new class extends Migration
     public function down()
     {
         if ( Schema::hasTable( 'nexopos_registers_history' ) ) {
-            Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+            Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
                 if ( Schema::hasColumn( 'nexopos_registers_history', 'transaction_type' ) ) {
                     $table->dropColumn( 'transaction_type' );
                 }

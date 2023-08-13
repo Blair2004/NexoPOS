@@ -87,7 +87,7 @@ class UnitService
          * other units changes
          */
         if ( $data[ 'base_unit' ] === true ) {
-            $group->units->map( function( $unit ) {
+            $group->units->map( function ( $unit ) {
                 $unit->base_unit = false;
                 $unit->save();
             });
@@ -171,7 +171,7 @@ class UnitService
          * other units changes
          */
         if ( $fields[ 'base_unit' ] === true ) {
-            $group->units->map( function( $unit ) use ( $id ) {
+            $group->units->map( function ( $unit ) use ( $id ) {
                 if ( $unit->id !== $id ) {
                     $unit->base_unit = false;
                     $unit->save();
@@ -218,7 +218,7 @@ class UnitService
         $baseUnit = UnitGroup::find( $group->id )
             ->units()
             ->get()
-            ->filter( function( $unit ) {
+            ->filter( function ( $unit ) {
                 return $unit->base_unit;
             });
 

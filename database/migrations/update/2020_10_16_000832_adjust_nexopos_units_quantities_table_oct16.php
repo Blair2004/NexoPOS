@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_unit_quantities', function ( Blueprint $table ) {
             foreach ([
                 'sale_price_tax',
                 'sale_price',
@@ -48,7 +48,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_unit_quantities', function ( Blueprint $table ) {
             foreach ([
                 'sale_price_tax',
                 'wholesale_price_tax',

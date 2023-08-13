@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products', function ( Blueprint $table ) {
             foreach ([
                 'selling_unit_ids',
                 'purchase_unit_ids',
@@ -34,7 +34,7 @@ return new class extends Migration
     public function down()
     {
         if ( Schema::hasTable( 'nexopos_products' ) ) {
-            Schema::table( 'nexopos_products', function( Blueprint $table ) {
+            Schema::table( 'nexopos_products', function ( Blueprint $table ) {
                 foreach ([
                     'selling_unit_ids',
                     'purchase_unit_ids',

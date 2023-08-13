@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_customers_account_history', function( Blueprint $table ) {
+        Schema::table( 'nexopos_customers_account_history', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_customers_account_history', 'previous_amount' ) ) {
                 $table->float( 'previous_amount' )->default(0);
             }
@@ -25,11 +25,11 @@ return new class extends Migration
             }
         });
 
-        Customer::get()->each( function( $customer ) {
+        Customer::get()->each( function ( $customer ) {
             $customer->account_history()
                 ->orderBy( 'created_at', 'desc' )
                 ->get()
-                ->each( function( $walletHistory ) {
+                ->each( function ( $walletHistory ) {
                     $this->handleWalletHistory( $walletHistory );
                 });
         });
@@ -67,7 +67,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_customers_account_history', function( Blueprint $table ) {
+        Schema::table( 'nexopos_customers_account_history', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_customers_account_history', 'previous_amount' ) ) {
                 $table->dropColumn( 'previous_amount' );
             }

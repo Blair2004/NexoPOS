@@ -402,7 +402,7 @@ class CustomerGroupCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url(  'dashboard/customers/groups' ),
             'create' => ns()->url(  'dashboard/customers/groups/create' ),
             'edit' => ns()->url(  'dashboard/customers/groups/edit' ),

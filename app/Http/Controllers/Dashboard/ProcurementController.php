@@ -120,7 +120,7 @@ class ProcurementController extends DashboardController
      */
     public function procurementProducts( $procurement_id )
     {
-        return $this->procurementService->getProducts( $procurement_id )->map( function( $product ) {
+        return $this->procurementService->getProducts( $procurement_id )->map( function ( $product ) {
             $product->unit;
 
             return $product;
@@ -300,19 +300,19 @@ class ProcurementController extends DashboardController
         $products = Product::query()
             ->trackingDisabled()
             ->with( 'unit_quantities.unit' )
-            ->where( function( $query ) use ( $request ) {
+            ->where( function ( $query ) use ( $request ) {
                 $query->where( 'sku', 'LIKE', "%{$request->input( 'argument' )}%" )
                 ->orWhere( 'name', 'LIKE', "%{$request->input( 'argument' )}%" )
                 ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'argument' )}%" );
             })
             ->limit( 8 )
             ->get()
-            ->map( function( $product ) {
+            ->map( function ( $product ) {
                 $units = json_decode( $product->purchase_unit_ids );
 
                 if ( $units ) {
                     $product->purchase_units = collect();
-                    collect( $units )->each( function( $unitID ) use ( &$product ) {
+                    collect( $units )->each( function ( $unitID ) use ( &$product ) {
                         $product->purchase_units->push( Unit::find( $unitID ) );
                     });
                 }

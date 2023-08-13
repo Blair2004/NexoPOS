@@ -42,7 +42,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
         $customer->save();
 
         $products = Product::with( 'unit_quantities' )->get()->shuffle()->take(3);
-        $products = $products->map( function( $product ) use ( $faker ) {
+        $products = $products->map( function ( $product ) use ( $faker ) {
             $unitElement = $faker->randomElement( $product->unit_quantities );
 
             $data = array_merge([
@@ -60,12 +60,12 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
             }
 
             return $data;
-        })->filter( function( $product ) {
+        })->filter( function ( $product ) {
             return $product[ 'quantity' ] > 0;
         });
 
         $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
-        $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
+        $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ($currency) {
             return $currency
                 ->define( $product[ 'unit_price' ] )
                 ->multiplyBy( $product[ 'quantity' ] )
@@ -85,7 +85,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
          */
         $this->defaultProcessing = true;
 
-        $response = $this->attemptPostOrder( function( $response, $data ) {
+        $response = $this->attemptPostOrder( function ( $response, $data ) {
             $order = Order::find( $data[ 'data' ][ 'order' ][ 'id' ] );
         });
 
@@ -108,7 +108,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
             $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
             $discountRate = $faker->numberBetween(0, 5);
 
-            $products = $products->map( function( $product ) use ( $faker ) {
+            $products = $products->map( function ( $product ) use ( $faker ) {
                 $unitElement = $faker->randomElement( $product->unit_quantities );
 
                 $data = array_merge([
@@ -126,11 +126,11 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 }
 
                 return $data;
-            })->filter( function( $product ) {
+            })->filter( function ( $product ) {
                 return $product[ 'quantity' ] > 0;
             });
 
-            $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
+            $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ($currency) {
                 return $currency
                     ->define( $product[ 'unit_price' ] )
                     ->multiplyBy( $product[ 'quantity' ] )

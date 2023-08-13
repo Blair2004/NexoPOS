@@ -29,7 +29,7 @@ trait App
          *
          * @see App\Http\Middleware\ClearRequestCacheMiddleware
          */
-        return Cache::remember( 'ns-core-installed', 3600, function() {
+        return Cache::remember( 'ns-core-installed', 3600, function () {
             return self::checkDatabaseExistence();
         });
     }

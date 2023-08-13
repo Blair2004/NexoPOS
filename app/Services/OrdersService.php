@@ -312,7 +312,7 @@ class OrdersService
      */
     public function __checkAttachedCoupons( $coupons )
     {
-        collect( $coupons )->each( function( $coupon ) {
+        collect( $coupons )->each( function ( $coupon ) {
             $customerCoupon = CustomerCoupon::find( $coupon[ 'customer_coupon_id' ] );
 
             if ( ! $customerCoupon instanceof CustomerCoupon ) {
@@ -493,7 +493,7 @@ class OrdersService
              * adjustment accordingly. In that case we'll use adjustment-return & sale.
              */
             if ( $order->payment_status !== Order::PAYMENT_HOLD ) {
-                $order->products->map( function( OrderProduct $product ) use ( $products ) {
+                $order->products->map( function ( OrderProduct $product ) use ( $products ) {
                     $productHistory = ProductHistory::where( 'operation_type', ProductHistory::ACTION_SOLD )
                         ->where( 'order_product_id', $product->id )
                         ->first();
@@ -536,7 +536,7 @@ class OrdersService
                     return false;
                 })
                 ->filter( fn( $adjustment ) => $adjustment !== false )
-                ->each( function( $adjustment ) use ( $order ) {
+                ->each( function ( $adjustment ) use ( $order ) {
                     if ( $adjustment[ 'operation' ] === 'remove' ) {
                         $adjustment[ 'orderProduct' ]->quantity -= $adjustment[ 'quantity' ];
 
@@ -580,7 +580,7 @@ class OrdersService
              * proceesed another time should be removed. If the order has
              * already affected the stock, we should make some adjustments.
              */
-            $order->products->each( function( $orderProduct ) use ( $ids, $order ) {
+            $order->products->each( function ( $orderProduct ) use ( $ids, $order ) {
                 /**
                  * if a product has the unit id changed
                  * the product he considered as new and the old is returned
@@ -859,7 +859,7 @@ class OrdersService
                 ->filter( fn( $payment ) => $payment !== false )
                 ->toArray();
 
-            $order->payments->each( function( $payment ) use ( $paymentIds ) {
+            $order->payments->each( function ( $payment ) use ( $paymentIds ) {
                 if ( ! in_array( $payment->id, $paymentIds ) ) {
                     throw new NotAllowedException( __( 'Unable to proceed as one of the previous submitted payment is missing from the order.' ) );
                 }
@@ -1064,8 +1064,8 @@ class OrdersService
             $orderProduct->product_category_id = $product[ 'product' ]->category_id ?? 0;
             $orderProduct->name = $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unnamed Product' );
             $orderProduct->quantity = $product[ 'quantity' ];
-            $orderProduct->price_with_tax = $product[ 'price_with_tax' ];
-            $orderProduct->price_without_tax = $product[ 'price_without_tax' ];
+            $orderProduct->price_with_tax = $product[ 'price_with_tax' ] ?? 0;
+            $orderProduct->price_without_tax = $product[ 'price_without_tax' ] ?? 0;
 
             /**
              * We might need to have another consideration
@@ -1148,7 +1148,7 @@ class OrdersService
 
     private function __buildOrderProducts( $products )
     {
-        return collect( $products )->map( function( $orderProduct ) {
+        return collect( $products )->map( function ( $orderProduct ) {
             /**
              * by default, we'll assume a quick
              * product is being created.
@@ -1157,7 +1157,7 @@ class OrdersService
             $productUnitQuantity = null;
 
             if ( ! empty( $orderProduct[ 'sku' ] ?? null ) || ! empty( $orderProduct[ 'product_id' ] ?? null ) ) {
-                $product = Cache::remember( 'store-' . ( $orderProduct['product_id'] ?? $orderProduct['sku'] ), 60, function() use ($orderProduct) {
+                $product = Cache::remember( 'store-' . ( $orderProduct['product_id'] ?? $orderProduct['sku'] ), 60, function () use ($orderProduct) {
                     if ( ! empty( $orderProduct['product_id'] ?? null ) ) {
                         return $this->productService->get($orderProduct['product_id']);
                     } elseif ( ! empty( $orderProduct['sku'] ?? null ) ) {
@@ -1203,7 +1203,7 @@ class OrdersService
                     $orderProduct[ 'product' ]->load( 'sub_items.product' );
                     $orderProduct[ 'product' ]
                         ->sub_items
-                        ->each( function( ProductSubItem $subitem ) use ( $session_identifier, $orderProduct ) {
+                        ->each( function ( ProductSubItem $subitem ) use ( $session_identifier, $orderProduct ) {
                             /**
                              * Stock management should be enabled
                              * for the sub item.
@@ -1577,7 +1577,7 @@ class OrdersService
      */
     public function computeTaxFromOrderTaxes( Order $order, $value, $type = 'inclusive' )
     {
-        return $order->taxes->map( function( $tax ) use ( $value, $type ) {
+        return $order->taxes->map( function ( $tax ) use ( $value, $type ) {
             $result = $this->taxService->getVatValue(
                 $type, $tax->rate, $value
             );
@@ -1597,7 +1597,7 @@ class OrdersService
      */
     public function getTaxComputedFromOrderTaxes( Order $order, $value, $type )
     {
-        $rates = $order->taxes->map( function( $tax ) {
+        $rates = $order->taxes->map( function ( $tax ) {
             return $tax->rate;
         })->sum();
 
@@ -1635,7 +1635,7 @@ class OrdersService
                 ->validProducts()
                 ->sum( 'total_price' );
 
-            $taxValue = $order->taxes->map( function( $tax ) use ( $order, $subTotal ) {
+            $taxValue = $order->taxes->map( function ( $tax ) use ( $order, $subTotal ) {
                 $tax->tax_value = $this->taxService->getVatValue( $order->tax_type, $tax->rate, $subTotal );
                 $tax->save();
 
@@ -1724,7 +1724,7 @@ class OrdersService
             $order->shipping = 0;
         }
 
-        $taxValue = collect( $results )->map( function( $result ) {
+        $taxValue = collect( $results )->map( function ( $result ) {
             $refundProduct = $result[ 'data' ][ 'productRefund' ];
 
             return $refundProduct->tax_value;
@@ -2052,7 +2052,7 @@ class OrdersService
                 return floatval($product->total_price);
             })->sum();
 
-        $productsQuantity = $products->map( function( $product) {
+        $productsQuantity = $products->map( function ( $product) {
             return floatval( $product->quantity );
         })->sum();
 
@@ -2159,7 +2159,7 @@ class OrdersService
             $order
             ->products()
             ->get()
-            ->each( function( OrderProduct $orderProduct) {
+            ->each( function ( OrderProduct $orderProduct) {
                 $orderProduct->load( 'product' );
                 $product = $orderProduct->product;
                 /**
@@ -2254,13 +2254,13 @@ class OrdersService
      */
     public function getPaymentTypes()
     {
-        $payments = PaymentType::active()->get()->map( function( $payment, $index ) {
+        $payments = PaymentType::active()->get()->map( function ( $payment, $index ) {
             $payment->selected = $index === 0;
 
             return $payment;
         });
 
-        return collect( $payments )->mapWithKeys( function( $payment ) {
+        return collect( $payments )->mapWithKeys( function ( $payment ) {
             return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
         })->toArray();
     }
@@ -2343,7 +2343,7 @@ class OrdersService
      */
     public function getTypeLabels()
     {
-        $types = Hook::filter( 'ns-order-types-labels', collect( $this->getTypeOptions() )->mapWithKeys( function( $option ) {
+        $types = Hook::filter( 'ns-order-types-labels', collect( $this->getTypeOptions() )->mapWithKeys( function ( $option ) {
             return [
                 $option[ 'identifier' ] => $option[ 'label' ],
             ];
@@ -2482,7 +2482,7 @@ class OrdersService
              * The status changes according to the fact
              * if some orders has received a payment.
              */
-            $orders->each( function( $order ) {
+            $orders->each( function ( $order ) {
                 if ( $order->paid > 0 ) {
                     $order->payment_status = Order::PAYMENT_PARTIALLY_DUE;
                 } else {
@@ -2541,7 +2541,7 @@ class OrdersService
     {
         $order->products()
             ->get()
-            ->each( function( OrderProduct $orderProduct ) {
+            ->each( function ( OrderProduct $orderProduct ) {
                 $orderProduct->load( 'product' );
 
                 if ( $orderProduct->product instanceof Product ) {
@@ -2598,7 +2598,7 @@ class OrdersService
         $rangeStarts = Carbon::parse( $startDate )->toDateTimeString();
         $rangeEnds = Carbon::parse( $endDate )->toDateTimeString();
 
-        $products = OrderProduct::whereHas( 'order', function( Builder $query ) {
+        $products = OrderProduct::whereHas( 'order', function ( Builder $query ) {
                 $query->where( 'payment_status', Order::PAYMENT_PAID );
             })
             ->where( 'created_at', '>=', $rangeStarts )
@@ -2610,7 +2610,7 @@ class OrdersService
 
     public function trackOrderCoupons( Order $order )
     {
-        $order->coupons->each( function( OrderCoupon $orderCoupon ) {
+        $order->coupons->each( function ( OrderCoupon $orderCoupon ) {
             $customerCoupon = CustomerCoupon::find( $orderCoupon->customer_coupon_id );
 
             if ( ! $customerCoupon instanceof CustomerCoupon ) {
@@ -2660,7 +2660,7 @@ class OrdersService
                     ->getRaw();
 
                 $orderInstalments
-                    ->each( function( $instalment ) use ( &$payableDifference ) {
+                    ->each( function ( $instalment ) use ( &$payableDifference ) {
                         if ( $payableDifference - $instalment->amount >= 0 ) {
                             $instalment->paid = true;
                             $instalment->save();
@@ -2865,7 +2865,7 @@ class OrdersService
         $total = $payments->map( fn( $payment ) => $payment->value )->sum();
 
         return [
-            'summary' => $paymentTypes->map( function( $paymentType ) use ( $payments ) {
+            'summary' => $paymentTypes->map( function ( $paymentType ) use ( $payments ) {
                 $total = $payments
                     ->filter( fn( $payment ) => $payment->identifier === $paymentType->identifier )
                     ->map( fn( $payment ) => $payment->value )

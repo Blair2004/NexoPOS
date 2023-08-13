@@ -4,7 +4,7 @@
  */
 use Illuminate\Support\Facades\Route;
 
-Route::get( '/intermediate/{route}/{from}', function( $route, $from ) {
+Route::get( '/intermediate/{route}/{from}', function ( $route, $from ) {
     $message = null;
 
     switch ( $from ) {

@@ -422,7 +422,7 @@ class TaxCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'taxes' ),
             'create' => ns()->url( 'dashboard/' . 'taxes/create' ),
             'edit' => ns()->url( 'dashboard/' . 'taxes/edit/' ),

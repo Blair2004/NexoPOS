@@ -127,7 +127,7 @@ class RouteServiceProvider extends ServiceProvider
                      */
                     $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
 
-                    Route::domain( $domainString )->group( function() use ( $module ) {
+                    Route::domain( $domainString )->group( function () use ( $module ) {
                         $this->mapModuleWebRoutes( $module );
                     });
                 } else {
@@ -146,7 +146,7 @@ class RouteServiceProvider extends ServiceProvider
                      */
                     $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
 
-                    Route::domain( $domainString )->group( function() use ( $module ) {
+                    Route::domain( $domainString )->group( function () use ( $module ) {
                         $this->mapModuleApiRoutes( $module );
                     });
                 } else {
