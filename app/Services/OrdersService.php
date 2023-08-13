@@ -1118,8 +1118,8 @@ class OrdersService
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price = $this->currencyService->define(
-                $product[ 'total_purchase_price' ] ?? $this->productService->getLastPurchasePrice( $product[ 'product' ] )
-            )
+                    $product[ 'total_purchase_price' ] ?? $this->productService->getLastPurchasePrice( $product[ 'product' ] )
+                )
                 ->getRaw();
 
             $this->computeOrderProduct( $orderProduct );
