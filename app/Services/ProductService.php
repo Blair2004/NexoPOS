@@ -1622,12 +1622,17 @@ class ProductService
      * @param Product $product
      * @return float
      */
-    public function getLastPurchasePrice( $product )
+    public function getLastPurchasePrice( $product, $before = null )
     {
         if ( $product instanceof Product ) {
-            $procurementProduct = ProcurementProduct::where( 'product_id', $product->id )
-                ->orderBy( 'id', 'desc' )
-                ->first();
+            $request = ProcurementProduct::where( 'product_id', $product->id )
+                ->orderBy( 'id', 'desc' );
+
+            if ( $before ) {
+                $request->where( 'created_at', '<=', $before );
+            }
+            
+            $procurementProduct     =   $request->first();
 
             if ( $procurementProduct instanceof ProcurementProduct ) {
                 return $procurementProduct->purchase_price;
