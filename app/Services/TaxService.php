@@ -251,25 +251,10 @@ class TaxService
     public function getComputedTaxGroupValue( $tax_type, $tax_group_id, $price )
     {
         $taxGroup = TaxGroup::find( $tax_group_id );
-        $computeTaxSeparately = ns()->option->get( 'ns_pos_tax_compute_group_separately', 'no' );
 
         if ( $taxGroup instanceof TaxGroup ) {
-            if ( $computeTaxSeparately === 'no' ) {
-                $summarizedRate = $taxGroup->taxes->sum( 'rate' );
-                return $this->getVatValue( $tax_type, $summarizedRate, $price );
-            } else {
-                return $taxGroup->taxes
-                    ->map( function( $tax ) use ( $tax_type, $price ) {
-                        $taxValue = $this->getVatValue(
-                            $tax_type,
-                            floatval( $tax[ 'rate' ] ),
-                            $price
-                        );
-        
-                        return $taxValue;
-                    })
-                    ->sum();
-            }
+            $summarizedRate = $taxGroup->taxes->sum( 'rate' );
+            return $this->getVatValue( $tax_type, $summarizedRate, $price );
         }
 
         return 0;
