@@ -123,6 +123,11 @@ class ProviderProcurementsCrud extends CrudService
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
+    public function hook( $query ): void
+    {
+        $query->where( 'provider_id', request()->query( 'provider_id' ) );
+    }
+
     /**
      * Return the label used for the crud
      * instance
