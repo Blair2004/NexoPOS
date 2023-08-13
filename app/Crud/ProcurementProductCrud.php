@@ -432,7 +432,7 @@ class ProcurementProductCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'procurements/products' ),
             'create' => 'javascript:void(0)', //ns()->url( 'dashboard/' . '/procurements/products/create' ),
             'edit' => ns()->url( 'dashboard/' . 'procurements/products/edit/' ),

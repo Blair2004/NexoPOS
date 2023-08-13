@@ -157,11 +157,11 @@
                         <tr class="success">
                             <td width="200" class="border p-2">
                                 <template v-if="order && options.ns_pos_tax_type === 'exclusive'">
-                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ order.total_tax_value + order.products_exclusive_tax_value | currency }}</a>
+                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'With Tax' ) }}: {{ order.total_tax_value + ( order.products_exclusive_tax_value + order.products_inclusive_tax_value ) | currency }}</a>
                                     <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ order.total_tax_value | currency }}</a>
                                 </template>
                                 <template v-else-if="order && options.ns_pos_tax_type === 'inclusive'">
-                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ order.total_tax_value + order.products_exclusive_tax_value | currency }}</a>
+                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'With Tax' ) }}: {{ order.total_tax_value + ( order.products_exclusive_tax_value + order.products_inclusive_tax_value ) | currency }}</a>
                                     <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ order.total_tax_value | currency }}</a>
                                 </template>
                             </td>
@@ -538,7 +538,7 @@ export default {
                 POS.refreshCart();
 
             } catch( exception ) {
-                console.error( exception );
+                // popup is closed... not needed to log or do anything else
             }
         },
 

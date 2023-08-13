@@ -519,7 +519,7 @@ class ProcurementCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => 'procurements',
             'create' => 'procurements/create',
             'edit' => 'procurements/edit',

@@ -27,7 +27,7 @@ return new class extends Migration
 
         Permission::where( 'namespace', 'like', '%nexopos.pos%' )
             ->get()
-            ->each( function( $permission ) use ( $role ) {
+            ->each( function ( $permission ) use ( $role ) {
                 $role->addPermissions( $permission->namespace );
             });
 

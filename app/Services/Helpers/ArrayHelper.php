@@ -142,7 +142,7 @@ trait ArrayHelper
      */
     public static function flatArrayWithKeys( $data )
     {
-        return collect( $data )->mapWithKeys( function( $data, $index ) {
+        return collect( $data )->mapWithKeys( function ( $data, $index ) {
             if ( ! is_array( $data ) || is_numeric( $index ) ) {
                 return [ $index => $data ];
             } elseif ( is_array( $data ) ) {
@@ -154,7 +154,7 @@ trait ArrayHelper
             }
 
             return [];
-        })->filter( function( $field ) {
+        })->filter( function ( $field ) {
             return $field !== false;
         });
     }

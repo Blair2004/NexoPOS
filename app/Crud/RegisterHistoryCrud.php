@@ -509,7 +509,7 @@ class RegisterHistoryCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'registers-history' ),
             'create' => false,
             'edit' => false,

@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         if ( Schema::hasTable( 'nexopos_orders_products' ) ) {
-            Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+            Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_orders_products', [
                     'quantity',
                     'discount_percentage',
@@ -46,7 +46,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_orders' ) ) {
-            Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+            Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_orders', [
                     'discount',
                     'discount_percentage',
@@ -74,7 +74,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_orders_coupons' ) ) {
-            Schema::table( 'nexopos_orders_coupons', function( Blueprint $table ) {
+            Schema::table( 'nexopos_orders_coupons', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_orders_coupons', [
                     'value',
                 ]) ) {
@@ -84,7 +84,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_orders_taxes' ) ) {
-            Schema::table( 'nexopos_orders_taxes', function( Blueprint $table ) {
+            Schema::table( 'nexopos_orders_taxes', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_orders_taxes', [
                     'tax_value',
                 ]) ) {
@@ -94,7 +94,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_orders_payments' ) ) {
-            Schema::table( 'nexopos_orders_payments', function( Blueprint $table ) {
+            Schema::table( 'nexopos_orders_payments', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_orders_payments', [
                     'value',
                 ]) ) {
@@ -104,7 +104,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_expenses_history' ) ) {
-            Schema::table( 'nexopos_expenses_history', function( Blueprint $table ) {
+            Schema::table( 'nexopos_expenses_history', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_expenses_history', [
                     'value',
                 ]) ) {
@@ -114,7 +114,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_expenses' ) ) {
-            Schema::table( 'nexopos_expenses', function( Blueprint $table ) {
+            Schema::table( 'nexopos_expenses', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_expenses', [
                     'value',
                 ]) ) {
@@ -124,7 +124,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_dashboard_weeks' ) ) {
-            Schema::table( 'nexopos_dashboard_weeks', function( Blueprint $table ) {
+            Schema::table( 'nexopos_dashboard_weeks', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_dashboard_weeks', [
                     'total_gross_income',
                     'total_taxes',
@@ -140,7 +140,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_customers_coupons' ) ) {
-            Schema::table( 'nexopos_customers_coupons', function( Blueprint $table ) {
+            Schema::table( 'nexopos_customers_coupons', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_customers_coupons', [
                     'discount_value',
                     'minimum_cart_value',
@@ -156,7 +156,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_customers_account_history' ) ) {
-            Schema::table( 'nexopos_customers_account_history', function( Blueprint $table ) {
+            Schema::table( 'nexopos_customers_account_history', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_customers_account_history', [
                     'amount',
                 ]) ) {
@@ -166,7 +166,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_customers' ) ) {
-            Schema::table( 'nexopos_customers', function( Blueprint $table ) {
+            Schema::table( 'nexopos_customers', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_customers', [
                     'purchases_amount',
                     'owed_amount',
@@ -180,7 +180,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_dashboard_days' ) ) {
-            Schema::table( 'nexopos_dashboard_days', function( Blueprint $table ) {
+            Schema::table( 'nexopos_dashboard_days', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_dashboard_days', [
                     'total_unpaid_orders',
                     'day_unpaid_orders',
@@ -236,7 +236,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_rewards_system' ) ) {
-            Schema::table( 'nexopos_rewards_system', function( Blueprint $table ) {
+            Schema::table( 'nexopos_rewards_system', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_rewards_system', [
                     'target',
                 ]) ) {
@@ -246,7 +246,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_rewards_system_rules' ) ) {
-            Schema::table( 'nexopos_rewards_system_rules', function( Blueprint $table ) {
+            Schema::table( 'nexopos_rewards_system_rules', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_rewards_system_rules', [
                     'from',
                     'to',
@@ -260,7 +260,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_providers' ) ) {
-            Schema::table( 'nexopos_providers', function( Blueprint $table ) {
+            Schema::table( 'nexopos_providers', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_providers', [
                     'amount_due',
                     'amount_paid',
@@ -272,7 +272,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_products_taxes' ) ) {
-            Schema::table( 'nexopos_products_taxes', function( Blueprint $table ) {
+            Schema::table( 'nexopos_products_taxes', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_products_taxes', [
                     'rate',
                     'value',
@@ -284,7 +284,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_products_histories' ) ) {
-            Schema::table( 'nexopos_products_histories', function( Blueprint $table ) {
+            Schema::table( 'nexopos_products_histories', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_products_histories', [
                     'before_quantity',
                     'quantity',
@@ -302,7 +302,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_registers_history' ) ) {
-            Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+            Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_registers_history', [
                     'value',
                 ]) ) {
@@ -312,7 +312,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_transfers_products' ) ) {
-            Schema::table( 'nexopos_transfers_products', function( Blueprint $table ) {
+            Schema::table( 'nexopos_transfers_products', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_transfers_products', [
                     'quantity',
                 ]) ) {
@@ -322,7 +322,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_procurements_products' ) ) {
-            Schema::table( 'nexopos_procurements_products', function( Blueprint $table ) {
+            Schema::table( 'nexopos_procurements_products', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_procurements_products', [
                     'gross_purchase_price',
                     'net_purchase_price',
@@ -342,7 +342,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_products_unit_quantities' ) ) {
-            Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+            Schema::table( 'nexopos_products_unit_quantities', function ( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_products_unit_quantities', [
                     'quantity',
                     'sale_price_tax',

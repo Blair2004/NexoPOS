@@ -43,7 +43,7 @@ class FormsProvider extends ServiceProvider
      */
     public function boot()
     {
-        Hook::addFilter( 'ns.forms', function( $class, $identifier ) {
+        Hook::addFilter( 'ns.forms', function ( $class, $identifier ) {
             switch ( $identifier ) {
                 case 'ns.user-profile':
                     return new UserProfileForm;
@@ -59,7 +59,7 @@ class FormsProvider extends ServiceProvider
             return $class;
         }, 10, 2 );
 
-        Hook::addFilter( 'ns.fields', function( $class, $identifier ) {
+        Hook::addFilter( 'ns.fields', function ( $class, $identifier ) {
             switch ( $class ) {
                 case 'ns.login' :
                     return new AuthLoginFields;

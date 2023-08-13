@@ -85,7 +85,7 @@ class ProductCategoryService
 
         if ( $categories->count() > 0 ) {
             return $categories
-                ->map( function( $category ) {
+                ->map( function ( $category ) {
                     return $this->getCategoryChildrens( $category->id );
                 })
                 ->flatten()

@@ -46,7 +46,7 @@ class CrudPostRequest extends BaseCrudRequest
         /**
          * Let's properly flat everything.
          */
-        $flatRules = collect( $isolatedRules )->mapWithKeys( function( $rule ) {
+        $flatRules = collect( $isolatedRules )->mapWithKeys( function ( $rule ) {
             return [ $rule[0] => $rule[1] ];
         })->toArray();
 

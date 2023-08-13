@@ -100,11 +100,11 @@ class ReportsController extends DashboardController
                 $request->input( 'endDate' )
             );
 
-        return collect( $orders )->mapToGroups( function( $product ) {
+        return collect( $orders )->mapToGroups( function ( $product ) {
             return [
                 $product->product_id . '-' . $product->unit_id => $product,
             ];
-        })->map( function( $groups ) {
+        })->map( function ( $groups ) {
             return [
                 'name' => $groups->first()->name,
                 'unit_name' => $groups->first()->unit_name,
@@ -128,33 +128,33 @@ class ReportsController extends DashboardController
         $entries = $this->reportService->getFromTimeRange( $rangeStarts, $rangeEnds );
         $total = $entries->count() > 0 ? $entries->first()->toArray() : [];
         $creditCashFlow = AccountType::where( 'operation', CashFlow::OPERATION_CREDIT )->with([
-            'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
+            'cashFlowHistories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
-        ->map( function( $accountType ) {
+        ->map( function ( $accountType ) {
             $accountType->total = $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
 
             return $accountType;
         });
 
         $debitCashFlow = AccountType::where( 'operation', CashFlow::OPERATION_DEBIT )->with([
-            'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
+            'cashFlowHistories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
-        ->map( function( $accountType ) {
+        ->map( function ( $accountType ) {
             $accountType->total = $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
 
             return $accountType;
         });
 
         return [
-            'summary' => collect( $total )->mapWithKeys( function( $value, $key ) use ( $entries ) {
+            'summary' => collect( $total )->mapWithKeys( function ( $value, $key ) use ( $entries ) {
                 if ( ! in_array( $key, [ 'range_starts', 'range_ends', 'day_of_year' ] ) ) {
                     return [ $key => $entries->sum( $key ) ];
                 }
@@ -192,11 +192,11 @@ class ReportsController extends DashboardController
 
         return $orders;
 
-        return collect( $orders )->mapToGroups( function( $product ) {
+        return collect( $orders )->mapToGroups( function ( $product ) {
             return [
                 $product->product_id . '-' . $product->unit_id => $product,
             ];
-        })->map( function( $groups ) {
+        })->map( function ( $groups ) {
             return [
                 'name' => $groups->first()->name,
                 'unit_name' => $groups->first()->unit_name,

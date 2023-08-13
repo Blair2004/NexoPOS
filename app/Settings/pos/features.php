@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Unit;
 use App\Services\Helper;
 use App\Services\OrdersService;
 
@@ -66,6 +67,13 @@ return [
                 'no' => __( 'No' ),
             ]),
             'description' => __( 'Allow quick product to be created from the POS.' ),
+        ], [
+            'name' => 'ns_pos_quick_product_default_unit',
+            'value' => ns()->option->get( 'ns_pos_quick_product_default_unit' ),
+            'label' => __( 'Quick Product Default Unit' ),
+            'type' => 'select',
+            'options' => Helper::toJsOptions( Unit::get(), [ 'id', 'name' ]),
+            'description' => __( 'Set what unit is assigned by default to all quick product.' ),
         ], [
             'name' => 'ns_pos_unit_price_ediable',
             'value' => ns()->option->get( 'ns_pos_unit_price_ediable' ),

@@ -24,7 +24,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_users_attributes' ) ) {
-            Schema::create( 'nexopos_users_attributes', function( Blueprint $table ) {
+            Schema::create( 'nexopos_users_attributes', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'user_id' );
                 $table->string( 'first_name' )->nullable();

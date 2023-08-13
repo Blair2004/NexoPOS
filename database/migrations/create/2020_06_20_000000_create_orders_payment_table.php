@@ -17,7 +17,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_orders_payments' ) ) {
-            Schema::createIfMissing( 'nexopos_orders_payments', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_orders_payments', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'order_id' );
                 $table->float( 'value', 18, 5 )->default(0);

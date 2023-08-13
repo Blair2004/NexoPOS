@@ -43,7 +43,7 @@ class CreateUserTest extends TestCase
 
         $this->users = app()->make( Users::class );
 
-        return Role::get()->map( function( $role ) {
+        return Role::get()->map( function ( $role ) {
             $password = Hash::make( Str::random(20) );
 
             $configuration = [
@@ -122,8 +122,8 @@ class CreateUserTest extends TestCase
      */
     public function test_delete_users()
     {
-        Role::get()->map( function( Role $role ) {
-            $role->users()->get()->each( function( User $user ) {
+        Role::get()->map( function ( Role $role ) {
+            $role->users()->get()->each( function ( User $user ) {
                 $this->attemptAuthenticate( $user );
 
                 /**
@@ -171,7 +171,7 @@ class CreateUserTest extends TestCase
             '/\{group\}/' => UnitGroup::class,
             '/\{unit\}/' => Unit::class,
             '/\{reward\}/' => RewardSystem::class,
-            '/\{customer\}|\{customerAccountHistory\}/' => function() {
+            '/\{customer\}|\{customerAccountHistory\}/' => function () {
                 $customerAccountHistory = CustomerAccountHistory::first()->id;
                 $customer = $customerAccountHistory->customer->id;
 

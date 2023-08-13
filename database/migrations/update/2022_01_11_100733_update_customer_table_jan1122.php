@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_customers', function( Blueprint $table ) {
+        Schema::table( 'nexopos_customers', function ( Blueprint $table ) {
             $keyExists = DB::select(
                 DB::raw(
                     'SHOW KEYS
@@ -41,7 +41,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_customers', function( Blueprint $table ) {
+        Schema::table( 'nexopos_customers', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_customers', 'credit_limit_amount' ) ) {
                 $table->dropColumn( 'credit_limit_amount' );
             }

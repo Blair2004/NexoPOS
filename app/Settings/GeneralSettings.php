@@ -163,7 +163,7 @@ class GeneralSettings extends SettingsPage
                             'value' => ns()->option->get( 'ns_currency_precision', '0' ),
                             'label' => __( 'Currency Precision' ),
                             'type' => 'select',
-                            'options' => collect([0, 1, 2, 3, 4, 5])->map( function( $index ) {
+                            'options' => collect([0, 1, 2, 3, 4, 5])->map( function ( $index ) {
                                 return [
                                     'label' => sprintf( __( '%s numbers after the decimal' ), $index ),
                                     'value' => $index,

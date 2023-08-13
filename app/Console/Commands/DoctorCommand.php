@@ -96,7 +96,7 @@ class DoctorCommand extends Command
              */
             $productService = app()->make( ProductService::class );
 
-            $this->withProgressBar( $products, function( OrderProduct $orderProduct ) use ( $productService ) {
+            $this->withProgressBar( $products, function ( OrderProduct $orderProduct ) use ( $productService ) {
                 $orderProduct->total_purchase_price = $productService->getLastPurchasePrice( $orderProduct->product ) * $orderProduct->quantity;
                 $orderProduct->save();
             });

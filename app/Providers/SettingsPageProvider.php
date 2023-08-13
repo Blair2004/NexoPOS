@@ -33,7 +33,7 @@ class SettingsPageProvider extends ServiceProvider
      */
     public function boot()
     {
-        Hook::addFilter( 'ns.settings', function( $class, $identifier ) {
+        Hook::addFilter( 'ns.settings', function ( $class, $identifier ) {
             switch ( $identifier ) {
                 case 'ns.general': return new GeneralSettings;
                     break;

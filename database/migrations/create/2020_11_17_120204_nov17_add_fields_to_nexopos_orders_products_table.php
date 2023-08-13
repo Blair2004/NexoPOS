@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::createIfMissing( 'nexopos_orders_refunds', function( Blueprint $table ) {
+        Schema::createIfMissing( 'nexopos_orders_refunds', function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->integer( 'order_id' );
             $table->integer( 'author' );

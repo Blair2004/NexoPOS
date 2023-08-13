@@ -79,7 +79,7 @@ class ComputeDailyReportCommand extends Command
         /**
          * let's show how it progresses
          */
-        $this->withProgressBar( $dates, function( $date ) use ( $reportService ) {
+        $this->withProgressBar( $dates, function ( $date ) use ( $reportService ) {
             $reportService->computeDashboardMonth( $date );
         });
 
@@ -119,7 +119,7 @@ class ComputeDailyReportCommand extends Command
         /**
          * let's show how it progresses
          */
-        $this->withProgressBar( $dates, function( $date ) use ( $reportService ) {
+        $this->withProgressBar( $dates, function ( $date ) use ( $reportService ) {
             $reportService->computeDayReport(
                 $date->startOfDay()->toDateTimeString(),
                 $date->endOfDay()->toDateTimeString()

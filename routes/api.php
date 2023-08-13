@@ -39,7 +39,7 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
      */
     $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
 
-    Route::domain( $domainString )->group( function() {
+    Route::domain( $domainString )->group( function () {
         include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'api-base.php';
     });
 } else {

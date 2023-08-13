@@ -16,7 +16,7 @@ use App\Http\Middleware\NotInstalledStateMiddleware;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware([ 'web' ])->group( function() {
+Route::middleware([ 'web' ])->group( function () {
     Route::get('/', [ HomeController::class, 'welcome' ])->name( 'ns.welcome' );
 });
 
@@ -26,7 +26,7 @@ Route::middleware([
     InstalledStateMiddleware::class,
     CheckMigrationStatus::class,
     SubstituteBindings::class,
-])->group( function() {
+])->group( function () {
     /**
      * We would like to isolate certain routes as it's registered
      * for authentication and are likely to be applicable to sub stores
@@ -42,13 +42,13 @@ Route::middleware([
         CheckApplicationHealthMiddleware::class,
         ClearRequestCacheMiddleware::class,
         FooterOutputHookMiddleware::class,
-    ])->group( function() {
-        Route::prefix( 'dashboard' )->group( function() {
+    ])->group( function () {
+        Route::prefix( 'dashboard' )->group( function () {
             event( new WebRoutesLoadedEvent( 'dashboard' ) );
 
             Route::middleware([
                 HandleCommonRoutesMiddleware::class,
-            ])->group( function() {
+            ])->group( function () {
                 require dirname( __FILE__ ) . '/nexopos.php';
             });
 
@@ -63,8 +63,8 @@ Route::middleware([
 Route::middleware([
     NotInstalledStateMiddleware::class,
     ClearRequestCacheMiddleware::class,
-])->group( function() {
-    Route::prefix( '/do-setup/' )->group( function() {
+])->group( function () {
+    Route::prefix( '/do-setup/' )->group( function () {
         Route::get( '', [ SetupController::class, 'welcome' ])->name( 'ns.do-setup' );
     });
 });

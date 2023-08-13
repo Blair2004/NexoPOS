@@ -60,7 +60,7 @@ class ProcurementForm extends SettingsPage
                     'type' => 'currency',
                 ],
             ]),
-            'products' => isset( $procurement ) ? $procurement->products->map( function( $_product ) {
+            'products' => isset( $procurement ) ? $procurement->products->map( function ( $_product ) {
                 $product = Product::findOrFail( $_product->product_id );
                 $product->load( 'unit_quantities.unit' )->get();
 

@@ -13,34 +13,34 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_procurements', 'value' ) ) {
                 $table->float( 'value', 18, 5 )->change();
             }
         });
 
-        Schema::table( 'nexopos_customers', function( Blueprint $table ) {
+        Schema::table( 'nexopos_customers', function ( Blueprint $table ) {
             $table->float( 'purchases_amount', 18, 5 )->change();
             $table->float( 'owed_amount', 18, 5 )->change();
             $table->float( 'account_amount', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_expenses', function( Blueprint $table ) {
+        Schema::table( 'nexopos_expenses', function ( Blueprint $table ) {
             $table->float( 'value', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_orders_coupons', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_coupons', function ( Blueprint $table ) {
             $table->float( 'discount_value', 18, 5 )->change();
             $table->float( 'minimum_cart_value', 18, 5 )->change();
             $table->float( 'maximum_cart_value', 18, 5 )->change();
             $table->float( 'value', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_orders_payments', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_payments', function ( Blueprint $table ) {
             $table->float( 'value', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_products_histories', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_histories', function ( Blueprint $table ) {
             $table->float( 'before_quantity', 18, 5 )->change();
             $table->float( 'quantity', 18, 5 )->change();
             $table->float( 'after_quantity', 18, 5 )->change();
@@ -48,63 +48,63 @@ return new class extends Migration
             $table->float( 'total_price', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products', function ( Blueprint $table ) {
             $table->float( 'tax_value', 18, 5 )->change(); // computed automatically
         });
 
-        Schema::table( 'nexopos_products_taxes', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_taxes', function ( Blueprint $table ) {
             $table->float( 'rate', 18, 5 )->change();
             $table->float( 'value', 18, 5 )->change(); // actual computed tax value
         });
 
-        Schema::table( 'nexopos_providers', function( Blueprint $table ) {
+        Schema::table( 'nexopos_providers', function ( Blueprint $table ) {
             $table->float( 'amount_due', 18, 5 )->change();
             $table->float( 'amount_paid', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_units', function( Blueprint $table ) {
+        Schema::table( 'nexopos_units', function ( Blueprint $table ) {
             $table->float( 'value', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+        Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
             $table->float( 'value', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_taxes', function( Blueprint $table ) {
+        Schema::table( 'nexopos_taxes', function ( Blueprint $table ) {
             $table->float( 'rate', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_rewards_system', function( Blueprint $table ) {
+        Schema::table( 'nexopos_rewards_system', function ( Blueprint $table ) {
             $table->float( 'target', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_rewards_system_rules', function( Blueprint $table ) {
+        Schema::table( 'nexopos_rewards_system_rules', function ( Blueprint $table ) {
             $table->float( 'from', 18, 5 )->change();
             $table->float( 'to', 18, 5 )->change();
             $table->float( 'reward', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_orders_instalments', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_instalments', function ( Blueprint $table ) {
             $table->float( 'amount', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_registers', function( Blueprint $table ) {
+        Schema::table( 'nexopos_registers', function ( Blueprint $table ) {
             $table->float( 'balance', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_customers_rewards', function( Blueprint $table ) {
+        Schema::table( 'nexopos_customers_rewards', function ( Blueprint $table ) {
             $table->float( 'points', 18, 5 )->change();
             $table->float( 'target', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_coupons', function( Blueprint $table ) {
+        Schema::table( 'nexopos_coupons', function ( Blueprint $table ) {
             $table->float( 'discount_value', 18, 5 )->change();
             $table->float( 'minimum_cart_value', 18, 5 )->change();
             $table->float( 'maximum_cart_value', 18, 5 )->change();
             $table->float( 'limit_usage', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_dashboard_months', function( Blueprint $table ) {
+        Schema::table( 'nexopos_dashboard_months', function ( Blueprint $table ) {
             $table->float( 'month_taxes', 18, 5 )->change();
             $table->float( 'month_unpaid_orders', 18, 5 )->change();
             $table->float( 'month_unpaid_orders_count', 18, 5 )->change();
@@ -131,24 +131,24 @@ return new class extends Migration
             $table->float( 'total_expenses', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_cash_flow', function( Blueprint $table ) {
+        Schema::table( 'nexopos_cash_flow', function ( Blueprint $table ) {
             $table->float( 'value', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_orders_refunds', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_refunds', function ( Blueprint $table ) {
             $table->float( 'total', 18, 5 )->change();
             $table->float( 'tax_value', 18, 5 )->change();
             $table->float( 'shipping', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_orders_products_refunds', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_products_refunds', function ( Blueprint $table ) {
             $table->float( 'unit_price', 18, 5 )->change();
             $table->float( 'tax_value', 18, 5 )->change();
             $table->float( 'quantity', 18, 5 )->change();
             $table->float( 'total_price', 18, 5 )->change();
         });
 
-        Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_unit_quantities', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_products_units_quantities', 'quantity' ) ) {
                 $table->float( 'quantity', 18, 5 )->change();
             }
@@ -196,7 +196,7 @@ return new class extends Migration
             }
         });
 
-        Schema::table( 'nexopos_procurements_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements_products', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_procurements_products', 'gross_purchase_price' ) ) {
                 $table->float( 'gross_purchase_price', 18, 5 )->change();
             }
@@ -220,7 +220,7 @@ return new class extends Migration
             }
         });
 
-        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders', 'discount' ) ) {
                 $table->float( 'discount', 18, 5 )->change();
             }
@@ -259,7 +259,7 @@ return new class extends Migration
             }
         });
 
-        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders_products', 'quantity' ) ) {
                 $table->float( 'quantity', 18, 5 )->change(); // could be the base unit
             }

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_payments_types', function( Blueprint $table ) {
+        Schema::table( 'nexopos_payments_types', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_payments_types', 'priority' ) ) {
                 $table->integer( 'priority' )->default(0);
             }
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_payments_types', function( Blueprint $table ) {
+        Schema::table( 'nexopos_payments_types', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_payments_types', 'priority' ) ) {
                 $table->dropColumn( 'priority' );
             }

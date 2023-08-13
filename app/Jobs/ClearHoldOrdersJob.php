@@ -54,7 +54,7 @@ class ClearHoldOrdersJob implements ShouldQueue
 
         $deleted = Order::paymentStatus( Order::PAYMENT_HOLD )
             ->get()
-            ->filter( function( $order ) use ( $options, $date ) {
+            ->filter( function ( $order ) use ( $options, $date ) {
                 /**
                  * @var Carbon
                  */

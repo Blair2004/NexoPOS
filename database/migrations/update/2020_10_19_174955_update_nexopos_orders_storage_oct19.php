@@ -15,13 +15,13 @@ return new class extends Migration
     {
         if ( Schema::hasTable( 'nexopos_orders_storage' ) ) {
             if ( Schema::hasColumn( 'nexopos_orders_storage', 'product_unit_quantity_id' ) ) {
-                Schema::table( 'nexopos_orders_storage', function( Blueprint $table ) {
+                Schema::table( 'nexopos_orders_storage', function ( Blueprint $table ) {
                     $table->renameColumn( 'product_unit_quantity_id', 'unit_quantity_id' );
                 });
             }
 
             if ( Schema::hasColumn( 'nexopos_orders_storage', 'product_unit_id' ) ) {
-                Schema::table( 'nexopos_orders_storage', function( Blueprint $table ) {
+                Schema::table( 'nexopos_orders_storage', function ( Blueprint $table ) {
                     $table->renameColumn( 'product_unit_id', 'unit_id' );
                 });
             }
@@ -37,13 +37,13 @@ return new class extends Migration
     {
         if ( Schema::hasTable( 'nexopos_orders_storage' ) ) {
             if ( Schema::hasColumn( 'nexopos_orders_storage', 'unit_quantity_id' ) ) {
-                Schema::table( 'nexopos_orders_storage', function( Blueprint $table ) {
+                Schema::table( 'nexopos_orders_storage', function ( Blueprint $table ) {
                     $table->renameColumn( 'unit_quantity_id', 'product_unit_quantity_id' );
                 });
             }
 
             if ( Schema::hasColumn( 'nexopos_orders_storage', 'unit_id' ) ) {
-                Schema::table( 'nexopos_orders_storage', function( Blueprint $table ) {
+                Schema::table( 'nexopos_orders_storage', function ( Blueprint $table ) {
                     $table->renameColumn( 'unit_id', 'product_unit_id' );
                 });
             }

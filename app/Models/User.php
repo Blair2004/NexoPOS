@@ -157,7 +157,7 @@ class User extends Authenticatable
             }
         }
 
-        return collect( self::$permissions )->filter( function( $permission, $key ) use ( $roles_id ) {
+        return collect( self::$permissions )->filter( function ( $permission, $key ) use ( $roles_id ) {
             return in_array( $key, $roles_id );
         })
             ->flatten()

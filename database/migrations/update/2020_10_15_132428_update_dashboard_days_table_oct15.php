@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_dashboard_days', function( Blueprint $table ) {
+        Schema::table( 'nexopos_dashboard_days', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'day_of_year' ) ) {
                 $table->integer( 'day_of_year' )->nullable();
             }
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_dashboard_days', function( Blueprint $table ) {
+        Schema::table( 'nexopos_dashboard_days', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_dashbaord_days', 'day_of_year' ) ) {
                 $table->dropColumn( 'day_of_year' );
             }

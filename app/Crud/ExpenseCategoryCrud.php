@@ -388,7 +388,7 @@ class ExpenseCategoryCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'accounting/accounts' ),
             'create' => ns()->url( 'dashboard/' . 'accounting/accounts/create' ),
             'edit' => ns()->url( 'dashboard/' . 'accounting/accounts/edit/' ),

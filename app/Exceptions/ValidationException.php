@@ -43,8 +43,8 @@ class ValidationException extends MainValidationException
         if ( $this->validator ) {
             $errors = $this->errors();
 
-            $errors = collect( $errors )->map( function( $messages ) {
-                return collect( $messages )->map( function( $message ) {
+            $errors = collect( $errors )->map( function ( $messages ) {
+                return collect( $messages )->map( function ( $message ) {
                     switch ( $message ) {
                         case 'validation.unique' :  return __( 'This value is already in use on the database.' );
                         case 'validation.required' :  return __( 'This field is required.' );

@@ -17,7 +17,7 @@ class FooterOutputHookMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        Hook::addAction( 'ns-dashboard-footer', function( Output $output ) {
+        Hook::addAction( 'ns-dashboard-footer', function ( Output $output ) {
             $exploded = explode( '.', request()->route()->getName() );
 
             /**

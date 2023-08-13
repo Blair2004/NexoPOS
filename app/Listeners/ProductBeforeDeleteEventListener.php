@@ -38,7 +38,7 @@ class ProductBeforeDeleteEventListener
          */
         $this->productService->resetProduct( $event->product );
 
-        $this->productService->getProductVariations( $event->product )->each( function( $variation ) {
+        $this->productService->getProductVariations( $event->product )->each( function ( $variation ) {
             /**
              * deleting a variation
              * could also trigger the same product event

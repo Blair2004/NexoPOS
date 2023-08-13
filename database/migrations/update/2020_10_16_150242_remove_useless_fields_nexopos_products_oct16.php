@@ -25,7 +25,7 @@ return new class extends Migration
             'incl_tax_wholesale_price',
             'excl_tax_wholesale_price',
         ] as $field ) {
-            Schema::table( 'nexopos_products', function( Blueprint $table ) use ( $field ) {
+            Schema::table( 'nexopos_products', function ( Blueprint $table ) use ( $field ) {
                 if ( Schema::hasColumn( 'nexopos_products', $field ) ) {
                     $table->dropColumn( $field );
                 }
@@ -53,7 +53,7 @@ return new class extends Migration
             'excl_tax_wholesale_price',
         ] as $field ) {
             if ( Schema::hasTable( 'nexopos_products' ) ) {
-                Schema::table( 'nexopos_products', function( Blueprint $table ) use ( $field ) {
+                Schema::table( 'nexopos_products', function ( Blueprint $table ) use ( $field ) {
                     if ( ! Schema::hasColumn( 'nexopos_products', $field ) ) {
                         $table->float( $field )->default(0);
                     }

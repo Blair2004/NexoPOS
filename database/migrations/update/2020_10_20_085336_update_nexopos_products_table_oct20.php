@@ -15,7 +15,7 @@ return new class extends Migration
     {
         if ( Schema::hasTable( 'nexopos_products' ) ) {
             if ( ! Schema::hasColumn( 'nexopos_products', 'accurate_stock' ) ) {
-                Schema::table( 'nexopos_products', function( Blueprint $table ) {
+                Schema::table( 'nexopos_products', function ( Blueprint $table ) {
                     $table->boolean( 'accurate_stock' )->default(0);
                 });
             }
@@ -31,7 +31,7 @@ return new class extends Migration
     {
         if ( Schema::hasTable( 'nexopos_products' ) ) {
             if ( Schema::hasColumn( 'nexopos_products', 'accurate_stock' ) ) {
-                Schema::table( 'nexopos_products', function( Blueprint $table ) {
+                Schema::table( 'nexopos_products', function ( Blueprint $table ) {
                     $table->dropColumn( 'accurate_stock' );
                 });
             }

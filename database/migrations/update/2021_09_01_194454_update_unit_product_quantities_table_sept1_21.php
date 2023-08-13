@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_unit_quantities', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'custom_price' ) ) {
                 $table->float( 'custom_price' )->default(0);
             }

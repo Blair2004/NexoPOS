@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_products', 'wholesale_tax_value' ) ) {
                 $table->float( 'wholesale_tax_value' )->default(0);
             }
@@ -31,7 +31,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_products', 'wholesale_tax_value' ) ) {
                 $table->dropColumn( 'wholesale_tax_value' );
             }

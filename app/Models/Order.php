@@ -234,7 +234,7 @@ class Order extends NsModel
         if ( ns()->option->get( 'ns_invoice_merge_similar_products', 'no' ) === 'yes' ) {
             $combinaison = [];
 
-            $this->products()->with( 'unit' )->get()->each( function( $product ) use ( &$combinaison ) {
+            $this->products()->with( 'unit' )->get()->each( function ( $product ) use ( &$combinaison ) {
                 $values = $product->toArray();
 
                 extract( $values );

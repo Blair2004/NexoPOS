@@ -689,7 +689,7 @@ class OrderCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => 'ns.orders',
             'create' => ns()->route( 'ns.dashboard.pos' ),
             'edit' => 'ns.orders/edit/#',

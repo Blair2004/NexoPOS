@@ -27,7 +27,7 @@ class DoctorService
 
     public function createUserAttribute(): array
     {
-        User::get()->each( function( User $user ) {
+        User::get()->each( function ( User $user ) {
             if ( ! $user->attribute instanceof UserAttribute ) {
                 $attribute = new UserAttribute;
                 $attribute->user_id = $user->id;
@@ -82,7 +82,7 @@ class DoctorService
     public function fixDuplicateOptions()
     {
         $options = Option::get();
-        $options->each( function( $option ) {
+        $options->each( function ( $option ) {
             try {
                 $option->refresh();
                 if ( $option instanceof Option ) {
@@ -156,7 +156,7 @@ class DoctorService
 
         $command->info( __( 'Restoring cash flow from paid orders...' ) );
 
-        $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
+        $command->withProgressBar( $orders, function ( $order ) use ( $expenseService ) {
             $expenseService->handleCreatedOrder( $order );
         });
 
@@ -172,8 +172,8 @@ class DoctorService
             Order::PAYMENT_PARTIALLY_REFUNDED,
         ])->get();
 
-        $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
-            $order->refundedProducts()->with( 'orderProduct' )->get()->each( function( $orderRefundedProduct ) use ( $order, $expenseService ) {
+        $command->withProgressBar( $orders, function ( $order ) use ( $expenseService ) {
+            $order->refundedProducts()->with( 'orderProduct' )->get()->each( function ( $orderRefundedProduct ) use ( $order, $expenseService ) {
                 $expenseService->createExpenseFromRefund(
                     order: $order,
                     orderProductRefund: $orderRefundedProduct,
@@ -188,7 +188,7 @@ class DoctorService
     public function fixCustomers()
     {
         $this->command
-            ->withProgressBar( Customer::with([ 'billing', 'shipping' ])->get(), function( $customer ) {
+            ->withProgressBar( Customer::with([ 'billing', 'shipping' ])->get(), function ( $customer ) {
                 if ( ! $customer->billing instanceof CustomerBillingAddress ) {
                     $billing = new CustomerBillingAddress;
                     $billing->customer_id = $customer->id;

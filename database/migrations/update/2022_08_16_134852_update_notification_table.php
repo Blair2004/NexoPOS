@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         if ( Schema::hasTable( 'nexopos_notifications' ) ) {
-            Schema::table( 'nexopos_notifications', function( Blueprint $table ) {
+            Schema::table( 'nexopos_notifications', function ( Blueprint $table ) {
                 $table->text( 'description' )->change();
             });
         }
