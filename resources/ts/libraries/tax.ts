@@ -4,10 +4,8 @@ export default class Tax {
         switch ( type ) {
             case 'inclusive':
                 return Tax.computeInclusive( value, rate );
-            break;
             case 'exclusive':
                 return Tax.computeExclusive( value, rate )
-            break;
         }
     }
 
