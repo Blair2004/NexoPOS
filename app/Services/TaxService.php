@@ -251,23 +251,28 @@ class TaxService
     public function getComputedTaxGroupValue( $tax_type, $tax_group_id, $price )
     {
         $taxGroup = TaxGroup::find( $tax_group_id );
-        $taxValue = 0;
+        $computeTaxSeparately = ns()->option->get( 'ns_pos_tax_compute_group_separately', 'no' );
 
         if ( $taxGroup instanceof TaxGroup ) {
-            $taxValue = $taxGroup->taxes
-                ->map( function( $tax ) use ( $tax_type, $price ) {
-                    $taxValue = $this->getVatValue(
-                        $tax_type,
-                        floatval( $tax[ 'rate' ] ),
-                        $price
-                    );
-
-                    return $taxValue;
-                })
-                ->sum();
+            if ( $computeTaxSeparately === 'no' ) {
+                $summarizedRate = $taxGroup->taxes->sum( 'rate' );
+                return $this->getVatValue( $tax_type, $summarizedRate, $price );
+            } else {
+                return $taxGroup->taxes
+                    ->map( function( $tax ) use ( $tax_type, $price ) {
+                        $taxValue = $this->getVatValue(
+                            $tax_type,
+                            floatval( $tax[ 'rate' ] ),
+                            $price
+                        );
+        
+                        return $taxValue;
+                    })
+                    ->sum();
+            }
         }
 
-        return $taxValue;
+        return 0;
     }
 
     /**
@@ -306,21 +311,21 @@ class TaxService
 
             if ( ( $tax_type ?? $product->tax_type) === 'inclusive' ) {
                 $product->sale_price_with_tax = ( floatval( $product->sale_price_edit ) );
-                $product->sale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->sale_price_edit ) ) );
                 $product->sale_price_without_tax = $this->getPriceWithoutTax(
                     type: 'inclusive',
                     rate: $taxRate,
                     value: $product->sale_price_edit
                 );
+                $product->sale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->sale_price_edit ) ) );
                 $product->sale_price = $product->sale_price_with_tax;
             } else {
                 $product->sale_price_without_tax = floatval( $product->sale_price_edit );
-                $product->sale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->sale_price_edit ) ) );
                 $product->sale_price_with_tax = $this->getPriceWithTax(
                     type: 'exclusive',
                     rate: $taxRate,
                     value: $product->sale_price_edit
                 );
+                $product->sale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->sale_price_edit ) ) );
                 $product->sale_price = $product->sale_price_with_tax;
             }
         }
@@ -551,7 +556,7 @@ class TaxService
         if ( $type === 'inclusive' ) {
             return ns()->currency->define( $value )->subtractBy( $this->getPriceWithoutTax( $type, $rate, $value ) )->getRaw();
         } elseif ( $type === 'exclusive' ) {
-            return ns()->currency->define( $this->getPriceWithoutTax( $type, $rate, $value ) )->subtractBy( $value )->getRaw();
+            return ns()->currency->define( $this->getPriceWithTax( $type, $rate, $value ) )->subtractBy( $value )->getRaw();
         }
     }
 
