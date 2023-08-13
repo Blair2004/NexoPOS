@@ -1120,7 +1120,9 @@ class OrdersService
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price = $this->currencyService->define(
-                    $product[ 'total_purchase_price' ] ?? $this->productService->getLastPurchasePrice( $product[ 'product' ] )
+                    $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getLastPurchasePrice( $product[ 'product' ] ) )
+                        ->multipliedBy( $product[ 'quantity' ] )
+                        ->getRaw()
                 )
                 ->getRaw();
 
@@ -2617,8 +2619,8 @@ class OrdersService
         $rangeEnds = Carbon::parse( $endDate )->toDateTimeString();
 
         $products = OrderProduct::whereHas( 'order', function( Builder $query ) {
-            $query->where( 'payment_status', Order::PAYMENT_PAID );
-        })
+                $query->where( 'payment_status', Order::PAYMENT_PAID );
+            })
             ->where( 'created_at', '>=', $rangeStarts )
             ->where( 'created_at', '<=', $rangeEnds )
             ->get();
