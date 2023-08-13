@@ -7,7 +7,9 @@
             <div class="flex flex-shrink-0 justify-center items-center py-6">
                 <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="NexoPOS">
             </div>
-            <router-view></router-view>
+            <router-view>
+                
+            </router-view>
         </div>
     </div>
 </div>

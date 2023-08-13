@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SetupController;
 use App\Http\Middleware\ClearRequestCacheMiddleware;
 use App\Http\Middleware\InstalledStateMiddleware;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -43,7 +44,8 @@ include dirname( __FILE__ ) . '/api/hard-reset.php';
 include_once dirname( __FILE__ ) . '/api/update.php';
 
 Route::prefix( 'setup' )->group( function() {
-    Route::post( 'database', 'SetupController@checkDatabase' );
-    Route::get( 'database', 'SetupController@checkDbConfigDefined' );
+    Route::get( 'check-database', [ SetupController::class, 'checkExistingCredentials' ]);
+    Route::post( 'database', [ SetupController::class, 'checkDatabase' ]);
+    Route::get( 'database', [ SetupController::class, 'checkDbConfigDefined' ]);
     Route::post( 'configuration', 'SetupController@saveConfiguration' );
 });

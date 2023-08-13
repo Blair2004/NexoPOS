@@ -90,7 +90,7 @@ export default {
 </script>
 <template>
     <div class="flex flex-auto">
-        <ns-input @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isInputField">
+        <ns-input :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-input>
@@ -106,7 +106,7 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-media-input>
-        <ns-select @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isSelectField">
+        <ns-select :field="field" v-if="isSelectField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>

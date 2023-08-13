@@ -256,8 +256,8 @@
         }
     }
     
-    .ns-disabled {
-        @apply bg-input-background border border-input-edge cursor-not-allowed text-primary;
+    &> button:disabled {
+        @apply bg-gray-400 shadow-none border border-input-edge cursor-not-allowed text-primary;
 
         span.ns-label {
             @apply bg-input-background text-primary;

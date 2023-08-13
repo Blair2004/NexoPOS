@@ -198,6 +198,10 @@
 
     button, a {
         @apply bg-input-button;
+
+        &:disabled {
+            @apply bg-gray-700;
+        }
     }
 
     &:hover {

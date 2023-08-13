@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Setup;
+use App\Services\SetupService;
 use Illuminate\Console\Command;
 
 class SetupCommand extends Command
@@ -91,9 +91,9 @@ class SetupCommand extends Command
 
         if ( in_array( strtolower( $answer ), [ 'y', 'yes' ] ) || $this->requireConfirmation === false ) {
             /**
-             * @var Setup $service
+             * @var SetupService $service
              */
-            $service = app()->make( Setup::class );
+            $service = app()->make( SetupService::class );
             $service->runMigration([
                 'admin_username' => $this->admin_username,
                 'admin_email' => $this->admin_email,

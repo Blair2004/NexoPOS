@@ -10,8 +10,6 @@
             <input 
                 :disabled="field.disabled" 
                 v-model="field.value" 
-                @blur="$emit( 'blur', this )" 
-                @change="$emit( 'change', this )" 
                 :id="field.name" :type="type || field.type || 'text'" 
                 :class="inputClass" class="block w-full sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
         </div>

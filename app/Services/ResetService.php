@@ -119,9 +119,6 @@ class ResetService
             }
         }
 
-        ns()->envEditor->delete( 'NS_VERSION' );
-        ns()->envEditor->delete( 'NS_AUTHORIZATION' );
-
         Artisan::call( 'key:generate', [ '--force' => true ] );
         Artisan::call( 'ns:cookie generate' );
 
@@ -131,7 +128,7 @@ class ResetService
 
         return [
             'status' => 'success',
-            'message' => __( 'The database has been hard reset.' ),
+            'message' => __( 'The database has been wiped out.' ),
         ];
     }
 
