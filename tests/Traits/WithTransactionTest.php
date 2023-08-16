@@ -47,16 +47,16 @@ trait WithTransactionTest
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
-        $category = TransactionAccount::find(1);
+        $transactionAccount = TransactionAccount::find(1);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.expenses', [
+            ->json( 'POST', 'api/crud/ns.transactions', [
                 'name' => __( 'Store Rent' ),
                 'general' => [
                     'active' => true,
                     'value' => 1500,
                     'recurring' => false,
-                    'category_id' => $category->id,
+                    'account_id' => $transactionAccount->id,
                 ],
             ]);
 
@@ -67,16 +67,16 @@ trait WithTransactionTest
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
-        $category = TransactionAccount::find(1);
+        $transactionAccount = TransactionAccount::find(1);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.expenses', [
+            ->json( 'POST', 'api/crud/ns.transactions', [
                 'name' => __( 'Material Delivery' ),
                 'general' => [
                     'active' => true,
                     'value' => 300,
                     'recurring' => false,
-                    'category_id' => $category->id,
+                    'account_id' => $transactionAccount->id,
                 ],
             ]);
 
@@ -87,17 +87,17 @@ trait WithTransactionTest
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
-        $category = TransactionAccount::find(2);
+        $transactionAccount = TransactionAccount::find(2);
 
         $role = Role::get()->shuffle()->first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.expenses', [
+            ->json( 'POST', 'api/crud/ns.transactions', [
                 'name' => __( 'Store Rent' ),
                 'general' => [
                     'active' => true,
                     'value' => 1500,
                     'recurring' => false,
-                    'category_id' => $category->id,
+                    'account_id' => $transactionAccount->id,
                     'occurrence' => 'month_starts',
                     'group_id' => $role->id,
                 ],

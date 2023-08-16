@@ -38,6 +38,7 @@ use App\Crud\UnitCrud;
 use App\Crud\UnitGroupCrud;
 use App\Crud\UnpaidOrderCrud;
 use App\Crud\UserCrud;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -72,10 +73,17 @@ class CrudServiceProvider extends ServiceProvider
              * defined they want to be autoloaded. We expect classes to have 2 
              * constant: AUTOLOAD=true, IDENTIFIER=<string>.
              */
-            $files  =   collect( Storage::disk( 'ns' )->files( 'app/Crud' ) );
-            $class  =   $files->map( fn( $file ) => 'App\Crud\\' . pathinfo( $file )[ 'filename' ] )
-                ->filter( fn( $class ) => ( defined( $class . '::AUTOLOAD' ) && defined( $class . '::IDENTIFIER' ) ) )
-                ->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace );
+            $classes    =   Cache::get( 'crud-classes', function( ) {
+                $files  =   collect( Storage::disk( 'ns' )->files( 'app/Crud' ) );
+                return $files->map( fn( $file ) => 'App\Crud\\' . pathinfo( $file )[ 'filename' ] )
+                    ->filter( fn( $class ) => ( defined( $class . '::AUTOLOAD' ) && defined( $class . '::IDENTIFIER' ) ) );
+            });
+
+            /**
+             * We pull the cached classes and checks if the 
+             * class has autoload and identifier defined.
+             */
+            $class  =   collect( $classes )->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace );
 
             if ( $class->count() === 1 ) {
                 return $class->first();

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @property integer $id
  * @property mixed $name
- * @property integer $category_id
+ * @property integer $account_id
  * @property string $description
  * @property integer $media_id
  * @property float $value

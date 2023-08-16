@@ -18,6 +18,6 @@ class CreateExpenseTest extends TestCase
     public function testCreateAllExpenses()
     {
         $this->attemptAuthenticate();
-        $this->attemptCreateExpenses();
+        $this->attemptCreateTransaction();
     }
 }

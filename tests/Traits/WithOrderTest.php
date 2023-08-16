@@ -1386,7 +1386,7 @@ trait WithOrderTest
                      */
                     $totalCashFlow = TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
                         ->where( 'operation', TransactionHistory::OPERATION_CREDIT )
-                        ->where( 'expense_category_id', ns()->option->get( 'ns_sales_cashflow_account' ) )
+                        ->where( 'transaction_account_id', ns()->option->get( 'ns_sales_cashflow_account' ) )
                         ->count();
     
                     $this->assertTrue( $totalCashFlow === 1, 'More than 1 cash flow was created for the sale account.' );
@@ -1397,7 +1397,7 @@ trait WithOrderTest
                      */
                     $totalRefundedCashFlow = TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
                         ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
-                        ->where( 'expense_category_id', ns()->option->get( 'ns_sales_refunds_account' ) )
+                        ->where( 'transaction_account_id', ns()->option->get( 'ns_sales_refunds_account' ) )
                         ->count();
     
                     $this->assertTrue( $totalRefundedCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
@@ -1410,7 +1410,7 @@ trait WithOrderTest
                     if ( $productCondition === OrderProductRefund::CONDITION_DAMAGED ) {
                         $totalSpoiledCashFlow = TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
                             ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
-                            ->where( 'expense_category_id', ns()->option->get( 'ns_stock_return_spoiled_account' ) )
+                            ->where( 'transaction_account_id', ns()->option->get( 'ns_stock_return_spoiled_account' ) )
                             ->count();
     
                         $this->assertTrue( $totalSpoiledCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );

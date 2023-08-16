@@ -65,7 +65,7 @@ trait WithAccountingTest
              */
             if ( ! $transactionAccount instanceof TransactionAccount ) {
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'POST', 'api/crud/ns.accounting-accounts', [
+                    ->json( 'POST', 'api/crud/ns.transactions-accounts', [
                         'name' => $account[ 'name' ],
                         'general' => [
                             'operation' => $account[ 'operation' ],
@@ -103,7 +103,7 @@ trait WithAccountingTest
 
         $this->assertTrue( $procurement instanceof Procurement, __( 'Unable to retreive the procurement using the id provided.' ) );
         $this->assertTrue( $transactionHistory instanceof TransactionHistory, __( 'Unable to retreive the cashflow using the provided procurement id' ) );
-        $this->assertTrue( $transactionHistory->expense_category_id == $assignedCategoryID, __( 'The assigned category doens\'t match what was set for procurement cash flow.' ) );
+        $this->assertTrue( $transactionHistory->transaction_account_id == $assignedCategoryID, __( 'The assigned account doens\'t match what was set for procurement cash flow.' ) );
         $this->assertEquals( $procurement->cost, $transactionHistory->value, __( 'The cash flow records doesn\'t match the procurement cost.' ) );
     }
 
@@ -147,7 +147,7 @@ trait WithAccountingTest
         $expenseCategoryID = ns()->option->get( 'ns_procurement_cashflow_account' );
         $totalExpenses = TransactionHistory::where( 'created_at', '>=', $dashboardDay->range_starts )
             ->where( 'created_at', '<=', $dashboardDay->range_ends )
-            ->where( 'expense_category_id', $expenseCategoryID )
+            ->where( 'transaction_account_id', $expenseCategoryID )
             ->where( 'procurement_id', $procurement[ 'id' ] )
             ->sum( 'value' );
 

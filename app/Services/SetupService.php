@@ -92,9 +92,9 @@ class SetupService
 
         $domain =   parse_url( url()->to( '/' ) );
 
-        ns()->envEditor->set( 'APP_URL', url()->to( '/' ) );
+        ns()->envEditor->set( 'APP_URL', url()->to( '/' ) );    
         ns()->envEditor->set( 'SESSION_DOMAIN', $domain[ 'host' ] );
-        ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'host' ] . ( $domain[ 'port' ] ? ':' . $domain[ 'port' ] : '' ) );
+        ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'host' ] . ( isset( $domain[ 'port' ] ) ? ':' . $domain[ 'port' ] : '' ) );
         ns()->envEditor->set( 'MAIL_MAILER', 'log' );
         ns()->envEditor->set( 'DB_CONNECTION', $databaseDriver );
 

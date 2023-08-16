@@ -372,7 +372,11 @@ class TaxService
         return 0;
     }
 
-    public function computeOrderProductTaxes( OrderProduct $orderProduct )
+    /**
+     * We might not need to perform this if
+     * the product already comes with defined tax
+     */
+    public function computeOrderProductTaxes( OrderProduct $orderProduct ): OrderProduct
     {
         /**
          * let's load the original product with the tax group
