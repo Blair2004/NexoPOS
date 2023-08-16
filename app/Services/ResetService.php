@@ -117,6 +117,8 @@ class ResetService
                 DB::statement("DROP TABLE `$table_name`");
                 DB::statement('SET FOREIGN_KEY_CHECKS = 1');
             }
+        } else {
+            file_put_contents( database_path( 'database.sqlite' ), '' );
         }
 
         Artisan::call( 'key:generate', [ '--force' => true ] );

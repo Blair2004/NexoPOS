@@ -90,28 +90,11 @@ class SetupService
             return response()->json( $message, 403 );
         }
 
-        $domain =   parse_url( url()->to( '/' ) );
+        // we'll empty the database
+        file_put_contents( database_path( 'database.sqlite' ), '' );
 
-        ns()->envEditor->set( 'APP_URL', url()->to( '/' ) );    
-        ns()->envEditor->set( 'SESSION_DOMAIN', $domain[ 'host' ] );
-        ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'host' ] . ( isset( $domain[ 'port' ] ) ? ':' . $domain[ 'port' ] : '' ) );
-        ns()->envEditor->set( 'MAIL_MAILER', 'log' );
-        ns()->envEditor->set( 'DB_CONNECTION', $databaseDriver );
-
-        if ( $databaseDriver === 'sqlite' ) {
-            ns()->envEditor->set( 'DB_DATABASE', database_path( 'database.sqlite' ) );
-            ns()->envEditor->set( 'DB_PREFIX', $request->input( 'database_prefix' ) );
-
-            // we'll empty the database
-            file_put_contents( database_path( 'database.sqlite' ), '' );
-        } else if ( $databaseDriver === 'mysql' ) {
-            ns()->envEditor->set( 'DB_HOST', $request->input( 'hostname' ) );
-            ns()->envEditor->set( 'DB_DATABASE', $request->input( 'database_name' ) ?: database_path( 'database.sqlite' ) );
-            ns()->envEditor->set( 'DB_USERNAME', $request->input( 'username' ) );
-            ns()->envEditor->set( 'DB_PASSWORD', $request->input( 'password' ) );
-            ns()->envEditor->set( 'DB_PREFIX', $request->input( 'database_prefix' ) );
-            ns()->envEditor->set( 'DB_PORT', $request->input( 'database_port' ) ?: 3306 );
-        }
+        $this->updateAppUrl();
+        $this->updateAppDBConfiguration( $request->post() );
 
         /**
          * Link the resource storage
@@ -122,6 +105,32 @@ class SetupService
             'status' => 'success',
             'message' => __( 'The connexion with the database was successful' ),
         ];
+    }
+
+    public function updateAppURL()
+    {
+        $domain =   parse_url( url()->to( '/' ) );
+
+        ns()->envEditor->set( 'APP_URL', url()->to( '/' ) );    
+        ns()->envEditor->set( 'SESSION_DOMAIN', $domain[ 'host' ] );
+        ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'host' ] . ( isset( $domain[ 'port' ] ) ? ':' . $domain[ 'port' ] : '' ) );
+    }
+
+    public function updateAppDBConfiguration( $data )
+    {
+        ns()->envEditor->set( 'DB_CONNECTION', $data[ 'database_driver' ] );
+
+        if ( $data[ 'database_driver' ] === 'sqlite' ) {
+            ns()->envEditor->set( 'DB_DATABASE', database_path( 'database.sqlite' ) );
+            ns()->envEditor->set( 'DB_PREFIX', $data[   'database_prefix' ]);
+        } else if ( $data[ 'database_driver' ] === 'mysql' ) {
+            ns()->envEditor->set( 'DB_HOST', $data[ 'hostname' ]);
+            ns()->envEditor->set( 'DB_DATABASE', $data[ 'database_name' ] ?: database_path( 'database.sqlite' ) );
+            ns()->envEditor->set( 'DB_USERNAME', $data[ 'username' ]);
+            ns()->envEditor->set( 'DB_PASSWORD', $data[ 'password' ]);
+            ns()->envEditor->set( 'DB_PREFIX', $data[   'database_prefix' ]);
+            ns()->envEditor->set( 'DB_PORT', $data[ 'database_port' ] ?: 3306 );
+        }
     }
 
     /**

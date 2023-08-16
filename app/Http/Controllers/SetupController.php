@@ -15,6 +15,11 @@ use Illuminate\Support\Facades\DB;
 
 class SetupController extends Controller
 {
+    public function __construct( private SetupService $setup)
+    {
+        // ...
+    }
+
     public function welcome( Request $request )
     {
         return view( 'pages.setup.welcome', [
@@ -26,29 +31,30 @@ class SetupController extends Controller
 
     public function checkDatabase( Request $request )
     {
-        $setup = new SetupService;
-
-        return $setup->saveDatabaseSettings( $request );
+        return $this->setup->saveDatabaseSettings( $request );
     }
 
     public function checkDbConfigDefined( Request $request )
     {
-        $setup = new SetupService;
-
-        return $setup->testDBConnexion();
+        return $this->setup->testDBConnexion();
     }
 
     public function saveConfiguration( ApplicationConfigRequest $request )
     {
-        $setup = new SetupService;
-
-        return $setup->runMigration( $request->all() );
+        return $this->setup->runMigration( $request->all() );
     }
 
     public function checkExistingCredentials()
     {
         try {
             if ( DB::connection()->getPdo() ) {
+
+                /**
+                 * We believe from here the app should update the .env file to ensure
+                 * the APP_URL and others values are updated with the actual domain name.
+                 */
+                $this->setup->updateAppURL();
+
                 return [
                     'status'    =>  'success'
                 ];
