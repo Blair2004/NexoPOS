@@ -356,7 +356,7 @@ class MenuService
                 'permissions' => [
                     'nexopos.reports.sales',
                     'nexopos.reports.best_sales',
-                    'nexopos.reports.cash_flow',
+                    'nexopos.reports.transactions',
                     'nexopos.reports.yearly',
                     'nexopos.reports.customers',
                     'nexopos.reports.inventory',
