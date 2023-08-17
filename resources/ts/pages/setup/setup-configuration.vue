@@ -3,6 +3,7 @@
         <ns-spinner size="12" border="4" animation="fast" v-if="fields.length === 0"></ns-spinner>
         <div class="bg-white rounded shadow my-2" v-if="fields.length > 0">
             <div class="welcome-box border-b border-gray-300 p-3 text-gray-700">
+                <div class="border-b pb-3 mb-3" v-html="__( '<strong>NexoPOS</strong> is now able to connect to the database. Start by creating the administrator account and giving a name to your installation. Once installed, this page will no longer be accessible.' )"></div>
                 <ns-field v-for="( field, key ) of fields" :key="key" :field="field"></ns-field>
             </div>
             <div class="bg-gray-200 p-3 flex justify-between items-center">

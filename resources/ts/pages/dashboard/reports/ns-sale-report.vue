@@ -39,7 +39,7 @@
                 <div class="my-4 flex justify-between w-full">
                     <div class="text-secondary">
                         <ul>
-                            <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
+                            <li class="pb-1 border-b border-dashed" v-html="__( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', startDateField.value ).replace( '{date2}', endDateField.value )"></li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Sale Report' ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'By : {user}' ).replace( '{user}', ns.user.username ) }}</li>
                         </ul>
@@ -252,12 +252,12 @@ export default {
             startDateField: {
                 name: 'start_date',
                 type: 'datetime',
-                value: moment()
+                value: ns.date.moment.startOf( 'day' ).format()
             },
             endDateField: {
                 name: 'end_date',
                 type: 'datetime',
-                value: moment()
+                value: ns.date.moment.endOf( 'day' ).format()
             },
             result: [],
             users: [],

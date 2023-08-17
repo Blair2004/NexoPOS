@@ -2,10 +2,10 @@
     <div id="report-section" class="px-4">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :field="startDateField"></ns-date-time-picker>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :field="endDateField"></ns-date-time-picker>
             </div>
             <div class="px-2">
                 <div class="ns-button">
@@ -42,7 +42,7 @@
                 <div class="my-4 flex justify-between w-full">
                     <div class="text-primary">
                         <ul>
-                            <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
+                            <li class="pb-1 border-b border-dashed">{{ __( 'Date Range : {date1} - {date2}' ).replace( '{date1}', startDate ).replace( '{date2}', endDate ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Best Products' ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'By : {user}' ).replace( '{user}', ns.user.username ) }}</li>
                         </ul>
@@ -142,8 +142,16 @@ export default {
     data() {
         return {
             ns: window.ns,
-            startDate: moment(),
-            endDate: moment(),
+            startDateField: {
+                name: 'start_date',
+                type: 'datetime',
+                value: ns.date.moment.startOf( 'day' ).format()
+            },
+            endDateField: {
+                name: 'end_date',
+                type: 'datetime',
+                value: ns.date.moment.endOf( 'day' ).format()
+            },
             report: null,
             sort : '',
         }
@@ -174,8 +182,8 @@ export default {
             const endDate       =   moment( this.endDate );
 
             nsHttpClient.post( '/api/reports/products-report', { 
-                    startDate : startDate.format( 'YYYY/MM/DD HH:mm' ), 
-                    endDate : endDate.format( 'YYYY/MM/DD HH:mm' ),
+                    startDate : this.startDateField.value, 
+                    endDate : this.endDateField.value,
                     sort: this.sort
                 })
                 .subscribe({
