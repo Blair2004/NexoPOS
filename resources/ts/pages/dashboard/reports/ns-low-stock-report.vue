@@ -25,6 +25,14 @@
                     </button>
                 </div>
             </div>
+            <div class="px-2">
+                <div class="ns-button">
+                    <button @click="selectCategories()" class="rounded flex justify-between shadow py-1 items-center px-2">
+                        <i class="las la-print text-xl"></i>
+                        <span class="pl-2">{{ __( 'Categories' ) }} : {{ categoryName || __( 'All Categories' ) }}</span>
+                    </button>
+                </div>
+            </div>
         </div>
         <div id="report" class="anim-duration-500 fade-in-entrance">
             <div class="flex w-full">
@@ -158,6 +166,7 @@ export default {
             stockReportResult: {},
             reportType: '',
             reportTypeName: '',
+            categoryName: '',
             validation: new FormValidation,
         }
     },
@@ -190,6 +199,20 @@ export default {
                 this.loadRelevantReport();
             } catch( exception ) {
                 // ...
+            }
+        },
+        async selectCategories() {
+            try {
+                const response =        await new Promise( ( resolve, reject) => {
+                    Popup.show( nsSelectPopupVue, {
+                        label: __( 'Select Categories' ),
+                        options: [],
+                        resolve,
+                        reject
+                    })
+                })
+            } catch( exception ) {
+                console.log( exception );
             }
         },
         loadRelevantReport() {

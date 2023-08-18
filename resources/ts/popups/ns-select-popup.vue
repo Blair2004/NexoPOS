@@ -10,6 +10,9 @@
         </div>
         <div class="flex flex-col overflow-hidden">
             <p class="p-2 text-center text-sm bg-info-primary" v-if="description.length > 0">{{ description }}</p>
+            <div class="m-2 border-dashed border-box-edge border-b">
+                <ns-field :field="field"></ns-field>
+            </div>
             <div class="overflow-y-auto">
                 <ul class="ns-vertical-menu">
                     <template v-if="type === 'select'">
@@ -41,7 +44,13 @@ export default {
             options: [],
             description: '',
             label: null,
-            type: 'select'
+            type: 'select',
+            field: {
+                name: 'search',
+                placeholder: __( 'Search for options' ),
+                value: '',
+                type: 'text'
+            }
         }
     },
     computed: {
