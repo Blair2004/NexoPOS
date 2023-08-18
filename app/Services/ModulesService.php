@@ -206,7 +206,7 @@ class ModulesService
                  * If the system is installed, then we can check if the module is enabled or not
                  * since by default it's not enabled
                  */
-                if ( ns()->installed() ) {
+                if ( Helper::installed() ) {
                     $modules = $this->options->get( 'enabled_modules', [] );
                     $config[ 'migrations' ] = $this->__getModuleMigration( $config );
                     $config[ 'all-migrations' ] = $this->getAllModuleMigrationFiles( $config );

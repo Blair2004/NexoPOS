@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\NotAllowedException;
+use App\Services\Helper;
 use Closure;
 use Illuminate\Support\Facades\App;
 
@@ -26,7 +27,7 @@ class NotInstalledStateMiddleware
             App::setLocale( $validLanguage );
         }
 
-        if ( ! ns()->installed() ) {
+        if ( ! Helper::installed() ) {
             return $next($request);
         }
 

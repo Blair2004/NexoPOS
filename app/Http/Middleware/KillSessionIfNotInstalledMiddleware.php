@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Helper;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class KillSessionIfNotInstalledMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ( ! ns()->installed() ) {
+        if ( ! Helper::installed() ) {
             Auth::logout();
         }
 

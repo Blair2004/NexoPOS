@@ -48,16 +48,6 @@ class CoreService
     }
 
     /**
-     * Returns a boolean if the system
-     * is installed or not. returns "true" if the system is installed
-     * and "false" if it's not.
-     */
-    public function installed(): bool
-    {
-        return Helper::installed();
-    }
-
-    /**
      * Returns a route to which apply
      * the filter "ns-route".
      */
