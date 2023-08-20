@@ -11,15 +11,15 @@
         <div class="flex flex-col overflow-hidden">
             <p class="p-2 text-center text-sm bg-info-primary" v-if="description.length > 0">{{ description }}</p>
             <div class="m-2 border-dashed border-box-edge border-b">
-                <ns-field :field="field"></ns-field>
+                <ns-field @keypress.enter="quickSelect()" :field="field"></ns-field>
             </div>
             <div class="overflow-y-auto">
                 <ul class="ns-vertical-menu">
                     <template v-if="type === 'select'">
-                        <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                        <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of filtredOptions" :key="option.value">{{ option.label }}</li>
                     </template>
                     <template v-if="type === 'multiselect'">
-                        <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                        <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer" v-for="option of filtredOptions" :key="option.value">{{ option.label }}</li>
                     </template>
                 </ul>
             </div>
@@ -54,6 +54,14 @@ export default {
         }
     },
     computed: {
+        filtredOptions() {
+            let result  =   this.options.filter( option => {
+                const reg   = new RegExp( this.field.value, 'i' );
+                return this.field.value.length === 0 ? true : reg.test( option.label );
+            });
+
+            return result;
+        }
     },
     mounted() {
         this.popupCloser();
@@ -84,6 +92,12 @@ export default {
         close() {
             this.popup.params.reject( false );
             this.popup.close();
+        },
+
+        quickSelect() {
+            if ( this.filtredOptions.length === 1 ) {
+                this.select( this.filtredOptions[0] );
+            }
         },
 
         select( option ) {

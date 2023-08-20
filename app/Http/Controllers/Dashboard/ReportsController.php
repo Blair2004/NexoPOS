@@ -84,7 +84,8 @@ class ReportsController extends DashboardController
                 $request->input( 'startDate' ),
                 $request->input( 'endDate' ),
                 $request->input( 'type' ),
-                $request->input( 'user_id' )
+                $request->input( 'user_id' ),
+                $request->input( 'categories_id' ),
             );
     }
 

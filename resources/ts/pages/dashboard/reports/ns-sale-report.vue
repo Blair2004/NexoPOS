@@ -23,14 +23,20 @@
             </div>
             <div class="px-2">
                 <button @click="openSettings()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
-                    <i class="las la-cogs text-xl"></i>
-                    <span class="pl-2">{{ __( 'Type' ) }} : {{ getType( reportType.value ) }}</span>
+                    <i class="las la-filter text-xl"></i>
+                    <span class="pl-2">{{ __( 'By Type' ) }} : {{ getType( reportType.value ) }}</span>
                 </button>
             </div>
             <div class="px-2">
                 <button @click="openUserFiltering()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
-                    <i class="las la-user text-xl"></i>
-                    <span class="pl-2">{{ __( 'Filter By User' ) }} : @{{ selectedUser || __( 'All Users' ) }}</span>
+                    <i class="las la-filter text-xl"></i>
+                    <span class="pl-2">{{ __( 'By User' ) }} : {{ selectedUser || __( 'All Users' ) }}</span>
+                </button>
+            </div>
+            <div class="px-2">
+                <button @click="openCategoryFiltering()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
+                    <i class="las la-filter text-xl"></i>
+                    <span class="pl-2">{{ __( 'By Category' ) }} : {{ selectedCategory || __( 'All Category' ) }}</span>
                 </button>
             </div>
         </div>
@@ -264,6 +270,7 @@ export default {
             ns: window.ns,
             summary: {},
             selectedUser: '',
+            selectedCategory: '',
             reportType: {
                 label: __( 'Report Type' ),
                 name: 'reportType',
@@ -292,6 +299,16 @@ export default {
                     // ...
                 ],
                 description: __( 'Allow you to choose the report type.' ),
+            },
+            filterCategory: {
+                label: __( 'Filter By Category' ),
+                name: 'filterCategory',
+                type: 'multiselect',
+                value: '',
+                options: [
+                    // ...
+                ],
+                description: __( 'Allow you to choose the category.' ),
             },
             field: {
                 type: 'datetimepicker',
@@ -378,6 +395,43 @@ export default {
             }
         },
 
+        async openCategoryFiltering() {
+            try {
+                const result    =   await new Promise( ( resolve, reject ) => {
+                    nsHttpClient.get( `/api/categories` )
+                        .subscribe({
+                            next: (categories) => {
+                                this.filterCategory.options     =   [
+                                    ...categories.map( category => {
+                                        return {
+                                            label: category.name,
+                                            value: category.id
+                                        }
+                                    })
+                                ];
+
+                                Popup.show( nsSelectPopupVue, {
+                                    ...this.filterCategory,
+                                    resolve, 
+                                    reject
+                                });
+                            },
+                            error: error => {
+                                nsSnackBar.error( __( 'No category was found for proceeding the filtering.' ) );
+                                reject( error );
+                            }
+                        });
+                });
+
+                this.selectedCategory       =   result.map( option => option.label ).join( ', ' );
+                this.filterCategory.value   =   result.map( option => option.value );
+                this.result             =   [];
+                this.loadReport();
+            } catch( exception ) {
+                // ...
+            }
+        },
+
         getType( type ) {
             const option    =   this.reportType.options.filter( option => {
                 return option.name === type;
@@ -406,7 +460,8 @@ export default {
                 startDate: this.startDateField.value,
                 endDate: this.endDateField.value,
                 type: this.reportType.value,
-                user_id: this.filterUser.value
+                user_id: this.filterUser.value,
+                categories_id: this.filterCategory.value
             }).subscribe({
                 next: response => {
                     this.result     =   response.result;

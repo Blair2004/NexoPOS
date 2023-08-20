@@ -70,8 +70,6 @@ export default {
         } else {
             this.setDate( moment( ns.date.current ).format( 'YYYY-MM-DD HH:mm:ss' ) );
         }
-
-        console.log( this.field );
     },
     methods: {
         __,

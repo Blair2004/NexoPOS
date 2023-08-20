@@ -805,15 +805,15 @@ class ReportService
      * Will return a report based
      * on the requested type.
      */
-    public function getSaleReport( string $start, string $end, string $type, $user_id = null )
+    public function getSaleReport( string $start, string $end, string $type, $user_id = null, $categories_id = null )
     {
         switch ( $type ) {
             case 'products_report':
-                return $this->getProductsReports( $start, $end, $user_id );
+                return $this->getProductsReports( $start, $end, $user_id, $categories_id );
                 break;
             case 'categories_report':
             case 'categories_summary':
-                return $this->getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id );
+                return $this->getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id, $categories_id );
                 break;
         }
     }
@@ -842,6 +842,9 @@ class ReportService
         ];
     }
 
+    /**
+     * @todo add support for category filter
+     */
     public function getProductsReports( $start, $end, $user_id = null )
     {
         $request = Order::paymentStatus( Order::PAYMENT_PAID )
