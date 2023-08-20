@@ -7,7 +7,9 @@ import Date from '~/dev/date.vue';
 import DateRange from '~/dev/daterange.vue';
 import DateTime from '~/dev/datetime.vue';
 import Index from '~/dev/index.vue';
+import InlineMultiselect from '~/dev/inline-multiselect.vue';
 import Inputs from '~/dev/inputs.vue';
+import Multiselect from '~/dev/multiselect.vue';
 
 const routes    =   [{
     path: '/',
@@ -25,6 +27,12 @@ const routes    =   [{
         }, {
             path: 'datetime',
             component: DateTime,
+        }, {
+            path: 'inline-multiselect',
+            component: InlineMultiselect,
+        },  {
+            path: 'multiselect',
+            component: Multiselect,
         }
     ]   
 }];

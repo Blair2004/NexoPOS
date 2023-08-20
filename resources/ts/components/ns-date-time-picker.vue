@@ -63,12 +63,20 @@ export default {
         }
     },
     mounted() {
-        // this.setDate( this.fieldDate.format( 'YYYY-MM-DD HH:mm:ss' ) );
+        let currentMoment = moment( this.field.value );
+
+        if ( currentMoment.isValid() ) {
+            this.setDate( currentMoment.format( 'YYYY-MM-DD HH:mm:ss' ) );
+        } else {
+            this.setDate( moment( ns.date.current ).format( 'YYYY-MM-DD HH:mm:ss' ) );
+        }
+
+        console.log( this.field );
     },
     methods: {
         __,
         setDate( date ) {
-            this.$emit( 'onSet', date );
+            this.field.value    =   date;
         }
     }
 }

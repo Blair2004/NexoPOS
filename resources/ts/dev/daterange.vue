@@ -30,6 +30,7 @@ export default {
         </ns-tabs-item>
         <ns-tabs-item identifier="demo" label="Demo">
             <ns-daterange-picker :field="field"></ns-daterange-picker>
+            <div>{{ field }}</div>
         </ns-tabs-item>
     </ns-tabs>
 </template>

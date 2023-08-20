@@ -183,7 +183,7 @@ export default {
                 nsHotPress
                     .create( 'search-popup' )
                     .whenNotVisible([ '.is-popup', '#product-search' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.openSearchPopup();
                 });
@@ -200,7 +200,7 @@ export default {
                 nsHotPress
                     .create( 'toggle-merge' )
                     .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.posToggleMerge();
                 });

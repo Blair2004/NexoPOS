@@ -16,6 +16,7 @@ import nsDaterangePicker    from  './ns-daterange-picker.vue';
 import nsDragzone           from  './ns-dragzone.vue';
 import nsField              from  './ns-field.vue';
 import nsIconButton         from  './ns-icon-button.vue';
+import nsInlineMultiselect  from  './ns-inline-multiselect.vue';
 import nsInput              from  './ns-input.vue';
 import nsLink               from  './ns-link.vue';
 import nsMediaInput         from  './ns-media-input.vue';
@@ -46,6 +47,7 @@ export {
     nsButton, 
     nsLink, 
     nsInput, 
+    nsInlineMultiselect,
     nsSelect, 
     nsCheckbox, 
     nsCrud, 

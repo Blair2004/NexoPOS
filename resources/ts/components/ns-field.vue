@@ -34,6 +34,9 @@ export default {
         isMultiselect() {
             return [ 'multiselect' ].includes( this.field.type );
         },
+        isInlineMultiselect() {
+            return [ 'inline-multiselect' ].includes( this.field.type );
+        },
         isSelectAudio() {
             return [ 'select-audio' ].includes( this.field.type );
         },
@@ -126,6 +129,10 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-checkbox>
+        <ns-inline-multiselect @blur="$emit( 'blur', field )" @update="$emit( 'change', field )"  :field="field" v-if="isInlineMultiselect">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-inline-multiselect>
         <ns-multiselect 
             @addOption="addOption( $event )" 
             @removeOption="removeOption( $event )" 
