@@ -72,7 +72,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-payment-types-report',
-    props: [ 'store-name', 'store-logo' ],
+    props: [ 'storeName', 'storeLogo' ],
     data() {
         return {
             startDate: moment(),

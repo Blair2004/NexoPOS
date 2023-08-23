@@ -16,10 +16,15 @@
             <div class="overflow-y-auto">
                 <ul class="ns-vertical-menu">
                     <template v-if="type === 'select'">
-                        <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of filtredOptions" :key="option.value">{{ option.label }}</li>
+                        <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of filtredOptions" :key="option.value">
+                            <span>{{ option.label }}</span>
+                        </li>
                     </template>
                     <template v-if="type === 'multiselect'">
-                        <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer" v-for="option of filtredOptions" :key="option.value">{{ option.label }}</li>
+                        <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer flex justify-between" v-for="option of filtredOptions" :key="option.value">
+                            <span>{{ option.label }}</span>
+                            <span v-if="isSelected( option )"><i class="las la-check"></i></span>
+                        </li>
                     </template>
                 </ul>
             </div>
@@ -32,7 +37,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import popupCloser from "~/libraries/popup-closer";
 import { __ } from '~/libraries/lang';
 export default {
@@ -76,17 +81,16 @@ export default {
         __,
 
         toggle( option ) {
-            const index     =   this.value.indexOf( option );
-
-            if ( index === -1 ) {
-                this.value.unshift( option );
+            if ( ! this.value.includes( option.value ) ) {
+                this.value.unshift( option.value );
             } else {
-                this.value.splice( index, 1 );
+                const indexOf   =   this.value.indexOf( option.value );
+                this.value.splice( indexOf, 1 );
             }
         },
 
         isSelected( option ) {
-            return this.value.indexOf( option ) >= 0;
+            return this.value.includes( option.value );
         },
 
         close() {
@@ -100,12 +104,12 @@ export default {
             }
         },
 
-        select( option ) {
+        select( option = undefined ) {
             if ( option !== undefined ) {
-                this.value  =   [ option ];
+                this.value  =   [ option.value ];
             }
 
-            this.popup.params.resolve( this.value );
+            this.popup.params.resolve( this.type === 'select' ? this.value[0] : this.value );
             this.close();
         }
     }

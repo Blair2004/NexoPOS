@@ -30,6 +30,7 @@ import nsPageTitle           from  './ns-page-title.vue';
 import nsPaginate           from  './ns-paginate.vue';
 import nsPromptPopup        from  '~/popups/ns-prompt-popup.vue';
 import nsSearch             from  './ns-search.vue';
+import nsSearchSelect       from  './ns-search-select.vue';
 import nsSelect             from  './ns-select.vue';
 import nsSelectAudio        from  './ns-select-audio.vue';
 import nsSpinner            from  './ns-spinner.vue';
@@ -58,6 +59,7 @@ export {
     nsTextarea, 
     nsField, 
     nsMultiselect, 
+    nsSearchSelect,
     nsSwitch, 
     nsDate, 
     nsMediaInput, 

@@ -99,8 +99,10 @@ class ReportsController extends DashboardController
     {
         $orders = $this->ordersService
             ->getSoldStock(
-                $request->input( 'startDate' ),
-                $request->input( 'endDate' )
+                startDate: $request->input( 'startDate' ),
+                endDate: $request->input( 'endDate' ),
+                categories: $request->input( 'categories' ),
+                units: $request->input( 'units' )
             );
 
         return collect( $orders )->mapToGroups( function( $product ) {
@@ -120,7 +122,7 @@ class ReportsController extends DashboardController
         })->values();
     }
 
-    public function getCashFlow( Request $request )
+    public function getTransactions( Request $request )
     {
         $rangeStarts = Carbon::parse( $request->input( 'startDate' ) )
             ->toDateTimeString();
@@ -190,28 +192,13 @@ class ReportsController extends DashboardController
     {
         $orders = $this->ordersService
             ->getSoldStock(
-                $request->input( 'startDate' ),
-                $request->input( 'endDate' )
+                startDate: $request->input( 'startDate' ),
+                endDate: $request->input( 'endDate' ),
+                categories: $request->input( 'categories' ),
+                units: $request->input( 'units' )
             );
 
         return $orders;
-
-        return collect( $orders )->mapToGroups( function( $product ) {
-            return [
-                $product->product_id . '-' . $product->unit_id => $product,
-            ];
-        })->map( function( $groups ) {
-            return [
-                'name' => $groups->first()->name,
-                'unit_name' => $groups->first()->unit_name,
-                'mode' => $groups->first()->mode,
-                'unit_price' => $groups->sum( 'unit_price' ),
-                'total_purchase_price' => $groups->sum( 'total_purchase_price' ),
-                'quantity' => $groups->sum( 'quantity' ),
-                'total_price' => $groups->sum( 'total_price' ),
-                'tax_value' => $groups->sum( 'tax_value' ),
-            ];
-        })->values();
     }
 
     public function getAnnualReport( Request $request )
@@ -271,14 +258,20 @@ class ReportsController extends DashboardController
         return $this->reportService->getCashierDashboard( Auth::id() );
     }
 
-    public function getLowStock()
+    public function getLowStock( Request $request )
     {
-        return $this->reportService->getLowStockProducts();
+        return $this->reportService->getLowStockProducts(
+            categories: $request->input( 'categories' ),
+            units: $request->input( 'units' )
+        );
     }
 
-    public function getStockReport()
+    public function getStockReport( Request $request )
     {
-        return $this->reportService->getStockReport();
+        return $this->reportService->getStockReport(
+            categories: $request->input( 'categories' ),
+            units: $request->input( 'units' )
+        );
     }
 
     public function showCustomerStatement()

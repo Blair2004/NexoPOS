@@ -2613,7 +2613,7 @@ class OrdersService
      * @param string $endDate range ends
      * @return Collection
      */
-    public function getSoldStock( $startDate, $endDate )
+    public function getSoldStock( $startDate, $endDate, $categories = [], $units = [] )
     {
         $rangeStarts = Carbon::parse( $startDate )->toDateTimeString();
         $rangeEnds = Carbon::parse( $endDate )->toDateTimeString();
@@ -2622,10 +2622,17 @@ class OrdersService
                 $query->where( 'payment_status', Order::PAYMENT_PAID );
             })
             ->where( 'created_at', '>=', $rangeStarts )
-            ->where( 'created_at', '<=', $rangeEnds )
-            ->get();
+            ->where( 'created_at', '<=', $rangeEnds );
 
-        return $products;
+        if ( ! empty( $categories ) ) {
+            $products->whereIn( 'product_category_id', $categories );
+        }
+
+        if ( ! empty( $units ) ) {
+            $products->whereIn( 'unit_id', $units );
+        }
+
+        return $products->get();
     }
 
     public function trackOrderCoupons( Order $order )

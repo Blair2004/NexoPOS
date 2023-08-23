@@ -8,8 +8,8 @@
             @include( '../common/dashboard/title' )
         </div>
         <ns-sold-stock-report 
-            store-name="{{ ns()->option->get( 'ns_store_name' ) }}" 
-            store-logo="{{ ns()->option->get( 'ns_store_rectangle_logo' ) }}" v-cloak>
+            storeName="{{ ns()->option->get( 'ns_store_name' ) }}" 
+            storeLogo="{{ ns()->option->get( 'ns_store_rectangle_logo' ) }}" v-cloak>
         </ns-sold-stock-report>
     </div>
 </div>

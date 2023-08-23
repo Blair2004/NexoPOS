@@ -25,6 +25,9 @@ export default {
         isSelectField() {
             return [ 'select' ].includes( this.field.type );
         },
+        isSearchField() {
+            return [ 'search-select' ].includes( this.field.type );
+        },
         isTextarea() {
             return [ 'textarea' ].includes( this.field.type );
         },
@@ -113,6 +116,10 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
+        <ns-search-select :field="field" v-if="isSearchField">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-search-select>
         <ns-daterange-picker @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateRangePicker">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

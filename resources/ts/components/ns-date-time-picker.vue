@@ -3,7 +3,7 @@
         <label v-if="field && field.label && field.label.length > 0" class="block leading-5 font-medium text-primary">{{ field.label }}</label>
         <div class="ns-button">
             <button @click="visible = !visible" :class="field && field.label && field.label.length > 0 ? 'mt-1 border border-input-edge' : ''" class="shadow rounded cursor-pointer w-full p-1 flex items-center text-primary">
-                <i class="las la-clock text-2xl"></i>
+                <i class="las la-clock text-xl"></i>
                 <span class="mx-1 text-sm" v-if="field">
                     <span v-if="! [ null, '', undefined ].includes( field.value )">{{ fieldDate.format( 'YYYY-MM-DD HH:mm' ) }}</span>
                     <span v-if="[ null, '', undefined ].includes( field.value )">N/A</span>

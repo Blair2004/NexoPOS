@@ -249,6 +249,7 @@ import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
 import { nsCurrency } from '~/filters/currency';
+import { joinArray } from "~/libraries/join-array";
 
 export default {
     name: 'ns-sale-report',
@@ -327,6 +328,7 @@ export default {
     methods: {
         __,
         nsCurrency,
+        joinArray,
         printSaleReport() {
             this.$htmlToPaper( 'sale-report' );
         },
@@ -397,12 +399,15 @@ export default {
 
         async openCategoryFiltering() {
             try {
+                let categories  =   [];
+
                 const result    =   await new Promise( ( resolve, reject ) => {
                     nsHttpClient.get( `/api/categories` )
                         .subscribe({
-                            next: (categories) => {
+                            next: (retreivedCategories) => {
+                                categories  =   retreivedCategories;
                                 this.filterCategory.options     =   [
-                                    ...categories.map( category => {
+                                    ...retreivedCategories.map( category => {
                                         return {
                                             label: category.name,
                                             value: category.id
@@ -423,12 +428,24 @@ export default {
                         });
                 });
 
-                this.selectedCategory       =   result.map( option => option.label ).join( ', ' );
-                this.filterCategory.value   =   result.map( option => option.value );
+                if ( result.length > 0 ) {
+                    let categoryNames   =   categories
+                        .filter( category => result.includes( category.id ) )
+                        .map( category => category.name );
+
+                    this.selectedCategory       =   this.joinArray( categoryNames );
+                    this.filterCategory.value   =   result;
+                } else {
+                    this.selectedCategory       =   '';
+                    this.filterCategory.value   =   [];
+                }
+
                 this.result             =   [];
                 this.loadReport();
+
             } catch( exception ) {
                 // ...
+                console.log( exception );
             }
         },
 
@@ -442,7 +459,7 @@ export default {
             }
 
             return __( 'Unknown' );
-        },
+        },        
 
         loadReport() {
             if ( this.startDate === null || this.endDate ===null ) {
@@ -482,7 +499,7 @@ export default {
             return 0;
         },
     },
-    props: [ 'store-logo', 'store-name' ],
+    props: [ 'storeLogo', 'storeName' ],
     mounted() {
         // ...
     }

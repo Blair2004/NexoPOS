@@ -8,8 +8,8 @@
             @include( '../common/dashboard/title' )
         </div>
         <ns-best-products-report 
-            store-name="{{ ns()->option->get( 'ns_store_name' ) }}" 
-            store-logo="{{ ns()->option->get( 'ns_store_rectangle_logo' ) }}"
+            storeName="{{ ns()->option->get( 'ns_store_name' ) }}" 
+            storeLogo="{{ ns()->option->get( 'ns_store_rectangle_logo' ) }}"
             v-cloak></ns-best-products-report>
     </div>
 </div>

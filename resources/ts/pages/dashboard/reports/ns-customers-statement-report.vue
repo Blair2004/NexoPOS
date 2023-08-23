@@ -2,10 +2,10 @@
     <div id="report-section">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-field :field="startDateField"></ns-field>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-field :field="endDateField"></ns-field>
             </div>
             <div class="px-2" v-if="selectedCustomer">
                 <div class="ns-button">
@@ -27,7 +27,7 @@
         <div>
             <ns-search
                 :placeholder="__( 'Search Customer...' )"
-                label="name"
+                :label="[ 'first_name', 'last_name' ]"
                 value="id"
                 @select="handleSelectedCustomer( $event )"
                 :url="searchUrl"
@@ -38,7 +38,7 @@
                 <div class="my-4 flex justify-between w-full">
                     <div class="text-primary">
                         <ul>
-                            <li class="pb-1 border-b border-dashed border-box-edge">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
+                            <li class="pb-1 border-b border-dashed border-box-edge">{{ __( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', this.startDateField.value ).replace( '{date2}', this.endDateField.value ) }}</li>
                             <li class="pb-1 border-b border-dashed border-box-edge">{{ __( 'Document : Customer Statement' ) }}</li>
                             <li class="pb-1 border-b border-dashed border-box-edge">{{ __( 'Customer : {selectedCustomerName}' ).replace( '{selectedCustomerName}', selectedCustomerName ) }}</li>
                             <li class="pb-1 border-b border-dashed border-box-edge">{{ __( 'By : {user}' ).replace( '{user}', ns.user.username ) }}</li>
@@ -58,24 +58,24 @@
                         <table class="table ns-table w-full">
                             <tbody class="text-primary">
                                 <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-info-primary text-white print:text-black">{{ __( 'Total Purchases' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( report.purchases_amount ) }}</td>
+                                    <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-box-edge text-white print:text-black">{{ __( 'Total Purchases' ) }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( report.purchases_amount ) }}</td>
                                 </tr>
                                 <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left bg-warning-secondary border-info-primary text-white print:text-black">{{ __( 'Due Amount' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( report.owed_amount ) }}</td>
+                                    <td width="200" class="font-semibold p-2 border text-left bg-warning-secondary border-box-edge text-white print:text-black">{{ __( 'Due Amount' ) }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( report.owed_amount ) }}</td>
                                 </tr>
                                 <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white print:text-black">{{ __( 'Wallet Balance' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( report.account_amount ) }}</td>
+                                    <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-box-edge text-white print:text-black">{{ __( 'Wallet Balance' ) }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( report.account_amount ) }}</td>
                                 </tr>                                   
                                 <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Credit Limit' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( report.credit_limit_amount ) }}</td>
+                                    <td width="200" class="font-semibold p-2 border text-left border-box-edge">{{ __( 'Credit Limit' ) }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( report.credit_limit_amount ) }}</td>
                                 </tr>                             
                                 <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Total Orders' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ report.total_orders }}</td>
+                                    <td width="200" class="font-semibold p-2 border text-left border-box-edge">{{ __( 'Total Orders' ) }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ report.total_orders }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -115,11 +115,19 @@ import { __ } from '~/libraries/lang';
 
 export default {
     name: 'ns-customers-statement-report',
-    props: [ 'store-logo', 'store-name', 'search-url' ],
+    props: [ 'storeLogo', 'storeName', 'search-url' ],
     data() {
         return {
-            startDate: moment().startOf( 'day' ),
-            endDate: moment().endOf( 'day' ),
+            startDateField: {
+                type: 'datetimepicker',
+                name: 'startDate',
+                value: moment( ns.date.current ).startOf( 'day' )
+            },
+            endDateField: {
+                type: 'datetimepicker',
+                name: 'endDate',
+                value: moment( ns.date.current ).endOf( 'day' )
+            },
             selectedCustomer: null,
             ns: window.ns,
             report: {
@@ -142,7 +150,7 @@ export default {
                 return __( 'N/A' );
             }
 
-            return this.selectedCustomer.name;
+            return `${this.selectedCustomer.first_name} ${this.selectedCustomer.last_name}` ;
         },
     },
     methods: {
@@ -151,18 +159,12 @@ export default {
         printSaleReport() {
             this.$htmlToPaper( 'report' );
         },
-        setStartDate( date ) {
-            this.startDate  =   date;
-        },
-        setEndDate( date ) {
-            this.endDate    =   date;
-        },
         handleSelectedCustomer( customer ) {
             this.selectedCustomer   =   customer;
 
             nsHttpClient.post( `/api/reports/customers-statement/${customer.id}`, {
-                rangeStarts: this.startDate.format( 'YYYY-MM-DD HH:mm:ss' ),
-                rangeEnds: this.endDate.format( 'YYYY-MM-DD HH:mm:ss' ),
+                rangeStarts: this.startDateField.value,
+                rangeEnds: this.endDateField.value,
             }).subscribe({
                 next: report => {
                     this.report     =   report;
