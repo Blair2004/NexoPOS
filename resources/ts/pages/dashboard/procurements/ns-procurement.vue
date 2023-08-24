@@ -528,17 +528,24 @@ export default {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td :key="key" v-if="column.type === 'name'" class="p-2 text-primary border">
-                                                        <span class="font-semibold">{{ product.name }}</span>
-                                                        <div class="flex justify-between">
-                                                            <div class="flex -mx-1 flex-col">
+                                                    <td :key="key" v-if="column.type === 'name'" width="500" class="p-2 text-primary border">
+                                                        <span class="">{{ product.name }}</span>
+                                                        <div class="flex">
+                                                            <div class="flex -mx-1">
                                                                 <div class="px-1">
                                                                     <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
                                                                 </div>
-                                                            </div>
-                                                            <div class="flex -mx-1 flex-col">
                                                                 <div class="px-1">
                                                                     <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
+                                                                </div>
+                                                                <div class="px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Unit' ) }}: {{ __( 'N/A' ) }}</span>
+                                                                </div>
+                                                                <div class="px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Tax' ) }}: {{ __( 'N/A' ) }}</span>
+                                                                </div>
+                                                                <div class="px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Convert' ) }}: {{ __( 'N/A' ) }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
