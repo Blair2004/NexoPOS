@@ -236,7 +236,7 @@ export default {
             };
         }
     },
-    props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
+    props: [ 'submitMethod', 'submitUrl', 'returnUrl', 'src', 'units-url' ],
     methods: {
         __,
         nsCurrency,

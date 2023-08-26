@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import FormValidation from '~/libraries/form-validation';
 import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
@@ -8,6 +8,9 @@ import Tax from "~/libraries/tax";
 import nsProcurementProductOptionsVue from '~/popups/ns-procurement-product-options.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
+import { Popup } from '~/libraries/popup';
+import NsNumpadPopup from '~/popups/ns-numpad-popup.vue';
+import NsSelectPopup from '~/popups/ns-select-popup.vue';
 export default {
     name: 'ns-procurement',
     mounted() {
@@ -44,7 +47,7 @@ export default {
              * all the values and that's what is submitted
              * to the server
              */
-            form: {},
+            form: <any>{},
 
             /**
              * Reference to the nsSnackBar object
@@ -121,7 +124,7 @@ export default {
     components: {
         nsManageProducts
     },
-    props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
+    props: [ 'submitMethod', 'submitUrl', 'returnUrl', 'src', 'rules' ],
     methods: {
         __,
         nsCurrency,
@@ -225,7 +228,7 @@ export default {
          */
         doSearch( search ) {
             nsHttpClient.post( '/api/procurements/products/search-product', { search })
-                .subscribe( result => {
+                .subscribe( (result: any[]) => {
                     if ( result.length === 1 ) {
                         this.addProductList( result[0] );
                     } else if ( result.length > 1 ) {
@@ -250,7 +253,7 @@ export default {
                 nsHttpClient.get( '/api/products' ),
                 nsHttpClient.get( this.src ),
                 nsHttpClient.get( '/api/taxes/groups' ),
-            ]).subscribe( result => {
+            ]).subscribe( (result: any[]) => {
                 this.reloading      =   false;
                 this.categories     =   result[0];
                 this.products       =   result[1];
@@ -338,9 +341,9 @@ export default {
             product.procurement.total_purchase_price        =   0;
             product.procurement.quantity                    =   1;
             product.procurement.expiration_date             =   null;
-            product.procurement.tax_group_id                =   0;
-            product.procurement.tax_type                    =   'inclusive';
-            product.procurement.unit_id                     =   0;
+            product.procurement.tax_group_id                =   product.tax_group_id;
+            product.procurement.tax_type                    =   product.tax_type || 'inclusive';
+            product.procurement.unit_id                     =   product.unit_quantities[0].unit_id;
             product.procurement.product_id                  =   product.id;
             product.procurement.procurement_id              =   null;
             product.procurement.$invalid                    =   false;
@@ -357,8 +360,8 @@ export default {
                     .subscribe();
             }
 
-            this.form.products.forEach( product => {
-                if ( ! parseFloat( product.procurement.quantity ) >= 1 ) {
+            this.form.products.forEach( (product: any) => {
+                if ( ! (parseFloat( product.procurement.quantity ) >= 1) ) {
                     product.procurement.$invalid    =   true;
                 } else if ( product.procurement.unit_id === 0 ) {
                     product.procurement.$invalid    =   true;
@@ -434,13 +437,114 @@ export default {
                 })
             });
             
-            promise.then( value => {
+            promise.then( (value: { [ key:string ] : any }) => {
                 for( let key in value ) {
                     this.form.products[ index ].procurement[ key ]      =   value[ key ];
                 }
 
                 this.updateLine( index );
             });
+        },
+
+        async selectUnitForProduct( index ) {
+            try {
+                const product   =   this.form.products[ index ];
+                console.log( product );
+                const result    =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( NsSelectPopup, {
+                        label: __( 'Choose the Unit' ),
+                        description: __( 'The product will be procured on that unit.' ),
+                        value: product.unit_id,
+                        resolve,
+                        reject,
+                        options: product.unit_quantities.map( unitQuantity => {
+                            return {
+                                label: unitQuantity.unit.name,
+                                value: unitQuantity.unit.id
+                            }
+                        })
+                    })
+                })
+
+                product.unit_id     =   result;
+            } catch( exception ) {
+
+            }
+        },
+
+        async selectTax( index ) {
+            try {
+                const product   =   this.form.products[ index ];
+                const result    =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( NsSelectPopup, {
+                        label: __( 'Choose Tax' ),
+                        description: __( 'The tax will be assigned to the procured product.' ),
+                        resolve,
+                        reject,
+                        options: this.taxes.map( tax => {
+                            return {
+                                label: tax.name,
+                                value: tax.id
+                            }
+                        })
+                    })
+                })
+
+                product.tax_group_id     =   result;
+            } catch( exception ) {
+
+            }
+        },
+
+        async triggerKeyboard( entry, key, index ) {
+            try {
+                const result    =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( NsNumpadPopup, {
+                        value: entry[ key ],
+                        resolve, 
+                        reject
+                    });
+                    console.log({ entry, key, index });
+                });
+
+                entry[ key ]    =   result;
+            } catch ( exception ) {
+                console.log({ exception })
+            }
+        },
+
+        getSelectedTax( index ) {
+            const product   =   this.form.products[ index ];
+            console.log( product );
+            const select    =   this.taxes.filter( tax => {
+                if ( product.tax_group_id && product.tax_group_id === tax.id ) {
+                    return true;
+                }
+                return false;
+            });
+
+            if ( select.length === 1 ) {
+                return select[0].name;
+            }
+
+            return __( 'N/A' );
+        },
+
+        getSelectedUnit( index ) {
+            const product   =   this.form.products[ index ];
+            const units     =   product.unit_quantities.map( unitQuantity => unitQuantity.unit );
+            const select    =   units.filter( unit => {
+                if ( product.unit_id !== undefined ) {
+                    return unit.id === product.unit_id
+                }
+                return false;
+            });
+
+            if ( select.length === 1 ) {
+                return select[0].name;
+            }
+
+            return __( 'N/A' );
         }
     }
 }
@@ -531,31 +635,35 @@ export default {
                                                     <td :key="key" v-if="column.type === 'name'" width="500" class="p-2 text-primary border">
                                                         <span class="">{{ product.name }}</span>
                                                         <div class="flex">
-                                                            <div class="flex -mx-1">
-                                                                <div class="px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
+                                                            <div class="flex md:flex-row flex-col md:-mx-1">
+                                                                <div class="md:px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
                                                                 </div>
-                                                                <div class="px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
+                                                                <div class="md:px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
                                                                 </div>
-                                                                <div class="px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Unit' ) }}: {{ __( 'N/A' ) }}</span>
+                                                                <div class="md:px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="selectUnitForProduct( index )">{{ __( 'Unit' ) }}: {{ getSelectedUnit( index ) }}</span>
                                                                 </div>
-                                                                <div class="px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Tax' ) }}: {{ __( 'N/A' ) }}</span>
+                                                                <div class="md:px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="selectTax( index )">{{ __( 'Tax' ) }}: {{ getSelectedTax( index ) }}</span>
                                                                 </div>
-                                                                <div class="px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Convert' ) }}: {{ __( 'N/A' ) }}</span>
+                                                                <div class="md:px-1">
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="setProductOptions( index )">{{ __( 'Convert' ) }}: {{ __( 'N/A' ) }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </td> 
-                                                    <td :key="key" v-if="column.type === 'text'" class="p-2 w-3 text-primary border">
-                                                        <div class="flex items-start">
+                                                    <td :key="key" v-if="column.type === 'text'" @click="triggerKeyboard( product.procurement, key, index )" class="text-primary border cursor-pointer">
+                                                        <div class="flex justify-center">
+                                                            <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
+                                                            <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ product.procurement[ key ] }}</span>
+                                                        </div>
+                                                        <!-- <div class="flex items-start">
                                                             <div class="input-group rounded border-2">
                                                                 <input @change="updateLine( index )" type="text" v-model="product.procurement[ key ]" class="w-24 p-2">
                                                             </div>
-                                                        </div>
+                                                        </div> -->
                                                     </td>
                                                     <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-primary border">
                                                         <div class="flex items-start">

@@ -14,7 +14,7 @@ export default {
     mounted() {
         this.loadForm();
     },
-    props: [ 'src', 'create-url', 'field-class', 'return-url', 'submit-url', 'submit-method', 'disable-tabs' ],
+    props: [ 'src', 'createUrl', 'fieldClass', 'returnUrl', 'submitUrl', 'submitMethod', 'disableTabs' ],
     computed: {
         activeTabFields() {
             for( let identifier in this.form.tabs ) {
@@ -62,6 +62,7 @@ export default {
             this.formValidation.disableForm( this.form );
 
             if ( this.submitUrl === undefined ) {
+                console.log( this );
                 return nsSnackBar.error( __( 'No submit URL was provided' ), __( 'Okay' ) )
                     .subscribe();
             }
@@ -146,6 +147,7 @@ export default {
                 <template v-if="form.main.name">
                     <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'info'" class="input-group flex border-2 rounded overflow-hidden">
                         <input v-model="form.main.value" 
+                            @keydown.enter="submit()"
                             @blur="formValidation.checkField( form.main )" 
                             @change="formValidation.checkField( form.main )" 
                             :disabled="form.main.disabled"
