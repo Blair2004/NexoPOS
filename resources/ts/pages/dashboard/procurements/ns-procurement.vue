@@ -2,7 +2,7 @@
 import FormValidation from '~/libraries/form-validation';
 import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
-import { nsSnackBar, nsHttpClient } from '~/bootstrap';
+import { nsSnackBar, nsHttpClient, nsNotice } from '~/bootstrap';
 import nsManageProducts from '~/pages/dashboard/procurements/manage-products.vue';
 import Tax from "~/libraries/tax";
 import nsProcurementProductOptionsVue from '~/popups/ns-procurement-product-options.vue';
@@ -11,6 +11,9 @@ import { nsCurrency } from '~/filters/currency';
 import { Popup } from '~/libraries/popup';
 import NsNumpadPopup from '~/popups/ns-numpad-popup.vue';
 import NsSelectPopup from '~/popups/ns-select-popup.vue';
+import { selectApiEntities } from '~/libraries/select-api-entities';
+
+
 export default {
     name: 'ns-procurement',
     mounted() {
@@ -128,6 +131,50 @@ export default {
     methods: {
         __,
         nsCurrency,
+
+        async defineConversionOption( index ) {
+            try {
+                const product   =   this.form.products[ index ];
+
+                if ( product.procurement.unit_id === undefined ) {
+                    return nsNotice.error( 
+                        __( 'An error has occured' ),
+                        __( 'Select the procured unit first before selecting the conversion unit.' ), {
+                            actions: {
+                                learnMore: {
+                                    label: __( 'Learn More' ),
+                                    onClick: ( instance ) => {
+                                        console.log( instance )
+                                    }
+                                },
+                                close: {
+                                    label: __( 'Close' ),
+                                    onClick: ( instance ) => {
+                                        instance.close();
+                                    }
+                                }
+                            },
+                            duration: 5000
+                        }
+                    )
+                }
+
+                const result    =   await selectApiEntities( 
+                    `/api/units/${product.procurement.unit_id}/siblings`, 
+                    __( 'Convert to unit' ), 
+                    product.procurement.convert_unit_id || null, 
+                    "select"
+                );
+
+                product.procurement.convert_unit_id     =   result.values[0];
+                product.procurement.convert_unit_label  =   result.labels[0];
+            } catch( exception ) {
+                return nsSnackBar
+                    .error( exception.message || __( 'An unexpected error has occured' ) )
+                    .subscribe();
+            }
+        },
+        
 
         computeTotal() {
 
@@ -449,7 +496,6 @@ export default {
         async selectUnitForProduct( index ) {
             try {
                 const product   =   this.form.products[ index ];
-                console.log( product );
                 const result    =   await new Promise( ( resolve, reject ) => {
                     Popup.show( NsSelectPopup, {
                         label: __( 'Choose the Unit' ),
@@ -466,9 +512,11 @@ export default {
                     })
                 })
 
-                product.unit_id     =   result;
-            } catch( exception ) {
+                product.procurement.unit_id     =   result;
 
+                this.fetchLastPurchasePrice( index );
+            } catch( exception ) {
+                console.log( exception );
             }
         },
 
@@ -490,7 +538,10 @@ export default {
                     })
                 })
 
-                product.tax_group_id     =   result;
+                product.procurement.tax_group_id     =   result;
+                
+                this.updateLine( index );
+
             } catch( exception ) {
 
             }
@@ -504,7 +555,6 @@ export default {
                         resolve, 
                         reject
                     });
-                    console.log({ entry, key, index });
                 });
 
                 entry[ key ]    =   result;
@@ -515,9 +565,8 @@ export default {
 
         getSelectedTax( index ) {
             const product   =   this.form.products[ index ];
-            console.log( product );
             const select    =   this.taxes.filter( tax => {
-                if ( product.tax_group_id && product.tax_group_id === tax.id ) {
+                if ( product.procurement.tax_group_id && product.procurement.tax_group_id === tax.id ) {
                     return true;
                 }
                 return false;
@@ -534,8 +583,8 @@ export default {
             const product   =   this.form.products[ index ];
             const units     =   product.unit_quantities.map( unitQuantity => unitQuantity.unit );
             const select    =   units.filter( unit => {
-                if ( product.unit_id !== undefined ) {
-                    return unit.id === product.unit_id
+                if ( product.procurement.unit_id !== undefined ) {
+                    return unit.id === product.procurement.unit_id
                 }
                 return false;
             });
@@ -623,15 +672,6 @@ export default {
                                         <tbody>
                                             <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'error border-2 border-error-primary' : ''">
                                                 <template v-for="( column, key ) of form.columns">                                                                                                       
-                                                    <td :key="key" v-if="column.type === 'tax_group_id'" class="p-2 text-primary border">
-                                                        <div class="flex items-start">
-                                                            <div class="input-group rounded border-2">
-                                                                <select @change="updateLine( index )" v-model="product.procurement.tax_group_id" class="p-2">
-                                                                    <option v-for="option of taxes" :key="option.id" :value="option.id">{{ option.name }}</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </td>
                                                     <td :key="key" v-if="column.type === 'name'" width="500" class="p-2 text-primary border">
                                                         <span class="">{{ product.name }}</span>
                                                         <div class="flex">
@@ -649,7 +689,7 @@ export default {
                                                                     <span class="text-xs text-error-primary cursor-pointer underline" @click="selectTax( index )">{{ __( 'Tax' ) }}: {{ getSelectedTax( index ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="setProductOptions( index )">{{ __( 'Convert' ) }}: {{ __( 'N/A' ) }}</span>
+                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="defineConversionOption( index )">{{ __( 'Convert' ) }}: {{ product.procurement.convert_unit_id ? product.procurement.convert_unit_label : __( 'N/A' ) }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -659,11 +699,6 @@ export default {
                                                             <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
                                                             <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ product.procurement[ key ] }}</span>
                                                         </div>
-                                                        <!-- <div class="flex items-start">
-                                                            <div class="input-group rounded border-2">
-                                                                <input @change="updateLine( index )" type="text" v-model="product.procurement[ key ]" class="w-24 p-2">
-                                                            </div>
-                                                        </div> -->
                                                     </td>
                                                     <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-primary border">
                                                         <div class="flex items-start">
@@ -677,15 +712,6 @@ export default {
                                                     <td :key="key" v-if="column.type === 'currency'" class="p-2 text-primary border">
                                                         <div class="flex items-start flex-col justify-end">
                                                             <span class="text-sm text-primary">{{ nsCurrency( product.procurement[ key ] ) }}</span>
-                                                        </div>
-                                                    </td>
-                                                    <td :key="key" v-if="column.type === 'unit_quantities'" class="p-2 text-primary border">
-                                                        <div class="flex items-start">
-                                                            <div class="input-group rounded border-2">
-                                                                <select @change="fetchLastPurchasePrice( index )" v-model="product.procurement.unit_id" class="p-2 w-32">
-                                                                    <option v-for="option of product.unit_quantities" :key="option.id" :value="option.unit.id">{{ option.unit.name }}</option>
-                                                                </select>
-                                                            </div>
                                                         </div>
                                                     </td>
                                                 </template>

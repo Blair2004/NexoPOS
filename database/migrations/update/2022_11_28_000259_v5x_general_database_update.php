@@ -249,6 +249,12 @@ return new class extends Migration
             }
         });
 
+        Schema::table( 'nexopos_procurements_products', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_procurements_products', 'convert_unit_id' ) ) {
+                $table->integer( 'convert_unit_id' )->nullable();
+            }
+        });
+
         Schema::table( 'nexopos_customers_addresses', function( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_customers_addresses', 'name' ) ) {
                 $table->renameColumn( 'name', 'first_name' );

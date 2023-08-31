@@ -47,7 +47,7 @@ class DetectLowStockProductsJob implements ShouldQueue
             $notificationService->create([
                 'title' => __( 'Low Stock Alert' ),
                 'description' => sprintf(
-                    __( '%s product(s) has low stock. Check those products to reorder them before the stock reach zero.' ),
+                    __( '%s product(s) has low stock. Reorder those product(s) before it get exhausted.' ),
                     $products
                 ),
                 'identifier' => 'ns.low-stock-products',

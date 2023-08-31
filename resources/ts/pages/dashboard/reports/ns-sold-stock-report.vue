@@ -171,7 +171,7 @@ export default {
         async selectCategories() {
             try {
                 const response  =   await selectApiEntities( '/api/categories', __( 'Limit Results By Categories' ), this.categoryField.value );
-                this.categoriesNames    =   response.names;
+                this.categoriesNames    =   response.labels;
                 this.categoryField.value    =   response.values;
                 this.loadReport();
             } catch( exception ) {
@@ -181,7 +181,7 @@ export default {
         async selectUnits() {
             try {
                 const response  =   await selectApiEntities( '/api/units', __( 'Limit Results By Units' ), this.unitField.value )
-                this.unitsNames         =   response.names;
+                this.unitsNames         =   response.labels;
                 this.unitField.value    =   response.values;
                 this.loadReport();
             } catch( exception ) {

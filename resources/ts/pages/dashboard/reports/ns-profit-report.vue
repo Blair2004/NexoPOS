@@ -186,7 +186,7 @@ export default {
             try {
                 const response              =   await selectApiEntities( '/api/categories', this.categoryField.label, this.categoryField.value );
                 this.categoryField.value    =   response.values;
-                this.categoryNames          =   response.names;
+                this.categoryNames          =   response.labels;
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {
@@ -198,7 +198,7 @@ export default {
             try {
                 const response              =   await selectApiEntities( '/api/units', this.unitField.label, this.unitField.value );
                 this.unitField.value    =   response.values;
-                this.unitNames          =   response.names;
+                this.unitNames          =   response.labels;
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {

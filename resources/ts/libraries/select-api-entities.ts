@@ -2,16 +2,16 @@ import nsSelectPopupVue from "~/popups/ns-select-popup.vue";
 import { Popup } from "./popup";
 import { joinArray } from "./join-array";
 
-export async function selectApiEntities( resource: string, label: string, value: any ): Promise<{ names: string, values: number[]}> {
+export async function selectApiEntities( resource: string, label: string, value: any, type: 'select' | 'multiselect' = 'multiselect' ): Promise<{ labels: string, values: number[]}> {
     return await new Promise( ( resolve, reject ) => {
         nsHttpClient.get( resource )
             .subscribe({
                 next: async ( resources ) => {
                     try {
-                        const result    =   <number[]>(await new Promise( ( resolve, reject ) => {
+                        const result    =   <number[]|number>(await new Promise( ( resolve, reject ) => {
                             Popup.show( nsSelectPopupVue, {
                                 label,
-                                type: 'multiselect',
+                                type,
                                 options: resources.map( resource => {
                                     return {
                                         label: resource.name,
@@ -24,14 +24,22 @@ export async function selectApiEntities( resource: string, label: string, value:
                             })
                         }));
 
-                        const names     =   resources
-                            .filter( resource => result.includes( resource.id ) )
-                            .map( resource => resource.name )
+                        if ( type === 'multiselect' ) {
+                            const labels     =   resources
+                                .filter( resource => (<number[]>result).includes( resource.id ) )
+                                .map( resource => resource.name )
+    
+                            return resolve({
+                                labels: joinArray( labels ),
+                                values: <number[]>result
+                            })
+                        } else {
+                            const labels     =   resources
+                                .filter( resource => +resource.id === +result )
+                                .map( resource => resource.name )
 
-                        return resolve({
-                            names: joinArray( names ),
-                            values: result
-                        })
+                            return resolve({ labels, values: [<number>result] })
+                        }
 
                     } catch( exception ) {
                         return reject( exception );

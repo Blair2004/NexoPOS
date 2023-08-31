@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get( 'units/{id?}', [ UnitsController::class, 'get' ]);
 Route::get( 'units/{id}/group', [ UnitsController::class, 'getUnitParentGroup' ]);
+Route::get( 'units/{id}/siblings', [ UnitsController::class, 'getSiblingUnits' ]);
 Route::get( 'units-groups/{id?}', [ UnitsController::class, 'getGroups' ]);
 
 Route::post( 'units', [ UnitsController::class, 'postUnit' ]);

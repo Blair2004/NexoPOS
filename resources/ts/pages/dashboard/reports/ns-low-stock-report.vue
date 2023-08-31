@@ -20,7 +20,7 @@
             <div class="px-2">
                 <div class="ns-button">
                     <button @click="selectReport()" class="rounded flex justify-between shadow py-1 items-center px-2">
-                        <i class="las la-print text-xl"></i>
+                        <i class="las la-filter text-xl"></i>
                         <span class="pl-2">{{ __( 'Report Type' ) }} : {{ reportTypeName }}</span>
                     </button>
                 </div>
@@ -28,7 +28,7 @@
             <div class="px-2">
                 <div class="ns-button">
                     <button @click="selectCategories()" class="rounded flex justify-between shadow py-1 items-center px-2">
-                        <i class="las la-print text-xl"></i>
+                        <i class="las la-filter text-xl"></i>
                         <span class="pl-2">{{ __( 'Categories' ) }} : {{ categoryName || __( 'All Categories' ) }}</span>
                     </button>
                 </div>
@@ -36,7 +36,7 @@
             <div class="px-2">
                 <div class="ns-button">
                     <button @click="selectUnits()" class="rounded flex justify-between shadow py-1 items-center px-2">
-                        <i class="las la-print text-xl"></i>
+                        <i class="las la-filter text-xl"></i>
                         <span class="pl-2">{{ __( 'Units' ) }} : {{ unitNames || __( 'All Units' ) }}</span>
                     </button>
                 </div>
