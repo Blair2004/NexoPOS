@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Crud\CashFlowHistoryCrud;
+use App\Crud\TransactionsHistoryCrud;
 
+/**
+ * @deprecated
+ */
 class BankingController extends Controller
 {
-    public function cashFlowList()
+    public function transactionsList()
     {
-        return CashFlowHistoryCrud::table();
+        return TransactionsHistoryCrud::table();
     }
 
-    public function createCashFlow()
+    public function createTransactions()
     {
-        return CashFlowHistoryCrud::form();
+        return TransactionsHistoryCrud::form();
     }
 }

@@ -30,7 +30,7 @@
                                             <span>{{ __( 'Unit' ) }}:</span> 
                                             <div class="input-group">
                                                 <select @change="redefineUnit( product )" ref="unitField" type="text" v-model="product.unit_quantity_id">
-                                                    <option :key="unitQuantity.id" :value="unitQuantity.id" v-for="unitQuantity of product.unit_quantities">{{ unitQuantity.unit.name }}</option>
+                                                    <option :key="unitQuantity.id" :value="unitQuantity.id" v-for="unitQuantity of product.unit_quantities">{{ unitQuantity.unit.name }} ({{ unitQuantity.quantity }})</option>
                                                 </select>
                                             </div>
                                         </li>

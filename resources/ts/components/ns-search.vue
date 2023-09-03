@@ -6,9 +6,7 @@
         <div class="relative">
             <div class="w-full absolute shadow-lg">
                 <ul class="ns-vertical-menu" v-if="results.length > 0 && searchText.length > 0">
-                    <li class="border-b p-2 cursor-pointer" v-for="( result, index ) of results" @click="selectOption( result )" :key="index">
-                        {{ getLabel(result) }}
-                    </li>
+                    <li class="border-b p-2 cursor-pointer" v-for="( result, index ) of results" @click="selectOption( result )" :key="index">{{ renderLabel( result, label ) }}</li>
                 </ul>
             </div>
         </div>
@@ -34,9 +32,17 @@ export default {
             this.searchText     =   '';
             this.results        =   [];
         },
-        getLabel( value: Function | string ): string {
-            if (typeof this.label === 'function') return this.label(value);
-            return value[label];
+        renderLabel( object, label ) {
+            /**
+             * if we would like to render
+             * more than one label from the entry
+             * the label can therefore be an array of attributes
+             */
+            if ( typeof label === 'object' ) {
+                return label.map( attribute => object[ attribute ] ).join( ' ' );
+            } else {
+                return object[ label ];
+            }
         }
     },
     watch: {

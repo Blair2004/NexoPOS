@@ -32,16 +32,15 @@ class CrudPutRequest extends BaseCrudRequest
          * it might be used to ignore record
          * during validation.
          */
-        $arrayRules = $service->extractValidation(
-            $resource,
-            $resource->getModel()::find( $this->route( 'id' ) )
+        $arrayRules = $resource->extractValidation( 
+            model: $resource->getModel()::find( $this->route( 'id' ) ) 
         );
 
         /**
          * As validation might uses array with Rule class, we want to
          * properly exclude that, so that the array is not converted into dots.
          */
-        $isolatedRules = $service->isolateArrayRules( $arrayRules );
+        $isolatedRules = $resource->isolateArrayRules( $arrayRules );
 
         /**
          * This will flat the rules to create a dot-like

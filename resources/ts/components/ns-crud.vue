@@ -170,7 +170,7 @@ export default {
 
         this.loadConfig();
     },
-    props: [ 'src', 'create-url', 'mode', 'identifier', 'queryParams' ],
+    props: [ 'src', 'createUrl', 'mode', 'identifier', 'queryParams' ],
     computed: {
         /**
          * helps to get parsed

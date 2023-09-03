@@ -18,18 +18,20 @@ class DateService extends Carbon
     {
         parent::__construct( $time, $timezone );
 
-        $this->timezone = $timezone;
-        $this->options = app()->make( Options::class );
-
-        if ( Auth::check() ) {
-            $language  =   Auth::user()->attribute->language ?: $this->options->get( 'ns_store_language', 'light' );
-        } else {
-            $language  =   $this->options->get( 'ns_store_language', 'en' );
+        if ( Helper::installed() ) {
+            $this->timezone = $timezone;
+            $this->options = app()->make( Options::class );
+    
+            if ( Auth::check() ) {
+                $language  =   Auth::user()->attribute->language ?: $this->options->get( 'ns_store_language', 'light' );
+            } else {
+                $language  =   $this->options->get( 'ns_store_language', 'en' );
+            }
+    
+            $longForm   =   $this->getLongLocaleCode( $language );
+    
+            $this->locale( $longForm );
         }
-
-        $longForm   =   $this->getLongLocaleCode( $language );
-
-        $this->locale( $longForm );
     }
 
     /**

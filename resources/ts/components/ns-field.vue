@@ -25,6 +25,9 @@ export default {
         isSelectField() {
             return [ 'select' ].includes( this.field.type );
         },
+        isSearchField() {
+            return [ 'search-select' ].includes( this.field.type );
+        },
         isTextarea() {
             return [ 'textarea' ].includes( this.field.type );
         },
@@ -33,6 +36,9 @@ export default {
         },
         isMultiselect() {
             return [ 'multiselect' ].includes( this.field.type );
+        },
+        isInlineMultiselect() {
+            return [ 'inline-multiselect' ].includes( this.field.type );
         },
         isSelectAudio() {
             return [ 'select-audio' ].includes( this.field.type );
@@ -90,7 +96,7 @@ export default {
 </script>
 <template>
     <div class="flex flex-auto">
-        <ns-input @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isInputField">
+        <ns-input :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-input>
@@ -106,10 +112,14 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-media-input>
-        <ns-select @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isSelectField">
+        <ns-select :field="field" v-if="isSelectField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
+        <ns-search-select :field="field" v-if="isSearchField">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-search-select>
         <ns-daterange-picker @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateRangePicker">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
@@ -126,6 +136,10 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-checkbox>
+        <ns-inline-multiselect @blur="$emit( 'blur', field )" @update="$emit( 'change', field )"  :field="field" v-if="isInlineMultiselect">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-inline-multiselect>
         <ns-multiselect 
             @addOption="addOption( $event )" 
             @removeOption="removeOption( $event )" 

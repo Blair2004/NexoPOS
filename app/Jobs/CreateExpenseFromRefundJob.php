@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
-use App\Services\ExpenseService;
+use App\Services\TransactionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,9 +31,9 @@ class CreateExpenseFromRefundJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( ExpenseService $expenseService)
+    public function handle( TransactionService $transactionService)
     {
-        $expenseService->createExpenseFromRefund(
+        $transactionService->createExpenseFromRefund(
             order: $this->order,
             orderProductRefund: $this->orderProductRefund,
             orderProduct: $this->orderProduct

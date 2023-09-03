@@ -7,6 +7,7 @@ use App\Events\ProductAfterDeleteEvent;
 use App\Events\ProductAfterStockAdjustmentEvent;
 use App\Events\ProductAfterUpdatedEvent;
 use App\Events\ProductBeforeDeleteEvent;
+use App\Events\ProductBeforeUpdatedEvent;
 use App\Events\ProductResetEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
@@ -320,7 +321,7 @@ class ProductService
      * @param array fields
      * @return array response
      */
-    public function update( Product $product, $data )
+    public function update( Product $product, array $data ): array
     {
         /**
          * check if the provided category
@@ -403,6 +404,9 @@ class ProductService
          * and not an instance of Product
          */
         $product = $this->getProductUsingArgument( 'id', $id );
+        
+        ProductBeforeUpdatedEvent::dispatch( $product );
+
         $mode = 'update';
 
         $this->releaseProductTaxes( $product );
@@ -695,7 +699,7 @@ class ProductService
                 }
 
                 /**
-                 * We don't need tos ave all the informations
+                 * We don't need to save all the information
                  * available on the group variable, that's why we define
                  * explicitly how everything is saved here.
                  */
@@ -1618,12 +1622,17 @@ class ProductService
      * @param Product $product
      * @return float
      */
-    public function getLastPurchasePrice( $product )
+    public function getLastPurchasePrice( $product, $before = null )
     {
         if ( $product instanceof Product ) {
-            $procurementProduct = ProcurementProduct::where( 'product_id', $product->id )
-                ->orderBy( 'id', 'desc' )
-                ->first();
+            $request = ProcurementProduct::where( 'product_id', $product->id )
+                ->orderBy( 'id', 'desc' );
+
+            if ( $before ) {
+                $request->where( 'created_at', '<=', $before );
+            }
+            
+            $procurementProduct     =   $request->first();
 
             if ( $procurementProduct instanceof ProcurementProduct ) {
                 return $procurementProduct->purchase_price;
@@ -1787,7 +1796,10 @@ class ProductService
                 ->orWhere( 'sku', 'LIKE', "%{$search}%" )
                 ->orWhere( 'barcode', 'LIKE', "%{$search}%" );
             })
-            ->with( 'unit_quantities.unit' )
+            ->with([ 
+                'unit_quantities.unit',
+                'tax_group.taxes'
+            ])
             ->limit( $limit );
 
         /**

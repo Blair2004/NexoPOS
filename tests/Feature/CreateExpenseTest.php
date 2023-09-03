@@ -4,11 +4,11 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
-use Tests\Traits\WithExpenseTest;
+use Tests\Traits\WithTransactionTest;
 
 class CreateExpenseTest extends TestCase
 {
-    use WithAuthentication, WithExpenseTest;
+    use WithAuthentication, WithTransactionTest;
 
     /**
      * A basic feature test example.
@@ -18,6 +18,6 @@ class CreateExpenseTest extends TestCase
     public function testCreateAllExpenses()
     {
         $this->attemptAuthenticate();
-        $this->attemptCreateExpenses();
+        $this->attemptCreateTransaction();
     }
 }

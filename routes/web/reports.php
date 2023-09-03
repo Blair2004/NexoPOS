@@ -8,7 +8,7 @@ Route::get( '/reports/sales-progress', [ ReportsController::class, 'salesProgres
 Route::get( '/reports/low-stock', [ ReportsController::class, 'stockReport' ])->name( ns()->routeName( 'ns.dashboard.reports-low-stock' ) ); // @todo update
 Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ])->name( ns()->routeName( 'ns.dashboard.reports.sold-stock' ) );
 Route::get( '/reports/profit', [ ReportsController::class, 'profit' ])->name( ns()->routeName( 'ns.dashboard.reports.profit' ) );
-Route::get( '/reports/cash-flow', [ ReportsController::class, 'cashFlow' ])->name( ns()->routeName( 'ns.dashboard.reports.cash-flow' ) );
+Route::get( '/reports/transactions', [ ReportsController::class, 'transactionsReport' ])->name( ns()->routeName( 'ns.dashboard.reports.transactions' ) );
 Route::get( '/reports/annual-report', [ ReportsController::class, 'annualReport' ])->name( ns()->routeName( 'ns.dashboard.reports-annual' ) ); // @todo update
 Route::get( '/reports/payment-types', [ ReportsController::class, 'salesByPaymentTypes' ])->name( ns()->routeName( 'ns.dashboard.reports.payment-types' ) );
 Route::get( '/reports/customers-statement', [ ReportsController::class, 'showCustomerStatement' ])->name( ns()->routeName( 'ns.dashboard.reports.customers-statement' ) );

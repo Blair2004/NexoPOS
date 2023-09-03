@@ -317,11 +317,8 @@ class CouponCrud extends CrudService
 
     /**
      * Filter POST input fields
-     *
-     * @param  array of fields
-     * @return  array of fields
      */
-    public function filterPostInputs( $inputs )
+    public function filterPostInputs( array $inputs ): array
     {
         $inputs = collect( $inputs )->map( function( $field, $key ) {
             if ( ( in_array( $key, [
@@ -362,11 +359,8 @@ class CouponCrud extends CrudService
 
     /**
      * Filter PUT input fields
-     *
-     * @param  array of fields
-     * @return  array of fields
      */
-    public function filterPutInputs( $inputs, Coupon $entry )
+    public function filterPutInputs( array $inputs, Coupon $entry ): array
     {
         $inputs = collect( $inputs )->map( function( $field, $key ) {
             if ( ( in_array( $key, [
@@ -407,11 +401,8 @@ class CouponCrud extends CrudService
 
     /**
      * Before saving a record
-     *
-     * @param  array $request
-     * @return  void
      */
-    public function beforePost( $inputs )
+    public function beforePost( array $inputs ): array
     {
         $this->allowedTo( 'create' );
         
@@ -460,12 +451,8 @@ class CouponCrud extends CrudService
 
     /**
      * After saving a record
-     *
-     * @param  Request $request
-     * @param  Coupon $entry
-     * @return  void
      */
-    public function afterPost( $inputs, Coupon $coupon )
+    public function afterPost( array $inputs, Coupon $coupon ): array
     {
         if ( isset( $inputs[ 'products' ] ) && ! empty( $inputs[ 'products' ] ) ) {
             foreach ( $inputs[ 'products' ] as $product_id ) {
@@ -507,12 +494,9 @@ class CouponCrud extends CrudService
     }
 
     /**
-     * get
-     *
-     * @param  string
-     * @return  mixed
+     * get model.
      */
-    public function get( $param )
+    public function get( string $param ): mixed
     {
         switch ( $param ) {
             case 'model': return $this->model;
@@ -613,10 +597,8 @@ class CouponCrud extends CrudService
 
     /**
      * Before Delete
-     *
-     * @return  void
      */
-    public function beforeDelete( $namespace, $id, $coupon )
+    public function beforeDelete( $namespace, $id, $coupon ): void
     {
         ns()->restrict( $this->permissions[ 'delete' ] );
 
@@ -681,7 +663,7 @@ class CouponCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace ): CrudEntry
     {
         switch ($entry->type) {
             case 'percentage_discount':
@@ -730,11 +712,8 @@ class CouponCrud extends CrudService
 
     /**
      * Bulk Delete Action
-     *
-     * @param    object Request with object
-     * @return    false/array
      */
-    public function bulkAction( Request $request )
+    public function bulkAction( Request $request ): bool | array
     {
         /**
          * Deleting licence is only allowed for admin
@@ -774,8 +753,6 @@ class CouponCrud extends CrudService
 
     /**
      * get Links
-     *
-     * @return  array of links
      */
     public function getLinks(): array
     {
@@ -790,8 +767,6 @@ class CouponCrud extends CrudService
 
     /**
      * Get Bulk actions
-     *
-     * @return  array of actions
      **/
     public function getBulkActions(): array
     {
@@ -813,10 +788,8 @@ class CouponCrud extends CrudService
 
     /**
      * get exports
-     *
-     * @return  array of export formats
      **/
-    public function getExports()
+    public function getExports(): array
     {
         return [];
     }

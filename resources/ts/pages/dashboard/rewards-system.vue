@@ -15,7 +15,7 @@ export default {
             nsHttpClient,
         }
     },
-    props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
+    props: [ 'submitMethod', 'submitUrl', 'returnUrl', 'src', 'rules' ],
     methods: {
         __,
         submit() {

@@ -94,8 +94,8 @@ return new class extends Migration
         include_once dirname( __FILE__ ) . '/../../permissions/customers.php';
         include_once dirname( __FILE__ ) . '/../../permissions/customers-groups.php';
         include_once dirname( __FILE__ ) . '/../../permissions/coupons.php';
-        include_once dirname( __FILE__ ) . '/../../permissions/expenses-categories.php';
-        include_once dirname( __FILE__ ) . '/../../permissions/expenses.php';
+        include_once dirname( __FILE__ ) . '/../../permissions/transactions-accounts.php';
+        include_once dirname( __FILE__ ) . '/../../permissions/transactions.php';
         include_once dirname( __FILE__ ) . '/../../permissions/orders.php';
         include_once dirname( __FILE__ ) . '/../../permissions/procurements.php';
         include_once dirname( __FILE__ ) . '/../../permissions/providers.php';

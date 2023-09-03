@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Classes\Currency;
 use App\Classes\Hook;
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\DashboardDay;
@@ -230,7 +230,7 @@ class ReportService
      */
     public function clearUnassignedCashFlow( $startAt, $endsAt )
     {
-        $cashFlows = CashFlow::where( 'created_at', '>=', $startAt )
+        $cashFlows = TransactionHistory::where( 'created_at', '>=', $startAt )
             ->where( 'created_at', '<=', $endsAt )
             ->get();
 
@@ -238,7 +238,7 @@ class ReportService
             /**
              * let's clear unassigned to orders
              */
-            if ( $cashFlow->operation === CashFlow::OPERATION_CREDIT && ! empty( $cashFlow->order_id ) ) {
+            if ( $cashFlow->operation === TransactionHistory::OPERATION_CREDIT && ! empty( $cashFlow->order_id ) ) {
                 $order = Order::find( $cashFlow->order_id );
 
                 if ( ! $order instanceof Order ) {
@@ -249,7 +249,7 @@ class ReportService
             /**
              * let's clear unassigned to procurements
              */
-            if ( $cashFlow->operation === CashFlow::OPERATION_DEBIT && ! empty( $cashFlow->procurement_id ) ) {
+            if ( $cashFlow->operation === TransactionHistory::OPERATION_DEBIT && ! empty( $cashFlow->procurement_id ) ) {
                 $order = Procurement::find( $cashFlow->procurement_id );
 
                 if ( ! $order instanceof Procurement ) {
@@ -301,7 +301,7 @@ class ReportService
      */
     public function deleteOrderCashFlow( Order $order )
     {
-        CashFlow::where( 'order_id', $order->id )->delete();
+        TransactionHistory::where( 'order_id', $order->id )->delete();
     }
 
     /**
@@ -313,19 +313,19 @@ class ReportService
      */
     public function deleteProcurementCashFlow( Procurement $procurement )
     {
-        CashFlow::where( 'procurement_id', $procurement->id )->delete();
+        TransactionHistory::where( 'procurement_id', $procurement->id )->delete();
     }
 
     public function computeIncome( $previousReport, $todayReport )
     {
-        $totalIncome = CashFlow::from( $this->dayStarts )
+        $totalIncome = TransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( CashFlow::OPERATION_CREDIT )
+            ->operation( TransactionHistory::OPERATION_CREDIT )
             ->sum( 'value' );
 
-        $totalExpenses = CashFlow::from( $this->dayStarts )
+        $totalExpenses = TransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( CashFlow::OPERATION_DEBIT )
+            ->operation( TransactionHistory::OPERATION_DEBIT )
             ->sum( 'value' );
 
         $todayReport->day_expenses = $totalExpenses;
@@ -450,12 +450,12 @@ class ReportService
     /**
      * @deprecated
      */
-    public function increaseDailyExpenses( CashFlow $cashFlow, $today = null )
+    public function increaseDailyExpenses( TransactionHistory $cashFlow, $today = null )
     {
         $today = $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
-            if ( $cashFlow->operation === CashFlow::OPERATION_DEBIT ) {
+            if ( $cashFlow->operation === TransactionHistory::OPERATION_DEBIT ) {
                 $yesterday = DashboardDay::forLastRecentDay( $today );
                 $today->day_expenses += $cashFlow->getRawOriginal( 'value' );
                 $today->total_expenses = ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
@@ -479,12 +479,12 @@ class ReportService
     /**
      * @deprecated
      */
-    public function reduceDailyExpenses( CashFlow $cashFlow, $today = null )
+    public function reduceDailyExpenses( TransactionHistory $cashFlow, $today = null )
     {
         $today = $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
-            if ( $cashFlow->operation === CashFlow::OPERATION_CREDIT ) {
+            if ( $cashFlow->operation === TransactionHistory::OPERATION_CREDIT ) {
                 $yesterday = DashboardDay::forLastRecentDay( $today );
                 $today->day_income -= $cashFlow->getRawOriginal( 'value' );
                 $today->total_income = ( $yesterday->total_income ?? 0 ) + $today->day_income;
@@ -805,15 +805,25 @@ class ReportService
      * Will return a report based
      * on the requested type.
      */
-    public function getSaleReport( string $start, string $end, string $type, $user_id = null )
+    public function getSaleReport( string $start, string $end, string $type, $user_id = null, $categories_id = null )
     {
         switch ( $type ) {
             case 'products_report':
-                return $this->getProductsReports( $start, $end, $user_id );
+                return $this->getProductsReports( 
+                    start: $start, 
+                    end: $end, 
+                    user_id: $user_id, 
+                    categories_id: $categories_id 
+                );
                 break;
             case 'categories_report':
             case 'categories_summary':
-                return $this->getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id );
+                return $this->getCategoryReports(
+                    start: $start, 
+                    end: $end, 
+                    user_id: $user_id, 
+                    categories_id: $categories_id 
+                );
                 break;
         }
     }
@@ -842,7 +852,10 @@ class ReportService
         ];
     }
 
-    public function getProductsReports( $start, $end, $user_id = null )
+    /**
+     * @todo add support for category filter
+     */
+    public function getProductsReports( $start, $end, $user_id = null, $categories_id = null )
     {
         $request = Order::paymentStatus( Order::PAYMENT_PAID )
             ->from( $start )
@@ -852,14 +865,29 @@ class ReportService
             $request = $request->where( 'author', $user_id );
         }
 
-        $orders = $request->with( 'products' )
-            ->get();
+        if ( ! empty( $categories_id ) ) {
+            /**
+             * Will only pull orders that has products which 
+             * belongs to the categories id provided
+             */
+            $request    =   $request->whereHas( 'products', function( $query ) use ( $categories_id ) {
+                $query->whereIn( 'product_category_id', $categories_id );
+            });
 
-        $summary = $this->getSalesSummary( $orders );
+            /**
+             * Will only pull products that belongs to the categories id provided.
+             */
+            $request    =   $request->with([
+                'products'  =>  function( $query ) use ( $categories_id ) {
+                    $query->whereIn( 'product_category_id', $categories_id );
+                }
+            ]);
+        }
 
-        $products = $orders->map( fn( $order ) => $order->products )->flatten();
-
-        $productsIds = $products->map( fn( $product ) => $product->product_id )->unique();
+        $orders         = $request->get();
+        $summary        = $this->getSalesSummary( $orders );
+        $products       = $orders->map( fn( $order ) => $order->products )->flatten();
+        $productsIds    = $products->map( fn( $product ) => $product->product_id )->unique();
 
         return [
             'result' => $productsIds->map( function( $id ) use ( $products ) {
@@ -877,7 +905,7 @@ class ReportService
         ];
     }
 
-    public function getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id = null )
+    public function getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id = null, $categories_id = [] )
     {
         $request = Order::paymentStatus( Order::PAYMENT_PAID )
             ->from( $start )
@@ -887,7 +915,26 @@ class ReportService
             $request = $request->where( 'author', $user_id );
         }
 
-        $orders = $request->with( 'products' )->get();
+        if ( ! empty( $categories_id ) ) {
+            /**
+             * Will only pull orders that has products which 
+             * belongs to the categories id provided
+             */
+            $request    =   $request->whereHas( 'products', function( $query ) use ( $categories_id ) {
+                $query->whereIn( 'product_category_id', $categories_id );
+            });
+
+            /**
+             * Will only pull products that belongs to the categories id provided.
+             */
+            $request    =   $request->with([
+                'products'  =>  function( $query ) use ( $categories_id ) {
+                    $query->whereIn( 'product_category_id', $categories_id );
+                }
+            ]);
+        }
+
+        $orders = $request->get();
 
         /**
          * We'll pull the sales
@@ -1090,9 +1137,21 @@ class ReportService
         ];
     }
 
-    public function getStockReport()
+    public function getStockReport( $categories, $units )
     {
-        return Product::with( 'unit_quantities.unit' )->paginate(50);
+        $query  =   Product::with([ 'unit_quantities' => function( $query ) use ( $units ) {
+            if ( ! empty( $units ) ) {
+                $query->whereIn( 'unit_id', $units );
+            } else {
+                return false;
+            }
+        }, 'unit_quantities.unit' ]);
+
+        if ( ! empty( $categories ) ) {
+            $query->whereIn( 'category_id', $categories );
+        }
+
+        return $query->paginate(50);
     }
 
     /**
@@ -1100,14 +1159,39 @@ class ReportService
      *
      * @return array $products
      */
-    public function getLowStockProducts()
+    public function getLowStockProducts( $categories, $units )
     {
-        return ProductUnitQuantity::with( 'product', 'unit' )->whereRaw( 'low_quantity > quantity' )->get();
+        return ProductUnitQuantity::query()
+            ->where( 'stock_alert_enabled', 1 )
+            ->whereRaw( 'low_quantity > quantity' )
+            ->with([ 
+                'product', 
+                'unit' => function( $query ) use ( $units ) {
+                    if ( ! empty( $units ) ) {
+                        $query->whereIn( 'id', $units );
+                    }
+                }
+            ])
+            ->whereHas( 'unit', function( $query ) use ( $units ) {
+                if ( ! empty( $units ) ) {
+                    $query->whereIn( 'id', $units );
+                } else {
+                    return false;
+                }
+            })
+            ->whereHas( 'product', function( $query ) use ( $categories ) {
+                if ( ! empty( $categories ) ) {
+                    $query->whereIn( 'category_id', $categories );
+                }
+
+                return false;
+            })
+            ->get();
     }
 
-    public function recomputeCashFlow( $fromDate, $toDate )
+    public function recomputeTransactions( $fromDate, $toDate )
     {
-        CashFlow::truncate();
+        TransactionHistory::truncate();
         DashboardDay::truncate();
         DashboardMonth::truncate();
 
@@ -1115,11 +1199,11 @@ class ReportService
         $endDateString = $toDate->endOfDay()->toDateTimeString();
 
         /**
-         * @var ExpenseService
+         * @var TransactionService
          */
-        $expenseService = app()->make( ExpenseService::class );
+        $transactionService = app()->make( TransactionService::class );
 
-        $expenseService->recomputeCashFlow(
+        $transactionService->recomputeCashFlow(
             $startDateString,
             $endDateString
         );

@@ -234,6 +234,7 @@ class ProductCrud extends CrudService
             ],
             'variations' => [
                 [
+                    '$primary'  =>  true,
                     'id' => $entry->id ?? '',
                     'tabs' => [
                         'identification' => [
@@ -809,5 +810,85 @@ class ProductCrud extends CrudService
     public function getExports()
     {
         return [];
+    }
+
+    public function getExtractedProductForm( $product )
+    {
+        $rawForm        =   $this->getForm( $product );
+
+        return array_merge(
+            $this->extractForm( $rawForm ),
+            [
+                'variations'    =>  collect( $rawForm[ 'variations' ] )->map( function( $variation, $index ) {
+                    $data   =   $this->extractForm( $variation );
+                    if ( $index === 0 ) {
+                        $data[ '$primary' ]     =   true;
+                    }
+
+                    $data[ 'images' ]   =   $variation[ 'tabs' ][ 'images' ][ 'groups' ]->map( function( $fields ) {
+                        return $this->extractFields( $fields );
+                    })->toArray();
+
+                    $groups     =   [];
+
+                    collect( $variation[ 'tabs' ][ 'units' ][ 'fields' ] )->filter( function( $field ) {
+                        return $field[ 'type' ] === 'group';
+                    })->each( function( $field ) use ( &$groups ) {
+                        $groups[ $field[ 'name' ] ]   =   collect( $field[ 'groups' ] )
+                            ->map( fn( $fields ) => $this->extractFields( $fields ) )
+                            ->toArray();
+                    });
+
+                    $data[ 'units' ]    =   [
+                        ...$data[ 'units' ],
+                        ...$groups
+                    ];
+
+                    return $data;
+                })->toArray()
+            ]
+        );
+    }
+
+    /**
+     * Returns a key-value array format
+     * of the crud post submitted.
+        */
+    public function getFlatForm( array $inputs, $model = null ): array
+    {
+        $primary = collect( $inputs[ 'variations' ] )
+            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
+            ->first();
+
+        $source = $primary;
+
+        /**
+         * this is made to ensure the array
+         * provided isn't flattened
+         */
+        unset( $primary[ 'images' ] );
+        unset( $primary[ 'units' ] );
+        unset( $primary[ 'groups' ] );
+
+        $primary[ 'identification' ][ 'name' ] = $inputs[ 'name' ];
+        $primary = Helper::flatArrayWithKeys( $primary )->toArray();
+        $primary[ 'product_type' ] = 'product';
+
+        /**
+         * let's restore the fields before
+         * storing that.
+         */
+        $primary[ 'images' ] = $source[ 'images' ];
+        $primary[ 'units' ] = $source[ 'units' ];
+        $primary[ 'groups' ] = $source[ 'groups' ];
+
+        unset( $primary[ '$primary' ] );
+
+        /**
+         * As foreign fields aren't handled with
+         * they are complex (array), this methods allow
+         * external script to reinject those complex fields.
+         */
+        return Hook::filter( 'ns-update-products-inputs', $primary, $source, $model );
     }
 }

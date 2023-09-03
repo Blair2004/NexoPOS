@@ -78,8 +78,8 @@ export default {
         this.settingsSubscription.unsubscribe();
     },
     methods: {
-        nsCurrency,
         popupCloser,
+        nsCurrency,
         __,
 
         definedValue( value ) {

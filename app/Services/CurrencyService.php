@@ -15,6 +15,8 @@ class CurrencyService
 
     private $currency_symbol;
 
+    private $currency_position;
+
     private $format;
 
     private $decimal_precision;
@@ -225,10 +227,13 @@ class CurrencyService
      */
     public function getRaw( $value = null )
     {
-        $value = $value !== null ? (string) BigDecimal::of( $value )->toScale( $this->decimal_precision, RoundingMode::UP ) : null;
-        $main = $value === null ? (string) $this->value->toScale( $this->decimal_precision, RoundingMode::UP ) : 0;
-
-        return floatval( $value !== null ? $value : $main );
+        if ( $value === null ) {
+            return $this->value->dividedBy( 1, $this->decimal_precision, RoundingMode::HALF_UP )->toFloat();
+        } else {
+            return BigDecimal::of( $value )->dividedBy( 1, $this->decimal_precision, RoundingMode::HALF_UP )->toFloat();
+        }
+        
+        return 0;
     }
 
     /**

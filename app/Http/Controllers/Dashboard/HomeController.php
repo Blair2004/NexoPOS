@@ -17,7 +17,7 @@ class HomeController extends DashboardController
     {
         return View::make( 'welcome', [
             'title' => sprintf(
-                __( 'POS &mdash; %s' ),
+                __( 'Welcome &mdash; %s' ),
                 ns()->option->get( 'ns_store_name', 'NexoPOS ' . config( 'nexopos.version' ) )
             ),
         ]);

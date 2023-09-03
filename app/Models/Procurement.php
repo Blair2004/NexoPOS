@@ -12,12 +12,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property integer $id
- * @property string $uuid
- * @property integer $author
+ * @property mixed $name
+ * @property integer $provider_id
+ * @property float $value
+ * @property float $cost
  * @property float $tax_value
+ * @property mixed $invoice_reference
  * @property bool $automatic_approval
- * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon $delivery_time
+ * @property \Carbon\Carbon $invoice_date
+ * @property mixed $payment_status
+ * @property mixed $delivery_status
+ * @property integer $total_items
  * @property string $description
+ * @property integer $author
+ * @property mixed $uuid
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
 */
 class Procurement extends NsModel
 {

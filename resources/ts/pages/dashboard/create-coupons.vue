@@ -49,7 +49,7 @@ export default {
             })
         }
     },
-    props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
+    props: [ 'submitMethod', 'submitUrl', 'returnUrl', 'src', 'rules' ],
     methods: {
         __,
         setTabActive( tab ) {

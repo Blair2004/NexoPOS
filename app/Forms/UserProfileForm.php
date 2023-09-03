@@ -170,7 +170,7 @@ class UserProfileForm extends SettingsPage
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The customer addresses were successfully updated.' )
+            'message'   =>  __( 'The addresses were successfully updated.' )
         ];
     }
 }

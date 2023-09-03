@@ -3,6 +3,7 @@ import { Popup } from '~/libraries/popup';
 import nsPosCustomers from '~/popups/ns-pos-customers.vue';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import popupCloser from "~/libraries/popup-closer";
+import { __ } from '~/libraries/lang';
 
 export default {
     name: 'ns-pos-reset-button',
@@ -17,7 +18,7 @@ export default {
         reset() {
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Confirm Your Action' ),
-                message: __( 'The current order will be cleared. But not deleted if it\'s persistent. Would you like to proceed ?' ),
+                message: __( "The current order will be cleared. But not deleted if it's persistent. Would you like to proceed ?" ),
                 onAction: ( action ) => {
                     if ( action ) {
                         POS.reset();

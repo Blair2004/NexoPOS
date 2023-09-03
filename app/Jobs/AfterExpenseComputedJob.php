@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,7 +22,7 @@ class AfterExpenseComputedJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct( public CashFlow $cashFlow )
+    public function __construct( public TransactionHistory $transactionHistory )
     {
         $this->prepareSerialization();
     }
@@ -33,6 +34,6 @@ class AfterExpenseComputedJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->cashFlow->delete();
+        $this->transactionHistory->delete();
     }
 }

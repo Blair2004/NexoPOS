@@ -3,6 +3,7 @@
 </template>
 <script>
 export default {
-    name : "ns-pos-loading-popup"
+    name : "ns-pos-loading-popup",
+    props: [ 'popup' ],
 }
 </script>

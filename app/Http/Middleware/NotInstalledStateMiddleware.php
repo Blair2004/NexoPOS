@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\NotAllowedException;
+use App\Services\Helper;
 use Closure;
+use Illuminate\Support\Facades\App;
 
 class NotInstalledStateMiddleware
 {
@@ -16,7 +18,16 @@ class NotInstalledStateMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if ( ! ns()->installed() ) {
+        /**
+         * we'll try to detect the language
+         * from the query string.
+         */
+        if ( ! empty( $request->query( 'lang' ) ) ) {
+            $validLanguage  =   in_array( $request->query( 'lang' ), array_keys( config( 'nexopos.languages' ) ) ) ? $request->query( 'lang' ) : 'en';
+            App::setLocale( $validLanguage );
+        }
+
+        if ( ! Helper::installed() ) {
             return $next($request);
         }
 

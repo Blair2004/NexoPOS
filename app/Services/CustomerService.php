@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Classes\Currency;
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
+use App\Events\CustomerBeforeDeletedEvent;
 use App\Events\CustomerRewardAfterCouponIssuedEvent;
 use App\Events\CustomerRewardAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
@@ -40,9 +41,12 @@ class CustomerService
                 ->orderBy( 'created_at', 'desc' )->get();
         } else {
             try {
-                return Customer::with( 'addresses' )->find( $id );
+                return Customer::with( 'addresses' )->findOrFail( $id );
             } catch ( Exception $exception ) {
-                throw new Exception( __( 'Unable to find the customer using the provided id.' ) );
+                throw new Exception( sprintf(
+                    __( 'Unable to find the customer using the provided id %s.' ),
+                    $id
+                ) );
             }
         }
     }
@@ -59,33 +63,41 @@ class CustomerService
             ->with( 'shipping' )
             ->where( 'group_id', '<>', null )
             ->limit( $limit )
-            ->notBanned()
+            ->active()
             ->orderBy( 'updated_at', 'desc' )->get();
+    }
+
+    /**
+     * Delete the customers addresses
+     * using the id provided
+     */
+    public function deleteCustomerAttributes( int $id ): void
+    {
+        CustomerAddress::where( 'customer_id', $id )->delete();
     }
 
     /**
      * delete a specific customer
      * using a provided id
-     *
-     * @param int customer id
-     * @return array resopnse
      */
-    public function delete( $id )
+    public function delete( int | Customer $id ): array
     {
         /**
-         * @todo dispatch event while
-         * deleting a customer
-         * @todo check if the action is performed by
          * an authorized user
          */
-        $customer = Customer::find( $id );
+        if ( $id instanceof Customer ) {
+            $customer = $id;
+        } else {
+            $customer = Customer::find( $id );
 
-        if ( ! $customer instanceof Customer ) {
-            throw new NotFoundException( __( 'Unable to find the customer using the provided id.' ) );
+            if ( ! $customer instanceof Customer ) {
+                throw new NotFoundException( __( 'Unable to find the customer using the provided id.' ) );
+            }
         }
 
-        Customer::find( $id )->delete();
-        CustomerAddress::where( 'customer_id', $id )->delete();
+        CustomerBeforeDeletedEvent::dispatch( $customer );
+
+        $customer->delete();
 
         return [
             'status' => 'success',
@@ -112,14 +124,13 @@ class CustomerService
             })
             ->orWhere( 'email', 'like', '%' . $argument . '%' )
             ->orWhere( 'phone', 'like', '%' . $argument . '%' )
-            ->notBanned()
             ->limit(10)
             ->get();
 
         return $customers;
     }
 
-    public function precheckCustomers( $fields, $id = null )
+    public function precheckCustomers( array $fields, $id = null ): void
     {
         if ( $id === null ) {
             /**
@@ -275,7 +286,7 @@ class CustomerService
     /**
      * get customers addresses
      */
-    public function getCustomerAddresses( int $id ): array
+    public function getCustomerAddresses( int $id ): Collection
     {
         $customer = $this->get( $id );
 
@@ -734,7 +745,7 @@ class CustomerService
 
     public function checkCouponExistence( array $couponConfig, $fields ): Coupon
     {
-        $coupon = Coupon::find( $couponConfig[ 'id' ] );
+        $coupon = Coupon::find( $couponConfig[ 'coupon_id' ] );
 
         if ( ! $coupon instanceof Coupon ) {
             throw new NotFoundException( sprintf( __( 'Unable to find a reference to the attached coupon : %s' ), $couponConfig[ 'name' ] ?? __( 'N/A' ) ) );
@@ -783,7 +794,7 @@ class CustomerService
          * We'll now check if the customer has an ongoing
          * coupon with the provided parameters
          */
-        $customerCoupon     =   CustomerCoupon::where( 'coupon_id', $couponConfig[ 'id' ] )
+        $customerCoupon     =   CustomerCoupon::where( 'coupon_id', $couponConfig[ 'coupon_id' ] )
             ->where( 'customer_id', $fields[ 'customer_id' ] ?? 0 )
             ->first();
 

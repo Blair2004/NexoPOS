@@ -9,6 +9,9 @@
         </ns-tabs-item>
         <ns-tabs-item identifier="demo" label="Demo">
             <ns-date-time-picker :field="field"></ns-date-time-picker>
+            <div>
+                {{ field }}
+            </div>
         </ns-tabs-item>
     </ns-tabs>
 </template>

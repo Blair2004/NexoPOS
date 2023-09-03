@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Exceptions\NotAllowedException;
+use App\Services\Helper;
 use App\Services\ModulesService;
 use Illuminate\Console\Command;
 
@@ -47,7 +48,7 @@ class GenerateModuleCommand extends Command
      */
     public function handle()
     {
-        if ( ns()->installed() ) {
+        if ( Helper::installed() ) {
             $this->askInformations();
         } else {
             $this->error( 'NexoPOS is not yet installed.' );

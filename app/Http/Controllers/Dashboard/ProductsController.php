@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Classes\Hook;
 use App\Classes\Output;
+use App\Crud\ProductCrud;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
 use App\Exceptions\NotAllowedException;
@@ -113,47 +114,14 @@ class ProductsController extends DashboardController
      */
     public function updateProduct( Request $request, Product $product )
     {
-        $primary = collect( $request->input( 'variations' ) )
-            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
-            ->first();
-
-        $source = $primary;
-        $units = $primary[ 'units' ];
-
-        /**
-         * this is made to ensure the array
-         * provided aren't flatten
-         */
-        unset( $primary[ 'images' ] );
-        unset( $primary[ 'units' ] );
-        unset( $primary[ 'groups' ] );
-
-        $primary[ 'identification' ][ 'name' ] = $request->input( 'name' );
-        $primary = Helper::flatArrayWithKeys( $primary )->toArray();
-        $primary[ 'product_type' ] = 'product';
-
-        /**
-         * let's restore the fields before
-         * storing that.
-         */
-        $primary[ 'images' ] = $source[ 'images' ];
-        $primary[ 'units' ] = $source[ 'units' ];
-        $primary[ 'groups' ] = $source[ 'groups' ];
-
-        unset( $primary[ '$primary' ] );
-
-        /**
-         * As foreign fields aren't handled with
-         * they are complex (array), this methods allow
-         * external script to reinject those complex fields.
-         */
-        $primary = Hook::filter( 'ns-update-products-inputs', $primary, $source, $product );
+        $productCrud    =   new ProductCrud;
+        $form           =   $productCrud->getFlatForm( $request->post(), $product );
 
         /**
          * the method "create" is capable of
          * creating either a product or a variable product
          */
-        return $this->productService->update( $product, $primary );
+        return $this->productService->update( $product, $form );
     }
 
     public function searchProduct( Request $request )
@@ -558,6 +526,7 @@ class ProductsController extends DashboardController
 
         if ( $procurementProduct instanceof ProcurementProduct ) {
             $product = $procurementProduct->product;
+            $product->load( 'tax_group.taxes' );
 
             /**
              * check if the product has expired
@@ -585,9 +554,11 @@ class ProductsController extends DashboardController
 
             $product = Product::find( $productUnitQuantity->product_id );
             $product->load( 'unit_quantities.unit' );
+            $product->load( 'tax_group.taxes' );
             $product->selectedUnitQuantity = $productUnitQuantity;
         } elseif ( $product instanceof Product ) {
             $product->load( 'unit_quantities.unit' );
+            $product->load( 'tax_group.taxes' );
 
             if ( $product->accurate_tracking ) {
                 throw new NotAllowedException( __( 'Unable to add a product that has accurate tracking enabled, using an ordinary barcode.' ) );

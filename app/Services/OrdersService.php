@@ -215,7 +215,7 @@ class OrdersService
 
         return [
             'status' => 'success',
-            'message' => __( 'The order has been placed.' ),
+            'message' => $isNew ? __( 'The order has been placed.' ) : __( 'The order has been updated' ),
             'data' => compact( 'order' ),
         ];
     }
@@ -368,7 +368,7 @@ class OrdersService
         $order->total_coupons = 0;
 
         foreach ( $coupons as $arrayCoupon ) {
-            $coupon     =   Coupon::find( $arrayCoupon[ 'id' ] );
+            $coupon     =   Coupon::find( $arrayCoupon[ 'coupon_id' ] );
 
             OrderCouponBeforeCreatedEvent::dispatch( $coupon, $order );
 
@@ -1096,6 +1096,8 @@ class OrdersService
             $orderProduct->product_category_id = $product[ 'product' ]->category_id ?? 0;
             $orderProduct->name = $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unnamed Product' );
             $orderProduct->quantity = $product[ 'quantity' ];
+            $orderProduct->price_with_tax = $product[ 'price_with_tax' ] ?? 0;
+            $orderProduct->price_without_tax = $product[ 'price_without_tax' ] ?? 0;
 
             /**
              * We might need to have another consideration
@@ -1120,8 +1122,10 @@ class OrdersService
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price = $this->currencyService->define(
-                $product[ 'total_purchase_price' ] ?? $this->productService->getLastPurchasePrice( $product[ 'product' ] )
-            )
+                    $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getLastPurchasePrice( $product[ 'product' ] ) )
+                        ->multipliedBy( $product[ 'quantity' ] )
+                        ->getRaw()
+                )
                 ->getRaw();
 
             $this->computeOrderProduct( $orderProduct );
@@ -2612,19 +2616,26 @@ class OrdersService
      * @param string $endDate range ends
      * @return Collection
      */
-    public function getSoldStock( $startDate, $endDate )
+    public function getSoldStock( $startDate, $endDate, $categories = [], $units = [] )
     {
         $rangeStarts = Carbon::parse( $startDate )->toDateTimeString();
         $rangeEnds = Carbon::parse( $endDate )->toDateTimeString();
 
         $products = OrderProduct::whereHas( 'order', function( Builder $query ) {
-            $query->where( 'payment_status', Order::PAYMENT_PAID );
-        })
+                $query->where( 'payment_status', Order::PAYMENT_PAID );
+            })
             ->where( 'created_at', '>=', $rangeStarts )
-            ->where( 'created_at', '<=', $rangeEnds )
-            ->get();
+            ->where( 'created_at', '<=', $rangeEnds );
 
-        return $products;
+        if ( ! empty( $categories ) ) {
+            $products->whereIn( 'product_category_id', $categories );
+        }
+
+        if ( ! empty( $units ) ) {
+            $products->whereIn( 'unit_id', $units );
+        }
+
+        return $products->get();
     }
 
     public function trackOrderCoupons( Order $order )

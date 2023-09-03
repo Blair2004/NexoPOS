@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\FloatConvertCasting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -17,6 +18,11 @@ class OrderTax extends NsModel
     protected $table = 'nexopos_' . 'orders_taxes';
 
     public $timestamps = false;
+
+    public $casts   =   [
+        'tax_value' =>  FloatConvertCasting::class,
+        'rate'      =>  FloatConvertCasting::class,
+    ];
 
     public function order()
     {

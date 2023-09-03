@@ -23,14 +23,20 @@
             </div>
             <div class="px-2">
                 <button @click="openSettings()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
-                    <i class="las la-cogs text-xl"></i>
-                    <span class="pl-2">{{ __( 'Type' ) }} : {{ getType( reportType.value ) }}</span>
+                    <i class="las la-filter text-xl"></i>
+                    <span class="pl-2">{{ __( 'By Type' ) }} : {{ getType( reportType.value ) }}</span>
                 </button>
             </div>
             <div class="px-2">
                 <button @click="openUserFiltering()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
-                    <i class="las la-user text-xl"></i>
-                    <span class="pl-2">{{ __( 'Filter By User' ) }} : @{{ selectedUser || __( 'All Users' ) }}</span>
+                    <i class="las la-filter text-xl"></i>
+                    <span class="pl-2">{{ __( 'By User' ) }} : {{ selectedUser || __( 'All Users' ) }}</span>
+                </button>
+            </div>
+            <div class="px-2">
+                <button @click="openCategoryFiltering()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
+                    <i class="las la-filter text-xl"></i>
+                    <span class="pl-2">{{ __( 'By Category' ) }} : {{ selectedCategory || __( 'All Category' ) }}</span>
                 </button>
             </div>
         </div>
@@ -39,7 +45,7 @@
                 <div class="my-4 flex justify-between w-full">
                     <div class="text-secondary">
                         <ul>
-                            <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
+                            <li class="pb-1 border-b border-dashed" v-html="__( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', startDateField.value ).replace( '{date2}', endDateField.value )"></li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Sale Report' ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'By : {user}' ).replace( '{user}', ns.user.username ) }}</li>
                         </ul>
@@ -243,6 +249,7 @@ import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
 import { nsCurrency } from '~/filters/currency';
+import { joinArray } from "~/libraries/join-array";
 
 export default {
     name: 'ns-sale-report',
@@ -252,18 +259,19 @@ export default {
             startDateField: {
                 name: 'start_date',
                 type: 'datetime',
-                value: moment()
+                value: ns.date.moment.startOf( 'day' ).format()
             },
             endDateField: {
                 name: 'end_date',
                 type: 'datetime',
-                value: moment()
+                value: ns.date.moment.endOf( 'day' ).format()
             },
             result: [],
             users: [],
             ns: window.ns,
             summary: {},
             selectedUser: '',
+            selectedCategory: '',
             reportType: {
                 label: __( 'Report Type' ),
                 name: 'reportType',
@@ -293,6 +301,16 @@ export default {
                 ],
                 description: __( 'Allow you to choose the report type.' ),
             },
+            filterCategory: {
+                label: __( 'Filter By Category' ),
+                name: 'filterCategory',
+                type: 'multiselect',
+                value: '',
+                options: [
+                    // ...
+                ],
+                description: __( 'Allow you to choose the category.' ),
+            },
             field: {
                 type: 'datetimepicker',
                 value: '2021-02-07',
@@ -310,6 +328,7 @@ export default {
     methods: {
         __,
         nsCurrency,
+        joinArray,
         printSaleReport() {
             this.$htmlToPaper( 'sale-report' );
         },
@@ -378,6 +397,58 @@ export default {
             }
         },
 
+        async openCategoryFiltering() {
+            try {
+                let categories  =   [];
+
+                const result    =   await new Promise( ( resolve, reject ) => {
+                    nsHttpClient.get( `/api/categories` )
+                        .subscribe({
+                            next: (retreivedCategories) => {
+                                categories  =   retreivedCategories;
+                                this.filterCategory.options     =   [
+                                    ...retreivedCategories.map( category => {
+                                        return {
+                                            label: category.name,
+                                            value: category.id
+                                        }
+                                    })
+                                ];
+
+                                Popup.show( nsSelectPopupVue, {
+                                    ...this.filterCategory,
+                                    resolve, 
+                                    reject
+                                });
+                            },
+                            error: error => {
+                                nsSnackBar.error( __( 'No category was found for proceeding the filtering.' ) );
+                                reject( error );
+                            }
+                        });
+                });
+
+                if ( result.length > 0 ) {
+                    let categoryNames   =   categories
+                        .filter( category => result.includes( category.id ) )
+                        .map( category => category.name );
+
+                    this.selectedCategory       =   this.joinArray( categoryNames );
+                    this.filterCategory.value   =   result;
+                } else {
+                    this.selectedCategory       =   '';
+                    this.filterCategory.value   =   [];
+                }
+
+                this.result             =   [];
+                this.loadReport();
+
+            } catch( exception ) {
+                // ...
+                console.log( exception );
+            }
+        },
+
         getType( type ) {
             const option    =   this.reportType.options.filter( option => {
                 return option.name === type;
@@ -388,7 +459,7 @@ export default {
             }
 
             return __( 'Unknown' );
-        },
+        },        
 
         loadReport() {
             if ( this.startDate === null || this.endDate ===null ) {
@@ -406,7 +477,8 @@ export default {
                 startDate: this.startDateField.value,
                 endDate: this.endDateField.value,
                 type: this.reportType.value,
-                user_id: this.filterUser.value
+                user_id: this.filterUser.value,
+                categories_id: this.filterCategory.value
             }).subscribe({
                 next: response => {
                     this.result     =   response.result;
@@ -427,7 +499,7 @@ export default {
             return 0;
         },
     },
-    props: [ 'store-logo', 'store-name' ],
+    props: [ 'storeLogo', 'storeName' ],
     mounted() {
         // ...
     }

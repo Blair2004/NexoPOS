@@ -128,17 +128,27 @@ class ModulesService
          * Checks if a config file exists
          */
         if ( in_array( 'config.xml', $files ) ) {
-            $xmlContent = file_get_contents( base_path() . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'config.xml' );
-            $xml = $this->xmlParser->extract( $xmlContent );
-            $config = $xml->parse([
-                'namespace' => [ 'uses' => 'namespace' ],
-                'version' => [ 'uses' => 'version' ],
-                'author' => [ 'uses' => 'author' ],
-                'description' => [ 'uses' => 'description' ],
-                'dependencies' => [ 'uses' => 'dependencies' ],
-                'name' => [ 'uses' => 'name' ],
-                'core' => [ 'uses' => 'core' ],
-            ]);
+            $xmlRelativePath    =   'modules' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'config.xml';
+            $xmlConfigPath      =   base_path() . DIRECTORY_SEPARATOR . $xmlRelativePath;
+            $xmlContent         =   file_get_contents( $xmlConfigPath );
+            
+            try {
+                $xml = $this->xmlParser->extract( $xmlContent );
+                $config = $xml->parse([
+                    'namespace' => [ 'uses' => 'namespace' ],
+                    'version' => [ 'uses' => 'version' ],
+                    'author' => [ 'uses' => 'author' ],
+                    'description' => [ 'uses' => 'description' ],
+                    'dependencies' => [ 'uses' => 'dependencies' ],
+                    'name' => [ 'uses' => 'name' ],
+                    'core' => [ 'uses' => 'core' ],
+                ]);
+            } catch( Exception $exception ) {
+                throw new Exception( sprintf(
+                    __( 'Failed to parse the configuration file on the following path "%s"' ), 
+                    $xmlRelativePath
+                ) );
+            }
 
             $xmlElement = new \SimpleXMLElement( $xmlContent );
 
@@ -196,7 +206,7 @@ class ModulesService
                  * If the system is installed, then we can check if the module is enabled or not
                  * since by default it's not enabled
                  */
-                if ( ns()->installed() ) {
+                if ( Helper::installed() ) {
                     $modules = $this->options->get( 'enabled_modules', [] );
                     $config[ 'migrations' ] = $this->__getModuleMigration( $config );
                     $config[ 'all-migrations' ] = $this->getAllModuleMigrationFiles( $config );
@@ -1338,7 +1348,7 @@ class ModulesService
     /**
      * Executes module migration.
      */
-    public function runMigration( $namespace, $file )
+    public function runMigration( string $namespace, string $file )
     {
         $result = $this->__runSingleFile( 
             method: 'up', 
@@ -1504,7 +1514,7 @@ class ModulesService
     }
 
     /**
-     * Scream Content
+     * Stream Content
      *
      * @return string content
      */

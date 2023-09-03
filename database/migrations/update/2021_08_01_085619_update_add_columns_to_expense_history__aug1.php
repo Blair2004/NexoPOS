@@ -15,45 +15,45 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( Schema::hasTable( 'nexopos_expenses_history' ) ) {
-            Schema::table('nexopos_expenses_history', function (Blueprint $table) {
-                if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'expense_category_id' ) ) {
+        if ( Schema::hasTable( 'nexopos_transactions_histories' ) ) {
+            Schema::table('nexopos_transactions_histories', function (Blueprint $table) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'expense_category_id' ) ) {
                     $table->integer( 'expense_category_id' )->nullable();
                 }
-                if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'expense_id' ) ) {
-                    $table->integer( 'expense_id' )->nullable();
+                if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'transaction_id' ) ) {
+                    $table->integer( 'transaction_id' )->nullable();
                 }
-                if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'operation' ) ) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'operation' ) ) {
                     $table->string( 'operation' )->nullable();
                 }
-                if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'procurement_id' ) ) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'procurement_id' ) ) {
                     $table->integer( 'procurement_id' )->nullable();
                 }
-                if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'order_refund_id' ) ) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'order_refund_id' ) ) {
                     $table->integer( 'order_refund_id' )->nullable();
                 }
-                if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'order_id' ) ) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'order_id' ) ) {
                     $table->integer( 'order_id' )->nullable();
                 }
-                if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'register_history_id' ) ) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'register_history_id' ) ) {
                     $table->integer( 'register_history_id' )->nullable();
                 }
-                if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'customer_account_history_id' ) ) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'customer_account_history_id' ) ) {
                     $table->integer( 'customer_account_history_id' )->nullable();
                 }
 
-                if ( Schema::hasColumn( 'nexopos_expenses_history', 'expense_name' ) ) {
+                if ( Schema::hasColumn( 'nexopos_transactions_histories', 'expense_name' ) ) {
                     $table->renameColumn( 'expense_name', 'name' );
                 }
 
-                if ( Schema::hasColumn( 'nexopos_expenses_history', 'expense_category_name' ) ) {
+                if ( Schema::hasColumn( 'nexopos_transactions_histories', 'expense_category_name' ) ) {
                     $table->dropColumn( 'expense_category_name' );
                 }
             });
         }
 
         if ( ! Schema::hasTable( 'nexopos_cash_flow' ) ) {
-            Schema::rename( 'nexopos_expenses_history', 'nexopos_cash_flow' );
+            Schema::rename( 'nexopos_transactions_histories', 'nexopos_cash_flow' );
         }
 
         /**
@@ -109,34 +109,34 @@ return new class extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_expenses_history' ) ) {
-            Schema::table('nexopos_expenses_history', function (Blueprint $table) {
-                if ( Schema::hasColumn( 'nexopos_expense_history', 'expense_category_id' ) ) {
+        if ( Schema::hasTable( 'nexopos_transactions_histories' ) ) {
+            Schema::table('nexopos_transactions_histories', function (Blueprint $table) {
+                if ( Schema::hasColumn( 'nexopos_transactions_histories', 'expense_category_id' ) ) {
                     $table->dropColumn( 'expense_category_id' );
                 }
-                if ( Schema::hasColumn( 'nexopos_expense_history', 'expense_id' ) ) {
-                    $table->dropColumn( 'expense_id' );
+                if ( Schema::hasColumn( 'nexopos_transactions_histories', 'transaction_id' ) ) {
+                    $table->dropColumn( 'transaction_id' );
                 }
-                if ( Schema::hasColumn( 'nexopos_expense_history', 'operation' ) ) {
+                if ( Schema::hasColumn( 'nexopos_transactions_histories', 'operation' ) ) {
                     $table->dropColumn( 'operation' );
                 }
-                if ( Schema::hasColumn( 'nexopos_expense_history', 'expense_category_id' ) ) {
+                if ( Schema::hasColumn( 'nexopos_transactions_histories', 'expense_category_id' ) ) {
                     $table->dropColumn( 'expense_category_id' );
                 }
-                if ( Schema::hasColumn( 'nexopos_expense_history', 'procurement_id' ) ) {
+                if ( Schema::hasColumn( 'nexopos_transactions_histories', 'procurement_id' ) ) {
                     $table->dropColumn( 'procurement_id' );
                 }
-                if ( Schema::hasColumn( 'nexopos_expense_history', 'order_id' ) ) {
+                if ( Schema::hasColumn( 'nexopos_transactions_histories', 'order_id' ) ) {
                     $table->dropColumn( 'order_id' );
                 }
-                if ( Schema::hasColumn( 'nexopos_expense_history', 'register_history_id' ) ) {
+                if ( Schema::hasColumn( 'nexopos_transactions_histories', 'register_history_id' ) ) {
                     $table->dropColumn( 'register_history_id' );
                 }
             });
         }
 
         if ( Schema::hasTable( 'nexopos_cash_flow' ) ) {
-            Schema::rename( 'nexopos_cash_flow', 'nexopos_expense_history' );
+            Schema::rename( 'nexopos_cash_flow', 'nexopos_transactions_histories' );
         }
     }
 };

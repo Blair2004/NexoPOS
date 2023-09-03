@@ -124,7 +124,7 @@ trait WithCouponTest
             'products'  =>  $products,
             'coupons'   =>  [
                 [
-                    'id'                    =>  999999999999999999999999999999,
+                    'coupon_id'             =>  999999999999999999999999999999,
                     'minimum_cart_value'    =>  0,
                     'maximum_cart_value'    =>  0,
                     'discount_value'        =>  0,
@@ -205,7 +205,7 @@ trait WithCouponTest
             'products'  =>  $products,
             'coupons'   =>  [
                 [
-                    'id'                    =>  $coupon->id,
+                    'coupon_id'             =>  $coupon->id,
                     'minimum_cart_value'    =>  $coupon->minimum_cart_value,
                     'maximum_cart_value'    =>  $coupon->maximum_cart_value,
                     'discount_value'        =>  $coupon->discount_value,
@@ -282,7 +282,7 @@ trait WithCouponTest
             'products'  =>  $products,
             'coupons'   =>  [
                 [
-                    'id'                    =>  $coupon->id,
+                    'coupon_id'             =>  $coupon->id,
                     'minimum_cart_value'    =>  $coupon->minimum_cart_value,
                     'maximum_cart_value'    =>  $coupon->maximum_cart_value,
                     'discount_value'        =>  $coupon->discount_value,
@@ -366,7 +366,7 @@ trait WithCouponTest
             'products'  =>  $products,
             'coupons'   =>  [
                 [
-                    'id'                    =>  $couponResponse[ 'data' ][ 'entry' ][ 'id' ],
+                    'coupon_id'             =>  $couponResponse[ 'data' ][ 'entry' ][ 'id' ],
                     'minimum_cart_value'    =>  $couponResponse[ 'data' ][ 'entry' ][ 'minimum_cart_value' ],
                     'maximum_cart_value'    =>  $couponResponse[ 'data' ][ 'entry' ][ 'maximum_cart_value' ],
                     'discount_value'        =>  $couponResponse[ 'data' ][ 'entry' ][ 'discount_value' ],
@@ -408,7 +408,7 @@ trait WithCouponTest
             'products'  =>  $products,
             'coupons'   =>  [
                 [
-                    'id'                    =>  $couponResponse[ 'data' ][ 'entry' ][ 'id' ],
+                    'coupon_id'             =>  $couponResponse[ 'data' ][ 'entry' ][ 'id' ],
                     'minimum_cart_value'    =>  $couponResponse[ 'data' ][ 'entry' ][ 'minimum_cart_value' ],
                     'maximum_cart_value'    =>  $couponResponse[ 'data' ][ 'entry' ][ 'maximum_cart_value' ],
                     'discount_value'        =>  $couponResponse[ 'data' ][ 'entry' ][ 'discount_value' ],

@@ -105,7 +105,7 @@
                     </div>
                 </div>
                 <div class="px-2">
-                    <div class="rounded border-tab-table-th-edge flex items-center justify-center p-1 border">
+                    <div class="rounded border-tab-table-th-edge flex items-center justify-center p-1 border" v-if="currentView === 'days'">
                         <span class="pr-2 pl-1 text-primary">
                             <i class="las la-clock"></i>
                         </span>
@@ -158,6 +158,7 @@ export default {
         this.hours          =   this.currentDay.hours();
         this.minutes        =   this.currentDay.minutes();
         this.build();
+        this.toggleView( 'days' );
     },
     methods: {
         __,
@@ -195,7 +196,7 @@ export default {
             return classes.join( ' ' );
         },
         erase() {
-            this.selectDate();
+            this.selectDate({ date: moment( ns.date.current ) });
         },
 
         isInRange( calendar ) {
@@ -245,6 +246,18 @@ export default {
                 setTimeout( () => {
                     this.$refs.year.select();
                 }, 100 );
+            }
+
+            if ( this.currentView === 'days' ) {
+                setTimeout(() => {
+                    this.$refs.hours.addEventListener( 'focus', function( e ) {
+                        this.select();
+                    });
+
+                    this.$refs.minutes.addEventListener( 'focus', function( e ) {
+                        this.select();
+                    })
+                }, 100);
             }
         },
         setMonth( index ) {

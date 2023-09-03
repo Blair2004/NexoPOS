@@ -94,14 +94,13 @@ class SettingsPage
      */
     public function validateForm( Request $request )
     {
-        $service = new CrudService;
-        $arrayRules = $service->extractValidation( $this, null );
+        $arrayRules = $this->extractValidation();
 
         /**
          * As rules might contains complex array (with Rule class),
          * we don't want that array to be transformed using the dot key form.
          */
-        $isolatedRules = $service->isolateArrayRules( $arrayRules );
+        $isolatedRules = $this->isolateArrayRules( $arrayRules );
 
         /**
          * Let's properly flat everything.
@@ -114,20 +113,6 @@ class SettingsPage
     }
 
     /**
-     * Get form plain data, by excaping the tabs
-     * identifiers
-     *
-     * @param Request $request
-     * @return array
-     */
-    public function getPlainData( Request $request )
-    {
-        $service = new CrudService;
-
-        return $service->getPlainData( $this, $request );
-    }
-
-    /**
      * Proceed to a saving using te provided
      * request along with the plain data
      *
@@ -136,14 +121,12 @@ class SettingsPage
      */
     public function saveForm( Request $request )
     {
-        $service = new CrudService;
-
         /**
          * @var Options
          */
         $options = app()->make( Options::class );
 
-        foreach ( $service->getPlainData( $this, $request ) as $key => $value ) {
+        foreach ( $this->getPlainData( $request ) as $key => $value ) {
             if ( empty( $value ) ) {
                 $options->delete( $key );
             } else {

@@ -3,7 +3,7 @@
         <div class="flex -mx-2">
             <div class="px-2">
                 <div class="ns-button">
-                    <button @click="loadReport()" class="rounded flex justify-between shadow py-1 items-center px-2">
+                    <button @click="loadRelevantReport()" class="rounded flex justify-between shadow py-1 items-center px-2">
                         <i class="las la-sync-alt text-xl"></i>
                         <span class="pl-2">{{ __( 'Load' ) }}</span>
                     </button>
@@ -20,13 +20,29 @@
             <div class="px-2">
                 <div class="ns-button">
                     <button @click="selectReport()" class="rounded flex justify-between shadow py-1 items-center px-2">
-                        <i class="las la-print text-xl"></i>
+                        <i class="las la-filter text-xl"></i>
                         <span class="pl-2">{{ __( 'Report Type' ) }} : {{ reportTypeName }}</span>
                     </button>
                 </div>
             </div>
+            <div class="px-2">
+                <div class="ns-button">
+                    <button @click="selectCategories()" class="rounded flex justify-between shadow py-1 items-center px-2">
+                        <i class="las la-filter text-xl"></i>
+                        <span class="pl-2">{{ __( 'Categories' ) }} : {{ categoryName || __( 'All Categories' ) }}</span>
+                    </button>
+                </div>
+            </div>
+            <div class="px-2">
+                <div class="ns-button">
+                    <button @click="selectUnits()" class="rounded flex justify-between shadow py-1 items-center px-2">
+                        <i class="las la-filter text-xl"></i>
+                        <span class="pl-2">{{ __( 'Units' ) }} : {{ unitNames || __( 'All Units' ) }}</span>
+                    </button>
+                </div>
+            </div>
         </div>
-        <div id="report" class="anim-duration-500 fade-in-entrance">
+        <div id="low-stock-report" class="anim-duration-500 fade-in-entrance">
             <div class="flex w-full">
                 <div class="my-4 flex justify-between w-full">
                     <div class="text-primary">
@@ -49,6 +65,7 @@
                                 <tr>
                                     <th class="border p-2 text-left">{{ __( 'Product' ) }}</th>
                                     <th class="border p-2 text-left">{{ __( 'Unit' ) }}</th>
+                                    <th width="150" class="border p-2 text-right">{{ __( 'Threshold' ) }}</th>
                                     <th width="150" class="border border-info-secondary bg-info-primary p-2 text-right">{{ __( 'Quantity' ) }}</th>
                                     <th width="150" class="border border-success-secondary bg-success-primary p-2 text-right">{{ __( 'Price' ) }}</th>
                                 </tr>
@@ -62,6 +79,7 @@
                                 <tr :key="key" v-for="(unitQuantity,key) of products" class="text-sm">
                                     <td class="p-2 border">{{ unitQuantity.product.name }}</td>
                                     <td class="p-2 border">{{ unitQuantity.unit.name }}</td>
+                                    <td class="p-2 border text-right">{{ unitQuantity.low_quantity }}</td>
                                     <td class="p-2 border text-right">{{ unitQuantity.quantity }}</td>
                                     <td class="p-2 border border-success-secondary bg-success-primary text-right">{{ nsCurrency( unitQuantity.quantity * unitQuantity.sale_price ) }}</td>
                                 </tr>
@@ -91,7 +109,7 @@
                                             <td class="p-2 border">
                                                 <div class="flex flex-col">
                                                     <span>{{ product.name }}</span>
-                                                    <small>{{ __( 'SKU' ) }}: {{ product.sku }}</small>
+                                                    <!-- <small>{{ __( 'SKU' ) }}: {{ product.sku }}</small> -->
                                                 </div>
                                             </td>
                                             <td class="p-2 border">{{ unitQuantity.unit.name }}</td>
@@ -131,10 +149,11 @@ import FormValidation from '~/libraries/form-validation';
 import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
 import nsPaginate from '~/components/ns-paginate.vue';
 import { nsCurrency } from '~/filters/currency';
+import { joinArray } from "~/libraries/join-array";
 
 export default {
     name : 'ns-low-stock-report',
-    props: [ 'store-logo', 'store-name' ],
+    props: [ 'storeLogo', 'storeName' ],
     mounted() {
         this.reportType     =   this.options[0].value;
         this.loadRelevantReport();
@@ -158,6 +177,10 @@ export default {
             stockReportResult: {},
             reportType: '',
             reportTypeName: '',
+            unitNames: '',
+            categoryName: '',
+            categoryIds: [],
+            unitIds: [],
             validation: new FormValidation,
         }
     },
@@ -170,11 +193,12 @@ export default {
             } else {
                 this.reportTypeName     =   __( 'N/A' );
             }
-        }
+        },
     },
     methods: {
         __,
         nsCurrency,
+        joinArray,
         async selectReport() {
             try {
                 const response     =   await new Promise( ( resolve, reject )  => {
@@ -185,12 +209,80 @@ export default {
                     });
                 });
 
-                this.reportType     =   response[0].value;
+                this.reportType     =   response;
 
                 this.loadRelevantReport();
             } catch( exception ) {
                 // ...
             }
+        },
+        async selectUnits() {
+            nsHttpClient.get( '/api/units' ).subscribe({
+                next: async ( units ) => {
+                    try {
+                        const response =        await new Promise( ( resolve, reject) => {
+                            Popup.show( nsSelectPopupVue, {
+                                label: __( 'Select Units' ),
+                                type: 'multiselect',
+                                options: units.map( unit => {
+                                    return {
+                                        label: unit.name,
+                                        value: unit.id
+                                    }
+                                }),
+                                resolve,
+                                reject
+                            })
+                        });
+
+                        const unitNames     =   units.filter( unit => response.includes( unit.id ) ).map( unit => unit.name );
+                        this.unitNames      =   this.joinArray( unitNames );
+                        this.unitIds        =   response;
+                        
+                        this.loadRelevantReport();
+
+                    } catch( exception ) {
+                        console.log( exception );
+                    }
+                },
+                error: error => {
+                    nsSnackBar.error( __( 'An error has occured while loading the units.' ) ).subscribe();
+                }
+            })
+        },
+        async selectCategories() {
+            nsHttpClient.get( '/api/categories' ).subscribe({
+                next: async ( categories ) => {
+                    try {
+                        const response =        await new Promise( ( resolve, reject) => {
+                            Popup.show( nsSelectPopupVue, {
+                                label: __( 'Select Categories' ),
+                                type: 'multiselect',
+                                options: categories.map( category => {
+                                    return {
+                                        label: category.name,
+                                        value: category.id
+                                    }
+                                }),
+                                resolve,
+                                reject
+                            })
+                        });
+
+                        const categoryName  =   categories.filter( cat => response.includes( cat.id ) ).map( cat => cat.name );
+                        this.categoryName   =   this.joinArray( categoryName );
+                        this.categoryIds    =   response;
+
+                        this.loadRelevantReport();
+
+                    } catch( exception ) {
+                        console.log( exception );
+                    }
+                },
+                error: error => {
+                    nsSnackBar.error( __( 'An error has occured while loading the categories.' ) ).subscribe();
+                }
+            })
         },
         loadRelevantReport() {
             switch( this.reportType ) {
@@ -206,7 +298,10 @@ export default {
             this.$htmlToPaper( 'low-stock-report' );
         },
         loadStockReport( url = null ) {
-            nsHttpClient.get( url || '/api/reports/stock-report' )
+            nsHttpClient.post( url || '/api/reports/stock-report', {
+                    categories: this.categoryIds,
+                    units: this.unitIds
+                })
                 .subscribe({
                     next: result => {
                         this.stockReportResult   =   result;
@@ -260,7 +355,10 @@ export default {
             return 0;
         },
         loadReport() {
-            nsHttpClient.get( '/api/reports/low-stock' )
+            nsHttpClient.post( '/api/reports/low-stock', {
+                    categories: this.categoryIds,
+                    units: this.unitIds
+                })
                 .subscribe({
                     next: result => {
                         this.products   =   result;

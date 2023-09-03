@@ -163,7 +163,7 @@
                                     <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.total_tax_value ) }}</a>
                                 </template>
                                 <template v-else-if="order && options.ns_pos_tax_type === 'inclusive'">
-                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.total_tax_value + order.products_tax_value ) }}</a>
+                                    <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.total_tax_value + ( order.products_exclusive_tax_value + order.products_inclusive_tax_value ) ) }}</a>
                                     <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.total_tax_value ) }}</a>
                                 </template>
                             </td>
@@ -247,6 +247,7 @@ import { Popup } from '~/libraries/popup';
 import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
 import switchTo from "~/libraries/pos-section-switch";
+
 import { ProductQuantityPromise } from "./queues/products/product-quantity";
 
 import nsPosPayButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-pay-button.vue';
@@ -264,6 +265,7 @@ import nsPosCouponsLoadPopupVue from '~/popups/ns-pos-coupons-load-popup.vue';
 import nsPosOrderSettingsVue from '~/popups/ns-pos-order-settings.vue';
 import nsPosProductPricePopupVue from '~/popups/ns-pos-product-price-popup.vue';
 import nsPosQuickProductPopupVue from '~/popups/ns-pos-quick-product-popup.vue';
+
 import { ref, markRaw } from '@vue/reactivity';
 import {toRaw} from "vue";
 import nsPosDiscountPopupVue from "~/popups/ns-pos-discount-popup.vue";
@@ -356,7 +358,7 @@ export default {
                 nsHotPress
                     .create( 'ns_pos_keyboard_shipping' )
                     .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.openShippingPopup();
                 });
@@ -368,7 +370,7 @@ export default {
                 nsHotPress
                     .create( 'ns_pos_keyboard_note' )
                     .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.openNotePopup();
                 });
@@ -523,7 +525,7 @@ export default {
                 POS.refreshCart();
 
             } catch( exception ) {
-                console.log( exception );
+                // popup is closed... not needed to log or do anything else
             }
         },
 

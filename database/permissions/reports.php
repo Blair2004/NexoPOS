@@ -21,10 +21,10 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $permission->description = __( 'Let you see the best_sales report' );
     $permission->save();
 
-    $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.cash_flow' ]);
-    $permission->name = __( 'See Cash Flow Report' );
-    $permission->namespace = 'nexopos.reports.cash_flow';
-    $permission->description = __( 'Let you see the cash flow report' );
+    $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.transactions' ]);
+    $permission->name = __( 'See Transaction Report' );
+    $permission->namespace = 'nexopos.reports.transactions';
+    $permission->description = __( 'Let you see the transactions report' );
     $permission->save();
 
     $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.yearly' ]);

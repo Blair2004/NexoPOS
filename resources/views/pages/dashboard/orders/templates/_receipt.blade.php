@@ -75,6 +75,14 @@ use Illuminate\Support\Facades\View;
                             <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $tax->tax_value ) }}</td>
                         </tr>
                         @endforeach
+                        @if ( $order->products_tax_value > 0 )
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
+                                <span>{{ $order->tax_type === 'inclusive' ? __( 'Inclusive Product Taxes' ) : __( 'Exclusive Product Taxes' ) }}</span>
+                            </td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->products_tax_value ) }}</td>
+                        </tr>
+                        @endif
                     @else                     
                         @if ( $order->tax_value > 0 )
                         <tr>
@@ -82,6 +90,13 @@ use Illuminate\Support\Facades\View;
                                 <span>{{ __( 'Taxes' ) }}</span>
                             </td>
                             <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tax_value ) }}</td>
+                        </tr>
+                        @elseif ( $order->products_tax_value > 0 )
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
+                            <span>{{ $order->tax_type === 'inclusive' ? __( 'Inclusive Product Taxes' ) : __( 'Exclusive Product Taxes' ) }}</span>
+                            </td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->products_tax_value ) }}</td>
                         </tr>
                         @endif
                     @endif

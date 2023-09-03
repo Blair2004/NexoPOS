@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Expense;
+use App\Models\Transaction;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,23 +14,25 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_expenses', function( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_expenses', 'type' ) ) {
-                $table->string( 'type' )->nullable();
-            }
-        });
-
-        Expense::get()->each( function( $expense ) {
-            if ( $expense->recurring ) {
-                $expense->type = 'recurring';
-            } elseif ( $expense->group_id > 0 ) {
-                $expense->type = 'salary';
-            } else {
-                $expense->type = 'direct';
-            }
-
-            $expense->save();
-        });
+        if ( Schema::hasTable( 'nexopos_transacations' ) ) {
+            Schema::table( 'nexopos_transactions', function( Blueprint $table ) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions', 'type' ) ) {
+                    $table->string( 'type' )->nullable();
+                }
+            });
+    
+            Transaction::get()->each( function( $transaction ) {
+                if ( $transaction->recurring ) {
+                    $transaction->type = Transaction::TYPE_RECURRING;
+                } elseif ( $transaction->group_id > 0 ) {
+                    $transaction->type = Transaction::TYPE_ENTITY;
+                } else {
+                    $transaction->type = Transaction::TYPE_DIRECT;
+                }
+    
+                $transaction->save();
+            });
+        }
     }
 
     /**
@@ -40,8 +42,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_expenses', function( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_expenses', 'type' ) ) {
+        Schema::table( 'nexopos_transactions', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_transactions', 'type' ) ) {
                 $table->dropColumn( 'type' );
             }
         });

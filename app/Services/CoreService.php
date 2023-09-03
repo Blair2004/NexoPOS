@@ -13,6 +13,7 @@ use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
@@ -44,16 +45,6 @@ class CoreService
         public EnvEditor $envEditor,
     ) {
         // ...
-    }
-
-    /**
-     * Returns a boolean if the system
-     * is installed or not. returns "true" if the system is installed
-     * and "false" if it's not.
-     */
-    public function installed(): bool
-    {
-        return Helper::installed();
     }
 
     /**
@@ -356,6 +347,20 @@ class CoreService
         ])->dispatchForGroup( Role::namespace( Role::ADMIN ) );
     }
 
+    public function getValidAuthor()
+    {
+        if ( Auth::check() ) {
+            return Auth::id();
+        }
+
+        if ( App::runningInConsole() ) {
+            $firstAdministrator   =   User::where( 'active', true )->
+                whereRelation( 'roles', 'namespace', Role::ADMIN )->first();
+
+            return $firstAdministrator->id;
+        }
+    }
+
     /**
      * Get the asset file name from the manifest.json file of a module in Laravel.
      *
@@ -364,7 +369,7 @@ class CoreService
      * @return string|null
      * @throws NotFoundException
      */
-    public function moduleViteAssets( $fileName, $moduleId ): string
+    public function moduleViteAssets( string $fileName, $moduleId ): string
     {
         $moduleService  =   app()->make( ModulesService::class );
         $module         =   $moduleService->get( $moduleId );

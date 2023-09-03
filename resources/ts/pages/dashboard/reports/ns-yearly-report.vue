@@ -155,7 +155,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name : 'ns-yearly-report',
-    props: [ 'store-logo', 'store-name' ],
+    props: [ 'storeLogo', 'storeName' ],
     mounted() {
         if ( this.timezone !== '' ) {
             this.year   =   ns.date.getMoment().format( 'Y' );

@@ -9,6 +9,12 @@
         @apply text-white;
     }
 
+    &.danger, &.warning, &.success, &.info, &.error {
+        h1, h2, h3, h4, h5 {
+            @apply text-white;
+        }
+    }
+
     &.danger {
         @apply border-danger-secondary bg-danger-primary;
 

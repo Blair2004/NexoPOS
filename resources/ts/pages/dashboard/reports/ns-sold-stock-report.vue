@@ -2,10 +2,10 @@
     <div id="report-section" class="px-4">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-field :field="startDateField"></ns-field>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-field :field="endDateField"></ns-field>
             </div>
             <div class="px-2">
                 <div class="ns-button">
@@ -23,13 +23,29 @@
                     </button>
                 </div>
             </div>
+            <div class="px-2">
+                <div class="ns-button">
+                    <button @click="selectCategories()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                        <i class="las la-filter text-xl"></i>
+                        <span class="pl-2">{{ __( 'Categories' ) }}: {{ categoriesNames || __( 'All Categories' ) }}</span>
+                    </button>
+                </div>
+            </div>
+            <div class="px-2">
+                <div class="ns-button">
+                    <button @click="selectUnits()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                        <i class="las la-filter text-xl"></i>
+                        <span class="pl-2">{{ __( 'Units' ) }}: {{ unitsNames || __( 'All Units' ) }}</span>
+                    </button>
+                </div>
+            </div>
         </div>
         <div id="report-printable" class="anim-duration-500 fade-in-entrance">
             <div class="flex w-full">
                 <div class="my-4 flex justify-between w-full">
                     <div class="text-secondary">
                         <ul>
-                            <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
+                            <li class="pb-1 border-b border-dashed">{{ __( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', startDateField.value ).replace( '{date2}', endDateField.value ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Sold Stock Report' ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'By : {user}' ).replace( '{user}', ns.user.username ) }}</li>
                         </ul>
@@ -39,9 +55,9 @@
                     </div>
                 </div>
             </div>
-            <div class="shadow rounded my-4">
-                <div class="ns-box">
-                    <div class="border-b ns-box-body p-2">
+            <div class="rounded my-4">
+                <div class="ns-box shadow">
+                    <div class="border-b ns-box-body">
                         <table class="table ns-table w-full">
                             <thead class="">
                                 <tr>
@@ -76,24 +92,47 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import moment from "moment";
 import nsDatepicker from "~/components/ns-datepicker.vue";
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
+import { joinArray } from '~/libraries/join-array';
 import { default as nsDateTimePicker } from '~/components/ns-date-time-picker.vue';
 import { nsCurrency } from '~/filters/currency';
-
+import { Popup } from "~/libraries/popup";
+import NsSelectPopup from "~/popups/ns-select-popup.vue";
+import { Category } from "~/interfaces/category";
+import { Unit } from "~/interfaces/unit";
+import { selectApiEntities } from "~/libraries/select-api-entities";
 
 export default {
     name: 'ns-sold-stock-report',
-    props: [ 'store-logo', 'store-name' ],
+    props: [ 'storeLogo', 'storeName' ],
     data() {
         return {
-            startDate: moment(),
-            endDate: moment(),
+            categoriesNames: '',
+            unitsNames: '',
+            startDateField: {
+                type: 'datetimepicker',
+                value: moment( ns.date.current ).startOf( 'month' ).format( 'YYYY-MM-DD HH:mm:ss' ),
+            },
+            endDateField: {
+                type: 'datetimepicker',
+                value: moment( ns.date.current ).endOf( 'month' ).format( 'YYYY-MM-DD HH:mm:ss' ),
+            },
+            categoryField: {
+                label: __( 'Filter by Category' ),
+                value: [],
+                name: 'filter_by_category'
+            },
+            unitField: {
+                label: __( 'Filter by Unit' ),
+                value: [],
+                name: 'filter_by_unit'
+            },
             products: [],
-            ns: window.ns
+            ns: window[ 'ns' ]
         }
     },
     components: {
@@ -129,28 +168,47 @@ export default {
     methods: {
         __,
         nsCurrency,
+        async selectCategories() {
+            try {
+                const response  =   await selectApiEntities( '/api/categories', __( 'Limit Results By Categories' ), this.categoryField.value );
+                this.categoriesNames    =   response.labels;
+                this.categoryField.value    =   response.values;
+                this.loadReport();
+            } catch( exception ) {
+                nsSnackBar.error( __( 'An error has occured while loading the categories' ) ).subscribe();
+            }
+        },
+        async selectUnits() {
+            try {
+                const response  =   await selectApiEntities( '/api/units', __( 'Limit Results By Units' ), this.unitField.value )
+                this.unitsNames         =   response.labels;
+                this.unitField.value    =   response.values;
+                this.loadReport();
+            } catch( exception ) {
+                nsSnackBar.error( __( 'An error has occured while loading the units' ) ).subscribe();
+            }
+        },
         printSaleReport() {
             this.$htmlToPaper( 'report-printable' );
         },
-        setStartDate( moment ) {
-            this.startDate  =   moment.format();
-        },
 
         loadReport() {
-            if ( this.startDate === null || this.endDate ===null ) {
+            if ( this.startDateField.value === null || this.endDateField.value ===null ) {
                 return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) ).subscribe();
             }
 
-            const startMoment   =   moment( this.startDate );
-            const endMoment     =   moment( this.endDate );
+            const startMoment   =   moment( this.startDateField.value );
+            const endMoment     =   moment( this.endDateField.value );
 
             if ( endMoment.isBefore( startMoment ) ) {
                 return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
             }
 
             nsHttpClient.post( '/api/reports/sold-stock-report', { 
-                startDate: this.startDate,
-                endDate: this.endDate
+                startDate: this.startDateField.value,
+                endDate: this.endDateField.value,
+                categories: this.categoryField.value,
+                units: this.unitField.value
             }).subscribe({
                 next: products => {
                     this.products     =   products;
@@ -159,11 +217,7 @@ export default {
                     nsSnackBar.error( error.message ).subscribe();
                 }
             });
-        },
-
-        setEndDate( moment ) {
-            this.endDate    =   moment.format();
-        },
+        }
     }
 }
 </script>

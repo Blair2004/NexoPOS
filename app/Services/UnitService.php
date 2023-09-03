@@ -72,6 +72,20 @@ class UnitService
     }
 
     /**
+     * Get sibling units
+     * Used to retreive other units that belongs to 
+     * the same unit group and the defined unit.
+     */
+    public function getSiblingUnits( Unit $unit )
+    {
+        $unit->load([ 'group.units' => function( $query ) use ( $unit ) {
+            $query->whereNotIn( 'id', [ $unit->id ]);
+        }]);
+
+        return $unit->group->units;
+    }
+    
+    /**
      * Create a unit using the provided informations
      *
      * @param array unit array

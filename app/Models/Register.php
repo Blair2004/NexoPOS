@@ -6,10 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property integer $id
- * @property string $printer_address
+ * @property mixed $name
+ * @property mixed $status
  * @property string $description
+ * @property integer $used_by
  * @property integer $author
  * @property float $balance
+ * @property mixed $uuid
+ * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
 */
 class Register extends NsModel

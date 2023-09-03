@@ -1,14 +1,8 @@
-<<<<<<< HEAD
-import { Tax } from "~/libraries/tax";
-=======
->>>>>>> 106a6f55... Changelog
 import { Address } from "cluster";
 import { Customer } from "./customer";
 import { OrderProduct } from "./order-product";
 import { OrderType } from "./order-type";
 import { Payment } from "./payment";
-import { Product } from "./product";
-import { Tax } from "@/libraries/tax";
 
 export interface Order {
     id?: number;

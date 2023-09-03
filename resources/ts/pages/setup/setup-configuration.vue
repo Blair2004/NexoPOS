@@ -3,13 +3,14 @@
         <ns-spinner size="12" border="4" animation="fast" v-if="fields.length === 0"></ns-spinner>
         <div class="bg-white rounded shadow my-2" v-if="fields.length > 0">
             <div class="welcome-box border-b border-gray-300 p-3 text-gray-700">
+                <div class="border-b pb-3 mb-3" v-html="__( '<strong>NexoPOS</strong> is now able to connect to the database. Start by creating the administrator account and giving a name to your installation. Once installed, this page will no longer be accessible.' )"></div>
                 <ns-field v-for="( field, key ) of fields" :key="key" :field="field"></ns-field>
             </div>
             <div class="bg-gray-200 p-3 flex justify-between items-center">
                 <div>
                     <ns-spinner v-if="processing" size="8" border="4"></ns-spinner>
                 </div>
-                <ns-button :disabled="processing" @click="saveConfiguration()" type="info">Create Installation</ns-button>
+                <ns-button :disabled="processing" @click="saveConfiguration()" type="info">{{ __( 'Install' )}}</ns-button>
             </div>
         </div>
     </div>
@@ -18,6 +19,7 @@
 <script>
 import FormValidation from '~/libraries/form-validation';
 import { nsHttpClient, nsSnackBar } from "~/bootstrap";
+import { __ } from '~/libraries/lang';
 
 export default {
     data: () => ({
@@ -27,6 +29,7 @@ export default {
         steps: [],
         failure: 0,
         maxFailure: 2,
+        __,
     }),
     methods: {
         validate() {
@@ -37,8 +40,10 @@ export default {
         },
         saveConfiguration( fields ) {
             this.form.disableFields( this.fields );
+            const form          =   this.form.getValue( this.fields );
+            form.language       =   ns.language
             this.processing     =   true;
-            return nsHttpClient.post( `/api/setup/configuration`, this.form.getValue( this.fields ) )
+            return nsHttpClient.post( `/api/setup/configuration`, form )
                 .subscribe({
                     next: result => {
                         document.location   =   '/sign-in';
@@ -59,30 +64,30 @@ export default {
                     next: result => {
                         this.fields     =   this.form.createFields([
                             {
-                                label: 'Application',
-                                description: 'That is the application name.',
+                                label: __( 'Application' ),
+                                description: __( 'That is the application name.' ),
                                 name: 'ns_store_name',
                                 validation: 'required',
                             }, {
-                                label: 'Username',
-                                description: 'Provide the administrator username.',
+                                label: __( 'Username' ),
+                                description: __( 'Provide the administrator username.' ),
                                 name: 'admin_username',
                                 validation: 'required',
                             }, {
-                                label: 'Email',
-                                description: 'Provide the administrator email.',
+                                label: __( 'Email' ),
+                                description: __( 'Provide the administrator email.' ),
                                 name: 'admin_email',
                                 validation: 'required',
                             }, {
-                                label: 'Password',
+                                label: __( 'Password' ),
                                 type: 'password',
-                                description: 'What should be the password required for authentication.',
+                                description: __( 'What should be the password required for authentication.' ),
                                 name: 'password',
                                 validation: 'required',
                             }, {
-                                label: 'Confirm Password',
+                                label: __( 'Confirm Password' ),
                                 type: 'password',
-                                description: 'Should be the same as the password above.',
+                                description: __( 'Should be the same as the password above.' ),
                                 name: 'confirm_password',
                                 validation: 'required',
                             }

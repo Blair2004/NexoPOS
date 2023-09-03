@@ -39,6 +39,9 @@ class OrdersController extends DashboardController
         parent::__construct();
 
         $this->middleware( function( $request, $next ) {
+            /**
+             * @todo must be refactored
+             */
             $this->paymentTypes = PaymentType::orderBy( 'priority', 'asc' )
                 ->active()
                 ->get()
@@ -54,12 +57,12 @@ class OrdersController extends DashboardController
 
     public function create( Request $request )
     {
-        return $this->ordersService->create( $request->all() );
+        return $this->ordersService->create( $request->post() );
     }
 
     public function updateOrder( Order $id, Request $request )
     {
-        return $this->ordersService->create( $request->all(), $id );
+        return $this->ordersService->create( $request->post(), $id );
     }
 
     public function addProductToOrder( $order_id, Request $request )
@@ -183,6 +186,7 @@ class OrdersController extends DashboardController
                 'ns_pos_order_sms' => ns()->option->get( 'ns_pos_order_sms', 'no'),
                 'ns_pos_sound_enabled' => ns()->option->get( 'ns_pos_sound_enabled', 'yes'),
                 'ns_pos_quick_product' => ns()->option->get( 'ns_pos_quick_product', 'no'),
+                'ns_pos_quick_product_default_unit' => ns()->option->get( 'ns_pos_quick_product_default_unit', 0 ),
                 'ns_pos_price_with_tax' => ns()->option->get( 'ns_pos_price_with_tax', 'no'),
                 'ns_pos_unit_price_ediable' => ns()->option->get( 'ns_pos_unit_price_ediable', 'no'),
                 'ns_pos_printing_enabled_for' => ns()->option->get( 'ns_pos_printing_enabled_for', 'only_paid_orders' ),

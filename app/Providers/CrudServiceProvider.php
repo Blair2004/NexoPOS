@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Crud\CashFlowHistoryCrud;
 use App\Crud\CouponCrud;
 use App\Crud\CustomerAccountCrud;
 use App\Crud\CustomerCouponCrud;
@@ -11,8 +10,6 @@ use App\Crud\CustomerGroupCrud;
 use App\Crud\CustomerOrderCrud;
 use App\Crud\CustomerRewardCrud;
 use App\Crud\ExpenseCategoryCrud;
-use App\Crud\ExpenseCrud;
-use App\Crud\ExpenseHistoryCrud;
 use App\Crud\GlobalProductHistoryCrud;
 use App\Crud\HoldOrderCrud;
 use App\Crud\OrderCrud;
@@ -34,10 +31,14 @@ use App\Crud\RewardSystemCrud;
 use App\Crud\RolesCrud;
 use App\Crud\TaxCrud;
 use App\Crud\TaxesGroupCrud;
+use App\Crud\TransactionAccountCrud;
+use App\Crud\TransactionCrud;
+use App\Crud\TransactionsHistoryCrud;
 use App\Crud\UnitCrud;
 use App\Crud\UnitGroupCrud;
 use App\Crud\UnpaidOrderCrud;
 use App\Crud\UserCrud;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -72,10 +73,17 @@ class CrudServiceProvider extends ServiceProvider
              * defined they want to be autoloaded. We expect classes to have 2 
              * constant: AUTOLOAD=true, IDENTIFIER=<string>.
              */
-            $files  =   collect( Storage::disk( 'ns' )->files( 'app/Crud' ) );
-            $class  =   $files->map( fn( $file ) => 'App\Crud\\' . pathinfo( $file )[ 'filename' ] )
-                ->filter( fn( $class ) => ( defined( $class . '::AUTOLOAD' ) && defined( $class . '::IDENTIFIER' ) ) )
-                ->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace );
+            $classes    =   Cache::get( 'crud-classes', function( ) {
+                $files  =   collect( Storage::disk( 'ns' )->files( 'app/Crud' ) );
+                return $files->map( fn( $file ) => 'App\Crud\\' . pathinfo( $file )[ 'filename' ] )
+                    ->filter( fn( $class ) => ( defined( $class . '::AUTOLOAD' ) && defined( $class . '::IDENTIFIER' ) ) );
+            });
+
+            /**
+             * We pull the cached classes and checks if the 
+             * class has autoload and identifier defined.
+             */
+            $class  =   collect( $classes )->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace );
 
             if ( $class->count() === 1 ) {
                 return $class->first();
@@ -100,9 +108,9 @@ class CrudServiceProvider extends ServiceProvider
                 'ns.customers-coupons' => CustomerCouponCrud::class,
                 'ns.rewards-system' => RewardSystemCrud::class,
                 'ns.providers' => ProviderCrud::class,
-                'ns.accounting-accounts' => ExpenseCategoryCrud::class,
-                'ns.cash-flow-history' => CashFlowHistoryCrud::class,
-                'ns.expenses' => ExpenseCrud::class,
+                'ns.transactions-accounts' => TransactionAccountCrud::class,
+                'ns.transactions-history' => TransactionsHistoryCrud::class,
+                'ns.transactions' => TransactionCrud::class,
                 'ns.units-groups' => UnitGroupCrud::class,
                 'ns.units' => UnitCrud::class,
                 'ns.products' => ProductCrud::class,
@@ -121,7 +129,6 @@ class CrudServiceProvider extends ServiceProvider
                 'ns.providers-procurements' => ProviderProcurementsCrud::class,
                 'ns.customers-account-history' => CustomerAccountCrud::class,
                 'ns.providers-products' => ProviderProductsCrud::class,
-                'ns.expense-history' => ExpenseHistoryCrud::class,
                 default => $namespace,
             };
         });

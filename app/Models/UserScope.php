@@ -23,22 +23,6 @@ abstract class UserScope extends NsModel
     }
 
     /**
-     * Get customers that are currently active.
-     */
-    public function scopeBanned( $query, $active = true )
-    {
-        return $query->where( 'banned', $active );
-    }
-
-    /**
-     * Get customers that are currently active.
-     */
-    public function scopeNotBanned( $query, $active = false )
-    {
-        return $query->where( 'banned', $active );
-    }
-
-    /**
      * get customers from groups
      */
     public function scopeFromGroup( $query, $index )

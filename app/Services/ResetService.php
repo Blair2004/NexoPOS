@@ -6,6 +6,7 @@ use App\Classes\Hook;
 use App\Classes\Schema;
 use App\Events\AfterHardResetEvent;
 use App\Events\BeforeHardResetEvent;
+use App\Models\Customer;
 use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -31,9 +32,9 @@ class ResetService
             'nexopos_dashboard_weeks',
             'nexopos_dashboard_months',
 
-            'nexopos_expenses',
-            'nexopos_expenses_categories',
-            'nexopos_cash_flow',
+            'nexopos_transactions',
+            'nexopos_transactions_accounts',
+            'nexopos_transactions_histories',
 
             'nexopos_medias',
             'nexopos_notifications',
@@ -82,6 +83,12 @@ class ResetService
             }
         }
 
+        /**
+         * Customers stills needs to be cleared
+         * so we'll remove them manually.
+         */
+        Customer::get()->each( fn( $customer ) => app()->make( CustomerService::class )->delete( $customer ) );
+
         return [
             'status' => 'success',
             'message' => __( 'The table has been truncated.' ),
@@ -97,23 +104,22 @@ class ResetService
     {
         BeforeHardResetEvent::dispatch();
 
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/core',
-            '--force' => true,
-        ]);
-
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/create',
-            '--force' => true,
-        ]);
-
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/update',
-            '--force' => true,
-        ]);
-
-        ns()->envEditor->delete( 'NS_VERSION' );
-        ns()->envEditor->delete( 'NS_AUTHORIZATION' );
+        /**
+         * this will only apply clearing all tables
+         * when we're not using sqlite.
+         */
+        if ( env( 'DB_CONNECTION' ) !== 'sqlite' ) {
+            $tables = DB::select('SHOW TABLES');
+    
+            foreach( $tables as $table ) {
+                $table_name = array_values( ( array ) $table )[0];
+                DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+                DB::statement("DROP TABLE `$table_name`");
+                DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            }
+        } else {
+            file_put_contents( database_path( 'database.sqlite' ), '' );
+        }
 
         Artisan::call( 'key:generate', [ '--force' => true ] );
         Artisan::call( 'ns:cookie generate' );
@@ -124,7 +130,7 @@ class ResetService
 
         return [
             'status' => 'success',
-            'message' => __( 'The database has been hard reset.' ),
+            'message' => __( 'The database has been wiped out.' ),
         ];
     }
 

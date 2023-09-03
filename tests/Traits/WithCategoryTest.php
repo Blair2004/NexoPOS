@@ -31,6 +31,22 @@ trait WithCategoryTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/crud/ns.products-categories', [
+                'name' => __( 'Smartphones' ),
+                'general' => [
+                    'displays_on_pos' => true,
+                ],
+            ]);
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/crud/ns.products-categories', [
+                'name' => __( 'Phones' ),
+                'general' => [
+                    'displays_on_pos' => true,
+                ],
+            ]);
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/crud/ns.products-categories', [
                 'name' => __( 'Computers' ),
                 'general' => [
                     'displays_on_pos' => true,
