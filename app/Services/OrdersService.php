@@ -1718,64 +1718,73 @@ class OrdersService
             throw new NotAllowedException( __('Unable to proceed a refund on an unpaid order.') );
         }
 
-        $orderRefund = new OrderRefund;
-        $orderRefund->author = Auth::id();
-        $orderRefund->order_id = $order->id;
-        $orderRefund->payment_method = $fields[ 'payment' ][ 'identifier' ];
-        $orderRefund->shipping = ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] ? $order->shipping : 0 );
-        $orderRefund->total = 0;
-        $orderRefund->save();
+        DB::beginTransaction();
+        try {
+            $orderRefund = new OrderRefund;
+            $orderRefund->author = Auth::id();
+            $orderRefund->order_id = $order->id;
+            $orderRefund->payment_method = $fields['payment']['identifier'];
+            $orderRefund->shipping = (isset($fields['refund_shipping']) && $fields['refund_shipping'] ? $order->shipping : 0);
+            $orderRefund->total = 0;
+            $orderRefund->save();
 
-        OrderRefundPaymentAfterCreatedEvent::dispatch( $orderRefund );
+            OrderRefundPaymentAfterCreatedEvent::dispatch($orderRefund);
 
-        $results = [];
+            $results = [];
 
-        foreach ( $fields[ 'products' ] as $product ) {
-            $results[] = $this->refundSingleProduct( $order, $orderRefund, OrderProduct::find( $product[ 'id' ] ), $product );
+            foreach ($fields['products'] as $product) {
+                $results[] = $this->refundSingleProduct($order, $orderRefund, OrderProduct::find($product['id']), $product);
+            }
+
+            /**
+             * if the shipping is refunded
+             * We'll do that here
+             */
+            $shipping = 0;
+
+            if (isset($fields['refund_shipping']) && $fields['refund_shipping'] === true) {
+                $shipping = $order->shipping;
+                $order->shipping = 0;
+            }
+
+            $taxValue = collect($results)->map(function ($result) {
+                $refundProduct = $result['data']['productRefund'];
+
+                return $refundProduct->tax_value;
+            })->sum() ?: 0;
+
+            $orderRefund->tax_value = Currency::raw($taxValue);
+
+            /**
+             * let's update the order refund total
+             */
+            $orderRefund->load('refunded_products');
+            $orderRefund->total = Currency::raw(($orderRefund->refunded_products->sum('total_price') + $shipping)); //  - $orderRefund->tax_value
+            $orderRefund->save();
+
+            /**
+             * check if the payment used is the customer account
+             * so that we can withdraw the funds to the account
+             */
+            if ($fields['payment']['identifier'] === OrderPayment::PAYMENT_ACCOUNT) {
+                $this->customerService->saveTransaction(
+                    $order->customer,
+                    CustomerAccountHistory::OPERATION_REFUND,
+                    $fields['total'],
+                    __('The current credit has been issued from a refund.'), [
+                        'order_id' => $order->id,
+                    ]
+                );
+            }
+
+            OrderAfterRefundedEvent::dispatch($order, $orderRefund);
+
+            DB::commit();
+
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw $exception;
         }
-
-        /**
-         * if the shipping is refunded
-         * We'll do that here
-         */
-        $shipping = 0;
-
-        if ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] === true ) {
-            $shipping = $order->shipping;
-            $order->shipping = 0;
-        }
-
-        $taxValue = collect( $results )->map( function( $result ) {
-            $refundProduct = $result[ 'data' ][ 'productRefund' ];
-
-            return $refundProduct->tax_value;
-        })->sum() ?: 0;
-
-        $orderRefund->tax_value = Currency::raw( $taxValue );
-
-        /**
-         * let's update the order refund total
-         */
-        $orderRefund->load( 'refunded_products' );
-        $orderRefund->total = Currency::raw( ( $orderRefund->refunded_products->sum( 'total_price' ) + $shipping ) ); //  - $orderRefund->tax_value
-        $orderRefund->save();
-
-        /**
-         * check if the payment used is the customer account
-         * so that we can withdraw the funds to the account
-         */
-        if ( $fields[ 'payment' ][ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
-            $this->customerService->saveTransaction(
-                $order->customer,
-                CustomerAccountHistory::OPERATION_REFUND,
-                $fields[ 'total' ],
-                __( 'The current credit has been issued from a refund.' ), [
-                    'order_id' => $order->id,
-                ]
-            );
-        }
-
-        OrderAfterRefundedEvent::dispatch( $order, $orderRefund );
 
         return [
             'status' => 'success',
