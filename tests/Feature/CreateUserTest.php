@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use App\Models\CustomerAccountHistory;
 use App\Models\Expense;
 use App\Models\Order;

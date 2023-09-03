@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Helper;
 use App\Services\ModulesService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -47,7 +48,7 @@ class MakeModuleServiceProviderCommand extends Command
      */
     public function handle()
     {
-        if ( ns()->installed() ) {
+        if ( Helper::installed() ) {
             if ( ! empty( $this->argument( 'namespace' ) && ! empty( $this->argument( 'name' ) ) ) ) {
                 $modules = app()->make( ModulesService::class );
 

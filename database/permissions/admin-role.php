@@ -25,9 +25,9 @@ $admin->addPermissions([
     'read.dashboard',
 ]);
 
-$admin->addPermissions( Permission::includes( '.expenses' )->get()->map( fn( $permission ) => $permission->namespace ) );
+$admin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $admin->addPermissions( Permission::includes( '.cash-flow-history' )->get()->map( fn( $permission ) => $permission->namespace ) );
-$admin->addPermissions( Permission::includes( '.expenses-categories' )->get()->map( fn( $permission ) => $permission->namespace ) );
+$admin->addPermissions( Permission::includes( '.transactions-accounts' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $admin->addPermissions( Permission::includes( '.medias' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $admin->addPermissions( Permission::includes( '.categories' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $admin->addPermissions( Permission::includes( '.customers' )->get()->map( fn( $permission ) => $permission->namespace ) );

@@ -2,10 +2,10 @@
     <div id="report-section" class="px-4">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :field="startDateField"></ns-date-time-picker>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-date-time-picker :field="endDateField"></ns-date-time-picker>
             </div>
             <div class="px-2">
                 <div class="ns-button">
@@ -26,15 +26,7 @@
         </div>
         <div class="flex -mx-2">
             <div class="px-2">
-                <select v-model="sort" class="text-primary border-box-background shadow rounded p-2">
-                    <option value="">{{ __( 'Sort Results' ) }}</option>
-                    <option value="using_quantity_asc">{{ __( 'Using Quantity Ascending' ) }}</option>
-                    <option value="using_quantity_desc">{{ __( 'Using Quantity Descending' ) }}</option>
-                    <option value="using_sales_asc">{{ __( 'Using Sales Ascending' ) }}</option>
-                    <option value="using_sales_desc">{{ __( 'Using Sales Descending' ) }}</option>
-                    <option value="using_name_asc">{{ __( 'Using Name Ascending' ) }}</option>
-                    <option value="using_name_desc">{{ __( 'Using Name Descending' ) }}</option>
-                </select>
+                <ns-field :field="sortField"></ns-field>
             </div>
         </div>
         <div id="best-products-report" class="anim-duration-500 fade-in-entrance">
@@ -42,7 +34,7 @@
                 <div class="my-4 flex justify-between w-full">
                     <div class="text-primary">
                         <ul>
-                            <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
+                            <li class="pb-1 border-b border-dashed">{{ __( 'Date Range : {date1} - {date2}' ).replace( '{date1}', startDateField.value ).replace( '{date2}', endDateField.value ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Best Products' ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'By : {user}' ).replace( '{user}', ns.user.username ) }}</li>
                         </ul>
@@ -52,10 +44,10 @@
                     </div>
                 </div>
             </div>
-            <div class="shadow rounded my-4">
-                <div class="border-b ns-box">
-                    <div class="ns-box-body p-2">
-                        <table class="table ns-table w-full">
+            <div class="my-4">
+                <div class="shadow ns-box">
+                    <div class="ns-box-body">
+                        <table class="table ns-table border w-full">
                             <thead class="">
                                 <tr>
                                     <th class="p-2 text-left">{{ __( 'Product' ) }}</th>
@@ -98,15 +90,15 @@
                                         </span>
                                     </td>
                                 </tr>
-                                <tr v-if="report.current.products.length === 0">
-                                    <td colspan="5">
+                                <tr class="" v-if="report.current.products.length === 0">
+                                    <td colspan="5" class="border text-center p-2">
                                         {{ __( 'No results to show.' ) }}
                                     </td>
                                 </tr>
                             </tbody>
                             <tbody v-if=" ! report">
                                 <tr>
-                                    <td colspan="5" class="text-center p-2">{{ __( 'Start by choosing a range and loading the report.' ) }}</td>
+                                    <td colspan="5" class="text-center p-2 border">{{ __( 'Start by choosing a range and loading the report.' ) }}</td>
                                 </tr>
                             </tbody>
                             <tfoot v-if="report" class="font-semibold">
@@ -142,10 +134,44 @@ export default {
     data() {
         return {
             ns: window.ns,
-            startDate: moment(),
-            endDate: moment(),
+            startDateField: {
+                name: 'start_date',
+                type: 'datetime',
+                value: ns.date.moment.startOf( 'day' ).format()
+            },
+            endDateField: {
+                name: 'end_date',
+                type: 'datetime',
+                value: ns.date.moment.endOf( 'day' ).format()
+            },
             report: null,
-            sort : '',
+            sortField: {
+                name: 'sort',
+                type: 'select',
+                label: __( 'Sort Results' ),
+                value: 'using_quantity_asc',
+                options: [
+                    {
+                        value: 'using_quantity_asc',
+                        label: __( 'Using Quantity Ascending' )
+                    }, {
+                        value: 'using_quantity_desc',
+                        label: __( 'Using Quantity Descending' )
+                    }, {
+                        value: 'using_sales_asc',
+                        label: __( 'Using Sales Ascending' )
+                    }, {
+                        value: 'using_sales_desc',
+                        label: __( 'Using Sales Descending' )
+                    }, {
+                        value: 'using_name_asc',
+                        label: __( 'Using Name Ascending' )
+                    }, {
+                        value: 'using_name_desc',
+                        label: __( 'Using Name Descending' )
+                    },
+                ]
+            },
         }
     },
     computed: {
@@ -156,27 +182,18 @@ export default {
             return 0;
         }
     },
-    props: [ 'store-logo', 'store-name' ],
+    props: [ 'storeLogo', 'storeName' ],
     methods: {
         nsCurrency,
         __,
-        setStartDate( moment ) {
-            this.startDate  =   moment.format();
-        },
-        setEndDate( moment ) {
-            this.endDate    =   moment.format();
-        },
         printSaleReport() {
             this.$htmlToPaper( 'best-products-report' );
         },
         loadReport() {
-            const startDate     =   moment( this.startDate );
-            const endDate       =   moment( this.endDate );
-
             nsHttpClient.post( '/api/reports/products-report', { 
-                    startDate : startDate.format( 'YYYY/MM/DD HH:mm' ), 
-                    endDate : endDate.format( 'YYYY/MM/DD HH:mm' ),
-                    sort: this.sort
+                    startDate : this.startDateField.value, 
+                    endDate : this.endDateField.value,
+                    sort: this.sortField.value
                 })
                 .subscribe({
                     next: result => {

@@ -7,6 +7,7 @@
 
 <script>
 import nsPosHoldOrdersPopupVue from '~/popups/ns-pos-hold-orders-popup.vue';
+import nsPosLoadingPopupVue from "~/popups/ns-pos-loading-popup.vue";
 import {ProductsQueue} from "~/pages/dashboard/pos/queues/order/products-queue";
 import {CustomerQueue} from "~/pages/dashboard/pos/queues/order/customer-queue";
 import {TypeQueue} from "~/pages/dashboard/pos/queues/order/type-queue";
@@ -57,11 +58,15 @@ export default {
 
                     POS.submitOrder().then( result => {
                         popup.close();
+                        // @todo add a print snipped here
                         nsSnackBar.success( result.message ).subscribe();
                     }, ( error ) => {
                         popup.close();
+                        // @todo add a print snipped here
                         nsSnackBar.error( error.message ).subscribe();
                     });
+                }).catch( exception => {
+                    console.log( exception );
                 })
             });
 
@@ -84,7 +89,7 @@ export default {
                 nsHotPress
                     .create( 'ns_pos_keyboard_hold_order' )
                     .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.holdOrder();
                 });

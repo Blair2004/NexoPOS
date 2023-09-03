@@ -22,7 +22,7 @@ class DoctorCommand extends Command
         {--fix-customers}
         {--fix-domains}
         {--fix-orphan-orders-products}
-        {--fix-cash-flow-orders}
+        {--fix-transactions-orders}
         {--fix-duplicate-options}';
 
     /**
@@ -85,8 +85,8 @@ class DoctorCommand extends Command
             return $this->info( $doctorService->fixOrphanOrderProducts() );
         }
 
-        if ( $this->option( 'fix-cash-flow-orders' ) ) {
-            return $doctorService->fixCashFlowOrders();
+        if ( $this->option( 'fix-transactions-orders' ) ) {
+            return $doctorService->fixTransactionsOrders();
         }
 
         if ( $this->option( 'clear-modules-temp' ) ) {

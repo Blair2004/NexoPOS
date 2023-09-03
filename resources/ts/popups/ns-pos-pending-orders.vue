@@ -65,7 +65,7 @@ export default {
                 value: ( order ) => order.code
             }, {
                 label: __( 'Cashier' ),
-                value: ( order ) => order.nexopos_users_username
+                value: ( order ) => order.user_username
             }, {
                 label: __( 'Total' ),
                 value: ( order ) => nsCurrency(order.total)
@@ -78,7 +78,7 @@ export default {
         this.columns.rightColumn    =   nsHooks.applyFilters( 'ns-pending-orders-right-column', [
             {
                 label: __( 'Customer' ),
-                value: ( order ) => order.nexopos_customers_name
+                value: ( order ) => `${order.customer_first_name} ${order.customer_last_name}`
             }, {
                 label: __( 'Date' ),
                 value: ( order ) => order.created_at

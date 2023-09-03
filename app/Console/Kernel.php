@@ -5,8 +5,8 @@ namespace App\Console;
 use App\Jobs\ClearHoldOrdersJob;
 use App\Jobs\ClearModuleTempJob;
 use App\Jobs\DetectLowStockProductsJob;
-use App\Jobs\DetectScheduledExpenseJob;
-use App\Jobs\ExecuteRecurringExpensesJob;
+use App\Jobs\DetectScheduledTransactionsJob;
+use App\Jobs\ExecuteReccuringTransactionsJob;
 use App\Jobs\PurgeOrderStorageJob;
 use App\Jobs\StockProcurementJob;
 use App\Jobs\TrackLaidAwayOrdersJob;
@@ -52,15 +52,15 @@ class Kernel extends ConsoleKernel
         $schedule->call( fn() => ns()->setLastCronActivity() )->everyMinute();
 
         /**
-         * Will execute expenses job daily.
+         * Will execute transactions job daily.
          */
-        $schedule->job( new ExecuteRecurringExpensesJob )->daily( '00:01' );
+        $schedule->job( new ExecuteReccuringTransactionsJob )->daily( '00:01' );
 
         /**
-         * Will execute scheduled expenses
+         * Will execute scheduled transactions
          * every minutes
          */
-        $schedule->job( DetectScheduledExpenseJob::class )->everyMinute();
+        $schedule->job( DetectScheduledTransactionsJob::class )->everyMinute();
 
         /**
          * Will check procurement awaiting automatic

@@ -9,6 +9,12 @@
         @apply text-primary;
     }
 
+    &.danger, &.warning, &.success, &.info, &.error {
+        h1, h2, h3, h4, h5 {
+            @apply text-white;
+        }
+    }
+
     &.danger {
         @apply border-danger-tertiary bg-danger-primary;
 
@@ -73,12 +79,15 @@
     }
 
     &.info {
-        @apply border-info-tertiary bg-info-primary;
+        @apply border-info-tertiary bg-info-tertiary;
 
-        p > a {
-            @apply text-info-tertiary;
-            &:hover {
-                @apply underline;
+        p {
+            @apply text-white;
+            & > a {
+                @apply text-info-primary;
+                &:hover {
+                    @apply underline;
+                }
             }
         }
 

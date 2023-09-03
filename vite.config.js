@@ -1,10 +1,13 @@
 import { defineConfig, loadEnv } from 'vite';
 
 import esmifyPlugin from './esmify';
-import fs from 'fs';
+// import fs from 'fs';
 import laravel from 'laravel-vite-plugin';
-import path from 'path';
+// import path from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import mkcert from 'vite-plugin-mkcert';
 
 export default ({ mode }) => {
     process.env = {...process.env, ...loadEnv(mode, process.cwd())};
@@ -18,23 +21,21 @@ export default ({ mode }) => {
                 protocol: 'wss',
                 host: 'localhost',
             },
-            https: {
-                key: fs.readFileSync( process.env.VITE_LOCAL_KEY ),
-                cert: fs.readFileSync( process.env.VITE_LOCAL_CRT ),
-        },
+            https: true,
         },
         resolve: {
             alias: [
                 {
                     find: '&',
-                    replacement: path.resolve( __dirname, 'resources' ),
+                    replacement: resolve( __dirname, 'resources' ),
                 }, {
                     find: '~',
-                    replacement: path.resolve( __dirname, 'resources/ts' ),
+                    replacement: resolve( __dirname, 'resources/ts' ),
                 },
             ]
         },
         plugins: [
+            mkcert(),
             esmifyPlugin(),
             vuePlugin({
                 template: {

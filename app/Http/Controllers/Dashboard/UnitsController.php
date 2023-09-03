@@ -60,9 +60,16 @@ class UnitsController extends DashboardController
         return $this->unitService->deleteUnit( $id );
     }
 
-    public function get( Request $request )
+    public function get()
     {
         return $this->unitService->get();
+    }
+
+    public function getSiblingUnits( Unit $id )
+    {
+        return $this->unitService->getSiblingUnits(
+            unit: $id
+        );
     }
 
     /**

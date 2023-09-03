@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -80,8 +80,8 @@ class Product extends NsModel
     /**
      * get products having accurate tracking enabled
      *
-     * @param QueryBuilder
-     * @return QueryBuilder
+     * @param Builder
+     * @return Builder
      */
     public function scopeTrackingEnabled( $query )
     {
@@ -91,8 +91,8 @@ class Product extends NsModel
     /**
      * get products having accurate tracking enabled
      *
-     * @param QueryBuilder
-     * @return QueryBuilder
+     * @param Builder
+     * @return Builder
      */
     public function scopeType( $query, $type )
     {
@@ -103,16 +103,53 @@ class Product extends NsModel
      * Add a scope that filter product
      * that aren't grouped
      */
-    public function scopeNotGrouped( QueryBuilder $query )
+    public function scopeNotGrouped( Builder $query )
     {
         return $query->where( 'type', '!=', self::TYPE_GROUPED );
     }
 
     /**
+     * Filter products if they are grouped products.
+     */
+    public function scopeGrouped( Builder $query )
+    {
+        return $query->where( 'type', self::TYPE_GROUPED );
+    }
+
+    /**
+     * Filter products if they are grouped products.
+     * @alias scopeGrouped
+     */
+    public function scopeIsGroup( Builder $query )
+    {
+        return $query->where( 'type', self::TYPE_GROUPED );
+    }
+    
+    /**
+     * Filter product that doesn't 
+     * belong to a group
+     */
+    public function scopeNotInGroup( Builder $query )
+    {
+        $subItemsIds    =   ProductSubItem::get( 'id' )->map( fn( $entry ) => $entry->id  )->toArray();
+        return $query->whereNotIn( 'id', $subItemsIds );
+    }
+
+    /**
+     * Filter products that are
+     * included as a sub_items.
+     */
+    public function scopeInGroup( Builder $query )
+    {
+        $subItemsIds    =   ProductSubItem::get( 'id' )->map( fn( $entry ) => $entry->id  )->toArray();
+        return $query->whereIn( 'id', $subItemsIds );
+    }
+
+    /**
      * get products having accurate tracking disabled
      *
-     * @param QueryBuilder
-     * @return QueryBuilder
+     * @param Builder
+     * @return Builder
      */
     public function scopeTrackingDisabled( $query )
     {
@@ -122,9 +159,9 @@ class Product extends NsModel
     /**
      * get a product using a barcode
      *
-     * @param QueryBuilder
+     * @param Builder
      * @param string barcode
-     * @return QueryBuilder
+     * @return Builder
      */
     public function scopeFindUsingBarcode( $query, $barcode )
     {
@@ -134,9 +171,9 @@ class Product extends NsModel
     /**
      * get a product using a barcode
      *
-     * @param QueryBuilder
+     * @param Builder
      * @param string barcode
-     * @return QueryBuilder
+     * @return Builder
      */
     public function scopeBarcode( $query, $barcode )
     {
@@ -146,9 +183,9 @@ class Product extends NsModel
     /**
      * get a product using a barcode
      *
-     * @param QueryBuilder $query
+     * @param Builder $query
      * @param string $sku
-     * @return QueryBuilder
+     * @return Builder
      */
     public function scopeSku( $query, $sku )
     {
@@ -158,8 +195,8 @@ class Product extends NsModel
     /**
      * get products that are on sale.
      *
-     * @param QueryBuilder
-     * @return QueryBuilder
+     * @param Builder
+     * @return Builder
      */
     public function scopeOnSale( $query )
     {
@@ -169,8 +206,8 @@ class Product extends NsModel
     /**
      * get products that aren't on sale.
      *
-     * @param QueryBuilder
-     * @return QueryBuilder
+     * @param Builder
+     * @return Builder
      */
     public function scopeHidden( $query )
     {
@@ -180,9 +217,9 @@ class Product extends NsModel
     /**
      * Filter a product using the SKU
      *
-     * @param QueryBuilder
+     * @param Builder
      * @param string sku
-     * @return QueryBuilder
+     * @return Builder
      */
     public function scopeFindUsingSKU( $query, $sku )
     {
@@ -232,8 +269,8 @@ class Product extends NsModel
     /**
      * Filter query by getting products that are variations
      *
-     * @param QueryBuilder $query
-     * @return QueryBuilder;
+     * @param Builder $query
+     * @return Builder;
      */
     public function scopeOnlyVariations( $query )
     {
@@ -243,8 +280,8 @@ class Product extends NsModel
     /**
      * Filter query by getting products that aren't variations
      *
-     * @param QueryBuilder $query
-     * @return QueryBuilder;
+     * @param Builder $query
+     * @return Builder;
      */
     public function scopeExcludeVariations( $query )
     {
@@ -255,8 +292,8 @@ class Product extends NsModel
      * Filter query by getting product with
      * stock management enabled
      *
-     * @param QueryBuilder $query
-     * @return QueryBuilder;
+     * @param Builder $query
+     * @return Builder;
      */
     public function scopeWithStockEnabled( $query )
     {
@@ -267,8 +304,8 @@ class Product extends NsModel
      * Filter query by getting product with
      * stock management disabled
      *
-     * @param QueryBuilder $query
-     * @return QueryBuilder;
+     * @param Builder $query
+     * @return Builder;
      */
     public function scopeWithStockDisabled( $query )
     {
@@ -279,8 +316,8 @@ class Product extends NsModel
      * Filter query by getitng product with
      * accurate stock enabled or not.
      *
-     * @param QueryBuilder $query
-     * @return QueryBuilder
+     * @param Builder $query
+     * @return Builder
      */
     public function scopeAccurateTracking( $query, $argument = true )
     {
@@ -290,8 +327,8 @@ class Product extends NsModel
     /**
      * Filter product that are searchable
      *
-     * @param QueryBuilder
-     * @return QueryBuilder
+     * @param Builder
+     * @return Builder
      */
     public function scopeSearchable( $query, $attribute = true )
     {

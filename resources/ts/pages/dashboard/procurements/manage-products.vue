@@ -100,36 +100,43 @@
                                         <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[0]"></ns-field>
                                         <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[1]"></ns-field>
                                     </div>
-                                    <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
-                                        <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
-                                            <div class="mb-2">
-                                                <label class="font-medium text-primary">{{ field.label }}</label>
-                                                <p class="py-1 text-sm text-primary">{{ field.description }}</p>
-                                            </div>
-                                            <div class="mb-2">
-                                                <div @click="addUnitGroup( field )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-primary cursor-pointer rounded-lg">
-                                                    <span class="rounded-full border-2 ns-inset-button info h-8 w-8 flex items-center justify-center">
-                                                        <i class="las la-plus-circle"></i>
-                                                    </span>
-                                                    <span>{{ __( 'New Group' ) }}</span>
+                                    <template v-if="unitLoaded">
+                                        <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
+                                            <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
+                                                <div class="mb-2">
+                                                    <label class="font-medium text-primary">{{ field.label }}</label>
+                                                    <p class="py-1 text-sm text-primary">{{ field.description }}</p>
                                                 </div>
-                                            </div>
-                                            <div class="-mx-4 flex flex-wrap">
-                                                <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
-                                                    <div class="shadow rounded overflow-hidden bg-box-elevation-background text-primary">
-                                                        <div class="border-b text-sm p-2 flex justify-between text-primary border-box-elevation-edge">
-                                                            <span>{{ __( 'Available Quantity' ) }}</span>
-                                                            <span>{{ getUnitQuantity( group_fields ) }}</span>
-                                                        </div>
-                                                        <div class="p-2 mb-2">
-                                                            <ns-field :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
-                                                        </div>
-                                                        <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
-                                                            {{ __( 'Delete' ) }}
+                                                <div class="mb-2">
+                                                    <div @click="addUnitGroup( field )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-primary cursor-pointer rounded-lg">
+                                                        <span class="rounded-full border-2 ns-inset-button info h-8 w-8 flex items-center justify-center">
+                                                            <i class="las la-plus-circle"></i>
+                                                        </span>
+                                                        <span>{{ __( 'New Group' ) }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="-mx-4 flex flex-wrap">
+                                                    <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
+                                                        <div class="shadow rounded overflow-hidden bg-box-elevation-background text-primary">
+                                                            <div class="border-b text-sm p-2 flex justify-between text-primary border-box-elevation-edge">
+                                                                <span>{{ __( 'Available Quantity' ) }}</span>
+                                                                <span>{{ getUnitQuantity( group_fields ) }}</span>
+                                                            </div>
+                                                            <div class="p-2 mb-2">
+                                                                <ns-field :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
+                                                            </div>
+                                                            <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
+                                                                {{ __( 'Delete' ) }}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </template>
+                                    </template>
+                                    <template v-if="! unitLoaded">
+                                        <div class="px-4 w-full lg:w-2/3 flex justify-center items-center">
+                                            <ns-spinner></ns-spinner>
                                         </div>
                                     </template>
                                 </div>
@@ -158,6 +165,7 @@ export default {
             nsSnackBar,
             nsHttpClient,
             _sampleVariation: null,
+            unitLoaded: false,
             form: '',
         }
     },
@@ -216,7 +224,7 @@ export default {
             };
         }
     },
-    props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
+    props: [ 'submitMethod', 'submitUrl', 'returnUrl', 'src', 'units-url' ],
     methods: {
         __,
         nsCurrency,
@@ -313,6 +321,7 @@ export default {
          * for every groups. Validation should prevent duplicated units.
          */
         loadAvailableUnits( unit_section ) {
+            this.unitLoaded = false;
             nsHttpClient.get( this.unitsUrl.replace( '{id}', unit_section.fields.filter( f => f.name === 'unit_group' )[0].value ) )
                 .subscribe( result => {
 
@@ -336,6 +345,8 @@ export default {
                             })
                         }
                     });
+
+                    this.unitLoaded = true;
 
                     this.$forceUpdate();
                 })

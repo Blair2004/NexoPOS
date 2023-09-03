@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property integer $id
+ * @property integer $coupon_id
+ * @property integer $customer_id
+*/
 class CouponCustomer extends Model
 {
     use HasFactory;

@@ -33,11 +33,9 @@ export default {
         }
     },
     methods: {
-        nsCurrency,
         __,
-
+        nsCurrency,
         popupResolver,
-
         popupCloser,
 
         loadRegisterSummary() {

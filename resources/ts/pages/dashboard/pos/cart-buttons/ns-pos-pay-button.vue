@@ -47,7 +47,7 @@ export default {
                 nsHotPress
                     .create( 'ns_pos_keyboard_payment' )
                     .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.payOrder();
                 });

@@ -4,6 +4,10 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
+use App\Mail\ActivateYourAccountMail;
+use App\Mail\UserRegisteredMail;
+use App\Mail\WelcomeMail;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -17,6 +21,8 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class UsersService
@@ -51,6 +57,20 @@ class UsersService
      */
     public function setUser( $attributes, $user = null )
     {
+        $validation_required    =   ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
+        $registration_role      =   ns()->option->get( 'ns_registration_role', false );
+        $defaultRole            =   Role::namespace( Role::USER )->first();
+        $assignedRole           =   Role::find( $registration_role );
+        $roleToUse              =   $registration_role === false ? $defaultRole : $assignedRole;
+
+        if ( ! $defaultRole instanceof Role ) {
+            throw new NotFoundException( __( 'The system role "Users" can be retrieved.' ) );
+        }
+
+        if ( ! $assignedRole instanceof Role ) {
+            throw new NotFoundException( __( 'The default role that must be assigned to new users cannot be retrieved.' ) );
+        }
+
         collect([
             'username' => fn() => User::where( 'username', $attributes[ 'username' ] ),
             'email' => fn() => User::where( 'email', $attributes[ 'email' ] ),
@@ -76,8 +96,17 @@ class UsersService
         $user = new User;
         $user->username = $attributes[ 'username' ];
         $user->email = $attributes[ 'email' ];
-        $user->active = $attributes[ 'active' ];
+        $user->active = $attributes[ 'active' ] ?? ( $validation_required ? false : true );
         $user->password = Hash::make( $attributes[ 'password' ] );
+
+        /**
+         * if the validation is required, we'll create an activation token
+         * and define the activation expiration for that token.
+         */
+        if ( $validation_required ) {
+            $user->activation_token         = Str::random(20);
+            $user->activation_expiration    = now()->addMinutes( config( 'nexopos.authentication.activation_token_lifetime', 30 ) );
+        }
 
         /**
          * For additional parameters
@@ -111,6 +140,36 @@ class UsersService
          * should be explicitly defined.
          */
         $this->createAttribute( $user );
+
+        /**
+         * let's try to email the new user with
+         * the details regarding his new created account.
+         */
+        try {
+            /**
+             * if the account validation is required, we'll
+             * send an email to ask the user to validate his account.
+             * Otherwise, we'll notify him about his new account.
+             */
+            if ( ! $validation_required ) {
+                Mail::to( $user->email )
+                    ->queue( new WelcomeMail( $user ) );
+            } else {
+                Mail::to( $user->email )
+                    ->queue( new ActivateYourAccountMail( $user ) );
+            }
+
+            /**
+             * The administrator might be aware
+             * of the user having created their account.
+             */
+            Role::namespace( 'admin' )->users->each( function( $admin ) use ( $user ) {
+                Mail::to( $admin->email )
+                    ->queue( new UserRegisteredMail( $admin, $user ) );
+            });
+        } catch ( Exception $exception ) {
+            Log::error( $exception->getMessage() );
+        }
 
         return [
             'status' => 'success',

@@ -73,6 +73,9 @@ class ResetCommand extends Command
                 ]);
                 $this->info( __( 'The demo has been enabled.' ) );
                 break;
+            default: 
+                $this->error( __( 'Unsupported reset mode.' ) );
+                break;
         }
     }
 

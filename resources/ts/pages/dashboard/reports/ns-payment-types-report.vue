@@ -2,10 +2,10 @@
     <div id="report-section" class="px-4">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-field :field="startDateField"></ns-field>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-field :field="endDateField"></ns-field>
             </div>
             <div class="px-2">
                 <button @click="loadReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
@@ -72,11 +72,17 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-payment-types-report',
-    props: [ 'store-name', 'store-logo' ],
+    props: [ 'storeName', 'storeLogo' ],
     data() {
         return {
-            startDate: moment(),
-            endDate: moment(),
+            startDateField: {
+                type: 'datetimepicker',
+                value: moment( ns.date.current ).startOf( 'day' ).format( 'YYYY-MM-DD HH:mm:ss' ),
+            },
+            endDateField: {
+                type: 'datetimepicker',
+                value: moment( ns.date.current ).endOf( 'day' ).format( 'YYYY-MM-DD HH:mm:ss' ),
+            },
             report: [],
             ns: window.ns,
             field: {
@@ -102,25 +108,22 @@ export default {
         printSaleReport() {
             this.$htmlToPaper( 'sale-report' );
         },
-        setStartDate( moment ) {
-            this.startDate  =   moment.format();
-        },
 
         loadReport() {
-            if ( this.startDate === null || this.endDate ===null ) {
+            if ( this.startDateField.value === null || this.endDateField.value ===null ) {
                 return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) ).subscribe();
             }
 
-            const startMoment   =   moment( this.startDate );
-            const endMoment     =   moment( this.endDate );
+            const startMoment   =   moment( this.startDateField.value );
+            const endMoment     =   moment( this.endDateField.value );
 
             if ( endMoment.isBefore( startMoment ) ) {
                 return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
             }
 
             nsHttpClient.post( '/api/reports/payment-types', { 
-                startDate: this.startDate,
-                endDate: this.endDate
+                startDate: this.startDateField.value,
+                endDate: this.endDateField.value
             }).subscribe({
                 next: report => {
                     this.report     =   report;
@@ -129,10 +132,6 @@ export default {
                     nsSnackBar.error( error.message ).subscribe();
                 }
             });
-        },
-
-        setEndDate( moment ) {
-            this.endDate    =   moment.format();
         },
     }
 }

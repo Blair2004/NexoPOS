@@ -2,10 +2,10 @@
     <div id="report-section" class="px-4">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-field :field="startDateField"></ns-field>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-field :field="endDateField"></ns-field>
             </div>
             <div class="px-2">
                 <div class="ns-button">
@@ -29,7 +29,7 @@
                 <div class="my-4 flex justify-between w-full">
                     <div class="text-primary">
                         <ul>
-                            <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
+                            <li class="pb-1 border-b border-dashed">{{ __( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', startDateField.value ).replace( '{date2}', endDateField.value ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Sale By Payment' ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'By : {user}' ).replace( '{user}', ns.user.username ) }}</li>
                         </ul>
@@ -92,7 +92,7 @@ import { nsCurrency } from '~/filters/currency';
 
 export default {
     name : 'ns-cash-flow',
-    props: [ 'store-logo', 'store-name' ],
+    props: [ 'storeLogo', 'storeName' ],
     mounted() {
     },
     components: {
@@ -101,8 +101,14 @@ export default {
     },
     data() {
         return {
-            startDate: moment(),
-            endDate: moment(),
+            startDateField: {
+                value: moment( ns.date.current ).startOf( 'month' ).format( 'YYYY-MM-DD HH:mm:ss' ),
+                type: 'datetimepicker'
+            },
+            endDateField: {
+                value: moment( ns.date.current ).endOf( 'month' ).format( 'YYYY-MM-DD HH:mm:ss' ),
+                type: 'datetimepicker'
+            },
             report: new Object,
             ns: window.ns
         }
@@ -124,17 +130,8 @@ export default {
         printSaleReport() {
             this.$htmlToPaper( 'report' );
         },
-        setStartDate( moment ) {
-            this.startDate  =   moment.format( 'YYYY/MM/DD HH:mm' );
-        },
-        setEndDate( moment ) {
-            this.endDate    =   moment.format( 'YYYY/MM/DD HH:mm' );
-        },
         loadReport() {
-            const startDate     =   this.startDate;
-            const endDate       =   this.endDate;
-
-            nsHttpClient.post( '/api/reports/cash-flow', { startDate, endDate })
+            nsHttpClient.post( '/api/reports/transactions', { startDate: this.startDateField.value, endDate: this.endDateField.value })
                 .subscribe({
                     next: result => {
                         this.report     =   result;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CashFlow;
+use App\Models\TransactionHistory;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
@@ -14,7 +14,7 @@ return new class extends Migration
     {
         $identifier = ns()->option->get( 'ns_stock_return_unspoiled_account' );
 
-        CashFlow::where( 'expense_category_id', $identifier )->delete();
+        TransactionHistory::where( 'expense_category_id', $identifier )->delete();
 
         ns()->option->delete( 'ns_stock_return_unspoiled_account' );
     }

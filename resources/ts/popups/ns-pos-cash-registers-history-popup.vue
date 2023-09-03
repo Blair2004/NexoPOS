@@ -8,8 +8,8 @@
         </div>
         <div class="flex w-full ns-box-body">
             <div class="flex flex-auto">
-                <div class="w-full md:w-1/2 text-right bg-success-primary text-white font-bold text-3xl p-3">{{ nsCurrency( totalIn ) }}</div>
-                <div class="w-full md:w-1/2 text-right bg-error-primary text-white font-bold text-3xl p-3">{{ nsCurrency( totalOut ) }}</div>
+                <div class="w-full md:w-1/2 text-right bg-success-secondary text-white font-bold text-3xl p-3">{{ nsCurrency( totalIn ) }}</div>
+                <div class="w-full md:w-1/2 text-right bg-error-secondary text-white font-bold text-3xl p-3">{{ nsCurrency( totalOut ) }}</div>
             </div>
         </div>
         <div class="flex flex-col overflow-y-auto h-120">

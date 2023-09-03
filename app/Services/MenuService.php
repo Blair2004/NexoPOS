@@ -129,39 +129,39 @@ class MenuService
                     ],
                 ],
             ],
-            'expenses' => [
+            'accounting' => [
                 'label' => __( 'Accounting' ),
                 'icon' => 'la-stream',
                 'permissions' => [
-                    'nexopos.read.expenses',
-                    'nexopos.create.expenses',
-                    'nexopos.read.expenses-categories',
-                    'nexopos.create.expenses-categories',
+                    'nexopos.read.transactions',
+                    'nexopos.create.transactions',
+                    'nexopos.read.transactions-account',
+                    'nexopos.create.transactions-account',
                 ],
                 'childrens' => [
-                    'expenses' => [
-                        'label' => __( 'Expenses'),
-                        'permissions' => [ 'nexopos.read.expenses' ],
-                        'href' => ns()->url( '/dashboard/expenses' ),
+                    'transactions' => [
+                        'label' => __( 'Transactions' ),
+                        'permissions' => [ 'nexopos.read.transactions' ],
+                        'href' => ns()->url( '/dashboard/accounting/transactions' ),
                     ],
-                    'create-expense' => [
-                        'label' => __( 'Create Expense'),
-                        'permissions' => [ 'nexopos.create.expenses' ],
-                        'href' => ns()->url( '/dashboard/expenses/create' ),
+                    'create-transaction' => [
+                        'label' => __( 'Create Transaction' ),
+                        'permissions' => [ 'nexopos.create.transactions' ],
+                        'href' => ns()->url( '/dashboard/accounting/transactions/create' ),
                     ],
-                    'cash-flow-history' => [
-                        'label' => __( 'Cash Flow History' ),
-                        'permissions' => [ 'nexopos.read.expenses' ],
-                        'href' => ns()->url( '/dashboard/cash-flow/history' ),
+                    'transactions-history' => [
+                        'label' => __( 'History' ),
+                        'permissions' => [ 'nexopos.read.transactions-history' ],
+                        'href' => ns()->url( '/dashboard/accounting/transactions/history' ),
                     ],
-                    'expenses-categories' => [
-                        'label' => __( 'Accounts'),
-                        'permissions' => [ 'nexopos.read.expenses-categories' ],
+                    'transactions-account' => [
+                        'label' => __( 'Accounts' ),
+                        'permissions' => [ 'nexopos.read.transactions-account' ],
                         'href' => ns()->url( '/dashboard/accounting/accounts' ),
                     ],
-                    'create-expenses-categories' => [
-                        'label' => __( 'Create Account'),
-                        'permissions' => [ 'nexopos.create.expenses-categories' ],
+                    'create-transactions-account' => [
+                        'label' => __( 'Create Account' ),
+                        'permissions' => [ 'nexopos.create.transactions-account' ],
                         'href' => ns()->url( '/dashboard/accounting/accounts/create' ),
                     ],
                 ],
@@ -356,7 +356,7 @@ class MenuService
                 'permissions' => [
                     'nexopos.reports.sales',
                     'nexopos.reports.best_sales',
-                    'nexopos.reports.cash_flow',
+                    'nexopos.reports.transactions',
                     'nexopos.reports.yearly',
                     'nexopos.reports.customers',
                     'nexopos.reports.inventory',
@@ -391,10 +391,10 @@ class MenuService
                         'label' => __( 'Incomes & Loosses' ),
                         'href' => ns()->url( '/dashboard/reports/profit' ),
                     ],
-                    'cash-flow' => [
-                        'label' => __( 'Cash Flow' ),
-                        'permissions' => [ 'nexopos.reports.cash_flow' ],
-                        'href' => ns()->url( '/dashboard/reports/cash-flow' ),
+                    'transactions' => [
+                        'label' => __( 'Transactions' ),
+                        'permissions' => [ 'nexopos.reports.transactions' ],
+                        'href' => ns()->url( '/dashboard/reports/transactions' ),
                     ],
                     'annulal-sales' => [
                         'label' => __( 'Annual Report' ),

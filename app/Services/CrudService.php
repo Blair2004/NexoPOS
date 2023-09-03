@@ -194,13 +194,12 @@ class CrudService
      * @param mixed $id
      * @return array as a crud response
      */
-    public function submitPreparedRequest( $namespace, $inputs, $id = null ): array
+    public function submitPreparedRequest( $inputs, $id = null ): array
     {
-        $crudInstance = $this->getCrudInstance( $namespace );
-        $model = $id !== null ? $crudInstance->getModel()::find( $id ) : null;
-        $data = $this->getFlatForm( $crudInstance, $inputs, $model );
+        $model = $id !== null ? $this->getModel()::find( $id ) : null;
+        $data = $this->getFlatForm( $inputs, $model );
 
-        return $this->submitRequest( $namespace, $data, $id );
+        return $this->submitRequest( $this->getNamespace(), $data, $id );
     }
 
     /**
@@ -1080,26 +1079,6 @@ class CrudService
     public function getTabsRelations(): array
     {
         return $this->tabsRelations;
-    }
-
-    /**
-     * Isolate Rules that use the Rule class
-     */
-    public function isolateArrayRules( array $arrayRules, string $parentKey = '' ): array
-    {
-        $rules = [];
-
-        foreach ( $arrayRules as $key => $value ) {
-            if ( is_array( $value ) && collect( array_keys( $value ) )->filter( function( $key ) {
-                return is_string( $key );
-            })->count() > 0 ) {
-                $rules = array_merge( $rules, $this->isolateArrayRules( $value, $key ) );
-            } else {
-                $rules[] = [ ( ! empty( $parentKey ) ? $parentKey . '.' : '' ) . $key, $value ];
-            }
-        }
-
-        return $rules;
     }
 
     public static function table( array $config = [], string|null $title = null, string|null $description = null, string|null $src = null, string|null $createUrl = null, array $queryParams = null ): ContractView

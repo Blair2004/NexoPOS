@@ -59,8 +59,8 @@ class HoldOrderCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_users', 'nexopos_orders.author', '=', 'nexopos_users.id' ],
         [ 'nexopos_users as customer', 'customer.id', '=', 'nexopos_orders.customer_id' ],
+        [ 'nexopos_users as user', 'nexopos_orders.author', '=', 'user.id' ],
     ];
 
     /**
@@ -81,8 +81,8 @@ class HoldOrderCrud extends CrudService
      * ]
      */
     public $pick = [
-        'nexopos_users' => [ 'username' ],
-        'customer' => [ 'name' ],
+        'user'      => [ 'username' ],
+        'customer'  => [ 'username', 'first_name', 'last_name' ],
     ];
 
     /**

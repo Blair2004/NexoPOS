@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
@@ -45,7 +46,8 @@ class DevShortCutCommand extends Command
     public function handle()
     {
         return match( $this->argument( 'argument' ) ) {
-            'model-attributes'  =>  $this->table([ __( 'File Name' ), __( 'Status' )], $this->setModelAttributes())
+            'model-attributes'  =>  $this->table([ __( 'File Name' ), __( 'Status' )], $this->setModelAttributes()),
+            default => throw new Exception( sprintf( __( 'Unsupported argument provided: "%s"' ), $this->argument( 'argument' ) ) )
         };
     }
 

@@ -48,7 +48,7 @@ class RecomputeCashFlowForDate implements ShouldQueue
          * @var ReportService $reportService
          */
         $reportService = app()->make( ReportService::class );
-        $reportService->recomputeCashFlow( $this->fromDate, $this->toDate );
+        $reportService->recomputeTransactions( $this->fromDate, $this->toDate );
 
         if ( ! $wasLoggedIn ) {
             Auth::logout();

@@ -37,6 +37,8 @@ class ProcurementService
 
     protected $currency;
 
+    protected $dateService;
+
     /**
      * @param BarcodeService $barcodeservice
      **/

@@ -1,0 +1,4 @@
+php artisan test --stop-on-failure --testsuite Sequential-1
+php artisan test --parallel --processes=4 --stop-on-failure --testsuite Parallel-1
+php artisan test --stop-on-failure --testsuite Sequential-2
+php artisan test --parallel --processes=4 --stop-on-failure --testsuite Parallel-2

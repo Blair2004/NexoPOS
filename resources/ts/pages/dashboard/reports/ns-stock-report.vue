@@ -9,7 +9,7 @@ import { __ } from '~/libraries/lang';
 import { default as nsDateTimePicker } from '~/components/ns-date-time-picker.vue';
 
 export default {
-    name: 'ns-sale-report',
+    name: 'ns-stock-report',
     data() {
         return {
             startDate: null,

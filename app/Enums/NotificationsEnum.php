@@ -11,5 +11,5 @@ class NotificationsEnum
 
     const NSWORKERDISABLED = 'ns.notifications.workers-disabled';
 
-    const NSSCHEDULEDEXPENSES = 'ns.notifications.scheduled-expenses';
+    const NSCHEDULEDTRANSACTIONS = 'ns.notifications.scheduled-transactions';
 }

@@ -32,7 +32,7 @@ export default {
                 nsHotPress
                     .create( 'ns_pos_keyboard_create_customer' )
                     .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.openCustomerPopup();
                 });

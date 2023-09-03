@@ -35,6 +35,20 @@ return [
 
     /**
      * --------------------------------------------------------------------
+     *  Authentication
+     * --------------------------------------------------------------------
+     * 
+     * Defines all default configurations that applies to authentication.
+     */
+    'authentication'    =>  [
+        /**
+         * Defines in "minutes" the lifetime of each token.
+         */
+        'activation_token_lifetime' =>  30
+    ],
+
+    /**
+     * --------------------------------------------------------------------
      *  RTL Languages
      * --------------------------------------------------------------------
      * 

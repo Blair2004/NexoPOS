@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Role;
+use App\Services\Helper;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -15,7 +16,7 @@ class ResetTest extends TestCase
      */
     public function testExample()
     {
-        if ( ns()->installed() ) {
+        if ( Helper::installed() ) {
             Sanctum::actingAs(
                 Role::namespace( 'admin' )->users->first(),
                 ['*']

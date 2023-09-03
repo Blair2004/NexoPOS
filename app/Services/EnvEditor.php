@@ -46,10 +46,11 @@ class EnvEditor {
                 if (strpos($value, ' ') !== false) {
                     $value = '"' . $value . '"';
                 }
-                $this->env_file_data[$key] = htmlspecialchars( $value );
             } else {
-                throw new Exception('Invalid value format');
+                $value = '';
             }
+            
+            $this->env_file_data[$key] = htmlspecialchars( $value );
         } else {
             throw new Exception('Invalid key format');
         }

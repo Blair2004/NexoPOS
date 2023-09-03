@@ -64,6 +64,7 @@ export default {
 
                     return response;
                 } catch( exception ) {
+                    console.log({ exception });
                     throw exception;
                 }
             });

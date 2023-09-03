@@ -2,17 +2,18 @@
 import { nsHttpClient, nsSnackBar } from '../bootstrap';
 import FormValidation from '~/libraries/form-validation';
 import nsPosCashRegistersActionPopupVue from './ns-pos-cash-registers-action-popup.vue';
+import nsNumpad from "~/components/ns-numpad.vue";
 import popupResolver from '~/libraries/popup-resolver';
 import { __ } from '~/libraries/lang';
-import {nsNumpad} from "~/components/components";
 import {Popup} from "~/libraries/popup";
 import {Register} from "~/interfaces/register";
 
 export default {
+    name: 'ns-pos-cash-registers-popup',
+    props: [ 'popup' ],
     components: {
         nsNumpad
     },
-    props: [ 'popup' ],
     data() {
         return {
             registers: [] as Register[],
@@ -58,7 +59,7 @@ export default {
 
                 this.popupResolver( response );
             } catch( exception ) {
-                console.log( exception );
+                this.popup.reject( exception );
             }
         },
         checkUsedRegister() {
@@ -109,31 +110,29 @@ export default {
         <div v-if="priorVerification"
             id="ns-pos-cash-registers-popup"
             class="w-95vw md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg ns-box' : ''">
-            <template>
-                <div class="title p-2 border-b ns-box-header flex justify-between items-center">
-                    <h3 class="font-semibold">{{ __( 'Open The Register' ) }}</h3>
-                    <div v-if="settings">
-                        <a :href="settings.urls.orders_url" class="rounded-full border ns-close-button px-3 text-sm py-1">{{ __( 'Exit To Orders' ) }}</a>
+            <div class="title p-2 border-b ns-box-header flex justify-between items-center">
+                <h3 class="font-semibold">{{ __( 'Open The Register' ) }}</h3>
+                <div v-if="settings">
+                    <a :href="settings.urls.orders_url" class="rounded-full border ns-close-button px-3 text-sm py-1">{{ __( 'Exit To Orders' ) }}</a>
+                </div>
+            </div>
+            <div v-if="! hasLoadedRegisters" class="py-10 flex-auto overflow-y-auto flex items-center justify-center">
+                <ns-spinner size="16" border="4"></ns-spinner>
+            </div>
+            <div class="flex-auto overflow-y-auto" v-if="hasLoadedRegisters">
+                <div class="grid grid-cols-3">
+                    <div @click="selectRegister( register )" v-for="(register, index) of registers"
+                        :class="getClass( register )"
+                        :key="index" class="border flex items-center justify-center flex-col p-3">
+                        <i class="las la-cash-register text-6xl"></i>
+                        <h3 class="text-semibold text-center">{{ register.name }}</h3>
+                        <span class="text-sm">({{ register.status_label }})</span>
                     </div>
                 </div>
-                <div v-if="! hasLoadedRegisters" class="py-10 flex-auto overflow-y-auto flex items-center justify-center">
-                    <ns-spinner size="16" border="4"></ns-spinner>
+                <div v-if="registers.length === 0" class="p-2 alert text-white">
+                    {{ __( 'Looks like there is no registers. At least one register is required to proceed.' ) }} &mdash; <a class="font-bold hover:underline" :href="settings.urls.registers_url">{{ __( 'Create Cash Register' ) }}</a>
                 </div>
-                <div class="flex-auto overflow-y-auto" v-if="hasLoadedRegisters">
-                    <div class="grid grid-cols-3">
-                        <div @click="selectRegister( register )" v-for="(register, index) of registers"
-                            :class="getClass( register )"
-                            :key="index" class="border flex items-center justify-center flex-col p-3">
-                            <i class="las la-cash-register text-6xl"></i>
-                            <h3 class="text-semibold text-center">{{ register.name }}</h3>
-                            <span class="text-sm">({{ register.status_label }})</span>
-                        </div>
-                    </div>
-                    <div v-if="registers.length === 0" class="p-2 alert text-white">
-                        {{ __( 'Looks like there is no registers. At least one register is required to proceed.' ) }} &mdash; <a class="font-bold hover:underline" :href="settings.urls.registers_url">{{ __( 'Create Cash Register' ) }}</a>
-                    </div>
-                </div>
-            </template>
+            </div>
         </div>
     </div>
 </template>

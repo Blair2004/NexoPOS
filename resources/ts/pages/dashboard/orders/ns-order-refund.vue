@@ -73,7 +73,7 @@
                     <span>{{ nsCurrency( screen ) }}</span>
                 </div>
                 <div>
-                    <ns-numpad-plus :currency="true" @changed="updateScreen( $event )" :value="screen" @next="proceedPayment( $event )"></ns-numpad-plus>
+                    <ns-numpad-plus :currency="true" @changed="updateScreen( $event )" :value="rawScreen" @next="proceedPayment( $event )"></ns-numpad-plus>
                 </div>
             </div>
         </div>
@@ -121,6 +121,7 @@ export default {
             refundShipping: false,
             selectedPaymentGateway: false,
             screen: 0,
+            rawScreen: 0,
             selectFields: [
                 {
                     type: 'select',
@@ -137,13 +138,14 @@ export default {
                 }
             ]
         }
-    }, 
+    },
     methods: {
         __,
         nsCurrency,
-        
+
         updateScreen( value ) {
-            this.screen     =   value;
+            this.rawScreen     =   value;
+            this.screen = parseFloat(value) || 0;
         },
 
         toggleRefundShipping( event ) {
@@ -191,9 +193,9 @@ export default {
                 .subscribe({
                     next:  (result) => {
                         this.isSubmitting   =   false;
-                        
+
                         this.$emit( 'changed', true );
-                        
+
                         /**
                          * if the order is fully refunded
                          * we should ask the parent component to switch
@@ -201,10 +203,10 @@ export default {
                          */
                         if ( result.data.order.payment_status === 'refunded' ) {
                             this.$emit( 'loadTab', 'details' );
-                        }   
+                        }
 
                         this.print.process( result.data.orderRefund.id, 'refund' );
-                        
+
                         nsSnackBar.success( result.message ).subscribe();
                     },
                     error: (error) => {
@@ -250,7 +252,7 @@ export default {
 
             promise.then( product => {
                 /**
-                 * this will set the quantity to be equal to the 
+                 * this will set the quantity to be equal to the
                  * remaining available quantity
                  */
                 product.quantity    =   this.getProductOriginalQuantity( product.id ) - this.getProductUsedQuantity( product.id );
@@ -260,7 +262,7 @@ export default {
 
         getProductOriginalQuantity( product_id ) {
             const product   =   this.order.products.filter( product => product.id === product_id );
-            
+
             if ( product.length > 0 ) {
                 return product
                     .map( product => parseFloat( product.quantity ) )
@@ -307,14 +309,14 @@ export default {
 
         changeQuantity( product ) {
             const promise   =   new Promise( ( resolve, reject ) => {
-                const availableQuantity     =   
+                const availableQuantity     =
                     this.getProductOriginalQuantity( product.id ) - this.getProductUsedQuantity( product.id ) + parseFloat( product.quantity );
                 Popup.show( nsOrdersProductQuantityVue, { resolve, reject, product, availableQuantity });
             });
 
             promise.then( updatedProduct => {
                 /**
-                 * we do exclude the product as we don't want that 
+                 * we do exclude the product as we don't want that
                  * to be counted as a used quantity.
                  */
                 if ( updatedProduct.quantity > this.getProductUsedQuantity( product.id ) - product.quantity ) {
@@ -338,7 +340,7 @@ export default {
                 });
             })
         }
-    },  
+    },
     mounted() {
         this.selectFields   =   this.formValidation.createFields( this.selectFields );
         nsHttpClient.get( '/api/orders/payments' )

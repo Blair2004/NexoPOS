@@ -5,7 +5,7 @@
                 <ns-notice>
                     <template #title>{{ __( 'About Token' ) }}</template>
                     <template #description>{{ __( `Token are used to provide a secure access to NexoPOS resources without having to share your personal username and password.
-                       Once generated, they doens\'t expires until you explicitely revoke it.` ) }}
+                       Once generated, they won\'t expires until you explicitely revoke it.` ) }}
                     </template>
                 </ns-notice>
             </div>

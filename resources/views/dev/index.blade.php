@@ -12,6 +12,10 @@
                 <ns-submenu to="/inputs/daterange">Date Range Picker</ns-submenu>
                 <ns-submenu to="/inputs/datetime">Date Time Picker</ns-submenu>
             </ns-menu>
+            <ns-menu label="Input Controls">
+                <ns-submenu to="/inputs/inline-multiselect">Inline Multiselect</ns-submenu>
+                <ns-submenu to="/inputs/multiselect">Multiselect</ns-submenu>
+            </ns-menu>
         </div>
         <div class="body bg-surface w-full flex flex-col">
             <router-view></router-view>

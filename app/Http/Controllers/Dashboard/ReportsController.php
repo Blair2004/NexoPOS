@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
-use App\Models\AccountType;
-use App\Models\CashFlow;
+use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Services\OrdersService;
 use App\Services\ReportService;
@@ -63,10 +63,10 @@ class ReportsController extends DashboardController
         ]);
     }
 
-    public function cashFlow()
+    public function transactionsReport()
     {
-        return $this->view( 'pages.dashboard.reports.cash-flow', [
-            'title' => __( 'Cash Flow Report' ),
+        return $this->view( 'pages.dashboard.reports.transactions', [
+            'title' => __( 'Transactions Report' ),
             'description' => __( 'Provides an overview on the activity for a specific period.' ),
         ]);
     }
@@ -84,7 +84,8 @@ class ReportsController extends DashboardController
                 $request->input( 'startDate' ),
                 $request->input( 'endDate' ),
                 $request->input( 'type' ),
-                $request->input( 'user_id' )
+                $request->input( 'user_id' ),
+                $request->input( 'categories_id' ),
             );
     }
 
@@ -98,8 +99,10 @@ class ReportsController extends DashboardController
     {
         $orders = $this->ordersService
             ->getSoldStock(
-                $request->input( 'startDate' ),
-                $request->input( 'endDate' )
+                startDate: $request->input( 'startDate' ),
+                endDate: $request->input( 'endDate' ),
+                categories: $request->input( 'categories' ),
+                units: $request->input( 'units' )
             );
 
         return collect( $orders )->mapToGroups( function( $product ) {
@@ -119,7 +122,7 @@ class ReportsController extends DashboardController
         })->values();
     }
 
-    public function getCashFlow( Request $request )
+    public function getTransactions( Request $request )
     {
         $rangeStarts = Carbon::parse( $request->input( 'startDate' ) )
             ->toDateTimeString();
@@ -129,30 +132,30 @@ class ReportsController extends DashboardController
 
         $entries = $this->reportService->getFromTimeRange( $rangeStarts, $rangeEnds );
         $total = $entries->count() > 0 ? $entries->first()->toArray() : [];
-        $creditCashFlow = AccountType::where( 'operation', CashFlow::OPERATION_CREDIT )->with([
-            'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
+        $creditCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_CREDIT )->with([
+            'histories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
-        ->map( function( $accountType ) {
-            $accountType->total = $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
+        ->map( function( $transactionAccount ) {
+            $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
 
-            return $accountType;
+            return $transactionAccount;
         });
 
-        $debitCashFlow = AccountType::where( 'operation', CashFlow::OPERATION_DEBIT )->with([
-            'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
+        $debitCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_DEBIT )->with([
+            'histories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
-        ->map( function( $accountType ) {
-            $accountType->total = $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
+        ->map( function( $transactionAccount ) {
+            $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
 
-            return $accountType;
+            return $transactionAccount;
         });
 
         return [
@@ -189,28 +192,13 @@ class ReportsController extends DashboardController
     {
         $orders = $this->ordersService
             ->getSoldStock(
-                $request->input( 'startDate' ),
-                $request->input( 'endDate' )
+                startDate: $request->input( 'startDate' ),
+                endDate: $request->input( 'endDate' ),
+                categories: $request->input( 'categories' ),
+                units: $request->input( 'units' )
             );
 
         return $orders;
-
-        return collect( $orders )->mapToGroups( function( $product ) {
-            return [
-                $product->product_id . '-' . $product->unit_id => $product,
-            ];
-        })->map( function( $groups ) {
-            return [
-                'name' => $groups->first()->name,
-                'unit_name' => $groups->first()->unit_name,
-                'mode' => $groups->first()->mode,
-                'unit_price' => $groups->sum( 'unit_price' ),
-                'total_purchase_price' => $groups->sum( 'total_purchase_price' ),
-                'quantity' => $groups->sum( 'quantity' ),
-                'total_price' => $groups->sum( 'total_price' ),
-                'tax_value' => $groups->sum( 'tax_value' ),
-            ];
-        })->values();
     }
 
     public function getAnnualReport( Request $request )
@@ -270,14 +258,20 @@ class ReportsController extends DashboardController
         return $this->reportService->getCashierDashboard( Auth::id() );
     }
 
-    public function getLowStock()
+    public function getLowStock( Request $request )
     {
-        return $this->reportService->getLowStockProducts();
+        return $this->reportService->getLowStockProducts(
+            categories: $request->input( 'categories' ),
+            units: $request->input( 'units' )
+        );
     }
 
-    public function getStockReport()
+    public function getStockReport( Request $request )
     {
-        return $this->reportService->getStockReport();
+        return $this->reportService->getStockReport(
+            categories: $request->input( 'categories' ),
+            units: $request->input( 'units' )
+        );
     }
 
     public function showCustomerStatement()

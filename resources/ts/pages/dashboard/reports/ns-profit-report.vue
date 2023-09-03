@@ -2,21 +2,33 @@
     <div id="report-section" class="px-4">
         <div class="flex -mx-2">
             <div class="px-2">
-                <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
+                <ns-field :field="startDateField"></ns-field>
             </div>
             <div class="px-2">
-                <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
+                <ns-field :field="endDateField"></ns-field>
             </div>
             <div class="px-2">
-                <button @click="loadReport()" class="rounded flex justify-between bg-box-background shadow py-1 items-center text-primary px-2">
+                <button @click="loadReport()" class="rounded flex justify-between bg-input-background hover:bg-input-button-hover shadow py-1 items-center text-primary px-2">
                     <i class="las la-sync-alt text-xl"></i>
                     <span class="pl-2">{{ __( 'Load' ) }}</span>
                 </button>
             </div>
             <div class="px-2">
-                <button @click="printSaleReport()" class="rounded flex justify-between bg-box-background shadow py-1 items-center text-primary px-2">
+                <button @click="printSaleReport()" class="rounded flex justify-between bg-input-background hover:bg-input-button-hover shadow py-1 items-center text-primary px-2">
                     <i class="las la-print text-xl"></i>
                     <span class="pl-2">{{ __( 'Print' ) }}</span>
+                </button>
+            </div>
+            <div class="px-2">
+                <button @click="selectCategories()" class="rounded flex justify-between bg-input-background hover:bg-input-button-hover shadow py-1 items-center text-primary px-2">
+                    <i class="las la-filter text-xl"></i>
+                    <span class="pl-2">{{ __( 'Category' ) }}: {{ categoryNames || __( 'All Categories' ) }}</span>
+                </button>
+            </div>
+            <div class="px-2">
+                <button @click="selectUnit()" class="rounded flex justify-between bg-input-background hover:bg-input-button-hover shadow py-1 items-center text-primary px-2">
+                    <i class="las la-filter text-xl"></i>
+                    <span class="pl-2">{{ __( 'Unit' ) }}: {{ unitNames || __( 'All Units' ) }}</span>
                 </button>
             </div>
         </div>
@@ -25,7 +37,7 @@
                 <div class="my-4 flex justify-between w-full">
                     <div class="text-secondary">
                         <ul>
-                            <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
+                            <li class="pb-1 border-b border-dashed">{{ __( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', startDateField.value ).replace( '{date2}', endDateField.value ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Profit Report' ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'By : {user}' ).replace( '{user}', ns.user.username ) }}</li>
                         </ul>
@@ -51,14 +63,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="product of products" :key="product.id" :class="product.total_price - product.total_purchase_price < 0 ? 'bg-red-100' : 'bg-white'">
-                                    <td class="p-2 border border-info-primary">{{ product.name }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ product.unit_name }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ product.quantity }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( product.total_purchase_price ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( product.total_price ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( product.tax_value ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( product.total_price - product.total_purchase_price ) }}</td>
+                                <tr v-for="product of products" :key="product.id" :class="product.total_price - product.total_purchase_price < 0 ? 'bg-error-primary' : 'bg-box-background'">
+                                    <td class="p-2 border border-box-edge">{{ product.name }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ product.unit_name }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ product.quantity }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( product.total_purchase_price ) }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( product.total_price ) }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( product.tax_value ) }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( product.total_price - product.total_purchase_price ) }}</td>
                                 </tr>
                             </tbody>
                             <tfoot class="font-semibold">
@@ -78,23 +90,40 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import moment from "moment";
 import nsDatepicker from "~/components/ns-datepicker.vue";
 import nsDateTimePicker from "~/components/ns-date-time-picker.vue";
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
+import { selectApiEntities } from "~/libraries/select-api-entities";
 
 export default {
     name: 'ns-profit-report',
-    props: [ 'store-logo', 'store-name' ],
+    props: [ 'storeLogo', 'storeName' ],
     data() {
         return {
-            startDate: moment(),
-            endDate: moment(),
+            categoryNames: '',
+            unitNames: '',
+            startDateField: {
+                type: 'datetimepicker',
+                value: moment( ns.date.current ).startOf( 'month' ).format( 'YYYY-MM-DD HH:mm:ss' ),
+            },
+            endDateField: {
+                type: 'datetimepicker',
+                value: moment( ns.date.current ).endOf( 'month' ).format( 'YYYY-MM-DD HH:mm:ss' ),
+            },
+            categoryField: {
+                value: [],
+                label: __( 'Filter by Category' ),
+            },
+            unitField: {
+                value: [],
+                label: __( 'Filter by Units' )
+            },
             products: [],
-            ns: window.ns
+            ns: window[ 'ns' ]
         }
     },
     components: {
@@ -105,7 +134,7 @@ export default {
         totalQuantities() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.quantity )
+                    .map( product => product.quantity )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -113,7 +142,7 @@ export default {
         totalPurchasePrice() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.total_purchase_price )
+                    .map( product => product.total_purchase_price )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -121,7 +150,7 @@ export default {
         totalSalePrice() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.total_price )
+                    .map( product => product.total_price )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -129,7 +158,7 @@ export default {
         totalProfit() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.total_price - order.total_purchase_price )
+                    .map( product => product.total_price - product.total_purchase_price )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -137,7 +166,7 @@ export default {
         totalTax() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( order => order.tax_value )
+                    .map( product => product.tax_value )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -153,21 +182,48 @@ export default {
             this.startDate  =   moment.format();
         },
 
+        async selectCategories() {
+            try {
+                const response              =   await selectApiEntities( '/api/categories', this.categoryField.label, this.categoryField.value );
+                this.categoryField.value    =   response.values;
+                this.categoryNames          =   response.labels;
+                this.loadReport();
+            } catch (error) {
+                if ( error !== false ) {
+                    return nsSnackBar.error( __( 'An error has occured while loading the categories' ) ).subscribe();
+                }
+            }
+        },
+        async selectUnit() {
+            try {
+                const response              =   await selectApiEntities( '/api/units', this.unitField.label, this.unitField.value );
+                this.unitField.value    =   response.values;
+                this.unitNames          =   response.labels;
+                this.loadReport();
+            } catch (error) {
+                if ( error !== false ) {
+                    return nsSnackBar.error( __( 'An error has occured while loading the units' ) ).subscribe();
+                }
+            }
+        },
+
         loadReport() {
-            if ( this.startDate === null || this.endDate ===null ) {
+            if ( this.startDateField.value === null || this.endDateField.value ===null ) {
                 return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) ).subscribe();
             }
 
-            const startMoment   =   moment( this.startDate );
-            const endMoment     =   moment( this.endDate );
+            const startMoment   =   moment( this.startDateField.value );
+            const endMoment     =   moment( this.endDateField.value );
 
             if ( endMoment.isBefore( startMoment ) ) {
                 return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
             }
 
             nsHttpClient.post( '/api/reports/profit-report', { 
-                startDate: this.startDate,
-                endDate: this.endDate
+                startDate: this.startDateField.value,
+                endDate: this.endDateField.value,
+                categories: this.categoryField.value,
+                units: this.unitField.value
             }).subscribe({
                 next: products => {
                     this.products     =   products;

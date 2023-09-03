@@ -234,7 +234,7 @@ export default {
                     name: this.coupon.name,
                     type: this.coupon.type,
                     value: 0,
-                    id: this.coupon.id,
+                    coupon_id: this.coupon.id,
                     limit_usage: this.coupon.limit_usage,
                     code: this.coupon.code,
                     discount_value: this.coupon.discount_value,
