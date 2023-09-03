@@ -115,7 +115,7 @@ export default {
                             });
 
                             // if we have at least one tax group, this latest is selected by default.
-                            if ( result[1][0].id !== undefined ) {
+                            if ( result[1][0]?.id !== undefined ) {
                                 field.value = result[1][0].id || this.options.ns_pos_tax_group;
                             }
                         }
