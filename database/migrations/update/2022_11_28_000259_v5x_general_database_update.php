@@ -279,6 +279,12 @@ return new class extends Migration
             }
         });
 
+        Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'convert_unit_id' ) ) {
+                $table->integer( 'convert_unit_id' )->nullable();
+            }
+        });
+
         /**
          * Every models that was pointing to the old customer id
          * must be update to support the new customer id which is not

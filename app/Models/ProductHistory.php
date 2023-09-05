@@ -49,6 +49,10 @@ class ProductHistory extends NsModel
 
     const ACTION_ADJUSTMENT_SALE = 'sale-adjustment';
 
+    const ACTION_CONVERT_OUT = 'convert-out';
+
+    const ACTION_CONVERT_IN = 'convert-in';
+
     public $casts    =  [
         'before_quantity'   =>  FloatConvertCasting::class,
         'quantity'          =>  FloatConvertCasting::class,
@@ -66,6 +70,7 @@ class ProductHistory extends NsModel
         ProductHistory::ACTION_LOST,
         ProductHistory::ACTION_ADJUSTMENT_SALE,
         ProductHistory::ACTION_DELETED,
+        ProductHistory::ACTION_CONVERT_OUT,
     ];
 
     /**
@@ -80,6 +85,7 @@ class ProductHistory extends NsModel
         ProductHistory::ACTION_TRANSFER_REJECTED,
         ProductHistory::ACTION_TRANSFER_CANCELED,
         ProductHistory::ACTION_ADJUSTMENT_RETURN,
+        ProductHistory::ACTION_CONVERT_IN,
     ];
 
     /**

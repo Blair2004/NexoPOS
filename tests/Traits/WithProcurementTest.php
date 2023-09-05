@@ -5,8 +5,17 @@ namespace Tests\Traits;
 use App\Classes\Currency;
 use App\Models\TransactionHistory;
 use App\Models\Procurement;
+use App\Models\Product;
+use App\Models\ProductHistory;
 use App\Models\Provider;
+use App\Models\TaxGroup;
+use App\Models\Unit;
+use App\Models\UnitGroup;
+use App\Services\ProductService;
+use App\Services\TaxService;
 use App\Services\TestService;
+use App\Services\UnitService;
+use Faker\Factory;
 
 trait WithProcurementTest
 {
@@ -120,5 +129,135 @@ trait WithProcurementTest
             Currency::raw( $newExpensevalue ),
             Currency::raw( (float) $currentExpenseValue + (float) $responseData[ 'data' ][ 'procurement' ][ 'cost' ] )
         );
+    }
+
+    protected function attemptCreateProcurementWithConversion()
+    {
+        $faker      =   Factory::create();
+        $taxType    =   'inclusive';
+        $margin     =   10;
+        $taxGroup   =   TaxGroup::get()->random();
+        
+        /**
+         * @var TaxService $taxService
+         */
+        $taxService     =   app()->make( TaxService::class );
+
+        /**
+         * @var ProductService $productService
+         */
+        $productService     =   app()->make( ProductService::class );
+
+        /**
+         * @var UnitService $unitService
+         */
+        $unitService     =   app()->make( UnitService::class );
+
+        $products   =   Product::withStockEnabled()
+        ->with( 'unitGroup' )
+        ->take(5)
+        ->get()
+        ->map( function( $product ) {
+            return $product->unitGroup->units()->where( 'base_unit', 0 )->limit(1)->get()->map( function( $unit ) use ( $product ) {
+                $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
+
+                return (object) [
+                    'unit' => $unit,
+                    'unitQuantity' => $unitQuantity,
+                    'product' => $product,
+                ];
+            });
+        })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+            $quantity = $faker->numberBetween(10, 99);
+
+            $newUnit    =   UnitGroup::with([ 'units' => function( $query ) use ( $data ) {
+                $query->whereNotIn( 'id', [ $data->unit->id ]);
+            }])->find( $data->unit->group_id )->units->first();
+
+            return [
+                'convert_unit_id'   =>  $newUnit->id,
+                'product_id' => $data->product->id,
+                'gross_purchase_price' => 15,
+                'net_purchase_price' => 16,
+                'purchase_price' => $taxService->getTaxGroupComputedValue(
+                    $taxType,
+                    $taxGroup,
+                    $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                        $data->unitQuantity->sale_price,
+                        $margin
+                    )
+                ),
+                'quantity' => $quantity,
+                'tax_group_id' => $taxGroup->id,
+                'tax_type' => $taxType,
+                'tax_value' => $taxService->getTaxGroupVatValue(
+                    $taxType,
+                    $taxGroup,
+                    $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                        $data->unitQuantity->sale_price,
+                        $margin
+                    )
+                ),
+                'total_purchase_price' => $taxService->getTaxGroupComputedValue(
+                    $taxType,
+                    $taxGroup,
+                    $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                        $data->unitQuantity->sale_price,
+                        $margin
+                    )
+                ) * $quantity,
+                'unit_id' => $data->unit->id,
+            ];
+        });
+        
+        /**
+         * @var TestService
+         */
+        $testService = app()->make( TestService::class );
+
+        $currentExpenseValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
+            'general.payment_status'    =>  Procurement::PAYMENT_PAID,
+            'general.delivery_status'   =>  Procurement::DELIVERED,
+            'products'  =>  $products,
+        ]);
+
+        /**
+         * Query: We store the procurement with an unpaid status.
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
+
+        $response->assertOk();
+
+        $products   =   $response->json()[ 'data' ][ 'products' ];
+
+        collect( $products )->each( function( $product ) use ( $unitService ) {
+            $productHistory     =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_CONVERT_OUT )
+                ->where( 'procurement_id', $product[ 'procurement_id' ])
+                ->where( 'procurement_product_id', $product[ 'id' ])
+                ->where( 'quantity', $product[ 'quantity' ] )
+                ->first();
+
+            $this->assertTrue( $productHistory instanceof ProductHistory, 'No product history was created after the conversion.' );
+
+            /**
+             * check if correct unit was received by the destination unit
+             */
+            $destinationQuantity    =   $unitService->getConvertedQuantity(
+                from: Unit::find( $product[ 'unit_id' ] ),
+                to: Unit::find( $product[ 'convert_unit_id' ] ),
+                quantity: $product[ 'quantity' ]
+            );
+
+            $destinationHistory     =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_CONVERT_IN )
+                ->where( 'procurement_id', $product[ 'procurement_id' ])
+                ->where( 'procurement_product_id', $product[ 'id' ])
+                ->where( 'unit_id', $product[ 'convert_unit_id' ])
+                ->where( 'quantity', $destinationQuantity )
+                ->first();
+
+            $this->assertTrue( $destinationHistory instanceof ProductHistory, 'No product history was created after the conversion.' );
+        });
     }
 }

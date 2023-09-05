@@ -514,6 +514,14 @@ export default {
 
                 product.procurement.unit_id     =   result;
 
+                /**
+                 * every modification here must reset the conversion
+                 * unit. This will avoid having the conversion unit be the same
+                 * as the procured unit.
+                 */
+                product.procurement.convert_unit_id         =   undefined;
+                product.procurement.convert_unit_label      =   undefined;
+
                 this.fetchLastPurchasePrice( index );
             } catch( exception ) {
                 console.log( exception );
@@ -558,6 +566,8 @@ export default {
                 });
 
                 entry[ key ]    =   result;
+
+                this.updateLine( index );
             } catch ( exception ) {
                 console.log({ exception })
             }

@@ -5,14 +5,14 @@ declare const nsExtraComponents;
 export default class FormValidation {
     validateFields( fields ) {
         return fields.map( field => {
-            this.checkField( field );
+            this.checkField( field, fields );
             return field.errors ? field.errors.length === 0 : 0;
         }).filter( f => f === false ).length === 0;
     }
 
     validateFieldsErrors( fields ) {
         return fields.map( field => {
-            this.checkField( field );
+            this.checkField( field, fields );
             return field.errors;
         }).flat();
     }
@@ -64,7 +64,7 @@ export default class FormValidation {
     }
 
     validateField( field ) {
-        return this.checkField( field );
+        return this.checkField( field, fields );
     }
 
     fieldsValid( fields ) {
@@ -163,12 +163,12 @@ export default class FormValidation {
         return form;
     }
 
-    checkField( field ) {
+    checkField( field, fields ) {
         if ( field.validation !== undefined ) {
             field.errors    =   [];
             const rules     =   this.detectValidationRules( field.validation );
             rules.forEach( rule => {
-                this.fieldPassCheck( field, rule );
+                this.fieldPassCheck( field, rule, fields );
             });
         }
         return field;
@@ -204,29 +204,24 @@ export default class FormValidation {
 
     detectValidationRules( validation ) {
         const execRule  =   ( rule ) => {
-            let finalRules          =   [];
             const minRule 			=	/(min)\:([0-9])+/g;
             const maxRule 			=	/(max)\:([0-9])+/g;
             const matchRule         =   /(same):(\w+)/g;
+            const diffRule          =   /(different):(\w+)/g;
             let result;
 
             if ([ 'email', 'required' ].includes( rule ) ) {
                 return {
                     identifier : rule
                 };
-            } else if( result =   minRule.exec( rule ) ) {
+            } else if ( rule.length > 0 ) {
+                result = minRule.exec( rule ) || maxRule.exec( rule ) || matchRule.exec( rule ) || diffRule.exec( rule );
+                
                 return {
                     identifier : result[1],
                     value: result[2]
                 }
-            } else if( result =   maxRule.exec( rule ) ) {
-                return {
-                    identifier : result[1],
-                    value: result[2]
-                }
-            }
-            
-            return rule;
+            } 
         };
 
         if ( Array.isArray( validation ) ) {
@@ -315,42 +310,52 @@ export default class FormValidation {
         }
     }
 
-    fieldPassCheck( field, rule ) {
+    trackError( field, rule ) {
+        field.errors.push({
+            identifier: rule.identifier,
+            invalid: true,
+            name: field.name
+        })
+    }
 
-        if ( rule.identifier === 'required' ) {
-            if ( field.value === undefined || field.value === null || field.value.length === 0 ) {
-                // because we would like to stop the validation here
-                return field.errors.push({
-                    identifier: rule.identifier,
-                    invalid: true,
-                    name: field.name
-                })
-            } else {
-                field.errors.forEach( ( error, index ) => {
-                    if ( error.identifier === rule.identifier && error.invalid === true ) {
-                        field.errors.splice( index, 1 );
-                    }
-                });
+    unTrackError( field, rule ) {
+        field.errors.forEach( ( error, index ) => {
+            if ( error.identifier === rule.identifier && error.invalid === true ) {
+                field.errors.splice( index, 1 );
             }
-        }
+        });
+    }
 
-        if ( rule.identifier === 'email' && field.value.length > 0 ) {
-            if ( ! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test( field.value ) ) {
-                // because we would like to stop the validation here
-                return field.errors.push({
-                    identifier: rule.identifier,
-                    invalid: true,
-                    name: field.name
-                })
-            } else {
-                field.errors.forEach( ( error, index ) => {
-                    if ( error[ rule.identifier ] === true ) {
-                        field.errors.splice( index, 1 );
-                    }
-                });
+    fieldPassCheck( field, rule, fields ) {
+        if ( rule !== undefined ) {
+            const rules     =   {
+                required: ( field, rule ) => field.value === undefined || field.value === null || field.value.length === 0,
+                email: ( field, rule ) => field.value.length > 0 && ! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test( field.value ),
+                same: ( field, rule ) => {
+                    const similar = fields.filter( field => field.name === rule.value )
+                    return similar.length === 1 && similar[0].value !== field.value;
+                },
+                different: ( field, rule ) => {
+                    const similar = fields.filter( field => field.name === rule.value )
+                    return similar.length === 1 && similar[0].value === field.value;
+                },
+                min: ( field, rule ) => field.value.length < parseInt( rule.value ),
+                max: ( field, rule ) => field.value.length > parseInt( rule.value )
             }
-        }
 
-        return field;
+            const ruleValidated   =   rules[ rule.identifier ];
+
+            console.log({ ruleValidated: ! ruleValidated( rule, field ), identifier: rule.identifier });
+            
+            if ( ruleValidated !== undefined ) {
+                if ( ! ruleValidated( field, rule ) ) {
+                    this.trackError( field, rule );
+                } else {
+                    this.unTrackError( field, rule );
+                }
+            }
+    
+            return field;
+        }
     }
 }

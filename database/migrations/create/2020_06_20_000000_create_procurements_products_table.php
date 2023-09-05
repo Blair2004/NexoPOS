@@ -34,6 +34,7 @@ return new class extends Migration
                 $table->float( 'tax_value', 18, 5 )->default(0);
                 $table->float( 'total_purchase_price', 18, 5 )->default(0);
                 $table->integer( 'unit_id' );
+                $table->integer( 'convert_unit_id' )->nullable();
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

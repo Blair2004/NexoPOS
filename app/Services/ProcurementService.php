@@ -416,6 +416,7 @@ class ProcurementService
             $procurementProduct->tax_value = $procuredProduct[ 'tax_value' ];
             $procurementProduct->expiration_date = $procuredProduct[ 'expiration_date' ] ?? null;
             $procurementProduct->total_purchase_price = $procuredProduct[ 'total_purchase_price' ];
+            $procurementProduct->convert_unit_id = $procuredProduct[ 'convert_unit_id' ] ?? null;
             $procurementProduct->unit_id = $procuredProduct[ 'unit_id' ];
             $procurementProduct->author = Auth::id();
             $procurementProduct->save();
@@ -857,25 +858,39 @@ class ProcurementService
                     'unit_price' => $product->purchase_price,
                     'total_price' => $product->total_purchase_price,
                     'unit_id' => $product->unit_id,
-                ]);
-
-                $currentQuantity = $this->productService->getQuantity(
-                    $product->product_id,
-                    $product->unit_id,
-                    $product->id
-                );
-
-                $newQuantity = $this->currency
-                    ->define( $currentQuantity )
-                    ->additionateBy( $product->quantity )
-                    ->get();
+                ]);                
 
                 /**
-                 * will generate a unique barcode for the procured product
+                 * We'll now check if the product is about to be
+                 * converted in another unit
                  */
-                $this->generateBarcode( $product );
+                if ( ! empty( $product->convert_unit_id ) ) {
+                    $this->productService->convertUnitQuantities(
+                        product: $product->product,
+                        quantity: $product->quantity,
+                        from: $product->unit,
+                        procurementProduct: $product,
+                        to: Unit::find( $product->convert_unit_id )
+                    );
+                } else {
+                    $currentQuantity = $this->productService->getQuantity(
+                        $product->product_id,
+                        $product->unit_id,
+                        $product->id
+                    );
 
-                $this->productService->setQuantity( $product->product_id, $product->unit_id, $newQuantity, $product->id );
+                    $newQuantity = $this->currency
+                        ->define( $currentQuantity )
+                        ->additionateBy( $product->quantity )
+                        ->get();
+    
+                    $this->productService->setQuantity( $product->product_id, $product->unit_id, $newQuantity, $product->id );
+
+                    /**
+                     * will generate a unique barcode for the procured product
+                     */
+                    $this->generateBarcode( $product );
+                }
             });
 
             $this->setDeliveryStatus( $procurement, Procurement::STOCKED );

@@ -346,7 +346,7 @@ export default {
                         if ( field.type === 'group' ) {
                             field.options   =   result;
                             field.fields.forEach( _field => {
-                                if ( _field.name === 'unit_id' ) {
+                                if ( [ 'unit_id', 'convert_unit_id' ].includes( _field.name ) ) {
                                     _field.options  =   result.map( option => {
                                         return {
                                             label: option.name,
@@ -360,27 +360,6 @@ export default {
 
                     this.unitLoaded = true;
 
-                    this.$forceUpdate();
-                })
-        },
-
-        /**
-         * @deprecated
-         */
-        loadOptionsFor( fieldName, value, variation_index ) {
-            nsHttpClient.get( this.unitsUrl.replace( '{id}', value ) )
-                .subscribe( result => {
-                    this.form.variations[ variation_index ].tabs.units.fields.forEach( _field => {
-                        if ( _field.name === fieldName ) {
-                            _field.options    =   result.map( option => {
-                                return {
-                                    label: option.name,
-                                    value: option.id,
-                                    selected: false,
-                                };
-                            })
-                        }
-                    });
                     this.$forceUpdate();
                 })
         },

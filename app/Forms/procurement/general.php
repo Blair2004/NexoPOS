@@ -15,13 +15,13 @@ return [
         ], [
             'type' => 'date',
             'name' => 'delivery_time',
-            'value' => $procurement->delivery_time ?? '',
+            'value' => $procurement->delivery_time ?? ns()->date->now()->format( 'Y-m-d'),
             'label' => __( 'Delivery Time' ),
             'description' => __( 'If the procurement has to be delivered at a specific time, define the moment here.' ),
         ], [
             'type' => 'date',
             'name' => 'invoice_date',
-            'value' => $procurement->invoice_date ?? '',
+            'value' => $procurement->invoice_date ?? ns()->date->now()->format( 'Y-m-d'),
             'label' => __( 'Invoice Date' ),
             'description' => __( 'If you would like to define a custom invoice date.' ),
         ], [
@@ -61,7 +61,7 @@ return [
             'name' => 'provider_id',
             'value' => $procurement->provider_id ?? '',
             'validation' => 'required',
-            'options' => Helper::toJsOptions( Provider::get(), [ 'id', 'name' ]),
+            'options' => Helper::toJsOptions( Provider::get(), [ 'id', 'first_name' ]),
             'label' => __( 'Provider' ),
             'description' => __( 'Determine what is the actual provider of the current procurement.' ),
         ],

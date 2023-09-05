@@ -43,6 +43,7 @@ return new class extends Migration
                 $table->float( 'custom_price_with_tax', 18, 5 )->default(0);
                 $table->float( 'custom_price_without_tax', 18, 5 )->default(0);
                 $table->float( 'custom_price_tax', 18, 5 )->default(0);
+                $table->integer( 'convert_unit_id' )->nullable();
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });

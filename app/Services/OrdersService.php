@@ -1083,9 +1083,16 @@ class OrdersService
              */
             OrderProductBeforeSavedEvent::dispatch( $orderProduct, $product );
 
+            /**
+             * We'll retreive the unit used for
+             * the order product.
+             * @var Unit $unit
+             */
+            $unit   =   Unit::find( $product[ 'unit_id' ] );
+
             $orderProduct->order_id = $order->id;
             $orderProduct->unit_quantity_id = $product[ 'unit_quantity_id' ];
-            $orderProduct->unit_name = $product[ 'unit_name' ] ?? Unit::find( $product[ 'unit_id' ] )->name;
+            $orderProduct->unit_name = $product[ 'unit_name' ] ?? $unit->name;
             $orderProduct->unit_id = $product[ 'unit_id' ];
             $orderProduct->mode = $product[ 'mode' ] ?? 'normal';
             $orderProduct->product_type = $product[ 'product_type' ] ?? 'product';
@@ -1120,9 +1127,12 @@ class OrdersService
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price = $this->currencyService->define(
-                    $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getLastPurchasePrice( $product[ 'product' ] ) )
-                        ->multipliedBy( $product[ 'quantity' ] )
-                        ->getRaw()
+                    $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getLastPurchasePrice( 
+                        product: $product[ 'product' ],
+                        unit: $unit
+                    ) )
+                    ->multipliedBy( $product[ 'quantity' ] )
+                    ->getRaw()
                 )
                 ->getRaw();
 

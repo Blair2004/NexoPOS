@@ -1118,6 +1118,8 @@ class ProductService
             ProductHistory::ACTION_VOID_RETURN,
             ProductHistory::ACTION_ADJUSTMENT_RETURN,
             ProductHistory::ACTION_ADJUSTMENT_SALE,
+            ProductHistory::ACTION_CONVERT_IN,
+            ProductHistory::ACTION_CONVERT_OUT,
         ]) ) {
             throw new NotAllowedException( __( 'The action is not an allowed operation.' ) );
         }
@@ -1306,56 +1308,67 @@ class ProductService
          */
         $oldQuantity = $this->getQuantity( $product_id, $unit_id );
 
-        if ( in_array( $action, ProductHistory::STOCK_REDUCE ) ) {
-            $this->preventNegativity(
-                oldQuantity: $oldQuantity,
-                quantity: $quantity
+        if ( in_array( $action, ProductHistory::STOCK_REDUCE ) || in_array( $action, ProductHistory::STOCK_INCREASE ) ) {
+            if ( in_array( $action, ProductHistory::STOCK_REDUCE ) ) {
+                $this->preventNegativity(
+                    oldQuantity: $oldQuantity,
+                    quantity: $quantity
+                );
+    
+                /**
+                 * @var string status
+                 * @var string message
+                 * @var array [ 'oldQuantity', 'newQuantity' ]
+                 */
+                $result = $this->reduceUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
+    
+                /**
+                 * We should reduce the quantity if
+                 * we're dealing with a product that has
+                 * accurate stock tracking
+                 */
+                if ( $procurementProduct instanceof ProcurementProduct ) {
+                    $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
+                }
+            } else if ( in_array( $action, ProductHistory::STOCK_INCREASE ) ) {
+                /**
+                 * @var string status
+                 * @var string message
+                 * @var array [ 'oldQuantity', 'newQuantity' ]
+                 */
+                $result = $this->increaseUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
+    
+                /**
+                 * We should reduce the quantity if
+                 * we're dealing with a product that has
+                 * accurate stock tracking
+                 */
+                if ( $procurementProduct instanceof ProcurementProduct ) {
+                    $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_INCREASE );
+                }
+            }
+    
+            return $this->recordStockHistory(
+                product_id: $product_id,
+                action: $action,
+                unit_id: $unit_id,
+                unit_price: $unit_price,
+                quantity: $quantity,
+                total_price: $total_price,
+                procurement_product_id: $procurementProduct?->id ?: null,
+                procurement_id: $procurementProduct->procurement_id,
+                order_id: isset( $orderProduct ) ? $orderProduct->order_id : null,
+                order_product_id: isset( $orderProduct ) ? $orderProduct->id : null,
+                old_quantity: $result[ 'data' ][ 'oldQuantity' ],
+                new_quantity: $result[ 'data' ][ 'newQuantity' ]
             );
-
-            /**
-             * @var string status
-             * @var string message
-             * @var array [ 'oldQuantity', 'newQuantity' ]
-             */
-            $result = $this->reduceUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
-
-            /**
-             * We should reduce the quantity if
-             * we're dealing with a product that has
-             * accurate stock tracking
-             */
-            if ( $procurementProduct instanceof ProcurementProduct ) {
-                $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
-            }
-        } else {
-            /**
-             * @var string status
-             * @var string message
-             * @var array [ 'oldQuantity', 'newQuantity' ]
-             */
-            $result = $this->increaseUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
-
-            /**
-             * We should reduce the quantity if
-             * we're dealing with a product that has
-             * accurate stock tracking
-             */
-            if ( $procurementProduct instanceof ProcurementProduct ) {
-                $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_INCREASE );
-            }
         }
 
-        return $this->recordStockHistory(
-            product_id: $product_id,
-            action: $action,
-            unit_id: $unit_id,
-            unit_price: $unit_price,
-            quantity: $quantity,
-            total_price: $total_price,
-            order_id: isset( $orderProduct ) ? $orderProduct->order_id : null,
-            order_product_id: isset( $orderProduct ) ? $orderProduct->id : null,
-            old_quantity: $result[ 'data' ][ 'oldQuantity' ],
-            new_quantity: $result[ 'data' ][ 'newQuantity' ]
+        throw new NotAllowedException( 
+            sprintf(
+                __( 'Unsupported stock action "%s"'),
+                $action
+            )
         );
     }
 
@@ -1380,6 +1393,8 @@ class ProductService
         $total_price, 
         $order_id = null, 
         $order_product_id = null,
+        $procurement_product_id = null,
+        $procurement_id = null,
         $old_quantity = 0, 
         $new_quantity = 0 )
     {
@@ -1618,14 +1633,12 @@ class ProductService
     /**
      * Will return the last purchase price
      * defined for the provided product
-     *
-     * @param Product $product
-     * @return float
      */
-    public function getLastPurchasePrice( $product, $before = null )
+    public function getLastPurchasePrice( Product $product, Unit $unit, string | null $before = null ): float | int
     {
         if ( $product instanceof Product ) {
             $request = ProcurementProduct::where( 'product_id', $product->id )
+                ->where( 'unit_id', $unit->id )
                 ->orderBy( 'id', 'desc' );
 
             if ( $before ) {
@@ -1782,6 +1795,131 @@ class ProductService
                 $product->barcode_type
             );
         });
+    }
+
+    /**
+     * Convert quantity from a source unit ($from) to a destination unit ($to)
+     * using the provided quantity and product.
+     */
+    public function convertUnitQuantities( Product $product, Unit $from, float $quantity, Unit $to, null | ProcurementProduct $procurementProduct = null ): array
+    {
+        if ( $product->stock_management !== Product::STOCK_MANAGEMENT_ENABLED ) {
+            throw new NotAllowedException( __( 'You cannot convert unit on a product having stock management disabled.' ) );
+        }
+
+        $unitQuantityFrom   =   ProductUnitQuantity::where( 'product_id', $product->id )
+            ->where( 'unit_id', $from->id )
+            ->first();
+
+        $unitQuantityTo     =   ProductUnitQuantity::where( 'product_id', $product->id )
+            ->where( 'unit_id', $to->id )
+            ->first();
+
+        if ( $from->id === $to->id ) {
+            throw new NotAllowedException( 
+                __( 'The source and the destination unit can\'t be the same. What are you trying to do ?' )
+            );
+        }
+
+        if ( ! $unitQuantityFrom instanceof ProductUnitQuantity ) {
+            throw new NotFoundException( 
+                sprintf( 
+                    __( 'There is no source unit quantity having the name "%s" for the item %s'),
+                    $from->name,
+                    $product->name
+                )
+            );
+        }
+
+        if ( ! $unitQuantityTo instanceof ProductUnitQuantity ) {
+            throw new NotFoundException( 
+                sprintf( 
+                    __( 'There is no destination unit quantity having the name %s for the item %s'),
+                    $from->name,
+                    $product->name
+                )
+            );
+        }
+
+        if ( ! $this->unitService->isFromSameGroup( $from, $to ) ) {
+            throw new NotAllowedException( __( 'The source unit and the destination unit doens\'t belong to the same unit group.' ) );
+        }
+        
+        /**
+         * We can't proceed with no base unit defined.
+         */
+
+        $from->load([
+            'group.units'    =>  function( $query ) {
+                $query->where( 'base_unit', true );
+            }
+        ]);
+
+        $baseUnit   =   $from->group->units->first();
+
+        if ( ! $baseUnit instanceof Unit ) {
+            throw new NotFoundException( 
+                sprintf( 
+                    __( 'The group %s has no base unit defined'),
+                    $from->group->name
+                )
+            );
+        }
+
+        $lastFromPurchasePrice  =   $this->getLastPurchasePrice(
+            product: $product,
+            unit: $from
+        );
+
+        /**
+         * This quantity will be initially removed
+         * from the source ProductUnitQuantity
+         */
+        $this->handleStockAdjustmentRegularProducts(
+            action: ProductHistory::ACTION_CONVERT_OUT,
+            product_id: $product->id,
+            unit_id: $from->id,
+            unit_price: $lastFromPurchasePrice,
+            quantity: $quantity,
+            procurementProduct: $procurementProduct,
+            total_price: ns()->currency->define( $lastFromPurchasePrice )->multipliedBy( $quantity )->getRaw(),
+        );
+
+        $lastToPurchasePrice  =   $this->getLastPurchasePrice(
+            product: $product,
+            unit: $to
+        );
+
+        /**
+         * This quantity will be added removed
+         * from the source ProductUnitQuantity
+         */
+        $finalDestinationQuantity   =   $this->unitService->getConvertedQuantity(
+            from: $from,
+            to: $to,
+            quantity: $quantity
+        );
+
+        $this->handleStockAdjustmentRegularProducts(
+            action: ProductHistory::ACTION_CONVERT_IN,
+            product_id: $product->id,
+            unit_id: $to->id,
+            unit_price: $lastToPurchasePrice,
+            quantity: $finalDestinationQuantity,
+            procurementProduct: $procurementProduct,
+            total_price: ns()->currency->define( $lastFromPurchasePrice )->multipliedBy( $quantity )->getRaw(),
+        );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  sprintf(
+                __( 'The conversion of %s(%s) to %s(%s) was successful' ),
+                $quantity,
+                $from->name,
+                $finalDestinationQuantity,
+                $to->name
+            )
+        ];
     }
 
     public function searchProduct( $search, $limit = 5, $arguments = [] )
