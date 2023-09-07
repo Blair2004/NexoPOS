@@ -392,6 +392,7 @@ export default {
             product.procurement.tax_type                    =   product.tax_type || 'inclusive';
             product.procurement.unit_id                     =   product.unit_quantities[0].unit_id;
             product.procurement.product_id                  =   product.id;
+            // product.procurement.convert_unit_id             =   product.unitnull
             product.procurement.procurement_id              =   null;
             product.procurement.$invalid                    =   false;
 
@@ -687,19 +688,19 @@ export default {
                                                         <div class="flex">
                                                             <div class="flex md:flex-row flex-col md:-mx-1">
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
+                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
+                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="selectUnitForProduct( index )">{{ __( 'Unit' ) }}: {{ getSelectedUnit( index ) }}</span>
+                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="selectUnitForProduct( index )">{{ __( 'Unit' ) }}: {{ getSelectedUnit( index ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="selectTax( index )">{{ __( 'Tax' ) }}: {{ getSelectedTax( index ) }}</span>
+                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="selectTax( index )">{{ __( 'Tax' ) }}: {{ getSelectedTax( index ) }}</span>
                                                                 </div>
                                                                 <div class="md:px-1">
-                                                                    <span class="text-xs text-error-primary cursor-pointer underline" @click="defineConversionOption( index )">{{ __( 'Convert' ) }}: {{ product.procurement.convert_unit_id ? product.procurement.convert_unit_label : __( 'N/A' ) }}</span>
+                                                                    <span class="text-xs text-info-tertiary cursor-pointer underline" @click="defineConversionOption( index )">{{ __( 'Convert' ) }}: {{ product.procurement.convert_unit_id ? product.procurement.convert_unit_label : __( 'N/A' ) }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>

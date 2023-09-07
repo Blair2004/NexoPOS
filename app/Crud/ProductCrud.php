@@ -185,7 +185,7 @@ class ProductCrud extends CrudService
                 'errors' => [],
                 'name' => 'convert_unit_id',
                 'label' => __( 'Convert Unit' ),
-                'validation'    =>  'required|different:unit_id',
+                'validation'    =>  'different:unit_id',
                 'options'   =>  Helper::toJsOptions( $units, [ 'id', 'name' ] ),
                 'value' => '',
                 'description' => __( 'The unit that is selected for convertion by default.' ),

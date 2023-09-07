@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col flex-auto ns-select">
         <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'has-error' : 'is-pristine'" class="border-2 mt-1 relative rounded-md shadow-sm mb-2 overflow-hidden">
+        <div :class="hasError ? 'has-error' : 'is-pristine'" class="border-2 mt-1 relative rounded-md shadow-sm mb-1 overflow-hidden">
             <div @click="showResults = ! showResults" class="h-10 sm:leading-5 py-2 px-4 flex items-center bg-input-background cursor-default">
                 <span class="text-primary text-sm">{{  selectedOption }}</span>
             </div>
@@ -18,12 +18,7 @@
                 </div>
             </div>
         </div>
-        <p v-if="! field.errors || field.errors.length === 0" class="text-xs ns-description">{{ field.description }}</p>
-        <p :key="index" v-for="(error,index) of field.errors" class="text-xs ns-error">
-            <slot v-if="error.identifier === 'required'" :name="error.identifier">{{ __( 'This field is required.' ) }}</slot>
-            <slot v-if="error.identifier === 'email'" :name="error.identifier">{{ __( 'This field must contain a valid email address.' ) }}</slot>
-            <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>
-        </p>
+        <ns-field-description :field="field"></ns-field-description>
     </div>
 </template>
 <script lang="ts">

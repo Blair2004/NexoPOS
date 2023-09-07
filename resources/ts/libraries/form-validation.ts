@@ -64,7 +64,7 @@ export default class FormValidation {
     }
 
     validateField( field ) {
-        return this.checkField( field, fields );
+        return this.checkField( field );
     }
 
     fieldsValid( fields ) {
@@ -163,7 +163,7 @@ export default class FormValidation {
         return form;
     }
 
-    checkField( field, fields ) {
+    checkField( field, fields = [] ) {
         if ( field.validation !== undefined ) {
             field.errors    =   [];
             const rules     =   this.detectValidationRules( field.validation );
@@ -310,11 +310,13 @@ export default class FormValidation {
         }
     }
 
-    trackError( field, rule ) {
+    trackError( field, rule, fields ) {
         field.errors.push({
             identifier: rule.identifier,
             invalid: true,
-            name: field.name
+            name: field.name,
+            rule,
+            fields
         })
     }
 
@@ -345,13 +347,11 @@ export default class FormValidation {
 
             const ruleValidated   =   rules[ rule.identifier ];
 
-            console.log({ ruleValidated: ! ruleValidated( rule, field ), identifier: rule.identifier });
-            
-            if ( ruleValidated !== undefined ) {
-                if ( ! ruleValidated( field, rule ) ) {
-                    this.trackError( field, rule );
+            if ( typeof ruleValidated === 'function' ) {
+                if ( ruleValidated( field, rule ) === false ) {
+                    return this.unTrackError( field, rule );                    
                 } else {
-                    this.unTrackError( field, rule );
+                    return this.trackError( field, rule, fields );
                 }
             }
     

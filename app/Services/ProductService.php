@@ -445,7 +445,7 @@ class ProductService
 
         /**
          * this will calculate the unit quantities
-         * for the creaed product.
+         * for the created product.
          */
         $this->__computeUnitQuantities( $fields, $product );
 
@@ -709,6 +709,7 @@ class ProductService
                 $unitQuantity->preview_url = $group[ 'preview_url' ] ?? '';
                 $unitQuantity->low_quantity = $group[ 'low_quantity' ] ?? 0;
                 $unitQuantity->stock_alert_enabled = $group[ 'stock_alert_enabled' ] ?? false;
+                $unitQuantity->convert_unit_id = $group[ 'convert_unit_id' ] ?? null;
 
                 /**
                  * Let's compute the tax only

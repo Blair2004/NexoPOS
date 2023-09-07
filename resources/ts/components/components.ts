@@ -15,6 +15,7 @@ import nsDatepicker         from  './ns-datepicker.vue';
 import nsDaterangePicker    from  './ns-daterange-picker.vue';
 import nsDragzone           from  './ns-dragzone.vue';
 import nsField              from  './ns-field.vue';
+import nsFieldDescription   from  './ns-field-description.vue';
 import nsIconButton         from  './ns-icon-button.vue';
 import nsInlineMultiselect  from  './ns-inline-multiselect.vue';
 import nsInput              from  './ns-input.vue';
@@ -84,4 +85,5 @@ export {
     nsConfirmPopup,
     nsPOSLoadingPopup,
     nsPageTitle,
+    nsFieldDescription
 };

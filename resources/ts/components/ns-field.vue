@@ -95,7 +95,7 @@ export default {
 }
 </script>
 <template>
-    <div class="flex flex-auto">
+    <div class="flex flex-auto mb-2">
         <ns-input :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

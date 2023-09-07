@@ -38,14 +38,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="field.errors && field.errors.length > 0">
-            <p v-if="! field.errors || field.errors.length === 0" class="text-xs ns-description"><slot name="description"></slot></p>
-            <p :key="index" v-for="(error,index) of field.errors" clas  s="text-xs ns-error">
-                <slot v-if="error.identifier === 'required'" :name="error.identifier">This field is required.</slot>
-                <slot v-if="error.identifier === 'email'" :name="error.identifier">This field must contain a valid email address.</slot>
-                <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>
-            </p>
-        </div>
+        <ns-field-description :field="field"></ns-field-description>
     </div>
 </template>
 <script>
