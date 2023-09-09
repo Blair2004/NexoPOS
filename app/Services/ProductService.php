@@ -1937,6 +1937,7 @@ class ProductService
             })
             ->with([ 
                 'unit_quantities.unit',
+                'category',
                 'tax_group.taxes'
             ])
             ->limit( $limit );

@@ -16,8 +16,9 @@
             <div class="overflow-y-auto ns-scrollbar flex-auto relative">
                 <ul class="ns-vertical-menu">
                     <li v-for="product of products" :key="product.id" @click="addToCart( product )" class="cursor-pointer p-2 flex justify-between border-b">
-                        <div class="text-primary">
-                            {{ product.name }}
+                        <div class="">
+                            <h2 class="text-primary">{{ product.name }}</h2>
+                            <small class="text-soft-secondary text-xs">{{ product.category.name }}</small>
                         </div>
                         <div></div>
                     </li>

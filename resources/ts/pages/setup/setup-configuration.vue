@@ -4,7 +4,14 @@
         <div class="bg-white rounded shadow my-2" v-if="fields.length > 0">
             <div class="welcome-box border-b border-gray-300 p-3 text-gray-700">
                 <div class="border-b pb-3 mb-3" v-html="__( '<strong>NexoPOS</strong> is now able to connect to the database. Start by creating the administrator account and giving a name to your installation. Once installed, this page will no longer be accessible.' )"></div>
-                <ns-field v-for="( field, key ) of fields" :key="key" :field="field"></ns-field>
+                <div class="flex -mx-2">
+                    <div class="px-2 w-full md:w-1/2">
+                        <ns-field v-for="( field, key ) of divide(fields)[0]" :key="key" :field="field"></ns-field>
+                    </div>
+                    <div class="px-2 w-full md:w-1/2">
+                        <ns-field v-for="( field, key ) of divide(fields)[1]" :key="key" :field="field"></ns-field>
+                    </div>
+                </div>
             </div>
             <div class="bg-gray-200 p-3 flex justify-between items-center">
                 <div>
@@ -56,6 +63,16 @@ export default {
                             .subscribe();
                     }
                 });
+        },
+
+        divide(arr) {
+            // get the middle index of the array
+            var mid = Math.floor(arr.length / 2);
+            // slice the array into two arrays
+            var arr1 = arr.slice(0, mid);
+            var arr2 = arr.slice(mid);
+            // return an array of two arrays
+            return [arr1, arr2];
         },
 
         checkDatabase() {

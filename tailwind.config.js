@@ -135,6 +135,10 @@ module.exports = {
         secondary: withOpacityValue('--secondary'),  
         tertiary: withOpacityValue('--tertiary'),  
 
+        'soft-primary': withOpacityValue('--soft-primary'),
+        'soft-secondary': withOpacityValue('--soft-secondary'),
+        'soft-tertiary': withOpacityValue('--soft-tertiary'),
+
         'info-primary': withOpacityValue('--info-primary'),
         'info-secondary': withOpacityValue('--info-secondary'),  
         'info-tertiary': withOpacityValue('--info-tertiary'),  
