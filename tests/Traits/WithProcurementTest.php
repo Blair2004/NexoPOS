@@ -180,7 +180,7 @@ trait WithProcurementTest
          * was returned
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'DELETE', 'api/procurements/' . $products       =   $response->json()[ 'data' ][ 'procurement' ][ 'id' ] );
+            ->json( 'DELETE', 'api/procurements/' . $response->json()[ 'data' ][ 'procurement' ][ 'id' ] );
 
         collect( $quantities )->map( function( $product ) use ( $productService ) {
             $actualQuantity = $productService->getQuantity(
