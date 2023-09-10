@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="relative" v-if="showResults">
-            <div class="w-full overflow-hidden -top-[12px] border-r-2 border-l-2 border-t rounded-b-md border-b-2 border-input-edge bg-input-background shadow z-10 absolute">
+            <div class="w-full overflow-hidden -top-[8px] border-r-2 border-l-2 border-t rounded-b-md border-b-2 border-input-edge bg-input-background shadow z-10 absolute">
                 <div class="border-b border-input-edge border-dashed p-2">
                     <input @keypress.enter="selectFirstOption()" ref="searchInputField" v-model="searchField" type="text" :placeholder="__( 'Search result' )">
                 </div>
@@ -42,7 +42,7 @@ export default {
                     return expression.test( option.label );
                 }).splice(0,10);
             } else {
-                return this.field.options.splice(0,10);
+                return this.field.options;
             }
         },
         hasError() {
@@ -81,7 +81,8 @@ export default {
             }
         },
         selectOption( option ) {
-            this.selectedOption     =   option.label || __( 'Select An Option' )
+            this.selectedOption =   option.label || __( 'Select An Option' )
+            this.field.value    =   option.value;
             this.$emit( 'change', option.value );
             this.searchField    =   '';
             this.showResults    =   false;

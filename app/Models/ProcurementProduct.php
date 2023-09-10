@@ -12,6 +12,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
+
 /**
  * @property integer $id
  * @property mixed $name
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float $tax_value
  * @property float $total_purchase_price
  * @property integer $unit_id
+ * @property integer $convert_unit_id
  * @property integer $author
  * @property mixed $uuid
  * @property \Carbon\Carbon $created_at

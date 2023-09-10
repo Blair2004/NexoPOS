@@ -27,7 +27,7 @@ return [
         ], [
             'type' => 'switch',
             'name' => 'automatic_approval',
-            'value' => $procurement->automatic_approval ?? '',
+            'value' => $procurement->automatic_approval ?? 1,
             'options' => Helper::kvToJsOptions([
                 0 => __( 'No' ),
                 1 => __( 'Yes' ),
@@ -37,7 +37,7 @@ return [
         ], [
             'type' => 'select',
             'name' => 'delivery_status',
-            'value' => $procurement->delivery_status ?? '',
+            'value' => $procurement->delivery_status ?? 'delivered',
             'validation' => 'required',
             'options' => Helper::kvToJsOptions([
                 'pending' => __( 'Pending' ),
@@ -48,7 +48,7 @@ return [
         ], [
             'type' => 'select',
             'name' => 'payment_status',
-            'value' => $procurement->payment_status ?? '',
+            'value' => $procurement->payment_status ?? 'paid',
             'validation' => 'required',
             'options' => Helper::kvToJsOptions([
                 'unpaid' => __( 'Unpaid' ),
@@ -57,7 +57,7 @@ return [
             'label' => __( 'Payment Status' ),
             'description' => __( 'Determine what is the actual payment status of the procurement.' ),
         ], [
-            'type' => 'select',
+            'type' => 'search-select',
             'name' => 'provider_id',
             'value' => $procurement->provider_id ?? '',
             'validation' => 'required',

@@ -469,6 +469,8 @@ class ProductHistoryCrud extends CrudService
                 break;
             case ProductHistory::ACTION_TRANSFER_OUT:
             case ProductHistory::ACTION_TRANSFER_IN:
+            case ProductHistory::ACTION_CONVERT_OUT:
+            case ProductHistory::ACTION_CONVERT_IN:
                 $entry->{ '$cssClass' } = 'bg-blue-100 border-blue-200 border text-sm dark:text-slate-300 dark:bg-blue-600 dark:border-blue-700';
                 break;
             case ProductHistory::ACTION_RETURNED:                
@@ -510,6 +512,10 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_ADJUSTMENT_RETURN : $entry->operation_type = __( 'Adjustment Return' );
             break;
             case ProductHistory::ACTION_ADJUSTMENT_SALE :   $entry->operation_type = __( 'Adjustment Sale' );
+            break;
+            case ProductHistory::ACTION_CONVERT_IN :   $entry->operation_type = __( 'Incoming Conversion' );
+            break;
+            case ProductHistory::ACTION_CONVERT_OUT :   $entry->operation_type = __( 'Outgoing Conversion' );
             break;
             default: Hook::filter( 'ns-products-history-operation', $entry->operation_type );
             break;

@@ -335,11 +335,11 @@ export default class FormValidation {
                 email: ( field, rule ) => field.value.length > 0 && ! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test( field.value ),
                 same: ( field, rule ) => {
                     const similar = fields.filter( field => field.name === rule.value )
-                    return similar.length === 1 && similar[0].value !== field.value;
+                    return similar.length === 1 && ( [ 'string', 'number' ].includes( typeof field.value ) && field.value.length > 0 && similar[0].value !== field.value );
                 },
                 different: ( field, rule ) => {
                     const similar = fields.filter( field => field.name === rule.value )
-                    return similar.length === 1 && similar[0].value === field.value;
+                    return similar.length === 1 && ( [ 'string', 'number' ].includes( typeof field.value ) && field.value.length > 0 && similar[0].value === field.value );
                 },
                 min: ( field, rule ) => field.value.length < parseInt( rule.value ),
                 max: ( field, rule ) => field.value.length > parseInt( rule.value )

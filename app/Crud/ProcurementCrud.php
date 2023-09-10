@@ -332,7 +332,7 @@ class ProcurementCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'providers_name' => [
+            'providers_first_name' => [
                 'label' => __( 'Provider' ),
                 '$direction' => '',
                 '$sort' => false,

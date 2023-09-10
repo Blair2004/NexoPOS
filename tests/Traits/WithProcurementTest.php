@@ -131,6 +131,73 @@ trait WithProcurementTest
         );
     }
 
+    protected function attemptDeleteProcurement()
+    {
+        /**
+         * @var TestService
+         */
+        $testService = app()->make( TestService::class );
+
+        /**
+         * @var ProductService
+         */
+        $productService = app()->make( ProductService::class );
+
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
+            'general.payment_status'    =>  Procurement::PAYMENT_PAID,
+            'general.delivery_status'   =>  Procurement::DELIVERED,
+            'total_products'            =>  5,
+            'total_unit_quantities'     =>  1
+        ]);
+
+        /**
+         * Query: We store the procurement with an unpaid status.
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
+
+        $response->assertOk();
+
+        /**
+         * identifying the products and retreive
+         * the current quantities
+         */
+        $products       =   $response->json()[ 'data' ][ 'products' ];
+
+        $quantities     =   collect( $products )->map( fn( $product ) => [
+            'product_id'    =>  $product[ 'product_id' ],
+            'unit_id'       =>  $product[ 'unit_id' ],
+            'name'          =>  $product[ 'name' ],
+            'quantity'      =>  $product[ 'quantity' ],
+            'total_quantity'      =>  $productService->getQuantity(
+                product_id: $product[ 'product_id' ],
+                unit_id: $product[ 'unit_id' ]
+            )
+        ]);
+
+        /**
+         * lets now delete to see if products
+         * was returned
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', 'api/procurements/' . $products       =   $response->json()[ 'data' ][ 'procurement' ][ 'id' ] );
+
+        collect( $quantities )->map( function( $product ) use ( $productService ) {
+            $actualQuantity = $productService->getQuantity(
+                product_id: $product[ 'product_id' ],
+                unit_id: $product[ 'unit_id' ]
+            );
+
+            $this->assertTrue( $actualQuantity == $product[ 'total_quantity' ] - $product[ 'quantity' ], sprintf(
+                'The product "%s" didn\'t has it\'s inventory updated after a procurement deletion to "%s". "%s" is the actual value, "%s" was removed',
+                $product[ 'name' ],
+                $product[ 'total_quantity' ] - $product[ 'quantity' ],
+                $actualQuantity,
+                $product[ 'quantity' ]
+            ));
+        });
+    }
+
     protected function attemptCreateProcurementWithConversion()
     {
         $faker      =   Factory::create();
