@@ -131,6 +131,28 @@ trait WithProcurementTest
         );
     }
 
+    protected function attemptDeleteProcurementWithConvertedProducts()
+    {
+        /**
+         * @var TestService
+         */
+        $testService = app()->make( TestService::class );
+
+        /**
+         * @var ProductService
+         */
+        $productService = app()->make( ProductService::class );
+
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
+            'general.payment_status'    =>  Procurement::PAYMENT_PAID,
+            'general.delivery_status'   =>  Procurement::DELIVERED,
+            'total_products'            =>  5,
+            'total_unit_quantities'     =>  1
+        ]);
+
+        dump( $procurementsDetails );
+    }
+
     protected function attemptDeleteProcurement()
     {
         /**
