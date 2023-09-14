@@ -89,7 +89,7 @@ class TransactionController extends DashboardController
         $fields = $request->only([
             'name',
             'active',
-            'category_id',
+            'account_id',
             'description',
             'media_id',
             'value',
@@ -161,18 +161,15 @@ class TransactionController extends DashboardController
     }
 
     /**
-     * delete a specific category
-     *
-     * @param int category id
-     * @return json
+     * delete a specific transaction account
      */
-    public function deleteCategory( $id )
+    public function deleteAccount( int $id )
     {
-        return $this->transactionService->deleteCategory( $id );
+        return $this->transactionService->deleteAccount( $id );
     }
 
     /**
-     * Create an expense category
+     * Create an transaction account.
      *
      * @param Request
      * @return json
@@ -190,12 +187,9 @@ class TransactionController extends DashboardController
     }
     /**
      * Get expenses entries under a specific
-     * expense category
-     *
-     * @param int Expense Category ID
-     * @return array
+     * transaction account
      */
-    public function getTransactionAccountsHistory( $id )
+    public function getTransactionAccountsHistory( int $id ): array
     {
         return $this->transactionService->getTransactionAccountByID( $id )->transactions;
     }

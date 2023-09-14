@@ -12,4 +12,4 @@ Route::post( 'transactions-accounts', [ TransactionController::class, 'postTrans
 Route::put( 'transactions/{id}', [ TransactionController::class, 'put' ])->where( 'id', '[0-9]+');
 Route::put( 'transactions-accounts/{id}', [ TransactionController::class, 'putTransactionAccount' ])->where( 'id', '[0-9]+');
 Route::delete( 'transactions/{id}', [ TransactionController::class, 'delete' ])->where('id', '[0-9]+');
-Route::delete( 'transactions-accounts/{id}', [ TransactionController::class, 'deleteCategory' ])->where('id', '[0-9]+');
+Route::delete( 'transactions-accounts/{id}', [ TransactionController::class, 'deleteAccount' ])->where('id', '[0-9]+');

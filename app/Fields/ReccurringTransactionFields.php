@@ -10,7 +10,7 @@ use App\Services\Helper;
 
 class ReccurringTransactionFields extends FieldsService
 {
-    protected static $identifier = 'ns.recurring-transactions';
+    protected static $identifier = Transaction::TYPE_RECURRING;
 
     public function __construct( Transaction $transaction = null )
     {

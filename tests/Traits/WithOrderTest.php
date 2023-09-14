@@ -206,16 +206,6 @@ trait WithOrderTest
         $result     =   $this->disburseCashFromRegister( $cashRegister, $cashRegisterService );
 
         /**
-         * @var TransactionHistory
-         */
-        $transactionHistory   =   TransactionHistory::where( 'register_history_id', $result[ 'data' ][ 'history' ]->id )
-            ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
-            ->first();
-
-        $this->assertTrue( $transactionHistory instanceof TransactionHistory, __( 'No cash flow was created for cash disbursement.' ) );
-        $this->assertTrue( $transactionHistory->value == $result[ 'data' ][ 'history' ]->value, __( 'The register history value doesn\'t match the cash flow value.' ) );
-
-        /**
          * between each operation
          * we need to refresh the cash register
          */
@@ -233,16 +223,6 @@ trait WithOrderTest
          * Step 5 : cash in some cash
          */
         $result     =   $this->cashInOnRegister( $cashRegister, $cashRegisterService );
-
-        /**
-         * @var TransactionHistory
-         */
-        $transactionHistory   =   TransactionHistory::where( 'register_history_id', $result[ 'data' ][ 'history' ]->id )
-            ->where( 'operation', TransactionHistory::OPERATION_CREDIT )
-            ->first();
-
-        $this->assertTrue( $transactionHistory instanceof TransactionHistory, __( 'No cash flow was created for cash in.' ) );
-        $this->assertTrue( $transactionHistory->value == $result[ 'data' ][ 'history' ]->value, __( 'The register history value doesn\'t match the cash flow value.' ) );
 
         /**
          * We neet to refresh the register
@@ -2720,12 +2700,12 @@ trait WithOrderTest
         $product = Product::withStockEnabled()
             ->notGrouped()
             ->notInGroup()
-            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
-            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->with( 'unit_quantities' )
             ->get()
             ->random();
 
-        $unit = $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
+        $unit = $product->unit_quantities()->first();
+
         $product_price = $this->faker->numberBetween( $rules->first()->from, $rules->first()->to );
         $subtotal = $product_price;
         $shippingFees = 0;

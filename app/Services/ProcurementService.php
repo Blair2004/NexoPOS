@@ -909,7 +909,25 @@ class ProcurementService
                     'unit_price' => $product->purchase_price,
                     'total_price' => $product->total_purchase_price,
                     'unit_id' => $product->unit_id,
-                ]);                
+                ]);
+
+                $currentQuantity = $this->productService->getQuantity(
+                    $product->product_id,
+                    $product->unit_id,
+                    $product->id
+                );
+
+                $newQuantity = $this->currency
+                    ->define( $currentQuantity )
+                    ->additionateBy( $product->quantity )
+                    ->get();
+
+                $this->productService->setQuantity( $product->product_id, $product->unit_id, $newQuantity, $product->id );
+
+                /**
+                 * will generate a unique barcode for the procured product
+                 */
+                $this->generateBarcode( $product );
 
                 /**
                  * We'll now check if the product is about to be
@@ -923,24 +941,6 @@ class ProcurementService
                         procurementProduct: $product,
                         to: Unit::find( $product->convert_unit_id )
                     );
-                } else {
-                    $currentQuantity = $this->productService->getQuantity(
-                        $product->product_id,
-                        $product->unit_id,
-                        $product->id
-                    );
-
-                    $newQuantity = $this->currency
-                        ->define( $currentQuantity )
-                        ->additionateBy( $product->quantity )
-                        ->get();
-    
-                    $this->productService->setQuantity( $product->product_id, $product->unit_id, $newQuantity, $product->id );
-
-                    /**
-                     * will generate a unique barcode for the procured product
-                     */
-                    $this->generateBarcode( $product );
                 }
             });
 

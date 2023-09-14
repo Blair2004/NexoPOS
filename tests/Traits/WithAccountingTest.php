@@ -132,7 +132,9 @@ trait WithAccountingTest
          * @var TestService
          */
         $procurementsDetails = app()->make( TestService::class );
-        $procurementData = $procurementsDetails->prepareProcurement( ns()->date->now(), [] );
+        $procurementData = $procurementsDetails->prepareProcurement( ns()->date->now(), [
+            'total_products'    =>  10
+        ] );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/procurements', $procurementData );

@@ -56,7 +56,7 @@ class ExecuteDelayedTransactionJob implements ShouldQueue
         $notificationService->create([
             'title' => __( 'Scheduled Transactions' ),
             'description' => sprintf( __( 'the transaction "%s" was executed as scheduled on %s.' ), $this->transaction->name, $dateService->getNowFormatted() ),
-            'url' => ns()->route( 'ns.dashboard.transaction.history', [ 'transaction' => $this->transaction->id ]),
+            'url' => ns()->route( 'ns.dashboard.transactions.history', [ 'transaction' => $this->transaction->id ]),
         ])->dispatchForGroup([ Role::namespace( Role::ADMIN ), Role::namespace( Role::STOREADMIN ) ]);
     }
 }

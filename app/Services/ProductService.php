@@ -746,25 +746,18 @@ class ProductService
     /**
      * get product quantity according
      * to a specific unit id
-     *
-     * @param int product id
-     * @param int unit id
      */
-    public function getQuantity( $product_id, $unit_id )
+    public function getQuantity( int $product_id, int $unit_id )
     {
-        $unitQuantities = $this->get( $product_id )->unit_quantities;
-        $filtredQuantities = $unitQuantities->filter( function( $quantity ) use ( $unit_id ) {
-            return (int) $quantity->unit_id === (int) $unit_id;
-        });
+        $product = Product::with([
+            'unit_quantities' => fn( $query ) => $query->where( 'unit_id', $unit_id )
+        ])->find( $product_id );
 
-        /**
-         * if there is not an entry, we'll return 0
-         * if there is an entry, we'll get the first quantity
-         * if it's no set, we'll return 0
-         */
-        return $filtredQuantities->count() > 0 ? $this->currency->define(
-            $filtredQuantities->first()->quantity
-        )->get() : 0;
+        if ( $product->unit_quantities->count() > 0 ) {
+            return $this->currency->define( $product->unit_quantities->first()->quantity )->toFloat();
+        }
+
+        return 0;
     }
 
     /**
@@ -1357,7 +1350,7 @@ class ProductService
                 quantity: $quantity,
                 total_price: $total_price,
                 procurement_product_id: $procurementProduct?->id ?: null,
-                procurement_id: $procurementProduct->procurement_id,
+                procurement_id: $procurementProduct->procurement_id ?? null,
                 order_id: isset( $orderProduct ) ? $orderProduct->order_id : null,
                 order_product_id: isset( $orderProduct ) ? $orderProduct->id : null,
                 old_quantity: $result[ 'data' ][ 'oldQuantity' ],
@@ -1635,7 +1628,7 @@ class ProductService
      * Will return the last purchase price
      * defined for the provided product
      */
-    public function getLastPurchasePrice( Product $product, Unit $unit, string | null $before = null ): float | int
+    public function getLastPurchasePrice( Product | null $product, Unit $unit, string | null $before = null ): float | int
     {
         if ( $product instanceof Product ) {
             $request = ProcurementProduct::where( 'product_id', $product->id )

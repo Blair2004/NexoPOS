@@ -40,7 +40,7 @@ class DetectScheduledTransactionsJob implements ShouldQueue
         $endRange->setSeconds(59);
 
         $query = Transaction::scheduled()
-            ->with( 'category' )
+            ->with( 'account' )
             ->active()
             ->scheduledAfterDate( $startRange->toDateTimeString() )
             ->scheduledBeforeDate( $endRange->toDateTimeString() );

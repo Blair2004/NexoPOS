@@ -10,7 +10,7 @@ use App\Services\Helper;
 
 class ScheduledTransactionFields extends FieldsService
 {
-    protected static $identifier = 'ns.scheduled-transactions';
+    protected static $identifier = Transaction::TYPE_SCHEDULED;
 
     public function __construct( Transaction $transaction = null )
     {

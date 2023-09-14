@@ -180,12 +180,9 @@ class TransactionService
     /**
      * Delete a specific account
      * using the provided id, along with the transactions
-     *
-     * @param int id
-     * @param bool force deleting
-     * @return array|NotAllowedException
+     * @throws NotAllowedException
      */
-    public function deleteCategory( $id, $force = false )
+    public function deleteAccount( int $id, bool $force = false ): array
     {
         $accountType = $this->getTransactionAccountByID( $id );
 
@@ -212,8 +209,9 @@ class TransactionService
     /**
      * Get a specific transaction
      * account using the provided ID
+     * @throws NotFoundException
      */
-    public function getTransaction( int $id )
+    public function getTransaction( int $id ): TransactionAccount
     {
         $accountType = TransactionAccount::with( 'transactions' )->find( $id );
 
@@ -225,39 +223,9 @@ class TransactionService
     }
 
     /**
-     * Create an account using
-     * the provided details
-     *
-     * @param array account detail
-     * @return array status of the operation
-     *
-     * @deprecated
-     */
-    public function createCategory( $fields )
-    {
-        $account = new TransactionAccount;
-
-        foreach ( $fields as $field => $value ) {
-            $account->$field = $value;
-        }
-
-        $account->author = Auth::id();
-        $account->save();
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The transaction account has been saved' ),
-            'data' => compact( 'account' ),
-        ];
-    }
-
-    /**
      * Creates an accounting account
-     *
-     * @param array $fields
-     * @return array status
      */
-    public function createAccount( $fields )
+    public function createAccount( array $fields ): array
     {
         $account = new TransactionAccount;
 
@@ -299,11 +267,8 @@ class TransactionService
 
     /**
      * Will trigger for not recurring transaction
-     *
-     * @param Transaction $transaction
-     * @return void
      */
-    public function triggerTransaction( $transaction )
+    public function triggerTransaction( Transaction $transaction ): array
     {
         $histories = $this->recordTransactionHistory( $transaction );
 
@@ -318,7 +283,7 @@ class TransactionService
         return compact( 'transaction', 'histories' );
     }
 
-    public function getCategoryTransaction( $id )
+    public function getAccountTransactions( $id )
     {
         $accountType = $this->getTransaction( $id );
 
@@ -906,52 +871,6 @@ class TransactionService
             $transaction->updated_at = $customerHistory->updated_at;
 
             $this->recordTransactionHistory( $transaction );
-        }
-    }
-
-    public function handleCashOperation( RegisterHistory $registerHistory )
-    {
-        if ( in_array( $registerHistory->action, [ 
-                RegisterHistory::ACTION_CASHING, 
-                RegisterHistory::ACTION_CASHOUT,
-                RegisterHistory::ACTION_OPENING,
-                RegisterHistory::ACTION_CLOSING,
-            ] ) ) {
-            
-            $registerHistory->load( 'register' );
-
-            $code   =   match( $registerHistory->action ) {
-                RegisterHistory::ACTION_CASHING =>  TransactionHistory::ACCOUNT_REGISTER_CASHIN,
-                RegisterHistory::ACTION_OPENING =>  TransactionHistory::ACCOUNT_REGISTER_CASHIN,
-                RegisterHistory::ACTION_CASHOUT =>  TransactionHistory::ACCOUNT_REGISTER_CASHOUT,
-                RegisterHistory::ACTION_CLOSING =>  TransactionHistory::ACCOUNT_REGISTER_CASHOUT,
-            };
-
-            $transactionAccount = $this->getTransactionAccountByCode( $code );
-
-            $transaction = new Transaction;
-            $transaction->value = $registerHistory->value;
-            $transaction->active = true;
-            $transaction->operation = match( $registerHistory->action ) {
-                RegisterHistory::ACTION_CASHING =>  TransactionHistory::OPERATION_CREDIT,
-                RegisterHistory::ACTION_OPENING =>  TransactionHistory::OPERATION_CREDIT,
-                RegisterHistory::ACTION_CASHOUT =>  TransactionHistory::OPERATION_DEBIT,
-                RegisterHistory::ACTION_CLOSING =>  TransactionHistory::OPERATION_DEBIT,
-            };
-            $transaction->author = $registerHistory->author;
-            $transaction->register_history_id = $registerHistory->id;
-            $transaction->name = match( $registerHistory->action ) {
-                RegisterHistory::ACTION_CASHING =>  sprintf( __( 'Cash In : %s'), $registerHistory->register->name ),
-                RegisterHistory::ACTION_OPENING =>  sprintf( __( 'Cash In : %s'), $registerHistory->register->name ),
-                RegisterHistory::ACTION_CASHOUT =>  sprintf( __( 'Cash Out : %s'), $registerHistory->register->name ),
-                RegisterHistory::ACTION_CLOSING =>  sprintf( __( 'Cash Out : %s'), $registerHistory->register->name ),
-            };
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-            $transaction->created_at = $registerHistory->created_at;
-            $transaction->updated_at = $registerHistory->updated_at;
-
-            $this->recordTransactionHistory( $transaction );  
         }
     }
 
