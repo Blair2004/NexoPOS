@@ -386,8 +386,7 @@ trait WithOrderTest
         $product        =   Product::where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED )
             ->notGrouped()
             ->notInGroup()
-            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
-            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->with( 'unit_quantities' )
             ->firstOrFail();
 
         $productService->setQuantity( $product->id, $product->unit_quantities->first()->unit_id, 3 );
@@ -466,11 +465,17 @@ trait WithOrderTest
         $unitService = app()->make( UnitService::class );
 
         $product = Product::with([ 'sub_items.unit_quantity', 'sub_items.product' ])
-            ->whereRelation( 'sub_items.unit_quantity', function( $query ) {
-                $query->where( 'quantity', '>', 500 );
-            })
             ->get()
             ->random();
+
+        /**
+         * We'll provide some quantities that will
+         * be used to perform our tests
+         */
+        $product->sub_items->each( function( $subItem ) {
+            $subItem->unit_quantity->quantity   =   10000;
+            $subItem->unit_quantity->save();
+        });
 
         /**
          * We would like to store the current Quantity
@@ -538,7 +543,7 @@ trait WithOrderTest
         collect( $response[ 'data' ][ 'order' ][ 'products' ] )->each( function( $orderProduct ) use ( $response ) {
             $this->assertTrue(
                 ProductHistory::where( 'order_id', $response[ 'data' ][ 'order' ][ 'id' ] )->where( 'product_id', $orderProduct[ 'id' ] )->first() instanceof ProductHistory,
-                sprintf( 'There is no product history for the parent product %s', $orderProduct[ 'name' ] )
+                sprintf( 'There is no product history for the parent product "%s"', $orderProduct[ 'name' ] )
             );
         });
 
@@ -2094,7 +2099,7 @@ trait WithOrderTest
 
         $product = Product::withStockEnabled()
             ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
-            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->with([ 'unit_quantities' => fn( $query ) => $query->where( 'quantity', '>', 100 ) ])
             ->first();
             
         $shippingFees = 150;
@@ -2185,13 +2190,13 @@ trait WithOrderTest
         if ( $currency->define( $secondFetchCustomer->purchases_amount )
             ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'total' ] )
             ->getRaw() != $currency->getRaw( $firstFetchCustomer->purchases_amount ) ) {
-            throw new Exception(
-                sprintf(
-                    __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
-                    $secondFetchCustomer->purchases_amount - (float) $responseData[ 'data' ][ 'order' ][ 'total' ],
-                    $firstFetchCustomer->purchases_amount
-                )
-            );
+                throw new Exception(
+                    sprintf(
+                        __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
+                        $secondFetchCustomer->purchases_amount - (float) $responseData[ 'data' ][ 'order' ][ 'total' ],
+                        $firstFetchCustomer->purchases_amount
+                    )
+                );
         }
 
         /**
@@ -2223,11 +2228,13 @@ trait WithOrderTest
          * Assert: We'll check if a refund record was created as a cash flow
          * for the products linked to the order.
          */
-        collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->each( function( $product ) {
+        collect( $responseData[ 'data' ][ 'orderRefund' ][ 'refunded_products' ] )->each( function( $product ) {
             $cashFlow   =   TransactionHistory::where( 'order_id', $product[ 'order_id' ] )
-                ->where( 'order_product_id', $product[ 'id' ] )
+                ->where( 'order_product_id', $product[ 'order_product_id' ] )
                 ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
                 ->first();
+
+            $this->assertTrue( $cashFlow instanceof TransactionHistory, 'A refund transaction hasn\'t been created after a refund' );
         });
 
         /**
@@ -2254,21 +2261,20 @@ trait WithOrderTest
         }
 
         /**
-         * let's check if an expense has been created accordingly
+         * let's check if a transaction has been created accordingly
          */
-        // ns_sales_refunds_cashflow_account
-        $expenseCategory = TransactionAccount::find( ns()->option->get( 'ns_sales_refunds_account' ) );
+        $transactionAccount = TransactionAccount::find( ns()->option->get( 'ns_sales_refunds_account' ) );
 
-        if ( ! $expenseCategory instanceof TransactionAccount ) {
-            throw new Exception( __( 'An expense hasn\'t been created after the refund.' ) );
+        if ( ! $transactionAccount instanceof TransactionAccount ) {
+            throw new Exception( __( 'An transaction hasn\'t been created after the refund.' ) );
         }
 
-        $expenseValue = $expenseCategory->cashFlowHistories()
+        $transactionValue = $transactionAccount->histories()
             ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
             ->sum( 'value' );
 
-        if ( (float) $expenseValue != (float) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
-            throw new Exception( __( 'The expense created after the refund doesn\'t match the order refund total.' ) );
+        if ( (float) $transactionValue != (float) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
+            throw new Exception( __( 'The transaction created after the refund doesn\'t match the order refund total.' ) );
         }
 
         $response->assertJson([

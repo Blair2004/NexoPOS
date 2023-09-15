@@ -423,10 +423,8 @@ class OrdersService
 
     /**
      * Will compute the taxes assigned to an order
-     *
-     * @return float
      */
-    public function __saveOrderTaxes( Order $order, $taxes )
+    public function __saveOrderTaxes( Order $order, $taxes ): float
     {
         /**
          * if previous taxes had been registered,
@@ -435,24 +433,19 @@ class OrdersService
         OrderTax::where( 'order_id', $order->id )->delete();
 
         $taxCollection = collect([]);
-
+        
         if ( count( $taxes ) > 0 ) {
-            foreach ( $taxes as $tax ) {
+            $percentages    =   collect( $taxes )->map( fn( $tax ) => $tax[ 'rate' ] );
+            $response       =   $this->taxService->getTaxesComputed(
+                tax_type: $order->tax_type,
+                rates: $percentages->toArray(),
+                value: ns()->currency->define( $order->subtotal )->subtractBy( $order->discount )->toFloat()
+            );
+
+            foreach ( $taxes as $index => $tax ) {
                 $orderTax = new OrderTax;
                 $orderTax->tax_name = $tax[ 'tax_name' ];
-
-                /**
-                 * in case the tax value is not provided,
-                 * we'll compute that using the defined value
-                 *
-                 * @todo deduct discount from subtotal
-                 */
-                $orderTax->tax_value = $tax[ 'tax_value' ] ?? $this->taxService->getVatValue(
-                    $order->tax_type,
-                    $tax[ 'rate' ],
-                    $order->subtotal - $order->discount
-                );
-
+                $orderTax->tax_value = $response[ 'percentages' ][ $index ][ 'tax' ];
                 $orderTax->rate = $tax[ 'rate' ];
                 $orderTax->tax_id = $tax[ 'tax_id' ];
                 $orderTax->order_id = $order->id;
@@ -484,12 +477,12 @@ class OrdersService
                 break;
             case 'flat_vat':
             case 'variable_vat':
-                $order->tax_value = Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
+                $order->tax_value = Currency::define( $this->__saveOrderTaxes( $order, $taxes ) )->toFloat();
                 $order->products_tax_value = 0;
                 break;
             case 'products_variable_vat':
             case 'products_flat_vat':
-                $order->tax_value = Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
+                $order->tax_value = Currency::define( $this->__saveOrderTaxes( $order, $taxes ) )->toFloat();
                 $order->products_tax_value = $this->getOrderProductsTaxes( $order );
                 break;
         }
@@ -1043,7 +1036,8 @@ class OrdersService
             ->getRaw();
 
         /**
-         * Compute total witht tax.
+         * Compute total with tax.
+         * @todo not accurate
          */
         $order->total_without_tax = Currency::fresh( $order->subtotal )
             ->subtractBy( $order->discount )
@@ -1421,9 +1415,9 @@ class OrdersService
         if ( empty( $fields[ 'tax_value' ] ) ) {
             $fields[ 'tax_value' ] = $this->currencyService->define(
                 $this->taxService->getComputedTaxGroupValue(
-                    $fields[ 'tax_type' ] ?? $product->tax_type ?? null,
-                    $fields[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
-                    $sale_price
+                    tax_type: $fields[ 'tax_type' ] ?? $product->tax_type ?? null,
+                    tax_group_id: $fields[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
+                    price: $sale_price
                 )
             )
             ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
@@ -1529,9 +1523,9 @@ class OrdersService
         $order->support_instalments = $fields[ 'support_instalments' ] ?? true; // by default instalments are supported
         $order->author = $fields[ 'author' ] ?? Auth::id(); // the author can now be changed
         $order->title = $fields[ 'title' ] ?? null;
-        $order->tax_value = $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 );
-        $order->products_tax_value = $this->currencyService->getRaw( $fields[ 'products_tax_value' ] ?? 0 );
-        $order->total_tax_value = $this->currencyService->getRaw( $fields[ 'total_tax_value' ] ?? 0 );
+        $order->tax_value = $this->currencyService->define( $fields[ 'tax_value' ] ?? 0 )->toFloat();
+        $order->products_tax_value = $this->currencyService->define( $fields[ 'products_tax_value' ] ?? 0 )->toFloat();
+        $order->total_tax_value = $this->currencyService->define( $fields[ 'total_tax_value' ] ?? 0 )->toFloat();
         $order->code = $order->code ?: ''; // to avoid generating a new code
         $order->save();
 
@@ -1658,13 +1652,19 @@ class OrdersService
         } elseif ( in_array( $posVat, [
             'flat_vat',
             'variable_vat',
-        ])) {
+        ]) && $order->taxes->count() > 0 ) {
             $subTotal = $order->products()
                 ->validProducts()
                 ->sum( 'total_price' );
 
-            $taxValue = $order->taxes->map( function( $tax ) use ( $order, $subTotal ) {
-                $tax->tax_value = $this->taxService->getVatValue( $order->tax_type, $tax->rate, $subTotal );
+            $response   =   $this->taxService->getTaxesComputed(
+                tax_type: $order->tax_type,
+                rates: $order->taxes->map( fn( $tax ) => $tax->rate )->toArray(),
+                value: $subTotal
+            );
+
+            $taxValue = $order->taxes->map( function( $tax, $index ) use ( $order, $subTotal, $response ) {
+                $tax->tax_value = $response[ 'percentages' ][ $index ][ 'tax' ];
                 $tax->save();
 
                 return $tax->tax_value;
@@ -1683,11 +1683,11 @@ class OrdersService
      */
     public function getOrderProductsTaxes( $order )
     {
-        return $this->currencyService->getRaw( $order
+        return $this->currencyService->define( $order
             ->products()
             ->get()
             ->map( fn( $product ) => $product->tax_value )->sum()
-        );
+        )->toFloat();
     }
 
     public function computeTotal( $fields, $order )
@@ -1695,14 +1695,17 @@ class OrdersService
         return $this->currencyService->define( $order->subtotal )
             ->subtractBy( $order->discount )
             ->additionateBy( $order->shipping )
-            ->getRaw();
+            ->toFloat();
     }
 
     public function computeSubTotal( $fields, $order )
     {
-        return $this->currencyService->getRaw( collect( $fields[ 'products' ] )
-            ->map( fn( $product ) => floatval( $product[ 'total_price' ] ) )
-            ->sum() );
+        return $this->currencyService->define( 
+                collect( $fields[ 'products' ] )
+                    ->map( fn( $product ) => floatval( $product[ 'total_price' ] ) )
+                    ->sum() 
+            )
+            ->toFloat();
     }
 
     private function __customerIsDefined($fields)
@@ -1764,7 +1767,10 @@ class OrdersService
          * let's update the order refund total
          */
         $orderRefund->load( 'refunded_products' );
-        $orderRefund->total = Currency::raw( ( $orderRefund->refunded_products->sum( 'total_price' ) + $shipping ) ); //  - $orderRefund->tax_value
+        $orderRefund->total = Currency::define( 
+            $orderRefund->refunded_products->sum( 'total_price' ) 
+        )->additionateBy( $shipping )->toFloat();
+
         $orderRefund->save();
 
         /**
@@ -1792,12 +1798,9 @@ class OrdersService
     }
 
     /**
-     * Refund a product from an order
-     *
-     * @param int product id
-     * @param string status : sold, returned, defective
+     * Refund a single product from an order.
      */
-    public function refundSingleProduct( Order $order, OrderRefund $orderRefund, OrderProduct $orderProduct, $details )
+    public function refundSingleProduct( Order $order, OrderRefund $orderRefund, OrderProduct $orderProduct, array $details ): array
     {
         if ( ! in_array( $details[ 'condition' ], [
             OrderProductRefund::CONDITION_DAMAGED,
@@ -1892,7 +1895,10 @@ class OrdersService
 
         return [
             'status' => 'success',
-            'message' => __('The product %s has been successfully refunded.'),
+            'message' => sprintf(
+                __('The product %s has been successfully refunded.'),
+                $orderProduct->name
+            ),
             'data' => compact( 'productRefund', 'orderProduct' ),
         ];
     }

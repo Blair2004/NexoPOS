@@ -156,7 +156,7 @@ trait WithTaxTest
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
-                return $tax;
+                return $tax->toArray();
             }),
         ]);
 
