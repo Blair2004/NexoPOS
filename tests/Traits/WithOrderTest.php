@@ -542,7 +542,7 @@ trait WithOrderTest
          */
         collect( $response[ 'data' ][ 'order' ][ 'products' ] )->each( function( $orderProduct ) use ( $response ) {
             $this->assertTrue(
-                ProductHistory::where( 'order_id', $response[ 'data' ][ 'order' ][ 'id' ] )->where( 'product_id', $orderProduct[ 'id' ] )->first() instanceof ProductHistory,
+                ProductHistory::where( 'order_id', $response[ 'data' ][ 'order' ][ 'id' ] )->where( 'order_product_id', $orderProduct[ 'id' ] )->first() instanceof ProductHistory,
                 sprintf( 'There is no product history for the parent product "%s"', $orderProduct[ 'name' ] )
             );
         });
