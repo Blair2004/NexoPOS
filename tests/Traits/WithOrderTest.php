@@ -464,9 +464,8 @@ trait WithOrderTest
          */
         $unitService = app()->make( UnitService::class );
 
-        $product = Product::with([ 'sub_items.unit_quantity', 'sub_items.product' ])
-            ->get()
-            ->random();
+        $product = Product::grouped()->with([ 'sub_items.unit_quantity', 'sub_items.product' ])
+            ->first();
 
         /**
          * We'll provide some quantities that will
@@ -1012,48 +1011,9 @@ trait WithOrderTest
 
         for ( $i = 0; $i < $this->count; $i++ ) {
             $singleResponse = [];
-
-            $products = Product::notGrouped()
-                ->notInGroup()
-                ->whereRelation( 'unit_quantities', 'quantity', '>', 1000 )
-                ->with( 'unit_quantities', function( $query ) {
-                    $query->where( 'quantity', '>', 100 );
-                })
-                ->get()
-                ->shuffle()
-                ->take(3);
-            $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
-            $discountRate = $faker->numberBetween(0, 5);
-
-            $products = $products->map( function( $product ) use ( $faker, $taxService ) {
-                $unitElement = $faker->randomElement( $product->unit_quantities );
-                $discountRate = 10;
-                $quantity = $faker->numberBetween(1, 10);
-                $data = array_merge([
-                    'name' => $product->name,
-                    'discount' => $taxService->getPercentageOf( $unitElement->sale_price * $quantity, $discountRate ),
-                    'discount_percentage' => $discountRate,
-                    'discount_type' => $faker->randomElement([ 'flat', 'percentage' ]),
-                    'quantity' => $quantity,
-                    'unit_price' => $unitElement->sale_price,
-                    'tax_type' => 'inclusive',
-                    'tax_group_id' => 1,
-                    'unit_id' => $unitElement->unit_id,
-                ], $this->customProductParams );
-
-                if ( ! $this->allowQuickProducts ) {
-                    $data[ 'product_id' ] = $product->id;
-                    $data[ 'unit_quantity_id' ] = $unitElement->id;
-                } elseif ( $faker->randomElement([ true, false ]) ) {
-                    $data[ 'product_id' ] = $product->id;
-                    $data[ 'unit_quantity_id' ] = $unitElement->id;
-                }
-
-                return $data;
-            })->filter( function( $product ) {
-                return $product[ 'quantity' ] > 0;
-            });
-
+            $shippingFees   = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
+            $discountRate   = $faker->numberBetween(0, 5);
+            
             /**
              * if no products are provided we'll generate random
              * product to use on the order.
@@ -1064,7 +1024,9 @@ trait WithOrderTest
                     ->whereHasRelation( 'unit_quantities', 'quantity', '>', 500 )
                     ->with( 'unit_quantities', function( $query ) {
                         $query->where( 'quantity', '>', 500 );
-                    })->get()->shuffle()->take(3);
+                    })
+                    ->limit(3)
+                    ->get();
 
                 $products = $products->map( function( $product ) use ( $faker, $taxService ) {
                     $unitElement = $faker->randomElement( $product->unit_quantities );
@@ -1676,22 +1638,21 @@ trait WithOrderTest
 
         $product            =   Product::withStockEnabled()
             ->notGrouped()
-            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 0 ) )
-            ->get()
-            ->random();
+            ->with( 'unit_quantities'  )
+            ->first();
+
+        // We provide some quantities to ensure
+        // the test doesn't fail because of the missing stock
+        $product->unit_quantities->each( function( $unitQuantity ) {
+            $unitQuantity->quantity = 10000;
+            $unitQuantity->save();
+        });
 
         $unitQuantity   =   $product->unit_quantities->first();
 
         if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
             throw new Exception( 'No valid unit is available.' );
         }
-
-        /**
-         * Step 1: We want to make sure the system take in account
-         * the remaining quantity while editing the order.
-         */
-        $unitQuantity->quantity     =   5;
-        $unitQuantity->save();
 
         $subtotal = $unitQuantity->sale_price * 5;
         $orderDetails   =   [

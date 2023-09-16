@@ -243,7 +243,7 @@ class TaxService
      * Retreive the tax value for a specific
      * amount using a determined tax group id on which the calculation is made
      */
-    public function getComputedTaxGroupValue( string | null $tax_type, int $tax_group_id, float $price )
+    public function getComputedTaxGroupValue( string | null $tax_type, int | null $tax_group_id, float $price )
     {
         $taxGroup = TaxGroup::find( $tax_group_id );
 
