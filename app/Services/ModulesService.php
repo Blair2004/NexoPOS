@@ -1101,13 +1101,23 @@ class ModulesService
                 $this->dependenciesCheck( $module );
             } catch ( MissingDependencyException $exception ) {
                 if ( $exception instanceof MissingDependencyException ) {
-                    throw new MissingDependencyException(
-                        sprintf(
-                            __( 'The module %s cannot be enabled as his dependencies (%s) are missing or are not enabled.' ),
-                            $module[ 'name' ],
-                            collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
-                        )
-                    );
+                    if ( count(  $module[ 'requires' ] ) === 1 ) {
+                        throw new MissingDependencyException(
+                            sprintf(
+                                __( 'The module %s cannot be enabled as his dependency (%s) is missing or not enabled.' ),
+                                $module[ 'name' ],
+                                collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
+                            )
+                        );
+                    } else {
+                        throw new MissingDependencyException(
+                            sprintf(
+                                __( 'The module %s cannot be enabled as his dependencies (%s) are missing or not enabled.' ),
+                                $module[ 'name' ],
+                                collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
+                            )
+                        );
+                    }
                 }
             }
 

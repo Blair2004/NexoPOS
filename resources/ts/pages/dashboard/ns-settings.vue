@@ -101,7 +101,9 @@ export default {
                 const result    =   await beforeSaveHook( form );
 
                 this.validation.enableForm( this.form );
-                this.loadSettingsForm();
+                const values        =   Object.values( this.form.tabs );
+                const tabIdentifier =   Object.keys( this.form.tabs )[ values.indexOf( this.activeTab ) ];
+                this.loadSettingsForm( tabIdentifier );
 
                 if ( result.data && result.data.results ) {
                     result.data.results.forEach( response => {
@@ -139,6 +141,12 @@ export default {
 
             nsHttpClient.get( this.url ).subscribe( form => {
                 let i   =   0;
+
+                /**
+                 * This will force the settings page
+                 * to refresh all the fields.
+                 */
+                this.form   =   {};
 
                 /**
                  * if we provide a tab that doesn't exists
