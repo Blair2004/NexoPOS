@@ -17,7 +17,7 @@ trait WithReportTest
             '/dashboard/reports/low-stock',
             '/dashboard/reports/sold-stock',
             '/dashboard/reports/profit',
-            '/dashboard/reports/cash-flow',
+            '/dashboard/reports/transactions',
             '/dashboard/reports/annual-report',
             '/dashboard/reports/payment-types',
         ];

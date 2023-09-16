@@ -52,6 +52,12 @@ class Kernel extends ConsoleKernel
         $schedule->call( fn() => ns()->setLastCronActivity() )->everyMinute();
 
         /**
+         * This will check every minutes if the symbolic link is
+         * broken to the storage folder.
+         */
+        $schedule->call( fn() => ns()->checkSymbolicLinks() )->everyMinute();
+
+        /**
          * Will execute transactions job daily.
          */
         $schedule->job( new ExecuteReccuringTransactionsJob )->daily( '00:01' );

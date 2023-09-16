@@ -560,7 +560,7 @@ class TaxService
     /**
      * Computes the vat value for a defined amount.
      */
-    public function getVatValue( string $type, float $rate, float $value ): float
+    public function getVatValue( string | null $type, float $rate, float $value ): float
     {
         if ( $type === 'inclusive' ) {
             return $this->currency->define( $value )->subtractBy( $this->getPriceWithoutTax( $type, $rate, $value ) )->toFloat();
@@ -575,7 +575,7 @@ class TaxService
      * get the tax value from an amount calculated
      * over a provided tax group.
      */
-    public function getTaxGroupVatValue( string $type, TaxGroup $group, float $value ): float
+    public function getTaxGroupVatValue( string | null $type, TaxGroup $group, float $value ): float
     {
         if ( $type === 'inclusive' ) {
             return $this->currency->define( $value )->subtractBy( $this->getPriceWithTaxUsingGroup( $type, $group, $value ) )->toFloat();

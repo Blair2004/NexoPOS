@@ -25,10 +25,22 @@ class CheckApplicationHealthMiddleware
         ns()->checkTaskSchedulingConfiguration();
 
         /**
-         * Will check if Cron Jobs are 
-         * correctly set for NexoPOS
+         * We'll only perform this is the QUEUE_CONNECTION 
+         * has a supported value. Otherwise it's performed asynchronously see app/Console/Kernel.php
          */
-        ns()->checkCronConfiguration();
+        if ( in_array( env( 'QUEUE_CONNECTION' ), [ 'sync' ] ) ) {
+            /**
+             * Will check if Cron Jobs are 
+             * correctly set for NexoPOS
+             */
+            ns()->checkCronConfiguration();
+    
+            /**
+             * Will check wether symbolic link
+             * is created to the storage
+             */
+            ns()->checkSymbolicLinks();
+        }
 
         /**
          * we'll check here is a module has a missing

@@ -8,6 +8,7 @@ use App\Exceptions\NotEnoughPermissionException;
 use App\Exceptions\NotFoundException;
 use App\Jobs\CheckTaskSchedulingConfigurationJob;
 use App\Models\Migration;
+use App\Models\Notification;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -311,6 +312,35 @@ class CoreService
 
             if ( $lastUpdate->diffInMinutes( $date->now() ) > 60 ) {
                 $this->emitCronMisconfigurationNotification();
+            }
+        }
+    }
+
+    public function checkSymbolicLinks(): void
+    {
+        if ( ! file_exists( public_path( 'storage' ) ) ) {
+            $notification   =   Notification::where( 'identifier', NotificationsEnum::NSSYMBOLICLINKSMISSING )
+                ->first();
+    
+            if ( ! $notification instanceof Notification ) {
+                ns()->option->set( 'ns_has_symbolic_links_missing_notifications', true );
+
+                $notification = app()->make( NotificationService::class );
+                $notification->create([
+                    'title' => __( 'Symbolic Links Missing' ),
+                    'identifier' => NotificationsEnum::NSSYMBOLICLINKSMISSING,
+                    'source' => 'system',
+                    'url' => 'https://my.nexopos.com/en/documentation/troubleshooting/broken-media-images?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
+                    'description' => __( "The Symbolic Links to the public directory is missing. Your medias might be broken and not display." ),
+                ])->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+            }
+        } else {
+            /**
+             * We should only perform this if we have reason to believe
+             * there is some records, to avoid the request triggered for no reason.
+             */
+            if ( ns()->option->get( 'ns_has_symbolic_links_missing_notifications' ) ) {
+                Notification::where( 'identifier', NotificationsEnum::NSSYMBOLICLINKSMISSING )->delete();
             }
         }
     }

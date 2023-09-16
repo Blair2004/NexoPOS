@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
   <testsuites>
     <testsuite name="Sequential-1">
       <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
@@ -69,6 +73,14 @@
       <directory suffix="CreateUserTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
+  <coverage>
+    <include>
+        <directory suffix=".php">app</directory>
+    </include>
+    <report>
+        <html outputDirectory="tests/.coverage" />
+    </report>
+  </coverage>
   <php>
     <server name="APP_ENV" value="TESTING"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
