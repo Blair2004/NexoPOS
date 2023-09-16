@@ -131,8 +131,6 @@ class TransactionsHistoryCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -172,7 +170,6 @@ class TransactionsHistoryCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -235,7 +232,6 @@ class TransactionsHistoryCrud extends CrudService
      * After saving a record
      *
      * @param Request $request
-     * @param TransactionHistory $entry
      * @return void
      */
     public function afterPost( $request, TransactionHistory $entry )
@@ -253,7 +249,7 @@ class TransactionsHistoryCrud extends CrudService
     {
         switch( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 

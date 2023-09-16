@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
 /**
- * @property integer $total_stores
+ * @property int $total_stores
  * @property string $description
  * @property bool $locked
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class Role extends NsRootModel
 {
     use HasFactory;

@@ -11,11 +11,10 @@ use Illuminate\Support\Facades\Storage;
 class UpdateService
 {
     /**
-     * returns not yet migrated files as an array of strings. 
+     * returns not yet migrated files as an array of strings.
      * Might be empty if all migrations has run or no migration is available.
      *
      * @param bool $ignoreMigrations
-     * @return Collection
      */
     public function getMigrations( $ignoreMigrations = false, $directories = [ 'create', 'update', 'core' ] ): Collection
     {
@@ -33,10 +32,10 @@ class UpdateService
             $files = collect( Storage::disk( 'ns' )->allFiles( 'database/migrations/' . $directory ) )
                 ->filter( fn( $file ) => pathinfo( $file )[ 'extension' ] === 'php' )
                 ->map( function( $file ) {
-                $fileInfo = pathinfo( $file );
-    
-                return $fileInfo[ 'filename' ];
-            });
+                    $fileInfo = pathinfo( $file );
+
+                    return $fileInfo[ 'filename' ];
+                });
 
             return $files;
         })->flatten()->diff( $migrations );
@@ -65,7 +64,6 @@ class UpdateService
         $class = require base_path( $file );
 
         if ( $class instanceof MigrationsMigration ) {
-
             $migration = new Migration;
             $migration->migration = $pathinfo[ 'filename' ];
             $migration->type = $type;

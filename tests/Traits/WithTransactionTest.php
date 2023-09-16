@@ -2,9 +2,9 @@
 
 namespace Tests\Traits;
 
+use App\Models\Role;
 use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
-use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 
 trait WithTransactionTest

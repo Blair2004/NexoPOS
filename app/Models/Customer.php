@@ -42,9 +42,9 @@ class Customer extends UserScope
     protected static function booted()
     {
         static::addGlobalScope( 'customers', function( Builder $builder ) {
-            $role     =   DB::table( 'nexopos_roles' )->where( 'namespace', Role::STORECUSTOMER )->first();
-            
-            $userRoleRelations  =   DB::table( 'nexopos_users_roles_relations' )
+            $role = DB::table( 'nexopos_roles' )->where( 'namespace', Role::STORECUSTOMER )->first();
+
+            $userRoleRelations = DB::table( 'nexopos_users_roles_relations' )
                 ->where( 'role_id', $role->id )
                 ->get([ 'user_id', 'role_id' ]);
 
@@ -59,8 +59,8 @@ class Customer extends UserScope
      */
     public function group()
     {
-        return $this->belongsTo( 
-            related: CustomerGroup::class, 
+        return $this->belongsTo(
+            related: CustomerGroup::class,
             foreignKey: 'group_id',
             ownerKey: 'id'
         );
@@ -68,8 +68,8 @@ class Customer extends UserScope
 
     public function coupons()
     {
-        return $this->hasMany( 
-            related: CustomerCoupon::class, 
+        return $this->hasMany(
+            related: CustomerCoupon::class,
             foreignKey: 'customer_id',
             localKey: 'id'
         );
@@ -78,7 +78,7 @@ class Customer extends UserScope
     public function rewards()
     {
         return $this->hasMany(
-            related: CustomerReward::class, 
+            related: CustomerReward::class,
             foreignKey: 'customer_id',
             localKey: 'id'
         );
@@ -92,16 +92,16 @@ class Customer extends UserScope
     public function orders()
     {
         return $this->hasMany(
-            related: Order::class, 
+            related: Order::class,
             foreignKey: 'customer_id',
-            localKey: 'id' 
+            localKey: 'id'
         );
     }
 
     public function addresses()
     {
         return $this->hasMany(
-            related: CustomerAddress::class, 
+            related: CustomerAddress::class,
             foreignKey: 'customer_id',
             localKey: 'id'
         );
@@ -119,7 +119,7 @@ class Customer extends UserScope
     public function shipping()
     {
         return $this->hasOne(
-            related: CustomerShippingAddress::class, 
+            related: CustomerShippingAddress::class,
             foreignKey: 'customer_id',
             localKey: 'id'
         );
@@ -128,7 +128,7 @@ class Customer extends UserScope
     public function account_history()
     {
         return $this->hasMany(
-            related: CustomerAccountHistory::class, 
+            related: CustomerAccountHistory::class,
             foreignKey: 'customer_id',
             localKey: 'id'
         );

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Exceptions\NotAllowedException;
-use App\Models\NsModel;
 use App\Traits\NsForms;
 use Carbon\Carbon;
 use Exception;
@@ -22,7 +21,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class CrudService
 {
     use NsForms;
-    
+
     /**
      * Toggle feature array
      *
@@ -135,23 +134,24 @@ class CrudService
      * This define custom casts
      * that are only applicable to the CRUD instance.
      */
-    protected $casts   =    [];
+    protected $casts = [];
 
     /**
      * Define permissions for using
      * the current resource
      */
-    protected $permissions  =   [];
+    protected $permissions = [];
 
     /**
      * Store the bulk messages for either successful
      * and unsuccessful operations.
      */
     protected $bulkDeleteSuccessMessage;
+
     protected $bulkDeleteDangerMessage;
 
     /**
-     * Store the values that should be 
+     * Store the values that should be
      * picked from relations
      */
     protected $pick;
@@ -396,7 +396,7 @@ class CrudService
      * @param string feature name
      * @return boolean/null
      */
-    public function isEnabled( $feature ): bool| null
+    public function isEnabled( $feature ): bool|null
     {
         return $this->features[ $feature ] ?? false;
     }
@@ -432,8 +432,6 @@ class CrudService
 
     /**
      * Will return picked array
-     *
-     * @return array
      */
     public function getPicked(): array
     {
@@ -446,7 +444,6 @@ class CrudService
      * @param Builder $query
      * @param array $definition
      * @param array $searchKeyValue
-     * @return void
      */
     public function handleDefinitionOperator( $query, $definition, $searchKeyValue ): void
     {
@@ -464,8 +461,6 @@ class CrudService
 
     /**
      * Returns the available query filters
-     *
-     * @return array
      */
     public function getQueryFilters(): array
     {
@@ -495,8 +490,6 @@ class CrudService
 
     /**
      * Will returns the CRUD component slug
-     *
-     * @return string
      */
     public function getSlug(): string
     {
@@ -553,7 +546,6 @@ class CrudService
          * Let's loop relation if they exists
          */
         if ( $this->getRelations() ) {
-
             /**
              * we're extracting the joined table
              * to make sure building the alias works
@@ -843,10 +835,10 @@ class CrudService
          * means the user has clicked on "reorder"
          */
         if ( $request->query( 'direction' ) && $request->query( 'active' ) ) {
-            $columns    =   $this->getColumns();
+            $columns = $this->getColumns();
 
-            $cannotSort    =   
-                array_key_exists( $request->query( 'active' ), array_keys( $columns ) ) && 
+            $cannotSort =
+                array_key_exists( $request->query( 'active' ), array_keys( $columns ) ) &&
                 $columns[ $request->query( 'active' ) ][ '$sort' ] === false;
 
             /**
@@ -902,7 +894,7 @@ class CrudService
              * that will have default uncasted values.
              */
             if ( ! isset( $entry->__raw ) ) {
-                $entry->__raw     =   new \stdClass;
+                $entry->__raw = new \stdClass;
             }
 
             if ( ! empty( $casts ) ) {
@@ -912,7 +904,7 @@ class CrudService
 
                         // We'll keep a reference of the raw
                         // uncasted property.
-                        $entry->__raw->$column    =   $entry->$column;
+                        $entry->__raw->$column = $entry->$column;
 
                         // We'll now cast the property.
                         $entry->$column = $castObject->get( $entry, $column, $entry->$column, []);
@@ -943,7 +935,7 @@ class CrudService
         //
     }
 
-    public function getColumns(): array 
+    public function getColumns(): array
     {
         return [];
     }
@@ -970,8 +962,6 @@ class CrudService
 
     /**
      * Get route
-     *
-     * @return string
      */
     public function getMainRoute(): string
     {
@@ -1026,6 +1016,7 @@ class CrudService
     /**
      * Will extract form with the entry
      * as a reference for the values.
+     *
      * @unused
      */
     public function getExtractedForm( $entry = null, $multiEntry = false )
@@ -1091,7 +1082,7 @@ class CrudService
          * we'll proceed by using the named arguments.
          */
         if ( empty( $config ) ) {
-            $config     =   collect( compact( 'title', 'description', 'src', 'createUrl', 'queryParams' ) )
+            $config = collect( compact( 'title', 'description', 'src', 'createUrl', 'queryParams' ) )
                 ->filter()
                 ->toArray();
         }
@@ -1143,7 +1134,7 @@ class CrudService
      * Will render a crud form using
      * the provided settings.
      */
-    public static function form( $entry = null, array $config = [] ): \Illuminate\Contracts\View\View
+    public static function form( $entry = null, array $config = [] ): ContractView
     {
         $className = get_called_class();
         $instance = new $className;
@@ -1225,7 +1216,7 @@ class CrudService
      * retrieve one of the declared permissions
      * the name must either be "create", "read", "update", "delete".
      */
-    public function getPermission( string|null $name ): bool | string
+    public function getPermission( string|null $name ): bool|string
     {
         return $this->permissions[ $name ] ?? false;
     }

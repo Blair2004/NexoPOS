@@ -185,6 +185,7 @@ class TransactionController extends DashboardController
 
         return $this->transactionService->createAccount( $fields );
     }
+
     /**
      * Get expenses entries under a specific
      * transaction account

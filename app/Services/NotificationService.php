@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Events\NotificationCreatedEvent;
 use App\Events\NotificationDeletedEvent;
 use App\Events\NotificationDispatchedEvent;
-use App\Exceptions\NotAllowedException;
 use App\Models\Notification;
 use App\Models\Permission;
 use App\Models\Role;
@@ -34,12 +33,12 @@ class NotificationService
     /**
      * @param array $config [ 'title', 'url', 'identifier', 'source', 'dismissable', 'description' ]
      */
-    public function create( string | array $title, string $description = '', string $url = '#', string $identifier = null, string $source = 'system', bool $dismissable = true )
+    public function create( string|array $title, string $description = '', string $url = '#', string $identifier = null, string $source = 'system', bool $dismissable = true )
     {
         if ( is_array( $title ) ) {
             extract( $title );
-        } 
-        
+        }
+
         if ( $description && $title ) {
             $this->title = $title;
             $this->url = $url ?: '#';
@@ -60,17 +59,17 @@ class NotificationService
      */
     public function dispatchForPermissions( array $permissions ): void
     {
-        $rolesGroups    =   collect( $permissions )
+        $rolesGroups = collect( $permissions )
             ->map( fn( $permissionName ) => Permission::with( 'roles' )->withNamespace( $permissionName ) )
             ->filter( fn( $permission ) => $permission instanceof Permission )
             ->map( fn( $permission ) => $permission->roles );
 
-        $uniqueRoles    =   [];
+        $uniqueRoles = [];
 
         $rolesGroups->each( function( $group ) use ( &$uniqueRoles ) {
-            foreach( $group as $role ) {
+            foreach ( $group as $role ) {
                 if ( ! isset( $uniqueRoles[ $role->namespace ] ) ) {
-                    $uniqueRoles[ $role->namespace ]    =   $role;
+                    $uniqueRoles[ $role->namespace ] = $role;
                 }
             }
         });
@@ -114,8 +113,6 @@ class NotificationService
     /**
      * Dispatch notification for specific
      * groups using array of group namespace provided
-     *
-     * @param array $namespaces
      */
     public function dispatchForGroupNamespaces( array $namespaces )
     {
@@ -206,7 +203,6 @@ class NotificationService
     /**
      * Deletes a notification if the socket are disabled
      *
-     * @param Notification $notification
      * @return void
      */
     public function proceedDeleteNotification( Notification $notification )

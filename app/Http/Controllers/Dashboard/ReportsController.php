@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
+use App\Models\Customer;
 use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
-use App\Models\Customer;
 use App\Services\OrdersService;
 use App\Services\ReportService;
 use Carbon\Carbon;
@@ -74,7 +74,6 @@ class ReportsController extends DashboardController
     /**
      * get sales based on a specific time range
      *
-     * @param Request $request
      * @return array
      */
     public function getSaleReport( Request $request )
@@ -92,7 +91,6 @@ class ReportsController extends DashboardController
     /**
      * get sold stock on a specific time range
      *
-     * @param Request $request
      * @return array
      */
     public function getSoldStockReport( Request $request )
@@ -182,7 +180,6 @@ class ReportsController extends DashboardController
     /**
      * get sold stock on a specific time range
      *
-     * @param Request $request
      *
      * @todo review
      *

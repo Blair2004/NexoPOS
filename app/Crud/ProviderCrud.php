@@ -6,7 +6,6 @@ use App\Models\Provider;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\UsersService;
-use Exception;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -74,8 +73,6 @@ class ProviderCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -108,7 +105,6 @@ class ProviderCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -217,7 +213,6 @@ class ProviderCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Provider $entry
      * @return  void
      */
     public function afterPost( $request, Provider $entry )

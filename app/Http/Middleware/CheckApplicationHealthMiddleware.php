@@ -12,8 +12,6 @@ class CheckApplicationHealthMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -25,16 +23,16 @@ class CheckApplicationHealthMiddleware
         ns()->checkTaskSchedulingConfiguration();
 
         /**
-         * We'll only perform this is the QUEUE_CONNECTION 
+         * We'll only perform this is the QUEUE_CONNECTION
          * has a supported value. Otherwise it's performed asynchronously see app/Console/Kernel.php
          */
         if ( in_array( env( 'QUEUE_CONNECTION' ), [ 'sync' ] ) ) {
             /**
-             * Will check if Cron Jobs are 
+             * Will check if Cron Jobs are
              * correctly set for NexoPOS
              */
             ns()->checkCronConfiguration();
-    
+
             /**
              * Will check wether symbolic link
              * is created to the storage

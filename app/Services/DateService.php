@@ -21,15 +21,15 @@ class DateService extends Carbon
         if ( Helper::installed() ) {
             $this->timezone = $timezone;
             $this->options = app()->make( Options::class );
-    
+
             if ( Auth::check() ) {
-                $language  =   Auth::user()->attribute->language ?: $this->options->get( 'ns_store_language', 'light' );
+                $language = Auth::user()->attribute->language ?: $this->options->get( 'ns_store_language', 'light' );
             } else {
-                $language  =   $this->options->get( 'ns_store_language', 'en' );
+                $language = $this->options->get( 'ns_store_language', 'en' );
             }
-    
-            $longForm   =   $this->getLongLocaleCode( $language );
-    
+
+            $longForm = $this->getLongLocaleCode( $language );
+
             $this->locale( $longForm );
         }
     }
@@ -40,16 +40,16 @@ class DateService extends Carbon
      */
     public function getLongLocaleCode( string $locale ): string
     {
-        return match( $locale ) {
-            'fr'    =>  'fr_FR',
-            'en'    =>  'en_US',
-            'es'    =>  'es_ES',
-            'it'    =>  'it_IT',
-            'ar'    =>  'ar_SA',
-            'pt'    =>  'pt_PT',
-            'tr'    =>  'tr_TR',
-            'vi'    =>  'vi_VN',
-            default =>  'en_US',
+        return match ( $locale ) {
+            'fr' => 'fr_FR',
+            'en' => 'en_US',
+            'es' => 'es_ES',
+            'it' => 'it_IT',
+            'ar' => 'ar_SA',
+            'pt' => 'pt_PT',
+            'tr' => 'tr_TR',
+            'vi' => 'vi_VN',
+            default => 'en_US',
         };
     }
 

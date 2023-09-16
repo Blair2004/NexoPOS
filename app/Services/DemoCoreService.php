@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\TransactionAccount;
 use App\Models\Customer;
 use App\Models\CustomerCoupon;
 use App\Models\Procurement;
@@ -11,6 +10,7 @@ use App\Models\Provider;
 use App\Models\Register;
 use App\Models\Tax;
 use App\Models\TaxGroup;
+use App\Models\TransactionAccount;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use Database\Seeders\CustomerGroupSeeder;
@@ -112,24 +112,24 @@ class DemoCoreService
 
     public function createBaseSettings()
     {
-        $orderTypes     =   app()->make( OrdersService::class )->getTypeLabels();
+        $orderTypes = app()->make( OrdersService::class )->getTypeLabels();
 
         /**
          * @var Options $optionService
          */
-        $optionService  =   app()->make( Options::class );
+        $optionService = app()->make( Options::class );
 
         $optionService->set(
             'ns_pos_order_types',
             array_keys( $orderTypes )
         );
 
-        $optionService->set( 
+        $optionService->set(
             'ns_currency_symbol',
             '$'
         );
 
-        $optionService->set( 
+        $optionService->set(
             'ns_currency_iso',
             'USD'
         );
@@ -137,16 +137,16 @@ class DemoCoreService
 
     public function createRegisters()
     {
-        $register           =   new Register;
-        $register->name     =   __( 'Terminal A' );
-        $register->status   =   Register::STATUS_CLOSED;
-        $register->author   =   ns()->getValidAuthor();
+        $register = new Register;
+        $register->name = __( 'Terminal A' );
+        $register->status = Register::STATUS_CLOSED;
+        $register->author = ns()->getValidAuthor();
         $register->save();
 
-        $register           =   new Register;
-        $register->name     =   __( 'Terminal B' );
-        $register->status   =   Register::STATUS_CLOSED;
-        $register->author   =   ns()->getValidAuthor();
+        $register = new Register;
+        $register->name = __( 'Terminal B' );
+        $register->status = Register::STATUS_CLOSED;
+        $register->author = ns()->getValidAuthor();
         $register->save();
     }
 

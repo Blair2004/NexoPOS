@@ -48,7 +48,7 @@ class TestService
                 'unit_id' => $unitElement->unit_id,
             ], $productDetails );
 
-            if ( 
+            if (
                 ( isset( $product->id ) ) ||
                 ( $faker->randomElement([ false, true ]) && ! ( $config[ 'allow_quick_products' ] ?? true ) )
             ) {
@@ -95,7 +95,7 @@ class TestService
             $faker->numberBetween( 0, 23 )
         )->format( 'Y-m-d H:m:s' );
 
-        $finalDetails   =   [
+        $finalDetails = [
             'customer_id' => $customer->id,
             'type' => [ 'identifier' => 'takeaway' ],
             'discount_type' => $discount[ 'type' ],
@@ -122,9 +122,9 @@ class TestService
         ];
 
         if ( isset( $config[ 'payments' ] ) && is_callable( $config[ 'payments' ] ) ) {
-            $finalDetails[ 'payments' ] =   $config[ 'payments' ]( $finalDetails );
+            $finalDetails[ 'payments' ] = $config[ 'payments' ]( $finalDetails );
         } else {
-            $finalDetails[ 'payments' ]     =   [
+            $finalDetails[ 'payments' ] = [
                 [
                     'identifier' => 'cash-payment',
                     'value' => $currency->define( $subtotal )
@@ -146,20 +146,20 @@ class TestService
          */
         $taxService = app()->make( TaxService::class );
 
-        $taxType    = Arr::random([ 'inclusive', 'exclusive' ]);
-        $taxGroup   = TaxGroup::get()->random();
-        $margin     = 25;
-        $request    =   Product::withStockEnabled()
+        $taxType = Arr::random([ 'inclusive', 'exclusive' ]);
+        $taxGroup = TaxGroup::get()->random();
+        $margin = 25;
+        $request = Product::withStockEnabled()
             ->limit( $details[ 'total_products' ] ?? -1 )
-            ->with([ 
-                'unitGroup', 
-                'unit_quantities' =>  function( $query ) use ( $details ) {
+            ->with([
+                'unitGroup',
+                'unit_quantities' => function( $query ) use ( $details ) {
                     $query->limit( $details[ 'total_unit_quantities' ] ?? -1 );
-                }
+                },
             ])
             ->get();
 
-        $config     =   [
+        $config = [
             'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
             'general' => [
                 'provider_id' => Provider::get()->random()->id,
@@ -170,61 +170,60 @@ class TestService
                 'created_at' => $date->toDateTimeString(),
             ],
             'products' => $request->map( function( $product ) {
-                    return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
+                return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
+                    // we retreive the unit quantity only if that is included on the group units.
+                    $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
 
-                        // we retreive the unit quantity only if that is included on the group units.
-                        $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
+                    if ( $unitQuantity instanceof ProductUnitQuantity ) {
+                        return (object) [
+                            'unit' => $unit,
+                            'unitQuantity' => $unitQuantity,
+                            'product' => $product,
+                        ];
+                    }
 
-                        if ( $unitQuantity instanceof ProductUnitQuantity ) {
-                            return (object) [
-                                'unit' => $unit,
-                                'unitQuantity' => $unitQuantity,
-                                'product' => $product,
-                            ];
-                        } 
+                    return false;
+                })->filter();
+            })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+                $quantity = $faker->numberBetween(100, 999);
 
-                        return false;
-                    })->filter();
-                })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
-                    $quantity = $faker->numberBetween(100, 999);
-
-                    return [
-                        'product_id' => $data->product->id,
-                        'gross_purchase_price' => 15,
-                        'net_purchase_price' => 16,
-                        'purchase_price' => $taxService->getTaxGroupComputedValue(
-                            $taxType,
-                            $taxGroup,
-                            $data->unitQuantity->sale_price - $taxService->getPercentageOf(
-                                $data->unitQuantity->sale_price,
-                                $margin
-                            )
-                        ),
-                        'quantity' => $quantity,
-                        'tax_group_id' => $taxGroup->id,
-                        'tax_type' => $taxType,
-                        'tax_value' => $taxService->getTaxGroupVatValue(
-                            $taxType,
-                            $taxGroup,
-                            $data->unitQuantity->sale_price - $taxService->getPercentageOf(
-                                $data->unitQuantity->sale_price,
-                                $margin
-                            )
-                        ),
-                        'total_purchase_price' => $taxService->getTaxGroupComputedValue(
-                            $taxType,
-                            $taxGroup,
-                            $data->unitQuantity->sale_price - $taxService->getPercentageOf(
-                                $data->unitQuantity->sale_price,
-                                $margin
-                            )
-                        ) * $quantity,
-                        'unit_id' => $data->unit->id,
-                    ];
-                }),
+                return [
+                    'product_id' => $data->product->id,
+                    'gross_purchase_price' => 15,
+                    'net_purchase_price' => 16,
+                    'purchase_price' => $taxService->getTaxGroupComputedValue(
+                        $taxType,
+                        $taxGroup,
+                        $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                            $data->unitQuantity->sale_price,
+                            $margin
+                        )
+                    ),
+                    'quantity' => $quantity,
+                    'tax_group_id' => $taxGroup->id,
+                    'tax_type' => $taxType,
+                    'tax_value' => $taxService->getTaxGroupVatValue(
+                        $taxType,
+                        $taxGroup,
+                        $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                            $data->unitQuantity->sale_price,
+                            $margin
+                        )
+                    ),
+                    'total_purchase_price' => $taxService->getTaxGroupComputedValue(
+                        $taxType,
+                        $taxGroup,
+                        $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                            $data->unitQuantity->sale_price,
+                            $margin
+                        )
+                    ) * $quantity,
+                    'unit_id' => $data->unit->id,
+                ];
+            }),
         ];
 
-        foreach( $details as $key => $value ) {
+        foreach ( $details as $key => $value ) {
             Arr::set( $config, $key, $value );
         }
 

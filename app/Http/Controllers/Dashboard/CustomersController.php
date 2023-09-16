@@ -164,15 +164,15 @@ class CustomersController extends DashboardController
             ->orderBy( 'created_at', 'desc' )
             ->get()
             ->map( function( Order $order ) {
-                $order->human_status =  match( $order->payment_status ) {
-                    Order::PAYMENT_HOLD                 => __( 'Hold' ),
-                    Order::PAYMENT_PAID                 => __( 'Paid' ),
-                    Order::PAYMENT_PARTIALLY            => __( 'Partially Paid' ),
-                    Order::PAYMENT_REFUNDED             => __( 'Refunded' ),
-                    Order::PAYMENT_UNPAID               => __( 'Unpaid' ),
-                    Order::PAYMENT_PARTIALLY_REFUNDED   => __( 'Partially Refunded' ),
-                    Order::PAYMENT_VOID                 => __( 'Void' ),
-                    default                             => $order->payment_status,
+                $order->human_status = match ( $order->payment_status ) {
+                    Order::PAYMENT_HOLD => __( 'Hold' ),
+                    Order::PAYMENT_PAID => __( 'Paid' ),
+                    Order::PAYMENT_PARTIALLY => __( 'Partially Paid' ),
+                    Order::PAYMENT_REFUNDED => __( 'Refunded' ),
+                    Order::PAYMENT_UNPAID => __( 'Unpaid' ),
+                    Order::PAYMENT_PARTIALLY_REFUNDED => __( 'Partially Refunded' ),
+                    Order::PAYMENT_VOID => __( 'Void' ),
+                    default => $order->payment_status,
                 };
 
                 $order->human_delivery_status = $this->ordersService->getDeliveryStatus( $order->delivery_status );
@@ -184,7 +184,6 @@ class CustomersController extends DashboardController
     /**
      * Renders a form for editing a customer
      *
-     * @param Customer $customer
      * @return string
      */
     public function editCustomer( Customer $customer )
@@ -247,7 +246,7 @@ class CustomersController extends DashboardController
     public function searchCustomer( Request $request )
     {
         $search = $request->input( 'search' );
-        
+
         return $this->customerService->search( $search );
     }
 
@@ -289,7 +288,6 @@ class CustomersController extends DashboardController
      * Returns a crud component table that lists
      * all customer rewards
      *
-     * @param Customer $customer
      * @return string
      */
     public function getCustomersRewards( Customer $customer )
@@ -305,8 +303,6 @@ class CustomersController extends DashboardController
      * Will render a formf or editing
      * a customer reward
      *
-     * @param Customer $customer
-     * @param CustomerReward $reward
      * @return string
      */
     public function editCustomerReward( Customer $customer, CustomerReward $reward )
@@ -322,7 +318,6 @@ class CustomersController extends DashboardController
     /**
      * Will render the customer coupon table
      *
-     * @param Customer $customer
      * @return string
      */
     public function getCustomersCoupons( Customer $customer )
@@ -338,7 +333,6 @@ class CustomersController extends DashboardController
     /**
      * Returns allt he customer coupons
      *
-     * @param Customer $customer
      * @return array
      */
     public function getCustomerCoupons( Customer $customer )
@@ -350,7 +344,6 @@ class CustomersController extends DashboardController
      * Loads specific customer coupon and return
      * as an array
      *
-     * @param Request $request
      * @param string $code
      * @return array|string
      */
@@ -362,7 +355,6 @@ class CustomersController extends DashboardController
     /**
      * Displays the customer account history
      *
-     * @param Customer $customer
      * @return string
      */
     public function getCustomerAccountHistory( Customer $customer )
@@ -386,7 +378,6 @@ class CustomersController extends DashboardController
     /**
      * Will render a form to create a customer account history
      *
-     * @param Customer $customer
      * @return View
      */
     public function createCustomerAccountHistory( Customer $customer )
@@ -422,7 +413,6 @@ class CustomersController extends DashboardController
      * Will render a form for editing
      * a generated coupon
      *
-     * @param CustomerCoupon $coupon
      * @return View
      */
     public function editGeneratedCoupon( CustomerCoupon $coupon )
@@ -444,7 +434,6 @@ class CustomersController extends DashboardController
     /**
      * Will return the customer rewards
      *
-     * @param Customer $customer
      * @return array<CustomerReward> $customerRewards
      */
     public function getCustomerRewards( Customer $customer )
@@ -455,7 +444,6 @@ class CustomersController extends DashboardController
     /**
      * Will return the customer account history
      *
-     * @param Customer $customer
      * @return array
      */
     public function getAccountHistory( Customer $customer )
@@ -469,9 +457,9 @@ class CustomersController extends DashboardController
     public function couponHistory( Coupon $coupon )
     {
         return CouponOrderHistoryCrud::table([
-            'queryParams'   =>  [
-                'coupon_id' =>  $coupon->id
-            ]
+            'queryParams' => [
+                'coupon_id' => $coupon->id,
+            ],
         ]);
     }
 
@@ -480,8 +468,8 @@ class CustomersController extends DashboardController
         return CustomerCouponHistoryCrud::table(
             title: sprintf( __( '%s Coupon History' ), $customer->name ),
             queryParams: [
-                'customer_id'   =>  $customer->id,
-                'customer_coupon_id'    =>  $customerCoupon->id
+                'customer_id' => $customer->id,
+                'customer_coupon_id' => $customerCoupon->id,
             ]
         );
     }

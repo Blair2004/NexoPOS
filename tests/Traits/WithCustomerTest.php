@@ -126,7 +126,7 @@ trait WithCustomerTest
             'status' => 'success',
         ]);
 
-        $customer   =   Customer::find( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
+        $customer = Customer::find( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
 
         $this->attemptTestCustomerGroup( $customer );
 
@@ -204,7 +204,7 @@ trait WithCustomerTest
          */
         $customerService = app()->make( CustomerService::class );
 
-        $customer   =   $this->attemptCreateCustomer();
+        $customer = $this->attemptCreateCustomer();
 
         $this->attemptTestCustomerGroup( $customer );
 
@@ -350,7 +350,7 @@ trait WithCustomerTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/customers/search', [
-                'search'    =>  $lastCustomer->first_name,
+                'search' => $lastCustomer->first_name,
             ]);
 
         $response->assertJsonPath( '0.id', $lastCustomer->id );

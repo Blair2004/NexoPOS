@@ -23,7 +23,6 @@ class ProcurementAfterDeleteProductEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\ProcurementAfterDeleteProductEvent  $event
      * @return void
      */
     public function handle(ProcurementAfterDeleteProductEvent $event)

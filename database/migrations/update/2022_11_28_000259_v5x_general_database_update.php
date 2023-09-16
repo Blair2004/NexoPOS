@@ -36,17 +36,17 @@ return new class extends Migration
         /**
          * @var UsersService $usersService
          */
-        $usersService   =   app()->make( UsersService::class );
+        $usersService = app()->make( UsersService::class );
 
         /**
          * @var DoctorService $doctorService
          */
-        $doctorService   =   app()->make( DoctorService::class );
+        $doctorService = app()->make( DoctorService::class );
 
         /**
          * @var CoreService $coreService
          */
-        $coreService   =   app()->make( CoreService::class );
+        $coreService = app()->make( CoreService::class );
 
         Schema::table( 'nexopos_roles', function( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_roles', 'dashid' ) ) {
@@ -74,24 +74,24 @@ return new class extends Migration
          * let's include the files that will create permissions
          * for all the declared widgets.
          */
-        include_once( base_path() . '/database/permissions/widgets.php' );
-        include_once( base_path() . '/database/permissions/transactions.php' );
+        include_once base_path() . '/database/permissions/widgets.php';
+        include_once base_path() . '/database/permissions/transactions.php';
 
         /**
          * We'll now defined default permissions
          */
-        $admin          =   Role::namespace( Role::ADMIN );
-        $storeAdmin     =   Role::namespace( Role::STOREADMIN );
-        $storeCashier   =   Role::namespace( Role::STORECASHIER );
-        
+        $admin = Role::namespace( Role::ADMIN );
+        $storeAdmin = Role::namespace( Role::STOREADMIN );
+        $storeCashier = Role::namespace( Role::STORECASHIER );
+
         $admin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $admin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
-        
+
         $storeAdmin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $storeAdmin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
-        
+
         $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
-            ( new ProfileWidget )->getPermission()
+            ( new ProfileWidget )->getPermission(),
         ])->get()->map( fn( $permission ) => $permission->namespace ) );
 
         /**
@@ -103,15 +103,16 @@ return new class extends Migration
         /**
          * We're introducing a customer role.
          */
-        include_once( base_path() . '/database/permissions/store-customer-role.php' );
+        include_once base_path() . '/database/permissions/store-customer-role.php';
 
         /**
          * to all roles available, we'll make all available widget added
          * to their dashboard
+         *
          * @var WidgetService $widgetService
          */
-        $widgetService  =   app()->make( WidgetService::class );
-        
+        $widgetService = app()->make( WidgetService::class );
+
         User::get()->each( fn( $user ) => $widgetService->addDefaultWidgetsToAreas( $user ) );
 
         /**
@@ -154,7 +155,7 @@ return new class extends Migration
         });
 
         /**
-         * Coupons can now be added to 
+         * Coupons can now be added to
          * customer groups.
          */
         Schema::table( 'nexopos_coupons', function( Blueprint $table ) {
@@ -186,30 +187,30 @@ return new class extends Migration
         /**
          * Let's convert customers into users
          */
-        $firstAdministrator     =   Role::namespace( Role::ADMIN )->users()->first();
-        $faker                  =   (new Factory)->create();
+        $firstAdministrator = Role::namespace( Role::ADMIN )->users()->first();
+        $faker = (new Factory)->create();
 
-        $users  =   DB::table( 'nexopos_customers' )->get( '*' )->map( function( $customer ) use ( $faker, $usersService, $doctorService, $firstAdministrator ) {
-            $user   =   User::where( 'email', $customer->email )
+        $users = DB::table( 'nexopos_customers' )->get( '*' )->map( function( $customer ) use ( $faker, $usersService, $doctorService, $firstAdministrator ) {
+            $user = User::where( 'email', $customer->email )
                 ->orWhere( 'username', $customer->email )
                 ->firstOrNew();
 
-            $user->birth_date           =   $customer->birth_date;
-            $user->username             =   ( $customer->email ?? 'user-' ) . $faker->randomNumber(5);
-            $user->email                =   ( $customer->email ?? $user->username ) . '@nexopos.com';
-            $user->purchases_amount     =   $customer->purchases_amount ?: 0;
-            $user->owed_amount          =   $customer->owed_amount ?: 0;
-            $user->credit_limit_amount  =   $customer->credit_limit_amount ?: 0;
-            $user->account_amount       =   $customer->account_amount ?: 0;
-            $user->first_name           =   $customer->name ?: '';
-            $user->last_name            =   $customer->surname ?: '';
-            $user->gender               =   $customer->gender ?: '';
-            $user->phone                =   $customer->phone ?: '';
-            $user->pobox                =   $customer->pobox ?: '';
-            $user->group_id             =   $customer->group_id;
-            $user->author               =   $firstAdministrator->id;
-            $user->active               =   true;
-            $user->password             =   Hash::make( Str::random(10) ); // every customer has a random password. 
+            $user->birth_date = $customer->birth_date;
+            $user->username = ( $customer->email ?? 'user-' ) . $faker->randomNumber(5);
+            $user->email = ( $customer->email ?? $user->username ) . '@nexopos.com';
+            $user->purchases_amount = $customer->purchases_amount ?: 0;
+            $user->owed_amount = $customer->owed_amount ?: 0;
+            $user->credit_limit_amount = $customer->credit_limit_amount ?: 0;
+            $user->account_amount = $customer->account_amount ?: 0;
+            $user->first_name = $customer->name ?: '';
+            $user->last_name = $customer->surname ?: '';
+            $user->gender = $customer->gender ?: '';
+            $user->phone = $customer->phone ?: '';
+            $user->pobox = $customer->pobox ?: '';
+            $user->group_id = $customer->group_id;
+            $user->author = $firstAdministrator->id;
+            $user->active = true;
+            $user->password = Hash::make( Str::random(10) ); // every customer has a random password.
             $user->save();
 
             /**
@@ -219,9 +220,9 @@ return new class extends Migration
             $doctorService->createAttributeForUser( $user );
 
             return [
-                'old_id'    =>  $customer->id,
-                'new_id'    =>  $user->id,
-                'user'      =>  $user
+                'old_id' => $customer->id,
+                'new_id' => $user->id,
+                'user' => $user,
             ];
         });
 
@@ -283,7 +284,7 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'convert_unit_id' ) ) {
                 $table->integer( 'convert_unit_id' )->nullable();
             }
-            
+
             if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'visible' ) ) {
                 $table->integer( 'visible' )->nullable();
             }
@@ -295,9 +296,9 @@ return new class extends Migration
          * set on the users table.
          */
         $users->each( function( $data ) {
-            foreach([ Order::class, CustomerAccountHistory::class, CustomerCoupon::class, CustomerAddress::class, CustomerReward::class ] as $class ) {
+            foreach ([ Order::class, CustomerAccountHistory::class, CustomerCoupon::class, CustomerAddress::class, CustomerReward::class ] as $class ) {
                 $class::where( 'customer_id', $data[ 'old_id' ] )->get()->each( function( $address ) use ( $data ) {
-                    $address->customer_id   =   $data[ 'new_id' ];
+                    $address->customer_id = $data[ 'new_id' ];
                     $address->save();
                 });
             }
@@ -311,7 +312,7 @@ return new class extends Migration
          * this will fix those value by storing absolute values.
          */
         OrderProduct::get( 'tax_value' )->each( function( $orderProduct ) {
-            $orderProduct->tax_value    =   abs( $orderProduct->tax_value );
+            $orderProduct->tax_value = abs( $orderProduct->tax_value );
             $orderProduct->save();
         });
 
@@ -319,10 +320,10 @@ return new class extends Migration
          * We'll drop permissions we no longer use
          */
 
-         /**
-          * 1: This permission is a duplicate one, and can easilly be confused
-          * with "nexopos.customers.manage-account-history"
-          */
+        /**
+         * 1: This permission is a duplicate one, and can easilly be confused
+         * with "nexopos.customers.manage-account-history"
+         */
         $permission = Permission::namespace( 'nexopos.customers.manage-account' );
 
         if ( $permission instanceof Permission ) {
@@ -333,18 +334,18 @@ return new class extends Migration
         /**
          * Fix options
          */
-        $options    =   Option::get();
+        $options = Option::get();
 
         $options->each( function( $option ) {
             $json = json_decode( $option->value, true );
 
             if ( preg_match( '/^[0-9]{1,}$/', $option->value ) ) {
-                $option->value  =   (int) $option->value;
-            } else if ( preg_match( '/^[0-9]{1,}\.[0-9]{1,}$/', $option->value ) ) {
-                $option->value  =   (float) $option->value;
-            } else if ( json_last_error() == JSON_ERROR_NONE ) {
-                $option->value  =   $json;
-                $option->array  =   1;
+                $option->value = (int) $option->value;
+            } elseif ( preg_match( '/^[0-9]{1,}\.[0-9]{1,}$/', $option->value ) ) {
+                $option->value = (float) $option->value;
+            } elseif ( json_last_error() == JSON_ERROR_NONE ) {
+                $option->value = $json;
+                $option->array = 1;
             }
 
             $option->save();

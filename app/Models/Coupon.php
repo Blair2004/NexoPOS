@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
+ * @property int $id
  * @property mixed $name
  * @property mixed $code
  * @property mixed $type
@@ -16,18 +16,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property \Carbon\Carbon $valid_hours_start
  * @property \Carbon\Carbon $valid_hours_end
  * @property float $limit_usage
- * @property integer $author
+ * @property int $author
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class Coupon extends NsModel
 {
     use HasFactory;
 
     protected $table = 'nexopos_' . 'coupons';
 
-    const TYPE_PERCENTAGE   =   'percentage_discount';
-    const TYPE_FLAT         =   'flat_discount';
+    const TYPE_PERCENTAGE = 'percentage_discount';
+
+    const TYPE_FLAT = 'flat_discount';
 
     public function scopeCode( $query, $code )
     {

@@ -211,7 +211,7 @@ class OrdersController extends DashboardController
                 'orders_url' => ns()->route( 'ns.dashboard.orders' ),
                 'dashboard_url' => ns()->route( 'ns.dashboard.home' ),
                 'registers_url' => ns()->route( 'ns.dashboard.registers-create' ),
-                'order_type_url' =>  ns()->route( 'ns.dashboard.settings', [ 'settings' => 'pos?tab=features' ])
+                'order_type_url' => ns()->route( 'ns.dashboard.settings', [ 'settings' => 'pos?tab=features' ]),
             ],
             'paymentTypes' => $this->paymentTypes,
         ]);
@@ -230,8 +230,8 @@ class OrdersController extends DashboardController
 
         $order->products = Hook::filter( 'ns-receipt-products', $order->products );
 
-        $order->paymentStatus       =   $this->ordersService->getPaymentLabel( $order->payment_status );
-        $order->deliveryStatus      =   $this->ordersService->getPaymentLabel( $order->delivery_status );
+        $order->paymentStatus = $this->ordersService->getPaymentLabel( $order->payment_status );
+        $order->deliveryStatus = $this->ordersService->getPaymentLabel( $order->delivery_status );
 
         return $this->view( 'pages.dashboard.orders.templates.invoice', [
             'order' => $order,
@@ -295,7 +295,6 @@ class OrdersController extends DashboardController
     /**
      * Will perform a payment on a specific order
      *
-     * @param Order $order
      * @param Request $request
      * @return array
      */
@@ -376,8 +375,6 @@ class OrdersController extends DashboardController
     /**
      * Will change the order processing status
      *
-     * @param Request $request
-     * @param Order $order
      * @return string json response
      */
     public function changeOrderProcessingStatus( Request $request, Order $order )
@@ -388,8 +385,6 @@ class OrdersController extends DashboardController
     /**
      * Will change the order processing status
      *
-     * @param Request $request
-     * @param Order $order
      * @return string json response
      */
     public function changeOrderDeliveryStatus( Request $request, Order $order )

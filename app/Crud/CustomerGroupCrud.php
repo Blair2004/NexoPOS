@@ -7,7 +7,6 @@ use App\Models\RewardSystem;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -72,8 +71,6 @@ class CustomerGroupCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -113,7 +110,6 @@ class CustomerGroupCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -172,7 +168,6 @@ class CustomerGroupCrud extends CrudService
      * Let's sort the customers
      *
      * @param Builder $query
-     * @return void
      */
     public function hook( $query ): void
     {

@@ -24,7 +24,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Str;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class UserCrud extends CrudService
@@ -70,7 +69,7 @@ class UserCrud extends CrudService
     public $pick = [
         'author' => [ 'username' ],
         'role' => [ 'name' ],
-        'group' =>  [ 'id', 'name' ],
+        'group' => [ 'id', 'name' ],
     ];
 
     protected $permissions = [
@@ -108,7 +107,7 @@ class UserCrud extends CrudService
         'phone',
         'gender',
         'pobox',
-        'credit_limit_amount'
+        'credit_limit_amount',
     ];
 
     protected $tabsRelations = [
@@ -116,15 +115,15 @@ class UserCrud extends CrudService
         'billing' => [ CustomerBillingAddress::class, 'customer_id', 'id' ],
     ];
 
-    protected $casts        =   [
-        'first_name'        =>  NotDefinedCast::class,
-        'last_name'         =>  NotDefinedCast::class,
-        'phone'             =>  NotDefinedCast::class,
-        'owed_amount'       =>  CurrencyCast::class,
-        'account_amount'    =>  CurrencyCast::class,
-        'purchases_amount'  =>  CurrencyCast::class,
-        'gender'            =>  GenderCast::class,
-        'active'            =>  YesNoBoolCast::class,
+    protected $casts = [
+        'first_name' => NotDefinedCast::class,
+        'last_name' => NotDefinedCast::class,
+        'phone' => NotDefinedCast::class,
+        'owed_amount' => CurrencyCast::class,
+        'account_amount' => CurrencyCast::class,
+        'purchases_amount' => CurrencyCast::class,
+        'gender' => GenderCast::class,
+        'active' => YesNoBoolCast::class,
     ];
 
     private Options $options;
@@ -133,8 +132,6 @@ class UserCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -170,7 +167,6 @@ class UserCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -214,13 +210,13 @@ class UserCrud extends CrudService
                         ], [
                             'type' => 'text',
                             'name' => 'first_name',
-                            'value' =>  $entry?->first_name,
+                            'value' => $entry?->first_name,
                             'label' => __( 'First Name' ),
                             'description' => __( 'Provide the user first name.' ),
                         ], [
                             'type' => 'text',
                             'name' => 'last_name',
-                            'value' =>  $entry?->last_name,
+                            'value' => $entry?->last_name,
                             'label' => __( 'Last Name' ),
                             'description' => __( 'Provide the user last name.' ),
                         ], [
@@ -265,13 +261,13 @@ class UserCrud extends CrudService
                         ], [
                             'type' => 'text',
                             'name' => 'credit_limit_amount',
-                            'value' =>  $entry?->credit_limit_amount,
+                            'value' => $entry?->credit_limit_amount,
                             'label' => __( 'Credit Limit' ),
                             'description' => __( 'Set the limit that can\'t be exceeded by the user.' ),
                         ], [
                             'type' => 'select',
                             'name' => 'gender',
-                            'value' =>  $entry?->gender,
+                            'value' => $entry?->gender,
                             'label' => __( 'Gender' ),
                             'options' => Helper::kvToJsOptions([
                                 '' => __( 'Not Defined' ),
@@ -282,7 +278,7 @@ class UserCrud extends CrudService
                         ], [
                             'type' => 'text',
                             'name' => 'phone',
-                            'value' =>  $entry?->phone,
+                            'value' => $entry?->phone,
                             'label' => __( 'Phone' ),
                             'validation' => collect([
                                 ns()->option->get( 'ns_customers_force_unique_phone', 'no' ) === 'yes' ? (
@@ -293,10 +289,10 @@ class UserCrud extends CrudService
                         ], [
                             'type' => 'text',
                             'name' => 'pobox',
-                            'value' =>  $entry?->pobox,
+                            'value' => $entry?->pobox,
                             'label' => __( 'PO Box' ),
                             'description' => __( 'Set the user PO Box.' ),
-                        ], 
+                        ],
                     ],
                 ],
                 'billing' => [
@@ -453,8 +449,8 @@ class UserCrud extends CrudService
 
         if ( ! empty( $inputs[ 'password' ] ) ) {
             $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
-        }         
-        
+        }
+
         return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
                 $value = $this->options->get( 'ns_customers_default_group', false );
@@ -488,7 +484,7 @@ class UserCrud extends CrudService
         if ( ! empty( $inputs[ 'password' ] ) ) {
             $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
         }
-        
+
         return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
                 $value = $this->options->get( 'ns_customers_default_group', false );
@@ -507,7 +503,6 @@ class UserCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  User $entry
      * @return  void
      */
     public function afterPost( $request, User $entry )
@@ -520,7 +515,7 @@ class UserCrud extends CrudService
                 );
 
             $this->userService->createAttribute( $entry );
-            
+
             /**
              * While creating the user, if we set that user as active
              * we'll dispatch the activation successful event.
@@ -578,7 +573,7 @@ class UserCrud extends CrudService
                 );
 
             $this->userService->createAttribute( $entry );
-            
+
             /**
              * While creating the user, if we set that user as active
              * we'll dispatch the activation successful event.
@@ -666,37 +661,37 @@ class UserCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->action( 
+        $entry->action(
             identifier: 'edit_customers_group',
             label: __( 'Edit' ),
             url: ns()->url( 'dashboard/users/edit/' . $entry->id ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'customers_orders',
             label: __( 'Orders' ),
             url: ns()->url( 'dashboard/users/' . $entry->id . '/orders' ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'customers_rewards',
             label: __( 'Rewards' ),
             url: ns()->url( 'dashboard/users/' . $entry->id . '/rewards' ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'customers_coupons',
             label: __( 'Coupons' ),
             url: ns()->url( 'dashboard/users/' . $entry->id . '/coupons' ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'customers_history',
             label: __( 'Wallet History' ),
             url: ns()->url( 'dashboard/users/' . $entry->id . '/account-history' ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
             type: 'DELETE',

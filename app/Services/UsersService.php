@@ -24,7 +24,8 @@ use Illuminate\Support\Str;
 
 class UsersService
 {
-    public function __construct() {
+    public function __construct()
+    {
         // ...
     }
 
@@ -36,7 +37,6 @@ class UsersService
      */
     public function all( $namespace = null )
     {
-
         if ( $namespace != null ) {
             return Role::namespace( $namespace )->users()->get();
         } else {
@@ -54,11 +54,11 @@ class UsersService
      */
     public function setUser( $attributes, $user = null )
     {
-        $validation_required    =   ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
-        $registration_role      =   ns()->option->get( 'ns_registration_role', false );
-        $defaultRole            =   Role::namespace( Role::USER )->first();
-        $assignedRole           =   Role::find( $registration_role );
-        $roleToUse              =   $registration_role === false ? $defaultRole : $assignedRole;
+        $validation_required = ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
+        $registration_role = ns()->option->get( 'ns_registration_role', false );
+        $defaultRole = Role::namespace( Role::USER )->first();
+        $assignedRole = Role::find( $registration_role );
+        $roleToUse = $registration_role === false ? $defaultRole : $assignedRole;
 
         if ( ! $defaultRole instanceof Role ) {
             throw new NotFoundException( __( 'The system role "Users" can be retrieved.' ) );
@@ -101,8 +101,8 @@ class UsersService
          * and define the activation expiration for that token.
          */
         if ( $validation_required ) {
-            $user->activation_token         = Str::random(20);
-            $user->activation_expiration    = now()->addMinutes( config( 'nexopos.authentication.activation_token_lifetime', 30 ) );
+            $user->activation_token = Str::random(20);
+            $user->activation_expiration = now()->addMinutes( config( 'nexopos.authentication.activation_token_lifetime', 30 ) );
         }
 
         /**
@@ -178,7 +178,6 @@ class UsersService
     /**
      * We'll define user role
      *
-     * @param User $user
      * @param array $roles
      */
     public function setUserRole( User $user, $roles )
@@ -246,7 +245,7 @@ class UsersService
     /**
      * Check if a user belongs to a group
      */
-    public function is( string | array $group_name ): bool
+    public function is( string|array $group_name ): bool
     {
         $roles = Auth::user()
             ->roles
@@ -318,34 +317,33 @@ class UsersService
      * Stores the widgets details
      * on the provided area
      */
-    public function storeWidgetsOnAreas( array $config, User | null $user = null ): array
+    public function storeWidgetsOnAreas( array $config, User|null $user = null ): array
     {
-        $userId     =   $user !== null ? $user->id : Auth::user()->id;
+        $userId = $user !== null ? $user->id : Auth::user()->id;
 
         extract( $config );
         /**
          * @var array $column
          */
-
-        foreach( $column[ 'widgets' ] as $position => $columnWidget ) {
-            $widget             =   UserWidget::where( 'identifier', $columnWidget[ 'componentName' ] )
+        foreach ( $column[ 'widgets' ] as $position => $columnWidget ) {
+            $widget = UserWidget::where( 'identifier', $columnWidget[ 'componentName' ] )
                 ->where( 'column', $column[ 'name' ] )
                 ->where( 'user_id', $userId )
                 ->first();
 
             if ( ! $widget instanceof UserWidget ) {
-                $widget     =   new UserWidget;
+                $widget = new UserWidget;
             }
 
-            $widget->identifier     =   $columnWidget[ 'componentName' ];
-            $widget->class_name     =   $columnWidget[ 'className' ] ?? '';
-            $widget->position       =   $position;
-            $widget->user_id        =   $userId;
-            $widget->column         =   $column[ 'name' ];
+            $widget->identifier = $columnWidget[ 'componentName' ];
+            $widget->class_name = $columnWidget[ 'className' ] ?? '';
+            $widget->position = $position;
+            $widget->user_id = $userId;
+            $widget->column = $column[ 'name' ];
             $widget->save();
         }
 
-        $identifiers    =   collect( $column[ 'widgets' ] )->map( fn( $widget ) => $widget[ 'componentName' ] )->toArray();
+        $identifiers = collect( $column[ 'widgets' ] )->map( fn( $widget ) => $widget[ 'componentName' ] )->toArray();
 
         UserWidget::whereNotIn( 'identifier', $identifiers )
             ->where( 'column', $column[ 'name' ] )
@@ -353,8 +351,8 @@ class UsersService
             ->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The widgets was successfully updated.' )
+            'status' => 'success',
+            'message' => __( 'The widgets was successfully updated.' ),
         ];
     }
 
@@ -362,21 +360,21 @@ class UsersService
      * Will generate a token for either the
      * logged user or for the provided user
      */
-    public function createToken( $name, User | null $user = null ): array
+    public function createToken( $name, User|null $user = null ): array
     {
         if ( $user === null ) {
             /**
              * @var User $user
              */
-            $user   =   Auth::user();
+            $user = Auth::user();
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The token was successfully created' ),
-            'data'      =>  [
-                'token' =>  $user->createToken( $name )
-            ]
+            'status' => 'success',
+            'message' => __( 'The token was successfully created' ),
+            'data' => [
+                'token' => $user->createToken( $name ),
+            ],
         ];
     }
 
@@ -384,32 +382,32 @@ class UsersService
      * Returns all generated token
      * using the provided user or the logged one.
      */
-    public function getTokens( User | null $user = null ): EloquentCollection
+    public function getTokens( User|null $user = null ): EloquentCollection
     {
         if ( $user === null ) {
             /**
              * @var User $user
              */
-            $user   =   Auth::user();
+            $user = Auth::user();
         }
 
         return $user->tokens()->orderBy( 'created_at', 'desc' )->get();
     }
 
-    public function deleteToken( $tokenId, User | null $user = null )
+    public function deleteToken( $tokenId, User|null $user = null )
     {
         if ( $user === null ) {
             /**
              * @var User $user
              */
-            $user   =   Auth::user();
+            $user = Auth::user();
         }
 
         $user->tokens()->where( 'id', $tokenId )->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The token has been successfully deleted.' )
+            'status' => 'success',
+            'message' => __( 'The token has been successfully deleted.' ),
         ];
     }
 }

@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
- * @property integer $coupon_id
+ * @property int $id
+ * @property int $coupon_id
  * @property string $uuid
  * @property float $target
  * @property string $description
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class RewardSystem extends NsModel
 {
     use HasFactory;

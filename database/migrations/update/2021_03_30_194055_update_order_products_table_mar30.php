@@ -26,7 +26,7 @@ return new class extends Migration
             ->each( function( $product ) {
                 $product->product_category_id = $product->product->category->id ?? 0;
                 $product->save();
-        });
+            });
     }
 
     /**

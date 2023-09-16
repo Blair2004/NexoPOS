@@ -7,7 +7,6 @@ use App\Models\OrderInstalment;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -112,8 +111,6 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -146,7 +143,6 @@ class OrderInstalmentCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -246,7 +242,6 @@ class OrderInstalmentCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  OrderInstalment $entry
      * @return  void
      */
     public function afterPost( $request, OrderInstalment $entry )

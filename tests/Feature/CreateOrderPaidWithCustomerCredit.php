@@ -198,7 +198,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/orders', $orderData );
 
-            $amount     =   ns()->currency->define( 5 )->format();
+            $amount = ns()->currency->define( 5 )->format();
 
             $response->assertStatus(401);
             $response->assertJsonPath( 'message', 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: ' . $amount . '.' );

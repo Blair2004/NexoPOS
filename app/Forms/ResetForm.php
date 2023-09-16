@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Forms;
 
 use App\Classes\Hook;
 use App\Services\Helper;
 use App\Services\SettingsPage;
 
-class ResetForm extends SettingsPage 
+class ResetForm extends SettingsPage
 {
     protected $identifier = 'ns.reset';
 
@@ -13,11 +14,11 @@ class ResetForm extends SettingsPage
 
     public function __construct()
     {
-        $this->form     =   [
-            'tabs'  =>  [
-                'reset' =>  [
-                    'label' =>  __( 'Reset' ),
-                    'fields'    =>  [
+        $this->form = [
+            'tabs' => [
+                'reset' => [
+                    'label' => __( 'Reset' ),
+                    'fields' => [
                         [
                             'name' => 'mode',
                             'label' => __( 'Mode' ),
@@ -41,9 +42,9 @@ class ResetForm extends SettingsPage
                             'value' => 1,
                             'description' => __( 'Will create procurements.' ),
                         ],
-                    ]
-                ]
-            ]            
-        ];   
+                    ],
+                ],
+            ],
+        ];
     }
 }

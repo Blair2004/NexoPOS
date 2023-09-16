@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
- * @property integer $author
+ * @property int $id
+ * @property int $author
  * @property string $uuid
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class CustomerBillingAddress extends CustomerAddress
 {
     use HasFactory;

@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use App\Services\UsersService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -107,8 +106,6 @@ class PaymentTypeCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -141,7 +138,6 @@ class PaymentTypeCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -264,7 +260,6 @@ class PaymentTypeCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  PaymentType $entry
      * @return  void
      */
     public function afterPost( $request, PaymentType $entry )

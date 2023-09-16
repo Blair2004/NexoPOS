@@ -67,32 +67,32 @@ trait WithReportTest
     protected function attemptTestSaleReport()
     {
         $report = $this->getSaleReport();
-        $newReport  =   new \stdClass;
+        $newReport = new \stdClass;
 
         /**
          * Step 1: attempt simple sale
          */
         $this->processOrders( [], function( $response, $responseData ) use ( $report, &$newReport ) {
             $newReport = $this->getSaleReport();
-    
+
             $this->assertEquals(
                 ns()->currency->getRaw( $report->summary->total ),
                 ns()->currency->getRaw( $newReport->summary->total - $responseData[ 'data' ][ 'order' ][ 'total' ] ),
                 'Order total doesn\'t match the report total.'
             );
-    
+
             $this->assertEquals(
                 ns()->currency->getRaw( $report->summary->sales_discounts ),
                 ns()->currency->getRaw( $newReport->summary->sales_discounts - $responseData[ 'data' ][ 'order' ][ 'discount' ] ),
                 'Discount total doesn\'t match the report discount.'
             );
-    
+
             $this->assertEquals(
                 ns()->currency->getRaw( $report->summary->subtotal ),
                 ns()->currency->getRaw( $newReport->summary->subtotal - $responseData[ 'data' ][ 'order' ][ 'subtotal' ] ),
                 'The subtotal doesn\'t match the report subtotal.'
             );
-    
+
             $this->assertEquals(
                 ns()->currency->getRaw( $report->summary->sales_taxes ),
                 ns()->currency->getRaw( $newReport->summary->sales_taxes - $responseData[ 'data' ][ 'order' ][ 'tax_value' ] ),
@@ -102,23 +102,22 @@ trait WithReportTest
 
         $report = $this->getSaleReport();
 
-
         /**
          * Step 1: attempt sale with taxes
          */
         $this->processOrders([
-            'tax_type'  =>  'inclusive',
-            'taxes'     =>  TaxGroup::with( 'taxes' )
+            'tax_type' => 'inclusive',
+            'taxes' => TaxGroup::with( 'taxes' )
                 ->first()
                 ->taxes()
                 ->get()
                 ->map( function( $tax ) {
                     return [
-                        'tax_name'  =>  $tax->name,
-                        'tax_id'    =>  $tax->id,
-                        'rate'      =>  $tax->rate
+                        'tax_name' => $tax->name,
+                        'tax_id' => $tax->id,
+                        'rate' => $tax->rate,
                     ];
-                })
+                }),
         ], function( $response, $responseData ) use ( $newReport ) {
             $freshOne = $this->getSaleReport();
 

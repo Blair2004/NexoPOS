@@ -1,72 +1,78 @@
 <?php
+
 namespace App\Crud;
 
 use App\Casts\CurrencyCast;
 use App\Casts\DateCast;
 use App\Casts\DiscountTypeCast;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Exceptions\NotAllowedException;
+use App\Models\OrderCoupon;
+use App\Models\User;
+use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Users;
-use App\Services\CrudEntry;
-use App\Exceptions\NotAllowedException;
-use App\Models\User;
+use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
-use App\Models\OrderCoupon;
 
 class CouponOrderHistoryCrud extends CrudService
-{    
-    const AUTOLOAD  =   true;
+{
+    const AUTOLOAD = true;
+
     const IDENTIFIER = 'ns.coupons-orders-history';
 
     /**
      * define the base table
+     *
      * @param string
      */
-    protected $table      =   'nexopos_orders_coupons';
+    protected $table = 'nexopos_orders_coupons';
 
     /**
      * default slug
+     *
      * @param string
      */
-    protected $slug   =   '/';
+    protected $slug = '/';
 
     /**
      * Define namespace
+     *
      * @param string
      */
-    protected $namespace  =   'ns.coupons-orders-history';
+    protected $namespace = 'ns.coupons-orders-history';
 
     /**
      * Model Used
+     *
      * @param string
      */
-    protected $model      =   OrderCoupon::class;
+    protected $model = OrderCoupon::class;
 
     /**
      * Define permissions
+     *
      * @param array
      */
-    protected $permissions  =   [
-        'create'    =>  false,
-        'read'      =>  true,
-        'update'    =>  false,
-        'delete'    =>  false,
+    protected $permissions = [
+        'create' => false,
+        'read' => true,
+        'update' => false,
+        'delete' => false,
     ];
 
-    protected $casts    =   [
-        'type'  =>  DiscountTypeCast::class,
-        'value' =>  CurrencyCast::class,
-        'created_at' =>  DateCast::class,
+    protected $casts = [
+        'type' => DiscountTypeCast::class,
+        'value' => CurrencyCast::class,
+        'created_at' => DateCast::class,
     ];
 
     /**
      * Adding relation
      * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     *
      * @param array
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders_coupons.author' ],
         [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_coupons.order_id' ],
         [ 'nexopos_users as customer', 'customer.id', '=', 'order.customer_id' ],
@@ -76,7 +82,7 @@ class CouponOrderHistoryCrud extends CrudService
      * all tabs mentionned on the tabs relations
      * are ignored on the parent model.
      */
-    protected $tabsRelations    =   [
+    protected $tabsRelations = [
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
@@ -84,62 +90,63 @@ class CouponOrderHistoryCrud extends CrudService
      * Export Columns defines the columns that
      * should be included on the exported csv file.
      */
-    protected $exportColumns    =   []; // @getColumns will be used by default.
+    protected $exportColumns = []; // @getColumns will be used by default.
 
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [
-        'user'  =>  [ 'username' ],
-        'order' =>  [ 'id', 'code' ],
-        'customer'  =>  [ 'username', 'first_name', 'last_name' ]
+    public $pick = [
+        'user' => [ 'username' ],
+        'order' => [ 'id', 'code' ],
+        'customer' => [ 'username', 'first_name', 'last_name' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * If few fields should only be filled
      * those should be listed here.
      */
-    public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * If fields should be ignored during saving
      * those fields should be listed here
      */
-    public $skippable   =   [];
+    public $skippable = [];
 
     /**
      * Determine if the options column should display
      * before the crud columns
      */
-    protected $prependOptions     =   false;
+    protected $prependOptions = false;
 
     /**
      * Will make the options column available per row if
      * set to "true". Otherwise it will be hidden.
      */
-    protected $showOptions     =   true;
+    protected $showOptions = true;
 
     /**
      * Define Constructor
-     * @param 
      */
     public function __construct()
     {
@@ -154,126 +161,129 @@ class CouponOrderHistoryCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return array
-    **/
+     **/
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Coupon Order Histories List' ),
-            'list_description'      =>  __( 'Display all coupon order histories.' ),
-            'no_entry'              =>  __( 'No coupon order histories has been registered' ),
-            'create_new'            =>  __( 'Add a new coupon order history' ),
-            'create_title'          =>  __( 'Create a new coupon order history' ),
-            'create_description'    =>  __( 'Register a new coupon order history and save it.' ),
-            'edit_title'            =>  __( 'Edit coupon order history' ),
-            'edit_description'      =>  __( 'Modify  Coupon Order History.' ),
-            'back_to_list'          =>  __( 'Return to Coupon Order Histories' ),
+            'list_title' => __( 'Coupon Order Histories List' ),
+            'list_description' => __( 'Display all coupon order histories.' ),
+            'no_entry' => __( 'No coupon order histories has been registered' ),
+            'create_new' => __( 'Add a new coupon order history' ),
+            'create_title' => __( 'Create a new coupon order history' ),
+            'create_description' => __( 'Register a new coupon order history and save it.' ),
+            'edit_title' => __( 'Edit coupon order history' ),
+            'edit_description' => __( 'Modify  Coupon Order History.' ),
+            'back_to_list' => __( 'Return to Coupon Order Histories' ),
         ];
     }
 
     /**
      * Fields
+     *
      * @param object/null
      * @return array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
+            'main' => [
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
+                            'type' => 'text',
+                            'name' => 'id',
+                            'label' => __( 'Id' ),
+                            'value' => $entry->id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'code',
-                            'label' =>  __( 'Code' ),
-                            'value' =>  $entry->code ?? '',
+                            'type' => 'text',
+                            'name' => 'code',
+                            'label' => __( 'Code' ),
+                            'value' => $entry->code ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
+                            'type' => 'text',
+                            'name' => 'name',
+                            'label' => __( 'Name' ),
+                            'value' => $entry->name ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'customer_coupon_id',
-                            'label' =>  __( 'Customer_coupon_id' ),
-                            'value' =>  $entry->customer_coupon_id ?? '',
+                            'type' => 'text',
+                            'name' => 'customer_coupon_id',
+                            'label' => __( 'Customer_coupon_id' ),
+                            'value' => $entry->customer_coupon_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'order_id',
-                            'label' =>  __( 'Order_id' ),
-                            'value' =>  $entry->order_id ?? '',
+                            'type' => 'text',
+                            'name' => 'order_id',
+                            'label' => __( 'Order_id' ),
+                            'value' => $entry->order_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'type',
-                            'label' =>  __( 'Type' ),
-                            'value' =>  $entry->type ?? '',
+                            'type' => 'text',
+                            'name' => 'type',
+                            'label' => __( 'Type' ),
+                            'value' => $entry->type ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'discount_value',
-                            'label' =>  __( 'Discount_value' ),
-                            'value' =>  $entry->discount_value ?? '',
+                            'type' => 'text',
+                            'name' => 'discount_value',
+                            'label' => __( 'Discount_value' ),
+                            'value' => $entry->discount_value ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'minimum_cart_value',
-                            'label' =>  __( 'Minimum_cart_value' ),
-                            'value' =>  $entry->minimum_cart_value ?? '',
+                            'type' => 'text',
+                            'name' => 'minimum_cart_value',
+                            'label' => __( 'Minimum_cart_value' ),
+                            'value' => $entry->minimum_cart_value ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'maximum_cart_value',
-                            'label' =>  __( 'Maximum_cart_value' ),
-                            'value' =>  $entry->maximum_cart_value ?? '',
+                            'type' => 'text',
+                            'name' => 'maximum_cart_value',
+                            'label' => __( 'Maximum_cart_value' ),
+                            'value' => $entry->maximum_cart_value ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'limit_usage',
-                            'label' =>  __( 'Limit_usage' ),
-                            'value' =>  $entry->limit_usage ?? '',
+                            'type' => 'text',
+                            'name' => 'limit_usage',
+                            'label' => __( 'Limit_usage' ),
+                            'value' => $entry->limit_usage ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'value',
-                            'label' =>  __( 'Value' ),
-                            'value' =>  $entry->value ?? '',
+                            'type' => 'text',
+                            'name' => 'value',
+                            'label' => __( 'Value' ),
+                            'value' => $entry->value ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
+                            'type' => 'text',
+                            'name' => 'author',
+                            'label' => __( 'Author' ),
+                            'value' => $entry->author ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
+                            'type' => 'text',
+                            'name' => 'uuid',
+                            'label' => __( 'Uuid' ),
+                            'value' => $entry->uuid ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
+                            'type' => 'text',
+                            'name' => 'created_at',
+                            'label' => __( 'Created_at' ),
+                            'value' => $entry->created_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ],                     ]
-                ]
-            ]
+                            'type' => 'text',
+                            'name' => 'updated_at',
+                            'label' => __( 'Updated_at' ),
+                            'value' => $entry->updated_at ?? '',
+                        ],                     ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param array of fields
      * @return array of fields
      */
@@ -284,6 +294,7 @@ class CouponOrderHistoryCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param array of fields
      * @return array of fields
      */
@@ -294,6 +305,7 @@ class CouponOrderHistoryCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param Request $request
      * @return void
      */
@@ -310,8 +322,8 @@ class CouponOrderHistoryCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param Request $request
-     * @param OrderCoupon $entry
      * @return void
      */
     public function afterPost( $request, OrderCoupon $entry )
@@ -319,21 +331,23 @@ class CouponOrderHistoryCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param string
      * @return mixed
      */
     public function get( $param )
     {
         switch( $param ) {
-            case 'model' : return $this->model ; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param Request $request
      * @param object entry
      * @return void
@@ -351,6 +365,7 @@ class CouponOrderHistoryCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param Request $request
      * @param object entry
      * @return void
@@ -362,9 +377,11 @@ class CouponOrderHistoryCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.coupons-orders-hitory' ) {
             /**
              *  Perform an action before deleting an entry
@@ -374,7 +391,7 @@ class CouponOrderHistoryCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -389,50 +406,50 @@ class CouponOrderHistoryCrud extends CrudService
     public function getColumns(): array
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'code'  =>  [
-                'label'  =>  __( 'Code' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'code' => [
+                'label' => __( 'Code' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'customer_first_name'  =>  [
-                'label'  =>  __( 'Customer' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'customer_first_name' => [
+                'label' => __( 'Customer' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'order_code'  =>  [
-                'label'  =>  __( 'Order' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'order_code' => [
+                'label' => __( 'Order' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'type'  =>  [
-                'label'  =>  __( 'Type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'type' => [
+                'label' => __( 'Type' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'discount_value'  =>  [
-                'label'  =>  __( 'Discount' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'discount_value' => [
+                'label' => __( 'Discount' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'value'  =>  [
-                'label'  =>  __( 'Value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'value' => [
+                'label' => __( 'Value' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -450,35 +467,33 @@ class CouponOrderHistoryCrud extends CrudService
             identifier: 'edit',
             url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
         );
-        
+
         $entry->action(
             label: __( 'Delete' ),
             identifier: 'delete',
             url: ns()->url( '/api/crud/ns.coupons-orders-hitory/' . $entry->id ),
             type: 'DELETE',
             confirm: [
-                'message'   =>  __( 'Would you like to delete this?' ),
+                'message' => __( 'Would you like to delete this?' ),
             ]
         );
-        
+
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param  object Request with object
      * @return  false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */
@@ -488,13 +503,13 @@ class CouponOrderHistoryCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
-                'success'   =>  0,
-                'failed'    =>  0
+            $status = [
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof OrderCoupon ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -502,6 +517,7 @@ class CouponOrderHistoryCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -510,40 +526,43 @@ class CouponOrderHistoryCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return array of links
      */
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . '/' ),
-            'create'    =>  ns()->url( 'dashboard/' . '//create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . '//edit/' ),
-            'post'      =>  ns()->url( 'api/crud/' . 'ns.coupons-orders-hitory' ),
-            'put'       =>  ns()->url( 'api/crud/' . 'ns.coupons-orders-hitory/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . '/' ),
+            'create' => ns()->url( 'dashboard/' . '//create' ),
+            'edit' => ns()->url( 'dashboard/' . '//edit/' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.coupons-orders-hitory' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.coupons-orders-hitory/{id}' . '' ),
         ];
     }
 
     /**
      * Get Bulk actions
+     *
      * @return array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

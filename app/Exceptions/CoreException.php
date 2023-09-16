@@ -16,7 +16,7 @@ class CoreException extends Exception
     {
         $message = $this->getMessage();
         $title = __( 'An Error Occurred' );
-        $back   = Helper::getValidPreviousUrl( $request );
+        $back = Helper::getValidPreviousUrl( $request );
 
         return response()->view( 'pages.errors.exception', compact( 'message', 'title', 'back' ), 503 );
     }

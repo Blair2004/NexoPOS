@@ -1,60 +1,67 @@
 <?php
+
 namespace App\Crud;
 
-use App\Casts\CurrencyCast;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\CrudEntry;
 use App\Exceptions\NotAllowedException;
-use TorMorten\Eventy\Facades\Events as Hook;
 use App\Models\OrderCoupon;
+use App\Services\CrudEntry;
+use App\Services\CrudService;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class CustomerCouponHistoryCrud extends CrudService
 {
     const AUTOLOAD = true;
+
     const IDENTIFIER = 'ns.customers-coupons-history';
 
     /**
      * define the base table
+     *
      * @param string
      */
     protected $table = 'nexopos_orders_coupons';
 
     /**
      * default slug
+     *
      * @param string
      */
     protected $slug = '/';
 
     /**
      * Define namespace
+     *
      * @param string
      */
     protected $namespace = 'ns.customers-coupons-history';
 
     /**
      * Model Used
+     *
      * @param string
      */
     protected $model = OrderCoupon::class;
 
     /**
      * Define permissions
+     *
      * @param array
      */
-    protected $permissions  =   [
-        'create'    =>  false,
-        'read'      =>  true,
-        'update'    =>  false,
-        'delete'    =>  false,
+    protected $permissions = [
+        'create' => false,
+        'read' => true,
+        'update' => false,
+        'delete' => false,
     ];
 
     /**
      * Adding relation
      * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     *
      * @param array
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_coupons.order_id' ],
         [ 'nexopos_coupons as coupon', 'coupon.id', '=', 'nexopos_orders_coupons.coupon_id' ],
         [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders_coupons.author' ],
@@ -64,7 +71,7 @@ class CustomerCouponHistoryCrud extends CrudService
      * all tabs mentionned on the tabs relations
      * are ignored on the parent model.
      */
-    protected $tabsRelations    =   [
+    protected $tabsRelations = [
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
@@ -77,26 +84,28 @@ class CustomerCouponHistoryCrud extends CrudService
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
     public $pick = [
-        'order' =>  [ 'code' ],
-        'coupon'    =>  [ 'name' ],
-        'user'  =>  [ 'username' ],
+        'order' => [ 'code' ],
+        'coupon' => [ 'name' ],
+        'user' => [ 'username' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var array
-    **/
+     **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var array
      */
     protected $whereIn = [];
@@ -126,7 +135,7 @@ class CustomerCouponHistoryCrud extends CrudService
     protected $showOptions = true;
 
     /**
-     * Here goes the CRUD constructor. Here you can change the behavior 
+     * Here goes the CRUD constructor. Here you can change the behavior
      * of the crud component.
      */
     public function __construct()
@@ -138,19 +147,19 @@ class CustomerCouponHistoryCrud extends CrudService
 
     /**
      * Return the label used for the crud object.
-    **/
+     **/
     public function getLabels(): array
     {
         return [
-            'list_title'            =>  __( 'Customer Coupon Histories List' ),
-            'list_description'      =>  __( 'Display all customer coupon histories.' ),
-            'no_entry'              =>  __( 'No customer coupon histories has been registered' ),
-            'create_new'            =>  __( 'Add a new customer coupon history' ),
-            'create_title'          =>  __( 'Create a new customer coupon history' ),
-            'create_description'    =>  __( 'Register a new customer coupon history and save it.' ),
-            'edit_title'            =>  __( 'Edit customer coupon history' ),
-            'edit_description'      =>  __( 'Modify  Customer Coupon History.' ),
-            'back_to_list'          =>  __( 'Return to Customer Coupon Histories' ),
+            'list_title' => __( 'Customer Coupon Histories List' ),
+            'list_description' => __( 'Display all customer coupon histories.' ),
+            'no_entry' => __( 'No customer coupon histories has been registered' ),
+            'create_new' => __( 'Add a new customer coupon history' ),
+            'create_title' => __( 'Create a new customer coupon history' ),
+            'create_description' => __( 'Register a new customer coupon history and save it.' ),
+            'edit_title' => __( 'Edit customer coupon history' ),
+            'edit_description' => __( 'Modify  Customer Coupon History.' ),
+            'back_to_list' => __( 'Return to Customer Coupon Histories' ),
         ];
     }
 
@@ -166,6 +175,7 @@ class CustomerCouponHistoryCrud extends CrudService
 
     /**
      * Filter POST input fields
+     *
      * @param array of fields
      * @return array of fields
      */
@@ -176,6 +186,7 @@ class CustomerCouponHistoryCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param array of fields
      * @return array of fields
      */
@@ -200,7 +211,7 @@ class CustomerCouponHistoryCrud extends CrudService
     }
 
     /**
-     * Trigger actions that will be executed 
+     * Trigger actions that will be executed
      * after the entry has been created.
      */
     public function afterPost( array $request, OrderCoupon $entry ): array
@@ -208,7 +219,6 @@ class CustomerCouponHistoryCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * A shortcut and secure way to access
      * senstive value on a read only way.
@@ -216,7 +226,8 @@ class CustomerCouponHistoryCrud extends CrudService
     public function get( string $param ): mixed
     {
         switch( $param ) {
-            case 'model' : return $this->model ; break;
+            case 'model': return $this->model;
+            break;
         }
     }
 
@@ -259,7 +270,7 @@ class CustomerCouponHistoryCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -274,35 +285,35 @@ class CustomerCouponHistoryCrud extends CrudService
     public function getColumns(): array
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'value'  =>  [
-                'label'  =>  __( 'Value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'value' => [
+                'label' => __( 'Value' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'order_code'  =>  [
-                'label'  =>  __( 'Order Code' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'order_code' => [
+                'label' => __( 'Order Code' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'coupon_name'  =>  [
-                'label'  =>  __( 'Coupon Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'coupon_name' => [
+                'label' => __( 'Coupon Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -312,31 +323,30 @@ class CustomerCouponHistoryCrud extends CrudService
      */
     public function addActions( CrudEntry $entry, $namespace ): CrudEntry
     {
-        $entry->value   =   ( string ) ns()->currency->define( $entry->value );
+        $entry->value = (string) ns()->currency->define( $entry->value );
 
         /**
          * Declaring entry actions
          */
-        $entry->action( 
+        $entry->action(
             identifier: 'edit',
             label: __( 'Edit' ),
             url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
         );
-        
-        $entry->action( 
+
+        $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
             type: 'DELETE',
             url: ns()->url( '/api/crud/ns.customers-coupons-history/' . $entry->id ),
             confirm: [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+                'message' => __( 'Would you like to delete this ?' ),
             ]
         );
-        
+
         return $entry;
     }
 
-    
     /**
      * trigger actions that are executed
      * when a bulk actio is posted.
@@ -347,9 +357,7 @@ class CustomerCouponHistoryCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-
             /**
              * Will control if the user has the permissoin to do that.
              */
@@ -359,13 +367,13 @@ class CustomerCouponHistoryCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
-                'success'   =>  0,
-                'failed'    =>  0
+            $status = [
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof OrderCoupon ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -373,6 +381,7 @@ class CustomerCouponHistoryCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -390,33 +399,33 @@ class CustomerCouponHistoryCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . '/' ),
-            'create'    =>  ns()->url( 'dashboard/' . '//create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . '//edit/' ),
-            'post'      =>  ns()->url( 'api/crud/' . 'ns.customers-coupons-history' ),
-            'put'       =>  ns()->url( 'api/crud/' . 'ns.customers-coupons-history/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . '/' ),
+            'create' => ns()->url( 'dashboard/' . '//create' ),
+            'edit' => ns()->url( 'dashboard/' . '//edit/' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-coupons-history' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-coupons-history/{id}' . '' ),
         ];
     }
 
     /**
      * Defines the bulk actions.
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * Defines the export configuration.
-    **/
+     **/
     public function getExports(): array
     {
         return [];

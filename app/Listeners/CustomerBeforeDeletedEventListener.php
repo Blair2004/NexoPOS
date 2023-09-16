@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\CustomerBeforeDeletedEvent;
 use App\Services\CustomerService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class CustomerBeforeDeletedEventListener
 {
@@ -14,8 +12,7 @@ class CustomerBeforeDeletedEventListener
      */
     public function __construct(
         public CustomerService $customerService
-    )
-    {
+    ) {
         //
     }
 

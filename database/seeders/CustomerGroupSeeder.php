@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Customer;
-use App\Models\CustomerBillingAddress;
 use App\Models\CustomerGroup;
-use App\Models\CustomerShippingAddress;
 use Illuminate\Database\Seeder;
 
 class CustomerGroupSeeder extends Seeder

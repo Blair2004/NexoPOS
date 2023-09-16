@@ -32,10 +32,10 @@ class ModuleDeleteCommand extends Command
 
         if ( $module !== null && $this->confirm( sprintf( __( 'Would you like to delete "%s"?' ), $module[ 'name' ] ) ) ) {
             $result = $modulesService->delete( $this->argument( 'identifier' ) );
-    
-            return match( $result[ 'status' ] ) {
-                'danger'    =>  $this->error( $result[ 'message' ] ),
-                'success'   =>  $this->info( $result[ 'message' ] ),
+
+            return match ( $result[ 'status' ] ) {
+                'danger' => $this->error( $result[ 'message' ] ),
+                'success' => $this->info( $result[ 'message' ] ),
             };
         }
 

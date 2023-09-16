@@ -21,7 +21,7 @@ class CashRegistersService
                 )
             );
         }
-        
+
         $register->status = Register::STATUS_OPENED;
         $register->used_by = Auth::id();
         $register->save();
@@ -89,7 +89,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashIn( Register $register, float $amount, string | null $description ): array
+    public function cashIn( Register $register, float $amount, string|null $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
@@ -156,7 +156,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashOut( Register $register, float $amount, string | null $description ): array
+    public function cashOut( Register $register, float $amount, string|null $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
@@ -223,7 +223,6 @@ class CashRegistersService
      * Will increase the register balance if it's assigned
      * to the right store
      *
-     * @param Order $order
      * @return void
      */
     public function recordCashRegisterHistorySale( Order $order )
@@ -312,7 +311,7 @@ class CashRegistersService
      * that only occurs if the order is updated
      * and will update the register history accordingly.
      */
-    public function createRegisterHistoryUsingPaymentStatus( Order $order, string $previous, string $new  ): null | RegisterHistory
+    public function createRegisterHistoryUsingPaymentStatus( Order $order, string $previous, string $new  ): null|RegisterHistory
     {
         /**
          * If the payment status changed from

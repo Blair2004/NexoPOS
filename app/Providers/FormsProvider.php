@@ -122,7 +122,7 @@ class FormsProvider extends ServiceProvider
                     return new ReccurringTransactionFields;
                     break;
                 case EntityTransactionFields::getIdentifier():
-                    return new EntityTransactionFields();
+                    return new EntityTransactionFields;
                     break;
                 case ScheduledTransactionFields::getIdentifier():
                     return new ScheduledTransactionFields;

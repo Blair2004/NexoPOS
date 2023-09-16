@@ -44,9 +44,7 @@ if (! function_exists('array_insert')) {
  * Insert a value or key/value pair after a specific key in an array.  If key doesn't exist, value is appended
  * to the end of the array.
  *
- * @param array $array
  * @param string $key
- * @param array $new
  * @return array
  */
 function array_insert_after( array $array, $key, array $new )
@@ -192,8 +190,6 @@ function execThis( $className )
 
 /**
  * Returns an instance of CoreService
- *
- * @return CoreService
  */
 function ns(): CoreService
 {

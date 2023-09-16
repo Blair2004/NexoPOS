@@ -152,8 +152,8 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
-        $username   =   $this->faker->userName();
-        $email      =   $this->faker->email();
+        $username = $this->faker->userName();
+        $email = $this->faker->email();
 
         $response = $this
             ->withSession([])
@@ -178,7 +178,7 @@ class AuthenticationTest extends TestCase
          * Step 1: we'll verify if the user
          * attribute are created after his registration.
          */
-        $user   =   User::where( 'email', $email )->first();
+        $user = User::where( 'email', $email )->first();
 
         $this->assertTrue( $user->attribute()->count() > 0, 'The created user doesn\'t have any attribute.' );
 

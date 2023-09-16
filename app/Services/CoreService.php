@@ -92,17 +92,17 @@ class CoreService
     public function restrict( $permissions, $message = '' ): void
     {
         if ( is_array( $permissions ) ) {
-            $passed     =   collect( $permissions )->filter( function( $permission ) {
+            $passed = collect( $permissions )->filter( function( $permission ) {
                 if ( is_bool( $permission ) ) {
                     return $permission;
                 } else {
                     return $this->allowedTo( $permission );
                 }
             })->count() === count( $permissions );
-        } else if ( is_string( $permissions ) ) {
+        } elseif ( is_string( $permissions ) ) {
             $passed = $this->allowedTo( $permissions );
-        } else if ( is_bool( $permissions ) ) {
-            $passed =   $permissions;
+        } elseif ( is_bool( $permissions ) ) {
+            $passed = $permissions;
         }
 
         if ( ! $passed ) {
@@ -116,7 +116,7 @@ class CoreService
      */
     public function getUserDetails(): Collection
     {
-        return collect( ( new User() )->getFillable() )->mapWithKeys( fn( $key ) => [ $key => Auth::user()->$key ] );
+        return collect( ( new User )->getFillable() )->mapWithKeys( fn( $key ) => [ $key => Auth::user()->$key ] );
     }
 
     /**
@@ -251,7 +251,7 @@ class CoreService
     }
 
     /**
-     * Register the available permissions when 
+     * Register the available permissions when
      * the app is installed as valid gates.
      */
     public function registerGatePermissions(): void
@@ -265,14 +265,14 @@ class CoreService
             Permission::get()->each( function( $permission ) {
                 if ( ! Gate::has( $permission->namespace ) ) {
                     Gate::define( $permission->namespace, function( User $user ) use ( $permission ) {
-                        $permissions    =   Cache::remember( 'ns-all-permissions-' . $user->id, 3600, function() use ( $user ) {
+                        $permissions = Cache::remember( 'ns-all-permissions-' . $user->id, 3600, function() use ( $user ) {
                             return $user->roles()
                                 ->with( 'permissions' )
                                 ->get()
                                 ->map( fn( $role ) => $role->permissions->map( fn( $permission ) => $permission->namespace ) )
                                 ->flatten();
                         })->toArray();
-        
+
                         return in_array( $permission->namespace, $permissions );
                     });
                 }
@@ -319,9 +319,9 @@ class CoreService
     public function checkSymbolicLinks(): void
     {
         if ( ! file_exists( public_path( 'storage' ) ) ) {
-            $notification   =   Notification::where( 'identifier', NotificationsEnum::NSSYMBOLICLINKSMISSING )
+            $notification = Notification::where( 'identifier', NotificationsEnum::NSSYMBOLICLINKSMISSING )
                 ->first();
-    
+
             if ( ! $notification instanceof Notification ) {
                 ns()->option->set( 'ns_has_symbolic_links_missing_notifications', true );
 
@@ -331,7 +331,7 @@ class CoreService
                     'identifier' => NotificationsEnum::NSSYMBOLICLINKSMISSING,
                     'source' => 'system',
                     'url' => 'https://my.nexopos.com/en/documentation/troubleshooting/broken-media-images?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
-                    'description' => __( "The Symbolic Links to the public directory is missing. Your medias might be broken and not display." ),
+                    'description' => __( 'The Symbolic Links to the public directory is missing. Your medias might be broken and not display.' ),
                 ])->dispatchForGroup( Role::namespace( Role::ADMIN ) );
             }
         } else {
@@ -384,7 +384,7 @@ class CoreService
         }
 
         if ( App::runningInConsole() ) {
-            $firstAdministrator   =   User::where( 'active', true )->
+            $firstAdministrator = User::where( 'active', true )->
                 whereRelation( 'roles', 'namespace', Role::ADMIN )->first();
 
             return $firstAdministrator->id;
@@ -394,18 +394,18 @@ class CoreService
     /**
      * Get the asset file name from the manifest.json file of a module in Laravel.
      *
-     * @param string $fileName
      * @param int $moduleId
      * @return string|null
+     *
      * @throws NotFoundException
      */
     public function moduleViteAssets( string $fileName, $moduleId ): string
     {
-        $moduleService  =   app()->make( ModulesService::class );
-        $module         =   $moduleService->get( $moduleId );
+        $moduleService = app()->make( ModulesService::class );
+        $module = $moduleService->get( $moduleId );
 
         if ( empty( $module ) ) {
-            throw new NotFoundException( 
+            throw new NotFoundException(
                 sprintf(
                     __( 'The requested module %s cannot be found.' ),
                     $moduleId
@@ -413,10 +413,10 @@ class CoreService
             );
         }
 
-        $manifestPath   =   $module[ 'path' ] . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . 'manifest.json';
+        $manifestPath = $module[ 'path' ] . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . 'manifest.json';
 
         if ( ! file_exists( $manifestPath ) ) {
-            throw new NotFoundException( 
+            throw new NotFoundException(
                 sprintf(
                     __( 'The manifest.json can\'t be located inside the module %s.' ),
                     $module[ 'name' ]
@@ -424,10 +424,10 @@ class CoreService
             );
         }
 
-        $manifestArray  =   json_decode( file_get_contents( $manifestPath ), true );
+        $manifestArray = json_decode( file_get_contents( $manifestPath ), true );
 
         if ( ! isset( $manifestArray[ $fileName ] ) ) {
-            throw new NotFoundException( 
+            throw new NotFoundException(
                 sprintf(
                     __( 'the requested file "%s" can\'t be located inside the manifest.json for the module %s.' ),
                     $fileName,
@@ -439,11 +439,11 @@ class CoreService
         /**
          * checks if a css file is declared as well
          */
-        $jsUrl      =   asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
-        $assets     =   collect([]);        
+        $jsUrl = asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
+        $assets = collect([]);
 
         if ( ! empty( $manifestArray[ $fileName ][ 'css' ] ) ) {
-            $assets     =   collect( $manifestArray[ $fileName ][ 'css' ] )->map( function( $url ) use ( $moduleId ) {
+            $assets = collect( $manifestArray[ $fileName ][ 'css' ] )->map( function( $url ) use ( $moduleId ) {
                 return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $url ) . '"/>';
             });
         }

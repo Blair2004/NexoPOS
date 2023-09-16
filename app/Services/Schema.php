@@ -40,7 +40,7 @@ class Schema
     public function renderSchema( $data )
     {
         extract( $data );
-        
+
         if ( isset( $table ) && ! empty( $table ) ) {
             echo "if ( ! Schema::hasTable( '{$table}' ) ) {\n";
             echo "\t\t\tSchema::create( '{$table}', function (Blueprint \$table) {\n";

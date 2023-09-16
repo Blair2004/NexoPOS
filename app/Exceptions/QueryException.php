@@ -16,7 +16,7 @@ class QueryException extends Exception
     {
         $message = $this->getMessage();
         $title = __( 'Query Exception' );
-        $back   = Helper::getValidPreviousUrl( $request );
+        $back = Helper::getValidPreviousUrl( $request );
 
         return response()->view( 'pages.errors.db-exception', compact( 'message', 'title', 'back' ), 500 );
     }

@@ -22,7 +22,6 @@ class OrderAfterPaymentStatusChangedEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\OrderAfterPaymentStatusChangedEvent  $event
      * @return void
      */
     public function handle(OrderAfterPaymentStatusChangedEvent $event)

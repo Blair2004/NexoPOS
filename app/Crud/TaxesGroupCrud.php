@@ -6,7 +6,6 @@ use App\Models\TaxGroup;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\UsersService;
-use Exception;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -62,8 +61,6 @@ class TaxesGroupCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -103,7 +100,6 @@ class TaxesGroupCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -182,7 +178,6 @@ class TaxesGroupCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  TaxGroup $entry
      * @return  void
      */
     public function afterPost( $request, TaxGroup $entry )

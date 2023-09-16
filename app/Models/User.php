@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -37,7 +36,7 @@ class User extends Authenticatable
     protected $table = 'nexopos_users';
 
     protected $casts = [
-        'active' => 'boolean'
+        'active' => 'boolean',
     ];
 
     /**
@@ -45,7 +44,6 @@ class User extends Authenticatable
      */
     public $options;
 
-    /** @var */
     public $user_id;
 
     protected $isDependencyFor = [
@@ -55,12 +53,12 @@ class User extends Authenticatable
             'foreign_name' => 'name',
             'foreign_index' => 'author',
         ],
-        Order::class    =>  [
-            'local_name'    =>  'username',
-            'local_index'   =>  'id',
-            'foreign_name'  =>  'code',
-            'foreign_index' =>  'author'
-        ]
+        Order::class => [
+            'local_name' => 'username',
+            'local_index' => 'id',
+            'foreign_name' => 'code',
+            'foreign_index' => 'author',
+        ],
     ];
 
     /**
@@ -144,21 +142,21 @@ class User extends Authenticatable
             $combinaison->save();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The role was successfully assigned.' )
+                'status' => 'success',
+                'message' => __( 'The role was successfully assigned.' ),
             ];
-        } else if ( is_array( $roleName ) ) {
+        } elseif ( is_array( $roleName ) ) {
             collect( $roleName )->each( fn( $role ) => $this->assignRole( $role ) );
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The role were successfully assigned.' )
+                'status' => 'success',
+                'message' => __( 'The role were successfully assigned.' ),
             ];
         }
 
         return [
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to identifier the provided role.' )
+            'status' => 'failed',
+            'message' => __( 'Unable to identifier the provided role.' ),
         ];
     }
 

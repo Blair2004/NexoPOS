@@ -114,8 +114,8 @@ class ProductsController extends DashboardController
      */
     public function updateProduct( Request $request, Product $product )
     {
-        $productCrud    =   new ProductCrud;
-        $form           =   $productCrud->getFlatForm( $request->post(), $product );
+        $productCrud = new ProductCrud;
+        $form = $productCrud->getFlatForm( $request->post(), $product );
 
         /**
          * the method "create" is capable of

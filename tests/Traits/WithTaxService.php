@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Traits;
 
 use App\Services\TaxService;
@@ -10,7 +11,7 @@ trait WithTaxService
         /**
          * @var TaxService $taxService
          */
-        $taxService     =   app()->make( TaxService::class );
+        $taxService = app()->make( TaxService::class );
 
         return $taxService->getPercentageOf(
             value: $value,

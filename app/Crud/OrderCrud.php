@@ -17,7 +17,6 @@ use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\OrdersService;
 use App\Services\UsersService;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -93,20 +92,18 @@ class OrderCrud extends CrudService
         'delete' => 'nexopos.delete.orders',
     ];
 
-    protected $casts        =   [
-        'customer_phone'    =>  NotDefinedCast::class,
-        'total'             =>  CurrencyCast::class,
-        'discount'          =>  CurrencyCast::class,
-        'delivery_status'   =>  OrderDeliveryCast::class,
-        'process_status'    =>  OrderProcessCast::class,
-        'type'              =>  OrderTypeCast::class,
-        'payment_status'    =>  OrderPaymentCast::class,
+    protected $casts = [
+        'customer_phone' => NotDefinedCast::class,
+        'total' => CurrencyCast::class,
+        'discount' => CurrencyCast::class,
+        'delivery_status' => OrderDeliveryCast::class,
+        'process_status' => OrderProcessCast::class,
+        'type' => OrderTypeCast::class,
+        'payment_status' => OrderPaymentCast::class,
     ];
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -199,7 +196,6 @@ class OrderCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -390,7 +386,6 @@ class OrderCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Order $entry
      * @return  void
      */
     public function afterPost( $request, Order $entry )
@@ -552,7 +547,7 @@ class OrderCrud extends CrudService
             default => ''
         };
 
-        $entry->action( 
+        $entry->action(
             identifier: 'ns.order-options',
             label: '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
             type: 'POPUP',
@@ -578,19 +573,19 @@ class OrderCrud extends CrudService
             );
         }
 
-        $entry->action( 
+        $entry->action(
             identifier: 'invoice',
             label: '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
             url: ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'receipt',
             label: '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
             url: ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'delete',
             label: '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
             type: 'DELETE',

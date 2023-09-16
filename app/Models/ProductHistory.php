@@ -6,13 +6,13 @@ use App\Casts\FloatConvertCasting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
- * @property integer $author
+ * @property int $id
+ * @property int $author
  * @property string $uuid
  * @property float $total_price
  * @property string $description
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class ProductHistory extends NsModel
 {
     use HasFactory;
@@ -53,10 +53,10 @@ class ProductHistory extends NsModel
 
     const ACTION_CONVERT_IN = 'convert-in';
 
-    public $casts    =  [
-        'before_quantity'   =>  FloatConvertCasting::class,
-        'quantity'          =>  FloatConvertCasting::class,
-        'after_quantity'    =>  FloatConvertCasting::class,
+    public $casts = [
+        'before_quantity' => FloatConvertCasting::class,
+        'quantity' => FloatConvertCasting::class,
+        'after_quantity' => FloatConvertCasting::class,
     ];
 
     /**

@@ -13,7 +13,6 @@ class NotInstalledStateMiddleware
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -23,7 +22,7 @@ class NotInstalledStateMiddleware
          * from the query string.
          */
         if ( ! empty( $request->query( 'lang' ) ) ) {
-            $validLanguage  =   in_array( $request->query( 'lang' ), array_keys( config( 'nexopos.languages' ) ) ) ? $request->query( 'lang' ) : 'en';
+            $validLanguage = in_array( $request->query( 'lang' ), array_keys( config( 'nexopos.languages' ) ) ) ? $request->query( 'lang' ) : 'en';
             App::setLocale( $validLanguage );
         }
 

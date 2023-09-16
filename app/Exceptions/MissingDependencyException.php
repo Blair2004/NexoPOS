@@ -18,7 +18,7 @@ class MissingDependencyException extends Exception
             return response()->view( 'pages.errors.missing-dependency', [
                 'title' => __( 'Missing Dependency' ),
                 'message' => $this->getMessage(),
-                'back'  =>  Helper::getValidPreviousUrl( $request ),
+                'back' => Helper::getValidPreviousUrl( $request ),
             ]);
         }
 

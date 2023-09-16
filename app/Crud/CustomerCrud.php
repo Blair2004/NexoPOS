@@ -22,7 +22,6 @@ use App\Services\Helper;
 use App\Services\Options;
 use App\Services\UsersService;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -59,9 +58,9 @@ class CustomerCrud extends CrudService
      */
     protected $prependOptions = true;
 
-    protected $pick     =   [
-        'user'  =>  [ 'id', 'username' ],
-        'group' =>  [ 'id', 'name' ]
+    protected $pick = [
+        'user' => [ 'id', 'username' ],
+        'group' => [ 'id', 'name' ],
     ];
 
     /**
@@ -81,14 +80,14 @@ class CustomerCrud extends CrudService
         'billing' => [ CustomerBillingAddress::class, 'customer_id', 'id' ],
     ];
 
-    protected $casts        =   [
-        'first_name'        =>  NotDefinedCast::class,
-        'last_name'         =>  NotDefinedCast::class,
-        'phone'             =>  NotDefinedCast::class,
-        'owed_amount'       =>  CurrencyCast::class,
-        'account_amount'    =>  CurrencyCast::class,
-        'purchases_amount'  =>  CurrencyCast::class,
-        'gender'            =>  GenderCast::class
+    protected $casts = [
+        'first_name' => NotDefinedCast::class,
+        'last_name' => NotDefinedCast::class,
+        'phone' => NotDefinedCast::class,
+        'owed_amount' => CurrencyCast::class,
+        'account_amount' => CurrencyCast::class,
+        'purchases_amount' => CurrencyCast::class,
+        'gender' => GenderCast::class,
     ];
 
     /**
@@ -123,15 +122,13 @@ class CustomerCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
         parent::__construct();
 
-        $this->options          =   app()->make( Options::class );
-        $this->customerService  =   app()->make( CustomerService::class );
+        $this->options = app()->make( Options::class );
+        $this->customerService = app()->make( CustomerService::class );
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
@@ -160,7 +157,6 @@ class CustomerCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -301,25 +297,25 @@ class CustomerCrud extends CrudService
          * email for the customer based on the domain and the last customer id.
          */
         if ( empty( $inputs[ 'email' ] ) ) {
-            $domain                 =   parse_url( url('/' ) );
-            $lastCustomer           =   User::orderBy( 'nexopos_users.id', 'desc' )->first();
+            $domain = parse_url( url('/' ) );
+            $lastCustomer = User::orderBy( 'nexopos_users.id', 'desc' )->first();
 
             if ( $lastCustomer instanceof User ) {
-                $lastCustomerId     =   $lastCustomer->id + 1;
+                $lastCustomerId = $lastCustomer->id + 1;
             } else {
-                $lastCustomerId     =   1;
+                $lastCustomerId = 1;
             }
-            
+
             $inputs[ 'email' ] = 'customer-' . $lastCustomerId + 1 . '@' . ( $domain[ 'host' ] ?? 'nexopos.com' );
-        } 
+        }
 
         /**
          * if the username is empty, it will match the email.
          */
         if ( empty( $inputs[ 'username' ] ) ) {
-            $inputs[ 'username' ]   = $inputs[ 'email' ];
-        } 
-        
+            $inputs[ 'username' ] = $inputs[ 'email' ];
+        }
+
         return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
                 $value = $this->options->get( 'ns_customers_default_group', false );
@@ -380,7 +376,7 @@ class CustomerCrud extends CrudService
         /**
          * @var UsersService $usersService
          */
-        $usersService    =   app()->make( UsersService::class );
+        $usersService = app()->make( UsersService::class );
         $usersService->setUserRole( User::find( $customer->id ), [ Role::namespace( Role::STORECUSTOMER )->id ]);
 
         return $inputs;
@@ -497,42 +493,42 @@ class CustomerCrud extends CrudService
      */
     public function setActions( CrudEntry $entry ): CrudEntry
     {
-        $entry->action( 
+        $entry->action(
             identifier: 'edit_customers_group',
             label: __( 'Edit' ),
             type: 'GOTO',
             url: ns()->url( 'dashboard/customers/edit/' . $entry->id ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'customers_orders',
             label: __( 'Orders' ),
             type: 'GOTO',
             url: ns()->url( 'dashboard/customers/' . $entry->id . '/orders' ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'customers_rewards',
             label: __( 'Rewards' ),
             type: 'GOTO',
             url: ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'customers_coupons',
             label: __( 'Coupons' ),
             type: 'GOTO',
             url: ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'customers_history',
             label: __( 'Wallet History' ),
             type: 'GOTO',
             url: ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
             type: 'DELETE',

@@ -6,7 +6,6 @@ use App\Models\Role;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Helper;
 use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
@@ -83,8 +82,6 @@ class RolesCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -124,7 +121,6 @@ class RolesCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -248,7 +244,6 @@ class RolesCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Role $entry
      * @return  void
      */
     public function afterPost( $request, Role $entry )

@@ -7,7 +7,6 @@ use App\Models\Order;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -81,8 +80,8 @@ class HoldOrderCrud extends CrudService
      * ]
      */
     public $pick = [
-        'user'      => [ 'username' ],
-        'customer'  => [ 'username', 'first_name', 'last_name' ],
+        'user' => [ 'username' ],
+        'customer' => [ 'username', 'first_name', 'last_name' ],
     ];
 
     /**
@@ -108,8 +107,6 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -150,7 +147,6 @@ class HoldOrderCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -355,7 +351,6 @@ class HoldOrderCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Order $entry
      * @return  void
      */
     public function afterPost( $request, Order $entry )

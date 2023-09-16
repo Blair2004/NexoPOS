@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\ModulesBeforeRemovedEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ModulesBeforeRemovedEventListener
 {

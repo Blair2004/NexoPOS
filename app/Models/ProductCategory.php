@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property integer $id
+ * @property int $id
  * @property string $uuid
- * @property integer $author
+ * @property int $author
  * @property bool $displays_on_pos
  * @property string $description
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class ProductCategory extends NsModel
 {
     use HasFactory;

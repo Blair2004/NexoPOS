@@ -16,25 +16,25 @@ class ProductUnitItemTest extends TestCase
         /**
          * @var UnitService $unitService
          */
-        $unitService    =   app()->make( UnitService::class );
+        $unitService = app()->make( UnitService::class );
 
-        $quantity       =   5;
-        $result         =   10;
+        $quantity = 5;
+        $result = 10;
 
-        $from           =   new Unit;
-        $from->value    =   12;
+        $from = new Unit;
+        $from->value = 12;
 
-        $to             =   new Unit;
-        $to->value      =   6;
+        $to = new Unit;
+        $to->value = 6;
 
-        $partA          =   $unitService->getConvertedQuantity(
+        $partA = $unitService->getConvertedQuantity(
             from: $from,
             to: $to,
             quantity: $quantity
         );
 
-        $partB          =   ( float ) ( ( $from->value * $quantity ) / $to->value );
-        
+        $partB = (float) ( ( $from->value * $quantity ) / $to->value );
+
         $this->assertTrue(
             $partA === $partB
         );
@@ -45,19 +45,19 @@ class ProductUnitItemTest extends TestCase
         /**
          * @var UnitService $unitService
          */
-        $unitService    =   app()->make( UnitService::class );
-        $purchasePrice  =   100;
-        $partB          =   ( float ) 50;
+        $unitService = app()->make( UnitService::class );
+        $purchasePrice = 100;
+        $partB = (float) 50;
 
-        $from           =   new Unit;
-        $from->value    =   12;
+        $from = new Unit;
+        $from->value = 12;
 
-        $to             =   new Unit;
-        $to->value      =   6;
+        $to = new Unit;
+        $to->value = 6;
 
-        $purchasePrice  =   100;
+        $purchasePrice = 100;
 
-        $partA          =   $unitService->getPurchasePriceFromUnit(
+        $partA = $unitService->getPurchasePriceFromUnit(
             purchasePrice: $purchasePrice,
             from: $from,
             to: $to

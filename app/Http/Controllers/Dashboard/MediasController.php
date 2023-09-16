@@ -32,7 +32,6 @@ class MediasController extends DashboardController
     /**
      * perform
      *
-     * @param
      * @return json
      */
     public function getMedias()
@@ -43,7 +42,6 @@ class MediasController extends DashboardController
     /**
      * perform
      *
-     * @param
      * @return json
      */
     public function deleteMedia()
@@ -53,8 +51,6 @@ class MediasController extends DashboardController
     /**
      * Update a media name
      *
-     * @param Media $media
-     * @param Request $request
      * @return json
      */
     public function updateMedia( Media $media, Request $request )

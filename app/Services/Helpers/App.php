@@ -48,8 +48,8 @@ trait App
 
     public static function pageTitle( $string )
     {
-        $storeName  =   ns()->option->get( 'ns_store_name' ) ?: 'NexoPOS';
-        
+        $storeName = ns()->option->get( 'ns_store_name' ) ?: 'NexoPOS';
+
         return sprintf(
             Hook::filter( 'ns-page-title', __( '%s &mdash; %s' ) ),
             $string,
@@ -65,15 +65,15 @@ trait App
     public static function getValidPreviousUrl( Request $request ): string
     {
         if ( $request->has('back') ) {
-            $backUrl    = $request->query('back');
-            $parsedUrl  = parse_url($backUrl);
-            $host       = $parsedUrl['host'];
+            $backUrl = $request->query('back');
+            $parsedUrl = parse_url($backUrl);
+            $host = $parsedUrl['host'];
 
             if (filter_var($backUrl, FILTER_VALIDATE_URL) && $host === parse_url(env('APP_URL'), PHP_URL_HOST)) {
                 return urldecode( $backUrl );
-            } 
+            }
         }
-        
+
         return url()->previous();
     }
 }

@@ -11,14 +11,12 @@ class TransactionOccurrenceCast implements CastsAttributes
      * Cast the given value.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
      * @param  mixed  $value
-     * @param  array  $attributes
      * @return mixed
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return match( $value ) {
+        return match ( $value ) {
             Transaction::OCCURRENCE_X_AFTER_MONTH_STARTS => __( 'Month Starts' ),
             Transaction::OCCURRENCE_MIDDLE_OF_MONTH => __( 'Month Middle' ),
             Transaction::OCCURRENCE_END_OF_MONTH => __( 'Month Ends' ),
@@ -33,9 +31,7 @@ class TransactionOccurrenceCast implements CastsAttributes
      * Prepare the given value for storage.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
      * @param  mixed  $value
-     * @param  array  $attributes
      * @return mixed
      */
     public function set($model, string $key, $value, array $attributes)

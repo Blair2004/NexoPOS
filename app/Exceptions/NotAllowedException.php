@@ -18,7 +18,7 @@ class NotAllowedException extends Exception
             return response()->view( 'pages.errors.not-allowed', [
                 'title' => __( 'Not Allowed Action' ),
                 'message' => $this->getMessage(),
-                'back'  =>  Helper::getValidPreviousUrl( $request ),
+                'back' => Helper::getValidPreviousUrl( $request ),
             ]);
         }
 

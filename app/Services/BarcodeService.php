@@ -31,9 +31,6 @@ class BarcodeService
     /**
      * Will generate code
      * for provided barcode type
-     *
-     * @param string $type
-     * @return string
      */
     public function generate( string $type ): string
     {

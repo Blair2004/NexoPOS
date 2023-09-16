@@ -18,7 +18,7 @@ class CoreVersionMismatchException extends Exception
     {
         $message = $this->getMessage();
         $title = $this->title ?: __( 'Incompatibility Exception' );
-        $back   = Helper::getValidPreviousUrl( $request );
+        $back = Helper::getValidPreviousUrl( $request );
 
         return response()->view( 'pages.errors.core-exception', compact( 'message', 'title', 'back' ), 500 );
     }

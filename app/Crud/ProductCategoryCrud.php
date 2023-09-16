@@ -11,7 +11,6 @@ use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\UsersService;
-use Exception;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -82,8 +81,6 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -116,7 +113,6 @@ class ProductCategoryCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -221,7 +217,6 @@ class ProductCategoryCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  ProductCategory $entry
      * @return  void
      */
     public function afterPost( $request, ProductCategory $entry )
@@ -348,21 +343,21 @@ class ProductCategoryCrud extends CrudService
         $entry->parent_name = $entry->parent_name === null ? __( 'No Parent' ) : $entry->parent_name;
         $entry->displays_on_pos = (int) $entry->displays_on_pos === 1 ? __( 'Yes' ) : __( 'No' );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'edit',
             label: __( 'Edit' ),
             type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'compute',
             label: _( 'Compute Products' ),
             type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id ),
         );
 
-        $entry->action( 
+        $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
             type: 'DELETE',

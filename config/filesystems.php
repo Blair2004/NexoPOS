@@ -88,12 +88,12 @@ return [
 
         'ns-modules-temp' => [
             'driver' => 'local',
-            'root' => storage_path( 'temporary-files/modules' )
+            'root' => storage_path( 'temporary-files/modules' ),
         ],
 
         'ns-temp' => [
             'driver' => 'local',
-            'root' => storage_path( 'temporary-files' )
+            'root' => storage_path( 'temporary-files' ),
         ],
     ],
 

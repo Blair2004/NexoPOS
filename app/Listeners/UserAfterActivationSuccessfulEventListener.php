@@ -3,10 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\UserAfterActivationSuccessfulEvent;
-use App\Services\UsersService;
 use App\Services\WidgetService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class UserAfterActivationSuccessfulEventListener
 {
@@ -17,8 +14,7 @@ class UserAfterActivationSuccessfulEventListener
      */
     public function __construct(
         private WidgetService $widgetService
-    )
-    {
+    ) {
         //
     }
 
@@ -31,7 +27,7 @@ class UserAfterActivationSuccessfulEventListener
     public function handle( UserAfterActivationSuccessfulEvent $event)
     {
         /**
-         * For every user who's activated, we will assign 
+         * For every user who's activated, we will assign
          * default widget to their account.
          */
         $this->widgetService->addDefaultWidgetsToAreas( $event->user );

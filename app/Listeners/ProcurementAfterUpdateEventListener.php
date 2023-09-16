@@ -3,9 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\ProcurementAfterUpdateEvent;
-use App\Services\TransactionService;
 use App\Services\ProcurementService;
 use App\Services\ProviderService;
+use App\Services\TransactionService;
 
 class ProcurementAfterUpdateEventListener
 {
@@ -25,7 +25,6 @@ class ProcurementAfterUpdateEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\ProcurementAfterUpdateEvent  $event
      * @return void
      */
     public function handle(ProcurementAfterUpdateEvent $event)

@@ -7,8 +7,6 @@ use App\Models\Procurement;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\ProviderService;
-use App\Services\UsersService;
-use Exception;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -80,8 +78,6 @@ class ProcurementCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -127,7 +123,6 @@ class ProcurementCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -261,7 +256,6 @@ class ProcurementCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Procurement $entry
      * @return  void
      */
     public function afterPost( $request, Procurement $entry )

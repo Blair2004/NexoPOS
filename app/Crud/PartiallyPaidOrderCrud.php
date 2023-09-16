@@ -8,8 +8,6 @@ class PartiallyPaidOrderCrud extends HoldOrderCrud
 {
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {

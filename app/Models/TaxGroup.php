@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property integer $id
+ * @property int $id
  * @property string $uuid
  * @property string $description
- * @property integer $author
+ * @property int $author
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class TaxGroup extends NsModel
 {
     use HasFactory;

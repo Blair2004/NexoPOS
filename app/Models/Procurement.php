@@ -11,9 +11,9 @@ use App\Events\ProcurementBeforeUpdateEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
+ * @property int $id
  * @property mixed $name
- * @property integer $provider_id
+ * @property int $provider_id
  * @property float $value
  * @property float $cost
  * @property float $tax_value
@@ -23,13 +23,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property \Carbon\Carbon $invoice_date
  * @property mixed $payment_status
  * @property mixed $delivery_status
- * @property integer $total_items
+ * @property int $total_items
  * @property string $description
- * @property integer $author
+ * @property int $author
  * @property mixed $uuid
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class Procurement extends NsModel
 {
     use HasFactory;

@@ -22,7 +22,6 @@ use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\Provider;
 use App\Models\Role;
-use App\Models\Scopes\VisibleProductUnitScope;
 use App\Models\Unit;
 use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -276,13 +275,13 @@ class ProcurementService
     /**
      * Attempt a product stock removal
      * if the procurement has been stocked
+     *
      * @throws NotAllowedException
      */
     public function attemptProductsStockRemoval( Procurement $procurement ): void
     {
         if ( $procurement->delivery_status === 'stocked' ) {
             $procurement->products->each( function( ProcurementProduct $procurementProduct ) {
-
                 /**
                  * We'll handle products that was converted a bit
                  * differently to ensure converted product inventory is taken in account.
@@ -292,28 +291,27 @@ class ProcurementService
                         ->withUnit( $procurementProduct->unit_id )
                         ->first();
 
-                    $quantity   =   $procurementProduct->quantity;
-                    $unitName   =   $procurementProduct->unit->name;
-
+                    $quantity = $procurementProduct->quantity;
+                    $unitName = $procurementProduct->unit->name;
                 } else {
-                    $fromUnit   =   $procurementProduct->unit;
-                    $toUnit     =   Unit::find( $procurementProduct->convert_unit_id );
+                    $fromUnit = $procurementProduct->unit;
+                    $toUnit = Unit::find( $procurementProduct->convert_unit_id );
 
-                    $quantity  =   $this->unitService->getConvertedQuantity(
+                    $quantity = $this->unitService->getConvertedQuantity(
                         from: $fromUnit,
                         to: $toUnit,
                         quantity: $procurementProduct->quantity
                     );
 
-                    $unitName       =   $toUnit->name;
-                    $unitQuantity   =   ProductUnitQuantity::withProduct( $procurementProduct->product_id )
+                    $unitName = $toUnit->name;
+                    $unitQuantity = ProductUnitQuantity::withProduct( $procurementProduct->product_id )
                         ->withUnit( $toUnit->id )
                         ->first();
                 }
 
                 if ( $unitQuantity instanceof ProductUnitQuantity ) {
                     if ( floatval( $unitQuantity->quantity ) - floatval( $quantity ) < 0 ) {
-                        throw new NotAllowedException( 
+                        throw new NotAllowedException(
                             sprintf(
                                 __( 'Unable to delete the procurement as there is not enough stock remaining for "%s" on unit "%s". This likely means the stock count has changed either with a sale, adjustment after the procurement has been stocked.' ),
                                 $procurementProduct->product->name,
@@ -761,21 +759,20 @@ class ProcurementService
          * procurement has been stocked.
          */
         if ( $procurement->delivery_status === 'stocked' ) {
-
             /**
              * if the product was'nt convered into a different unit
              * then we'll directly perform a stock adjustment on that product.
              */
             if ( ! empty( $procurementProduct->convert_unit_id ) ) {
-                $from       =   Unit::find( $procurementProduct->unit_id );
-                $to         =   Unit::find( $procurementProduct->convert_unit_id );
-                $convertedQuantityToRemove  =   $this->unitService->getConvertedQuantity(
+                $from = Unit::find( $procurementProduct->unit_id );
+                $to = Unit::find( $procurementProduct->convert_unit_id );
+                $convertedQuantityToRemove = $this->unitService->getConvertedQuantity(
                     from: $from,
                     to: $to,
                     quantity: $procurementProduct->quantity
                 );
 
-                $purchasePrice  =   $this->unitService->getPurchasePriceFromUnit(
+                $purchasePrice = $this->unitService->getPurchasePriceFromUnit(
                     purchasePrice: $procurementProduct->purchase_price,
                     from: $from,
                     to: $to
@@ -888,7 +885,6 @@ class ProcurementService
      * this will actually save the history and update
      * the product stock
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function handleProcurement( Procurement $procurement )
@@ -1024,7 +1020,7 @@ class ProcurementService
         return Product::query()
             ->whereIn( 'type', [
                 Product::TYPE_DEMATERIALIZED,
-                Product::TYPE_MATERIALIZED
+                Product::TYPE_MATERIALIZED,
             ])
             ->where( function( $query ) use ( $argument ) {
                 $query->orWhere( 'name', 'LIKE', "%{$argument}%" )

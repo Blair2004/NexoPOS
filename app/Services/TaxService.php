@@ -243,12 +243,13 @@ class TaxService
      * Retreive the tax value for a specific
      * amount using a determined tax group id on which the calculation is made
      */
-    public function getComputedTaxGroupValue( string | null $tax_type, int | null $tax_group_id, float $price )
+    public function getComputedTaxGroupValue( string|null $tax_type, int|null $tax_group_id, float $price )
     {
         $taxGroup = TaxGroup::find( $tax_group_id );
 
         if ( $taxGroup instanceof TaxGroup ) {
             $summarizedRate = $taxGroup->taxes->sum( 'rate' );
+
             return $this->getVatValue( $tax_type, $summarizedRate, $price );
         }
 
@@ -256,50 +257,49 @@ class TaxService
     }
 
     /**
-     * Will compute the tax value for each tax rate 
+     * Will compute the tax value for each tax rate
      * provided on the $rates and return the global tax value
      * and the tax value for each rates.
      */
     public function getTaxesComputed( string $tax_type, array $rates, float $value ): array
     {
-        $response                   =   [];
-        $response[ 'value' ]        =   $value;
-        $response[ 'rate' ]  =   collect( $rates )->sum();
-        $response[ 'percentages' ]  =   collect( $rates )->map( fn( $rate ) => ns()->currency->define(
+        $response = [];
+        $response[ 'value' ] = $value;
+        $response[ 'rate' ] = collect( $rates )->sum();
+        $response[ 'percentages' ] = collect( $rates )->map( fn( $rate ) => ns()->currency->define(
             ns()->currency->define( $rate )->dividedBy( $response[ 'rate' ] )->toFloat()
         )->multipliedBy(100)->toFloat() );
 
         if ( $tax_type === 'inclusive' ) {
-            $response[ 'with-tax' ]         =   $response[ 'value' ];
-            $response[ 'without-tax' ]      =   $this->getPriceWithoutTax(
+            $response[ 'with-tax' ] = $response[ 'value' ];
+            $response[ 'without-tax' ] = $this->getPriceWithoutTax(
                 type: $tax_type,
                 rate: $response[ 'rate' ],
                 value: $value
             );
 
-            $response[ 'tax' ]   =   $value - $response[ 'without-tax' ];
-        } else if ( $tax_type === 'exclusive' ) {
-            $response[ 'without-tax' ]  =   $response[ 'value' ];
-            $response[ 'with-tax' ]     =   $this->getPriceWithTax(
+            $response[ 'tax' ] = $value - $response[ 'without-tax' ];
+        } elseif ( $tax_type === 'exclusive' ) {
+            $response[ 'without-tax' ] = $response[ 'value' ];
+            $response[ 'with-tax' ] = $this->getPriceWithTax(
                 type: $tax_type,
                 rate: $response[ 'rate' ],
                 value: $value
             );
 
-            $response[ 'tax' ]   =   $response[ 'with-tax' ] - $value;
+            $response[ 'tax' ] = $response[ 'with-tax' ] - $value;
         } else {
-
         }
 
         /**
          * let's now compute the individual values
          */
-        $response[ 'percentages' ]   =   collect( $response[ 'percentages' ] )->map( function( $percentage ) use ( $value, $response ) {
+        $response[ 'percentages' ] = collect( $response[ 'percentages' ] )->map( function( $percentage ) use ( $value, $response ) {
             $computed = ns()->currency->define(
                 ns()->currency->define( $value )->multipliedBy( $percentage )->toFloat()
             )->divideBy(100)->toFloat();
 
-            $tax    =   ns()->currency->define( 
+            $tax = ns()->currency->define(
                 ns()->currency->define( $response[ 'tax' ] )->multipliedBy( $percentage )->toFloat()
             )->dividedBy(100)->toFloat();
 
@@ -398,7 +398,6 @@ class TaxService
      * Compute tax for a provided unit group
      *
      * @param string $type inclusive or exclusive
-     * @param TaxGroup $group
      * @param float|int $value
      * @return float
      *
@@ -460,15 +459,15 @@ class TaxService
          */
         if ( $taxGroup instanceof TaxGroup ) {
             if ( $type === 'exclusive' ) {
-                $orderProduct->price_with_tax   =   $orderProduct->unit_price;
-                $orderProduct->price_without_tax    =   $this->getPriceWithoutTaxUsingGroup(
+                $orderProduct->price_with_tax = $orderProduct->unit_price;
+                $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
                     type: 'inclusive',
                     price: $orderProduct->price_with_tax - $discount,
                     group: $taxGroup
                 );
             } else {
-                $orderProduct->price_without_tax    =   $orderProduct->unit_price;
-                $orderProduct->price_with_tax       =   $this->getPriceWithTaxUsingGroup(
+                $orderProduct->price_without_tax = $orderProduct->unit_price;
+                $orderProduct->price_with_tax = $this->getPriceWithTaxUsingGroup(
                     type: 'exclusive',
                     price: $orderProduct->price_without_tax - $discount,
                     group: $taxGroup
@@ -528,11 +527,11 @@ class TaxService
     public function getPriceWithoutTax( string $type, float $rate, float $value ): float
     {
         if ( $type === 'inclusive' ) {
-            return $this->currency->define( 
-                    $this->currency->define( $value )->dividedBy(
-                        $this->currency->define( $rate )->additionateBy(100)->toFloat()
-                    )->toFloat()
-                )
+            return $this->currency->define(
+                $this->currency->define( $value )->dividedBy(
+                    $this->currency->define( $rate )->additionateBy(100)->toFloat()
+                )->toFloat()
+            )
                 ->multipliedBy(100)
                 ->toFloat();
         }
@@ -560,7 +559,7 @@ class TaxService
     /**
      * Computes the vat value for a defined amount.
      */
-    public function getVatValue( string | null $type, float $rate, float $value ): float
+    public function getVatValue( string|null $type, float $rate, float $value ): float
     {
         if ( $type === 'inclusive' ) {
             return $this->currency->define( $value )->subtractBy( $this->getPriceWithoutTax( $type, $rate, $value ) )->toFloat();
@@ -575,7 +574,7 @@ class TaxService
      * get the tax value from an amount calculated
      * over a provided tax group.
      */
-    public function getTaxGroupVatValue( string | null $type, TaxGroup $group, float $value ): float
+    public function getTaxGroupVatValue( string|null $type, TaxGroup $group, float $value ): float
     {
         if ( $type === 'inclusive' ) {
             return $this->currency->define( $value )->subtractBy( $this->getPriceWithTaxUsingGroup( $type, $group, $value ) )->toFloat();
@@ -601,6 +600,7 @@ class TaxService
     /**
      * delete a specific tax using
      * a provided identifier
+     *
      * @throws NotFoundException
      */
     public function delete( int $id ): array

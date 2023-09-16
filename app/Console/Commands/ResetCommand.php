@@ -73,7 +73,7 @@ class ResetCommand extends Command
                 ]);
                 $this->info( __( 'The demo has been enabled.' ) );
                 break;
-            default: 
+            default:
                 $this->error( __( 'Unsupported reset mode.' ) );
                 break;
         }
@@ -91,7 +91,6 @@ class ResetCommand extends Command
 
     /**
      * Proceed hard reset
-     *
      */
     private function hardReset(): void
     {
@@ -102,7 +101,6 @@ class ResetCommand extends Command
 
     /**
      * Proceed soft reset
-     *
      */
     private function softReset(): void
     {

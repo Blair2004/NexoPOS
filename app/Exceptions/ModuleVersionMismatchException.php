@@ -16,7 +16,7 @@ class ModuleVersionMismatchException extends Exception
     {
         $message = $this->getMessage();
         $title = __( 'Module Version Mismatch' );
-        $back   = Helper::getValidPreviousUrl( $request );
+        $back = Helper::getValidPreviousUrl( $request );
 
         return response()->view( 'pages.errors.module-exception', compact( 'message', 'title', 'back' ), 500 );
     }

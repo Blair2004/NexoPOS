@@ -38,7 +38,6 @@ class Options
      * Will reset the default options
      *
      * @param array $options
-     * @return void
      */
     public function setDefault( $options = [] ): void
     {
@@ -135,9 +134,9 @@ class Options
             $option = new Option;
             $option->key = trim( strtolower( $key ) );
             $option->array = false;
-            
+
             $this->encodeOptionValue( $option, $value );
-            
+
             $option->expire_on = $expiration;
 
             /**
@@ -167,7 +166,7 @@ class Options
         if ( is_array( $value ) ) {
             $option->array = true;
             $option->value = json_encode( $value );
-        } else if ( empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) ) {
+        } elseif ( empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) ) {
             $option->value = '';
         } else {
             $option->value = $value;
@@ -203,6 +202,7 @@ class Options
 
         $options = $filtredOptions->map( function( $option ) {
             $this->decodeOptionValue( $option );
+
             return $option;
         });
 
@@ -212,7 +212,7 @@ class Options
             default => $options->map( fn( $option ) => $option->value )->toArray()
         };
     }
-    
+
     public function decodeOptionValue( $option )
     {
         /**
@@ -224,17 +224,17 @@ class Options
                 $json = json_decode( $option->value, true );
 
                 if ( json_last_error() == JSON_ERROR_NONE ) {
-                    $option->value  =   $json;
+                    $option->value = $json;
                 } else {
-                    $option->value  =   null;
+                    $option->value = null;
                 }
             } elseif ( ! $option->array ) {
                 if ( preg_match( '/^[0-9]{1,}$/', $option->value ) ) {
-                    $option->value  =   (int) $option->value;
-                } else if ( preg_match( '/^[0-9]{1,}\.[0-9]{1,}$/', $option->value ) ) {
-                    $option->value  =   (float) $option->value;
+                    $option->value = (int) $option->value;
+                } elseif ( preg_match( '/^[0-9]{1,}\.[0-9]{1,}$/', $option->value ) ) {
+                    $option->value = (float) $option->value;
                 } else {
-                    $option->value  =   $option->value;
+                    $option->value = $option->value;
                 }
             }
         }

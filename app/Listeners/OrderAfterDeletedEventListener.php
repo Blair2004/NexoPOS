@@ -26,7 +26,6 @@ class OrderAfterDeletedEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\OrderAfterDeletedEvent  $event
      * @return void
      */
     public function handle(OrderAfterDeletedEvent $event)

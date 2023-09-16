@@ -23,7 +23,6 @@ class ProductAfterUpdatedEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\ProductAfterUpdatedEvent  $event
      * @return void
      */
     public function handle(ProductAfterUpdatedEvent $event)
@@ -35,7 +34,7 @@ class ProductAfterUpdatedEventListener
          * and check if it's different from the new defined category.
          * This will help computing total items for the old category.
          */
-        $oldCategoryId  =   session()->pull( 'product_category_id' );
+        $oldCategoryId = session()->pull( 'product_category_id' );
 
         if ( $oldCategoryId !== $event->product->category->id ) {
             ComputeCategoryProductsJob::dispatch( ProductCategory::find( $oldCategoryId ) );

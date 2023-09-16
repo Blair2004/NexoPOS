@@ -181,11 +181,11 @@ class GeneralSettings extends SettingsPage
                             'name' => 'ns_date_format',
                             'value' => ns()->option->get( 'ns_date_format' ),
                             'type' => 'select',
-                            'options'   =>  Helper::kvToJsOptions([
-                                'Y-m-d' =>  ns()->date->format( 'Y-m-d' ),
-                                'Y/m/d' =>  ns()->date->format( 'Y/m/d' ),
-                                'd-m-y' =>  ns()->date->format( 'd-m-Y' ),
-                                'd/m/y' =>  ns()->date->format( 'd/m/Y' ),
+                            'options' => Helper::kvToJsOptions([
+                                'Y-m-d' => ns()->date->format( 'Y-m-d' ),
+                                'Y/m/d' => ns()->date->format( 'Y/m/d' ),
+                                'd-m-y' => ns()->date->format( 'd-m-Y' ),
+                                'd/m/y' => ns()->date->format( 'd/m/Y' ),
                             ]),
                             'description' => __( 'This define how the date should be defined. The default format is "Y-m-d".' ),
                         ], [

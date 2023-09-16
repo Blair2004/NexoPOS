@@ -3,10 +3,10 @@
 namespace Tests\Traits;
 
 use App\Classes\Currency;
-use App\Models\TransactionAccount;
-use App\Models\TransactionHistory;
 use App\Models\DashboardDay;
 use App\Models\Procurement;
+use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
 use App\Services\ReportService;
 use App\Services\TestService;
 use Illuminate\Support\Facades\Auth;
@@ -92,14 +92,14 @@ trait WithAccountingTest
         /**
          * @var Procurement
          */
-        $procurement    =   Procurement::find( $procurement_id );
+        $procurement = Procurement::find( $procurement_id );
 
         /**
          * @var TransactionHistory
          */
-        $transactionHistory       =   TransactionHistory::where( 'procurement', $procurement_id )->first();
+        $transactionHistory = TransactionHistory::where( 'procurement', $procurement_id )->first();
 
-        $assignedCategoryID     =   ns()->option->get( 'ns_procurement_cashflow_account' );
+        $assignedCategoryID = ns()->option->get( 'ns_procurement_cashflow_account' );
 
         $this->assertTrue( $procurement instanceof Procurement, __( 'Unable to retreive the procurement using the id provided.' ) );
         $this->assertTrue( $transactionHistory instanceof TransactionHistory, __( 'Unable to retreive the cashflow using the provided procurement id' ) );
@@ -133,7 +133,7 @@ trait WithAccountingTest
          */
         $procurementsDetails = app()->make( TestService::class );
         $procurementData = $procurementsDetails->prepareProcurement( ns()->date->now(), [
-            'total_products'    =>  10
+            'total_products' => 10,
         ] );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )

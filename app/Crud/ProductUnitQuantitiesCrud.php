@@ -6,7 +6,6 @@ use App\Exceptions\NotAllowedException;
 use App\Models\ProductUnitQuantity;
 use App\Models\User;
 use App\Services\CrudService;
-use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -86,8 +85,6 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -127,7 +124,6 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -242,7 +238,6 @@ class ProductUnitQuantitiesCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  ProductUnitQuantity $entry
      * @return  void
      */
     public function afterPost( $request, ProductUnitQuantity $entry )

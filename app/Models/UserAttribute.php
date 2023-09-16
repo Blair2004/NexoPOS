@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
- * @property integer $user_id
+ * @property int $id
+ * @property int $user_id
  * @property mixed $avatar_link
  * @property mixed $theme
  * @property mixed $language
-*/
+ */
 class UserAttribute extends NsRootModel
 {
     use HasFactory;

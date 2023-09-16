@@ -3,9 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\ProcurementAfterCreateEvent;
-use App\Services\TransactionService;
 use App\Services\ProcurementService;
 use App\Services\ProviderService;
+use App\Services\TransactionService;
 
 class ProcurementAfterCreateEventListener
 {

@@ -25,8 +25,7 @@ class UsersController extends DashboardController
 {
     public function __construct(
         protected UsersService $usersService
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -123,7 +122,6 @@ class UsersController extends DashboardController
     /**
      * update roles permissions
      *
-     * @param Request $request
      * @return Json
      */
     public function updateRole( Request $request )
@@ -193,8 +191,8 @@ class UsersController extends DashboardController
 
     public function createToken( Request $request )
     {
-        $validation     =   Validator::make( $request->all(), [
-            'name'  =>  'required'
+        $validation = Validator::make( $request->all(), [
+            'name' => 'required',
         ]);
 
         if ( ! $validation->passes() ) {

@@ -83,8 +83,6 @@ class CrudController extends DashboardController
      * Dashboard Crud POST
      * receive and treat POST request for CRUD Resource
      *
-     * @param string $namespace
-     * @param CrudPostRequest $request
      * @return void
      */
     public function crudPost( string $namespace, CrudPostRequest $request )
@@ -101,7 +99,6 @@ class CrudController extends DashboardController
      *
      * @param string $namespace
      * @param int $id primary key
-     * @param CrudPutRequest $request
      * @return void
      */
     public function crudPut( $namespace, $id, CrudPutRequest $request )
@@ -319,13 +316,12 @@ class CrudController extends DashboardController
      * Export the entries as a CSV file
      *
      * @param string $namespace
-     * @param Request $request
      * @return array $response
      */
     public function exportCrud( $namespace, Request $request )
     {
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
-        
+
         $resource = new $crudClass;
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
@@ -347,11 +343,11 @@ class CrudController extends DashboardController
          */
         $sheetCol1 = [ '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
         $sheetCol2 = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
-        $sheetColumns   =   [];
+        $sheetColumns = [];
 
-        foreach( $sheetCol1 as $col ) {
-            foreach( $sheetCol2 as $col2 ) {
-                $sheetColumns[]     =   $col . $col2;
+        foreach ( $sheetCol1 as $col ) {
+            foreach ( $sheetCol2 as $col2 ) {
+                $sheetColumns[] = $col . $col2;
             }
         }
 
@@ -398,7 +394,7 @@ class CrudController extends DashboardController
                 $sheet->setCellValue( $sheetColumns[ $totalColumns ] . ( $rowIndex + 2 ), strip_tags( $entry->$columnName ) );
                 $totalColumns++;
             }
-            $totalColumns   =   0;
+            $totalColumns = 0;
         }
 
         /**
@@ -442,7 +438,7 @@ class CrudController extends DashboardController
     {
         $relativePath = Cache::pull( $hash );
 
-        if( $relativePath === null ) {
+        if ( $relativePath === null ) {
             throw new NotAllowedException( __( 'This link has expired.' ) );
         }
 

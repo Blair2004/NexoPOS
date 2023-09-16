@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\CashFlow;
 use App\Models\TransactionHistory;
 use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;

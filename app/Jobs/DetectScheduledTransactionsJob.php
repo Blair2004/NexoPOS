@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\Expense;
 use App\Models\Transaction;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

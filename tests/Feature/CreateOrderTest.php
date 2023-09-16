@@ -23,6 +23,7 @@ class CreateOrderTest extends TestCase
 
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
+
             return $this->attemptPostOrder( $callback );
         } else {
             $this->assertTrue( true ); // because we haven't performed any test.

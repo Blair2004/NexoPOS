@@ -370,7 +370,6 @@ class ProductService
      * consist of valid items (not gruoped items).
      *
      * @param array $fields
-     * @return void
      */
     public function checkGroupProduct( $fields ): void
     {
@@ -404,7 +403,7 @@ class ProductService
          * and not an instance of Product
          */
         $product = $this->getProductUsingArgument( 'id', $id );
-        
+
         ProductBeforeUpdatedEvent::dispatch( $product );
 
         $mode = 'update';
@@ -476,7 +475,6 @@ class ProductService
     /**
      * Saves the sub items by binding that to a product
      *
-     * @param Product $product
      * @param array $subItems
      * @return array response
      */
@@ -580,7 +578,6 @@ class ProductService
     /**
      * Update a variable product
      *
-     * @param Product $product
      * @param array fields to save
      * @return array response of the process
      */
@@ -751,7 +748,7 @@ class ProductService
     public function getQuantity( int $product_id, int $unit_id )
     {
         $product = Product::with([
-            'unit_quantities' => fn( $query ) => $query->where( 'unit_id', $unit_id )
+            'unit_quantities' => fn( $query ) => $query->where( 'unit_id', $unit_id ),
         ])->find( $product_id );
 
         if ( $product->unit_quantities->count() > 0 ) {
@@ -1070,7 +1067,6 @@ class ProductService
      *
      * @param string operation : deducted, sold, procured, deleted, adjusted, damaged
      * @param mixed[]<$unit_id,$product_id,$unit_price,?$total_price,?$procurement_id,?$procurement_product_id,?$sale_id,?$quantity> $data to manage
-     * @return ProductHistory|EloquentCollection|bool
      */
     public function stockAdjustment( $action, $data ): ProductHistory|EloquentCollection|bool
     {
@@ -1163,26 +1159,24 @@ class ProductService
      *
      * @param string $action
      * @param float $quantity
-     * @param Product $product
      * @param Unit $unit
-     * @return EloquentCollection
      */
-    private function handleStockAdjustmentsForGroupedProducts( 
-        $action, 
-        $orderProductQuantity, 
-        Product $product, 
-        Unit $parentUnit, 
+    private function handleStockAdjustmentsForGroupedProducts(
+        $action,
+        $orderProductQuantity,
+        Product $product,
+        Unit $parentUnit,
         OrderProduct $orderProduct = null  ): EloquentCollection
     {
         $product->load( 'sub_items' );
 
-        $products   =   $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $parentUnit, $orderProduct ) {            
+        $products = $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $parentUnit, $orderProduct ) {
             $finalQuantity = $this->computeSubItemQuantity(
                 subItemQuantity: $subItem->quantity,
                 parentUnit: $parentUnit,
                 parentQuantity: $orderProductQuantity
             );
-            
+
             /**
              * Let's retrieve the old item quantity.
              */
@@ -1309,14 +1303,14 @@ class ProductService
                     oldQuantity: $oldQuantity,
                     quantity: $quantity
                 );
-    
+
                 /**
                  * @var string status
                  * @var string message
                  * @var array [ 'oldQuantity', 'newQuantity' ]
                  */
                 $result = $this->reduceUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
-    
+
                 /**
                  * We should reduce the quantity if
                  * we're dealing with a product that has
@@ -1325,14 +1319,14 @@ class ProductService
                 if ( $procurementProduct instanceof ProcurementProduct ) {
                     $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
                 }
-            } else if ( in_array( $action, ProductHistory::STOCK_INCREASE ) ) {
+            } elseif ( in_array( $action, ProductHistory::STOCK_INCREASE ) ) {
                 /**
                  * @var string status
                  * @var string message
                  * @var array [ 'oldQuantity', 'newQuantity' ]
                  */
                 $result = $this->increaseUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
-    
+
                 /**
                  * We should reduce the quantity if
                  * we're dealing with a product that has
@@ -1342,7 +1336,7 @@ class ProductService
                     $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_INCREASE );
                 }
             }
-    
+
             return $this->recordStockHistory(
                 product_id: $product_id,
                 action: $action,
@@ -1359,7 +1353,7 @@ class ProductService
             );
         }
 
-        throw new NotAllowedException( 
+        throw new NotAllowedException(
             sprintf(
                 __( 'Unsupported stock action "%s"'),
                 $action
@@ -1379,18 +1373,18 @@ class ProductService
      * @param float $old_quantity
      * @param float $new_quantity
      */
-    public function recordStockHistory( 
-        $product_id, 
-        $action, 
-        $unit_id, 
-        $unit_price, 
-        $quantity, 
-        $total_price, 
-        $order_id = null, 
+    public function recordStockHistory(
+        $product_id,
+        $action,
+        $unit_id,
+        $unit_price,
+        $quantity,
+        $total_price,
+        $order_id = null,
         $order_product_id = null,
         $procurement_product_id = null,
         $procurement_id = null,
-        $old_quantity = 0, 
+        $old_quantity = 0,
         $new_quantity = 0 )
     {
         $history = new ProductHistory;
@@ -1425,15 +1419,16 @@ class ProductService
         }
 
         $unit->load( 'group.units' );
+
         return $unit->group->units->filter( fn( $unit ) => $unit->base_unit )->first();
     }
 
-    public function computeSubItemQuantity( 
+    public function computeSubItemQuantity(
         float $subItemQuantity,
         Unit $parentUnit,
         float $parentQuantity )
     {
-        return ( ( $subItemQuantity * $parentUnit->value ) * $parentQuantity );
+        return  ( $subItemQuantity * $parentUnit->value ) * $parentQuantity;
     }
 
     /**
@@ -1536,7 +1531,6 @@ class ProductService
      * add a stock entry to a product
      * history using the provided informations
      *
-     * @param ProcurementProduct $product
      * @param array<$quantity,$unit_id,$purchase_price,$product_id>
      */
     public function procurementStockEntry( ProcurementProduct $product, $fields )
@@ -1629,7 +1623,7 @@ class ProductService
      * Will return the last purchase price
      * defined for the provided product
      */
-    public function getLastPurchasePrice( Product | null $product, Unit $unit, string | null $before = null ): float | int
+    public function getLastPurchasePrice( Product|null $product, Unit $unit, string|null $before = null ): float|int
     {
         if ( $product instanceof Product ) {
             $request = ProcurementProduct::where( 'product_id', $product->id )
@@ -1639,8 +1633,8 @@ class ProductService
             if ( $before ) {
                 $request->where( 'created_at', '<=', $before );
             }
-            
-            $procurementProduct     =   $request->first();
+
+            $procurementProduct = $request->first();
 
             if ( $procurementProduct instanceof ProcurementProduct ) {
                 return $procurementProduct->purchase_price;
@@ -1760,7 +1754,6 @@ class ProductService
      * Will return the Product Unit Quantities
      * for the provided product
      *
-     * @param Product $product
      * @return array
      */
     public function getProductUnitQuantities( Product $product )
@@ -1775,7 +1768,6 @@ class ProductService
      * Generate product barcode using product
      * configurations.
      *
-     * @param Product $product
      * @return void
      */
     public function generateProductBarcode( Product $product )
@@ -1797,29 +1789,29 @@ class ProductService
      * Convert quantity from a source unit ($from) to a destination unit ($to)
      * using the provided quantity and product.
      */
-    public function convertUnitQuantities( Product $product, Unit $from, float $quantity, Unit $to, null | ProcurementProduct $procurementProduct = null ): array
+    public function convertUnitQuantities( Product $product, Unit $from, float $quantity, Unit $to, null|ProcurementProduct $procurementProduct = null ): array
     {
         if ( $product->stock_management !== Product::STOCK_MANAGEMENT_ENABLED ) {
             throw new NotAllowedException( __( 'You cannot convert unit on a product having stock management disabled.' ) );
         }
 
-        $unitQuantityFrom   =   ProductUnitQuantity::where( 'product_id', $product->id )
+        $unitQuantityFrom = ProductUnitQuantity::where( 'product_id', $product->id )
             ->where( 'unit_id', $from->id )
             ->first();
 
-        $unitQuantityTo     =   ProductUnitQuantity::where( 'product_id', $product->id )
+        $unitQuantityTo = ProductUnitQuantity::where( 'product_id', $product->id )
             ->where( 'unit_id', $to->id )
             ->first();
 
         if ( $from->id === $to->id ) {
-            throw new NotAllowedException( 
+            throw new NotAllowedException(
                 __( 'The source and the destination unit can\'t be the same. What are you trying to do ?' )
             );
         }
 
         if ( ! $unitQuantityFrom instanceof ProductUnitQuantity ) {
-            throw new NotFoundException( 
-                sprintf( 
+            throw new NotFoundException(
+                sprintf(
                     __( 'There is no source unit quantity having the name "%s" for the item %s'),
                     $from->name,
                     $product->name
@@ -1828,8 +1820,8 @@ class ProductService
         }
 
         if ( ! $unitQuantityTo instanceof ProductUnitQuantity ) {
-            throw new NotFoundException( 
-                sprintf( 
+            throw new NotFoundException(
+                sprintf(
                     __( 'There is no destination unit quantity having the name %s for the item %s'),
                     $from->name,
                     $product->name
@@ -1840,29 +1832,28 @@ class ProductService
         if ( ! $this->unitService->isFromSameGroup( $from, $to ) ) {
             throw new NotAllowedException( __( 'The source unit and the destination unit doens\'t belong to the same unit group.' ) );
         }
-        
+
         /**
          * We can't proceed with no base unit defined.
          */
-
         $from->load([
-            'group.units'    =>  function( $query ) {
+            'group.units' => function( $query ) {
                 $query->where( 'base_unit', true );
-            }
+            },
         ]);
 
-        $baseUnit   =   $from->group->units->first();
+        $baseUnit = $from->group->units->first();
 
         if ( ! $baseUnit instanceof Unit ) {
-            throw new NotFoundException( 
-                sprintf( 
+            throw new NotFoundException(
+                sprintf(
                     __( 'The group %s has no base unit defined'),
                     $from->group->name
                 )
             );
         }
 
-        $lastFromPurchasePrice  =   $this->getLastPurchasePrice(
+        $lastFromPurchasePrice = $this->getLastPurchasePrice(
             product: $product,
             unit: $from
         );
@@ -1881,7 +1872,7 @@ class ProductService
             total_price: ns()->currency->define( $lastFromPurchasePrice )->multipliedBy( $quantity )->getRaw(),
         );
 
-        $lastToPurchasePrice  =   $this->getLastPurchasePrice(
+        $lastToPurchasePrice = $this->getLastPurchasePrice(
             product: $product,
             unit: $to
         );
@@ -1890,7 +1881,7 @@ class ProductService
          * This quantity will be added removed
          * from the source ProductUnitQuantity
          */
-        $finalDestinationQuantity   =   $this->unitService->getConvertedQuantity(
+        $finalDestinationQuantity = $this->unitService->getConvertedQuantity(
             from: $from,
             to: $to,
             quantity: $quantity
@@ -1907,14 +1898,14 @@ class ProductService
         );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf(
+            'status' => 'success',
+            'message' => sprintf(
                 __( 'The conversion of %s(%s) to %s(%s) was successful' ),
                 $quantity,
                 $from->name,
                 $finalDestinationQuantity,
                 $to->name
-            )
+            ),
         ];
     }
 
@@ -1930,10 +1921,10 @@ class ProductService
                 ->orWhere( 'sku', 'LIKE', "%{$search}%" )
                 ->orWhere( 'barcode', 'LIKE', "%{$search}%" );
             })
-            ->with([ 
+            ->with([
                 'unit_quantities.unit',
                 'category',
-                'tax_group.taxes'
+                'tax_group.taxes',
             ])
             ->limit( $limit );
 

@@ -18,14 +18,14 @@ class CustomerFactory extends Factory
     public function definition()
     {
         return [
-            'username'  =>  $this->faker->userName(),
-            'password'  =>  $this->faker->password(),
+            'username' => $this->faker->userName(),
+            'password' => $this->faker->password(),
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'username' => $this->faker->userName(),
             'password' => Hash::make( $this->faker->password() ),
             'email' => $this->faker->email(),
-            'active'    =>  true,
+            'active' => true,
             'gender' => $this->faker->randomElement([ 'male', 'female', '' ]),
             'phone' => $this->faker->phoneNumber(),
             'pobox' => $this->faker->postcode(),
@@ -37,7 +37,7 @@ class CustomerFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating( function( $model ) {
-            $user   =   User::find( $model->id );
+            $user = User::find( $model->id );
             $user->assignRole( Role::STORECUSTOMER );
         });
     }

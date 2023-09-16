@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Console\Commands\DoctorCommand;
-use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerShippingAddress;
@@ -11,6 +9,7 @@ use App\Models\Option;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Role;
+use App\Models\TransactionHistory;
 use App\Models\User;
 use App\Models\UserAttribute;
 use Exception;
@@ -103,10 +102,10 @@ class DoctorService
 
     public function fixOrphanOrderProducts()
     {
-        $orderIds   =   Order::get( 'id' );
+        $orderIds = Order::get( 'id' );
 
-        $query  =   OrderProduct::whereNotIn( 'order_id', $orderIds );
-        $total  =   $query->count();
+        $query = OrderProduct::whereNotIn( 'order_id', $orderIds );
+        $total = $query->count();
         $query->delete();
 
         return sprintf( __( '%s products were freed' ), $total );
@@ -145,7 +144,7 @@ class DoctorService
         /**
          * @var TransactionService $transactionService
          */
-        $transactionService     =   app()->make( TransactionService::class );
+        $transactionService = app()->make( TransactionService::class );
 
         TransactionHistory::where( 'order_id', '>', 0 )->delete();
         TransactionHistory::where( 'order_refund_id', '>', 0 )->delete();
@@ -153,10 +152,10 @@ class DoctorService
         /**
          * Step 1: Recompute from order sales
          */
-        $orders     =   Order::paymentStatus( Order::PAYMENT_PAID )->get();
-        
+        $orders = Order::paymentStatus( Order::PAYMENT_PAID )->get();
+
         $this->command->info( __( 'Restoring cash flow from paid orders...' ) );
-        
+
         $this->command->withProgressBar( $orders, function( $order ) use ( $transactionService ) {
             $transactionService->handleCreatedOrder( $order );
         });
@@ -167,10 +166,10 @@ class DoctorService
          * Step 2: Recompute from refund
          */
         $this->command->info( __( 'Restoring cash flow from refunded orders...' ) );
-        
-        $orders     =   Order::paymentStatusIn([
+
+        $orders = Order::paymentStatusIn([
             Order::PAYMENT_REFUNDED,
-            Order::PAYMENT_PARTIALLY_REFUNDED
+            Order::PAYMENT_PARTIALLY_REFUNDED,
         ])->get();
 
         $this->command->withProgressBar( $orders, function( $order ) use ( $transactionService ) {
@@ -188,8 +187,8 @@ class DoctorService
 
     public function clearTemporaryFiles()
     {
-        $directories    =   Storage::disk( 'ns-modules-temp' )->directories();
-        $deleted        =   collect( $directories )->filter( fn( $directory ) => Storage::disk( 'ns-modules-temp' )->deleteDirectory( $directory ) );
+        $directories = Storage::disk( 'ns-modules-temp' )->directories();
+        $deleted = collect( $directories )->filter( fn( $directory ) => Storage::disk( 'ns-modules-temp' )->deleteDirectory( $directory ) );
 
         $this->command->info( sprintf(
             __( '%s on %s directories were deleted.' ),
@@ -197,8 +196,8 @@ class DoctorService
             $deleted->count()
         ) );
 
-        $files    =   Storage::disk( 'ns-modules-temp' )->files();
-        $deleted        =   collect( $files )->filter( fn( $file ) => Storage::disk( 'ns-modules-temp' )->delete( $file ) );
+        $files = Storage::disk( 'ns-modules-temp' )->files();
+        $deleted = collect( $files )->filter( fn( $file ) => Storage::disk( 'ns-modules-temp' )->delete( $file ) );
 
         $this->command->info( sprintf(
             __( '%s on %s files were deleted.' ),
@@ -241,27 +240,29 @@ class DoctorService
      */
     public function clearBrokenModuleLinks(): array
     {
-        $dir        =   base_path( 'public/modules' );
-        $files      =   scandir($dir);
-        $deleted    =   [];
+        $dir = base_path( 'public/modules' );
+        $files = scandir($dir);
+        $deleted = [];
 
-        foreach($files as $file) {
-            if ($file === '.' || $file === '..') continue;
-            
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+
             if (is_link($dir . '/' . $file)) {
-                if (!file_exists(readlink($dir . '/' . $file))) {
-                    $deleted[]  =   $dir . '/' . $file;
+                if (! file_exists(readlink($dir . '/' . $file))) {
+                    $deleted[] = $dir . '/' . $file;
                     unlink($dir . '/' . $file);
                 }
             }
         }
 
         return [
-            'status'    =>  'sucess',
-            'message'   =>  sprintf(
+            'status' => 'sucess',
+            'message' => sprintf(
                 __( '%s link were deleted' ),
                 count( $deleted )
-            )
+            ),
         ];
     }
 }

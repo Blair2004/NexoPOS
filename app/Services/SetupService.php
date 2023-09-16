@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 class SetupService
 {
     public Options $options;
-    
+
     /**
      * Attempt database and save db informations
      *
@@ -22,7 +22,7 @@ class SetupService
      */
     public function saveDatabaseSettings( Request $request )
     {
-        $databaseDriver     =   $request->input( 'database_driver' );
+        $databaseDriver = $request->input( 'database_driver' );
 
         config([ 'database.connections.test' => [
             'driver' => $request->input( 'database_driver' ) ?: 'mysql',
@@ -109,9 +109,9 @@ class SetupService
 
     public function updateAppURL()
     {
-        $domain =   parse_url( url()->to( '/' ) );
+        $domain = parse_url( url()->to( '/' ) );
 
-        ns()->envEditor->set( 'APP_URL', url()->to( '/' ) );    
+        ns()->envEditor->set( 'APP_URL', url()->to( '/' ) );
         ns()->envEditor->set( 'SESSION_DOMAIN', $domain[ 'host' ] );
         ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'host' ] . ( isset( $domain[ 'port' ] ) ? ':' . $domain[ 'port' ] : '' ) );
     }
@@ -123,7 +123,7 @@ class SetupService
         if ( $data[ 'database_driver' ] === 'sqlite' ) {
             ns()->envEditor->set( 'DB_DATABASE', database_path( 'database.sqlite' ) );
             ns()->envEditor->set( 'DB_PREFIX', $data[   'database_prefix' ]);
-        } else if ( $data[ 'database_driver' ] === 'mysql' ) {
+        } elseif ( $data[ 'database_driver' ] === 'mysql' ) {
             ns()->envEditor->set( 'DB_HOST', $data[ 'hostname' ]);
             ns()->envEditor->set( 'DB_DATABASE', $data[ 'database_name' ] ?: database_path( 'database.sqlite' ) );
             ns()->envEditor->set( 'DB_USERNAME', $data[ 'username' ]);
@@ -141,18 +141,17 @@ class SetupService
      */
     public function runMigration( $fields )
     {
-
         /**
          * We assume so far the application is installed
          * then we can launch option service
          */
-        $configuredLanguage     =   $fields[ 'language' ] ?? 'en';
+        $configuredLanguage = $fields[ 'language' ] ?? 'en';
 
         App::setLocale( $configuredLanguage );
-        
+
         /**
          * We're running this simple migration call to ensure
-         * default tables are created. Those table are located at the 
+         * default tables are created. Those table are located at the
          * root of the database folder.
          */
         Artisan::call( 'migrate' );
@@ -168,7 +167,7 @@ class SetupService
         Artisan::call( 'ns:translate', [
             '--symlink' => true,
         ]);
-        
+
         /**
          * we'll register all "update" migration
          * as already run as these migration are supposed
@@ -184,7 +183,7 @@ class SetupService
             });
 
         /**
-         * The update migrations should'nt be executed. 
+         * The update migrations should'nt be executed.
          * This should improve the speed during the installation.
          */
         ns()->update
@@ -194,11 +193,11 @@ class SetupService
             )
             ->each( function( $file ) {
                 ns()->update->assumeExecuted( $file );
-            });        
+            });
 
         $this->options = app()->make( Options::class );
         $this->options->setDefault();
-        $this->options->set( 'ns_store_language', $configuredLanguage ); 
+        $this->options->set( 'ns_store_language', $configuredLanguage );
 
         /**
          * From this moment, new permissions has been created.
@@ -225,7 +224,7 @@ class SetupService
         ]);
 
         UserAfterActivationSuccessfulEvent::dispatch( $user );
-                
+
         $this->createDefaultPayment( $user );
 
         return [

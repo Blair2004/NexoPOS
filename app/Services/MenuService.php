@@ -306,11 +306,11 @@ class MenuService
                     ],
                 ],
             ],
-            'roles' =>  [
-                'label' =>  __( 'Roles' ),
-                'icon'  =>  'la-shield-alt',
-                'permissions'   =>  [ 'read.roles', 'create.roles', 'update.roles' ],
-                'childrens' =>  [
+            'roles' => [
+                'label' => __( 'Roles' ),
+                'icon' => 'la-shield-alt',
+                'permissions' => [ 'read.roles', 'create.roles', 'update.roles' ],
+                'childrens' => [
                     'all-roles' => [
                         'label' => __( 'Roles' ),
                         'permissions' => [ 'read.roles' ],
@@ -326,7 +326,7 @@ class MenuService
                         'permissions' => [ 'update.roles' ],
                         'href' => ns()->url( '/dashboard/users/roles/permissions-manager' ),
                     ],
-                ]
+                ],
             ],
             'procurements' => [
                 'label' => __( 'Procurements' ),

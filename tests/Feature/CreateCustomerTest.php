@@ -19,7 +19,7 @@ class CreateCustomerTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        for( $i = 0; $i < 10; $i++ ) {
+        for ( $i = 0; $i < 10; $i++ ) {
             $this->attemptCreateCustomerWithInitialTransactions();
         }
     }

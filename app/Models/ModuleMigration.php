@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
+ * @property int $id
  * @property string $file
-*/
+ */
 class ModuleMigration extends NsModel
 {
     use HasFactory;

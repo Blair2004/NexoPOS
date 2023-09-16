@@ -22,7 +22,6 @@ class OrderAfterProductRefundedEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\OrderAfterProductRefundedEvent  $event
      * @return void
      */
     public function handle(OrderAfterProductRefundedEvent $event)

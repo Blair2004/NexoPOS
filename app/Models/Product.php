@@ -118,20 +118,22 @@ class Product extends NsModel
 
     /**
      * Filter products if they are grouped products.
+     *
      * @alias scopeGrouped
      */
     public function scopeIsGroup( Builder $query )
     {
         return $query->where( 'type', self::TYPE_GROUPED );
     }
-    
+
     /**
-     * Filter product that doesn't 
+     * Filter product that doesn't
      * belong to a group
      */
     public function scopeNotInGroup( Builder $query )
     {
-        $subItemsIds    =   ProductSubItem::get( 'id' )->map( fn( $entry ) => $entry->id  )->toArray();
+        $subItemsIds = ProductSubItem::get( 'id' )->map( fn( $entry ) => $entry->id  )->toArray();
+
         return $query->whereNotIn( 'id', $subItemsIds );
     }
 
@@ -141,7 +143,8 @@ class Product extends NsModel
      */
     public function scopeInGroup( Builder $query )
     {
-        $subItemsIds    =   ProductSubItem::get( 'id' )->map( fn( $entry ) => $entry->id  )->toArray();
+        $subItemsIds = ProductSubItem::get( 'id' )->map( fn( $entry ) => $entry->id  )->toArray();
+
         return $query->whereIn( 'id', $subItemsIds );
     }
 

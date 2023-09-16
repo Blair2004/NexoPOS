@@ -23,8 +23,8 @@ class SetupController extends Controller
     public function welcome( Request $request )
     {
         return view( 'pages.setup.welcome', [
-            'title'     => __( 'Welcome &mdash; NexoPOS' ),
-            'languages' =>  config( 'nexopos.languages' ),
+            'title' => __( 'Welcome &mdash; NexoPOS' ),
+            'languages' => config( 'nexopos.languages' ),
             'lang' => $request->query( 'lang' ) ?: 'en',
         ]);
     }
@@ -48,7 +48,6 @@ class SetupController extends Controller
     {
         try {
             if ( DB::connection()->getPdo() ) {
-
                 /**
                  * We believe from here the app should update the .env file to ensure
                  * the APP_URL and others values are updated with the actual domain name.
@@ -56,12 +55,12 @@ class SetupController extends Controller
                 $this->setup->updateAppURL();
 
                 return [
-                    'status'    =>  'success'
+                    'status' => 'success',
                 ];
             }
         } catch (\Exception $e) {
             return response()->json([
-                'status'    =>  'failed'
+                'status' => 'failed',
             ], 403 );
         }
     }

@@ -2,5 +2,5 @@
 
 return [
     'label' => __( 'API Token' ),
-    'component' =>  'nsToken',
+    'component' => 'nsToken',
 ];

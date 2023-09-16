@@ -2,14 +2,12 @@
 
 namespace App\Crud;
 
-use App\Casts\ProductHistoryAction;
 use App\Casts\ProductHistoryActionCast;
 use App\Exceptions\NotAllowedException;
 use App\Models\ProductHistory;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -49,8 +47,8 @@ class ProductHistoryCrud extends CrudService
         'delete' => false,
     ];
 
-    public $casts   =   [
-        'operation_type'    =>  ProductHistoryActionCast::class
+    public $casts = [
+        'operation_type' => ProductHistoryActionCast::class,
     ];
 
     /**
@@ -104,8 +102,6 @@ class ProductHistoryCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -138,7 +134,6 @@ class ProductHistoryCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -293,7 +288,6 @@ class ProductHistoryCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  ProductHistory $entry
      * @return  void
      */
     public function afterPost( $request, ProductHistory $entry )
@@ -311,7 +305,7 @@ class ProductHistoryCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -479,7 +473,7 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_CONVERT_IN:
                 $entry->{ '$cssClass' } = 'bg-blue-100 border-blue-200 border text-sm dark:text-slate-300 dark:bg-blue-600 dark:border-blue-700';
                 break;
-            case ProductHistory::ACTION_RETURNED:                
+            case ProductHistory::ACTION_RETURNED:
             case ProductHistory::ACTION_ADJUSTMENT_RETURN:
             case ProductHistory::ACTION_TRANSFER_REJECTED:
             case ProductHistory::ACTION_TRANSFER_CANCELED:

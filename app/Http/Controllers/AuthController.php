@@ -18,21 +18,14 @@ use App\Http\Requests\PostNewPasswordRequest;
 use App\Http\Requests\PostPasswordLostRequest;
 use App\Http\Requests\SignInRequest;
 use App\Http\Requests\SignUpRequest;
-use App\Mail\ActivateYourAccountMail;
 use App\Mail\ResetPasswordMail;
-use App\Mail\UserRegisteredMail;
-use App\Mail\WelcomeMail;
-use App\Models\Role;
 use App\Models\User;
-use App\Models\UserRoleRelation;
-use App\Services\Options;
 use App\Services\UsersService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -41,7 +34,6 @@ class AuthController extends Controller
 {
     public function __construct( private UsersService $userService )
     {
-        
     }
 
     public function signIn()
@@ -245,19 +237,17 @@ class AuthController extends Controller
 
     /**
      * Process user registration
-     *
-     * @param SignUpRequest $request
      */
     public function postSignUp( SignUpRequest $request )
     {
         Hook::action( 'ns-register-form', $request );
 
-        $validation_required    =   ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
-        
+        $validation_required = ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
+
         $this->userService->setUser( $request->only([
             'username',
             'email',
-            'password'
+            'password',
         ]));
 
         if ( $request->expectsJson() ) {

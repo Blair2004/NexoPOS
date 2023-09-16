@@ -83,8 +83,8 @@ class CouponCrud extends CrudService
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
-    protected $tabs     =   [
-        'valid_until'   =>  NotDefinedCast::class,
+    protected $tabs = [
+        'valid_until' => NotDefinedCast::class,
     ];
 
     /**
@@ -121,8 +121,6 @@ class CouponCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -155,7 +153,6 @@ class CouponCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -189,7 +186,7 @@ class CouponCrud extends CrudService
                             'label' => __( 'Coupon Code' ),
                             'validation' => [
                                 'required',
-                                Rule::unique( 'nexopos_coupons', 'code' )->ignore( $entry !== null ? $entry->id : 0 )
+                                Rule::unique( 'nexopos_coupons', 'code' )->ignore( $entry !== null ? $entry->id : 0 ),
                             ],
                             'description' => __( 'Might be used while printing the coupon.' ),
                             'value' => $entry->code ?? '',
@@ -276,7 +273,7 @@ class CouponCrud extends CrudService
                             'description' => __( 'The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.' ),
                         ],
                     ],
-                ],  
+                ],
                 'selected_groups' => [
                     'label' => __( 'Customer Groups' ),
                     'active' => false,
@@ -284,9 +281,9 @@ class CouponCrud extends CrudService
                         [
                             'type' => 'multiselect',
                             'name' => 'groups',
-                            'options'   =>  CustomerGroup::get([ 'name', 'id' ])->map( fn( $group ) => [ 
-                                'label'  =>  $group->name,
-                                'value' =>  $group->id
+                            'options' => CustomerGroup::get([ 'name', 'id' ])->map( fn( $group ) => [
+                                'label' => $group->name,
+                                'value' => $group->id,
                             ]),
                             'label' => __( 'Assigned To Customer Group' ),
                             'description' => __( 'Only the customers who belongs to the selected groups will be able to use the coupon.' ),
@@ -301,14 +298,14 @@ class CouponCrud extends CrudService
                         [
                             'type' => 'multiselect',
                             'name' => 'customers',
-                            'options'   =>  Customer::get([ 'first_name', 'id' ])->map( fn( $customer ) => [ 
-                                'label'  =>  $customer->first_name,
-                                'value' =>  $customer->id
+                            'options' => Customer::get([ 'first_name', 'id' ])->map( fn( $customer ) => [
+                                'label' => $customer->first_name,
+                                'value' => $customer->id,
                             ]),
                             'label' => __( 'Assigned To Customers' ),
                             'description' => __( 'Only the customers selected will be ale to use the coupon.' ),
-                            'value' => $entry instanceof Coupon ? $entry->customers->map( fn( $customer ) => $customer->customer_id )->toArray() : []
-                        ]
+                            'value' => $entry instanceof Coupon ? $entry->customers->map( fn( $customer ) => $customer->customer_id )->toArray() : [],
+                        ],
                     ],
                 ],
             ],
@@ -405,7 +402,7 @@ class CouponCrud extends CrudService
     public function beforePost( array $inputs ): array
     {
         $this->allowedTo( 'create' );
-        
+
         if ( $this->permissions[ 'create' ] !== false ) {
             if ( isset( $inputs[ 'products' ] ) && ! empty( $inputs[ 'products' ] ) ) {
                 foreach ( $inputs[ 'products' ] as $product_id ) {
@@ -552,22 +549,22 @@ class CouponCrud extends CrudService
     public function afterPut( array $inputs, Coupon $coupon ): array
     {
         collect([
-            'products'  =>  [
-                'property'  =>  'product_id',
-                'class'     =>  CouponProduct::class,
+            'products' => [
+                'property' => 'product_id',
+                'class' => CouponProduct::class,
             ],
-            'categories'  =>  [
-                'property'  =>  'category_id',
-                'class'     =>  CouponCategory::class,
+            'categories' => [
+                'property' => 'category_id',
+                'class' => CouponCategory::class,
             ],
-            'groups'  =>  [
-                'property'  =>  'group_id',
-                'class'     =>  CouponCustomerGroup::class,
+            'groups' => [
+                'property' => 'group_id',
+                'class' => CouponCustomerGroup::class,
             ],
-            'customers'  =>  [
-                'property'  =>  'customer_id',
-                'class'     =>  CouponCustomer::class,
-            ]
+            'customers' => [
+                'property' => 'customer_id',
+                'class' => CouponCustomer::class,
+            ],
         ])->each( function( $data, $key ) use ( $inputs, $coupon ) {
             $coupon->{$key}->each( function( $element ) use ( $inputs, $data, $key ) {
                 if ( isset( $inputs[ $key ] ) && ! in_array( $element->{$data[ 'property' ]}, $inputs[ $key ] ) ) {
@@ -580,11 +577,11 @@ class CouponCrud extends CrudService
                     $productRelation = $data[ 'class' ]::where( 'coupon_id', $coupon->id )
                         ->where( $data[ 'property' ], $argument )
                         ->first();
-        
+
                     if ( ! $productRelation instanceof $data[ 'class' ] ) {
                         $productRelation = new $data[ 'class' ];
                     }
-        
+
                     $productRelation->coupon_id = $coupon->id;
                     $productRelation->{$data[ 'property' ]} = $argument;
                     $productRelation->save();
@@ -682,22 +679,22 @@ class CouponCrud extends CrudService
         $entry->valid_until = $entry->valid_until ?? __('Undefined');
 
         // you can make changes here
-        $entry->action( 
-            identifier: 'edit-coupon', 
+        $entry->action(
+            identifier: 'edit-coupon',
             label: __('Edit'),
             type: 'GOTO',
             url: ns()->url('/dashboard/customers/coupons/edit/' . $entry->id),
         );
 
-        $entry->action( 
-            identifier: 'coupon-history', 
+        $entry->action(
+            identifier: 'coupon-history',
             label: __('History'),
             type: 'GOTO',
             url: ns()->url('/dashboard/customers/coupons/history/' . $entry->id),
         );
 
-        $entry->action( 
-            identifier: 'delete', 
+        $entry->action(
+            identifier: 'delete',
             label: __('Delete'),
             type: 'DELETE',
             url: ns()->url('/api/crud/ns.coupons/' . $entry->id),
@@ -713,7 +710,7 @@ class CouponCrud extends CrudService
     /**
      * Bulk Delete Action
      */
-    public function bulkAction( Request $request ): bool | array
+    public function bulkAction( Request $request ): bool|array
     {
         /**
          * Deleting licence is only allowed for admin

@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property integer $batch
+ * @property int $batch
  * @property string $type
-*/
+ */
 class Migration extends Model
 {
     use HasFactory;

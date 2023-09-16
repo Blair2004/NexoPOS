@@ -18,7 +18,7 @@ class NotFoundException extends Exception
             return response()->view( 'pages.errors.not-allowed', [
                 'title' => __( 'Not Found Exception' ),
                 'message' => $this->getMessage(),
-                'back'  =>  Helper::getValidPreviousUrl( $request ),
+                'back' => Helper::getValidPreviousUrl( $request ),
             ]);
         }
 

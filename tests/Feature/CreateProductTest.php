@@ -2,9 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Crud\ProductCrud;
-use App\Models\Product;
-use App\Models\ProductCategory;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithCategoryTest;
@@ -21,7 +18,7 @@ class CreateProductTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        for( $i = 0; $i< 5; $i++ ) {
+        for ( $i = 0; $i < 5; $i++ ) {
             $this->attemptCreateGroupedProduct();
         }
     }
@@ -44,7 +41,7 @@ class CreateProductTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        for( $i = 0; $i<=3; $i++ ) {
+        for ( $i = 0; $i <= 3; $i++ ) {
             $this->attemptSetProduct();
         }
 

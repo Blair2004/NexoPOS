@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * of this class which can there after be used by the customer.
  */
 /**
- * @property integer $id
+ * @property int $id
  * @property string $code
- * @property integer $author
+ * @property int $author
  * @property \Carbon\Carbon $updated_at
  * @property bool $active
-*/
+ */
 class CustomerCoupon extends NsModel
 {
     use HasFactory;

@@ -169,28 +169,28 @@ class DemoService extends DemoCoreService
                  * if groups is provided
                  */
                 if ( isset( $product->groups ) ) {
-                    $subProducts   =   collect( $product->groups )->map( function( $productName ) {
-                        $subProduct    =   Product::where( 'name', $productName )
+                    $subProducts = collect( $product->groups )->map( function( $productName ) {
+                        $subProduct = Product::where( 'name', $productName )
                             ->with( 'unit_quantities' )
                             ->first();
 
                         /**
                          * @var ProductUnitQuantity $unitQuantity
                          */
-                        $unitQuantity   =   $subProduct->unit_quantities->random();
+                        $unitQuantity = $subProduct->unit_quantities->random();
 
                         return [
-                            'product_id'        =>  $subProduct->id,
-                            'unit_id'           =>  $unitQuantity->unit_id,
-                            'unit_quantity_id'  =>  $unitQuantity->id,
-                            'quantity'          =>  $this->faker->numberBetween(1,5),
-                            'sale_price'        =>  $unitQuantity->sale_price,
+                            'product_id' => $subProduct->id,
+                            'unit_id' => $unitQuantity->unit_id,
+                            'unit_quantity_id' => $unitQuantity->id,
+                            'quantity' => $this->faker->numberBetween(1, 5),
+                            'sale_price' => $unitQuantity->sale_price,
                         ];
                     });
 
-                    $newProduct[ 'type' ]      =   'grouped';
-                    $newProduct[ 'groups' ]    =   [
-                        'product_subitems'  =>  $subProducts
+                    $newProduct[ 'type' ] = 'grouped';
+                    $newProduct[ 'groups' ] = [
+                        'product_subitems' => $subProducts,
                     ];
                 }
 

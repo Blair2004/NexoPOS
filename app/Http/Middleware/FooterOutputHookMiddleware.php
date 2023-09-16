@@ -12,7 +12,6 @@ class FooterOutputHookMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
@@ -24,11 +23,11 @@ class FooterOutputHookMiddleware
          * Will now have 2 hooks "ns-dashboard-homme-header" and "ns-dashboard-home-footer"
          */
         collect([ 'header', 'footer' ])->each( function( $arg ) {
-            $hookName   =   'ns-dashboard-' . $arg;
-            
+            $hookName = 'ns-dashboard-' . $arg;
+
             Hook::addAction( $hookName, function( Output $output ) use ( $arg ) {
                 $exploded = explode( '.', request()->route()->getName() );
-    
+
                 /**
                  * a route might not have a name
                  * if that happen, we'll ignore that.

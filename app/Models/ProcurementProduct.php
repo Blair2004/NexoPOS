@@ -11,32 +11,30 @@ use App\Events\ProcurementProductBeforeUpdateEvent;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-
-
 /**
- * @property integer $id
+ * @property int $id
  * @property mixed $name
  * @property float $gross_purchase_price
  * @property float $net_purchase_price
- * @property integer $procurement_id
- * @property integer $product_id
+ * @property int $procurement_id
+ * @property int $product_id
  * @property float $purchase_price
  * @property float $quantity
  * @property float $available_quantity
- * @property integer $tax_group_id
+ * @property int $tax_group_id
  * @property mixed $barcode
  * @property \Carbon\Carbon $expiration_date
  * @property mixed $tax_type
  * @property float $tax_value
  * @property float $total_purchase_price
- * @property integer $unit_id
- * @property integer $convert_unit_id
+ * @property int $unit_id
+ * @property int $convert_unit_id
  * @property bool $visible
- * @property integer $author
+ * @property int $author
  * @property mixed $uuid
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class ProcurementProduct extends NsModel
 {
     use HasFactory;

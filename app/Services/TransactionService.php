@@ -11,17 +11,16 @@ use App\Fields\DirectTransactionFields;
 use App\Fields\EntityTransactionFields;
 use App\Fields\ReccurringTransactionFields;
 use App\Fields\ScheduledTransactionFields;
-use App\Models\TransactionAccount;
-use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
 use App\Models\Procurement;
-use App\Models\RegisterHistory;
 use App\Models\Role;
 use App\Models\Transaction;
+use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -95,6 +94,7 @@ class TransactionService
     /**
      * get a specific transaction using
      * the provided id
+     *
      * @throws NotFoundException
      */
     public function get( int $id = null ): Collection|Transaction
@@ -180,6 +180,7 @@ class TransactionService
     /**
      * Delete a specific account
      * using the provided id, along with the transactions
+     *
      * @throws NotAllowedException
      */
     public function deleteAccount( int $id, bool $force = false ): array
@@ -209,6 +210,7 @@ class TransactionService
     /**
      * Get a specific transaction
      * account using the provided ID
+     *
      * @throws NotFoundException
      */
     public function getTransaction( int $id ): TransactionAccount
@@ -326,7 +328,7 @@ class TransactionService
                 $history->customer_account_history_id = $transaction->customer_account_history_id ?? 0; // if the cash flow is created from a customer payment.
                 $history->transaction_account_id = $transaction->account->id;
                 $history->save();
-    
+
                 return collect([ $history ]);
             } else {
                 throw new ModelNotFoundException( sprintf( 'The transaction account is not found.' ) );
@@ -431,7 +433,6 @@ class TransactionService
     /**
      * Will record a transaction resulting from a paid procurement
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function handleProcurementTransaction( Procurement $procurement )
@@ -464,7 +465,6 @@ class TransactionService
     /**
      * Will record a transaction for every refund performed
      *
-     * @param OrderProduct $orderProduct
      * @return void
      */
     public function createTransactionFromRefund( Order $order, OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
@@ -519,7 +519,6 @@ class TransactionService
      * created and the payment status is PAID
      * we'll store the total as a cash flow transaction.
      *
-     * @param Order $order
      * @return void
      */
     public function handleCreatedOrder( Order $order )
@@ -806,7 +805,6 @@ class TransactionService
      * Will add customer credit operation
      * to the cash flow history
      *
-     * @param CustomerAccountHistory $customerHistory
      * @return void
      */
     public function handleCustomerCredit( CustomerAccountHistory $customerHistory )

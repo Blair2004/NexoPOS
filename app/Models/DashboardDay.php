@@ -9,11 +9,11 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
+ * @property int $id
  * @property float $day_expenses
- * @property integer $day_of_year
+ * @property int $day_of_year
  * @property \Carbon\Carbon $range_ends
-*/
+ */
 class DashboardDay extends NsModel
 {
     use HasFactory;
@@ -66,7 +66,6 @@ class DashboardDay extends NsModel
      *
      * @todo Maybe there is a better way to do this
      *
-     * @param DashboardDay $day
      * @return DashboardDay
      */
     public static function forLastRecentDay( DashboardDay $day )

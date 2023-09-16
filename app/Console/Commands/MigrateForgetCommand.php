@@ -61,10 +61,9 @@ class MigrateForgetCommand extends Command
 
                 ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
                     ->delete();
-
             } else {
                 if ( $this->option( 'down' ) ) {
-                    $migrations     =   ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
+                    $migrations = ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
                         ->get()
                         ->map( fn( $migration ) => $migration->file )
                         ->toArray();
@@ -76,8 +75,6 @@ class MigrateForgetCommand extends Command
                     ->where( 'file', $this->option( 'file' ) )
                     ->delete();
             }
-
-
 
             Artisan::call( 'cache:clear' );
 

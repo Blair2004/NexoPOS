@@ -29,7 +29,6 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -97,7 +96,7 @@ class Kernel extends ConsoleKernel
         $schedule->job( new TrackLaidAwayOrdersJob )->dailyAt( '13:00' );
 
         /**
-         * We'll clear temporary files weekly. This will erase folder that 
+         * We'll clear temporary files weekly. This will erase folder that
          * hasn't been deleted after a module installation.
          */
         $schedule->job( new ClearModuleTempJob )->weekly();

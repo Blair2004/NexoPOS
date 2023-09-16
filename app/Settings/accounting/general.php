@@ -50,6 +50,6 @@ return [
             'description' => __( 'Stock return for spoiled items will be attached to this account' ),
             'options' => Helper::toJsOptions( $transactions, [ 'id', 'name' ]),
             'type' => 'select',
-        ], 
+        ],
     ],
 ];

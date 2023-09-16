@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\User;
@@ -34,18 +35,18 @@ class WidgetService
      * All declared widgets are
      * registered on this parameter
      */
-    private array $widgets    =   [];
+    private array $widgets = [];
 
     /**
      * anyone can see the widget
      * by default.
      */
-    protected $permission   =   false;
+    protected $permission = false;
 
     /**
      * here is stored the widget ares.
      */
-    protected $widgetAreas  =   [];
+    protected $widgetAreas = [];
 
     /**
      * Describe what the widget does.
@@ -54,7 +55,7 @@ class WidgetService
 
     public function __construct( private UsersService $usersService )
     {
-        $this->widgets      =   [
+        $this->widgets = [
             IncompleteSaleCardWidget::class,
             ExpenseCardWidget::class,
             SaleCardWidget::class,
@@ -101,14 +102,14 @@ class WidgetService
             /**
              * @var WidgetService $widgetInstance
              */
-            $widgetInstance     =   new $widget;
+            $widgetInstance = new $widget;
 
-            return ( object ) [
-                'className' =>  $widget,
-                'instance'  =>  $widgetInstance,
-                'name'      =>  $widgetInstance->getName(),
-                'component' =>  $widgetInstance->getVueComponent(),
-                'canAccess' =>  $widgetInstance->canAccess()
+            return (object) [
+                'className' => $widget,
+                'instance' => $widgetInstance,
+                'name' => $widgetInstance->getName(),
+                'component' => $widgetInstance->getVueComponent(),
+                'canAccess' => $widgetInstance->canAccess(),
             ];
         });
     }
@@ -144,15 +145,15 @@ class WidgetService
     }
 
     /**
-     * Declare widgets classes that 
+     * Declare widgets classes that
      * should be registered
      */
     public function registerWidgets( string|array $widget ): void
     {
         if ( ! is_array( $widget ) ) {
-            $this->widgets[]    =   $widget;
+            $this->widgets[] = $widget;
         } else {
-            foreach( $widget as $_widget ) {
+            foreach ( $widget as $_widget ) {
                 $this->registerWidgets( $_widget );
             }
         }
@@ -163,21 +164,20 @@ class WidgetService
      */
     public function registerWidgetsArea( string $name, Closure $columns ): void
     {
-        $this->widgetAreas[ $name ]     =   $columns;
+        $this->widgetAreas[ $name ] = $columns;
     }
-
 
     /**
      * Get the widget defined for a specifc area.
      */
     public function getWidgetsArea( string $name ): Collection
     {
-        $widgets    =   $this->widgetAreas[ $name ] ?? [];
+        $widgets = $this->widgetAreas[ $name ] ?? [];
 
         if ( ! empty( $widgets() ) ) {
             return collect( $widgets() )->map( function( $widget ) use ( $name ) {
                 return array_merge( $widget, [
-                    'parent'    =>  $name
+                    'parent' => $name,
                 ]);
             });
         }
@@ -190,31 +190,31 @@ class WidgetService
      */
     public function addDefaultWidgetsToAreas( User $user ): void
     {
-        $areas  =   [
+        $areas = [
             'first-column',
             'second-column',
-            'third-column'
+            'third-column',
         ];
 
-        $areaWidgets  = [];
-        
-        $widgetClasses  =   collect( $this->widgets )->filter( function( $class ) use ( $user ) {
+        $areaWidgets = [];
+
+        $widgetClasses = collect( $this->widgets )->filter( function( $class ) use ( $user ) {
             return ( new $class )->canAccess( $user );
         })->toArray();
-        
+
         /**
          * This will assign all widgets
          * to available areas.
          */
-        foreach( $widgetClasses as $index => $widgetClass ) {
+        foreach ( $widgetClasses as $index => $widgetClass ) {
             /**
              * @var WidgetService $widgetInstance
              */
-            $widgetInstance     =   new $widgetClass;
+            $widgetInstance = new $widgetClass;
 
-            $areaWidgets[ $areas[ $index % 3 ] ][]  = [
-                'className' =>  $widgetClass,
-                'componentName' =>  $widgetInstance->getVueComponent()
+            $areaWidgets[ $areas[ $index % 3 ] ][] = [
+                'className' => $widgetClass,
+                'componentName' => $widgetInstance->getVueComponent(),
             ];
         }
 
@@ -222,14 +222,14 @@ class WidgetService
          * We're now storing widgets to
          * each relevant area.
          */
-        foreach( $areaWidgets as $areaName => $widgets ) {
+        foreach ( $areaWidgets as $areaName => $widgets ) {
             $config = [
-                'column'   =>  [
-                    'name'      =>  $areaName,
-                    'widgets'   =>  $widgets
-                ]
+                'column' => [
+                    'name' => $areaName,
+                    'widgets' => $widgets,
+                ],
             ];
-    
+
             $this->usersService->storeWidgetsOnAreas(
                 config: $config,
                 user: $user
@@ -242,19 +242,20 @@ class WidgetService
      */
     public function bootWidgetsAreas(): void
     {
-        $widgetArea     =   function() {
-            return ( collect([ 'first', 'second', 'third' ])->map( function( $column ) {
-                $columnName =   $column . '-column';
+        $widgetArea = function() {
+            return  collect([ 'first', 'second', 'third' ])->map( function( $column ) {
+                $columnName = $column . '-column';
+
                 return [
-                    'name'  =>  $columnName,
-                    'widgets'   =>  UserWidget::where( 'user_id', Auth::id() )
+                    'name' => $columnName,
+                    'widgets' => UserWidget::where( 'user_id', Auth::id() )
                         ->where( 'column', $columnName )
                         ->orderBy( 'position' )
                         ->get()
                         ->filter( fn( $widget ) => Gate::allows( ( new $widget->class_name )->getPermission() ) )
-                        ->values()
+                        ->values(),
                 ];
-            })->toArray() );
+            })->toArray();
         };
 
         $this->registerWidgetsArea( 'ns-dashboard-widgets', $widgetArea );

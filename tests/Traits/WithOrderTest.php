@@ -4,7 +4,6 @@ namespace Tests\Traits;
 
 use App\Classes\Currency;
 use App\Exceptions\NotAllowedException;
-use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
@@ -23,6 +22,7 @@ use App\Models\RegisterHistory;
 use App\Models\RewardSystem;
 use App\Models\TaxGroup;
 use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
 use App\Models\Unit;
 use App\Models\User;
 use App\Services\CashRegistersService;
@@ -77,7 +77,7 @@ trait WithOrderTest
             $date = $startOfWeek->addDay()->clone();
             $this->count = $this->count === false ? $faker->numberBetween(2, 5) : $this->count;
             $responses[] = $this->processOrders([
-                'created_at'    =>  $date
+                'created_at' => $date,
             ], $callback );
         }
 
@@ -124,7 +124,7 @@ trait WithOrderTest
          * the cash register has the correct amount set
          * after the opening.
          */
-        $newCashRegister    =   $cashRegister->fresh();
+        $newCashRegister = $cashRegister->fresh();
         $this->assertEquals( $newCashRegister->balance, $cashRegister->balance + 100, __( 'The cash register balance after opening is not correct' ) );
 
         /**
@@ -203,7 +203,7 @@ trait WithOrderTest
          * Step 4 : disburse (cash-out) some cash
          * from the provided register
          */
-        $result     =   $this->disburseCashFromRegister( $cashRegister, $cashRegisterService );
+        $result = $this->disburseCashFromRegister( $cashRegister, $cashRegisterService );
 
         /**
          * between each operation
@@ -222,7 +222,7 @@ trait WithOrderTest
         /**
          * Step 5 : cash in some cash
          */
-        $result     =   $this->cashInOnRegister( $cashRegister, $cashRegisterService );
+        $result = $this->cashInOnRegister( $cashRegister, $cashRegisterService );
 
         /**
          * We neet to refresh the register
@@ -299,25 +299,24 @@ trait WithOrderTest
         /**
          * @var ProductService $productSevice
          */
-        $productService  =   app()->make( ProductService::class );
+        $productService = app()->make( ProductService::class );
 
         /**
          * @var TestService $testService
          */
-        $testService    =   app()->make( TestService::class );
+        $testService = app()->make( TestService::class );
 
         /**
          * Step 1: we'll set the quantity to be 3
          * and we'll create the order with 2 quantity partially paid
          */
-        $product        =   Product::where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED )
+        $product = Product::where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED )
             ->notGrouped()
             ->notInGroup()
             ->get()
             ->random();
 
         $productService->setQuantity( $product->id, $product->unit_quantities->first()->unit_id, 3 );
-        
 
         /**
          * Let's prepare the order to submit that.
@@ -326,22 +325,22 @@ trait WithOrderTest
             date: ns()->date->now(),
             config: [
                 'allow_quick_products' => false,
-                'payments'  =>  function( $details ) {
+                'payments' => function( $details ) {
                     return [
                         [
-                            'identifier'    =>  'cash-payment',
-                            'value'         =>  $details[ 'subtotal' ] / 3
-                        ]
+                            'identifier' => 'cash-payment',
+                            'value' => $details[ 'subtotal' ] / 3,
+                        ],
                     ];
                 },
                 'products' => fn() => collect([
                     json_decode( json_encode([
-                        'name'  =>  $product->name,
-                        'id'        =>  $product->id,
-                        'quantity'  =>  2,
-                        'unit_price'    =>  10,
-                        'unit_quantities'   =>  [ $product->unit_quantities->first() ]
-                    ]) )
+                        'name' => $product->name,
+                        'id' => $product->id,
+                        'quantity' => 2,
+                        'unit_price' => 10,
+                        'unit_quantities' => [ $product->unit_quantities->first() ],
+                    ]) ),
                 ]),
             ]
         );
@@ -354,43 +353,42 @@ trait WithOrderTest
          */
         $response->assertStatus( 200 );
 
-        $details    =   $response->json();
+        $details = $response->json();
 
         /**
          * Step 3: update the order with the same product
          * and check if it goes through
          */
-        $details[ 'data' ][ 'order' ][ 'type' ]     =   [ 'identifier' => $details[ 'data' ][ 'order' ][ 'type' ] ];
+        $details[ 'data' ][ 'order' ][ 'type' ] = [ 'identifier' => $details[ 'data' ][ 'order' ][ 'type' ] ];
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/orders/' . $details[ 'data' ][ 'order' ][ 'id' ], $details[ 'data' ][ 'order' ] );
 
         $response->assertStatus(200, 'An error occured while submitting the order' );
     }
-    
+
     public function attemptCreateAndEditOrderWithGreaterQuantity()
     {
         /**
          * @var ProductService $productSevice
          */
-        $productService  =   app()->make( ProductService::class );
+        $productService = app()->make( ProductService::class );
 
         /**
          * @var TestService $testService
          */
-        $testService    =   app()->make( TestService::class );
+        $testService = app()->make( TestService::class );
 
         /**
          * Step 1: we'll set the quantity to be 3
          * and we'll create the order with 2 quantity partially paid
          */
-        $product        =   Product::where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED )
+        $product = Product::where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED )
             ->notGrouped()
             ->notInGroup()
             ->with( 'unit_quantities' )
             ->firstOrFail();
 
         $productService->setQuantity( $product->id, $product->unit_quantities->first()->unit_id, 3 );
-        
 
         /**
          * Let's prepare the order to submit that.
@@ -399,22 +397,22 @@ trait WithOrderTest
             date: ns()->date->now(),
             config: [
                 'allow_quick_products' => false,
-                'payments'  =>  function( $details ) {
+                'payments' => function( $details ) {
                     return [
                         [
-                            'identifier'    =>  'cash-payment',
-                            'value'         =>  $details[ 'subtotal' ] / 3
-                        ]
+                            'identifier' => 'cash-payment',
+                            'value' => $details[ 'subtotal' ] / 3,
+                        ],
                     ];
                 },
                 'products' => fn() => collect([
                     json_decode( json_encode([
-                        'name'  =>  $product->name,
-                        'id'        =>  $product->id,
-                        'quantity'  =>  2,
-                        'unit_price'    =>  10,
-                        'unit_quantities'   =>  [ $product->unit_quantities->first() ]
-                    ]) )
+                        'name' => $product->name,
+                        'id' => $product->id,
+                        'quantity' => 2,
+                        'unit_price' => 10,
+                        'unit_quantities' => [ $product->unit_quantities->first() ],
+                    ]) ),
                 ]),
             ]
         );
@@ -427,19 +425,19 @@ trait WithOrderTest
          */
         $response->assertStatus( 200 );
 
-        $details    =   $response->json();
+        $details = $response->json();
 
         /**
          * Step 3: update the order with the same product
          * and check if it goes through
          */
-        $details[ 'data' ][ 'order' ][ 'type' ]     =   [ 'identifier' => $details[ 'data' ][ 'order' ][ 'type' ] ];
+        $details[ 'data' ][ 'order' ][ 'type' ] = [ 'identifier' => $details[ 'data' ][ 'order' ][ 'type' ] ];
 
         /**
          * We'll here request more quantity that what is
          * available on the inventory. This request must fail.
          */
-        $details[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ]    =   4;
+        $details[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ] = 4;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/orders/' . $details[ 'data' ][ 'order' ][ 'id' ], $details[ 'data' ][ 'order' ] );
@@ -472,7 +470,7 @@ trait WithOrderTest
          * be used to perform our tests
          */
         $product->sub_items->each( function( $subItem ) {
-            $subItem->unit_quantity->quantity   =   10000;
+            $subItem->unit_quantity->quantity = 10000;
             $subItem->unit_quantity->save();
         });
 
@@ -491,7 +489,7 @@ trait WithOrderTest
                     product_id: $value->product_id,
                     unit_id: $value->unit_id
                 ),
-                'product_id'    =>  $value->product_id,
+                'product_id' => $value->product_id,
                 'unit' => $unit,
                 'unitGroup' => $group,
                 'baseUnit' => $baseUnit,
@@ -551,7 +549,7 @@ trait WithOrderTest
          */
         foreach ( $query->get() as $productHistory ) {
             $savedQuantity = $quantities[ $productHistory->product_id . '-' . $productHistory->unit_id ];
-            $orderProduct   =   OrderProduct::findOrFail( $productHistory->order_product_id );
+            $orderProduct = OrderProduct::findOrFail( $productHistory->order_product_id );
 
             $finalQuantity = $productService->computeSubItemQuantity(
                 subItemQuantity: $savedQuantity[ 'quantity' ],
@@ -568,7 +566,7 @@ trait WithOrderTest
                 throw new Exception( 'Something went wrong' );
             }
 
-            $this->assertTrue( ( float ) ( $savedQuantity[ 'currentQuantity' ] - ( $finalQuantity ) ) === ( float ) $actualQuantity, 'Quantity sold and recorded not matching' );
+            $this->assertTrue( (float) ( $savedQuantity[ 'currentQuantity' ] - ( $finalQuantity ) ) === (float) $actualQuantity, 'Quantity sold and recorded not matching' );
         }
 
         return $response;
@@ -606,7 +604,7 @@ trait WithOrderTest
                             unit_id: $subItem->unit_id
                         ),
                         'unit' => $unit,
-                        'parentUnit'    =>  $unitService->get( $orderProduct->unit_id ),
+                        'parentUnit' => $unitService->get( $orderProduct->unit_id ),
                         'baseUnit' => $baseUnit,
                         'unitGroup' => $unitGroup,
                         'quantity' => $subItem->quantity,
@@ -665,7 +663,7 @@ trait WithOrderTest
                     }
 
                     $this->assertTrue(
-                        ( float ) $actualQuantity === ( float ) ( $finalQuantity + $savedQuantity[ 'currentQuantity' ] ),
+                        (float) $actualQuantity === (float) ( $finalQuantity + $savedQuantity[ 'currentQuantity' ] ),
                         'The new quantity doesn\'t match.'
                     );
                 });
@@ -777,7 +775,6 @@ trait WithOrderTest
     /**
      * Will disburse the cash register
      *
-     * @param Register $cashRegister
      * @param CashRegistersService $cashRegisterService
      * @return void
      */
@@ -789,7 +786,6 @@ trait WithOrderTest
     /**
      * Will disburse the cash register
      *
-     * @param Register $cashRegister
      * @param CashRegistersService $cashRegisterService
      * @return void
      */
@@ -1011,9 +1007,9 @@ trait WithOrderTest
 
         for ( $i = 0; $i < $this->count; $i++ ) {
             $singleResponse = [];
-            $shippingFees   = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
-            $discountRate   = $faker->numberBetween(0, 5);
-            
+            $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
+            $discountRate = $faker->numberBetween(0, 5);
+
             /**
              * if no products are provided we'll generate random
              * product to use on the order.
@@ -1057,17 +1053,17 @@ trait WithOrderTest
                     return $product[ 'quantity' ] > 0;
                 });
             } else {
-                $products   =   collect( $orderDetails[ 'products' ] );
+                $products = collect( $orderDetails[ 'products' ] );
             }
 
             $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
-                $discount   =   match( $product[ 'discount_type' ] ) {
-                    'percentage'    =>  $this->getPercentageOf( $product[ 'unit_price' ] * $product[ 'quantity' ], $product[ 'discount_percentage' ] ),
-                    'flat'          =>  $product[ 'discount' ],
-                    default         =>  0
+                $discount = match ( $product[ 'discount_type' ] ) {
+                    'percentage' => $this->getPercentageOf( $product[ 'unit_price' ] * $product[ 'quantity' ], $product[ 'discount_percentage' ] ),
+                    'flat' => $product[ 'discount' ],
+                    default => 0
                 };
 
-                $product[ 'discount' ]  =   $discount;
+                $product[ 'discount' ] = $discount;
 
                 $productSubTotal = $currency
                     ->fresh( $product[ 'unit_price' ] )
@@ -1083,10 +1079,10 @@ trait WithOrderTest
             } else {
                 $customer = Customer::find( $orderDetails[ 'customer_id' ] );
             }
-            
+
             /**
              * if coupons aren't defined
-             * We'll try to assign a coupon to 
+             * We'll try to assign a coupon to
              * the selected customer
              */
             if ( ! isset( $orderDetails[ 'coupons' ] ) ) {
@@ -1096,7 +1092,7 @@ trait WithOrderTest
                     $allCoupons = [
                         [
                             'customer_coupon_id' => $customerCoupon->id,
-                            'id'    =>  $customerCoupon->coupon_id,
+                            'id' => $customerCoupon->coupon_id,
                             'name' => $customerCoupon->name,
                             'type' => 'percentage_discount',
                             'code' => $customerCoupon->code,
@@ -1110,12 +1106,11 @@ trait WithOrderTest
                             'maximum_cart_value' => $customerCoupon->coupon->maximum_cart_value,
                         ],
                     ];
-    
                 } else {
                     $allCoupons = collect([]);
                 }
             } else {
-                $allCoupons     =   $orderDetails[ 'coupons' ];
+                $allCoupons = $orderDetails[ 'coupons' ];
             }
 
             $totalCoupons = collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] ?? 0 )->sum();
@@ -1124,13 +1119,13 @@ trait WithOrderTest
                 $discount = [
                     'type' => $orderDetails[ 'discount_type' ],
                     'rate' => $orderDetails[ 'discount_percentage' ],
-                    'value' =>  0,
+                    'value' => 0,
                 ];
             } else {
                 $discount = [
                     'type' => '',
                     'rate' => 0,
-                    'value' =>  0,
+                    'value' => 0,
                 ];
             }
 
@@ -1143,7 +1138,7 @@ trait WithOrderTest
                     ->multiplyBy( $subtotal )
                     ->divideBy( 100 )
                     ->getRaw();
-            } else if( $discount[ 'type' ] === 'flat' ) {
+            } elseif ( $discount[ 'type' ] === 'flat' ) {
                 $discount[ 'value' ] = Currency::fresh( $subtotal )
                     ->divideBy( 2 )
                     ->getRaw();
@@ -1166,7 +1161,7 @@ trait WithOrderTest
                 'created_at' => $this->customDate ? $dateString : null,
                 'discount_percentage' => $discount[ 'rate' ] ?? 0,
                 'discount' => $discount[ 'value' ] ?? 0,
-                'total_coupons' =>  $totalCoupons,
+                'total_coupons' => $totalCoupons,
                 'addresses' => [
                     'shipping' => [
                         'first_name' => 'First Name Delivery',
@@ -1218,21 +1213,20 @@ trait WithOrderTest
                         'status' => 'success',
                     ]);
                 }
-    
+
                 $singleResponse[ 'order-creation' ] = $response->json();
-                $totalCoupons   =   collect( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.coupons' ) )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
-    
+                $totalCoupons = collect( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.coupons' ) )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+
                 if ( $this->shouldMakePayment ) {
-    
                     $total = $currency->define( $subtotal )
                         ->additionateBy( $orderData[ 'shipping' ] )
                         ->subtractBy( $totalCoupons )
                         ->getRaw();
-    
+
                     $this->assertEquals( $currency->getRaw(
                         Arr::get( $singleResponse[ 'order-creation' ], 'data.order.subtotal' )
                     ), $currency->getRaw( $orderData[ 'subtotal' ] ) );
-    
+
                     $this->assertEquals( $currency->getRaw(
                         Arr::get( $singleResponse[ 'order-creation' ], 'data.order.total' )
                     ), $currency->define( $subtotal )
@@ -1240,17 +1234,17 @@ trait WithOrderTest
                         ->subtractBy( $totalCoupons )
                         ->getRaw()
                     );
-    
+
                     $couponValue = ( ! empty( $orderData[ 'coupons' ] ) ? $totalCoupons : 0 );
                     $totalPayments = collect( $orderData[ 'payments' ] )->map( fn( $payment ) => (float) $payment[ 'value' ] )->sum() ?: 0;
                     $sum = (  (float) $orderData[ 'subtotal' ] + (float) $orderData[ 'shipping' ] - ( in_array( $orderData[ 'discount_type' ], [ 'flat', 'percentage' ]) ? (float) $orderData[ 'discount' ] : 0 ) - $couponValue );
                     $change = ns()->currency->fresh( $totalPayments )->subtractBy( $sum )->getRaw();
-    
+
                     $changeFromOrder = ns()->currency->getRaw( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.change' ) );
                     $this->assertEquals( $changeFromOrder, $change );
-    
+
                     $singleResponse[ 'order-payment' ] = json_decode( $response->getContent() );
-    
+
                     /**
                      * test if the order has updated
                      * correctly the customer account
@@ -1258,9 +1252,9 @@ trait WithOrderTest
                     $customer->refresh();
                     $customerSecondPurchases = $customer->purchases_amount;
                     $customerSecondOwed = $customer->owed_amount;
-    
-                    $this->assertTrue( 
-                        ( float ) ( $customerFirstPurchases + $total ) === ( float ) $customerSecondPurchases,
+
+                    $this->assertTrue(
+                        (float) ( $customerFirstPurchases + $total ) === (float) $customerSecondPurchases,
                         sprintf(
                             __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Total : %s' ),
                             $customerFirstPurchases + $total,
@@ -1269,9 +1263,9 @@ trait WithOrderTest
                         )
                     );
                 }
-    
+
                 $responseData = json_decode( $response->getContent(), true );
-    
+
                 /**
                  * Let's test wether the cash
                  * flow has been created for this sale
@@ -1293,7 +1287,7 @@ trait WithOrderTest
                         OrderProductRefund::CONDITION_DAMAGED,
                         OrderProductRefund::CONDITION_UNSPOILED,
                     ]);
-    
+
                     $products = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) use ( $faker, $productCondition ) {
                         return array_merge( $product, [
                             'condition' => $productCondition,
@@ -1304,7 +1298,7 @@ trait WithOrderTest
                             ]),
                         ]);
                     });
-    
+
                     $response = $this->withSession( $this->app[ 'session' ]->all() )
                         ->json( 'POST', 'api/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
                             'payment' => [
@@ -1322,11 +1316,11 @@ trait WithOrderTest
                                 )->sum(),
                             'products' => $products,
                         ]);
-    
+
                     $response->assertJson([
                         'status' => 'success',
                     ]);
-    
+
                     /**
                      * A single cash flow should be
                      * created for that order for the sale account
@@ -1335,9 +1329,9 @@ trait WithOrderTest
                         ->where( 'operation', TransactionHistory::OPERATION_CREDIT )
                         ->where( 'transaction_account_id', ns()->option->get( 'ns_sales_cashflow_account' ) )
                         ->count();
-    
+
                     $this->assertTrue( $totalCashFlow === 1, 'More than 1 cash flow was created for the sale account.' );
-    
+
                     /**
                      * all refund transaction give a stock flow record.
                      * We need to check if it has been created.
@@ -1346,9 +1340,9 @@ trait WithOrderTest
                         ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
                         ->where( 'transaction_account_id', ns()->option->get( 'ns_sales_refunds_account' ) )
                         ->count();
-    
+
                     $this->assertTrue( $totalRefundedCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
-    
+
                     /**
                      * in case the order is refunded with
                      * some defective products, we need to check if
@@ -1359,17 +1353,15 @@ trait WithOrderTest
                             ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
                             ->where( 'transaction_account_id', ns()->option->get( 'ns_stock_return_spoiled_account' ) )
                             ->count();
-    
+
                         $this->assertTrue( $totalSpoiledCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
                     }
-    
+
                     $singleResponse[ 'order-refund' ] = json_decode( $response->getContent() );
                 }
-    
+
                 $responses[] = $singleResponse;
             }
-
-            
         }
 
         return $responses;
@@ -1449,35 +1441,36 @@ trait WithOrderTest
         /**
          * @var ProductService $productService
          */
-        $productService     =   app()->make( ProductService::class );
-        $result     =   $this->attemptCreateHoldOrder();
+        $productService = app()->make( ProductService::class );
+        $result = $this->attemptCreateHoldOrder();
 
         /**
-         * Step: 1 From this moment, the stock shouldn't  have changed. 
+         * Step: 1 From this moment, the stock shouldn't  have changed.
          * So we'll check if there has been any stock change here.
          */
-        $order      =   $result[ 'data' ][ 'order' ];
+        $order = $result[ 'data' ][ 'order' ];
 
         /**
          * Step 2: From here, we'll make a payment to the order,
          * and make sure there is a stock deducted. First we'll keep
          * the actual products stock
          */
-        $stock  =   collect( $order[ 'products' ] )->mapWithKeys( function( $orderProduct ) use ( $productService ) {
+        $stock = collect( $order[ 'products' ] )->mapWithKeys( function( $orderProduct ) use ( $productService ) {
             return [
-                $orderProduct[ 'id' ] =>  $productService->getQuantity( $orderProduct[ 'product_id' ], $orderProduct[ 'unit_id' ] )
+                $orderProduct[ 'id' ] => $productService->getQuantity( $orderProduct[ 'product_id' ], $orderProduct[ 'unit_id' ] ),
             ];
         });
 
-        $order[ 'type' ]        =   [ 'identifier' => $order[ 'type' ] ];
-        $order[ 'products' ]    =   collect( $order[ 'products' ] )->map( function( $product ) {
-            $product[ 'quantity' ]  = 5; // we remove 1 quantity so it returns to inventory
+        $order[ 'type' ] = [ 'identifier' => $order[ 'type' ] ];
+        $order[ 'products' ] = collect( $order[ 'products' ] )->map( function( $product ) {
+            $product[ 'quantity' ] = 5; // we remove 1 quantity so it returns to inventory
+
             return $product;
         })->toArray();
-        
-        $order[ 'payments' ][]  =   [
-            'identifier'    =>  'cash-payment',
-            'value'         =>  abs( $order[ 'change' ] )
+
+        $order[ 'payments' ][] = [
+            'identifier' => 'cash-payment',
+            'value' => abs( $order[ 'change' ] ),
         ];
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
@@ -1488,16 +1481,16 @@ trait WithOrderTest
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_PAID );
 
         $stock->each( function( $quantity, $orderProductID ) use ( $productService ) {
-            $orderProduct   =   OrderProduct::find( $orderProductID );
-            $newQuantity    =   $productService->getQuantity( $orderProduct->product_id, $orderProduct->unit_id );
+            $orderProduct = OrderProduct::find( $orderProductID );
+            $newQuantity = $productService->getQuantity( $orderProduct->product_id, $orderProduct->unit_id );
 
-            $this->assertTrue( 
-                $newQuantity < $quantity, 
-                sprintf( 
-                    __( 'Stock mismatch! %s was expected to be greater than %s, after an order update' ), 
-                    $newQuantity, 
-                    $quantity 
-                ) 
+            $this->assertTrue(
+                $newQuantity < $quantity,
+                sprintf(
+                    __( 'Stock mismatch! %s was expected to be greater than %s, after an order update' ),
+                    $newQuantity,
+                    $quantity
+                )
             );
         });
     }
@@ -1507,13 +1500,13 @@ trait WithOrderTest
         /**
          * @var ProductService $productService
          */
-        $productService     =   app()->make( ProductService::class );
+        $productService = app()->make( ProductService::class );
 
-        $product            =   Product::withStockEnabled()
+        $product = Product::withStockEnabled()
             ->grouped()
             ->with([ 'unit_quantities' ])
             ->get()
-            ->random();        
+            ->random();
 
         /**
          * Step 1: We want to make sure the system take in account
@@ -1523,14 +1516,14 @@ trait WithOrderTest
             $productService->setQuantity( $subProduct->product->id, $subProduct->unit_quantity->unit_id, 25000 );
         });
 
-        $unitQuantity   =   $product->unit_quantities->first();
+        $unitQuantity = $product->unit_quantities->first();
 
         if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
             throw new Exception( 'No valid unit is available.' );
         }
 
         $subtotal = $unitQuantity->sale_price * 5;
-        $orderDetails   =   [
+        $orderDetails = [
             'customer_id' => $this->attemptCreateCustomer()->id,
             'type' => [ 'identifier' => 'takeaway' ],
             'discount_type' => 'percentage',
@@ -1562,68 +1555,69 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $orderDetails );
-            
+
         $response->assertStatus(200);
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_HOLD );
-            
-        $payment    =   PaymentType::first();
-        $order  =   $response->json()[ 'data' ][ 'order' ];
+
+        $payment = PaymentType::first();
+        $order = $response->json()[ 'data' ][ 'order' ];
 
         /**
          * Step 2: From here, we'll make a first payment to the order,
          * and make sure there is a stock deducted. First we'll keep
          * the actual products stock
          */
-        $stock  =   collect( $order[ 'products' ] )->mapWithKeys( function( $orderProduct ) use ( $productService ) {
-            $product    =   Product::with([ 'sub_items.product', 'sub_items.unit_quantity' ])
+        $stock = collect( $order[ 'products' ] )->mapWithKeys( function( $orderProduct ) use ( $productService ) {
+            $product = Product::with([ 'sub_items.product', 'sub_items.unit_quantity' ])
                 ->where( 'id', $orderProduct[ 'product_id' ] )
                 ->first();
 
             return [
-                $orderProduct[ 'id' ] =>  $product->sub_items->mapWithKeys( fn( $subItem ) => [
-                    $subItem->id    => $productService->getQuantity( $subItem->product->id,  $subItem->unit_quantity->unit_id )
-                ]) 
+                $orderProduct[ 'id' ] => $product->sub_items->mapWithKeys( fn( $subItem ) => [
+                    $subItem->id => $productService->getQuantity( $subItem->product->id, $subItem->unit_quantity->unit_id ),
+                ]),
             ];
         });
 
         /**
-         * Step 3: We'll try to make a payment to the order to 
+         * Step 3: We'll try to make a payment to the order to
          * turn that into a partially paid order.
          */
-        $orderDetails   =   array_merge( $orderDetails, [
-            'products'  =>  Order::find( $order[ 'id' ] )
+        $orderDetails = array_merge( $orderDetails, [
+            'products' => Order::find( $order[ 'id' ] )
                 ->products()
                 ->get()
                 ->map( function( $product ) {
                     $product->quantity = 4;
+
                     return $product;
                 })
                 ->toArray(),
-            'payments'  =>  [
+            'payments' => [
                 [
-                    'identifier'  =>  $payment->identifier,
-                    'value'         =>  $order[ 'total' ] / 3
-                ]
-            ]
+                    'identifier' => $payment->identifier,
+                    'value' => $order[ 'total' ] / 3,
+                ],
+            ],
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/orders/' . $order[ 'id' ], $orderDetails );
-        
+
         $response->assertStatus(200);
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_PARTIALLY );
 
         $stock->each( function( $products, $parentProductID ) use ( $productService ) {
             $products->each( function( $quantity, $subItemID ) use ( $productService ) {
-                $productSubItem   =   ProductSubItem::with( 'product' )->find( $subItemID );
-                $newQuantity    =   $productService->getQuantity( $productSubItem->product->id, $productSubItem->unit_id );
+                $productSubItem = ProductSubItem::with( 'product' )->find( $subItemID );
+                $newQuantity = $productService->getQuantity( $productSubItem->product->id, $productSubItem->unit_id );
                 $this->assertTrue( $newQuantity < $quantity, __( 'The quantity hasn\'t changed after selling a previously hold order.' ) );
             });
         });
 
-        $this->assertTrue( 
-            ProductHistory::where( 'order_id', $order[ 'id' ] )->count() > 0, 
-            __( 'There has not been a stock transaction for an order that has partially received a payment.' ) 
+        $this->assertTrue(
+            ProductHistory::where( 'order_id', $order[ 'id' ] )->count() > 0,
+            __( 'There has not been a stock transaction for an order that has partially received a payment.' )
         );
 
         return $response->json();
@@ -1634,9 +1628,9 @@ trait WithOrderTest
         /**
          * @var ProductService $productService
          */
-        $productService     =   app()->make( ProductService::class );
+        $productService = app()->make( ProductService::class );
 
-        $product            =   Product::withStockEnabled()
+        $product = Product::withStockEnabled()
             ->notGrouped()
             ->with( 'unit_quantities'  )
             ->first();
@@ -1648,14 +1642,14 @@ trait WithOrderTest
             $unitQuantity->save();
         });
 
-        $unitQuantity   =   $product->unit_quantities->first();
+        $unitQuantity = $product->unit_quantities->first();
 
         if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
             throw new Exception( 'No valid unit is available.' );
         }
 
         $subtotal = $unitQuantity->sale_price * 5;
-        $orderDetails   =   [
+        $orderDetails = [
             'customer_id' => $this->attemptCreateCustomer()->id,
             'type' => [ 'identifier' => 'takeaway' ],
             'discount_type' => 'percentage',
@@ -1687,60 +1681,61 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $orderDetails );
-            
+
         $response->assertStatus(200);
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_HOLD );
-            
-        $payment    =   PaymentType::first();
-        $order  =   $response->json()[ 'data' ][ 'order' ];
+
+        $payment = PaymentType::first();
+        $order = $response->json()[ 'data' ][ 'order' ];
 
         /**
          * Step 2: From here, we'll make a first payment to the order,
          * and make sure there is a stock deducted. First we'll keep
          * the actual products stock
          */
-        $stock  =   collect( $order[ 'products' ] )->mapWithKeys( function( $orderProduct ) use ( $productService ) {
+        $stock = collect( $order[ 'products' ] )->mapWithKeys( function( $orderProduct ) use ( $productService ) {
             return [
-                $orderProduct[ 'id' ] =>  $productService->getQuantity( $orderProduct[ 'product_id' ], $orderProduct[ 'unit_id' ] )
+                $orderProduct[ 'id' ] => $productService->getQuantity( $orderProduct[ 'product_id' ], $orderProduct[ 'unit_id' ] ),
             ];
         });
 
         /**
-         * Step 3: We'll try to make a payment to the order to 
+         * Step 3: We'll try to make a payment to the order to
          * turn that into a partially paid order.
          */
-        $orderDetails   =   array_merge( $orderDetails, [
-            'products'  =>  Order::find( $order[ 'id' ] )
+        $orderDetails = array_merge( $orderDetails, [
+            'products' => Order::find( $order[ 'id' ] )
                 ->products()
                 ->get()
                 ->map( function( $product ) {
                     $product->quantity = 4; // we assume the remaining stock has at least 1 quantity remaining.
+
                     return $product;
                 })
                 ->toArray(),
-            'payments'  =>  [
+            'payments' => [
                 [
-                    'identifier'  =>  $payment->identifier,
-                    'value'         =>  $order[ 'total' ] / 3
-                ]
-            ]
+                    'identifier' => $payment->identifier,
+                    'value' => $order[ 'total' ] / 3,
+                ],
+            ],
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/orders/' . $order[ 'id' ], $orderDetails );
-        
+
         $response->assertStatus(200);
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_PARTIALLY );
 
         $stock->each( function( $quantity, $orderProductID ) use ( $productService ) {
-            $orderProduct   =   OrderProduct::find( $orderProductID );
-            $newQuantity    =   $productService->getQuantity( $orderProduct->product_id, $orderProduct->unit_id );
+            $orderProduct = OrderProduct::find( $orderProductID );
+            $newQuantity = $productService->getQuantity( $orderProduct->product_id, $orderProduct->unit_id );
             $this->assertTrue( $newQuantity < $quantity, __( 'The quantity hasn\'t changed after selling a previously hold order.' ) );
         });
 
-        $this->assertTrue( 
-            ProductHistory::where( 'order_id', $order[ 'id' ] )->count() > 0, 
-            __( 'There has not been a stock transaction for an order that has partially received a payment.' ) 
+        $this->assertTrue(
+            ProductHistory::where( 'order_id', $order[ 'id' ] )->count() > 0,
+            __( 'There has not been a stock transaction for an order that has partially received a payment.' )
         );
 
         return $response->json();
@@ -1766,14 +1761,14 @@ trait WithOrderTest
                 'customer_id' => $customer->id,
             ],
             config: [
-                'products'  =>  function() {
+                'products' => function() {
                     return Product::withStockEnabled()
                         ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
                         ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
                         ->notGrouped()
                         ->notInGroup()
                         ->get();
-                }
+                },
             ],
             date: ns()->date->now()
         );
@@ -1862,14 +1857,14 @@ trait WithOrderTest
                  * Here we'll check if there is an history created for every
                  * product that was deleted.
                  */
-                $productHistory   =   ProductHistory::where( 'action', ProductHistory::ACTION_RETURNED )
+                $productHistory = ProductHistory::where( 'action', ProductHistory::ACTION_RETURNED )
                     ->where( 'order_product_id', $orderProduct->id )
                     ->where( 'order_id', $orderProduct->order_id )
                     ->first();
 
                 $this->assertTrue(
                     ! $productHistory instanceof ProductHistory,
-                    sprintf( 
+                    sprintf(
                         __( 'No product history was created for the product "%s" upon is was deleted with the order it\'s attached to.' ),
                         $orderProduct->name
                     )
@@ -1900,7 +1895,7 @@ trait WithOrderTest
                 'customer_id' => $customer->id,
             ],
             config: [
-                'products'  =>  function() {
+                'products' => function() {
                     return Product::where( 'STOCK_MANAGEMENT', Product::STOCK_MANAGEMENT_ENABLED )
                         ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
                         ->with( 'unit_quantities', function( $query ) {
@@ -1909,7 +1904,7 @@ trait WithOrderTest
                         ->notGrouped()
                         ->notInGroup()
                         ->get();
-                }
+                },
             ],
             date: ns()->date->now()
         );
@@ -1917,7 +1912,7 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $data );
 
-        $orderData = ( object ) $response->json()[ 'data' ][ 'order' ];
+        $orderData = (object) $response->json()[ 'data' ][ 'order' ];
         $order = Order::with([ 'products', 'user' ])->find( $orderData->id );
 
         /**
@@ -1925,13 +1920,13 @@ trait WithOrderTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders/' . $orderData->id . '/void', [
-                'reason'    =>  'Testing Voiding'
+                'reason' => 'Testing Voiding',
             ]);
 
         $response->assertOk();
 
         $order->load([ 'products.product' ]);
-        
+
         /**
          * We'll check if for each product on the order
          * there was a refund made for the returned goods
@@ -1939,14 +1934,14 @@ trait WithOrderTest
         $order->products->each( function( $product ) {
             // every product that aren't refund
             if ( $product->refunded_products()->count() === 0 && $product->product()->first() instanceof Product ) {
-                $history  =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_VOID_RETURN )
+                $history = ProductHistory::where( 'operation_type', ProductHistory::ACTION_VOID_RETURN )
                     ->where( 'order_product_id', $product->id )
                     ->where( 'order_id', $product->order_id )
                     ->first();
 
                 $this->assertTrue( $history instanceof ProductHistory, __( 'No return history was created for a void order product.' ) );
             }
-        });        
+        });
 
         $order->refresh();
         $order->load([ 'products.product' ]);
@@ -1973,7 +1968,7 @@ trait WithOrderTest
         $order->products->each( function( $product ) {
             // every product that aren't refund
             if ( $product->refunded_products()->count() === 0 ) {
-                $history  =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_RETURNED )
+                $history = ProductHistory::where( 'operation_type', ProductHistory::ACTION_RETURNED )
                     ->where( 'order_product_id', $product->id )
                     ->where( 'order_id', $product->order_id )
                     ->first();
@@ -2003,14 +1998,14 @@ trait WithOrderTest
                 'customer_id' => $customer->id,
             ],
             config: [
-                'products'  =>  function() {
+                'products' => function() {
                     return Product::where( 'STOCK_MANAGEMENT', Product::STOCK_MANAGEMENT_ENABLED )
                         ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
                         ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
                         ->notGrouped()
                         ->notInGroup()
                         ->get();
-                }
+                },
             ],
             date: ns()->date->now()
         );
@@ -2018,7 +2013,7 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $data );
 
-        $orderData = ( object ) $response->json()[ 'data' ][ 'order' ];
+        $orderData = (object) $response->json()[ 'data' ][ 'order' ];
         $order = Order::with([ 'products', 'user' ])->find( $orderData->id );
 
         /**
@@ -2026,11 +2021,11 @@ trait WithOrderTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders/' . $orderData->id . '/void', [
-                'reason'    =>  'Testing Voiding'
+                'reason' => 'Testing Voiding',
             ]);
 
         $order->load([ 'products.product' ]);
-        
+
         /**
          * We'll check if for each product on the order
          * there was a refund made for the returned goods
@@ -2038,7 +2033,7 @@ trait WithOrderTest
         $order->products->each( function( $product ) {
             // every product that aren't refund
             if ( $product->refunded_products()->count() === 0 && $product->product()->first() instanceof Product ) {
-                $history  =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_VOID_RETURN )
+                $history = ProductHistory::where( 'operation_type', ProductHistory::ACTION_VOID_RETURN )
                     ->where( 'order_product_id', $product->id )
                     ->where( 'order_id', $product->order_id )
                     ->first();
@@ -2055,14 +2050,13 @@ trait WithOrderTest
          */
         $currency = app()->make( CurrencyService::class );
 
-        
         $firstFetchCustomer = $this->attemptCreateCustomer();
 
         $product = Product::withStockEnabled()
             ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
             ->with([ 'unit_quantities' => fn( $query ) => $query->where( 'quantity', '>', 100 ) ])
             ->first();
-            
+
         $shippingFees = 150;
         $discountRate = 3.5;
         $products = [
@@ -2097,7 +2091,7 @@ trait WithOrderTest
          */
         $taxes = [];
         $taxGroup = TaxGroup::first();
-        
+
         if ( $taxGroup instanceof TaxGroup ) {
             $taxes = $taxGroup->taxes->map( function( $tax ) {
                 return [
@@ -2151,13 +2145,13 @@ trait WithOrderTest
         if ( $currency->define( $secondFetchCustomer->purchases_amount )
             ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'total' ] )
             ->getRaw() != $currency->getRaw( $firstFetchCustomer->purchases_amount ) ) {
-                throw new Exception(
-                    sprintf(
-                        __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
-                        $secondFetchCustomer->purchases_amount - (float) $responseData[ 'data' ][ 'order' ][ 'total' ],
-                        $firstFetchCustomer->purchases_amount
-                    )
-                );
+            throw new Exception(
+                sprintf(
+                    __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
+                    $secondFetchCustomer->purchases_amount - (float) $responseData[ 'data' ][ 'order' ][ 'total' ],
+                    $firstFetchCustomer->purchases_amount
+                )
+            );
         }
 
         /**
@@ -2181,16 +2175,15 @@ trait WithOrderTest
                 'products' => $responseData[ 'data' ][ 'order' ][ 'products' ],
             ]);
 
-            
         $response->assertStatus(200);
         $responseData = $response->json();
-        
+
         /**
          * Assert: We'll check if a refund record was created as a cash flow
          * for the products linked to the order.
          */
         collect( $responseData[ 'data' ][ 'orderRefund' ][ 'refunded_products' ] )->each( function( $product ) {
-            $cashFlow   =   TransactionHistory::where( 'order_id', $product[ 'order_id' ] )
+            $cashFlow = TransactionHistory::where( 'order_id', $product[ 'order_id' ] )
                 ->where( 'order_product_id', $product[ 'order_product_id' ] )
                 ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
                 ->first();
@@ -2258,7 +2251,7 @@ trait WithOrderTest
         $products = Product::whereRelation( 'unit_quantities', 'quantity', '>', 100 )
             ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
             ->get();
-            
+
         $shippingFees = $faker->randomElement([100, 150, 200, 250, 300, 350, 400]);
         $discountRate = $faker->numberBetween(1, 5);
 
@@ -2523,23 +2516,22 @@ trait WithOrderTest
          * We should test if the records
          * for partially paid order was created
          */
-        foreach( $products as $product ) {
-            $history    =   ProductHistory::where( 'product_id', $product[ 'product_id' ] )
+        foreach ( $products as $product ) {
+            $history = ProductHistory::where( 'product_id', $product[ 'product_id' ] )
                 ->where( 'operation_type', ProductHistory::ACTION_SOLD )
                 ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
                 ->first();
 
             $this->assertTrue( $history instanceof ProductHistory, 'No product history was created after placing the order with partial payment.' );
-            $this->assertTrue( ( float ) $history->quantity === ( float ) $product[ 'quantity' ], 'The quantity of the product doesn\'t match the product history quantity.' );
+            $this->assertTrue( (float) $history->quantity === (float) $product[ 'quantity' ], 'The quantity of the product doesn\'t match the product history quantity.' );
         }
 
         /**
          * Step 2: We'll here increase the
          * quantity of the product attached to the order.
          */
-        $newProducts    =   $responseData[ 'data' ][ 'order' ][ 'products' ];
+        $newProducts = $responseData[ 'data' ][ 'order' ][ 'products' ];
         Arr::set( $newProducts, '0.quantity', $newProducts[0][ 'quantity' ] + 1 );
-
 
         $shippingFees = 150;
         $discountRate = 3.5;
@@ -2574,23 +2566,23 @@ trait WithOrderTest
         ]);
 
         $response->assertStatus(200);
-        $json   =   $response->json();
+        $json = $response->json();
 
         /**
          * Test 2: Testing Product History
          * We should test if the records
          * for partially paid order was created
          */
-        foreach( $products as $product ) {
-            $historyActionAdjustmentSale    =   ProductHistory::where( 'product_id', $product[ 'product_id' ] )
+        foreach ( $products as $product ) {
+            $historyActionAdjustmentSale = ProductHistory::where( 'product_id', $product[ 'product_id' ] )
                 ->where( 'operation_type', ProductHistory::ACTION_ADJUSTMENT_SALE )
                 ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
                 ->first();
 
             $this->assertTrue( $historyActionAdjustmentSale instanceof ProductHistory, 'The created history doesn\'t match what should have been created after an order modification.' );
             $this->assertSame(
-                ( float ) $historyActionAdjustmentSale->quantity,
-                ( float ) $json[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ] - ( float ) $responseData[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ],
+                (float) $historyActionAdjustmentSale->quantity,
+                (float) $json[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ] - (float) $responseData[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ],
                 'The quantity of the product doesn\'t match the new product quantity after the order modfiication.'
             );
         }
@@ -2599,9 +2591,8 @@ trait WithOrderTest
          * Step 3: We'll here decrease the
          * quantity of the product attached to the order.
          */
-        $newProducts    =   $responseData[ 'data' ][ 'order' ][ 'products' ];
+        $newProducts = $responseData[ 'data' ][ 'order' ][ 'products' ];
         Arr::set( $newProducts, '0.quantity', $newProducts[0][ 'quantity' ] - 2 );
-
 
         $shippingFees = 150;
         $discountRate = 3.5;
@@ -2636,23 +2627,23 @@ trait WithOrderTest
         ]);
 
         $response->assertStatus(200);
-        $json2   =   $response->json();
+        $json2 = $response->json();
 
         /**
          * Test 3: Testing Product History
          * We should test if the records
          * for partially paid order was created
          */
-        foreach( $products as $product ) {
-            $historyActionAdjustmentSale    =   ProductHistory::where( 'product_id', $product[ 'product_id' ] )
+        foreach ( $products as $product ) {
+            $historyActionAdjustmentSale = ProductHistory::where( 'product_id', $product[ 'product_id' ] )
                 ->where( 'operation_type', ProductHistory::ACTION_ADJUSTMENT_RETURN )
                 ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
                 ->first();
 
             $this->assertTrue( $historyActionAdjustmentSale instanceof ProductHistory, 'The created history doesn\'t match what should have been created after an order modification.' );
             $this->assertSame(
-                ( float ) $historyActionAdjustmentSale->quantity,
-                ( float ) $json[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ] - ( float ) $json2[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ],
+                (float) $historyActionAdjustmentSale->quantity,
+                (float) $json[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ] - (float) $json2[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ],
                 'The quantity of the product doesn\'t match the new product quantity after the order modfiication.'
             );
         }
@@ -2681,7 +2672,7 @@ trait WithOrderTest
          * We'll set a fixed quantity to avoid failling
          * on not enough stock error
          */
-        $unit->quantity     =   10000;
+        $unit->quantity = 10000;
         $unit->save();
 
         $customer = $this->attemptCreateCustomer();

@@ -16,7 +16,7 @@ class MethodNotAllowedHttpException extends Exception
     {
         $message = $this->getMessage();
         $title = __( 'Method Not Allowed' );
-        $back   = Helper::getValidPreviousUrl( $request );
+        $back = Helper::getValidPreviousUrl( $request );
 
         return response()->view( 'pages.errors.http-exception', compact( 'message', 'title', 'back' ), 500 );
     }

@@ -97,7 +97,7 @@ class AppServiceProvider extends ServiceProvider
 
         // save Singleton for options
         $this->app->singleton( UsersService::class, function() {
-            return new UsersService();
+            return new UsersService;
         });
 
         // provide media manager
@@ -264,9 +264,10 @@ class AppServiceProvider extends ServiceProvider
          * their Vite assets
          */
         Blade::directive( 'moduleViteAssets', function( $expression ) {
-            $params     = explode(',', $expression);
-            $fileName   = trim($params[0], "'");
-            $module     = trim($params[1], " '");
+            $params = explode(',', $expression);
+            $fileName = trim($params[0], "'");
+            $module = trim($params[1], " '");
+
             return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\" ); ?>";
         });
     }
@@ -313,9 +314,9 @@ class AppServiceProvider extends ServiceProvider
 
         config([
             'nexopos.orders.products.refunds' => [
-                OrderProductRefund::CONDITION_DAMAGED       =>  __( 'Damaged' ),
-                OrderProductRefund::CONDITION_UNSPOILED     =>  __( 'Good Condition' ),
-            ]
+                OrderProductRefund::CONDITION_DAMAGED => __( 'Damaged' ),
+                OrderProductRefund::CONDITION_UNSPOILED => __( 'Good Condition' ),
+            ],
         ]);
     }
 }

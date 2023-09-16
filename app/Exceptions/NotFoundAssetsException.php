@@ -16,7 +16,7 @@ class NotFoundAssetsException extends Exception
     {
         $message = $this->getMessage();
         $title = __( 'Not Found Assets' );
-        $back   = Helper::getValidPreviousUrl( $request );
+        $back = Helper::getValidPreviousUrl( $request );
 
         return response()->view( 'pages.errors.assets-exception', compact( 'message', 'title', 'back' ), 500 );
     }

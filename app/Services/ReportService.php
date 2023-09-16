@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Classes\Currency;
 use App\Classes\Hook;
-use App\Models\TransactionHistory;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\DashboardDay;
@@ -18,6 +17,7 @@ use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\RegisterHistory;
 use App\Models\Role;
+use App\Models\TransactionHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -168,7 +168,6 @@ class ReportService
     /**
      * will update wasted goods report
      *
-     * @param ProductHistory $history
      * @return void
      */
     public function handleStockAdjustment( ProductHistory $history )
@@ -296,7 +295,6 @@ class ReportService
      * Will delete all cash flow
      * related to the specific order
      *
-     * @param Order $order
      * @return void
      */
     public function deleteOrderCashFlow( Order $order )
@@ -308,7 +306,6 @@ class ReportService
      * Will delete all procurement
      * related to a specific cash flow
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function deleteProcurementCashFlow( Procurement $procurement )
@@ -809,20 +806,20 @@ class ReportService
     {
         switch ( $type ) {
             case 'products_report':
-                return $this->getProductsReports( 
-                    start: $start, 
-                    end: $end, 
-                    user_id: $user_id, 
-                    categories_id: $categories_id 
+                return $this->getProductsReports(
+                    start: $start,
+                    end: $end,
+                    user_id: $user_id,
+                    categories_id: $categories_id
                 );
                 break;
             case 'categories_report':
             case 'categories_summary':
                 return $this->getCategoryReports(
-                    start: $start, 
-                    end: $end, 
-                    user_id: $user_id, 
-                    categories_id: $categories_id 
+                    start: $start,
+                    end: $end,
+                    user_id: $user_id,
+                    categories_id: $categories_id
                 );
                 break;
         }
@@ -831,10 +828,11 @@ class ReportService
     private function getSalesSummary( $orders )
     {
         $allSales = $orders->map( function( $order ) {
-            $productTaxes   =   $order->products()->sum( 'tax_value' );
+            $productTaxes = $order->products()->sum( 'tax_value' );
+
             return [
                 'subtotal' => $order->subtotal,
-                'product_taxes'   =>  $productTaxes,
+                'product_taxes' => $productTaxes,
                 'sales_discounts' => $order->discount,
                 'sales_taxes' => $order->tax_value,
                 'shipping' => $order->shipping,
@@ -867,27 +865,27 @@ class ReportService
 
         if ( ! empty( $categories_id ) ) {
             /**
-             * Will only pull orders that has products which 
+             * Will only pull orders that has products which
              * belongs to the categories id provided
              */
-            $request    =   $request->whereHas( 'products', function( $query ) use ( $categories_id ) {
+            $request = $request->whereHas( 'products', function( $query ) use ( $categories_id ) {
                 $query->whereIn( 'product_category_id', $categories_id );
             });
 
             /**
              * Will only pull products that belongs to the categories id provided.
              */
-            $request    =   $request->with([
-                'products'  =>  function( $query ) use ( $categories_id ) {
+            $request = $request->with([
+                'products' => function( $query ) use ( $categories_id ) {
                     $query->whereIn( 'product_category_id', $categories_id );
-                }
+                },
             ]);
         }
 
-        $orders         = $request->get();
-        $summary        = $this->getSalesSummary( $orders );
-        $products       = $orders->map( fn( $order ) => $order->products )->flatten();
-        $productsIds    = $products->map( fn( $product ) => $product->product_id )->unique();
+        $orders = $request->get();
+        $summary = $this->getSalesSummary( $orders );
+        $products = $orders->map( fn( $order ) => $order->products )->flatten();
+        $productsIds = $products->map( fn( $product ) => $product->product_id )->unique();
 
         return [
             'result' => $productsIds->map( function( $id ) use ( $products ) {
@@ -917,20 +915,20 @@ class ReportService
 
         if ( ! empty( $categories_id ) ) {
             /**
-             * Will only pull orders that has products which 
+             * Will only pull orders that has products which
              * belongs to the categories id provided
              */
-            $request    =   $request->whereHas( 'products', function( $query ) use ( $categories_id ) {
+            $request = $request->whereHas( 'products', function( $query ) use ( $categories_id ) {
                 $query->whereIn( 'product_category_id', $categories_id );
             });
 
             /**
              * Will only pull products that belongs to the categories id provided.
              */
-            $request    =   $request->with([
-                'products'  =>  function( $query ) use ( $categories_id ) {
+            $request = $request->with([
+                'products' => function( $query ) use ( $categories_id ) {
                     $query->whereIn( 'product_category_id', $categories_id );
-                }
+                },
             ]);
         }
 
@@ -1071,46 +1069,46 @@ class ReportService
 
             return array_merge([
                 [
-                    'key' =>  'created_at',
-                    'value' =>  ns()->date->getFormatted( Auth::user()->created_at ),
-                    'label' =>  __( 'Member Since' ),
+                    'key' => 'created_at',
+                    'value' => ns()->date->getFormatted( Auth::user()->created_at ),
+                    'label' => __( 'Member Since' ),
                 ], [
-                    'key' =>  'total_sales_count',
-                    'value' =>  $totalSales,
-                    'label' =>  __( 'Total Orders' ),
-                    'today' =>  [
-                        'key' =>  'today_sales_count',
-                        'value' =>  $todaySales,
-                        'label' =>  __( 'Today\'s Orders' ),
-                    ], 
+                    'key' => 'total_sales_count',
+                    'value' => $totalSales,
+                    'label' => __( 'Total Orders' ),
+                    'today' => [
+                        'key' => 'today_sales_count',
+                        'value' => $todaySales,
+                        'label' => __( 'Today\'s Orders' ),
+                    ],
                 ], [
-                    'key' =>  'total_sales_amount',
-                    'value' =>  ns()->currency->define( $totalSalesAmount )->format(),
-                    'label' =>  __( 'Total Sales' ),
-                    'today' =>  [
-                        'key' =>  'today_sales_amount',
-                        'value' =>  ns()->currency->define( $todaySalesAmount )->format(),
-                        'label' =>  __( 'Today\'s Sales' ),
-                    ], 
+                    'key' => 'total_sales_amount',
+                    'value' => ns()->currency->define( $totalSalesAmount )->format(),
+                    'label' => __( 'Total Sales' ),
+                    'today' => [
+                        'key' => 'today_sales_amount',
+                        'value' => ns()->currency->define( $todaySalesAmount )->format(),
+                        'label' => __( 'Today\'s Sales' ),
+                    ],
                 ], [
-                    'key' =>  'total_refunds_amount',
-                    'value' =>  ns()->currency->define( $totalRefundsAmount )->format(),
-                    'label' =>  __( 'Total Refunds' ),
-                    'today' =>  [
-                        'key' =>  'today_refunds_amount',
-                        'value' =>  ns()->currency->define( $todayRefunds )->format(),
-                        'label' =>  __( 'Today\'s Refunds' ),
-                    ], 
+                    'key' => 'total_refunds_amount',
+                    'value' => ns()->currency->define( $totalRefundsAmount )->format(),
+                    'label' => __( 'Total Refunds' ),
+                    'today' => [
+                        'key' => 'today_refunds_amount',
+                        'value' => ns()->currency->define( $todayRefunds )->format(),
+                        'label' => __( 'Today\'s Refunds' ),
+                    ],
                 ], [
-                    'key' =>  'total_customers',
-                    'value' =>  $totalCustomers,
-                    'label' =>  __( 'Total Customers' ),
-                    'today' =>  [
-                        'key' =>  'today_customers',
-                        'value' =>  $todayCustomers,
-                        'label' =>  __( 'Today\'s Customers' ),
-                    ], 
-                ], 
+                    'key' => 'total_customers',
+                    'value' => $totalCustomers,
+                    'label' => __( 'Total Customers' ),
+                    'today' => [
+                        'key' => 'today_customers',
+                        'value' => $todayCustomers,
+                        'label' => __( 'Today\'s Customers' ),
+                    ],
+                ],
             ], $config );
         });
     }
@@ -1139,7 +1137,7 @@ class ReportService
 
     public function getStockReport( $categories, $units )
     {
-        $query  =   Product::with([ 'unit_quantities' => function( $query ) use ( $units ) {
+        $query = Product::with([ 'unit_quantities' => function( $query ) use ( $units ) {
             if ( ! empty( $units ) ) {
                 $query->whereIn( 'unit_id', $units );
             } else {
@@ -1164,13 +1162,13 @@ class ReportService
         return ProductUnitQuantity::query()
             ->where( 'stock_alert_enabled', 1 )
             ->whereRaw( 'low_quantity > quantity' )
-            ->with([ 
-                'product', 
+            ->with([
+                'product',
                 'unit' => function( $query ) use ( $units ) {
                     if ( ! empty( $units ) ) {
                         $query->whereIn( 'id', $units );
                     }
-                }
+                },
             ])
             ->whereHas( 'unit', function( $query ) use ( $units ) {
                 if ( ! empty( $units ) ) {
@@ -1223,7 +1221,6 @@ class ReportService
     /**
      * Will return the actual customer statement
      *
-     * @param Customer $customer
      * @return array
      */
     public function getCustomerStatement( Customer $customer, $rangeStarts = null, $rangeEnds = null )

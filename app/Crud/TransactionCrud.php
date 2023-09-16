@@ -6,19 +6,18 @@ use App\Casts\CurrencyCast;
 use App\Casts\TransactionOccurrenceCast;
 use App\Casts\TransactionTypeCast;
 use App\Casts\YesNoBoolCast;
-use App\Events\TransactionBeforeDeleteEvent;
-use App\Events\TransactionBeforeUpdateEvent;
 use App\Events\TransactionAfterCreatedEvent;
 use App\Events\TransactionAfterUpdatedEvent;
 use App\Events\TransactionBeforeCreatedEvent;
-use App\Models\TransactionAccount;
+use App\Events\TransactionBeforeDeleteEvent;
+use App\Events\TransactionBeforeUpdateEvent;
 use App\Models\Role;
 use App\Models\Transaction;
+use App\Models\TransactionAccount;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\UsersService;
-use Exception;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -85,19 +84,17 @@ class TransactionCrud extends CrudService
      */
     public $fillable = [];
 
-    protected $casts    =   [
-        'recurring'     => 'boolean',
-        'active'        => 'boolean',
-        'type'          =>  TransactionTypeCast::class,
-        'occurrence'    =>  TransactionOccurrenceCast::class,
-        'recurring'     =>  YesNoBoolCast::class,
-        'value'         =>  CurrencyCast::class,
+    protected $casts = [
+        'recurring' => 'boolean',
+        'active' => 'boolean',
+        'type' => TransactionTypeCast::class,
+        'occurrence' => TransactionOccurrenceCast::class,
+        'recurring' => YesNoBoolCast::class,
+        'value' => CurrencyCast::class,
     ];
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -130,7 +127,6 @@ class TransactionCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {

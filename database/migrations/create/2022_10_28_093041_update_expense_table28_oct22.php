@@ -20,7 +20,7 @@ return new class extends Migration
                     $table->string( 'type' )->nullable();
                 }
             });
-    
+
             Transaction::get()->each( function( $transaction ) {
                 if ( $transaction->recurring ) {
                     $transaction->type = Transaction::TYPE_RECURRING;
@@ -29,7 +29,7 @@ return new class extends Migration
                 } else {
                     $transaction->type = Transaction::TYPE_DIRECT;
                 }
-    
+
                 $transaction->save();
             });
         }

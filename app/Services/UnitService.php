@@ -73,7 +73,7 @@ class UnitService
 
     /**
      * Get sibling units
-     * Used to retreive other units that belongs to 
+     * Used to retreive other units that belongs to
      * the same unit group and the defined unit.
      */
     public function getSiblingUnits( Unit $unit )
@@ -84,7 +84,7 @@ class UnitService
 
         return $unit->group->units;
     }
-    
+
     /**
      * Create a unit using the provided informations
      *
@@ -225,7 +225,6 @@ class UnitService
      * get the single base unit defined
      * for a specific group
      *
-     * @param UnitGroup $group
      * @return Unit
      */
     public function getBaseUnit( UnitGroup $group )
@@ -252,9 +251,7 @@ class UnitService
      * return what is the exact total base unit
      * value of 2 Unit instance provided
      *
-     * @param Unit $unit
      * @param Unit base unit
-     * @param
      */
     public function computeBaseUnit( Unit $unit, Unit $base, $quantity )
     {
@@ -278,14 +275,14 @@ class UnitService
     /**
      * Will returns the final quantity of a converted unit.
      */
-    public function getConvertedQuantity( Unit $from, Unit $to, float $quantity ): float | int
+    public function getConvertedQuantity( Unit $from, Unit $to, float $quantity ): float|int
     {
-        return ns()->currency->define( 
-                ns()->currency
-                    ->define( $from->value )
-                    ->multipliedBy( $quantity )
-                    ->getRaw()
-            )
+        return ns()->currency->define(
+            ns()->currency
+                ->define( $from->value )
+                ->multipliedBy( $quantity )
+                ->getRaw()
+        )
             ->dividedBy( $to->value )
             ->getRaw();
     }

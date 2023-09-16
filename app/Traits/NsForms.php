@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Traits;
 
 use App\Classes\Hook;
 use App\Services\CrudService;
 use App\Services\SettingsPage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 trait NsForms
 {
@@ -23,7 +23,7 @@ trait NsForms
      */
     public function extractValidation( $model = null ): array
     {
-        $form   =   $this->getFormObject( model: $model );
+        $form = $this->getFormObject( model: $model );
 
         $rules = [];
 
@@ -82,8 +82,8 @@ trait NsForms
      */
     public function getFlatForm( array $fields, $model = null ): array
     {
-        $form   =   $this->getFormObject( model: $model );
-        $data   = [];
+        $form = $this->getFormObject( model: $model );
+        $data = [];
 
         if ( isset( $form[ 'main' ][ 'name' ] ) ) {
             $data[ $form[ 'main' ][ 'name' ] ] = $fields[ $form[ 'main' ][ 'name' ] ];
@@ -150,31 +150,33 @@ trait NsForms
      * The PHP version of FormValidation.extractForm.
      * This returns a flattened version of a Form.
      */
-    public function extractForm($form): array {
+    public function extractForm($form): array
+    {
         $formValue = [];
-    
+
         if (isset($form['main'])) {
             $formValue[$form['main']['name']] = $form['main']['value'];
         }
-    
+
         if (isset($form['tabs'])) {
             foreach ($form['tabs'] as $tabIdentifier => $tab) {
-                if (!isset($formValue[$tabIdentifier])) {
+                if (! isset($formValue[$tabIdentifier])) {
                     $formValue[$tabIdentifier] = [];
                 }
-    
+
                 $formValue[$tabIdentifier] = $this->extractFields( $tab[ 'fields' ] );
             }
         }
-    
+
         return $formValue;
     }
 
-    function extractFields($fields, $formValue = []) {
+    public function extractFields($fields, $formValue = [])
+    {
         foreach ($fields as $field) {
             $formValue[$field['name']] = $field['value'] ?? '';
         }
-    
+
         return $formValue;
     }
 }

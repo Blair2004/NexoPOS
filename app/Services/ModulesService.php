@@ -18,7 +18,6 @@ use Illuminate\Contracts\View\View as ViewView;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -81,9 +80,8 @@ class ModulesService
      * Load modules for a defined path.
      *
      * @param string path to load
-     * @return void
      */
-    public function load( string | null $dir = null ): void
+    public function load( string|null $dir = null ): void
     {
         /**
          * If we're not loading a specific module directory
@@ -128,10 +126,10 @@ class ModulesService
          * Checks if a config file exists
          */
         if ( in_array( 'config.xml', $files ) ) {
-            $xmlRelativePath    =   'modules' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'config.xml';
-            $xmlConfigPath      =   base_path() . DIRECTORY_SEPARATOR . $xmlRelativePath;
-            $xmlContent         =   file_get_contents( $xmlConfigPath );
-            
+            $xmlRelativePath = 'modules' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'config.xml';
+            $xmlConfigPath = base_path() . DIRECTORY_SEPARATOR . $xmlRelativePath;
+            $xmlContent = file_get_contents( $xmlConfigPath );
+
             try {
                 $xml = $this->xmlParser->extract( $xmlContent );
                 $config = $xml->parse([
@@ -145,7 +143,7 @@ class ModulesService
                 ]);
             } catch( Exception $exception ) {
                 throw new Exception( sprintf(
-                    __( 'Failed to parse the configuration file on the following path "%s"' ), 
+                    __( 'Failed to parse the configuration file on the following path "%s"' ),
                     $xmlRelativePath
                 ) );
             }
@@ -287,7 +285,7 @@ class ModulesService
     /**
      * Triggers the module's service provider on the defined method.
      */
-    public function triggerServiceProviders( array $config, string $method, string | bool $parentClass = false ): void
+    public function triggerServiceProviders( array $config, string $method, string|bool $parentClass = false ): void
     {
         foreach ( $config[ 'providers' ] as $service ) {
             /**
@@ -324,7 +322,7 @@ class ModulesService
      * Will check for a specific module or all the module
      * enabled if there is a dependency error.
      */
-    public function dependenciesCheck( null | array $module = null ): void
+    public function dependenciesCheck( null|array $module = null ): void
     {
         if ( $module === null ) {
             collect( $this->getEnabled() )->each( function( $module ) {
@@ -471,7 +469,7 @@ class ModulesService
     /**
      * Return the list of modules as an array
      */
-    public function get($namespace = null): bool | array
+    public function get($namespace = null): bool|array
     {
         if ( $namespace !== null ) {
             return $this->modules[ $namespace ] ?? false;
@@ -484,7 +482,7 @@ class ModulesService
      * Get a specific module using the provided
      * namespace only if that module is enabled
      */
-    public function getIfEnabled( string $namespace ): bool | array
+    public function getIfEnabled( string $namespace ): bool|array
     {
         $module = $this->modules[ $namespace ] ?? false;
 
@@ -777,13 +775,13 @@ class ModulesService
              */
             $this->runAllMigration( $moduleNamespace );
 
-            $module     =   $this->get( $moduleNamespace );
+            $module = $this->get( $moduleNamespace );
 
             $this->clearTemporaryFiles();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  sprintf( __( 'The module was "%s" was successfully installed.' ), $module[ 'name' ] )
+                'status' => 'success',
+                'message' => sprintf( __( 'The module was "%s" was successfully installed.' ), $module[ 'name' ] ),
             ];
         } else {
             /**
@@ -909,7 +907,7 @@ class ModulesService
     /**
      * Clears Temp Folder
      */
-    function clearTemporaryFiles(): void
+    public function clearTemporaryFiles(): void
     {
         Artisan::call( 'ns:doctor', [ '--clear-modules-temp' => true ]);
     }
@@ -958,7 +956,7 @@ class ModulesService
             return [
                 'status' => 'success',
                 'code' => 'module_deleted',
-                'message'   =>  sprintf( __( 'The modules "%s" was deleted successfully.' ), $module[ 'name' ] ),
+                'message' => sprintf( __( 'The modules "%s" was deleted successfully.' ), $module[ 'name' ] ),
                 'module' => $module,
             ];
         }
@@ -968,7 +966,7 @@ class ModulesService
          */
         return [
             'status' => 'danger',
-            'message'   =>  sprintf( __( 'Unable to locate a module having as identifier "%s".' ), $namespace ),
+            'message' => sprintf( __( 'Unable to locate a module having as identifier "%s".' ), $namespace ),
             'code' => 'unknow_module',
         ];
     }
@@ -1025,7 +1023,7 @@ class ModulesService
 
         if ( is_file( $filePath ) ) {
             /**
-             * Includes the migration file which might returns an anonymous 
+             * Includes the migration file which might returns an anonymous
              * class or a migration class with a defined class.
              */
             $object = include_once $filePath;
@@ -1051,8 +1049,7 @@ class ModulesService
                         'className' => $className,
                     ],
                 ];
-            } else if ( $object instanceof Migration ) {
-
+            } elseif ( $object instanceof Migration ) {
                 /**
                  * In case the migration file is an anonymous class,
                  * we'll just execute the requested method from the returned object.
@@ -1063,7 +1060,7 @@ class ModulesService
                     'status' => 'success',
                     'message' => __( 'The migration run successfully.' ),
                     'data' => [
-                        'object' => $object
+                        'object' => $object,
                     ],
                 ];
             }
@@ -1204,7 +1201,6 @@ class ModulesService
 
         // check if module exists
         if ( $module = $this->get( $namespace ) ) {
-            
             ModulesBeforeDisabledEvent::dispatch( $module );
 
             // @todo sandbox to test if the module runs
@@ -1350,10 +1346,10 @@ class ModulesService
      */
     public function runMigration( string $namespace, string $file )
     {
-        $result = $this->__runSingleFile( 
-            method: 'up', 
-            namespace: $namespace, 
-            file: $file 
+        $result = $this->__runSingleFile(
+            method: 'up',
+            namespace: $namespace,
+            file: $file
         );
 
         /**
@@ -1394,8 +1390,8 @@ class ModulesService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'All migration were executed.' )
+            'status' => 'success',
+            'message' => __( 'All migration were executed.' ),
         ];
     }
 
@@ -1479,8 +1475,8 @@ class ModulesService
             Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Events' . DIRECTORY_SEPARATOR . $config[ 'namespace' ] . 'Event.php', $this->streamContent( 'event', $config ) );
             Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'index.html', '<h1>Silence is golden !</h1>' );
             Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . 'DatabaseMigration.php', View::make( 'generate.modules.migration', [
-                'module'    =>  $config,
-                'migration' =>  'DatabaseMigration'
+                'module' => $config,
+                'migration' => 'DatabaseMigration',
             ])->render() );
 
             /**

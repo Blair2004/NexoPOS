@@ -103,8 +103,6 @@ class ProviderProductsCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -137,7 +135,6 @@ class ProviderProductsCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -213,7 +210,6 @@ class ProviderProductsCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  ProcurementProduct $entry
      * @return  void
      */
     public function afterPost( $request, ProcurementProduct $entry )

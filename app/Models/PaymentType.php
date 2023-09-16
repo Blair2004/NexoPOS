@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
+ * @property int $id
  * @property string $identifier
- * @property integer $author
+ * @property int $author
  * @property string $description
  * @property bool $readonly
  * @property \Carbon\Carbon $updated_at
-*/
+ */
 class PaymentType extends NsModel
 {
     use HasFactory;

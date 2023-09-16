@@ -39,7 +39,7 @@ trait WithProductTest
          * We'll merge with the provided $form
          * and count category from that.
          */
-        $form   =   $form ?: [
+        $form = $form ?: [
             'name' => ucwords( $faker->word ),
             'variations' => [
                 [
@@ -79,9 +79,9 @@ trait WithProductTest
             ],
         ];
 
-        $currentCategory        =   ProductCategory::find( $form[ 'variations' ][0][ 'identification' ][ 'category_id' ] ); 
-        $sale_price             =   $form[ 'variations' ][0][ 'units' ][ 'selling_group' ][0][ 'sale_price_edit' ];
-        $categoryProductCount   =   $currentCategory->products()->count();
+        $currentCategory = ProductCategory::find( $form[ 'variations' ][0][ 'identification' ][ 'category_id' ] );
+        $sale_price = $form[ 'variations' ][0][ 'units' ][ 'selling_group' ][0][ 'sale_price_edit' ];
+        $categoryProductCount = $currentCategory->products()->count();
 
         $response = $this
             ->withSession( $this->app[ 'session' ]->all() )
@@ -111,31 +111,31 @@ trait WithProductTest
 
     protected function attemptChangeProductCategory()
     {
-        $result     =   $this->attemptSetProduct();
+        $result = $this->attemptSetProduct();
 
         /**
          * Step 2: let's store the previous category
          * and assign a new category to see if the old category
          * see his total_items count updated.
          */
-        $oldCategoryID  =   $result[ 'data' ][ 'product' ][ 'category_id' ];
-        $oldCategory    =   ProductCategory::find( $oldCategoryID );
-        $newCategory    =   ProductCategory::where( 'id', '!=', $oldCategoryID )
+        $oldCategoryID = $result[ 'data' ][ 'product' ][ 'category_id' ];
+        $oldCategory = ProductCategory::find( $oldCategoryID );
+        $newCategory = ProductCategory::where( 'id', '!=', $oldCategoryID )
             ->where( 'parent_id', null )
             ->first();
 
-        $productCrud    =   new ProductCrud;
-        $productData    =   $result->json()[ 'data' ][ 'product' ];
-        $product        =   Product::find( $productData[ 'id' ] );
-        $newForm        =   $productCrud->getExtractedProductForm( $product );
+        $productCrud = new ProductCrud;
+        $productData = $result->json()[ 'data' ][ 'product' ];
+        $product = Product::find( $productData[ 'id' ] );
+        $newForm = $productCrud->getExtractedProductForm( $product );
 
         /**
          * We'll new update
          * the category
          */
-        $newForm[ 'variations' ][0][ 'identification' ][ 'category_id' ]    =   $newCategory->id;
+        $newForm[ 'variations' ][0][ 'identification' ][ 'category_id' ] = $newCategory->id;
 
-        $newResult      =   $this->attemptSetProduct(
+        $newResult = $this->attemptSetProduct(
             product_id: $product->id,
             form: $newForm
         );
@@ -143,23 +143,23 @@ trait WithProductTest
         /**
          * Step 3: We'll now check if the previous category has his quantity updated
          */
-        $oldCategoryRefreshed   =   $oldCategory->fresh();
-        $newCategoryRefreshed   =   $newCategory->fresh();
+        $oldCategoryRefreshed = $oldCategory->fresh();
+        $newCategoryRefreshed = $newCategory->fresh();
 
-        $this->assertGreaterThan( 
+        $this->assertGreaterThan(
             expected: $newCategory->total_items,
             actual: $newCategoryRefreshed->total_items,
-            message: sprintf( 
+            message: sprintf(
                 'The new category "total_items" has\nt properly been updated. %s was expected, we have %s currently defined.',
                 $oldCategoryRefreshed->total_items,
                 $oldCategory->total_items
             )
         );
-        
-        $this->assertGreaterThan( 
+
+        $this->assertGreaterThan(
             expected: $oldCategoryRefreshed->total_items,
             actual: $oldCategory->total_items,
-            message: sprintf( 
+            message: sprintf(
                 'The old category "total_items" has\nt properly been updated. %s was expected, we have %s currently defined.',
                 $oldCategoryRefreshed->total_items,
                 $oldCategory->total_items
@@ -169,23 +169,23 @@ trait WithProductTest
 
     protected function orderProduct( $name, $unit_price, $quantity, $unitQuantityId = null, $productId = null, $discountType = null, $discountPercentage = null, $taxType = null, $taxGroupId = null )
     {
-        $product        =   $productId !== null ? Product::with( 'unit_quantities' )->find( $productId ) : Product::with( 'unit_quantities' )->withStockEnabled()->whereHas( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', $quantity ) )->get()->random();
-        $unitQuantity   =   $unitQuantityId !== null ? $product->unit_quantities->filter( fn( $unitQuantity ) => ( int ) $unitQuantity->id === ( int ) $unitQuantityId )->first() : $product->unit_quantities->first();
+        $product = $productId !== null ? Product::with( 'unit_quantities' )->find( $productId ) : Product::with( 'unit_quantities' )->withStockEnabled()->whereHas( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', $quantity ) )->get()->random();
+        $unitQuantity = $unitQuantityId !== null ? $product->unit_quantities->filter( fn( $unitQuantity ) => (int) $unitQuantity->id === (int) $unitQuantityId )->first() : $product->unit_quantities->first();
 
         ! $product instanceof Product ? throw new Exception( 'The provided product is not valid.' ) : null;
         ! $unitQuantity instanceof ProductUnitQuantity ? throw new Exception( 'The provided unit quantity is not valid.' ) : null;
 
         return [
-            'name'  =>  $name,
-            'unit_price'    =>  $unit_price,
-            'quantity'      =>  $quantity,
-            'product_id'    =>  $product->id,
-            'unit_quantity_id'  =>  $unitQuantity->id,
-            'unit_id'       =>  $unitQuantity->unit_id,
-            'discount_type' =>  $discountType,
-            'discount_percentage' =>  $discountPercentage,
-            'tax_group_id'  =>  $taxGroupId,
-            'tax_type'      =>  $taxType
+            'name' => $name,
+            'unit_price' => $unit_price,
+            'quantity' => $quantity,
+            'product_id' => $product->id,
+            'unit_quantity_id' => $unitQuantity->id,
+            'unit_id' => $unitQuantity->unit_id,
+            'discount_type' => $discountType,
+            'discount_percentage' => $discountPercentage,
+            'tax_group_id' => $taxGroupId,
+            'tax_type' => $taxType,
         ];
     }
 
@@ -238,27 +238,27 @@ trait WithProductTest
             ->map( fn( $cat ) => $cat->id )
             ->toArray();
 
-            $products = Product::where( 'type', Product::TYPE_DEMATERIALIZED )
-                ->notInGroup()
-                ->notGrouped()
-                ->limit(2)
-                ->get()
-                ->map( function( $product ) use ( $faker ) {
-                    /**
-                     * @var ProductUnitQuantity $unitQuantity
-                     */
-                    $unitQuantity = $product->unit_quantities->first();
-                    $unitQuantityID = $unitQuantity->id;
+        $products = Product::where( 'type', Product::TYPE_DEMATERIALIZED )
+            ->notInGroup()
+            ->notGrouped()
+            ->limit(2)
+            ->get()
+            ->map( function( $product ) use ( $faker ) {
+                /**
+                 * @var ProductUnitQuantity $unitQuantity
+                 */
+                $unitQuantity = $product->unit_quantities->first();
+                $unitQuantityID = $unitQuantity->id;
 
-                    return [
-                        'unit_quantity_id' => $unitQuantityID,
-                        'product_id' => $product->id,
-                        'unit_id' => $unitQuantity->unit->id,
-                        'quantity' => $faker->randomNumber(1),
-                        'sale_price' => $unitQuantity->sale_price,
-                    ];
-                })
-                ->toArray();
+                return [
+                    'unit_quantity_id' => $unitQuantityID,
+                    'product_id' => $product->id,
+                    'unit_id' => $unitQuantity->unit->id,
+                    'quantity' => $faker->randomNumber(1),
+                    'sale_price' => $unitQuantity->sale_price,
+                ];
+            })
+            ->toArray();
 
         $response = $this
             ->withSession( $this->app[ 'session' ]->all() )

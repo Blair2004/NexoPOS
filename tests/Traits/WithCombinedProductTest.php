@@ -13,10 +13,10 @@ trait WithCombinedProductTest
         ns()->option->set( 'ns_invoice_merge_similar_products', 'yes' );
 
         $testService = new TestService;
-        $orderDetails = $testService->prepareOrder( 
-            date: ns()->date->now(), 
-            orderDetails: [], 
-            productDetails: [], 
+        $orderDetails = $testService->prepareOrder(
+            date: ns()->date->now(),
+            orderDetails: [],
+            productDetails: [],
             config: [
                 'products' => function() {
                     $product = Product::where( 'tax_group_id', '>', 0 )

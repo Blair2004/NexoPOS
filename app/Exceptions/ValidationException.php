@@ -20,7 +20,7 @@ class ValidationException extends MainValidationException
             return response()->view( 'pages.errors.not-allowed', [
                 'title' => __( 'An error has occurred' ),
                 'message' => __( 'Unable to proceed, the submitted form is not valid.' ),
-                'back'  => Helper::getValidPreviousUrl( $request ),
+                'back' => Helper::getValidPreviousUrl( $request ),
             ]);
         }
 

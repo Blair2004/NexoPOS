@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Casts\FloatConvertCasting;
 use App\Events\ProductUnitQuantityAfterCreatedEvent;
 use App\Events\ProductUnitQuantityAfterUpdatedEvent;
-use App\Models\Scopes\VisibleProductUnitScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
