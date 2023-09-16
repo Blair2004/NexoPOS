@@ -17,13 +17,14 @@
         </template>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { shallowRef } from '@vue/reactivity';
 import draggable from 'vuedraggable';
 import { __ } from '~/libraries/lang';
 import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
 import { nsSnackBar } from '~/bootstrap';
 
+declare const Popup;
 
 export default {
     name: 'ns-dragzone',
@@ -91,32 +92,34 @@ export default {
 
                 const currentlyUsedWidgetNames   =   column.widgets.map( widget => widget.componentName );
 
-                const options   =   this.widgets.filter( widget => {
+                const notUsedWidgets   =   this.widgets.filter( widget => {
                     const namesOnly     =   alreadyUsedWidgets.map( widget => widget.componentName );
                     return ! namesOnly.includes( widget.componentName );
-                }).map( widget => {
+                })
+                .map( widget => {
                     return {
                         value: widget,
                         label: widget.name
                     }
                 });
 
-                const result    =   await new Promise( ( resolve, reject ) => {
+                const widgets    =   await new Promise( ( resolve, reject ) => {
+                    const value     =   notUsedWidgets.filter( widget => {
+                        return currentlyUsedWidgetNames.includes( widget.componentName );
+                    });
+
                     Popup.show( nsSelectPopupVue, {
-                        value: options.filter( option => {
-                            return currentlyUsedWidgetNames.includes( option.value.componentName );
-                        }),
+                        value,
                         resolve, 
                         reject,
                         type: 'multiselect',
-                        options,
+                        options: notUsedWidgets,
                         label: __( 'Choose Widget' ),
                         description: __( 'Select with widget you want to add to the column.' )
                     });
                 }); 
                 
                 const index     =   this.columns.indexOf( column );
-                const widgets   =   result.map( option => option.value );
                 this.columns[ index ].widgets  =   widgets;
                 this.handleChange( this.columns[ index ] );
                 

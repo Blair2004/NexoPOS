@@ -104,7 +104,7 @@ export default {
                     this.$emit( 'updated', this.form );
                 },
                 error: ( error ) => {
-                    nsSnackBar.error( error.message, 'OKAY', { duration: 0 }).subscribe();
+                    nsSnackBar.error( error.message, __( 'Okay' ), { duration: 0 }).subscribe();
                 }
             });
         },

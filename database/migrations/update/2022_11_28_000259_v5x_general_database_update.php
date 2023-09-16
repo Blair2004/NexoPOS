@@ -283,6 +283,10 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'convert_unit_id' ) ) {
                 $table->integer( 'convert_unit_id' )->nullable();
             }
+            
+            if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'visible' ) ) {
+                $table->integer( 'visible' )->nullable();
+            }
         });
 
         /**

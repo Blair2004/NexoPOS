@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float $total_purchase_price
  * @property integer $unit_id
  * @property integer $convert_unit_id
+ * @property bool $visible
  * @property integer $author
  * @property mixed $uuid
  * @property \Carbon\Carbon $created_at

@@ -22,6 +22,7 @@ use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\Provider;
 use App\Models\Role;
+use App\Models\Scopes\VisibleProductUnitScope;
 use App\Models\Unit;
 use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;

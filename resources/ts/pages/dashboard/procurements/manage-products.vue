@@ -1,8 +1,16 @@
 
 <template>
     <div class="form flex-auto" id="crud-form">
-        <div v-if="Object.values( form ).length === 0" class="flex items-center h-full justify-center flex-auto">
+        <div v-if="Object.values( form ).length === 0 && hasLoaded" class="flex items-center h-full justify-center flex-auto">
             <ns-spinner/>
+        </div>
+        <div v-if="Object.values( form ).length === 0 && hasError">
+            <ns-notice color="error">
+                <template #title>{{ __( 'An Error Has Occured' ) }}</template>
+                <template #description>
+                    {{  __( 'An unexpected error has occured while loading the form. Please check the log or contact the support.' ) }}
+                </template>
+            </ns-notice>
         </div>
         <template v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
@@ -134,9 +142,15 @@
                                             </div>
                                         </template>
                                     </template>
-                                    <template v-if="! unitLoaded">
+                                    <template v-if="! unitLoaded && ! unitLoadError">
                                         <div class="px-4 w-full lg:w-2/3 flex justify-center items-center">
                                             <ns-spinner></ns-spinner>
+                                        </div>
+                                    </template>
+                                    <template v-if="unitLoadError && ! unitLoaded">
+                                        <div class="px-4 w-full md:w-1/2 lg:w-2/3 flex flex-col justify-center items-center">
+                                            <i class="las la-frown text-7xl"></i>
+                                            <p class="w-full md:w-1/3 py-3 text-center text-sm text-primary">{{ __( 'We were not able to load the units. Make sure there are units attached on the unit group selected.' ) }}</p>
                                         </div>
                                     </template>
                                 </div>
@@ -166,7 +180,10 @@ export default {
             nsHttpClient,
             _sampleVariation: null,
             unitLoaded: false,
+            unitLoadError: false,
             form: '',
+            hasLoaded: false,
+            hasError: false,
         }
     },
     watch: {
@@ -333,34 +350,41 @@ export default {
          * for every groups. Validation should prevent duplicated units.
          */
         loadAvailableUnits( unit_section ) {
-            this.unitLoaded = false;
-            nsHttpClient.get( this.unitsUrl.replace( '{id}', unit_section.fields.filter( f => f.name === 'unit_group' )[0].value ) )
-                .subscribe( result => {
+            this.unitLoaded     =   false;
+            this.unitLoadError  =   false;
+            const unitGroup     =   unit_section.fields.filter( f => f.name === 'unit_group' )[0].value;
+            
+            nsHttpClient.get( this.unitsUrl.replace( '{id}', unitGroup ) )
+                .subscribe({
+                    next: result => {
+                        /**
+                         * For each group, we'll loop to find
+                         * the field that allow to choose the unit
+                         * in order to change the options available
+                         */
+                        unit_section.fields.forEach( field => {
+                            if ( field.type === 'group' ) {
+                                field.options   =   result;
+                                field.fields.forEach( _field => {
+                                    if ( [ 'unit_id', 'convert_unit_id' ].includes( _field.name ) ) {
+                                        _field.options  =   result.map( option => {
+                                            return {
+                                                label: option.name,
+                                                value: option.id
+                                            }
+                                        });
+                                    }
+                                })
+                            }
+                        });
 
-                    /**
-                     * For each group, we'll loop to find
-                     * the field that allow to choose the unit
-                     * in order to change the options available
-                     */
-                    unit_section.fields.forEach( field => {
-                        if ( field.type === 'group' ) {
-                            field.options   =   result;
-                            field.fields.forEach( _field => {
-                                if ( [ 'unit_id', 'convert_unit_id' ].includes( _field.name ) ) {
-                                    _field.options  =   result.map( option => {
-                                        return {
-                                            label: option.name,
-                                            value: option.id
-                                        }
-                                    });
-                                }
-                            })
-                        }
-                    });
+                        this.unitLoaded = true;
 
-                    this.unitLoaded = true;
-
-                    this.$forceUpdate();
+                        this.$forceUpdate();
+                    },
+                    error: error => {
+                        this.unitLoadError  =   true;
+                    }
                 })
         },
         submit() {
@@ -556,8 +580,17 @@ export default {
         },
         loadForm() {
             const request   =   nsHttpClient.get( `${this.src}` );
-            request.subscribe( f => {
-                this.form    =   this.parseForm( f.form );
+            this.hasLoaded  =   false;
+            this.hasError   =   false;
+
+            request.subscribe({
+                next: f => {
+                    this.hasLoaded  =   true;
+                    this.form    =   this.parseForm( f.form );
+                },
+                error: error => {
+                    this.hasError   =   true;
+                }
             });
         },
         addImage( variation ) {

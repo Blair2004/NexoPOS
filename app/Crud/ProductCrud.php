@@ -217,6 +217,14 @@ class ProductCrud extends CrudService
                 'label' => __( 'Low Quantity' ),
                 'description' => __( 'Which quantity should be assumed low.' ),
             ], [
+                'type' => 'switch',
+                'errors' => [],
+                'name' => 'visible',
+                'label' => __( 'Visible' ),
+                'value' =>  1, // by default
+                'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                'description' => __( 'Define whether the unit is available for sale.' ),
+            ], [
                 'type' => 'media',
                 'errors' => [],
                 'name' => 'preview_url',

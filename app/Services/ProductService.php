@@ -710,6 +710,7 @@ class ProductService
                 $unitQuantity->low_quantity = $group[ 'low_quantity' ] ?? 0;
                 $unitQuantity->stock_alert_enabled = $group[ 'stock_alert_enabled' ] ?? false;
                 $unitQuantity->convert_unit_id = $group[ 'convert_unit_id' ] ?? null;
+                $unitQuantity->visible = $group[ 'visible' ] ?? true;
 
                 /**
                  * Let's compute the tax only
@@ -1764,9 +1765,10 @@ class ProductService
      */
     public function getProductUnitQuantities( Product $product )
     {
-        $product->unit_quantities->each( fn( $quantity ) => $quantity->load( 'unit' ) );
-
-        return $product->unit_quantities;
+        return $product->unit_quantities()
+            ->with([ 'unit' ])
+            ->visible()
+            ->get();
     }
 
     /**

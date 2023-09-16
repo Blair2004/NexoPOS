@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\FloatConvertCasting;
 use App\Events\ProductUnitQuantityAfterCreatedEvent;
 use App\Events\ProductUnitQuantityAfterUpdatedEvent;
+use App\Models\Scopes\VisibleProductUnitScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -80,6 +81,16 @@ class ProductUnitQuantity extends NsModel
     public function scopeBarcode( $query, $reference )
     {
         return $query->where( 'barcode', $reference );
+    }
+
+    public function scopeHidden( $query )
+    {
+        return $query->where( 'visible', false );
+    }
+
+    public function scopeVisible( $query )
+    {
+        return $query->where( 'visible', true );
     }
 
     public function unit()
