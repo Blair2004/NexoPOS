@@ -167,9 +167,24 @@ export default class FormValidation {
         if ( field.validation !== undefined ) {
             field.errors    =   [];
             const rules     =   this.detectValidationRules( field.validation );
-            rules.forEach( rule => {
-                this.fieldPassCheck( field, rule, fields );
-            });
+            const ruleNames =   rules.map( rule => rule.identifier );
+
+            console.log({ ruleNames, rules, field, fields })
+
+            /**
+             * when the rule "sometimes" is defined. The field will be processed only if there is a value provided.
+             */
+            if ( ruleNames.includes( 'sometimes' ) ) {
+                if ( field.value !== undefined && field.value.length > 0 ) {
+                    rules.forEach( rule => {
+                        this.fieldPassCheck( field, rule, fields );
+                    });
+                }
+            } else {
+                rules.forEach( rule => {
+                    this.fieldPassCheck( field, rule, fields );
+                });
+            }
         }
         return field;
     }
@@ -205,8 +220,9 @@ export default class FormValidation {
     detectValidationRules( validation ) {
         const execRule  =   ( rule ) => {
             const minRule 			=	/(min)\:([0-9])+/g;
+            const sometimesRule     =	/(sometimes)/g;
             const maxRule 			=	/(max)\:([0-9])+/g;
-            const matchRule         =   /(same):(\w+)/g;
+            const sameRule          =   /(same):(\w+)/g;
             const diffRule          =   /(different):(\w+)/g;
             let result;
 
@@ -215,7 +231,7 @@ export default class FormValidation {
                     identifier : rule
                 };
             } else if ( rule.length > 0 ) {
-                result = minRule.exec( rule ) || maxRule.exec( rule ) || matchRule.exec( rule ) || diffRule.exec( rule );
+                result = minRule.exec( rule ) || maxRule.exec( rule ) || sameRule.exec( rule ) || diffRule.exec( rule ) || sometimesRule.exec( rule );
                 
                 return {
                     identifier : result[1],
@@ -341,13 +357,14 @@ export default class FormValidation {
                     const similar = fields.filter( field => field.name === rule.value )
                     return similar.length === 1 && ( [ 'string', 'number' ].includes( typeof field.value ) && field.value.length > 0 && similar[0].value === field.value );
                 },
-                min: ( field, rule ) => field.value.length < parseInt( rule.value ),
-                max: ( field, rule ) => field.value.length > parseInt( rule.value )
+                min: ( field, rule ) => field.value && field.value.length < parseInt( rule.value ),
+                max: ( field, rule ) => field.value && field.value.length > parseInt( rule.value )
             }
 
             const ruleValidated   =   rules[ rule.identifier ];
 
             if ( typeof ruleValidated === 'function' ) {
+                console.log({ ruleVaidated: ruleValidated( field, rule ), field, rule })
                 if ( ruleValidated( field, rule ) === false ) {
                     return this.unTrackError( field, rule );                    
                 } else {
