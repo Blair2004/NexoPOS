@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div v-if="activeTab.fields && activeTab.fields.length > 0" class="ns-tab-item-footer border-t p-2 flex justify-end">
-                    <ns-button @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
+                    <ns-button :disabled="isSubmitting" @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
                 </div>
             </div>
         </div>
@@ -46,6 +46,7 @@ export default {
         return {
             validation: new FormValidation,
             form: {},
+            isSubmitting: false,
             test: '',
         }
     },
@@ -86,12 +87,15 @@ export default {
              * and prevent the regular process to run.
              */
             const beforeSaveHook    =   nsHooks.applyFilters( 'ns-before-saved', () => new Promise( ( resolve, reject ) => {
+                this.isSubmitting   =   true;
                 return nsHttpClient.post( this.url, form )
                     .subscribe({
                         next: result => {
+                            this.isSubmitting   =   false;
                             resolve( result );
                         },
                         error: ( error ) => {
+                            this.isSubmitting   =   false;
                             reject( error )
                         }
                     })

@@ -210,6 +210,7 @@ class OrdersController extends DashboardController
                 'sale_printing_url' => Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
                 'orders_url' => ns()->route( 'ns.dashboard.orders' ),
                 'dashboard_url' => ns()->route( 'ns.dashboard.home' ),
+                'categories_url' => ns()->route( 'ns.dashboard.products.categories.create' ),
                 'registers_url' => ns()->route( 'ns.dashboard.registers-create' ),
                 'order_type_url' => ns()->route( 'ns.dashboard.settings', [ 'settings' => 'pos?tab=features' ]),
             ],

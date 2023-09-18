@@ -166,10 +166,8 @@ export default class FormValidation {
     checkField( field, fields = [] ) {
         if ( field.validation !== undefined ) {
             field.errors    =   [];
-            const rules     =   this.detectValidationRules( field.validation );
+            const rules     =   this.detectValidationRules( field.validation ).filter( rule => rule != undefined );
             const ruleNames =   rules.map( rule => rule.identifier );
-
-            console.log({ ruleNames, rules, field, fields })
 
             /**
              * when the rule "sometimes" is defined. The field will be processed only if there is a value provided.
@@ -364,7 +362,9 @@ export default class FormValidation {
             const ruleValidated   =   rules[ rule.identifier ];
 
             if ( typeof ruleValidated === 'function' ) {
+                
                 console.log({ ruleVaidated: ruleValidated( field, rule ), field, rule })
+
                 if ( ruleValidated( field, rule ) === false ) {
                     return this.unTrackError( field, rule );                    
                 } else {
