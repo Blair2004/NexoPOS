@@ -66,7 +66,7 @@
                 </div>
                 <div @click="selectPaymentGateway()" class="elevation-surface border info font-semibold flex mb-2 p-2 justify-between cursor-pointer">
                     <span>{{ __( 'Payment Gateway' ) }}</span>
-                    <span>{{ selectedPaymentGateway ? selectedPaymentGateway.label : 'N/A' }}</span>
+                    <span>{{ selectedPaymentGateway ? selectedPaymentGatewayLabel : 'N/A' }}</span>
                 </div>
                 <div class="elevation-surface border font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Screen' ) }}</span>
@@ -182,7 +182,7 @@ export default {
             const data      =   {
                 products            :   this.refundables,
                 total               :   this.screen,
-                payment             :   this.selectedPaymentGateway,
+                payment             :   { identifier: this.selectedPaymentGateway },
                 refund_shipping     :   this.refundShipping
             }
 
@@ -295,14 +295,17 @@ export default {
             }, _ => _ );
         },
 
-        selectPaymentGateway() {
-            const promise   =   new Promise( ( resolve, reject ) => {
-                Popup.show( nsSelectPopupVue, { resolve, reject, value : [ this.selectedPaymentOption ], ...this.paymentField[0] })
-            });
+        async selectPaymentGateway() {
+            try {
+                this.selectedPaymentGateway     =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsSelectPopupVue, { resolve, reject, value : [ this.selectedPaymentOption ], ...this.paymentField[0] })
+                });
 
-            promise.then( option => {
-                this.selectedPaymentGateway     =   option[0];
-            }, _ => _ )
+                this.selectedPaymentGatewayLabel   =   this.paymentField[0].options
+                    .filter( option => option.value === this.selectedPaymentGateway )[0].label;
+            } catch( exception ) {
+                nsSnackBar.error( __( 'An error has occured while seleting the payment gateway.' ) ).subscribe();
+            }
         },
 
         changeQuantity( product ) {

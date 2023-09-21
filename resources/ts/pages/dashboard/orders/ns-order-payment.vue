@@ -51,7 +51,12 @@
                 </h3>
                 <ul>
                     <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite border elevation-surface mb-2">
-                        <span>{{ paymentsLabels[ payment.identifier ] || __( 'Unknown' ) }}</span>
+                        <span class="flex items-center">
+                            <a href="javascript:void(0)" @click="printPaymentReceipt( payment )" class="m-1 rounded-full hover:bg-info-tertiary hover:text-white flex items-center justify-center h-8 w-8">
+                                <i class="las la-print"></i>
+                            </a>
+                            {{ paymentsLabels[ payment.identifier ] || __( 'Unknown' ) }}
+                        </span>
                         <span>{{ nsCurrency( payment.value ) }}</span>
                     </li>
                 </ul>
@@ -59,7 +64,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import Labels from '~/libraries/labels';
 import FormValidation from '~/libraries/form-validation';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
@@ -67,6 +72,9 @@ import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
 import { nsNumpad } from '~/components/components';
+import Print from '~/libraries/print';
+
+declare const systemUrls, systemOptions, paymentTypes;
 
 export default {
     props: [ 'order' ],
@@ -75,6 +83,7 @@ export default {
             labels: new Labels,
             validation: new FormValidation,
             inputValue: 0,
+            print: new Print({ urls: systemUrls, options: systemOptions }),
             fields: [],
             paymentTypes, // must be exposed on the local environment
         }
@@ -102,6 +111,9 @@ export default {
                 .subscribe( fields => {
                     this.fields     =   this.validation.createFields( fields );
                 });
+        },
+        printPaymentReceipt( payment ) {
+            this.print.process( payment.id, 'payment' );
         },
         submitPayment( value ) {
             this.validation.validateFields( this.fields );
