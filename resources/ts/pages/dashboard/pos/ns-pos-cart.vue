@@ -239,7 +239,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { nsHooks, nsSnackBar } from '~/bootstrap';
 import { Popup } from '~/libraries/popup';
 import { nsCurrency } from '~/filters/currency';
@@ -247,23 +247,17 @@ import { __ } from '~/libraries/lang';
 import switchTo from "~/libraries/pos-section-switch";
 
 import { ProductQuantityPromise } from "./queues/products/product-quantity";
-import { ProductsQueue } from "./queues/order/products-queue";
-import { CustomerQueue } from "./queues/order/customer-queue";
-import { PaymentQueue } from "./queues/order/payment-queue";
-import { TypeQueue } from "./queues/order/type-queue";
 
 import nsPosPayButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-pay-button.vue';
 import nsPosHoldButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-hold-button.vue';
 import nsPosDiscountButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-discount-button.vue';
 import nsPosVoidButton from '~/pages/dashboard/pos/cart-buttons/ns-pos-void-button.vue';
 
-import PosPaymentPopup from '~/popups/ns-pos-payment-popup.vue';
+import nsPosDiscountPopupVue from '~/popups/ns-pos-discount-popup.vue';
 import PosConfirmPopup from '~/popups/ns-pos-confirm-popup.vue';
-import nsPosQuantityPopupVue from '~/popups/ns-pos-quantity-popup.vue';
 import nsPosOrderTypePopupVue from '~/popups/ns-pos-order-type-popup.vue';
 import nsPosCustomerPopupVue from '~/popups/ns-pos-customer-select-popup.vue';
 import nsPosShippingPopupVue from '~/popups/ns-pos-shipping-popup.vue';
-import nsPosLoadingPopupVue from '~/popups/ns-pos-loading-popup.vue';
 import nsPosNotePopupVue from '~/popups/ns-pos-note-popup.vue';
 import nsPosTaxPopupVue from '~/popups/ns-pos-tax-popup.vue';
 import nsPosCouponsLoadPopupVue from '~/popups/ns-pos-coupons-load-popup.vue';
@@ -271,7 +265,11 @@ import nsPosOrderSettingsVue from '~/popups/ns-pos-order-settings.vue';
 import nsPosProductPricePopupVue from '~/popups/ns-pos-product-price-popup.vue';
 import nsPosQuickProductPopupVue from '~/popups/ns-pos-quick-product-popup.vue';
 
+declare const POS, nsShortcuts, nsHotPress;
+
 import { ref, markRaw } from '@vue/reactivity';
+import { Order } from '~/interfaces/order';
+import { Ref } from 'vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -297,7 +295,7 @@ export default {
             settingsSubscribe: null,
             settings: {},
             types: [],
-            order: ref({}),
+            order: ref({}) as Ref<Order>,
         }
     },
     computed: {
@@ -480,7 +478,7 @@ export default {
             }
 
             try {
-                const response  =   await new Promise( ( resolve, reject) => {
+                const response  =   await new Promise<{}>( ( resolve, reject) => {
                     Popup.show( nsPosOrderSettingsVue, { resolve, reject, order : this.order });
                 });
 
@@ -496,7 +494,7 @@ export default {
 
         async openNotePopup() {
             try {
-                const response  =   await new Promise( ( resolve, reject ) => {
+                const response  =   await new Promise<{}>( ( resolve, reject ) => {
                     const note              =   this.order.note;
                     const note_visibility   =   this.order.note_visibility;
                     Popup.show( nsPosNotePopupVue, { resolve, reject, note, note_visibility });
@@ -513,7 +511,7 @@ export default {
 
         async selectTaxGroup( activeTab = 'settings' ) {
             try {
-                const response              =   await new Promise( ( resolve, reject ) => {
+                const response              =   await new Promise<{}>( ( resolve, reject ) => {
                     const taxes             =   this.order.taxes;
                     const tax_group_id      =   this.order.tax_group_id;
                     const tax_type          =   this.order.tax_type;
@@ -536,6 +534,30 @@ export default {
 
         selectCustomer() {
             Popup.show( nsPosCustomerPopupVue );
+        },
+
+        openDiscountPopup( reference, type ) {
+            if ( ! this.settings.products_discount && type === 'product' ) {
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) ).subscribe();
+            }
+
+            if ( ! this.settings.cart_discount && type === 'cart' ) {
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
+            }
+
+            Popup.show( nsPosDiscountPopupVue, { 
+                reference,
+                type,
+                onSubmit( response ) {
+                    if ( type === 'product' ) {
+                        POS.updateProduct( reference, response );
+                    } else if ( type === 'cart' ) {
+                        POS.updateCart( reference, response );
+                    }
+                }
+            }, {
+                popupClass: 'bg-white h:2/3 shadow-lg xl:w-1/4 lg:w-2/5 md:w-2/3 w-full'
+            })
         },
 
         toggleMode( product, index ) {

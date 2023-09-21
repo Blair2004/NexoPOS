@@ -32,7 +32,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
 
