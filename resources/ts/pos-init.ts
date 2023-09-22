@@ -1,5 +1,9 @@
 import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
 import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/product-unit";
+import { CustomerQueue } from "./pages/dashboard/pos/queues/order/customer-queue";
+import { PaymentQueue } from "./pages/dashboard/pos/queues/order/payment-queue";
+import { ProductsQueue } from "./pages/dashboard/pos/queues/order/products-queue";
+import { TypeQueue } from "./pages/dashboard/pos/queues/order/type-queue";
 import { BehaviorSubject } from "rxjs";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
@@ -38,6 +42,11 @@ const nsPOSLoadingPopup         = (<any>window).nsPOSLoadingPopup = defineAsyncC
 const nsPromptPopup             = (<any>window).nsPromptPopup = defineAsyncComponent( () => import('./popups/ns-' + 'prompt' + '-popup.vue' ) );
 const nsLayawayPopup            = (<any>window).nsLayawayPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'layaway' + '-popup.vue' ) );
 const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'shipping' + '-popup.vue' ) );
+
+( window as any ).CustomerQueue     =   CustomerQueue;
+( window as any ).PaymentQueue      =   PaymentQueue;
+( window as any ).ProductsQueue     =   ProductsQueue;
+( window as any ).TypeQueue         =   TypeQueue;
 
 declare const systemOptions;
 declare const systemUrls;

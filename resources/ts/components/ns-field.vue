@@ -116,7 +116,7 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
-        <ns-search-select :field="field" v-if="isSearchField">
+        <ns-search-select :field="field" @change="$emit( 'change', field )" v-if="isSearchField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-search-select>

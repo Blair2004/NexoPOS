@@ -11,7 +11,7 @@
                 <div class="border-b border-input-edge border-dashed p-2">
                     <input @keypress.enter="selectFirstOption()" ref="searchInputField" v-model="searchField" type="text" :placeholder="__( 'Search result' )">
                 </div>
-                <div>
+                <div class="h-60 overflow-y-auto">
                     <ul>
                         <li @click="selectOption( option )" v-for="option of filtredOptions" class="py-1 px-2 hover:bg-input-button-hover cursor-pointer text-primary">{{ option.label }}</li>
                     </ul>
@@ -71,7 +71,11 @@ export default {
         }
     },
     mounted() {
-        // ...
+        const options   =   this.field.options.filter( op => op.value === this.field.value );
+
+        if ( options.length > 0 ) {
+            this.selectOption( options[0] );
+        }
     },
     methods: { 
         __,

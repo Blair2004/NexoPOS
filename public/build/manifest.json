@@ -390,8 +390,8 @@
       "_npm~@vue~shared_-82b01912.js"
     ]
   },
-  "_ns-orders-preview-popup-3b2cd782.js": {
-    "file": "assets/ns-orders-preview-popup-3b2cd782.js",
+  "_ns-orders-preview-popup-1dc865af.js": {
+    "file": "assets/ns-orders-preview-popup-1dc865af.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -426,8 +426,8 @@
       "_npm~@vue~shared_-82b01912.js"
     ]
   },
-  "_ns-pos-customer-select-popup-652b9182.js": {
-    "file": "assets/ns-pos-customer-select-popup-652b9182.js",
+  "_ns-pos-customer-select-popup-9a3a2fa2.js": {
+    "file": "assets/ns-pos-customer-select-popup-9a3a2fa2.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
@@ -438,7 +438,7 @@
       "_ns-paginate-881a9632.js",
       "_npm~@vue~reactivity_-481192b6.js",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_ns-orders-preview-popup-3b2cd782.js"
+      "_ns-orders-preview-popup-1dc865af.js"
     ],
     "isDynamicEntry": true
   },
@@ -535,7 +535,7 @@
     "src": "resources/scss/animations.scss"
   },
   "resources/scss/app.scss": {
-    "file": "assets/app-340ee949.css",
+    "file": "assets/app-0c372aff.css",
     "isEntry": true,
     "src": "resources/scss/app.scss"
   },
@@ -657,7 +657,7 @@
       "resources/ts/pages/dashboard/orders/ns-order-invoice.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ],
-    "file": "assets/app-b4ab4d11.js",
+    "file": "assets/app-14fe4faf.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_ns-hotpress-3da57d7a.js",
@@ -1411,7 +1411,7 @@
     "src": "resources/ts/pages/dashboard/ns-permissions.vue"
   },
   "resources/ts/pages/dashboard/ns-settings.vue": {
-    "file": "assets/ns-settings-4682640b.js",
+    "file": "assets/ns-settings-61e19637.js",
     "imports": [
       "_currency-47ec5b79.js",
       "resources/ts/bootstrap.ts",
@@ -1499,9 +1499,9 @@
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-customers-button.vue": {
     "dynamicImports": [
-      "_ns-pos-customer-select-popup-652b9182.js"
+      "_ns-pos-customer-select-popup-9a3a2fa2.js"
     ],
-    "file": "assets/ns-pos-customers-button-a13bcdd4.js",
+    "file": "assets/ns-pos-customers-button-6a61eef9.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "resources/ts/bootstrap.ts",
@@ -1742,22 +1742,20 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-reset-button.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos-cart.vue": {
-    "file": "assets/ns-pos-cart-cfb72fd8.js",
+    "file": "assets/ns-pos-cart-ae9b9384.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-47ec5b79.js",
       "_pos-section-switch-0869c4e1.js",
       "_product-quantity-44b15dc1.js",
-      "_ns-pos-customer-select-popup-652b9182.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_npm~@vue~runtime-core_-ff0bdc0c.js",
       "_npm~@vue~shared_-82b01912.js",
-      "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_ns-numpad-plus-f3ffaa01.js",
-      "resources/ts/popups/ns-pos-loading-popup.vue",
-      "_ns-paginate-881a9632.js",
-      "_ns-pos-order-type-popup-ddc0509f.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
+      "resources/ts/popups/ns-pos-loading-popup.vue",
+      "resources/ts/popups/ns-pos-confirm-popup.vue",
+      "_ns-pos-order-type-popup-ddc0509f.js",
+      "_ns-pos-customer-select-popup-9a3a2fa2.js",
       "resources/ts/popups/ns-pos-shipping-popup.vue",
       "_npm~@vue~reactivity_-481192b6.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
@@ -1768,6 +1766,7 @@
       "_npm~vuedraggable-90a90e9d.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "_npm~lodash-f7a36ac5.js",
+      "_ns-numpad-plus-f3ffaa01.js",
       "_npm~rxjs-a7e91008.js",
       "_npm~laravel-echo-7ac8f47a.js",
       "_npm~pusher-js-7b18aad5.js",
@@ -1791,7 +1790,8 @@
       "_npm~tslib-f3101d7c.js",
       "_npm~numeral-faf61dd1.js",
       "_npm~currency.js-57f74176.js",
-      "_ns-orders-preview-popup-3b2cd782.js",
+      "_ns-paginate-881a9632.js",
+      "_ns-orders-preview-popup-1dc865af.js",
       "_print-3c0412fa.js",
       "resources/ts/popups/ns-prompt-popup.vue",
       "_npm~pure-color-28f75675.js",
@@ -1818,7 +1818,7 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos-cart.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos-grid.vue": {
-    "file": "assets/ns-pos-grid-188d7388.js",
+    "file": "assets/ns-pos-grid-2d63ce5c.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_pos-section-switch-0869c4e1.js",
@@ -1859,7 +1859,7 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos.vue": {
-    "file": "assets/ns-pos-102c55b6.js",
+    "file": "assets/ns-pos-97254fd2.js",
     "imports": [
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue",
@@ -1898,10 +1898,12 @@
       "_pos-section-switch-0869c4e1.js",
       "_product-quantity-44b15dc1.js",
       "_ns-numpad-plus-f3ffaa01.js",
-      "_ns-pos-customer-select-popup-652b9182.js",
-      "_ns-paginate-881a9632.js",
+      "resources/ts/popups/ns-pos-loading-popup.vue",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_ns-orders-preview-popup-3b2cd782.js",
+      "_ns-pos-order-type-popup-ddc0509f.js",
+      "_ns-pos-customer-select-popup-9a3a2fa2.js",
+      "_ns-paginate-881a9632.js",
+      "_ns-orders-preview-popup-1dc865af.js",
       "_print-3c0412fa.js",
       "_npm~@dicebear~avatars_-e73ed2cc.js",
       "_npm~pure-color-28f75675.js",
@@ -1929,8 +1931,6 @@
       "_npm~sortablejs-9be29f79.js",
       "_npm~vue-upload-component-9e5d4563.js",
       "resources/ts/popups/ns-prompt-popup.vue",
-      "resources/ts/popups/ns-pos-loading-popup.vue",
-      "_ns-pos-order-type-popup-ddc0509f.js",
       "resources/ts/popups/ns-pos-shipping-popup.vue"
     ],
     "isDynamicEntry": true,
@@ -2971,13 +2971,13 @@
     "src": "resources/ts/pages/setup/welcome.vue"
   },
   "resources/ts/popups.ts": {
-    "file": "assets/popups-30e7721b.js",
+    "file": "assets/popups-65fd788c.js",
     "imports": [
       "_components-56572fa4.js",
       "_npm~@vue~runtime-dom_-a668b91e.js",
       "resources/ts/popups/ns-alert-popup.vue",
       "resources/ts/popups/ns-pos-confirm-popup.vue",
-      "_ns-orders-preview-popup-3b2cd782.js",
+      "_ns-orders-preview-popup-1dc865af.js",
       "resources/ts/popups/ns-pos-loading-popup.vue",
       "_ns-procurement-quantity-f64edfbe.js",
       "_currency-47ec5b79.js",
@@ -3219,7 +3219,7 @@
       "resources/ts/popups/ns-pos-layaway-popup.vue",
       "resources/ts/popups/ns-pos-shipping-popup.vue"
     ],
-    "file": "assets/pos-init-13b7b8be.js",
+    "file": "assets/pos-init-d7092136.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_product-quantity-44b15dc1.js",
@@ -3267,7 +3267,7 @@
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
     ],
-    "file": "assets/pos-ef409fab.js",
+    "file": "assets/pos-1b460d5b.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_ns-hotpress-3da57d7a.js",
