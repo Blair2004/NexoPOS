@@ -76,7 +76,7 @@ return new class extends Migration
                 'nexopos.update.orders-instalments',
                 'nexopos.read.orders-instalments',
                 'nexopos.delete.orders-instalments',
-            ])->each( function( $identifier ) {
+            ])->each( function ( $identifier ) {
                 $permission = Permission::where( 'namespace', $identifier
                 )->first();
 

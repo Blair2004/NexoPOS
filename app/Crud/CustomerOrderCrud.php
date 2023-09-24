@@ -419,7 +419,7 @@ class CustomerOrderCrud extends OrderCrud
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'dashboard/customers/orders' ),
             'create' => ns()->url( 'dashboard/' . 'dashboard/customers/orders/create' ),
             'edit' => ns()->url( 'dashboard/' . 'dashboard/customers/orders/edit/' ),

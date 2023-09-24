@@ -17,7 +17,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_products' ) ) {
-            Schema::createIfMissing( 'nexopos_products', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_products', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'tax_type' )->nullable(); // inclusive, exclusive

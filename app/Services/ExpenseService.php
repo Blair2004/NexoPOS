@@ -178,7 +178,7 @@ class ExpenseService
          * if there is not expense, it
          * won't be looped
          */
-        $accountType->expenses->map( function( $expense ) {
+        $accountType->expenses->map( function ( $expense ) {
             $expense->delete();
         });
 
@@ -210,7 +210,7 @@ class ExpenseService
          * if there is not expense, it
          * won't be looped
          */
-        $accountType->expenses->map( function( $expense ) {
+        $accountType->expenses->map( function ( $expense ) {
             $expense->delete();
         });
 
@@ -346,7 +346,7 @@ class ExpenseService
     public function recordCashFlowHistory( Expense $expense )
     {
         if ( ! empty( $expense->group_id  ) ) {
-            Role::find( $expense->group_id )->users->each( function( $user ) use ( $expense ) {
+            Role::find( $expense->group_id )->users->each( function ( $user ) use ( $expense ) {
                 if ( $expense->category instanceof ExpenseCategory ) {
                     $history = new CashFlow;
                     $history->value = $expense->value;
@@ -416,7 +416,7 @@ class ExpenseService
         $processStatus = Expense::recurring()
             ->active()
             ->get()
-            ->map( function( $expense ) {
+            ->map( function ( $expense ) {
                 switch ( $expense->occurrence ) {
                     case 'month_starts':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth() );
@@ -734,7 +734,7 @@ class ExpenseService
 
         $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_REFUNDS );
 
-        $orders->each( function( $order ) use ( $expenseCategory ) {
+        $orders->each( function ( $order ) use ( $expenseCategory ) {
             $expense = new Expense;
             $expense->value = $order->total;
             $expense->active = true;
@@ -770,7 +770,7 @@ class ExpenseService
 
         Customer::where( 'id', '>', 0 )->update([ 'purchases_amount' => 0 ]);
 
-        $orders->each( function( $order ) use ( $expenseCategory ) {
+        $orders->each( function ( $order ) use ( $expenseCategory ) {
             $expense = new Expense;
             $expense->value = $order->total;
             $expense->active = true;
@@ -805,7 +805,7 @@ class ExpenseService
             ->where( 'created_at', '<=', $rangeEnds )
             ->get();
 
-        $histories->each( function( $history ) {
+        $histories->each( function ( $history ) {
             $this->handleCustomerCredit( $history );
         });
     }
@@ -819,7 +819,7 @@ class ExpenseService
     {
         Procurement::where( 'created_at', '>=', $rangeStarts )
             ->where( 'created_at', '<=', $rangeEnds )
-            ->get()->each( function( $procurement ) {
+            ->get()->each( function ( $procurement ) {
                 $this->handleProcurementExpense( $procurement );
             });
     }
@@ -835,7 +835,7 @@ class ExpenseService
             ->where( 'created_at', '<=', $rangeEnds )
             ->notRecurring()
             ->get()
-            ->each( function( $expense ) {
+            ->each( function ( $expense ) {
                 $this->triggerExpense( $expense );
             });
     }

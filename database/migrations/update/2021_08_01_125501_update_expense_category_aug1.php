@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         if ( Schema::hasTable( 'nexopos_expenses_categories' ) ) {
-            Schema::table( 'nexopos_expenses_categories', function( Blueprint $table ) {
+            Schema::table( 'nexopos_expenses_categories', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_expenses_categories', 'operation' ) ) {
                     $table->string( 'operation' )->default( 'debit' ); // "credit" or "debit".
                 }
@@ -33,7 +33,7 @@ return new class extends Migration
     public function down()
     {
         if ( Schema::hasTable( 'nexopos_expenses_categories' ) ) {
-            Schema::table( 'nexopos_expenses_categories', function( Blueprint $table ) {
+            Schema::table( 'nexopos_expenses_categories', function ( Blueprint $table ) {
                 if ( Schema::hasColumn( 'nexopos_expenses_categories', 'operation' ) ) {
                     $table->dropColumn( 'operation' ); // "credit" or "debit".
                 }

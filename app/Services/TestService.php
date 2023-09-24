@@ -26,7 +26,7 @@ class TestService
         $products = isset( $config[ 'products' ] ) ? $config[ 'products' ]() : Product::where( 'tax_group_id', '>', 0 )
             ->where( 'type', '<>', Product::TYPE_GROUPED )
             ->whereRelation( 'unit_quantities', 'quantity', '>', 1000 )
-            ->with( 'unit_quantities', function( $query ) {
+            ->with( 'unit_quantities', function ( $query ) {
                 $query->where( 'quantity', '>', 3 );
             })
             ->get()
@@ -35,7 +35,7 @@ class TestService
         $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
         $discountRate = $faker->numberBetween(0, 5);
 
-        $products = $products->map( function( $product ) use ( $faker, $productDetails, $config ) {
+        $products = $products->map( function ( $product ) use ( $faker, $productDetails, $config ) {
             $unitElement = $faker->randomElement( $product->unit_quantities );
 
             $data = array_merge([
@@ -56,7 +56,7 @@ class TestService
             }
 
             return $data;
-        })->filter( function( $product ) {
+        })->filter( function ( $product ) {
             return $product[ 'quantity' ] > 0;
         });
 
@@ -65,7 +65,7 @@ class TestService
          */
         $customer = Customer::get()->random();
 
-        $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
+        $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ($currency) {
             return $currency
                 ->define( $product[ 'unit_price' ] )
                 ->multiplyBy( $product[ 'quantity' ] )
@@ -167,8 +167,8 @@ class TestService
             'products' => Product::withStockEnabled()
                 ->with( 'unitGroup' )
                 ->get()
-                ->map( function( $product ) {
-                    return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
+                ->map( function ( $product ) {
+                    return $product->unitGroup->units->map( function ( $unit ) use ( $product ) {
                         $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
 
                         return (object) [
@@ -177,7 +177,7 @@ class TestService
                             'product' => $product,
                         ];
                     });
-                })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+                })->flatten()->map( function ( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
                     $quantity = $faker->numberBetween(1000000, 9000000);
 
                     return [

@@ -42,8 +42,8 @@ class OrderPayment extends NsModel
 
     public function getPaymentLabelAttribute()
     {
-        $paymentTypes = Cache::remember( 'nexopos.pos.payments-key', '3600', function() {
-            return PaymentType::active()->get()->mapWithKeys( function( $paymentType ) {
+        $paymentTypes = Cache::remember( 'nexopos.pos.payments-key', '3600', function () {
+            return PaymentType::active()->get()->mapWithKeys( function ( $paymentType ) {
                 return [ $paymentType->identifier => $paymentType->label ];
             });
         });

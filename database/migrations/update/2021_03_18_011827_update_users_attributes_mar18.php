@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_users_attributes', function( Blueprint $table ) {
+        Schema::table( 'nexopos_users_attributes', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_users_attributes', 'avatar_link' ) ) {
                 $table->string( 'avatar_link' )->nullable();
             }
@@ -37,7 +37,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_users_attributes', function( Blueprint $table ) {
+        Schema::table( 'nexopos_users_attributes', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_users_attributes', 'avatar_link' ) ) {
                 $table->dropColumn( 'avatar_link' );
             }

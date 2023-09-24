@@ -25,7 +25,7 @@ return new class extends Migration
     {
         Permission::where( 'namespace', 'like', '%.report.%' )
             ->get()
-            ->each( function( $permission ) {
+            ->each( function ( $permission ) {
                 $permission->namespace = str_replace( '.report.', '.reports.', $permission->namespace );
                 $permission->save();
             });

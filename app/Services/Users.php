@@ -59,7 +59,7 @@ class Users
         collect([
             'username' => fn() => User::where( 'username', $attributes[ 'username' ] ),
             'email' => fn() => User::where( 'email', $attributes[ 'email' ] ),
-        ])->each( function( $callback, $key ) use ( $user ) {
+        ])->each( function ( $callback, $key ) use ( $user ) {
             $query = $callback();
 
             if ( $user instanceof User ) {

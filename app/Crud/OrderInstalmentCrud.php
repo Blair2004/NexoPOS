@@ -435,7 +435,7 @@ class OrderInstalmentCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'orders/instalments' ),
             'create' => false,
             'edit' => ns()->url( 'dashboard/' . 'orders/instalments/edit/' ),

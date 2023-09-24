@@ -84,7 +84,7 @@ return new class extends Migration
         }
 
         if ( ! Schema::hasTable( 'nexopos_dashboard_weeks' ) ) {
-            Schema::createIfMissing( 'nexopos_dashboard_weeks', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_dashboard_weeks', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'id' ) ) {
                     $table->bigIncrements( 'id' );
                 }
@@ -92,7 +92,7 @@ return new class extends Migration
         }
 
         if ( Schema::hasTable( 'nexopos_dashboard_weeks' ) ) {
-            Schema::table( 'nexopos_dashboard_weeks', function( Blueprint $table ) {
+            Schema::table( 'nexopos_dashboard_weeks', function ( Blueprint $table ) {
                 foreach ([
                     'total_gross_income',
                     'total_taxes',

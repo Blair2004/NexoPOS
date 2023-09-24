@@ -442,7 +442,7 @@ class RegisterCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'cash-registers' ),
             'create' => ns()->url( 'dashboard/' . 'cash-registers/create' ),
             'edit' => ns()->url( 'dashboard/' . 'cash-registers/edit/' ),

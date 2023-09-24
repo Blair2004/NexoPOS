@@ -47,11 +47,11 @@ class OrdersController extends DashboardController
         $this->optionsService = $options;
         $this->ordersService = $ordersService;
 
-        $this->middleware( function( $request, $next ) {
+        $this->middleware( function ( $request, $next ) {
             $this->paymentTypes = PaymentType::orderBy( 'priority', 'asc' )
                 ->active()
                 ->get()
-                ->map( function( $payment, $index ) {
+                ->map( function ( $payment, $index ) {
                     $payment->selected = $index === 0;
 
                     return $payment;
@@ -92,7 +92,7 @@ class OrdersController extends DashboardController
         return $this->view( 'pages.dashboard.orders.templates.payment-receipt', [
             'payment' => $orderPayment,
             'order' => $order,
-            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
+            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function ( $payment ) {
                 return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
             }),
             'ordersService' => app()->make( OrdersService::class ),
@@ -180,7 +180,7 @@ class OrdersController extends DashboardController
                 ns()->option->get( 'ns_store_name', 'NexoPOS' )
             ),
             'orderTypes' => collect( $this->ordersService->getTypeOptions() )
-                ->filter( function( $type, $label ) {
+                ->filter( function ( $type, $label ) {
                     return in_array( $label, ns()->option->get( 'ns_pos_order_types' ) ?: [] );
                 }),
             'options' => Hook::filter( 'ns-pos-options', [
@@ -276,7 +276,7 @@ class OrdersController extends DashboardController
             'title' => sprintf( __( 'Order Receipt &mdash; %s' ), $order->code ),
             'optionsService' => $this->optionsService,
             'ordersService' => $this->ordersService,
-            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
+            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function ( $payment ) {
                 return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
             }),
         ]);

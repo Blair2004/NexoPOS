@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_products_taxes', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_taxes', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_products_taxes', 'unit_quantity_id' ) ) {
                 $table->integer( 'unit_quantity_id' );
             }
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_products_taxes', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_taxes', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_products_taxes', 'unit_quantity_id' ) ) {
                 $table->dropColumn( 'unit_quantity_id' );
             }

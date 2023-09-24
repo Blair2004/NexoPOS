@@ -61,7 +61,7 @@ return new class extends Migration
          */
         Permission::includes( '.expenses-history' )
             ->get()
-            ->each( function( $permission ) {
+            ->each( function ( $permission ) {
                 $permission->removeFromRoles();
                 $permission->delete();
             });

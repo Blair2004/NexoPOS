@@ -36,10 +36,10 @@ return new class extends Migration
         }
 
         if ( Schema::hasColumn( 'nexopos_users', 'role_id' ) ) {
-            Role::get()->each( function( $role ) {
+            Role::get()->each( function ( $role ) {
                 User::where( 'role_id', $role->id )
                     ->get()
-                    ->each( function( $user ) use ( $role ) {
+                    ->each( function ( $user ) use ( $role ) {
                         $relation = new UserRoleRelation;
                         $relation->user_id = $user->id;
                         $relation->role_id = $role->id;

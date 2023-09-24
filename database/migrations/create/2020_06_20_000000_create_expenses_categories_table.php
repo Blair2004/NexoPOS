@@ -17,7 +17,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_expenses_categories' ) ) {
-            Schema::createIfMissing( 'nexopos_expenses_categories', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_expenses_categories', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'operation' )->default( 'debit' ); // "credit" or "debit".

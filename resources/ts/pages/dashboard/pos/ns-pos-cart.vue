@@ -538,7 +538,7 @@ export default {
                 POS.refreshCart();
 
             } catch( exception ) {
-                console.error( exception );
+                // popup is closed... not needed to log or do anything else
             }
         },
 

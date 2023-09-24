@@ -20,7 +20,7 @@ return new class extends Migration
             }
         });
 
-        ProductUnitQuantity::get()->each( function( ProductUnitQuantity $unitQuantity ) {
+        ProductUnitQuantity::get()->each( function ( ProductUnitQuantity $unitQuantity ) {
             $barcode = $unitQuantity->product->barcode;
             $unitQuantity->barcode = $barcode . '-' . $unitQuantity->id;
             $unitQuantity->save();

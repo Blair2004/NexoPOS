@@ -76,7 +76,7 @@ trait WithReportTest
         $this->shouldRefund = false;
         $this->customDate = false;
 
-        $responses = $this->attemptPostOrder( function( $response, $responseData ) {
+        $responses = $this->attemptPostOrder( function ( $response, $responseData ) {
             // ...
         });
 
@@ -114,7 +114,7 @@ trait WithReportTest
         $this->count = 1;
         $this->shouldRefund = false;
 
-        $responses = $this->attemptPostOrder( function( $response, $responseData ) {
+        $responses = $this->attemptPostOrder( function ( $response, $responseData ) {
             // ...
         });
     }

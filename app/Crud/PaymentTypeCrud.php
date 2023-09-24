@@ -481,7 +481,7 @@ class PaymentTypeCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'orders/payments-types' ),
             'create' => ns()->url( 'dashboard/' . 'orders/payments-types/create' ),
             'edit' => ns()->url( 'dashboard/' . 'orders/payments-types/edit/' ),

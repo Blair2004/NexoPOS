@@ -59,18 +59,18 @@ class NotificationService
     public function dispatchForGroup( $role )
     {
         if ( is_array( $role ) ) {
-            collect( $role )->each( function( $role ) {
+            collect( $role )->each( function ( $role ) {
                 $this->dispatchForGroup( $role );
             });
         } elseif ( $role instanceof Collection ) {
-            $role->each( function( $role ) {
+            $role->each( function ( $role ) {
                 $this->dispatchForGroup( $role );
             });
         } elseif ( is_string( $role ) ) {
             $roleInstance = Role::namespace( $role );
             $this->dispatchForGroup( $roleInstance );
         } else {
-            $role->users->map( function( $user ) {
+            $role->users->map( function ( $user ) {
                 $this->__makeNotificationFor( $user );
             });
         }
@@ -122,7 +122,7 @@ class NotificationService
 
     public function dispatchForUsers( Collection $users )
     {
-        $users->map( function( $user ) {
+        $users->map( function ( $user ) {
             $this->__makeNotificationFor( $user );
         });
     }
@@ -142,7 +142,7 @@ class NotificationService
     {
         Notification::identifiedBy( $identifier )
             ->get()
-            ->each( function( $notification ) {
+            ->each( function ( $notification ) {
                 NotificationDeletedEvent::dispatch( $notification );
                 $this->proceedDeleteNotification( $notification );
             });
@@ -161,7 +161,7 @@ class NotificationService
     {
         Notification::for( $user->id )
             ->get()
-            ->each( function( $notification ) {
+            ->each( function ( $notification ) {
                 NotificationDeletedEvent::dispatch( $notification );
 
                 $this->proceedDeleteNotification( $notification );

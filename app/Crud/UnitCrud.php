@@ -416,7 +416,7 @@ class UnitCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'units' ),
             'create' => ns()->url( 'dashboard/' . 'units/create' ),
             'edit' => ns()->url( 'dashboard/' . 'units/edit/' ),

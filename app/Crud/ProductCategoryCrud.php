@@ -445,7 +445,7 @@ class ProductCategoryCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'products/categories' ),
             'create' => ns()->url( 'dashboard/' . 'products/categories/create' ),
             'edit' => ns()->url( 'dashboard/' . 'products/categories/edit/' ),

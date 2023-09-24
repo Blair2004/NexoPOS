@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_unit_quantities', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'low_quantity' ) ) {
                 $table->float( 'low_quantity', 18, 5 )->default(0);
             }
@@ -47,7 +47,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_unit_quantities', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'low_quantity' ) ) {
                 $table->dropColumn( 'low_quantity' );
             }

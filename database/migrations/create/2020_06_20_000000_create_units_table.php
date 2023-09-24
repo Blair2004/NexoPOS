@@ -17,7 +17,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_units' ) ) {
-            Schema::createIfMissing( 'nexopos_units', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_units', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'identifier' )->unique();

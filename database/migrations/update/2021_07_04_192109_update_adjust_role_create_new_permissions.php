@@ -35,7 +35,7 @@ return new class extends Migration
             $role->delete();
         }
 
-        Schema::table( 'nexopos_roles', function( Blueprint $table ) {
+        Schema::table( 'nexopos_roles', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_roles', 'dashid' ) ) {
                 $table->string( 'dashid' )->nullable()->default( 'default' );
             }
@@ -50,7 +50,7 @@ return new class extends Migration
             'nexopos.store.administrator',
         ])
             ->get()
-            ->each( function( $role ) {
+            ->each( function ( $role ) {
                 $role->dashid = 'store';
                 $role->save();
             });
@@ -63,7 +63,7 @@ return new class extends Migration
             'nexopos.store.cashier',
         ])
             ->get()
-            ->each( function( $role ) {
+            ->each( function ( $role ) {
                 $role->dashid = 'cashier';
                 $role->save();
             });
@@ -76,7 +76,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_roles', function( Blueprint $table ) {
+        Schema::table( 'nexopos_roles', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_roles', 'dashid' ) ) {
                 $table->removeColumn( 'dashid' );
             }

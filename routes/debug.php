@@ -5,8 +5,8 @@ use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\Route;
 
 if ( env( 'APP_DEBUG' ) ) {
-    Route::get( '/routes', function() {
-        $values = collect( array_values( (array) app( 'router' )->getRoutes() )[1] )->map( function( RoutingRoute $route ) {
+    Route::get( '/routes', function () {
+        $values = collect( array_values( (array) app( 'router' )->getRoutes() )[1] )->map( function ( RoutingRoute $route ) {
             return [
                 'domain' => $route->getDomain(),
                 'uri' => $route->uri(),
@@ -18,7 +18,7 @@ if ( env( 'APP_DEBUG' ) ) {
         return ( new ArrayToTextTable( $values->toArray() ) )->render();
     });
 
-    Route::get( '/exceptions/{class}', function( $class ) {
+    Route::get( '/exceptions/{class}', function ( $class ) {
         $exceptions = [
             \App\Exceptions\CoreException::class,
             \App\Exceptions\CoreVersionMismatchException::class,

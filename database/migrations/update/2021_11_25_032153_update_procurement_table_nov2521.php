@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_procurements', 'value' ) && ! Schema::hasColumn( 'nexopos_procurements', 'cost' ) ) {
                 $table->renameColumn( 'value', 'cost' );
             }
         });
 
-        Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_procurements', 'value' ) ) {
                 $table->float( 'value', 18, 5 )->default(0);
             }
@@ -33,7 +33,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_procurements', 'value' ) && Schema::hasColumn( 'nexopos_procurements', 'cost' ) ) {
                 $table->renameColumn( 'cost', 'value' );
             }

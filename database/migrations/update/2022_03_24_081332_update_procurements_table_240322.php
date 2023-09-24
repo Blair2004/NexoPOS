@@ -14,13 +14,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_procurements', 'invoice_date' ) ) {
                 $table->datetime( 'invoice_date' )->nullable();
             }
         });
 
-        Procurement::get()->each( function( $procurement ) {
+        Procurement::get()->each( function ( $procurement ) {
             $procurement->invoice_date = $procurement->created_at;
             $procurement->save();
         });
@@ -33,7 +33,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_procurements', 'invoice_date' ) ) {
                 $table->dropColumn( 'invoice_date' );
             }

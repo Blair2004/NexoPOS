@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_orders_products', 'mode' ) ) {
                 $table->string( 'mode' )->default( 'normal' ); // can be wholesale
             }
@@ -31,13 +31,13 @@ return new class extends Migration
     public function down()
     {
         if ( Schema::hascolumn( 'nexopos_orders_products', 'mode' ) ) {
-            Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+            Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
                 $table->dropColumn( 'mode' );
             });
         }
 
         if ( Schema::hascolumn( 'nexopos_orders_products', 'unit_name' ) ) {
-            Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+            Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
                 $table->dropColumn( 'unit_name' );
             });
         }

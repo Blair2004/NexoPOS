@@ -362,7 +362,7 @@ class UnitGroupCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'units/groups' ),
             'create' => ns()->url( 'dashboard/' . 'units/groups/create' ),
             'edit' => ns()->url( 'dashboard/' . 'units/groups/edit/' ),

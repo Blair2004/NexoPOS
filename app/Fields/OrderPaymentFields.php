@@ -18,7 +18,7 @@ class OrderPaymentFields extends FieldsService
                 'validation' => 'required',
                 'name' => 'identifier',
                 'type' => 'select',
-                'options' => collect( PaymentType::active()->get() )->map( function( $payment ) {
+                'options' => collect( PaymentType::active()->get() )->map( function ( $payment ) {
                     $payment[ 'value' ] = $payment[ 'identifier' ];
 
                     return $payment;

@@ -488,7 +488,7 @@ class GlobalProductHistoryCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . '/products/history' ),
             'create' => ns()->url( 'dashboard/' . '/products/history/create' ),
             'edit' => ns()->url( 'dashboard/' . '/products/history/edit/' ),

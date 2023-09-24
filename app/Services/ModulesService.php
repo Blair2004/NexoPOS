@@ -88,9 +88,9 @@ class ModulesService
              * intersect modules/ and remove it
              * to make sure $this->__init can load successfully.
              */
-            collect( $directories )->map( function( $module ) {
+            collect( $directories )->map( function ( $module ) {
                 return str_replace( '/', '\\', $module );
-            })->each( function( $module ) {
+            })->each( function ( $module ) {
                 $this->__init( $module );
             });
         } else {
@@ -114,7 +114,7 @@ class ModulesService
         /**
          * Just retrieve the files name
          */
-        $files = array_map( function( $file ) {
+        $files = array_map( function ( $file ) {
             $info = pathinfo( $file );
 
             return $info[ 'basename' ];
@@ -149,7 +149,7 @@ class ModulesService
                 ];
             }
 
-            $config[ 'requires' ] = collect( $xmlElement->children()->requires->xpath( '//dependency' ) )->mapWithKeys( function( $module ) {
+            $config[ 'requires' ] = collect( $xmlElement->children()->requires->xpath( '//dependency' ) )->mapWithKeys( function ( $module ) {
                 $module = (array) $module;
 
                 return [
@@ -209,7 +209,7 @@ class ModulesService
                 $config[ 'actions' ] = $this->getAllValidFiles( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Actions' ) );
                 $config[ 'filters' ] = $this->getAllValidFiles( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Filters' ) );
                 $config[ 'commands' ] = collect( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands' ) )
-                    ->mapWithKeys( function( $file ) {
+                    ->mapWithKeys( function ( $file ) {
                         $className = str_replace(
                             ['/', '.php'],
                             ['\\', ''],
@@ -253,7 +253,7 @@ class ModulesService
                             ->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Lang' );
                         $rawFiles = $this->getAllValidFiles( $rawFiles, [ 'json' ] );
 
-                        $config[ 'langFiles' ] = collect( $rawFiles )->mapWithKeys( function( $file ) {
+                        $config[ 'langFiles' ] = collect( $rawFiles )->mapWithKeys( function ( $file ) {
                             $pathInfo = pathinfo( $file );
 
                             return [ $pathInfo[ 'filename' ] => $file ];
@@ -317,7 +317,7 @@ class ModulesService
     public function dependenciesCheck( $module = null )
     {
         if ( $module === null ) {
-            collect( $this->getEnabled() )->each( function( $module ) {
+            collect( $this->getEnabled() )->each( function ( $module ) {
                 $this->dependenciesCheck( $module );
             });
         } else {
@@ -326,7 +326,7 @@ class ModulesService
              * are meet for the provided modules
              */
             if ( isset( $module[ 'requires' ] ) ) {
-                collect( $module[ 'requires' ] )->each( function( $dependency, $namespace ) use ( $module ) {
+                collect( $module[ 'requires' ] )->each( function ( $dependency, $namespace ) use ( $module ) {
                     if ( $this->get( $namespace ) === null ) {
                         /**
                          * The dependency is missing
@@ -494,7 +494,7 @@ class ModulesService
      */
     public function getEnabled()
     {
-        return array_filter( $this->modules, function( $module ) {
+        return array_filter( $this->modules, function ( $module ) {
             if ( $module[ 'enabled' ] === true ) {
                 return $module;
             }
@@ -508,7 +508,7 @@ class ModulesService
      */
     public function getDisabled()
     {
-        return array_filter( $this->modules, function( $module ) {
+        return array_filter( $this->modules, function ( $module ) {
             if ( $module[ 'enabled' ] === false ) {
                 return $module;
             }
@@ -583,7 +583,7 @@ class ModulesService
              * if a file is within an exclude
              * match the looped file, it's skipped
              */
-            $files = array_values( collect( $files )->filter( function( $file ) use ( $manifest, $namespace ) {
+            $files = array_values( collect( $files )->filter( function ( $file ) use ( $manifest, $namespace ) {
                 if ( is_array( @$manifest[ 'exclude' ] ) ) {
                     foreach ( $manifest[ 'exclude' ] as $check ) {
                         if ( fnmatch( ucwords( $namespace ) . '/' . $check, $file ) ) {
@@ -679,7 +679,7 @@ class ModulesService
         /**
          * Just retrieve the files name
          */
-        $files = array_map( function( $file ) {
+        $files = array_map( function ( $file ) {
             $info = pathinfo( $file );
 
             return $info[ 'basename' ];
@@ -1037,7 +1037,7 @@ class ModulesService
          * migration, we'll use the $only argument
          */
         if ( ! empty( $only ) ) {
-            $migrationFiles = collect( $migrationFiles )->filter( function( $file ) use ( $only ) {
+            $migrationFiles = collect( $migrationFiles )->filter( function ( $file ) use ( $only ) {
                 return in_array( $file, $only );
             })->toArray();
         }
@@ -1324,7 +1324,7 @@ class ModulesService
          * that means we're running it for the first time
          * we'll set the migration to 0.0 then.
          */
-        $migratedFiles = $cache === true ? Cache::remember( self::CACHE_MIGRATION_LABEL . $module[ 'namespace' ], 3600 * 24, function() use ( $module ) {
+        $migratedFiles = $cache === true ? Cache::remember( self::CACHE_MIGRATION_LABEL . $module[ 'namespace' ], 3600 * 24, function () use ( $module ) {
             return $this->getModuleAlreadyMigratedFiles( $module );
         }) : $this->getModuleAlreadyMigratedFiles( $module );
 
@@ -1392,7 +1392,7 @@ class ModulesService
          * We only want to restrict file
          * that has the ".php" extension.
          */
-        return collect( $files )->filter( function( $file ) use ( $extensions ) {
+        return collect( $files )->filter( function ( $file ) use ( $extensions ) {
             $details = pathinfo( $file );
 
             return isset( $details[ 'extension' ] ) && in_array( $details[ 'extension' ], $extensions );
@@ -1490,7 +1490,7 @@ class ModulesService
      */
     public function serviceProvider( $module, $instance, $method, $params = null )
     {
-        collect( $module[ 'providers' ] )->each( function( $provider ) use ( $instance, $params, $method ) {
+        collect( $module[ 'providers' ] )->each( function ( $provider ) use ( $instance, $params, $method ) {
             if ( $provider instanceof $instance ) {
                 $provider->$method( $params );
             }

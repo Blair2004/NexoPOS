@@ -519,7 +519,7 @@ class CrudService
             $relations = [];
             $relatedTables = [];
 
-            collect( $this->getRelations() )->each( function( $relation ) use ( &$relations, &$relatedTables ) {
+            collect( $this->getRelations() )->each( function ( $relation ) use ( &$relations, &$relatedTables ) {
                 if ( isset( $relation[0] ) ) {
                     if ( ! is_array( $relation[0] ) ) {
                         $relations[] = $relation;
@@ -530,7 +530,7 @@ class CrudService
                          */
                         $relatedTables[] = $this->__extractTable( $relation );
                     } else {
-                        collect( $relation )->each( function( $_relation ) use ( &$relations, &$relatedTables ) {
+                        collect( $relation )->each( function ( $_relation ) use ( &$relations, &$relatedTables ) {
                             $relations[] = $_relation;
 
                             /**
@@ -575,7 +575,7 @@ class CrudService
                     $hasAlias[0] = $this->hookTableName( $hasAlias[0] ); // make the table name hookable
                     $aliasName = $hasAlias[1] ?? false; // for aliased relation. The pick use the alias as a reference.
                     $columns = collect( Schema::getColumnListing( count( $hasAlias ) === 2 ? trim( $hasAlias[0] ) : $relation[0] ) )
-                        ->filter( function( $column ) use ( $pick, $table, $aliasName ) {
+                        ->filter( function ( $column ) use ( $pick, $table, $aliasName ) {
                             $picked = $pick[ $aliasName ? trim( $aliasName ) : $table ] ?? [];
                             if ( ! empty( $picked ) ) {
                                 if ( in_array( $column, $picked ) ) {
@@ -785,7 +785,7 @@ class CrudService
          * searching
          */
         if ( $request->query( 'search' ) ) {
-            $query->where( function( $query ) use ( $request, $columnsLongName ) {
+            $query->where( function ( $query ) use ( $request, $columnsLongName ) {
                 foreach ( $columnsLongName as $index => $column ) {
                     if ( $index == 0 ) {
                         $query->where( $column, 'like', "%{$request->query( 'search' )}%" );
@@ -829,7 +829,7 @@ class CrudService
          * looping entries to provide inline
          * options
          */
-        $entries[ 'data' ] = collect( $entries[ 'data' ] )->map( function( $entry ) {
+        $entries[ 'data' ] = collect( $entries[ 'data' ] )->map( function ( $entry ) {
             $entry = new CrudEntry( (array) $entry );
 
             /**
@@ -1129,7 +1129,7 @@ class CrudService
         $rules = [];
 
         foreach ( $arrayRules as $key => $value ) {
-            if ( is_array( $value ) && collect( array_keys( $value ) )->filter( function( $key ) {
+            if ( is_array( $value ) && collect( array_keys( $value ) )->filter( function ( $key ) {
                 return is_string( $key );
             })->count() > 0 ) {
                 $rules = array_merge( $rules, $this->isolateArrayRules( $value, $key ) );

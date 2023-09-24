@@ -402,7 +402,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units' ),
             'create' => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/create' ),
             'edit' => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/edit/' ),

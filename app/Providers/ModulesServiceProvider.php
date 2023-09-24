@@ -24,7 +24,7 @@ class ModulesServiceProvider extends ServiceProvider
          * trigger boot method only for enabled modules
          * service providers that extends ModulesServiceProvider.
          */
-        collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
+        collect( $modules->getEnabled() )->each( function ( $module ) use ( $modules ) {
             $modules->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
         });
 
@@ -44,7 +44,7 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton( ModulesService::class, function( $app ) {
+        $this->app->singleton( ModulesService::class, function ( $app ) {
             $this->modules = new ModulesService;
             $this->modules->load();
 
@@ -54,7 +54,7 @@ class ModulesServiceProvider extends ServiceProvider
              * trigger register method only for enabled modules
              * service providers that extends ModulesServiceProvider.
              */
-            collect( $this->modules->getEnabled() )->each( function( $module ) {
+            collect( $this->modules->getEnabled() )->each( function ( $module ) {
                 /**
                  * register module commands
                  */

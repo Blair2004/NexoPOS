@@ -121,7 +121,7 @@ class CoreService
     {
         $passed = false;
 
-        collect( $permissions )->each( function( $permission ) use ( &$passed ) {
+        collect( $permissions )->each( function ( $permission ) use ( &$passed ) {
             $userPermissionsNamespaces = collect( Auth::user()->permissions() )
                 ->toArray();
 
@@ -158,14 +158,14 @@ class CoreService
     public function purgeMissingMigrations()
     {
         $migrations = collect( Migration::get() )
-            ->map( function( $migration ) {
+            ->map( function ( $migration ) {
                 return $migration->migration;
             });
 
         $rawFiles = collect( Storage::disk( 'ns' )
         ->allFiles( 'database/migrations' ) );
 
-        $files = $rawFiles->map( function( $file ) {
+        $files = $rawFiles->map( function ( $file ) {
             $details = pathinfo( $file );
 
             return $details[ 'filename' ];

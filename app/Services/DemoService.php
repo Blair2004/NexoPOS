@@ -152,7 +152,7 @@ class DemoService extends DemoCoreService
                     ],
                     'units' => [
                         'selling_group' => $unitGroup
-                            ->units->map( function( $unit ) use ( $product ) {
+                            ->units->map( function ( $unit ) use ( $product ) {
                                 return [
                                     'sale_price_edit' => $product->price * $unit->value,
                                     'wholesale_price_edit' => ns()->currency->getPercentageValue( $product->price, 10, 'substract' ) * $unit->value,
@@ -168,7 +168,7 @@ class DemoService extends DemoCoreService
                  * if groups is provided
                  */
                 if ( isset( $product->groups ) ) {
-                    $subProducts = collect( $product->groups )->map( function( $productName ) {
+                    $subProducts = collect( $product->groups )->map( function ( $productName ) {
                         $subProduct = Product::where( 'name', $productName )
                             ->with( 'unit_quantities' )
                             ->first();

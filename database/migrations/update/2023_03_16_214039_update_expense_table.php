@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         if ( Schema::hasTable( 'nexopos_expenses' ) ) {
-            Schema::table( 'nexopos_expenses', function( Blueprint $table ) {
+            Schema::table( 'nexopos_expenses', function ( Blueprint $table ) {
                 if ( Schema::hasColumn( 'nexopos_expenses', 'occurence' ) ) {
                     $table->renameColumn( 'occurence', 'occurrence' );
                 }

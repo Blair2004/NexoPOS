@@ -5,17 +5,17 @@ use App\Http\Middleware\InstalledStateMiddleware;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix( 'nexopos/v4' )->group( function() {
+Route::prefix( 'nexopos/v4' )->group( function () {
     Route::middleware([
         InstalledStateMiddleware::class,
         SubstituteBindings::class,
         ClearRequestCacheMiddleware::class,
-    ])->group( function() {
+    ])->group( function () {
         include dirname( __FILE__ ) . '/api/fields.php';
 
         Route::middleware([
             'auth:sanctum',
-        ])->group( function() {
+        ])->group( function () {
             include dirname( __FILE__ ) . '/api/dashboard.php';
             include dirname( __FILE__ ) . '/api/categories.php';
             include dirname( __FILE__ ) . '/api/customers.php';
@@ -43,7 +43,7 @@ Route::prefix( 'nexopos/v4' )->group( function() {
     include dirname( __FILE__ ) . '/api/hard-reset.php';
     include_once dirname( __FILE__ ) . '/api/update.php';
 
-    Route::prefix( 'setup' )->group( function() {
+    Route::prefix( 'setup' )->group( function () {
         Route::post( 'database', 'SetupController@checkDatabase' );
         Route::get( 'database', 'SetupController@checkDbConfigDefined' );
         Route::post( 'configuration', 'SetupController@saveConfiguration' );

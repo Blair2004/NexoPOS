@@ -33,7 +33,7 @@ class ProcurementFields extends FieldsService
          * let's populate the value
          * using a clear method
          */
-        return collect([ $name, $description, $provider_id ])->map( function( $field ) use ( $model ) {
+        return collect([ $name, $description, $provider_id ])->map( function ( $field ) use ( $model ) {
             $field->value = $this->__getValue( $model, $field->name );
 
             return $field;

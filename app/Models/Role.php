@@ -154,7 +154,7 @@ class Role extends NsRootModel
              * looping over provided permissions
              * and attempt to create a relation
              */
-            $permissions->each( function( $permissionNamespace ) {
+            $permissions->each( function ( $permissionNamespace ) {
                 $this->addPermissions( $permissionNamespace );
             });
         } elseif ( is_array( $permissions ) ) {
@@ -162,7 +162,7 @@ class Role extends NsRootModel
              * looping over provided permissions
              * and attempt to create a relation
              */
-            collect( $permissions )->each( function( $permissionNamespace ) {
+            collect( $permissions )->each( function ( $permissionNamespace ) {
                 $this->addPermissions( $permissionNamespace );
             });
         } elseif ( $permissions instanceof Permission ) {

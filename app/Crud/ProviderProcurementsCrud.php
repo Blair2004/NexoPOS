@@ -477,7 +477,7 @@ class ProviderProcurementsCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . '/providers/procurements' ),
             'create' => false,
             'edit' => false,
