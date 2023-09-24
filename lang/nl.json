@@ -1490,7 +1490,7 @@
     "Unable to find a module having the identifier\/namespace \"%s\"": "Kan geen module vinden met de identificatiecode\/namespace \"%s\"",
     "If your CRUD resource has a relation, mention it as follow \"foreign_table, foreign_key, local_key\" ? [S] to skip, [Q] to quit.": "Als uw CRUD bron een relatie heeft, vermeld het als volgt \"foreign_table, foreign_key, local_key\"? [S] voor overslaan, [Q] om te stoppen.",
     "Add a new relation ? Mention it as follow \"foreign_table, foreign_key, local_key\" ? [S] to skip, [Q] to quit.": "Nieuwe relatie toevoegen? Vermeld het als volgt: \"foreign_table, foreign_key, local_key\"? [S] om over te slaan, [Q] om te stoppen.",
-    "The CRUD resource \"%s\" for the module \"%s\" has been generated at \"%s\"": "De CRUD resource \"%s\" voor de module \"%s\" is gegenereerd op \"%s\"",
+    "The CRUD resource \"%s\" for the module \"%s\" has been generated at \"%s\"": "De CRUD bron \"%s\" voor de module \"%s\" is gegenereerd op \"%s\"",
     "The CRUD resource \"%s\" has been generated at %s": "De CRUD bron \"%s\" is gegenereerd op %s",
     "The following products will be required to be present on the cart, in order for this coupon to be valid.": "De volgende producten moeten aanwezig zijn in de winkelwagen, zodat deze waardebon geldig is..",
     "The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.": "De producten toegewezen aan een van deze rubrieken moeten aanwezig zijn in de winkelwagen, zodat deze waardebon geldig is.",
