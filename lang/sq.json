@@ -8,7 +8,7 @@
     "Which table name should be used ? [Q] to quit.": "Cili emër tabele duhet të përdoret? [Q] për të lënë.",
     "What slug should be used ? [Q] to quit.": "Çfarë slug duhet të përdoret? [Q] për të lënë.",
     "Please provide a valid value.": "Jep një vlerë të vlefshme.",
-    "If your CRUD resource has a relation, mention it as follow \"foreign_table, foreign_key, local_key\" ? [S] to skip, [Q] to quit.": "Nëse burimi juaj CRUD ka një lidhje, përmendeni atë si vijon \"tabela_e_huajshme, çelësi_i huaj, çelësi_lokal" ? [S] për të kapërcyer, [Q] për të lënë.",
+    "If your CRUD resource has a relation, mention it as follow \"foreign_table, foreign_key, local_key\" ? [S] to skip, [Q] to quit.": "Nëse burimi juaj CRUD ka një lidhje, përmendeni atë si vijon \"tabela_e_huajshme, çelësi_i huaj, çelësi_lokal\" ? [S] për të kapërcyer, [Q] për të lënë.",
     "Add a new relation ? Mention it as follow \"foreign_table, foreign_key, local_key\" ? [S] to skip, [Q] to quit.": "Shto një lidhje të re? E përmendni si vijon \"tabela_e huaj, çelësi_i huaj, çelësi_lokal\" ? [S] për të kapërcyer, [Q] për të lënë.",
     "The CRUD resource \"%s\" for the module \"%s\" has been generated at \"%s\"": "Burimi CRUD \"%s\" për modulin \"%s\" është krijuar në \"%s\"",
     "The CRUD resource \"%s\" has been generated at %s": "Burimi CRUD \"%s\" është krijuar në %s",
