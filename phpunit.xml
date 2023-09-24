@@ -8,6 +8,7 @@
   <testsuites>
     <testsuite name="Feature">
       <directory suffix="ExceptionsTest.php">./tests/Feature</directory>
+      <directory suffix="TestLanguageFileValidity.php">./tests/Feature</directory>
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
       <directory suffix="CrudTest.php">./tests/Feature</directory>
       <directory suffix="FieldsTest.php">./tests/Feature</directory>
