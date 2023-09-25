@@ -39,6 +39,7 @@
       <directory suffix="CreateUnitTest.php">./tests/Feature</directory>    
       <directory suffix="CreateCategoryTest.php">./tests/Feature</directory>
       <directory suffix="CreateProductTest.php">./tests/Feature</directory>          
+      <directory suffix="TestCogsPrices.php">./tests/Feature</directory>          
       <directory suffix="CreateProviderTest.php">./tests/Feature</directory>    
       <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
       <directory suffix="CreateCouponTest.php">./tests/Feature</directory>

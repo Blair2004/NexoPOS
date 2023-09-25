@@ -45,6 +45,7 @@ return new class extends Migration
                 $table->float( 'custom_price_tax', 18, 5 )->default(0);
                 $table->boolean( 'visible' )->default( true ); // wether the unit should available for sale.
                 $table->integer( 'convert_unit_id' )->nullable();
+                $table->float( 'cogs' )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });

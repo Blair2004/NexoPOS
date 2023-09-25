@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $unit_id
  * @property int $convert_unit_id
  * @property bool $visible
+ * @property float $cogs
  * @property int $author
  * @property mixed $uuid
  * @property \Carbon\Carbon $created_at

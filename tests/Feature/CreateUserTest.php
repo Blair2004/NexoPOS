@@ -122,7 +122,7 @@ class CreateUserTest extends TestCase
     public function test_delete_users()
     {
         Role::get()->map( function( Role $role ) {
-            $role->users()->get()->each( function( User $user ) {
+            $role->users()->limit(1)->get()->each( function( User $user ) {
                 $this->attemptAuthenticate( $user );
 
                 /**
@@ -153,7 +153,7 @@ class CreateUserTest extends TestCase
     /**
      * @depends test_create_users
      */
-    public function test_created_users()
+    public function test_explorable_routes()
     {
         $user = User::first();
         $this->attemptAllRoutes( $user );

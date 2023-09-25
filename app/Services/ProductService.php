@@ -243,16 +243,11 @@ class ProductService
             $data[ 'barcode' ] = $this->barcodeService->generateRandomBarcode( $data[ 'barcode_type' ] );
         }
 
-        if ( $this->getProductUsingBarcode( $data[ 'barcode' ] ) ) {
+        if ( $this->getProductUsingBarcode( $data[ 'barcode' ] ) instanceof Product ) {
             throw new Exception( sprintf(
                 __( 'The provided barcode "%s" is already in use.' ),
                 $data[ 'barcode' ]
             ) );
-        }
-
-        if ( empty( $data[ 'sku' ] ) ) {
-            $category = ProductCategory::find( $data[ 'category_id' ] );
-            $data[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $data[ 'name' ] ) . '--' . Str::random(5);
         }
 
         /**
@@ -264,6 +259,15 @@ class ProductService
                 __( 'The provided SKU "%s" is already in use.' ),
                 $data[ 'sku' ]
             ) );
+        }
+
+        /**
+         * We'll generate an SKU automatically
+         * if it's not provided by the form.
+         */
+        if ( empty( $data[ 'sku' ] ) ) {
+            $category = ProductCategory::find( $data[ 'category_id' ] );
+            $data[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $data[ 'name' ] ) . '--' . Str::random(5);
         }
 
         $product = new Product;
@@ -676,6 +680,7 @@ class ProductService
         } elseif ( $field === 'units' ) {
             $product->unit_group = $fields[ 'units' ][ 'unit_group' ];
             $product->accurate_tracking = $fields[ 'units' ][ 'accurate_tracking' ] ?? false;
+            $product->auto_cogs = $fields[ 'units' ][ 'auto_cogs' ] ?? false;
         }
     }
 
@@ -707,6 +712,7 @@ class ProductService
                 $unitQuantity->low_quantity = $group[ 'low_quantity' ] ?? 0;
                 $unitQuantity->stock_alert_enabled = $group[ 'stock_alert_enabled' ] ?? false;
                 $unitQuantity->convert_unit_id = $group[ 'convert_unit_id' ] ?? null;
+                $unitQuantity->cogs = $group[ 'cogs' ] ?? 0; 
                 $unitQuantity->visible = $group[ 'visible' ] ?? true;
 
                 /**
@@ -724,6 +730,45 @@ class ProductService
                  */
                 $unitQuantity->barcode = $product->barcode . '-' . $unitQuantity->id;
                 $unitQuantity->save();
+            }
+        }
+    }
+
+    /**
+     * We'll get the Cost Of Good Sold from
+     * the whole product history.
+     */
+    public function computeCogsIfNecessary( ProductHistory $productHistory ): void
+    {
+        $productHistory->load( 'product' );
+
+        /**
+         * if the value is explicitely defined
+         * then we'll skip the automatic detection
+         */
+        if ( $productHistory->product instanceof Product && $productHistory->product->auto_cogs ) {
+            $productHistories   =   ProductHistory::where( 'unit_id', $productHistory->unit_id )->where( 'product_id', $productHistory->product_id )
+                ->whereIn( 'operation_type', [
+                    ProductHistory::ACTION_CONVERT_IN,
+                    ProductHistory::ACTION_STOCKED,
+                    // we might need to consider futher conversion option.
+                ])
+                ->get();
+
+            $totalQuantities    =   $productHistories->map( fn( $productHistory ) => $productHistory->quantity )->sum();
+            $sums   =   $productHistories->map( fn( $productHistory ) => $productHistory->total_price )->sum();
+
+            if ( $sums > 0 && $totalQuantities > 0 ) {
+                $cogs   =   ns()->currency->define( $sums )->divideBy( $totalQuantities )->toFloat();
+
+                $productUnitQuantity    =   ProductUnitQuantity::where( 'unit_id', $productHistory->unit_id )
+                    ->where( 'product_id', $productHistory->product_id )
+                    ->first();
+
+                if ( $productUnitQuantity instanceof ProductUnitQuantity ) {
+                    $productUnitQuantity->cogs  =   $cogs;
+                    $productUnitQuantity->save();
+                }
             }
         }
     }

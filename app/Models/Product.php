@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float $tax_value
  * @property string $product_type
  * @property string $type
- * @property string $accurate_tracking
+ * @property bool $accurate_tracking
+ * @property bool $auto_cogs
  * @property string $status
  * @property string $stock_management Can either be "enabled" or "disabled"
  * @property string $barcode
@@ -57,6 +58,7 @@ class Product extends NsModel
 
     protected $cats = [
         'accurate_tracking' => 'boolean',
+        'auto_cogs' =>  'boolean'
     ];
 
     /**

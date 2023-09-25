@@ -199,6 +199,13 @@ class ProductCrud extends CrudService
                 'description' => __( 'Define the wholesale price.' ),
                 'validation' => 'required',
             ], [
+                'type' => 'number',
+                'errors' => [],
+                'name' => 'cogs',
+                'label' => __( 'COGS' ),
+                'value' => '',
+                'description' => __( 'Used to define the Cost of Goods Sold.' ),
+            ], [
                 'type' => 'switch',
                 'errors' => [],
                 'name' => 'stock_alert_enabled',
@@ -383,6 +390,16 @@ class ProductCrud extends CrudService
                                     'name' => 'accurate_tracking',
                                     'label' => __( 'Accurate Tracking' ),
                                     'value' => $entry->accurate_tracking ?? 0,
+                                ], [
+                                    'type' => 'switch',
+                                    'description' => __( 'The Cost Of Goods Sold will be automatically be computed based on procurement and conversion.' ),
+                                    'options' => Helper::kvToJsOptions([
+                                        1 => __( 'Yes' ),
+                                        0 => __( 'No' ),
+                                    ]),
+                                    'name' => 'auto_cogs',
+                                    'label' => __( 'Auto COGS' ),
+                                    'value' => $entry->auto_cogs ?? 1,
                                 ], [
                                     'type' => 'select',
                                     'options' => Helper::toJsOptions( $groups, [ 'id', 'name' ] ),

@@ -59,7 +59,7 @@ class CustomerService
     public function getRecentlyActive( $limit = 30 )
     {
         return Customer::with( 'billing' )
-            ->with( 'shipping' )
+            ->with( 'shipping', 'group' )
             ->where( 'group_id', '<>', null )
             ->limit( $limit )
             ->active()

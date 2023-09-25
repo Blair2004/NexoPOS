@@ -288,6 +288,16 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'visible' ) ) {
                 $table->integer( 'visible' )->nullable();
             }
+
+            if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'cogs' ) ) {
+                $table->integer( 'cogs' )->nullable();
+            }
+        });
+
+        Schema::table( 'nexopos_products', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_products', 'auto_cogs' ) ) {
+                $table->boolean( 'auto_cogs' )->default( true );
+            }
         });
 
         /**

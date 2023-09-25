@@ -3,16 +3,33 @@
 namespace App\Models;
 
 use App\Casts\FloatConvertCasting;
+use App\Events\ProductHistoryAfterCreatedEvent;
+use App\Events\ProductHistoryAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+
 /**
- * @property int $id
- * @property int $author
- * @property string $uuid
+ * @property integer $id
+ * @property integer $product_id
+ * @property integer $procurement_id
+ * @property integer $procurement_product_id
+ * @property integer $order_id
+ * @property integer $order_product_id
+ * @property mixed $operation_type
+ * @property integer $unit_id
+ * @property float $before_quantity
+ * @property float $quantity
+ * @property float $after_quantity
+ * @property float $unit_price
  * @property float $total_price
  * @property string $description
+ * @property integer $author
+ * @property mixed $uuid
+ * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- */
+ * 
+ * @property Product $product
+*/
 class ProductHistory extends NsModel
 {
     use HasFactory;
@@ -57,6 +74,11 @@ class ProductHistory extends NsModel
         'before_quantity' => FloatConvertCasting::class,
         'quantity' => FloatConvertCasting::class,
         'after_quantity' => FloatConvertCasting::class,
+    ];
+
+    public $dispatchesEvents =  [
+        'created'   =>  ProductHistoryAfterCreatedEvent::class,
+        'updated'   =>  ProductHistoryAfterUpdatedEvent::class,
     ];
 
     /**
@@ -108,5 +130,10 @@ class ProductHistory extends NsModel
     public function unit()
     {
         return $this->belongsTo( Unit::class );
+    }
+
+    public function product()
+    {
+        return $this->belongsTo( Product::class );
     }
 }
