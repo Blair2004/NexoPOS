@@ -6,7 +6,7 @@
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div id="screen" class="h-16 border-b ns-box-body flex items-center justify-center">
+        <div id="screen" class="h-16 ns-box-body flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
         <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">

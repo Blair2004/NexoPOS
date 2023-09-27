@@ -11,7 +11,7 @@
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div id="screen" class="h-24 border-b primary ns-box-body flex items-center justify-center">
+        <div id="screen" class="h-24 primary ns-box-body flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
         <ns-numpad v-if="options.ns_pos_numpad === 'default'" :floating="options.ns_pos_allow_decimal_quantities" @changed="updateQuantity( $event )" @next="defineQuantity( $event )" :value="finalValue"></ns-numpad>
