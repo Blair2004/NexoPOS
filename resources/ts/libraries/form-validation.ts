@@ -5,14 +5,14 @@ declare const nsExtraComponents;
 export default class FormValidation {
     validateFields( fields ) {
         return fields.map( field => {
-            this.checkField( field, fields );
+            this.checkField( field, fields, { touchField: false } );
             return field.errors ? field.errors.length === 0 : 0;
         }).filter( f => f === false ).length === 0;
     }
 
     validateFieldsErrors( fields ) {
         return fields.map( field => {
-            this.checkField( field, fields );
+            this.checkField( field, fields, { touchField: false });
             return field.errors;
         }).flat();
     }
@@ -64,7 +64,7 @@ export default class FormValidation {
     }
 
     validateField( field ) {
-        return this.checkField( field );
+        return this.checkField( field, [], { touchField: false } );
     }
 
     fieldsValid( fields ) {
@@ -77,6 +77,7 @@ export default class FormValidation {
             field.type      =   field.type      || 'text',
             field.errors    =   field.errors    || [];
             field.disabled  =   field.disabled  || false;
+            field.touched   =   false;
 
             /**
              * extra component should use the "component" attribute provided
@@ -100,6 +101,27 @@ export default class FormValidation {
             
             return field;
         });
+    }
+
+    /**
+     * Checks wether a for is touched or not.
+     * @param form current form to perform the check
+     * @returns bool
+     */
+    isFormUntouched( form ) {
+        let isFormUntouched = true;
+
+        if ( form.main ) {
+            isFormUntouched     =   form.main.touched ? false : isFormUntouched;
+        }
+
+        if ( form.tabs ) {
+            for( let tab in form.tabs ) {
+                isFormUntouched =   form.tabs[ tab ].fields.filter( field => field.touched ).length > 0 ? false : isFormUntouched;
+            }
+        }
+
+        return isFormUntouched;
     }
 
     createForm( form ) {
@@ -163,7 +185,9 @@ export default class FormValidation {
         return form;
     }
 
-    checkField( field, fields = [] ) {
+    checkField( field, fields = [], options = {
+        touchField: true
+    } ) {
         if ( field.validation !== undefined ) {
             field.errors    =   [];
             const rules     =   this.detectValidationRules( field.validation ).filter( rule => rule != undefined );
@@ -184,6 +208,16 @@ export default class FormValidation {
                 });
             }
         }
+
+        /**
+         * By default, the field is not touched when
+         * we want to perform a verification. But 
+         * that option can enable a touching behavior.
+         */
+        if ( options.touchField ) {
+            field.touched = true;
+        }
+
         return field;
     }
 

@@ -81,6 +81,13 @@ export default {
 
             this.$emit( 'change', { action: 'addOption', option })
         },
+        changeTouchedState( field, $event ){
+            if ( $event.stopPropagation ) {
+                $event.stopPropagation();
+                field.touched    =    true;
+                this.$emit( 'change', field );
+            }
+        },
         refreshMultiselect() {
             this.field.value    =   this.field.options
                 .filter( option => option.selected )
@@ -96,19 +103,19 @@ export default {
 </script>
 <template>
     <div class="flex flex-auto mb-2">
-        <ns-input :field="field" v-if="isInputField">
+        <ns-input @change="changeTouchedState( field, $event )" :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-input>
-        <ns-date-time-picker @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateTimePicker">
+        <ns-date-time-picker @blur="$emit( 'blur', field )" @change="changeTouchedState( field, $event )"  :field="field" v-if="isDateTimePicker">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-date-time-picker>
-        <ns-date @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateField">
+        <ns-date @blur="$emit( 'blur', field )" @change="changeTouchedState( field, $event )"  :field="field" v-if="isDateField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-date>
-        <ns-media-input @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isMedia">
+        <ns-media-input @blur="$emit( 'blur', field )" @change="changeTouchedState( field, $event )"  :field="field" v-if="isMedia">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-media-input>
@@ -116,27 +123,27 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
-        <ns-search-select :field="field" @change="$emit( 'change', field )" v-if="isSearchField">
+        <ns-search-select :field="field" @change="changeTouchedState( field, $event )" v-if="isSearchField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-search-select>
-        <ns-daterange-picker @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateRangePicker">
+        <ns-daterange-picker @blur="$emit( 'blur', field )" @change="changeTouchedState( field, $event )"  :field="field" v-if="isDateRangePicker">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-daterange-picker>
-        <ns-select-audio @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isSelectAudio">
+        <ns-select-audio @blur="$emit( 'blur', field )" @change="changeTouchedState( field, $event )"  :field="field" v-if="isSelectAudio">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select-audio>
-        <ns-textarea @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isTextarea">
+        <ns-textarea @blur="$emit( 'blur', field )" @change="changeTouchedState( field, $event )"  :field="field" v-if="isTextarea">
             <template>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-textarea>
-        <ns-checkbox @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isCheckbox">
+        <ns-checkbox @blur="$emit( 'blur', field )" @change="changeTouchedState( field, $event )"  :field="field" v-if="isCheckbox">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-checkbox>
-        <ns-inline-multiselect @blur="$emit( 'blur', field )" @update="$emit( 'change', field )"  :field="field" v-if="isInlineMultiselect">
+        <ns-inline-multiselect @blur="$emit( 'blur', field )" @update="changeTouchedState( field, $event )"  :field="field" v-if="isInlineMultiselect">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-inline-multiselect>
@@ -156,7 +163,7 @@ export default {
         </ns-ckeditor>
         <ns-switch 
             :field="field" 
-            @change="$emit( 'change', field )"
+            @change="changeTouchedState( field, $event )"
             v-if="isSwitch">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
@@ -166,7 +173,7 @@ export default {
                 <component 
                     :field="field"
                     @blur="$emit( 'blur', field )" 
-                    @change="$emit( 'change', field )" 
+                    @change="changeTouchedState( field, $event )" 
                         v-bind:is="field.component"></component>
             </keep-alive>
         </template>

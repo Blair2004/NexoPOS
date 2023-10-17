@@ -19,6 +19,10 @@ export default {
     name: 'ns-procurement',
     mounted() {
         this.reloadEntities();
+
+        window.onbeforeunload   =   () => {
+            return ! this.formValidation.isFormUntouched( this.form ) || this.form.products.length > 0 ? __( 'You have unsaved modifications. Would you like to proceed?' ) : null;
+        }
     },
     computed: {
         activeTab() {
