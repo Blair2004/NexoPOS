@@ -36,7 +36,7 @@ const nsPopups      =   createApp({
     data() {
         return {
             popups: [],
-            defaultClass: 'absolute top-0 left-0 w-full h-full flex items-center justify-center is-popup'
+            defaultClass: 'absolute top-0 left-0 w-full h-full items-center flex overflow-y-auto py-5 justify-center is-popup'
         }
     },
     mounted() {

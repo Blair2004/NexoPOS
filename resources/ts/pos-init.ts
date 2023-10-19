@@ -308,25 +308,6 @@ export class POS {
         }));
 
         /**
-         * We're handling here the responsive aspect
-         * of the POS.
-         */
-        window.addEventListener('resize', () => {
-            this._responsive.detect();
-            this.defineCurrentScreen();
-        });
-
-        /**
-         * This will ensure the order is not closed mistakenly.
-         * @returns void
-         */
-        window.onbeforeunload   =   () => {
-            if ( this.products.getValue().length > 0 ) {
-                return __( 'Some products has been added to the cart. Would youl ike to discard this order ?' );
-            }
-        }
-
-        /**
          * Whenever there is a change
          * on the products, we'll update
          * the cart.

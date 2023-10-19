@@ -1,23 +1,29 @@
 <template>
     <div>
-        <div class="shadow-lg w-95vw md:w-2/5-screen ns-box" v-if="loaded">
+        <div class="shadow-lg w-95vw md:w-3/5-screen ns-box" v-if="loaded">
             <div class="border-b ns-box-header p-2 text-primary flex justify-between items-center">
                 <h3 class="font-semibold">{{ title }}</h3>
                 <div><ns-close-button @click="close()"></ns-close-button></div>
             </div>
             <div class="p-2">
-                <div v-if="register !== null" class="mb-2 p-3 elevation-surface font-bold border text-right flex justify-between">
-                    <span>{{ __( 'Balance' ) }} </span>
-                    <span>{{ nsCurrency( register.balance ) }}</span>
+                <div>
+                    <div v-if="register !== null" class="mb-2 p-3 elevation-surface font-bold border text-right flex justify-between">
+                        <span>{{ __( 'Balance' ) }} </span>
+                        <span>{{ nsCurrency( register.balance ) }}</span>
+                    </div>
+                    <div class="mb-2 p-3 elevation-surface success border font-bold text-right flex justify-between">
+                        <span>{{ __( 'Input' ) }}</span>
+                        <span>{{ nsCurrency( amount ) }}</span>
+                    </div>
                 </div>
-                <div class="mb-2 p-3 elevation-surface success border font-bold text-right flex justify-between">
-                    <span>{{ __( 'Input' ) }}</span>
-                    <span>{{ nsCurrency( amount ) }}</span>
+                <div class="flex flex-col md:flex-row md:-mx-2">
+                    <div class="md:px-2 md:w-1/2 w-full">
+                        <ns-numpad :floating="true" @next="submit( $event )" :value="amount" @changed="definedValue( $event )"></ns-numpad>
+                    </div>
+                    <div class="md:px-2 md:w-1/2 w-full">
+                        <ns-field v-for="(field,index) of fields" :field="field" :key="index"></ns-field>
+                    </div>
                 </div>
-                <div class="mb-2">
-                    <ns-numpad :floating="true" @next="submit( $event )" :value="amount" @changed="definedValue( $event )"></ns-numpad>
-                </div>
-                <ns-field v-for="(field,index) of fields" :field="field" :key="index"></ns-field>
             </div>
         </div>
         <div class="h-full w-full flex items-center justify-center" v-if="! loaded">

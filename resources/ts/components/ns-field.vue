@@ -19,6 +19,9 @@ export default {
         isInputField() {
             return [ 'text', 'password', 'email', 'number', 'tel' ].includes( this.field.type );
         },
+        isHiddenField() {
+            return [ 'hidden' ].includes( this.field.type );
+        },
         isDateField() {
             return [ 'date' ].includes( this.field.type );
         },
@@ -102,7 +105,10 @@ export default {
 }
 </script>
 <template>
-    <div class="flex flex-auto mb-2">
+    <template v-if="isHiddenField">
+        <input type="hidden" :name="field.name" :value="field.value"/>
+    </template>
+    <div class="flex flex-auto mb-2" v-if="! isHiddenField">
         <ns-input @change="changeTouchedState( field, $event )" :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
