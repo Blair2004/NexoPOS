@@ -90,8 +90,6 @@ class UserCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -126,7 +124,6 @@ class UserCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -257,7 +254,6 @@ class UserCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  User $entry
      * @return  void
      */
     public function afterPost( $request, User $entry )
@@ -484,7 +480,7 @@ class UserCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'users' ),
             'create' => ns()->url( 'dashboard/' . 'users/create' ),
             'edit' => ns()->url( 'dashboard/' . 'users/edit/' ),

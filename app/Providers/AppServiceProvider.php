@@ -51,19 +51,19 @@ class AppServiceProvider extends ServiceProvider
     {
         include_once base_path() . '/app/Services/HelperFunctions.php';
 
-        $this->app->singleton( Options::class, function() {
+        $this->app->singleton( Options::class, function () {
             return new Options;
         });
 
-        $this->app->singleton( MenuService::class, function() {
+        $this->app->singleton( MenuService::class, function () {
             return new MenuService;
         });
 
-        $this->app->singleton( UpdateService::class, function() {
+        $this->app->singleton( UpdateService::class, function () {
             return new UpdateService;
         });
 
-        $this->app->bind( DemoService::class, function() {
+        $this->app->bind( DemoService::class, function () {
             return new DemoService(
                 app()->make( ProductCategoryService::class ),
                 app()->make( ProductService::class ),
@@ -73,7 +73,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // save Singleton for options
-        $this->app->singleton( DateService::class, function() {
+        $this->app->singleton( DateService::class, function () {
             $options = app()->make( Options::class );
             $timeZone = $options->get( 'ns_datetime_timezone', 'Europe/London' );
 
@@ -81,16 +81,16 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // save Singleton for options
-        $this->app->singleton( UserOptions::class, function() {
+        $this->app->singleton( UserOptions::class, function () {
             return new UserOptions( Auth::id() );
         });
 
-        $this->app->singleton( CashRegistersService::class, function() {
+        $this->app->singleton( CashRegistersService::class, function () {
             return new CashRegistersService;
         });
 
         // save Singleton for options
-        $this->app->singleton( Users::class, function() {
+        $this->app->singleton( Users::class, function () {
             return new Users(
                 Auth::check() ? Auth::user()->roles : collect([]),
                 Auth::user(),
@@ -99,31 +99,31 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // provide media manager
-        $this->app->singleton( MediaService::class, function() {
+        $this->app->singleton( MediaService::class, function () {
             return new MediaService([
                 'extensions' => [ 'jpg', 'jpeg', 'png', 'gif', 'zip', 'docx', 'txt' ],
             ]);
         });
 
-        $this->app->singleton( CrudService::class, function() {
+        $this->app->singleton( CrudService::class, function () {
             return new CrudService;
         });
 
-        $this->app->singleton( BarcodeService::class, function() {
+        $this->app->singleton( BarcodeService::class, function () {
             return new BarcodeService;
         });
 
-        $this->app->singleton( ResetService::class, function() {
+        $this->app->singleton( ResetService::class, function () {
             return new ResetService;
         });
 
-        $this->app->bind( ReportService::class, function() {
+        $this->app->bind( ReportService::class, function () {
             return new ReportService(
                 app()->make( DateService::class )
             );
         });
 
-        $this->app->singleton( CoreService::class, function() {
+        $this->app->singleton( CoreService::class, function () {
             return new CoreService(
                 app()->make( CurrencyService::class ),
                 app()->make( UpdateService::class ),
@@ -136,17 +136,17 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->bind( ProductCategoryService::class, function( $app ) {
+        $this->app->bind( ProductCategoryService::class, function ( $app ) {
             return new ProductCategoryService;
         });
 
-        $this->app->bind( TaxService::class, function( $app ) {
+        $this->app->bind( TaxService::class, function ( $app ) {
             return new TaxService(
                 $app->make( CurrencyService::class )
             );
         });
 
-        $this->app->bind( CurrencyService::class, function( $app ) {
+        $this->app->bind( CurrencyService::class, function ( $app ) {
             $options = app()->make( Options::class );
 
             return new CurrencyService(
@@ -162,7 +162,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->bind( ProductService::class, function( $app ) {
+        $this->app->bind( ProductService::class, function ( $app ) {
             return new ProductService(
                 $app->make( ProductCategoryService::class ),
                 $app->make( TaxService::class ),
@@ -172,31 +172,31 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton( Validation::class, function( $app ) {
+        $this->app->singleton( Validation::class, function ( $app ) {
             return new Validation;
         });
 
-        $this->app->bind( UnitService::class, function( $app ) {
+        $this->app->bind( UnitService::class, function ( $app ) {
             return new UnitService(
                 $app->make( CurrencyService::class )
             );
         });
 
-        $this->app->singleton( ProviderService::class, function( $app ) {
+        $this->app->singleton( ProviderService::class, function ( $app ) {
             return new ProviderService;
         });
 
-        $this->app->singleton( CustomerService::class, function( $app ) {
+        $this->app->singleton( CustomerService::class, function ( $app ) {
             return new CustomerService;
         });
 
-        $this->app->bind( ExpenseService::class, function( $app ) {
+        $this->app->bind( ExpenseService::class, function ( $app ) {
             return new ExpenseService(
                 app()->make( DateService::class )
             );
         });
 
-        $this->app->bind( OrdersService::class, function( $app ) {
+        $this->app->bind( OrdersService::class, function ( $app ) {
             return new OrdersService(
                 customerService: $app->make( CustomerService::class ),
                 productService: $app->make( ProductService::class ),
@@ -210,7 +210,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->bind( ProcurementService::class, function( $app ) {
+        $this->app->bind( ProcurementService::class, function ( $app ) {
             return new ProcurementService(
                 $app->make( ProviderService::class ),
                 $app->make( UnitService::class ),
@@ -225,7 +225,7 @@ class AppServiceProvider extends ServiceProvider
          * When the module has started,
          * we can load the configuration.
          */
-        Event::listen( function( ModulesBootedEvent $event ) {
+        Event::listen( function ( ModulesBootedEvent $event ) {
             $this->loadConfiguration();
         });
     }
@@ -292,9 +292,9 @@ class AppServiceProvider extends ServiceProvider
 
         config([
             'nexopos.orders.products.refunds' => [
-                OrderProductRefund::CONDITION_DAMAGED       =>  __( 'Damaged' ),
-                OrderProductRefund::CONDITION_UNSPOILED     =>  __( 'Good Condition' ),
-            ]
+                OrderProductRefund::CONDITION_DAMAGED => __( 'Damaged' ),
+                OrderProductRefund::CONDITION_UNSPOILED => __( 'Good Condition' ),
+            ],
         ]);
     }
 }

@@ -82,8 +82,6 @@ class RewardSystemCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -116,7 +114,6 @@ class RewardSystemCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -166,8 +163,8 @@ class RewardSystemCrud extends CrudService
              * this is made to restore rules
              * by populating the form used for the rules
              */
-            'rules' => $entry ? ( collect( $entry->rules )->map( function( $rule ) use ( $ruleForm ) {
-                return collect( $ruleForm )->map( function( $field ) use ( $rule ) {
+            'rules' => $entry ? ( collect( $entry->rules )->map( function ( $rule ) use ( $ruleForm ) {
+                return collect( $ruleForm )->map( function ( $field ) use ( $rule ) {
                     $field[ 'value' ] = $rule[ $field[ 'name' ] ] ?? '';
 
                     return $field;
@@ -257,7 +254,7 @@ class RewardSystemCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -276,9 +273,9 @@ class RewardSystemCrud extends CrudService
          * with their original ID. Those not posted
          * are deleted.
          */
-        $ids = collect( $rules )->filter( function( $rule ) {
+        $ids = collect( $rules )->filter( function ( $rule ) {
             return isset( $rule[ 'id' ] );
-        })->map( function( $rule ) {
+        })->map( function ( $rule ) {
             return $rule[ 'id' ];
         });
 
@@ -482,7 +479,7 @@ class RewardSystemCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => 'ns.rewards_system',
             'create' => 'ns.rewards_system/create',
             'edit' => 'ns.rewards_system/edit/#',

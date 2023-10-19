@@ -166,7 +166,7 @@ class CustomersGroupsController extends DashboardController
             $customers = Customer::where( 'group_id', $fromModel->id )
                 ->get();
             $customers
-                ->forEach( function( $customer ) use ( $toModel ) {
+                ->forEach( function ( $customer ) use ( $toModel ) {
                     $customer->group_id = $toModel->id;
                     $customer->save();
                 });
@@ -185,7 +185,7 @@ class CustomersGroupsController extends DashboardController
                 $customer = Customer::where( 'id', $customerID )
                     ->where( 'group_id', $fromModel->id )
                     ->get()
-                    ->forEach( function( $customer ) use ( $toModel ) {
+                    ->forEach( function ( $customer ) use ( $toModel ) {
                         $customer->group_id = $toModel->id;
                         $customer->save();
                     });

@@ -175,7 +175,6 @@ class TaxesController extends DashboardController
     /**
      * Edit existing taxes
      *
-     * @param Tax $tax
      * @return view
      */
     public function editTax( Tax $tax )

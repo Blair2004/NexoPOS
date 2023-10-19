@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+        Schema::table( 'nexopos_products_unit_quantities', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'net_sale_price' ) && ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'sale_price_with_tax' ) ) {
                 $table->renameColumn( 'net_sale_price', 'sale_price_with_tax' );
             }
@@ -43,7 +43,7 @@ return new class extends Migration
             }
         });
 
-        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders_products', 'gross_price' ) && ! Schema::hasColumn( 'nexopos_orders_products', 'price_without_tax' ) ) {
                 $table->renameColumn( 'gross_price', 'price_without_tax' );
             }
@@ -61,7 +61,7 @@ return new class extends Migration
             }
         });
 
-        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders', 'net_total' ) ) {
                 $table->renameColumn( 'net_total', 'total_with_tax' );
             }

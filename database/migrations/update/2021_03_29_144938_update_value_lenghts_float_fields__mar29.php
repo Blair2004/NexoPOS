@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_procurements', 'value' ) ) {
                 $table->float( 'value', 11, 4 )->change();
             }
         });
 
-        Schema::table( 'nexopos_providers', function( Blueprint $table ) {
+        Schema::table( 'nexopos_providers', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_providers', 'amount_due' ) ) {
                 $table->float( 'amount_due', 11, 4 )->change();
             }

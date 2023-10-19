@@ -33,7 +33,6 @@ class ResetController extends DashboardController
     /**
      * perform a hard reset
      *
-     * @param Request $request
      * @return array $array
      */
     public function hardReset( Request $request )
@@ -48,7 +47,6 @@ class ResetController extends DashboardController
     /**
      * Will truncate the database and seed
      *
-     * @param Request $request
      * @return array
      */
     public function truncateWithDemo( Request $request )
@@ -69,7 +67,7 @@ class ResetController extends DashboardController
                 $this->resetService->handleCustom(
                     $request->all()
                 );
-                break;
+            break;
         }
 
         return [

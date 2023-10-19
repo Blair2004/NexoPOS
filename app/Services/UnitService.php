@@ -87,7 +87,7 @@ class UnitService
          * other units changes
          */
         if ( $data[ 'base_unit' ] === true ) {
-            $group->units->map( function( $unit ) {
+            $group->units->map( function ( $unit ) {
                 $unit->base_unit = false;
                 $unit->save();
             });
@@ -171,7 +171,7 @@ class UnitService
          * other units changes
          */
         if ( $fields[ 'base_unit' ] === true ) {
-            $group->units->map( function( $unit ) use ( $id ) {
+            $group->units->map( function ( $unit ) use ( $id ) {
                 if ( $unit->id !== $id ) {
                     $unit->base_unit = false;
                     $unit->save();
@@ -211,7 +211,6 @@ class UnitService
      * get the single base unit defined
      * for a specific group
      *
-     * @param UnitGroup $group
      * @return Unit
      */
     public function getBaseUnit( UnitGroup $group )
@@ -219,7 +218,7 @@ class UnitService
         $baseUnit = UnitGroup::find( $group->id )
             ->units()
             ->get()
-            ->filter( function( $unit ) {
+            ->filter( function ( $unit ) {
                 return $unit->base_unit;
             });
 
@@ -238,9 +237,7 @@ class UnitService
      * return what is the exact total base unit
      * value of 2 Unit instance provided
      *
-     * @param Unit $unit
      * @param Unit base unit
-     * @param
      */
     public function computeBaseUnit( Unit $unit, Unit $base, $quantity )
     {

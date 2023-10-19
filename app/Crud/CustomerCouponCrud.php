@@ -111,8 +111,6 @@ class CustomerCouponCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -145,7 +143,6 @@ class CustomerCouponCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -233,7 +230,6 @@ class CustomerCouponCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  CustomerCoupon $entry
      * @return  void
      */
     public function afterPost( $request, CustomerCoupon $entry )
@@ -251,7 +247,7 @@ class CustomerCouponCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -462,7 +458,7 @@ class CustomerCouponCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->route( 'ns.dashboard.customers-coupons-generated-list' ),
             'create' => '#', // ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/create' ),
             'edit' => ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/edit/' ),

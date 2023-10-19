@@ -11,7 +11,6 @@ namespace App\Http\Controllers\Dashboard;
 use App\Classes\Hook;
 use App\Crud\ProcurementCrud;
 use App\Crud\ProcurementProductCrud;
-use App\Events\ProcurementAfterUpdateEvent;
 use App\Exceptions\NotAllowedException;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\ProcurementRequest;
@@ -96,7 +95,6 @@ class ProcurementController extends DashboardController
      * to the mentionned procurement
      *
      * @param int procurement id
-     * @param Request $request
      * @return array response
      */
     public function procure( $procurement_id, Request $request )
@@ -122,7 +120,7 @@ class ProcurementController extends DashboardController
      */
     public function procurementProducts( $procurement_id )
     {
-        return $this->procurementService->getProducts( $procurement_id )->map( function( $product ) {
+        return $this->procurementService->getProducts( $procurement_id )->map( function ( $product ) {
             $product->unit;
 
             return $product;
@@ -152,7 +150,6 @@ class ProcurementController extends DashboardController
      * Will change the payment status to
      * paid for a provided procurement.
      *
-     * @param Procurement $procurement
      * @return array
      */
     public function setAsPaid( Procurement $procurement )
@@ -303,19 +300,19 @@ class ProcurementController extends DashboardController
         $products = Product::query()
             ->trackingDisabled()
             ->with( 'unit_quantities.unit' )
-            ->where( function( $query ) use ( $request ) {
+            ->where( function ( $query ) use ( $request ) {
                 $query->where( 'sku', 'LIKE', "%{$request->input( 'argument' )}%" )
                 ->orWhere( 'name', 'LIKE', "%{$request->input( 'argument' )}%" )
                 ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'argument' )}%" );
             })
             ->limit( 8 )
             ->get()
-            ->map( function( $product ) {
+            ->map( function ( $product ) {
                 $units = json_decode( $product->purchase_unit_ids );
 
                 if ( $units ) {
                     $product->purchase_units = collect();
-                    collect( $units )->each( function( $unitID ) use ( &$product ) {
+                    collect( $units )->each( function ( $unitID ) use ( &$product ) {
                         $product->purchase_units->push( Unit::find( $unitID ) );
                     });
                 }

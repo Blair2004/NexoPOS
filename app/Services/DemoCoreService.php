@@ -111,24 +111,24 @@ class DemoCoreService
 
     public function createBaseSettings()
     {
-        $orderTypes     =   app()->make( OrdersService::class )->getTypeLabels();
+        $orderTypes = app()->make( OrdersService::class )->getTypeLabels();
 
         /**
          * @var Options $optionService
          */
-        $optionService  =   app()->make( Options::class );
+        $optionService = app()->make( Options::class );
 
         $optionService->set(
             'ns_pos_order_types',
-            array_values( $orderTypes )
+            array_keys( $orderTypes )
         );
 
-        $optionService->set( 
+        $optionService->set(
             'ns_currency_symbol',
             '$'
         );
 
-        $optionService->set( 
+        $optionService->set(
             'ns_currency_iso',
             'USD'
         );
@@ -269,8 +269,8 @@ class DemoCoreService
             'products' => Product::withStockEnabled()
                 ->with( 'unitGroup' )
                 ->get()
-                ->map( function( $product ) {
-                    return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
+                ->map( function ( $product ) {
+                    return $product->unitGroup->units->map( function ( $unit ) use ( $product ) {
                         $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
 
                         return (object) [
@@ -279,7 +279,7 @@ class DemoCoreService
                             'product' => $product,
                         ];
                     });
-                })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+                })->flatten()->map( function ( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
                     return [
                         'product_id' => $data->product->id,
                         'gross_purchase_price' => 15,
@@ -343,7 +343,7 @@ class DemoCoreService
             $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
             $discountRate = $faker->numberBetween(0, 5);
 
-            $products = $products->map( function( $product ) use ( $faker ) {
+            $products = $products->map( function ( $product ) use ( $faker ) {
                 $unitElement = $faker->randomElement( $product->unit_quantities );
 
                 return array_merge([
@@ -361,7 +361,7 @@ class DemoCoreService
             $customerFirstPurchases = $customer->purchases_amount;
             $customerFirstOwed = $customer->owed_amount;
 
-            $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
+            $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ($currency) {
                 return $currency
                     ->define( $product[ 'unit_price' ] )
                     ->multiplyBy( $product[ 'quantity' ] )

@@ -94,15 +94,15 @@ class TestNsRacksManagerTransferToInventory extends TestCase
             'products' => Product::whereIn( 'id', [ $rackProduct->product_id ])
                 ->with( 'unitGroup' )
                 ->get()
-                ->map( function( $product ) {
-                    return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
+                ->map( function ( $product ) {
+                    return $product->unitGroup->units->map( function ( $unit ) use ( $product ) {
                         return (object) [
                             'unit' => $unit,
                             'unitQuantity' => $product->unit_quantities->filter( fn( $q ) => $q->unit_id === $unit->id )->first(),
                             'product' => $product,
                         ];
                     });
-                })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker, $rack ) {
+                })->flatten()->map( function ( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker, $rack ) {
                     return [
                         'product_id' => $data->product->id,
                         'gross_purchase_price' => 15,

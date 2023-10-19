@@ -17,7 +17,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_customers' ) ) {
-            Schema::createIfMissing( 'nexopos_customers', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_customers', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'surname' )->nullable();
@@ -39,7 +39,7 @@ return new class extends Migration
         }
 
         if ( ! Schema::hasTable( 'nexopos_customers_addresses' ) ) {
-            Schema::createIfMissing( 'nexopos_customers_addresses', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_customers_addresses', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'customer_id' );
                 $table->string( 'type' ); // either "billing" | "shipping"
@@ -60,7 +60,7 @@ return new class extends Migration
         }
 
         if ( ! Schema::hasTable( 'nexopos_customers_account_history' ) ) {
-            Schema::createIfMissing( 'nexopos_customers_account_history', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_customers_account_history', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'customer_id' );
                 $table->integer( 'order_id' )->nullable();

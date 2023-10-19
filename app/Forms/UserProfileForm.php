@@ -109,7 +109,7 @@ class UserProfileForm extends SettingsPage
             if ( ! Hash::check( $request->input( 'security.old_password' ), Auth::user()->password ) ) {
                 $validator->errors()->add( 'security.old_password', __( 'Wrong password provided' ) );
 
-                return  [
+                return [
                     'status' => 'failed',
                     'message' => __( 'Wrong old password provided' ),
                 ];

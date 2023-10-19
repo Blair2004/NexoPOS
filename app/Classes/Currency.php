@@ -16,7 +16,6 @@ class Currency
      * the default value.
      *
      * @param float $amount
-     * @return CurrencyService
      */
     public static function fresh( $amount ): CurrencyService
     {

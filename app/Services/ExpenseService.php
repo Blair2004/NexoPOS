@@ -126,6 +126,7 @@ class ExpenseService
 
     /**
      * @deprecated
+     *
      * @use getAccountType
      */
     public function getCategories( $id = null )
@@ -177,7 +178,7 @@ class ExpenseService
          * if there is not expense, it
          * won't be looped
          */
-        $accountType->expenses->map( function( $expense ) {
+        $accountType->expenses->map( function ( $expense ) {
             $expense->delete();
         });
 
@@ -209,7 +210,7 @@ class ExpenseService
          * if there is not expense, it
          * won't be looped
          */
-        $accountType->expenses->map( function( $expense ) {
+        $accountType->expenses->map( function ( $expense ) {
             $expense->delete();
         });
 
@@ -345,7 +346,7 @@ class ExpenseService
     public function recordCashFlowHistory( Expense $expense )
     {
         if ( ! empty( $expense->group_id  ) ) {
-            Role::find( $expense->group_id )->users->each( function( $user ) use ( $expense ) {
+            Role::find( $expense->group_id )->users->each( function ( $user ) use ( $expense ) {
                 if ( $expense->category instanceof ExpenseCategory ) {
                     $history = new CashFlow;
                     $history->value = $expense->value;
@@ -415,7 +416,7 @@ class ExpenseService
         $processStatus = Expense::recurring()
             ->active()
             ->get()
-            ->map( function( $expense ) {
+            ->map( function ( $expense ) {
                 switch ( $expense->occurrence ) {
                     case 'month_starts':
                         $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth() );
@@ -489,7 +490,6 @@ class ExpenseService
     /**
      * Will record an expense resulting from a paid procurement
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function handleProcurementExpense( Procurement $procurement )
@@ -522,7 +522,6 @@ class ExpenseService
     /**
      * Will record an expense for every refund performed
      *
-     * @param OrderProduct $orderProduct
      * @return void
      */
     public function createExpenseFromRefund( Order $order, OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
@@ -573,7 +572,6 @@ class ExpenseService
      * created and the payment status is PAID
      * we'll store the total as a cash flow transaction.
      *
-     * @param Order $order
      * @return void
      */
     public function handleCreatedOrder( Order $order )
@@ -690,21 +688,21 @@ class ExpenseService
              */
             switch ( $type ) {
                 case CashFlow::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_SALES: $label = __( 'Sales Account' );
-                break;
+                    break;
                 case CashFlow::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' );
-                break;
+                    break;
             }
 
             return $this->getDefinedAccountType( $account[ 'option' ], [
@@ -736,7 +734,7 @@ class ExpenseService
 
         $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_REFUNDS );
 
-        $orders->each( function( $order ) use ( $expenseCategory ) {
+        $orders->each( function ( $order ) use ( $expenseCategory ) {
             $expense = new Expense;
             $expense->value = $order->total;
             $expense->active = true;
@@ -772,7 +770,7 @@ class ExpenseService
 
         Customer::where( 'id', '>', 0 )->update([ 'purchases_amount' => 0 ]);
 
-        $orders->each( function( $order ) use ( $expenseCategory ) {
+        $orders->each( function ( $order ) use ( $expenseCategory ) {
             $expense = new Expense;
             $expense->value = $order->total;
             $expense->active = true;
@@ -807,7 +805,7 @@ class ExpenseService
             ->where( 'created_at', '<=', $rangeEnds )
             ->get();
 
-        $histories->each( function( $history ) {
+        $histories->each( function ( $history ) {
             $this->handleCustomerCredit( $history );
         });
     }
@@ -821,7 +819,7 @@ class ExpenseService
     {
         Procurement::where( 'created_at', '>=', $rangeStarts )
             ->where( 'created_at', '<=', $rangeEnds )
-            ->get()->each( function( $procurement ) {
+            ->get()->each( function ( $procurement ) {
                 $this->handleProcurementExpense( $procurement );
             });
     }
@@ -837,7 +835,7 @@ class ExpenseService
             ->where( 'created_at', '<=', $rangeEnds )
             ->notRecurring()
             ->get()
-            ->each( function( $expense ) {
+            ->each( function ( $expense ) {
                 $this->triggerExpense( $expense );
             });
     }
@@ -863,7 +861,6 @@ class ExpenseService
      * Will add customer credit operation
      * to the cash flow history
      *
-     * @param CustomerAccountHistory $customerHistory
      * @return void
      */
     public function handleCustomerCredit( CustomerAccountHistory $customerHistory )

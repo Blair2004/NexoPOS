@@ -76,7 +76,6 @@ class CurrencyService
      * Set a value for the current instance
      *
      * @param int|float $amount
-     * @return CurrencyService
      */
     private static function __defineAmount( $amount ): CurrencyService
     {
@@ -225,10 +224,13 @@ class CurrencyService
      */
     public function getRaw( $value = null )
     {
-        $value = $value !== null ? (string) BigDecimal::of( $value )->dividedBy(1, $this->decimal_precision, RoundingMode::UP ) : null;
-        $main = $value === null ? (string) $this->value->dividedBy(1, $this->decimal_precision, RoundingMode::UP ) : 0;
+        if ( $value === null ) {
+            return $this->value->dividedBy( 1, $this->decimal_precision, RoundingMode::HALF_UP )->toFloat();
+        } else {
+            return BigDecimal::of( $value )->dividedBy( 1, $this->decimal_precision, RoundingMode::HALF_UP )->toFloat();
+        }
 
-        return floatval( $value !== null ? $value : $main );
+        return 0;
     }
 
     /**

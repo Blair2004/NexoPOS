@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_orders_products', 'procurement_product_id' ) ) {
                 $table->integer( 'procurement_product_id' )->nullable();
             }
         });
 
-        Schema::table( 'nexopos_procurements_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements_products', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_procurements_products', 'barcode' ) ) {
                 $table->string( 'barcode' )->nullable();
             }
@@ -33,13 +33,13 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders_products', 'procurement_product_id' ) ) {
                 $table->dropColumn( 'procurement_product_id' );
             }
         });
 
-        Schema::table( 'nexopos_procurements_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_procurements_products', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_procurements_products', 'barcode' ) ) {
                 $table->dropColumn( 'barcode' );
             }

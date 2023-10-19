@@ -55,7 +55,7 @@ class CashRegistersController extends DashboardController
             return $register;
         }
 
-        return Register::get()->map( function( $register ) {
+        return Register::get()->map( function ( $register ) {
             $this->registersService->getRegisterDetails( $register );
 
             return $register;
@@ -136,7 +136,7 @@ class CashRegistersController extends DashboardController
                     ->where( 'id', '>=', $lastOpening->id )
                     ->get();
 
-                $actions->each( function( $session ) {
+                $actions->each( function ( $session ) {
                     switch ( $session->action ) {
                         case RegisterHistory::ACTION_CASHING:
                             $session->label = __( 'Cash In' );
@@ -174,7 +174,6 @@ class CashRegistersController extends DashboardController
     /**
      * returns the cahs register instance
      *
-     * @param Register $register
      * @return string
      */
     public function getRegisterHistory( Register $register )

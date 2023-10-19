@@ -15,7 +15,7 @@ use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 class Setup
 {
     public Options $options;
-    
+
     /**
      * Attempt database and save db informations
      *
@@ -122,10 +122,13 @@ class Setup
     {
         /**
          * We're running this simple migration call to ensure
-         * default tables are created. Those table are located at the 
+         * default tables are created. Those table are located at the
          * root of the database folder.
          */
-        Artisan::call( 'migrate' );
+        Artisan::call( 'migrate', [
+            '--force' => true,
+            '--path' => 'database/migrations/2022_10_28_123458_setup_migration_table.php',
+        ]);
 
         /**
          * NexoPOS uses Sanctum, we're making sure to publish the package.
@@ -149,12 +152,12 @@ class Setup
                 directories: [ 'core', 'create' ],
                 ignoreMigrations: true
             )
-            ->each( function( $file ) {
+            ->each( function ( $file ) {
                 ns()->update->executeMigrationFromFileName( $file );
             });
 
         /**
-         * The update migrations should'nt be executed. 
+         * The update migrations should'nt be executed.
          * This should improve the speed during the installation.
          */
         ns()->update
@@ -162,7 +165,7 @@ class Setup
                 directories: [ 'update' ],
                 ignoreMigrations: true
             )
-            ->each( function( $file ) {
+            ->each( function ( $file ) {
                 ns()->update->assumeExecuted( $file );
             });
 

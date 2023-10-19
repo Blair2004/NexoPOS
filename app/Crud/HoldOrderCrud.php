@@ -108,8 +108,6 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -150,7 +148,6 @@ class HoldOrderCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -355,7 +352,6 @@ class HoldOrderCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Order $entry
      * @return  void
      */
     public function afterPost( $request, Order $entry )
@@ -373,7 +369,7 @@ class HoldOrderCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -528,7 +524,7 @@ class HoldOrderCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'ns.hold-orders' ),
             'create' => ns()->url( 'dashboard/' . 'ns.hold-orders/create' ),
             'edit' => ns()->url( 'dashboard/' . 'ns.hold-orders/edit/' ),

@@ -21,10 +21,10 @@ class SettingsPage
      */
     public function getForm()
     {
-        return collect( $this->form )->mapWithKeys( function( $tab, $key ) {
+        return collect( $this->form )->mapWithKeys( function ( $tab, $key ) {
             if ( $tab === 'tabs' ) {
                 return [
-                    $key => collect( $tab )->mapWithKeys( function( $tab, $key ) {
+                    $key => collect( $tab )->mapWithKeys( function ( $tab, $key ) {
                         /**
                          * in case not fields is provided
                          * let's save the tab with no fields.
@@ -88,7 +88,6 @@ class SettingsPage
      * Validate a form using a provided
      * request. Based on the actual settings page rules
      *
-     * @param Request $request
      * @return array
      */
     public function validateForm( Request $request )
@@ -105,7 +104,7 @@ class SettingsPage
         /**
          * Let's properly flat everything.
          */
-        $flatRules = collect( $isolatedRules )->mapWithKeys( function( $rule ) {
+        $flatRules = collect( $isolatedRules )->mapWithKeys( function ( $rule ) {
             return [ $rule[0] => $rule[1] ];
         })->toArray();
 
@@ -116,7 +115,6 @@ class SettingsPage
      * Get form plain data, by excaping the tabs
      * identifiers
      *
-     * @param Request $request
      * @return array
      */
     public function getPlainData( Request $request )
@@ -130,7 +128,6 @@ class SettingsPage
      * Proceed to a saving using te provided
      * request along with the plain data
      *
-     * @param Request $request
      * @return array
      */
     public function saveForm( Request $request )

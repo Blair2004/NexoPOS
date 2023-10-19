@@ -111,8 +111,6 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -121,6 +119,11 @@ class ProviderProcurementsCrud extends CrudService
         $this->providerService = app()->make( ProviderService::class );
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+    }
+
+    public function hook( $query ): void
+    {
+        $query->where( 'provider_id', request()->query( 'provider_id' ) );
     }
 
     /**
@@ -147,7 +150,6 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -268,7 +270,6 @@ class ProviderProcurementsCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Procurement $entry
      * @return  void
      */
     public function afterPost( $request, Procurement $entry )
@@ -286,7 +287,7 @@ class ProviderProcurementsCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -476,7 +477,7 @@ class ProviderProcurementsCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . '/providers/procurements' ),
             'create' => false,
             'edit' => false,

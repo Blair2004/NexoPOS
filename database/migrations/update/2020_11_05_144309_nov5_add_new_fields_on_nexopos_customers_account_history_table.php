@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         if ( Schema::hasTable( 'nexopos_customers_account_history' ) ) {
-            Schema::table( 'nexopos_customers_account_history', function( Blueprint $table ) {
+            Schema::table( 'nexopos_customers_account_history', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_customers_account_history', 'order_id' ) ) {
                     $table->integer( 'order_id' )->nullable();
                 }
@@ -30,7 +30,7 @@ return new class extends Migration
     public function down()
     {
         if ( Schema::hasTable( 'nexopos_customers_account_history' ) ) {
-            Schema::table( 'nexopos_customers_account_history', function( Blueprint $table ) {
+            Schema::table( 'nexopos_customers_account_history', function ( Blueprint $table ) {
                 if ( Schema::hasColumn( 'nexopos_customers_account_history', 'order_id' ) ) {
                     $table->dropColumn( 'order_id' );
                 }

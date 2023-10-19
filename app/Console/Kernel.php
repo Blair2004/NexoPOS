@@ -28,7 +28,6 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -38,7 +37,7 @@ class Kernel extends ConsoleKernel
          * This could be made through events that are dispatched within
          * the jobs
          */
-        $schedule->call( function() {
+        $schedule->call( function () {
             if ( env( 'TELESCOPE_ENABLED', false ) ) {
                 Artisan::call( 'telescope:prune', [ 'hours' => 12 ]);
             }
@@ -92,7 +91,7 @@ class Kernel extends ConsoleKernel
          * We want to make sure Modules Kernel get injected
          * on the process so that modules jobs can also be scheduled.
          */
-        collect( $modules->getEnabled() )->each( function( $module ) use ( $schedule ) {
+        collect( $modules->getEnabled() )->each( function ( $module ) use ( $schedule ) {
             $filePath = $module[ 'path' ] . 'Console' . DIRECTORY_SEPARATOR . 'Kernel.php';
 
             if ( is_file( $filePath ) ) {

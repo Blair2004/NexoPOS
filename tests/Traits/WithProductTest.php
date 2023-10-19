@@ -64,7 +64,7 @@ trait WithProductTest
                                 'tax_type' => $taxType,
                             ],
                             'units' => [
-                                'selling_group' => $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
+                                'selling_group' => $unitGroup->units->map( function ( $unit ) use ( $faker, $sale_price ) {
                                     return [
                                         'sale_price_edit' => $sale_price,
                                         'wholesale_price_edit' => $faker->numberBetween(20, 25),
@@ -154,7 +154,7 @@ trait WithProductTest
             $products = Product::where( 'type', Product::TYPE_DEMATERIALIZED )
                 ->limit(2)
                 ->get()
-                ->map( function( $product ) use ( $faker ) {
+                ->map( function ( $product ) use ( $faker ) {
                     /**
                      * @var ProductUnitQuantity $unitQuantity
                      */
@@ -203,7 +203,7 @@ trait WithProductTest
                                 'tax_type' => $taxType,
                             ],
                             'units' => [
-                                'selling_group' => $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
+                                'selling_group' => $unitGroup->units->map( function ( $unit ) use ( $faker, $sale_price ) {
                                     return [
                                         'sale_price_edit' => $sale_price,
                                         'wholesale_price_edit' => $faker->numberBetween(20, 25),
@@ -236,8 +236,8 @@ trait WithProductTest
 
             $this->assertTrue( count( $products ) === $product->sub_items->count(), 'Sub items aren\'t matching' );
 
-            $matched = $product->sub_items->filter( function( $subItem ) use ( $products ) {
-                return collect( $products )->filter( function( $_product ) use ( $subItem ) {
+            $matched = $product->sub_items->filter( function ( $subItem ) use ( $products ) {
+                return collect( $products )->filter( function ( $_product ) use ( $subItem ) {
                     $argument = (
                         (int) $_product[ 'unit_id' ] === (int) $subItem->unit_id &&
                         (int) $_product[ 'product_id' ] === (int) $subItem->product_id &&
@@ -258,9 +258,9 @@ trait WithProductTest
 
     protected function attemptAdjustmentByDeletion()
     {
-        $productUnitQuantity    =   ProductUnitQuantity::where( 'quantity', '>', 10 )
+        $productUnitQuantity = ProductUnitQuantity::where( 'quantity', '>', 10 )
             ->with( 'product' )
-            ->whereRelation( 'product', function( $query ){
+            ->whereRelation( 'product', function ( $query ) {
                 return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
             })
             ->first();

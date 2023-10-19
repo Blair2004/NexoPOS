@@ -100,6 +100,11 @@ class ResetService
         BeforeHardResetEvent::dispatch();
 
         Artisan::call( 'migrate:reset', [
+            '--path' => 'database/migrations/2022_10_28_123458_setup_migration_table.php',
+            '--force' => true,
+        ]);
+
+        Artisan::call( 'migrate:reset', [
             '--path' => '/database/migrations/core',
             '--force' => true,
         ]);
@@ -113,6 +118,13 @@ class ResetService
             '--path' => '/database/migrations/update',
             '--force' => true,
         ]);
+
+        /**
+         * only if the table already exists.
+         */
+        if ( Schema::hasTable( 'migrations' ) ) {
+            Migration::truncate();
+        }
 
         DotenvEditor::load();
         DotenvEditor::deleteKey( 'NS_VERSION' );

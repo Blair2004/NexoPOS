@@ -19,7 +19,7 @@
                 <ns-tabs-item padding="0" :label="__( 'Summary' )" identifier="summary" :active="false">
                     <div class="p-2" v-if="order">
                         <div v-for="tax of order.taxes" :key="tax.id" class="mb-2 border shadow p-2 w-full flex justify-between items-center elevation-surface">
-                            <span>{{ tax.tax_name }}</span>
+                            <span>{{ tax.name }}</span>
                             <span>{{ tax.tax_value | currency  }}</span>
                         </div>
                         <div class="p-2 text-center text-primary" v-if="order.taxes.length === 0">{{ __( 'No tax is active' ) }}</div>
@@ -137,6 +137,14 @@ export default {
             }
 
             const fields    =   this.validation.extractFields( this.group_fields );
+
+            /**
+             * When we save tax, we should instruct NexoPOS to 
+             * ignore previously cached tax and fetch new taxes. 
+             * This will be done by overwriting the tax_groups.
+             */
+            fields.tax_groups   =   [];
+            
             this.popupResolver( fields );
         },  
         loadGroups() {

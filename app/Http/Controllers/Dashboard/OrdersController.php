@@ -47,11 +47,11 @@ class OrdersController extends DashboardController
         $this->optionsService = $options;
         $this->ordersService = $ordersService;
 
-        $this->middleware( function( $request, $next ) {
+        $this->middleware( function ( $request, $next ) {
             $this->paymentTypes = PaymentType::orderBy( 'priority', 'asc' )
                 ->active()
                 ->get()
-                ->map( function( $payment, $index ) {
+                ->map( function ( $payment, $index ) {
                     $payment->selected = $index === 0;
 
                     return $payment;
@@ -92,7 +92,7 @@ class OrdersController extends DashboardController
         return $this->view( 'pages.dashboard.orders.templates.payment-receipt', [
             'payment' => $orderPayment,
             'order' => $order,
-            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
+            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function ( $payment ) {
                 return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
             }),
             'ordersService' => app()->make( OrdersService::class ),
@@ -180,7 +180,7 @@ class OrdersController extends DashboardController
                 ns()->option->get( 'ns_store_name', 'NexoPOS' )
             ),
             'orderTypes' => collect( $this->ordersService->getTypeOptions() )
-                ->filter( function( $type, $label ) {
+                ->filter( function ( $type, $label ) {
                     return in_array( $label, ns()->option->get( 'ns_pos_order_types' ) ?: [] );
                 }),
             'options' => Hook::filter( 'ns-pos-options', [
@@ -192,6 +192,7 @@ class OrdersController extends DashboardController
                 'ns_pos_order_sms' => ns()->option->get( 'ns_pos_order_sms', 'no'),
                 'ns_pos_sound_enabled' => ns()->option->get( 'ns_pos_sound_enabled', 'yes'),
                 'ns_pos_quick_product' => ns()->option->get( 'ns_pos_quick_product', 'no'),
+                'ns_pos_quick_product_default_unit' => ns()->option->get( 'ns_pos_quick_product_default_unit', 0 ),
                 'ns_pos_price_with_tax' => ns()->option->get( 'ns_pos_price_with_tax', 'no'),
                 'ns_pos_unit_price_ediable' => ns()->option->get( 'ns_pos_unit_price_ediable', 'no'),
                 'ns_pos_printing_enabled_for' => ns()->option->get( 'ns_pos_printing_enabled_for', 'only_paid_orders' ),
@@ -230,11 +231,12 @@ class OrdersController extends DashboardController
         $order->load( 'shipping_address' );
         $order->load( 'billing_address' );
         $order->load( 'user' );
+        $order->load( 'taxes' );
 
         $order->products = Hook::filter( 'ns-receipt-products', $order->products );
 
-        $order->paymentStatus       =   $this->ordersService->getPaymentLabel( $order->payment_status );
-        $order->deliveryStatus      =   $this->ordersService->getPaymentLabel( $order->delivery_status );
+        $order->paymentStatus = $this->ordersService->getPaymentLabel( $order->payment_status );
+        $order->deliveryStatus = $this->ordersService->getPaymentLabel( $order->delivery_status );
 
         return $this->view( 'pages.dashboard.orders.templates.invoice', [
             'order' => $order,
@@ -274,7 +276,7 @@ class OrdersController extends DashboardController
             'title' => sprintf( __( 'Order Receipt &mdash; %s' ), $order->code ),
             'optionsService' => $this->optionsService,
             'ordersService' => $this->ordersService,
-            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
+            'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function ( $payment ) {
                 return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
             }),
         ]);
@@ -298,7 +300,6 @@ class OrdersController extends DashboardController
     /**
      * Will perform a payment on a specific order
      *
-     * @param Order $order
      * @param Request $request
      * @return array
      */
@@ -379,8 +380,6 @@ class OrdersController extends DashboardController
     /**
      * Will change the order processing status
      *
-     * @param Request $request
-     * @param Order $order
      * @return string json response
      */
     public function changeOrderProcessingStatus( Request $request, Order $order )
@@ -391,8 +390,6 @@ class OrdersController extends DashboardController
     /**
      * Will change the order processing status
      *
-     * @param Request $request
-     * @param Order $order
      * @return string json response
      */
     public function changeOrderDeliveryStatus( Request $request, Order $order )

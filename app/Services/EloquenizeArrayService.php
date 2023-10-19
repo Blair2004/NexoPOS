@@ -8,7 +8,7 @@ class EloquenizeArrayService
 {
     public function parse( Builder $query, $data )
     {
-        $query->where( function( $query ) use ( $data ) {
+        $query->where( function ( $query ) use ( $data ) {
             foreach ( $data as $fieldName => $arguments ) {
                 match ( $arguments[ 'comparison' ] ) {
                     '<>' => $query->where( $fieldName, '<>', $arguments[ 'value' ] ),

@@ -27,7 +27,7 @@ class DoctorService
 
     public function createUserAttribute(): array
     {
-        User::get()->each( function( User $user ) {
+        User::get()->each( function ( User $user ) {
             if ( ! $user->attribute instanceof UserAttribute ) {
                 $attribute = new UserAttribute;
                 $attribute->user_id = $user->id;
@@ -82,7 +82,7 @@ class DoctorService
     public function fixDuplicateOptions()
     {
         $options = Option::get();
-        $options->each( function( $option ) {
+        $options->each( function ( $option ) {
             try {
                 $option->refresh();
                 if ( $option instanceof Option ) {
@@ -98,10 +98,10 @@ class DoctorService
 
     public function fixOrphanOrderProducts()
     {
-        $orderIds   =   Order::get( 'id' );
+        $orderIds = Order::get( 'id' );
 
-        $query  =   OrderProduct::whereNotIn( 'order_id', $orderIds );
-        $total  =   $query->count();
+        $query = OrderProduct::whereNotIn( 'order_id', $orderIds );
+        $total = $query->count();
         $query->delete();
 
         return sprintf( __( '%s products were freed' ), $total );
@@ -120,11 +120,11 @@ class DoctorService
          */
         $domain = Str::replaceFirst( 'http://', '', url( '/' ) );
         $domain = Str::replaceFirst( 'https://', '', $domain );
-        $domain = explode( ':', $domain )[0];
+        $withoutPort = explode( ':', $domain )[0];
 
         if ( ! env( 'SESSION_DOMAIN', false ) ) {
             DotenvEditor::load();
-            DotenvEditor::setKey( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', explode( ':', $domain )[0] ) );
+            DotenvEditor::setKey( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', $withoutPort ) );
             DotenvEditor::save();
         }
 
@@ -144,7 +144,7 @@ class DoctorService
         /**
          * @var ExpenseService $expenseService
          */
-        $expenseService     =   app()->make( ExpenseService::class );
+        $expenseService = app()->make( ExpenseService::class );
 
         CashFlow::where( 'order_id', '>', 0 )->delete();
         CashFlow::where( 'order_refund_id', '>', 0 )->delete();
@@ -152,11 +152,11 @@ class DoctorService
         /**
          * Step 1: Recompute from order sales
          */
-        $orders     =   Order::paymentStatus( Order::PAYMENT_PAID )->get();
-        
+        $orders = Order::paymentStatus( Order::PAYMENT_PAID )->get();
+
         $command->info( __( 'Restoring cash flow from paid orders...' ) );
-        
-        $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
+
+        $command->withProgressBar( $orders, function ( $order ) use ( $expenseService ) {
             $expenseService->handleCreatedOrder( $order );
         });
 
@@ -166,14 +166,14 @@ class DoctorService
          * Step 2: Recompute from refund
          */
         $command->info( __( 'Restoring cash flow from refunded orders...' ) );
-        
-        $orders     =   Order::paymentStatusIn([
+
+        $orders = Order::paymentStatusIn([
             Order::PAYMENT_REFUNDED,
-            Order::PAYMENT_PARTIALLY_REFUNDED
+            Order::PAYMENT_PARTIALLY_REFUNDED,
         ])->get();
 
-        $command->withProgressBar( $orders, function( $order ) use ( $expenseService ) {
-            $order->refundedProducts()->with( 'orderProduct' )->get()->each( function( $orderRefundedProduct ) use ( $order, $expenseService ) {
+        $command->withProgressBar( $orders, function ( $order ) use ( $expenseService ) {
+            $order->refundedProducts()->with( 'orderProduct' )->get()->each( function ( $orderRefundedProduct ) use ( $order, $expenseService ) {
                 $expenseService->createExpenseFromRefund(
                     order: $order,
                     orderProductRefund: $orderRefundedProduct,
@@ -188,7 +188,7 @@ class DoctorService
     public function fixCustomers()
     {
         $this->command
-            ->withProgressBar( Customer::with([ 'billing', 'shipping' ])->get(), function( $customer ) {
+            ->withProgressBar( Customer::with([ 'billing', 'shipping' ])->get(), function ( $customer ) {
                 if ( ! $customer->billing instanceof CustomerBillingAddress ) {
                     $billing = new CustomerBillingAddress;
                     $billing->customer_id = $customer->id;

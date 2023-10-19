@@ -422,7 +422,6 @@ class CustomerService
      * compute a reward assigned to a customer group
      * and issue a coupon if necessary
      *
-     * @param Order $order
      * @return void
      */
     public function computeReward( Order $order )
@@ -431,7 +430,7 @@ class CustomerService
 
         if ( $reward instanceof RewardSystem ) {
             $points = 0;
-            $reward->rules->each( function( $rule ) use ( $order, &$points ) {
+            $reward->rules->each( function ( $rule ) use ( $order, &$points ) {
                 if ( $order->total >= $rule->from && $order->total <= $rule->to ) {
                     $points += (float) $rule->reward;
                 }
@@ -555,7 +554,7 @@ class CustomerService
             $this->setActiveStatus( $customerCoupon );
         } else {
             $customerCoupon
-                ->each( function( $customerCoupon ) use ( $coupon  ) {
+                ->each( function ( $customerCoupon ) use ( $coupon  ) {
                     $customerCoupon->name = $coupon->name;
                     $customerCoupon->limit_usage = $coupon->limit_usage;
                     $customerCoupon->code = $coupon->code;
@@ -591,7 +590,7 @@ class CustomerService
     {
         CustomerCoupon::couponID( $coupon->id )
             ->get()
-            ->each( function( $coupon ) {
+            ->each( function ( $coupon ) {
                 $coupon->delete();
             });
     }

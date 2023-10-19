@@ -84,7 +84,7 @@ class DashboardController extends Controller
      */
     public function hookOutput( $name )
     {
-        Hook::addAction( 'ns-dashboard-footer', function( Output $output ) use ( $name ) {
+        Hook::addAction( 'ns-dashboard-footer', function ( Output $output ) use ( $name ) {
             Hook::action( $name, $output );
         }, 15 );
     }
@@ -130,7 +130,7 @@ class DashboardController extends Controller
         DashboardDay::from( $currentWeekStarts->toDateTimeString() )
             ->to( $currentWeekEnds->toDateTimeString() )
             ->get()
-            ->each( function( $report ) use ( &$weekMap ) {
+            ->each( function ( $report ) use ( &$weekMap ) {
                 if ( ! isset( $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'current' ][ 'entries' ] ) ) {
                     $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'current' ][ 'entries' ] = [];
                 }
@@ -141,7 +141,7 @@ class DashboardController extends Controller
         DashboardDay::from( $lastWeekStarts->toDateTimeString() )
             ->to( $lastWeekEnds->toDateTimeString() )
             ->get()
-            ->each( function( $report ) use ( &$weekMap ) {
+            ->each( function ( $report ) use ( &$weekMap ) {
                 if ( ! isset( $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'previous' ][ 'entries' ] ) ) {
                     $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'previous' ][ 'entries' ] = [];
                 }

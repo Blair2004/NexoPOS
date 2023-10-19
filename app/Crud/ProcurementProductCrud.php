@@ -107,8 +107,6 @@ class ProcurementProductCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -141,7 +139,6 @@ class ProcurementProductCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -223,7 +220,6 @@ class ProcurementProductCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  ProcurementProduct $entry
      * @return  void
      */
     public function afterPost( $request, ProcurementProduct $entry )
@@ -241,7 +237,7 @@ class ProcurementProductCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -436,7 +432,7 @@ class ProcurementProductCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'procurements/products' ),
             'create' => 'javascript:void(0)', //ns()->url( 'dashboard/' . '/procurements/products/create' ),
             'edit' => ns()->url( 'dashboard/' . 'procurements/products/edit/' ),

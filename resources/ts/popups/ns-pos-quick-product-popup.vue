@@ -111,10 +111,20 @@ export default {
                                     label: group.name,
                                     value: group.id,
                                 }
-                            })
+                            });
+
+                            // if we have at least one tax group, this latest is selected by default.
+                            if ( result[1][0].id !== undefined ) {
+                                field.value = result[1][0].id || this.options.ns_pos_tax_group;
+                            }
+                        }
+
+                        if ( field.name === 'tax_type' ) {
+                            field.value = this.options.tax_type || 'inclusive';
                         }
 
                         if ( field.name === 'unit_id' ) {
+                            field.value     =   this.options.ns_pos_quick_product_default_unit;
                             field.options   =   result[0].map( unit => {
                                 return {
                                     label: unit.name,
@@ -135,6 +145,10 @@ export default {
         buildForm() {
             this.fields     =   this.validation.createFields( this.fields );
             this.loaded     =   true;
+
+            setTimeout(() => {
+                this.$popup.container.querySelector( '#name' ).select();
+            }, 100);
         }
     },
     computed: {
@@ -145,6 +159,7 @@ export default {
     data() {
         return {
             units: [],
+            options: POS.options.getValue(),
             tax_groups: [],
             loaded: false,
             validation: new FormValidation,
@@ -184,6 +199,7 @@ export default {
                     type: 'text',
                     description: __( 'Define what is the sale price of the item.' ),
                     validation: '',
+                    value: 0,
                     show( form ) {
                         return form.product_type === 'product';
                     }

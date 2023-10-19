@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+        Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
             $table->float( 'value' )->default(0)->change();
         });
     }

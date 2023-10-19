@@ -168,7 +168,6 @@ class ReportService
     /**
      * will update wasted goods report
      *
-     * @param ProductHistory $history
      * @return void
      */
     public function handleStockAdjustment( ProductHistory $history )
@@ -234,7 +233,7 @@ class ReportService
             ->where( 'created_at', '<=', $endsAt )
             ->get();
 
-        $cashFlows->each( function( $cashFlow ) {
+        $cashFlows->each( function ( $cashFlow ) {
             /**
              * let's clear unassigned to orders
              */
@@ -296,7 +295,6 @@ class ReportService
      * Will delete all cash flow
      * related to the specific order
      *
-     * @param Order $order
      * @return void
      */
     public function deleteOrderCashFlow( Order $order )
@@ -308,7 +306,6 @@ class ReportService
      * Will delete all procurement
      * related to a specific cash flow
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function deleteProcurementCashFlow( Procurement $procurement )
@@ -764,7 +761,7 @@ class ReportService
                 ->where( $orderTable . '.created_at', '<=', $report[ 'endDate' ] )
                 ->whereIn( $orderTable . '.payment_status', [ Order::PAYMENT_PAID ])
                 ->get()
-                ->map( function( $product ) {
+                ->map( function ( $product ) {
                     $product->difference = 0;
 
                     return $product;
@@ -776,7 +773,7 @@ class ReportService
             $default->total_price = 0;
             $default->quantity = 0;
 
-            $oldProduct = collect( $previousDates[ 'previous' ][ 'products' ] )->filter( function( $previousProduct ) use ( $product ) {
+            $oldProduct = collect( $previousDates[ 'previous' ][ 'products' ] )->filter( function ( $previousProduct ) use ( $product ) {
                 return $previousProduct->product_id === $product->product_id;
             })->first() ?: $default;
 
@@ -825,7 +822,7 @@ class ReportService
 
     private function getSalesSummary( $orders )
     {
-        $allSales = $orders->map( function( $order ) {
+        $allSales = $orders->map( function ( $order ) {
             return [
                 'subtotal' => $order->subtotal,
                 'sales_discounts' => $order->discount,
@@ -864,7 +861,7 @@ class ReportService
         $productsIds = $products->map( fn( $product ) => $product->product_id )->unique();
 
         return [
-            'result' => $productsIds->map( function( $id ) use ( $products ) {
+            'result' => $productsIds->map( function ( $id ) use ( $products ) {
                 $product = $products->where( 'product_id', $id )->first();
                 $filtredProdcuts = $products->where( 'product_id', $id )->all();
 
@@ -913,7 +910,7 @@ class ReportService
         /**
          * That will sum all the total prices
          */
-        $categories->each( function( $category ) use ( $products ) {
+        $categories->each( function ( $category ) use ( $products ) {
             $rawProducts = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
 
             $products = [];
@@ -922,7 +919,7 @@ class ReportService
              * this will merge similar products
              * to summarize them.
              */
-            $rawProducts->each( function( $product ) use ( &$products ) {
+            $rawProducts->each( function ( $product ) use ( &$products ) {
                 if ( isset( $products[ $product->product_id ] ) ) {
                     $products[ $product->product_id ][ 'quantity' ] += $product->quantity;
                     $products[ $product->product_id ][ 'tax_value' ] += $product->tax_value;
@@ -963,7 +960,7 @@ class ReportService
             Cache::forget( $cacheKey );
         }
 
-        return Cache::remember( $cacheKey, now()->addDay(1), function() use ( $startDate, $cashier, $endDate ) {
+        return Cache::remember( $cacheKey, now()->addDay(1), function () use ( $startDate, $cashier, $endDate ) {
             $startDate = $startDate === null ? ns()->date->getNow()->startOfDay()->toDateTimeString() : $startDate;
             $endDate = $endDate === null ? ns()->date->getNow()->endOfDay()->toDateTimeString() : $endDate;
 
@@ -1049,8 +1046,8 @@ class ReportService
     {
         $date = ns()->date->copy();
         $date->year = $year;
-        $startOfYear = $date->startOfYear();
-        $endOfYear = $date->endOfYear();
+        $startOfYear = $date->copy()->startOfYear();
+        $endOfYear = $date->copy()->endOfYear();
 
         while ( ! $startOfYear->isSameMonth( $endOfYear ) ) {
             $this->computeDashboardMonth( $startOfYear->copy() );
@@ -1112,7 +1109,6 @@ class ReportService
     /**
      * Will return the actual customer statement
      *
-     * @param Customer $customer
      * @return array
      */
     public function getCustomerStatement( Customer $customer, $rangeStarts = null, $rangeEnds = null )

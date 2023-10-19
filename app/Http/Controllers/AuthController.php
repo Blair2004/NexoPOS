@@ -239,8 +239,6 @@ class AuthController extends Controller
 
     /**
      * Process user registration
-     *
-     * @param SignUpRequest $request
      */
     public function postSignUp( SignUpRequest $request )
     {
@@ -315,7 +313,7 @@ class AuthController extends Controller
              * The administrator might be aware
              * of the user having created their account.
              */
-            Role::namespace( 'admin' )->users->each( function( $admin ) use ( $user ) {
+            Role::namespace( 'admin' )->users->each( function ( $admin ) use ( $user ) {
                 Mail::to( $admin->email )
                     ->queue( new UserRegisteredMail( $admin, $user ) );
             });

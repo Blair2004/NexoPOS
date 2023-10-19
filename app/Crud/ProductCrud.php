@@ -105,8 +105,6 @@ class ProductCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -141,7 +139,6 @@ class ProductCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -343,7 +340,7 @@ class ProductCrud extends CrudService
                                 [
                                     'type' => 'hidden',
                                     'name' => 'product_subitems',
-                                    'value' => $entry !== null ? $entry->sub_items()->get()->map( function( $subItem ) {
+                                    'value' => $entry !== null ? $entry->sub_items()->get()->map( function ( $subItem ) {
                                         $subItem->load( 'product.unit_quantities.unit' );
 
                                         return [
@@ -401,8 +398,8 @@ class ProductCrud extends CrudService
                                      */
                                     'groups' => ( $entry instanceof Product ? ProductUnitQuantity::withProduct( $entry->id )
                                         ->get()
-                                        ->map( function( $productUnitQuantity ) use ( $fields ) {
-                                            return collect( $fields )->map( function( $field ) use ( $productUnitQuantity ) {
+                                        ->map( function ( $productUnitQuantity ) use ( $fields ) {
+                                            return collect( $fields )->map( function ( $field ) use ( $productUnitQuantity ) {
                                                 $field[ 'value' ] = $productUnitQuantity->{ $field[ 'name' ] };
 
                                                 return $field;
@@ -477,7 +474,7 @@ class ProductCrud extends CrudService
                                     'description' => __( 'Define whether the image should be primary. If there are more than one primary image, one will be chosen for you.' ),
                                 ],
                             ],
-                            'groups' => $entry ? $entry->galleries->map( function( $gallery ) {
+                            'groups' => $entry ? $entry->galleries->map( function ( $gallery ) {
                                 return [
                                     [
                                         'type' => 'media',
@@ -541,7 +538,6 @@ class ProductCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  Product $entry
      * @return  void
      */
     public function afterPost( $request, Product $entry )
@@ -811,7 +807,7 @@ class ProductCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'products' ),
             'create' => ns()->url( 'dashboard/' . 'products/create' ),
             'edit' => ns()->url( 'dashboard/' . 'products/edit/' ),

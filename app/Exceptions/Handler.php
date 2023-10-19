@@ -78,7 +78,6 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Throwable
@@ -151,7 +150,7 @@ class Handler extends ExceptionHandler
                 ],
             ]);
 
-            $exceptionResponse = $exceptions->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
+            $exceptionResponse = $exceptions->map( function ( $exceptionConfig, $class ) use ( $exception, $request ) {
                 if ( $exception instanceof $class ) {
                     if ( $request->expectsJson() ) {
                         Log::error( $exception->getMessage() );

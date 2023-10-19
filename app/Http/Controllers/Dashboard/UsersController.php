@@ -124,7 +124,6 @@ class UsersController extends DashboardController
     /**
      * update roles permissions
      *
-     * @param Request $request
      * @return Json
      */
     public function updateRole( Request $request )

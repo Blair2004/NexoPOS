@@ -25,19 +25,19 @@ class SaveSettingsTest extends TestCase
         );
 
         collect( Storage::disk( 'ns' )->files( 'app/Settings' ) )
-            ->map( function( $fileName ) {
+            ->map( function ( $fileName ) {
                 $fileName = collect( explode( '/', $fileName ) );
                 $file = pathinfo( $fileName->last() );
 
                 return 'App\\Settings\\' . $file[ 'filename' ];
             })
-            ->each( function( $class ) {
+            ->each( function ( $class ) {
                 $object = new $class;
 
-                $form = collect( $object->getForm()[ 'tabs' ] )->mapWithKeys( function( $value, $key ) {
+                $form = collect( $object->getForm()[ 'tabs' ] )->mapWithKeys( function ( $value, $key ) {
                     return [
                         $key => collect( $value[ 'fields' ] )
-                            ->mapWithKeys( function( $field ) {
+                            ->mapWithKeys( function ( $field ) {
                                 return [
                                     $field[ 'name' ] => match ( $field[ 'name' ] ) {
                                         'ns_store_language' => 'en',

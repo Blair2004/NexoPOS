@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         if ( Schema::hasTable( 'nexopos_orders_products' ) ) {
-            Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+            Schema::table( 'nexopos_orders_products', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_orders_products', 'total_purchase_price' ) ) {
                     $table->float( 'total_purchase_price' )->default(0);
                 }

@@ -31,7 +31,7 @@ trait WithTaxTest
         $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id' => $taxGroup->id,
             'tax_type' => 'exclusive',
-            'taxes' => $taxGroup->taxes->map( function( $tax ) {
+            'taxes' => $taxGroup->taxes->map( function ( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -39,7 +39,7 @@ trait WithTaxTest
             }),
         ]);
 
-        $this->assertCheck( $details, function( $order ) use ( $orderService  ) {
+        $this->assertCheck( $details, function ( $order ) use ( $orderService  ) {
             $this->assertEquals(
                 (float) $orderService->getOrderProductsTaxes( Order::find( $order[ 'id' ] ) ),
                 (float) $order[ 'products_tax_value' ],
@@ -64,7 +64,7 @@ trait WithTaxTest
         $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id' => $taxGroup->id,
             'tax_type' => 'exclusive',
-            'taxes' => $taxGroup->taxes->map( function( $tax ) {
+            'taxes' => $taxGroup->taxes->map( function ( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -72,7 +72,7 @@ trait WithTaxTest
             }),
         ]);
 
-        $this->assertCheck( $details, function( $order ) use ( $orderService ) {
+        $this->assertCheck( $details, function ( $order ) use ( $orderService ) {
             $this->assertEquals(
                 (float) $orderService->getOrderProductsTaxes( Order::find( $order[ 'id' ] ) ),
                 (float) $order[ 'products_tax_value' ],
@@ -93,7 +93,7 @@ trait WithTaxTest
         $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id' => $taxGroup->id,
             'tax_type' => 'exclusive',
-            'taxes' => $taxGroup->taxes->map( function( $tax ) {
+            'taxes' => $taxGroup->taxes->map( function ( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -111,7 +111,7 @@ trait WithTaxTest
         $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id' => $taxGroup->id,
             'tax_type' => 'inclusive',
-            'taxes' => $taxGroup->taxes->map( function( $tax ) {
+            'taxes' => $taxGroup->taxes->map( function ( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -129,7 +129,7 @@ trait WithTaxTest
         $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id' => $taxGroup->id,
             'tax_type' => 'exclusive',
-            'taxes' => $taxGroup->taxes->map( function( $tax ) {
+            'taxes' => $taxGroup->taxes->map( function ( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -152,7 +152,7 @@ trait WithTaxTest
         $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id' => $taxGroup->id,
             'tax_type' => 'exclusive',
-            'taxes' => $taxGroup->taxes->map( function( $tax ) {
+            'taxes' => $taxGroup->taxes->map( function ( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 

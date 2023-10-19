@@ -129,8 +129,6 @@ class CustomerAccountCrud extends CrudService
 
     /**
      * Define Constructor
-     *
-     * @param
      */
     public function __construct()
     {
@@ -226,7 +224,7 @@ class CustomerAccountCrud extends CrudService
             __( 'Total' )
         );
 
-        $totalPositive = collect( $event->entries[ 'data' ] )->map( function( $entry ) {
+        $totalPositive = collect( $event->entries[ 'data' ] )->map( function ( $entry ) {
             if ( in_array( $entry->getOriginalValue( 'operation' ), [
                 CustomerAccountHistory::OPERATION_ADD,
                 CustomerAccountHistory::OPERATION_REFUND,
@@ -235,7 +233,7 @@ class CustomerAccountCrud extends CrudService
             }
         })->sum();
 
-        $totalNegative = collect( $event->entries[ 'data' ] )->map( function( $entry ) {
+        $totalNegative = collect( $event->entries[ 'data' ] )->map( function ( $entry ) {
             if ( in_array( $entry->getOriginalValue( 'operation' ), [
                 CustomerAccountHistory::OPERATION_DEDUCT,
                 CustomerAccountHistory::OPERATION_PAYMENT,
@@ -275,7 +273,6 @@ class CustomerAccountCrud extends CrudService
     /**
      * Check whether a feature is enabled
      *
-     * @return  bool
      **/
     public function isEnabled( $feature ): bool
     {
@@ -374,7 +371,6 @@ class CustomerAccountCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @param  CustomerAccountHistory $entry
      * @return  void
      */
     public function afterPost( $request, CustomerAccountHistory $entry )
@@ -392,7 +388,7 @@ class CustomerAccountCrud extends CrudService
     {
         switch ( $param ) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -579,7 +575,7 @@ class CustomerAccountCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
+        return [
             'list' => ns()->url( 'dashboard/' . 'customers/' . '/account-history' ),
             'create' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/create' ),
             'edit' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/edit/' ),

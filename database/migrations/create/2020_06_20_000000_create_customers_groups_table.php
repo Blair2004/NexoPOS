@@ -17,7 +17,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_customers_groups' ) ) {
-            Schema::createIfMissing( 'nexopos_customers_groups', function( Blueprint $table ) {
+            Schema::createIfMissing( 'nexopos_customers_groups', function ( Blueprint $table ) {
                 $table->bigIncrements('id');
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();

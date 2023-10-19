@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_orders_coupons', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_coupons', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_orders_coupons', 'code' ) ) {
                 $table->string( 'code' );
             }

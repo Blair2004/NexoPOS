@@ -60,7 +60,6 @@ class DashboardDay extends NsModel
      *
      * @todo Maybe there is a better way to do this
      *
-     * @param DashboardDay $day
      * @return DashboardDay
      */
     public static function forLastRecentDay( DashboardDay $day )

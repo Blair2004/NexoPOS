@@ -47,7 +47,7 @@ class CrudPutRequest extends BaseCrudRequest
          * This will flat the rules to create a dot-like
          * validation rules array
          */
-        $flatRules = collect( $isolatedRules )->mapWithKeys( function( $rule ) {
+        $flatRules = collect( $isolatedRules )->mapWithKeys( function ( $rule ) {
             return [ $rule[0] => $rule[1] ];
         })->toArray();
 

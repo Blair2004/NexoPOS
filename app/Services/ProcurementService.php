@@ -119,7 +119,7 @@ class ProcurementService
          * We don't want the event ProcurementBeforeCreateEvent
          * and ProcurementAfterCreateEvent to trigger while saving
          */
-        Procurement::withoutEvents( function() use ( $procurement, $data ) {
+        Procurement::withoutEvents( function () use ( $procurement, $data ) {
             $procurement->name = $data[ 'name' ];
 
             foreach ( $data[ 'general' ] as $field => $value ) {
@@ -197,7 +197,7 @@ class ProcurementService
          * We won't dispatch the even while savin the procurement
          * however we'll do that once the product has been stored.
          */
-        Procurement::withoutEvents( function() use ( $data, $procurement ) {
+        Procurement::withoutEvents( function () use ( $data, $procurement ) {
             if ( $procurement->delivery_status === 'stocked' ) {
                 throw new Exception( __( 'Unable to edit a procurement that has already been stocked. Please consider performing and stock adjustment.' ) );
             }
@@ -255,7 +255,7 @@ class ProcurementService
 
         event( new ProcurementBeforeDeleteEvent( $procurement ) );
 
-        $totalDeletions = $procurement->products->map( function( ProcurementProduct $product ) use ( $procurement ) {
+        $totalDeletions = $procurement->products->map( function ( ProcurementProduct $product ) use ( $procurement ) {
             return $this->deleteProduct( $product, $procurement );
         })->count();
 
@@ -272,13 +272,11 @@ class ProcurementService
     /**
      * Attempt a product stock removal
      * if the procurement has been stocked
-     *
-     * @param Procurement $procurement
      */
     public function attemptProductsStockRemoval( Procurement $procurement )
     {
         if ( $procurement->delivery_status === 'stocked' ) {
-            $procurement->products->each( function( ProcurementProduct $procurementProduct ) {
+            $procurement->products->each( function ( ProcurementProduct $procurementProduct ) {
                 $unitQuantity = ProductUnitQuantity::withProduct( $procurementProduct->product_id )
                     ->withUnit( $procurementProduct->unit_id )
                     ->first();
@@ -300,7 +298,7 @@ class ProcurementService
      */
     public function deleteProcurementProducts( Procurement $procurement )
     {
-        $procurement->products->each( function( ProcurementProduct $product ) use ( $procurement ) {
+        $procurement->products->each( function ( ProcurementProduct $product ) use ( $procurement ) {
             $this->deleteProduct( $product, $procurement );
         });
     }
@@ -311,7 +309,7 @@ class ProcurementService
     public function computeValue( $id )
     {
         $procurement = Procurement::findOrFail( $id );
-        $value = $procurement->products->map( function( $product ) {
+        $value = $procurement->products->map( function ( $product ) {
             return $product->price * $product->quantity;
         });
     }
@@ -373,8 +371,6 @@ class ProcurementService
      * This only save the product
      * but doesn't affect the stock
      *
-     * @param Procurement $procurement
-     * @param Collection $products
      * @return Collection $products
      */
     public function saveProducts( Procurement $procurement, Collection $products )
@@ -383,7 +379,7 @@ class ProcurementService
          * We'll just make sure to have a reference
          * of all the product that has been procured.
          */
-        $procuredProducts = $products->map( function( $procuredProduct ) use ( $procurement ) {
+        $procuredProducts = $products->map( function ( $procuredProduct ) use ( $procurement ) {
             $product = Product::find( $procuredProduct[ 'product_id' ] );
 
             /**
@@ -557,7 +553,7 @@ class ProcurementService
          */
         $productService = app()->make( ProductService::class );
 
-        Procurement::withoutEvents( function() use ( $procurement, $productService ) {
+        Procurement::withoutEvents( function () use ( $procurement, $productService ) {
             /**
              * Let's loop all procured produt
              * and get unit quantity if that exists
@@ -566,7 +562,7 @@ class ProcurementService
             $purchases = $procurement
                 ->products()
                 ->get()
-                ->map( function( $procurementProduct ) use (  $productService ) {
+                ->map( function ( $procurementProduct ) use (  $productService ) {
                     $unitPrice = 0;
                     $unit = $productService->getUnitQuantity( $procurementProduct->product_id, $procurementProduct->unit_id );
 
@@ -609,7 +605,7 @@ class ProcurementService
     {
         $procurement = Procurement::find( $id );
 
-        $procurement->products->each( function( $product ) {
+        $procurement->products->each( function ( $product ) {
             $product->delete();
         });
 
@@ -634,7 +630,7 @@ class ProcurementService
      */
     public function deleteProducts( Procurement $procurement )
     {
-        $procurement->products->each( function( $product ) {
+        $procurement->products->each( function ( $product ) {
             $product->delete();
         });
 
@@ -656,7 +652,7 @@ class ProcurementService
     {
         $procurement = $this->get( $procurement_id );
 
-        return $procurement->products->filter( function( $product ) use ( $product_id ) {
+        return $procurement->products->filter( function ( $product ) use ( $product_id ) {
             return (int) $product->id === (int) $product_id;
         })->count() > 0;
     }
@@ -790,14 +786,14 @@ class ProcurementService
             ->pluck( 'id' );
 
         $result = collect( $products )
-            ->map( function( $product ) use ( $productsId ) {
+            ->map( function ( $product ) use ( $productsId ) {
                 if ( ! in_array( $product[ 'id' ], $productsId ) ) {
                     throw new Exception( sprintf( __( 'The product with the following ID "%s" is not initially included on the procurement' ), $product[ 'id' ] ) );
                 }
 
                 return $product;
             })
-            ->map( function( $product ) {
+            ->map( function ( $product ) {
                 return $this->updateProcurementProduct( $product[ 'id' ], $product );
             });
 
@@ -822,7 +818,7 @@ class ProcurementService
 
     public function setDeliveryStatus( Procurement $procurement, string $status )
     {
-        Procurement::withoutEvents( function() use ( $procurement, $status ) {
+        Procurement::withoutEvents( function () use ( $procurement, $status ) {
             $procurement->delivery_status = $status;
             $procurement->save();
         });
@@ -833,7 +829,6 @@ class ProcurementService
      * this will actually save the history and update
      * the product stock
      *
-     * @param Procurement $procurement
      * @return void
      */
     public function handleProcurement( Procurement $procurement )
@@ -841,7 +836,7 @@ class ProcurementService
         event( new ProcurementBeforeHandledEvent( $procurement ) );
 
         if ( $procurement->delivery_status === Procurement::DELIVERED ) {
-            $procurement->products->map( function( ProcurementProduct $product ) {
+            $procurement->products->map( function ( ProcurementProduct $product ) {
                 /**
                  * We'll keep an history of what has just happened.
                  * in order to monitor how the stock evolve.
@@ -904,7 +899,7 @@ class ProcurementService
             ->autoApproval()
             ->get();
 
-        $procurements->each( function( Procurement $procurement ) {
+        $procurements->each( function ( Procurement $procurement ) {
             $this->setDeliveryStatus( $procurement, Procurement::DELIVERED );
             $this->handleProcurement( $procurement );
         });
@@ -955,9 +950,9 @@ class ProcurementService
         return Product::query()
             ->whereIn( 'type', [
                 Product::TYPE_DEMATERIALIZED,
-                Product::TYPE_MATERIALIZED
+                Product::TYPE_MATERIALIZED,
             ])
-            ->where( function( $query ) use ( $argument ) {
+            ->where( function ( $query ) use ( $argument ) {
                 $query->orWhere( 'name', 'LIKE', "%{$argument}%" )
                 ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
                 ->orWhere( 'barcode', 'LIKE', "%{$argument}%" );
@@ -965,12 +960,12 @@ class ProcurementService
             ->with( 'unit_quantities.unit' )
             ->limit( $limit )
             ->get()
-            ->map( function( $product ) {
+            ->map( function ( $product ) {
                 $units = json_decode( $product->purchase_unit_ids );
 
                 if ( $units ) {
                     $product->purchase_units = collect();
-                    collect( $units )->each( function( $unitID ) use ( &$product ) {
+                    collect( $units )->each( function ( $unitID ) use ( &$product ) {
                         $product->purchase_units->push( Unit::find( $unitID ) );
                     });
                 }
@@ -979,7 +974,7 @@ class ProcurementService
                  * We'll pull the last purchase
                  * price for the item retreived
                  */
-                $product->unit_quantities->each( function( $unitQuantity ) {
+                $product->unit_quantities->each( function ( $unitQuantity ) {
                     $lastPurchase = ProcurementProduct::where( 'product_id', $unitQuantity->product_id )
                         ->where( 'unit_id', $unitQuantity->unit_id )
                         ->orderBy( 'updated_at', 'desc' )
