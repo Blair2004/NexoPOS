@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Models\User;
 use App\Models\UserWidget;
 use App\Widgets\BestCashiersWidget;
@@ -55,7 +56,7 @@ class WidgetService
 
     public function __construct( private UsersService $usersService )
     {
-        $this->widgets = [
+        $this->widgets = Hook::filter( 'ns-dashboard-widgets', [
             IncompleteSaleCardWidget::class,
             ExpenseCardWidget::class,
             SaleCardWidget::class,
@@ -64,7 +65,7 @@ class WidgetService
             OrdersChartWidget::class,
             OrdersSummaryWidget::class,
             BestCashiersWidget::class,
-        ];
+        ]);
     }
 
     /**
