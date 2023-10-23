@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Validator;
 
 class UserProfileForm extends SettingsPage
 {
-    protected $identifier = 'ns.user-profile';
+    const IDENTIFIER = 'ns.user-profile';
 
     public function __construct()
     {

@@ -6,7 +6,7 @@ use App\Services\SettingsPage;
 
 class InvoiceSettings extends SettingsPage
 {
-    protected $identifier = 'ns.invoice-settings';
+    const IDENTIFIER = 'ns.invoice-settings';
 
     public function __construct()
     {

@@ -19,7 +19,7 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * default identifier
      */
-    protected $identifier = 'products/units';
+    const IDENTIFIER = 'products/units';
 
     /**
      * Define namespace

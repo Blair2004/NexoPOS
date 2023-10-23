@@ -7,7 +7,7 @@ use App\Services\SettingsPage;
 
 class WorkersSettings extends SettingsPage
 {
-    protected $identifier = 'ns.workers';
+    const IDENTIFIER = 'ns.workers';
 
     public function __construct()
     {

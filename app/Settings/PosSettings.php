@@ -7,7 +7,8 @@ use App\Services\SettingsPage;
 
 class PosSettings extends SettingsPage
 {
-    public $identifier = 'ns.pos';
+    const IDENTIFIER = 'ns.pos';
+    const AUTOLOAD = true;
 
     public function __construct()
     {

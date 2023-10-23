@@ -6,7 +6,7 @@ use App\Services\SettingsPage;
 
 class SuppliesDeliveriesSettings extends SettingsPage
 {
-    protected $identifier = 'ns.supplies-deliveries';
+    const IDENTIFIER = 'ns.supplies-deliveries';
 
     public function __construct()
     {

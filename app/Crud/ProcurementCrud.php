@@ -20,7 +20,7 @@ class ProcurementCrud extends CrudService
     /**
      * base route name
      */
-    protected $identifier = '/procurements';
+    const IDENTIFIER = '/procurements';
 
     /**
      * Define namespace

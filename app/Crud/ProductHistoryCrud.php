@@ -21,7 +21,7 @@ class ProductHistoryCrud extends CrudService
     /**
      * default identifier
      */
-    protected $identifier = 'products/histories';
+    const IDENTIFIER = 'products/histories';
 
     /**
      * Define namespace

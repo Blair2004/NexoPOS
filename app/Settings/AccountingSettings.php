@@ -6,7 +6,7 @@ use App\Services\SettingsPage;
 
 class AccountingSettings extends SettingsPage
 {
-    protected $identifier = 'ns.accounting';
+    const IDENTIFIER = 'ns.accounting';
 
     public function __construct()
     {

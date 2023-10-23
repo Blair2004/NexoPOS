@@ -37,8 +37,8 @@ class SettingsController extends DashboardController
         switch ( $identifier ) {
             case 'customers': return $this->customersSettings();
                 break;
-            case 'general': return $this->generalSettings();
-                break;
+            // case 'general': return $this->generalSettings();
+            //     break;
             case 'invoices': return $this->invoiceSettings();
                 break;
             case 'orders': return $this->ordersSettings();
@@ -123,7 +123,7 @@ class SettingsController extends DashboardController
             return $settings->getForm();
         }
 
-        throw new Exception( __( 'Unable to initiallize the settings page. The identifier "' . $identifier . ', hasn\'t returned any SettingsPage instance."' ) );
+        throw new Exception( __( 'Unable to initiallize the settings page. The identifier "' . $identifier . '", doesn\'t belong to a valid SettingsPage instance.' ) );
     }
 
     public function customersSettings()
@@ -134,6 +134,9 @@ class SettingsController extends DashboardController
         ]);
     }
 
+    /**
+     * @deprecated
+     */
     public function generalSettings()
     {
         return $this->view( 'pages.dashboard.settings.general', [

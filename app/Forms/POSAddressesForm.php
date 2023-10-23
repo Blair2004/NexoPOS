@@ -6,7 +6,7 @@ use App\Services\SettingsPage;
 
 class POSAddressesForm extends SettingsPage
 {
-    protected $identifier = 'ns.pos-addresses';
+    const IDENTIFIER = 'ns.pos-addresses';
 
     protected $form;
 

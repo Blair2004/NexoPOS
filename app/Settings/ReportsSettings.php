@@ -6,7 +6,7 @@ use App\Services\SettingsPage;
 
 class ReportsSettings extends SettingsPage
 {
-    protected $identifier = 'ns.reports';
+    const IDENTIFIER = 'ns.reports';
 
     public function __construct()
     {

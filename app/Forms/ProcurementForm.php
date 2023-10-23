@@ -9,7 +9,7 @@ use App\Services\SettingsPage;
 
 class ProcurementForm extends SettingsPage
 {
-    protected $identifier = 'ns.procurement';
+    const IDENTIFIER = 'ns.procurement';
 
     public $form;
 

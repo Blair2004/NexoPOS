@@ -8,7 +8,7 @@ use App\Services\SettingsPage;
 
 class ResetForm extends SettingsPage
 {
-    protected $identifier = 'ns.reset';
+    const IDENTIFIER = 'ns.reset';
 
     protected $form;
 

@@ -9,11 +9,15 @@ use App\Services\SettingsPage;
 
 class GeneralSettings extends SettingsPage
 {
-    protected $identifier = 'ns.general';
+    const IDENTIFIER = 'ns.general';
+    
+    const AUTOLOAD = true;
 
     public function __construct()
     {
         $this->form = [
+            'title' => __( 'General Settings' ),
+            'description' => __( 'Configure the general settings of the application.' ),
             'tabs' => [
                 'identification' => [
                     'label' => __( 'Identification' ),

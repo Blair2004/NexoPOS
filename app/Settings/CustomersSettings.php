@@ -7,7 +7,9 @@ use App\Services\SettingsPage;
 
 class CustomersSettings extends SettingsPage
 {
-    protected $identifier = 'ns.customers';
+    const IDENTIFIER = 'ns.customers';
+
+    const AUTOLOAD = true;
 
     public function __construct()
     {

@@ -13,9 +13,9 @@ class SettingsPage
 
     protected $form = [];
 
-    protected $labels = [];
+    protected $slug;
 
-    protected $identifier;
+    protected $routeName;
 
     /**
      * returns the defined form
@@ -43,46 +43,64 @@ class SettingsPage
         })->toArray();
     }
 
-    public function getLabels()
+    public function getSlug()
     {
-        return $this->labels;
-    }
-
-    public function getNamespace()
-    {
-        return $this->identifier;
+        return $this->slug  ?:  '/settings/' . $this->getIdentifier();
     }
 
     public function getIdentifier()
     {
-        return $this->identifier;
+        return get_called_class()::IDENTIFIER;
+    }
+
+    /**
+     * In case the form is used as a resource,
+     * "index" is used as a main method.
+     */
+    public static function index()
+    {
+        return self::renderForm();
     }
 
     public static function renderForm()
     {
         $className = get_called_class();
-        $form = new $className;
+        $settings = new $className;
+
+        dd(
+            $settings->getForm()
+        );
 
         return View::make( 'pages.dashboard.settings.form', [
-            'title' => $form->getLabels()[ 'title' ] ?? __( 'Untitled Settings Page' ),
+            'title' => $settings->getLabels()[ 'title' ] ?? __( 'Untitled Settings Page' ),
 
             /**
              * retrive the description provided on the SettingsPage instance.
              * Otherwhise a default settings is used .
              */
-            'description' => $form->getLabels()[ 'description' ] ?? __( 'No description provided for this settings page.' ),
+            'description' => $settings->getLabels()[ 'description' ] ?? __( 'No description provided for this settings page.' ),
 
             /**
-             * retrieve the identifier of the form if it's defined.
-             * this is used to load the form asynchronously.
+             * retrieve the identifier of the settings if it's defined.
+             * this is used to load the settings asynchronously.
              */
-            'identifier' => $form->getIdentifier(),
+            'identifier' => $settings->getIdentifier(),
 
             /**
              * Provided to render the side menu.
              */
             'menus' => app()->make( MenuService::class ),
         ]);
+    }
+
+    public function getRoute()
+    {
+        return ns()->route( $this->routeName );
+    }
+
+    public function getRouteName()
+    {
+        return $this->routeName;
     }
 
     /**

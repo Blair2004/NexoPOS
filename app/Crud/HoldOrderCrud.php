@@ -24,7 +24,7 @@ class HoldOrderCrud extends CrudService
      *
      * @param  string
      */
-    protected $identifier = 'ns.hold-orders';
+    const IDENTIFIER = 'ns.hold-orders';
 
     /**
      * Define namespace

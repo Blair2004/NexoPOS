@@ -15,7 +15,7 @@ class CustomerOrderCrud extends OrderCrud
      *
      * @param  string
      */
-    protected $identifier = 'dashboard/customers/orders';
+    const IDENTIFIER = 'dashboard/customers/orders';
 
     /**
      * Define namespace
