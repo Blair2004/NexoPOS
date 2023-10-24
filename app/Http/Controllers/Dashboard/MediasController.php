@@ -5,20 +5,18 @@ namespace App\Http\Controllers\Dashboard;
 use App\Exceptions\NotAllowedException;
 use App\Http\Controllers\DashboardController;
 use App\Models\Media;
+use App\Services\DateService;
 use App\Services\MediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class MediasController extends DashboardController
 {
-    protected $mediaService;
-
     public function __construct(
-        MediaService $mediaService
+        protected MediaService $mediaService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
-        $this->mediaService = $mediaService;
+        // ...
     }
 
     public function showMedia()

@@ -52,16 +52,6 @@ class CrudServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
-    }
-
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
         /**
          * every crud class on the system should be
          * added here in order to be available and supported.
@@ -113,8 +103,10 @@ class CrudServiceProvider extends ServiceProvider
                 if ( $class->count() === 1 ) {
                     return $class->first();
                 }
-            });
 
+                return false;
+            })->filter();
+            
             /**
              * If the namespace match a module crud instance, 
              * we'll use that first result

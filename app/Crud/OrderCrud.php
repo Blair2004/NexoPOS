@@ -3,6 +3,7 @@
 namespace App\Crud;
 
 use App\Casts\CurrencyCast;
+use App\Casts\DateCast;
 use App\Casts\NotDefinedCast;
 use App\Casts\OrderDeliveryCast;
 use App\Casts\OrderPaymentCast;
@@ -100,6 +101,8 @@ class OrderCrud extends CrudService
         'process_status' => OrderProcessCast::class,
         'type' => OrderTypeCast::class,
         'payment_status' => OrderPaymentCast::class,
+        'created_at' => DateCast::class,
+        'updated_at' => DateCast::class,
     ];
 
     /**

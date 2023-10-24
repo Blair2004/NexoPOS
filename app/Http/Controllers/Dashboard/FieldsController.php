@@ -9,11 +9,6 @@ use TorMorten\Eventy\Facades\Events as Hook;
 
 class FieldsController extends DashboardController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function getFields( $resource, $identifier = null )
     {
         $instance = Hook::filter( 'ns.fields', $resource, $identifier );

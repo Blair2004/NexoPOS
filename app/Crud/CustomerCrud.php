@@ -3,6 +3,7 @@
 namespace App\Crud;
 
 use App\Casts\CurrencyCast;
+use App\Casts\DateCast;
 use App\Casts\GenderCast;
 use App\Casts\NotDefinedCast;
 use App\Events\CustomerAfterCreatedEvent;
@@ -88,6 +89,8 @@ class CustomerCrud extends CrudService
         'account_amount' => CurrencyCast::class,
         'purchases_amount' => CurrencyCast::class,
         'gender' => GenderCast::class,
+        'created_at' => DateCast::class,
+        'updated_at' => DateCast::class,
     ];
 
     /**

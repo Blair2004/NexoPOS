@@ -24,6 +24,7 @@ use App\Models\CustomerCoupon;
 use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Services\CustomerService;
+use App\Services\DateService;
 use App\Services\OrdersService;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -33,23 +34,12 @@ use Illuminate\Support\Facades\View;
 
 class CustomersController extends DashboardController
 {
-    /**
-     * @var CustomerService
-     */
-    protected $customerService;
-
-    /**
-     * @var OrdersService
-     */
-    protected $ordersService;
-
     public function __construct(
-        CustomerService $customerService,
-        OrdersService $ordersService
+        protected CustomerService $customerService,
+        protected OrdersService $ordersService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-        $this->customerService = $customerService;
-        $this->ordersService = $ordersService;
+        // ...
     }
 
     public function createCustomer()

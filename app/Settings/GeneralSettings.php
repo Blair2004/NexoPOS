@@ -9,7 +9,7 @@ use App\Services\SettingsPage;
 
 class GeneralSettings extends SettingsPage
 {
-    const IDENTIFIER = 'ns.general';
+    const IDENTIFIER = 'general';
     
     const AUTOLOAD = true;
 
@@ -190,13 +190,25 @@ class GeneralSettings extends SettingsPage
                                 'Y/m/d' => ns()->date->format( 'Y/m/d' ),
                                 'd-m-y' => ns()->date->format( 'd-m-Y' ),
                                 'd/m/y' => ns()->date->format( 'd/m/Y' ),
+                                'M dS, Y'  => ns()->date->format( 'M dS, Y' ),
+                                'd M Y'  => ns()->date->format( 'd M Y' ),
+                                'd.m.Y'  => ns()->date->format( 'd.m.Y' ),
                             ]),
                             'description' => __( 'This define how the date should be defined. The default format is "Y-m-d".' ),
                         ], [
                             'label' => __( 'Date Time Format' ),
                             'name' => 'ns_datetime_format',
                             'value' => ns()->option->get( 'ns_datetime_format' ),
-                            'type' => 'text',
+                            'type' => 'select',
+                            'options'   =>  Helper::kvToJsOptions([
+                                'Y-m-d H:i'     => ns()->date->format( 'Y-m-d H:i' ),
+                                'Y/m/d H:i'     => ns()->date->format( 'Y/m/d H:i' ),
+                                'd-m-y H:i'     => ns()->date->format( 'd-m-Y H:i' ),
+                                'd/m/y H:i'     => ns()->date->format( 'd/m/Y H:i' ),
+                                'M dS, Y H:i'   => ns()->date->format( 'M dS, Y H:i' ),
+                                'd M Y, H:i'     => ns()->date->format( 'd M Y, H:i' ),
+                                'd.m.Y, H:i'     => ns()->date->format( 'd.m.Y, H:i' ),
+                            ]),
                             'description' => __( 'This define how the date and times hould be formated. The default format is "Y-m-d H:i".' ),
                         ], [
                             'label' => sprintf( __( 'Date TimeZone' ) ),

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Events\SettingsSavedEvent;
 use App\Traits\NsForms;
+use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
@@ -13,9 +14,7 @@ class SettingsPage
 
     protected $form = [];
 
-    protected $slug;
-
-    protected $routeName;
+    protected string $view;
 
     /**
      * returns the defined form
@@ -43,11 +42,6 @@ class SettingsPage
         })->toArray();
     }
 
-    public function getSlug()
-    {
-        return $this->slug  ?:  '/settings/' . $this->getIdentifier();
-    }
-
     public function getIdentifier()
     {
         return get_called_class()::IDENTIFIER;
@@ -66,41 +60,45 @@ class SettingsPage
     {
         $className = get_called_class();
         $settings = new $className;
+        
+        /**
+         * if something has to be made before a form 
+         * is renderer, we'll trigger the method here if
+         * that exists.
+         */
+        if ( method_exists( $settings, 'beforeRenderForm' ) ) {
+            $settings->beforeRenderForm();
+        }
 
-        dd(
-            $settings->getForm()
-        );
+        /**
+         * When the settingsPage class has the "getView" method,
+         * we return it as it might provide a custom View page.
+         */
+        if ( method_exists( $settings, 'getView' ) ) {
+            return $settings->getView();
+        }
 
+        $form   =   $settings->getForm();
+
+        /**
+         * if the form is an instance of a view
+         * that view is rendered in place of the default form.
+         */
         return View::make( 'pages.dashboard.settings.form', [
-            'title' => $settings->getLabels()[ 'title' ] ?? __( 'Untitled Settings Page' ),
+            'title' => $form[ 'title' ] ?? __( 'Untitled Settings Page' ),
 
             /**
              * retrive the description provided on the SettingsPage instance.
              * Otherwhise a default settings is used .
              */
-            'description' => $settings->getLabels()[ 'description' ] ?? __( 'No description provided for this settings page.' ),
+            'description' => $form[ 'description' ] ?? __( 'No description provided for this settings page.' ),
 
             /**
              * retrieve the identifier of the settings if it's defined.
              * this is used to load the settings asynchronously.
              */
             'identifier' => $settings->getIdentifier(),
-
-            /**
-             * Provided to render the side menu.
-             */
-            'menus' => app()->make( MenuService::class ),
         ]);
-    }
-
-    public function getRoute()
-    {
-        return ns()->route( $this->routeName );
-    }
-
-    public function getRouteName()
-    {
-        return $this->routeName;
     }
 
     /**

@@ -7,25 +7,28 @@ use App\Jobs\ComputeYearlyReportJob;
 use App\Models\Customer;
 use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
+use App\Services\DateService;
 use App\Services\OrdersService;
 use App\Services\ReportService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class ReportsController extends DashboardController
 {
     public function __construct(
         protected OrdersService $ordersService,
-        protected ReportService $reportService
+        protected ReportService $reportService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
+        // ...
     }
 
     public function salesReport()
     {
-        return $this->view( 'pages.dashboard.reports.sales-report', [
+        return View::make( 'pages.dashboard.reports.sales-report', [
             'title' => __( 'Sales Report' ),
             'description' => __( 'Provides an overview over the sales during a specific period' ),
         ]);
@@ -33,7 +36,7 @@ class ReportsController extends DashboardController
 
     public function salesProgress()
     {
-        return $this->view( 'pages.dashboard.reports.best-products-report', [
+        return View::make( 'pages.dashboard.reports.best-products-report', [
             'title' => __( 'Sales Progress' ),
             'description' => __( 'Provides an overview over the best products sold during a specific period.' ),
         ]);
@@ -41,7 +44,7 @@ class ReportsController extends DashboardController
 
     public function soldStock()
     {
-        return $this->view( 'pages.dashboard.reports.sold-stock-report', [
+        return View::make( 'pages.dashboard.reports.sold-stock-report', [
             'title' => __( 'Sold Stock' ),
             'description' => __( 'Provides an overview over the sold stock during a specific period.' ),
         ]);
@@ -49,7 +52,7 @@ class ReportsController extends DashboardController
 
     public function stockReport()
     {
-        return $this->view( 'pages.dashboard.reports.low-stock-report', [
+        return View::make( 'pages.dashboard.reports.low-stock-report', [
             'title' => __( 'Stock Report' ),
             'description' => __( 'Provides an overview of the products stock.' ),
         ]);
@@ -57,7 +60,7 @@ class ReportsController extends DashboardController
 
     public function profit()
     {
-        return $this->view( 'pages.dashboard.reports.profit-report', [
+        return View::make( 'pages.dashboard.reports.profit-report', [
             'title' => __( 'Profit Report' ),
             'description' => __( 'Provides an overview of the provide of the products sold.' ),
         ]);
@@ -65,7 +68,7 @@ class ReportsController extends DashboardController
 
     public function transactionsReport()
     {
-        return $this->view( 'pages.dashboard.reports.transactions', [
+        return View::make( 'pages.dashboard.reports.transactions', [
             'title' => __( 'Transactions Report' ),
             'description' => __( 'Provides an overview on the activity for a specific period.' ),
         ]);
@@ -205,7 +208,7 @@ class ReportsController extends DashboardController
 
     public function annualReport( Request $request )
     {
-        return $this->view( 'pages.dashboard.reports.annual-report', [
+        return View::make( 'pages.dashboard.reports.annual-report', [
             'title' => __( 'Annual Report' ),
             'description' => __( 'Provides an overview over the sales during a specific period' ),
         ]);
@@ -213,7 +216,7 @@ class ReportsController extends DashboardController
 
     public function salesByPaymentTypes( Request $request )
     {
-        return $this->view( 'pages.dashboard.reports.payment-types', [
+        return View::make( 'pages.dashboard.reports.payment-types', [
             'title' => __( 'Sales By Payment Types' ),
             'description' => __( 'Provide a report of the sales by payment types, for a specific period.' ),
         ]);
@@ -273,7 +276,7 @@ class ReportsController extends DashboardController
 
     public function showCustomerStatement()
     {
-        return $this->view( 'pages.dashboard.reports.customers-statement', [
+        return View::make( 'pages.dashboard.reports.customers-statement', [
             'title' => __( 'Customers Statement' ),
             'description' => __( 'Display the complete customer statement.' ),
         ]);

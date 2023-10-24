@@ -30,22 +30,11 @@ use Illuminate\Support\Facades\View;
 
 class ProductsController extends DashboardController
 {
-    /** @var ProductService */
-    protected $productService;
-
-    /**
-     * @var DateService
-     */
-    protected $dateService;
-
     public function __construct(
-        ProductService $productService,
-        DateService $dateService
+        protected ProductService $productService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
-        $this->productService = $productService;
-        $this->dateService = $dateService;
+        // ...
     }
 
     public function saveProduct( Request $request )
@@ -320,6 +309,8 @@ class ProductsController extends DashboardController
 
     public function listProducts()
     {
+        return ProductCrud::table();
+
         ns()->restrict([ 'nexopos.read.products' ]);
 
         Hook::addAction( 'ns-crud-footer', function( Output $output ) {

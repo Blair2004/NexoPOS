@@ -14,6 +14,7 @@ use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use App\Models\Tax;
 use App\Models\TaxGroup;
+use App\Services\DateService;
 use App\Services\TaxService;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,14 +22,11 @@ use Illuminate\Support\Facades\View;
 
 class TaxesController extends DashboardController
 {
-    private $taxService;
-
     public function __construct(
-        TaxService $taxService
+        protected TaxService $taxService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
-        $this->taxService = $taxService;
+        // ...
     }
 
     public function get( $id = null )

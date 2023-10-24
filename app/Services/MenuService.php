@@ -437,9 +437,9 @@ class MenuService
                         'label' => __( 'Reports'),
                         'href' => ns()->url( '/dashboard/settings/reports' ),
                     ],
-                    'invoice-settings' => [
-                        'label' => __( 'Invoice Settings'),
-                        'href' => ns()->url( '/dashboard/settings/invoice-settings' ),
+                    'invoices' => [
+                        'label' => __( 'Invoices' ),
+                        'href' => ns()->url( '/dashboard/settings/invoices' ),
                     ],
                     'workers' => [
                         'label' => __( 'Workers' ),

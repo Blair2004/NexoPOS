@@ -15,18 +15,18 @@ use App\Http\Requests\UnitRequest;
 use App\Http\Requests\UnitsGroupsRequest;
 use App\Models\Unit;
 use App\Models\UnitGroup;
+use App\Services\DateService;
 use App\Services\UnitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
 class UnitsController extends DashboardController
 {
-    private $unitService;
-
-    public function __construct( UnitService $unit )
-    {
-        parent::__construct();
-        $this->unitService = $unit;
+    public function __construct( 
+        protected UnitService $unitService,
+        protected DateService $dateService
+    ) {
+        // ...
     }
 
     public function postGroup( UnitsGroupsRequest $request )

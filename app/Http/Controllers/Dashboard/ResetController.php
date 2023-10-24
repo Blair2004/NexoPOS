@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
+use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\ResetService;
 use Database\Seeders\DefaultSeeder;
@@ -12,22 +13,12 @@ use Illuminate\Http\Request;
 
 class ResetController extends DashboardController
 {
-    /**
-     * @var ResetService
-     */
-    protected $resetService;
-
-    /**
-     * @param DemoService
-     */
-    protected $demoService;
-
     public function __construct(
-        ResetService $resetService,
-        DemoService $demoService
+        protected ResetService $resetService,
+        protected DemoService $demoService,
+        protected DateService $dateService
     ) {
-        $this->resetService = $resetService;
-        $this->demoService = $demoService;
+        // ...
     }
 
     /**

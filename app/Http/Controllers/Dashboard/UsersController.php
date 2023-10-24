@@ -14,6 +14,7 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\DateService;
 use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
@@ -24,14 +25,15 @@ use Illuminate\Support\Facades\View;
 class UsersController extends DashboardController
 {
     public function __construct(
-        protected UsersService $usersService
+        protected UsersService $usersService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
+        // ...
     }
 
     public function listUsers()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
+        return View::make( 'pages.dashboard.crud.table', [
             'title' => __( 'Users List' ),
             'createUrl' => url( '/dashboard/users/create' ),
             'description' => __( 'Manage all users available.' ),
@@ -76,7 +78,7 @@ class UsersController extends DashboardController
          */
         ns()->restrict([ 'update.roles' ]);
 
-        return $this->view( 'pages.dashboard.users.permission-manager', [
+        return View::make( 'pages.dashboard.users.permission-manager', [
             'title' => __( 'Permission Manager' ),
             'description' => __( 'Manage all permissions and roles' ),
         ]);
@@ -91,7 +93,7 @@ class UsersController extends DashboardController
     {
         ns()->restrict([ 'manage.profile' ]);
 
-        return $this->view( 'pages.dashboard.users.profile', [
+        return View::make( 'pages.dashboard.users.profile', [
             'title' => __( 'My Profile' ),
             'description' => __( 'Change your personal settings' ),
             'src' => url( '/api/forms/ns.user-profile' ),

@@ -66,7 +66,7 @@ class SettingsCommand extends Command
                 exit;
             }
         } else {
-            $filePath = 'app' . DIRECTORY_SEPARATOR . 'Forms' . DIRECTORY_SEPARATOR . $fileName . '.php';
+            $filePath = 'app' . DIRECTORY_SEPARATOR . 'Settings' . DIRECTORY_SEPARATOR . $fileName . '.php';
 
             $this->putFile(
                 filePath: $filePath,

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Casts\DateCast;
 use App\Exceptions\NotAllowedException;
 use App\Traits\NsForms;
 use Carbon\Carbon;
@@ -131,10 +132,13 @@ class CrudService
     protected $exportColumns = [];
 
     /**
-     * This define custom casts
-     * that are only applicable to the CRUD instance.
+     * This defines the casts that applies
+     * to every entry on a crud table.
      */
-    protected $casts = [];
+    protected $casts    =   [
+        'created_at'    =>  DateCast::class,
+        'updated_at'    =>  DateCast::class,
+    ];
 
     /**
      * Define permissions for using

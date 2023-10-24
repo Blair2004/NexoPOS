@@ -19,6 +19,7 @@ use App\Models\Procurement;
 use App\Models\ProcurementProduct;
 use App\Models\Product;
 use App\Models\Unit;
+use App\Services\DateService;
 use App\Services\Options;
 use App\Services\ProcurementService;
 use App\Services\ProductService;
@@ -30,32 +31,15 @@ class ProcurementController extends DashboardController
 {
     protected $crud;
 
-    /**
-     * @var ProcurementService
-     **/
-    protected $procurementService;
-
-    /**
-     * @var ProductService
-     **/
-    protected $productService;
-
-    /**
-     * @var Options
-     */
-    protected $options;
+    protected $validation;
 
     public function __construct(
-        ProcurementService $procurementService,
-        ProductService $productService,
-        Options $options
+        protected ProcurementService $procurementService,
+        protected ProductService $productService,
+        protected Options $options,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
         $this->validation = new Validation;
-        $this->procurementService = $procurementService;
-        $this->productService = $productService;
-        $this->options = $options;
     }
 
     /**

@@ -15,11 +15,6 @@ use Illuminate\Support\Facades\View;
 
 class TransactionsAccountController extends DashboardController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * Index Controller Page
      *

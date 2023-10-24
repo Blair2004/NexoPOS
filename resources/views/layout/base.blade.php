@@ -13,6 +13,8 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     $theme  =   ns()->option->get( 'ns_default_theme', 'light' );
 }
 ?>
+
+@inject( 'dateService', 'App\Services\DateService' )
 <!DOCTYPE html>
 <html lang="en" class="{{ $theme }}">
 <head>
@@ -56,7 +58,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
             current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
             serverDate : '{{ app()->make( DateService::class )->toDateTimeString() }}',
             timeZone: '{{ ns()->option->get( "ns_datetime_timezone" ) }}',
-            format: `{{ ns()->option->get( 'ns_datetime_format' ) }}`
+            format: `{{ $dateService->convertFormatToMomment( ns()->option->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) ) }}`
         }
 
         /**

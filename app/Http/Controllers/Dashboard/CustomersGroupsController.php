@@ -20,11 +20,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CustomersGroupsController extends DashboardController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function listCustomersGroups()
     {
         return CustomerGroupCrud::table();

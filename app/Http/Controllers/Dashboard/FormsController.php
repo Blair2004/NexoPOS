@@ -16,11 +16,6 @@ use TorMorten\Eventy\Facades\Events as Hook;
 
 class FormsController extends DashboardController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function getForm( $resource )
     {
         /**

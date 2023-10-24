@@ -11,15 +11,19 @@ namespace App\Http\Controllers\Dashboard;
 use App\Crud\TransactionsHistoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Transaction;
+use App\Services\DateService;
 use App\Services\Options;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 
 class TransactionController extends DashboardController
 {
-    public function __construct( public TransactionService $transactionService, public Options $optionsService )
-    {
-        parent::__construct();
+    public function __construct( 
+        public TransactionService $transactionService, 
+        public Options $optionsService,
+        protected DateService $dateService
+    ) {
+        // ...
     }
 
     public function get( $id = null )

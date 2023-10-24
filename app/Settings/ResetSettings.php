@@ -1,20 +1,24 @@
 <?php
 
-namespace App\Forms;
+namespace App\Settings;
 
 use App\Classes\Hook;
+use App\Classes\Output;
 use App\Services\Helper;
 use App\Services\SettingsPage;
 
-class ResetForm extends SettingsPage
+class ResetSettings extends SettingsPage
 {
-    const IDENTIFIER = 'ns.reset';
+    const IDENTIFIER = 'reset';
+    const AUTOLOAD = true;
 
     protected $form;
 
     public function __construct()
     {
         $this->form = [
+            'title' =>  __( 'Reset' ),
+            'description' => __( 'Wipes and Reset the database.' ),
             'tabs' => [
                 'reset' => [
                     'label' => __( 'Reset' ),
@@ -46,5 +50,10 @@ class ResetForm extends SettingsPage
                 ],
             ],
         ];
+    }
+
+    public function beforeRenderForm()
+    {
+        Hook::addAction( 'ns-dashboard-footer', fn( Output $output ) => $output->addView( 'pages.dashboard.settings.reset-footer' ) );
     }
 }

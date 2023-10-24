@@ -17,4 +17,3 @@ include dirname( __FILE__ ) . '/web/products.php';
 include dirname( __FILE__ ) . '/web/taxes.php';
 include dirname( __FILE__ ) . '/web/units.php';
 include dirname( __FILE__ ) . '/web/reports.php';
-include dirname( __FILE__ ) . '/web/banking.php';

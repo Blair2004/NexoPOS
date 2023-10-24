@@ -17,32 +17,29 @@ use App\Models\Role;
 use App\Services\DateService;
 use App\Services\MenuService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller
 {
-    protected $menuService;
-
-    protected $dateService;
-
-    public function __construct()
-    {
-        $this->dateService = app()->make( DateService::class );
-        $this->menuService = app()->make( MenuService::class );
+    public function __construct(
+        protected DateService $dateService
+    ) {
+        // ...
     }
 
     public function home()
     {
-        return view( 'pages.dashboard.home', [
-            'menus' => $this->menuService,
+        return View::make( 'pages.dashboard.home', [
             'title' => __( 'Dashboard' ),
         ]);
     }
 
+    /**
+     * @deprecated
+     */
     protected function view( $path, $data = [])
     {
-        return view( $path, array_merge([
-            'menus' => $this->menuService,
-        ], $data ));
+        return view( $path, $data );
     }
 
     public function getCards()
