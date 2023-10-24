@@ -49,7 +49,7 @@
     "ts-loader": "^9.4.2",
     "typescript": "^4.8.4",
     "vue-loader": "^15.9.3",
-    "vue-template-compiler": "^2.7.14",
+    "vue-template-compiler": "^2.7.15",
     "webpack": "^5.81.0",
     "wildcard": "^2.0.0"
   },
@@ -77,7 +77,7 @@
     "rxjs": "^7.8.0",
     "tailwindcss": "^3.2.4",
     "twitter_cldr": "^2.2.0",
-    "vue": "^2.7.14",
+    "vue": "^2.7.15",
     "vue-apexcharts": "^1.6.0",
     "vue-custom-scrollbar": "^1.4.3",
     "vue-html-to-paper": "1.4.4",
