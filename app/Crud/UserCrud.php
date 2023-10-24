@@ -102,6 +102,7 @@ class UserCrud extends CrudService
         'password',
         'active',
         'role_id',
+        'group_id',
         'first_name',
         'last_name',
         'phone',

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\ModulesService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
@@ -40,7 +41,43 @@ class SettingsPageProvider extends ServiceProvider
              */
             if ( $classes->isNotEmpty() ) {
                 $className  =   $classes->first();
+                return new $className;
+            }
 
+            /**
+             * We'll attempt to perform the same autoload
+             * but for only enabled modules
+             * @var ModulesService $modulesService 
+             */
+            $modulesService    =   app()->make( ModulesService::class );
+
+            $classes            =   collect( $modulesService->getEnabled() )->map( function( $module ) use ( $identifier ) {
+                $classes = Cache::get( 'modules-crud-classes-' . $module[ 'namespace' ], function() use ( $module ) {
+                    $files = collect( Storage::disk( 'ns' )->files( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Settings' ) );
+
+                    return $files->map( fn( $file ) => 'Modules\\' . $module[ 'namespace' ] . '\Settings\\' . pathinfo( $file )[ 'filename' ] )
+                        ->filter( fn( $class ) => ( defined( $class . '::AUTOLOAD' ) && defined( $class . '::IDENTIFIER' ) ) );
+                });
+
+                /**
+                 * We pull the cached classes and checks if the
+                 * class has autoload and identifier defined.
+                 */
+                $class = collect( $classes )->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $identifier );                
+
+                if ( $class->count() === 1 ) {
+                    return $class->first();
+                }
+
+                return false;
+            })->filter();
+
+            /**
+             * If there is a match, we'll return
+             * the first class that matches.
+             */
+            if ( $classes->isNotEmpty() ) {
+                $className  =   $classes->first();
                 return new $className;
             }
 
