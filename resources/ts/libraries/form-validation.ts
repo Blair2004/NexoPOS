@@ -264,10 +264,12 @@ export default class FormValidation {
                 };
             } else if ( rule.length > 0 ) {
                 result = minRule.exec( rule ) || maxRule.exec( rule ) || sameRule.exec( rule ) || diffRule.exec( rule ) || sometimesRule.exec( rule );
-                
-                return {
-                    identifier : result[1],
-                    value: result[2]
+
+                if ( result !== null ) {
+                    return {
+                        identifier : result[1],
+                        value: result[2]
+                    }
                 }
             } 
         };
