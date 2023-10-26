@@ -476,7 +476,7 @@ export default {
                     </div>
                 </div>
             </div>
-            <div class="p-2 flex ns-media-footer flex-shrink-0 justify-between">
+            <div class="py-2 pr-2 flex ns-media-footer flex-shrink-0 justify-between">
                 <div class="flex -mx-2 flex-shrink-0">
                     <div class="px-2" v-if="bulkSelect">
                         <div class="ns-button shadow rounded overflow-hidden info">
