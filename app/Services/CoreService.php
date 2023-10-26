@@ -44,6 +44,7 @@ class CoreService
         public Options $option,
         public MathService $math,
         public EnvEditor $envEditor,
+        public MediaService $mediaService,
     ) {
         // ...
     }

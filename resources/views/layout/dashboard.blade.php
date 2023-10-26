@@ -91,6 +91,15 @@ if ( Auth::check() ) {
         window.ns.user              =   <?php echo json_encode( ns()->getUserDetails() );?>;
         window.ns.user.attributes   =   <?php echo json_encode( Auth::user()->attribute->first() );?>;
         window.ns.cssFiles          =   <?php echo json_encode( ns()->simplifyManifest() );?>;
+
+        /**
+         * We'll store here the file mime types
+         * that are supported by the media manager.
+         */
+        window.ns.medias            =   {
+            mimes:  <?php echo json_encode( ns()->mediaService->getMimes() )?>,
+            imageMimes: <?php echo json_encode( ns()->mediaService->getImageMimes() );?>
+        }
     </script>
     @vite([ 'resources/ts/lang-loader.ts' ])
 @include( 'common.header-socket' )

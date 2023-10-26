@@ -45,6 +45,35 @@ export default {
                 first_page: 0
             },
 
+            /**
+             * icon taken from: https://icons8.com/line-awesome
+             */
+            fileIcons: {
+                zip: 'la-file-archive',
+                tar: 'la-file-archive',
+                bz: 'la-file-archive',
+                '7z': 'la-file-archive',
+
+                css: 'la-file-code',
+                js: 'la-file-code',
+                json: 'la-file-code',
+                docx: 'la-file-word',
+                doc: 'la-file-word',
+
+                mp3: 'la-file-audio',
+                aac: 'la-file-audio',
+                ods: 'la-file-audio',
+
+                pdf: 'la-file-pdf',
+                csv: 'la-file-csv',
+
+                avi: 'la-file-video',
+                mpeg: 'la-file-video',
+                mpkg: 'la-file-video',
+
+                unknown: 'la-file'
+            },
+
             queryPage: 1,
 
             /**
@@ -247,7 +276,9 @@ export default {
          */
         processFiles( files ) {
             const arrayFiles    =   Array.from( files );
-            const valid         =   arrayFiles.filter( file => [ 'image/png', 'image/gif', 'image/jpg', 'image/jpeg' ].includes( file.type ) );
+            const valid         =   arrayFiles.filter( file => {
+                return Object.values( window.ns.medias.mimes ).includes( file.type );
+            });
 
             valid.forEach( file => {
                 this.files.unshift({
@@ -342,6 +373,16 @@ export default {
             resource.fileEdit   =   false;
             resource.selected   =   ! resource.selected;
         },
+
+        /**
+         * Returns wether the provided media 
+         * is an image or not.
+         * @param {object} media 
+         */
+        isImage( media ) {
+            const imageExtensions   =   Object.keys( ns.medias.imageMimes );
+            return imageExtensions.includes( media.extension );
+        }
     }
 }
 </script>
@@ -353,7 +394,7 @@ export default {
                 <li @click="select( page )" v-for="(page,index) of pages" class="py-2 px-3 cursor-pointer border-l-8" :class="page.selected ? 'active' : ''" :key="index">{{ page.label }}</li>
             </ul>
         </div>
-        <div class="content w-full flex-col overflow-hidden flex" v-if="currentPage.name === 'upload'">
+        <div class="content flex-auto w-full flex-col overflow-hidden flex" v-if="currentPage.name === 'upload'">
             <div class="p-2 flex bg-box-background flex-shrink-0 justify-between" v-if="isPopup">
                 <div></div>
                 <div>
@@ -373,7 +414,7 @@ export default {
                 </div>
             </div>
         </div>
-        <div class="content flex-col w-full overflow-hidden flex" v-if="currentPage.name === 'gallery'">
+        <div class="content flex-auto flex-col w-full overflow-hidden flex" v-if="currentPage.name === 'gallery'">
             <div class="p-2 flex bg-box-background flex-shrink-0 justify-between" v-if="isPopup">
                 <div></div>
                 <div>
@@ -396,7 +437,12 @@ export default {
                                 <div v-for="(resource, index) of response.data" :key="index" class="">
                                     <div class="p-2">
                                         <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected ring-4' : ''" class="rounded-lg aspect-square bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
-                                            <img class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name">
+                                            <img v-if="isImage( resource )" class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name"/>
+                                            <template v-if="! isImage( resource )" class="object-cover h-full" :alt="resource.name">
+                                                <div class="object-cover h-full flex items-center justify-center">
+                                                    <i :class="fileIcons[ resource.extension ] || fileIcons.unknown" class="las text-8xl text-white"></i>
+                                                </div>
+                                            </template>
                                         </div>
                                     </div>
                                 </div>
@@ -408,8 +454,13 @@ export default {
                     </div>
                 </div>
                 <div id="preview" class="ns-media-preview-panel hidden lg:block w-64 flex-shrink-0 ">
-                    <div class="h-64 bg-gray-800 flex items-center justify-center">
-                        <img v-if="panelOpened" :src="selectedResource.sizes.thumb" :alt="selectedResource.name">
+                    <div class="h-64 bg-gray-800 flex items-center justify-center" v-if="panelOpened">
+                        <img v-if="isImage( selectedResource )" class="object-cover h-full" :src="selectedResource.sizes.thumb" :alt="selectedResource.name"/>
+                        <template v-if="! isImage( selectedResource )" class="object-cover h-full" :alt="selectedResource.name">
+                            <div class="object-cover h-full flex items-center justify-center">
+                                <i :class="fileIcons[ selectedResource.extension ] || fileIcons.unknown" class="las text-8xl text-white"></i>
+                            </div>
+                        </template>
                     </div>
                     <div id="details" class="p-4 text-gray-700 text-sm" v-if="panelOpened">
                         <p class="flex flex-col mb-2">

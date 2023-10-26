@@ -102,9 +102,9 @@ class AppServiceProvider extends ServiceProvider
 
         // provide media manager
         $this->app->singleton( MediaService::class, function() {
-            return new MediaService([
-                'extensions' => [ 'jpg', 'jpeg', 'png', 'gif', 'zip', 'docx', 'txt' ],
-            ]);
+            return new MediaService( 
+                dateService: app()->make( DateService::class )
+            );
         });
 
         $this->app->singleton( CrudService::class, function() {
@@ -136,6 +136,7 @@ class AppServiceProvider extends ServiceProvider
                 app()->make( Options::class ),
                 app()->make( MathService::class ),
                 app()->make( EnvEditor::class ),
+                app()->make( MediaService::class ),
             );
         });
 

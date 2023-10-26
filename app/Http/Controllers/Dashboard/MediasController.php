@@ -9,6 +9,7 @@ use App\Services\DateService;
 use App\Services\MediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
 
 class MediasController extends DashboardController
 {
@@ -21,7 +22,7 @@ class MediasController extends DashboardController
 
     public function showMedia()
     {
-        return $this->view( 'pages.dashboard.medias.list', [
+        return View::make( 'pages.dashboard.medias.list', [
             'title' => __( 'Manage Medias' ),
             'description' => __( 'Upload and manage medias (photos).' ),
         ]);
@@ -35,15 +36,6 @@ class MediasController extends DashboardController
     public function getMedias()
     {
         return $this->mediaService->loadAjax();
-    }
-
-    /**
-     * perform
-     *
-     * @return json
-     */
-    public function deleteMedia()
-    {
     }
 
     /**

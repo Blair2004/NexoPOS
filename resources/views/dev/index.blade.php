@@ -15,6 +15,7 @@
             <ns-menu label="Input Controls">
                 <ns-submenu to="/inputs/inline-multiselect">Inline Multiselect</ns-submenu>
                 <ns-submenu to="/inputs/multiselect">Multiselect</ns-submenu>
+                <ns-submenu to="/inputs/upload">Upload</ns-submenu>
             </ns-menu>
         </div>
         <div class="body bg-surface w-full flex flex-col">

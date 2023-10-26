@@ -10,6 +10,7 @@ import Index from '~/dev/index.vue';
 import InlineMultiselect from '~/dev/inline-multiselect.vue';
 import Inputs from '~/dev/inputs.vue';
 import Multiselect from '~/dev/multiselect.vue';
+import Upload from '~/dev/upload.vue';
 
 const routes    =   [{
     path: '/',
@@ -33,6 +34,9 @@ const routes    =   [{
         },  {
             path: 'multiselect',
             component: Multiselect,
+        }, {
+            path: 'upload',
+            component: Upload,
         }
     ]   
 }];

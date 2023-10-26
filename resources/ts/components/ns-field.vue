@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import { default as nsDateRangePicker } from './ns-date-range-picker.vue';
 import { default as nsDateTimePicker } from './ns-date-time-picker.vue';
 import { default as nsSwitch } from './ns-switch.vue';
