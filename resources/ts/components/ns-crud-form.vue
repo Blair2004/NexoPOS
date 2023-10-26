@@ -14,7 +14,7 @@ export default {
     mounted() {
         this.loadForm();
     },
-    props: [ 'src', 'createUrl', 'fieldClass', 'returnUrl', 'submitUrl', 'submitMethod', 'disableTabs' ],
+    props: [ 'src', 'createUrl', 'fieldClass', 'returnUrl', 'submitUrl', 'submitMethod', 'disableTabs', 'queryParams' ],
     computed: {
         activeTabFields() {
             for( let identifier in this.form.tabs ) {
@@ -67,7 +67,7 @@ export default {
                     .subscribe();
             }
 
-            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, this.formValidation.extractForm( this.form ) )
+            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.appendQueryParamas( this.submitUrl ), this.formValidation.extractForm( this.form ) )
                 .subscribe( result => {
                     if ( result.status === 'success' ) {
                         if ( this.submitMethod && this.submitMethod.toLowerCase() === 'post' && this.returnUrl !== false ) {
@@ -96,7 +96,7 @@ export default {
             this.rows.forEach( r => r.$checked = event );
         },
         loadForm() {
-            const request   =   nsHttpClient.get( `${this.src}` );
+            const request   =   nsHttpClient.get( `${this.appendQueryParamas( this.src ) }` );
             request.subscribe({
                 next: (f) => {
                     this.form    =   this.parseForm( f.form );
@@ -107,6 +107,18 @@ export default {
                     nsSnackBar.error( error.message, __( 'Okay' ), { duration: 0 }).subscribe();
                 }
             });
+        },
+        appendQueryParamas( url ) {
+            console.log( this.queryParams );
+            const params    =   Object.keys(this.queryParams)
+                .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(this.queryParams[key])}`)
+                .join('&');
+
+            if ( url.includes( '?' ) ) {
+                return `${url}&${params}`;
+            }
+
+            return `${url}?${params}`;
         },
         parseForm( form ) {
             form.main.value     =   form.main.value === undefined ? '' : form.main.value;

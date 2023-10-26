@@ -317,7 +317,9 @@ class CrudService
              * If fillable is empty or if "author" it's explicitly
              * mentionned on the fillable array.
              */
-            if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
+            $columns    =   array_keys( $this->getColumns() );
+            
+            if ( empty( $fillable ) || in_array( 'author', $fillable ) && in_array( 'author', $columns ) ) {
                 $entry->author = Auth::id();
             }
 
@@ -1122,11 +1124,6 @@ class CrudService
             'createUrl' => Hook::filter( $instance::method( 'getFilteredLinks' ), $instance->getFilteredLinks() )[ 'create' ] ?? false,
 
             /**
-             * Provided to render the side menu.
-             */
-            'menus' => app()->make( MenuService::class ),
-
-            /**
              * to provide custom query params
              * to every outgoing request on the table
              */
@@ -1138,8 +1135,18 @@ class CrudService
      * Will render a crud form using
      * the provided settings.
      */
-    public static function form( $entry = null, array $config = [] ): ContractView
+    public static function form( $entry = null, array $config = [], string $title = '', string $description = '', string $src = '', string $returnUrl = '', string $submitUrl = '', string $submitMethod = '', array $queryParams = [] ): ContractView
     {
+        /**
+         * in case the default way of proceeding is not defined
+         * we'll proceed by using the named arguments.
+         */
+        if ( empty( $config ) ) {
+            $config = collect( compact( 'title', 'description', 'src', 'submitUrl', 'queryParams', 'returnUrl', 'submitMethod' ) )
+                ->filter()
+                ->toArray();
+        }
+
         $className = get_called_class();
         $instance = new $className;
         $permissionType = $entry === null ? 'create' : 'update';
@@ -1154,7 +1161,7 @@ class CrudService
          * use crud form to render
          * a valid form.
          */
-        return View::make( 'pages.dashboard.crud.form', [
+        return View::make( 'pages.dashboard.crud.form', array_merge([
             /**
              * this pull the title either
              * the form is made to create or edit a resource.
@@ -1192,15 +1199,16 @@ class CrudService
             'submitMethod' => $config[ 'submitMethod' ] ?? ( $entry === null ? 'post' : 'put' ),
 
             /**
-             * This will pass an instance of the MenuService.
-             */
-            'menus' => app()->make( MenuService::class ),
-
-            /**
              * provide the current crud namespace
              */
             'namespace' => $instance->getNamespace(),
-        ]);
+
+            /**
+             * to provide custom query params
+             * to every outgoing request on the table
+             */
+            'queryParams' => [],
+        ], $config ) );
     }
 
     /**

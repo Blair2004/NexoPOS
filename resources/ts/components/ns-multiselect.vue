@@ -52,6 +52,7 @@ export default {
             eventListener: null,
         }
     },
+    emits: [ 'change', 'blur' ],
     props: [ 'field' ],
     computed: {
         hasError() {

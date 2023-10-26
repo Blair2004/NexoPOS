@@ -12,6 +12,7 @@ use App\Classes\Output;
         <ns-crud-form 
             return-url="{{ $returnUrl }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
+            :query-params='@json( $queryParams ?? [] )'
             submit-url="{{ $submitUrl }}"
             src="{{ $src }}">
             <template v-slot:title>{{ $mainFieldLabel ?? __( 'mainFieldLabel not defined' ) }}</template>

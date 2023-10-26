@@ -5,6 +5,7 @@ export default {
         }
     },
     name: 'ns-switch',
+    emits: [ 'change', 'blur' ],
     mounted() {
     },
     computed: {
