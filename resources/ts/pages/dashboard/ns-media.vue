@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
 import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
 import popupCloser from "~/libraries/popup-closer";
 import { __ } from '~/libraries/lang';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import VueUpload from 'vue-upload-component';
+import { fileIcons } from '~/shared/file-icons';
+import { Popup } from '~/libraries/popup';
+import { nsAlertPopup } from '~/components/components';
 
 export default {
     name: 'ns-media',
@@ -45,34 +48,7 @@ export default {
                 first_page: 0
             },
 
-            /**
-             * icon taken from: https://icons8.com/line-awesome
-             */
-            fileIcons: {
-                zip: 'la-file-archive',
-                tar: 'la-file-archive',
-                bz: 'la-file-archive',
-                '7z': 'la-file-archive',
-
-                css: 'la-file-code',
-                js: 'la-file-code',
-                json: 'la-file-code',
-                docx: 'la-file-word',
-                doc: 'la-file-word',
-
-                mp3: 'la-file-audio',
-                aac: 'la-file-audio',
-                ods: 'la-file-audio',
-
-                pdf: 'la-file-pdf',
-                csv: 'la-file-csv',
-
-                avi: 'la-file-video',
-                mpeg: 'la-file-video',
-                mpkg: 'la-file-video',
-
-                unknown: 'la-file'
-            },
+            fileIcons,
 
             queryPage: 1,
 
@@ -150,6 +126,14 @@ export default {
         cancelBulkSelect() {
             this.bulkSelect     =   false;
             this.response.data.forEach( v => v.selected = false );
+        },
+
+        openError( fileData ) {
+            console.log( fileData );
+            // Popup.show( nsAlertPopup, {
+            //     title: __( 'An error occured' ),
+            //     message: fileData
+            // })
         },
 
         /**
@@ -240,7 +224,8 @@ export default {
                                 resolve( result );
                             },
                             error: error => {
-                                reject( error );
+                                uploadableFiles[i].failed   =   true;
+                                uploadableFiles[i].error    =   error;
                             }
                         })
                     })
@@ -261,12 +246,51 @@ export default {
             e.stopPropagation();
         },
 
+        getAllParents( elem ) {
+            let parents = [];
+            while (elem.parentNode && elem.parentNode.nodeName.toLowerCase() != 'body') {
+                elem = elem.parentNode;
+                parents.push(elem);
+            }
+
+            return parents;
+        },
+
         /**
          * Will trigger manual upload
          * @return void
          */
-        triggerManualUpload() {
-            this.$refs.files.click();
+        triggerManualUpload( $event ) {
+            const element = $event.target;
+            
+            if ( element !== null ) {
+                /**
+                 * We'll retrieve all parents and their classes
+                 * to make sure it's not a children of ns-scrollbar
+                 */
+                const parents           =   this.getAllParents( element );
+                const parentsClasses    =   parents.map( parent => {
+                    const classes       =   parent.getAttribute( 'class' );
+                    
+                    if ( classes ) {
+                        return classes.split( ' ' );
+                    }
+                });
+
+                /**
+                 * the clicked item should also add it's own classes
+                 */
+                if ( element.getAttribute( 'class' ) ) {
+                    const classes   =   element.getAttribute( 'class' ).split( ' ' );
+                    parentsClasses.push( classes );
+                }
+
+                // If the item click is not a children of ns-scrollbar or ns-scrollbar itself... 
+                // we can open the popup.
+                if ( ! parentsClasses.flat().includes( 'ns-scrollbar' ) ) {
+                    this.$refs.files.click();
+                }
+            };
         },
 
         /***
@@ -277,6 +301,7 @@ export default {
         processFiles( files ) {
             const arrayFiles    =   Array.from( files );
             const valid         =   arrayFiles.filter( file => {
+                console.log( this );
                 return Object.values( window.ns.medias.mimes ).includes( file.type );
             });
 
@@ -401,14 +426,15 @@ export default {
                     <ns-close-button @click="popupInstance.close()"></ns-close-button>
                 </div>
             </div>
-            <div id="dropping-zone" @click="triggerManualUpload()" :class="isDragging ? 'border-dashed border-2' : ''" class="flex flex-auto m-2 p-2 flex-col border-info-primary items-center justify-center">
-                <h3 class="text-lg md:text-xl font-bold text-center text-primary mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
+            <div id="dropping-zone" @click="triggerManualUpload( $event )" :class="isDragging ? 'border-dashed border-2' : ''" class="flex flex-auto m-2 p-2 flex-col border-info-primary items-center justify-center">
+                <h3 class="cursor-pointer text-lg md:text-xl font-bold text-center text-primary mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
                 <input style="display:none" type="file" name="" multiple ref="files" id="">
-                <div class="rounded w-full md:w-2/3 text-primary h-56 overflow-y-auto ns-scrollbar p-2">
+                <div class="rounded bg-box-background shadow w-full md:w-2/3 text-primary h-56 overflow-y-auto ns-scrollbar p-2">
                     <ul>
-                        <li v-for="(fileData, index) of files" :key="index" class="p-2 mb-2 shadow ns-media-upload-item flex items-center justify-between rounded">
+                        <li v-for="(fileData, index) of files" :class="fileData.failed === false ? 'border-info-secondary' : 'border-error-secondary'" :key="index" class="p-2 mb-2 border-b-2 flex items-center justify-between">
                             <span>{{ fileData.file.name }}</span>
-                            <span class="rounded bg-info-primary flex items-center justify-center text-xs p-2">{{ fileData.progress }}%</span>
+                            <span v-if="fileData.failed === false" class="rounded bg-info-primary flex items-center justify-center text-xs p-2">{{ fileData.progress }}%</span>
+                            <div @click="openError( fileData )" v-if="fileData.failed === true" class="rounded bg-error-primary hover:bg-error-secondary hover:text-white flex items-center justify-center text-xs p-2 cursor-pointer"><i class="las la-eye"></i> <span class="ml-2">{{ __( 'See Error' ) }}</span></div>
                         </li>
                     </ul>
                 </div>

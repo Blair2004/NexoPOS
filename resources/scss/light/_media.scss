@@ -23,8 +23,12 @@
         }
 
         .ns-media-upload-item {
-            @apply bg-box-elevation-hover;
+            @apply bg-box-elevation-background;
+            .error {
+                @apply bg-error-primary;
+            }
         }
+
         .ns-media-preview-panel {
             @apply bg-tab-active;
         }

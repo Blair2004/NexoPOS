@@ -18,6 +18,7 @@ class Media extends NsModel
 
     protected $casts = [
         'created_at' => DateCast::class,
+        'updated_at' => DateCast::class,
     ];
 
     public function user()

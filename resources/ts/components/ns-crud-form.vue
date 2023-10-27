@@ -62,7 +62,6 @@ export default {
             this.formValidation.disableForm( this.form );
 
             if ( this.submitUrl === undefined ) {
-                console.log( this );
                 return nsSnackBar.error( __( 'No submit URL was provided' ), __( 'Okay' ) )
                     .subscribe();
             }
@@ -109,7 +108,6 @@ export default {
             });
         },
         appendQueryParamas( url ) {
-            console.log( this.queryParams );
             const params    =   Object.keys(this.queryParams)
                 .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(this.queryParams[key])}`)
                 .join('&');

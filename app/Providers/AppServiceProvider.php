@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
+use App\Exceptions\PostTooLargeException as ExceptionsPostTooLargeException;
 use App\Models\Order;
 use App\Models\OrderProductRefund;
 use App\Services\BarcodeService;
@@ -36,6 +37,7 @@ use App\Services\UserOptions;
 use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
+use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;

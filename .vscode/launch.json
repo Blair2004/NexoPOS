@@ -8,7 +8,7 @@
             "name": "Listen for Xdebug",
             "type": "php",
             "request": "launch",
-            "port": 9004,
+            "port": 9003,
             "ignore": [
                 "**/vendor/**/*.php"
             ]
