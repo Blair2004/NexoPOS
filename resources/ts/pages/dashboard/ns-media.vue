@@ -129,11 +129,10 @@ export default {
         },
 
         openError( fileData ) {
-            console.log( fileData );
-            // Popup.show( nsAlertPopup, {
-            //     title: __( 'An error occured' ),
-            //     message: fileData
-            // })
+            Popup.show( nsAlertPopup, {
+                title: __( 'An error occured' ),
+                message: fileData.error.message || __( 'An unexpected error occured.' )
+            });
         },
 
         /**
@@ -430,13 +429,16 @@ export default {
                 <h3 class="cursor-pointer text-lg md:text-xl font-bold text-center text-primary mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
                 <input style="display:none" type="file" name="" multiple ref="files" id="">
                 <div class="rounded bg-box-background shadow w-full md:w-2/3 text-primary h-56 overflow-y-auto ns-scrollbar p-2">
-                    <ul>
+                    <ul v-if="files.length > 0">
                         <li v-for="(fileData, index) of files" :class="fileData.failed === false ? 'border-info-secondary' : 'border-error-secondary'" :key="index" class="p-2 mb-2 border-b-2 flex items-center justify-between">
                             <span>{{ fileData.file.name }}</span>
                             <span v-if="fileData.failed === false" class="rounded bg-info-primary flex items-center justify-center text-xs p-2">{{ fileData.progress }}%</span>
                             <div @click="openError( fileData )" v-if="fileData.failed === true" class="rounded bg-error-primary hover:bg-error-secondary hover:text-white flex items-center justify-center text-xs p-2 cursor-pointer"><i class="las la-eye"></i> <span class="ml-2">{{ __( 'See Error' ) }}</span></div>
                         </li>
                     </ul>
+                    <div v-if="files.length === 0" class="h-full w-full items-center justify-center flex text-center text-soft-tertiary">
+                        {{ __( 'Your uploaded files will displays here.' ) }}
+                    </div>
                 </div>
             </div>
         </div>

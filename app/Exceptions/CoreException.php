@@ -4,19 +4,26 @@ namespace App\Exceptions;
 
 use App\Services\Helper;
 use Exception;
+use Illuminate\Http\Request;
 
 class CoreException extends Exception
 {
-    public function __construct( $message = null )
+    public function render( Request $request, $exception )
     {
-        $this->message = $message ?: __('An exception has occurred.' );
-    }
+        $title      = __( 'Oops, We\'re Sorry!!!' );
+        $back       = Helper::getValidPreviousUrl( $request );
+        $message    = $exception->getMessage() ?: sprintf( __( 'Class: %s' ), get_class( $exception ) );
 
-    public function render( $request )
-    {
-        $message = $this->getMessage();
-        $title = __( 'An Error Occurred' );
-        $back = Helper::getValidPreviousUrl( $request );
+        if ( $request->expectsJson() ) {
+            return response()->json([
+                'status'    =>  'failed',
+                'message'   =>  $message,
+                'data'      =>  [
+                    'class' =>  $exception::CLASS,
+                    'previous'  =>  $back
+                ]
+            ], $exception->getStatusCode() );
+        }        
 
         return response()->view( 'pages.errors.exception', compact( 'message', 'title', 'back' ), 503 );
     }
