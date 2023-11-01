@@ -2,12 +2,15 @@
 
 namespace App\Console;
 
+use App\Jobs\BuildDetailedReportJob;
 use App\Jobs\ClearHoldOrdersJob;
 use App\Jobs\ClearModuleTempJob;
 use App\Jobs\DetectLowStockProductsJob;
 use App\Jobs\DetectScheduledTransactionsJob;
+use App\Jobs\EndDetailedReportJob;
 use App\Jobs\ExecuteReccuringTransactionsJob;
 use App\Jobs\PurgeOrderStorageJob;
+use App\Jobs\StartDetailedReportJob;
 use App\Jobs\StockProcurementJob;
 use App\Jobs\TrackLaidAwayOrdersJob;
 use App\Services\ModulesService;
@@ -102,7 +105,13 @@ class Kernel extends ConsoleKernel
         $schedule->job( new ClearModuleTempJob )->weekly();
 
         /**
-         * @var ModulesService
+         * Start and end of detailed report building.
+         */
+        $schedule->job( new EndDetailedReportJob() )->dailyAt( '23:50' );
+        $schedule->job( new StartDetailedReportJob() )->dailyAt( '00:10' );
+
+        /**
+         * @var ModulesService $modules
          */
         $modules = app()->make( ModulesService::class );
 

@@ -31,6 +31,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $author
  * @property string $uuid
  * @property TaxGroup $tax_group
+ * 
+ * @method static Builder trackingEnabled()
+ * @method static Builder trackingDisabled()
+ * @method static Builder findUsingBarcode( $barcode )
+ * @method static Builder barcode( $barcode )
+ * @method static Builder sku( $sku )
+ * @method static Builder onSale()
+ * @method static Builder hidden()
+ * @method static Builder findUsingSKU( $sku )
+ * @method static Builder onlyVariations()
+ * @method static Builder excludeVariations()
+ * @method static Builder withStockEnabled()
+ * @method static Builder withStockDisabled()
+ * @method static Builder accurateTracking( $argument = true )
+ * @method static Builder searchable( $attribute = true )
+ * @method static Builder type( $type )
+ * @method static Builder notGrouped()
+ * @method static Builder grouped()
+ * @method static Builder isGroup()
+ * @method static Builder notInGroup()
+ * @method static Builder inGroup()
  */
 class Product extends NsModel
 {

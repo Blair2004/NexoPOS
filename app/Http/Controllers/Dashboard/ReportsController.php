@@ -290,4 +290,13 @@ class ReportsController extends DashboardController
             rangeEnds: $request->input( 'rangeEnds' )
         );
     }
+
+    public function getStockHistory( Request $request )
+    {
+        return $this->reportService->getStockHistory(
+            day: $request->input( 'day' ),
+            categories: $request->input( 'categories' ) ?: [],
+            units: $request->input( 'units' ) ?: []
+        );
+    }
 }

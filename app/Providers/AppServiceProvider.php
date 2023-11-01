@@ -123,7 +123,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind( ReportService::class, function() {
             return new ReportService(
-                app()->make( DateService::class )
+                app()->make( DateService::class ),
+                app()->make( ProductService::class ),
             );
         });
 

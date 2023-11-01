@@ -383,6 +383,11 @@ class MenuService
                         'permissions' => [ 'nexopos.reports.low-stock' ],
                         'href' => ns()->url( '/dashboard/reports/low-stock' ),
                     ],
+                    'stock-history' => [
+                        'label' => __( 'Stock History' ),
+                        'permissions' => [ 'nexopos.reports.stock-history' ],
+                        'href' => ns()->url( '/dashboard/reports/stock-history' ),
+                    ],
                     'sold-stock' => [
                         'label' => __( 'Sold Stock' ),
                         'href' => ns()->url( '/dashboard/reports/sold-stock' ),

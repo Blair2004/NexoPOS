@@ -5,7 +5,6 @@ namespace App\Exceptions;
 use App\Exceptions\MethodNotAllowedHttpException as ExceptionsMethodNotAllowedHttpException;
 use App\Exceptions\PostTooLargeException as ExceptionsPostTooLargeException;
 use App\Exceptions\QueryException as ExceptionsQueryException;
-use App\Exceptions\ValidationException as ExceptionsValidationException;
 use ArgumentCountError;
 use Doctrine\Common\Cache\Psr6\InvalidArgument;
 use ErrorException;
@@ -13,8 +12,6 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\PostTooLargeException;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
@@ -102,7 +99,7 @@ class Handler extends ExceptionHandler
          */
         foreach( $matches as $bind => $use ) {
             if ( $exception instanceof $bind ) {
-                throw new $use;
+                throw new $use( $exception->getMessage() );
             }
         }
 

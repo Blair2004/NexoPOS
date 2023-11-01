@@ -76,6 +76,7 @@ return new class extends Migration
          */
         include_once base_path() . '/database/permissions/widgets.php';
         include_once base_path() . '/database/permissions/transactions.php';
+        include_once base_path() . '/database/permissions/reports.php';
 
         /**
          * We'll now defined default permissions
@@ -86,6 +87,7 @@ return new class extends Migration
 
         $admin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $admin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $admin->addPermissions( Permission::includes( '.reports' )->get()->map( fn( $permission ) => $permission->namespace ) );
 
         $storeAdmin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $storeAdmin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );

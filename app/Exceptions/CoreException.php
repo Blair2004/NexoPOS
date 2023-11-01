@@ -22,7 +22,7 @@ class CoreException extends Exception
                     'class' =>  $exception::CLASS,
                     'previous'  =>  $back
                 ]
-            ], $exception->getStatusCode() );
+            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 501 );
         }        
 
         return response()->view( 'pages.errors.exception', compact( 'message', 'title', 'back' ), 503 );

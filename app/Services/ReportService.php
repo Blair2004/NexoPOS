@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Classes\Currency;
 use App\Classes\Hook;
+use App\Jobs\ProcessProductHistoryByChunkJob;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\DashboardDay;
@@ -13,6 +14,7 @@ use App\Models\OrderRefund;
 use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ProductDetailedHistory;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\RegisterHistory;
@@ -32,12 +34,11 @@ class ReportService
 
     private $dayEnds;
 
-    private $dateService;
-
     public function __construct(
-        DateService $dateService
+        protected DateService $dateService,
+        protected ProductService $productService,
     ) {
-        $this->dateService = $dateService;
+        // ...
     }
 
     public function refreshFromDashboardDay( DashboardDay $todayReport )
@@ -1244,5 +1245,146 @@ class ReportService
                 ->where( 'created_at', '<=', $rangeEnds )
                 ->get(),
         ];
+    }
+
+    /**
+     * Dispatches a job to process product history data in chunks.
+     * Products with stock enabled are retrieved in chunks of 100.
+     * For each chunk, a ProcessProductHistoryByChunkJob is dispatched with a delay.
+     * The delay increases by 10 seconds for each subsequent job.
+     */
+    public function dispatchProductHistoryByChunkJob( $className, $dayPeriod ): void
+    {
+        $defaultTimeInterval    =   10;
+        
+        Product::with( 'unit_quantities' )->withStockEnabled()->chunk( 50, function( $products ) use ( &$defaultTimeInterval, $className, $dayPeriod ) {
+            $className::dispatch( $products, $dayPeriod )->delay( now()->addSeconds( $defaultTimeInterval ) );
+            $defaultTimeInterval    +=  10;
+        });
+    }
+    
+    /**
+     * Will generate the start of day detailed history
+     */
+    public function generateStartOfDayDetailedHistory( $products )
+    {
+        $currentDay                 =   $this->dateService->format( 'y-m-d' );
+        $previousDay                =   $this->dateService->clone()->subDay()->format( 'y-m-d' );
+        
+        foreach( $products as $product ) {
+            foreach( $product->unit_quantities as $unitQuantity ) {
+                $previousDetailedHistory    =   ProductDetailedHistory::for( $previousDay )
+                    ->where( 'product_id', $unitQuantity->product_id )
+                    ->where( 'unit_id', $unitQuantity->unit_id )
+                    ->first();
+        
+    
+                $currentDetailedHistory             =   new ProductDetailedHistory;
+                $currentDetailedHistory->date       = $currentDay;
+                $currentDetailedHistory->product_id = $unitQuantity->product_id;
+                $currentDetailedHistory->unit_id    = $unitQuantity->unit_id;
+    
+                /**
+                 * if the previous detailed history doesn't exist, we'll build one
+                 * using the product history if those exists.
+                 */
+                if ( ! $previousDetailedHistory instanceof ProductDetailedHistory ) {
+                    $currentDetailedHistory->initial_quantity       = $this->productService->getQuantity(
+                        product_id: $unitQuantity->product_id,
+                        unit_id: $unitQuantity->unit_id
+                    );
+                } else {
+                    $currentDetailedHistory->initial_quantity       = $previousDetailedHistory->final_quantity;
+                }
+    
+                $currentDetailedHistory->sold_quantity          = 0;
+                $currentDetailedHistory->defective_quantity     = 0;
+                $currentDetailedHistory->final_quantity         = 0;
+                $currentDetailedHistory->save();            
+            }
+        }
+    }
+
+    /**
+     * Will generate the end of day detailed history
+     */
+    public function generateEndOfDayDetailedHistory( $products ): void
+    {
+        $currentDay                 =   $this->dateService->format( 'y-m-d' );
+        $previousDay                =   $this->dateService->clone()->subDay()->format( 'y-m-d' );
+        
+        foreach( $products as $product ) {
+            foreach( $product->unit_quantities as $unitQuantity ) {
+                $startOfDay                 =   Carbon::parse( $currentDay )->startOfDay()->toDateTimeString();
+                $endOfDay                   =   Carbon::parse( $currentDay )->endOfDay()->toDateTimeString();
+
+                $currentDetailedHistory     =   ProductDetailedHistory::for( $previousDay )
+                    ->where( 'product_id', $unitQuantity->product_id )
+                    ->where( 'unit_id', $unitQuantity->unit_id )
+                    ->first();
+        
+                /**
+                 * if a product was created durign the day and by the end of the 
+                 * day the apps tries to generate a report, the ProductDetailedHistory will be missing.
+                 * In that case, we need to create a new one. But here we'll set the initial quantity to 0
+                 * and the procured quantity to the current quantity.
+                 */
+                if ( ! $currentDetailedHistory instanceof ProductDetailedHistory ) {
+                    $currentDetailedHistory                     =   new ProductDetailedHistory;
+                    $currentDetailedHistory->date               =   $currentDay;
+                    $currentDetailedHistory->product_id         =   $unitQuantity->product_id;
+                    $currentDetailedHistory->unit_id            =   $unitQuantity->unit_id;
+                    $currentDetailedHistory->procured_quantity  =   $this->productService->getQuantity(
+                        product_id: $unitQuantity->product_id,
+                        unit_id: $unitQuantity->unit_id
+                    );
+                }
+
+                $currentDetailedHistory->sold_quantity          = $this->productService->sumProductHistory(
+                    product_id: $unitQuantity->product_id,
+                    unit_id: $unitQuantity->unit_id,
+                    startOfDay: $startOfDay,
+                    endOfDay: $endOfDay,
+                    action: [ ProductHistory::ACTION_SOLD ]
+                );
+
+                $currentDetailedHistory->defective_quantity     = $this->productService->sumProductHistory(
+                    product_id: $unitQuantity->product_id,
+                    unit_id: $unitQuantity->unit_id,
+                    startOfDay: $startOfDay,
+                    endOfDay: $endOfDay,
+                    action: [ 
+                        ProductHistory::ACTION_DELETED, 
+                        ProductHistory::ACTION_LOST, 
+                        ProductHistory::ACTION_REMOVED, 
+                        ProductHistory::ACTION_DEFECTIVE,
+                    ]
+                );
+
+                $currentDetailedHistory->procured_quantity     = $this->productService->sumProductHistory(
+                    product_id: $unitQuantity->product_id,
+                    unit_id: $unitQuantity->unit_id,
+                    startOfDay: $startOfDay,
+                    endOfDay: $endOfDay,
+                    action: [ 
+                        ProductHistory::ACTION_ADJUSTMENT_RETURN, 
+                        ProductHistory::ACTION_ADDED, 
+                        ProductHistory::ACTION_CONVERT_IN, 
+                        ProductHistory::ACTION_RETURNED,
+                        ProductHistory::ACTION_TRANSFER_IN,
+                        ProductHistory::ACTION_TRANSFER_CANCELED,
+                        ProductHistory::ACTION_TRANSFER_REJECTED,
+                    ]
+                );
+
+                $currentDetailedHistory->final_quantity         = ns()->currency->define( $currentDetailedHistory->initial_quantity )
+                    ->additionateBy( $currentDetailedHistory->procured_quantity )
+                    ->subtractBy( $currentDetailedHistory->sold_quantity )
+                    ->subtractBy( $currentDetailedHistory->defective_quantity )
+                    ->getRaw();
+
+                $currentDetailedHistory->save();            
+            }
+        }
     }
 }

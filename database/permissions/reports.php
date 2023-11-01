@@ -62,4 +62,10 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $permission->namespace = 'nexopos.reports.low-stock';
     $permission->description = __( 'Let the user read the report that shows low stock.' );
     $permission->save();
+    
+    $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.stock-history' ]);
+    $permission->name = __( 'Read Stock History' );
+    $permission->namespace = 'nexopos.reports.stock-history';
+    $permission->description = __( 'Let the user read the stock history report.' );
+    $permission->save();
 }

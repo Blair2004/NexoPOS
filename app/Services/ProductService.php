@@ -1997,4 +1997,16 @@ class ProductService
                 return $product;
             });
     }
+
+    /**
+     * Get the product history for the provided.
+     */
+    public function sumProductHistory( int $product_id, int $unit_id, string $startOfDay, string $endOfDay, array $action ): float|int
+    {
+        return ProductHistory::where('product_id', $product_id)
+            ->where('unit_id', $unit_id)
+            ->whereIn('action', $action)
+            ->whereBetween('created_at', [$startOfDay, $endOfDay])
+            ->sum('quantity');
+    }
 }
