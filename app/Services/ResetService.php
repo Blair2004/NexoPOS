@@ -56,6 +56,7 @@ class ResetService
             'nexopos_products',
             'nexopos_products_categories',
             'nexopos_products_histories',
+            'nexopos_products_histories_combined',
             'nexopos_products_galleries',
             'nexopos_products_metas',
             'nexopos_products_taxes',

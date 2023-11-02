@@ -16,6 +16,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductDetailedHistory;
 use App\Models\ProductHistory;
+use App\Models\ProductHistoryCombined;
 use App\Models\ProductUnitQuantity;
 use App\Models\RegisterHistory;
 use App\Models\Role;
@@ -1247,144 +1248,95 @@ class ReportService
         ];
     }
 
-    /**
-     * Dispatches a job to process product history data in chunks.
-     * Products with stock enabled are retrieved in chunks of 100.
-     * For each chunk, a ProcessProductHistoryByChunkJob is dispatched with a delay.
-     * The delay increases by 10 seconds for each subsequent job.
-     */
-    public function dispatchProductHistoryByChunkJob( $className, $dayPeriod ): void
+    public function combineProductHistory( ProductHistory $productHistory )
     {
-        $defaultTimeInterval    =   10;
+        $formatedDate               =   $this->dateService->now()->format( 'Y-m-d' );
+        $currentDetailedHistory     =   ProductHistoryCombined::where( 'date', $formatedDate )
+            ->where( 'unit_id', $productHistory->unit_id )
+            ->where( 'product_id', $productHistory->product_id )
+            ->first();
+
+        /**
+         * if this is not set, the we're probably doing this for the 
+         * first time of the day, so we need to pull the current quantity of the product
+         */
+        if ( ! $currentDetailedHistory instanceof ProductHistoryCombined ) {
+            $currentDetailedHistory = new ProductHistoryCombined;
+            $currentDetailedHistory->date = $formatedDate;
+            $currentDetailedHistory->name = $productHistory->product->name;
+            $currentDetailedHistory->initial_quantity = $productHistory->before_quantity;
+            $currentDetailedHistory->procured_quantity = 0;
+            $currentDetailedHistory->sold_quantity = 0;
+            $currentDetailedHistory->defective_quantity = 0;
+            $currentDetailedHistory->final_quantity = 0;
+            $currentDetailedHistory->product_id = $productHistory->product_id;
+            $currentDetailedHistory->unit_id = $productHistory->unit_id;
+        }
+
+        if ( $productHistory->operation_type === ProductHistory::ACTION_ADDED ) {
+            $currentDetailedHistory->procured_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_DELETED ) {
+            $currentDetailedHistory->defective_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_STOCKED ) {
+            $currentDetailedHistory->procured_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_LOST ) {
+            $currentDetailedHistory->defective_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_REMOVED ) {
+            $currentDetailedHistory->defective_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_SOLD ) {
+            $currentDetailedHistory->sold_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_ADJUSTMENT_RETURN ) {
+            $currentDetailedHistory->procured_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_CONVERT_IN ) {
+            $currentDetailedHistory->procured_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_RETURNED ) {
+            $currentDetailedHistory->procured_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_TRANSFER_IN ) {
+            $currentDetailedHistory->procured_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_TRANSFER_CANCELED ) {
+            $currentDetailedHistory->procured_quantity += $productHistory->quantity;
+        } else if ( $productHistory->operation_type === ProductHistory::ACTION_TRANSFER_REJECTED ) {
+            $currentDetailedHistory->procured_quantity += $productHistory->quantity;
+        }
         
-        Product::with( 'unit_quantities' )->withStockEnabled()->chunk( 50, function( $products ) use ( &$defaultTimeInterval, $className, $dayPeriod ) {
-            $className::dispatch( $products, $dayPeriod )->delay( now()->addSeconds( $defaultTimeInterval ) );
-            $defaultTimeInterval    +=  10;
+        $currentDetailedHistory->final_quantity = ns()->currency->define( $currentDetailedHistory->initial_quantity )
+            ->additionateBy( $currentDetailedHistory->procured_quantity )
+            ->subtractBy( $currentDetailedHistory->sold_quantity )
+            ->subtractBy( $currentDetailedHistory->defective_quantity )
+            ->getRaw();
+
+        $currentDetailedHistory->save();
+    }
+
+    public function getCombinedProductHistory( $date, $categories, $units )
+    {
+        $productsWithStockEnabled   =   Cache::remember( 'ns-combined-products',  60, function() use ( $units, $date, $categories ) {
+            return Product::withStockEnabled()
+                ->whereHas( 'unit_quantities', function( $query ) use ( $units ) {
+                    if ( ! empty( $units ) ) {
+                        $query->whereIn( 'unit_id', $units );
+                    }
+                })
+                ->whereHas( 'unit_quantities.unit', function( $query ) use ( $units ) {
+                    if ( ! empty( $units ) ) {
+                        $query->whereIn( 'id', $units );
+                    }
+                })
+                ->whereHas( 'unit_quantities', function( $query ) use ( $categories ) {
+                    if ( ! empty( $categories ) ) {
+                        $query->whereIn( 'product_category_id', $categories );
+                    }
+                })
+                ->whereHas( 'unit_quantities.unit', function( $query ) use ( $categories ) {
+                    if ( ! empty( $categories ) ) {
+                        $query->whereIn( 'product_category_id', $categories );
+                    }
+                })
+                ->get();
         });
-    }
-    
-    /**
-     * Will generate the start of day detailed history
-     */
-    public function generateStartOfDayDetailedHistory( $products )
-    {
-        $currentDay                 =   $this->dateService->format( 'y-m-d' );
-        $previousDay                =   $this->dateService->clone()->subDay()->format( 'y-m-d' );
-        
-        foreach( $products as $product ) {
-            foreach( $product->unit_quantities as $unitQuantity ) {
-                $previousDetailedHistory    =   ProductDetailedHistory::for( $previousDay )
-                    ->where( 'product_id', $unitQuantity->product_id )
-                    ->where( 'unit_id', $unitQuantity->unit_id )
-                    ->first();
-        
-    
-                $currentDetailedHistory             =   new ProductDetailedHistory;
-                $currentDetailedHistory->date       = $currentDay;
-                $currentDetailedHistory->product_id = $unitQuantity->product_id;
-                $currentDetailedHistory->unit_id    = $unitQuantity->unit_id;
-    
-                /**
-                 * if the previous detailed history doesn't exist, we'll build one
-                 * using the product history if those exists.
-                 */
-                if ( ! $previousDetailedHistory instanceof ProductDetailedHistory ) {
-                    $currentDetailedHistory->initial_quantity       = $this->productService->getQuantity(
-                        product_id: $unitQuantity->product_id,
-                        unit_id: $unitQuantity->unit_id
-                    );
-                } else {
-                    $currentDetailedHistory->initial_quantity       = $previousDetailedHistory->final_quantity;
-                }
-    
-                $currentDetailedHistory->sold_quantity          = 0;
-                $currentDetailedHistory->defective_quantity     = 0;
-                $currentDetailedHistory->final_quantity         = 0;
-                $currentDetailedHistory->save();            
-            }
-        }
-    }
 
-    /**
-     * Will generate the end of day detailed history
-     */
-    public function generateEndOfDayDetailedHistory( $products ): void
-    {
-        $currentDay                 =   $this->dateService->format( 'y-m-d' );
-        $previousDay                =   $this->dateService->clone()->subDay()->format( 'y-m-d' );
-        
-        foreach( $products as $product ) {
-            foreach( $product->unit_quantities as $unitQuantity ) {
-                $startOfDay                 =   Carbon::parse( $currentDay )->startOfDay()->toDateTimeString();
-                $endOfDay                   =   Carbon::parse( $currentDay )->endOfDay()->toDateTimeString();
+        /// ....
 
-                $currentDetailedHistory     =   ProductDetailedHistory::for( $previousDay )
-                    ->where( 'product_id', $unitQuantity->product_id )
-                    ->where( 'unit_id', $unitQuantity->unit_id )
-                    ->first();
-        
-                /**
-                 * if a product was created durign the day and by the end of the 
-                 * day the apps tries to generate a report, the ProductDetailedHistory will be missing.
-                 * In that case, we need to create a new one. But here we'll set the initial quantity to 0
-                 * and the procured quantity to the current quantity.
-                 */
-                if ( ! $currentDetailedHistory instanceof ProductDetailedHistory ) {
-                    $currentDetailedHistory                     =   new ProductDetailedHistory;
-                    $currentDetailedHistory->date               =   $currentDay;
-                    $currentDetailedHistory->product_id         =   $unitQuantity->product_id;
-                    $currentDetailedHistory->unit_id            =   $unitQuantity->unit_id;
-                    $currentDetailedHistory->procured_quantity  =   $this->productService->getQuantity(
-                        product_id: $unitQuantity->product_id,
-                        unit_id: $unitQuantity->unit_id
-                    );
-                }
-
-                $currentDetailedHistory->sold_quantity          = $this->productService->sumProductHistory(
-                    product_id: $unitQuantity->product_id,
-                    unit_id: $unitQuantity->unit_id,
-                    startOfDay: $startOfDay,
-                    endOfDay: $endOfDay,
-                    action: [ ProductHistory::ACTION_SOLD ]
-                );
-
-                $currentDetailedHistory->defective_quantity     = $this->productService->sumProductHistory(
-                    product_id: $unitQuantity->product_id,
-                    unit_id: $unitQuantity->unit_id,
-                    startOfDay: $startOfDay,
-                    endOfDay: $endOfDay,
-                    action: [ 
-                        ProductHistory::ACTION_DELETED, 
-                        ProductHistory::ACTION_LOST, 
-                        ProductHistory::ACTION_REMOVED, 
-                        ProductHistory::ACTION_DEFECTIVE,
-                    ]
-                );
-
-                $currentDetailedHistory->procured_quantity     = $this->productService->sumProductHistory(
-                    product_id: $unitQuantity->product_id,
-                    unit_id: $unitQuantity->unit_id,
-                    startOfDay: $startOfDay,
-                    endOfDay: $endOfDay,
-                    action: [ 
-                        ProductHistory::ACTION_ADJUSTMENT_RETURN, 
-                        ProductHistory::ACTION_ADDED, 
-                        ProductHistory::ACTION_CONVERT_IN, 
-                        ProductHistory::ACTION_RETURNED,
-                        ProductHistory::ACTION_TRANSFER_IN,
-                        ProductHistory::ACTION_TRANSFER_CANCELED,
-                        ProductHistory::ACTION_TRANSFER_REJECTED,
-                    ]
-                );
-
-                $currentDetailedHistory->final_quantity         = ns()->currency->define( $currentDetailedHistory->initial_quantity )
-                    ->additionateBy( $currentDetailedHistory->procured_quantity )
-                    ->subtractBy( $currentDetailedHistory->sold_quantity )
-                    ->subtractBy( $currentDetailedHistory->defective_quantity )
-                    ->getRaw();
-
-                $currentDetailedHistory->save();            
-            }
-        }
+        return $productsWithStockEnabled;
     }
 }

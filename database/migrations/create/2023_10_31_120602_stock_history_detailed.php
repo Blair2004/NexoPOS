@@ -11,19 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nexopos_products_detailed_history', function (Blueprint $table) {
+        Schema::create('nexopos_products_histories_combined', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->date( 'date' );
             $table->integer('product_id');
             $table->integer('unit_id');
-            $table->float('initial_quantity');
-            $table->float('sold_quantity');
-            $table->float( 'procured_quantity' );
-            $table->float('defective_quantity');
-            $table->float('final_quantity');
-            $table->integer('author');
-            $table->string('uuid');
+            $table->float('initial_quantity')->default(0);
+            $table->float('sold_quantity')->default(0);
+            $table->float( 'procured_quantity' )->default(0);
+            $table->float( 'defective_quantity' )->default(0);
+            $table->float('final_quantity')->default(0);
+            $table->string('uuid')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nexopos_products_detailed_history');
+        Schema::dropIfExists('nexopos_products_histories_combined');
     }
 };

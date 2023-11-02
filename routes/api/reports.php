@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\ReportsController;
+use Github\Api\Repo;
 use Illuminate\Support\Facades\Route;
 
 Route::post( 'reports/sale-report', [ ReportsController::class, 'getSaleReport' ]);
@@ -14,4 +15,5 @@ Route::post( 'reports/compute/{type}', [ ReportsController::class, 'computeRepor
 Route::get( 'reports/cashier-report', [ ReportsController::class, 'getMyReport' ]);
 Route::post( 'reports/low-stock', [ ReportsController::class, 'getLowStock' ]);
 Route::post( 'reports/stock-report', [ ReportsController::class, 'getStockReport' ]);
+Route::post( 'reports/product-history-combined', [ ReportsController::class, 'getProductHistoryCombined' ]);
 Route::post( 'reports/customers-statement/{customer}', [ ReportsController::class, 'getCustomerStatement' ]);

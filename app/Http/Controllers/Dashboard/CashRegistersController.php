@@ -146,9 +146,6 @@ class CashRegistersController extends DashboardController
                         case RegisterHistory::ACTION_CASHOUT:
                             $session->label = __( 'Cash Out' );
                             break;
-                        case RegisterHistory::ACTION_CHANGE:
-                            $session->label = __( 'Give Change' );
-                            break;
                         case RegisterHistory::ACTION_CLOSING:
                             $session->label = __( 'Closing' );
                             break;

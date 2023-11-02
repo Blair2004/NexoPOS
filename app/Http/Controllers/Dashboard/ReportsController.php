@@ -74,6 +74,14 @@ class ReportsController extends DashboardController
         ]);
     }
 
+    public function stockCombinedReport()
+    {
+        return View::make( 'pages.dashboard.reports.stock-combined', [
+            'title' => __( 'Combined Report' ),
+            'description' => __( 'Provides a combined report for every transactions on products.' ),
+        ]);
+    }
+
     /**
      * get sales based on a specific time range
      *
@@ -291,12 +299,12 @@ class ReportsController extends DashboardController
         );
     }
 
-    public function getStockHistory( Request $request )
+    public function getProductHistoryCombined( Request $request )
     {
-        return $this->reportService->getStockHistory(
-            day: $request->input( 'day' ),
-            categories: $request->input( 'categories' ) ?: [],
-            units: $request->input( 'units' ) ?: []
+        return $this->reportService->getCombinedProductHistory(
+            $request->input( 'date' ),
+            $request->input( 'categories' ),
+            $request->input( 'units' )
         );
     }
 }

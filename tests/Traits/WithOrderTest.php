@@ -148,21 +148,11 @@ trait WithOrderTest
             ->sum( 'value' ) )->getRaw();
 
         /**
-         * We should also take into account the change that produce
-         * records on the cash register history
-         */
-        $rawTotalChangeValue = RegisterHistory::where( 'action', RegisterHistory::ACTION_CHANGE )
-            ->where( 'register_id', $cashRegister->id )
-            ->sum( 'value' );
-
-        $totalChangeValue = ns()->currency->define( $rawTotalChangeValue )->getRaw();
-
-        /**
          * only if the order total is greater than 0
          */
         if ( (float) $response[ 'data' ][ 'order' ][ 'tendered' ] > 0 ) {
             $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
-            $this->assertEquals( (float) $cashRegister->balance, (float) ( ns()->currency->define( $totalValue )->subtractBy( $totalChangeValue )->getRaw() ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
+            $this->assertEquals( (float) $cashRegister->balance, (float) ( ns()->currency->define( $totalValue )->getRaw() ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
         }
 
         /**

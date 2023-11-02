@@ -31,6 +31,7 @@ const nsLowStockReport              =   defineAsyncComponent( () => import( './p
 const nsSaleReport                  =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sale-report.vue' ) );
 const nsSoldStockReport             =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sold-stock-report.vue' ) );
 const nsProfitReport                =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-profit-report.vue' ) );
+const nsStockCombinedReport         =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-stock-combined-report.vue' ) );
 const nsCashFlowReport              =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-cash-flow-report.vue' ) );
 const nsYearlyReport                =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-yearly-report.vue' ) );
 const nsBestProductsReport          =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-best-products-report.vue' ) );
@@ -67,6 +68,7 @@ const allComponents    =   Object.assign({
     nsSaleReport,
     nsSoldStockReport,
     nsProfitReport,
+    nsStockCombinedReport,
     nsCashFlowReport,
     nsYearlyReport,
     nsPaymentTypesReport,

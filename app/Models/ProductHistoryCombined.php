@@ -20,11 +20,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
-class ProductDetailedHistory extends Model
+class ProductHistoryCombined extends Model
 {
     use HasFactory;
 
-    protected $table = 'nexopos_' . 'products_detailed_history';
+    protected $table = 'nexopos_' . 'products_histories_combined';
 
     public function scopeFor( $query, $for )
     {
