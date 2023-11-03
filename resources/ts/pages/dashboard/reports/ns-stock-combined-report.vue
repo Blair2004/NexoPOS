@@ -82,12 +82,15 @@
                         </thead>
                         <tbody class="text-xs">
                             <tr v-for="product in products" :key="product.id">
-                                <td class="border p-2">{{ product.name }}</td>
-                                <td class="border p-2">{{ product.initial_quantity }}</td>
-                                <td class="border p-2">{{ product.added_quantity }}</td>
-                                <td class="border p-2">{{ product.sold_quantity }}</td>
-                                <td class="border p-2">{{ product.defective_quantity }}</td>
-                                <td class="border p-2">{{ product.final_quantity }}</td>
+                                <td class="border p-2">{{ product.history_name }} ({{ product.unit_name }})</td>
+                                <td class="border p-2">{{ product.history_initial_quantity }}</td>
+                                <td class="border p-2">{{ product.history_procured_quantity }}</td>
+                                <td class="border p-2">{{ product.history_sold_quantity }}</td>
+                                <td class="border p-2">{{ product.history_defective_quantity }}</td>
+                                <td class="border p-2">{{ product.history_final_quantity }}</td>
+                            </tr>
+                            <tr v-if="products.length === 0">
+                                <td colspan="6" class="border p-2 text-center">{{ __( 'No data available' ) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -101,7 +104,7 @@ import moment from 'moment';
 import { __ } from '~/libraries/lang';
 import { selectApiEntities } from "~/libraries/select-api-entities";
 
-declare const ns;
+declare const ns, nsSnackBar, nsHttpClient;
 
 export default {
     props: [ 'storeLogo', 'storeName' ],
@@ -155,7 +158,7 @@ export default {
             try {
                 const response              =   await selectApiEntities( '/api/categories', this.categoryField.label, this.categoryField.value );
                 this.categoryField.value    =   response.values;
-                this.categoryNames          =   response.labels;
+                this.categoriesNames          =   response.labels;
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {
@@ -167,7 +170,7 @@ export default {
             try {
                 const response              =   await selectApiEntities( '/api/units', this.unitField.label, this.unitField.value );
                 this.unitField.value    =   response.values;
-                this.unitNames          =   response.labels;
+                this.unitsNames          =   response.labels;
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {

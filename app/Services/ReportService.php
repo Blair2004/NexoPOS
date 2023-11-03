@@ -14,7 +14,6 @@ use App\Models\OrderRefund;
 use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\ProductDetailedHistory;
 use App\Models\ProductHistory;
 use App\Models\ProductHistoryCombined;
 use App\Models\ProductUnitQuantity;
@@ -1310,33 +1309,41 @@ class ReportService
 
     public function getCombinedProductHistory( $date, $categories, $units )
     {
-        $productsWithStockEnabled   =   Cache::remember( 'ns-combined-products',  60, function() use ( $units, $date, $categories ) {
-            return Product::withStockEnabled()
-                ->whereHas( 'unit_quantities', function( $query ) use ( $units ) {
-                    if ( ! empty( $units ) ) {
-                        $query->whereIn( 'unit_id', $units );
-                    }
-                })
-                ->whereHas( 'unit_quantities.unit', function( $query ) use ( $units ) {
-                    if ( ! empty( $units ) ) {
-                        $query->whereIn( 'id', $units );
-                    }
-                })
-                ->whereHas( 'unit_quantities', function( $query ) use ( $categories ) {
-                    if ( ! empty( $categories ) ) {
-                        $query->whereIn( 'product_category_id', $categories );
-                    }
-                })
-                ->whereHas( 'unit_quantities.unit', function( $query ) use ( $categories ) {
-                    if ( ! empty( $categories ) ) {
-                        $query->whereIn( 'product_category_id', $categories );
-                    }
-                })
-                ->get();
-        });
+        $request    =   DB::query()->select([
+            'nexopos_products_unit_quantities.*',
+            'nexopos_products.category_id as product_category_id',
+            'nexopos_units.name as unit_name',
+            'nexopos_products_histories_combined.date as history_date',
+            'nexopos_products_histories_combined.initial_quantity as history_initial_quantity',
+            'nexopos_products_histories_combined.procured_quantity as history_procured_quantity',
+            'nexopos_products_histories_combined.defective_quantity as history_defective_quantity',
+            'nexopos_products_histories_combined.sold_quantity as history_sold_quantity',
+            'nexopos_products_histories_combined.final_quantity as history_final_quantity',
+            'nexopos_products_histories_combined.unit_id as history_unit_id',
+            'nexopos_products_histories_combined.product_id as history_product_id',
+            'nexopos_products_histories_combined.name as history_name',
+        ])->from( 'nexopos_products_unit_quantities' )
+            ->rightJoin( 'nexopos_products', 'nexopos_products.id', '=', 'nexopos_products_unit_quantities.product_id' )
+            ->rightJoin( 'nexopos_products_histories_combined', function( $join ) use ( $date ) {
+                $join->on( 'nexopos_products_histories_combined.product_id', '=', 'nexopos_products_unit_quantities.product_id' );
+                $join->on( 'nexopos_products_histories_combined.unit_id', '=', 'nexopos_products_unit_quantities.unit_id' );
+                $join->where( 'nexopos_products_histories_combined.date', $date );
+            })
+            ->rightJoin( 'nexopos_units', 'nexopos_units.id', '=', 'nexopos_products_histories_combined.unit_id' );
 
-        /// ....
+        /**
+         * Will only pull products that belongs to the units id provided.
+         */
+        if ( ! empty( $units ) ) {
+            $request->whereIn( 'nexopos_products_histories_combined.unit_id', $units );
+        }
 
-        return $productsWithStockEnabled;
+        if ( ! empty( $categories ) ) {
+            $request->whereIn( 'nexopos_products.category_id', $categories );
+        }
+
+        $request->where( 'nexopos_products_histories_combined.date', Carbon::parse( $date )->format( 'Y-m-d' ) );
+
+        return $request->get();
     }
 }

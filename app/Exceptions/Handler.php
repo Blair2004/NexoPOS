@@ -15,6 +15,7 @@ use Illuminate\Http\Exceptions\PostTooLargeException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
+use TypeError;
 
 class Handler extends ExceptionHandler
 {
@@ -91,6 +92,7 @@ class Handler extends ExceptionHandler
             InvalidArgument::class                  =>  CoreException::class,
             ErrorException::class                   =>  CoreException::class,
             ArgumentCountError::class               =>  CoreException::class,
+            TypeError::class                        =>  CoreException::class,
         ];
 
         /**
@@ -99,7 +101,7 @@ class Handler extends ExceptionHandler
          */
         foreach( $matches as $bind => $use ) {
             if ( $exception instanceof $bind ) {
-                throw new $use( $exception->getMessage() );
+                throw new $use( env( 'APP_DEBUG' ) ? $exception->getMessage() : __( 'Something went wrong.' ) );
             }
         }
 

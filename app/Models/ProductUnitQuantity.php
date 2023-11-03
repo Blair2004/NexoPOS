@@ -97,6 +97,11 @@ class ProductUnitQuantity extends NsModel
         return $this->hasOne( Unit::class, 'id', 'unit_id' );
     }
 
+    public function history()
+    {
+        return $this->hasMany( ProductHistoryCombined::class, 'product_id', 'product_id' );
+    }
+
     public function taxes()
     {
         return $this->hasMany( ProductTax::class, 'unit_quantity_id' );

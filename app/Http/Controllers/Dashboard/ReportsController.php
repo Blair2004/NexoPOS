@@ -302,7 +302,7 @@ class ReportsController extends DashboardController
     public function getProductHistoryCombined( Request $request )
     {
         return $this->reportService->getCombinedProductHistory(
-            $request->input( 'date' ),
+            Carbon::parse( $request->input( 'date' ) )->format( 'Y-m-d' ),
             $request->input( 'categories' ),
             $request->input( 'units' )
         );
