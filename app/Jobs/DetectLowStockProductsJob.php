@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\LowStockProductsCountedEvent;
+use App\Models\Notification;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
 use App\Services\NotificationService;
@@ -31,7 +32,7 @@ class DetectLowStockProductsJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( NotificationService $notificationService )
     {
         $products = ProductUnitQuantity::stockAlertEnabled()
             ->whereRaw( 'low_quantity > quantity' )
@@ -40,10 +41,6 @@ class DetectLowStockProductsJob implements ShouldQueue
         if ( $products > 0 ) {
             LowStockProductsCountedEvent::dispatch();
 
-            /**
-             * @var NotificationService
-             */
-            $notificationService = app()->make( NotificationService::class );
             $notificationService->create([
                 'title' => __( 'Low Stock Alert' ),
                 'description' => sprintf(

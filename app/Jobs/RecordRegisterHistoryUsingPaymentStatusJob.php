@@ -26,7 +26,7 @@ class RecordRegisterHistoryUsingPaymentStatusJob implements ShouldQueue
 
     /**
      * Execute the job.
-     *
+     * @todo check if this is still necessary
      * @return void
      */
     public function handle( CashRegistersService $cashRegistersService )

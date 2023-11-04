@@ -29,13 +29,8 @@ class TrackOrderCouponsJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( OrdersService $ordersService )
     {
-        /**
-         * @var OrdersService
-         */
-        $orderService = app()->make( OrdersService::class );
-
-        $orderService->trackOrderCoupons( $this->order );
+        $ordersService->trackOrderCoupons( $this->order );
     }
 }

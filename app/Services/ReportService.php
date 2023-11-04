@@ -1249,6 +1249,16 @@ class ReportService
 
     public function combineProductHistory( ProductHistory $productHistory )
     {
+        $currentDetailedHistory     =   $this->prepareProductHistoryCombinedHistory( $productHistory );
+        $this->saveProductHistoryCombined( $currentDetailedHistory, $productHistory );
+        $currentDetailedHistory->save();
+    }
+
+    /**
+     * Will prepare the product history combined
+     */
+    public function prepareProductHistoryCombinedHistory( ProductHistory $productHistory ): ProductHistoryCombined
+    {
         $formatedDate               =   $this->dateService->now()->format( 'Y-m-d' );
         $currentDetailedHistory     =   ProductHistoryCombined::where( 'date', $formatedDate )
             ->where( 'unit_id', $productHistory->unit_id )
@@ -1272,6 +1282,14 @@ class ReportService
             $currentDetailedHistory->unit_id = $productHistory->unit_id;
         }
 
+        return $currentDetailedHistory;
+    }
+
+    /**
+     * Will save the product history combined
+     */
+    public function saveProductHistoryCombined( ProductHistoryCombined &$currentDetailedHistory, ProductHistory $productHistory ): ProductHistoryCombined
+    {
         if ( $productHistory->operation_type === ProductHistory::ACTION_ADDED ) {
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
         } else if ( $productHistory->operation_type === ProductHistory::ACTION_DELETED ) {
@@ -1304,7 +1322,7 @@ class ReportService
             ->subtractBy( $currentDetailedHistory->defective_quantity )
             ->getRaw();
 
-        $currentDetailedHistory->save();
+        return $currentDetailedHistory;
     }
 
     public function getCombinedProductHistory( $date, $categories, $units )

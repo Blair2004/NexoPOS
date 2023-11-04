@@ -6,6 +6,7 @@ use App\Jobs\ClearHoldOrdersJob;
 use App\Jobs\ClearModuleTempJob;
 use App\Jobs\DetectLowStockProductsJob;
 use App\Jobs\DetectScheduledTransactionsJob;
+use App\Jobs\EnsureCombinedProductHistoryExistsJob;
 use App\Jobs\ExecuteReccuringTransactionsJob;
 use App\Jobs\PurgeOrderStorageJob;
 use App\Jobs\StockProcurementJob;
@@ -54,7 +55,7 @@ class Kernel extends ConsoleKernel
          * This will check every minutes if the symbolic link is
          * broken to the storage folder.
          */
-        $schedule->call( fn() => ns()->checkSymbolicLinks() )->everyMinute();
+        $schedule->call( fn() => ns()->checkSymbolicLinks() )->hourly();
 
         /**
          * Will execute transactions job daily.
@@ -65,7 +66,7 @@ class Kernel extends ConsoleKernel
          * Will execute scheduled transactions
          * every minutes
          */
-        $schedule->job( DetectScheduledTransactionsJob::class )->everyMinute();
+        $schedule->job( DetectScheduledTransactionsJob::class )->everyFiveMinutes();
 
         /**
          * Will check procurement awaiting automatic
@@ -94,6 +95,12 @@ class Kernel extends ConsoleKernel
          * trigger relevant notifications.
          */
         $schedule->job( new TrackLaidAwayOrdersJob )->dailyAt( '13:00' );
+
+        /**
+         * We'll check if there is a ProductHistoryCombined that was generated
+         * during the current day. If it's not the case, we'll create one.
+         */
+        $schedule->job( new EnsureCombinedProductHistoryExistsJob )->hourly();
 
         /**
          * We'll clear temporary files weekly. This will erase folder that

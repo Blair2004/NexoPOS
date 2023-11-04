@@ -33,23 +33,8 @@ class ExecuteDelayedTransactionJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( TransactionService $transactionService, NotificationService $notificationService, DateService $dateService)
     {
-        /**
-         * @var DateService $dateService
-         */
-        $dateService = app()->make( DateService::class );
-
-        /**
-         * @var TransactionService $transactionService
-         */
-        $transactionService = app()->make( TransactionService::class );
-
-        /**
-         * @var NotificationService $notificationService
-         */
-        $notificationService = app()->make( NotificationService::class );
-
         $transactionService->triggerTransaction( $this->transaction );
 
         $notificationService->create([

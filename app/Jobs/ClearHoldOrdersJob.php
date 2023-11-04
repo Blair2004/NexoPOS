@@ -35,23 +35,12 @@ class ClearHoldOrdersJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(
+        Options $options,
+        DateService $date,
+        NotificationService $notification
+    )
     {
-        /**
-         * @var Options
-         */
-        $options = app()->make( Options::class );
-
-        /**
-         * @var DateService
-         */
-        $date = app()->make( DateService::class );
-
-        /**
-         * @var NotificationService;
-         */
-        $notification = app()->make( NotificationService::class );
-
         $deleted = Order::paymentStatus( Order::PAYMENT_HOLD )
             ->get()
             ->filter( function( $order ) use ( $options, $date ) {

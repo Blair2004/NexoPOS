@@ -32,7 +32,7 @@ class ProcessTransactionJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( TransactionService $transactionService )
+    public function handle( TransactionService $transactionService, DateService $dateService )
     {
         /**
          * @var DateService $date

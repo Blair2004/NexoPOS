@@ -31,7 +31,7 @@ class RecomputeCashFlowForDate implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( ReportService $reportService )
     {
         $wasLoggedIn = true;
 
@@ -44,10 +44,6 @@ class RecomputeCashFlowForDate implements ShouldQueue
         $this->fromDate = Carbon::parse( $this->fromDate );
         $this->toDate = Carbon::parse( $this->toDate );
 
-        /**
-         * @var ReportService $reportService
-         */
-        $reportService = app()->make( ReportService::class );
         $reportService->recomputeTransactions( $this->fromDate, $this->toDate );
 
         if ( ! $wasLoggedIn ) {

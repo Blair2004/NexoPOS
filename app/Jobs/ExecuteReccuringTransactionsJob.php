@@ -28,12 +28,8 @@ class ExecuteReccuringTransactionsJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( TransactionService $transactionService )
     {
-        /**
-         * @var TransactionService
-         */
-        $transactionService = app()->make( TransactionService::class );
         $transactionService->handleRecurringTransactions();
     }
 }
