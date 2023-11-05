@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Services\Helper;
 use Exception;
+use Illuminate\Http\Request;
 
 class QueryException extends Exception
 {
@@ -12,8 +13,14 @@ class QueryException extends Exception
         $this->message = $message ?: __('A Database Exception Occurred.' );
     }
 
-    public function render( $request )
+    public function render( Request $request )
     {
+        if ( $request->expectsJson() ) {
+            return response()->json([
+                'message' => $this->getMessage()
+            ], 500 );
+        }
+        
         $message = $this->getMessage();
         $title = __( 'Query Exception' );
         $back = Helper::getValidPreviousUrl( $request );
