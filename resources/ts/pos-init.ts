@@ -529,6 +529,8 @@ export class POS {
         } else if (type === 'exclusive') {
             return this.getPriceWithTax(value, rate, type) - value;
         }
+
+        return 0;
     }
 
     computeTaxes() {
@@ -604,8 +606,8 @@ export class POS {
             ).multiply( 100 ).done();
 
             return {
-                id: _tax.id,
-                name: _tax.name,
+                tax_id: _tax.id,
+                tax_name: _tax.name,
                 rate: parseFloat(_tax.rate),
                 tax_value: math.chain(
                     math.chain( currentVatValue ).multiply( currentPercentage ).done()
