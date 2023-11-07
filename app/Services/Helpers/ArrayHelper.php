@@ -85,6 +85,9 @@ trait ArrayHelper
 
         if ( $collections ) {
             foreach ( $collections as $collection ) {
+                
+                $collection     =   ( object ) $collection;
+
                 $id = $config[0];
                 if ( ! is_array( $config[1] ) ) {
                     $name = $config[1];
