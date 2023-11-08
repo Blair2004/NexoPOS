@@ -82,11 +82,38 @@ class Options
             $this->rawOptions = $this->option()
                 ->get()
                 ->mapWithKeys( function ( $option ) {
+                    $option     =   $this->parseOption( $option );
+
                     return [
                         $option->key => $option,
                     ];
                 });
         }
+    }
+
+    public function parseOption( $option )
+    {
+        /**
+         * We should'nt run this everytime we
+         * try to pull an option from the database or from the array
+         */
+        if ( ! empty( $option->value ) ) {
+            if ( is_string( $option->value ) ) {
+                $json = json_decode( $option->value, true );
+
+                if ( json_last_error() == JSON_ERROR_NONE ) {
+                    $option->value = $json;
+                }
+            } elseif ( ! is_array( $option->value ) ) {
+                $option->value = match ( $option->value ) {
+                    preg_match( '/[0-9]{1,}/', $option->value ) => (int) $option->value,
+                    preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) => (float) $option->value,
+                    default => $option->value,
+                };
+            }
+        }
+
+        return $option;
     }
 
     /**
@@ -147,7 +174,7 @@ class Options
         /**
          * Let's save the new option
          */
-        $this->rawOptions[ $key ] = $option;
+        $this->rawOptions[ $key ] = $this->parseOption( $option );
 
         return $option;
     }
@@ -179,36 +206,10 @@ class Options
             return is_array( $key ) ? in_array( $option->key, $key ) : $option->key === $key;
         });
 
-        $options = $filtredOptions->map( function ( $option ) {
-            /**
-             * We should'nt run this everytime we
-             * try to pull an option from the database or from the array
-             */
-            if ( ! empty( $option->value ) && ! $option->parsed ) {
-                if ( is_string( $option->value ) ) {
-                    $json = json_decode( $option->value, true );
-
-                    if ( json_last_error() == JSON_ERROR_NONE ) {
-                        $option->value = $json;
-                        $option->parsed = true;
-                    }
-                } elseif ( ! is_array( $option->value ) ) {
-                    $option->parsed = true;
-                    $option->value = match ( $option->value ) {
-                        preg_match( '/[0-9]{1,}/', $option->value ) => (int) $option->value,
-                        preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) => (float) $option->value,
-                        default => $option->value,
-                    };
-                }
-            }
-
-            return $option;
-        });
-
-        return match ( $options->count() ) {
+        return match ( $filtredOptions->count() ) {
             0 => $default,
-            1 => $options->first()->value,
-            default => $options->map( fn( $option ) => $option->value )->toArray()
+            1 => $filtredOptions->first()->value,
+            default => $filtredOptions->map( fn( $option ) => $option->value )->toArray()
         };
     }
 

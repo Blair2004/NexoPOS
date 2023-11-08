@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Classes\Currency;
 use App\Classes\Hook;
+use App\Events\BeforeSaveOrderTaxEvent;
 use App\Events\DueOrdersEvent;
 use App\Events\OrderAfterCheckPerformedEvent;
 use App\Events\OrderAfterCreatedEvent;
@@ -414,7 +415,14 @@ class OrdersService
         if ( count( $taxes ) > 0 ) {
             foreach ( $taxes as $tax ) {
                 $orderTax = new OrderTax;
-                $orderTax->tax_name = $tax[ 'tax_name' ];
+
+                foreach(
+                    Hook::filter( 'ns-order-tax-fields', [
+                        'tax_name', 'rate', 'tax_id'
+                    ]) as $taxField 
+                ) {
+                    $orderTax->$taxField   =   $tax[ $taxField ];
+                }
 
                 /**
                  * in case the tax value is not provided,
@@ -428,9 +436,10 @@ class OrdersService
                     $order->subtotal - $order->discount
                 );
 
-                $orderTax->rate = $tax[ 'rate' ];
-                $orderTax->tax_id = $tax[ 'tax_id' ];
                 $orderTax->order_id = $order->id;
+
+                BeforeSaveOrderTaxEvent::dispatch( $orderTax, $tax );
+
                 $orderTax->save();
 
                 $taxCollection->push( $orderTax );
@@ -978,7 +987,7 @@ class OrdersService
      * @param array $data
      * @return array $order
      */
-    private function __computeOrderTotal($data)
+    protected function __computeOrderTotal($data)
     {
         /**
          * @param float $order
@@ -1430,7 +1439,7 @@ class OrdersService
         return $now->format( 'y' ) . $now->format( 'm' ) . $now->format( 'd' ) . '-' . str_pad( $count, 3, 0, STR_PAD_LEFT );
     }
 
-    private function __initOrder( $fields, $paymentStatus, $order )
+    protected function __initOrder( $fields, $paymentStatus, $order )
     {
         /**
          * if the order is not provided as a parameter
@@ -2598,7 +2607,7 @@ class OrdersService
         $rangeStarts = Carbon::parse( $startDate )->toDateTimeString();
         $rangeEnds = Carbon::parse( $endDate )->toDateTimeString();
 
-        $products = OrderProduct::whereHas( 'order', function ( Builder $query ) {
+        $products = OrderProduct::whereHas( 'order', function( Builder $query ) {
                 $query->where( 'payment_status', Order::PAYMENT_PAID );
             })
             ->where( 'created_at', '>=', $rangeStarts )

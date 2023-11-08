@@ -9,6 +9,8 @@ class PosSettings extends SettingsPage
 {
     public $identifier = 'ns.pos';
 
+    public $form;
+
     public function __construct()
     {
         $posSettingsTabs = Hook::filter( 'ns-pos-settings-tabs', [
