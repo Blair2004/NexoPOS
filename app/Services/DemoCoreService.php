@@ -8,6 +8,7 @@ use App\Models\CustomerCoupon;
 use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\Provider;
+use App\Models\Role;
 use App\Models\Tax;
 use App\Models\TaxGroup;
 use App\Models\Unit;
@@ -62,7 +63,7 @@ class DemoCoreService
         if ( ! $group instanceof UnitGroup ) {
             $group = new UnitGroup;
             $group->name = __( 'Countable' );
-            $group->author = Auth::id();
+            $group->author = Role::namespace( 'admin' )->users()->first()->id;
             $group->save();
         }
 
@@ -73,7 +74,7 @@ class DemoCoreService
             $unit->name = __( 'Piece' );
             $unit->identifier = 'piece';
             $unit->description = '';
-            $unit->author = Auth::id();
+            $unit->author = Role::namespace( 'admin' )->users()->first()->id;
             $unit->group_id = $group->id;
             $unit->base_unit = true;
             $unit->value = 1;
@@ -87,7 +88,7 @@ class DemoCoreService
             $unit->name = __( 'Small Box' );
             $unit->identifier = 'small-box';
             $unit->description = '';
-            $unit->author = Auth::id();
+            $unit->author = Role::namespace( 'admin' )->users()->first()->id;
             $unit->group_id = $group->id;
             $unit->base_unit = true;
             $unit->value = 6;
@@ -101,7 +102,7 @@ class DemoCoreService
             $unit->name = __( 'Box' );
             $unit->identifier = 'box';
             $unit->description = '';
-            $unit->author = Auth::id();
+            $unit->author = Role::namespace( 'admin' )->users()->first()->id;
             $unit->group_id = $group->id;
             $unit->base_unit = true;
             $unit->value = 12;
@@ -213,7 +214,7 @@ class DemoCoreService
         if ( ! $taxGroup instanceof TaxGroup ) {
             $taxGroup = new TaxGroup;
             $taxGroup->name = __( 'GST' );
-            $taxGroup->author = Auth::id();
+            $taxGroup->author = Role::namespace( 'admin' )->users()->first()->id;
             $taxGroup->save();
         }
 
@@ -224,7 +225,7 @@ class DemoCoreService
             $tax->name = __( 'SGST' );
             $tax->rate = 8;
             $tax->tax_group_id = $taxGroup->id;
-            $tax->author = Auth::id();
+            $tax->author = Role::namespace( 'admin' )->users()->first()->id;
             $tax->save();
         }
 
@@ -235,7 +236,7 @@ class DemoCoreService
             $tax->name = __( 'CGST' );
             $tax->rate = 8;
             $tax->tax_group_id = $taxGroup->id;
-            $tax->author = Auth::id();
+            $tax->author = Role::namespace( 'admin' )->users()->first()->id;
             $tax->save();
         }
     }
