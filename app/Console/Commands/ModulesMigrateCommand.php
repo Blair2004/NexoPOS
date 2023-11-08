@@ -54,7 +54,7 @@ class ModulesMigrateCommand extends Command
         if ( empty( $module ) ) {
             throw new NotFoundException(
                 sprintf(
-                    __( 'Unable to find a module having the identifier "%".' ),
+                    __( 'Unable to find a module having the identifier "%s".' ),
                     $this->argument( 'moduleNamespace' )
                 )
             );
