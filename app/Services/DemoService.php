@@ -102,11 +102,11 @@ class DemoService extends DemoCoreService
         $this->createTaxes();
         $this->createProducts();
 
-        if ( $create_procurements ) {
+        if ( isset( $create_procurements ) && $create_procurements ) {
             $this->performProcurement();
         }
 
-        if ( $create_sales && $create_procurements ) {
+        if ( isset( $create_sales ) && $create_sales && isset( $create_procurements ) && $create_procurements ){
             $this->createSales();
         }
     }
