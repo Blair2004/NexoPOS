@@ -1162,7 +1162,7 @@ class ModulesService
                     $parser->parse( $code );
                 }
             } catch ( Error $error ) {
-                return response()->json([
+                return [
                     'status' => 'failed',
                     'message' => sprintf(
                         __( 'An Error Occurred "%s": %s'),
@@ -1170,7 +1170,7 @@ class ModulesService
                         $error->getMessage(),
                     ),
                     'module' => $module,
-                ], 502 );
+                ];
             }
 
             try {
@@ -1181,7 +1181,7 @@ class ModulesService
                 $this->triggerServiceProviders( $module, 'register', ServiceProvider::class );
                 $this->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
             } catch ( GlobalError $error ) {
-                return response()->json([
+                return [
                     'status' => 'failed',
                     'message' => sprintf(
                         __( 'An Error Occurred "%s": %s'),
@@ -1190,7 +1190,7 @@ class ModulesService
                         $error->getFile(),
                     ),
                     'module' => $module,
-                ], 502 );
+                ];
             }
 
             /**
