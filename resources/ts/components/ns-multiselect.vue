@@ -21,7 +21,7 @@
             <div class="h-0 z-10" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
                 <div class="ns-dropdown shadow">
                     <div class="search border-b border-input-option-hover">
-                        <input v-model="search" class="p-2 w-full bg-transparent text-primary outline-none" placeholder="Search">
+                        <input @keypress.enter="selectAvailableOptionIfPossible()" v-model="search" class="p-2 w-full bg-transparent text-primary outline-none" placeholder="Search">
                     </div>
                     <div class="h-40 overflow-y-auto">
                         <div @click="addOption( option )" :key="index" v-for="(option, index) of _filtredOptions" :class="option.selected ? 'bg-info-secondary text-white' : 'text-primary'" class="option p-2 flex justify-between cursor-pointer hover:bg-info-secondary hover:text-white">
@@ -86,6 +86,11 @@ export default {
         __,
         togglePanel() {
             this.showPanel = !this.showPanel;
+        },
+        selectAvailableOptionIfPossible() {
+            if ( this._filtredOptions.length > 0 ) {
+                this.addOption( this._filtredOptions[0] );
+            }
         },
         addOption( option ) {
             if ( ! this.field.disabled ) {

@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class CoreException extends Exception
 {
+    public function __construct( public $message = null, public $code = 0, public $previous = null )
+    {
+        parent::__construct( $message, $code, $previous );
+    }
+
     public function render( Request $request, $exception )
     {
         $title      = __( 'Oops, We\'re Sorry!!!' );
@@ -18,10 +23,11 @@ class CoreException extends Exception
             return response()->json([
                 'status'    =>  'failed',
                 'message'   =>  $message,
-                'data'      =>  [
-                    'class' =>  $exception::CLASS,
-                    'previous'  =>  $back
-                ]
+                'exception' =>  $exception::CLASS,
+                'previous'  =>  $back,
+                'trace'     =>  $this->previous->getTrace(),
+                'line'      =>  $this->previous->getLine(),
+                'file'      =>  $this->previous->getFile(),
             ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 501 );
         }        
 

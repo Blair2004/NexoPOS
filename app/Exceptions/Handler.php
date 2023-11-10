@@ -101,7 +101,7 @@ class Handler extends ExceptionHandler
          */
         foreach( $matches as $bind => $use ) {
             if ( $exception instanceof $bind ) {
-                throw new $use( env( 'APP_DEBUG' ) ? $exception->getMessage() : __( 'Something went wrong.' ) );
+                throw new $use( env( 'APP_DEBUG' ) ? $exception->getMessage() : __( 'Something went wrong.' ), 502, $exception );
             }
         }
 
