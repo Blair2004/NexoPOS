@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Exceptions\MethodNotAllowedHttpException as ExceptionsMethodNotAllowedHttpException;
 use App\Exceptions\PostTooLargeException as ExceptionsPostTooLargeException;
 use App\Exceptions\QueryException as ExceptionsQueryException;
+use App\Services\Helper;
 use ArgumentCountError;
 use Doctrine\Common\Cache\Psr6\InvalidArgument;
 use ErrorException;
@@ -76,40 +77,59 @@ class Handler extends ExceptionHandler
     }
 
     public function render( $request, Throwable $exception )
+    {        
+        /**
+         * When the exception doesn't provide a custom "handler" method
+         * we'll try to render it ourself.
+         */
+        if( $request->expectsJson() ) {
+            return $this->renderJsonException( $request, $exception );
+        } else {
+            return $this->renderViewException( $request, $exception );
+        }
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     */
+    protected function renderViewException( $request, $exception ): Response
     {
-        /**
-         * We're dealing here with exceptions that
-         * provide a custom "handler" method.
-         */
-        if ( method_exists( $exception, 'render' ) ) {
-            return $exception->render( $request, $exception );
+        $title      = __( 'Oops, We\'re Sorry!!!' );
+        $back       = Helper::getValidPreviousUrl( $request );
+        $message    = $exception->getMessage() ?: sprintf( __( 'Class: %s' ), get_class( $exception ) );
+        $exploded   = explode( '(View', $message );
+        $message    = $exploded[0] ?? $message;
+
+        if ( env( 'APP_DEBUG', true ) ) {
+            /**
+             * We'll attempt our best to display or 
+             * return a proper response for unsupported exceptions
+             * mostly these are either package exceptions or laravel exceptions
+             */
+            return parent::render( $request, $exception );
+        } else {    
+            return response()->view( 'pages.errors.exception', compact( 'message', 'title', 'back' ), 503 );
         }
+    }
 
-        $matches    =   [
-            PostTooLargeException::class            =>  ExceptionsPostTooLargeException::class,
-            QueryException::class                   =>  ExceptionsQueryException::class,
-            MethodNotAllowedHttpException::class    =>  ExceptionsMethodNotAllowedHttpException::class,
-            InvalidArgument::class                  =>  CoreException::class,
-            ErrorException::class                   =>  CoreException::class,
-            ArgumentCountError::class               =>  CoreException::class,
-            TypeError::class                        =>  CoreException::class,
-        ];
+    /**
+     * Render an exception into a JSON response.
+     */
+    protected function renderJsonException( $request, $exception ): Response
+    {
+        $back       = Helper::getValidPreviousUrl( $request );
+        $message    = $exception->getMessage() ?: sprintf( __( 'Class: %s' ), get_class( $exception ) );
+        $exploded   = explode( '(View', $message );
+        $message    = $exploded[0] ?? $message;
 
-        /**
-         * This will replace original unsupported exceptions with
-         * understandable exceptions that return proper reponses.
-         */
-        foreach( $matches as $bind => $use ) {
-            if ( $exception instanceof $bind ) {
-                throw new $use( env( 'APP_DEBUG' ) ? $exception->getMessage() : __( 'Something went wrong.' ), 502, $exception );
-            }
+        if ( env( 'APP_DEBUG', true ) ) {
+            return parent::render( $request, $exception );
+        } else {
+            return response()->json([
+                'status'    =>  'failed',
+                'message'   =>  __( 'An error occured while performing your request.' ),
+                'previous'  =>  $back,
+            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 501 );
         }
-
-        /**
-         * We'll attempt our best to display or 
-         * return a proper response for unsupported exceptions
-         * mostly these are either package exceptions or laravel exceptions
-         */
-        return parent::render( $request, $exception );
     }
 }
