@@ -168,7 +168,7 @@ if ( Auth::check() ) {
     </div>
     @section( 'layout.dashboard.footer' )
         @include( 'common.popups' )
-        @include( 'common.footer' )
+        @include( 'common.dashboard-footer' )
         @vite([ 'resources/ts/app.ts' ])
     @show
 </body>

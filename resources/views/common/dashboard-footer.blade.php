@@ -30,7 +30,7 @@ ns.base_url         =   '{{ url( "/" ) }}';
 @vite([ 'resources/ts/bootstrap.ts' ])
 <?php 
     $output     =   new Output;
-    Hook::action( 'ns-footer', $output );
+    Hook::action( 'ns-dashboard-footer', $output );
     echo ( string ) $output;
 ?>
 @yield( 'layout.dashboard.footer.inject' )
