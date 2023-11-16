@@ -131,7 +131,7 @@ class Setup
         ]);
 
         /**
-         * NexoPOS uses Sanctum, we're making sure to publish the package.
+         * AviPOS uses Sanctum, we're making sure to publish the package.
          */
         Artisan::call( 'vendor:publish', [
             '--force' => true,
@@ -214,7 +214,7 @@ class Setup
 
         return [
             'status' => 'success',
-            'message' => __( 'NexoPOS has been successfully installed.' ),
+            'message' => __( 'AviPOS has been successfully installed.' ),
         ];
     }
 

@@ -199,7 +199,7 @@ class ReportService
              *
              * @var NotificationService
              */
-            $message = __( 'A stock operation has recently been detected, however the NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
+            $message = __( 'A stock operation has recently been detected, however the AviPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
             $notification = app()->make( NotificationService::class );
             $notification->create([
                 'title' => __( 'Untracked Stock Operation' ),
@@ -509,7 +509,7 @@ class ReportService
          *
          * @var NotificationService
          */
-        $message = __( 'A stock operation has recently been detected, however the NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
+        $message = __( 'A stock operation has recently been detected, however the AviPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
 
         $notification = app()->make( NotificationService::class );
         $notification->create([

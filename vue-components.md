@@ -1,6 +1,6 @@
 # Introduction
 
-NexoPOS is build with a bunch of Vue components. Each components can serve as a feature or it can be part of another component that serve as a feature. 
+AviPOS is build with a bunch of Vue components. Each components can serve as a feature or it can be part of another component that serve as a feature. 
 Vue.js has been selected to be used as the frontend framework as it's easier to maintain and foremost flexible. 
 
 This will list currenlty available components and how they can be used.

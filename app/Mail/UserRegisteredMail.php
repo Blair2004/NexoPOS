@@ -34,7 +34,7 @@ class UserRegisteredMail extends Mailable
     public function build()
     {
         return $this
-            ->subject( ns()->option->get( 'ns_notifications_registrations_administrator_email_title', __( '[NexoPOS] A New User Has Registered' ) ) )
+            ->subject( ns()->option->get( 'ns_notifications_registrations_administrator_email_title', __( '[AviPOS] A New User Has Registered' ) ) )
             ->from( ns()->option->get( 'ns_store_email', 'notifications@nexopos.com' ) )
             ->markdown('mails/user-registered-mail');
     }

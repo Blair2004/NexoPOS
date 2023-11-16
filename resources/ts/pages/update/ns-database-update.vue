@@ -2,14 +2,14 @@
     <div class="container mx-auto flex-auto items-center justify-center flex">
         <div id="database-update" class="w-full md:w-2/3 lg:w-1/3">
             <div class="flex justify-center items-center py-6">
-                <img class="w-32" src="/svg/nexopos-variant-1.svg" alt="NexoPOS">
+                <img class="w-32" src="/svg/nexopos-variant-1.svg" alt="AviPOS">
             </div>
             <div class="my-3 rounded shadow ns-box">
                 <div class="border-b ns-box-header py-4 flex items-center justify-center">
                     <h3 class="text-xl font-bold">{{ __( 'Database Update' ) }}</h3>
                 </div>
                 <div class="p-2 ns-box-body">
-                    <p class="text-center text-sm py-4">{{ __( 'In order to keep NexoPOS running smoothly with updates, we need to proceed to the database migration. In fact you don\'t need to do any action, just wait until the process is done and you\'ll be redirected.' ) }}</p>
+                    <p class="text-center text-sm py-4">{{ __( 'In order to keep AviPOS running smoothly with updates, we need to proceed to the database migration. In fact you don\'t need to do any action, just wait until the process is done and you\'ll be redirected.' ) }}</p>
                     <div v-if="error" class="border-l-4 text-sm ns-notice error p-4">
                         <p>
                             {{ __( 'Looks like an error has occurred during the update. Usually, giving another shot should fix that. However, if you still don\'t get any chance.' ) }}

@@ -1,6 +1,6 @@
 <?php
 /**
- * NexoPOS Controller
+ * AviPOS Controller
  *
  * @since  1.0
 **/

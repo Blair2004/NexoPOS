@@ -1,7 +1,7 @@
 <?php
 
 /**
- * NexoPOS Controller
+ * AviPOS Controller
  *
  * @since  1.0
  **/
@@ -177,7 +177,7 @@ class OrdersController extends DashboardController
         return $this->view( 'pages.dashboard.orders.pos', [
             'title' => sprintf(
                 __( 'POS &mdash; %s' ),
-                ns()->option->get( 'ns_store_name', 'NexoPOS' )
+                ns()->option->get( 'ns_store_name', 'AviPOS' )
             ),
             'orderTypes' => collect( $this->ordersService->getTypeOptions() )
                 ->filter( function ( $type, $label ) {

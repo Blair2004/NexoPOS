@@ -1,7 +1,7 @@
 <?php
 
 /**
- * NexoPOS Controller
+ * AviPOS Controller
  *
  * @since  1.0
  **/
@@ -136,7 +136,7 @@ class ModulesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.modules.upload', [
             'title' => __( 'Upload A Module' ),
-            'description' => __( 'Extends NexoPOS features with some new modules.' ),
+            'description' => __( 'Extends AviPOS features with some new modules.' ),
         ]);
     }
 

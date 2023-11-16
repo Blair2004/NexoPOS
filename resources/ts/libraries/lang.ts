@@ -2,7 +2,7 @@ import { nsHttpClient } from "@/bootstrap";
 
 declare const nsLanguage;
 
-export const __   =   function( text, namespace = 'NexoPOS' ) {
+export const __   =   function( text, namespace = 'AviPOS' ) {
     return nsLanguage.getEntries( namespace ) ? (nsLanguage.getEntries( namespace )[ text ] || text ) : text;
 }
 

@@ -10,7 +10,7 @@
             <div class="my-2 shadow overflow-hidden rounded bg-white w-95vw md:w-3/4 lg:w-3/5">
                 <p class="md:w-auto w-95vw bg-gray-700 text-gray-100 lg:text-lg text-center p-4">{{ $message }}</p>
                 <div class="p-4 text-gray-600 text-center text-sm">
-                    {{ __( 'NexoPOS wasn\'t able to perform a database request. This error might be related to a misconfiguration on your .env file. The following guide might be useful to help you solving this issue.' ) }}
+                    {{ __( 'AviPOS wasn\'t able to perform a database request. This error might be related to a misconfiguration on your .env file. The following guide might be useful to help you solving this issue.' ) }}
                 </div>
                 <ul class="flex flex-col">
                     <li class="flex">

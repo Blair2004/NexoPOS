@@ -47,7 +47,7 @@ class Options
 
         $defaultOptions = [
             'ns_registration_enabled' => false,
-            'ns_store_name' => 'NexoPOS 4.x',
+            'ns_store_name' => 'AviPOS 4.x',
             'ns_pos_order_types' => array_keys( $types ),
         ];
 

@@ -10,7 +10,7 @@ use App\Classes\Output;
         <div class="container mx-auto p-4 md:p-0 flex-auto items-center justify-center flex">
             <div id="sign-in-box" class="w-full md:w-3/5 lg:w-2/5">
                 <div class="flex justify-center items-center py-6">
-                    <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="NexoPOS">
+                    <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="AviPOS">
                 </div>
                 {!! Hook::filter( 'ns.before-password-recovery-form', new Output ) !!}
                 @include( '/common/auth/password-recovery-form' )

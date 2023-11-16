@@ -11,7 +11,7 @@ return [
             'name' => 'invoice_reference',
             'value' => $procurement->invoice_reference ?? '',
             'label' => __( 'Invoice Number' ),
-            'description' => __( 'If the procurement has been issued outside of NexoPOS, please provide a unique reference.' ),
+            'description' => __( 'If the procurement has been issued outside of AviPOS, please provide a unique reference.' ),
         ], [
             'type' => 'date',
             'name' => 'delivery_time',

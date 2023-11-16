@@ -82,7 +82,7 @@ class MakeModuleServiceProviderCommand extends Command
                 }
             }
         } else {
-            $this->info( 'NexoPOS is not yet installed.' );
+            $this->info( 'AviPOS is not yet installed.' );
         }
     }
 }

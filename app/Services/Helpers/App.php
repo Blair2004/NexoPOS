@@ -48,7 +48,7 @@ trait App
     public static function pageTitle( $string )
     {
         return sprintf(
-            Hook::filter( 'ns-page-title', __( '%s &mdash; NexoPOS 4' ) ),
+            Hook::filter( 'ns-page-title', __( '%s &mdash; AviPOS 4' ) ),
             $string );
     }
 }

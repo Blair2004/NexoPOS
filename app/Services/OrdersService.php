@@ -75,7 +75,7 @@ class OrdersService
     }
 
     /**
-     * Create an order on NexoPOS.
+     * Create an order on AviPOS.
      *
      * @param array $fields
      * @param Order|null $order (optional)
