@@ -125,7 +125,7 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-media-input>
-        <ns-select :field="field" v-if="isSelectField">
+        <ns-select @change="changeTouchedState( field, $event )" :field="field" v-if="isSelectField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>

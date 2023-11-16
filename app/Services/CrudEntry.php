@@ -53,6 +53,7 @@ class CrudEntry implements JsonSerializable
     }
 
     /**
+     * use "action" method instead
      * @deprecated
      */
     public function addAction( $identifier, $action )

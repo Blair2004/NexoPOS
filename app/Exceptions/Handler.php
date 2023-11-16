@@ -123,7 +123,12 @@ class Handler extends ExceptionHandler
         $message    = $exploded[0] ?? $message;
 
         if ( env( 'APP_DEBUG', true ) ) {
-            return parent::render( $request, $exception );
+            return response()->json([
+                'status'    =>  'failed',
+                'message'   =>  $message,
+                'previous'  =>  $back,
+                'trace'     =>  $exception->getTrace(),
+            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 501 );
         } else {
             return response()->json([
                 'status'    =>  'failed',

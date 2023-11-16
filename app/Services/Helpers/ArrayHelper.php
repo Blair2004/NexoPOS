@@ -85,8 +85,10 @@ trait ArrayHelper
 
         if ( $collections ) {
             foreach ( $collections as $collection ) {
-                $id = $config[0];
-                if ( ! is_array( $config[1] ) ) {
+                if ( is_callable( $config ) ) {
+                    $result[] = $config( $collection );
+                } else if ( ! is_array( $config[1] ) ) {
+                    $id = $config[0];
                     $name = $config[1];
 
                     $result[] = [
