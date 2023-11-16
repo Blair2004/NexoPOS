@@ -2363,6 +2363,12 @@ class OrdersService
                 'icon' => '/images/delivery.png',
                 'selected' => false,
             ],
+            'dinein' => [
+                'identifier' => 'dinein',
+                'label' => __( 'Dine In' ),
+                'icon' => '/images/delivery.png',
+                'selected' => false,
+            ],
         ]);
     }
 
