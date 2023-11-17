@@ -3,14 +3,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 ?>
-@extends( 'layout.base' )
+@extends( 'layout.dashboard' )
 
-@section( 'layout.base.header' )
+@section( 'layout.dashboard.header' )
     @parent
-    @yield( 'layout.base.header.pos' )
+    @yield( 'layout.dashboard.header.pos' )
 @endsection
 
-@section( 'layout.base.body' )
+@section( 'layout.dashboard.body' )
 <div id="pos-app" class="h-full w-full relative">
     <div id="loader" class="top-0 anim-duration-500 fade-in-entrance left-0 absolute w-full z-50 h-full flex flex-col items-center justify-center">
         @if ( ns()->option->get( 'ns_store_square_logo', false ) )
@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Gate;
 </div>
 @endsection
 
-@section( 'layout.base.footer' )
+@section( 'layout.dashboard.footer' )
     @parent
     @include( 'common.popups' )
     @vite([ 'resources/ts/pos-init.ts' ])
