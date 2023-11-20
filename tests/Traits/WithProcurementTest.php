@@ -121,4 +121,33 @@ trait WithProcurementTest
             Currency::raw( (float) $currentExpenseValue + (float) $responseData[ 'data' ][ 'procurement' ][ 'cost' ] )
         );
     }
+
+    public function attemptDeleteProcurement()
+    {
+        /**
+         * @var TestService
+         */
+        $testService = app()->make( TestService::class );
+
+        $currentExpenseValue = CashFlow::where( 'expense_category_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
+            'general.payment_status' => Procurement::PAYMENT_UNPAID,
+            'general.delivery_status' => Procurement::PENDING,
+        ]);
+
+        /**
+         * Query: We store the procurement with an unpaid status.
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/procurements', $procurementsDetails );
+
+        $response->assertOk();
+
+        $procurementId = $response->json()[ 'data' ][ 'procurement' ][ 'id' ];
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', 'api/nexopos/v4/procurements/' . $procurementId );
+
+        $response->assertOk();
+    }
 }
