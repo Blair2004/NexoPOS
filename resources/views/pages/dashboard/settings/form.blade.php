@@ -1,4 +1,6 @@
 <?php
+
+use App\Classes\Hook;
 use App\Classes\Output;
 ?>
 @extends( 'layout.dashboard' )
@@ -21,5 +23,9 @@ use App\Classes\Output;
 
 @section( 'layout.dashboard.footer' )
     @parent
-{!! ( string ) Hook::filter( 'ns-settings-footer', new Output, $identifier ) !!}
+    <?php
+    $output     =   new Output;
+    Hook::action( 'ns-dashboard-settings-footer', $output, $identifier )
+    ?>
+    {!! ( string ) $output !!}
 @endsection

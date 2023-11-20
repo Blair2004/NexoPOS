@@ -3,8 +3,8 @@
         <div id="card-header" class="flex flex-wrap ml-4">
             <div 
                 :class="tab.active ? 'active' : 'inactive'" 
-                @click="setActive( tab )" v-bind:key="key" 
                 v-for="( tab, key ) of form.tabs" 
+                @click="setActive( tab, key )" v-bind:key="key" 
                 class="tab cursor-pointer flex items-center px-4 py-2 rounded-tl-lg rounded-tr-lg">
                 <span>{{ tab.label }}</span>
                 <span v-if="tab.errors && tab.errors.length > 0" class="ml-2 rounded-full ns-inset-button error active text-sm h-6 w-6 flex items-center justify-center">{{ tab.errors.length }}</span>
@@ -132,19 +132,20 @@ export default {
                     .subscribe();
             }                
         },
-        setActive( tab ) {
-            for( let tab in this.form.tabs ) {
-                this.form.tabs[ tab ].active     =   false;
+        setActive( tab, identifier ) {
+            for( let _tab in this.form.tabs ) {
+                this.form.tabs[ _tab ].active     =   false;
             }
 
             tab.active  =   true;
 
-            nsHooks.doAction( 'ns-settings-change-tab', { tab, instance: this });
+            nsHooks.doAction( 'ns-settings-change-tab', { tab, instance: this, identifier });
         },
         loadSettingsForm( activeTab = null ) {
 
             nsHttpClient.get( this.url ).subscribe( form => {
                 let i   =   0;
+                let activeTabIdentifier    =   null;
 
                 /**
                  * This will force the settings page
@@ -169,8 +170,10 @@ export default {
 
                         if ( activeTab === null && i === 0 ) {
                             form.tabs[ tab ].active  =   true;
+                            activeTabIdentifier      =   tab;
                         } else if ( activeTab !== null && tab === activeTab ) {
                             form.tabs[ tab ].active  =   true;
+                            activeTabIdentifier      =   tab;
                         }
                     } else {
                         form.tabs[ tab ].active  =   this.form.tabs[ tab ].active;
@@ -191,7 +194,7 @@ export default {
                 this.form  =    this.validation.createForm( form );
                 
                 nsHooks.doAction( 'ns-settings-loaded', this );
-                nsHooks.doAction( 'ns-settings-change-tab', { tab : this.activeTab, instance: this });
+                nsHooks.doAction( 'ns-settings-change-tab', { tab : this.activeTab, instance: this, identifier: activeTabIdentifier });
             });
         }
     }
