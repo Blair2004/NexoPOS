@@ -103,6 +103,15 @@ class ModulesService
         }
     }
 
+    public function resolveRelativePathToClass( $filePath )
+    {
+        $filePath = str_replace( '/', '\\', $filePath );
+        $filePath = str_replace( '.php', '', $filePath );
+        $filePath = str_replace( 'modules\\', '', $filePath );
+
+        return 'Modules\\' . $filePath;
+    }
+
     /**
      * Init a module from a provided path.
      */
@@ -1328,10 +1337,29 @@ class ModulesService
      */
     public function getAllModuleMigrationFiles( array $module ): array
     {
-        $files = Storage::disk( 'ns-modules' )
-            ->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+        $migrationDirectory =   ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR;
+        $files = Storage::disk( 'ns-modules' )->allFiles( $migrationDirectory );
+        $files = $this->getAllValidFiles( $files );
 
-        return $this->getAllValidFiles( $files );
+        return collect( $files )->filter( function( $file ) use ( $module ) {
+            /**
+             * we need to resolve the files and make sure it doesn't have any
+             * dependency on a module. For example, we might want a migration from our module to
+             * be counted as a migration only if another module exists and is enabled.
+             */
+            $migration  =   $this->resolveRelativePathToClass( $file );
+    
+            if ( class_exists( $migration ) && defined( $migration . '::DEPENDENCIES' ) ) {
+                foreach( $migration::DEPENDENCIES as $dependency ) {
+                    if ( ! $this->getIfEnabled( $dependency ) ) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+
+        })->toArray();
     }
 
     /**

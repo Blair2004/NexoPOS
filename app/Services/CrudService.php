@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Casts\DateCast;
+use App\Classes\Output;
 use App\Exceptions\NotAllowedException;
 use App\Traits\NsForms;
 use Carbon\Carbon;
@@ -1134,6 +1135,11 @@ class CrudService
              * to every outgoing request on the table
              */
             'queryParams' => [],
+
+            /**
+             * An instance of the current called crud component.
+             */
+            'instance' => $instance,
         ], $config));
     }
 
@@ -1374,5 +1380,10 @@ class CrudService
     public function getHeaderButtons(): array
     {
         return [];
+    }
+
+    public function getTableFooter( Output $output ): Output
+    {
+        return $output;
     }
 }

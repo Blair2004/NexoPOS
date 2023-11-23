@@ -313,7 +313,7 @@ class TaxService
      * compute the tax added to a
      * product using a defined tax group id and type.
      */
-    public function computeTax( ProductUnitQuantity $product, int $tax_group_id, string $tax_type = null ): void
+    public function computeTax( ProductUnitQuantity $product, int | null $tax_group_id, string $tax_type = null ): void
     {
         $taxGroup = TaxGroup::find( $tax_group_id );
 

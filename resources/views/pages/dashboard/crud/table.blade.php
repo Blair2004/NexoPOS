@@ -28,6 +28,7 @@ $identifier    =   collect( explode( '/', $src ) )
 
 $output     =   new Output;
 Hook::action( 'ns-crud-footer', $output, $identifier );
+Hook::action( $instance::method( 'getTableFooter' ), $instance->getTableFooter( $output ), $instance );
 ?>
 {!! ( string ) $output !!}
 @endsection
