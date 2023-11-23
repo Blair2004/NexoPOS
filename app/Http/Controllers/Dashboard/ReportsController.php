@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
+use App\Jobs\EnsureCombinedProductHistoryExistsJob;
 use App\Models\Customer;
 use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
@@ -306,5 +307,10 @@ class ReportsController extends DashboardController
             $request->input( 'categories' ),
             $request->input( 'units' )
         );
+    }
+
+    public function computeCombinedReport()
+    {
+        return $this->reportService->computeCombinedReport();
     }
 }

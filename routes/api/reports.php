@@ -17,3 +17,4 @@ Route::post( 'reports/low-stock', [ ReportsController::class, 'getLowStock' ]);
 Route::post( 'reports/stock-report', [ ReportsController::class, 'getStockReport' ]);
 Route::post( 'reports/product-history-combined', [ ReportsController::class, 'getProductHistoryCombined' ]);
 Route::post( 'reports/customers-statement/{customer}', [ ReportsController::class, 'getCustomerStatement' ]);
+Route::get( 'reports/compute-combined-report', [ ReportsController::class, 'computeCombinedReport' ]);

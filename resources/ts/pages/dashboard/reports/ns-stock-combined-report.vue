@@ -1,39 +1,51 @@
 <template>
     <div id="report-section" class="px-4">
         <div class="flex -mx-2">
-            <div class="px-2">
-                <ns-field :field="datePicker"></ns-field>
-            </div>
-            <div class="px-2">
-                <div class="ns-button">
-                    <button @click="loadReport()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
-                        <i class="las la-sync-alt text-xl"></i>
-                        <span class="pl-2">{{ __( 'Load' ) }}</span>
-                    </button>
+            <div class="px-2 flex -mx-2">
+                <div class="px-2">
+                    <ns-field :field="datePicker"></ns-field>
+                </div>
+                <div class="px-2">
+                    <div class="ns-button">
+                        <button @click="loadReport()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                            <i class="las la-sync-alt text-xl"></i>
+                            <span class="pl-2">{{ __( 'Load' ) }}</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="px-2">
+                    <div class="ns-button">
+                        <button @click="printSaleReport()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                            <i class="las la-print text-xl"></i>
+                            <span class="pl-2">{{ __( 'Print' ) }}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="px-2">
-                <div class="ns-button">
-                    <button @click="printSaleReport()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
-                        <i class="las la-print text-xl"></i>
-                        <span class="pl-2">{{ __( 'Print' ) }}</span>
-                    </button>
+            <div class="px-2 flex -mx-2">
+                <div class="px-2">
+                    <div class="ns-button">
+                        <button @click="selectCategories()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                            <i class="las la-filter text-xl"></i>
+                            <span class="pl-2">{{ __( 'Categories' ) }}: {{ categoriesNames || __( 'All Categories' ) }}</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="px-2">
-                <div class="ns-button">
-                    <button @click="selectCategories()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
-                        <i class="las la-filter text-xl"></i>
-                        <span class="pl-2">{{ __( 'Categories' ) }}: {{ categoriesNames || __( 'All Categories' ) }}</span>
-                    </button>
+                <div class="px-2">
+                    <div class="ns-button">
+                        <button @click="selectUnits()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                            <i class="las la-filter text-xl"></i>
+                            <span class="pl-2">{{ __( 'Units' ) }}: {{ unitsNames || __( 'All Units' ) }}</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="px-2">
-                <div class="ns-button">
-                    <button @click="selectUnits()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
-                        <i class="las la-filter text-xl"></i>
-                        <span class="pl-2">{{ __( 'Units' ) }}: {{ unitsNames || __( 'All Units' ) }}</span>
-                    </button>
+                <div class="px-2">
+                    <div class="ns-button">
+                        <button @click="generateReport()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                            <i class="las la-sync-alt"></i>
+                            <span class="pl-2">{{ __( 'Generate Report' ) }}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,6 +165,24 @@ export default {
         },
         printSaleReport() {
             this.$htmlToPaper( 'combined-report' );
+        },
+        async generateReport() {
+            try {
+                const response:{ status: string, message: string } = await new Promise( ( resolve, reject ) => {
+                    nsHttpClient.get( '/api/reports/compute-combined-report' ).subscribe({
+                        next: response => {
+                            resolve( response );
+                        }, 
+                        error: response => {
+                            reject( response );
+                        }
+                    })
+                });
+
+                nsSnackBar.success( response.message ).subscribe();
+            } catch( response ) {
+                nsSnackBar.error( response.message ).subscribe();
+            }
         },
         async selectCategories() {
             try {

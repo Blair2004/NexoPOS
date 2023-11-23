@@ -619,7 +619,7 @@
       "resources/ts/pages/dashboard/orders/ns-order-invoice.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ],
-    "file": "assets/app-13194f50.js",
+    "file": "assets/app-378658c2.js",
     "imports": [
       "_preload-helper-a4192956.js",
       "_ns-hotpress-3da57d7a.js",
@@ -2574,7 +2574,7 @@
     "src": "resources/ts/pages/dashboard/reports/ns-sold-stock-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-stock-combined-report.vue": {
-    "file": "assets/ns-stock-combined-report-657e81ca.js",
+    "file": "assets/ns-stock-combined-report-dc92e152.js",
     "imports": [
       "_npm~moment-fbc5633a.js",
       "_currency-d0508508.js",

@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Classes\Currency;
 use App\Classes\Hook;
-use App\Jobs\ProcessProductHistoryByChunkJob;
+use App\Jobs\EnsureCombinedProductHistoryExistsJob;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\DashboardDay;
@@ -1363,5 +1363,18 @@ class ReportService
         $request->where( 'nexopos_products_histories_combined.date', Carbon::parse( $date )->format( 'Y-m-d' ) );
 
         return $request->get();
+    }
+
+    /**
+     * Only trigger the job for combined products.
+     */
+    public function computeCombinedReport()
+    {
+        EnsureCombinedProductHistoryExistsJob::dispatch();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The report will be generated. Try loading the report within few minutes.' )
+        ];
     }
 }
