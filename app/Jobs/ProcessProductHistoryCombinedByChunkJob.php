@@ -40,8 +40,10 @@ class ProcessProductHistoryCombinedByChunkJob implements ShouldQueue
                     ->orderBy( 'id', 'desc' )
                     ->first();
 
-                $reportService->prepareProductHistoryCombinedHistory( $lastProductHistory )
-                    ->save();
+                if ( $lastProductHistory instanceof ProductHistory ) {
+                    $reportService->prepareProductHistoryCombinedHistory( $lastProductHistory )
+                        ->save();
+                }
             });
         });
     }

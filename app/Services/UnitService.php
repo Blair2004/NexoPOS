@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Auth;
 
 class UnitService
 {
-    public function __construct( CurrencyService $currency )
+    public function __construct( public CurrencyService $currency )
     {
-        $this->currency = $currency;
+        // ...
     }
 
     public function createGroup( $data )
