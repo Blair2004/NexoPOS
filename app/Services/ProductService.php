@@ -1281,7 +1281,7 @@ class ProductService
          * the grouped product
          */
         $this->recordStockHistory(
-            product_id: $orderProduct->id,
+            product_id: $orderProduct->product_id,
             action: $action,
             unit_id: $orderProduct->unit_id,
             unit_price: $orderProduct->unit_price,

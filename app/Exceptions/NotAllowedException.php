@@ -12,6 +12,11 @@ class NotAllowedException extends Exception
         $this->message = $message ?: __('The Action You Tried To Perform Is Not Allowed.' );
     }
 
+    public function getStatusCode()
+    {
+        return 403;
+    }
+
     public function render( $request )
     {
         if ( ! $request->expectsJson() ) {

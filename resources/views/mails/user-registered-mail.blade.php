@@ -1,14 +1,14 @@
 @component('mail::message')
 
-@if ( $options->get( 'ns_notifications_registrations_administrator_email_body' ) )
-    {!! $options->get( 'ns_notifications_registrations_administrator_email_body' ) !!}
+@if ( ns()->option->get( 'ns_notifications_registrations_administrator_email_body' ) )
+    {!! ns()->option->get( 'ns_notifications_registrations_administrator_email_body' ) !!}
 @else
     # {{ __( 'New User Registration') }}
 
     {{ 
         sprintf(
             __( 'A new user has registered to your store (%s) with the email %s.' ),
-            $options->get( 'ns_store_name' ),
+            ns()->option->get( 'ns_store_name' ),
             $user->email
         )
     }}

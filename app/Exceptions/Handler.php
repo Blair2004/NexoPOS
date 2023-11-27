@@ -6,15 +6,9 @@ use App\Exceptions\MethodNotAllowedHttpException as ExceptionsMethodNotAllowedHt
 use App\Exceptions\PostTooLargeException as ExceptionsPostTooLargeException;
 use App\Exceptions\QueryException as ExceptionsQueryException;
 use App\Services\Helper;
-use ArgumentCountError;
-use Doctrine\Common\Cache\Psr6\InvalidArgument;
-use ErrorException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Exceptions\PostTooLargeException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 use TypeError;
 
@@ -108,7 +102,7 @@ class Handler extends ExceptionHandler
              */
             return parent::render( $request, $exception );
         } else {    
-            return response()->view( 'pages.errors.exception', compact( 'message', 'title', 'back' ), 503 );
+            return response()->view( 'pages.errors.exception', compact( 'message', 'title', 'back' ), 500 );
         }
     }
 
@@ -128,13 +122,13 @@ class Handler extends ExceptionHandler
                 'message'   =>  $message,
                 'previous'  =>  $back,
                 'trace'     =>  $exception->getTrace(),
-            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 501 );
+            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 500 );
         } else {
             return response()->json([
                 'status'    =>  'failed',
                 'message'   =>  __( 'An error occured while performing your request.' ),
                 'previous'  =>  $back,
-            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 501 );
+            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 500 );
         }
     }
 }

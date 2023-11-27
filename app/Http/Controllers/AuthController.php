@@ -242,31 +242,29 @@ class AuthController extends Controller
     {
         Hook::action( 'ns-register-form', $request );
 
-        $validation_required = ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
-
-        $this->userService->setUser( $request->only([
-            'username',
-            'email',
-            'password',
-        ]));
-
-        if ( $request->expectsJson() ) {
-            return [
-                'status' => 'success',
-                'message' => $validation_required ?
-                    __( 'Your Account has been successfully created.' ) :
-                    __( 'Your Account has been created but requires email validation.' ),
-                'data' => [
-                    'redirectTo' => ns()->route( 'ns.login' ),
-                ],
-            ];
-        } else {
-            return redirect()->route( 'ns.login', [
-                'status' => 'success',
-                'message' => ! $validation_required ?
-                    __( 'Your Account has been successfully created.' ) :
-                    __( 'Your Account has been created but requires email validation.' ),
-            ]);
+        try {
+            $response   =   $this->userService->setUser( $request->only([
+                'username',
+                'email',
+                'password',
+            ]));
+    
+            if ( $request->expectsJson() ) {
+                return $response;
+            } else {
+                return redirect()->route( 'ns.login', [
+                    'status' => 'success',
+                    'message' => $response[ 'message' ],
+                ]);
+            }
+        } catch( Exception $exception ) {
+            if ( $request->expectsJson() ) {
+                throw $exception;
+            } else {
+                return redirect()->route( 'ns.register' )->withErrors([
+                    'username' => $exception->getMessage(),
+                ]);
+            }
         }
     }
 

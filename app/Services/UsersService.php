@@ -168,9 +168,13 @@ class UsersService
             Log::error( $exception->getMessage() );
         }
 
+        $validation_required = ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
+
         return [
             'status' => 'success',
-            'message' => __( 'The user has been successfully created' ),
+            'message' => ! $validation_required ?
+                __( 'Your Account has been successfully created.' ) :
+                __( 'Your Account has been created but requires email validation.' ),
             'data' => compact( 'user' ),
         ];
     }

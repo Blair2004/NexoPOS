@@ -2864,15 +2864,24 @@ trait WithOrderTest
             ->random();
 
         /**
+         * We'll clear all product history
+         * created for this product
+         */
+        ProductHistory::where( 'product_id', $product->id )->delete();
+
+        /**
          * Let's prepare the order to submit that.
          */
         $orderDetails = $testService->prepareOrder(
             date: ns()->date->now(),
+            orderDetails: [
+                'payment_status'    =>  'hold',
+            ],
             config: [
                 'allow_quick_products' => false,
                 'payments' => function ( $details ) {
                     return []; // no payment are submitted
-                },
+                },                
                 'products' => fn() => collect([
                     json_decode( json_encode([
                         'name' => $product->name,
@@ -2886,7 +2895,7 @@ trait WithOrderTest
         );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+            ->json( 'POST', 'api/orders', $orderDetails );
 
         // we need to delete the order and check if the product history has been updated accordingly
 
@@ -2898,7 +2907,7 @@ trait WithOrderTest
         $order = Order::find( $response->json( 'data.order.id' ) );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'DELETE', 'api/nexopos/v4/orders/' . $order->id );
+            ->json( 'DELETE', 'api/orders/' . $order->id );
 
         $response->assertStatus( 200 );
 

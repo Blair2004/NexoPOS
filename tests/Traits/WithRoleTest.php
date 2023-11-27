@@ -21,15 +21,14 @@ trait WithRoleTest
         $response = $this->submitRequest( ( new RolesCrud )->getNamespace(), [
             'name' => $role->name,
             'general' => [
-                'namespace' => $role->namespace,
-                'dashid' => $role->dashid,
+                'namespace' => $role->namespace
             ],
         ]);
 
         /**
          * The attempt should fail.
          */
-        $response->assertStatus(422);
+        $response->assertStatus(500);
     }
 
     public function attemptEditReservedRole()

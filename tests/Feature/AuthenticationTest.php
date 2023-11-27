@@ -200,7 +200,11 @@ class AuthenticationTest extends TestCase
                 ]
             );
 
-        $response->assertSee( 'Unable to proceed, the submitted form is not valid.' );
+        $response->assertRedirect( ns()->route( 'ns.register' ) );
+        $response->assertSessionHasErrors([
+            'email' => 'The email field must be a valid email address.',
+            'password_confirm'  =>  'The password confirm field must match password.'
+        ]);
     }
 
     public function testSubmitPasswordRecoveryForm()

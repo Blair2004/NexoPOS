@@ -115,11 +115,12 @@ trait WithProcurementTest
          * We'll proceed to the verification
          * and check if the accounts are valid.
          */
-        $responseData = json_decode( $response->getContent(), true );
+        $responseData = $response->json();
         $newExpensevalue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $existingExpense = TransactionHistory::where( 'procurement_id', $responseData[ 'data' ][ 'procurement' ][ 'id' ] )->first();
 
-        $this->assertTrue( $existingExpense instanceof TransactionHistory, __( 'No cash flow were created for the created procurement.' ) );
+        $this->assertTrue( $existingExpense instanceof TransactionHistory, __( 'No cash flow were created for the paid procurement.' ) );
+        $this->assertSame( ( float ) $existingExpense[ 'value' ], ( float ) $responseData[ 'data' ][ 'procurement' ][ 'cost' ], __( 'The attached procurement value doesn\'t match the transaction value.' ) );
 
         $response->assertJson([ 'status' => 'success' ]);
 
@@ -303,8 +304,8 @@ trait WithProcurementTest
             'product_id' => $product[ 'product_id' ],
             'unit_id' => $product[ 'unit_id' ],
             'name' => $product[ 'name' ],
-            'quantity' => $product[ 'quantity' ],
-            'total_quantity' => $productService->getQuantity(
+            'procured_quantity' => $product[ 'quantity' ],
+            'current_quantity' => $productService->getQuantity(
                 product_id: $product[ 'product_id' ],
                 unit_id: $product[ 'unit_id' ]
             ),
@@ -318,18 +319,22 @@ trait WithProcurementTest
             ->json( 'DELETE', 'api/procurements/' . $response->json()[ 'data' ][ 'procurement' ][ 'id' ] );
 
         collect( $quantities )->map( function( $product ) use ( $productService ) {
-            $actualQuantity = $productService->getQuantity(
+            $currentQuantity = $productService->getQuantity(
                 product_id: $product[ 'product_id' ],
                 unit_id: $product[ 'unit_id' ]
             );
 
-            $this->assertTrue( $actualQuantity == $product[ 'total_quantity' ] - $product[ 'quantity' ], sprintf(
-                'The product "%s" didn\'t has it\'s inventory updated after a procurement deletion to "%s". "%s" is the actual value, "%s" was removed',
-                $product[ 'name' ],
-                $product[ 'total_quantity' ] - $product[ 'quantity' ],
-                $actualQuantity,
-                $product[ 'quantity' ]
-            ));
+            $this->assertSame( 
+                ns()->currency->define( $currentQuantity )->getRaw(), 
+                ns()->currency->define( $product[ 'current_quantity' ] )->subtractBy( $product[ 'procured_quantity' ] )->getRaw(), 
+                sprintf(
+                    'The product "%s" didn\'t has it\'s inventory updated after a procurement deletion. "%s" is the actual value, "%s" was removed and "%s" was expected.',
+                    $product[ 'name' ],
+                    $currentQuantity,
+                    $product[ 'procured_quantity' ],
+                    $product[ 'current_quantity' ] - $product[ 'procured_quantity' ]
+                )
+            );
         });
     }
 

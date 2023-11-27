@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\TransactionAccountCrud;
 use App\Crud\TransactionsHistoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Transaction;
@@ -15,6 +16,7 @@ use App\Services\DateService;
 use App\Services\Options;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class TransactionController extends DashboardController
 {
@@ -44,12 +46,7 @@ class TransactionController extends DashboardController
 
     public function listTransactions()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
-            'src' => ns()->url( '/api/crud/ns.transactions' ),
-            'title' => __( 'Transactions' ),
-            'description' => __( 'List all created transactions' ),
-            'createUrl' => ns()->url( '/dashboard/accounting/transactions/create' ),
-        ]);
+        return TransactionAccountCrud::table();
     }
 
     public function createTransaction()
@@ -58,7 +55,7 @@ class TransactionController extends DashboardController
             session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Entity Transactions as tasks aren\'t configured correctly.' ) );
         }
 
-        return $this->view( 'pages.dashboard.transactions.create', [
+        return View::make( 'pages.dashboard.transactions.create', [
             'title' => __( 'Create New Transaction' ),
             'description' => __( 'Set direct, scheduled transactions.' ),
         ]);
@@ -70,7 +67,7 @@ class TransactionController extends DashboardController
             session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Entity Transactions as tasks aren\'t configured correctly.' ) );
         }
 
-        return $this->view( 'pages.dashboard.transactions.update', [
+        return View::make( 'pages.dashboard.transactions.update', [
             'title' => __( 'Update Transaction' ),
             'transaction' => $transaction,
             'description' => __( 'Set direct, scheduled transactions.' ),

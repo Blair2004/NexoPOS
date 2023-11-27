@@ -179,6 +179,11 @@ class CrudService
     protected $table;
 
     /**
+     * Define the main route identifier.
+     */
+    protected $mainRoute;
+
+    /**
      * Construct Parent
      */
     public function __construct()

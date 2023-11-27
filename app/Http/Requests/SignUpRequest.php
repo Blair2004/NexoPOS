@@ -31,6 +31,8 @@ class SignUpRequest extends FormRequest
      */
     public function rules()
     {
+        $this->redirect = ns()->route( 'ns.register' );
+
         return [
             'username' => 'required|min:6',
             'email' => 'email',

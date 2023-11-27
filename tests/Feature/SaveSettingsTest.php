@@ -31,8 +31,13 @@ class SaveSettingsTest extends TestCase
 
                 return 'App\\Settings\\' . $file[ 'filename' ];
             })
+            ->filter( function( $class ) {
+                $object = new $class;
+                return array_key_exists( 'tabs', $object->getForm() );
+            })
             ->each( function( $class ) {
                 $object = new $class;
+                $form   =   $object->getForm();
 
                 $form = collect( $object->getForm()[ 'tabs' ] )->mapWithKeys( function( $value, $key ) {
                     return [
@@ -61,10 +66,10 @@ class SaveSettingsTest extends TestCase
                     ];
                 })->toArray();
 
-                if ( ! empty( $object->getNamespace() ) ) {
+                if ( ! empty( $object->getIdentifier() ) ) {
                     $response = $this
                         ->withSession( $this->app[ 'session' ]->all() )
-                        ->json( 'POST', '/api/settings/' . $object->getNamespace(), $form );
+                        ->json( 'POST', '/api/settings/' . $object->getIdentifier(), $form );
 
                     $response->assertJsonPath( 'status', 'success' );
 

@@ -319,12 +319,7 @@ class ProductsController extends DashboardController
             return $output;
         });
 
-        return $this->view( 'pages.dashboard.crud.table', [
-            'title' => __( 'Products List' ),
-            'createUrl' => ns()->url( '/dashboard/products/create' ),
-            'description' => __( 'List all products available on the system' ),
-            'src' => ns()->url( '/api/crud/ns.products' ),
-        ]);
+        return ProductCrud::table();
     }
 
     public function editProduct( Product $product )

@@ -33,12 +33,7 @@ class UsersController extends DashboardController
 
     public function listUsers()
     {
-        return View::make( 'pages.dashboard.crud.table', [
-            'title' => __( 'Users List' ),
-            'createUrl' => url( '/dashboard/users/create' ),
-            'description' => __( 'Manage all users available.' ),
-            'src' => url( '/api/crud/ns.users' ),
-        ]);
+        return UserCrud::table();
     }
 
     public function createUser()
