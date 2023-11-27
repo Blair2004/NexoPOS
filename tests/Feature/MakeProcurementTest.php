@@ -15,13 +15,13 @@ class MakeProcurementTest extends TestCase
      *
      * @return void
      */
-    public function testCreateProcurement()
+    private function testCreateProcurement()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateProcurement();
     }
 
-    public function testCreateUnpaidProcurement()
+    private function testCreateUnpaidProcurement()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateAnUnpaidProcurement();
