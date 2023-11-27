@@ -1114,7 +1114,7 @@ class OrdersService
                 ->get();
 
             if (
-                in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) &&
+                in_array( $order[ 'payment_status' ], [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ] ) &&
                 $product[ 'product' ] instanceof Product
             ) {
                 /**
@@ -2168,7 +2168,7 @@ class OrdersService
             $order
             ->products()
             ->get()
-            ->each( function ( OrderProduct $orderProduct) {
+            ->each( function ( OrderProduct $orderProduct) use ( $order ) {
                 $orderProduct->load( 'product' );
                 $product = $orderProduct->product;
                 /**
@@ -2176,7 +2176,19 @@ class OrdersService
                  * only if the product is not a quick product/service
                  * we'll also check if the linked product still exists.
                  */
-                if ( $orderProduct->product_id > 0 && $product instanceof Product ) {
+                if ( 
+                    ( $orderProduct->product_id > 0 && $product instanceof Product ) &&
+                    ( 
+                        in_array( 
+                        $order->payment_status, [ 
+                            Order::PAYMENT_PAID, 
+                            Order::PAYMENT_PARTIALLY, 
+                            Order::PAYMENT_UNPAID,
+                            Order::PAYMENT_PARTIALLY_DUE,
+                            Order::PAYMENT_PARTIALLY_REFUNDED
+                        ]) 
+                    )
+                ) {
                     $this->productService->stockAdjustment( ProductHistory::ACTION_RETURNED, [
                         'total_price' => $orderProduct->total_price,
                         'product_id' => $orderProduct->product_id,

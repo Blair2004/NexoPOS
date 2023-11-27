@@ -2803,4 +2803,68 @@ trait WithOrderTest
             return $product[ 'quantity' ] > 0;
         });
     }
+
+    public function attemptDeleteOrderAndCheckProductHistory()
+    {
+        $testService = app()->make( TestService::class );
+
+        /**
+         * Step 1: we'll set the quantity to be 3
+         * and we'll create the order with 2 quantity partially paid
+         */
+        $product = Product::where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED )
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->get()
+            ->random();
+
+        /**
+         * Let's prepare the order to submit that.
+         */
+        $orderDetails = $testService->prepareOrder(
+            date: ns()->date->now(),
+            config: [
+                'allow_quick_products' => false,
+                'payments' => function ( $details ) {
+                    return []; // no payment are submitted
+                },
+                'products' => fn() => collect([
+                    json_decode( json_encode([
+                        'name' => $product->name,
+                        'id' => $product->id,
+                        'quantity' => 2,
+                        'unit_price' => 10,
+                        'unit_quantities' => [ $product->unit_quantities->first() ],
+                    ]) ),
+                ]),
+            ]
+        );
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+
+        // we need to delete the order and check if the product history has been updated accordingly
+
+        $response->assertStatus( 200 );
+
+        /**
+         * Step 2: We'll here delete the order
+         */
+        $order = Order::find( $response->json( 'data.order.id' ) );
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', 'api/nexopos/v4/orders/' . $order->id );
+
+        $response->assertStatus( 200 );
+
+        /**
+         * Step 3: We'll here check if the product history
+         * has been updated accordingly
+         */
+        $hasReturnAction = ProductHistory::where( 'product_id', $product->id )
+            ->where( 'operation_type', ProductHistory::ACTION_RETURNED )
+            ->count() > 0;
+
+        $this->assertFalse( $hasReturnAction, __( 'The product history has been updated despite the order wasn\'t paid.' ) );
+    }
 }
