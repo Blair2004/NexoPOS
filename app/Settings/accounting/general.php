@@ -50,6 +50,13 @@ return [
             'description' => __( 'Stock return for spoiled items will be attached to this account' ),
             'options' => Helper::toJsOptions( $transactions, [ 'id', 'name' ]),
             'type' => 'select',
+        ], [
+            'label' => __( 'Disbursement (cash register)' ),
+            'name' => 'ns_disbursement_cash_register_account',
+            'value' => ns()->option->get( 'ns_disbursement_cash_register_account' ),
+            'description' => __( 'Trnsaction account for all cash disbursement.' ),
+            'options' => Helper::toJsOptions( $transactions, [ 'id', 'name' ]),
+            'type' => 'select',
         ],
     ],
 ];
