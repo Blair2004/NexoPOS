@@ -121,11 +121,11 @@ trait WithReportTest
         ], function( $response, $responseData ) use ( $newReport ) {
             $freshOne = $this->getSaleReport();
 
-            $this->assertEquals( $freshOne->summary->total, $newReport->summary->total + $responseData[ 'data' ][ 'order' ][ 'total' ], 'New report doesn\'t reflect the sale that was made.' );
-            $this->assertEquals( $freshOne->summary->sales_taxes, $newReport->summary->sales_taxes + $responseData[ 'data' ][ 'order' ][ 'tax_value' ], 'The taxes doesn\'t reflect the sale that was made.' );
-            $this->assertEquals( $freshOne->summary->subtotal, $newReport->summary->subtotal + $responseData[ 'data' ][ 'order' ][ 'subtotal' ], 'The subtotal doesn\'t reflect the sale that was made.' );
-            $this->assertEquals( $freshOne->summary->shipping, $newReport->summary->shipping + $responseData[ 'data' ][ 'order' ][ 'shipping' ], 'The subtotal doesn\'t reflect the sale that was made.' );
-            $this->assertEquals( $freshOne->summary->sales_discounts, $newReport->summary->sales_discounts + $responseData[ 'data' ][ 'order' ][ 'discount' ], 'The discount doesn\'t reflect the sale that was made.' );
+            $this->assertEquals( $freshOne->summary->total, ns()->currency->define( $newReport->summary->total )->additionateBy( $responseData[ 'data' ][ 'order' ][ 'total' ] )->toFloat(), 'New report doesn\'t reflect the sale that was made.' );
+            $this->assertEquals( $freshOne->summary->sales_taxes, ns()->currency->define( $newReport->summary->sales_taxes )->additionateBy( $responseData[ 'data' ][ 'order' ][ 'tax_value' ] )->toFloat(), 'The taxes doesn\'t reflect the sale that was made.' );
+            $this->assertEquals( $freshOne->summary->subtotal, ns()->currency->define( $newReport->summary->subtotal )->additionateBy( $responseData[ 'data' ][ 'order' ][ 'subtotal' ] )->toFloat(), 'The subtotal doesn\'t reflect the sale that was made.' );
+            $this->assertEquals( $freshOne->summary->shipping, ns()->currency->define( $newReport->summary->shipping )->additionateBy( $responseData[ 'data' ][ 'order' ][ 'shipping' ] )->toFloat(), 'The subtotal doesn\'t reflect the sale that was made.' );
+            $this->assertEquals( $freshOne->summary->sales_discounts, ns()->currency->define( $newReport->summary->sales_discounts )->additionateBy( $responseData[ 'data' ][ 'order' ][ 'discount' ] )->toFloat(), 'The discount doesn\'t reflect the sale that was made.' );
         });
     }
 }

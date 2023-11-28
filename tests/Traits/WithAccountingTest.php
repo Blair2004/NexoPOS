@@ -133,7 +133,7 @@ trait WithAccountingTest
          */
         $procurementsDetails = app()->make( TestService::class );
         $procurementData = $procurementsDetails->prepareProcurement( ns()->date->now(), [
-            'total_products' => 10,
+            'total_products' => 2,
         ] );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )

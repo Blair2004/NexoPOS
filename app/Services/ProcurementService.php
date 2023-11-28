@@ -256,15 +256,7 @@ class ProcurementService
             throw new Exception( 'Unable to find the requested procurement using the provided id.' );
         }
 
-        event( new ProcurementBeforeDeleteEvent( $procurement ) );
-
-        $totalDeletions = $procurement->products->map( function( ProcurementProduct $product ) use ( $procurement ) {
-            return $this->deleteProduct( $product, $procurement );
-        })->count();
-
         $procurement->delete();
-
-        event( new ProcurementAfterDeleteEvent( $procurement ) );
 
         return [
             'status' => 'success',

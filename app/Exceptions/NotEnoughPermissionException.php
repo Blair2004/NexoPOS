@@ -7,6 +7,11 @@ use Exception;
 
 class NotEnoughPermissionException extends Exception
 {
+    public function getStatusCode()
+    {
+        return 403;
+    }
+
     public function __construct( $message = null )
     {
         $this->message = $message ?: __('You\'re not allowed to see that page.' );

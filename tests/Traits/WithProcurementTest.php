@@ -287,6 +287,22 @@ trait WithProcurementTest
         ]);
 
         /**
+         * We need to retreive the quantities for the products
+         * that will be procured
+         */
+        $initialQuantities = collect( $procurementsDetails[ 'products' ] )->map( function( $product ) use ( $productService ) {
+            return [
+                'product_id' => $product[ 'product_id' ],
+                'unit_id' => $product[ 'unit_id' ],
+                'procured_quantity' => $product[ 'quantity' ],
+                'current_quantity' => $productService->getQuantity(
+                    product_id: $product[ 'product_id' ],
+                    unit_id: $product[ 'unit_id' ]
+                ),
+            ];
+        });        
+
+        /**
          * Query: We store the procurement with an unpaid status.
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
@@ -299,6 +315,31 @@ trait WithProcurementTest
          * the current quantities
          */
         $products = $response->json()[ 'data' ][ 'products' ];
+
+        /**
+         * We'll not compare the previous quantity with the new quantity and see if
+         * that's the result of the addition of the previous quantity plus the procured quantity
+         */
+        collect( $products )->map( function( $product ) use ( $productService, $initialQuantities ) {
+            $currentQuantity = $productService->getQuantity(
+                product_id: $product[ 'product_id' ],
+                unit_id: $product[ 'unit_id' ]
+            );
+
+            $initialQuantity = collect( $initialQuantities )->filter( fn( $q ) => (int) $q[ 'product_id' ] === (int) $product[ 'product_id' ] && (int) $q[ 'unit_id' ] === (int) $product[ 'unit_id' ] )->first();
+
+            $this->assertSame( 
+                ns()->currency->define( $currentQuantity )->getRaw(), 
+                ns()->currency->define( $initialQuantity[ 'current_quantity' ] )->additionateBy( $initialQuantity[ 'procured_quantity' ] )->getRaw(), 
+                sprintf(
+                    'The product "%s" didn\'t has it\'s inventory updated after a procurement. "%s" is the actual value, "%s" was added and "%s" was expected.',
+                    $product[ 'name' ],
+                    $currentQuantity,
+                    $initialQuantity[ 'procured_quantity' ],
+                    $initialQuantity[ 'current_quantity' ] + $initialQuantity[ 'procured_quantity' ]
+                )
+            );
+        });
 
         $quantities = collect( $products )->map( fn( $product ) => [
             'product_id' => $product[ 'product_id' ],
@@ -318,11 +359,13 @@ trait WithProcurementTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'DELETE', 'api/procurements/' . $response->json()[ 'data' ][ 'procurement' ][ 'id' ] );
 
-        collect( $quantities )->map( function( $product ) use ( $productService ) {
+        collect( $quantities )->map( function( $product ) use ( $productService, $initialQuantities ) {
             $currentQuantity = $productService->getQuantity(
                 product_id: $product[ 'product_id' ],
                 unit_id: $product[ 'unit_id' ]
             );
+
+            $actualProduct = collect( $initialQuantities )->filter( fn( $q ) => (int) $q[ 'product_id' ] === (int) $product[ 'product_id' ] && (int) $q[ 'unit_id' ] === (int) $product[ 'unit_id' ] )->first();
 
             $this->assertSame( 
                 ns()->currency->define( $currentQuantity )->getRaw(), 

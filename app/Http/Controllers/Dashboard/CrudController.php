@@ -52,8 +52,6 @@ class CrudController extends DashboardController
             throw new NotFoundException( __( 'Unable to delete an entry that no longer exists.' ) );
         }
 
-        $resource->handleDependencyForDeletion( $model );
-
         /**
          * Run the filter before deleting
          */
@@ -65,6 +63,8 @@ class CrudController extends DashboardController
                 return $response;
             }
         }
+
+        $resource->handleDependencyForDeletion( $model );
 
         $model->delete();
 

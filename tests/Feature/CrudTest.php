@@ -41,12 +41,6 @@ class CrudTest extends TestCase
                     'slug' => 'crud/{namespace}/form-config/{id?}',
                     'verb' => 'get',
                 ], [
-                    // 'slug'  =>  'crud/{namespace}/{id}',
-                    // 'verb'  =>  'put',
-                ], [
-                    // 'slug'  =>  'crud/{namespace}',
-                    // 'verb'  =>  'post',
-                ], [
                     'slug' => 'crud/{namespace}/export',
                     'verb' => 'post',
                 ], [

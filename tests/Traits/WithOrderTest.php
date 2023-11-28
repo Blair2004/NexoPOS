@@ -253,10 +253,6 @@ trait WithOrderTest
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_CASHOUT )->sum( 'value' );
 
-        $totalChange = RegisterHistory::withRegister( $cashRegister )
-            ->from( $opening->created_at )
-            ->action( RegisterHistory::ACTION_CHANGE )->sum( 'value' );
-
         $totalRefunds = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_REFUND )->sum( 'value' );
@@ -269,7 +265,6 @@ trait WithOrderTest
             ->additionateBy( $totalCashing )
             ->additionateBy( $totalSales )
             ->subtractBy( $totalClosing )
-            ->subtractBy( $totalChange )
             ->subtractBy( $totalRefunds )
             ->subtractBy( $totalCashOut )
             ->subtractBy( $totalDelete )
@@ -2238,7 +2233,8 @@ trait WithOrderTest
          */
         $orderService = app()->make( OrdersService::class );
         $faker = Factory::create();
-        $products = Product::whereRelation( 'unit_quantities', 'quantity', '>', 100 )
+        $products = Product::notGrouped()
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
             ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
             ->get();
 

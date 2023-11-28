@@ -107,7 +107,7 @@ class CoreService
         }
 
         if ( ! $passed ) {
-            throw new NotEnoughPermissionException( $message ?: __( 'Your don\'t have enough permissions to perform this action.' ) );
+            throw new NotEnoughPermissionException( $message ?: __( 'You do not have enough permissions to perform this action.' ) );
         }
     }
 

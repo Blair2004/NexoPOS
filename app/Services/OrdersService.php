@@ -1415,7 +1415,7 @@ class OrdersService
                 )
             )
             ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
-            ->getRaw();
+            ->toFloat();
         }
 
         /**
@@ -1750,7 +1750,7 @@ class OrdersService
             return $refundProduct->tax_value;
         })->sum() ?: 0;
 
-        $orderRefund->tax_value = Currency::raw( $taxValue );
+        $orderRefund->tax_value = ns()->currency->define( $taxValue )->toFloat();
 
         /**
          * let's update the order refund total

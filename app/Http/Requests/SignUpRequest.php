@@ -8,6 +8,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SignUpRequest extends FormRequest
 {
+    public $redirectRoute = 'ns.register';
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -31,8 +33,6 @@ class SignUpRequest extends FormRequest
      */
     public function rules()
     {
-        $this->redirect = ns()->route( 'ns.register' );
-
         return [
             'username' => 'required|min:6',
             'email' => 'email',
