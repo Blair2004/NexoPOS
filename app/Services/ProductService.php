@@ -3,11 +3,7 @@
 namespace App\Services;
 
 use App\Events\ProductAfterCreatedEvent;
-use App\Events\ProductAfterDeleteEvent;
 use App\Events\ProductAfterStockAdjustmentEvent;
-use App\Events\ProductAfterUpdatedEvent;
-use App\Events\ProductBeforeDeleteEvent;
-use App\Events\ProductBeforeUpdatedEvent;
 use App\Events\ProductResetEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
@@ -307,8 +303,6 @@ class ProductService
             $this->saveSubItems( $product, $fields[ 'groups' ] ?? [] );
         }
 
-        event( new ProductAfterCreatedEvent( $product, $data ) );
-
         $editUrl = ns()->route( 'ns.products-edit', [ 'product' => $product->id ]);
 
         return [
@@ -408,8 +402,6 @@ class ProductService
          */
         $product = $this->getProductUsingArgument( 'id', $id );
 
-        ProductBeforeUpdatedEvent::dispatch( $product );
-
         $mode = 'update';
 
         $this->releaseProductTaxes( $product );
@@ -464,8 +456,6 @@ class ProductService
         if (  $product->type === Product::TYPE_GROUPED ) {
             $this->saveSubItems( $product, $fields[ 'groups' ] ?? [] );
         }
-
-        event( new ProductAfterUpdatedEvent( $product, $fields ) );
 
         $editUrl = ns()->route( 'ns.products-edit', [ 'product' => $product->id ]);
 
@@ -981,11 +971,7 @@ class ProductService
     {
         $name = $product->name;
 
-        event( new ProductBeforeDeleteEvent( $product ) );
-
         $product->delete();
-
-        event( new ProductAfterDeleteEvent( $product ) );
 
         return [
             'status' => 'success',
@@ -1619,11 +1605,7 @@ class ProductService
         $count = $variations->count();
 
         $variations->map( function( $variation ) {
-            event( new ProductBeforeDeleteEvent( $variation ) );
-
             $variation->delete();
-
-            event( new ProductAfterDeleteEvent( $variation ) );
         });
 
         if ( $count === 0 ) {

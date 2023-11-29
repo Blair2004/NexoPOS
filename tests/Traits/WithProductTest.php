@@ -97,6 +97,8 @@ trait WithProductTest
             ->withSession( $this->app[ 'session' ]->all() )
             ->json( $product_id === null ? 'POST' : 'PUT', '/api/products/' . ( $product_id !== null ? $product_id : '' ), $form );
 
+        $response->assertStatus(200);
+
         if ( ! $skip_tests ) {
             $result = json_decode( $response->getContent(), true );
             $taxGroup = TaxGroup::find(1);

@@ -19,6 +19,8 @@ class ProductBeforeUpdatedEventListener
      */
     public function handle( ProductBeforeUpdatedEvent $event): void
     {
-        session()->put( 'product_category_id', $event->product->category_id );
+        $original   =   $event->product->getOriginal();
+
+        session()->put( 'product_category_id', $original[ 'category_id' ] );
     }
 }

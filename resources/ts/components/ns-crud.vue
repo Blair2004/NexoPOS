@@ -341,6 +341,8 @@ export default {
                 this.searchQuery    =   '';
             }
 
+            this.page   =   1;
+
             this.refresh();
         },
         sort( identifier ) {

@@ -2,6 +2,12 @@
 
 namespace App\Models;
 
+use App\Events\ProductAfterCreatedEvent;
+use App\Events\ProductAfterDeleteEvent;
+use App\Events\ProductAfterUpdatedEvent;
+use App\Events\ProductBeforeCreatedEvent;
+use App\Events\ProductBeforeDeleteEvent;
+use App\Events\ProductBeforeUpdatedEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -77,9 +83,18 @@ class Product extends NsModel
 
     protected $table = 'nexopos_' . 'products';
 
-    protected $cats = [
+    protected $casts = [
         'accurate_tracking' => 'boolean',
         'auto_cogs' =>  'boolean'
+    ];
+
+    protected $dispatchesEvents     =   [
+        'creating'      =>  ProductBeforeCreatedEvent::class,
+        'created'       =>  ProductAfterCreatedEvent::class,
+        'updating'      =>  ProductBeforeUpdatedEvent::class,
+        'updated'       =>  ProductAfterUpdatedEvent::class,
+        'deleting'      =>  ProductBeforeDeleteEvent::class,
+        'deleted'       =>  ProductAfterDeleteEvent::class,
     ];
 
     /**

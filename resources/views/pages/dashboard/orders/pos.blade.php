@@ -3,7 +3,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 ?>
-@extends( 'layout.dashboard' )
+@extends( 'layout.dashboard-blank' )
 
 @section( 'layout.dashboard.header' )
     @parent
