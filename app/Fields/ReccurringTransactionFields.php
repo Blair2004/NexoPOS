@@ -28,6 +28,7 @@ class ReccurringTransactionFields extends FieldsService
                 'description' => __( 'If set to yes, the transaction will take effect immediately and be saved on the history.' ),
                 'options' => Helper::kvToJsOptions([ false => __( 'No' ), true => __( 'Yes' )]),
                 'type' => 'switch',
+                'value' =>  true,
             ], [
                 'label' => __( 'Account' ),
                 'description' => __( 'Assign the transaction to an account.' ),

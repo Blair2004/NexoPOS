@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\TransactionAccountCrud;
+use App\Crud\TransactionCrud;
 use App\Crud\TransactionsHistoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Transaction;
@@ -46,7 +47,7 @@ class TransactionController extends DashboardController
 
     public function listTransactions()
     {
-        return TransactionAccountCrud::table();
+        return TransactionCrud::table();
     }
 
     public function createTransaction()
@@ -199,5 +200,10 @@ class TransactionController extends DashboardController
     public function transactionsHistory()
     {
         return TransactionsHistoryCrud::table();
+    }
+
+    public function triggerTransaction( Transaction $transaction )
+    {
+        return $this->transactionService->triggerTransaction( $transaction );
     }
 }

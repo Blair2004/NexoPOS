@@ -439,6 +439,16 @@ class TransactionCrud extends CrudService
         );
 
         $entry->action(
+            identifier: 'trigger',
+            label: __( 'Trigger' ),
+            url: ns()->url( '/api/transactions/trigger/' . $entry->id ),
+            type: 'GET',
+            confirm: [
+                'message' => __( 'Would you like to trigger this expense now?' ),
+            ],
+        );
+
+        $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
             url: ns()->url( '/api/crud/ns.transactions/' . $entry->id ),

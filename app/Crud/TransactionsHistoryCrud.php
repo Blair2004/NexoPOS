@@ -162,6 +162,8 @@ class TransactionsHistoryCrud extends CrudService
 
     public function hook( $query ): void
     {
+        $query->orderBy( 'updated_at', 'DESC' );
+        
         if ( ! empty( request()->query( 'transaction_id' ) ) ) {
             $query->where( 'transaction_id', request()->query( 'transaction_id' ) );
         }

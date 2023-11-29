@@ -34,17 +34,31 @@ class ProcessTransactionJob implements ShouldQueue
      */
     public function handle( TransactionService $transactionService, DateService $dateService )
     {
-        /**
-         * @var DateService $date
-         */
-        $date = app()->make( DateService::class );
+        switch( $this->transaction->type ) {
+            case Transaction::TYPE_SCHEDULED:
+                $this->handleScheduledTransaction( $transactionService, $dateService );
+                break;
+            // case Transaction::TYPE_RECURRING:
+            //     $this->handleRecurringTransaction( $transactionService, $dateService );
+            //     break;
+            // case Transaction::TYPE_ENTITY:
+            //     $this->handleEntityTransaction( $transactionService, $dateService );
+            //     break;
+            case Transaction::TYPE_DIRECT:
+                $this->handleDirectTransaction( $transactionService, $dateService );
+                break;
+        }
+    }
 
-        if ( (bool) $this->transaction->active && ! $this->transaction->recurring && Carbon::parse( $this->transaction->scheduled_date )->lessThan( $date->toDateTimeString() ) ) {
-            /**
-             * if the expense is not recurring and not scheduled
-             * we'll immediately trigger it.
-             */
+    public function handleScheduledTransaction( TransactionService $transactionService, DateService $dateService )
+    {
+        if ( Carbon::parse( $this->transaction->scheduled_date )->lessThan( $dateService->toDateTimeString() ) ) {
             $transactionService->triggerTransaction( $this->transaction );
         }
+    }
+
+    public function handleDirectTransaction( TransactionService $transactionService, DateService $dateService )
+    {
+        $transactionService->triggerTransaction( $this->transaction );
     }
 }

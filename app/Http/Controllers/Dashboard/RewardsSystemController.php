@@ -22,11 +22,20 @@ class RewardsSystemController extends DashboardController
 
     public function create()
     {
-        return RewardSystemCrud::form();
+        return RewardSystemCrud::form(
+            config: [
+                'view' => 'pages.dashboard.rewards-system.create'
+            ]
+        );
     }
 
     public function edit( RewardSystem $reward )
     {
-        return RewardSystemCrud::form( $reward );
+        return RewardSystemCrud::form( 
+            entry: $reward,
+            config: [
+                'view' => 'pages.dashboard.rewards-system.create'
+            ]
+        );
     }
 }

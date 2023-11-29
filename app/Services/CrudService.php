@@ -1175,10 +1175,10 @@ class CrudService
         $instance->allowedTo($permissionType);
 
         /**
-         * use crud form to render
-         * a valid form.
+         * use crud form to render a valid form.
+         * "view" on the $config might be used to use a custom view file.
          */
-        return View::make('pages.dashboard.crud.form', array_merge([
+        return View::make( $config[ 'view' ] ?? 'pages.dashboard.crud.form', array_merge([
             /**
              * this pull the title either
              * the form is made to create or edit a resource.

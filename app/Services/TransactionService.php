@@ -277,12 +277,16 @@ class TransactionService
         /**
          * a non recurring transaction
          * once triggered should be disabled to
-         * prevent futher execution on modification.
+         * prevent further execution on modification.
          */
         $transaction->active = false;
         $transaction->save();
 
-        return compact( 'transaction', 'histories' );
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The transaction has been successfully triggered.' ),
+            'data'      =>  compact( 'transaction', 'histories' ),
+        ];
     }
 
     public function getAccountTransactions( $id )
