@@ -305,17 +305,17 @@ class ProductCategoryCrud extends CrudService
             'name' => [
                 'label' => __( 'Name' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'parent_name' => [
                 'label' => __( 'Parent' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'total_items' => [
                 'label' => __( 'Total Products' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'displays_on_pos' => [
                 'label' => __( 'Displays On POS' ),
@@ -330,7 +330,7 @@ class ProductCategoryCrud extends CrudService
             'created_at' => [
                 'label' => __( 'Created At' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
         ];
     }
