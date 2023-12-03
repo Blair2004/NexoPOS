@@ -14,14 +14,16 @@ class {{ $name }} implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * Here you'll resolve your services.
+     */
     public function __construct()
     {
         // ...
     }
 
     /**
-     * ...
-     * @return void
+     * Here your jobs is being executed
      */
     public function handle()
     {

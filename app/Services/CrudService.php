@@ -1111,18 +1111,20 @@ class CrudService
          */
         $instance->allowedTo('read');
 
+        $labels     =   Hook::filter($instance::method('getLabels'), $instance->getLabels());
+
         return View::make('pages.dashboard.crud.table', array_merge([
             /**
              * that displays the title on the page.
              * It fetches the value from the labels
              */
-            'title' => Hook::filter($instance::method('getLabels'), $instance->getLabels())['list_title'],
+            'title' => $labels['list_title'],
 
             /**
              * That displays the page description. This allow pull the value
              * from the labels.
              */
-            'description' => Hook::filter($instance::method('getLabels'), $instance->getLabels())['list_description'],
+            'description' => $labels['list_description'],
 
             /**
              * This create the src URL using the "namespace".
@@ -1253,9 +1255,9 @@ class CrudService
     /**
      * Shortcut for filtering CRUD methods
      */
-    public static function filterMethod(string $methodName, callable $callback): mixed
+    public static function filterMethod(string $methodName, callable | array $callback, $priority = 10, $arguments = 1 ): mixed
     {
-        return Hook::filter(self::method($methodName), $callback);
+        return Hook::addFilter(self::method($methodName), $callback, $priority, $arguments );
     }
 
     /**

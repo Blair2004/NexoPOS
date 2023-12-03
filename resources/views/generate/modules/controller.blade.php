@@ -8,18 +8,12 @@
 
 namespace Modules\{{ $module[ 'namespace' ] }}\Http\Controllers;
 use Illuminate\Support\Facades\View;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Controller;
 
-class {{ $name }} extends DashboardController
+class {{ $name }} extends Controller
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
-     * Index Controller Page
-     * @return view
+     * Main Page
      * @since {{ $module[ 'version' ] }}
     **/
     public function index()

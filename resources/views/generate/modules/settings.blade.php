@@ -20,7 +20,7 @@ class {{ ucwords( $name ) }} extends SettingsPage
     public function __construct()
     {
         /**
-         * @var ModulesService $module
+         * @var ModulesService
          */
         $module     =   app()->make( ModulesService::class );
 

@@ -18,7 +18,6 @@ class {{ $className }} extends CoreServiceProvider
     
     /**
      * Boot method
-     * @return void
     **/
     public function boot()
     {

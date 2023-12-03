@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\ProductAfterCreatedEvent;
 use App\Events\ProductAfterStockAdjustmentEvent;
 use App\Events\ProductResetEvent;
 use App\Exceptions\NotAllowedException;
