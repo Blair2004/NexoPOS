@@ -29,6 +29,8 @@ trait WithCustomerTest
         $response->assertJson([
             'status' => 'success',
         ]);
+
+        return CustomerGroup::findOrFail( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
     }
 
     protected function attemptRemoveCreditCustomerAccount()
@@ -390,5 +392,58 @@ trait WithCustomerTest
             ->json( 'GET', 'api/customers/' . $customer->id . '/group' );
 
         $response->assertOk();
+    }
+
+    protected function attemptDeleteCustomer( Customer $customer )
+    {
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', 'api/crud/ns.customers/' . $customer->id );
+
+        $response->assertJson([
+            'status' => 'success',
+        ]);
+
+        return $customer;
+    }
+
+    protected function attemptUpdateCustomer( Customer $customer )
+    {
+        $faker  =   Factory::create();
+        $group  =   $this->attemptCreateCustomerGroup();
+
+        /**
+         * Creating a first customer
+         */
+        $email = $faker->email;
+        $firstName = $faker->firstName;
+        $lastName = $faker->lastName;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/crud/ns.customers/' . $customer->id, [
+                'first_name' => $firstName,
+                'general' => [
+                    'group_id' => $group->id,
+                    'last_name' => $faker->lastName,
+                    'email' => $customer->email,
+                ],
+                'shipping' => [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                ],
+                'billing' => [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                ],
+            ]);
+
+        $response->assertJson([
+            'status' => 'success',
+        ]);
+
+        $this->assertFalse( $customer->group->id === $group->id );
+
+        return Customer::with( 'group' )->findOrFail( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
     }
 }

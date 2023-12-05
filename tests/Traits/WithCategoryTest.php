@@ -27,6 +27,58 @@ trait WithCategoryTest
         throw new Exception( __( 'No product was found to perform the test.' ) );
     }
 
+    protected function attemptDeleteSingleCategory( $category )
+    {
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', 'api/crud/ns.products-categories/' . $category->id );
+
+        return $response->assertJson([
+            'status' => 'success',
+        ]);
+    }
+
+    protected function attemptCreateSingleCategory()
+    {
+        // import faker and create a fake category name
+        $faker = \Faker\Factory::create();
+        $categoryName = $faker->name;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/crud/ns.products-categories', [
+                'name' => $categoryName,
+                'general' => [
+                    'displays_on_pos' => true,
+                ],
+            ]);
+
+        $response->assertJson([
+            'status' => 'success',
+        ]);
+
+        return ProductCategory::find( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
+    }
+
+    protected function attemptUpdateCategory( ProductCategory $category )
+    {
+        // import faker and create a fake category name
+        $faker = \Faker\Factory::create();
+        $categoryName = $faker->name;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/crud/ns.products-categories/' . $category->id, [
+                'name' => $categoryName,
+                'general' => [
+                    'displays_on_pos' => true,
+                ],
+            ]);
+
+        $response->assertJson([
+            'status' => 'success',
+        ]);
+
+        return ProductCategory::find( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
+    }
+
     protected function attemptCreateCategory()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )

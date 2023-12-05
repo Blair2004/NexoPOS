@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Models\Customer;
 use App\Models\Procurement;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\ProductUnitQuantity;
 use App\Models\Provider;
 use App\Models\TaxGroup;
+use App\Models\UnitGroup;
 use App\Models\User;
 use Carbon\Carbon;
 use Faker\Factory;
@@ -17,6 +19,29 @@ use Illuminate\Support\Str;
 
 class TestService
 {
+    public function prepareProduct( $data = [] )
+    {
+        $faker = Factory::create();
+        $category   =   ProductCategory::get()->random();
+        $unitGroup  =   UnitGroup::get()->random();
+        $taxGroup   =   TaxGroup::get()->random();
+
+        return array_merge([
+            'name' => $faker->name,
+            'category_id'   =>  $category->id,
+            'units'   =>  [
+                'selling_group' =>  [
+                    'unit_id'   =>  $unitGroup->units->random()->id,
+                    'sale_price_edit'    =>  $faker->numberBetween(100, 1000),
+                    'wholesale_price_edit'    =>  $faker->numberBetween(100, 1000),
+                    'purchase_price'    =>  $faker->numberBetween(100, 1000),
+                ],
+            ],
+            'tax_group_id'  =>  $taxGroup->id,
+            'tax_type'  =>  Arr::random([ 'inclusive', 'exclusive' ]),
+        ], $data );
+    }
+
     public function prepareOrder( Carbon $date, array $orderDetails = [], array $productDetails = [], array $config = [] )
     {
         /**
