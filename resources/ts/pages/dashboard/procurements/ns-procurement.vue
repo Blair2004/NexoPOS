@@ -13,6 +13,7 @@ import NsNumpadPopup from '~/popups/ns-numpad-popup.vue';
 import NsSelectPopup from '~/popups/ns-select-popup.vue';
 import { selectApiEntities } from '~/libraries/select-api-entities';
 import { Unit } from '~/interfaces/unit';
+import { nsPOSLoadingPopup } from '~/components/components';
 
 
 export default {
@@ -456,21 +457,30 @@ export default {
                 }
             }
 
-            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
-                .subscribe( data => {
-                    if ( data.status === 'success' ) {
-                        return document.location   =   this.returnUrl;
-                    }
-                    this.formValidation.enableForm( this.form );
-                }, ( error ) => {
-                    nsSnackBar.error( error.message, undefined, {
-                        duration: 5000
-                    }).subscribe();
+            const popup = Popup.show( nsPOSLoadingPopup );
 
-                    this.formValidation.enableForm( this.form );
-                    
-                    if ( error.errors ) {
-                        this.formValidation.triggerError( this.form, error.errors );
+            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
+                .subscribe({
+                    next: data => {
+                        popup.close();
+                        
+                        if ( data.status === 'success' ) {
+                            return document.location   =   this.returnUrl;
+                        }
+                        this.formValidation.enableForm( this.form );
+                    }, 
+                    error: ( error ) => {
+                        popup.close();
+
+                        nsSnackBar.error( error.message, undefined, {
+                            duration: 5000
+                        }).subscribe();
+
+                        this.formValidation.enableForm( this.form );
+                        
+                        if ( error.errors ) {
+                            this.formValidation.triggerError( this.form, error.errors );
+                        }
                     }
                 })
         },
