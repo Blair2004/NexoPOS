@@ -18,7 +18,7 @@ use Illuminate\Testing\TestResponse;
 
 trait WithProductTest
 {
-    protected function attemptSetProduct( $product_id = null, $form = [], $categories = [], $unitGroup = null, $taxType = 'inclusive', $sale_price = null, $skip_tests = false ): TestResponse
+    protected function attemptSetProduct( $product_id = null, $form = [], $categories = [], $unitGroup = null, $taxType = 'inclusive', $sale_price = null, $skip_tests = false ): array
     {
         /**
          * if no form is provided, then
@@ -97,11 +97,14 @@ trait WithProductTest
             ->withSession( $this->app[ 'session' ]->all() )
             ->json( $product_id === null ? 'POST' : 'PUT', '/api/products/' . ( $product_id !== null ? $product_id : '' ), $form );
 
+        $response->dump();
         $response->assertStatus(200);
 
         if ( ! $skip_tests ) {
             $result = json_decode( $response->getContent(), true );
             $taxGroup = TaxGroup::find(1);
+
+            $response->assertStatus(200);
     
             if ( $taxType === 'exclusive' ) {
                 $this->assertEquals( (float) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getPriceWithTaxUsingGroup( $taxType, $taxGroup, $sale_price ) );
@@ -116,11 +119,9 @@ trait WithProductTest
             $currentCategory->refresh();
     
             $this->assertEquals( $categoryProductCount + 1, $currentCategory->total_items, 'The category total items hasn\'t increased' );
-    
-            $response->assertStatus(200);
         }
 
-        return $response;
+        return $response->json();
     }
 
     protected function attemptChangeProductCategory()
@@ -205,7 +206,7 @@ trait WithProductTest
 
     protected function attemptDeleteProducts()
     {
-        $result = $this->attemptSetProduct()->json();
+        $result = $this->attemptSetProduct();
 
         /**
          * We'll delete the last product and see

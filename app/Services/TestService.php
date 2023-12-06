@@ -27,18 +27,44 @@ class TestService
         $taxGroup   =   TaxGroup::get()->random();
 
         return array_merge([
-            'name' => $faker->name,
-            'category_id'   =>  $category->id,
-            'units'   =>  [
-                'selling_group' =>  [
-                    'unit_id'   =>  $unitGroup->units->random()->id,
-                    'sale_price_edit'    =>  $faker->numberBetween(100, 1000),
-                    'wholesale_price_edit'    =>  $faker->numberBetween(100, 1000),
-                    'purchase_price'    =>  $faker->numberBetween(100, 1000),
+            'name' => ucwords( $faker->word ),
+            'variations' => [
+                [
+                    '$primary' => true,
+                    'expiracy' => [
+                        'expires' => 0,
+                        'on_expiration' => 'prevent_sales',
+                    ],
+                    'groups'    =>  [],
+                    'identification' => [
+                        'barcode' => $faker->ean13(),
+                        'barcode_type' => 'ean13',
+                        'searchable' => $faker->randomElement([ true, false ]),
+                        'category_id' => $category->id,
+                        'description' => __( 'Created via tests' ),
+                        'product_type' => 'product',
+                        'type' => $faker->randomElement([ Product::TYPE_MATERIALIZED, Product::TYPE_DEMATERIALIZED ]),
+                        'sku' => Str::random(15) . '-sku',
+                        'status' => 'available',
+                        'stock_management' => 'enabled',
+                    ],
+                    'images' => [],
+                    'taxes' => [
+                        'tax_group_id' => 1,
+                        'tax_type' => Arr::random([ 'inclusive', 'exclusive' ]),
+                    ],
+                    'units' => [
+                        'selling_group' => $unitGroup->units->map( function( $unit ) use ( $faker ) {
+                            return [
+                                'sale_price_edit' => $faker->numberBetween(20, 25),
+                                'wholesale_price_edit' => $faker->numberBetween(20, 25),
+                                'unit_id' => $unit->id,
+                            ];
+                        })->toArray(),
+                        'unit_group' => $unitGroup->id,
+                    ],
                 ],
             ],
-            'tax_group_id'  =>  $taxGroup->id,
-            'tax_type'  =>  Arr::random([ 'inclusive', 'exclusive' ]),
         ], $data );
     }
 

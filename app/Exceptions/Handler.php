@@ -111,6 +111,16 @@ class Handler extends ExceptionHandler
      */
     protected function renderJsonException( $request, $exception ): Response
     {
+        $exceptionsWithCode     =   [
+            AuthenticationException::class  =>  401,
+            ExceptionsMethodNotAllowedHttpException::class  =>  405,
+            ExceptionsPostTooLargeException::class  =>  413,
+            ExceptionsQueryException::class  =>  500,
+            TypeError::class  =>  500,
+        ];
+
+        $code   =   $exceptionsWithCode[ get_class( $exception ) ] ?? 500;
+
         $back       = Helper::getValidPreviousUrl( $request );
         $message    = $exception->getMessage() ?: sprintf( __( 'Class: %s' ), get_class( $exception ) );
         $exploded   = explode( '(View', $message );
@@ -121,14 +131,16 @@ class Handler extends ExceptionHandler
                 'status'    =>  'failed',
                 'message'   =>  $message,
                 'previous'  =>  $back,
+                'file'      =>  $exception->getFile(),
+                'line'      =>  $exception->getLine(),
                 'trace'     =>  $exception->getTrace(),
-            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 500 );
+            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : $code );
         } else {
             return response()->json([
                 'status'    =>  'failed',
                 'message'   =>  __( 'An error occured while performing your request.' ),
                 'previous'  =>  $back,
-            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : 500 );
+            ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : $code );
         }
     }
 }

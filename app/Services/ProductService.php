@@ -234,22 +234,22 @@ class ProductService
      */
     public function createSimpleProduct( $data )
     {
-        if ( empty( $data[ 'barcode' ] ) ) {
-            $data[ 'barcode' ] = $this->barcodeService->generateRandomBarcode( $data[ 'barcode_type' ] );
-        }
-
-        if ( $this->getProductUsingBarcode( $data[ 'barcode' ] ) instanceof Product ) {
+        if ( ! empty( $data[ 'barcode' ] ) && $this->getProductUsingBarcode( $data[ 'barcode' ] ) instanceof Product ) {
             throw new Exception( sprintf(
                 __( 'The provided barcode "%s" is already in use.' ),
                 $data[ 'barcode' ]
             ) );
         }
 
+        if ( empty( $data[ 'barcode' ] ) ) {
+            $data[ 'barcode' ] = $this->barcodeService->generateRandomBarcode( $data[ 'barcode_type' ] );
+        }
+
         /**
          * search a product using the provided SKU
          * and throw an error if it's the case
          */
-        if ( $this->getProductUsingSKU( $data[ 'sku' ] ) ) {
+        if ( $this->getProductUsingSKU( $data[ 'sku' ] ) && ! empty( $data[ 'barcode' ] ) ) {
             throw new Exception( sprintf(
                 __( 'The provided SKU "%s" is already in use.' ),
                 $data[ 'sku' ]
@@ -628,7 +628,6 @@ class ProductService
         $result = $this->updateSimpleProduct( $product, $data );
         $parent = $result[ 'data' ][ 'product' ];
         $parent->product_type = 'variable';
-        $parent->save();
 
         /**
          * loop variations to see if they aren't
@@ -637,6 +636,8 @@ class ProductService
         foreach ( $data[ 'variations' ] as $variation ) {
             $this->updateProductVariation( $parent, $variation[ 'id' ], $variation );
         }
+        
+        $parent->save();
 
         return [
             'status' => 'success',
@@ -649,10 +650,6 @@ class ProductService
      * Compute the tax and update the
      * product according to the tax assigned
      * to that product
-     *
-     * @param Product instance of the product to update
-     * @param array of the data to handle
-     * @return array response of the process
      */
     private function __fillProductFields( Product $product, array $data )
     {

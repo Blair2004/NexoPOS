@@ -391,7 +391,7 @@ class TaxService
             }
         }
 
-        $product->save();
+        $product->saveQuietly();
     }
 
     /**
