@@ -25,7 +25,7 @@ const nsManageProducts              =   defineAsyncComponent( () => import( './p
 const nsProcurementInvoice          =   defineAsyncComponent( () => import( './pages/dashboard/procurements/ns-procurement-invoice.vue' ) );
 const nsNotifications               =   defineAsyncComponent( () => import( './pages/dashboard/ns-notifications.vue' ) );
 const nsMedia                       =   defineAsyncComponent( () => import( './pages/dashboard/ns-media.vue' ) );
-const nsTransaction                     =   defineAsyncComponent( () => import( './pages/dashboard/transactions/ns-transaction.vue' ) );
+const nsTransaction                 =   defineAsyncComponent( () => import( './pages/dashboard/transactions/ns-transaction.vue' ) );
 const nsDashboard                   =   defineAsyncComponent( () => import( './pages/dashboard/home/ns-dashboard.vue' ) );
 const nsLowStockReport              =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-low-stock-report.vue' ) );
 const nsSaleReport                  =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-sale-report.vue' ) );

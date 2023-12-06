@@ -79,7 +79,7 @@ export class Popup {
         const popup     =   {
             hash: `popup-${this.hash()}-${this.hash()}`,
             component: shallowRef( component ),
-            close: ( callback ) => this.close( popup, callback ),
+            close: ( callback = null ) => this.close( popup, callback ),
             params,
             config,
         };
