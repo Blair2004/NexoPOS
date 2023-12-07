@@ -278,8 +278,8 @@ class ProviderCrud extends CrudService
     public function getColumns(): array
     {
         return [
-            'name' => [
-                'label' => __( 'Name' ),
+            'first_name' => [
+                'label' => __( 'First Name' ),
                 '$direction' => '',
                 '$sort' => false,
             ],

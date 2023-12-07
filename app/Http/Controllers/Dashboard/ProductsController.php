@@ -219,14 +219,6 @@ class ProductsController extends DashboardController
         return $this->productService->getProductVariations();
     }
 
-    /**
-     * delete all available product variations
-     */
-    public function deleteAllVariations()
-    {
-        return $this->productService->deleteVariations();
-    }
-
     public function deleteAllProducts()
     {
         return $this->productService->deleteAllProducts();

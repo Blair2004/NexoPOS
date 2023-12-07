@@ -1932,7 +1932,10 @@ class ProductService
         ];
     }
 
-    public function searchProduct( $search, $limit = 5, $arguments = [] )
+    /**
+     * Get the product using the provided SKU
+    */
+    public function searchProduct( string $search, int $limit = 5, array $arguments = [] )
     {
         /**
          * @var Builder $query
@@ -1986,5 +1989,23 @@ class ProductService
             ->whereIn('action', $action)
             ->whereBetween('created_at', [$startOfDay, $endOfDay])
             ->sum('quantity');
+    }
+
+    /**
+     * Delete relations linked to a product
+     */
+    public function deleteProductRelations( Product $product )
+    {
+        $product->sub_items()->delete();
+        $product->galleries()->delete();
+        $product->variations()->delete();
+        $product->product_taxes()->delete();
+        $product->unit_quantities()->delete();
+        $product->history()->delete();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The product has been deleted.' ),
+        ];
     }
 }

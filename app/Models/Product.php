@@ -307,6 +307,11 @@ class Product extends NsModel
         return $this->hasMany( ProductSubItem::class, 'parent_id', 'id' );
     }
 
+    public function history()
+    {
+        return $this->hasMany( ProductHistory::class, 'product_id', 'id' );
+    }
+
     /**
      * Filter query by getting products that are variations
      *

@@ -976,6 +976,12 @@ trait WithOrderTest
         ]);
     }
 
+    public function attemptCreateOrder( $data ) 
+    {
+        return $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/orders', $data );
+    }
+
     public function processOrders( $orderDetails, $callback = null )
     {
         $responses = [];

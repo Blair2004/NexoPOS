@@ -626,19 +626,6 @@ class ProductCrud extends CrudService
         if ( $namespace == 'ns.products' ) {
             $this->allowedTo( 'delete' );
         }
-
-        ProductBeforeDeleteEvent::dispatch( $model );
-
-        $this->deleteProductAttachedRelation( $model );
-    }
-
-    public function deleteProductAttachedRelation( $model )
-    {
-        $model->sub_items()->delete();
-        $model->galleries()->delete();
-        $model->variations()->delete();
-        $model->product_taxes()->delete();
-        $model->unit_quantities()->delete();
     }
 
     /**

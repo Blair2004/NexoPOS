@@ -97,7 +97,6 @@ trait WithProductTest
             ->withSession( $this->app[ 'session' ]->all() )
             ->json( $product_id === null ? 'POST' : 'PUT', '/api/products/' . ( $product_id !== null ? $product_id : '' ), $form );
 
-        $response->dump();
         $response->assertStatus(200);
 
         if ( ! $skip_tests ) {
@@ -229,6 +228,19 @@ trait WithProductTest
         $this->assertTrue( ProductUnitQuantity::where( 'product_id', $product->id )->count() === 0, 'The product unit quantities wheren\'t deleted.' );
         $this->assertTrue( ProductHistory::where( 'product_id', $product->id )->count() === 0, 'The product history wasn\'t deleted.' );
         $this->assertTrue( $category->total_items === $totalItems - 1, 'The category total items wasn\'t updated after the deletion.' );
+    }
+
+    public function attemptDeleteProduct( $product )
+    {
+        /**
+         * @var ProductService
+         */
+        $productService = app()->make( ProductService::class );
+
+        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', '/api/crud/ns.products/' . $product->id );
+
+        $response->assertStatus(200);
     }
 
     protected function attemptCreateGroupedProduct()
