@@ -370,11 +370,6 @@ class ProductHistoryCrud extends CrudService
     public function getColumns(): array
     {
         return [
-            'products_name' => [
-                'label' => __( 'Product' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
             'operation_type' => [
                 'label' => __( 'Operation' ),
                 '$direction' => '',
@@ -465,12 +460,12 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_SOLD:
             case ProductHistory::ACTION_ADDED:
             case ProductHistory::ACTION_STOCKED:
+            case ProductHistory::ACTION_CONVERT_IN:
                 $entry->{ '$cssClass' } = 'bg-green-100 border-green-200 border text-sm dark:text-slate-300 dark:bg-green-700 dark:border-green-800';
                 break;
             case ProductHistory::ACTION_TRANSFER_OUT:
             case ProductHistory::ACTION_TRANSFER_IN:
             case ProductHistory::ACTION_CONVERT_OUT:
-            case ProductHistory::ACTION_CONVERT_IN:
                 $entry->{ '$cssClass' } = 'bg-blue-100 border-blue-200 border text-sm dark:text-slate-300 dark:bg-blue-600 dark:border-blue-700';
                 break;
             case ProductHistory::ACTION_RETURNED:

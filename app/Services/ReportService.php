@@ -1273,7 +1273,7 @@ class ReportService
             $currentDetailedHistory = new ProductHistoryCombined;
             $currentDetailedHistory->date = $formatedDate;
             $currentDetailedHistory->name = $productHistory->product->name;
-            $currentDetailedHistory->initial_quantity = $productHistory->after_quantity ?? 0;
+            $currentDetailedHistory->initial_quantity = $productHistory->before_quantity ?? 0;
             $currentDetailedHistory->procured_quantity = 0;
             $currentDetailedHistory->sold_quantity = 0;
             $currentDetailedHistory->defective_quantity = 0;

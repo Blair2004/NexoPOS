@@ -34,7 +34,7 @@ declare const nsExtraComponents: any;
 export default {
     data: () => {
         return {
-            selectedOption: __( 'Select An Option' ),
+            selectedOption: __( 'Choose...' ),
             searchField: '',
             showResults: false,
         }
@@ -93,7 +93,7 @@ export default {
             }
         },
         selectOption( option ) {
-            this.selectedOption =   option.label || __( 'Select An Option' )
+            this.selectedOption =   option.label || __( 'Choose...' )
             this.field.value    =   option.value;
             this.$emit( 'change', option.value );
             this.searchField    =   '';

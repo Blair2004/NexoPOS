@@ -21,9 +21,16 @@ export default {
     mounted() {
         this.reloadEntities();
 
-        window.onbeforeunload   =   () => {
-            return ! this.formValidation.isFormUntouched( this.form ) || this.form.products.length > 0 ? __( 'You have unsaved modifications. Would you like to proceed?' ) : null;
-        }
+        this.shouldPreventAccidentlRefreshSubscriber    =   this.shouldPreventAccidentalRefresh.subscribe({ 
+            next: value => {
+                console.log(value)
+                if ( value ){
+                    window.addEventListener( 'beforeunload', this.addAccidentalCloseListener );
+                } else {
+                    window.removeEventListener( 'beforeunload', this.addAccidentalCloseListener );
+                }
+            }
+        })
     },
     computed: {
         activeTab() {
@@ -118,9 +125,26 @@ export default {
              * spinner
              */
             reloading: false,
+
+            /**
+             * determine if we should bypass the accidental
+             * load of the page when products are added
+             */
+            shouldPreventAccidentalRefresh: new BehaviorSubject( false ),
+            shouldPreventAccidentlRefreshSubscriber: null,
         }
     },
     watch: {
+        form: {
+            handler() {
+                if( this.formValidation.isFormUntouched( this.form ) ) {
+                    this.shouldPreventAccidentalRefresh.next(false);
+                } else {
+                    this.shouldPreventAccidentalRefresh.next(true);
+                }
+            },
+            deep: true
+        },
         searchValue( value ) {
             if ( value ) {
                 clearTimeout( this.debounceSearch );
@@ -137,6 +161,11 @@ export default {
     methods: {
         __,
         nsCurrency,
+
+        addAccidentalCloseListener( event ) {
+            event.preventDefault();
+            return true;
+        },
 
         async defineConversionOption( index ) {
             try {
@@ -183,7 +212,6 @@ export default {
             }
         },
         
-
         computeTotal() {
 
             this.totalTaxValues = 0;
@@ -465,6 +493,7 @@ export default {
                         popup.close();
                         
                         if ( data.status === 'success' ) {
+                            this.shouldPreventAccidentalRefresh.next(false);
                             return document.location   =   this.returnUrl;
                         }
                         this.formValidation.enableForm( this.form );
@@ -654,6 +683,7 @@ export default {
                 </div>
                 <div :class="form.main.disabled ? 'disabled' : ( form.main.errors.length > 0 ? 'error' : '' )" class="flex border-2 rounded input-group info overflow-hidden">
                     <input v-model="form.main.value" 
+                        @keypress="formValidation.checkField( form.main )"
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 
                         :disabled="form.main.disabled"

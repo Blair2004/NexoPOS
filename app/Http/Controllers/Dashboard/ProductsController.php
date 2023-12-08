@@ -301,8 +301,6 @@ class ProductsController extends DashboardController
 
     public function listProducts()
     {
-        return ProductCrud::table();
-
         ns()->restrict([ 'nexopos.read.products' ]);
 
         Hook::addAction( 'ns-crud-footer', function( Output $output ) {
@@ -372,7 +370,10 @@ class ProductsController extends DashboardController
             return $output;
         }, 10, 2 );
 
+        $product = Product::find( $identifier );
+
         return ProductHistoryCrud::table([
+            'title' => sprintf( __( 'Stock History For %s' ), $product->name ),
             'queryParams' => [
                 'product_id' => $identifier,
             ],
