@@ -121,6 +121,26 @@ return [
                 'no' => __( 'No' ),
             ]),
             'description' => __( 'Will permanently enable barcode autofocus to ease using a barcode reader.' ),
+        ],  [
+            'name' => 'ns_pos_hide_exhausted_products',
+            'value' => ns()->option->get( 'ns_pos_hide_exhausted_products' ),
+            'label' => __( 'Hide Exhausted Products' ),
+            'type' => 'switch',
+            'options' => Helper::kvToJsOptions([
+                'yes' => __( 'Yes' ),
+                'no' => __( 'No' ),
+            ]),
+            'description' => __( 'Will hide exhausted products from selection on the POS.' ),
+        ], [
+            'name' => 'ns_pos_hide_empty_categories',
+            'value' => ns()->option->get( 'ns_pos_hide_empty_categories' ),
+            'label' => __( 'Hide Empty Category' ),
+            'type' => 'switch',
+            'options' => Helper::kvToJsOptions([
+                'yes' => __( 'Yes' ),
+                'no' => __( 'No' ),
+            ]),
+            'description' => __( 'Category with no or exhausted products will be hidden from selection.' ),
         ],
     ],
 ];

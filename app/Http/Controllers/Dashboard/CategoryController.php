@@ -240,6 +240,15 @@ class CategoryController extends DashboardController
         if ( $id !== '0' ) {
             $category = ProductCategory::where( 'id', $id )
                 ->displayOnPOS()
+                ->where( function( $query ) {
+                    $exhaustedHidden = ns()->option->get( 'ns_pos_hide_empty_categories' );
+
+                    if ( $exhaustedHidden === 'yes' ) {
+                        $query->whereHas('products.unit_quantities', function ($query) {
+                            $query->where('quantity', '>', 0);
+                        });
+                    }
+                })
                 ->with( 'subCategories' )
                 ->first();
 
@@ -247,6 +256,15 @@ class CategoryController extends DashboardController
                 'products' => $category->products()
                     ->with( 'galleries', 'tax_group.taxes' )
                     ->onSale()
+                    ->where( function( $query ) {
+                        $exhaustedHidden = ns()->option->get( 'ns_pos_hide_exhausted_products' );
+
+                        if ( $exhaustedHidden === 'yes' ) {
+                            $query->whereHas('unit_quantities', function ($query) {
+                                $query->where('quantity', '>', 0);
+                            });
+                        }
+                    })
                     ->trackingDisabled()
                     ->get()
                     ->map( function( $product ) {
@@ -270,9 +288,18 @@ class CategoryController extends DashboardController
             'previousCategory' => false,
             'currentCategory' => false,
             'categories' => ProductCategory::where(function( $query ) {
-                $query->where( 'parent_id', null )
+                    $query->where( 'parent_id', null )
                         ->orWhere( 'parent_id', 0 );
-            })
+                })
+                ->where( function( $query ) {
+                    $exhaustedHidden = ns()->option->get( 'ns_pos_hide_empty_categories' );
+
+                    if ( $exhaustedHidden === 'yes' ) {
+                        $query->whereHas('products.unit_quantities', function ($query) {
+                            $query->where('quantity', '>', 0);
+                        });
+                    }
+                })
                 ->displayOnPOS()
                 ->get(),
         ];

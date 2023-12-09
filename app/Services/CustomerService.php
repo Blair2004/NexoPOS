@@ -445,6 +445,14 @@ class CustomerService
     {
         $order->load( 'customer.group.reward' );
 
+        /**
+         * if the customer is not assigned to a valid customer group,
+         * the reward will not be computed.
+         */
+        if ( ! $order->customer->group instanceof CustomerGroup ) {
+            return;
+        }
+
         $reward = $order->customer->group->reward;
 
         if ( $reward instanceof RewardSystem ) {
