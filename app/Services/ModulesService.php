@@ -1035,7 +1035,7 @@ class ModulesService
              * Includes the migration file which might returns an anonymous
              * class or a migration class with a defined class.
              */
-            $object = include_once $filePath;
+            $object = require( $filePath );
 
             if ( class_exists( $className ) ) {
                 /**
@@ -1058,7 +1058,7 @@ class ModulesService
                         'className' => $className,
                     ],
                 ];
-            } elseif ( $object instanceof Migration ) {
+            } elseif ( is_object( $object ) ) {
                 /**
                  * In case the migration file is an anonymous class,
                  * we'll just execute the requested method from the returned object.
