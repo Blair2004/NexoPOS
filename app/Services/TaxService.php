@@ -313,19 +313,19 @@ class TaxService
      * compute the tax added to a
      * product using a defined tax group id and type.
      */
-    public function computeTax( ProductUnitQuantity $product, int | null $tax_group_id, string $tax_type = null ): void
+    public function computeTax( ProductUnitQuantity $unitQuantity, int | null $tax_group_id, string $tax_type = null ): void
     {
         $taxGroup = TaxGroup::find( $tax_group_id );
 
-        $product->sale_price = $this->currency->define( $product->sale_price_edit )->getRaw();
-        $product->sale_price_with_tax = $this->currency->define( $product->sale_price_edit )->getRaw();
-        $product->sale_price_without_tax = $this->currency->define( $product->sale_price_edit )->getRaw();
-        $product->sale_price_tax = 0;
+        $unitQuantity->sale_price = $this->currency->define( $unitQuantity->sale_price_edit )->getRaw();
+        $unitQuantity->sale_price_with_tax = $this->currency->define( $unitQuantity->sale_price_edit )->getRaw();
+        $unitQuantity->sale_price_without_tax = $this->currency->define( $unitQuantity->sale_price_edit )->getRaw();
+        $unitQuantity->sale_price_tax = 0;
 
-        $product->wholesale_price = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-        $product->wholesale_price_with_tax = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-        $product->wholesale_price_without_tax = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-        $product->wholesale_price_tax = 0;
+        $unitQuantity->wholesale_price = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+        $unitQuantity->wholesale_price_with_tax = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+        $unitQuantity->wholesale_price_without_tax = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+        $unitQuantity->wholesale_price_tax = 0;
 
         /**
          * calculate the taxes whether they are all
@@ -338,24 +338,24 @@ class TaxService
                 })
                 ->sum();
 
-            if ( ( $tax_type ?? $product->tax_type) === 'inclusive' ) {
-                $product->sale_price_with_tax = ( floatval( $product->sale_price_edit ) );
-                $product->sale_price_without_tax = $this->getPriceWithoutTax(
+            if ( ( $tax_type ?? $unitQuantity->tax_type) === 'inclusive' ) {
+                $unitQuantity->sale_price_with_tax = ( floatval( $unitQuantity->sale_price_edit ) );
+                $unitQuantity->sale_price_without_tax = $this->getPriceWithoutTax(
                     type: 'inclusive',
                     rate: $taxRate,
-                    value: $product->sale_price_edit
+                    value: $unitQuantity->sale_price_edit
                 );
-                $product->sale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->sale_price_edit ) ) );
-                $product->sale_price = $product->sale_price_with_tax;
+                $unitQuantity->sale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $unitQuantity->sale_price_edit ) ) );
+                $unitQuantity->sale_price = $unitQuantity->sale_price_with_tax;
             } else {
-                $product->sale_price_without_tax = floatval( $product->sale_price_edit );
-                $product->sale_price_with_tax = $this->getPriceWithTax(
+                $unitQuantity->sale_price_without_tax = floatval( $unitQuantity->sale_price_edit );
+                $unitQuantity->sale_price_with_tax = $this->getPriceWithTax(
                     type: 'exclusive',
                     rate: $taxRate,
-                    value: $product->sale_price_edit
+                    value: $unitQuantity->sale_price_edit
                 );
-                $product->sale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->sale_price_edit ) ) );
-                $product->sale_price = $product->sale_price_with_tax;
+                $unitQuantity->sale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $unitQuantity->sale_price_edit ) ) );
+                $unitQuantity->sale_price = $unitQuantity->sale_price_with_tax;
             }
         }
 
@@ -370,28 +370,28 @@ class TaxService
                 })
                 ->sum();
 
-            if ( ( $tax_type ?? $product->tax_type ) === 'inclusive' ) {
-                $product->wholesale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->wholesale_price_edit ) ) );
-                $product->wholesale_price_with_tax = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-                $product->wholesale_price_without_tax = $this->getPriceWithoutTax(
+            if ( ( $tax_type ?? $unitQuantity->tax_type ) === 'inclusive' ) {
+                $unitQuantity->wholesale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $unitQuantity->wholesale_price_edit ) ) );
+                $unitQuantity->wholesale_price_with_tax = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+                $unitQuantity->wholesale_price_without_tax = $this->getPriceWithoutTax(
                     type: 'inclusive',
                     rate: $taxRate,
-                    value: $product->wholesale_price_edit
+                    value: $unitQuantity->wholesale_price_edit
                 );
-                $product->wholesale_price = $product->wholesale_price_without_tax;
+                $unitQuantity->wholesale_price = $unitQuantity->wholesale_price_without_tax;
             } else {
-                $product->wholesale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->wholesale_price_edit ) ) );
-                $product->wholesale_price_without_tax = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-                $product->wholesale_price_with_tax = $this->getPriceWithTax(
+                $unitQuantity->wholesale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $unitQuantity->wholesale_price_edit ) ) );
+                $unitQuantity->wholesale_price_without_tax = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+                $unitQuantity->wholesale_price_with_tax = $this->getPriceWithTax(
                     type: 'exclusive',
                     rate: $taxRate,
-                    value: $product->wholesale_price_edit
+                    value: $unitQuantity->wholesale_price_edit
                 );
-                $product->wholesale_price = $product->wholesale_price_without_tax;
+                $unitQuantity->wholesale_price = $unitQuantity->wholesale_price_without_tax;
             }
         }
 
-        $product->saveQuietly();
+        $unitQuantity->save();
     }
 
     /**

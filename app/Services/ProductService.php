@@ -1722,7 +1722,7 @@ class ProductService
         /**
          * compute product tax
          */
-        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
+        // $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
             'status' => 'success',
@@ -1764,7 +1764,7 @@ class ProductService
          * for the meantime we assume the tax applies on the
          * main product
          */
-        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
+        // $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
             'status' => 'success',
