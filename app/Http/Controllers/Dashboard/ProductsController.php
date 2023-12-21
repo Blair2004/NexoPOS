@@ -316,7 +316,7 @@ class ProductsController extends DashboardController
     {
         ns()->restrict([ 'nexopos.update.products' ]);
 
-        return $this->view( 'pages.dashboard.products.create', [
+        return view::make( 'pages.dashboard.products.create', [
             'title' => __( 'Edit a product' ),
             'description' => __( 'Makes modifications to a product' ),
             'submitUrl' => ns()->url( '/api/products/' . $product->id ),
@@ -331,7 +331,7 @@ class ProductsController extends DashboardController
     {
         ns()->restrict([ 'nexopos.create.products' ]);
 
-        return $this->view( 'pages.dashboard.products.create', [
+        return view::make( 'pages.dashboard.products.create', [
             'title' => __( 'Create a product' ),
             'description' => __( 'Add a new product on the system' ),
             'submitUrl' => ns()->url( '/api/products' ),
@@ -382,7 +382,7 @@ class ProductsController extends DashboardController
 
     public function showStockAdjustment()
     {
-        return $this->view( 'pages.dashboard.products.stock-adjustment', [
+        return View::make( 'pages.dashboard.products.stock-adjustment', [
             'title' => __( 'Stock Adjustment' ),
             'description' => __( 'Adjust stock of existing products.' ),
             'actions' => Helper::kvToJsOptions([
@@ -390,6 +390,7 @@ class ProductsController extends DashboardController
                 ProductHistory::ACTION_DELETED => __( 'Delete' ),
                 ProductHistory::ACTION_DEFECTIVE => __( 'Defective' ),
                 ProductHistory::ACTION_LOST => __( 'Lost' ),
+                ProductHistory::ACTION_SET => __( 'Set' ),
             ]),
         ]);
     }
@@ -445,9 +446,23 @@ class ProductsController extends DashboardController
          * made are actually supported.
          */
         foreach ( $request->input( 'products' ) as $unit ) {
+            /**
+             * if the action is set, then we need to make sure
+             * the quantity is set
+             */
+            if ( ! isset( $unit[ 'adjust_unit' ][ 'unit_id' ] ) ) {
+                throw new Exception( sprintf( __( 'The unit is not set for the product "%s".' ), $unit[ 'name' ] ) );
+            }
+
+            /**
+             * let's check if the action is supported
+             */
             if (
                 ! in_array( $unit[ 'adjust_action' ], ProductHistory::STOCK_INCREASE ) &&
-                ! in_array( $unit[ 'adjust_action' ], ProductHistory::STOCK_REDUCE )
+                ! in_array( $unit[ 'adjust_action' ], ProductHistory::STOCK_REDUCE ) &&
+                ! in_array( $unit[ 'adjust_action' ], [
+                    ProductHistory::ACTION_SET,
+                ])
             ) {
                 throw new Exception( sprintf( __( 'Unsupported action for the product %s.' ), $unit[ 'name' ] ) );
             }
@@ -471,6 +486,16 @@ class ProductsController extends DashboardController
                         )
                     );
                 }
+            }
+
+            if ( $unit[ 'adjust_quantity' ] < 0 ) {
+                throw new NotAllowedException(
+                    sprintf(
+                        __( 'The adjustment quantity can\'t be negative for the product "%s" (%s)' ),
+                        $unit[ 'name' ],
+                        $unit[ 'adjust_quantity' ]
+                    )
+                );
             }
         }
 
@@ -556,7 +581,7 @@ class ProductsController extends DashboardController
 
     public function printLabels()
     {
-        return $this->view( 'pages.dashboard.products.print-labels', [
+        return view::make( 'pages.dashboard.products.print-labels', [
             'title' => __( 'Print Labels' ),
             'description' => __( 'Customize and print products labels.' ),
         ]);

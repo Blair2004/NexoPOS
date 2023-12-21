@@ -383,23 +383,23 @@ class ProductCrud extends CrudService
                                 [
                                     'type' => 'switch',
                                     'description' => __( 'The product won\'t be visible on the grid and fetched only using the barcode reader or associated barcode.' ),
-                                    'options' => Helper::kvToJsOptions([
-                                        1 => __( 'Yes' ),
-                                        0 => __( 'No' ),
-                                    ]),
+                                    'options' => Helper::boolToOptions(
+                                        true: __( 'Yes' ),
+                                        false: __( 'No' ),
+                                    ),
                                     'name' => 'accurate_tracking',
                                     'label' => __( 'Accurate Tracking' ),
-                                    'value' => $entry->accurate_tracking ?? 0,
+                                    'value' => $entry->accurate_tracking ?? false,
                                 ], [
                                     'type' => 'switch',
                                     'description' => __( 'The Cost Of Goods Sold will be automatically be computed based on procurement and conversion.' ),
-                                    'options' => Helper::kvToJsOptions([
-                                        1 => __( 'Yes' ),
-                                        0 => __( 'No' ),
-                                    ]),
+                                    'options' => Helper::boolToOptions(
+                                        true: __( 'Yes' ),
+                                        false: __( 'No' ),
+                                    ),
                                     'name' => 'auto_cogs',
                                     'label' => __( 'Auto COGS' ),
-                                    'value' => $entry->auto_cogs ?? 1,
+                                    'value' => $entry->auto_cogs ?? true,
                                 ], [
                                     'type' => 'select',
                                     'options' => Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
@@ -440,9 +440,12 @@ class ProductCrud extends CrudService
                                     'name' => 'expires',
                                     'validation' => 'required',
                                     'label' => __( 'Product Expires' ),
-                                    'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                                    'options' => Helper::boolToOptions(
+                                        true: __( 'Yes' ),
+                                        false: __( 'No' ),
+                                    ),
                                     'description' => __( 'Set to "No" expiration time will be ignored.' ),
-                                    'value' => ( $entry !== null && $entry->expires ? 1 : 0 ),
+                                    'value' => $entry->expires ?? false,
                                 ], [
                                     'type' => 'select',
                                     'options' => Helper::kvToJsOptions([
@@ -508,9 +511,12 @@ class ProductCrud extends CrudService
                                     ], [
                                         'type' => 'switch',
                                         'name' => 'featured',
-                                        'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                                        'options' => Helper::boolToOptions(
+                                            true: __( 'Yes' ),
+                                            false: __( 'No' ),
+                                        ),
                                         'label' => __( 'Is Primary' ),
-                                        'value' => (int) $gallery->featured,
+                                        'value' => $gallery->featured ?? false,
                                         'description' => __( 'Define whether the image should be primary. If there are more than one primary image, one will be chosen for you.' ),
                                     ],
                                 ];

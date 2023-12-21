@@ -139,7 +139,7 @@ trait WithProductTest
             ->first();
 
         $productCrud = new ProductCrud;
-        $productData = $result->json()[ 'data' ][ 'product' ];
+        $productData = $result[ 'data' ][ 'product' ];
         $product = Product::find( $productData[ 'id' ] );
         $newForm = $productCrud->getExtractedProductForm( $product );
 
@@ -473,9 +473,47 @@ trait WithProductTest
         }
     }
 
+    protected function attemptGroupedProductStockAdjustment()
+    {
+        $productQuantity = ProductUnitQuantity::whereHas('product', function ($query) {
+                $query->grouped();
+            })
+            ->first();
+
+        if (!$productQuantity instanceof ProductUnitQuantity) {
+            throw new Exception(__('Unable to find a grouped product to perform this test.'));
+        }
+
+        $product = $productQuantity->product;
+
+        $response = $this->withSession($this->app['session']->all())
+            ->json('POST', 'api/products/adjustments', [
+                'products' => [
+                    [
+                        'name' => $product->name,
+                        'adjust_action' => ProductHistory::ACTION_ADDED,
+                        'adjust_unit' => [
+                            'sale_price' => $productQuantity->sale_price,
+                            'unit_id' => $productQuantity->unit_id,
+                        ],
+                        'id' => $product->id,
+                        'adjust_quantity' => 1,
+                    ],
+                ],
+            ]);
+
+        $response->assertStatus(500);
+        $response->assertSeeText('Adjusting grouped product inventory must result of a create, update, delete sale operation.');
+    }
+
     protected function attemptProductStockAdjustment()
     {
-        $productQuantity = ProductUnitQuantity::where( 'quantity', '>', 0 )->first();
+        $productQuantity = ProductUnitQuantity::where('quantity', '>', 0)
+            ->whereHas('product', function ($query) {
+                $query->notGrouped()
+                    ->withStockEnabled();
+            })
+            ->first();
 
         if ( ! $productQuantity instanceof ProductUnitQuantity ) {
             throw new Exception( __( 'Unable to find a product to perform this test.' ) );
@@ -512,5 +550,46 @@ trait WithProductTest
                 )
             );
         }
+    }
+
+    protected function attemptSetStockCount()
+    {
+        $productQuantity = ProductUnitQuantity::where( 'quantity', '>', 0 )->first();
+
+        if ( ! $productQuantity instanceof ProductUnitQuantity ) {
+            throw new Exception( __( 'Unable to find a product to perform this test.' ) );
+        }
+
+        $product = $productQuantity->product;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/products/adjustments', [
+                'products' => [
+                    [
+                        'adjust_action' => 'set',
+                        'adjust_unit' => [
+                            'sale_price' => $productQuantity->sale_price,
+                            'unit_id' => $productQuantity->unit_id,
+                        ],
+                        'id' => $product->id,
+                        'adjust_quantity' => 10,
+                    ],
+                ],
+            ]);
+
+        $oldQuantity = $productQuantity->quantity;
+        $productQuantity->refresh();
+
+        $response->assertStatus(200);
+
+        $this->assertTrue(
+            $productQuantity->quantity === (float) 10,
+            sprintf(
+                __( 'The stock modification : %s hasn\'t made any change' ),
+                'set'
+            )
+        );
+
+        $this->assertNotEquals($oldQuantity, $productQuantity->quantity);
     }
 }

@@ -397,6 +397,18 @@ class ProcurementService
         $procuredProducts = $products->map( function( $procuredProduct ) use ( $procurement ) {
             $product = Product::find( $procuredProduct[ 'product_id' ] );
 
+            if ( ! $product instanceof Product ) {
+                throw new Exception( sprintf( __( 'Unable to find the product using the provided id "%s"' ), $procuredProduct[ 'product_id' ] ) );
+            }
+
+            if ( $product->stock_management === 'disabled' ) {
+                throw new Exception( sprintf( __( 'Unable to procure the product "%s" as the stock management is disabled.' ), $product->name ) );
+            }
+
+            if ( $product->product_type === 'grouped' ) {
+                throw new Exception( sprintf( __( 'Unable to procure the product "%s" as it is a grouped product.' ), $product->name ) );
+            }
+
             /**
              * as the id might not always be provided
              * We'll find some record having an id set to 0

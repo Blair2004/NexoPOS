@@ -70,6 +70,8 @@ class ProductHistory extends NsModel
 
     const ACTION_CONVERT_IN = 'convert-in';
 
+    const ACTION_SET = 'set';
+
     public $casts = [
         'before_quantity' => FloatConvertCasting::class,
         'quantity' => FloatConvertCasting::class,

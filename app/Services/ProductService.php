@@ -1138,6 +1138,7 @@ class ProductService
             ProductHistory::ACTION_ADJUSTMENT_SALE,
             ProductHistory::ACTION_CONVERT_IN,
             ProductHistory::ACTION_CONVERT_OUT,
+            ProductHistory::ACTION_SET,
         ]) ) {
             throw new NotAllowedException( __( 'The action is not an allowed operation.' ) );
         }
@@ -1197,6 +1198,10 @@ class ProductService
     {
         $product->load( 'sub_items' );
 
+        if ( ! $orderProduct instanceof OrderProduct ) {
+            throw new Exception( __( 'Adjusting grouped product inventory must result of a create, update, delete sale operation.' ) );
+        }
+
         $products = $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $parentUnit, $orderProduct ) {
             $finalQuantity = $this->computeSubItemQuantity(
                 subItemQuantity: $subItem->quantity,
@@ -1226,7 +1231,7 @@ class ProductService
                     quantity: $finalQuantity,
                     oldQuantity: $oldQuantity
                 );
-            } else {
+            } else if ( in_array( $action, ProductHistory::STOCK_INCREASE ) ) {
                 /**
                  * @var string status
                  * @var string message
@@ -1250,8 +1255,8 @@ class ProductService
                 unit_id: $subItem->unit_id,
                 unit_price: $subItem->sale_price,
                 quantity: $finalQuantity,
-                order_id: $orderProduct->order_id,
-                order_product_id: $orderProduct->id,
+                order_id: $orderProduct->order_id ?? null,
+                order_product_id: $orderProduct->id ?? null,
                 total_price: $finalQuantity * $subItem->sale_price,
                 old_quantity: $result[ 'data' ][ 'oldQuantity' ],
                 new_quantity: $result[ 'data' ][ 'newQuantity' ]
@@ -1263,7 +1268,7 @@ class ProductService
          * the grouped product
          */
         $this->recordStockHistory(
-            product_id: $orderProduct->product_id,
+            product_id: $product->id,
             action: $action,
             unit_id: $orderProduct->unit_id,
             unit_price: $orderProduct->unit_price,
@@ -1377,6 +1382,25 @@ class ProductService
                 order_product_id: isset( $orderProduct ) ? $orderProduct->id : null,
                 old_quantity: $result[ 'data' ][ 'oldQuantity' ],
                 new_quantity: $result[ 'data' ][ 'newQuantity' ]
+            );
+        } else if ( 
+            in_array( $action, [ ProductHistory::ACTION_SET ]) 
+        ) {
+            $this->setQuantity( $product_id, $unit_id, $quantity );
+
+            return $this->recordStockHistory(
+                product_id: $product_id,
+                action: $action,
+                unit_id: $unit_id,
+                unit_price: $unit_price,
+                quantity: $quantity,
+                total_price: $total_price,
+                procurement_product_id: $procurementProduct?->id ?: null,
+                procurement_id: $procurementProduct->procurement_id ?? null,
+                order_id: isset( $orderProduct ) ? $orderProduct->order_id : null,
+                order_product_id: isset( $orderProduct ) ? $orderProduct->id : null,
+                old_quantity: $oldQuantity,
+                new_quantity: $quantity
             );
         }
 

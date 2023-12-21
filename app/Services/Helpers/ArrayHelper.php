@@ -136,6 +136,26 @@ trait ArrayHelper
     }
 
     /**
+     * Key Value To Js Options
+     *
+     * @param array
+     * @return array of options
+     */
+    public static function boolToOptions( $true, $false )
+    {
+        return [
+            [
+                'label' => $true,
+                'value' => true,
+            ],
+            [
+                'label' => $false,
+                'value' => false,
+            ],
+        ];
+    }
+
+    /**
      * flat multidimensional array using
      * keys
      *

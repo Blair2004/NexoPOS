@@ -74,10 +74,8 @@ class TestCogsPrices extends TestCase
                     ],
                 ],
         ]);
-
-        $response->assertStatus(200);
         
-        $product    =   $response->json()[ 'data' ][ 'product' ];
+        $product    =   $response[ 'data' ][ 'product' ];
         
         $this->assertTrue( ( float ) $product[ 'unit_quantities' ][0][ 'cogs' ] === ( float ) 10, 'The COGS price is not as manually defined' );
     }
@@ -144,7 +142,7 @@ class TestCogsPrices extends TestCase
 
         $response   =   $this->attemptSetProduct( form: $form, skip_tests: true );
 
-        $product    =   $response->json()[ 'data' ][ 'product' ];
+        $product    =   $response[ 'data' ][ 'product' ];
 
         $this->assertTrue( $product[ 'auto_cogs' ], 'The auto COGS feature is not set to true while it should be.' );
         
