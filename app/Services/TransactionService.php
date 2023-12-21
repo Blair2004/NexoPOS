@@ -272,6 +272,13 @@ class TransactionService
      */
     public function triggerTransaction( Transaction $transaction ): array
     {
+        if( ! in_array( $transaction->type, [
+            Transaction::TYPE_DIRECT,
+            Transaction::TYPE_ENTITY,
+        ]) ) {
+            throw new NotAllowedException( __( 'This transaction type can\'t be triggered.' ) );
+        }
+        
         $histories = $this->recordTransactionHistory( $transaction );
 
         /**

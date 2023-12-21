@@ -67,6 +67,7 @@ export default {
 
             const finalProduct                  =   new Object;
             product.unit_quantity.unit          =   product.unit;
+            finalProduct.selected               =   false;
             finalProduct.quantities             =   [ product.unit_quantity ];
             finalProduct.name                   =   product.name;
             finalProduct.adjust_unit            =   product.unit_quantity;
@@ -90,6 +91,9 @@ export default {
         },
 
         addSuggestion( suggestion ) {
+            const alreadyAdded    =   this.products
+                .filter( product => product.id === suggestion.id ).length > 0;
+
             forkJoin([
                 nsHttpClient.get( `/api/products/${suggestion.id}/units/quantities` ),
                 // nsHttpClient.get( `/api/products/${suggestion.id}/procurements` )
@@ -101,11 +105,12 @@ export default {
                         const action = this.actions.filter( action => action.value === 'deleted' );
                         let defaultAction = action.length === 1 ? action[0] : { value: 'deleted' };
 
+                        suggestion.selected                         =   false;
                         suggestion.quantities                       =   result[0];
                         suggestion.adjust_quantity                  =   1;
                         suggestion.adjust_action                    =   defaultAction.value,
                         suggestion.adjust_reason                    =   '',
-                        suggestion.adjust_unit                      =   defaultUnit.length > 0 ? defaultUnit[0]: '',
+                        suggestion.adjust_unit                      =   defaultUnit.length > 0 && ! alreadyAdded ? defaultUnit[0]: '',
                         suggestion.adjust_value                     =   0;
                         suggestion.procurement_product_id           =   0;
 
@@ -113,7 +118,7 @@ export default {
                         this.products.unshift( suggestion );
                         this.clearSearch();
                     } else {
-                        return nsSnackBar.error( __( `This product does't have any stock to adjust.` ) ).subscribe();
+                        return nsSnackBar.error( __( `This product doesn't have any stock to adjust.` ) ).subscribe();
                     }
 
                     if ( suggestion.accurate_tracking === 1 ) {
@@ -155,7 +160,7 @@ export default {
                  * will check the stock if the adjustment
                  * reduce the stock.
                  */
-                if ( ! [ 'added' ].includes( product.adjust_action ) ) {
+                if ( ! [ 'added', 'set' ].includes( product.adjust_action ) ) {
                     if ( product.accurate_tracking !== undefined && result.quantity > product.available_quantity ) {
                         return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) ).subscribe();
                     } else if ( result.quantity > product.adjust_unit.quantity ) {
@@ -211,7 +216,7 @@ export default {
                 // ...
             })
         },
-        async toggleAdjustUnit( product ) {
+        async selectAdjustmentUnit( product ) {
             try {
                 const result = await new Promise( ( resolve, reject ) => {
                     Popup.show( nsSelectPopupVue, {
@@ -229,6 +234,15 @@ export default {
                     });
                 });
 
+                const index             =   this.products.indexOf( product );
+                const otherProducts     =   this.products.filter( ( product, _index ) => _index !== index );
+                const exists    =   otherProducts
+                    .filter( __product => __product.adjust_unit.unit.id === result.unit.id && __product.adjust_unit.product_id === result.product_id ).length > 0;
+
+                if ( exists ) {
+                    return nsSnackBar.error( __( 'A similar product with the same unit already exists.' ) ).subscribe();
+                }
+                
                 product.adjust_unit    =   result;
                 this.recalculateProduct( product );
 
@@ -295,6 +309,17 @@ export default {
             }
 
             return __( 'N/A' );
+        },
+        deleteSelectedProducts() {
+            Popup.show( nsPosConfirmPopupVue, { 
+                title: __( 'Confirm Your Action' ),
+                message: __( 'Would you like to remove the selected products from the table ?' ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        this.products   =   this.products.filter( product => ! product.selected );
+                    }
+                }
+            });
         }
     },
     watch: {
@@ -331,26 +356,27 @@ export default {
                 <thead class="border-b">
                     <tr>
                         <td class="p-2">{{ __( 'Product' ) }}</td>
-                        <td width="120" class="p-2 text-center">{{ __( 'Quantity' ) }}</td>
-                        <td width="120" class="p-2 text-center">{{ __( 'Value' ) }}</td>
+                        <td width="120" class="p-2 text-center hidden md:table-cell">{{ __( 'Quantity' ) }}</td>
+                        <td width="120" class="p-2 text-center hidden md:table-cell">{{ __( 'Value' ) }}</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-if="products.length === 0">
-                        <td class="p-2 text-center" colspan="6">{{ __( 'Search and add some products' ) }}</td>
+                        <td class="p-2 border-b text-center hidden md:table-cell" colspan="6">{{ __( 'Search and add some products' ) }}</td>
+                        <td class="p-2 border-b text-center table-cell md:hidden" colspan="4">{{ __( 'Search and add some products' ) }}</td>
                     </tr>
-                    <tr :key="product.id" class="border-b" v-for="product of products">
-                        <td class="p-2">
-                            <h3 class="font-bold">{{ product.name }} ({{ ( product.accurate_tracking === 1 ? product.available_quantity : product.adjust_unit.quantity ) || 0 }})</h3>
-                            <div class="flex -mx-2 md:flex-row">
-                                <div class="px-2" @click="toggleAdjustUnit( product )">
+                    <tr :key="product.id" v-for="product of products">
+                        <td class="p-2 border">
+                            <h3 class="font-bold cursor-pointer" @click="product.selected  =   ! product.selected"><input type="checkbox" :checked="product.selected" name="" id=""> {{ product.name }} ({{ ( product.accurate_tracking === 1 ? product.available_quantity : product.adjust_unit.quantity ) || 0 }})</h3>
+                            <div class="flex -mx-2 md:flex-row flex-wrap">
+                                <div class="px-2 w-1/2 md:w-auto" @click="selectAdjustmentUnit( product )">
                                     <div class="text-xs cursor-pointer border-b border-dashed border-info-secondary py-1">
                                         <span class="text-xs">{{ __( 'Unit:' ) }}</span>&nbsp;
                                         <span v-if="product.adjust_unit.unit" class="">{{ product.adjust_unit.unit.name }}</span>
                                         <span v-if="! product.adjust_unit.unit">{{ __( 'N/A' ) }}</span>
                                     </div>
                                 </div>
-                                <div class="px-2" @click="selectStockAdjustementAction( product )">
+                                <div class="px-2 w-1/2 md:w-auto" @click="selectStockAdjustementAction( product )">
                                     <div class="text-xs cursor-pointer border-b border-dashed border-info-secondary py-1">
                                         <span class="text-xs">{{ __( 'Operation:' ) }}</span>&nbsp;
                                         <span class="">
@@ -358,7 +384,7 @@ export default {
                                         </span>
                                     </div>
                                 </div>
-                                <div v-if="product.accurate_tracking === 1" class="px-2" @click="selectProcurement( product )">
+                                <div v-if="product.accurate_tracking === 1" class="px-2 w-1/2 md:w-auto" @click="selectProcurement( product )">
                                     <div class="text-xs cursor-pointer border-b border-dashed border-info-secondary py-1">
                                         <span class="text-xs">{{ __( 'Procurement:' ) }}</span>&nbsp;
                                         <span class="">
@@ -366,7 +392,7 @@ export default {
                                         </span>
                                     </div>
                                 </div>
-                                <div class="px-2" @click="provideReason( product )">
+                                <div class="px-2 w-1/2 md:w-auto" @click="provideReason( product )">
                                     <div class="text-xs cursor-pointer border-b border-dashed border-info-secondary py-1">
                                         <span class="text-xs">{{ __( 'Reason:' ) }}</span>&nbsp;
                                         <span v-if="product.adjust_reason">
@@ -377,19 +403,19 @@ export default {
                                         </span>
                                     </div>
                                 </div>
-                                <div class="px-2" @click="removeProduct( product )">
+                                <div class="px-2 w-1/2 md:w-auto" @click="removeProduct( product )">
                                     <div class="text-xs cursor-pointer border-b border-dashed border-danger-secondary py-1">
                                         <span class="text-xs">{{ __( 'Delete' ) }}</span>
                                     </div>
                                 </div>
                             </div>
                         </td>
-                        <td class="p-2" @click="openQuantityPopup( product )">
+                        <td class="p-2 border hidden md:table-cell" @click="openQuantityPopup( product )">
                             <div class="flex items-center justify-center cursor-pointer">
                                 <span class="border-b border-dashed border-info-secondary py-2 px-4">{{ product.adjust_quantity }}</span>
                             </div>
                         </td>
-                        <td class="p-2">
+                        <td class="p-2 border hidden md:table-cell">
                             <div class="flex items-center justify-center">
                                 <span class="border-b border-dashed border-info-secondary py-2 px-4">{{ nsCurrency( product.adjust_value ) }}</span>
                             </div>
@@ -398,7 +424,19 @@ export default {
                 </tbody>
             </table>
             <div class="ns-box-footer p-2 flex justify-end">
-                <ns-button @click="proceedStockAdjustment()" type="info">{{ __( 'Proceed' ) }}</ns-button>
+                <div class="-mx-2 flex">
+                    <div class="px-2">
+                        <ns-button v-if="products.filter( p => p.selected ).length > 0" @click="deleteSelectedProducts()" type="error">
+                            <div class="flex items-center justify-center h-6">
+                                <i class="las la-trash"></i>
+                            </div>
+                            <span class="hidden md:inline-block">{{ __( 'Remove Selected' ) }}</span>
+                        </ns-button>
+                    </div>
+                    <div class="px-2">
+                        <ns-button @click="proceedStockAdjustment()" type="info">{{ __( 'Proceed' ) }}</ns-button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

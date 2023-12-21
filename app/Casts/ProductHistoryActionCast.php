@@ -32,6 +32,7 @@ class ProductHistoryActionCast implements CastsAttributes
         }
 
         return match ( $value ) {
+            ProductHistory::ACTION_SET => __( 'Assignation' ),
             ProductHistory::ACTION_STOCKED => __( 'Stocked' ),
             ProductHistory::ACTION_DEFECTIVE => __( 'Defective' ),
             ProductHistory::ACTION_DELETED => __( 'Deleted' ),
@@ -49,6 +50,7 @@ class ProductHistoryActionCast implements CastsAttributes
             ProductHistory::ACTION_ADJUSTMENT_SALE => __( 'Adjustment Sale' ),
             ProductHistory::ACTION_CONVERT_IN => __( 'Incoming Conversion' ),
             ProductHistory::ACTION_CONVERT_OUT => __( 'Outgoing Conversion' ),
+            default => __( 'Unknown Action' ),
         };
     }
 
