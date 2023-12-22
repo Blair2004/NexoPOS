@@ -42,9 +42,9 @@ class CoreService
      *
      * @return bool
      */
-    public function installed()
+    public function installed( $force = false )
     {
-        return Helper::installed();
+        return Helper::installed( $force );
     }
 
     /**
