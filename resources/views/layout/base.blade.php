@@ -57,7 +57,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
         window.ns.date                     =   {
             current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
             serverDate : '{{ app()->make( DateService::class )->toDateTimeString() }}',
-            timeZone: '{{ ns()->option->get( "ns_datetime_timezone" ) }}',
+            timeZone: '{{ ns()->option->get( "ns_datetime_timezone", "Europe/London" ) }}',
             format: `{{ $dateService->convertFormatToMomment( ns()->option->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) ) }}`
         }
 
