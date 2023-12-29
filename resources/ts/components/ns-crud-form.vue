@@ -108,6 +108,10 @@ export default {
             });
         },
         appendQueryParamas( url ) {
+            if ( this.queryParams === undefined ) {
+                return url;
+            }
+
             const params    =   Object.keys(this.queryParams)
                 .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(this.queryParams[key])}`)
                 .join('&');

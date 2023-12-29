@@ -62,7 +62,6 @@ class CustomerService
             ->with( 'shipping', 'group' )
             ->where( 'group_id', '<>', null )
             ->limit( $limit )
-            ->active()
             ->orderBy( 'updated_at', 'desc' )->get();
     }
 

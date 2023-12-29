@@ -36,6 +36,7 @@
                 </ul>
             </div>
             <div id="grid-items" class="overflow-hidden h-full flex-col flex">
+
                 <div v-if="hasCategories" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                     <div @click="loadCategories( category )" v-for="category of categories" :key="category.id" 
                         class="cell-item w-full h-36 cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative">
@@ -51,7 +52,7 @@
                     </div>
                 </div>
 
-                <div v-if="! hasCategories && ! hasProducts" class="h-full w-full flex flex-col items-center justify-center">
+                <div v-if="! hasCategories && ! hasProducts && ! isLoading" class="h-full w-full flex flex-col items-center justify-center">
                     <i class="las la-frown-open text-8xl text-primary"></i>
                     <p class="w-1/2 md:w-2/3 text-center text-primary">
                         {{ __( 'Looks like there is either no products and no categories. How about creating those first to get started ?' ) }}

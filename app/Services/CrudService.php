@@ -331,7 +331,9 @@ class CrudService
              */
             $columns    =   array_keys($this->getColumns());
 
-            if (empty($fillable) || in_array('author', $fillable) && in_array('author', $columns)) {
+            if (empty($fillable) || (
+                in_array('author', $fillable)
+            )) {
                 $entry->author = Auth::id();
             }
 

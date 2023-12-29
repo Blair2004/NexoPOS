@@ -11,7 +11,7 @@
         </div>
         <div class="overflow-y-auto flex flex-auto">
             <div class="flex p-2 flex-auto flex-col overflow-y-auto">
-                <div :data-order-id="order.id" class="border-b ns-box-body w-full py-2" v-for="order of orders" :key="order.id">
+                <div :data-order-id="order.id" class="border-b ns-box-body w-full py-2 ns-order-line" v-for="order of orders" :key="order.id">
                     <h3 class="text-primary">{{ order.title || 'Untitled Order' }}</h3>
                     <div class="px-2">
                         <div class="flex flex-wrap -mx-4">
@@ -54,10 +54,19 @@ export default {
     },
     watch: {
         orders() {
-            nsHooks.doAction( 'ns-pos-pending-orders-refreshed', this.orders );
+            this.$nextTick(() => {
+                nsHooks.doAction( 'ns-pos-pending-orders-refreshed', this.orders.map( order => {
+                    return {
+                    order,
+                    dom: document.querySelector( `[data-order-id="${order.id}"]` )
+                    }
+                }));
+            });
         }
     },
+    
     mounted() {
+
         this.columns.leftColumn    =   nsHooks.applyFilters( 'ns-pending-orders-left-column', [
             {
                 label: __( 'Code' ),

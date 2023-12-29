@@ -13,6 +13,7 @@ import {
 
 import { NsHotPress }       from './libraries/ns-hotpress';
 import VueHtmlToPaper from './libraries/html-printer';
+import { nsHooks } from './bootstrap';
 
 const nsRewardsSystem               =   defineAsyncComponent( () => import( '~/pages/dashboard/rewards-system.vue' ) );
 const nsCreateCoupons               =   defineAsyncComponent( () => import( './pages/dashboard/create-coupons.vue' ) );
@@ -177,7 +178,29 @@ window.nsDashboardContent.use( VueHtmlToPaper, {
 });
 
 window.nsComponents          =   Object.assign( allComponents, baseComponents );
-window.nsDashboardAside.mount( '#dashboard-aside' );
-window.nsDashboardOverlay.mount( '#dashboard-overlay' );
-window.nsDashboardHeader.mount( '#dashboard-header' );
-window.nsDashboardContent.mount( '#dashboard-content' );
+
+/**
+ * If anything has to happen before mounting
+ * that will be the place to do it.
+ */
+nsHooks.doAction( 'ns-before-mount' );
+
+const dashboardAsideElement = document.querySelector('#dashboard-aside');
+if (window.nsDashboardAside && dashboardAsideElement) {
+    window.nsDashboardAside.mount(dashboardAsideElement);
+}
+
+const dashboardOverlayElement = document.querySelector('#dashboard-overlay');
+if (window.nsDashboardOverlay && dashboardOverlayElement) {
+    window.nsDashboardOverlay.mount(dashboardOverlayElement);
+}
+
+const dashboardHeaderElement = document.querySelector('#dashboard-header');
+if (window.nsDashboardHeader && dashboardHeaderElement) {
+    window.nsDashboardHeader.mount(dashboardHeaderElement);
+}
+
+const dashboardContentElement = document.querySelector('#dashboard-content');
+if (window.nsDashboardContent && dashboardContentElement) {
+    window.nsDashboardContent.mount(dashboardContentElement);
+}

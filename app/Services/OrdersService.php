@@ -1099,12 +1099,16 @@ class OrdersService
              */
             if ( $product[ 'product' ] instanceof Product && $product[ 'product' ]->tax_type !== 'disabled' && ! empty( $product[ 'product' ]->tax_group_id )) {
                 $orderProduct->tax_group_id = $product[ 'product' ]->tax_group_id;
-                $orderProduct->tax_type = $product[ 'product' ]->tax_type;
+                $orderProduct->tax_type = $product[ 'product' ]->tax_type ?? 'inclusive';
                 $orderProduct->tax_value = $product[ 'tax_value' ];
             } elseif ( isset( $product[ 'tax_type' ] ) && isset( $product[ 'tax_group_id' ] ) ) {
                 $orderProduct->tax_group_id = $product[ 'tax_group_id' ];
                 $orderProduct->tax_type = $product[ 'tax_type' ];
                 $orderProduct->tax_value = $product[ 'tax_value' ];
+            } else {
+                $orderProduct->tax_group_id = 0;
+                $orderProduct->tax_type = 'disabled';
+                $orderProduct->tax_value = 0;
             }
 
             /**
