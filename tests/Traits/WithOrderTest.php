@@ -1008,8 +1008,7 @@ trait WithOrderTest
             if ( ! isset( $orderDetails[ 'products' ] ) ) {
                 $products = Product::notGrouped()
                     ->notInGroup()
-                    ->whereHasRelation( 'unit_quantities', 'quantity', '>', 500 )
-                    ->with( 'unit_quantities', function( $query ) {
+                    ->whereHas( 'unit_quantities', function( $query ) {
                         $query->where( 'quantity', '>', 500 );
                     })
                     ->limit(3)
@@ -1048,13 +1047,18 @@ trait WithOrderTest
             }
 
             $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
-                $discount = match ( $product[ 'discount_type' ] ) {
-                    'percentage' => $this->getPercentageOf( $product[ 'unit_price' ] * $product[ 'quantity' ], $product[ 'discount_percentage' ] ),
-                    'flat' => $product[ 'discount' ],
-                    default => 0
-                };
 
-                $product[ 'discount' ] = $discount;
+                $product[ 'discount' ]  =   0;
+
+                if ( isset( $product[ 'discount_type' ] ) ) {
+                    $discount = match ( $product[ 'discount_type' ] ) {
+                        'percentage' => $this->getPercentageOf( $product[ 'unit_price' ] * $product[ 'quantity' ], $product[ 'discount_percentage' ] ),
+                        'flat' => $product[ 'discount' ],
+                        default => 0
+                    };
+    
+                    $product[ 'discount' ] = $discount;
+                }
 
                 $productSubTotal = $currency
                     ->fresh( $product[ 'unit_price' ] )

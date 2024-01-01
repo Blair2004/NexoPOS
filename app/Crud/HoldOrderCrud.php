@@ -4,7 +4,6 @@ namespace App\Crud;
 
 use App\Exceptions\NotAllowedException;
 use App\Models\Order;
-use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use Illuminate\Http\Request;
@@ -462,11 +461,11 @@ class HoldOrderCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->addAction( 'ns.open', [
-            'label' => __( 'Continue' ),
-            'namespace' => 'ns.open',
-            'type' => 'POPUP',
-        ]);
+        $entry->action(
+            label: __( 'Continue' ),
+            identifier: 'ns.open',
+            type: 'POPUP',
+        );
 
         return $entry;
     }
