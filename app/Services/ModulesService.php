@@ -1031,47 +1031,21 @@ class ModulesService
         $className = 'Modules\\' . ucwords( $namespace ) . '\Migrations\\' . $className;
 
         if ( is_file( $filePath ) ) {
-            /**
-             * Includes the migration file which might returns an anonymous
-             * class or a migration class with a defined class.
-             */
-            $object = require( $filePath );
-
             if ( class_exists( $className ) ) {
+                return $this->triggerClass( $className, $method );
+            } else {
                 /**
-                 * Create Object
+                 * Includes the migration file which might returns an anonymous
+                 * class or a migration class with a defined class.
                  */
-                $object = new $className;
+                
+                $object = require( $filePath );
 
-                /**
-                 * let's try to run a method
-                 * "up" or "down" and watch for
-                 * any error.
-                 */
-                $object->$method();
-
-                return [
-                    'status' => 'success',
-                    'message' => __( 'The migration run successfully.' ),
-                    'data' => [
-                        'object' => $object,
-                        'className' => $className,
-                    ],
-                ];
-            } elseif ( is_object( $object ) ) {
-                /**
-                 * In case the migration file is an anonymous class,
-                 * we'll just execute the requested method from the returned object.
-                 */
-                $object->$method();
-
-                return [
-                    'status' => 'success',
-                    'message' => __( 'The migration run successfully.' ),
-                    'data' => [
-                        'object' => $object,
-                    ],
-                ];
+                if ( is_object( $object ) ) {
+                    return $this->triggerObject( $object, $method );
+                } else {
+                    return $this->triggerClass( $className, $method );
+                }
             }
 
             return [
@@ -1083,6 +1057,47 @@ class ModulesService
         return [
             'status' => 'failed',
             'message' => sprintf( __( 'Unable to locate the following file : %s' ), $filePath ),
+        ];
+    }
+
+    public function triggerObject( $object, $method ) 
+    {
+        /**
+         * In case the migration file is an anonymous class,
+         * we'll just execute the requested method from the returned object.
+         */
+        $object->$method();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The migration run successfully.' ),
+            'data' => [
+                'object' => $object,
+            ],
+        ];
+    }
+    
+    public function triggerClass( $className, $method ) 
+    {
+        /**
+         * Create Object
+         */
+        $object = new $className;
+
+        /**
+         * let's try to run a method
+         * "up" or "down" and watch for
+         * any error.
+         */
+        $object->$method();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The migration run successfully.' ),
+            'data' => [
+                'object' => $object,
+                'className' => $className,
+            ],
         ];
     }
 
