@@ -1089,6 +1089,13 @@ class ModulesService
          * "up" or "down" and watch for
          * any error.
          */
+        if ( ! method_exists( $object, $method ) ) {
+            return [
+                'status' => 'failed',
+                'message' => sprintf( __( 'The migration file doens\'t have a valid method name. Expected method : %s' ), $method ),
+            ];
+        }
+        
         $object->$method();
 
         return [
