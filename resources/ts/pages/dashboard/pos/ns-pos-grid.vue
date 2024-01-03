@@ -65,8 +65,9 @@
                     <div @click="addToTheCart( product )" v-for="product of products" :key="product.id" 
                         class="cell-item w-full h-36 cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative">
                         <div class="h-full w-full flex items-center justify-center overflow-hidden">
-                            <img v-if="product.galleries && product.galleries.filter( i => i.featured ).length > 0" :src="product.galleries.filter( i => i.featured )[0].url" class="object-cover h-full" :alt="product.name">
-                            <i v-if="! product.galleries || product.galleries.filter( i => i.featured ).length === 0" class="las la-image text-6xl"></i>
+                            <img v-if="product.galleries && product.galleries.filter( i => i.featured ).length > 0" :src="product.galleries.filter( i => i.featured )[0].url" class="object-cover h-full" :alt="product.name"/>
+                            <img v-if="hasNoFeatured( product )" :src="product.galleries[0].url" class="object-cover h-full" :alt="product.name"/>
+                            <i v-else="! product.galleries || product.galleries.filter( i => i.featured ).length === 0" class="las la-image text-6xl"></i>
                         </div>
                         <div class="w-full absolute z-10 -bottom-10">
                             <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
@@ -300,6 +301,10 @@ export default {
 
         openSearchPopup() {
             Popup.show( nsPosSearchProductVue );
+        },
+
+        hasNoFeatured( product ) {
+            return product.galleries && product.galleries.length > 0 && product.galleries.filter( i => i.featured ).length === 0;
         },
 
         submitSearch( value ) {

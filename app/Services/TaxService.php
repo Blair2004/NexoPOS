@@ -515,7 +515,7 @@ class TaxService
      */
     public function getPriceWithTaxUsingGroup( string $type, TaxGroup $group, $price ): float
     {
-        $rate = $group->taxes->map( fn( $tax ) => $tax->rate )->sum();
+        $rate = $group->taxes()->get()->map( fn( $tax ) => $tax->rate )->sum();
 
         return $this->getPriceWithTax( $type, $rate, $price );
     }

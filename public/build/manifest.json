@@ -608,7 +608,7 @@
       "resources/ts/pages/dashboard/orders/ns-order-invoice.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ],
-    "file": "assets/app-a567f5cb.js",
+    "file": "assets/app-f1f12ad4.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_ns-hotpress-3da57d7a.js",
@@ -1548,7 +1548,7 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-order-type-button.vue"
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-pending-orders-button.vue": {
-    "file": "assets/ns-pos-pending-orders-button-ecbebfbd.js",
+    "file": "assets/ns-pos-pending-orders-button-e7340390.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_ns-prompt-popup-643e5185.js",
@@ -1762,7 +1762,7 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos-cart.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos-grid.vue": {
-    "file": "assets/ns-pos-grid-b3aebef1.js",
+    "file": "assets/ns-pos-grid-419cfa07.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_pos-section-switch-0869c4e1.js",
@@ -1804,7 +1804,7 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos.vue": {
-    "file": "assets/ns-pos-95cde1e2.js",
+    "file": "assets/ns-pos-fbb14ba3.js",
     "imports": [
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue",
@@ -3108,7 +3108,7 @@
       "resources/ts/popups/ns-pos-layaway-popup.vue",
       "resources/ts/popups/ns-pos-shipping-popup.vue"
     ],
-    "file": "assets/pos-init-4db5069b.js",
+    "file": "assets/pos-init-011b0854.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_ns-pos-order-type-popup-4ae94c03.js",
@@ -3180,7 +3180,7 @@
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
     ],
-    "file": "assets/pos-e17951c1.js",
+    "file": "assets/pos-9ef9d688.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_ns-hotpress-3da57d7a.js",

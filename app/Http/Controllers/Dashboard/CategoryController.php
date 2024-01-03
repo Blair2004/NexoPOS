@@ -12,6 +12,7 @@ use App\Crud\GlobalProductHistoryCrud;
 use App\Crud\ProductCategoryCrud;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\DateService;
 use App\Services\ProductCategoryService;
@@ -241,13 +242,7 @@ class CategoryController extends DashboardController
             $category = ProductCategory::where( 'id', $id )
                 ->displayOnPOS()
                 ->where( function( $query ) {
-                    $exhaustedHidden = ns()->option->get( 'ns_pos_hide_empty_categories' );
-
-                    if ( $exhaustedHidden === 'yes' ) {
-                        $query->whereHas('products.unit_quantities', function ($query) {
-                            $query->where('quantity', '>', 0);
-                        });
-                    }
+                    $this->applyHideCategories( $query );
                 })
                 ->with( 'subCategories' )
                 ->first();
@@ -257,13 +252,7 @@ class CategoryController extends DashboardController
                     ->with( 'galleries', 'tax_group.taxes' )
                     ->onSale()
                     ->where( function( $query ) {
-                        $exhaustedHidden = ns()->option->get( 'ns_pos_hide_exhausted_products' );
-
-                        if ( $exhaustedHidden === 'yes' ) {
-                            $query->whereHas('unit_quantities', function ($query) {
-                                $query->where('quantity', '>', 0);
-                            });
-                        }
+                        $this->applyHideProducts( $query );
                     })
                     ->trackingDisabled()
                     ->get()
@@ -292,17 +281,47 @@ class CategoryController extends DashboardController
                         ->orWhere( 'parent_id', 0 );
                 })
                 ->where( function( $query ) {
-                    $exhaustedHidden = ns()->option->get( 'ns_pos_hide_empty_categories' );
-
-                    if ( $exhaustedHidden === 'yes' ) {
-                        $query->whereHas('products.unit_quantities', function ($query) {
-                            $query->where('quantity', '>', 0);
-                        });
-                    }
+                    $this->applyHideCategories( $query );
                 })
                 ->displayOnPOS()
                 ->get(),
         ];
+    }
+
+    private function applyHideProducts( $query )
+    {
+        $exhaustedHidden = ns()->option->get( 'ns_pos_hide_exhausted_products' );
+
+        if ( $exhaustedHidden === 'yes' ) {
+            $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
+
+            $query->orWhere( function ( $query ) {
+                $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
+                
+                $query->whereHas( 'unit_quantities', function( $query ) {
+                    $query->where( 'quantity', '>', 0 );
+                });
+            });
+        }
+    }
+
+    private function applyHideCategories( $query )
+    {
+        $exhaustedHidden = ns()->option->get( 'ns_pos_hide_empty_categories' );
+
+        if ( $exhaustedHidden === 'yes' ) {
+            $query->whereHas( 'products', function( $query ) {
+                $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
+            });
+
+            $query->orWhereHas('products', function ($query) {
+                $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
+                
+                $query->whereHas( 'unit_quantities', function( $query ) {
+                    $query->where( 'quantity', '>', 0 );
+                });
+            });
+        }
     }
 
     /**

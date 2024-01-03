@@ -347,6 +347,9 @@ class DemoCoreService
             $startOfRange->addDay();
         }
 
+        $allProducts = Product::with( 'unit_quantities' )->get();
+        $allCustomers   =   Customer::get();
+
         for ( $i = 0; $i < $this->orderCount; $i++ ) {
             $currentDate = Arr::random( $dates );
 
@@ -355,9 +358,11 @@ class DemoCoreService
              */
             $currency = app()->make( CurrencyService::class );
             $faker = Factory::create();
-            $products = Product::with( 'unit_quantities' )->get()->shuffle()->take(3);
+            
             $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
             $discountRate = $faker->numberBetween(0, 5);
+
+            $products   =   $allProducts->shuffle()->take(3);
 
             $products = $products->map( function( $product ) use ( $faker ) {
                 $unitElement = $faker->randomElement( $product->unit_quantities );
@@ -373,7 +378,7 @@ class DemoCoreService
             /**
              * testing customer balance
              */
-            $customer = Customer::get()->random();
+            $customer = $allCustomers->random();
             $customerFirstPurchases = $customer->purchases_amount;
             $customerFirstOwed = $customer->owed_amount;
 
