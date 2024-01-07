@@ -12,8 +12,9 @@
                 <div class="flex h-full w-full items-center justify-center" v-if="! loaded">
                     <ns-spinner size="24"></ns-spinner>
                 </div>
-                <div class="flex h-full w-full items-center justify-center" v-if="loaded && refunds.length === 0">
-                    <i class="lar la-frown-open"></i>
+                <div class="flex h-full w-full items-center flex-col justify-center" v-if="loaded && refunds.length === 0">
+                    <i class="lar la-frown-open text-4xl"></i>
+                    <p class="text-sm text-soft-primary text-center">{{ __( 'No refunds made so far. Good news right?' ) }}</p>
                 </div>
                 <template v-if="loaded && refunds.length > 0">
                     <div class="border-b border-box-edge flex flex-col md:flex-row" :key="refund.id" v-for="refund of refunds">

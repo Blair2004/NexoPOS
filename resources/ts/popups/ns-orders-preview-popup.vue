@@ -83,7 +83,7 @@ export default {
                 message: __( 'Would you like to delete this order' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.delete( `/api/orders/${this.rawOrder.id}` )
+                        nsHttpClient.delete( `/api/orders/${this.order.id}` )
                             .subscribe({
                                 next: result => {
                                     nsSnackBar.success( result.message ).subscribe();
@@ -108,7 +108,7 @@ export default {
                         message: __( 'The current order will be void. This action will be recorded. Consider providing a reason for this operation' ),
                         onAction:  ( reason ) => {
                             if ( reason !== false ) {
-                                nsHttpClient.post( `/api/orders/${this.rawOrder.id}/void`, { reason })
+                                nsHttpClient.post( `/api/orders/${this.order.id}/void`, { reason })
                                     .subscribe({
                                         next: result => {
                                             nsSnackBar.success( result.message ).subscribe();
@@ -168,19 +168,19 @@ export default {
                 <!-- End Summary -->
 
                 <!-- Payment Component -->
-                <ns-tabs-item :visible="! [ 'order_void', 'hold', 'refunded', 'partially_refunded' ].includes( rawOrder.payment_status )" :label="__( 'Payments' )" identifier="payments">
+                <ns-tabs-item :visible="! [ 'order_void', 'hold', 'refunded', 'partially_refunded' ].includes( order.payment_status )" :label="__( 'Payments' )" identifier="payments">
                     <ns-order-payment v-if="order" @changed="refresh()" :order="order"></ns-order-payment>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Refund -->
-                <ns-tabs-item :visible="! [ 'order_void', 'hold', 'refunded' ].includes( rawOrder.payment_status )" :label="__( 'Refund & Return' )" identifier="refund">
+                <ns-tabs-item :visible="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" :label="__( 'Refund & Return' )" identifier="refund">
                     <ns-order-refund v-if="order" @loadTab="setActive( $event )" @changed="refresh()" :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Instalment -->
-                <ns-tabs-item :visible="[ 'partially_paid', 'unpaid' ].includes( rawOrder.payment_status ) && rawOrder.support_instalments" :label="__( 'Installments' )" identifier="instalments">
+                <ns-tabs-item :visible="[ 'partially_paid', 'unpaid' ].includes( order.payment_status ) && order.support_instalments" :label="__( 'Installments' )" identifier="instalments">
                     <ns-order-instalments v-if="order" @changed="refresh()" :order="order"></ns-order-instalments>
                 </ns-tabs-item>
                 <!-- End Instalment -->
