@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\ModulesBootedEvent;
 use App\Events\ModulesLoadedEvent;
+use App\Services\Helper;
 use App\Services\ModulesService;
 use Illuminate\Support\ServiceProvider;
 
@@ -47,7 +48,7 @@ class ModulesServiceProvider extends ServiceProvider
         $this->app->singleton(ModulesService::class, function ($app) {
             $this->modules = new ModulesService;
 
-            if (ns()->installed(true)) {
+            if ( Helper::installed(true)) {
                 $this->modules->load();
 
                 collect($this->modules->getEnabled())->each(fn($module) => $this->modules->boot($module));

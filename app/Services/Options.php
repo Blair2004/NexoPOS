@@ -171,6 +171,7 @@ class Options
             $option->array = false;
 
             $this->encodeOptionValue( $option, $value );
+        }
 
         $option->key = $key;
         $option->array = false;
