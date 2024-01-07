@@ -275,6 +275,7 @@ class TransactionService
         if( ! in_array( $transaction->type, [
             Transaction::TYPE_DIRECT,
             Transaction::TYPE_ENTITY,
+            Transaction::TYPE_SCHEDULED,
         ]) ) {
             throw new NotAllowedException( __( 'This transaction type can\'t be triggered.' ) );
         }

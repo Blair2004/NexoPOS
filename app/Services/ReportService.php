@@ -842,12 +842,12 @@ class ReportService
         });
 
         return [
-            'sales_discounts' => Currency::define( $allSales->sum( 'sales_discounts' ) )->getRaw(),
-            'product_taxes' => Currency::define( $allSales->sum( 'product_taxes' ) )->getRaw(),
-            'sales_taxes' => Currency::define( $allSales->sum( 'sales_taxes' ) )->getRaw(),
-            'subtotal' => Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
-            'shipping' => Currency::define( $allSales->sum( 'shipping' ) )->getRaw(),
-            'total' => Currency::define( $allSales->sum( 'total' ) )->getRaw(),
+            'sales_discounts' => Currency::define( $allSales->sum( 'sales_discounts' ) )->toFloat(),
+            'product_taxes' => Currency::define( $allSales->sum( 'product_taxes' ) )->toFloat(),
+            'sales_taxes' => Currency::define( $allSales->sum( 'sales_taxes' ) )->toFloat(),
+            'subtotal' => Currency::define( $allSales->sum( 'subtotal' ) )->toFloat(),
+            'shipping' => Currency::define( $allSales->sum( 'shipping' ) )->toFloat(),
+            'total' => Currency::define( $allSales->sum( 'total' ) )->toFloat(),
         ];
     }
 

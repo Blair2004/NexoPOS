@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\OrderPayment;
+use App\Models\PaymentType;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
@@ -22,6 +24,10 @@ class HardResetTest extends TestCase
             '--admin_password' => env( 'NS_RESET_PASSWORD', 123456 ),
             '--store_name' => env( 'NS_RESET_APPNAME', 'NexoPOS' ),
         ]);
+
+        // Check if 3 order payments have been created
+        $paymentTypeCount = PaymentType::count();
+        $this->assertEquals(3, $paymentTypeCount);
 
         ns()->option->setDefault();
 

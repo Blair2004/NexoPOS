@@ -59,7 +59,7 @@ class ProcessExpensesTest extends TestCase
         $this->executeScheduledTransaction( $transaction );
     }
 
-    public function executeScheduledTransaction( $transaction )
+    private function executeScheduledTransaction( $transaction )
     {
         $scheduledCarbon = Carbon::parse( $transaction->scheduled_date );
 

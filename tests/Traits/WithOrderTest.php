@@ -45,8 +45,6 @@ trait WithOrderTest
 
     protected $customProductParams = [];
 
-    protected $customOrderParams = [];
-
     protected $processCoupon = true;
 
     protected $useDiscount = true;
@@ -77,7 +75,7 @@ trait WithOrderTest
             $date = $startOfWeek->addDay()->clone();
             $this->count = $this->count === false ? $faker->numberBetween(2, 5) : $this->count;
             $responses[] = $this->processOrders([
-                'created_at' => $date,
+                'created_at' => $date->getNowFormatted(),
             ], $callback );
         }
 
@@ -557,6 +555,33 @@ trait WithOrderTest
         return $response;
     }
 
+    private function prepareProductQuery( $products, $productDetails = [] ) 
+    {
+        $faker = Factory::create();
+
+        return $products->map( function( $product ) use ( $faker, $productDetails ) {
+            $unitElement = $faker->randomElement( $product->unit_quantities );
+
+            $data = array_merge([
+                'name' => $product->name,
+                'quantity' => $product->quantity ?? $faker->numberBetween(1, 3),
+                'unit_price' => $unitElement->sale_price,
+                'tax_type' => 'inclusive',
+                'tax_group_id' => 1,
+                'unit_id' => $unitElement->unit_id,
+            ], $productDetails );
+
+            if (
+                ( isset( $product->id ) )
+            ) {
+                $data[ 'product_id' ] = $product->id;
+                $data[ 'unit_quantity_id' ] = $unitElement->id;
+            }
+
+            return $data;
+        });
+    }
+
     public function attemptRefundOrderWithGroupedProducts()
     {
         /**
@@ -791,6 +816,7 @@ trait WithOrderTest
             ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
             ->get()
             ->random();
+
         $unitQuantity = $product->unit_quantities()->where( 'quantity', '>', 100 )->first();
         $subtotal = $unitQuantity->sale_price * 5;
         $shippingFees = 150;
@@ -1006,11 +1032,14 @@ trait WithOrderTest
              * product to use on the order.
              */
             if ( ! isset( $orderDetails[ 'products' ] ) ) {
-                $products = Product::notGrouped()
+                $products = isset( $orderDetails[ 'productsRequest' ] ) ? $orderDetails[ 'productsRequest' ]() : Product::notGrouped()
                     ->notInGroup()
                     ->whereHas( 'unit_quantities', function( $query ) {
                         $query->where( 'quantity', '>', 500 );
                     })
+                    ->with(['unit_quantities' => function($query) {
+                        $query->where('quantity', '>', 500);
+                    }])
                     ->limit(3)
                     ->get();
 
@@ -1046,13 +1075,13 @@ trait WithOrderTest
                 $products = collect( $orderDetails[ 'products' ] );
             }
 
-            $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
+            $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency, $taxService) {
 
                 $product[ 'discount' ]  =   0;
 
                 if ( isset( $product[ 'discount_type' ] ) ) {
                     $discount = match ( $product[ 'discount_type' ] ) {
-                        'percentage' => $this->getPercentageOf( $product[ 'unit_price' ] * $product[ 'quantity' ], $product[ 'discount_percentage' ] ),
+                        'percentage' => $taxService->getPercentageOf( $product[ 'unit_price' ] * $product[ 'quantity' ], $product[ 'discount_percentage' ] ),
                         'flat' => $product[ 'discount' ],
                         default => 0
                     };
@@ -1620,11 +1649,6 @@ trait WithOrderTest
 
     protected function attemptCreateHoldOrder()
     {
-        /**
-         * @var ProductService $productService
-         */
-        $productService = app()->make( ProductService::class );
-
         $product = Product::withStockEnabled()
             ->notGrouped()
             ->with( 'unit_quantities'  )
@@ -1680,17 +1704,79 @@ trait WithOrderTest
         $response->assertStatus(200);
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_HOLD );
 
+        return $response;
+    }
+
+    protected function attemptUpdateHoldOrder( Order $order )
+    {
+        $product = Product::withStockEnabled()
+            ->notGrouped()
+            ->with( 'unit_quantities'  )
+            ->first();
+
+        // We provide some quantities to ensure
+        // the test doesn't fail because of the missing stock
+        $product->unit_quantities->each( function( $unitQuantity ) {
+            $unitQuantity->quantity = 10000;
+            $unitQuantity->save();
+        });
+
+        $unitQuantity = $product->unit_quantities->first();
+
+        if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
+            throw new Exception( 'No valid unit is available.' );
+        }
+
+        $subtotal = $unitQuantity->sale_price * 5;
+
+        /**
+         * @var ProductService $productService
+         */
+        $productService = app()->make( ProductService::class );
+
+        $orderDetails = [
+            'customer_id' => $this->attemptCreateCustomer()->id,
+            'type' => [ 'identifier' => 'takeaway' ],
+            'discount_type' => 'percentage',
+            'discount_percentage' => 2.5,
+            'addresses' => [
+                'shipping' => [
+                    'name' => 'First Name Delivery',
+                    'surname' => 'Surname',
+                    'country' => 'Cameroon',
+                ],
+                'billing' => [
+                    'name' => 'EBENE Voundi',
+                    'surname' => 'Antony Hervé',
+                    'country' => 'United State Seattle',
+                ],
+            ],
+            'payment_status' => Order::PAYMENT_HOLD,
+            'subtotal' => $subtotal,
+            'shipping' => 150,
+            'products' => [
+                [
+                    'product_id' => $unitQuantity->product->id,
+                    'quantity' => 3,
+                    'unit_price' => 12,
+                    'unit_quantity_id' => $unitQuantity->id,
+                ],
+            ],
+        ];
+
         $payment = PaymentType::first();
-        $order = $response->json()[ 'data' ][ 'order' ];
 
         /**
          * Step 2: From here, we'll make a first payment to the order,
          * and make sure there is a stock deducted. First we'll keep
          * the actual products stock
          */
-        $stock = collect( $order[ 'products' ] )->mapWithKeys( function( $orderProduct ) use ( $productService ) {
+        $stock = collect( $order->products )->mapWithKeys( function( $orderProduct ) use ( $productService ) {
             return [
-                $orderProduct[ 'id' ] => $productService->getQuantity( $orderProduct[ 'product_id' ], $orderProduct[ 'unit_id' ] ),
+                $orderProduct[ 'id' ] => $productService->getQuantity( 
+                    $orderProduct->product_id, 
+                    $orderProduct->unit_id 
+                ),
             ];
         });
 

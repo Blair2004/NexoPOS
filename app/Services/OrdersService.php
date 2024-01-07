@@ -772,6 +772,11 @@ class OrdersService
      */
     public function makeOrderSinglePayment( $payment, Order $order )
     {
+        // Check if the order is already paid
+        if ($order->payment_status === Order::PAYMENT_PAID) {
+            throw new NotAllowedException( __( 'Unable to proceed as the order is already paid.' ) );
+        }
+
         /**
          * We should check if the order allow instalments.
          */
@@ -897,8 +902,8 @@ class OrdersService
         })->sum() );
 
         $total = $this->currencyService->define(
-            $subtotal + $this->__getShippingFee($fields)
-        )
+                $subtotal + $this->__getShippingFee($fields)
+            )
             ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->getRaw();
@@ -961,7 +966,7 @@ class OrdersService
             }
         }
 
-        if ( $totalPayments >= $total ) {
+        if ( $totalPayments >= $total && count( $fields[ 'payments' ] ?? [] ) > 0 ) {
             $paymentStatus = Order::PAYMENT_PAID;
         } elseif ($totalPayments < $total && $totalPayments > 0) {
             $paymentStatus = Order::PAYMENT_PARTIALLY;
@@ -1488,7 +1493,7 @@ class OrdersService
             if ( ! in_array( $attribute, [
                 'id',
             ])) {
-                $order->$attribute = $fields[ $attribute ];
+                $order->$attribute = $fields[ $attribute ] ?? null;
             }
         }
 
@@ -2128,20 +2133,16 @@ class OrdersService
          * We believe if the product total is greater
          * than "0", then probably the order hasn't been paid yet.
          */
-        if ( $productTotal ) {
-            if ( (float) $order->total == 0 && $totalRefunds > 0 ) {
-                $order->payment_status = Order::PAYMENT_REFUNDED;
-            } elseif ( $order->total > 0 && $totalRefunds > 0 ) {
-                $order->payment_status = Order::PAYMENT_PARTIALLY_REFUNDED;
-            } elseif ( $order->tendered >= $order->total && $order->total > 0 ) {
-                $order->payment_status = Order::PAYMENT_PAID;
-            } elseif ( (float) $order->tendered < (float) $order->total && (float) $order->tendered > 0 ) {
-                $order->payment_status = Order::PAYMENT_PARTIALLY;
-            } elseif ( $order->total == 0 && $totalRefunds == 0 ) {
-                $order->payment_status = Order::PAYMENT_UNPAID;
-            }
-        } elseif ( $productTotal == 0 && $productsQuantity == 0 ) {
+        if ( (float) $order->total == 0 && $totalRefunds > 0 ) {
             $order->payment_status = Order::PAYMENT_REFUNDED;
+        } elseif ( $order->total > 0 && $totalRefunds > 0 ) {
+            $order->payment_status = Order::PAYMENT_PARTIALLY_REFUNDED;
+        } elseif ( $order->tendered >= $order->total && $order->payments->count() > 0 ) {
+            $order->payment_status = Order::PAYMENT_PAID;
+        } elseif ( (float) $order->tendered < (float) $order->total && (float) $order->tendered > 0 ) {
+            $order->payment_status = Order::PAYMENT_PARTIALLY;
+        } elseif ( $order->total == 0 && $order->tendered == 0 ) {
+            $order->payment_status = Order::PAYMENT_UNPAID;
         }
 
         $order->save();

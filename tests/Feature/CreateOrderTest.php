@@ -80,9 +80,6 @@ class CreateOrderTest extends TestCase
             $this->processCoupon = false;
             $this->useDiscount = false;
             $this->shouldMakePayment = false;
-            $this->customOrderParams = [
-                'shipping' => 0,
-            ];
             $this->customProductParams = [
                 'unit_price' => 0,
                 'discount' => 0,
