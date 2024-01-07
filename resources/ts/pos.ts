@@ -1,31 +1,31 @@
 /**
  * will bootstrap time
  */
-import Vue from 'vue';
 import './shared/time';
+
 import * as baseComponents from './components/components';
 
-import VirtualCollection from 'vue-virtual-collection';
-import { NsHotPress } from './libraries/ns-hotpress';
+import { createApp, defineAsyncComponent } from 'vue/dist/vue.esm-bundler';
 
-const nsPos                     =   () => import( './pages/dashboard/pos/ns-pos.vue' );
-const nsPosCart                 =   () => import( './pages/dashboard/pos/ns-pos-cart.vue' );
-const nsPosGrid                 =   () => import( './pages/dashboard/pos/ns-pos-grid.vue' );
+import { NsHotPress } from './libraries/ns-hotpress';
 
 ( window as any ).nsComponents  =   { ...baseComponents };
 ( window as any ).nsHotPress    =   new NsHotPress;
 
-Vue.use( VirtualCollection );
-
-new Vue({
-    el: '#pos-app',
+const posApp    =   createApp({
     mounted() {
         // ...
     },
-    components: {
-        nsPos,
-        nsPosCart,
-        nsPosGrid,
-        ...( window as any ).nsComponents,
-    }
-})
+});
+
+posApp.component( 'nsPos', defineAsyncComponent( () => import( '~/pages/dashboard/pos/ns-pos.vue' ) ) );
+posApp.component( 'nsPosCart', defineAsyncComponent( () => import( '~/pages/dashboard/pos/ns-pos-cart.vue' ) ) );
+posApp.component( 'nsPosGrid', defineAsyncComponent( () => import( '~/pages/dashboard/pos/ns-pos-grid.vue' ) ) );
+
+for( let name in baseComponents ) {
+    posApp.component( name, baseComponents[ name ] );
+}
+
+posApp.mount( '#pos-app' );
+
+( window as any ).posApp    =   posApp;

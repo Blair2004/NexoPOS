@@ -4,28 +4,32 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
-use App\Models\AccountType;
-use App\Models\CashFlow;
+use App\Jobs\EnsureCombinedProductHistoryExistsJob;
 use App\Models\Customer;
+use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
+use App\Services\DateService;
 use App\Services\OrdersService;
 use App\Services\ReportService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class ReportsController extends DashboardController
 {
     public function __construct(
         protected OrdersService $ordersService,
-        protected ReportService $reportService
+        protected ReportService $reportService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
+        // ...
     }
 
     public function salesReport()
     {
-        return $this->view( 'pages.dashboard.reports.sales-report', [
+        return View::make( 'pages.dashboard.reports.sales-report', [
             'title' => __( 'Sales Report' ),
             'description' => __( 'Provides an overview over the sales during a specific period' ),
         ]);
@@ -33,7 +37,7 @@ class ReportsController extends DashboardController
 
     public function salesProgress()
     {
-        return $this->view( 'pages.dashboard.reports.best-products-report', [
+        return View::make( 'pages.dashboard.reports.best-products-report', [
             'title' => __( 'Sales Progress' ),
             'description' => __( 'Provides an overview over the best products sold during a specific period.' ),
         ]);
@@ -41,7 +45,7 @@ class ReportsController extends DashboardController
 
     public function soldStock()
     {
-        return $this->view( 'pages.dashboard.reports.sold-stock-report', [
+        return View::make( 'pages.dashboard.reports.sold-stock-report', [
             'title' => __( 'Sold Stock' ),
             'description' => __( 'Provides an overview over the sold stock during a specific period.' ),
         ]);
@@ -49,7 +53,7 @@ class ReportsController extends DashboardController
 
     public function stockReport()
     {
-        return $this->view( 'pages.dashboard.reports.low-stock-report', [
+        return View::make( 'pages.dashboard.reports.low-stock-report', [
             'title' => __( 'Stock Report' ),
             'description' => __( 'Provides an overview of the products stock.' ),
         ]);
@@ -57,17 +61,25 @@ class ReportsController extends DashboardController
 
     public function profit()
     {
-        return $this->view( 'pages.dashboard.reports.profit-report', [
+        return View::make( 'pages.dashboard.reports.profit-report', [
             'title' => __( 'Profit Report' ),
             'description' => __( 'Provides an overview of the provide of the products sold.' ),
         ]);
     }
 
-    public function cashFlow()
+    public function transactionsReport()
     {
-        return $this->view( 'pages.dashboard.reports.cash-flow', [
-            'title' => __( 'Cash Flow Report' ),
+        return View::make( 'pages.dashboard.reports.transactions', [
+            'title' => __( 'Transactions Report' ),
             'description' => __( 'Provides an overview on the activity for a specific period.' ),
+        ]);
+    }
+
+    public function stockCombinedReport()
+    {
+        return View::make( 'pages.dashboard.reports.stock-combined', [
+            'title' => __( 'Combined Report' ),
+            'description' => __( 'Provides a combined report for every transactions on products.' ),
         ]);
     }
 
@@ -83,7 +95,8 @@ class ReportsController extends DashboardController
                 $request->input( 'startDate' ),
                 $request->input( 'endDate' ),
                 $request->input( 'type' ),
-                $request->input( 'user_id' )
+                $request->input( 'user_id' ),
+                $request->input( 'categories_id' ),
             );
     }
 
@@ -96,8 +109,10 @@ class ReportsController extends DashboardController
     {
         $orders = $this->ordersService
             ->getSoldStock(
-                $request->input( 'startDate' ),
-                $request->input( 'endDate' )
+                startDate: $request->input( 'startDate' ),
+                endDate: $request->input( 'endDate' ),
+                categories: $request->input( 'categories' ),
+                units: $request->input( 'units' )
             );
 
         return collect( $orders )->mapToGroups( function ( $product ) {
@@ -117,7 +132,7 @@ class ReportsController extends DashboardController
         })->values();
     }
 
-    public function getCashFlow( Request $request )
+    public function getTransactions( Request $request )
     {
         $rangeStarts = Carbon::parse( $request->input( 'startDate' ) )
             ->toDateTimeString();
@@ -127,30 +142,30 @@ class ReportsController extends DashboardController
 
         $entries = $this->reportService->getFromTimeRange( $rangeStarts, $rangeEnds );
         $total = $entries->count() > 0 ? $entries->first()->toArray() : [];
-        $creditCashFlow = AccountType::where( 'operation', CashFlow::OPERATION_CREDIT )->with([
-            'cashFlowHistories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
+        $creditCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_CREDIT )->with([
+            'histories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
-        ->map( function ( $accountType ) {
-            $accountType->total = $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
+        ->map( function( $transactionAccount ) {
+            $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
 
-            return $accountType;
+            return $transactionAccount;
         });
 
-        $debitCashFlow = AccountType::where( 'operation', CashFlow::OPERATION_DEBIT )->with([
-            'cashFlowHistories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
+        $debitCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_DEBIT )->with([
+            'histories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
                 $query->where( 'created_at', '>=', $rangeStarts )
                     ->where( 'created_at', '<=', $rangeEnds );
             },
         ])
         ->get()
-        ->map( function ( $accountType ) {
-            $accountType->total = $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
+        ->map( function( $transactionAccount ) {
+            $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
 
-            return $accountType;
+            return $transactionAccount;
         });
 
         return [
@@ -186,28 +201,13 @@ class ReportsController extends DashboardController
     {
         $orders = $this->ordersService
             ->getSoldStock(
-                $request->input( 'startDate' ),
-                $request->input( 'endDate' )
+                startDate: $request->input( 'startDate' ),
+                endDate: $request->input( 'endDate' ),
+                categories: $request->input( 'categories' ),
+                units: $request->input( 'units' )
             );
 
         return $orders;
-
-        return collect( $orders )->mapToGroups( function ( $product ) {
-            return [
-                $product->product_id . '-' . $product->unit_id => $product,
-            ];
-        })->map( function ( $groups ) {
-            return [
-                'name' => $groups->first()->name,
-                'unit_name' => $groups->first()->unit_name,
-                'mode' => $groups->first()->mode,
-                'unit_price' => $groups->sum( 'unit_price' ),
-                'total_purchase_price' => $groups->sum( 'total_purchase_price' ),
-                'quantity' => $groups->sum( 'quantity' ),
-                'total_price' => $groups->sum( 'total_price' ),
-                'tax_value' => $groups->sum( 'tax_value' ),
-            ];
-        })->values();
     }
 
     public function getAnnualReport( Request $request )
@@ -217,7 +217,7 @@ class ReportsController extends DashboardController
 
     public function annualReport( Request $request )
     {
-        return $this->view( 'pages.dashboard.reports.annual-report', [
+        return View::make( 'pages.dashboard.reports.annual-report', [
             'title' => __( 'Annual Report' ),
             'description' => __( 'Provides an overview over the sales during a specific period' ),
         ]);
@@ -225,7 +225,7 @@ class ReportsController extends DashboardController
 
     public function salesByPaymentTypes( Request $request )
     {
-        return $this->view( 'pages.dashboard.reports.payment-types', [
+        return View::make( 'pages.dashboard.reports.payment-types', [
             'title' => __( 'Sales By Payment Types' ),
             'description' => __( 'Provide a report of the sales by payment types, for a specific period.' ),
         ]);
@@ -267,19 +267,25 @@ class ReportsController extends DashboardController
         return $this->reportService->getCashierDashboard( Auth::id() );
     }
 
-    public function getLowStock()
+    public function getLowStock( Request $request )
     {
-        return $this->reportService->getLowStockProducts();
+        return $this->reportService->getLowStockProducts(
+            categories: $request->input( 'categories' ),
+            units: $request->input( 'units' )
+        );
     }
 
-    public function getStockReport()
+    public function getStockReport( Request $request )
     {
-        return $this->reportService->getStockReport();
+        return $this->reportService->getStockReport(
+            categories: $request->input( 'categories' ),
+            units: $request->input( 'units' )
+        );
     }
 
     public function showCustomerStatement()
     {
-        return $this->view( 'pages.dashboard.reports.customers-statement', [
+        return View::make( 'pages.dashboard.reports.customers-statement', [
             'title' => __( 'Customers Statement' ),
             'description' => __( 'Display the complete customer statement.' ),
         ]);
@@ -292,5 +298,19 @@ class ReportsController extends DashboardController
             rangeStarts: $request->input( 'rangeStarts' ),
             rangeEnds: $request->input( 'rangeEnds' )
         );
+    }
+
+    public function getProductHistoryCombined( Request $request )
+    {
+        return $this->reportService->getCombinedProductHistory(
+            Carbon::parse( $request->input( 'date' ) )->format( 'Y-m-d' ),
+            $request->input( 'categories' ),
+            $request->input( 'units' )
+        );
+    }
+
+    public function computeCombinedReport()
+    {
+        return $this->reportService->computeCombinedReport();
     }
 }

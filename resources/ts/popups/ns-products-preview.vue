@@ -5,7 +5,7 @@
                 {{ __( 'Previewing :' ) }} {{ product.name }}
             </div>
             <div>
-                <ns-close-button @click="$popup.close()"></ns-close-button>
+                <ns-close-button @click="popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="flex-auto overflow-y-auto ns-box-body">
@@ -24,8 +24,8 @@
                             <tbody>
                                 <tr v-for="unitQuantity of unitQuantities" :key="unitQuantity.id">
                                     <td class="p-1 border text-left">{{ unitQuantity.unit.name }}</td>
-                                    <td class="p-1 border text-right">{{ unitQuantity.sale_price | currency }}</td>
-                                    <td class="p-1 border text-right">{{ unitQuantity.wholesale_price | currency }}</td>
+                                    <td class="p-1 border text-right">{{ nsCurrency( unitQuantity.sale_price  ) }}</td>
+                                    <td class="p-1 border text-right">{{ nsCurrency( unitQuantity.wholesale_price  ) }}</td>
                                     <td class="p-1 border text-right">{{ unitQuantity.quantity }}</td>
                                 </tr>
                             </tbody>
@@ -38,17 +38,21 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+import { nsHttpClient } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+
 export default {
     name: 'ns-products-preview',
+    props: [ 'popup' ],
     computed: {
         product() {
-            return this.$popupParams.product
+            return this.popup.params.product
         }
     },
     methods: {
         __,
+        nsCurrency,
         changeActiveTab( event ) {
             this.active     =   event;
 
@@ -58,7 +62,7 @@ export default {
         },
         loadProductQuantities() {
             this.hasLoadedUnitQuantities            =   false;
-            nsHttpClient.get( `/api/nexopos/v4/products/${this.product.id}/units/quantities` )
+            nsHttpClient.get( `/api/products/${this.product.id}/units/quantities` )
                 .subscribe( result => {
                     this.unitQuantities             =   result;
                     this.hasLoadedUnitQuantities    =   true;
@@ -74,11 +78,6 @@ export default {
     },
     mounted() {
         this.loadProductQuantities();
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.$popup.close();
-            }
-        });
     }
 }
 </script>

@@ -7,7 +7,7 @@
             <div class="p-2 border-b ns-box-body items-center flex justify-between">
                 <span>{{ __( 'Selected' ) }} : </span>
                 <div class="flex items-center justify-between">
-                    <span>{{ order.customer ? order.customer.name : 'N/A' }}</span>
+                    <span>{{ order.customer ? `${order.customer.first_name} ${order.customer.last_name}` : 'N/A' }}</span>
                     <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button hover:border-transparent">
                         <i class="las la-eye"></i>
                     </button>
@@ -33,11 +33,14 @@
                         <span class="border-b border-dashed border-info-primary">{{ __( 'Create a customer' ) }}</span>
                     </li>
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
-                        <span>{{ customer.name }}</span>
+                        <div class="flex flex-col">
+                            <span>{{ customer.first_name }} {{ customer.last_name }}</span>
+                            <small class="text-xs text-secondary">{{ customer.group.name }}</small>
+                        </div>
                         <p class="flex items-center">
-                            <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ customer.owe_amount | currency }}</span>
+                            <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owe_amount ) }}</span>
                             <span v-if="customer.owe_amount > 0">/</span>
-                            <span class="purchase-amount">{{ customer.purchases_amount | currency }}</span>
+                            <span class="purchase-amount">{{ nsCurrency( customer.purchases_amount ) }}</span>
                             <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button info">
                                 <i class="las la-eye"></i>
                             </button>
@@ -52,13 +55,15 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import resolveIfQueued from "@/libraries/popup-resolver";
-import { Popup } from '@/libraries/popup';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import resolveIfQueued from "~/libraries/popup-resolver";
+import { Popup } from '~/libraries/popup';
 import nsPosCustomersVue from './ns-pos-customers.vue';
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
+    props: [ 'popup' ],
     data() {
         return {
             searchCustomerValue: '',
@@ -83,12 +88,6 @@ export default {
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.resolveIfQueued( false );
-            }
-        });
-
         this.orderSubscription  =   POS.order.subscribe( order => {
             this.order      =   order;
         });
@@ -97,11 +96,12 @@ export default {
 
         this.$refs.searchField.focus();
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscription.unsubscribe();
     },
     methods: {
         __,
+        nsCurrency,
         
         /**
          * if the popup is likely to be used
@@ -114,12 +114,12 @@ export default {
             if ( this.customers.length === 1 ) {
                 return this.selectCustomer( this.customers[0] );
             }
-            nsSnackBar.info( 'Too many result.' ).subscribe();
+            nsSnackBar.info( __( 'Too many results.' ) ).subscribe();
         },
 
         openCustomerHistory( customer, event ) {
             event.stopImmediatePropagation();
-            this.$popup.close();
+            this.popup.close();
             Popup.show( nsPosCustomersVue, { customer, activeTab: 'account-payment' });
         },
 
@@ -132,7 +132,7 @@ export default {
              * POS object;
              */
             this.isLoading      =   true;
-            
+
             POS.selectCustomer( customer ).then( resolve => {
                 this.isLoading  =   false;
                 this.resolveIfQueued( customer );
@@ -141,7 +141,7 @@ export default {
             });
         },
         searchCustomer( value ) {
-            nsHttpClient.post( '/api/nexopos/v4/customers/search', {
+            nsHttpClient.post( '/api/customers/search', {
                 search: value
             }).subscribe( customers => {
                 customers.forEach( customer => customer.selected = false );
@@ -157,7 +157,7 @@ export default {
         getRecentCustomers() {
             this.isLoading  =   true;
 
-            nsHttpClient.get( '/api/nexopos/v4/customers/recently-active' )
+            nsHttpClient.get( '/api/customers/recently-active' )
                 .subscribe({
                     next: customers => {
                         this.isLoading  =   false;

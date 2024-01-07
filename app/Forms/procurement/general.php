@@ -15,19 +15,19 @@ return [
         ], [
             'type' => 'date',
             'name' => 'delivery_time',
-            'value' => $procurement->delivery_time ?? '',
+            'value' => $procurement->delivery_time ?? ns()->date->now()->format( 'Y-m-d'),
             'label' => __( 'Delivery Time' ),
             'description' => __( 'If the procurement has to be delivered at a specific time, define the moment here.' ),
         ], [
             'type' => 'date',
             'name' => 'invoice_date',
-            'value' => $procurement->invoice_date ?? '',
+            'value' => $procurement->invoice_date ?? ns()->date->now()->format( 'Y-m-d'),
             'label' => __( 'Invoice Date' ),
             'description' => __( 'If you would like to define a custom invoice date.' ),
         ], [
             'type' => 'switch',
             'name' => 'automatic_approval',
-            'value' => $procurement->automatic_approval ?? '',
+            'value' => $procurement->automatic_approval ?? 1,
             'options' => Helper::kvToJsOptions([
                 0 => __( 'No' ),
                 1 => __( 'Yes' ),
@@ -37,7 +37,7 @@ return [
         ], [
             'type' => 'select',
             'name' => 'delivery_status',
-            'value' => $procurement->delivery_status ?? '',
+            'value' => $procurement->delivery_status ?? 'delivered',
             'validation' => 'required',
             'options' => Helper::kvToJsOptions([
                 'pending' => __( 'Pending' ),
@@ -48,7 +48,7 @@ return [
         ], [
             'type' => 'select',
             'name' => 'payment_status',
-            'value' => $procurement->payment_status ?? '',
+            'value' => $procurement->payment_status ?? 'paid',
             'validation' => 'required',
             'options' => Helper::kvToJsOptions([
                 'unpaid' => __( 'Unpaid' ),
@@ -57,11 +57,11 @@ return [
             'label' => __( 'Payment Status' ),
             'description' => __( 'Determine what is the actual payment status of the procurement.' ),
         ], [
-            'type' => 'select',
+            'type' => 'search-select',
             'name' => 'provider_id',
             'value' => $procurement->provider_id ?? '',
             'validation' => 'required',
-            'options' => Helper::toJsOptions( Provider::get(), [ 'id', 'name' ]),
+            'options' => Helper::toJsOptions( Provider::get(), [ 'id', 'first_name' ]),
             'label' => __( 'Provider' ),
             'description' => __( 'Determine what is the actual provider of the current procurement.' ),
         ],

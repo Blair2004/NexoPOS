@@ -17,17 +17,18 @@
     </div>
 </template>
 <script>
-import popupResolver from '@/libraries/popup-resolver'
-import popupCloser from '@/libraries/popup-closer'
-import { __ } from '@/libraries/lang'
-import FormValidation from '@/libraries/form-validation'
-import { nsSnackBar } from '@/bootstrap';
-import Print from '@/libraries/print';
-import { nsNotice } from '@/components/components'
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue'
+import popupResolver from '~/libraries/popup-resolver'
+import popupCloser from '~/libraries/popup-closer'
+import { __ } from '~/libraries/lang'
+import FormValidation from '~/libraries/form-validation'
+import { nsSnackBar } from '~/bootstrap';
+import Print from '~/libraries/print';
+import { nsNotice } from '~/components/components'
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue'
 
 export default {
     name: 'ns-order-instalments-payment',
+    props: [ 'popup' ],
     components: {
         nsNotice,
     },
@@ -60,7 +61,7 @@ export default {
         },
 
         updateInstalmentAsDue( instalment ) {
-            nsHttpClient.put( `/api/nexopos/v4/orders/${this.order.id}/instalments/${this.instalment.id}/`, {
+            nsHttpClient.put( `/api/orders/${this.order.id}/instalments/${this.instalment.id}/`, {
                 instalment: {
                     date: ns.date.moment.format('YYYY-MM-DD HH:mm:ss' )
                 }
@@ -79,8 +80,8 @@ export default {
                 return nsSnackBar.error( __m( 'The form is not valid.' ) ).subcribe();
             }
 
-            nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments/${this.instalment.id}/pay`, {
-                    ...this.validation.extractFields( this.fields )
+            nsHttpClient.post( `/api/orders/${this.order.id}/instalments/${this.instalment.id}/pay`, { 
+                    ...this.validation.extractFields( this.fields ) 
                 })
                 .subscribe({
                     next: result => {
@@ -111,8 +112,8 @@ export default {
     mounted() {
         this.popupCloser();
 
-        this.order      =   this.$popupParams.order;
-        this.instalment =   this.$popupParams.instalment;
+        this.order      =   this.popup.params.order;
+        this.instalment =   this.popup.params.instalment;
 
         this.fields     =   this.validation.createFields( this.fields );
     }

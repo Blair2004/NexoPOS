@@ -7,7 +7,8 @@ use App\Services\SettingsPage;
 
 class PosSettings extends SettingsPage
 {
-    public $identifier = 'ns.pos';
+    const IDENTIFIER = 'pos';
+    const AUTOLOAD = true;
 
     public $form;
 
@@ -24,6 +25,8 @@ class PosSettings extends SettingsPage
 
         $this->form = [
             'tabs' => $posSettingsTabs,
+            'title' => __( 'POS Settings' ),
+            'description' => __( 'Configure the pos settings.' ),
         ];
     }
 }

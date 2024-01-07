@@ -4,23 +4,23 @@
             <div class="grid grid-cols-2 gap-2">
                 <div id="details" class="h-16 flex justify-between items-center border elevation-surface info text-xl md:text-3xl p-2">
                     <span>{{ __( 'Total' ) }} : </span>
-                    <span>{{ order.total | currency }}</span>
+                    <span>{{ nsCurrency( order.total ) }}</span>
                 </div>
                 <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center border elevation-surface error text-xl md:text-3xl p-2">
                     <span>{{ __( 'Discount' ) }} : </span>
-                    <span>{{ order.discount | currency }}</span>
+                    <span>{{ nsCurrency( order.discount ) }}</span>
                 </div>
                 <div id="paid" class="h-16 flex justify-between items-center border elevation-surface success text-xl md:text-3xl p-2">
                     <span>{{ __( 'Paid' ) }} : </span>
-                    <span>{{ order.tendered | currency }}</span>
+                    <span>{{ nsCurrency( order.tendered ) }}</span>
                 </div>
                 <div id="change" class="h-16 flex justify-between items-center border elevation-surface warning text-xl md:text-3xl p-2">
                     <span>{{ __( 'Change' ) }} : </span>
-                    <span>{{ order.change | currency }}</span>
+                    <span>{{ nsCurrency( order.change ) }}</span>
                 </div>
                 <div id="change" class="col-span-2 h-16 flex justify-between items-center elevation-surface border text-xl md:text-3xl p-2">
                     <span>{{ __( 'Screen' ) }} : </span>
-                    <span>{{ backValue / number | currency }}</span>
+                    <span>{{ nsCurrency( backValue / number ) }}</span>
                 </div>
             </div>
         </div>
@@ -49,7 +49,7 @@
                             v-for="(amount, index) of amountShortcuts" :key="index"
                             @click="increaseBy({ value : amount })"
                             class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
-                            <span>{{ amount | currency }}</span>
+                            <span>{{ nsCurrency( amount ) }}</span>
                         </div>
                     </div>
                 </div>
@@ -58,11 +58,13 @@
     </div>
 </template>
 <script>
-import { Popup } from '@/libraries/popup';
-import nsPosDiscountPopupVue from '@/popups/ns-pos-discount-popup.vue';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { __ } from '@/libraries/lang';
-import { nsSnackBar } from '@/bootstrap';
+import { Popup } from '~/libraries/popup';
+import nsPosDiscountPopupVue from '~/popups/ns-pos-discount-popup.vue';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { __ } from '~/libraries/lang';
+import { nsSnackBar } from '~/bootstrap';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     name: 'sample-payment',
     props: [ 'label', 'identifier' ],
@@ -143,11 +145,12 @@ export default {
         nsHotPress.destroy( 'numpad-backspace' );
         nsHotPress.destroy( 'numpad-save' );
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscription.unsubscribe();
     },
     methods: {
         __,
+        nsCurrency,
         toggleDiscount() {
             if ( this.settings.cart_discount !== undefined && this.settings.cart_discount === true ) {
                 Popup.show( nsPosDiscountPopupVue, {
@@ -166,7 +169,7 @@ export default {
                 title: __( 'Confirm Full Payment' ),
                 message: __( 'A full payment will be made using {paymentType} for {total}' )
                     .replace( '{paymentType}', this.label )
-                    .replace( '{total}', this.$options.filters.currency( this.order.total ) ),
+                    .replace( '{total}', nsCurrency( this.order.total ) ),
                 onAction: ( action ) => {
                     if ( action ) {
                         const order     =   POS.order.getValue();

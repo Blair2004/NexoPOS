@@ -6,7 +6,6 @@ use App\Exceptions\NotAllowedException;
 use App\Models\ProductUnitQuantity;
 use App\Models\User;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -20,7 +19,7 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * default identifier
      */
-    protected $identifier = 'products/units';
+    const IDENTIFIER = 'products/units';
 
     /**
      * Define namespace
@@ -315,10 +314,8 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'products_name' => [

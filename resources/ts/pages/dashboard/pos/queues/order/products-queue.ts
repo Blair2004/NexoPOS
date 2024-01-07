@@ -1,7 +1,7 @@
-import { nsSnackBar } from "../../../../../bootstrap";
-import { Queue } from "../../../../../contracts/queue";
-import { Order } from "@/interfaces/order"
-import { __ } from "@/libraries/lang";
+import { nsSnackBar } from "~/bootstrap";
+import { Queue } from "~/contracts/queue";
+import { Order } from "~/interfaces/order"
+import { __ } from "~/libraries/lang";
 
 export class ProductsQueue implements Queue {
     constructor( private order: Order ) {}

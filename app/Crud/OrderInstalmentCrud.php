@@ -7,7 +7,6 @@ use App\Models\OrderInstalment;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -67,7 +66,7 @@ class OrderInstalmentCrud extends CrudService
      */
     public $relations = [
         [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_instalments.order_id' ],
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'order.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'order.customer_id' ],
     ];
 
     /**
@@ -321,10 +320,8 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'customer_name' => [
@@ -376,7 +373,7 @@ class OrderInstalmentCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.orders-instalments/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.orders-instalments/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -439,8 +436,8 @@ class OrderInstalmentCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'orders/instalments' ),
             'create' => false,
             'edit' => ns()->url( 'dashboard/' . 'orders/instalments/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.orders-instalments' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.orders-instalments/{id}' . '' ),
         ];
     }
 

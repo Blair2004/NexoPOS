@@ -1,12 +1,13 @@
 import { BehaviorSubject, forkJoin } from "rxjs";
-import { map } from "rxjs/operators";
 import { nsHttpClient, nsSnackBar } from "./bootstrap";
+
 import { __ } from "./libraries/lang";
+import { map } from "rxjs/operators";
 
 export class Cashier {
     private _mysales: BehaviorSubject<{}>;
     private _reports    =   {
-        mysales:    nsHttpClient.get( '/api/nexopos/v4/reports/cashier-report' ),
+        mysales:    nsHttpClient.get( '/api/reports/cashier-report' ),
     };
 
     constructor() {
@@ -25,7 +26,7 @@ export class Cashier {
     }
 
     refreshReport() {
-        nsHttpClient.get( '/api/nexopos/v4/reports/cashier-report?refresh=true' )
+        nsHttpClient.get( '/api/reports/cashier-report?refresh=true' )
             .subscribe( result => {
                 this._mysales.next( result );
                 nsSnackBar.success( __  ( 'The report has been refreshed.' ), __( 'OK' ) ).subscribe();

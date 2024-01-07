@@ -7,7 +7,6 @@ use App\Models\RegisterHistory;
 use App\Models\User;
 use App\Services\CashRegistersService;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -353,10 +352,8 @@ class RegisterHistoryCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             // 'register_name'  =>  [
@@ -421,9 +418,6 @@ class RegisterHistoryCrud extends CrudService
                 $entry->{ '$cssClass' } = 'warning border';
                 break;
             case RegisterHistory::ACTION_CASHOUT:
-                $entry->{ '$cssClass' } = 'warning border';
-                break;
-            case RegisterHistory::ACTION_CHANGE:
                 $entry->{ '$cssClass' } = 'warning border';
                 break;
             case RegisterHistory::ACTION_CLOSING:

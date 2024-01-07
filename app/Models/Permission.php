@@ -17,7 +17,7 @@ class Permission extends Model
 
     protected $table = 'nexopos_permissions';
 
-    protected $fillable = [ 'namespace' ];
+    protected $fillable = [ 'namespace', 'name', 'description' ];
 
     public function scopeWithNamespace( $query, $param )
     {

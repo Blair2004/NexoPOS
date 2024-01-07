@@ -24,5 +24,5 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Environment:**
- - NexoPOS 4.x vesrion: [e.g. 4.5.2]
+ - NexoPOS vesrion: [e.g. 4.5.2]
  - Premium Extensions: [e.g Nexo Print Adapter (4.5.0), Gastro (4.5.2)]

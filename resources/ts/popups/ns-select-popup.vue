@@ -10,18 +10,26 @@
         </div>
         <div class="flex flex-col overflow-hidden">
             <p class="p-2 text-center text-sm bg-info-primary" v-if="description.length > 0">{{ description }}</p>
+            <div class="m-2 border-dashed border-box-edge border-b">
+                <ns-field @keypress.enter="quickSelect()" :field="field"></ns-field>
+            </div>
             <div class="overflow-y-auto">
                 <ul class="ns-vertical-menu">
                     <template v-if="type === 'select'">
-                        <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                        <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of filtredOptions" :key="option.value">
+                            <span>{{ option.label }}</span>
+                        </li>
                     </template>
                     <template v-if="type === 'multiselect'">
-                        <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                        <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer flex justify-between" v-for="option of filtredOptions" :key="option.value">
+                            <span>{{ option.label }}</span>
+                            <span v-if="isSelected( option )"><i class="las la-check"></i></span>
+                        </li>
                     </template>
                 </ul>
             </div>
         </div>
-        <div class="flex justify-between" v-if="type === 'multiselect'">
+        <div class="flex justify-between p-2" v-if="type === 'multiselect'">
             <div></div>
             <div>
                 <ns-button @click="select()" type="info">{{ __( 'Select' ) }}</ns-button>
@@ -29,58 +37,79 @@
         </div>
     </div>
 </template>
-<script>
-import popupCloser from "@/libraries/popup-closer";
-import { __ } from '@/libraries/lang';
+<script lang="ts">
+import popupCloser from "~/libraries/popup-closer";
+import { __ } from '~/libraries/lang';
 export default {
+    name: 'ns-select-popup',
+    props: [ 'popup' ],
     data() {
         return {
             value: [],
             options: [],
             description: '',
             label: null,
-            type: 'select'
+            type: 'select',
+            field: {
+                name: 'search',
+                placeholder: __( 'Search for options' ),
+                value: '',
+                type: 'text'
+            }
         }
     },
     computed: {
+        filtredOptions() {
+            let result  =   this.options.filter( option => {
+                const reg   = new RegExp( this.field.value, 'i' );
+                return this.field.value.length === 0 ? true : reg.test( option.label );
+            });
+
+            return result;
+        }
     },
     mounted() {
         this.popupCloser();
-        this.value       =   this.$popupParams.value  || [];
-        this.options     =   this.$popupParams.options;
-        this.label       =   this.$popupParams.label;
-        this.description =   this.$popupParams.description || '';
-        this.type        =   this.$popupParams.type || this.type;
+        this.value       =   this.popup.params.value  || [];
+        this.options     =   this.popup.params.options;
+        this.label       =   this.popup.params.label;
+        this.description =   this.popup.params.description || '';
+        this.type        =   this.popup.params.type || this.type;
     },
     methods: {
         popupCloser,
         __,
 
         toggle( option ) {
-            const index     =   this.value.indexOf( option );
-
-            if ( index === -1 ) {
-                this.value.unshift( option );
+            if ( ! this.value.includes( option.value ) ) {
+                this.value.unshift( option.value );
             } else {
-                this.value.splice( index, 1 );
+                const indexOf   =   this.value.indexOf( option.value );
+                this.value.splice( indexOf, 1 );
             }
         },
 
         isSelected( option ) {
-            return this.value.indexOf( option ) >= 0;
+            return this.value.includes( option.value );
         },
 
         close() {
-            this.$popupParams.reject( false );
-            this.$popup.close();
+            this.popup.params.reject( false );
+            this.popup.close();
         },
 
-        select( option ) {
+        quickSelect() {
+            if ( this.filtredOptions.length === 1 ) {
+                this.select( this.filtredOptions[0] );
+            }
+        },
+
+        select( option = undefined ) {
             if ( option !== undefined ) {
-                this.value  =   [ option ];
+                this.value  =   [ option.value ];
             }
 
-            this.$popupParams.resolve( this.value );
+            this.popup.params.resolve( this.type === 'select' ? this.value[0] : this.value );
             this.close();
         }
     }

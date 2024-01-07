@@ -10,8 +10,7 @@ use App\Models\ProductCategory;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use App\Services\Users;
-use Exception;
+use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -266,41 +265,21 @@ class ProductCategoryCrud extends CrudService
     {
         /**
          * If the category is not visible on the POS
-         * the products aren't searchable.
+         * This products aren't available either.
          */
         if ( ! (bool) $entry->displays_on_pos ) {
             Product::where( 'category_id', $entry->id )->update([
-                'searchable' => false,
+                'status' => 'unavailable',
             ]);
         } else {
             Product::where( 'category_id', $entry->id )->update([
-                'searchable' => true,
+                'status' => 'available',
             ]);
         }
 
         ProductCategoryAfterUpdatedEvent::dispatch( $entry );
 
         return $request;
-    }
-
-    /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
     }
 
     /**
@@ -319,26 +298,24 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
                 'label' => __( 'Name' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'parent_name' => [
                 'label' => __( 'Parent' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'total_items' => [
                 'label' => __( 'Total Products' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
             'displays_on_pos' => [
                 'label' => __( 'Displays On POS' ),
@@ -353,7 +330,7 @@ class ProductCategoryCrud extends CrudService
             'created_at' => [
                 'label' => __( 'Created At' ),
                 '$direction' => '',
-                '$sort' => false,
+                '$sort' => true,
             ],
         ];
     }
@@ -366,31 +343,29 @@ class ProductCategoryCrud extends CrudService
         $entry->parent_name = $entry->parent_name === null ? __( 'No Parent' ) : $entry->parent_name;
         $entry->displays_on_pos = (int) $entry->displays_on_pos === 1 ? __( 'Yes' ) : __( 'No' );
 
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'edit',
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id ),
+        );
 
-        $entry->addAction( 'compute', [
-            'label' => __( 'Compute Products' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'compute',
+            label: _( 'Compute Products' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id ),
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.products-categories/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.products-categories/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
-        ]);
+        );
 
         return $entry;
     }
@@ -407,7 +382,7 @@ class ProductCategoryCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( Users::class );
+        $user = app()->make( UsersService::class );
 
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
@@ -449,8 +424,8 @@ class ProductCategoryCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'products/categories' ),
             'create' => ns()->url( 'dashboard/' . 'products/categories/create' ),
             'edit' => ns()->url( 'dashboard/' . 'products/categories/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.products-categories' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.products-categories/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.products-categories' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.products-categories/{id}' . '' ),
         ];
     }
 

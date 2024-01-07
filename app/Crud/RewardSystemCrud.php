@@ -8,7 +8,6 @@ use App\Models\RewardSystemRule;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -311,26 +310,6 @@ class RewardSystemCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -364,10 +343,8 @@ class RewardSystemCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -419,7 +396,7 @@ class RewardSystemCrud extends CrudService
             'namespace' => 'delete',
             'type' => 'DELETE',
             'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.rewards-system/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.rewards-system/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this reward system ?' ),
                 'title' => __( 'Delete a licence' ),
@@ -441,7 +418,7 @@ class RewardSystemCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( 'App\Services\Users' );
+        $user = app()->make( 'App\Services\UsersService' );
 
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
@@ -479,10 +456,12 @@ class RewardSystemCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return [
-            'list' => 'ns.rewards_system',
-            'create' => 'ns.rewards_system/create',
-            'edit' => 'ns.rewards_system/edit/#',
+        return  [
+            'list'      => ns()->url( '/dashboard/rewards-system' ),
+            'create'    => ns()->url( '/dashboard/rewards-system/create' ),
+            'edit'      => ns()->url( '/dashboard/rewards-system/edit/{id}' ),
+            'post'      => ns()->url( '/api/crud/' . $this->getMainRoute() ),
+            'put'       => ns()->url( '/api/crud/' . $this->getMainRoute() . '/{id}' ),
         ];
     }
 

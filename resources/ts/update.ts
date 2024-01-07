@@ -1,14 +1,22 @@
 declare const window;
 
-import Vue from 'vue';
+import * as components from "~/components/components";
 
-const nsDatabaseUpdate     =   require( './pages/update/ns-database-update' ).default;
+import { createApp } from 'vue/dist/vue.esm-bundler';
+import nsDatabaseUpdate from '~/pages/update/ns-database-update.vue';
 
-console.log( nsDatabaseUpdate );
-
-(<any>window)[ 'nsUpdate' ]      =   new Vue({
-    el: '#main-container',
+window.nsUpdate     =   createApp({
     components: {
         nsDatabaseUpdate
     }
-})
+});
+
+/**
+ * let's register the component that has
+ * a valid name globally
+ */
+ for( let name in components ) {
+    window.nsUpdate.component( name, components[ name ] );
+}
+
+window.nsUpdate.mount( '#main-container' );

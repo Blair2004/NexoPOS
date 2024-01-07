@@ -33,11 +33,12 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '@/bootstrap';
-import resolveIfQueued from "@/libraries/popup-resolver";
-import FormValidation from '@/libraries/form-validation';
+import { nsHttpClient } from '~/bootstrap';
+import resolveIfQueued from "~/libraries/popup-resolver";
+import FormValidation from '~/libraries/form-validation';
 export default {
     name: 'ns-pos-shipping-popup',
+    props: [ 'popup' ],
     computed: {
         activeTabFields() {
             if ( this.tabs !== null ) {
@@ -56,16 +57,10 @@ export default {
             return this.tabs !== null ? this.tabs.shipping.fields[0].value : new Object;
         }
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscription.unsubscribe();
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.resolveIfQueued( false );
-            }
-        });
-
         this.orderSubscription  =   POS.order.subscribe( order => this.order = order ); 
 
         this.loadForm();
@@ -145,7 +140,7 @@ export default {
             this.tabs[ identifier ].active     =   true;
         },
         loadForm() {
-            nsHttpClient.get( '/api/nexopos/v4/forms/ns.pos-addresses' )
+            nsHttpClient.get( '/api/forms/ns.pos-addresses' )
                 .subscribe( ({tabs}) => {
                     /**
                      * let's populate back the fields

@@ -13,7 +13,7 @@ class MenuService
         $this->menus = [
             'dashboard' => [
                 'label' => __( 'Dashboard' ),
-                'permissions' => [ 'update.core', 'read.dashboard' ],
+                'permissions' => [ 'read.dashboard' ],
                 'icon' => 'la-home',
                 'childrens' => [
                     'index' => [
@@ -31,13 +31,13 @@ class MenuService
             ],
             'orders' => [
                 'label' => __( 'Orders' ),
-                'permissions' => [ 'nexopos.update.orders', 'nexopos.read.orders' ],
+                'permissions' => [ 'nexopos.read.orders' ],
                 'icon' => 'la-list-ol',
                 'childrens' => [
                     'order-list' => [
                         'label' => __( 'Orders List' ),
                         'href' => ns()->url( '/dashboard/orders' ),
-                        'permissions' => [ 'nexopos.update.orders', 'nexopos.read.orders' ],
+                        'permissions' => [ 'nexopos.read.orders' ],
                     ],
                     'payment-type' => [
                         'label' => __( 'Payment Types' ),
@@ -129,39 +129,39 @@ class MenuService
                     ],
                 ],
             ],
-            'expenses' => [
+            'accounting' => [
                 'label' => __( 'Accounting' ),
                 'icon' => 'la-stream',
                 'permissions' => [
-                    'nexopos.read.expenses',
-                    'nexopos.create.expenses',
-                    'nexopos.read.expenses-categories',
-                    'nexopos.create.expenses-categories',
+                    'nexopos.read.transactions',
+                    'nexopos.create.transactions',
+                    'nexopos.read.transactions-account',
+                    'nexopos.create.transactions-account',
                 ],
                 'childrens' => [
-                    'expenses' => [
-                        'label' => __( 'Expenses'),
-                        'permissions' => [ 'nexopos.read.expenses' ],
-                        'href' => ns()->url( '/dashboard/expenses' ),
+                    'transactions' => [
+                        'label' => __( 'Transactions' ),
+                        'permissions' => [ 'nexopos.read.transactions' ],
+                        'href' => ns()->url( '/dashboard/accounting/transactions' ),
                     ],
-                    'create-expense' => [
-                        'label' => __( 'Create Expense'),
-                        'permissions' => [ 'nexopos.create.expenses' ],
-                        'href' => ns()->url( '/dashboard/expenses/create' ),
+                    'create-transaction' => [
+                        'label' => __( 'Create Transaction' ),
+                        'permissions' => [ 'nexopos.create.transactions' ],
+                        'href' => ns()->url( '/dashboard/accounting/transactions/create' ),
                     ],
-                    'cash-flow-history' => [
-                        'label' => __( 'Cash Flow History' ),
-                        'permissions' => [ 'nexopos.read.expenses' ],
-                        'href' => ns()->url( '/dashboard/cash-flow/history' ),
+                    'transactions-history' => [
+                        'label' => __( 'History' ),
+                        'permissions' => [ 'nexopos.read.transactions-history' ],
+                        'href' => ns()->url( '/dashboard/accounting/transactions/history' ),
                     ],
-                    'expenses-categories' => [
-                        'label' => __( 'Accounts'),
-                        'permissions' => [ 'nexopos.read.expenses-categories' ],
+                    'transactions-account' => [
+                        'label' => __( 'Accounts' ),
+                        'permissions' => [ 'nexopos.read.transactions-account' ],
                         'href' => ns()->url( '/dashboard/accounting/accounts' ),
                     ],
-                    'create-expenses-categories' => [
-                        'label' => __( 'Create Account'),
-                        'permissions' => [ 'nexopos.create.expenses-categories' ],
+                    'create-transactions-account' => [
+                        'label' => __( 'Create Account' ),
+                        'permissions' => [ 'nexopos.create.transactions-account' ],
                         'href' => ns()->url( '/dashboard/accounting/accounts/create' ),
                     ],
                 ],
@@ -290,12 +290,12 @@ class MenuService
                 'icon' => 'la-users',
                 'childrens' => [
                     'profile' => [
-                        'label' => __( 'List' ),
+                        'label' => __( 'My Profile' ),
                         'permissions' => [ 'manage.profile' ],
                         'href' => ns()->url( '/dashboard/users/profile' ),
                     ],
                     'users' => [
-                        'label' => __( 'List' ),
+                        'label' => __( 'Users List' ),
                         'permissions' => [ 'read.users' ],
                         'href' => ns()->url( '/dashboard/users' ),
                     ],
@@ -304,7 +304,14 @@ class MenuService
                         'permissions' => [ 'create.users' ],
                         'href' => ns()->url( '/dashboard/users/create' ),
                     ],
-                    'roles' => [
+                ],
+            ],
+            'roles' => [
+                'label' => __( 'Roles' ),
+                'icon' => 'la-shield-alt',
+                'permissions' => [ 'read.roles', 'create.roles', 'update.roles' ],
+                'childrens' => [
+                    'all-roles' => [
                         'label' => __( 'Roles' ),
                         'permissions' => [ 'read.roles' ],
                         'href' => ns()->url( '/dashboard/users/roles' ),
@@ -318,10 +325,6 @@ class MenuService
                         'label' => __( 'Permissions Manager' ),
                         'permissions' => [ 'update.roles' ],
                         'href' => ns()->url( '/dashboard/users/roles/permissions-manager' ),
-                    ],
-                    'profile' => [
-                        'label' => __( 'Profile' ),
-                        'href' => ns()->url( '/dashboard/users/profile' ),
                     ],
                 ],
             ],
@@ -353,7 +356,7 @@ class MenuService
                 'permissions' => [
                     'nexopos.reports.sales',
                     'nexopos.reports.best_sales',
-                    'nexopos.reports.cash_flow',
+                    'nexopos.reports.transactions',
                     'nexopos.reports.yearly',
                     'nexopos.reports.customers',
                     'nexopos.reports.inventory',
@@ -380,6 +383,11 @@ class MenuService
                         'permissions' => [ 'nexopos.reports.low-stock' ],
                         'href' => ns()->url( '/dashboard/reports/low-stock' ),
                     ],
+                    'stock-history' => [
+                        'label' => __( 'Stock History' ),
+                        'permissions' => [ 'nexopos.reports.stock-history' ],
+                        'href' => ns()->url( '/dashboard/reports/stock-history' ),
+                    ],
                     'sold-stock' => [
                         'label' => __( 'Sold Stock' ),
                         'href' => ns()->url( '/dashboard/reports/sold-stock' ),
@@ -388,10 +396,10 @@ class MenuService
                         'label' => __( 'Incomes & Loosses' ),
                         'href' => ns()->url( '/dashboard/reports/profit' ),
                     ],
-                    'cash-flow' => [
-                        'label' => __( 'Cash Flow' ),
-                        'permissions' => [ 'nexopos.reports.cash_flow' ],
-                        'href' => ns()->url( '/dashboard/reports/cash-flow' ),
+                    'transactions' => [
+                        'label' => __( 'Transactions' ),
+                        'permissions' => [ 'nexopos.reports.transactions' ],
+                        'href' => ns()->url( '/dashboard/reports/transactions' ),
                     ],
                     'annulal-sales' => [
                         'label' => __( 'Annual Report' ),
@@ -434,9 +442,9 @@ class MenuService
                         'label' => __( 'Reports'),
                         'href' => ns()->url( '/dashboard/settings/reports' ),
                     ],
-                    'invoice-settings' => [
-                        'label' => __( 'Invoice Settings'),
-                        'href' => ns()->url( '/dashboard/settings/invoice-settings' ),
+                    'invoices' => [
+                        'label' => __( 'Invoices' ),
+                        'href' => ns()->url( '/dashboard/settings/invoices' ),
                     ],
                     'workers' => [
                         'label' => __( 'Workers' ),

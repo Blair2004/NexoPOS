@@ -1,6 +1,5 @@
 <?php
 
-use App\Exceptions\NotFoundException;
 use App\Services\CoreService;
 use illuminate\Support\Facades\Route;
 
@@ -110,9 +109,9 @@ function generate_timezone_list()
         $offset_prefix = $offset < 0 ? '-' : '+';
         $offset_formatted = gmdate( 'H:i', abs($offset) );
 
-        $pretty_offset = "UTC${offset_prefix}${offset_formatted}";
+        $pretty_offset = "UTC{$offset_prefix}{$offset_formatted}";
 
-        $timezone_list[$timezone] = "(${pretty_offset}) $timezone";
+        $timezone_list[$timezone] = "({$pretty_offset}) $timezone";
     }
 
     return $timezone_list;
@@ -212,33 +211,4 @@ function __m( $key, $namespace = 'default' )
     }
 
     return $key;
-}
-
-/**
- * Will load css assert
- *
- * @param string $path
- * @return string
- */
-function loadcss( $path )
-{
-    if ( in_array( strtolower( env( 'NS_ENV' ) ), [ 'prod', 'production' ]) ) {
-        $files = json_decode( file_get_contents( base_path( 'public/css-manifest.json' ) ), true );
-
-        if ( isset( $files[ $path ] ) ) {
-            return asset( 'css/' . $files[ $path ] );
-        }
-
-        throw new NotFoundException( sprintf(
-            __( 'Unable to find the requested asset file "%s".'),
-            asset( 'css/' . $path )
-        ) );
-    } else {
-        return asset( 'css/' . $path );
-
-        throw new NotFoundException( sprintf(
-            __( 'Unable to find the requested asset file "%s".'),
-            asset( 'css/' . $path )
-        ) );
-    }
 }

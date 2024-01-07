@@ -25,14 +25,15 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
-import FormValidation from '@/libraries/form-validation';
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
+import { __ } from '~/libraries/lang';
+import FormValidation from '~/libraries/form-validation';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
 import { forkJoin } from 'rxjs';
-import { nsSnackBar } from '@/bootstrap';
+import { nsSnackBar } from '~/bootstrap';
 export default {
     name: 'ns-pos-quick-product-popup',
+    props: [ 'popup' ],
     methods: {
         __,
         popupCloser,
@@ -96,8 +97,8 @@ export default {
             this.loaded     =   false;
 
             forkJoin(
-                nsHttpClient.get( `/api/nexopos/v4/units` ),
-                nsHttpClient.get( `/api/nexopos/v4/taxes/groups` ),
+                nsHttpClient.get( `/api/units` ),
+                nsHttpClient.get( `/api/taxes/groups` ),
             ).subscribe({
                 next: ( result ) => {
                     // ..

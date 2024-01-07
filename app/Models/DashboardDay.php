@@ -8,6 +8,12 @@ use App\Services\DateService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int $id
+ * @property float $day_expenses
+ * @property int $day_of_year
+ * @property \Carbon\Carbon $range_ends
+ */
 class DashboardDay extends NsModel
 {
     use HasFactory;

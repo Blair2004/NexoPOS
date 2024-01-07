@@ -7,7 +7,14 @@ declare const window;
 
 const precision     =   ( new Array( parseInt( ns.currency.ns_currency_precision ) ) ).fill('').map( _ => 0 ).join('');
 
-const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', locale = 'en' ) => {
+/**
+ * Convert a number into a currency format.
+ * @param value the value to convert
+ * @param format amount format
+ * @param locale locale
+ * @returns string
+ */
+const nsCurrency    =   ( value, format = 'full', locale = 'en' ) => {
     let numeralFormat, currencySymbol;
 
     switch( ns.currency.ns_currency_prefered ) {
@@ -36,11 +43,20 @@ const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', lo
 
     return `${ns.currency.ns_currency_position === 'before' ? currencySymbol : '' }${ newValue }${ns.currency.ns_currency_position === 'after' ? currencySymbol : '' }`;
 
-});
+}
 
 const nsRawCurrency     =   ( value ) => {
     const numeralFormat = `0.${precision}`;
     return parseFloat( NumeralJS( value ).format( numeralFormat ) );
 }
 
-export { nsCurrency, nsRawCurrency };
+/**
+ * Will abbreviate an amount to return a short form.
+ * @param value amount to abbreviate
+ * @returns string
+ */
+const nsNumberAbbreviate    =   ( value ) => {
+    return NumeralJS( value ).format( '0a' );
+}
+
+export { nsCurrency, nsRawCurrency, nsNumberAbbreviate };

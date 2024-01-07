@@ -43,7 +43,7 @@ class ModuleSymlinkCommand extends Command
             Storage::disk( 'ns' )->deleteDirectory( 'public/modules' );
             Storage::disk( 'ns' )->makeDirectory( 'public/modules' );
 
-            $this->withProgressBar( $modules, function ( $module ) use ( $moduleService ) {
+            $this->withProgressBar( $modules, function( $module ) use ( $moduleService ) {
                 $moduleService->createSymLink( $module[ 'namespace' ] );
             });
 

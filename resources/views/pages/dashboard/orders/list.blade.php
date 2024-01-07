@@ -9,7 +9,7 @@ use App\Services\OrdersService;
 
 @section( 'layout.dashboard.body' )
 <div>
-    @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
+    @include( Hook::filter( 'ns-dashboard-header-file', '../common/dashboard-header' ) )
     <div id="dashboard-content" class="px-4">
         <div class="page-inner-header mb-4">
             <h3 class="text-3xl text-gray-800 font-bold">{{ __( 'Managing Orders' ) }}</h3>

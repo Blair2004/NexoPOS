@@ -4,10 +4,8 @@ namespace App\Crud;
 
 use App\Exceptions\NotAllowedException;
 use App\Models\Order;
-use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -25,7 +23,7 @@ class HoldOrderCrud extends CrudService
      *
      * @param  string
      */
-    protected $identifier = 'ns.hold-orders';
+    const IDENTIFIER = 'ns.hold-orders';
 
     /**
      * Define namespace
@@ -59,8 +57,8 @@ class HoldOrderCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_users', 'nexopos_orders.author', '=', 'nexopos_users.id' ],
-        [ 'nexopos_customers', 'nexopos_customers.id', '=', 'nexopos_orders.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'nexopos_orders.customer_id' ],
+        [ 'nexopos_users as user', 'nexopos_orders.author', '=', 'user.id' ],
     ];
 
     /**
@@ -81,8 +79,8 @@ class HoldOrderCrud extends CrudService
      * ]
      */
     public $pick = [
-        'nexopos_users' => [ 'username' ],
-        'nexopos_customers' => [ 'name' ],
+        'user' => [ 'username' ],
+        'customer' => [ 'username', 'first_name', 'last_name' ],
     ];
 
     /**
@@ -430,10 +428,8 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'code' => [
@@ -465,11 +461,11 @@ class HoldOrderCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->addAction( 'ns.open', [
-            'label' => __( 'Continue' ),
-            'namespace' => 'ns.open',
-            'type' => 'POPUP',
-        ]);
+        $entry->action(
+            label: __( 'Continue' ),
+            identifier: 'ns.open',
+            type: 'POPUP',
+        );
 
         return $entry;
     }

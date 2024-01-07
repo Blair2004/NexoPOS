@@ -7,7 +7,6 @@ use App\Models\CustomerCoupon;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -63,7 +62,7 @@ class CustomerCouponCrud extends CrudService
         'leftJoin' => [
             [ 'nexopos_users as user', 'user.id', '=', 'nexopos_customers_coupons.author' ],
         ],
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ],
         [ 'nexopos_coupons as coupon', 'coupon.id', '=', 'nexopos_customers_coupons.coupon_id' ],
     ];
 
@@ -315,17 +314,10 @@ class CustomerCouponCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
-            'customer_name' => [
-                'label' => __( 'Customer' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
             'name' => [
                 'label' => __( 'Name' ),
                 '$direction' => '',
@@ -387,6 +379,13 @@ class CustomerCouponCrud extends CrudService
 
         $entry->coupon_type = $entry->coupon_type === 'percentage_discount' ? __( 'Percentage' ) : __( 'Flat' );
 
+        $entry->action(
+            label: __( 'Usage History' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/customers/' . $entry->customer_id . '/coupons/' . $entry->id . '/history/' ),
+            identifier: 'usage.history'
+        );
+
         // you can make changes here
         $entry->addAction( 'edit', [
             'label' => __( 'Edit' ),
@@ -399,7 +398,7 @@ class CustomerCouponCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-coupons/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.customers-coupons/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -462,8 +461,8 @@ class CustomerCouponCrud extends CrudService
             'list' => ns()->route( 'ns.dashboard.customers-coupons-generated-list' ),
             'create' => '#', // ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/create' ),
             'edit' => ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/{id}' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-coupons' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-coupons/{id}' ),
         ];
     }
 

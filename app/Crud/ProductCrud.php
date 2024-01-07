@@ -13,8 +13,6 @@ use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\TaxService;
-use App\Services\Users;
-use Exception;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -178,6 +176,15 @@ class ProductCrud extends CrudService
                 'validation' => 'required',
                 'value' => ! $units->isEmpty() ? $units->first()->id : '',
             ], [
+                'type' => 'select',
+                'errors' => [],
+                'name' => 'convert_unit_id',
+                'label' => __( 'Convert Unit' ),
+                'validation' => 'different:unit_id',
+                'options' => Helper::toJsOptions( $units, [ 'id', 'name' ] ),
+                'value' => '',
+                'description' => __( 'The unit that is selected for convertion by default.' ),
+            ], [
                 'type' => 'number',
                 'errors' => [],
                 'name' => 'sale_price_edit',
@@ -192,6 +199,13 @@ class ProductCrud extends CrudService
                 'description' => __( 'Define the wholesale price.' ),
                 'validation' => 'required',
             ], [
+                'type' => 'number',
+                'errors' => [],
+                'name' => 'cogs',
+                'label' => __( 'COGS' ),
+                'value' => '',
+                'description' => __( 'Used to define the Cost of Goods Sold.' ),
+            ], [
                 'type' => 'switch',
                 'errors' => [],
                 'name' => 'stock_alert_enabled',
@@ -204,6 +218,14 @@ class ProductCrud extends CrudService
                 'name' => 'low_quantity',
                 'label' => __( 'Low Quantity' ),
                 'description' => __( 'Which quantity should be assumed low.' ),
+            ], [
+                'type' => 'switch',
+                'errors' => [],
+                'name' => 'visible',
+                'label' => __( 'Visible' ),
+                'value' => 1, // by default
+                'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                'description' => __( 'Define whether the unit is available for sale.' ),
             ], [
                 'type' => 'media',
                 'errors' => [],
@@ -231,6 +253,7 @@ class ProductCrud extends CrudService
             ],
             'variations' => [
                 [
+                    '$primary' => true,
                     'id' => $entry->id ?? '',
                     'tabs' => [
                         'identification' => [
@@ -282,16 +305,6 @@ class ProductCrud extends CrudService
                                     'label' => __( 'Barcode Type' ),
                                     'validation' => 'required',
                                     'value' => $entry->barcode_type ?? 'code128',
-                                ], [
-                                    'type' => 'switch',
-                                    'description' => __( 'Determine if the product can be searched on the POS.' ),
-                                    'options' => Helper::kvToJsOptions([
-                                        1 => __( 'Yes' ),
-                                        0 => __( 'No' ),
-                                    ]),
-                                    'name' => 'searchable',
-                                    'label' => __( 'Searchable' ),
-                                    'value' => $entry->searchable ?? 1,
                                 ], [
                                     'type' => 'select',
                                     'options' => Helper::kvToJsOptions( Hook::filter( 'ns-products-type', [
@@ -370,13 +383,23 @@ class ProductCrud extends CrudService
                                 [
                                     'type' => 'switch',
                                     'description' => __( 'The product won\'t be visible on the grid and fetched only using the barcode reader or associated barcode.' ),
-                                    'options' => Helper::kvToJsOptions([
-                                        1 => __( 'Yes' ),
-                                        0 => __( 'No' ),
-                                    ]),
+                                    'options' => Helper::boolToOptions(
+                                        true: __( 'Yes' ),
+                                        false: __( 'No' ),
+                                    ),
                                     'name' => 'accurate_tracking',
                                     'label' => __( 'Accurate Tracking' ),
-                                    'value' => $entry->accurate_tracking ?? 0,
+                                    'value' => $entry->accurate_tracking ?? false,
+                                ], [
+                                    'type' => 'switch',
+                                    'description' => __( 'The Cost Of Goods Sold will be automatically be computed based on procurement and conversion.' ),
+                                    'options' => Helper::boolToOptions(
+                                        true: __( 'Yes' ),
+                                        false: __( 'No' ),
+                                    ),
+                                    'name' => 'auto_cogs',
+                                    'label' => __( 'Auto COGS' ),
+                                    'value' => $entry->auto_cogs ?? true,
                                 ], [
                                     'type' => 'select',
                                     'options' => Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
@@ -417,9 +440,12 @@ class ProductCrud extends CrudService
                                     'name' => 'expires',
                                     'validation' => 'required',
                                     'label' => __( 'Product Expires' ),
-                                    'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                                    'options' => Helper::boolToOptions(
+                                        true: __( 'Yes' ),
+                                        false: __( 'No' ),
+                                    ),
                                     'description' => __( 'Set to "No" expiration time will be ignored.' ),
-                                    'value' => ( $entry !== null && $entry->expires ? 1 : 0 ),
+                                    'value' => $entry->expires ?? false,
                                 ], [
                                     'type' => 'select',
                                     'options' => Helper::kvToJsOptions([
@@ -485,9 +511,12 @@ class ProductCrud extends CrudService
                                     ], [
                                         'type' => 'switch',
                                         'name' => 'featured',
-                                        'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                                        'options' => Helper::boolToOptions(
+                                            true: __( 'Yes' ),
+                                            false: __( 'No' ),
+                                        ),
                                         'label' => __( 'Is Primary' ),
-                                        'value' => (int) $gallery->featured,
+                                        'value' => $gallery->featured ?? false,
                                         'description' => __( 'Define whether the image should be primary. If there are more than one primary image, one will be chosen for you.' ),
                                     ],
                                 ];
@@ -594,26 +623,6 @@ class ProductCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -623,27 +632,12 @@ class ProductCrud extends CrudService
         if ( $namespace == 'ns.products' ) {
             $this->allowedTo( 'delete' );
         }
-
-        ProductBeforeDeleteEvent::dispatch( $model );
-
-        $this->deleteProductAttachedRelation( $model );
-    }
-
-    public function deleteProductAttachedRelation( $model )
-    {
-        $model->sub_items()->delete();
-        $model->galleries()->delete();
-        $model->variations()->delete();
-        $model->product_taxes()->delete();
-        $model->unit_quantities()->delete();
     }
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'type' => [
@@ -710,47 +704,43 @@ class ProductCrud extends CrudService
         $entry->status = $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
         $entry->category_name = $entry->category_name ?: __( 'Unassigned' );
         // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => '<i class="mr-2 las la-edit"></i> ' . __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'edit',
+            label: '<i class="mr-2 las la-edit"></i> ' . __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
+        );
 
-        $entry->addAction( 'ns.quantities', [
-            'label' => '<i class="mr-2 las la-eye"></i> ' . __( 'Preview' ),
-            'namespace' => 'ns.quantities',
-            'type' => 'POPUP',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'ns.quantities',
+            label: '<i class="mr-2 las la-eye"></i> ' . __( 'Preview' ),
+            type: 'POPUP',
+            url: ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
+        );
 
-        $entry->addAction( 'units', [
-            'label' => '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),
-            'namespace' => 'units',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products/' . $entry->id . '/units' ),
-        ]);
+        $entry->action(
+            identifier: 'units',
+            label: '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products/' . $entry->id . '/units' ),
+        );
 
-        $entry->addAction( 'history', [
-            'label' => '<i class="mr-2 las la-history"></i> ' . __( 'See History' ),
-            'namespace' => 'history',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'products/' . $entry->id . '/history' ),
-        ]);
+        $entry->action(
+            identifier: 'history',
+            label: '<i class="mr-2 las la-history"></i> ' . __( 'See History' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'products/' . $entry->id . '/history' ),
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.products/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'delete',
+            label: '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.products/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
-        ]);
+        );
 
         return $entry;
     }
@@ -841,5 +831,85 @@ class ProductCrud extends CrudService
     public function getExports()
     {
         return [];
+    }
+
+    public function getExtractedProductForm( $product )
+    {
+        $rawForm = $this->getForm( $product );
+
+        return array_merge(
+            $this->extractForm( $rawForm ),
+            [
+                'variations' => collect( $rawForm[ 'variations' ] )->map( function( $variation, $index ) {
+                    $data = $this->extractForm( $variation );
+                    if ( $index === 0 ) {
+                        $data[ '$primary' ] = true;
+                    }
+
+                    $data[ 'images' ] = $variation[ 'tabs' ][ 'images' ][ 'groups' ]->map( function( $fields ) {
+                        return $this->extractFields( $fields );
+                    })->toArray();
+
+                    $groups = [];
+
+                    collect( $variation[ 'tabs' ][ 'units' ][ 'fields' ] )->filter( function( $field ) {
+                        return $field[ 'type' ] === 'group';
+                    })->each( function( $field ) use ( &$groups ) {
+                        $groups[ $field[ 'name' ] ] = collect( $field[ 'groups' ] )
+                            ->map( fn( $fields ) => $this->extractFields( $fields ) )
+                            ->toArray();
+                    });
+
+                    $data[ 'units' ] = [
+                        ...$data[ 'units' ],
+                        ...$groups,
+                    ];
+
+                    return $data;
+                })->toArray(),
+            ]
+        );
+    }
+
+    /**
+     * Returns a key-value array format
+     * of the crud post submitted.
+     */
+    public function getFlatForm( array $inputs, $model = null ): array
+    {
+        $primary = collect( $inputs[ 'variations' ] )
+            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
+            ->first();
+
+        $source = $primary;
+
+        /**
+         * this is made to ensure the array
+         * provided isn't flattened
+         */
+        unset( $primary[ 'images' ] );
+        unset( $primary[ 'units' ] );
+        unset( $primary[ 'groups' ] );
+
+        $primary[ 'identification' ][ 'name' ] = $inputs[ 'name' ];
+        $primary = Helper::flatArrayWithKeys( $primary )->toArray();
+        $primary[ 'product_type' ] = 'product';
+
+        /**
+         * let's restore the fields before
+         * storing that.
+         */
+        $primary[ 'images' ] = $source[ 'images' ];
+        $primary[ 'units' ] = $source[ 'units' ];
+        $primary[ 'groups' ] = $source[ 'groups' ];
+
+        unset( $primary[ '$primary' ] );
+
+        /**
+         * As foreign fields aren't handled with
+         * they are complex (array), this methods allow
+         * external script to reinject those complex fields.
+         */
+        return Hook::filter( 'ns-update-products-inputs', $primary, $source, $model );
     }
 }

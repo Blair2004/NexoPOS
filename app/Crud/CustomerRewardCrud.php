@@ -7,7 +7,6 @@ use App\Models\CustomerReward;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -60,7 +59,7 @@ class CustomerRewardCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_rewards.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'nexopos_customers_rewards.customer_id' ],
     ];
 
     /**
@@ -300,10 +299,8 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'customer_name' => [
@@ -356,7 +353,7 @@ class CustomerRewardCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-rewards/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.customers-rewards/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -424,8 +421,8 @@ class CustomerRewardCrud extends CrudService
             'list' => 'javascript:void(0)',
             'create' => 'javascript:void(0)',
             'edit' => ns()->url( 'dashboard/' . $this->getSlug() . '/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-rewards' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-rewards/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-rewards' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-rewards/{id}' . '' ),
         ];
     }
 

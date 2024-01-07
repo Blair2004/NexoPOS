@@ -22,10 +22,10 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 import { forkJoin } from 'rxjs';
-import FormValidation from '@/libraries/form-validation';
-import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';
+import FormValidation from '~/libraries/form-validation';
+import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
 
 export default {
     name: 'ns-login',
@@ -40,7 +40,7 @@ export default {
     },
     mounted() {
         forkJoin([
-            nsHttpClient.get( '/api/nexopos/v4/fields/ns.new-password' ),
+            nsHttpClient.get( '/api/fields/ns.new-password' ),
             nsHttpClient.get( '/sanctum/csrf-cookie' ),
         ])
         .subscribe( result => {

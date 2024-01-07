@@ -11,7 +11,7 @@
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div id="screen" class="h-24 border-b primary ns-box-body flex items-center justify-center">
+        <div id="screen" class="h-24 primary ns-box-body flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
         <ns-numpad v-if="options.ns_pos_numpad === 'default'" :floating="options.ns_pos_allow_decimal_quantities" @changed="updateQuantity( $event )" @next="defineQuantity( $event )" :value="finalValue"></ns-numpad>
@@ -19,13 +19,15 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
-import popupCloser from '@/libraries/popup-closer';
-import nsNumpadVue from '@/components/ns-numpad.vue';
-import nsNumpadPlusVue from '@/components/ns-numpad-plus.vue';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import popupCloser from '~/libraries/popup-closer';
+import nsNumpadVue from '~/components/ns-numpad.vue';
+import nsNumpadPlusVue from '~/components/ns-numpad-plus.vue';
 
 export default {
+    name: 'ns-pos-quantity-popup',
+    props: [ 'popup' ],
     components: {
         nsNumpad: nsNumpadVue,
         nsNumpadPlus: nsNumpadPlusVue
@@ -48,35 +50,17 @@ export default {
             this.options    =   options;
         });
 
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                /**
-                 * as this runs under a Promise
-                 * we need to make sure that
-                 * it resolve false using the "resolve" function
-                 * provided as $popupParams.
-                 * Here we resolve "false" as the user has broken the Promise
-                 */
-                this.$popupParams.reject( false );
-
-                /**
-                 * we can safely close the popup.
-                 */
-                this.$popup.close();
-            }
-        });
-
         /**
          * if the quantity is defined, then probably
          * we're already trying to edit an existing product
          */
-        if ( this.$popupParams.product.quantity ) {
-            this.finalValue     =   this.$popupParams.product.quantity;
+        if ( this.popup.params.product.quantity ) {
+            this.finalValue     =   this.popup.params.product.quantity;
         }
 
         this.popupCloser();
     },
-    destroyed() {
+    unmounted() {
         nsHotPress.destroy( 'pos-quantity-numpad');
         nsHotPress.destroy( 'pos-quantity-backspace' );
         nsHotPress.destroy( 'pos-quantity-enter');
@@ -87,8 +71,8 @@ export default {
         popupCloser,
 
         closePopup() {
-            this.$popupParams.reject( false );
-            this.$popup.close();
+            this.popup.params.reject( false );
+            this.popup.close();
         },
 
         updateQuantity( quantity ) {
@@ -99,7 +83,7 @@ export default {
             /**
              * resolve is provided only on the addProductQueue
              */
-            const { product, data }         =   this.$popupParams;
+            const { product, data }         =   this.popup.params;
 
             if ( quantity === 0 ) {
                 return nsSnackBar.error( __( 'Please provide a quantity' ) )
@@ -147,8 +131,8 @@ export default {
         },
 
         resolve( params ) {
-            this.$popupParams.resolve( params );
-            this.$popup.close();
+            this.popup.params.resolve( params );
+            this.popup.close();
         }
     }
 }

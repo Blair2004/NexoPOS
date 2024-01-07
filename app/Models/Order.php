@@ -9,6 +9,8 @@ use App\Services\DateService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
+ * ns-generated-comments
+ *
  * @property int id
  * @property string description
  * @property string code

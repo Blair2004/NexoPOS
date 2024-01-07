@@ -22,6 +22,10 @@ class CashRegistersService
             );
         }
 
+        $register->status = Register::STATUS_OPENED;
+        $register->used_by = Auth::id();
+        $register->save();
+
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_OPENING;
@@ -31,11 +35,6 @@ class CashRegistersService
         $registerHistory->value = $amount;
         $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->getRaw();
         $registerHistory->save();
-
-        $register->status = Register::STATUS_OPENED;
-        $register->used_by = Auth::id();
-        $register->balance = $amount;
-        $register->save();
 
         return [
             'status' => 'success',
@@ -90,7 +89,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashIn( Register $register, $amount, $description )
+    public function cashIn( Register $register, float $amount, string|null $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
@@ -125,7 +124,7 @@ class CashRegistersService
         ];
     }
 
-    public function saleDelete( Register $register, $amount, $description )
+    public function saleDelete( Register $register, float $amount, string $description ): array
     {
         if ( $register->balance - $amount < 0 ) {
             throw new NotAllowedException(
@@ -157,7 +156,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashOut( Register $register, $amount, $description )
+    public function cashOut( Register $register, float $amount, string|null $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
@@ -273,37 +272,6 @@ class CashRegistersService
             });
 
             $register->refresh();
-
-            /**
-             * We'll check if there is a transaction that
-             * tracks the change on that order. If not we'll define it.
-             */
-            $changeHistory = RegisterHistory::where( 'order_id', $order->id )
-                ->where( 'register_id', $register->id )
-                ->where( 'action', RegisterHistory::ACTION_CHANGE )
-                ->first();
-
-            if ( ! $changeHistory instanceof RegisterHistory ) {
-                $changeHistory = new RegisterHistory;
-                $changeHistory->register_id = $register->id;
-                $changeHistory->order_id = $order->id;
-                $changeHistory->author = $order->author;
-                $changeHistory->balance_before = $register->balance;
-                $changeHistory->value = $order->change;
-                $changeHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $order->change )->getRaw();
-                $changeHistory->action = RegisterHistory::ACTION_CHANGE;
-            }
-
-            /**
-             * If the transaction doesn't have any change, there is no need
-             * to keep an history for that. We'll check if the change history wasn't recently created
-             * and check if the change equal to 0 in order to delete the record.
-             */
-            if ( ! $changeHistory->wasRecentlyCreated && $order->change === 0 ) {
-                $changeHistory->delete();
-            } else {
-                $changeHistory->save();
-            }
         }
     }
 
@@ -311,10 +279,8 @@ class CashRegistersService
      * Listen for payment status changes
      * that only occurs if the order is updated
      * and will update the register history accordingly.
-     *
-     * @return void
      */
-    public function createRegisterHistoryUsingPaymentStatus( Order $order, string $previous, string $new  )
+    public function createRegisterHistoryUsingPaymentStatus( Order $order, string $previous, string $new  ): null|RegisterHistory
     {
         /**
          * If the payment status changed from
@@ -336,7 +302,11 @@ class CashRegistersService
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = Auth::id();
             $registerHistory->save();
+
+            return $registerHistory;
         }
+
+        return null;
     }
 
     /**
@@ -344,7 +314,7 @@ class CashRegistersService
      * will update the cash register if any order
      * is marked as paid.
      */
-    public function createRegisterHistoryFromPaidOrder( Order $order )
+    public function createRegisterHistoryFromPaidOrder( Order $order ): void
     {
         /**
          * If the payment status changed from
@@ -367,11 +337,8 @@ class CashRegistersService
     /**
      * returns human readable labels
      * for all register actions.
-     *
-     * @param string $label
-     * @return string
      */
-    public function getActionLabel( $label )
+    public function getActionLabel( string $label ): string
     {
         switch ( $label ) {
             case RegisterHistory::ACTION_CASHING:
@@ -400,11 +367,8 @@ class CashRegistersService
 
     /**
      * Returns the register status for human
-     *
-     * @param string $label
-     * @return string
      */
-    public function getRegisterStatusLabel( $label )
+    public function getRegisterStatusLabel( string $label ): string
     {
         switch ( $label ) {
             case Register::STATUS_CLOSED:
@@ -426,11 +390,9 @@ class CashRegistersService
     }
 
     /**
-     * Update the register with various details
-     *
-     * @return void
+     * Update the register with various details.
      */
-    public function getRegisterDetails( Register $register )
+    public function getRegisterDetails( Register $register ): Register
     {
         $register->status_label = $this->getRegisterStatusLabel( $register->status );
         $register->opening_balance = 0;

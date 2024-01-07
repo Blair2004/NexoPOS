@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Exceptions\NotAllowedException;
+use App\Services\Helper;
 use App\Services\ModulesService;
 use Illuminate\Console\Command;
 
@@ -27,7 +28,7 @@ class GenerateModuleCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new NexoPOS 4.x module';
+    protected $description = 'Create a new NexoPOS module';
 
     /**
      * Create a new command instance.
@@ -47,10 +48,10 @@ class GenerateModuleCommand extends Command
      */
     public function handle()
     {
-        if ( ns()->installed() ) {
+        if ( Helper::installed() ) {
             $this->askInformations();
         } else {
-            $this->info( 'NexoPOS 4.x is not yet installed.' );
+            $this->error( 'NexoPOS is not yet installed.' );
         }
     }
 
@@ -71,7 +72,7 @@ class GenerateModuleCommand extends Command
         $table = [ 'Namespace', 'Name', 'Author', 'Description', 'Version' ];
         $this->table( $table, [ $this->module ] );
 
-        if ( ! $this->confirm( 'Would you confirm theses informations \n' ) ) {
+        if ( ! $this->confirm( 'Would you confirm theses informations' ) ) {
             $this->askInformations();
         }
 

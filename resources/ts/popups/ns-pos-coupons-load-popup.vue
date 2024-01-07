@@ -7,13 +7,13 @@
             </div>
         </div>
         <div class="p-1 ns-box-body">
-            <ns-tabs @changeTab="setActiveTab( $event )" :active="activeTab">
-                <ns-tabs-item
-                    :label="__( 'Apply A Coupon' )"
+            <ns-tabs @active="setActiveTab( $event )" :active="activeTab">
+                <ns-tabs-item 
+                    :label="__( 'Apply A Coupon' )" 
                     padding="p-2"
                     identifier="apply-coupon">
                     <div class="border-2 input-group info rounded flex">
-                        <input ref="coupon" @keyup.enter="loadCoupon()" v-model="couponCode" type="text" class="w-full text-primary p-2 outline-none" :placeholder="placeHolder">
+                        <input ref="coupon" @keyup.enter="loadCoupon()" v-model="couponCode" type="text" class="coupon-field w-full text-primary p-2 outline-none" :placeholder="placeHolder">
                         <button @click="loadCoupon()" class="px-3 py-2">{{ __( 'Load' ) }}</button>
                     </div>
                     <div class="pt-2">
@@ -26,40 +26,39 @@
                     </div>
                     <div class="pt-2" v-if="order && order.customer_id !== undefined">
                         <ns-notice color="success">
-                            <template v-slot:description>{{ __( 'Loading Coupon For : ' ) + `${order.customer.name} ${order.customer.surname}` }}</template>
-                        </ns-notice>
-
+                            <template v-slot:description>{{ __( 'Loading Coupon For : ' ) + `${order.customer.first_name} ${order.customer.last_name}` }}</template>
+                        </ns-notice>                        
                     </div>
                     <div class="overflow-hidden">
-                        <div class="pt-2 fade-in-entrance anim-duration-500 overflow-y-auto ns-scrollbar h-64" v-if="customerCoupon">
+                        <div class="pt-2 fade-in-entrance anim-duration-500 overflow-y-auto ns-scrollbar h-64" v-if="coupon">
                             <table class="w-full ns-table">
                                 <tbody>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Coupon Name' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.name }}</td>
-                                    </tr>
+                                        <td class="p-2 w-1/2 border">{{ coupon.name }}</td>
+                                    </tr>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                     <tr>
-                                        <td class="p-2 w-1/2 border">{{ __( 'Discount' ) }} ({{ getCouponType( customerCoupon.coupon.type ) }})</td>
-                                        <td class="p-2 w-1/2 border">{{ getDiscountValue( customerCoupon.coupon ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ __( 'Discount' ) }} ({{ getCouponType( coupon.type ) }})</td>
+                                        <td class="p-2 w-1/2 border">{{ getDiscountValue( coupon ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Usage' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.usage + '/' + ( customerCoupon.limit_usage || __( 'Unlimited' ) ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ ( coupon.customer_coupon.length > 0 ? coupon.customer_coupon[0].usage : 0 ) + '/' + ( coupon.limit_usage || __( 'Unlimited' ) ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Valid From' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.coupon.valid_hours_start || __( 'N/A' ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ coupon.valid_hours_start || __( 'N/A' ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Valid Till' ) }}</td>
-                                        <td class="p-2 w-1/2 border">{{ customerCoupon.coupon.valid_hours_end || __( 'N/A' ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ coupon.valid_hours_end || __( 'N/A' ) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 w-1/2 border">{{ __( 'Categories' ) }}</td>
                                         <td class="p-2 w-1/2 border">
                                             <ul>
-                                                <li class="rounded-full px-3 py-1 border" :key="category.id" v-for="category of customerCoupon.coupon.categories">{{ category.category.name }}</li>
-                                                <li v-if="customerCoupon.coupon.categories.length === 0">{{ __( 'Not applicable' ) }}</li>
+                                                <li class="rounded-full px-3 py-1 border" :key="category.id" v-for="category of coupon.categories">{{ category.category.name }}</li>
+                                                <li v-if="coupon.categories.length === 0">{{ __( 'Not applicable' ) }}</li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -67,8 +66,8 @@
                                         <td class="p-2 w-1/2 border">{{ __( 'Products' ) }}</td>
                                         <td class="p-2 w-1/2 border">
                                             <ul>
-                                                <li class="rounded-full px-3 py-1 border" :key="product.id" v-for="product of customerCoupon.coupon.products">{{ product.product.name }}</li>
-                                                <li v-if="customerCoupon.coupon.products.length === 0">{{ __( 'Not applicable' ) }}</li>
+                                                <li class="rounded-full px-3 py-1 border" :key="product.id" v-for="product of coupon.products">{{ product.product.name }}</li>
+                                                <li v-if="coupon.products.length === 0">{{ __( 'Not applicable' ) }}</li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -79,11 +78,11 @@
                 </ns-tabs-item>
                 <ns-tabs-item :label="__( 'Active Coupons' )" padding="p-1" identifier="active-coupons">
                     <ul v-if="order">
-                        <li v-for="( customerCoupon, index) of order.coupons" :key="index" class="flex justify-between elevation-surface border items-center px-2 py-1">
+                        <li v-for="( coupon, index) of order.coupons" :key="index" class="flex justify-between elevation-surface border items-center px-2 py-1">
                             <div class="flex-auto">
                                 <h3 class="font-semibold text-primary p-2 flex justify-between">
-                                    <span>{{ customerCoupon.name }}</span>
-                                    <span>{{ getDiscountValue( customerCoupon ) }}</span>
+                                    <span>{{ coupon.name }}</span>
+                                    <span>{{ getDiscountValue( coupon ) }}</span>
                                 </h3>
                             </div>
                             <div>
@@ -97,7 +96,7 @@
                 </ns-tabs-item>
             </ns-tabs>
         </div>
-        <div class="flex" v-if="customerCoupon">
+        <div class="flex" v-if="coupon">
             <button @click="apply()" class="w-1/2 px-3 py-2 bg-success-tertiary text-white font-bold">
                 {{ __( 'Apply' ) }}
             </button>
@@ -108,16 +107,17 @@
     </div>
 </template>
 <script>
-import popupCloser from '@/libraries/popup-closer';
-import popupResolver from '@/libraries/popup-resolver';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from "@/libraries/lang";
+import popupCloser from '~/libraries/popup-closer';
+import popupResolver from '~/libraries/popup-resolver';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from "~/libraries/lang";
 import nsPosCustomerSelectPopupVue from './ns-pos-customer-select-popup.vue';
-import { SnackBar } from '@/libraries/snackbar';
-import nsNotice from '@/components/ns-notice.vue';
+import nsNotice from '~/components/ns-notice.vue';
+import { ref } from "vue";
 
 export default {
     name: 'ns-pos-coupons-load-popup',
+    props: [ 'popup' ],
     components: {
         nsNotice
     },
@@ -128,39 +128,39 @@ export default {
             order: null,
             activeTab: 'apply-coupon',
             orderSubscriber: null,
-            customerCoupon: null
+            coupon: null
         }
     },
     mounted() {
         this.popupCloser();
-        this.$refs[ 'coupon' ].select();
-        this.orderSubscriber    =   POS.order.subscribe( order => {
-            this.order = order;
 
+        this.orderSubscriber    =   POS.order.subscribe( order => {
+            this.order = ref(order);
+            
             if ( this.order.coupons.length > 0 ) {
                 this.activeTab  =   'active-coupons';
             }
         });
 
-        if ( this.$popupParams ) {
+        if ( this.popup.params ) {
 
             /**
              * We want to add a way to quickly
              * apply a coupon while loading the popup
              */
-            if ( this.$popupParams.apply_coupon ) {
-                this.couponCode     =   this.$popupParams.apply_coupon;
+            if ( this.popup.params.apply_coupon ) {
+                this.couponCode     =   this.popup.params.apply_coupon;
                 this.getCoupon( this.couponCode )
                     .subscribe({
                         next: ( coupon ) => {
-                            this.customerCoupon     =   coupon;
+                            this.coupon     =   coupon;
                             this.apply();
                         }
                     })
             }
         }
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
     },
     methods: {
@@ -173,7 +173,7 @@ export default {
         },
 
         cancel() {
-            this.customerCoupon =   null;
+            this.coupon         =   null;
             this.couponCode     =   null;
         },
 
@@ -184,27 +184,25 @@ export default {
 
         apply() {
             try {
-                const customerCoupon    =   this.customerCoupon;
-
-                if (
-                    this.customerCoupon.coupon.valid_hours_start !== null &&
-                    ! ns.date.moment.isAfter( this.customerCoupon.coupon.valid_hours_start ) &&
-                    this.customerCoupon.coupon.valid_hours_start.length > 0
+                if ( 
+                    this.coupon.valid_hours_start !== null &&
+                    ! ns.date.moment.isAfter( this.coupon.valid_hours_start ) && 
+                    this.coupon.valid_hours_start.length > 0
                 ) {
                     return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) )
                         .subscribe();
                 }
 
-                if (
-                    this.customerCoupon.coupon.valid_hours_end !== null &&
-                    ! ns.date.moment.isBefore( this.customerCoupon.coupon.valid_hours_end ) &&
-                    this.customerCoupon.coupon.valid_hours_end.length > 0
+                if ( 
+                    this.coupon.valid_hours_end !== null &&
+                    ! ns.date.moment.isBefore( this.coupon.valid_hours_end ) &&
+                    this.coupon.valid_hours_end.length > 0 
                 ) {
                     return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) )
                         .subscribe();
                 }
 
-                const requiredProducts      =   this.customerCoupon.coupon.products;
+                const requiredProducts      =   this.coupon.products;
 
                 if (
                     requiredProducts.length > 0
@@ -216,7 +214,7 @@ export default {
                     }
                 }
 
-                const requiredCategories      =   this.customerCoupon.coupon.categories;
+                const requiredCategories      =   this.coupon.categories;
 
                 if (
                     requiredCategories.length > 0
@@ -228,28 +226,28 @@ export default {
                     }
                 }
 
-                this.cancel();
-
-                const coupon    =   {
-                    active: customerCoupon.coupon.active,
-                    customer_coupon_id   :   customerCoupon.id,
-                    minimum_cart_value: customerCoupon.coupon.minimum_cart_value,
-                    maximum_cart_value: customerCoupon.coupon.maximum_cart_value,
-                    name: customerCoupon.coupon.name,
-                    type: customerCoupon.coupon.type,
+                let finalCoupon    =   {
+                    customer_coupon_id   :   this.coupon.customer_coupon.length > 0 ? this.coupon.customer_coupon[0].id : 0,
+                    minimum_cart_value: this.coupon.minimum_cart_value,
+                    maximum_cart_value: this.coupon.maximum_cart_value,
+                    name: this.coupon.name,
+                    type: this.coupon.type,
                     value: 0,
-                    limit_usage: customerCoupon.coupon.limit_usage,
-                    code: customerCoupon.coupon.code,
-                    discount_value: customerCoupon.coupon.discount_value,
-                    categories: customerCoupon.coupon.categories,
-                    products: customerCoupon.coupon.products,
+                    coupon_id: this.coupon.id,
+                    limit_usage: this.coupon.limit_usage,
+                    code: this.coupon.code,
+                    discount_value: this.coupon.discount_value,
+                    categories: this.coupon.categories,
+                    products: this.coupon.products,
                 }
 
-                POS.pushCoupon( coupon );
+                this.cancel();
+
+                POS.pushCoupon( finalCoupon );
                 this.activeTab  =   'active-coupons';
 
                 setTimeout( () => {
-                    this.popupResolver( coupon );
+                    this.popupResolver( finalCoupon );
                 }, 500 );
 
                 nsSnackBar.success( __( 'The coupon has applied to the cart.' ) )
@@ -285,14 +283,20 @@ export default {
 
         setActiveTab( tab ) {
             this.activeTab  =   tab;
+
+            if ( tab === 'apply-coupon' ) {
+                setTimeout( () => {
+                    document.querySelector( '.coupon-field' ).select();
+                }, 10 );
+            }
         },
 
         getCoupon( code ) {
             if ( ! this.order.customer_id > 0 ) {
-                return nsSnackBar.error( __( 'You must select a customer before applying a coupon.' ) ).subscribe();
+                return nsSnackBar.error( __( 'You must select a customer before applying a coupon.' ) );
             }
 
-            return nsHttpClient.post( `/api/nexopos/v4/customers/coupons/${code}`, {
+            return nsHttpClient.post( `/api/customers/coupons/${code}`, {
                     customer_id :  this.order.customer_id
                 });
         },
@@ -302,8 +306,8 @@ export default {
 
             this.getCoupon( code )
                 .subscribe({
-                    next: customerCoupon => {
-                        this.customerCoupon     =   customerCoupon;
+                    next: coupon => {
+                        this.coupon     =   coupon;
                         nsSnackBar.success( __( 'The coupon has been loaded.' ) ).subscribe()
                     },
                     error : error => {

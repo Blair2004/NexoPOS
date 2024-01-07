@@ -19,43 +19,28 @@ use App\Models\Procurement;
 use App\Models\ProcurementProduct;
 use App\Models\Product;
 use App\Models\Unit;
+use App\Services\DateService;
 use App\Services\Options;
 use App\Services\ProcurementService;
 use App\Services\ProductService;
 use App\Services\Validation;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class ProcurementController extends DashboardController
 {
     protected $crud;
 
-    /**
-     * @var ProcurementService
-     **/
-    protected $procurementService;
-
-    /**
-     * @var ProductService
-     **/
-    protected $productService;
-
-    /**
-     * @var Options
-     */
-    protected $options;
+    protected $validation;
 
     public function __construct(
-        ProcurementService $procurementService,
-        ProductService $productService,
-        Options $options
+        protected ProcurementService $procurementService,
+        protected ProductService $productService,
+        protected Options $options,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
         $this->validation = new Validation;
-        $this->procurementService = $procurementService;
-        $this->productService = $productService;
-        $this->options = $options;
     }
 
     /**
@@ -257,7 +242,7 @@ class ProcurementController extends DashboardController
     {
         ns()->restrict([ 'nexopos.create.procurements' ]);
 
-        return $this->view( 'pages.dashboard.procurements.create', Hook::filter( 'ns-create-procurement-labels', [
+        return View::make( 'pages.dashboard.procurements.create', Hook::filter( 'ns-create-procurement-labels', [
             'title' => __( 'New Procurement' ),
             'description' => __( 'Make a new procurement.' ),
         ] ) );
@@ -271,7 +256,7 @@ class ProcurementController extends DashboardController
             throw new NotAllowedException( __( 'Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.' ) );
         }
 
-        return $this->view( 'pages.dashboard.procurements.edit', Hook::filter( 'ns-update-procurement-labels', [
+        return View::make( 'pages.dashboard.procurements.edit', Hook::filter( 'ns-update-procurement-labels', [
             'title' => __( 'Edit Procurement' ),
             'description' => __( 'Perform adjustment on existing procurement.' ),
             'procurement' => $procurement,
@@ -282,7 +267,7 @@ class ProcurementController extends DashboardController
     {
         ns()->restrict([ 'nexopos.read.procurements' ]);
 
-        return $this->view( 'pages.dashboard.procurements.invoice', [
+        return View::make( 'pages.dashboard.procurements.invoice', [
             'title' => sprintf( __( '%s - Invoice' ), $procurement->name ),
             'description' => __( 'list of product procured.' ),
             'procurement' => $procurement,
@@ -299,13 +284,15 @@ class ProcurementController extends DashboardController
     {
         $products = Product::query()
             ->trackingDisabled()
+            ->withStockEnabled()
+            ->notGrouped()
             ->with( 'unit_quantities.unit' )
             ->where( function ( $query ) use ( $request ) {
                 $query->where( 'sku', 'LIKE', "%{$request->input( 'argument' )}%" )
                 ->orWhere( 'name', 'LIKE', "%{$request->input( 'argument' )}%" )
                 ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'argument' )}%" );
             })
-            ->limit( 8 )
+            ->limit(8)
             ->get()
             ->map( function ( $product ) {
                 $units = json_decode( $product->purchase_unit_ids );

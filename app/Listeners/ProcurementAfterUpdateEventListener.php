@@ -3,9 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\ProcurementAfterUpdateEvent;
-use App\Services\ExpenseService;
 use App\Services\ProcurementService;
 use App\Services\ProviderService;
+use App\Services\TransactionService;
 
 class ProcurementAfterUpdateEventListener
 {
@@ -17,7 +17,7 @@ class ProcurementAfterUpdateEventListener
     public function __construct(
         public ProcurementService $procurementService,
         public ProviderService $providerService,
-        public ExpenseService $expenseService
+        public TransactionService $transactionService
     ) {
         //
     }
@@ -32,6 +32,6 @@ class ProcurementAfterUpdateEventListener
         $this->procurementService->refresh( $event->procurement );
         $this->providerService->computeSummary( $event->procurement->provider );
         $this->procurementService->handleProcurement( $event->procurement );
-        $this->expenseService->handleProcurementExpense( $event->procurement );
+        $this->transactionService->handleProcurementTransaction( $event->procurement );
     }
 }

@@ -9,7 +9,7 @@ use App\Services\SettingsPage;
 
 class ProcurementForm extends SettingsPage
 {
-    protected $identifier = 'ns.procurement';
+    const IDENTIFIER = 'ns.procurement';
 
     public $form;
 
@@ -39,18 +39,18 @@ class ProcurementForm extends SettingsPage
                     'label' => __( 'Unit Price' ),
                     'type' => 'text',
                 ],
-                'tax_group_id' => [
-                    'label' => __( 'Tax' ),
-                    'type' => 'tax_group_id',
-                ],
+                // 'tax_group_id' => [
+                //     'label' => __( 'Tax' ),
+                //     'type' => 'tax_group_id',
+                // ],
                 'tax_value' => [
                     'label' => __( 'Tax Value' ),
                     'type' => 'currency',
                 ],
-                'unit_quantities' => [
-                    'label' => __( 'UOM' ),
-                    'type' => 'unit_quantities',
-                ],
+                // 'unit_quantities' => [
+                //     'label' => __( 'UOM' ),
+                //     'type' => 'unit_quantities',
+                // ],
                 'quantity' => [
                     'label' => __( 'Quantity' ),
                     'type' => 'text',

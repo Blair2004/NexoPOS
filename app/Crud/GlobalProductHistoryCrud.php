@@ -2,12 +2,12 @@
 
 namespace App\Crud;
 
+use App\Casts\ProductHistoryActionCast;
 use App\Exceptions\NotAllowedException;
 use App\Models\ProductHistory;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -51,6 +51,10 @@ class GlobalProductHistoryCrud extends CrudService
         'read' => true,
         'update' => false,
         'delete' => false,
+    ];
+
+    public $casts = [
+        'operation_type' => ProductHistoryActionCast::class,
     ];
 
     /**
@@ -298,10 +302,8 @@ class GlobalProductHistoryCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'product_name' => [
@@ -373,62 +375,15 @@ class GlobalProductHistoryCrud extends CrudService
         $entry->order_code = $entry->order_code ?: __( 'N/A' );
         $entry->total_price = ns()->currency->fresh( $entry->total_price )->format();
 
-        switch ( $entry->operation_type ) {
-            case ProductHistory::ACTION_ADDED :
-            case ProductHistory::ACTION_ADJUSTMENT_RETURN :
-            case ProductHistory::ACTION_RETURNED :
-            case ProductHistory::ACTION_STOCKED :
-            case ProductHistory::ACTION_TRANSFER_CANCELED :
-            case ProductHistory::ACTION_TRANSFER_IN :
-            case ProductHistory::ACTION_VOID_RETURN :
-                $entry->{ '$cssClass' } = 'info border text-sm';
-                break;
-            default:
-                $entry->{ '$cssClass' } = 'success border text-sm';
-                break;
-        }
-
-        switch ( $entry->operation_type ) {
-            case ProductHistory::ACTION_ADDED: $entry->operation_type = __( 'Added' );
-                break;
-            case ProductHistory::ACTION_ADJUSTMENT_RETURN: $entry->operation_type = __( 'Stock Return' );
-                break;
-            case ProductHistory::ACTION_ADJUSTMENT_SALE: $entry->operation_type = __( 'Sale Adjustment' );
-                break;
-            case ProductHistory::ACTION_DEFECTIVE: $entry->operation_type = __( 'Defective' );
-                break;
-            case ProductHistory::ACTION_DELETED: $entry->operation_type = __( 'Deleted' );
-                break;
-            case ProductHistory::ACTION_LOST: $entry->operation_type = __( 'Lost' );
-                break;
-            case ProductHistory::ACTION_REMOVED: $entry->operation_type = __( 'Removed' );
-                break;
-            case ProductHistory::ACTION_RETURNED: $entry->operation_type = __( 'Stock Return' );
-                break;
-            case ProductHistory::ACTION_SOLD: $entry->operation_type = __( 'Sold' );
-                break;
-            case ProductHistory::ACTION_STOCKED: $entry->operation_type = __( 'Stocked' );
-                break;
-            case ProductHistory::ACTION_TRANSFER_CANCELED: $entry->operation_type = __( 'Transfer Canceled' );
-                break;
-            case ProductHistory::ACTION_TRANSFER_IN: $entry->operation_type = __( 'Incoming Transfer' );
-                break;
-            case ProductHistory::ACTION_TRANSFER_OUT: $entry->operation_type = __( 'Outgoing Transfer' );
-                break;
-            case ProductHistory::ACTION_VOID_RETURN: $entry->operation_type = __( 'Void Return' );
-                break;
-        }
-
         // you can make changes here
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.global-products-history/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            label: __( 'Delete' ),
+            identifier: 'delete',
+            url: ns()->url( '/api/crud/ns.global-products-history/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ]);
+            ]
+        );
 
         return $entry;
     }
@@ -492,8 +447,8 @@ class GlobalProductHistoryCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . '/products/history' ),
             'create' => ns()->url( 'dashboard/' . '/products/history/create' ),
             'edit' => ns()->url( 'dashboard/' . '/products/history/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.global-products-history' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.global-products-history/{id}' . '' ),
         ];
     }
 

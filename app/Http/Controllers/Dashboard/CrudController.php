@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Events\CrudAfterDeleteEvent;
 use App\Events\CrudBeforeExportEvent;
+use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\CrudPostRequest;
@@ -51,8 +52,6 @@ class CrudController extends DashboardController
             throw new NotFoundException( __( 'Unable to delete an entry that no longer exists.' ) );
         }
 
-        $resource->handleDependencyForDeletion( $model );
-
         /**
          * Run the filter before deleting
          */
@@ -64,6 +63,8 @@ class CrudController extends DashboardController
                 return $response;
             }
         }
+
+        $resource->handleDependencyForDeletion( $model );
 
         $model->delete();
 
@@ -124,7 +125,11 @@ class CrudController extends DashboardController
             throw new Exception( sprintf( __( 'Unable to load the CRUD resource : %s.' ), $crudClass ) );
         }
 
+        /**
+         * @var CrudService
+         */
         $resource = new $crudClass;
+        $resource->allowedTo( 'read' );
 
         return $resource->getEntries();
     }
@@ -194,6 +199,7 @@ class CrudController extends DashboardController
          * @var CrudService
          */
         $resource = new $crudClass;
+        $resource->allowedTo( 'read' );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             return $resource->getEntries( $request );
@@ -212,6 +218,7 @@ class CrudController extends DashboardController
     {
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
         $resource = new $crudClass;
+        $resource->allowedTo( 'read' );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             return Hook::filter(
@@ -243,6 +250,7 @@ class CrudController extends DashboardController
         }
 
         $resource = new $crudClass;
+        $resource->allowedTo( 'read' );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             return [
@@ -252,10 +260,11 @@ class CrudController extends DashboardController
                 ),
                 'queryFilters' => Hook::filter( get_class( $resource ) . '@getQueryFilters', $resource->getQueryFilters() ),
                 'labels' => Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
-                'links' => Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ?? [] ),
+                'links' => Hook::filter( get_class( $resource ) . '@getFilteredLinks', $resource->getFilteredLinks() ?? [] ),
                 'bulkActions' => Hook::filter( get_class( $resource ) . '@getBulkActions', $resource->getBulkActions() ),
                 'prependOptions' => Hook::filter( get_class( $resource ) . '@getPrependOptions', $resource->getPrependOptions() ),
                 'showOptions' => Hook::filter( get_class( $resource ) . '@getShowOptions', $resource->getShowOptions() ),
+                'headerButtons' => Hook::filter( get_class( $resource ) . '@getHeaderButtons', $resource->getHeaderButtons() ),
                 'namespace' => $namespace,
             ];
         }
@@ -276,16 +285,12 @@ class CrudController extends DashboardController
     {
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
         $resource = new $crudClass( compact( 'namespace', 'id' ) );
+        $resource->allowedTo( 'read' );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             $model = $resource->get( 'model' );
             $model = $model::find( $id );
             $form = $resource->getForm( $model );
-
-            /**
-             * @deprecated
-             */
-            $form = Hook::filter( 'ns.crud.form', $form, $namespace, compact( 'model', 'namespace', 'id' ) );
 
             /**
              * @since 4.4.3
@@ -316,16 +321,35 @@ class CrudController extends DashboardController
     public function exportCrud( $namespace, Request $request )
     {
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+
         $resource = new $crudClass;
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
+
+        /**
+         * only users having read capability
+         * can download a CSV file.
+         */
+        $resource->allowedTo( 'read' );
 
         $columns = Hook::filter(
             get_class( $resource ) . '@getColumns',
             $resource->getExportColumns() ?: $resource->getColumns()
         );
 
-        $sheetColumns = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
+        /**
+         * We'll make sure th provide enough columns to ensure
+         * long tables are exported successfully.
+         */
+        $sheetCol1 = [ '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
+        $sheetCol2 = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
+        $sheetColumns = [];
+
+        foreach ( $sheetCol1 as $col ) {
+            foreach ( $sheetCol2 as $col2 ) {
+                $sheetColumns[] = $col . $col2;
+            }
+        }
 
         if ( count( array_values( $columns ) ) > count( $sheetColumns ) ) {
             throw new Exception( __( 'The crud columns exceed the maximum column that can be exported (27)' ) );
@@ -355,13 +379,22 @@ class CrudController extends DashboardController
         }
 
         $entries = $resource->getEntries( $config );
+        $totalColumns = 0;
+
+        /**
+         * We can't export if there is
+         * nothing to export, so we'll skip that.
+         */
+        if ( count( $entries[ 'data' ] ) === 0 ) {
+            throw new NotAllowedException( __( 'Unable to export if there is nothing to export.' ) );
+        }
 
         foreach ( $entries[ 'data' ] as $rowIndex => $entry ) {
-            $totalColumns = 0;
             foreach ( $columns as $columnName => $column ) {
                 $sheet->setCellValue( $sheetColumns[ $totalColumns ] . ( $rowIndex + 2 ), strip_tags( $entry->$columnName ) );
                 $totalColumns++;
             }
+            $totalColumns = 0;
         }
 
         /**
@@ -401,45 +434,13 @@ class CrudController extends DashboardController
         ];
     }
 
-    /**
-     * Can Access
-     * Check whether the logged user has
-     * the right to access to the requested resource
-     *
-     * @return AsyncResponse
-     */
-    public function canAccess( $namespace, Request $request )
-    {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
-        $resource = new $crudClass;
-
-        if ( method_exists( $resource, 'canAccess' ) ) {
-            if ( $resource->canAccess([
-                'type' => $request->input( 'type' ),
-                'namespace' => $request->input( 'namespace' ),
-                'id' => $request->input( 'id' ),
-            ]) ) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => __( 'You\'re allowed to access to that page' ),
-                ]);
-            }
-
-            return response()->json([
-                'status' => 'failed',
-                'message' => __( 'You don\'t have the right to access to the requested page.' ),
-            ], 403 );
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => __( 'This resource is not protected. The access is granted.' ),
-        ]);
-    }
-
     public function downloadSavedFile( $hash )
     {
         $relativePath = Cache::pull( $hash );
+
+        if ( $relativePath === null ) {
+            throw new NotAllowedException( __( 'This link has expired.' ) );
+        }
 
         if ( Storage::disk( 'public' )->exists( $relativePath ) ) {
             return Storage::disk( 'public' )->download( $relativePath );

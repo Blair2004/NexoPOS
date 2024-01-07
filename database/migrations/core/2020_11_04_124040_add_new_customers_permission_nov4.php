@@ -32,7 +32,7 @@ return new class extends Migration
         if ( ! $permission instanceof Permission ) {
             $permission = Permission::firstOrNew([ 'namespace' => $this->permission ]);
             $permission->namespace = $this->permission;
-            $permission->name = __( 'Manage Customer Account' );
+            $permission->name = __( 'Manage Customer Account History' );
             $permission->description = __( 'Can add, deduct amount from each customers account.' );
             $permission->save();
         }

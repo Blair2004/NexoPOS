@@ -94,11 +94,11 @@
                                 <h3 class="text-primary">{{ product.name }}</h3>
                                 <span class="text-sm text-secondary">{{ product.unit }}</span>
                             </td>
-                            <td class="p-2 border text-center text-primary">{{ product.unit_price | currency }}</td>
+                            <td class="p-2 border text-center text-primary">{{ nsCurrency( product.unit_price ) }}</td>
                             <td class="p-2 border text-center text-primary">{{ product.quantity }}</td>
-                            <td class="p-2 border text-center text-primary">{{ product.discount | currency }}</td>
-                            <td class="p-2 border text-center text-primary">{{ product.tax_value | currency }}</td>
-                            <td class="p-2 border text-right text-primary">{{ product.total_price | currency }}</td>
+                            <td class="p-2 border text-center text-primary">{{ nsCurrency( product.discount ) }}</td>
+                            <td class="p-2 border text-center text-primary">{{ nsCurrency( product.tax_value ) }}</td>
+                            <td class="p-2 border text-right text-primary">{{ nsCurrency( product.total_price ) }}</td>
                         </tr>
                     </tbody>
                     <tfoot class="font-semibold">
@@ -113,22 +113,27 @@
                             </td>
                             <td class="p-2 border text-center text-primary" colspan="2"></td>
                             <td class="p-2 border text-primary text-left">{{ __( 'Sub Total' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ order.subtotal | currency }}</td>
+                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.subtotal ) }}</td>
                         </tr>
                         <tr v-if="order.discount > 0">
                             <td class="p-2 border text-center text-primary" colspan="4"></td>
                             <td class="p-2 border text-primary text-left">{{ __( 'Discount' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ - order.discount | currency }}</td>
+                            <td class="p-2 border text-right text-primary">{{ nsCurrency( - order.discount ) }}</td>
                         </tr>
                         <tr v-if="order.total_coupons > 0">
                             <td class="p-2 border text-center text-primary" colspan="4"></td>
                             <td class="p-2 border text-left text-primary">{{ __( 'Coupons' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ - order.total_coupons | currency }}</td>
+                            <td class="p-2 border text-right text-primary">{{ nsCurrency( - order.total_coupons ) }}</td>
                         </tr>
                         <tr v-if="order.shipping > 0">
                             <td class="p-2 border text-center text-primary" colspan="4"></td>
                             <td class="p-2 border text-primary text-left">{{ __( 'Shipping' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ order.shipping | currency }}</td>
+                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.shipping ) }}</td>
+                        </tr>
+                        <tr :key="tax.id" v-for="tax of order.taxes">
+                            <td class="p-2 border text-center text-primary" colspan="4"></td>
+                            <td class="p-2 border text-primary text-left">{{ tax.tax_name }} &mdash; {{ order.tax_type === 'inclusive' ? __( 'Inclusive' ) : __( 'Exclusive' )  }}</td>
+                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.tax_value ) }}</td>
                         </tr>
                         <tr :key="tax.id" v-for="tax of order.taxes">
                             <td class="p-2 border text-center text-primary" colspan="4"></td>
@@ -138,22 +143,22 @@
                         <tr>
                             <td class="p-2 border text-center text-primary" colspan="4"></td>
                             <td class="p-2 border text-primary text-left">{{ __( 'Total' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ order.total | currency }}</td>
+                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.total ) }}</td>
                         </tr>
                         <tr>
                             <td class="p-2 border text-center text-primary" colspan="4"></td>
                             <td class="p-2 border text-primary text-left">{{ __( 'Paid' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ order.tendered | currency }}</td>
+                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.tendered ) }}</td>
                         </tr>
                         <tr v-if="[ 'partially_paid', 'unpaid' ].includes( order.payment_status )" class="error">
                             <td class="p-2 border text-center" colspan="4"></td>
                             <td class="p-2 border text-left">{{ __( 'Due' ) }}</td>
-                            <td class="p-2 border text-right">{{ order.change | currency }}</td>
+                            <td class="p-2 border text-right">{{ nsCurrency( order.change ) }}</td>
                         </tr>
                         <tr v-else>
                             <td class="p-2 border text-center text-primary" colspan="4"></td>
                             <td class="p-2 border text-primary text-left">{{ __( 'Change' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ order.change | currency }}</td>
+                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.change ) }}</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -162,11 +167,14 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang'
+import { nsCurrency } from '~/filters/currency';
+import { __ } from '~/libraries/lang';
+
 export default {
     props: [ 'order', 'billing', 'shipping' ],
     methods: {
         __,
+        nsCurrency,
         printTable() {
             this.$htmlToPaper( 'invoice-container' )
         }

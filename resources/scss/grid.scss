@@ -1,0 +1,31 @@
+.ns-grid {
+    @apply flex md:flex-row flex-col;
+
+    &.ns-grid-gap-2 {
+        @apply md:-mx-2;
+        & > .ns-grid-item {
+            @apply md:px-2;
+        }
+    }
+
+    &.ns-grid-gap-4 {
+        @apply md:-mx-4;
+        & > .ns-grid-item {
+            @apply md:px-4;
+        }
+    }
+
+    &.ns-grid-gap-6 {
+        @apply md:-mx-6;
+        & > .ns-grid-item {
+            @apply md:px-6;
+        }
+    }
+
+    &.ns-grid-gap-8 {
+        @apply md:-mx-8;
+        & > .ns-grid-item {
+            @apply md:px-8;
+        }
+    }
+}

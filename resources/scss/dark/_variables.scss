@@ -1,0 +1,108 @@
+:root {
+    --typography: 255 255 255;
+    --surface: 15 23 42;
+    --surface-soft: 30 41 59;
+    --surface-hard: 15 23 42;
+    --popup-surface: 51 65 85;
+    --input-edge: 30 41 59;
+    --input-background: 71 85 105;
+    --input-disabled: 30 41 59;
+    --input-button: 71 85 105;
+    --input-button-hover: 59 130 246; /** blue-400 **/
+    --input-button-active: 59 130 246; /** blue-500 **/
+    --input-option-hover: 100 116 139;
+
+    --box-background: 51 65 85;
+    --box-edge: 71 85 105;
+    --box-elevation-background: 71 85 105;
+    --box-elevation-edge: 100 116 139;
+    --box-elevation-hover: 100 116 139;
+    
+    --crud-button-edge: 71 85 105;
+    --crud-input-background: 30 41 59;
+    --pos-button-edge: 30 41 59;
+
+    --numpad-background: 71 85 105;
+    --numpad-typography: 250 250 250;
+    --numpad-edge: 71 85 105;
+    --numpad-hover: 71 85 105;
+    --numpad-hover-edge: 71 85 105;
+
+    --option-hover: 100 116 139;
+
+    --scroll-thumb: 51 65 85;
+    --scroll-track: 0 0 0;
+    --scroll-popup-thumb: 71 85 105;
+
+    --pre: 30 41 59;
+
+    --tab-active: 51 65 85;
+    --tab-active-border: 30 41 59;
+    --tab-inactive: 30 41 59;
+
+    --tab-table-th: 100 116 139;
+    --tab-table-th-edge: 100 116 139;
+    --table-th: 51 65 85;
+    --table-th-edge: 71 85 105;
+
+    --floating-menu: 71 85 105;
+    --floating-menu-hover: 100 116 139;
+    --floating-menu-selected: 71 85 105;
+    --floating-menu-edge: 51 65 85;
+
+    --primary: 226 232 240;
+    --secondary: 203 213 225;
+    --tertiary: 148 163 184;
+
+    --soft-primary: 75 85 99;
+    --soft-secondary: 107 114 128;
+    --soft-tertiary: 156 163 175;
+
+    --info-primary: 96 165 250;
+    --info-secondary: 59 130 246;
+    --info-tertiary: 37 99 235;
+
+    --info-light-primary: 191 219 254;
+    --info-light-secondary: 147 197 253;
+    --info-light-tertiary: 96 165 250;
+
+    --error-primary: 248 113 113;
+    --error-secondary: 239 68 68;
+    --error-tertiary: 220 38 38;
+
+    --error-light-primary: 254 202 202;
+    --error-light-secondary: 252 165 165;
+    --error-light-tertiary: 248 113 113;
+
+    --success-primary: 34 197 94;
+    --success-secondary: 22 163 74;
+    --success-tertiary: 21 128 61;
+
+    --success-light-primary: 187 247 208;
+    --success-light-secondary: 134 239 172;
+    --success-light-tertiary: 74 222 128;
+
+    --warning-primary: 251 146 60;
+    --warning-secondary: 249 115 22;
+    --warning-tertiary: 234 88 12;
+
+    --warning-light-primary: 255 237 213;
+    --warning-light-secondary: 254 215 170;
+    --warning-light-tertiary: 253 186 116;
+
+    --danger-primary: 202 138 4;
+    --danger-secondary: 161 98 7;
+    --danger-tertiary: 133 77 14;
+
+    --danger-light-primary: 254 249 195;
+    --danger-light-secondary: 254 240 138;
+    --danger-light-tertiary: 253 224 71;
+
+    --default-primary: 203 213 225;
+    --default-secondary: 148 163 184;
+    --default-tertiary: 100 116 139;
+
+    --default-light-primary: 226 232 240;
+    --default-light-secondary: 203 213 225;
+    --default-light-tertiary: 148 163 184;
+}

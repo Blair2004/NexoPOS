@@ -27,6 +27,6 @@ class ProcurementAfterDeleteProductEventListener
      */
     public function handle(ProcurementAfterDeleteProductEvent $event)
     {
-        $this->procurementService->refresh( $event->procurement_id );
+        $this->procurementService->refresh( $event->procurement );
     }
 }

@@ -36,18 +36,8 @@ class ProcurementRefreshJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( ProcurementService $procurementService, NotificationService $notificationService )
     {
-        /**
-         * @var ProcurementService
-         */
-        $procurementService = app()->make( ProcurementService::class );
-
-        /**
-         * @var NotificationService
-         */
-        $notificationService = app()->make( NotificationService::class );
-
         $procurementService->refresh( $this->procurement );
 
         $notificationService->create([

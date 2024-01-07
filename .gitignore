@@ -41,10 +41,15 @@ public/modules-lang/*
 !public/modules-lang/index.html
 public/mapping.json
 storage/module.zip
+tests/.coverage
 tests/database.sqlite
 tests/database.sqlite-journal
 tests/Post/*
 storage/snapshots/*.sql
+storage/temporary-files/*
 .idea
+public/hot
 database/migrations/2019_12_14_000001_create_personal_access_tokens_table.php
 tests/.coverage
+.phpunit.cache/test-results
+storage/dotenv-editor

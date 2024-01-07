@@ -10,21 +10,19 @@
                         <div>
                             <h4 class="text-semibold text-primary">{{ __( 'Sub Total' ) }}</h4>
                         </div>
-                        <div class="font-semibold text-secondary">{{ order.subtotal | currency }}</div>
+                        <div class="font-semibold text-secondary">{{ nsCurrency( order.subtotal ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start ns-notice error">
+                    <div class="p-2 flex justify-between items-start text-primary elevation-surface error border">
                         <div>
                             <h4 class="text-semibold">
-                                <span class="text-white">{{ __( 'Discount' ) }}</span>
-                                <span class="text-white ml-1" v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
-                                <span class="text-white ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
+                                <span class="">{{ __( 'Discount' ) }}</span>
+                                <span class=" ml-1" v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
+                                <span class=" ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
                             </h4>
                         </div>
-                        <div class="font-semibold">
-                            <span>{{ order.discount | currency }}</span>
-                        </div>
+                        <div class="font-semibold text-primary">{{ nsCurrency( order.discount ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -32,35 +30,33 @@
                         <div>
                             <h4 class="text-semibold text-primary">{{ __( 'Shipping' ) }}</h4>
                         </div>
-                        <div class="font-semibold text-secondary">{{ order.shipping | currency }}</div>
+                        <div class="font-semibold text-secondary">{{ nsCurrency( order.shipping ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start ns-notice error">
+                    <div class="p-2 flex justify-between items-start text-primary elevation-surface error border">
                         <div>
                             <h4 class="text-semibold">
                                 {{ __( 'Coupons' ) }}
                             </h4>
                         </div>
-                        <div class="font-semibold">
-                            <span>{{ order.total_coupons | currency }}</span>
-                        </div>
+                        <div class="font-semibold text-primary">{{ nsCurrency( order.total_coupons ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start ns-notice info">
+                    <div class="p-2 flex justify-between items-start border ns-notice success">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Total' ) }}</h4>
                         </div>
-                        <div class="font-semibold">{{ order.total | currency }}</div>
+                        <div class="font-semibold text-primary">{{ nsCurrency( order.total ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start ns-notice warning">
+                    <div class="p-2 flex justify-between items-start text-primary elevation-surface info border">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Taxes' ) }}</h4>
                         </div>
-                        <div class="font-semibold">{{ order.tax_value | currency }}</div>
+                        <div class="font-semibold">{{ nsCurrency( order.tax_value ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -68,7 +64,7 @@
                         <div>
                             <h4 class="text-semibold">{{ __( 'Change' ) }}</h4>
                         </div>
-                        <div class="font-semibold">{{ order.change | currency }}</div>
+                        <div class="font-semibold">{{ nsCurrency( order.change ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -76,7 +72,7 @@
                         <div>
                             <h4 class="text-semibold">{{ __( 'Paid' ) }}</h4>
                         </div>
-                        <div class="font-semibold">{{ order.tendered | currency }}</div>
+                        <div class="font-semibold">{{ nsCurrency( order.tendered ) }}</div>
                     </div>
                 </div>
             </div>
@@ -92,7 +88,9 @@
                         <span>{{ __( 'Customer' ) }}</span>
                     </h4>
                 </div>
-                <div class="font-semibold text-secondary">{{ order.nexopos_customers_name }}</div>
+                <div class="font-semibold text-secondary" v-if="order">
+                    <a class="border-b border-dashed border-info-primary" :href="systemUrls.customer_edit_url.replace( '#customer', order.customer.id )" target="_blank" rel="noopener noreferrer">{{ order.customer.first_name }} {{ order.customer.last_name }}</a>
+                </div>
             </div>
             <div class="mb-2 p-2 flex justify-between items-start elevation-surface border">
                 <div>
@@ -173,7 +171,7 @@
                     <h4 class="text-semibold text-primary">{{ product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-secondary text-sm">{{ product.unit.name || 'N/A' }}</p>
                 </div>
-                <div class="font-semibold text-secondary">{{ product.total_price | currency }}</div>
+                <div class="font-semibold text-secondary">{{ nsCurrency( product.total_price ) }}</div>
             </div>
 
             <div class="mb-2">
@@ -187,18 +185,20 @@
                     <h4 class="text-semibold text-primary">{{ product.order_product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-secondary text-sm">{{ product.unit.name || 'N/A' }} | <span class="rounded-full px-2" :class="product.condition === 'damaged' ? 'bg-error-tertiary text-white' : 'bg-info-tertiary text-white'">{{ product.condition }}</span></p>
                 </div>
-                <div class="font-semibold text-secondary">{{ product.total_price | currency }}</div>
+                <div class="font-semibold text-secondary">{{ nsCurrency( product.total_price ) }}</div>
             </div>
         </div>
     </div>
 </template>
 <script>
-import Labels from "@/libraries/labels";
-import { __ } from '@/libraries/lang';
-import { Popup } from '@/libraries/popup';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import nsOrdersRefundPopupVue from '@/popups/ns-orders-refund-popup.vue';
+import Labels from "~/libraries/labels";
+import { __ } from '~/libraries/lang';
+import { Popup } from '~/libraries/popup';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import nsOrdersRefundPopupVue from '~/popups/ns-orders-refund-popup.vue';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     props: [ 'order' ],
     data() {
@@ -208,19 +208,22 @@ export default {
             labels: new Labels,
             showProcessingSelect: false,
             showDeliverySelect: false,
+            systemUrls,
         }
     },
     mounted() {
+        // ...
     },
     methods: {
         __,
+        nsCurrency,
         submitProcessingChange() {
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Would you proceed ?' ),
                 message: __( 'The processing status of the order will be changed. Please confirm your action.' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/processing`, {
+                        nsHttpClient.post( `/api/orders/${this.order.id}/processing`, {
                             process_status: this.order.process_status
                         }).subscribe({
                             next: result => {
@@ -253,7 +256,7 @@ export default {
                 message: __( 'The delivery status of the order will be changed. Please confirm your action.' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/delivery`, {
+                        nsHttpClient.post( `/api/orders/${this.order.id}/delivery`, {
                             delivery_status: this.order.delivery_status
                         }).subscribe({
                             next: result => {

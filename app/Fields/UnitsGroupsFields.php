@@ -7,7 +7,7 @@ use App\Services\FieldsService;
 
 class UnitsGroupsFields extends FieldsService
 {
-    protected $identifier = 'ns.unit-group-fields';
+    protected static $identifier = 'ns.units-group-fields';
 
     public function get( UnitGroup $model = null )
     {

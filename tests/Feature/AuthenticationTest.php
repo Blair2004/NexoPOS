@@ -152,15 +152,18 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
+        $username = $this->faker->userName();
+        $email = $this->faker->email();
+
         $response = $this
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 '/auth/sign-up', [
-                    'username' => $this->faker->userName(),
+                    'username' => $username,
                     'password' => $password,
                     'password_confirm' => $password,
-                    'email' => $this->faker->email(),
+                    'email' => $email,
                 ]
             );
 
@@ -172,7 +175,15 @@ class AuthenticationTest extends TestCase
         ]) );
 
         /**
-         * Step 1: test with invalid password and email
+         * Step 1: we'll verify if the user
+         * attribute are created after his registration.
+         */
+        $user = User::where( 'email', $email )->first();
+
+        $this->assertTrue( $user->attribute()->count() > 0, 'The created user doesn\'t have any attribute.' );
+
+        /**
+         * Step 2: test with invalid password and email
          * valid informations
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
@@ -184,12 +195,37 @@ class AuthenticationTest extends TestCase
                 '/auth/sign-up', [
                     'username' => $this->faker->userName(),
                     'password' => $password,
-                    'password_confirm' => $password . '122',
+                    'password_confirm' => $password,
                     'email' => 'not-a-valid-email',
                 ]
             );
 
-        $response->assertSee( 'Unable to proceed, the submitted form is not valid.' );
+        $response->assertRedirect( ns()->route( 'ns.register' ) );
+        $response->assertSessionHasErrors([
+            'email' => 'The email field must be a valid email address.',
+        ]);
+
+        /**
+         * Step 3: test with invalid password
+         */
+        ns()->option->set( 'ns_registration_enabled', 'yes' );
+
+        $response = $this
+            ->withSession([])
+            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
+            ->post(
+                '/auth/sign-up', [
+                    'username' => $this->faker->userName(),
+                    'password' => $password,
+                    'password_confirm' => $password . 'not-the-same',
+                    'email' => $this->faker->email(),
+                ]
+            );
+
+        $response->assertRedirect( ns()->route( 'ns.register' ) );
+        $response->assertSessionHasErrors([
+            'password_confirm'  =>  'The password confirm field must match password.'
+        ]);
     }
 
     public function testSubmitPasswordRecoveryForm()

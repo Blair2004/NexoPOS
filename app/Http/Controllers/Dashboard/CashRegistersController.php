@@ -15,6 +15,7 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Register;
 use App\Models\RegisterHistory;
 use App\Services\CashRegistersService;
+use App\Services\DateService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,9 +23,10 @@ use Illuminate\Support\Facades\Auth;
 class CashRegistersController extends DashboardController
 {
     public function __construct(
-        protected CashRegistersService $registersService
+        protected CashRegistersService $registersService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
+        // ...
     }
 
     public function listRegisters()
@@ -143,9 +145,6 @@ class CashRegistersController extends DashboardController
                             break;
                         case RegisterHistory::ACTION_CASHOUT:
                             $session->label = __( 'Cash Out' );
-                            break;
-                        case RegisterHistory::ACTION_CHANGE:
-                            $session->label = __( 'Give Change' );
                             break;
                         case RegisterHistory::ACTION_CLOSING:
                             $session->label = __( 'Closing' );

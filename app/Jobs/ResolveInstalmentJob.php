@@ -29,12 +29,8 @@ class ResolveInstalmentJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( OrdersService $ordersService )
     {
-        /**
-         * @var OrdersService
-         */
-        $ordersService = app()->make( OrdersService::class );
         $ordersService->resolveInstalments( $this->order );
     }
 }

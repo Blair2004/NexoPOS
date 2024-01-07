@@ -96,6 +96,7 @@ class DemoService extends DemoCoreService
 
         $this->createBaseSettings();
         $this->prepareDefaultUnitSystem();
+        $this->createRegisters();
         $this->createCustomers();
         $this->createAccountingAccounts();
         $this->createProviders();
@@ -168,7 +169,7 @@ class DemoService extends DemoCoreService
                  * if groups is provided
                  */
                 if ( isset( $product->groups ) ) {
-                    $subProducts = collect( $product->groups )->map( function ( $productName ) {
+                    $subProducts = collect( $product->groups )->map( function( $productName ) {
                         $subProduct = Product::where( 'name', $productName )
                             ->with( 'unit_quantities' )
                             ->first();

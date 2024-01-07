@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Order;
 use App\Services\OrdersService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,16 +29,11 @@ class TrackLaidAwayOrdersJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( OrdersService $ordersService )
     {
-        /**
-         * @var OrdersService
-         */
-        $orderService = app()->make( OrdersService::class );
-
         /**
          * for order thas has already expired
          */
-        $orderService->notifyExpiredLaidAway();
+        $ordersService->notifyExpiredLaidAway();
     }
 }

@@ -6,10 +6,12 @@ use App\Events\NotificationCreatedEvent;
 use App\Events\NotificationDeletedEvent;
 use App\Events\NotificationDispatchedEvent;
 use App\Models\Notification;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\support\Str;
 
 class NotificationService
@@ -31,9 +33,11 @@ class NotificationService
     /**
      * @param array $config [ 'title', 'url', 'identifier', 'source', 'dismissable', 'description' ]
      */
-    public function create( $config )
+    public function create( string|array $title, string $description = '', string $url = '#', string $identifier = null, string $source = 'system', bool $dismissable = true )
     {
-        extract( $config );
+        if ( is_array( $title ) ) {
+            extract( $title );
+        }
 
         if ( $description && $title ) {
             $this->title = $title;
@@ -47,6 +51,34 @@ class NotificationService
         }
 
         throw new Exception( __( 'Missing required parameters to create a notification' ) );
+    }
+
+    /**
+     * Will dispatch a notification for all the roles
+     * that has permissions belonging to the parameter
+     */
+    public function dispatchForPermissions( array $permissions ): void
+    {
+        $rolesGroups = collect( $permissions )
+            ->map( fn( $permissionName ) => Permission::with( 'roles' )->withNamespace( $permissionName ) )
+            ->filter( fn( $permission ) => $permission instanceof Permission )
+            ->map( fn( $permission ) => $permission->roles );
+
+        $uniqueRoles = [];
+
+        $rolesGroups->each( function( $group ) use ( &$uniqueRoles ) {
+            foreach ( $group as $role ) {
+                if ( ! isset( $uniqueRoles[ $role->namespace ] ) ) {
+                    $uniqueRoles[ $role->namespace ] = $role;
+                }
+            }
+        });
+
+        if ( empty( $uniqueRoles ) ) {
+            Log::alert( 'A notification was dispatched for permissions that aren\'t assigned.', $permissions );
+        }
+
+        $this->dispatchForGroup( $uniqueRoles );
     }
 
     /**

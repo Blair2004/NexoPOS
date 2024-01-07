@@ -82,9 +82,24 @@ class ProductUnitQuantity extends NsModel
         return $query->where( 'barcode', $reference );
     }
 
+    public function scopeHidden( $query )
+    {
+        return $query->where( 'visible', false );
+    }
+
+    public function scopeVisible( $query )
+    {
+        return $query->where( 'visible', true );
+    }
+
     public function unit()
     {
         return $this->hasOne( Unit::class, 'id', 'unit_id' );
+    }
+
+    public function history()
+    {
+        return $this->hasMany( ProductHistoryCombined::class, 'product_id', 'product_id' );
     }
 
     public function taxes()
@@ -99,7 +114,7 @@ class ProductUnitQuantity extends NsModel
 
     public function product()
     {
-        return $this->hasOne( Product::class, 'id', 'product_id' );
+        return $this->belongsTo( Product::class, 'product_id', 'id' );
     }
 
     public function scopeWithProduct( Builder $query, $id )

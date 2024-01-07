@@ -76,25 +76,25 @@ class UploadModuleTest extends TestCase
 
         $module = $moduleService->get( $config[ 'namespace' ] );
 
-        $this->assertTrue( $module === null, 'The module wasn\'t deleted' );
+        $this->assertTrue( $module === false, 'The module wasn\'t deleted' );
 
         /**
-         * Step 5: We'll reupload the module
+         * Step 6: We'll reupload the module
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', '/api/nexopos/v4/modules', [
+            ->json( 'POST', '/api/modules', [
                 'module' => UploadedFile::fake()->createWithContent( 'module.zip', file_get_contents( $result[ 'path' ] ) ),
             ]);
 
         $response->assertRedirect( ns()->route( 'ns.dashboard.modules-list' ) );
 
         /**
-         * Step 6 : We'll re-delete the uploaded module
+         * Step 7 : We'll re-delete the uploaded module
          */
         $moduleService->delete( $config[ 'namespace' ] );
         $moduleService->load();
         $module = $moduleService->get( $config[ 'namespace' ] );
 
-        $this->assertTrue( $module === null, 'The uploaded module wasn\'t deleted' );
+        $this->assertTrue( $module === false, 'The uploaded module wasn\'t deleted' );
     }
 }

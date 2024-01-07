@@ -53,6 +53,7 @@ class ModuleListerner extends Command
             $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
             $fileName = $listenerPath . $name;
             $namespace = $this->argument( 'namespace' );
+            $relativePath   =   'modules' . DIRECTORY_SEPARATOR . $fileName;
 
             $fileExists = Storage::disk( 'ns-modules' )->exists(
                 $fileName . '.php'
@@ -63,7 +64,10 @@ class ModuleListerner extends Command
                     'modules', 'module', 'name', 'namespace'
                 ) ) );
 
-                return $this->info( 'The listener has been created !' );
+                return $this->info( sprintf(
+                    __( 'The listener has been created on the path "%s"!' ),
+                    $relativePath . '.php'
+                ) );
             }
 
             return $this->error( 'The listener already exists !' );

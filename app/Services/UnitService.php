@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Auth;
 
 class UnitService
 {
-    public function __construct( CurrencyService $currency )
+    public function __construct( public CurrencyService $currency )
     {
-        $this->currency = $currency;
+        // ...
     }
 
     public function createGroup( $data )
@@ -69,6 +69,20 @@ class UnitService
         } else {
             return UnitGroup::get();
         }
+    }
+
+    /**
+     * Get sibling units
+     * Used to retreive other units that belongs to
+     * the same unit group and the defined unit.
+     */
+    public function getSiblingUnits( Unit $unit )
+    {
+        $unit->load([ 'group.units' => function( $query ) use ( $unit ) {
+            $query->whereNotIn( 'id', [ $unit->id ]);
+        }]);
+
+        return $unit->group->units;
     }
 
     /**
@@ -248,6 +262,40 @@ class UnitService
         return $this->currency->value( $value )
             ->multiplyBy( $quantity )
             ->get();
+    }
+
+    /**
+     * Checks wether two units belongs to the same unit group.
+     */
+    public function isFromSameGroup( Unit $from, Unit $to ): bool
+    {
+        return $from->group_id === $to->group_id;
+    }
+
+    /**
+     * Will returns the final quantity of a converted unit.
+     */
+    public function getConvertedQuantity( Unit $from, Unit $to, float $quantity ): float|int
+    {
+        return ns()->currency->define(
+            ns()->currency
+                ->define( $from->value )
+                ->multipliedBy( $quantity )
+                ->getRaw()
+        )
+            ->dividedBy( $to->value )
+            ->getRaw();
+    }
+
+    /**
+     * Using the source unit, will return the purchase price
+     * for a converted unit.
+     */
+    public function getPurchasePriceFromUnit( $purchasePrice, Unit $from, Unit $to )
+    {
+        return ns()->currency->define(
+            ns()->currency->define( $purchasePrice )->dividedBy( $from->value )->toFloat()
+        )->multipliedBy( $to->value )->getRaw();
     }
 
     public function deleteUnit( $id )

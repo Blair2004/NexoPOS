@@ -6,9 +6,9 @@ use App\Services\UserOptions;
 use App\Traits\NsDependable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -39,24 +39,6 @@ class User extends Authenticatable
         'active' => 'boolean',
     ];
 
-    protected $isDependencyFor = [
-        Product::class => [
-            'local_name' => 'username',
-            'local_index' => 'id',
-            'foreign_name' => 'name',
-            'foreign_index' => 'author',
-        ],
-    ];
-
-    /**
-     * While saving model, this will
-     * use the timezone defined on the settings
-     */
-    public function freshTimestamp()
-    {
-        return ns()->date->getNow();
-    }
-
     /**
      * @var App\Services\UserOptions;
      */
@@ -64,13 +46,28 @@ class User extends Authenticatable
 
     public $user_id;
 
+    protected $isDependencyFor = [
+        Product::class => [
+            'local_name' => 'username',
+            'local_index' => 'id',
+            'foreign_name' => 'name',
+            'foreign_index' => 'author',
+        ],
+        Order::class => [
+            'local_name' => 'username',
+            'local_index' => 'id',
+            'foreign_name' => 'code',
+            'foreign_index' => 'author',
+        ],
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'role_id', 'active', 'username',
+        'email', 'password', 'role_id', 'active', 'username', 'author',
     ];
 
     /**
@@ -96,17 +93,27 @@ class User extends Authenticatable
         parent::__construct( $attributes );
     }
 
-    public function attribute()
+    /**
+     * While saving model, this will
+     * use the timezone defined on the settings
+     */
+    public function freshTimestamp()
+    {
+        return ns()->date->getNow();
+    }
+
+    /**
+     * Define the relation with the user attribute.
+     */
+    public function attribute(): HasOne
     {
         return $this->hasOne( UserAttribute::class, 'user_id', 'id' );
     }
 
     /**
      * Relation with roles
-     *
-     * @return HasManyThrough
      **/
-    public function roles()
+    public function roles(): HasManyThrough
     {
         return $this->hasManyThrough(
             Role::class,
@@ -119,176 +126,38 @@ class User extends Authenticatable
     }
 
     /**
-     * Relation with permissions
-     * this should be triggered once.
-     *
-     * @return array
-     */
-    public static function permissions( $user_id = null )
-    {
-        /**
-         * If user id is not provided
-         */
-        $user = $user_id === null ? User::find( Auth::id() ) : User::find( $user_id );
-
-        $roles_id = $user
-            ->roles()
-            ->get()
-            ->map( fn( $role ) => $role->id )
-            ->toArray();
-
-        foreach ( $roles_id as $role_id ) {
-            if ( empty( self::$permissions[ $role_id ] ) ) {
-                $rawPermissions = Role::find( $role_id )->permissions;
-
-                /**
-                 * if the permissions hasn't yet been cached
-                 */
-                self::$permissions[ $role_id ] = [];
-
-                /**
-                 * if there is a rawPermission available
-                 */
-                if ( $rawPermissions->count() ) {
-                    foreach ( $rawPermissions as $permission ) {
-                        self::$permissions[ $role_id ][] = $permission->namespace;
-                    }
-                }
-            }
-        }
-
-        return collect( self::$permissions )->filter( function ( $permission, $key ) use ( $roles_id ) {
-            return in_array( $key, $roles_id );
-        })
-            ->flatten()
-            ->unique()
-            ->toArray();
-    }
-
-    /**
-     * Check if a user can perform an action
-     */
-    public static function allowedTo( $action, $type = 'all' )
-    {
-        if ( ! is_array( $action ) ) {
-            /**
-             * We'll check if any permission has been added
-             * to the user property, otherwise we'll get them.
-             */
-            if ( empty( Auth::user()->storedPermissions ) ) {
-                Auth::user()->storedPermissions = self::permissions();
-            }
-
-            return in_array( $action, Auth::user()->storedPermissions );
-        } else {
-            /**
-             * While looping, if one permission is not granted, exit the loop and return false
-             */
-            if ( $action ) {
-                $hasPassed = false;
-                foreach ( $action as $_permission ) {
-                    if ( ! self::allowedTo( $_permission ) && $type === 'all' ) {
-                        return false;
-                    } elseif ( self::allowedTo( $_permission ) && $type === 'some' ) {
-                        $hasPassed = true;
-                    }
-                }
-
-                return $type === 'all' ? true : $hasPassed;
-            }
-
-            return false;
-        }
-    }
-
-    /**
-     * Get authenticated user pseudo
-     *
-     * @return string
-     */
-    public function pseudo()
-    {
-        return Auth::user()->username;
-    }
-
-    /**
      * Assign user to a role
-     *
-     * @param int user id
-     * @param role name
-     * @return bool
      */
-    public static function setAs( $user, $roleName )
+    public function assignRole( $roleName )
     {
         if ( $role = Role::namespace( $roleName ) ) {
-            if ( $user instanceof User ) {
-                $combinaison = UserRoleRelation::combinaison( $user, $role )->first();
+            $combinaison = UserRoleRelation::combinaison( $this, $role )->first();
 
-                if ( ! $combinaison instanceof UserRoleRelation ) {
-                    $combinaison = new UserRoleRelation;
-                }
-
-                $combinaison->user_id = $user->id;
-                $combinaison->role_id = $role->id;
-                $combinaison->save();
-            } else {
-                $user = User::find( $user );
-
-                if ( $user instanceof User ) {
-                    return User::setAs( $user, $roleName );
-                }
+            if ( ! $combinaison instanceof UserRoleRelation ) {
+                $combinaison = new UserRoleRelation;
             }
+
+            $combinaison->user_id = $this->id;
+            $combinaison->role_id = $role->id;
+            $combinaison->save();
+
+            return [
+                'status' => 'success',
+                'message' => __( 'The role was successfully assigned.' ),
+            ];
+        } elseif ( is_array( $roleName ) ) {
+            collect( $roleName )->each( fn( $role ) => $this->assignRole( $role ) );
+
+            return [
+                'status' => 'success',
+                'message' => __( 'The role were successfully assigned.' ),
+            ];
         }
 
-        return false;
-    }
-
-    /**
-     * Set object as a role
-     * basically assigning role to user
-     *
-     * @param object user
-     * @return User<Model>
-     */
-    public static function set( $user )
-    {
-        return $user ? User::define( $user->id ) : false;
-    }
-
-    /**
-     * Define user id
-     *
-     * @param int user
-     */
-    public static function define( $user_id )
-    {
-        $user = new User;
-        $user->user_id = $user_id;
-
-        return $user;
-    }
-
-    /**
-     * Assign a role
-     *
-     * @param string role namespace
-     * @return void
-     */
-    public function as( $role )
-    {
-        return self::setAs( $this->user_id, $role );
-    }
-
-    /**
-     * mutator
-     * mutate active field
-     *
-     * @param string value
-     * @return bool
-     */
-    public function getActiveAttribute( $value )
-    {
-        return $value == '1';
+        return [
+            'status' => 'failed',
+            'message' => __( 'Unable to identifier the provided role.' ),
+        ];
     }
 
     /**

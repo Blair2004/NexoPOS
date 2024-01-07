@@ -26,13 +26,14 @@
 /**
  * @deprecated
  */
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
+import { nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 
 export default {
     name: "ns-pos-coupons-popup",
+    props: [ 'popup' ],
     data() {
         return {
             orderSubscriber: null,
@@ -50,7 +51,7 @@ export default {
 
         this.loadCoupons();
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
     },
     methods: {
@@ -66,7 +67,7 @@ export default {
 
         loadCoupons() {
             this.hasLoaded  =   false;
-            nsHttpClient.get( `/api/nexopos/v4/customers/${this.order.customer_id}/coupons` )
+            nsHttpClient.get( `/api/customers/${this.order.customer_id}/coupons` )
                 .subscribe( coupons => {
                     this.hasLoaded  =   true;
                     this.coupons    =   coupons;

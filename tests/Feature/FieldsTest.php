@@ -33,14 +33,16 @@ class FieldsTest extends TestCase
             $object = new $class;
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'get', '/api/nexopos/v4/fields/' . $object->getIdentifier() );
+                ->json( 'get', '/api/fields/' . $class::getIdentifier() );
 
             $result = collect( json_decode( $response->getContent() ) );
 
-            $this->assertTrue(
-                $result->filter( fn( $field ) => isset( $field->name ) )->count() === $result->count(),
-                'Some fields aren\'t corretly defined.'
-            );
+            if ( $result->filter( fn( $field ) => isset( $field->name ) )->count() !== $result->count() ) {
+                $this->assertTrue(
+                    $result->filter( fn( $field ) => isset( $field->name ) )->count() === $result->count(),
+                    sprintf( 'Some fields aren\'t corretly defined for the class %s.', $class )
+                );
+            }
         }
 
         $files = Storage::disk( 'ns' )->files( 'app/Forms' );
@@ -55,7 +57,7 @@ class FieldsTest extends TestCase
             $object = new $class;
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'get', '/api/nexopos/v4/forms/' . $object->getIdentifier() );
+                ->json( 'get', '/api/forms/' . $object->getIdentifier() );
 
             $result = json_decode( $response->getContent() );
 

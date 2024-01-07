@@ -10,17 +10,17 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Models\Notification;
+use App\Services\DateService;
 use App\Services\NotificationService;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationsController extends DashboardController
 {
-    protected $notificationService;
-
     public function __construct(
-        NotificationService $notificationService
+        protected NotificationService $notificationService,
+        protected DateService $dateService
     ) {
-        $this->notificationService = $notificationService;
+        // ...
     }
 
     /**

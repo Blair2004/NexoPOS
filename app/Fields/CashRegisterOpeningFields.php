@@ -7,7 +7,7 @@ use App\Services\FieldsService;
 
 class CashRegisterOpeningFields extends FieldsService
 {
-    protected $identifier = 'ns.cash-registers-opening';
+    protected static $identifier = 'ns.cash-registers-opening';
 
     public function get()
     {

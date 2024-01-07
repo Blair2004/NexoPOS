@@ -37,7 +37,7 @@
                                 <small>{{ product.unit.name }}</small>
                             </div>
                             <div class="flex items-center justify-center">
-                                <span class="py-1 flex items-center cursor-pointer border-b border-dashed border-info-primary">{{ product.unit_price * product.quantity | currency }}</span>
+                                <span class="py-1 flex items-center cursor-pointer border-b border-dashed border-info-primary">{{ nsCurrency( product.unit_price * product.quantity ) }}</span>
                             </div>
                         </div>
                         <div class="flex">
@@ -58,38 +58,39 @@
             <div class="py-2">
                 <div class="elevation-surface border font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Total' ) }}</span>
-                    <span>{{ total | currency }}</span>
+                    <span>{{ nsCurrency( total ) }}</span>
                 </div>
                 <div class="elevation-surface border success font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Paid' ) }}</span>
-                    <span>{{ order.tendered | currency }}</span>
+                    <span>{{ nsCurrency( order.tendered ) }}</span>
                 </div>
                 <div @click="selectPaymentGateway()" class="elevation-surface border info font-semibold flex mb-2 p-2 justify-between cursor-pointer">
                     <span>{{ __( 'Payment Gateway' ) }}</span>
-                    <span>{{ selectedPaymentGateway ? selectedPaymentGateway.label : 'N/A' }}</span>
+                    <span>{{ selectedPaymentGateway ? selectedPaymentGatewayLabel : 'N/A' }}</span>
                 </div>
                 <div class="elevation-surface border font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Screen' ) }}</span>
-                    <span>{{ screenValue | currency }}</span>
+                    <span>{{ nsCurrency( screen ) }}</span>
                 </div>
                 <div>
-                    <ns-numpad :currency="true" @changed="updateScreen( $event )" :value="screen" @next="proceedPayment( $event )"></ns-numpad>
+                    <ns-numpad-plus :currency="true" @changed="updateScreen( $event )" :value="screen" @next="proceedPayment( $event )"></ns-numpad-plus>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
-import FormValidation from '@/libraries/form-validation';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import nsOrdersRefundProducts from "@/popups/ns-orders-refund-product-popup";
-import nsOrdersProductQuantityVue from '@/popups/ns-orders-product-quantity.vue';
-import nsNumpad from "@/components/ns-numpad";
-import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { Popup } from '@/libraries/popup';
-import { __ } from '@/libraries/lang';
-import Print from '@/libraries/print';
+import FormValidation from '~/libraries/form-validation';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import nsOrdersRefundProducts from "~/popups/ns-orders-refund-product-popup.vue";
+import nsOrdersProductQuantityVue from '~/popups/ns-orders-product-quantity.vue';
+import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { Popup } from '~/libraries/popup';
+import { __ } from '~/libraries/lang';
+import Print from '~/libraries/print';
+import { nsNumpad } from '~/components/components';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
     components: {
@@ -97,16 +98,6 @@ export default {
     },
     props: [ 'order' ],
     computed: {
-        screenValue() {
-            let number    =   parseInt( 
-                1 + ( new Array( parseInt( ns.currency.ns_currency_precision ) ) )
-                .fill('')
-                .map( _ => 0 )
-                .join('') 
-            )
-            const amount    =   this.screen  / number;
-            return amount;
-        },
         total() {
             if ( this.refundables.length > 0 ) {
                 return this.refundables.map( product => parseFloat( product.unit_price ) * parseFloat( product.quantity ) )
@@ -149,7 +140,8 @@ export default {
     }, 
     methods: {
         __,
-
+        nsCurrency,
+        
         updateScreen( value ) {
             this.screen     =   value;
         },
@@ -171,7 +163,7 @@ export default {
                 return nsSnackBar.error( __( 'There is nothing to refund.' ) ).subscribe();
             }
 
-            if ( this.screenValue === 0 ) {
+            if ( this.screen === 0 ) {
                 return nsSnackBar.error( __( 'Please provide a valid payment amount.' ) ).subscribe();
             }
 
@@ -189,13 +181,13 @@ export default {
         doProceed() {
             const data      =   {
                 products            :   this.refundables,
-                total               :   this.screenValue,
-                payment             :   this.selectedPaymentGateway,
+                total               :   this.screen,
+                payment             :   { identifier: this.selectedPaymentGateway },
                 refund_shipping     :   this.refundShipping
             }
 
             this.isSubmitting   =   true;
-            nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/refund`, data )
+            nsHttpClient.post( `/api/orders/${this.order.id}/refund`, data )
                 .subscribe({
                     next:  (result) => {
                         this.isSubmitting   =   false;
@@ -303,14 +295,17 @@ export default {
             }, _ => _ );
         },
 
-        selectPaymentGateway() {
-            const promise   =   new Promise( ( resolve, reject ) => {
-                Popup.show( nsSelectPopupVue, { resolve, reject, value : [ this.selectedPaymentOption ], ...this.paymentField[0] })
-            });
+        async selectPaymentGateway() {
+            try {
+                this.selectedPaymentGateway     =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsSelectPopupVue, { resolve, reject, value : [ this.selectedPaymentOption ], ...this.paymentField[0] })
+                });
 
-            promise.then( option => {
-                this.selectedPaymentGateway     =   option[0];
-            }, _ => _ )
+                this.selectedPaymentGatewayLabel   =   this.paymentField[0].options
+                    .filter( option => option.value === this.selectedPaymentGateway )[0].label;
+            } catch( exception ) {
+                nsSnackBar.error( __( 'An error has occured while seleting the payment gateway.' ) ).subscribe();
+            }
         },
 
         changeQuantity( product ) {
@@ -349,7 +344,7 @@ export default {
     },  
     mounted() {
         this.selectFields   =   this.formValidation.createFields( this.selectFields );
-        nsHttpClient.get( '/api/nexopos/v4/orders/payments' )
+        nsHttpClient.get( '/api/orders/payments' )
             .subscribe( paymentField => {
                 this.paymentField       =   paymentField;
             });

@@ -85,11 +85,10 @@ trait ArrayHelper
 
         if ( $collections ) {
             foreach ( $collections as $collection ) {
-                
-                $collection     =   ( object ) $collection;
-
-                $id = $config[0];
-                if ( ! is_array( $config[1] ) ) {
+                if ( is_callable( $config ) ) {
+                    $result[] = $config( $collection );
+                } else if ( ! is_array( $config[1] ) ) {
+                    $id = $config[0];
                     $name = $config[1];
 
                     $result[] = [
@@ -134,6 +133,26 @@ trait ArrayHelper
         }
 
         return $final;
+    }
+
+    /**
+     * Key Value To Js Options
+     *
+     * @param array
+     * @return array of options
+     */
+    public static function boolToOptions( $true, $false )
+    {
+        return [
+            [
+                'label' => $true,
+                'value' => true,
+            ],
+            [
+                'label' => $false,
+                'value' => false,
+            ],
+        ];
     }
 
     /**

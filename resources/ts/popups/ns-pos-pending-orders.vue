@@ -11,7 +11,7 @@
         </div>
         <div class="overflow-y-auto flex flex-auto">
             <div class="flex p-2 flex-auto flex-col overflow-y-auto">
-                <div :data-order-id="order.id" class="border-b ns-box-body w-full py-2" v-for="order of orders" :key="order.id">
+                <div :data-order-id="order.id" class="border-b ns-box-body w-full py-2 ns-order-line" v-for="order of orders" :key="order.id">
                     <h3 class="text-primary">{{ order.title || 'Untitled Order' }}</h3>
                     <div class="px-2">
                         <div class="flex flex-wrap -mx-4">
@@ -39,8 +39,8 @@
     </div>
 </template>
 <script>
-import { nsHooks } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import { nsHooks } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     props: [ 'orders' ],
     data() {
@@ -54,17 +54,26 @@ export default {
     },
     watch: {
         orders() {
-            nsHooks.doAction( 'ns-pos-pending-orders-refreshed', this.orders );
+            this.$nextTick(() => {
+                nsHooks.doAction( 'ns-pos-pending-orders-refreshed', this.orders.map( order => {
+                    return {
+                    order,
+                    dom: document.querySelector( `[data-order-id="${order.id}"]` )
+                    }
+                }));
+            });
         }
     },
+    
     mounted() {
+
         this.columns.leftColumn    =   nsHooks.applyFilters( 'ns-pending-orders-left-column', [
             {
                 label: __( 'Code' ),
                 value: ( order ) => order.code
             }, {
                 label: __( 'Cashier' ),
-                value: ( order ) => order.nexopos_users_username
+                value: ( order ) => order.user_username
             }, {
                 label: __( 'Total' ),
                 value: ( order ) => order.total
@@ -77,7 +86,7 @@ export default {
         this.columns.rightColumn    =   nsHooks.applyFilters( 'ns-pending-orders-right-column', [
             {
                 label: __( 'Customer' ),
-                value: ( order ) => order.nexopos_customers_name
+                value: ( order ) => `${order.customer_first_name} ${order.customer_last_name}`
             }, {
                 label: __( 'Date' ),
                 value: ( order ) => order.created_at

@@ -156,7 +156,7 @@ trait WithTaxTest
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
-                return $tax;
+                return $tax->toArray();
             }),
         ]);
 
@@ -171,7 +171,7 @@ trait WithTaxTest
         $taxService = app()->make( TaxService::class );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', $details );
+            ->json( 'POST', 'api/orders', $details );
 
         $response->assertStatus( 200 );
 
@@ -189,7 +189,7 @@ trait WithTaxTest
     protected function attemptCreateTaxGroup()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', '/api/nexopos/v4/crud/ns.taxes-groups', [
+            ->json( 'POST', '/api/crud/ns.taxes-groups', [
                 'name' => __( 'GST' ),
             ]);
 
@@ -203,7 +203,7 @@ trait WithTaxTest
         $group = TaxGroup::get()->shuffle()->first();
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.taxes', [
+            ->json( 'POST', 'api/crud/ns.taxes', [
                 'name' => __( 'SGST' ),
                 'general' => [
                     'rate' => 5.5,
@@ -216,7 +216,7 @@ trait WithTaxTest
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.taxes', [
+            ->json( 'POST', 'api/crud/ns.taxes', [
                 'name' => __( 'CGST' ),
                 'general' => [
                     'rate' => 6.5,

@@ -1,0 +1,18 @@
+.ns-tab {
+    .tab {
+        @apply border-tab-active-border text-primary;
+        
+        &.active {
+            @apply bg-tab-active;
+        }
+        &.inactive {
+            @apply bg-tab-inactive;
+        }
+    }
+}
+.ns-tab-item > div {
+    @apply border-tab-active-border bg-tab-active;
+    .ns-tab-item-footer {
+        @apply border-gray-400;
+    }
+}

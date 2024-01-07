@@ -3,7 +3,7 @@
         <div id="notification-button" @click="visible = !visible" :class="visible ? 'panel-visible border-0 shadow-lg' : 'border panel-hidden'" class="hover:shadow-lg hover:border-opacity-0 rounded-full h-12 w-12 cursor-pointer font-bold text-2xl justify-center items-center flex">
             <div class="relative float-right" v-if="notifications.length > 0">
                 <div class="absolute -ml-6 -mt-8">
-                    <div class="bg-info-tertiary text-white w-8 h-8 rounded-full text-xs flex items-center justify-center">{{ notifications.length | abbreviate }}</div>
+                    <div class="bg-info-tertiary text-white w-8 h-8 rounded-full text-xs flex items-center justify-center">{{ nsNumberAbbreviate( notifications.length, 'abbreviate' ) }}</div>
                 </div>
             </div>
             <i class="las la-bell"></i>
@@ -22,6 +22,9 @@
                                     <ns-close-button @click="closeNotice( $event, notification )"></ns-close-button>
                                 </div>
                                 <p class="py-1 text-sm">{{ notification.description }}</p>
+                                <div class="flex justify-end">
+                                    <span class="text-xs date">{{ timespan( notification.updated_at ) }}</span>
+                                </div>
                             </div>
                         </div>
                         <div v-if="notifications.length === 0" class="h-full w-full flex items-center justify-center">
@@ -40,9 +43,13 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import nsCloseButton from '~/components/ns-close-button.vue';
+import { nsNumberAbbreviate } from '~/filters/currency';
+import { timespan } from '~/libraries/timespan';
+
 export default {
     name: 'ns-notifications',
     data() {
@@ -51,6 +58,9 @@ export default {
             visible: false,
             interval: null,
         }
+    },
+    components: {
+        nsCloseButton
     },
     mounted() {
         document.addEventListener( 'click', this.checkClickedItem );
@@ -71,15 +81,15 @@ export default {
 
         this.loadNotifications();
     },
-    destroyed() {
+    unmounted() {
         clearInterval( this.interval );
     },
     methods: {
         __,
+        timespan,
+        nsNumberAbbreviate,
         pushNotificationIfNew( notification ) {
             const exists     =   this.notifications.filter( _notification => _notification.id === notification.id ).length > 0;
-
-            console.log( notification );
 
             if ( ! exists ) {
                 this.notifications.push( notification );
@@ -99,7 +109,7 @@ export default {
                 message: __( 'Would you like to clear all the notifications ?' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.delete( `/api/nexopos/v4/notifications/all` )
+                        nsHttpClient.delete( `/api/notifications/all` )
                             .subscribe( result => {
                                 nsSnackBar.success( result.message ).subscribe();
                             })
@@ -124,7 +134,7 @@ export default {
         },
 
         loadNotifications() {
-            nsHttpClient.get( '/api/nexopos/v4/notifications' )
+            nsHttpClient.get( '/api/notifications' )
                 .subscribe( notifications => {
                     this.notifications  =   notifications;
                 })
@@ -137,7 +147,7 @@ export default {
         },
 
         closeNotice( event, notification ) {
-            nsHttpClient.delete( `/api/nexopos/v4/notifications/${notification.id}` )
+            nsHttpClient.delete( `/api/notifications/${notification.id}` )
                 .subscribe( result => {
                     this.loadNotifications();
                 });

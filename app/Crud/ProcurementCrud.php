@@ -7,8 +7,6 @@ use App\Models\Procurement;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\ProviderService;
-use App\Services\Users;
-use Exception;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -22,7 +20,7 @@ class ProcurementCrud extends CrudService
     /**
      * base route name
      */
-    protected $identifier = '/procurements';
+    const IDENTIFIER = '/procurements';
 
     /**
      * Define namespace
@@ -220,7 +218,7 @@ class ProcurementCrud extends CrudService
     public function filterPostInputs( $inputs )
     {
         if ( empty( $inputs[ 'invoice_date' ] ) ) {
-            $inputs[ 'invoice_date' ] = ns()->date->getNowFormatted();
+            $inputs[ 'invoice_date' ] = ns()->date->toDateTimeString();
         }
 
         return $inputs;
@@ -235,7 +233,7 @@ class ProcurementCrud extends CrudService
     public function filterPutInputs( $inputs, Procurement $entry )
     {
         if ( empty( $inputs[ 'invoice_date' ] ) ) {
-            $inputs[ 'invoice_date' ] = ns()->date->getNowFormatted();
+            $inputs[ 'invoice_date' ] = ns()->date->toDateTimeString();
         }
 
         return $inputs;
@@ -306,26 +304,6 @@ class ProcurementCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -339,10 +317,8 @@ class ProcurementCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -350,7 +326,7 @@ class ProcurementCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'providers_name' => [
+            'providers_first_name' => [
                 'label' => __( 'Provider' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -442,7 +418,7 @@ class ProcurementCrud extends CrudService
             $entry->addAction( 'set_paid', [
                 'label' => __( 'Set Paid' ),
                 'type' => 'GET',
-                'url' => ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/set-as-paid' ),
+                'url' => ns()->url( '/api/procurements/' . $entry->id . '/set-as-paid' ),
                 'confirm' => [
                     'message' => __( 'Would you like to mark this procurement as paid?' ),
                 ],
@@ -454,7 +430,7 @@ class ProcurementCrud extends CrudService
             'namespace' => 'refresh',
             'type' => 'GET',
             'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/refresh' ),
+            'url' => ns()->url( '/api/procurements/' . $entry->id . '/refresh' ),
             'confirm' => [
                 'message' => __( 'Would you like to refresh this ?' ),
             ],
@@ -464,7 +440,7 @@ class ProcurementCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],

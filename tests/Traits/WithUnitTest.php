@@ -9,7 +9,7 @@ trait WithUnitTest
     protected function attemptCreateUnitGroup()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units-groups', [
+            ->json( 'POST', 'api/crud/ns.units-groups', [
                 'name' => __( 'Liquids' ),
             ]);
 
@@ -24,7 +24,7 @@ trait WithUnitTest
     {
         $group = UnitGroup::get()->shuffle()->first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units', [
+            ->json( 'POST', 'api/crud/ns.units', [
                 'name' => __( 'Piece' ),
                 'general' => [
                     'base_unit' => true,
@@ -39,7 +39,7 @@ trait WithUnitTest
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units', [
+            ->json( 'POST', 'api/crud/ns.units', [
                 'name' => __( 'Dozen' ),
                 'general' => [
                     'base_unit' => false,
@@ -54,7 +54,7 @@ trait WithUnitTest
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units', [
+            ->json( 'POST', 'api/crud/ns.units', [
                 'name' => __( 'Thirty' ),
                 'general' => [
                     'base_unit' => false,

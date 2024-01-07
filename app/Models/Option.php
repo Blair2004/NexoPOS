@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int $user_id
+ * @property string $key
+ * @property string $value
+ * @property \Carbon\Carbon $updated_at
+ * @property bool $array
+ */
 class Option extends NsModel
 {
     use HasFactory;
@@ -13,6 +20,11 @@ class Option extends NsModel
     public $parsed = false;
 
     protected $key;
+
+    protected $casts = [
+        'array' => 'boolean',
+        'user_id' => 'integer',
+    ];
 
     public function scopeKey( $query, $key )
     {

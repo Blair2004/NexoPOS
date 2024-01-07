@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -317,10 +316,8 @@ class RegisterCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -383,7 +380,7 @@ class RegisterCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.registers/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.registers/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -446,8 +443,8 @@ class RegisterCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'cash-registers' ),
             'create' => ns()->url( 'dashboard/' . 'cash-registers/create' ),
             'edit' => ns()->url( 'dashboard/' . 'cash-registers/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.registers' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.registers/{id}' . '' ),
         ];
     }
 

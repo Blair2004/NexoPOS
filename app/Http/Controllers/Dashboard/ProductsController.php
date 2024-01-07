@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Classes\Hook;
 use App\Classes\Output;
+use App\Crud\ProductCrud;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
 use App\Exceptions\NotAllowedException;
@@ -29,22 +30,11 @@ use Illuminate\Support\Facades\View;
 
 class ProductsController extends DashboardController
 {
-    /** @var ProductService */
-    protected $productService;
-
-    /**
-     * @var DateService
-     */
-    protected $dateService;
-
     public function __construct(
-        ProductService $productService,
-        DateService $dateService
+        protected ProductService $productService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
-        $this->productService = $productService;
-        $this->dateService = $dateService;
+        // ...
     }
 
     public function saveProduct( Request $request )
@@ -113,52 +103,16 @@ class ProductsController extends DashboardController
      */
     public function updateProduct( Request $request, Product $product )
     {
-        $primary = collect( $request->input( 'variations' ) )
-            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
-            ->first();
-
-        $source = $primary;
-        $units = $primary[ 'units' ];
-
-        /**
-         * this is made to ensure the array
-         * provided aren't flatten
-         */
-        unset( $primary[ 'images' ] );
-        unset( $primary[ 'units' ] );
-        unset( $primary[ 'groups' ] );
-
-        $primary[ 'identification' ][ 'name' ] = $request->input( 'name' );
-        $primary = Helper::flatArrayWithKeys( $primary )->toArray();
-        $primary[ 'product_type' ] = 'product';
-
-        /**
-         * let's restore the fields before
-         * storing that.
-         */
-        $primary[ 'images' ] = $source[ 'images' ];
-        $primary[ 'units' ] = $source[ 'units' ];
-        $primary[ 'groups' ] = $source[ 'groups' ];
-
-        unset( $primary[ '$primary' ] );
-
-        /**
-         * As foreign fields aren't handled with
-         * they are complex (array), this methods allow
-         * external script to reinject those complex fields.
-         */
-        $primary = Hook::filter( 'ns-update-products-inputs', $primary, $source, $product );
+        $productCrud = new ProductCrud;
+        $form = $productCrud->getFlatForm( $request->post(), $product );
 
         /**
          * the method "create" is capable of
          * creating either a product or a variable product
          */
-        return $this->productService->update( $product, $primary );
+        return $this->productService->update( $product, $form );
     }
 
-    /**
-     * @todo must be extracted to a service
-     */
     public function searchProduct( Request $request )
     {
         return $this->productService->searchProduct(
@@ -265,14 +219,6 @@ class ProductsController extends DashboardController
         return $this->productService->getProductVariations();
     }
 
-    /**
-     * delete all available product variations
-     */
-    public function deleteAllVariations()
-    {
-        return $this->productService->deleteVariations();
-    }
-
     public function deleteAllProducts()
     {
         return $this->productService->deleteAllProducts();
@@ -357,32 +303,27 @@ class ProductsController extends DashboardController
     {
         ns()->restrict([ 'nexopos.read.products' ]);
 
-        Hook::addFilter( 'ns-crud-footer', function ( Output $output ) {
+        Hook::addAction( 'ns-crud-footer', function( Output $output ) {
             $output->addView( 'pages.dashboard.products.quantity-popup' );
 
             return $output;
         });
 
-        return $this->view( 'pages.dashboard.crud.table', [
-            'title' => __( 'Products List' ),
-            'createUrl' => ns()->url( '/dashboard/products/create' ),
-            'description' => __( 'List all products available on the system' ),
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.products' ),
-        ]);
+        return ProductCrud::table();
     }
 
     public function editProduct( Product $product )
     {
         ns()->restrict([ 'nexopos.update.products' ]);
 
-        return $this->view( 'pages.dashboard.products.create', [
+        return view::make( 'pages.dashboard.products.create', [
             'title' => __( 'Edit a product' ),
             'description' => __( 'Makes modifications to a product' ),
-            'submitUrl' => ns()->url( '/api/nexopos/v4/products/' . $product->id ),
+            'submitUrl' => ns()->url( '/api/products/' . $product->id ),
             'returnUrl' => ns()->url( '/dashboard/products' ),
-            'unitsUrl' => ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
+            'unitsUrl' => ns()->url( '/api/units-groups/{id}/units' ),
             'submitMethod' => 'PUT',
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.products/form-config/' . $product->id ),
+            'src' => ns()->url( '/api/crud/ns.products/form-config/' . $product->id ),
         ]);
     }
 
@@ -390,13 +331,13 @@ class ProductsController extends DashboardController
     {
         ns()->restrict([ 'nexopos.create.products' ]);
 
-        return $this->view( 'pages.dashboard.products.create', [
+        return view::make( 'pages.dashboard.products.create', [
             'title' => __( 'Create a product' ),
             'description' => __( 'Add a new product on the system' ),
-            'submitUrl' => ns()->url( '/api/nexopos/v4/products' ),
+            'submitUrl' => ns()->url( '/api/products' ),
             'returnUrl' => ns()->url( '/dashboard/products' ),
-            'unitsUrl' => ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.products/form-config' ),
+            'unitsUrl' => ns()->url( '/api/units-groups/{id}/units' ),
+            'src' => ns()->url( '/api/crud/ns.products/form-config' ),
         ]);
     }
 
@@ -423,13 +364,16 @@ class ProductsController extends DashboardController
      */
     public function productHistory( $identifier )
     {
-        Hook::addFilter( 'ns-crud-footer', function ( Output $output, $identifier ) {
+        Hook::addAction( 'ns-crud-footer', function( Output $output, $identifier ) {
             $output->addView( 'pages.dashboard.products.history' );
 
             return $output;
         }, 10, 2 );
 
+        $product = Product::find( $identifier );
+
         return ProductHistoryCrud::table([
+            'title' => sprintf( __( 'Stock History For %s' ), $product->name ),
             'queryParams' => [
                 'product_id' => $identifier,
             ],
@@ -438,7 +382,7 @@ class ProductsController extends DashboardController
 
     public function showStockAdjustment()
     {
-        return $this->view( 'pages.dashboard.products.stock-adjustment', [
+        return View::make( 'pages.dashboard.products.stock-adjustment', [
             'title' => __( 'Stock Adjustment' ),
             'description' => __( 'Adjust stock of existing products.' ),
             'actions' => Helper::kvToJsOptions([
@@ -446,6 +390,7 @@ class ProductsController extends DashboardController
                 ProductHistory::ACTION_DELETED => __( 'Delete' ),
                 ProductHistory::ACTION_DEFECTIVE => __( 'Defective' ),
                 ProductHistory::ACTION_LOST => __( 'Lost' ),
+                ProductHistory::ACTION_SET => __( 'Set' ),
             ]),
         ]);
     }
@@ -501,9 +446,23 @@ class ProductsController extends DashboardController
          * made are actually supported.
          */
         foreach ( $request->input( 'products' ) as $unit ) {
+            /**
+             * if the action is set, then we need to make sure
+             * the quantity is set
+             */
+            if ( ! isset( $unit[ 'adjust_unit' ][ 'unit_id' ] ) ) {
+                throw new Exception( sprintf( __( 'The unit is not set for the product "%s".' ), $unit[ 'name' ] ) );
+            }
+
+            /**
+             * let's check if the action is supported
+             */
             if (
                 ! in_array( $unit[ 'adjust_action' ], ProductHistory::STOCK_INCREASE ) &&
-                ! in_array( $unit[ 'adjust_action' ], ProductHistory::STOCK_REDUCE )
+                ! in_array( $unit[ 'adjust_action' ], ProductHistory::STOCK_REDUCE ) &&
+                ! in_array( $unit[ 'adjust_action' ], [
+                    ProductHistory::ACTION_SET,
+                ])
             ) {
                 throw new Exception( sprintf( __( 'Unsupported action for the product %s.' ), $unit[ 'name' ] ) );
             }
@@ -527,6 +486,16 @@ class ProductsController extends DashboardController
                         )
                     );
                 }
+            }
+
+            if ( $unit[ 'adjust_quantity' ] < 0 ) {
+                throw new NotAllowedException(
+                    sprintf(
+                        __( 'The adjustment quantity can\'t be negative for the product "%s" (%s)' ),
+                        $unit[ 'name' ],
+                        $unit[ 'adjust_quantity' ]
+                    )
+                );
             }
         }
 
@@ -556,7 +525,7 @@ class ProductsController extends DashboardController
         $procurementProduct = ProcurementProduct::barcode( $reference )->first();
         $productUnitQuantity = ProductUnitQuantity::barcode( $reference )->with( 'unit' )->first();
         $product = Product::barcode( $reference )
-            ->searchable()
+            ->onSale()
             ->first();
 
         if ( $procurementProduct instanceof ProcurementProduct ) {
@@ -612,7 +581,7 @@ class ProductsController extends DashboardController
 
     public function printLabels()
     {
-        return $this->view( 'pages.dashboard.products.print-labels', [
+        return view::make( 'pages.dashboard.products.print-labels', [
             'title' => __( 'Print Labels' ),
             'description' => __( 'Customize and print products labels.' ),
         ]);

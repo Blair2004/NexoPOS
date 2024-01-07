@@ -1,17 +1,9 @@
+@inject( 'widgetService', 'App\Services\WidgetService' )
 <div id="dashboard-content" class="px-4">
-    <ns-dashboard-cards></ns-dashboard-cards>
-    <div class="-m-4 flex flex-wrap">
-        <div class="p-4 w-full flex lg:w-1/2">
-            <ns-orders-chart></ns-orders-chart>
-        </div>
-        <div class="p-4 w-full flex lg:w-1/2">
-            <ns-orders-summary></ns-orders-summary>
-        </div>
-        <div class="p-4 w-full flex lg:w-1/2">
-            <ns-best-customers></ns-best-customers>
-        </div>
-        <div class="p-4 w-full flex lg:w-1/2">
-            <ns-best-cashiers></ns-best-cashiers>
-        </div>
-    </div>
+    <ns-dashboard>
+        <ns-dragzone 
+            :raw-columns="{{ $widgetService->getWidgetsArea( 'ns-dashboard-widgets' )->values()->toJson() }}" 
+            :raw-widgets="{{ $widgetService->getWidgets()->values()->toJson() }}">
+        </ns-dragzone>
+    </ns-dashboard>
 </div>

@@ -24,7 +24,7 @@ class ExtractTranslation extends Command
      *
      * @var string
      */
-    protected $description = 'Will perform various operation regarding translation for NexoPOS 4.x and it\'s modules';
+    protected $description = 'Will perform various operation regarding translation for NexoPOS and it\'s modules';
 
     /**
      * Create a new command instance.
@@ -218,7 +218,7 @@ class ExtractTranslation extends Command
          */
         $this->withProgressBar( $filtered, function ( $file ) use ( &$exportable ) {
             $fileContent = Storage::disk( 'ns' )->get( $file );
-            preg_match_all('/\_\_[m]?\(\s*[\'\"\`]([\w\s\+\"\\/\d\-é&\[\]\@*$#\.\?\%,;)\{\}]*)[\'\"\`]\s*(\,?\s*[\'\"\`]?(\w)*[\'\"\`]?\s*)?\)/', $fileContent, $output_array);
+            preg_match_all('/__[m]?\(\s*(?(?=[\'"`](?:[\s\S]*?)[\'"`](?:,\s*(?:[^)]*))?)[\'"`]([\s\S]*?)[\'"`](?:,\s*(?:[^)]*))?|)\s*\)/', $fileContent, $output_array);
 
             if ( isset( $output_array[1] ) ) {
                 foreach ( $output_array[1] as $string ) {

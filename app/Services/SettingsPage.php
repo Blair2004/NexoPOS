@@ -3,23 +3,23 @@
 namespace App\Services;
 
 use App\Events\SettingsSavedEvent;
+use App\Traits\NsForms;
+use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
 class SettingsPage
 {
+    use NsForms;
+
     protected $form = [];
 
-    protected $labels = [];
-
-    protected $identifier;
+    protected string $view;
 
     /**
      * returns the defined form
-     *
-     * @return array
      */
-    public function getForm()
+    public function getForm(): array
     {
         return collect( $this->form )->mapWithKeys( function ( $tab, $key ) {
             if ( $tab === 'tabs' ) {
@@ -39,48 +39,65 @@ class SettingsPage
             }
 
             return [ $key => $tab ];
-        });
-    }
-
-    public function getLabels()
-    {
-        return $this->labels;
-    }
-
-    public function getNamespace()
-    {
-        return $this->identifier;
+        })->toArray();
     }
 
     public function getIdentifier()
     {
-        return $this->identifier;
+        return get_called_class()::IDENTIFIER;
+    }
+
+    /**
+     * In case the form is used as a resource,
+     * "index" is used as a main method.
+     */
+    public static function index()
+    {
+        return self::renderForm();
     }
 
     public static function renderForm()
     {
         $className = get_called_class();
-        $form = new $className;
+        $settings = new $className;
+        
+        /**
+         * if something has to be made before a form 
+         * is renderer, we'll trigger the method here if
+         * that exists.
+         */
+        if ( method_exists( $settings, 'beforeRenderForm' ) ) {
+            $settings->beforeRenderForm();
+        }
 
+        /**
+         * When the settingsPage class has the "getView" method,
+         * we return it as it might provide a custom View page.
+         */
+        if ( method_exists( $settings, 'getView' ) ) {
+            return $settings->getView();
+        }
+
+        $form   =   $settings->getForm();
+
+        /**
+         * if the form is an instance of a view
+         * that view is rendered in place of the default form.
+         */
         return View::make( 'pages.dashboard.settings.form', [
-            'title' => $form->getLabels()[ 'title' ] ?? __( 'Untitled Settings Page' ),
+            'title' => $form[ 'title' ] ?? __( 'Untitled Settings Page' ),
 
             /**
              * retrive the description provided on the SettingsPage instance.
              * Otherwhise a default settings is used .
              */
-            'description' => $form->getLabels()[ 'description' ] ?? __( 'No description provided for this settings page.' ),
+            'description' => $form[ 'description' ] ?? __( 'No description provided for this settings page.' ),
 
             /**
-             * retrieve the identifier of the form if it's defined.
-             * this is used to load the form asynchronously.
+             * retrieve the identifier of the settings if it's defined.
+             * this is used to load the settings asynchronously.
              */
-            'identifier' => $form->getIdentifier(),
-
-            /**
-             * Provided to render the side menu.
-             */
-            'menus' => app()->make( MenuService::class ),
+            'identifier' => $settings->getIdentifier(),
         ]);
     }
 
@@ -92,14 +109,13 @@ class SettingsPage
      */
     public function validateForm( Request $request )
     {
-        $service = new CrudService;
-        $arrayRules = $service->extractCrudValidation( $this, null );
+        $arrayRules = $this->extractValidation();
 
         /**
          * As rules might contains complex array (with Rule class),
          * we don't want that array to be transformed using the dot key form.
          */
-        $isolatedRules = $service->isolateArrayRules( $arrayRules );
+        $isolatedRules = $this->isolateArrayRules( $arrayRules );
 
         /**
          * Let's properly flat everything.
@@ -112,19 +128,6 @@ class SettingsPage
     }
 
     /**
-     * Get form plain data, by excaping the tabs
-     * identifiers
-     *
-     * @return array
-     */
-    public function getPlainData( Request $request )
-    {
-        $service = new CrudService;
-
-        return $service->getPlainData( $this, $request );
-    }
-
-    /**
      * Proceed to a saving using te provided
      * request along with the plain data
      *
@@ -132,14 +135,12 @@ class SettingsPage
      */
     public function saveForm( Request $request )
     {
-        $service = new CrudService;
-
         /**
          * @var Options
          */
         $options = app()->make( Options::class );
 
-        foreach ( $service->getPlainData( $this, $request ) as $key => $value ) {
+        foreach ( $this->getPlainData( $request ) as $key => $value ) {
             if ( empty( $value ) ) {
                 $options->delete( $key );
             } else {

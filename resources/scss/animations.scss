@@ -1,0 +1,94 @@
+@keyframes ZoomOutEntrance {
+    0% {
+        transform: scale(1.1,1.1);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1,1);
+        opacity: 1;
+    }
+}
+
+@keyframes ZoomInEntrance {
+    0% {
+        transform: scale(0.9,0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1,1);
+        opacity: 1;
+    }
+}
+
+@keyframes ZoomOutExit {
+    0% {
+        transform: scale(1,1);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(0.9,0.9);
+        opacity: 1;
+    }
+}
+
+@keyframes ZoomInExit {
+    0% {
+        transform: scale(1,1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.1,1.1);
+        opacity: 0;
+    }
+}
+
+@keyframes FadeInEntrance {
+    0% {
+        opacity: 0;
+    }
+    70% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes FadeOutExit {
+    0% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.zoom-out-entrance {
+    animation: ZoomOutEntrance 500ms;
+}
+.zoom-in-entrance {
+    animation: ZoomInEntrance;
+}
+.zoom-in-exit {
+    animation: ZoomInExit 300ms;
+}
+.zoom-out-exit {
+    animation: ZoomOutExit;
+}
+.fade-in-entrance {
+    animation: FadeInEntrance;
+}
+.fade-out-exit {
+    animation: FadeOutExit;
+}
+
+$times: 100,300,500,700,900;
+
+@each $i in $times {
+    .anim-duration-#{$i} {
+        animation-duration: #{$i}ms;
+    }
+}

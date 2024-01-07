@@ -1,15 +1,15 @@
 <template>
     <div id="crud-table" class="w-full rounded-lg" :class="mode !== 'light' ? 'shadow mb-8': ''">
-        <div id="crud-table-header" class="p-2 border-b border-popup-surface flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
+        <div id="crud-table-header" class="p-2 border-b flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
                 <div v-if="createUrl" class="px-2 flex items-center justify-center">
                     <a :href="createUrl || '#'" class="rounded-full ns-crud-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border"><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
                     <div class="rounded-full p-1 ns-crud-input flex">
-                        <input v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-none px-2">
+                        <input @keypress.enter="search()" v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-none px-2">
                         <button @click="search()" class="rounded-full w-8 h-8 outline-none ns-crud-input-button"><i class="las la-search"></i></button>
-                        <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-secondary text-white outline-none hover:bg-error-tertiary"><i class="las la-times"></i></button>
+                        <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-secondary outline-none hover:bg-error-tertiary"><i class="las la-times text-white"></i></button>
                     </div>
                 </div>
                 <div class="px-2 flex items-center justify-center">
@@ -26,9 +26,12 @@
                     <button @click="openQueryFilter()" :class="withFilters ? 'table-filters-enabled' : 'table-filters-disabled'" class="ns-crud-button border rounded-full text-sm h-10 px-3 outline-none ">
                         <i v-if="! withFilters" class="las la-filter"></i>
                         <i v-if="withFilters" class="las la-check"></i>
-                        <span v-if="! withFilters">{{ __( 'Filters' ) }}</span>
-                        <span v-if="withFilters">{{ __( 'Has Filters' ) }}</span>
+                        <span class="ml-1" v-if="! withFilters">{{ __( 'Filters' ) }}</span>
+                        <span class="ml-1" v-if="withFilters">{{ __( 'Has Filters' ) }}</span>
                     </button>
+                </div>
+                <div id="custom-buttons" v-if="headerButtonsComponents.length > 0">
+                    <component @refresh="refresh()" :result="result" :is="component" :key="index" v-for="(component, index) of headerButtonsComponents"/>
                 </div>
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">
@@ -42,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <div class="flex">
+        <div class="flex p-2">
             <div class="overflow-x-auto flex-auto">
                 <table class="table ns-table w-full" v-if="Object.values( columns ).length > 0">
                     <thead>
@@ -77,7 +80,7 @@
                                 @toggled="handleShowOptions( $event )"></ns-table-row>
                         </template>
                         <tr v-if="! result || result.data.length === 0">
-                            <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 dark:text-slate-300 py-3">{{ __( 'There is nothing to display...' ) }}</td>
+                            <td :colspan="Object.values( columns ).length + 2" class="text-center border py-3">{{ __( 'There is nothing to display...' ) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -112,15 +115,17 @@
     </div>
 </template>
 <script lang="ts">
-import { nsSnackBar } from '@/bootstrap';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { Popup } from '@/libraries/popup';
-import { __ } from '@/libraries/lang';
-import { HttpStatusResponse } from '@/interfaces/http-status-response';
-import { HttpCrudResponse } from '@/interfaces/http-crud-response';
-import nsOrdersFilterPopupVue from '@/popups/ns-orders-filter-popup.vue';
+import { nsSnackBar } from '~/bootstrap';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { Popup } from '~/libraries/popup';
+import { __ } from '~/libraries/lang';
+import { HttpStatusResponse } from '~/interfaces/http-status-response';
+import { HttpCrudResponse } from '~/interfaces/http-crud-response';
+import nsOrdersFilterPopupVue from '~/popups/ns-orders-filter-popup.vue';
+import { defineAsyncComponent } from 'vue';
 
 declare const nsCrudHandler;
+declare const nsExtraComponents;
 
 export default {
     data: () => {
@@ -136,6 +141,7 @@ export default {
             bulkAction: '',
             bulkActions: [],
             queryFilters:[],
+            headerButtons: [],
             withFilters: false,
             columns: [],
             selectedEntries:[],
@@ -164,7 +170,7 @@ export default {
 
         this.loadConfig();
     },
-    props: [ 'src', 'create-url', 'mode', 'identifier', 'queryParams' ],
+    props: [ 'src', 'createUrl', 'mode', 'identifier', 'queryParams' ],
     computed: {
         /**
          * helps to get parsed
@@ -201,8 +207,17 @@ export default {
         },
         resultInfo() {
             return __( 'displaying {perPage} on {items} items' )
-                .replace( '{perPage}', this.result.total )
-                .replace( '{items}', this.result.total )
+                .replace( '{perPage}', this.result.per_page || 0 )
+                .replace( '{items}', this.result.total || 0 )
+        },
+        headerButtonsComponents() {
+            return this.headerButtons.map( buttonComponent => {
+                return defineAsyncComponent( () => {
+                    return new Promise( ( resolve ) => {
+                        resolve( nsExtraComponents[ buttonComponent ] );
+                    })
+                })
+            });
         }
     },
     methods: {
@@ -258,6 +273,7 @@ export default {
                 onAction: ( action ) => {
                     if ( action ) {
                         this.selectedEntries    =   [];
+                        this.handleGlobalChange( false );
                     }
                 }
             });
@@ -309,6 +325,7 @@ export default {
                 this.queryFilters   =   f.queryFilters;
                 this.prependOptions =   f.prependOptions;
                 this.showOptions    =   f.showOptions;
+                this.headerButtons  =   f.headerButtons || [];
                 this.refresh();
             }, ( error ) => {
                 nsSnackBar.error( error.message, 'OK', { duration: false }).subscribe();
@@ -325,9 +342,14 @@ export default {
                 this.searchQuery    =   '';
             }
 
+            this.page   =   1;
+
             this.refresh();
         },
         sort( identifier ) {
+            if ( this.columns[ identifier ].$sort === false ) {
+                return nsSnackBar.error( __( 'Sorting is explicitely disabled on this column' ) ).subscribe();
+            }
 
             for ( let key in this.columns ) {
                 if ( key !== identifier ) {
@@ -346,6 +368,7 @@ export default {
                     this.columns[ identifier ].$direction   =   '';
                 break;
                 case '':
+                default:
                     this.columns[ identifier ].$direction   =   'asc';
                 break;
             }
@@ -362,7 +385,7 @@ export default {
         bulkDo() {
             if ( this.bulkAction ) {
                 if ( this.selectedEntries.length > 0 ) {
-                    if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || __( 'Would you like to perform the selected bulk action on the selected entries ?' ) ) ) {
+                    if ( confirm( this.getSelectedAction.confirm || __( 'Would you like to perform the selected bulk action on the selected entries ?' ) ) ) {
                         return nsHttpClient.post( `${this.src}/bulk-actions`, {
                             action: this.bulkAction,
                             entries: this.selectedEntries.map( r => r.$id )
@@ -379,11 +402,11 @@ export default {
                         })
                     }
                 } else {
-                    return nsSnackBar.error( this.$slots[ 'error-no-selection' ] ? this.$slots[ 'error-no-selection' ][0].text : __( 'No selection has been made.' ) )
+                    return nsSnackBar.error( __( 'No selection has been made.' ) )
                         .subscribe();
                 }
             } else {
-                return nsSnackBar.error( this.$slots[ 'error-no-action' ] ? this.$slots[ 'error-no-action' ][0].text : __( 'No action has been selected.' ) )
+                return nsSnackBar.error( __( 'No action has been selected.' ) )
                     .subscribe();
             }
 
@@ -391,8 +414,6 @@ export default {
 
         async openQueryFilter() {
             try {
-                console.log( nsOrdersFilterPopupVue );
-
                 const result    =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsOrdersFilterPopupVue, { resolve, reject, queryFilters: this.queryFilters });
                 });

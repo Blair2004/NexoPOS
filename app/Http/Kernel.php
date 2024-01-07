@@ -4,10 +4,11 @@ namespace App\Http;
 
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
-use App\Http\Middleware\ForceSetSessionDomainMiddleware;
+use App\Http\Middleware\KillSessionIfNotInstalledMiddleware;
 use App\Http\Middleware\LoadLangMiddleware;
 use App\Http\Middleware\ProtectRoutePermissionMiddleware;
 use App\Http\Middleware\ProtectRouteRoleMiddleware;
+use App\Http\Middleware\SanitizePostFieldsMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
@@ -21,10 +22,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
-        ForceSetSessionDomainMiddleware::class,
         \App\Http\Middleware\TrustProxies::class,
-        \Fruitcake\Cors\HandleCors::class,
         \App\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
@@ -39,6 +37,7 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
         'web' => [
             \App\Http\Middleware\EncryptCookies::class,
+            KillSessionIfNotInstalledMiddleware::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
@@ -50,7 +49,7 @@ class Kernel extends HttpKernel
         'api' => [
             EnsureFrontendRequestsAreStateful::class,
             LoadLangMiddleware::class,
-            // 'throttle:80,1',
+            'throttle:80,1',
         ],
     ];
 
@@ -61,7 +60,7 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
-    protected $routeMiddleware = [
+    protected $middlewareAliases = [
         'ns.not-installed' => \App\Http\Middleware\NotInstalledStateMiddleware::class,
         'ns.installed' => \App\Http\Middleware\InstalledStateMiddleware::class,
         'ns.clear-cache' => \App\Http\Middleware\ClearRequestCacheMiddleware::class,
@@ -79,5 +78,6 @@ class Kernel extends HttpKernel
         'ns.check-application-health' => CheckApplicationHealthMiddleware::class,
         'ns.restrict' => ProtectRoutePermissionMiddleware::class,
         'ns.restrict-role' => ProtectRouteRoleMiddleware::class,
+        'ns.sanitize-inputs' => SanitizePostFieldsMiddleware::class,
     ];
 }

@@ -2,12 +2,12 @@
 
 @section( 'layout.dashboard.body' )
 <div class="h-full flex-auto flex flex-col">
-    @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
+    @include( Hook::filter( 'ns-dashboard-header-file', '../common/dashboard-header' ) )
     <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
         @include( 'common.dashboard.title' )
         <ns-procurement
-            submit-url="{{ ns()->url( '/api/nexopos/v4/procurements' ) }}"
-            src="{{ ns()->url( '/api/nexopos/v4/forms/ns.procurement' ) }}"
+            submit-url="{{ ns()->url( '/api/procurements' ) }}"
+            src="{{ ns()->url( '/api/forms/ns.procurement' ) }}"
             return-url="{{ ns()->url( '/dashboard/procurements' ) }}">
             <template v-slot:title>{{ __( 'Procurement Name' ) }}</template>
             <template v-slot:error-no-products>{{ __( 'Unable to proceed no products has been provided.' ) }}</template>

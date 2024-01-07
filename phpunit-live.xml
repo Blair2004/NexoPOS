@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.4/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true">
+  <testsuites>
+    <testsuite name="Sequential-1">
+      <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
+      <directory suffix="TestLanguageFileValidity.php">./tests/Feature</directory>
+      <directory suffix="HardResetTest.php">./tests/Feature</directory>
+    </testsuite>
+    <testsuite name="Parallel-1">
+      <directory suffix="ExceptionsTest.php">./tests/Feature</directory>
+      <directory suffix="TestAllDateTimeOptions.php">./tests/Feature</directory>
+      <directory suffix="CrudTest.php">./tests/Feature</directory>
+      <directory suffix="FieldsTest.php">./tests/Feature</directory>
+      <directory suffix="UploadModuleTest.php">./tests/Feature</directory>
+      <directory suffix="FieldsTest.php">./tests/Feature</directory>
+      <directory suffix="TestSetOrderType.php">./tests/Feature</directory>
+      <directory suffix="OptionSavingTest.php">./tests/Feature</directory>
+      <directory suffix="TestOtherGetRoutes.php">./tests/Feature</directory>
+      <directory suffix="ManageRoleTest.php">./tests/Feature</directory>
+      <directory suffix="RefreshReportForPassDaysTest.php">./tests/Feature</directory>
+      <directory suffix="RenderCrudFormTest.php">./tests/Feature</directory>
+      <directory suffix="SaveSettingsTest.php">./tests/Feature</directory>
+      <directory suffix="CrudTest.php">./tests/Feature</directory>
+      <directory suffix="CrudEditEntitiesTest.php">./tests/Feature</directory>
+      <directory suffix="AuthenticationTest.php">./tests/Feature</directory>
+    </testsuite>
+    <testsuite name="Sequential-2">
+      <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory>
+      <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
+      <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
+      <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
+      <directory suffix="CreateCustomerGroupTest.php">./tests/Feature</directory>
+      <directory suffix="CreateCustomerTest.php">./tests/Feature</directory>
+      <directory suffix="CustomerCreditTest.php">./tests/Feature</directory>
+      <directory suffix="CreateUnitGroupTest.php">./tests/Feature</directory>
+      <directory suffix="CreateUnitTest.php">./tests/Feature</directory>
+      <directory suffix="CreateCategoryTest.php">./tests/Feature</directory>
+      <directory suffix="CreateProductTest.php">./tests/Feature</directory>
+      <directory suffix="CreateProviderTest.php">./tests/Feature</directory>
+      <directory suffix="TestCogsPrices.php">./tests/Feature</directory>
+      <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
+      <directory suffix="CreateCouponTest.php">./tests/Feature</directory>
+      <directory suffix="CreateRewardSystemTest.php">./tests/Feature</directory>
+      <directory suffix="TestRewardSystem.php">./tests/Feature</directory>
+      <directory suffix="ConfigureAccoutingTest.php">./tests/Feature</directory>
+      <directory suffix="ProcessExpensesTest.php">./tests/Feature</directory>
+      <directory suffix="PerformStockAdjustmentTest.php">./tests/Feature</directory>
+      <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory>
+      <directory suffix="CreateRegisterTest.php">./tests/Feature</directory>
+      <directory suffix="CashRegisterActionsTest.php">./tests/Feature</directory>
+      <directory suffix="DeleteRegisterTest.php">./tests/Feature</directory>
+    </testsuite>
+    <testsuite name="Parallel-2">
+      <directory suffix="CreateOrderOnRegister.php">./tests/Feature</directory>
+      <directory suffix="CreateOrderTest.php">./tests/Feature</directory>
+      <directory suffix="CreateOrderPaidWithCustomerCredit.php">./tests/Feature</directory>
+      <directory suffix="CreateOrderWithDifferentProductPriceMode.php">./tests/Feature</directory>
+      <directory suffix="CreateCustomPaymentTypeAndOrder.php">./tests/Feature</directory>
+      <directory suffix="DeleteOrderTest.php">./tests/Feature</directory>
+      <directory suffix="OrderRefundTest.php">./tests/Feature</directory>
+      <directory suffix="OrderHoldTest.php">./tests/Feature</directory>
+      <directory suffix="OrderWithInstalment.php">./tests/Feature</directory>
+      <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory>
+      <directory suffix="DeletingOrderTest.php">./tests/Feature</directory>
+      <directory suffix="CombiningProductsTest.php">./tests/Feature</directory>
+      <directory suffix="ComputeTaxesFromSales.php">./tests/Feature</directory>
+      <directory suffix="CanSeeReportsTest.php">./tests/Feature</directory>
+      <directory suffix="CustomerRouteTest.php">./tests/Feature</directory>
+    </testsuite>
+    <testsuite name="Sequantial-3">
+      <directory suffix="CreateUserTest.php">./tests/Feature</directory>
+    </testsuite>
+  </testsuites>
+  <coverage>
+    <report>
+      <html outputDirectory="tests/.coverage"/>
+    </report>
+  </coverage>
+  <php>
+    <server name="APP_ENV" value="testing"/>
+    <server name="BCRYPT_ROUNDS" value="4"/>
+    <server name="CACHE_DRIVER" value="array"/>
+    <!-- <env name="DB_CONNECTION" value="sqlite"/> -->
+    <!-- <env name="DB_DATABASE" value=":memory:"/> -->
+    <server name="MAIL_MAILER" value="array"/>
+    <server name="PULSE_ENABLED" value="false"/>
+    <server name="QUEUE_CONNECTION" value="sync"/>
+    <server name="SESSION_DRIVER" value="array"/>
+    <server name="TELESCOPE_ENABLED" value="false"/>
+    <server name="BROADCAST_DRIVER" value="log"/>
+    <server name="SANCTUM_STATEFUL_DOMAINS" value="nexopos-v4.std"/>
+    <server name="SESSION_DOMAIN" value="nexopos-v4.std"/>
+    <server name="NS_VERSION" value="false"/>
+  </php>
+  <source>
+    <include>
+      <directory suffix=".php">app</directory>
+    </include>
+  </source>
+</phpunit>

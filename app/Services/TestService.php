@@ -5,8 +5,11 @@ namespace App\Services;
 use App\Models\Customer;
 use App\Models\Procurement;
 use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\ProductUnitQuantity;
 use App\Models\Provider;
 use App\Models\TaxGroup;
+use App\Models\UnitGroup;
 use App\Models\User;
 use Carbon\Carbon;
 use Faker\Factory;
@@ -16,6 +19,55 @@ use Illuminate\Support\Str;
 
 class TestService
 {
+    public function prepareProduct( $data = [] )
+    {
+        $faker = Factory::create();
+        $category   =   ProductCategory::get()->random();
+        $unitGroup  =   UnitGroup::get()->random();
+        $taxGroup   =   TaxGroup::get()->random();
+
+        return array_merge([
+            'name' => ucwords( $faker->word ),
+            'variations' => [
+                [
+                    '$primary' => true,
+                    'expiracy' => [
+                        'expires' => 0,
+                        'on_expiration' => 'prevent_sales',
+                    ],
+                    'groups'    =>  [],
+                    'identification' => [
+                        'barcode' => $faker->ean13(),
+                        'barcode_type' => 'ean13',
+                        'searchable' => $faker->randomElement([ true, false ]),
+                        'category_id' => $category->id,
+                        'description' => __( 'Created via tests' ),
+                        'product_type' => 'product',
+                        'type' => $faker->randomElement([ Product::TYPE_MATERIALIZED, Product::TYPE_DEMATERIALIZED ]),
+                        'sku' => Str::random(15) . '-sku',
+                        'status' => 'available',
+                        'stock_management' => 'enabled',
+                    ],
+                    'images' => [],
+                    'taxes' => [
+                        'tax_group_id' => 1,
+                        'tax_type' => Arr::random([ 'inclusive', 'exclusive' ]),
+                    ],
+                    'units' => [
+                        'selling_group' => $unitGroup->units->map( function( $unit ) use ( $faker ) {
+                            return [
+                                'sale_price_edit' => $faker->numberBetween(20, 25),
+                                'wholesale_price_edit' => $faker->numberBetween(20, 25),
+                                'unit_id' => $unit->id,
+                            ];
+                        })->toArray(),
+                        'unit_group' => $unitGroup->id,
+                    ],
+                ],
+            ],
+        ], $data );
+    }
+
     public function prepareOrder( Carbon $date, array $orderDetails = [], array $productDetails = [], array $config = [] )
     {
         /**
@@ -26,7 +78,7 @@ class TestService
         $products = isset( $config[ 'products' ] ) ? $config[ 'products' ]() : Product::where( 'tax_group_id', '>', 0 )
             ->where( 'type', '<>', Product::TYPE_GROUPED )
             ->whereRelation( 'unit_quantities', 'quantity', '>', 1000 )
-            ->with( 'unit_quantities', function ( $query ) {
+            ->with( 'unit_quantities', function( $query ) {
                 $query->where( 'quantity', '>', 3 );
             })
             ->get()
@@ -103,13 +155,13 @@ class TestService
             'discount' => $discount[ 'value' ] ?? 0,
             'addresses' => [
                 'shipping' => [
-                    'name' => 'First Name Delivery',
-                    'surname' => 'Surname',
+                    'first_name' => 'John',
+                    'last_name' => 'Doe',
                     'country' => 'Cameroon',
                 ],
                 'billing' => [
-                    'name' => 'EBENE Voundi',
-                    'surname' => 'Antony Hervé',
+                    'first_name' => 'EBENE Voundi',
+                    'last_name' => 'Antony Hervé',
                     'country' => 'United State Seattle',
                 ],
             ],
@@ -145,14 +197,18 @@ class TestService
          */
         $taxService = app()->make( TaxService::class );
 
-        /**
-         * @var CurrencyService
-         */
-        $currencyService = app()->make( CurrencyService::class );
-
         $taxType = Arr::random([ 'inclusive', 'exclusive' ]);
         $taxGroup = TaxGroup::get()->random();
         $margin = 25;
+        $request = Product::withStockEnabled()
+            ->limit( $details[ 'total_products' ] ?? -1 )
+            ->with([
+                'unitGroup',
+                'unit_quantities' => function( $query ) use ( $details ) {
+                    $query->limit( $details[ 'total_unit_quantities' ] ?? -1 );
+                },
+            ])
+            ->get();
 
         $config = [
             'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
@@ -164,56 +220,58 @@ class TestService
                 'automatic_approval' => 1,
                 'created_at' => $date->toDateTimeString(),
             ],
-            'products' => Product::withStockEnabled()
-                ->with( 'unitGroup' )
-                ->get()
-                ->map( function ( $product ) {
-                    return $product->unitGroup->units->map( function ( $unit ) use ( $product ) {
-                        $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
+            'products' => $request->map( function( $product ) {
+                return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
+                    // we retreive the unit quantity only if that is included on the group units.
+                    $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
 
+                    if ( $unitQuantity instanceof ProductUnitQuantity ) {
                         return (object) [
                             'unit' => $unit,
                             'unitQuantity' => $unitQuantity,
                             'product' => $product,
                         ];
-                    });
-                })->flatten()->map( function ( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
-                    $quantity = $faker->numberBetween(1000000, 9000000);
+                    }
 
-                    return [
-                        'product_id' => $data->product->id,
-                        'gross_purchase_price' => 15,
-                        'net_purchase_price' => 16,
-                        'purchase_price' => $taxService->getTaxGroupComputedValue(
-                            $taxType,
-                            $taxGroup,
-                            $data->unitQuantity->sale_price - $taxService->getPercentageOf(
-                                $data->unitQuantity->sale_price,
-                                $margin
-                            )
-                        ),
-                        'quantity' => $quantity,
-                        'tax_group_id' => $taxGroup->id,
-                        'tax_type' => $taxType,
-                        'tax_value' => $taxService->getTaxGroupVatValue(
-                            $taxType,
-                            $taxGroup,
-                            $data->unitQuantity->sale_price - $taxService->getPercentageOf(
-                                $data->unitQuantity->sale_price,
-                                $margin
-                            )
-                        ),
-                        'total_purchase_price' => $taxService->getTaxGroupComputedValue(
-                            $taxType,
-                            $taxGroup,
-                            $data->unitQuantity->sale_price - $taxService->getPercentageOf(
-                                $data->unitQuantity->sale_price,
-                                $margin
-                            )
-                        ) * $quantity,
-                        'unit_id' => $data->unit->id,
-                    ];
-                }),
+                    return false;
+                })->filter();
+            })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+                $quantity = $faker->numberBetween(100, 999);
+
+                return [
+                    'product_id' => $data->product->id,
+                    'gross_purchase_price' => 15,
+                    'net_purchase_price' => 16,
+                    'purchase_price' => $taxService->getTaxGroupComputedValue(
+                        $taxType,
+                        $taxGroup,
+                        $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                            $data->unitQuantity->sale_price,
+                            $margin
+                        )
+                    ),
+                    'quantity' => $quantity,
+                    'tax_group_id' => $taxGroup->id,
+                    'tax_type' => $taxType,
+                    'tax_value' => $taxService->getTaxGroupVatValue(
+                        $taxType,
+                        $taxGroup,
+                        $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                            $data->unitQuantity->sale_price,
+                            $margin
+                        )
+                    ),
+                    'total_purchase_price' => $taxService->getTaxGroupComputedValue(
+                        $taxType,
+                        $taxGroup,
+                        $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                            $data->unitQuantity->sale_price,
+                            $margin
+                        )
+                    ) * $quantity,
+                    'unit_id' => $data->unit->id,
+                ];
+            }),
         ];
 
         foreach ( $details as $key => $value ) {

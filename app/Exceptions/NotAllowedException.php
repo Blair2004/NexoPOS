@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helper;
 use Exception;
 
 class NotAllowedException extends Exception
@@ -11,12 +12,18 @@ class NotAllowedException extends Exception
         $this->message = $message ?: __('The Action You Tried To Perform Is Not Allowed.' );
     }
 
+    public function getStatusCode()
+    {
+        return 403;
+    }
+
     public function render( $request )
     {
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-allowed', [
                 'title' => __( 'Not Allowed Action' ),
                 'message' => $this->getMessage(),
+                'back' => Helper::getValidPreviousUrl( $request ),
             ]);
         }
 

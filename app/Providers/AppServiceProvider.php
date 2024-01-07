@@ -4,9 +4,9 @@ namespace App\Providers;
 
 use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
+use App\Exceptions\PostTooLargeException as ExceptionsPostTooLargeException;
 use App\Models\Order;
 use App\Models\OrderProductRefund;
-use App\Models\Permission;
 use App\Services\BarcodeService;
 use App\Services\CashRegistersService;
 use App\Services\CoreService;
@@ -15,7 +15,7 @@ use App\Services\CurrencyService;
 use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\DemoService;
-use App\Services\ExpenseService;
+use App\Services\EnvEditor;
 use App\Services\Helper;
 use App\Services\MathService;
 use App\Services\MediaService;
@@ -30,12 +30,16 @@ use App\Services\ProviderService;
 use App\Services\ReportService;
 use App\Services\ResetService;
 use App\Services\TaxService;
+use App\Services\TransactionService;
 use App\Services\UnitService;
 use App\Services\UpdateService;
 use App\Services\UserOptions;
-use App\Services\Users;
+use App\Services\UsersService;
 use App\Services\Validation;
+use App\Services\WidgetService;
+use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -80,6 +84,10 @@ class AppServiceProvider extends ServiceProvider
             return new DateService( 'now', $timeZone );
         });
 
+        $this->app->singleton( EnvEditor::class, function() {
+            return new EnvEditor( base_path( '.env' ) );
+        });
+
         // save Singleton for options
         $this->app->singleton( UserOptions::class, function () {
             return new UserOptions( Auth::id() );
@@ -90,19 +98,15 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // save Singleton for options
-        $this->app->singleton( Users::class, function () {
-            return new Users(
-                Auth::check() ? Auth::user()->roles : collect([]),
-                Auth::user(),
-                new Permission
-            );
+        $this->app->singleton( UsersService::class, function() {
+            return new UsersService;
         });
 
         // provide media manager
-        $this->app->singleton( MediaService::class, function () {
-            return new MediaService([
-                'extensions' => [ 'jpg', 'jpeg', 'png', 'gif', 'zip', 'docx', 'txt' ],
-            ]);
+        $this->app->singleton( MediaService::class, function() {
+            return new MediaService( 
+                dateService: app()->make( DateService::class )
+            );
         });
 
         $this->app->singleton( CrudService::class, function () {
@@ -119,7 +123,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind( ReportService::class, function () {
             return new ReportService(
-                app()->make( DateService::class )
+                app()->make( DateService::class ),
+                app()->make( ProductService::class ),
             );
         });
 
@@ -132,7 +137,9 @@ class AppServiceProvider extends ServiceProvider
                 app()->make( NotificationService::class ),
                 app()->make( ProcurementService::class ),
                 app()->make( Options::class ),
-                app()->make( MathService::class )
+                app()->make( MathService::class ),
+                app()->make( EnvEditor::class ),
+                app()->make( MediaService::class ),
             );
         });
 
@@ -190,8 +197,8 @@ class AppServiceProvider extends ServiceProvider
             return new CustomerService;
         });
 
-        $this->app->bind( ExpenseService::class, function ( $app ) {
-            return new ExpenseService(
+        $this->app->bind( TransactionService::class, function( $app ) {
+            return new TransactionService(
                 app()->make( DateService::class )
             );
         });
@@ -218,6 +225,12 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( CurrencyService::class ),
                 $app->make( DateService::class ),
                 $app->make( BarcodeService::class ),
+            );
+        });
+
+        $this->app->singleton( WidgetService::class, function( $app ) {
+            return new WidgetService(
+                $app->make( UsersService::class )
             );
         });
 
@@ -248,6 +261,19 @@ class AppServiceProvider extends ServiceProvider
         if ( Helper::installed() ) {
             Schema::defaultStringLength(191);
         }
+
+        /**
+         * We'll register a directive
+         * that will help module loading
+         * their Vite assets
+         */
+        Blade::directive( 'moduleViteAssets', function( $expression ) {
+            $params = explode(',', $expression);
+            $fileName = trim($params[0], "'");
+            $module = trim($params[1], " '");
+
+            return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\" ); ?>";
+        });
     }
 
     /**

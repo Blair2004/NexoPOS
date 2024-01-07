@@ -15,14 +15,15 @@
     </div>
 </template>
 <script>
-import FormValidation from '@/libraries/form-validation';
+import FormValidation from '~/libraries/form-validation';
 export default {
     name: 'ns-pos-order-settings',
+    props: [ 'popup' ],
     mounted() {
-        nsHttpClient.get( '/api/nexopos/v4/fields/ns.pos-order-settings' )
+        nsHttpClient.get( '/api/fields/ns.pos-order-settings' )
             .subscribe( fields => {
                 fields.forEach( field => {
-                    field.value     =   this.$popupParams.order[ field.name ] || '';
+                    field.value     =   this.popup.params.order[ field.name ] || '';
                 });
                 
                 this.fields     =   this.validation.createFields( fields );

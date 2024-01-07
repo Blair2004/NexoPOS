@@ -449,10 +449,8 @@ class CustomerAccountCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'previous_amount' => [
@@ -516,7 +514,7 @@ class CustomerAccountCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-account-history/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.customers-account-history/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -579,8 +577,8 @@ class CustomerAccountCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'customers/' . '/account-history' ),
             'create' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/create' ),
             'edit' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-account-history' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-account-history/{id}' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-account-history' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-account-history/{id}' ),
         ];
     }
 

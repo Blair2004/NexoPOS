@@ -4,7 +4,7 @@
   <img src="https://user-images.githubusercontent.com/5265663/162700085-40ed00ca-9154-42cb-850a-ccf1c2db2d5d.png" alt="NexoPOS"/>
 </p>
 
-NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS 4.x include a responsive and beautiful dashboard that ease the interaction either on a smartphone, tables or desktops.
+NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS include a responsive and beautiful dashboard that ease the interaction either on a smartphone, tables or desktops.
 
 Read Review On:
 [![Laravel News](https://user-images.githubusercontent.com/5265663/186377311-c42ddd2c-bc84-465c-a3b6-94e6df8d68bc.jpg)](https://laravel-news.com/nexopos-point-of-sale-for-laravel?utm_source=github.com&utm_medium=readme&utm_campagin=nexopos)
@@ -12,14 +12,14 @@ Read Review On:
 ## Demo
 - Regular : https://v4.nexopos.com
 - MultiStore : https://v4-multi.nexopos.com
-- Gastro 4.x : https://v4-gastro.nexopos.com
+- Gastro : https://v4-gastro.nexopos.com
 - Username : demouser
 - Password : 123456
 
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS-4x/tree/v4.7.x&refcode=ebdb80cb0ec7)
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS/tree/v5.0.x&refcode=ebdb80cb0ec7)
 
 ## Documentation
-All the documentation for NexoPOS 4.x can be found on [My NexoPOS](https://my.nexopos.com/en/documentation). That includes : 
+All the documentation for NexoPOS can be found on [My NexoPOS](https://my.nexopos.com/en/documentation). That includes : 
 
 - [Configuring the environment](https://my.nexopos.com/en/documentation/getting-started/configuring-the-environment)
 - [Downloading NexoPOS](https://my.nexopos.com/en/documentation/getting-started/download-and-install)
@@ -37,20 +37,20 @@ We've also create video tutorial that will help you performing those easilly.
 ](https://www.youtube.com/watch?v=V80-hOJCywY)
 
 # Get More Using Modules
-NexoPOS 4x available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm-inventory-manager/31188619) gives access to premium modules marketplace. While purchasing on CodeCanyon, you get : 
+NexoPOS available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm-inventory-manager/31188619) gives access to premium modules marketplace. While purchasing on CodeCanyon, you get : 
 
 - $40 In credit to [My NexoPOS](https://my.nexopos.com/en/marketplace) balance.
-- Access to NexoPOS 4.x marketplace
+- Access to NexoPOS marketplace
 - Premium Support & Installation Service
 - You're eligible for customization
 
 ## Changelog & Feature Announcement
-We're frequently discussing about the future of the app (while waiting discussion are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS 4.x.
+We're frequently discussing about the future of the app (while waiting discussion are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS.
 
 
 ## Support Terms
 
-1 - The support on NexoPOS 4.x only applies to the information provided by the users while creating an issue. This means we won't either do the installation on your server or check an issue on your server. You're therefore invited not to post your server information while creating an issue. We'll use your explanations to reproduce your issue and therefore to solve it.
+1 - The support on NexoPOS only applies to the information provided by the users while creating an issue. This means we won't either do the installation on your server or check an issue on your server. You're therefore invited not to post your server information while creating an issue. We'll use your explanations to reproduce your issue and therefore to solve it.
 
 2 - If you would like to have a dedicated support. Consider registering as a member to [My NexoPOS platform](https://my.nexopos.com/en/account/checkout/premium).
 
@@ -58,7 +58,7 @@ We're frequently discussing about the future of the app (while waiting discussio
 Here we list the knowns issues and the way around. Not everyone is likely to face these issues as it depends on the used enviroment.
 
 - CSRF error After Installation
-Chances are when you make your installation, you'll have your website URL changed. Unfortunately, if the domain has to change, it must be clearly described on the .env file. We've written a guide that explains how to solve the [CSRF issue on NexoPOS 4.x](https://my.nexopos.com/en/documentation/troubleshooting/how-to-fix-csrf-token-mismatch-on-nexopos-4-x).
+Chances are when you make your installation, you'll have your website URL changed. Unfortunately, if the domain has to change, it must be clearly described on the .env file. We've written a guide that explains how to solve the [CSRF issue on NexoPOS](https://my.nexopos.com/en/documentation/troubleshooting/how-to-fix-csrf-token-mismatch-on-nexopos-4-x).
 
 - Error After Database Details (using `php artisan serve`)
 If you're serving the project using `php artisan serve`, after setting up the database credentails and having them validated, you migth stop on an infinite

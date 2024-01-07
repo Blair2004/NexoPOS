@@ -6,8 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Helper;
-use App\Services\Users;
+use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -158,14 +157,6 @@ class RolesCrud extends CrudService
                             'description' => __( 'Should be a unique value with no spaces or special character' ),
                             'value' => $entry->namespace ?? '',
                         ], [
-                            'type' => 'select',
-                            'name' => 'dashid',
-                            'label' => __( 'Dashboard Identifier' ),
-                            'validation' => 'required',
-                            'options' => Helper::kvToJsOptions( $this->dashboardOptions ),
-                            'description' => __( 'Define what should be the home page of the dashboard.' ),
-                            'value' => $entry->dashid ?? 'none',
-                        ], [
                             'type' => 'textarea',
                             'name' => 'description',
                             'label' => __( 'Description' ),
@@ -301,26 +292,6 @@ class RolesCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -338,10 +309,8 @@ class RolesCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -350,11 +319,6 @@ class RolesCrud extends CrudService
                 '$sort' => false,
             ],
             'namespace' => [
-                'label' => __( 'Namespace' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'dashid' => [
                 'label' => __( 'Namespace' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -373,7 +337,6 @@ class RolesCrud extends CrudService
     public function setActions( CrudEntry $entry, $namespace )
     {
         $entry->locked = (bool) $entry->locked;
-        $entry->dashid = $this->dashboardOptions[ $entry->dashid ] ?? __( 'Unknown Dashboard' );
 
         // you can make changes here
         $entry->addAction( 'edit', [
@@ -392,14 +355,14 @@ class RolesCrud extends CrudService
                 'message' => __( 'Would you like to clone this role ?' ),
             ],
             'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/' . 'users/roles/' . $entry->id . '/clone' ),
+            'url' => ns()->url( '/api/' . 'users/roles/' . $entry->id . '/clone' ),
         ]);
 
         $entry->addAction( 'delete', [
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.roles/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.roles/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -420,7 +383,7 @@ class RolesCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( Users::class );
+        $user = app()->make( UsersService::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status' => 'failed',
@@ -474,8 +437,8 @@ class RolesCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'users/roles' ),
             'create' => ns()->url( 'dashboard/' . 'users/roles/create' ),
             'edit' => ns()->url( 'dashboard/' . 'users/roles/edit/{id}' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.roles' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.roles/{id}' . '' ),
         ];
     }
 

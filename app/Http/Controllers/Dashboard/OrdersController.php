@@ -24,30 +24,25 @@ use App\Models\OrderInstalment;
 use App\Models\OrderPayment;
 use App\Models\OrderRefund;
 use App\Models\PaymentType;
+use App\Services\DateService;
 use App\Services\Options;
 use App\Services\OrdersService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class OrdersController extends DashboardController
 {
-    /** @var OrdersService */
-    private $ordersService;
-
-    /** @var OptionsService */
-    private $optionsService;
-
     private $paymentTypes;
 
     public function __construct(
-        OrdersService $ordersService,
-        Options $options
+        private OrdersService $ordersService,
+        private Options $optionsService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
-        $this->optionsService = $options;
-        $this->ordersService = $ordersService;
-
-        $this->middleware( function ( $request, $next ) {
+        $this->middleware( function( $request, $next ) {
+            /**
+             * @todo must be refactored
+             */
             $this->paymentTypes = PaymentType::orderBy( 'priority', 'asc' )
                 ->active()
                 ->get()
@@ -63,12 +58,12 @@ class OrdersController extends DashboardController
 
     public function create( Request $request )
     {
-        return $this->ordersService->create( $request->all() );
+        return $this->ordersService->create( $request->post() );
     }
 
     public function updateOrder( Order $id, Request $request )
     {
-        return $this->ordersService->create( $request->all(), $id );
+        return $this->ordersService->create( $request->post(), $id );
     }
 
     public function addProductToOrder( $order_id, Request $request )
@@ -89,7 +84,7 @@ class OrdersController extends DashboardController
 
         $orderPayment->load( 'order' );
 
-        return $this->view( 'pages.dashboard.orders.templates.payment-receipt', [
+        return View::make( 'pages.dashboard.orders.templates.payment-receipt', [
             'payment' => $orderPayment,
             'order' => $order,
             'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function ( $payment ) {
@@ -104,7 +99,7 @@ class OrdersController extends DashboardController
 
     public function listOrders()
     {
-        Hook::addFilter(
+        Hook::addAction(
             'ns-crud-footer',
             fn( Output $output ) => $output
                 ->addView( 'pages.dashboard.orders.footer' )
@@ -174,7 +169,7 @@ class OrdersController extends DashboardController
                 ->addView( 'pages.dashboard.orders.footer' )
         );
 
-        return $this->view( 'pages.dashboard.orders.pos', [
+        return View::make( 'pages.dashboard.orders.pos', [
             'title' => sprintf(
                 __( 'POS &mdash; %s' ),
                 ns()->option->get( 'ns_store_name', 'NexoPOS' )
@@ -216,7 +211,9 @@ class OrdersController extends DashboardController
                 'sale_printing_url' => Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
                 'orders_url' => ns()->route( 'ns.dashboard.orders' ),
                 'dashboard_url' => ns()->route( 'ns.dashboard.home' ),
+                'categories_url' => ns()->route( 'ns.dashboard.products.categories.create' ),
                 'registers_url' => ns()->route( 'ns.dashboard.registers-create' ),
+                'order_type_url' => ns()->route( 'ns.dashboard.settings', [ 'settings' => 'pos?tab=features' ]),
             ],
             'paymentTypes' => $this->paymentTypes,
         ]);
@@ -238,7 +235,7 @@ class OrdersController extends DashboardController
         $order->paymentStatus = $this->ordersService->getPaymentLabel( $order->payment_status );
         $order->deliveryStatus = $this->ordersService->getPaymentLabel( $order->delivery_status );
 
-        return $this->view( 'pages.dashboard.orders.templates.invoice', [
+        return View::make( 'pages.dashboard.orders.templates.invoice', [
             'order' => $order,
             'options' => $optionsService->get(),
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
@@ -254,7 +251,7 @@ class OrdersController extends DashboardController
 
         $refund->refunded_products = Hook::filter( 'ns-refund-receipt-products', $refund->refunded_products );
 
-        return $this->view( 'pages.dashboard.orders.templates.refund-receipt', [
+        return View::make( 'pages.dashboard.orders.templates.refund-receipt', [
             'refund' => $refund,
             'ordersService' => app()->make( OrdersService::class ),
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
@@ -271,7 +268,7 @@ class OrdersController extends DashboardController
         $order->load( 'billing_address' );
         $order->load( 'user' );
 
-        return $this->view( 'pages.dashboard.orders.templates.receipt', [
+        return View::make( 'pages.dashboard.orders.templates.receipt', [
             'order' => $order,
             'title' => sprintf( __( 'Order Receipt &mdash; %s' ), $order->code ),
             'optionsService' => $this->optionsService,

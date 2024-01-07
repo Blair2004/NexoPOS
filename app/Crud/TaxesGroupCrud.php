@@ -5,8 +5,7 @@ namespace App\Crud;
 use App\Models\TaxGroup;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
-use Exception;
+use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -227,26 +226,6 @@ class TaxesGroupCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -260,10 +239,8 @@ class TaxesGroupCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -302,7 +279,7 @@ class TaxesGroupCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.taxes-groups/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -323,7 +300,7 @@ class TaxesGroupCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( Users::class );
+        $user = app()->make( UsersService::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status' => 'failed',
@@ -364,8 +341,8 @@ class TaxesGroupCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'taxes/groups' ),
             'create' => ns()->url( 'dashboard/' . 'taxes/groups/create' ),
             'edit' => ns()->url( 'dashboard/' . 'taxes/groups/edit/{id}' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups/' . '{id}' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.taxes-groups' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.taxes-groups/' . '{id}' ),
         ];
     }
 

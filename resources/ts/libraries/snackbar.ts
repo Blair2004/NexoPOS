@@ -1,4 +1,3 @@
-import { sample } from "lodash";
 import * as rx from 'rx';
 
 declare const window:any;

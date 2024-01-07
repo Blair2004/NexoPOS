@@ -33,8 +33,6 @@ class RegisterHistory extends NsModel
 
     const ACTION_SALE = 'register-sale';
 
-    const ACTION_CHANGE = 'register-change';
-
     const ACTION_DELETE = 'register-cash-delete';
 
     const ACTION_REFUND = 'register-refund';
@@ -50,14 +48,22 @@ class RegisterHistory extends NsModel
         self::ACTION_CLOSING,
         self::ACTION_CASHOUT,
         self::ACTION_DELETE,
-        self::ACTION_CHANGE,
     ];
 
     protected $dispatchesEvents = [
         'created' => CashRegisterHistoryAfterCreatedEvent::class,
     ];
 
-    public function scopeRegister( $query, Register $register )
+    public function register()
+    {
+        return $this->hasOne(
+            related: Register::class,
+            foreignKey: 'id',
+            localKey: 'register_id'
+        );
+    }
+
+    public function scopeWithRegister( $query, Register $register )
     {
         return $query->where( 'register_id', $register->id );
     }

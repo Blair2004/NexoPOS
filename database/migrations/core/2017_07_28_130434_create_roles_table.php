@@ -28,8 +28,9 @@ return new class extends Migration
                 $table->increments('id');
                 $table->string( 'name' )->unique();
                 $table->string( 'namespace' )->unique();
-                $table->string( 'dashid' )->nullable()->default( 'cashier' );
                 $table->text( 'description' )->nullable();
+                $table->integer( 'reward_system_id' )->nullable();
+                $table->float( 'minimal_credit_payment' )->default(0);
                 $table->integer( 'author' )->nullable(); // when provided match the user id
                 $table->boolean( 'locked' )->default( true ); // means the role can be edited from the frontend.
                 $table->timestamps();

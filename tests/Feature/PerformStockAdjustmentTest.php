@@ -21,9 +21,21 @@ class PerformStockAdjustmentTest extends TestCase
         $this->attemptProductStockAdjustment();
     }
 
-    public function test_decreate_product_stock()
+    public function test_decrease_product_stock()
     {
         $this->attemptAuthenticate();
         $this->attemptDecreaseStockCount();
+    }
+
+    public function test_set_product_stock()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptSetStockCount();
+    }
+
+    public function test_increase_grouped_product_stock()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptGroupedProductStockAdjustment();
     }
 }

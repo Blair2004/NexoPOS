@@ -14,14 +14,15 @@ class DoctorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:doctor 
+    protected $signature = 'ns:doctor
+        {--clear-modules-temp}
         {--fix-roles} 
         {--fix-users-attributes} 
         {--fix-orders-products} 
         {--fix-customers}
         {--fix-domains}
         {--fix-orphan-orders-products}
-        {--fix-cash-flow-orders}
+        {--fix-transactions-orders}
         {--fix-duplicate-options}';
 
     /**
@@ -84,8 +85,12 @@ class DoctorCommand extends Command
             return $this->info( $doctorService->fixOrphanOrderProducts() );
         }
 
-        if ( $this->option( 'fix-cash-flow-orders' ) ) {
-            return $doctorService->fixCashFlowOrders( $this );
+        if ( $this->option( 'fix-transactions-orders' ) ) {
+            return $doctorService->fixTransactionsOrders();
+        }
+
+        if ( $this->option( 'clear-modules-temp' ) ) {
+            return $doctorService->clearTemporaryFiles();
         }
 
         if ( $this->option( 'fix-orders-products' ) ) {
@@ -96,8 +101,11 @@ class DoctorCommand extends Command
              */
             $productService = app()->make( ProductService::class );
 
-            $this->withProgressBar( $products, function ( OrderProduct $orderProduct ) use ( $productService ) {
-                $orderProduct->total_purchase_price = $productService->getLastPurchasePrice( $orderProduct->product ) * $orderProduct->quantity;
+            $this->withProgressBar( $products, function( OrderProduct $orderProduct ) use ( $productService ) {
+                $orderProduct->total_purchase_price = $productService->getLastPurchasePrice(
+                    product: $orderProduct->product,
+                    unit: $orderProduct->unit,
+                ) * $orderProduct->quantity;
                 $orderProduct->save();
             });
 

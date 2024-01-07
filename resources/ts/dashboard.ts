@@ -1,4 +1,5 @@
 import { BehaviorSubject, forkJoin } from "rxjs";
+
 import { map } from "rxjs/operators";
 import { nsHttpClient } from "./bootstrap";
 
@@ -9,11 +10,11 @@ export class Dashboard {
     private _weeksSummary: BehaviorSubject<{}>;
     private _recentOrders: BehaviorSubject<[]>;
     private _reports    =   {
-        day:            nsHttpClient.get( '/api/nexopos/v4/dashboard/day' ),
-        bestCustomers:  nsHttpClient.get( '/api/nexopos/v4/dashboard/best-customers' ),
-        weeksSummary:   nsHttpClient.get( '/api/nexopos/v4/dashboard/weeks' ),
-        bestCashiers:   nsHttpClient.get( '/api/nexopos/v4/dashboard/best-cashiers' ),
-        recentOrders:   nsHttpClient.get( '/api/nexopos/v4/dashboard/recent-orders' )
+        day:            nsHttpClient.get( '/api/dashboard/day' ),
+        bestCustomers:  nsHttpClient.get( '/api/dashboard/best-customers' ),
+        weeksSummary:   nsHttpClient.get( '/api/dashboard/weeks' ),
+        bestCashiers:   nsHttpClient.get( '/api/dashboard/best-cashiers' ),
+        recentOrders:   nsHttpClient.get( '/api/dashboard/recent-orders' )
     };
 
     constructor() {

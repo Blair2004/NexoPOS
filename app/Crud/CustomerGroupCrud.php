@@ -7,7 +7,6 @@ use App\Models\RewardSystem;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -238,26 +237,6 @@ class CustomerGroupCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw AccessDeniedException
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -291,10 +270,8 @@ class CustomerGroupCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -340,7 +317,7 @@ class CustomerGroupCrud extends CrudService
             'namespace' => 'delete',
             'type' => 'DELETE',
             'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-groups/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.customers-groups/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
                 'title' => __( 'Delete a licence' ),
@@ -364,7 +341,7 @@ class CustomerGroupCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( 'App\Services\Users' );
+        $user = app()->make( 'App\Services\UsersService' );
 
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
@@ -406,8 +383,8 @@ class CustomerGroupCrud extends CrudService
             'list' => ns()->url(  'dashboard/customers/groups' ),
             'create' => ns()->url(  'dashboard/customers/groups/create' ),
             'edit' => ns()->url(  'dashboard/customers/groups/edit' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-groups' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-groups/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-groups' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-groups/{id}' . '' ),
         ];
     }
 

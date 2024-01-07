@@ -7,10 +7,10 @@
     </div>
 </template>
 <script>
-import { default as nsPosCashRegistersPopupVue } from '@/popups/ns-pos-cash-registers-popup.vue';
-import nsPosCashRegistersOptionsPopupVue from '@/popups/ns-pos-cash-registers-options-popup.vue';
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import nsPosCashRegistersPopupVue from '~/popups/ns-pos-cash-registers-popup.vue';
+import nsPosCashRegistersOptionsPopupVue from '~/popups/ns-pos-cash-registers-options-popup.vue';
+import { nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 
 export default {
     data() {
@@ -62,6 +62,7 @@ export default {
 
                     return response;
                 } catch( exception ) {
+                    console.log({ exception });
                     throw exception;
                 }
             });
@@ -85,7 +86,7 @@ export default {
             }
         }
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
     },

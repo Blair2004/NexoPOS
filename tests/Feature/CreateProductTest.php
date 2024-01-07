@@ -17,7 +17,10 @@ class CreateProductTest extends TestCase
     public function testCreateGroupedProducts()
     {
         $this->attemptAuthenticate();
-        $this->attemptCreateGroupedProduct();
+
+        for ( $i = 0; $i < 5; $i++ ) {
+            $this->attemptCreateGroupedProduct();
+        }
     }
 
     /**
@@ -37,8 +40,18 @@ class CreateProductTest extends TestCase
     public function testCreateProducts()
     {
         $this->attemptAuthenticate();
-        $this->attemptCreateProduct();
+
+        for ( $i = 0; $i <= 3; $i++ ) {
+            $this->attemptSetProduct();
+        }
+
         $this->attemptDeleteCategory();
+    }
+
+    public function testEditProductByChangingCategory()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptChangeProductCategory();
     }
 
     public function testSearchableAreSearchable()

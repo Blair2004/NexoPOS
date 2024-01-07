@@ -1,0 +1,26 @@
+.ns-floating-notice {
+    &.info {
+        @apply border-info-tertiary bg-red-900;
+        h2, p {
+            @apply text-white;
+        }
+    }
+    &.error {
+        @apply border-error-tertiary bg-red-900;
+        h2, p {
+            @apply text-white;
+        }
+    }
+    &.warning {
+        @apply border-warning-tertiary bg-red-900;
+        h2, p {
+            @apply text-white;
+        }
+    }
+    &.success {
+        @apply border-success-tertiary bg-green-900;
+        h2, p {
+            @apply text-white;
+        }
+    }
+}

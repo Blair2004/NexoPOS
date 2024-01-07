@@ -1,10 +1,8 @@
-import { SnackBar } from "./snackbar";
-import { HttpClient } from "./http-client";
 import { EventEmitter } from "./event-emitter";
+import { FloatingNotice } from "./floating-notice";
+import { HttpClient } from "./http-client";
+import { SnackBar } from "./snackbar";
 import { State } from "./state";
+import { joinArray } from "./join-array";
 
-// module.exports.EventEmitter     =   require( './event-emitter' );
-// module.exports.HttpClient       =   require( './http-client' );
-// module.exports.SnackBar         =   require( './snackbar' );
-
-export { SnackBar, HttpClient, EventEmitter, State };
+export { SnackBar, HttpClient, EventEmitter, State, FloatingNotice, joinArray };

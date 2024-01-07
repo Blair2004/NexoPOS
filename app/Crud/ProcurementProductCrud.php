@@ -298,10 +298,8 @@ class ProcurementProductCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -373,7 +371,7 @@ class ProcurementProductCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.procurements-products/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.procurements-products/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -436,8 +434,8 @@ class ProcurementProductCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'procurements/products' ),
             'create' => 'javascript:void(0)', //ns()->url( 'dashboard/' . '/procurements/products/create' ),
             'edit' => ns()->url( 'dashboard/' . 'procurements/products/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.procurements-products' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.procurements-products/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.procurements-products' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.procurements-products/{id}' . '' ),
         ];
     }
 

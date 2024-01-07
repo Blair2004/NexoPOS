@@ -34,5 +34,5 @@ Hook::action( 'ns.after-login-fields', $afterForm );
 @section( 'layout.base.footer' )
     @parent
     {!! Hook::filter( 'ns-login-footer', new Output ) !!}
-    <script src="{{ asset( ns()->isProduction() ? 'js/auth.min.js' : 'js/auth.js' ) }}"></script>
+    @vite([ 'resources/ts/auth.ts' ])
 @endsection

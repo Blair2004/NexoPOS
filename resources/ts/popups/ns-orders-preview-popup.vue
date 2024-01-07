@@ -1,30 +1,26 @@
 <script>
-import { nsHttpClient, nsSnackBar } from "@/bootstrap";
-import { nsCurrency } from "@/filters/currency";
+import { nsHttpClient, nsSnackBar } from "~/bootstrap";
+import { nsCurrency } from "~/filters/currency";
 import { forkJoin } from "rxjs";
-import nsOrderRefund from "@/pages/dashboard/orders/ns-order-refund.vue";
+import nsOrderRefund from "~/pages/dashboard/orders/ns-order-refund.vue";
 import nsPromptPopupVue from "./ns-prompt-popup.vue";
 import nsPosConfirmPopupVue from "./ns-pos-confirm-popup.vue";
-import nsOrderPayment from "@/pages/dashboard/orders/ns-order-payment.vue";
-import nsOrderDetails from "@/pages/dashboard/orders/ns-order-details.vue";
-import nsOrderInstalments from "@/pages/dashboard/orders/ns-order-instalments.vue";
-import { __ } from "@/libraries/lang";
-import popupResolver from "@/libraries/popup-resolver";
-import popupCloser from "@/libraries/popup-closer";
-import Print from "@/libraries/print";
+import nsOrderPayment from "~/pages/dashboard/orders/ns-order-payment.vue";
+import nsOrderDetails from "~/pages/dashboard/orders/ns-order-details.vue";
+import nsOrderInstalments from "~/pages/dashboard/orders/ns-order-instalments.vue";
+import { __ } from "~/libraries/lang";
+import popupResolver from "~/libraries/popup-resolver";
+import popupCloser from "~/libraries/popup-closer";
+import Print from "~/libraries/print";
 
-/**
- * @var {ExtendedVue}
- */
-const nsOrderPreviewPopup   =   {
-    filters: {
-        nsCurrency
-    },
-    name: 'ns-preview-popup',
+export default {
+    name: 'ns-orders-preview-popup',
+    props: [ 'popup' ],
     data() {
         return {
             active: 'details',
             order: new Object,
+            rawOrder: new Object,
             products: [],
             payments: [],
             options: null,
@@ -50,6 +46,7 @@ const nsOrderPreviewPopup   =   {
         __,
         popupResolver,
         popupCloser,
+        nsCurrency,
 
         closePopup( action = false ) {
             this.popupResolver( action );
@@ -62,12 +59,6 @@ const nsOrderPreviewPopup   =   {
         },
         refresh() {
             /**
-             * this will notify the crud component to
-             * refresh the list of result as a row state has changed.
-             */
-            this.$popupParams.component.$emit( 'updated' );
-
-            /**
              * Withn the popup let's refresh the order
              * and display updated values.
              */
@@ -76,9 +67,9 @@ const nsOrderPreviewPopup   =   {
 
         loadOrderDetails( orderId ) {
             forkJoin([
-                nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}` ),
-                nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}/products` ),
-                nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}/payments` ),
+                nsHttpClient.get( `/api/orders/${orderId}` ),
+                nsHttpClient.get( `/api/orders/${orderId}/products` ),
+                nsHttpClient.get( `/api/orders/${orderId}/payments` ),
             ])
                 .subscribe( result => {
                     this.order              =   result[0];
@@ -92,7 +83,7 @@ const nsOrderPreviewPopup   =   {
                 message: __( 'Would you like to delete this order' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        nsHttpClient.delete( `/api/nexopos/v4/orders/${this.order.id}` )
+                        nsHttpClient.delete( `/api/orders/${this.order.id}` )
                             .subscribe({
                                 next: result => {
                                     nsSnackBar.success( result.message ).subscribe();
@@ -117,7 +108,7 @@ const nsOrderPreviewPopup   =   {
                         message: __( 'The current order will be void. This action will be recorded. Consider providing a reason for this operation' ),
                         onAction:  ( reason ) => {
                             if ( reason !== false ) {
-                                nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/void`, { reason })
+                                nsHttpClient.post( `/api/orders/${this.order.id}/void`, { reason })
                                     .subscribe({
                                         next: result => {
                                             nsSnackBar.success( result.message ).subscribe();
@@ -138,32 +129,24 @@ const nsOrderPreviewPopup   =   {
             }
         },
         refreshCrudTable() {
-            this.$popupParams.component.$emit( 'updated', true );
+            this.popup.params.component.$emit( 'updated', true );
         }
     },
     watch: {
         active() {
             if ( this.active === 'details' ) {
-                this.loadOrderDetails( this.order.id );
+                this.loadOrderDetails( this.rawOrder.id );
             }
         }
     },
     mounted() {
-        this.order      =   this.$popupParams.order;
+        this.rawOrder   =   this.popup.params.order;
         this.options    =   systemOptions;
         this.urls       =   systemUrls;
-        this.loadOrderDetails( this.order.id );
+        this.loadOrderDetails( this.rawOrder.id );
         this.popupCloser();
     }
 }
-
-/**
- * in order to make sure the popup
- * is available globally.
- */
-window.nsOrderPreviewPopup      =   nsOrderPreviewPopup;
-
-export default nsOrderPreviewPopup;
 </script>
 <template>
     <div class="h-95vh w-95vw md:h-6/7-screen md:w-6/7-screen overflow-hidden shadow-xl ns-box flex flex-col">
@@ -175,30 +158,30 @@ export default nsOrderPreviewPopup;
                 <ns-close-button @click="closePopup(true)"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 overflow-scroll ns-box-body flex flex-auto">
+        <div class="p-2 ns-box-body overflow-hidden flex flex-auto">
             <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
                 <ns-tabs-item :label="__( 'Details' )" identifier="details" class="overflow-y-auto">
-                    <ns-order-details :order="order"></ns-order-details>
+                    <ns-order-details v-if="order" :order="order"></ns-order-details>
                 </ns-tabs-item>
 
                 <!-- End Summary -->
 
                 <!-- Payment Component -->
-                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded', 'partially_refunded' ].includes( order.payment_status )" :label="__( 'Payments' )" identifier="payments" class="overflow-y-auto">
-                    <ns-order-payment @changed="refresh()" :order="order"></ns-order-payment>
+                <ns-tabs-item :visible="! [ 'order_void', 'hold', 'refunded', 'partially_refunded' ].includes( order.payment_status )" :label="__( 'Payments' )" identifier="payments">
+                    <ns-order-payment v-if="order" @changed="refresh()" :order="order"></ns-order-payment>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Refund -->
-                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" :label="__( 'Refund & Return' )" identifier="refund" class="flex overflow-y-auto">
-                    <ns-order-refund @loadTab="setActive( $event )" @changed="refresh()" :order="order"></ns-order-refund>
+                <ns-tabs-item :visible="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" :label="__( 'Refund & Return' )" identifier="refund">
+                    <ns-order-refund v-if="order" @loadTab="setActive( $event )" @changed="refresh()" :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Instalment -->
-                <ns-tabs-item v-if="[ 'partially_paid', 'unpaid' ].includes( order.payment_status ) && order.support_instalments" :label="__( 'Installments' )" identifier="instalments" class="flex overflow-y-auto">
-                    <ns-order-instalments @changed="refresh()" :order="order"></ns-order-instalments>
+                <ns-tabs-item :visible="[ 'partially_paid', 'unpaid' ].includes( order.payment_status ) && order.support_instalments" :label="__( 'Installments' )" identifier="instalments">
+                    <ns-order-instalments v-if="order" @changed="refresh()" :order="order"></ns-order-instalments>
                 </ns-tabs-item>
                 <!-- End Instalment -->
             </ns-tabs>

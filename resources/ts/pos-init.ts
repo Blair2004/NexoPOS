@@ -1,11 +1,14 @@
 import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
 import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/product-unit";
+import { CustomerQueue } from "./pages/dashboard/pos/queues/order/customer-queue";
+import { PaymentQueue } from "./pages/dashboard/pos/queues/order/payment-queue";
+import { ProductsQueue } from "./pages/dashboard/pos/queues/order/products-queue";
+import { TypeQueue } from "./pages/dashboard/pos/queues/order/type-queue";
 import { BehaviorSubject } from "rxjs";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
-import Vue from 'vue';
 import { Order } from "./interfaces/order";
-import { nsEvent, nsHooks, nsHttpClient, nsSnackBar } from "./bootstrap";
+import { nsEvent, nsHooks, nsHttpClient, nsNotice, nsSnackBar } from "./bootstrap";
 import { PaymentType } from "./interfaces/payment-type";
 import { Payment } from "./interfaces/payment";
 import { Responsive } from "./libraries/responsive";
@@ -16,6 +19,8 @@ import { __ } from "./libraries/lang";
 import { ProductUnitQuantity } from "./interfaces/product-unit-quantity";
 import { nsRawCurrency } from "./filters/currency";
 import moment from "moment";
+import { defineAsyncComponent } from "vue";
+import { nsCurrency } from "./filters/currency";
 import Print from "./libraries/print";
 import Tax from "./libraries/tax";
 import * as math from "mathjs"
@@ -25,23 +30,32 @@ import * as math from "mathjs"
  * these are dynamic component
  * that are loaded conditionally
  */
-const nsPosDashboardButton      = (<any>window).nsPosDashboardButton = require('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button').default;
-const nsPosPendingOrderButton   = (<any>window).nsPosPendingOrderButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button').default;
-const nsPosOrderTypeButton      = (<any>window).nsPosOrderTypeButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button').default;
-const nsPosCustomersButton      = (<any>window).nsPosCustomersButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button').default;
-const nsPosResetButton          = (<any>window).nsPosResetButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button').default;
-const nsPosCashRegister         = (<any>window).nsPosCashRegister = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button').default;
-const nsAlertPopup              = (<any>window).nsAlertPopup = require('./popups/ns-' + 'alert' + '-popup').default;
-const nsConfirmPopup            = (<any>window).nsConfirmPopup = require('./popups/ns-pos-' + 'confirm' + '-popup').default;
-const nsPOSLoadingPopup         = (<any>window).nsPOSLoadingPopup = require('./popups/ns-pos-' + 'loading' + '-popup').default;
-const nsPromptPopup             = (<any>window).nsPromptPopup = require('./popups/ns-' + 'prompt' + '-popup').default;
-const nsLayawayPopup            = (<any>window).nsLayawayPopup = require('./popups/ns-pos-' + 'layaway' + '-popup').default;
-const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = require('./popups/ns-pos-' + 'shipping' + '-popup').default;
+const nsPosDashboardButton      = (<any>window).nsPosDashboardButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button.vue' ) );
+const nsPosPendingOrderButton   = (<any>window).nsPosPendingOrderButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button.vue' ) );
+const nsPosOrderTypeButton      = (<any>window).nsPosOrderTypeButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button.vue' ) );
+const nsPosCustomersButton      = (<any>window).nsPosCustomersButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button.vue' ) );
+const nsPosResetButton          = (<any>window).nsPosResetButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button.vue' ) );
+const nsPosCashRegister         = (<any>window).nsPosCashRegister = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button.vue' ) );
+const nsAlertPopup              = (<any>window).nsAlertPopup = defineAsyncComponent( () => import('./popups/ns-' + 'alert' + '-popup.vue' ) );
+const nsConfirmPopup            = (<any>window).nsConfirmPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'confirm' + '-popup.vue' ) );
+const nsPOSLoadingPopup         = (<any>window).nsPOSLoadingPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'loading' + '-popup.vue' ) );
+const nsPromptPopup             = (<any>window).nsPromptPopup = defineAsyncComponent( () => import('./popups/ns-' + 'prompt' + '-popup.vue' ) );
+const nsLayawayPopup            = (<any>window).nsLayawayPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'layaway' + '-popup.vue' ) );
+const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'shipping' + '-popup.vue' ) );
+
+( window as any ).CustomerQueue     =   CustomerQueue;
+( window as any ).PaymentQueue      =   PaymentQueue;
+( window as any ).ProductsQueue     =   ProductsQueue;
+( window as any ).TypeQueue         =   TypeQueue;
+
+declare const systemOptions;
+declare const systemUrls;
 
 declare const systemOptions;
 declare const systemUrls;
 
 export class POS {
+    private _cartButtons: BehaviorSubject<{ [key: string]: any }>;
     private _products: BehaviorSubject<OrderProduct[]>;
     private _breadcrumbs: BehaviorSubject<any[]>;
     private _customers: BehaviorSubject<Customer[]>;
@@ -173,6 +187,10 @@ export class POS {
         return this._processingAddQueue;
     }
 
+    get cartButtons() {
+        return this._cartButtons;
+    }
+
     async reset() {
         this._isSubmitting = false;
 
@@ -183,12 +201,14 @@ export class POS {
         this.products.next([]);
         this._customers.next([]);
         this._breadcrumbs.next([]);
+        this._cartButtons.next({});
         this.defineCurrentScreen();
         this.setHoldPopupEnabled(true);
 
         await this.processInitialQueue();
 
         nsHooks.doAction( 'ns-after-cart-changed' );
+        nsHooks.doAction( 'ns-after-cart-reset' );
     }
 
     public initialize() {
@@ -203,6 +223,7 @@ export class POS {
         this._settings = new BehaviorSubject<{ [key: string]: any }>({});
         this._order = new BehaviorSubject<Order>(this.defaultOrder());
         this._selectedPaymentType = new BehaviorSubject<PaymentType>(null);
+        this._cartButtons = new BehaviorSubject<{ [key: string]: any }>({})
         this._orderTypeProcessQueue = [
             {
                 identifier: 'handle.delivery-order',
@@ -250,7 +271,7 @@ export class POS {
             const order = this.order.getValue();
 
             if (options.ns_customers_default !== false) {
-                nsHttpClient.get(`/api/nexopos/v4/customers/${options.ns_customers_default}`)
+                nsHttpClient.get(`/api/customers/${options.ns_customers_default}`)
                     .subscribe({
                         next: customer => {
                             this.selectCustomer(customer);
@@ -260,9 +281,24 @@ export class POS {
                             });
                         },
                         error: (error) => {
-                            nsSnackBar
-                                .error( __( 'Unable to select the default customer. Looks like the customer no longer exists. Consider changing the default customer on the settings.' ), __( 'OKAY' ), { duration: 0 })
-                                .subscribe();
+                            nsNotice
+                                .error( 
+                                    __( 'An error has occured' ),
+                                    __( 'Unable to select the default customer. Looks like the customer no longer exists. Consider changing the default customer on the settings.' ),
+                                    {
+                                        actions: {
+                                            readMore: {
+                                                label: __( 'Read More' ),
+                                                onClick: ( instance ) => {
+                                                    instance.close();
+                                                    window.open( 'https://my.nexopos.com/en/documentation/troubleshooting/no-default-customer', '_blank' );
+                                                }
+                                            }, 
+                                            close: {
+                                                label: __( 'Close' ),
+                                            }
+                                        }
+                                    })
                             reject(error);
                         }
                     });
@@ -273,25 +309,6 @@ export class POS {
                 message: 'tax group assignated'
             });
         }));
-
-        /**
-         * We're handling here the responsive aspect
-         * of the POS.
-         */
-        window.addEventListener('resize', () => {
-            this._responsive.detect();
-            this.defineCurrentScreen();
-        });
-
-        /**
-         * This will ensure the order is not closed mistakenly.
-         * @returns void
-         */
-        window.onbeforeunload   =   () => {
-            if ( this.products.getValue().length > 0 ) {
-                return __( 'Some products has been added to the cart. Would youl ike to discard this order ?' );
-            }
-        }
 
         /**
          * Whenever there is a change
@@ -570,7 +587,7 @@ export class POS {
             }
             
             if (order.tax_group_id !== undefined && order.tax_group_id.toString().length > 0 ) {
-                nsHttpClient.get(`/api/nexopos/v4/taxes/groups/${order.tax_group_id}`)
+                nsHttpClient.get(`/api/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
                             order   =   this.computeOrderTaxGroup( order, tax );
@@ -594,9 +611,6 @@ export class POS {
     }
 
     computeOrderTaxGroup( order, tax ) {
-
-        const posVat            =   this.options.getValue().ns_pos_vat;
-        const priceWithTax      =   this.options.getValue().ns_pos_price_with_tax === 'yes';
         const summarizedRates   =   <number>tax.taxes.map( tax => parseFloat( tax.rate ) ).reduce( ( b, a ) => b + a );
         const currentVatValue   =   this.getVatValue( order.subtotal - order.discount, summarizedRates, order.tax_type );
 
@@ -606,8 +620,8 @@ export class POS {
             ).multiply( 100 ).done();
 
             return {
-                tax_id: _tax.id,
-                tax_name: _tax.name,
+                id: _tax.id,
+                name: _tax.name,
                 rate: parseFloat(_tax.rate),
                 tax_value: math.chain(
                     math.chain( currentVatValue ).multiply( currentPercentage ).done()
@@ -717,7 +731,7 @@ export class POS {
                 });
 
                 if (result.order.instalments.length === 0 && result.order.tendered < expected) {
-                    const message = __(`Before saving this order, a minimum payment of {amount} is required`).replace('{amount}', Vue.filter('currency')(expected));
+                    const message = __(`Before saving this order, a minimum payment of {amount} is required`).replace('{amount}', nsCurrency(expected));
                     Popup.show(nsAlertPopup, { title: __('Unable to proceed'), message });
                     return reject({ status: 'failed', message });
                 } else {
@@ -739,7 +753,7 @@ export class POS {
                         Popup.show(nsConfirmPopup, {
                             title: __(`Initial Payment`),
                             message: __(`In order to proceed, an initial payment of {amount} is required for the selected payment type "{paymentType}". Would you like to proceed ?`)
-                                .replace('{amount}', Vue.filter('currency')(firstSlice))
+                                .replace('{amount}', nsCurrency(firstSlice))
                                 .replace('{paymentType}', paymentType.label),
                             onAction: (action) => {
                                 if ( action ) {
@@ -828,7 +842,7 @@ export class POS {
 
                 this._isSubmitting = true;
 
-                return nsHttpClient[method](`/api/nexopos/v4/orders${order.id !== undefined ? '/' + order.id : ''}`, order)
+                return nsHttpClient[method](`/api/orders${order.id !== undefined ? '/' + order.id : ''}`, order)
                     .subscribe({
                         next: result => {
                             resolve(result);
@@ -900,7 +914,7 @@ export class POS {
             if( [ 'inclusive', 'exclusive' ].includes( product.tax_type ) ) {
                 try {
                     if( product.tax_group_id ) {
-                        nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${product.tax_group_id}` )
+                        nsHttpClient.get( `/api/taxes/groups/${product.tax_group_id}` )
                             .subscribe({
                                 next: (taxGroup: any) => {
                                     [ 'sale', 'wholesale', 'custom' ].forEach( label => {
@@ -938,7 +952,7 @@ export class POS {
 
     loadOrder(order_id) {
         return new Promise((resolve, reject) => {
-            nsHttpClient.get(`/api/nexopos/v4/orders/${order_id}/pos`)
+            nsHttpClient.get(`/api/orders/${order_id}/pos`)
                 .subscribe({
                     next: async (order: any) => {
                         /**
@@ -1086,11 +1100,15 @@ export class POS {
         this._order.next(order);
     }
 
-    setPaymentActive(payment) {
+    setPaymentActive( payment: PaymentType ) {
         const payments = this._paymentsType.getValue();
-        const index = payments.indexOf(payment);
-        payments.forEach(p => p.selected = false);
-        payments[index].selected = true;
+        payments.forEach(p => {
+            if ( p.identifier === payment.identifier ) {
+                p.selected = true;
+            } else {
+                p.selected = false;
+            }
+        });
         this._paymentsType.next(payments);
     }
 
@@ -1101,9 +1119,11 @@ export class POS {
     selectCustomer(customer) {
         return new Promise((resolve, reject) => {
             const order = this.order.getValue();
+            const billing = Object.assign( customer.billing || {},  {});
 
-            const billing = Object.assign( customer.billing,  {});
-            delete billing.id;
+            if ( billing.id !== undefined ) {
+                delete billing.id;
+            }
 
             order.customer = customer;
             order.customer_id = customer.id;
@@ -1116,7 +1136,7 @@ export class POS {
              * customer meta data
              */
             if (customer.group === undefined || customer.group === null) {
-                nsHttpClient.get(`/api/nexopos/v4/customers/${customer.id}/group`)
+                nsHttpClient.get(`/api/customers/${customer.id}/group`)
                     .subscribe({
                         next: group => {
                             order.customer.group = group;
@@ -1136,7 +1156,7 @@ export class POS {
     updateCart(current, update) {
         for (let key in update) {
             if (update[key] !== undefined) {
-                Vue.set(current, key, update[key]);
+                current[ key ]  =   update[ key ];
             }
         }
 
@@ -1548,11 +1568,12 @@ export class POS {
     updateProduct(product, data, index = null) {
         const products = this._products.getValue();
         index = index === null ? products.indexOf(product) : index;
+        index = index === -1 ? 0 : index;
 
         /**
          * to ensure Vue updates accordingly.
          */
-        Vue.set(products, index, { ...product, ...data });
+        products[ index ]       =   { ...product, ...data };
 
         this.recomputeProducts(products);
         this.products.next(products);
@@ -1754,7 +1775,7 @@ export class POS {
     }
 
     loadCustomer(id) {
-        return nsHttpClient.get(`/api/nexopos/v4/customers/${id}`);
+        return nsHttpClient.get(`/api/customers/${id}`);
     }
 
     defineSettings(settings) {
@@ -1769,7 +1790,7 @@ export class POS {
                     message: __( 'The current order will be deleted as no payment has been made so far.' ),
                     onAction: (action) => {
                         if (action) {
-                            nsHttpClient.delete(`/api/nexopos/v4/orders/${order.id}`)
+                            nsHttpClient.delete(`/api/orders/${order.id}`)
                                 .subscribe({
                                     next: (result: any) => {
                                         nsSnackBar.success(result.message).subscribe();
@@ -1788,7 +1809,7 @@ export class POS {
                     message: __( 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.' ),
                     onAction: (reason) => {
                         if (reason !== false) {
-                            nsHttpClient.post(`/api/nexopos/v4/orders/${order.id}/void`, { reason })
+                            nsHttpClient.post(`/api/orders/${order.id}/void`, { reason })
                                 .subscribe({
                                     next: (result: any) => {
                                         nsSnackBar.success(result.message).subscribe();

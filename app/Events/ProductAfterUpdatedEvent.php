@@ -17,7 +17,7 @@ class ProductAfterUpdatedEvent
      *
      * @return void
      */
-    public function __construct( public Product $product, public $fields )
+    public function __construct( public Product $product )
     {
         //
     }

@@ -7,8 +7,7 @@ use App\Models\UnitGroup;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use App\Services\Users;
-use Exception;
+use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -266,26 +265,6 @@ class UnitCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -299,10 +278,8 @@ class UnitCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
 
@@ -358,7 +335,7 @@ class UnitCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.units/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.units/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -379,7 +356,7 @@ class UnitCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( Users::class );
+        $user = app()->make( UsersService::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status' => 'failed',
@@ -420,8 +397,8 @@ class UnitCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'units' ),
             'create' => ns()->url( 'dashboard/' . 'units/create' ),
             'edit' => ns()->url( 'dashboard/' . 'units/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.units' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.units/{id}' . '' ),
         ];
     }
 

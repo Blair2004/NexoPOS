@@ -2,15 +2,25 @@
 
 namespace App\Services;
 
+use App\Events\ModulesAfterDisabledEvent;
+use App\Events\ModulesAfterEnabledEvent;
+use App\Events\ModulesAfterRemovedEvent;
+use App\Events\ModulesBeforeDisabledEvent;
+use App\Events\ModulesBeforeEnabledEvent;
+use App\Events\ModulesBeforeRemovedEvent;
 use App\Exceptions\MissingDependencyException;
 use App\Exceptions\ModuleVersionMismatchException;
 use App\Exceptions\NotAllowedException;
 use App\Models\ModuleMigration;
 use Error as GlobalError;
 use Exception;
+use Illuminate\Contracts\View\View as ViewView;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -55,13 +65,9 @@ class ModulesService
     }
 
     /**
-     * Will load a set of files within a specifc module
-     *
-     * @param string $module namespace
-     * @param string $path to fload
-     * @return mixed
+     * Will load a set of files within a specifc module.
      */
-    public static function loadModuleFile( $namespace, $file )
+    public static function loadModuleFile( string $namespace, string $file ): mixed
     {
         $moduleService = app()->make( self::class );
         $module = $moduleService->get( $namespace );
@@ -74,9 +80,8 @@ class ModulesService
      * Load modules for a defined path.
      *
      * @param string path to load
-     * @return void
      */
-    public function load( $dir = null )
+    public function load( string|null $dir = null ): void
     {
         /**
          * If we're not loading a specific module directory
@@ -98,13 +103,19 @@ class ModulesService
         }
     }
 
+    public function resolveRelativePathToClass( $filePath )
+    {
+        $filePath = str_replace( '/', '\\', $filePath );
+        $filePath = str_replace( '.php', '', $filePath );
+        $filePath = str_replace( 'modules\\', '', $filePath );
+
+        return 'Modules\\' . $filePath;
+    }
+
     /**
      * Init a module from a provided path.
-     *
-     * @param string
-     * @return void
      */
-    public function __init( string $dir )
+    public function __init( string $dir ): void
     {
         /**
          * Loading files from module directory
@@ -124,17 +135,27 @@ class ModulesService
          * Checks if a config file exists
          */
         if ( in_array( 'config.xml', $files ) ) {
-            $xmlContent = file_get_contents( base_path() . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'config.xml' );
-            $xml = $this->xmlParser->extract( $xmlContent );
-            $config = $xml->parse([
-                'namespace' => [ 'uses' => 'namespace' ],
-                'version' => [ 'uses' => 'version' ],
-                'author' => [ 'uses' => 'author' ],
-                'description' => [ 'uses' => 'description' ],
-                'dependencies' => [ 'uses' => 'dependencies' ],
-                'name' => [ 'uses' => 'name' ],
-                'core' => [ 'uses' => 'core' ],
-            ]);
+            $xmlRelativePath = 'modules' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'config.xml';
+            $xmlConfigPath = base_path() . DIRECTORY_SEPARATOR . $xmlRelativePath;
+            $xmlContent = file_get_contents( $xmlConfigPath );
+
+            try {
+                $xml = $this->xmlParser->extract( $xmlContent );
+                $config = $xml->parse([
+                    'namespace' => [ 'uses' => 'namespace' ],
+                    'version' => [ 'uses' => 'version' ],
+                    'author' => [ 'uses' => 'author' ],
+                    'description' => [ 'uses' => 'description' ],
+                    'dependencies' => [ 'uses' => 'dependencies' ],
+                    'name' => [ 'uses' => 'name' ],
+                    'core' => [ 'uses' => 'core' ],
+                ]);
+            } catch( Exception $exception ) {
+                throw new Exception( sprintf(
+                    __( 'Failed to parse the configuration file on the following path "%s"' ),
+                    $xmlRelativePath
+                ) );
+            }
 
             $xmlElement = new \SimpleXMLElement( $xmlContent );
 
@@ -177,7 +198,6 @@ class ModulesService
                 $config[ 'composer-installed' ] = Storage::disk( 'ns-modules' )->exists( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
                 $config[ 'controllers-path' ] = $currentModulePath . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
                 $config[ 'controllers-relativePath' ] = ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
-                $config[ 'dashboard-path' ] = $currentModulePath . 'Dashboard' . DIRECTORY_SEPARATOR;
                 $config[ 'enabled' ] = false; // by default the module is set as disabled
                 $config[ 'has-languages' ] = Storage::disk( 'ns-modules' )->exists( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Lang' );
                 $config[ 'lang-relativePath' ] = 'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Lang';
@@ -193,11 +213,11 @@ class ModulesService
                  * If the system is installed, then we can check if the module is enabled or not
                  * since by default it's not enabled
                  */
-                if ( ns()->installed() ) {
-                    $modules = (array) $this->options->get( 'enabled_modules' );
+                if ( Helper::installed() ) {
+                    $modules = $this->options->get( 'enabled_modules', [] );
                     $config[ 'migrations' ] = $this->__getModuleMigration( $config );
                     $config[ 'all-migrations' ] = $this->getAllModuleMigrationFiles( $config );
-                    $config[ 'enabled' ] = in_array( $config[ 'namespace' ], $modules ) ? true : false;
+                    $config[ 'enabled' ] = in_array( $config[ 'namespace' ], (array) $modules ) ? true : false;
                 }
 
                 /**
@@ -267,14 +287,14 @@ class ModulesService
                 }
             }
         } else {
-            return [
-                'status' => 'failed',
-                'message' => sprintf( __( 'No config.xml has been found on the directory : %s' ), $dir ),
-            ];
+            Log::error( sprintf( __( 'No config.xml has been found on the directory : %s. This folder is ignored' ), $dir ) );
         }
     }
 
-    public function triggerServiceProviders( $config, $method, $parentClass = false )
+    /**
+     * Triggers the module's service provider on the defined method.
+     */
+    public function triggerServiceProviders( array $config, string $method, string|bool $parentClass = false ): void
     {
         foreach ( $config[ 'providers' ] as $service ) {
             /**
@@ -310,11 +330,8 @@ class ModulesService
     /**
      * Will check for a specific module or all the module
      * enabled if there is a dependency error.
-     *
-     * @param null|array $module
-     * @return void
      */
-    public function dependenciesCheck( $module = null )
+    public function dependenciesCheck( null|array $module = null ): void
     {
         if ( $module === null ) {
             collect( $this->getEnabled() )->each( function ( $module ) {
@@ -423,11 +440,9 @@ class ModulesService
     }
 
     /**
-     * Run Modules
-     *
-     * @return void
+     * Boot a module if it's enabled.
      */
-    public function boot( $module = null )
+    public function boot( $module = null ): void
     {
         if ( ! empty( $module ) && $module[ 'enabled' ] ) {
             $this->__boot( $module );
@@ -441,7 +456,10 @@ class ModulesService
         }
     }
 
-    private function __boot( $module )
+    /**
+     * Autoload vendors for a defined module.
+     */
+    private function __boot( $module ): void
     {
         /**
          * Autoload Vendors
@@ -458,25 +476,22 @@ class ModulesService
     }
 
     /**
-     * Return the list of module as an array
+     * Return the list of modules as an array
      */
-    public function get($namespace = null): array|null
+    public function get($namespace = null): bool|array
     {
         if ( $namespace !== null ) {
-            return $this->modules[ $namespace ] ?? null;
+            return $this->modules[ $namespace ] ?? false;
         }
 
         return $this->modules;
     }
 
     /**
-     * get a specific module using the provided
+     * Get a specific module using the provided
      * namespace only if that module is enabled
-     *
-     * @param string module namespace
-     * @return bool|array
      */
-    public function getIfEnabled( $namespace )
+    public function getIfEnabled( string $namespace ): bool|array
     {
         $module = $this->modules[ $namespace ] ?? false;
 
@@ -488,11 +503,9 @@ class ModulesService
     }
 
     /**
-     * Return the list of active module as an array
-     *
-     * @return array of active modules
+     * Returns the list of active module as an array
      */
-    public function getEnabled()
+    public function getEnabled(): array
     {
         return array_filter( $this->modules, function ( $module ) {
             if ( $module[ 'enabled' ] === true ) {
@@ -502,11 +515,9 @@ class ModulesService
     }
 
     /**
-     * Return the list of active module as an array
-     *
-     * @return array of active modules
+     * Returns the list of active module as an array
      */
-    public function getDisabled()
+    public function getDisabled(): array
     {
         return array_filter( $this->modules, function ( $module ) {
             if ( $module[ 'enabled' ] === false ) {
@@ -516,12 +527,9 @@ class ModulesService
     }
 
     /**
-     * Get by File
-     *
-     * @param string file path
-     * @return array/null
+     * Get a module using the index-file.
      */
-    public function asFile( $indexFile )
+    public function asFile( string $indexFile ): mixed
     {
         foreach ( $this->modules as $module ) {
             if ( $module[ 'index-file' ] == $indexFile ) {
@@ -531,12 +539,9 @@ class ModulesService
     }
 
     /**
-     * Extract module using provided namespace
-     *
-     * @param string module namespace
-     * @return array of module details
+     * Extracts a module using provided namespace
      */
-    public function extract( $namespace )
+    public function extract( string $namespace ): array
     {
         $this->checkManagementStatus();
 
@@ -637,28 +642,22 @@ class ModulesService
     }
 
     /**
-     * Upload a module
-     *
-     * @param File module
-     * @return bool
+     * Uploads a module
      */
-    public function upload( $file )
+    public function upload( UploadedFile $file ): array
     {
         $this->checkManagementStatus();
 
-        if ( ! is_dir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '_temp' ) ) {
-            mkdir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '_temp' );
-        }
-
-        $path = $file->store( '_temp', 'ns-modules' );
+        $path = $file->store( '', [ 'disk' => 'ns-modules-temp' ]);
 
         $fileInfo = pathinfo( $file->getClientOriginalName() );
-        $fullPath = base_path( 'modules' ) . DIRECTORY_SEPARATOR . $path;
+        $fullPath = Storage::disk( 'ns-modules-temp' )->path( $path );
+        $extractionFolderName = Str::uuid();
         $dir = dirname( $fullPath );
 
         $archive = new \ZipArchive;
         $archive->open( $fullPath );
-        $archive->extractTo( $dir . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
+        $archive->extractTo( $dir . DIRECTORY_SEPARATOR . $extractionFolderName );
         $archive->close();
 
         /**
@@ -666,14 +665,14 @@ class ModulesService
          */
         unlink( $fullPath );
 
-        $directory = Storage::disk( 'ns-modules' )->directories( '_temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
+        $directory = Storage::disk( 'ns-modules-temp' )->directories( $extractionFolderName );
 
         if ( count( $directory ) > 1 ) {
             throw new Exception( __( 'Unable to detect the folder from where to perform the installation.' ) );
         }
 
         $directoryName = pathinfo( $directory[0] )[ 'basename' ];
-        $rawFiles = Storage::disk( 'ns-modules' )->allFiles( '_temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
+        $rawFiles = Storage::disk( 'ns-modules-temp' )->allFiles( $extractionFolderName );
         $module = [];
 
         /**
@@ -686,9 +685,9 @@ class ModulesService
         }, $rawFiles );
 
         if ( in_array( 'config.xml', $files ) ) {
-            $file = '_temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] . DIRECTORY_SEPARATOR . $directoryName . DIRECTORY_SEPARATOR . 'config.xml';
+            $file = $extractionFolderName . DIRECTORY_SEPARATOR . $directoryName . DIRECTORY_SEPARATOR . 'config.xml';
             $xml = new \SimpleXMLElement(
-                Storage::disk( 'ns-modules' )->get( $file )
+                Storage::disk( 'ns-modules-temp' )->get( $file )
             );
 
             if (
@@ -700,11 +699,11 @@ class ModulesService
                 /**
                  * the file send is not a valid module
                  */
-                $this->__clearTempFolder();
+                $this->clearTemporaryFiles();
 
                 return [
                     'status' => 'failed',
-                    'message' => __( 'Invalid Module provided' ),
+                    'message' => __( 'Invalid Module provided.' ),
                 ];
             }
 
@@ -720,11 +719,11 @@ class ModulesService
                     /**
                      * We're dealing with old module
                      */
-                    $this->__clearTempFolder();
+                    $this->clearTemporaryFiles();
 
                     return [
                         'status' => 'danger',
-                        'message' => __( 'Unable to upload this module as it\'s older than the current on' ),
+                        'message' => __( 'Unable to upload this module as it\'s older than the version installed' ),
                         'module' => $module,
                     ];
                 }
@@ -749,13 +748,13 @@ class ModulesService
              * and create symlink for the assets
              */
             foreach ( $rawFiles as $file ) {
-                $search = '_temp' . '/' . $fileInfo[ 'filename' ] . '/' . $directoryName . '/';
+                $search = $extractionFolderName . '/' . $directoryName . '/';
                 $replacement = $moduleNamespace . DIRECTORY_SEPARATOR;
                 $final = str_replace( $search, $replacement, $file );
 
                 Storage::disk( 'ns-modules' )->put(
                     $final,
-                    Storage::disk( 'ns-modules' )->get( $file )
+                    Storage::disk( 'ns-modules-temp' )->get( $file )
                 );
             }
 
@@ -774,15 +773,30 @@ class ModulesService
             $this->createSymLink( $moduleNamespace );
 
             /**
+             * We needs to load all modules, to ensure
+             * the new uploaded module is recognized
+             */
+            $this->load();
+
+            /**
              * @step 3 : run migrations
              * check if the module has a migration
              */
-            return $this->__runModuleMigration( $moduleNamespace, $xml->version );
+            $this->runAllMigration( $moduleNamespace );
+
+            $module = $this->get( $moduleNamespace );
+
+            $this->clearTemporaryFiles();
+
+            return [
+                'status' => 'success',
+                'message' => sprintf( __( 'The module was "%s" was successfully installed.' ), $module[ 'name' ] ),
+            ];
         } else {
             /**
              * the file send is not a valid module
              */
-            $this->__clearTempFolder();
+            $this->clearTemporaryFiles();
 
             return [
                 'status' => 'danger',
@@ -792,13 +806,10 @@ class ModulesService
     }
 
     /**
-     * create a symbolink asset directory
-     * for specific module
-     *
-     * @param string module namespace
-     * @return void
+     * Creates a symbolic link to the asset directory
+     * for specific module.
      */
-    public function createSymLink( $moduleNamespace )
+    public function createSymLink( string $moduleNamespace ): void
     {
         $this->checkManagementStatus();
 
@@ -827,7 +838,7 @@ class ModulesService
         }
 
         /**
-         * checks if a public directory exists and create a
+         * checks if a lang directory exists and create a
          * link for that directory
          */
         if (
@@ -848,13 +859,9 @@ class ModulesService
     }
 
     /**
-     * remove symlink create for a
-     * module using a namespace
-     *
-     * @param string module namespace
-     * @return void
+     * Removes a symbolic link created for a module using a namespace
      */
-    public function removeSymLink( $moduleNamespace )
+    public function removeSymLink( string $moduleNamespace ): void
     {
         $this->checkManagementStatus();
 
@@ -866,101 +873,58 @@ class ModulesService
     }
 
     /**
-     * Check module migration
-     *
-     * @return array of response
+     * Checks a module migration
      */
-    private function __runModuleMigration( $moduleNamespace, $version )
+    private function __runModuleMigration( string $moduleNamespace ): array
     {
-        $module_version_key = strtolower( $moduleNamespace ) . '_last_migration';
+        /**
+         * Load module since it has'nt yet been added to the
+         * runtime
+         */
+        $this->load( $moduleNamespace );
 
-        if ( $version = $this->options->get( $module_version_key ) != null ) {
-            /**
-             * the new options will be set after the migration
-             */
-            $this->__clearTempFolder();
+        /**
+         * Get the module details
+         */
+        $module = $this->get( $moduleNamespace );
 
-            return [
-                'status' => 'success',
-                'message' => __( 'A migration is required for this module' ),
-                'action' => 'migration',
-            ];
-        } else {
-            /**
-             * Load module since it has'nt yet been added to the
-             * runtime
-             */
-            $this->load( $moduleNamespace );
+        /**
+         * Run the first migration
+         */
+        $migrationFiles = $this->getMigrations( $moduleNamespace );
 
-            /**
-             * Get the module details
-             */
-            $module = $this->get( $moduleNamespace );
-
-            /**
-             * Run the first migration
-             */
-            $migrationFiles = $this->getMigrations( $moduleNamespace );
-
-            /**
-             * Checks if migration files exists
-             */
-            if ( $migrationFiles ) {
-                foreach ( $migrationFiles as $version => $files ) {
-                    /**
-                     * Looping each migration files
-                     */
-                    foreach ( $files as $file ) {
-                        $this->__runSingleFile( 'up', $module, $file );
-                    }
-                }
+        /**
+         * Checks if migration files exists
+         */
+        if ( count( $migrationFiles ) > 0 ) {
+            foreach ( $migrationFiles as $file ) {
+                /**
+                 * Looping each migration files
+                 */
+                $this->__runSingleFile( 'up', $module, $file );
             }
-
-            $this->options->set( $module_version_key, $version );
-
-            $this->__clearTempFolder();
-
-            return [
-                'status' => 'success',
-                'message' => __( 'The module has been successfully installed.' ),
-            ];
         }
+
+        $this->clearTemporaryFiles();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The module has been successfully installed.' ),
+        ];
     }
 
     /**
-     * Clear Temp Folder
-     *
-     * @return void
+     * Clears Temp Folder
      */
-    private function __clearTempFolder()
+    public function clearTemporaryFiles(): void
     {
-        /**
-         * The user may have uploaded some unuseful folders.
-         * We should then delete everything and return an error.
-         */
-        $directories = Storage::disk( 'ns-modules' )->allDirectories( '_temp' );
-
-        foreach ( $directories as $directory ) {
-            Storage::disk( 'ns-modules' )->deleteDirectory( $directory );
-        }
-
-        /**
-         * Delete unused files as well
-         */
-        $files = Storage::disk( 'ns-modules' )->allFiles( '_temp' );
-
-        foreach ( $files as $file ) {
-            Storage::disk( 'ns-modules' )->delete( $file );
-        }
+        Artisan::call( 'ns:doctor', [ '--clear-modules-temp' => true ]);
     }
 
     /**
-     * delete Modules
-     *
-     * @param string module namespace
-     * @return array of error message
+     * Deletes an existing module using the provided namespace
      */
-    public function delete( string $namespace )
+    public function delete( string $namespace ): array
     {
         $this->checkManagementStatus();
 
@@ -973,17 +937,15 @@ class ModulesService
              */
             $this->disable( $namespace );
 
-            /**
-             * Delete Migration version
-             *
-             * @deprecated
-             */
-            $this->options->delete( strtolower( $module[ 'namespace' ] ) . '_last_migration' );
+            ModulesBeforeRemovedEvent::dispatch( $module );
 
+            /**
+             * We revert all migrations made by the modules.
+             */
             $this->revertMigrations( $module );
 
             /**
-             * Delete module from DISK
+             * Delete module from filesystem.
              */
             Storage::disk( 'ns-modules' )->deleteDirectory( ucwords( $namespace ) );
 
@@ -998,9 +960,12 @@ class ModulesService
              */
             unset( $this->modules[ $namespace ] );
 
+            ModulesAfterRemovedEvent::dispatch( $module );
+
             return [
                 'status' => 'success',
                 'code' => 'module_deleted',
+                'message' => sprintf( __( 'The modules "%s" was deleted successfully.' ), $module[ 'name' ] ),
                 'module' => $module,
             ];
         }
@@ -1010,18 +975,16 @@ class ModulesService
          */
         return [
             'status' => 'danger',
+            'message' => sprintf( __( 'Unable to locate a module having as identifier "%s".' ), $namespace ),
             'code' => 'unknow_module',
         ];
     }
 
     /**
-     * Will revert the migrations
+     * Reverts the migrations
      * for a specific module
-     *
-     * @param array $module
-     * @return void
      */
-    public function revertMigrations( $module, $only = [] )
+    public function revertMigrations( array $module, $only = [] ): void
     {
         /**
          * Run down method for all migrations
@@ -1048,18 +1011,15 @@ class ModulesService
          */
         if ( $migrationFiles ) {
             foreach ( $migrationFiles as $file ) {
-                $this->__runSingleFile( 'down', $module, $file );
+                $this->__runSingleFile( 'down', $module[ 'namespace' ], $file );
             }
         }
     }
 
     /**
-     * Run a single file
-     *
-     * @param array module
-     * @param string file
+     * Runs a single file
      */
-    private function __runSingleFile( $method, $module, $file )
+    private function __runSingleFile( string $method, string $namespace, string $file ): array
     {
         /**
          * include initial migration files
@@ -1068,37 +1028,24 @@ class ModulesService
         $fileInfo = pathinfo( $filePath );
         $fileName = $fileInfo[ 'filename' ];
         $className = str_replace( ' ', '', ucwords( str_replace( '_', ' ', $fileName ) ) );
-        $className = 'Modules\\' . ucwords( $module[ 'namespace' ] ) . '\Migrations\\' . $className;
+        $className = 'Modules\\' . ucwords( $namespace ) . '\Migrations\\' . $className;
 
         if ( is_file( $filePath ) ) {
-            /**
-             * Include the migration class file
-             * and checks if that class exists
-             * we're parsin the className from the file name
-             */
-            include_once $filePath;
-
             if ( class_exists( $className ) ) {
+                return $this->triggerClass( $className, $method );
+            } else {
                 /**
-                 * Create Object
+                 * Includes the migration file which might returns an anonymous
+                 * class or a migration class with a defined class.
                  */
-                $object = new $className;
+                
+                $object = require( $filePath );
 
-                /**
-                 * let's try to run a method
-                 * "up" or "down" and watch for
-                 * any error.
-                 */
-                $object->$method();
-
-                return [
-                    'status' => 'success',
-                    'message' => __( 'The migration run successfully.' ),
-                    'data' => [
-                        'object' => $object,
-                        'className' => $className,
-                    ],
-                ];
+                if ( is_object( $object ) ) {
+                    return $this->triggerObject( $object, $method );
+                } else {
+                    return $this->triggerClass( $className, $method );
+                }
             }
 
             return [
@@ -1113,13 +1060,58 @@ class ModulesService
         ];
     }
 
+    public function triggerObject( $object, $method ) 
+    {
+        /**
+         * In case the migration file is an anonymous class,
+         * we'll just execute the requested method from the returned object.
+         */
+        $object->$method();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The migration run successfully.' ),
+            'data' => [
+                'object' => $object,
+            ],
+        ];
+    }
+    
+    public function triggerClass( $className, $method ) 
+    {
+        /**
+         * Create Object
+         */
+        $object = new $className;
+
+        /**
+         * let's try to run a method
+         * "up" or "down" and watch for
+         * any error.
+         */
+        if ( ! method_exists( $object, $method ) ) {
+            return [
+                'status' => 'failed',
+                'message' => sprintf( __( 'The migration file doens\'t have a valid method name. Expected method : %s' ), $method ),
+            ];
+        }
+        
+        $object->$method();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The migration run successfully.' ),
+            'data' => [
+                'object' => $object,
+                'className' => $className,
+            ],
+        ];
+    }
+
     /**
-     * Enable module
-     *
-     * @param string namespace
-     * @return array of error message
+     * Enables module using a provided namespace
      */
-    public function enable( string $namespace )
+    public function enable( string $namespace ): array
     {
         $this->checkManagementStatus();
 
@@ -1130,6 +1122,8 @@ class ModulesService
              */
             $enabledModules = $this->options->get( 'enabled_modules', [] );
 
+            ModulesBeforeEnabledEvent::dispatch( $module );
+
             /**
              * @todo we might need to check if this module
              * has dependencies that are missing.
@@ -1138,13 +1132,23 @@ class ModulesService
                 $this->dependenciesCheck( $module );
             } catch ( MissingDependencyException $exception ) {
                 if ( $exception instanceof MissingDependencyException ) {
-                    throw new MissingDependencyException(
-                        sprintf(
-                            __( 'The module %s cannot be enabled as his dependencies (%s) are missing or are not enabled.' ),
-                            $module[ 'name' ],
-                            collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
-                        )
-                    );
+                    if ( count(  $module[ 'requires' ] ) === 1 ) {
+                        throw new MissingDependencyException(
+                            sprintf(
+                                __( 'The module %s cannot be enabled as his dependency (%s) is missing or not enabled.' ),
+                                $module[ 'name' ],
+                                collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
+                            )
+                        );
+                    } else {
+                        throw new MissingDependencyException(
+                            sprintf(
+                                __( 'The module %s cannot be enabled as his dependencies (%s) are missing or not enabled.' ),
+                                $module[ 'name' ],
+                                collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
+                            )
+                        );
+                    }
                 }
             }
 
@@ -1208,6 +1212,7 @@ class ModulesService
              */
             $this->createSymLink( $namespace );
 
+            ModulesAfterEnabledEvent::dispatch( $module );
             Artisan::call( 'cache:clear' );
 
             return [
@@ -1229,17 +1234,16 @@ class ModulesService
     }
 
     /**
-     * Disable Module
-     *
-     * @param string module namespace
-     * @return array of status message
+     * Disables Module using a provided namespace
      */
-    public function disable( string $namespace )
+    public function disable( string $namespace ): array
     {
         $this->checkManagementStatus();
 
         // check if module exists
         if ( $module = $this->get( $namespace ) ) {
+            ModulesBeforeDisabledEvent::dispatch( $module );
+
             // @todo sandbox to test if the module runs
             $enabledModules = $this->options->get( 'enabled_modules', []);
             $indexToRemove = array_search( $namespace, $enabledModules );
@@ -1249,7 +1253,9 @@ class ModulesService
                 unset( $enabledModules[ $indexToRemove ] );
             }
 
-            $this->options->set( 'enabled_modules', json_encode( $enabledModules ) );
+            $this->options->set( 'enabled_modules', $enabledModules );
+
+            ModulesAfterDisabledEvent::dispatch( $module );
 
             return [
                 'status' => 'success',
@@ -1267,18 +1273,12 @@ class ModulesService
     }
 
     /**
-     * get Migrations
-     *
-     * @param string module namespace
-     * @return array of version
+     * Returns an array with the module migrations.
      */
-    public function getMigrations( $namespace )
+    public function getMigrations( string $namespace ): array
     {
-        $module = $this->getIfEnabled( $namespace );
+        $module = $this->get( $namespace );
 
-        /**
-         * if module exists
-         */
         if ( $module ) {
             return $this->__getModuleMigration( $module );
         }
@@ -1286,7 +1286,7 @@ class ModulesService
         return [];
     }
 
-    public function getAllMigrations( $module )
+    public function getAllMigrations( array $module ): array
     {
         $migrations = Storage::disk( 'ns-modules' )
             ->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
@@ -1295,13 +1295,10 @@ class ModulesService
     }
 
     /**
-     * Will return the module migrations files
+     * Returns the module migrations files
      * that has already been migrated.
-     *
-     * @param array $module
-     * @return array
      */
-    public function getModuleAlreadyMigratedFiles( $module )
+    public function getModuleAlreadyMigratedFiles( array $module ): array
     {
         return ModuleMigration::namespace( $module[ 'namespace' ] )
             ->get()
@@ -1311,13 +1308,10 @@ class ModulesService
     }
 
     /**
-     * Get module migration without
+     * Returns the migration without
      * having the modules array built.
-     *
-     * @param array module namespace
-     * @return array of migration files
      */
-    private function __getModuleMigration( $module, $cache = true )
+    private function __getModuleMigration( array $module, bool $cache = true ): array
     {
         /**
          * If the last migration is not defined
@@ -1332,14 +1326,10 @@ class ModulesService
     }
 
     /**
-     * Will return all migrations file that hasn't
+     * Returns all migrations file that hasn't
      * yet been runned for a specific module
-     *
-     * @param array $module
-     * @param array $migratedFiles
-     * @return array
      */
-    public function getModuleUnmigratedFiles( $module, $migratedFiles )
+    public function getModuleUnmigratedFiles( array $module, array $migratedFiles ): array
     {
         $files = $this->getAllModuleMigrationFiles( $module );
         $unmigratedFiles = [];
@@ -1364,29 +1354,41 @@ class ModulesService
     }
 
     /**
-     * Return all the migration defined
+     * Returns all the migration defined
      * for a specific module
-     *
-     * @param array $module
-     * @return array
      */
-    public function getAllModuleMigrationFiles( $module )
+    public function getAllModuleMigrationFiles( array $module ): array
     {
-        $files = Storage::disk( 'ns-modules' )
-            ->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+        $migrationDirectory =   ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR;
+        $files = Storage::disk( 'ns-modules' )->allFiles( $migrationDirectory );
+        $files = $this->getAllValidFiles( $files );
 
-        return $this->getAllValidFiles( $files );
+        return collect( $files )->filter( function( $file ) use ( $module ) {
+            /**
+             * we need to resolve the files and make sure it doesn't have any
+             * dependency on a module. For example, we might want a migration from our module to
+             * be counted as a migration only if another module exists and is enabled.
+             */
+            $migration  =   $this->resolveRelativePathToClass( $file );
+    
+            if ( class_exists( $migration ) && defined( $migration . '::DEPENDENCIES' ) ) {
+                foreach( $migration::DEPENDENCIES as $dependency ) {
+                    if ( ! $this->getIfEnabled( $dependency ) ) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+
+        })->toArray();
     }
 
     /**
-     * Will only return files which extension matches
+     * Returns files which extension matches
      * the extensions provided.
-     *
-     * @param array $files
-     * @param array $extensions
-     * @return array
      */
-    private function getAllValidFiles( $files, $extensions = [ 'php' ] )
+    private function getAllValidFiles( array $files, $extensions = [ 'php' ] ): array
     {
         /**
          * We only want to restrict file
@@ -1400,17 +1402,15 @@ class ModulesService
     }
 
     /**
-     * Run module migration
-     *
-     * @param string module namespace
-     * @param string version number
-     * @param string file path
-     * @return void
+     * Executes module migration.
      */
-    public function runMigration( $namespace, $file )
+    public function runMigration( string $namespace, string $file )
     {
-        $module = $this->get( $namespace );
-        $result = $this->__runSingleFile( 'up', $module, $file );
+        $result = $this->__runSingleFile(
+            method: 'up',
+            namespace: $namespace,
+            file: $file
+        );
 
         /**
          * save the migration only
@@ -1437,31 +1437,28 @@ class ModulesService
     }
 
     /**
-     * Run all module migration
-     *
-     * @param string module namespace
-     * @param string version number
-     * @param string file path
-     * @return void
+     * Executes all module migrations files.
      */
-    public function runAllMigration( $namespace, $version, $file )
+    public function runAllMigration( string $namespace ): array
     {
         $migrations = $this->getMigrations( $namespace );
+
         if ( $migrations && is_array( $migrations ) ) {
-            foreach ( $migrations as $version => $files ) {
-                foreach ( $files as $file ) {
-                    $this->runMigration( $namespace, $version, $file );
-                }
+            foreach ( $migrations as $file ) {
+                $this->runMigration( $namespace, $file );
             }
         }
+
+        return [
+            'status' => 'success',
+            'message' => __( 'All migration were executed.' ),
+        ];
     }
 
     /**
      * Drop Module Migration
-     *
-     * @param string module namespace
      */
-    public function dropMigration( $namespace, $version, $file )
+    public function dropMigration( string $namespace, string $file ): array
     {
         $module = $this->get( $namespace );
 
@@ -1470,40 +1467,23 @@ class ModulesService
 
     /**
      * Drop All Migration
-     *
-     * @param string module namespace
      */
-    public function dropAllMigrations( $namespace )
+    public function dropAllMigrations( string $namespace ): void
     {
-        $migrations = $this->getAllMigrations( $namespace );
+        $migrations = $this->getAllMigrations( $this->get( $namespace ) );
+
         if ( ! empty( $migrations ) ) {
-            foreach ( $migrations as $version => $files ) {
-                foreach ( $files as $file ) {
-                    $this->dropMigration( $namespace, $version, $file );
-                }
+            foreach ( $migrations as $file ) {
+                $this->dropMigration( $namespace, $file );
             }
         }
     }
 
     /**
-     * @deprecated
+     * Prevents module management when
+     * it's explicitely disabled from the settings
      */
-    public function serviceProvider( $module, $instance, $method, $params = null )
-    {
-        collect( $module[ 'providers' ] )->each( function ( $provider ) use ( $instance, $params, $method ) {
-            if ( $provider instanceof $instance ) {
-                $provider->$method( $params );
-            }
-        });
-    }
-
-    /**
-     * Prevent module management when
-     * it's explicitly disabled from the settings
-     *
-     * @return void
-     */
-    public function checkManagementStatus()
+    public function checkManagementStatus(): void
     {
         if ( env( 'NS_LOCK_MODULES', false ) ) {
             throw new NotAllowedException( __( 'Unable to proceed, the modules management is disabled.' ) );
@@ -1513,10 +1493,8 @@ class ModulesService
     /**
      * Generate a modules using the
      * configuration provided
-     *
-     * @param array $config
      */
-    public function generateModule( $config )
+    public function generateModule( array $config ): array
     {
         if (
             ! $this->get( $config[ 'namespace' ] ) ||
@@ -1556,6 +1534,10 @@ class ModulesService
             Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $config[ 'namespace' ] . 'Module.php', $this->streamContent( 'main', $config ) );
             Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Events' . DIRECTORY_SEPARATOR . $config[ 'namespace' ] . 'Event.php', $this->streamContent( 'event', $config ) );
             Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'index.html', '<h1>Silence is golden !</h1>' );
+            Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . 'DatabaseMigration.php', View::make( 'generate.modules.migration', [
+                'module' => $config,
+                'migration' => 'DatabaseMigration',
+            ])->render() );
 
             /**
              * Generate Module Public Folder
@@ -1588,11 +1570,11 @@ class ModulesService
     }
 
     /**
-     * Scream Content
+     * Stream Content
      *
      * @return string content
      */
-    public function streamContent( $content, $config )
+    public function streamContent( string $content, array $config ): ViewView
     {
         switch ( $content ) {
             case 'main':

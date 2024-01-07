@@ -9,8 +9,10 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\CouponCrud;
+use App\Crud\CouponOrderHistoryCrud;
 use App\Crud\CustomerAccountCrud;
 use App\Crud\CustomerCouponCrud;
+use App\Crud\CustomerCouponHistoryCrud;
 use App\Crud\CustomerCrud;
 use App\Crud\CustomerOrderCrud;
 use App\Crud\CustomerRewardCrud;
@@ -22,6 +24,7 @@ use App\Models\CustomerCoupon;
 use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Services\CustomerService;
+use App\Services\DateService;
 use App\Services\OrdersService;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -31,23 +34,12 @@ use Illuminate\Support\Facades\View;
 
 class CustomersController extends DashboardController
 {
-    /**
-     * @var CustomerService
-     */
-    protected $customerService;
-
-    /**
-     * @var OrdersService
-     */
-    protected $ordersService;
-
     public function __construct(
-        CustomerService $customerService,
-        OrdersService $ordersService
+        protected CustomerService $customerService,
+        protected OrdersService $ordersService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-        $this->customerService = $customerService;
-        $this->ordersService = $ordersService;
+        // ...
     }
 
     public function createCustomer()
@@ -125,7 +117,7 @@ class CustomersController extends DashboardController
     public function post( Request $request )
     {
         $data = $request->only([
-            'name', 'surname', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
+            'first_name', 'last_name', 'username', 'password', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
         ]);
 
         return $this->customerService->create( $data );
@@ -143,7 +135,7 @@ class CustomersController extends DashboardController
     public function put( $customer_id, Request $request )
     {
         $data = $request->only([
-            'name', 'surname', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
+            'first_name', 'last_name', 'username', 'password', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
         ]);
 
         return $this->customerService->update( $customer_id, $data );
@@ -161,25 +153,17 @@ class CustomersController extends DashboardController
             ->orders()
             ->orderBy( 'created_at', 'desc' )
             ->get()
-            ->map( function ( Order $order ) {
-                switch ( $order->payment_status ) {
-                    case Order::PAYMENT_HOLD : $order->human_status = __( 'Hold' );
-                        break;
-                    case Order::PAYMENT_PAID : $order->human_status = __( 'Paid' );
-                        break;
-                    case Order::PAYMENT_PARTIALLY : $order->human_status = __( 'Partially Paid' );
-                        break;
-                    case Order::PAYMENT_REFUNDED : $order->human_status = __( 'Refunded' );
-                        break;
-                    case Order::PAYMENT_UNPAID : $order->human_status = __( 'Unpaid' );
-                        break;
-                    case Order::PAYMENT_PARTIALLY_REFUNDED : $order->human_status = __( 'Partially Refunded' );
-                        break;
-                    case Order::PAYMENT_VOID : $order->human_status = __( 'Void' );
-                        break;
-                    default: $order->human_status = $order->payment_status;
-                        break;
-                }
+            ->map( function( Order $order ) {
+                $order->human_status = match ( $order->payment_status ) {
+                    Order::PAYMENT_HOLD => __( 'Hold' ),
+                    Order::PAYMENT_PAID => __( 'Paid' ),
+                    Order::PAYMENT_PARTIALLY => __( 'Partially Paid' ),
+                    Order::PAYMENT_REFUNDED => __( 'Refunded' ),
+                    Order::PAYMENT_UNPAID => __( 'Unpaid' ),
+                    Order::PAYMENT_PARTIALLY_REFUNDED => __( 'Partially Refunded' ),
+                    Order::PAYMENT_VOID => __( 'Void' ),
+                    default => $order->payment_status,
+                };
 
                 $order->human_delivery_status = $this->ordersService->getDeliveryStatus( $order->delivery_status );
 
@@ -230,10 +214,10 @@ class CustomersController extends DashboardController
         return $this->view( 'pages.dashboard.coupons.create', [
             'title' => __( 'Create Coupon' ),
             'description' => __( 'helps you creating a coupon.' ),
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config' ),
+            'src' => ns()->url( '/api/crud/ns.coupons/form-config' ),
             'returnUrl' => ns()->url( '/dashboard/customers/coupons' ),
             'submitMethod' => 'POST',
-            'submitUrl' => ns()->url( '/api/nexopos/v4/crud/ns.coupons' ),
+            'submitUrl' => ns()->url( '/api/crud/ns.coupons' ),
         ]);
     }
 
@@ -242,24 +226,18 @@ class CustomersController extends DashboardController
         return $this->view( 'pages.dashboard.coupons.create', [
             'title' => __( 'Edit Coupon' ),
             'description' => __( 'Editing an existing coupon.' ),
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config/' . $coupon->id ),
+            'src' => ns()->url( '/api/crud/ns.coupons/form-config/' . $coupon->id ),
             'returnUrl' => ns()->url( '/dashboard/customers/coupons' ),
             'submitMethod' => 'PUT',
-            'submitUrl' => ns()->url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
+            'submitUrl' => ns()->url( '/api/crud/ns.coupons/' . $coupon->id ),
         ]);
     }
 
     public function searchCustomer( Request $request )
     {
         $search = $request->input( 'search' );
-        $customers = Customer::with( 'billing' )
-            ->with( 'shipping' )
-            ->where( 'name', 'like', '%' . $search . '%' )
-            ->orWhere( 'email', 'like', '%' . $search . '%' )
-            ->orWhere( 'phone', 'like', '%' . $search . '%' )
-            ->get();
 
-        return $customers;
+        return $this->customerService->search( $search );
     }
 
     public function accountTransaction( Customer $customer, Request $request )
@@ -289,7 +267,7 @@ class CustomersController extends DashboardController
     public function getCustomersOrders( Customer $customer )
     {
         return CustomerOrderCrud::table([
-            'src' => ns()->url( '/api/nexopos/v4/crud/ns.customers-orders' ),
+            'src' => ns()->url( '/api/crud/ns.customers-orders' ),
             'queryParams' => [
                 'customer_id' => $customer->id,
             ],
@@ -334,11 +312,12 @@ class CustomersController extends DashboardController
      */
     public function getCustomersCoupons( Customer $customer )
     {
-        return CustomerCouponCrud::table([
-            'queryParams' => [
+        return CustomerCouponCrud::table(
+            title:  sprintf( __( '%s Coupons' ), $customer->name ),
+            queryParams: [
                 'customer_id' => $customer->id,
             ],
-        ]);
+        );
     }
 
     /**
@@ -377,11 +356,11 @@ class CustomersController extends DashboardController
             'createUrl' => ns()->url( '/dashboard/customers/' . $customer->id . '/account-history/create' ),
             'description' => sprintf(
                 __( 'Displays the customer account history for %s' ),
-                $customer->name
+                $customer->first_name . ' ' . $customer->last_name
             ),
             'title' => sprintf(
                 __( 'Account History : %s' ),
-                $customer->name
+                $customer->first_name . ' ' . $customer->last_name
             ),
         ]);
     }
@@ -398,7 +377,7 @@ class CustomersController extends DashboardController
                 'customer_id' => $customer->id,
             ],
             'returnUrl' => ns()->url( '/dashboard/customers/' . $customer->id . '/account-history' ),
-            'submitUrl' => ns()->url( '/api/nexopos/v4/customers/' . $customer->id . '/crud/account-history' ),
+            'submitUrl' => ns()->url( '/api/customers/' . $customer->id . '/crud/account-history' ),
             'description' => sprintf(
                 __( 'Displays the customer account history for %s' ),
                 $customer->name
@@ -463,5 +442,25 @@ class CustomersController extends DashboardController
             ->account_history()
             ->orderBy( 'created_at', 'desc' )
             ->paginate(20);
+    }
+
+    public function couponHistory( Coupon $coupon )
+    {
+        return CouponOrderHistoryCrud::table([
+            'queryParams' => [
+                'coupon_id' => $coupon->id,
+            ],
+        ]);
+    }
+
+    public function listCustomerCouponHistory( Customer $customer, CustomerCoupon $customerCoupon )
+    {
+        return CustomerCouponHistoryCrud::table(
+            title: sprintf( __( '%s Coupon History' ), $customer->name ),
+            queryParams: [
+                'customer_id' => $customer->id,
+                'customer_coupon_id' => $customerCoupon->id,
+            ]
+        );
     }
 }

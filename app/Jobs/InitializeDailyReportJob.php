@@ -29,12 +29,8 @@ class InitializeDailyReportJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( ReportService $reportService )
     {
-        /**
-         * @var ReportService
-         */
-        $reportService = app()->make( ReportService::class );
         $reportService->computeDayReport();
     }
 }

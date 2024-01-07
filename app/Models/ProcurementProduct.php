@@ -12,23 +12,29 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int id
- * @property string name
- * @property float gross_purchase_price
- * @property float net_purchase_price
- * @property int procurement_id
- * @property int product_id
- * @property float purchase_price
- * @property float quantity
- * @property float available_quantity
- * @property int tax_group_id
- * @property string barcode
- * @property string expiration_date
- * @property int tax_type
- * @property float tax_value
- * @property float total_purchase_price
- * @property int unit_id
- * @property int author
+ * @property int $id
+ * @property mixed $name
+ * @property float $gross_purchase_price
+ * @property float $net_purchase_price
+ * @property int $procurement_id
+ * @property int $product_id
+ * @property float $purchase_price
+ * @property float $quantity
+ * @property float $available_quantity
+ * @property int $tax_group_id
+ * @property mixed $barcode
+ * @property \Carbon\Carbon $expiration_date
+ * @property mixed $tax_type
+ * @property float $tax_value
+ * @property float $total_purchase_price
+ * @property int $unit_id
+ * @property int $convert_unit_id
+ * @property bool $visible
+ * @property float $cogs
+ * @property int $author
+ * @property mixed $uuid
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class ProcurementProduct extends NsModel
 {

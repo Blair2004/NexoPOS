@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $author
+ * @property string $uuid
+ * @property \Carbon\Carbon $updated_at
+ */
 class CustomerAddress extends NsModel
 {
     use HasFactory;
@@ -21,7 +27,7 @@ class CustomerAddress extends NsModel
         return $this->belongsTo( Customer::class, 'customer_id' );
     }
 
-    public function scopefrom( $query, $id, $type )
+    public function scopeFrom( $query, $id, $type )
     {
         return $query->where( 'customer_id', $id )
             ->where( 'type', $type );

@@ -7,7 +7,7 @@ use App\Services\FieldsService;
 
 class AuthRegisterFields extends FieldsService
 {
-    protected $identifier = 'ns.register';
+    protected static $identifier = 'ns.register';
 
     public function get()
     {

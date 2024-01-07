@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\ProviderService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -348,10 +347,8 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -418,7 +415,7 @@ class ProviderProcurementsCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],

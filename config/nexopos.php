@@ -1,7 +1,25 @@
 <?php
 
 return [
-    'version' => '4.8.22',
+    /**
+     * --------------------------------------------------------------------
+     *  Version
+     * --------------------------------------------------------------------
+     *
+     * This is the core version of NexoPOS. This is used to displays on the
+     * dashboard and to ensure a compatibility with the modules.
+     */
+    'version' => '5.0.0',
+
+    /**
+     * --------------------------------------------------------------------
+     *  Supported Languages
+     * --------------------------------------------------------------------
+     *
+     * Describes all the languages that are supported by NexoPOS.
+     * If the language is not supported or if there is no valid translation
+     * every localization functions will return the original string
+     */
     'languages' => [
         'en' => 'English',
         'de' => 'Deutsch',
@@ -13,9 +31,39 @@ return [
         'tr' => 'Türkçe',
         'vi' => 'Vietnamese',
         'sq' => 'Shqiptare',
-        'nl' => 'Nederlands',
     ],
+
+    /**
+     * --------------------------------------------------------------------
+     *  Authentication
+     * --------------------------------------------------------------------
+     *
+     * Defines all default configurations that applies to authentication.
+     */
+    'authentication' => [
+        /**
+         * Defines in "minutes" the lifetime of each token.
+         */
+        'activation_token_lifetime' => 30,
+    ],
+
+    /**
+     * --------------------------------------------------------------------
+     *  RTL Languages
+     * --------------------------------------------------------------------
+     *
+     * Defines all language which once enabled should
+     * turn on the RTL dashboard.
+     */
     'rtl-languages' => [ 'ar' ],
+
+    /**
+     * --------------------------------------------------------------------
+     *  Timezones
+     * --------------------------------------------------------------------
+     *
+     * List all supported timezones.
+     */
     'timezones' => [
         'America/Adak' => '(GMT-10:00) America/Adak (Hawaii-Aleutian Standard Time)',
         'America/Atka' => '(GMT-10:00) America/Atka (Hawaii-Aleutian Standard Time)',

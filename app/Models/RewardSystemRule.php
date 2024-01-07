@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int $id
+ * @property float $reward
+ * @property int $author
+ * @property string $uuid
+ * @property \Carbon\Carbon $updated_at
+ */
 class RewardSystemRule extends NsModel
 {
     use HasFactory;

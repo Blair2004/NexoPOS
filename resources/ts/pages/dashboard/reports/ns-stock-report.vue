@@ -3,13 +3,13 @@
 </template>
 <script>
 import moment from "moment";
-import nsDatepicker from "@/components/ns-datepicker";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
-import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
+import nsDatepicker from "~/components/ns-datepicker.vue";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import { default as nsDateTimePicker } from '~/components/ns-date-time-picker.vue';
 
 export default {
-    name: 'ns-sale-report',
+    name: 'ns-stock-report',
     data() {
         return {
             startDate: null,
@@ -53,7 +53,6 @@ export default {
         },
         setStartDate( moment ) {
             this.startDate  =   moment.format();
-            console.log( this.startDate );
         },
 
         loadReport() {
@@ -68,7 +67,7 @@ export default {
                 return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
             }
 
-            nsHttpClient.post( '/api/nexopos/v4/reports/sale-report', { 
+            nsHttpClient.post( '/api/reports/sale-report', { 
                 startDate: this.startDate,
                 endDate: this.endDate
             }).subscribe( orders => {

@@ -1,7 +1,7 @@
 <script>
-import { Popup } from '@/libraries/popup';
-import nsPosPendingOrdersPopup from '@/popups/ns-pos-pending-orders-popup';
-import { __ } from '@/libraries/lang';
+import { Popup } from '~/libraries/popup';
+import nsPosPendingOrdersPopup from '~/popups/ns-pos-pending-orders-popup.vue';
+import { __ } from '~/libraries/lang';
 
 export default {
     name: 'ns-pos-pending-orders-button',
@@ -9,8 +9,7 @@ export default {
         __,
 
         openPendingOrdersPopup() {
-            const popup     =   new Popup;
-            popup.open( nsPosPendingOrdersPopup );
+            Popup.show( nsPosPendingOrdersPopup );
         }
     },
 }

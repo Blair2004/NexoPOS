@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Exceptions\NotFoundException;
 use App\Models\OrderProduct;
 use App\Models\Product;
-use App\Models\ProductTax;
 use App\Models\ProductUnitQuantity;
 use App\Models\Tax;
 use App\Models\TaxGroup;
@@ -83,7 +83,7 @@ class TaxService
     {
         $tax = Tax::find( $tax_id );
         if ( ! $tax instanceof Tax ) {
-            throw new Exception( __( 'Unable to find the requested tax using the provided identifier.' ) );
+            throw new NotFoundException( __( 'Unable to find the requested tax using the provided identifier.' ) );
         }
 
         return $tax;
@@ -242,13 +242,8 @@ class TaxService
     /**
      * Retreive the tax value for a specific
      * amount using a determined tax group id on which the calculation is made
-     *
-     * @param string $tax_type might be "inclusive" or "exclusive".
-     * @param int $tax_group_id is the tax group id on which the calculation is made
-     * @param float $price the amount used for the calculation
-     * @return float calculated value
      */
-    public function getComputedTaxGroupValue( $tax_type, $tax_group_id, $price )
+    public function getComputedTaxGroupValue( string|null $tax_type, int|null $tax_group_id, float $price )
     {
         $taxGroup = TaxGroup::find( $tax_group_id );
 
@@ -262,27 +257,75 @@ class TaxService
     }
 
     /**
-     * compute the tax added to a
-     * product using a defined tax group id and type
-     *
-     * @param ProductUnitQuantity
-     * @param int $tax_group_id the tax group on which the calculation is made
-     * @param string $tax_type might be "inclusive" or "exclusive"
-     * @return void
+     * Will compute the tax value for each tax rate
+     * provided on the $rates and return the global tax value
+     * and the tax value for each rates.
      */
-    public function computeTax( ProductUnitQuantity $product, $tax_group_id, $tax_type = null )
+    public function getTaxesComputed( string $tax_type, array $rates, float $value ): array
+    {
+        $response = [];
+        $response[ 'value' ] = $value;
+        $response[ 'rate' ] = collect( $rates )->sum();
+        $response[ 'percentages' ] = collect( $rates )->map( fn( $rate ) => ns()->currency->define(
+            ns()->currency->define( $rate )->dividedBy( $response[ 'rate' ] )->toFloat()
+        )->multipliedBy(100)->toFloat() );
+
+        if ( $tax_type === 'inclusive' ) {
+            $response[ 'with-tax' ] = $response[ 'value' ];
+            $response[ 'without-tax' ] = $this->getPriceWithoutTax(
+                type: $tax_type,
+                rate: $response[ 'rate' ],
+                value: $value
+            );
+
+            $response[ 'tax' ] = $value - $response[ 'without-tax' ];
+        } elseif ( $tax_type === 'exclusive' ) {
+            $response[ 'without-tax' ] = $response[ 'value' ];
+            $response[ 'with-tax' ] = $this->getPriceWithTax(
+                type: $tax_type,
+                rate: $response[ 'rate' ],
+                value: $value
+            );
+
+            $response[ 'tax' ] = $response[ 'with-tax' ] - $value;
+        } else {
+        }
+
+        /**
+         * let's now compute the individual values
+         */
+        $response[ 'percentages' ] = collect( $response[ 'percentages' ] )->map( function( $percentage ) use ( $value, $response ) {
+            $computed = ns()->currency->define(
+                ns()->currency->define( $value )->multipliedBy( $percentage )->toFloat()
+            )->divideBy(100)->toFloat();
+
+            $tax = ns()->currency->define(
+                ns()->currency->define( $response[ 'tax' ] )->multipliedBy( $percentage )->toFloat()
+            )->dividedBy(100)->toFloat();
+
+            return compact( 'computed', 'percentage', 'tax' );
+        })->toArray();
+
+        return $response;
+    }
+
+    /**
+     * compute the tax added to a
+     * product using a defined tax group id and type.
+     */
+    public function computeTax( ProductUnitQuantity $unitQuantity, int | null $tax_group_id, string $tax_type = null ): void
     {
         $taxGroup = TaxGroup::find( $tax_group_id );
 
-        $product->sale_price = $this->currency->define( $product->sale_price_edit )->getRaw();
-        $product->sale_price_with_tax = $this->currency->define( $product->sale_price_edit )->getRaw();
-        $product->sale_price_without_tax = $this->currency->define( $product->sale_price_edit )->getRaw();
-        $product->sale_price_tax = 0;
+        $unitQuantity->sale_price = $this->currency->define( $unitQuantity->sale_price_edit )->getRaw();
+        $unitQuantity->sale_price_with_tax = $this->currency->define( $unitQuantity->sale_price_edit )->getRaw();
+        $unitQuantity->sale_price_without_tax = $this->currency->define( $unitQuantity->sale_price_edit )->getRaw();
+        $unitQuantity->sale_price_tax = 0;
 
-        $product->wholesale_price = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-        $product->wholesale_price_with_tax = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-        $product->wholesale_price_without_tax = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-        $product->wholesale_price_tax = 0;
+        $unitQuantity->wholesale_price = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+        $unitQuantity->wholesale_price_with_tax = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+        $unitQuantity->wholesale_price_without_tax = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+        $unitQuantity->wholesale_price_tax = 0;
 
         /**
          * calculate the taxes whether they are all
@@ -295,24 +338,24 @@ class TaxService
                 })
                 ->sum();
 
-            if ( ( $tax_type ?? $product->tax_type) === 'inclusive' ) {
-                $product->sale_price_with_tax = ( floatval( $product->sale_price_edit ) );
-                $product->sale_price_without_tax = $this->getPriceWithoutTax(
+            if ( ( $tax_type ?? $unitQuantity->tax_type) === 'inclusive' ) {
+                $unitQuantity->sale_price_with_tax = ( floatval( $unitQuantity->sale_price_edit ) );
+                $unitQuantity->sale_price_without_tax = $this->getPriceWithoutTax(
                     type: 'inclusive',
                     rate: $taxRate,
-                    value: $product->sale_price_edit
+                    value: $unitQuantity->sale_price_edit
                 );
-                $product->sale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->sale_price_edit ) ) );
-                $product->sale_price = $product->sale_price_with_tax;
+                $unitQuantity->sale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $unitQuantity->sale_price_edit ) ) );
+                $unitQuantity->sale_price = $unitQuantity->sale_price_with_tax;
             } else {
-                $product->sale_price_without_tax = floatval( $product->sale_price_edit );
-                $product->sale_price_with_tax = $this->getPriceWithTax(
+                $unitQuantity->sale_price_without_tax = floatval( $unitQuantity->sale_price_edit );
+                $unitQuantity->sale_price_with_tax = $this->getPriceWithTax(
                     type: 'exclusive',
                     rate: $taxRate,
-                    value: $product->sale_price_edit
+                    value: $unitQuantity->sale_price_edit
                 );
-                $product->sale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->sale_price_edit ) ) );
-                $product->sale_price = $product->sale_price_with_tax;
+                $unitQuantity->sale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $unitQuantity->sale_price_edit ) ) );
+                $unitQuantity->sale_price = $unitQuantity->sale_price_with_tax;
             }
         }
 
@@ -327,28 +370,28 @@ class TaxService
                 })
                 ->sum();
 
-            if ( ( $tax_type ?? $product->tax_type ) === 'inclusive' ) {
-                $product->wholesale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->wholesale_price_edit ) ) );
-                $product->wholesale_price_with_tax = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-                $product->wholesale_price_without_tax = $this->getPriceWithoutTax(
+            if ( ( $tax_type ?? $unitQuantity->tax_type ) === 'inclusive' ) {
+                $unitQuantity->wholesale_price_tax = ( floatval( $this->getVatValue( 'inclusive', $taxRate, $unitQuantity->wholesale_price_edit ) ) );
+                $unitQuantity->wholesale_price_with_tax = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+                $unitQuantity->wholesale_price_without_tax = $this->getPriceWithoutTax(
                     type: 'inclusive',
                     rate: $taxRate,
-                    value: $product->wholesale_price_edit
+                    value: $unitQuantity->wholesale_price_edit
                 );
-                $product->wholesale_price = $product->wholesale_price_without_tax;
+                $unitQuantity->wholesale_price = $unitQuantity->wholesale_price_without_tax;
             } else {
-                $product->wholesale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->wholesale_price_edit ) ) );
-                $product->wholesale_price_without_tax = $this->currency->define( $product->wholesale_price_edit )->getRaw();
-                $product->wholesale_price_with_tax = $this->getPriceWithTax(
+                $unitQuantity->wholesale_price_tax = ( floatval( $this->getVatValue( 'exclusive', $taxRate, $unitQuantity->wholesale_price_edit ) ) );
+                $unitQuantity->wholesale_price_without_tax = $this->currency->define( $unitQuantity->wholesale_price_edit )->getRaw();
+                $unitQuantity->wholesale_price_with_tax = $this->getPriceWithTax(
                     type: 'exclusive',
                     rate: $taxRate,
-                    value: $product->wholesale_price_edit
+                    value: $unitQuantity->wholesale_price_edit
                 );
-                $product->wholesale_price = $product->wholesale_price_without_tax;
+                $unitQuantity->wholesale_price = $unitQuantity->wholesale_price_without_tax;
             }
         }
 
-        $product->save();
+        $unitQuantity->save();
     }
 
     /**
@@ -372,7 +415,11 @@ class TaxService
         return 0;
     }
 
-    public function computeOrderProductTaxes( OrderProduct $orderProduct )
+    /**
+     * We might not need to perform this if
+     * the product already comes with defined tax.
+     */
+    public function computeOrderProductTaxes( OrderProduct $orderProduct ): OrderProduct
     {
         /**
          * let's load the original product with the tax group
@@ -411,7 +458,7 @@ class TaxService
          * then probably it's not assigned to the product.
          */
         if ( $taxGroup instanceof TaxGroup ) {
-            if ( $orderProduct->tax_type === 'exclusive' ) {
+            if ( $type === 'exclusive' ) {
                 $orderProduct->price_with_tax = $orderProduct->unit_price;
                 $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
                     type: 'inclusive',
@@ -453,12 +500,9 @@ class TaxService
 
     /**
      * Compute the gross price from net price
-     * using the tax group rate
-     *
-     * @param float $price
-     * @return float
+     * using the tax group rate.
      */
-    public function getPriceWithoutTaxUsingGroup( $type, TaxGroup $group, $price )
+    public function getPriceWithoutTaxUsingGroup( string $type, TaxGroup $group, $price ): float
     {
         $rate = $group->taxes->map( fn( $tax ) => $tax->rate )->sum();
 
@@ -467,31 +511,29 @@ class TaxService
 
     /**
      * Computes the net price using the gross
-     * price along with a TaxGroup rate
-     *
-     * @param string $type
-     * @param float $price
-     * @return float
+     * price along with a TaxGroup rate.
      */
-    public function getPriceWithTaxUsingGroup( $type, TaxGroup $group, $price )
+    public function getPriceWithTaxUsingGroup( string $type, TaxGroup $group, $price ): float
     {
-        $rate = $group->taxes->map( fn( $tax ) => $tax->rate )->sum();
+        $rate = $group->taxes()->get()->map( fn( $tax ) => $tax->rate )->sum();
 
         return $this->getPriceWithTax( $type, $rate, $price );
     }
 
     /**
      * Compute the net price using a rate
-     * and a tax type provided
-     *
-     * @param string $type
-     *
-     * @todo rename
+     * and a tax type provided.
      */
-    public function getPriceWithoutTax( $type, float $rate, float $value )
+    public function getPriceWithoutTax( string $type, float $rate, float $value ): float
     {
         if ( $type === 'inclusive' ) {
-            return $this->currency->getRaw( ( $value / ( $rate + 100 ) ) * 100 );
+            return $this->currency->define(
+                $this->currency->define( $value )->dividedBy(
+                    $this->currency->define( $rate )->additionateBy(100)->toFloat()
+                )->toFloat()
+            )
+                ->multipliedBy(100)
+                ->toFloat();
         }
 
         return $value;
@@ -499,141 +541,69 @@ class TaxService
 
     /**
      * Compute the gross price using a rate
-     * and a tax type provided
-     *
-     * @param string $type
-     *
-     * @todo rename
+     * and a tax type provided.
      */
-    public function getPriceWithTax( $type, float $rate, float $value )
+    public function getPriceWithTax( string $type, float $rate, float $value ): float
     {
         if ( $type === 'exclusive' ) {
-            return $this->currency->getRaw( ( $value / 100 ) * ( $rate + 100 ) );
+            return $this->currency->define(
+                $this->currency->define( $value )->dividedBy(100)->toFloat()
+            )->multipliedBy(
+                $this->currency->define( $rate )->additionateBy(100)->toFloat()
+            )->toFloat();
         }
 
         return $value;
     }
 
     /**
-     * @deprecated
+     * Computes the vat value for a defined amount.
      */
-    public function getComputedTaxValue( $type, float $rate, float $value )
+    public function getVatValue( string|null $type, float $rate, float $value ): float
     {
         if ( $type === 'inclusive' ) {
-            return $this->currency->getRaw( ( $value / ( $rate + 100 ) ) * 100 );
+            return $this->currency->define( $value )->subtractBy( $this->getPriceWithoutTax( $type, $rate, $value ) )->toFloat();
         } elseif ( $type === 'exclusive' ) {
-            return $this->currency->getRaw( ( $value / 100 ) * ( $rate + 100 ) );
+            return $this->currency->define( $this->getPriceWithTax( $type, $rate, $value ) )->subtractBy( $value )->toFloat();
         }
 
-        return $value;
-    }
-
-    public function getVatValue( $type, float $rate, float $value )
-    {
-        if ( $type === 'inclusive' ) {
-            return ns()->currency->define( $value )->subtractBy( $this->getPriceWithoutTax( $type, $rate, $value ) )->getRaw();
-        } elseif ( $type === 'exclusive' ) {
-            return ns()->currency->define( $this->getPriceWithTax( $type, $rate, $value ) )->subtractBy( $value )->getRaw();
-        }
+        return 0;
     }
 
     /**
      * get the tax value from an amount calculated
-     * over a provided tax group
-     *
-     * @param string type
-     * @param TaxGroup
-     * @return float
+     * over a provided tax group.
      */
-    public function getTaxGroupVatValue( $type, TaxGroup $group, float $value )
+    public function getTaxGroupVatValue( string|null $type, TaxGroup $group, float $value ): float
     {
         if ( $type === 'inclusive' ) {
-            return $value - $this->getPriceWithTaxUsingGroup( $type, $group, $value );
+            return $this->currency->define( $value )->subtractBy( $this->getPriceWithTaxUsingGroup( $type, $group, $value ) )->toFloat();
         } elseif ( $type === 'exclusive' ) {
-            return $this->getPriceWithoutTaxUsingGroup( $type, $group, $value ) - $value;
+            return $this->currency->define( $this->getPriceWithoutTaxUsingGroup( $type, $group, $value ) )->subtractBy( $value )->toFloat();
         }
+
+        return 0;
     }
 
     /**
      * calculate a percentage of a provided
      * value using a defined rate
-     *
-     * @param float value
-     * @param float rate
-     * @return float
      */
-    public function getPercentageOf( $value, $rate )
+    public function getPercentageOf( float $value, float $rate ): float
     {
         return $this->currency->fresh( $value )
             ->multipliedBy( $rate )
             ->dividedBy( 100 )
-            ->getRaw();
-    }
-
-    /**
-     * Update the product tax using
-     * the provided tax/product combinaison
-     *
-     * @param Product product itself
-     * @param Tax tax itself
-     * @return array
-     *
-     * @deprecated
-     */
-    public function saveProductTax( Product $product, Tax $tax )
-    {
-        $taxValue = $this->currency->value( $product->sale_price )
-            ->multiplyBy( $tax->rate )
-            ->divideBy( 100 )
-            ->get();
-
-        $product->tax_value = $taxValue;
-        $product->save();
-
-        /**
-         * let's update or add a ProductTax entry.
-         * We assume there can only be unique
-         * tax_id & product_id combinaison
-         */
-        $productTax = ProductTax::findMatch([
-            'product_id' => $product->id,
-            'tax_id' => $tax->id,
-        ])->first();
-
-        if ( $productTax instanceof ProductTax ) {
-            $productTax->name = $tax->name; // in case it has changed
-            $productTax->rate = $tax->rate;
-            $productTax->value = $taxValue;
-            $productTax->author = Auth::id();
-            $productTax->save();
-        } else {
-            $productTax = new ProductTax;
-            $productTax->product_id = $product->id;
-            $productTax->tax_id = $tax->id;
-            $productTax->name = $tax->name; // in case it has changed
-            $productTax->rate = $tax->rate;
-            $productTax->value = $taxValue;
-            $productTax->author = Auth::id();
-            $productTax->save();
-        }
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The product tax has been saved.' ),
-            'data' => [
-                'tax' => $productTax,
-            ],
-        ];
+            ->toFloat();
     }
 
     /**
      * delete a specific tax using
      * a provided identifier
      *
-     * @param int tax id
-     * @return array|Exception response of the operation
+     * @throws NotFoundException
      */
-    public function delete( $id )
+    public function delete( int $id ): array
     {
         $tax = $this->get( $id );
         $tax->delete();

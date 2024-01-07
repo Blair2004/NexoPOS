@@ -6,7 +6,7 @@
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div id="screen" class="h-16 border-b ns-box-body flex items-center justify-center">
+        <div id="screen" class="h-16 ns-box-body flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
         <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
@@ -22,9 +22,11 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
+    name: 'ns-procurement-quantity',
+    props: [ 'popup' ],
     data() {
         return {
             finalValue: 1,
@@ -40,23 +42,17 @@ export default {
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.closePopup();
-            }
-        });
-
         /**
          * if the quantity is defined, then probably
          * we're already trying to edit an existing product
          */
-        if ( this.$popupParams.quantity ) {
-            this.finalValue     =   this.$popupParams.quantity;
+        if ( this.popup.params.quantity ) {
+            this.finalValue     =   this.popup.params.quantity;
         }
 
         document.addEventListener( 'keyup', this.handleKeyPress );
     },
-    destroyed() {
+    unmounted() {
         document.removeEventListener( 'keypress', this.handleKeyPress );
     },
     methods: {
@@ -72,15 +68,15 @@ export default {
              * as this runs under a Promise
              * we need to make sure that
              * it resolve false using the "resolve" function
-             * provided as $popupParams.
+             * provided as "popup.params".
              * Here we resolve "false" as the user has broken the Promise
              */
-            this.$popupParams.reject( false );
+            this.popup.params.reject( false );
 
             /**
              * we can safely close the popup.
              */
-            this.$popup.close();
+            this.popup.close();
         },
         
         inputValue( key ) {
@@ -88,7 +84,7 @@ export default {
                 /**
                  * resolve is provided only on the addProductQueue
                  */
-                const { product, data }         =   this.$popupParams;
+                const { product, data }         =   this.popup.params;
                 const quantity                  =   parseFloat( this.finalValue );
 
                 if ( quantity === 0 ) {
@@ -119,8 +115,8 @@ export default {
         },
 
         resolve( params ) {
-            this.$popupParams.resolve( params );
-            this.$popup.close();
+            this.popup.params.resolve( params );
+            this.popup.close();
         }
     }
 }

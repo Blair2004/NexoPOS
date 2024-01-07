@@ -33,15 +33,9 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $customers->description = __( 'Let the user import customers.' );
     $customers->save();
 
-    $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.customers.manage-account' ]);
-    $permission->namespace = 'nexopos.customers.manage-account';
-    $permission->name = __( 'Manage Customers Account' );
-    $permission->description = __( 'Allow to manage customer virtual deposit account.' );
-    $permission->save();
-
     $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.customers.manage-account-history' ]);
     $permission->namespace = 'nexopos.customers.manage-account-history';
-    $permission->name = __( 'Manage Customer Account' );
+    $permission->name = __( 'Manage Customer Account History' );
     $permission->description = __( 'Can add, deduct amount from each customers account.' );
     $permission->save();
 }

@@ -2,6 +2,10 @@
 
 namespace App\Crud;
 
+use App\Casts\CurrencyCast;
+use App\Casts\DateCast;
+use App\Casts\GenderCast;
+use App\Casts\NotDefinedCast;
 use App\Events\CustomerAfterCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerBeforeDeletedEvent;
@@ -10,14 +14,18 @@ use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerGroup;
 use App\Models\CustomerShippingAddress;
+use App\Models\Role;
+use App\Models\User;
+use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\CustomerService;
 use App\Services\Helper;
 use App\Services\Options;
-use App\Services\Users;
+use App\Services\UsersService;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -26,7 +34,7 @@ class CustomerCrud extends CrudService
     /**
      * define the base table
      */
-    protected $table = 'nexopos_customers';
+    protected $table = 'nexopos_users';
 
     /**
      * base route name
@@ -51,12 +59,17 @@ class CustomerCrud extends CrudService
      */
     protected $prependOptions = true;
 
+    protected $pick = [
+        'user' => [ 'id', 'username' ],
+        'group' => [ 'id', 'name' ],
+    ];
+
     /**
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_customers_groups', 'nexopos_customers.group_id', '=', 'nexopos_customers_groups.id' ],
-        [ 'nexopos_users', 'nexopos_customers.author', '=', 'nexopos_users.id' ],
+        [ 'nexopos_customers_groups as group', 'nexopos_users.group_id', '=', 'group.id' ],
+        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_users.author' ],
     ];
 
     /**
@@ -66,6 +79,18 @@ class CustomerCrud extends CrudService
     protected $tabsRelations = [
         'shipping' => [ CustomerShippingAddress::class, 'customer_id', 'id' ],
         'billing' => [ CustomerBillingAddress::class, 'customer_id', 'id' ],
+    ];
+
+    protected $casts = [
+        'first_name' => NotDefinedCast::class,
+        'last_name' => NotDefinedCast::class,
+        'phone' => NotDefinedCast::class,
+        'owed_amount' => CurrencyCast::class,
+        'account_amount' => CurrencyCast::class,
+        'purchases_amount' => CurrencyCast::class,
+        'gender' => GenderCast::class,
+        'created_at' => DateCast::class,
+        'updated_at' => DateCast::class,
     ];
 
     /**
@@ -94,6 +119,10 @@ class CustomerCrud extends CrudService
         'delete' => 'nexopos.delete.customers',
     ];
 
+    private Options $options;
+
+    private CustomerService $customerService;
+
     /**
      * Define Constructor
      */
@@ -102,6 +131,7 @@ class CustomerCrud extends CrudService
         parent::__construct();
 
         $this->options = app()->make( Options::class );
+        $this->customerService = app()->make( CustomerService::class );
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
@@ -138,6 +168,8 @@ class CustomerCrud extends CrudService
 
     public function hook( $query ): void
     {
+        $query->join( 'nexopos_users_roles_relations', 'nexopos_users.id', '=', 'nexopos_users_roles_relations.user_id' );
+        $query->join( 'nexopos_roles', 'nexopos_roles.id', '=', 'nexopos_users_roles_relations.role_id' );
         $query->orderBy( 'updated_at', 'desc' );
     }
 
@@ -152,9 +184,9 @@ class CustomerCrud extends CrudService
         return [
             'main' => [
                 'label' => __( 'Customer Name' ),
-                'name' => 'name',
+                'name' => 'first_name',
                 'validation' => 'required',
-                'value' => $entry->name ?? '',
+                'value' => $entry->first_name ?? '',
                 'description' => __( 'Provide a unique name for the customer.' ),
             ],
             'tabs' => [
@@ -163,10 +195,10 @@ class CustomerCrud extends CrudService
                     'fields' => [
                         [
                             'type' => 'text',
-                            'label' => __( 'Surname' ),
-                            'name' => 'surname',
-                            'value' => $entry->surname ?? '',
-                            'description' => __( 'Provide the customer surname' ),
+                            'label' => __( 'Last Name' ),
+                            'name' => 'last_name',
+                            'value' => $entry->last_name ?? '',
+                            'description' => __( 'Provide the customer last name' ),
                         ], [
                             'type' => 'number',
                             'label' => __( 'Credit Limit' ),
@@ -194,7 +226,7 @@ class CustomerCrud extends CrudService
                             'validation' => collect([
                                 ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? 'email' : '',
                                 ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? (
-                                    $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
+                                    $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_users', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_users', 'email' )
                                 ) : '',
                             ])->filter()->toArray(),
                             'description' => __( 'Provide the customer email.' ),
@@ -205,7 +237,7 @@ class CustomerCrud extends CrudService
                             'value' => $entry->phone ?? '',
                             'validation' => collect([
                                 ns()->option->get( 'ns_customers_force_unique_phone', 'no' ) === 'yes' ? (
-                                    $entry instanceof Customer && ! empty( $entry->phone ) ? Rule::unique( 'nexopos_customers', 'phone' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'phone' )
+                                    $entry instanceof Customer && ! empty( $entry->phone ) ? Rule::unique( 'nexopos_users', 'phone' )->ignore( $entry->id ) : Rule::unique( 'nexopos_users', 'phone' )
                                 ) : '',
                             ])->toArray(),
                             'description' => __( 'Provide the customer phone number' ),
@@ -231,137 +263,12 @@ class CustomerCrud extends CrudService
                 ],
                 'billing' => [
                     'label' => __( 'Billing Address' ),
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'name' => 'name',
-                            'value' => $entry->billing->name ?? '',
-                            'label' => __( 'Name' ),
-                            'description' => __( 'Provide the billing name.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'surname',
-                            'value' => $entry->billing->surname ?? '',
-                            'label' => __( 'Surname' ),
-                            'description' => __( 'Provide the billing surname.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'phone',
-                            'value' => $entry->billing->phone ?? '',
-                            'label' => __( 'Phone' ),
-                            'description' => __( 'Billing phone number.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'address_1',
-                            'value' => $entry->billing->address_1 ?? '',
-                            'label' => __( 'Address 1' ),
-                            'description' => __( 'Billing First Address.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'address_2',
-                            'value' => $entry->billing->address_2 ?? '',
-                            'label' => __( 'Address 2' ),
-                            'description' => __( 'Billing Second Address.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'country',
-                            'value' => $entry->billing->country ?? '',
-                            'label' => __( 'Country' ),
-                            'description' => __( 'Billing Country.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'city',
-                            'value' => $entry->billing->city ?? '',
-                            'label' => __( 'City' ),
-                            'description' => __( 'City' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'pobox',
-                            'value' => $entry->billing->pobox ?? '',
-                            'label' => __( 'PO.Box' ),
-                            'description' => __( 'Postal Address' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'company',
-                            'value' => $entry->billing->company ?? '',
-                            'label' => __( 'Company' ),
-                            'description' => __( 'Company' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'email',
-                            'value' => $entry->billing->email ?? '',
-                            'label' => __( 'Email' ),
-                            'description' => __( 'Email' ),
-                        ],
-                    ],
+                    'fields' => $this->customerService->getAddressFields( $entry->billing ?? null ),
                 ],
                 'shipping' => [
                     'label' => __( 'Shipping Address' ),
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'name' => 'name',
-                            'value' => $entry->shipping->name ?? '',
-                            'label' => __( 'Name' ),
-                            'description' => __( 'Provide the shipping name.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'surname',
-                            'value' => $entry->shipping->surname ?? '',
-                            'label' => __( 'Surname' ),
-                            'description' => __( 'Provide the shipping surname.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'phone',
-                            'value' => $entry->shipping->phone ?? '',
-                            'label' => __( 'Phone' ),
-                            'description' => __( 'Shipping phone number.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'address_1',
-                            'value' => $entry->shipping->address_1 ?? '',
-                            'label' => __( 'Address 1' ),
-                            'description' => __( 'Shipping First Address.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'address_2',
-                            'value' => $entry->shipping->address_2 ?? '',
-                            'label' => __( 'Address 2' ),
-                            'description' => __( 'Shipping Second Address.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'country',
-                            'value' => $entry->shipping->country ?? '',
-                            'label' => __( 'Country' ),
-                            'description' => __( 'Shipping Country.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'city',
-                            'value' => $entry->shipping->city ?? '',
-                            'label' => __( 'City' ),
-                            'description' => __( 'City' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'pobox',
-                            'value' => $entry->shipping->pobox ?? '',
-                            'label' => __( 'PO.Box' ),
-                            'description' => __( 'Postal Address' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'company',
-                            'value' => $entry->shipping->company ?? '',
-                            'label' => __( 'Company' ),
-                            'description' => __( 'Company' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'email',
-                            'value' => $entry->shipping->email ?? '',
-                            'label' => __( 'Email' ),
-                            'description' => __( 'Email' ),
-                        ],
-                    ],
+                    'fields' => $this->customerService->getAddressFields( $entry->shipping ?? null ),
                 ],
-
             ],
         ];
     }
@@ -374,7 +281,45 @@ class CustomerCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
-        return collect( $inputs )->map( function ( $value, $key ) {
+        unset( $inputs[ 'password_confirm' ] );
+
+        /**
+         * if the password is not changed, no
+         * need to hash it
+         */
+        $inputs = collect( $inputs )->filter( fn( $input ) => ! empty( $input ) || $input === 0 )->toArray();
+
+        if ( ! empty( $inputs[ 'password' ] ) ) {
+            $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
+        } else {
+            $inputs[ 'password' ] = Hash::make( Str::random(10) );
+        }
+
+        /**
+         * if no email is provided, then we'll generate a random
+         * email for the customer based on the domain and the last customer id.
+         */
+        if ( empty( $inputs[ 'email' ] ) ) {
+            $domain = parse_url( url('/' ) );
+            $lastCustomer = User::orderBy( 'nexopos_users.id', 'desc' )->first();
+
+            if ( $lastCustomer instanceof User ) {
+                $lastCustomerId = $lastCustomer->id + 1;
+            } else {
+                $lastCustomerId = 1;
+            }
+
+            $inputs[ 'email' ] = 'customer-' . $lastCustomerId + 1 . '@' . ( $domain[ 'host' ] ?? 'nexopos.com' );
+        }
+
+        /**
+         * if the username is empty, it will match the email.
+         */
+        if ( empty( $inputs[ 'username' ] ) ) {
+            $inputs[ 'username' ] = $inputs[ 'email' ];
+        }
+
+        return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
                 $value = $this->options->get( 'ns_customers_default_group', false );
                 $group = CustomerGroup::find( $value );
@@ -396,7 +341,21 @@ class CustomerCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Customer $entry )
     {
-        return collect( $inputs )->map( function ( $value, $key ) {
+        unset( $inputs[ 'password_confirm' ] );
+
+        /**
+         * if the password is not changed, no
+         * need to hash it
+         */
+        $inputs = collect( $inputs )->filter( fn( $input ) => ! empty( $input ) || $input === 0 )->toArray();
+
+        if ( ! empty( $inputs[ 'password' ] ) ) {
+            $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
+        } else {
+            $inputs[ 'password' ] = Hash::make( Str::random(10) );
+        }
+
+        return collect( $inputs )->map( function( $value, $key ) {
             if ( $key === 'group_id' && empty( $value ) ) {
                 $value = $this->options->get( 'ns_customers_default_group', false );
                 $group = CustomerGroup::find( $value );
@@ -412,13 +371,16 @@ class CustomerCrud extends CrudService
 
     /**
      * After Crud POST
-     *
-     * @param  object entry
-     * @return  void
      */
-    public function afterPost( $inputs, Customer $customer )
+    public function afterPost( array $inputs, Customer $customer ): array
     {
         CustomerAfterCreatedEvent::dispatch( $customer );
+
+        /**
+         * @var UsersService $usersService
+         */
+        $usersService = app()->make( UsersService::class );
+        $usersService->setUserRole( User::find( $customer->id ), [ Role::namespace( Role::STORECUSTOMER )->id ]);
 
         return $inputs;
     }
@@ -439,11 +401,8 @@ class CustomerCrud extends CrudService
 
     /**
      * After Crud PUT
-     *
-     * @param  object entry
-     * @return  void
      */
-    public function afterPut( $inputs, Customer $customer )
+    public function afterPut( array $inputs, Customer $customer ): array
     {
         CustomerAfterUpdatedEvent::dispatch( $customer );
 
@@ -451,31 +410,9 @@ class CustomerCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw AccessDeniedException
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
-     *
-     * @return  void
      */
-    public function beforeDelete( $namespace, $id, Customer $customer )
+    public function beforeDelete( string $namespace, int $id, Customer $customer ): void
     {
         if ( $namespace == 'ns.customers' ) {
             $this->allowedTo( 'delete' );
@@ -486,10 +423,8 @@ class CustomerCrud extends CrudService
 
     /**
      * before creating
-     *
-     * @return  void
      */
-    public function beforePost( $inputs )
+    public function beforePost( $inputs ): void
     {
         $this->allowedTo( 'create' );
 
@@ -502,10 +437,8 @@ class CustomerCrud extends CrudService
 
     /**
      * before updating
-     *
-     * @return  void
      */
-    public function beforePut( $inputs, $customer )
+    public function beforePut( $inputs, $customer ): void
     {
         $this->allowedTo( 'update' );
 
@@ -518,26 +451,24 @@ class CustomerCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
-            'name' => [
-                'label' => __( 'Name' ),
+            'first_name' => [
+                'label' => __( 'First Name' ),
             ],
-            'surname' => [
-                'label' => __( 'Surname' ),
+            'last_name' => [
+                'label' => __( 'Last Name' ),
             ],
             'phone' => [
                 'label' => __( 'Phone' ),
             ],
-            'nexopos_customers_groups_name' => [
-                'label' => __( 'Group' ),
-            ],
             'email' => [
                 'label' => __( 'Email' ),
+            ],
+            'group_name' => [
+                'label' => __( 'Group' ),
             ],
             'account_amount' => [
                 'label' => __( 'Account Credit' ),
@@ -551,7 +482,7 @@ class CustomerCrud extends CrudService
             'gender' => [
                 'label' => __( 'Gender' ),
             ],
-            'nexopos_users_username' => [
+            'user_username' => [
                 'label' => __( 'Author' ),
             ],
             'created_at' => [
@@ -563,72 +494,53 @@ class CustomerCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
-        $entry->owed_amount = (string) ns()->currency->define( $entry->owed_amount );
-        $entry->account_amount = (string) ns()->currency->define( $entry->account_amount );
-        $entry->purchases_amount = (string) ns()->currency->define( $entry->purchases_amount );
-        $entry->phone = empty( $entry->phone ) ? __( 'Not Defined' ) : $entry->phone;
+        $entry->action(
+            identifier: 'edit_customers_group',
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/edit/' . $entry->id ),
+        );
 
-        $entry->addAction( 'edit_customers_group', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit_customers_group',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/edit/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'customers_orders',
+            label: __( 'Orders' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/' . $entry->id . '/orders' ),
+        );
 
-        $entry->addAction( 'customers_orders', [
-            'label' => __( 'Orders' ),
-            'namespace' => 'customers_orders',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/orders' ),
-        ]);
+        $entry->action(
+            identifier: 'customers_rewards',
+            label: __( 'Rewards' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' ),
+        );
 
-        $entry->addAction( 'customers_rewards', [
-            'label' => __( 'Rewards' ),
-            'namespace' => 'customers_rewards',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' ),
-        ]);
+        $entry->action(
+            identifier: 'customers_coupons',
+            label: __( 'Coupons' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' ),
+        );
 
-        $entry->addAction( 'customers_coupons', [
-            'label' => __( 'Coupons' ),
-            'namespace' => 'customers_coupons',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' ),
-        ]);
+        $entry->action(
+            identifier: 'customers_history',
+            label: __( 'Wallet History' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' ),
+        );
 
-        $entry->addAction( 'customers_history', [
-            'label' => __( 'Wallet History' ),
-            'namespace' => 'customers_history',
-            'type' => 'GOTO',
-            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' ),
-        ]);
-
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.customers/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
                 'title' => __( 'Delete a customers' ),
             ],
-        ]);
-
-        $entry->surname = $entry->surname ?? __( 'Not Defined' );
-        $entry->pobox = $entry->pobox ?? __( 'Not Defined' );
-        $entry->reward_system_id = $entry->reward_system_id ?? __( 'Not Defined' );
-        $entry->email = $entry->email ?: __( 'Not Defined' );
-
-        switch ( $entry->gender ) {
-            case 'male': $entry->gender = __( 'Male' );
-                break;
-            case 'female': $entry->gender = __( 'Female' );
-                break;
-            default: $entry->gender = __( 'Not Defined' );
-                break;
-        }
+        );
 
         return $entry;
     }
@@ -689,8 +601,8 @@ class CustomerCrud extends CrudService
             'list' => ns()->url( '/dashboard/customers' ),
             'create' => ns()->url( '/dashboard/customers/create' ),
             'edit' => ns()->url( '/dashboard/customers/edit/{id}' ),
-            'post' => ns()->url( '/api/nexopos/v4/crud/ns.customers' ),
-            'put' => ns()->url( '/api/nexopos/v4/crud/ns.customers/{id}' ),
+            'post' => ns()->url( '/api/crud/ns.customers' ),
+            'put' => ns()->url( '/api/crud/ns.customers/{id}' ),
         ];
     }
 

@@ -4,8 +4,15 @@ namespace App\Models;
 
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
+/**
+ * @property int $total_stores
+ * @property string $description
+ * @property bool $locked
+ * @property \Carbon\Carbon $updated_at
+ */
 class Role extends NsRootModel
 {
     use HasFactory;
@@ -30,25 +37,14 @@ class Role extends NsRootModel
     const STORECASHIER = 'nexopos.store.cashier';
 
     /**
+     * @var string STOREDRIVER store role with purchasing capacity
+     */
+    const STORECUSTOMER = 'nexopos.store.customer';
+
+    /**
      * @var string USER base role with no or less permissions
      */
     const USER = 'user';
-
-    /**
-     * Default dashboard identifier.
-     * Store dashboard
-     */
-    const DASHID_STORE = 'store';
-
-    /**
-     * Store cashier dashboard.
-     */
-    const DASHID_CASHIER = 'cashier';
-
-    /**
-     * Default dashboard for other users.
-     */
-    const DASHID_DEFAULT = 'default';
 
     protected $cats = [
         'locked' => 'boolean',
@@ -85,10 +81,8 @@ class Role extends NsRootModel
 
     /**
      * Relation with Permissions
-     *
-     * @return void
      **/
-    public function permissions()
+    public function permissions(): BelongsToMany
     {
         return $this->belongsToMany( Permission::class, 'nexopos_role_permission' );
     }
@@ -107,18 +101,6 @@ class Role extends NsRootModel
     public static function namespace( $name )
     {
         return self::where( 'namespace', $name )->first();
-    }
-
-    /**
-     * @param string namespace
-     *
-     * @deprecated
-     *
-     * @return Role
-     */
-    public static function withNamespace( $name )
-    {
-        return self::where( 'namespace', $name );
     }
 
     /**

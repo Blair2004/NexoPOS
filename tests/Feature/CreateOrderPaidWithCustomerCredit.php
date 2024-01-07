@@ -72,7 +72,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 ->getRaw();
         })->sum() );
 
-        $this->customOrderParams = [
+        $orderDetails = [
             'customer_id' => $customer->id,
             'products' => $products->toArray(),
             'payment_status' => Order::PAYMENT_UNPAID,
@@ -85,14 +85,14 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
          */
         $this->defaultProcessing = true;
 
-        $response = $this->attemptPostOrder( function ( $response, $data ) {
+        $response = $this->processOrders( $orderDetails, function( $response, $data ) {
             $order = Order::find( $data[ 'data' ][ 'order' ][ 'id' ] );
         });
 
         $this->defaultProcessing = false;
     }
 
-    public function processOrders( $currentDate, $callback )
+    public function processOrders( array $orderDetails, callable $callback = null )
     {
         $responses = [];
         /**
@@ -150,7 +150,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
                 ->getRaw();
 
-            $dateString = $currentDate->startOfDay()->addHours(
+            $dateString = ns()->date->startOfDay()->addHours(
                 $faker->numberBetween( 0, 23 )
             )->format( 'Y-m-d H:m:s' );
 
@@ -165,13 +165,13 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 'discount' => $discount[ 'value' ] ?? 0,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'First Name Delivery',
+                        'last_name' => 'Surname',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],
@@ -193,13 +193,15 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                             ->getRaw(),
                     ],
                 ] : [],
-            ], $this->customOrderParams );
+            ], $orderDetails );
 
             $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
+                ->json( 'POST', 'api/orders', $orderData );
 
-            $response->assertStatus(401);
-            $response->assertJsonPath( 'message', 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: USD 5 .' );
+            $amount = ns()->currency->define( 5 )->format();
+
+            $response->assertStatus(403);
+            $response->assertJsonPath( 'message', 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: ' . $amount . '.' );
         }
 
         return $responses;

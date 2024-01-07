@@ -31,11 +31,8 @@ class TestWorkerJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( Options $options, NotificationService $notification )
     {
-        $options = app()->make( Options::class );
-        $notification = app()->make( NotificationService::class );
-
         if ( $options->get( 'ns_workers_enabled' ) === 'await_confirm' ) {
             $options->set( 'ns_workers_enabled', 'yes' );
             $notification->deleteHavingIdentifier( $this->notification_id );

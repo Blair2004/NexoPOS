@@ -2,6 +2,13 @@
 
 namespace App\Crud;
 
+use App\Casts\CurrencyCast;
+use App\Casts\DateCast;
+use App\Casts\NotDefinedCast;
+use App\Casts\OrderDeliveryCast;
+use App\Casts\OrderPaymentCast;
+use App\Casts\OrderProcessCast;
+use App\Casts\OrderTypeCast;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Register;
@@ -10,8 +17,7 @@ use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\OrdersService;
-use App\Services\Users;
-use Exception;
+use App\Services\UsersService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -44,13 +50,13 @@ class OrderCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_users', 'nexopos_orders.author', '=', 'nexopos_users.id' ],
-        [ 'nexopos_customers', 'nexopos_customers.id', '=', 'nexopos_orders.customer_id' ],
+        [ 'nexopos_users as author', 'nexopos_orders.author', '=', 'author.id' ],
+        [ 'nexopos_users as customer', 'nexopos_orders.customer_id', '=', 'customer.id' ],
     ];
 
     public $pick = [
-        'nexopos_users' => [ 'username' ],
-        'nexopos_customers' => [ 'name', 'phone' ],
+        'author' => [ 'username' ],
+        'customer' => [ 'first_name', 'phone' ],
     ];
 
     public $queryFilters = [];
@@ -85,6 +91,18 @@ class OrderCrud extends CrudService
         'read' => 'nexopos.read.orders',
         'update' => 'nexopos.update.orders',
         'delete' => 'nexopos.delete.orders',
+    ];
+
+    protected $casts = [
+        'customer_phone' => NotDefinedCast::class,
+        'total' => CurrencyCast::class,
+        'discount' => CurrencyCast::class,
+        'delivery_status' => OrderDeliveryCast::class,
+        'process_status' => OrderProcessCast::class,
+        'type' => OrderTypeCast::class,
+        'payment_status' => OrderPaymentCast::class,
+        'created_at' => DateCast::class,
+        'updated_at' => DateCast::class,
     ];
 
     /**
@@ -139,7 +157,7 @@ class OrderCrud extends CrudService
                 'label' => __( 'Customer' ),
                 'name' => 'customer_id',
                 'description' => __( 'Restrict the orders by the customer.' ),
-                'options' => Helper::toJsOptions( Customer::get(), [ 'id', 'name' ]),
+                'options' => Helper::toJsOptions( Customer::get(), [ 'id', 'first_name' ]),
             ], [
                 'type' => 'text',
                 'label' => __( 'Customer Phone' ),
@@ -419,26 +437,6 @@ class OrderCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -463,10 +461,8 @@ class OrderCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'code' => [
@@ -475,13 +471,13 @@ class OrderCrud extends CrudService
                 '$sort' => false,
                 'width' => '120px',
             ],
-            'nexopos_customers_name' => [
+            'customer_first_name' => [
                 'label' => __( 'Customer' ),
                 '$direction' => '',
                 '$sort' => false,
                 'width' => '120px',
             ],
-            'nexopos_customers_phone' => [
+            'customer_phone' => [
                 'label' => __( 'Phone' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -516,7 +512,7 @@ class OrderCrud extends CrudService
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'nexopos_users_username' => [
+            'author_username' => [
                 'label' => __( 'Author' ),
                 '$direction' => '',
                 '$sort' => false,
@@ -541,58 +537,25 @@ class OrderCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        /**
-         * @var OrdersService
-         */
-        $orderService = app()->make( OrdersService::class );
+        $entry->{ '$cssClass' } = match ( $entry->__raw->payment_status ) {
+            Order::PAYMENT_PAID => 'success border text-sm',
+            Order::PAYMENT_UNPAID => 'danger border text-sm',
+            Order::PAYMENT_PARTIALLY => 'info border text-sm',
+            Order::PAYMENT_HOLD => 'danger border text-sm',
+            Order::PAYMENT_VOID => 'error border text-sm',
+            Order::PAYMENT_REFUNDED => 'default border text-sm',
+            Order::PAYMENT_PARTIALLY_REFUNDED => 'default border text-sm',
+            Order::PAYMENT_DUE => 'danger border text-sm',
+            Order::PAYMENT_PARTIALLY_DUE => 'danger border text-sm',
+            default => ''
+        };
 
-        $entry->nexopos_customers_phone = $entry->nexopos_customers_phone ?: __( 'N/A' );
-        $entry->total = (string) ns()->currency->define( $entry->total );
-        $entry->discount = (string) ns()->currency->define( $entry->discount );
-
-        $entry->delivery_status = $orderService->getShippingLabel( $entry->delivery_status );
-        $entry->process_status = $orderService->getProcessStatus( $entry->process_status );
-        $entry->type = $orderService->getTypeLabel( $entry->type );
-
-        switch ( $entry->payment_status ) {
-            case Order::PAYMENT_PAID:
-                $entry->{ '$cssClass' } = 'success border text-sm';
-                break;
-            case Order::PAYMENT_UNPAID:
-                $entry->{ '$cssClass' } = 'danger border text-sm';
-                break;
-            case Order::PAYMENT_PARTIALLY:
-                $entry->{ '$cssClass' } = 'info border text-sm';
-                break;
-            case Order::PAYMENT_HOLD:
-                $entry->{ '$cssClass' } = 'danger border text-sm';
-                break;
-            case Order::PAYMENT_VOID:
-                $entry->{ '$cssClass' } = 'error border text-sm';
-                break;
-            case Order::PAYMENT_REFUNDED:
-                $entry->{ '$cssClass' } = 'default border text-sm';
-                break;
-            case Order::PAYMENT_PARTIALLY_REFUNDED:
-                $entry->{ '$cssClass' } = 'default border text-sm';
-                break;
-            case Order::PAYMENT_DUE:
-                $entry->{ '$cssClass' } = 'danger border text-sm';
-                break;
-            case Order::PAYMENT_PARTIALLY_DUE:
-                $entry->{ '$cssClass' } = 'danger border text-sm';
-                break;
-        }
-
-        $entry->payment_status = ns()->order->getPaymentLabel( $entry->payment_status );
-
-        // you can make changes here
-        $entry->addAction( 'ns.order-options', [
-            'label' => '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
-            'namespace' => 'ns.order-options',
-            'type' => 'POPUP',
-            'url' => ns()->url( '/dashboard/' . 'orders' . '/edit/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'ns.order-options',
+            label: '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
+            type: 'POPUP',
+            url: ns()->url( '/dashboard/' . 'orders' . '/edit/' . $entry->id )
+        );
 
         /**
          * We'll check if the order has refunds
@@ -605,37 +568,35 @@ class OrderCrud extends CrudService
         $hasRefunds = $refundCount > 0;
 
         if ( $hasRefunds ) {
-            $entry->addAction( 'ns.order-refunds', [
-                'label' => '<i class="mr-2 las la-receipt"></i> ' . __( 'Refund Receipt' ),
-                'type' => 'POPUP',
-                'namespace' => 'ns.order-refunds',
-                'url' => ns()->url( '/dashboard/' . 'orders' . '/refund-receipt/' . $entry->id ),
-            ]);
+            $entry->action(
+                identifier: 'ns.order-refunds',
+                label: '<i class="mr-2 las la-receipt"></i> ' . __( 'Refund Receipt' ),
+                type: 'POPUP',
+                url: ns()->url( '/dashboard/' . 'orders' . '/refund-receipt/' . $entry->id ),
+            );
         }
 
-        $entry->addAction( 'invoice', [
-            'label' => '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
-            'namespace' => 'invoice',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'invoice',
+            label: '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
+            url: ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id ),
+        );
 
-        $entry->addAction( 'receipt', [
-            'label' => '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
-            'namespace' => 'receipt',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'receipt',
+            label: '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
+            url: ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id ),
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'delete',
+            label: '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.orders/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
-        ]);
+        );
 
         return $entry;
     }
@@ -652,7 +613,7 @@ class OrderCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( Users::class );
+        $user = app()->make( UsersService::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status' => 'failed',

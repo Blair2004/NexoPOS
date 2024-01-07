@@ -12,7 +12,7 @@ trait WithCashRegisterTest
     protected function attemptCreateCashRegisterWithActions()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.registers', [
+            ->json( 'POST', 'api/crud/ns.registers', [
                 'name' => __( 'Test Cash Register' ),
                 'general' => [
                     'status' => Register::STATUS_CLOSED,
@@ -27,7 +27,7 @@ trait WithCashRegisterTest
          * Opening cash register
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/cash-registers/open/' . $register->id, [
+            ->json( 'POST', 'api/cash-registers/open/' . $register->id, [
                 'amount' => 100,
             ]);
 
@@ -37,7 +37,7 @@ trait WithCashRegisterTest
          * cashing on the cash register
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/cash-registers/' . RegisterHistory::ACTION_CASHING . '/' . $register->id, [
+            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHING . '/' . $register->id, [
                 'amount' => 100,
             ]);
 
@@ -47,7 +47,7 @@ trait WithCashRegisterTest
          * cashout on the cash register
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/cash-registers/' . RegisterHistory::ACTION_CASHOUT . '/' . $register->id, [
+            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHOUT . '/' . $register->id, [
                 'amount' => 100,
             ]);
 
@@ -57,7 +57,7 @@ trait WithCashRegisterTest
          * close cash register
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/cash-registers/' . RegisterHistory::ACTION_CLOSING . '/' . $register->id, [
+            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CLOSING . '/' . $register->id, [
                 'amount' => 100,
             ]);
 
@@ -67,7 +67,7 @@ trait WithCashRegisterTest
     protected function attemptCreateRegisterTransactions()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.registers', [
+            ->json( 'POST', 'api/crud/ns.registers', [
                 'name' => __( 'Cash Register' ),
                 'general' => [
                     'status' => Register::STATUS_CLOSED,
@@ -149,7 +149,7 @@ trait WithCashRegisterTest
     protected function attemptCreateRegister()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.registers', [
+            ->json( 'POST', 'api/crud/ns.registers', [
                 'name' => __( 'Register' ),
                 'general' => [
                     'status' => Register::STATUS_CLOSED,
@@ -170,7 +170,7 @@ trait WithCashRegisterTest
         global $argv;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'DELETE', 'api/nexopos/v4/crud/ns.registers/' . $argv[ 'entry' ][ 'id' ], [
+            ->json( 'DELETE', 'api/crud/ns.registers/' . $argv[ 'data' ][ 'entry' ][ 'id' ], [
                 'name' => __( 'Register' ),
                 'general' => [
                     'status' => Register::STATUS_CLOSED,

@@ -1,18 +1,12 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import * as components from './components/components';
 
-import { 
-    nsButton,
-    nsCheckbox,
-    nsCrud,
-    nsMenu,
-    nsSubmenu,
-    nsLink,
-} from './components/components';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
-const WelcomeComponent              =   require( './pages/setup/welcome.vue' ).default;
-const DatabaseComponent             =   require( './pages/setup/database.vue' ).default;
-const SetupConfigurationComponent   =   require( './pages/setup/setup-configuration.vue' ).default;
+import { createApp } from 'vue';
+
+const WelcomeComponent              =   () => import( './pages/setup/welcome.vue' );
+const DatabaseComponent             =   () => import( './pages/setup/database.vue' );
+const SetupConfigurationComponent   =   () => import( './pages/setup/setup-configuration.vue' );
 
 const routes    =   [
     { path: '/', component: WelcomeComponent },
@@ -20,12 +14,20 @@ const routes    =   [
     { path: '/configuration', component: SetupConfigurationComponent },
 ];
 
-Vue.use( VueRouter );
+const nsRouter      =   createRouter({ routes, history: createWebHashHistory() });
 
-const nsRouter    =   new VueRouter({ routes });
+const nsRouterApp   =   createApp({});
 
-new Vue({
-    router: nsRouter
-}).$mount( '#nexopos-setup' );
+nsRouterApp.use( nsRouter );
 
-export { nsRouter };
+/**
+ * Global component registration.
+ * Those components are widely used on the app.
+ */
+for( let name in components ) {
+    nsRouterApp.component( name, components[ name ] );
+}
+
+nsRouterApp.mount( '#nexopos-setup' );
+
+(window as any).nsRouter     =   nsRouter;

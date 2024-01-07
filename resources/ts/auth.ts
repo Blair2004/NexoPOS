@@ -1,32 +1,29 @@
-import Vue from 'vue';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import { defineAsyncComponent } from 'vue';
+import { createApp } from 'vue/dist/vue.esm-bundler';
 import * as components from './components/components';
-import FormValidation from './libraries/form-validation';
 
-const nsRegister            =   () => import( './pages/auth/ns-register.vue' );
-const nsLogin               =   () => import( './pages/auth/ns-login.vue' );
-const nsPasswordLost        =   () => import( './pages/auth/ns-password-lost.vue' );
-const nsNewPassword         =   () => import( './pages/auth/ns-new-password.vue' );
+declare let nsExtraComponents;
+declare const window;
 
-const nsState               =   window[ 'nsState' ];
-const nsScreen              =   window[ 'nsScreen' ];
-const nsExtraComponents     =   window[ 'nsExtraComponents' ];
+nsExtraComponents.nsRegister        =   defineAsyncComponent( () => import( './pages/auth/ns-register.vue' ) );
+nsExtraComponents.nsLogin           =   defineAsyncComponent( () => import( './pages/auth/ns-login.vue' ) );
+nsExtraComponents.nsPasswordLost    =   defineAsyncComponent( () => import( './pages/auth/ns-password-lost.vue' ) );
+nsExtraComponents.nsNewPassword     =   defineAsyncComponent( () => import( './pages/auth/ns-new-password.vue' ) );
 
-(<any>window)[ 'nsComponents' ]          =   Object.assign( components, nsExtraComponents, {
-    nsRegister,
-    nsLogin,
-    nsPasswordLost,
-    nsNewPassword
-});
-
-(<any>window)[ 'authVueComponent' ]      =   new Vue({
-    el: '#page-container',
+window.nsHttpClient                 =   nsHttpClient;
+window.authVueComponent             =   createApp({
     components: {
-        nsLogin,
-        nsRegister,
-        nsPasswordLost,
-        nsNewPassword,
         ...nsExtraComponents,
         ...components
     }
 });
+
+/**
+ * Global component registration.
+ * Those components are widely used on the app.
+ */
+for( let name in components ) {
+    window.authVueComponent.component( name, components[ name ] );
+}
+
+window.authVueComponent.mount( '#page-container' );

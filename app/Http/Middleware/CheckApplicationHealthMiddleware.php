@@ -2,14 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Enums\NotificationsEnum;
 use App\Events\AfterAppHealthCheckedEvent;
-use App\Jobs\TaskSchedulingPingJob;
-use App\Models\Role;
-use App\Services\DateService;
 use App\Services\ModulesService;
-use App\Services\NotificationService;
-use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -22,33 +16,28 @@ class CheckApplicationHealthMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ( ns()->option->get( 'ns_cron_ping', false ) === false ) {
+        /**
+         * Will check if either "redis" or "supervisor" is configured
+         * and will emit a notification if it's not the case.
+         */
+        ns()->checkTaskSchedulingConfiguration();
+
+        /**
+         * We'll only perform this is the QUEUE_CONNECTION
+         * has a supported value. Otherwise it's performed asynchronously see app/Console/Kernel.php
+         */
+        if ( in_array( env( 'QUEUE_CONNECTION' ), [ 'sync' ] ) ) {
             /**
-             * @var NotificationsEnum;
+             * Will check if Cron Jobs are
+             * correctly set for NexoPOS
              */
-            $this->emitMisconfigurationNotification();
+            ns()->checkCronConfiguration();
 
             /**
-             * force dispatching the job
-             * to force check the tasks status.
+             * Will check wether symbolic link
+             * is created to the storage
              */
-            TaskSchedulingPingJob::dispatch()->delay( now() );
-        } else {
-            /**
-             * @var DateService
-             */
-            $date = app()->make( DateService::class );
-            $lastUpdate = Carbon::parse( ns()->option->get( 'ns_cron_ping' ) );
-
-            if ( $lastUpdate->diffInMinutes( $date->now() ) > 60 ) {
-                $this->emitMisconfigurationNotification();
-
-                /**
-                 * force dispatching the job
-                 * to force check the tasks status.
-                 */
-                TaskSchedulingPingJob::dispatch()->delay( now() );
-            }
+            ns()->checkSymbolicLinks();
         }
 
         /**
@@ -63,22 +52,5 @@ class CheckApplicationHealthMiddleware
         AfterAppHealthCheckedEvent::dispatch();
 
         return $next($request);
-    }
-
-    /**
-     * Will emit notification if it has to
-     *
-     * @return void
-     */
-    public function emitMisconfigurationNotification()
-    {
-        $notification = app()->make( NotificationService::class );
-        $notification->create([
-            'title' => __( 'Workers Misconfiguration' ),
-            'identifier' => NotificationsEnum::NSCRONDISABLED,
-            'source' => 'system',
-            'url' => 'https://laravel.com/docs/8.x/scheduling#starting-the-scheduler',
-            'description' => __( "NexoPOS is unable to run tasks correctly. This happens if Queues or Tasks Scheduling aren't configured correctly." ),
-        ])->dispatchForGroup( Role::namespace( 'admin' ) );
     }
 }

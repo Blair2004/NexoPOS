@@ -21,10 +21,10 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $permission->description = __( 'Let you see the best_sales report' );
     $permission->save();
 
-    $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.cash_flow' ]);
-    $permission->name = __( 'See Cash Flow Report' );
-    $permission->namespace = 'nexopos.reports.cash_flow';
-    $permission->description = __( 'Let you see the cash flow report' );
+    $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.transactions' ]);
+    $permission->name = __( 'See Transaction Report' );
+    $permission->namespace = 'nexopos.reports.transactions';
+    $permission->description = __( 'Let you see the transactions report' );
     $permission->save();
 
     $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.yearly' ]);
@@ -61,5 +61,11 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $permission->name = __( 'Read Low Stock Report' );
     $permission->namespace = 'nexopos.reports.low-stock';
     $permission->description = __( 'Let the user read the report that shows low stock.' );
+    $permission->save();
+    
+    $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.stock-history' ]);
+    $permission->name = __( 'Read Stock History' );
+    $permission->namespace = 'nexopos.reports.stock-history';
+    $permission->description = __( 'Let the user read the stock history report.' );
     $permission->save();
 }

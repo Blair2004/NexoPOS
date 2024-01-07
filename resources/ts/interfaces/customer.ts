@@ -1,5 +1,5 @@
 export interface Customer {
-    name: string;
+    first_name: string;
     id: number;
     owed_amount?: number;
     purchases_amount?: number;
@@ -8,7 +8,7 @@ export interface Customer {
     phone?: string;
     gender?: string;
     description?: string;
-    surname?: string;
+    last_name?: string;
     pobox?: string;
     group_id?: number;
     coupons?: {

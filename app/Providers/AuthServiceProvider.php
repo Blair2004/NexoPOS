@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\PersonalAccessToken;
+use App\Services\CoreService;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -20,8 +23,10 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot( CoreService $coreService )
     {
-        $this->registerPolicies();
+        $coreService->registerGatePermissions();
+
+        Sanctum::usePersonalAccessTokenModel( PersonalAccessToken::class );
     }
 }

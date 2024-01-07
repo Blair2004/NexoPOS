@@ -4,6 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * This class is made to ensure that NexoPOS can count coupon usage
+ * for a specific customer. Additionnaly when a reward system issue a coupon for a customer, it creates an instance
+ * of this class which can there after be used by the customer.
+ */
+/**
+ * @property int $id
+ * @property string $code
+ * @property int $author
+ * @property \Carbon\Carbon $updated_at
+ * @property bool $active
+ */
 class CustomerCoupon extends NsModel
 {
     use HasFactory;

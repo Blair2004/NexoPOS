@@ -1,6 +1,7 @@
 import * as rx from "rx";
 import * as rxjs from 'rxjs';
-import { nsHooks, nsUrl } from '@/bootstrap'
+
+declare const nsHooks;
 
 export class HttpClient {
     _subject: rxjs.Subject<{}>;

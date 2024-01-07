@@ -81,8 +81,10 @@ module.exports = {
         cyan: colors.cyan,
         
         typography: withOpacityValue('--typography'),
+        
         surface: withOpacityValue('--surface'),
-
+        'surface-soft': withOpacityValue('--surface-soft'),
+        'surface-hard': withOpacityValue('--surface-hard'),
         'popup-surface': withOpacityValue('--popup-surface'),
 
         'input-edge': withOpacityValue('--input-edge'),
@@ -101,6 +103,7 @@ module.exports = {
 
         'option-hover': withOpacityValue('--option-hover'),
         'crud-button-edge': withOpacityValue('--crud-button-edge'),
+        'crud-input-background': withOpacityValue('--crud-input-background'),
         'pos-button-edge': withOpacityValue('--pos-button-edge'),
 
         'numpad-typography': withOpacityValue('--numpad-typography'),
@@ -124,12 +127,17 @@ module.exports = {
         'tab-inactive': withOpacityValue('--tab-inactive'),
 
         'floating-menu-hover': withOpacityValue('--floating-menu-hover'),
+        'floating-menu-selected': withOpacityValue('--floating-menu-selected'),
         'floating-menu': withOpacityValue('--floating-menu'),
         'floating-menu-edge': withOpacityValue('--floating-menu-edge'),
 
         primary: withOpacityValue('--primary'),
         secondary: withOpacityValue('--secondary'),  
         tertiary: withOpacityValue('--tertiary'),  
+
+        'soft-primary': withOpacityValue('--soft-primary'),
+        'soft-secondary': withOpacityValue('--soft-secondary'),
+        'soft-tertiary': withOpacityValue('--soft-tertiary'),
 
         'info-primary': withOpacityValue('--info-primary'),
         'info-secondary': withOpacityValue('--info-secondary'),  

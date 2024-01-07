@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $author
+ * @property string $uuid
+ * @property float $value
+ * @property \Carbon\Carbon $updated_at
+ */
 class ProductTax extends NsModel
 {
     use HasFactory;

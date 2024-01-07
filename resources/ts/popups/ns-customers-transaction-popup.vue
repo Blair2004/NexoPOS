@@ -33,16 +33,17 @@
     </div>
 </template>
 <script>
-import closeWithOverlayClicked from "@/libraries/popup-closer";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import FormValidation from '@/libraries/form-validation';
-import { __ } from '@/libraries/lang';
+import closeWithOverlayClicked from "~/libraries/popup-closer";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import FormValidation from '~/libraries/form-validation';
+import { __ } from '~/libraries/lang';
 
 export default {
     mounted() {
         this.closeWithOverlayClicked();
         this.loadTransactionFields();
     },
+    props: [ 'popup' ],
     data() {
         return {
             fields: [],
@@ -56,33 +57,33 @@ export default {
         closeWithOverlayClicked,
 
         proceed() {
-            const customer      =   this.$popupParams.customer;
+            const customer      =   this.popup.params.customer;
             const form          =   this.formValidation.extractFields( this.fields );
             this.isSubmiting    =   true;
 
-            nsHttpClient.post( `/api/nexopos/v4/customers/${customer.id}/account-history`, form )
+            nsHttpClient.post( `/api/customers/${customer.id}/account-history`, form )
                 .subscribe({
                     next: result => {
                         this.isSubmiting    =   false;
                         nsSnackBar.success( result.message ).subscribe();
-                        this.$popupParams.resolve( result );
-                        this.$popup.close();
+                        this.popup.params.resolve( result );
+                        this.popup.close();
                     },
                     error: ( error ) => {
                         this.isSubmiting    =   false;
                         nsSnackBar.error( error.message ).subscribe();
-                        this.$popupParams.reject( error );
+                        this.popup.params.reject( error );
                     }
                 })
         },
 
         close() {
-            this.$popup.close();
-            this.$popupParams.reject( false );
+            this.popup.close();
+            this.popup.params.reject( false );
         },
 
         loadTransactionFields() {
-            nsHttpClient.get( '/api/nexopos/v4/fields/ns.customers-account' )
+            nsHttpClient.get( '/api/fields/ns.customers-account' )
                 .subscribe({
                     next: fields => {
                         this.fields     =   this.formValidation.createFields( fields );

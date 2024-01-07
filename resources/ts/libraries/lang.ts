@@ -1,4 +1,4 @@
-import { nsHttpClient } from "@/bootstrap";
+import { nsHttpClient } from "~/bootstrap";
 
 declare const nsLanguage;
 

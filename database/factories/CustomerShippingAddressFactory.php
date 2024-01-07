@@ -24,9 +24,9 @@ class CustomerShippingAddressFactory extends Factory
 
         return [
             'type' => 'shipping',
-            'name' => $this->faker->firstName(),
             'email' => $email,
-            'surname' => $this->faker->lastName(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
             'phone' => $this->faker->phoneNumber(),
             'address_1' => $this->faker->streetAddress(),
             'address_2' => $this->faker->streetAddress(),

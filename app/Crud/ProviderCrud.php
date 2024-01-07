@@ -5,8 +5,7 @@ namespace App\Crud;
 use App\Models\Provider;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
-use Exception;
+use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -122,9 +121,9 @@ class ProviderCrud extends CrudService
     {
         return [
             'main' => [
-                'label' => __( 'Name' ),
-                'name' => 'name',
-                'value' => $entry->name ?? '',
+                'label' => __( 'First Name' ),
+                'name' => 'first_name',
+                'value' => $entry->first_name ?? '',
                 'description' => __( 'Provide a name to the resource.' ),
                 'validation' => 'required',
             ],
@@ -140,10 +139,10 @@ class ProviderCrud extends CrudService
                             'value' => $entry->email ?? '',
                         ], [
                             'type' => 'text',
-                            'name' => 'surname',
-                            'label' => __( 'Surname' ),
-                            'description' => __( 'Provider surname if necessary.' ),
-                            'value' => $entry->surname ?? '',
+                            'name' => 'last_name',
+                            'label' => __( 'Last Name' ),
+                            'description' => __( 'Provider last name if necessary.' ),
+                            'value' => $entry->last_name ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'phone',
@@ -262,26 +261,6 @@ class ProviderCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
      * @return  void
@@ -295,14 +274,12 @@ class ProviderCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
-            'name' => [
-                'label' => __( 'Name' ),
+            'first_name' => [
+                'label' => __( 'First Name' ),
                 '$direction' => '',
                 '$sort' => false,
             ],
@@ -378,7 +355,7 @@ class ProviderCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.providers/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.providers/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -399,7 +376,7 @@ class ProviderCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( Users::class );
+        $user = app()->make( UsersService::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status' => 'failed',
@@ -440,8 +417,8 @@ class ProviderCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'providers' ),
             'create' => ns()->url( 'dashboard/' . 'providers/create' ),
             'edit' => ns()->url( 'dashboard/' . 'providers/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.providers' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.providers/{id}' . '' ),
         ];
     }
 

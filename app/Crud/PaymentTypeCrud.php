@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -349,10 +348,8 @@ class PaymentTypeCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'identifier' => [
@@ -413,7 +410,7 @@ class PaymentTypeCrud extends CrudService
             'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.payments-types/' . $entry->id ),
+            'url' => ns()->url( '/api/crud/ns.payments-types/' . $entry->id ),
             'confirm' => [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
@@ -485,8 +482,8 @@ class PaymentTypeCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'orders/payments-types' ),
             'create' => ns()->url( 'dashboard/' . 'orders/payments-types/create' ),
             'edit' => ns()->url( 'dashboard/' . 'orders/payments-types/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.payments-types' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.payments-types/{id}' . '' ),
         ];
     }
 

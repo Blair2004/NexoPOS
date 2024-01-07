@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\BeforeStartWebRouteEvent;
+use App\Http\Controllers\DevController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,3 +42,22 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
 } else {
     include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'web-base.php';
 }
+
+/**
+ * this is made to redirect to
+ * vie server. For some reason we're unable to
+ * configure that correctly on vite.config.js
+ */
+Route::get( '__vite_ping', function() {
+    $filePath = base_path( 'public/hot' );
+
+    if ( file_exists( $filePath ) ) {
+        return redirect( file_get_contents( $filePath ) . '/__vite_ping' );
+    }
+});
+
+/**
+ * for local Vue 3 components development
+ * those routes are registered.
+ */
+Route::get( '__dev__', [ DevController::class, 'index' ]);

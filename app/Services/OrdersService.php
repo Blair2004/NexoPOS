@@ -21,6 +21,8 @@ use App\Events\OrderAfterUpdatedProcessStatus;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderBeforePaymentCreatedEvent;
+use App\Events\OrderCouponAfterCreatedEvent;
+use App\Events\OrderCouponBeforeCreatedEvent;
 use App\Events\OrderProductAfterComputedEvent;
 use App\Events\OrderProductAfterSavedEvent;
 use App\Events\OrderProductBeforeSavedEvent;
@@ -28,6 +30,7 @@ use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Events\OrderVoidedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
+use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
@@ -103,7 +106,7 @@ class OrdersService
          * We'll now check the attached coupon
          * and determin whether they can be processed.
          */
-        $this->__checkAttachedCoupons( $fields[ 'coupons' ] ?? [] );
+        $this->__checkAttachedCoupons( $fields );
 
         /**
          * As no payment might be provided
@@ -142,7 +145,7 @@ class OrdersService
          * ------------------------------------------
          *                  WARNING
          * ------------------------------------------
-         * all what follow will proceed database
+         * All what follow will proceed database
          * modification. All verifications on current order
          * should be made prior this section
          */
@@ -199,6 +202,7 @@ class OrdersService
         $order->save();
         $order->load( 'payments' );
         $order->load( 'products' );
+        $order->load( 'coupons' );
 
         /**
          * let's notify when an
@@ -210,7 +214,7 @@ class OrdersService
 
         return [
             'status' => 'success',
-            'message' => __( 'The order has been placed.' ),
+            'message' => $isNew ? __( 'The order has been placed.' ) : __( 'The order has been updated' ),
             'data' => compact( 'order' ),
         ];
     }
@@ -311,18 +315,10 @@ class OrdersService
      * @param array $coupons
      * @return void
      */
-    public function __checkAttachedCoupons( $coupons )
+    public function __checkAttachedCoupons( $fields )
     {
-        collect( $coupons )->each( function ( $coupon ) {
-            $customerCoupon = CustomerCoupon::find( $coupon[ 'customer_coupon_id' ] );
-
-            if ( ! $customerCoupon instanceof CustomerCoupon ) {
-                throw new NotFoundException( sprintf( __( 'Unable to find a reference to the attached coupon : %s' ), $coupon[ 'name' ] ?? __( 'N/A' ) ) );
-            }
-
-            if ( ! $customerCoupon->active ) {
-                throw new NotFoundException( sprintf( __( 'The provided coupon "%s", can no longer be used' ), $customerCoupon->name ) );
-            }
+        collect( $fields[ 'coupons' ] ?? [] )->each( function( $coupon ) use ( $fields ) {
+            $result = $this->customerService->checkCouponExistence( $coupon, $fields );
         });
     }
 
@@ -336,10 +332,24 @@ class OrdersService
     private function __computeOrderCoupons( $fields, $subtotal )
     {
         if ( isset( $fields[ 'coupons' ] ) ) {
-            return collect( $fields[ 'coupons' ] )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+            return collect( $fields[ 'coupons' ] )->map( function( $coupon ) use ( $subtotal ) {
+                if ( ! isset( $coupon[ 'value' ] ) ) {
+                    return $this->__computeCouponValue( $coupon, $subtotal );
+                }
+
+                return $coupon[ 'value' ];
+            })->sum();
         }
 
         return 0;
+    }
+
+    private function __computeCouponValue( $coupon, $subtotal )
+    {
+        return match ( $coupon[ 'discount_type' ] ) {
+            'percentage_discount' => $this->computeDiscountValues( $coupon[ 'discount_value' ], $subtotal ),
+            'flat_discount' => $coupon[ 'discount_value' ]
+        };
     }
 
     /**
@@ -354,13 +364,24 @@ class OrdersService
 
         $order->total_coupons = 0;
 
-        foreach ( $coupons as $coupon ) {
-            $existingCoupon = OrderCoupon::find( $coupon[ 'id' ] ?? null );
+        foreach ( $coupons as $arrayCoupon ) {
+            $coupon = Coupon::find( $arrayCoupon[ 'coupon_id' ] );
+
+            OrderCouponBeforeCreatedEvent::dispatch( $coupon, $order );
+
+            $existingCoupon = OrderCoupon::where( 'order_id', $order->id )
+                ->where( 'coupon_id', $coupon->id )
+                ->first();
+
+            $customerCoupon = CustomerCoupon::where( 'coupon_id', $coupon->id )
+                ->where( 'customer_id', $order->customer_id )
+                ->firstOrFail();
 
             if ( ! $existingCoupon instanceof OrderCoupon ) {
                 $existingCoupon = new OrderCoupon;
                 $existingCoupon->order_id = $order->id;
-                $existingCoupon->customer_coupon_id = $coupon[ 'customer_coupon_id' ];
+                $existingCoupon->coupon_id = $coupon[ 'id' ];
+                $existingCoupon->customer_coupon_id = $customerCoupon->id;
                 $existingCoupon->minimum_cart_value = $coupon[ 'minimum_cart_value' ] ?: 0;
                 $existingCoupon->maximum_cart_value = $coupon[ 'maximum_cart_value' ] ?: 0;
                 $existingCoupon->name = $coupon[ 'name' ] ?: 0;
@@ -372,9 +393,9 @@ class OrdersService
             }
 
             $existingCoupon->value = $coupon[ 'value' ] ?: (
-                $coupon[ 'discount_type' ] === 'percentage_discount' ?
-                    $this->computeDiscountValues( $coupon[ 'discount_value' ], $order->subtotal ) :
-                    $coupon[ 'discount_value' ]
+                $arrayCoupon[ 'type' ] === 'percentage_discount' ?
+                    $this->computeDiscountValues( $arrayCoupon[ 'discount_value' ], $order->subtotal ) :
+                    $arrayCoupon[ 'discount_value' ]
             );
 
             /**
@@ -384,6 +405,8 @@ class OrdersService
             $order->total_coupons += $existingCoupon->value;
 
             $existingCoupon->save();
+
+            OrderCouponAfterCreatedEvent::dispatch( $existingCoupon, $order );
 
             $savedCoupons[] = $existingCoupon->id;
         }
@@ -399,10 +422,8 @@ class OrdersService
 
     /**
      * Will compute the taxes assigned to an order
-     *
-     * @return float
      */
-    public function __saveOrderTaxes( Order $order, $taxes )
+    public function __saveOrderTaxes( Order $order, $taxes ): float
     {
         /**
          * if previous taxes had been registered,
@@ -413,29 +434,19 @@ class OrdersService
         $taxCollection = collect([]);
 
         if ( count( $taxes ) > 0 ) {
-            foreach ( $taxes as $tax ) {
+            $percentages = collect( $taxes )->map( fn( $tax ) => $tax[ 'rate' ] );
+            $response = $this->taxService->getTaxesComputed(
+                tax_type: $order->tax_type,
+                rates: $percentages->toArray(),
+                value: ns()->currency->define( $order->subtotal )->subtractBy( $order->discount )->toFloat()
+            );
+
+            foreach ( $taxes as $index => $tax ) {
                 $orderTax = new OrderTax;
-
-                foreach(
-                    Hook::filter( 'ns-order-tax-fields', [
-                        'tax_name', 'rate', 'tax_id'
-                    ]) as $taxField 
-                ) {
-                    $orderTax->$taxField   =   $tax[ $taxField ];
-                }
-
-                /**
-                 * in case the tax value is not provided,
-                 * we'll compute that using the defined value
-                 *
-                 * @todo deduct discount from subtotal
-                 */
-                $orderTax->tax_value = $tax[ 'tax_value' ] ?? $this->taxService->getVatValue(
-                    $order->tax_type,
-                    $tax[ 'rate' ],
-                    $order->subtotal - $order->discount
-                );
-
+                $orderTax->tax_name = $tax[ 'tax_name' ];
+                $orderTax->tax_value = $response[ 'percentages' ][ $index ][ 'tax' ];
+                $orderTax->rate = $tax[ 'rate' ];
+                $orderTax->tax_id = $tax[ 'tax_id' ];
                 $orderTax->order_id = $order->id;
 
                 BeforeSaveOrderTaxEvent::dispatch( $orderTax, $tax );
@@ -467,12 +478,12 @@ class OrdersService
                 break;
             case 'flat_vat':
             case 'variable_vat':
-                $order->tax_value = Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
+                $order->tax_value = Currency::define( $this->__saveOrderTaxes( $order, $taxes ) )->toFloat();
                 $order->products_tax_value = 0;
                 break;
             case 'products_variable_vat':
             case 'products_flat_vat':
-                $order->tax_value = Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
+                $order->tax_value = Currency::define( $this->__saveOrderTaxes( $order, $taxes ) )->toFloat();
                 $order->products_tax_value = $this->getOrderProductsTaxes( $order );
                 break;
         }
@@ -502,7 +513,7 @@ class OrdersService
              * adjustment accordingly. In that case we'll use adjustment-return & sale.
              */
             if ( $order->payment_status !== Order::PAYMENT_HOLD ) {
-                $order->products->map( function ( OrderProduct $product ) use ( $products ) {
+                $order->products->map( function( OrderProduct $product ) use ( $products ) {
                     $productHistory = ProductHistory::where( 'operation_type', ProductHistory::ACTION_SOLD )
                         ->where( 'order_product_id', $product->id )
                         ->first();
@@ -540,7 +551,7 @@ class OrdersService
 
                     /**
                      * When no changes has been made
-                     * on the orde product.
+                     * on the order products.
                      */
                     return false;
                 })
@@ -671,8 +682,8 @@ class OrdersService
     {
         $allowedKeys = [
             'id',
-            'name',
-            'surname',
+            'first_name',
+            'last_name',
             'phone',
             'address_1',
             'address_2',
@@ -765,6 +776,11 @@ class OrdersService
      */
     public function makeOrderSinglePayment( $payment, Order $order )
     {
+        // Check if the order is already paid
+        if ($order->payment_status === Order::PAYMENT_PAID) {
+            throw new NotAllowedException( __( 'Unable to proceed as the order is already paid.' ) );
+        }
+
         /**
          * We should check if the order allow instalments.
          */
@@ -890,8 +906,8 @@ class OrdersService
         })->sum() );
 
         $total = $this->currencyService->define(
-            $subtotal + $this->__getShippingFee($fields)
-        )
+                $subtotal + $this->__getShippingFee($fields)
+            )
             ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->getRaw();
@@ -954,7 +970,7 @@ class OrdersService
             }
         }
 
-        if ( $totalPayments >= $total ) {
+        if ( $totalPayments >= $total && count( $fields[ 'payments' ] ?? [] ) > 0 ) {
             $paymentStatus = Order::PAYMENT_PAID;
         } elseif ($totalPayments < $total && $totalPayments > 0) {
             $paymentStatus = Order::PAYMENT_PARTIALLY;
@@ -1023,7 +1039,9 @@ class OrdersService
             ->getRaw();
 
         /**
-         * Compute total witht tax.
+         * Compute total with tax.
+         *
+         * @todo not accurate
          */
         $order->total_without_tax = Currency::fresh( $order->subtotal )
             ->subtractBy( $order->discount )
@@ -1062,9 +1080,17 @@ class OrdersService
              */
             OrderProductBeforeSavedEvent::dispatch( $orderProduct, $product );
 
+            /**
+             * We'll retreive the unit used for
+             * the order product.
+             *
+             * @var Unit $unit
+             */
+            $unit = Unit::find( $product[ 'unit_id' ] );
+
             $orderProduct->order_id = $order->id;
             $orderProduct->unit_quantity_id = $product[ 'unit_quantity_id' ];
-            $orderProduct->unit_name = $product[ 'unit_name' ] ?? Unit::find( $product[ 'unit_id' ] )->name;
+            $orderProduct->unit_name = $product[ 'unit_name' ] ?? $unit->name;
             $orderProduct->unit_id = $product[ 'unit_id' ];
             $orderProduct->mode = $product[ 'mode' ] ?? 'normal';
             $orderProduct->product_type = $product[ 'product_type' ] ?? 'product';
@@ -1082,12 +1108,16 @@ class OrdersService
              */
             if ( $product[ 'product' ] instanceof Product && $product[ 'product' ]->tax_type !== 'disabled' && ! empty( $product[ 'product' ]->tax_group_id )) {
                 $orderProduct->tax_group_id = $product[ 'product' ]->tax_group_id;
-                $orderProduct->tax_type = $product[ 'product' ]->tax_type;
+                $orderProduct->tax_type = $product[ 'product' ]->tax_type ?? 'inclusive';
                 $orderProduct->tax_value = $product[ 'tax_value' ];
             } elseif ( isset( $product[ 'tax_type' ] ) && isset( $product[ 'tax_group_id' ] ) ) {
                 $orderProduct->tax_group_id = $product[ 'tax_group_id' ];
                 $orderProduct->tax_type = $product[ 'tax_type' ];
                 $orderProduct->tax_value = $product[ 'tax_value' ];
+            } else {
+                $orderProduct->tax_group_id = 0;
+                $orderProduct->tax_type = 'disabled';
+                $orderProduct->tax_value = 0;
             }
 
             /**
@@ -1099,10 +1129,13 @@ class OrdersService
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price = $this->currencyService->define(
-                    $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getLastPurchasePrice( $product[ 'product' ] ) )
-                        ->multipliedBy( $product[ 'quantity' ] )
-                        ->getRaw()
-                )
+                $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getLastPurchasePrice(
+                    product: $product[ 'product' ],
+                    unit: $unit
+                ) )
+                ->multipliedBy( $product[ 'quantity' ] )
+                ->getRaw()
+            )
                 ->getRaw();
 
             $this->computeOrderProduct( $orderProduct );
@@ -1114,7 +1147,7 @@ class OrdersService
                 ->get();
 
             if (
-                in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) &&
+                in_array( $order[ 'payment_status' ], [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ] ) &&
                 $product[ 'product' ] instanceof Product
             ) {
                 /**
@@ -1166,7 +1199,7 @@ class OrdersService
             $productUnitQuantity = null;
 
             if ( ! empty( $orderProduct[ 'sku' ] ?? null ) || ! empty( $orderProduct[ 'product_id' ] ?? null ) ) {
-                $product = Cache::remember( 'store-' . ( $orderProduct['product_id'] ?? $orderProduct['sku'] ), 60, function () use ($orderProduct) {
+                $product = Cache::remember( 'store-' . ( $orderProduct['product_id'] ?? $orderProduct['sku'] ), 60, function() use ($orderProduct) {
                     if ( ! empty( $orderProduct['product_id'] ?? null ) ) {
                         return $this->productService->get($orderProduct['product_id']);
                     } elseif ( ! empty( $orderProduct['sku'] ?? null ) ) {
@@ -1389,13 +1422,13 @@ class OrdersService
         if ( empty( $fields[ 'tax_value' ] ) ) {
             $fields[ 'tax_value' ] = $this->currencyService->define(
                 $this->taxService->getComputedTaxGroupValue(
-                    $fields[ 'tax_type' ] ?? $product->tax_type ?? null,
-                    $fields[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
-                    $sale_price
+                    tax_type: $fields[ 'tax_type' ] ?? $product->tax_type ?? null,
+                    tax_group_id: $fields[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
+                    price: $sale_price
                 )
             )
             ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
-            ->getRaw();
+            ->toFloat();
         }
 
         /**
@@ -1464,7 +1497,7 @@ class OrdersService
             if ( ! in_array( $attribute, [
                 'id',
             ])) {
-                $order->$attribute = $fields[ $attribute ];
+                $order->$attribute = $fields[ $attribute ] ?? null;
             }
         }
 
@@ -1477,7 +1510,9 @@ class OrdersService
         $order->subtotal = $this->currencyService->getRaw( $fields[ 'subtotal' ] ?? 0 ) ?: $this->computeSubTotal( $fields, $order );
         $order->discount_type = $fields['discount_type'] ?? null;
         $order->discount_percentage = $this->currencyService->getRaw( $fields['discount_percentage'] ?? 0 );
-        $order->discount = $this->currencyService->getRaw( $fields['discount'] ?? 0 ) ?: $this->computeOrderDiscount( $order, $fields );
+        $order->discount = (
+            $this->currencyService->getRaw( $order->discount_type === 'flat' && isset( $fields['discount'] ) ? $fields['discount'] : 0 )
+        ) ?: ( $order->discount_type === 'percentage' ? $this->computeOrderDiscount( $order, $fields ) : 0 );
         $order->total = $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
         $order->type = $fields['type']['identifier'];
         $order->final_payment_date = isset( $fields['final_payment_date' ] ) ? Carbon::parse( $fields['final_payment_date' ] )->format( 'Y-m-d h:m:s' ) : null; // when the order is not saved as laid away
@@ -1495,9 +1530,9 @@ class OrdersService
         $order->support_instalments = $fields[ 'support_instalments' ] ?? true; // by default instalments are supported
         $order->author = $fields[ 'author' ] ?? Auth::id(); // the author can now be changed
         $order->title = $fields[ 'title' ] ?? null;
-        $order->tax_value = $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 );
-        $order->products_tax_value = $this->currencyService->getRaw( $fields[ 'products_tax_value' ] ?? 0 );
-        $order->total_tax_value = $this->currencyService->getRaw( $fields[ 'total_tax_value' ] ?? 0 );
+        $order->tax_value = $this->currencyService->define( $fields[ 'tax_value' ] ?? 0 )->toFloat();
+        $order->products_tax_value = $this->currencyService->define( $fields[ 'products_tax_value' ] ?? 0 )->toFloat();
+        $order->total_tax_value = $this->currencyService->define( $fields[ 'total_tax_value' ] ?? 0 )->toFloat();
         $order->code = $order->code ?: ''; // to avoid generating a new code
         $order->save();
 
@@ -1596,26 +1631,6 @@ class OrdersService
     }
 
     /**
-     * Will return the tax values from the order taxes
-     *
-     * @param float $value
-     * @param string $type
-     * @return float
-     *
-     * @deprecated
-     */
-    public function getTaxComputedFromOrderTaxes( Order $order, $value, $type )
-    {
-        $rates = $order->taxes->map( function ( $tax ) {
-            return $tax->rate;
-        })->sum();
-
-        return $this->taxService->getComputedTaxValue(
-            $type, $rates, $value
-        );
-    }
-
-    /**
      * will compute the taxes based
      * on the configuration and the products
      */
@@ -1639,13 +1654,19 @@ class OrdersService
         } elseif ( in_array( $posVat, [
             'flat_vat',
             'variable_vat',
-        ])) {
+        ]) && $order->taxes->count() > 0 ) {
             $subTotal = $order->products()
                 ->validProducts()
                 ->sum( 'total_price' );
 
-            $taxValue = $order->taxes->map( function ( $tax ) use ( $order, $subTotal ) {
-                $tax->tax_value = $this->taxService->getVatValue( $order->tax_type, $tax->rate, $subTotal );
+            $response = $this->taxService->getTaxesComputed(
+                tax_type: $order->tax_type,
+                rates: $order->taxes->map( fn( $tax ) => $tax->rate )->toArray(),
+                value: $subTotal
+            );
+
+            $taxValue = $order->taxes->map( function( $tax, $index ) use (   $response ) {
+                $tax->tax_value = $response[ 'percentages' ][ $index ][ 'tax' ];
                 $tax->save();
 
                 return $tax->tax_value;
@@ -1664,11 +1685,11 @@ class OrdersService
      */
     public function getOrderProductsTaxes( $order )
     {
-        return $this->currencyService->getRaw( $order
+        return $this->currencyService->define( $order
             ->products()
             ->get()
             ->map( fn( $product ) => $product->tax_value )->sum()
-        );
+        )->toFloat();
     }
 
     public function computeTotal( $fields, $order )
@@ -1676,14 +1697,17 @@ class OrdersService
         return $this->currencyService->define( $order->subtotal )
             ->subtractBy( $order->discount )
             ->additionateBy( $order->shipping )
-            ->getRaw();
+            ->toFloat();
     }
 
     public function computeSubTotal( $fields, $order )
     {
-        return $this->currencyService->getRaw( collect( $fields[ 'products' ] )
-            ->map( fn( $product ) => floatval( $product[ 'total_price' ] ) )
-            ->sum() );
+        return $this->currencyService->define(
+            collect( $fields[ 'products' ] )
+                ->map( fn( $product ) => floatval( $product[ 'total_price' ] ) )
+                ->sum()
+        )
+            ->toFloat();
     }
 
     private function __customerIsDefined($fields)
@@ -1739,13 +1763,16 @@ class OrdersService
             return $refundProduct->tax_value;
         })->sum() ?: 0;
 
-        $orderRefund->tax_value = Currency::raw( $taxValue );
+        $orderRefund->tax_value = ns()->currency->define( $taxValue )->toFloat();
 
         /**
          * let's update the order refund total
          */
         $orderRefund->load( 'refunded_products' );
-        $orderRefund->total = Currency::raw( ( $orderRefund->refunded_products->sum( 'total_price' ) + $shipping ) ); //  - $orderRefund->tax_value
+        $orderRefund->total = Currency::define(
+            $orderRefund->refunded_products->sum( 'total_price' )
+        )->additionateBy( $shipping )->toFloat();
+
         $orderRefund->save();
 
         /**
@@ -1773,12 +1800,9 @@ class OrdersService
     }
 
     /**
-     * Refund a product from an order
-     *
-     * @param int product id
-     * @param string status : sold, returned, defective
+     * Refund a single product from an order.
      */
-    public function refundSingleProduct( Order $order, OrderRefund $orderRefund, OrderProduct $orderProduct, $details )
+    public function refundSingleProduct( Order $order, OrderRefund $orderRefund, OrderProduct $orderProduct, array $details ): array
     {
         if ( ! in_array( $details[ 'condition' ], [
             OrderProductRefund::CONDITION_DAMAGED,
@@ -1873,7 +1897,10 @@ class OrdersService
 
         return [
             'status' => 'success',
-            'message' => __('The product %s has been successfully refunded.'),
+            'message' => sprintf(
+                __('The product %s has been successfully refunded.'),
+                $orderProduct->name
+            ),
             'data' => compact( 'productRefund', 'orderProduct' ),
         ];
     }
@@ -2110,20 +2137,16 @@ class OrdersService
          * We believe if the product total is greater
          * than "0", then probably the order hasn't been paid yet.
          */
-        if ( $productTotal ) {
-            if ( (float) $order->total == 0 && $totalRefunds > 0 ) {
-                $order->payment_status = Order::PAYMENT_REFUNDED;
-            } elseif ( $order->total > 0 && $totalRefunds > 0 ) {
-                $order->payment_status = Order::PAYMENT_PARTIALLY_REFUNDED;
-            } elseif ( $order->tendered >= $order->total && $order->total > 0 ) {
-                $order->payment_status = Order::PAYMENT_PAID;
-            } elseif ( (float) $order->tendered < (float) $order->total && (float) $order->tendered > 0 ) {
-                $order->payment_status = Order::PAYMENT_PARTIALLY;
-            } elseif ( $order->total == 0 && $totalRefunds == 0 ) {
-                $order->payment_status = Order::PAYMENT_UNPAID;
-            }
-        } elseif ( $productTotal == 0 && $productsQuantity == 0 ) {
+        if ( (float) $order->total == 0 && $totalRefunds > 0 ) {
             $order->payment_status = Order::PAYMENT_REFUNDED;
+        } elseif ( $order->total > 0 && $totalRefunds > 0 ) {
+            $order->payment_status = Order::PAYMENT_PARTIALLY_REFUNDED;
+        } elseif ( $order->tendered >= $order->total && $order->payments->count() > 0 ) {
+            $order->payment_status = Order::PAYMENT_PAID;
+        } elseif ( (float) $order->tendered < (float) $order->total && (float) $order->tendered > 0 ) {
+            $order->payment_status = Order::PAYMENT_PARTIALLY;
+        } elseif ( $order->total == 0 && $order->tendered == 0 ) {
+            $order->payment_status = Order::PAYMENT_UNPAID;
         }
 
         $order->save();
@@ -2168,7 +2191,7 @@ class OrdersService
             $order
             ->products()
             ->get()
-            ->each( function ( OrderProduct $orderProduct) {
+            ->each( function ( OrderProduct $orderProduct) use ( $order ) {
                 $orderProduct->load( 'product' );
                 $product = $orderProduct->product;
                 /**
@@ -2176,7 +2199,19 @@ class OrdersService
                  * only if the product is not a quick product/service
                  * we'll also check if the linked product still exists.
                  */
-                if ( $orderProduct->product_id > 0 && $product instanceof Product ) {
+                if ( 
+                    ( $orderProduct->product_id > 0 && $product instanceof Product ) &&
+                    ( 
+                        in_array( 
+                        $order->payment_status, [ 
+                            Order::PAYMENT_PAID, 
+                            Order::PAYMENT_PARTIALLY, 
+                            Order::PAYMENT_UNPAID,
+                            Order::PAYMENT_PARTIALLY_DUE,
+                            Order::PAYMENT_PARTIALLY_REFUNDED
+                        ]) 
+                    )
+                ) {
                     $this->productService->stockAdjustment( ProductHistory::ACTION_RETURNED, [
                         'total_price' => $orderProduct->total_price,
                         'product_id' => $orderProduct->product_id,
@@ -2445,8 +2480,8 @@ class OrdersService
             'order_date' => ns()->date->getFormatted( $order->created_at ),
             'customer_name' => $order->customer->name,
             'customer_email' => $order->customer->email,
-            'shipping_' . 'name' => $order->shipping_address->name,
-            'shipping_' . 'surname' => $order->shipping_address->surname,
+            'shipping_' . 'first_name' => $order->shipping_address->first_name,
+            'shipping_' . 'last_name' => $order->shipping_address->last_name,
             'shipping_' . 'phone' => $order->shipping_address->phone,
             'shipping_' . 'address_1' => $order->shipping_address->address_1,
             'shipping_' . 'address_2' => $order->shipping_address->address_2,
@@ -2455,8 +2490,8 @@ class OrdersService
             'shipping_' . 'pobox' => $order->shipping_address->pobox,
             'shipping_' . 'company' => $order->shipping_address->company,
             'shipping_' . 'email' => $order->shipping_address->email,
-            'billing_' . 'name' => $order->billing_address->name,
-            'billing_' . 'surname' => $order->billing_address->surname,
+            'billing_' . 'first_name' => $order->billing_address->first_name,
+            'billing_' . 'last_name' => $order->billing_address->last_name,
             'billing_' . 'phone' => $order->billing_address->phone,
             'billing_' . 'address_1' => $order->billing_address->address_1,
             'billing_' . 'address_2' => $order->billing_address->address_2,
@@ -2550,7 +2585,7 @@ class OrdersService
     {
         $order->products()
             ->get()
-            ->each( function ( OrderProduct $orderProduct ) {
+            ->each( function( OrderProduct $orderProduct ) {
                 $orderProduct->load( 'product' );
 
                 if ( $orderProduct->product instanceof Product ) {
@@ -2602,7 +2637,7 @@ class OrdersService
      * @param string $endDate range ends
      * @return Collection
      */
-    public function getSoldStock( $startDate, $endDate )
+    public function getSoldStock( $startDate, $endDate, $categories = [], $units = [] )
     {
         $rangeStarts = Carbon::parse( $startDate )->toDateTimeString();
         $rangeEnds = Carbon::parse( $endDate )->toDateTimeString();
@@ -2611,15 +2646,22 @@ class OrdersService
                 $query->where( 'payment_status', Order::PAYMENT_PAID );
             })
             ->where( 'created_at', '>=', $rangeStarts )
-            ->where( 'created_at', '<=', $rangeEnds )
-            ->get();
+            ->where( 'created_at', '<=', $rangeEnds );
 
-        return $products;
+        if ( ! empty( $categories ) ) {
+            $products->whereIn( 'product_category_id', $categories );
+        }
+
+        if ( ! empty( $units ) ) {
+            $products->whereIn( 'unit_id', $units );
+        }
+
+        return $products->get();
     }
 
     public function trackOrderCoupons( Order $order )
     {
-        $order->coupons->each( function ( OrderCoupon $orderCoupon ) {
+        $order->coupons()->where( 'counted', false )->each( function( OrderCoupon $orderCoupon ) {
             $customerCoupon = CustomerCoupon::find( $orderCoupon->customer_coupon_id );
 
             if ( ! $customerCoupon instanceof CustomerCoupon ) {
@@ -2629,19 +2671,10 @@ class OrdersService
                 ) );
             }
 
-            /**
-             * if a limit_usage is set to 0, that means there is no limit.
-             */
-            if ( $customerCoupon->limit_usage > 0 ) {
-                if ( $customerCoupon->usage + 1 < $customerCoupon->limit_usage ) {
-                    $customerCoupon->usage += 1;
-                    $customerCoupon->save();
-                } elseif ( $customerCoupon->usage + 1 === $customerCoupon->limit_usage ) {
-                    $customerCoupon->usage += 1;
-                    $customerCoupon->active = false;
-                    $customerCoupon->save();
-                }
-            }
+            $this->customerService->increaseCouponUsage( $customerCoupon );
+
+            $orderCoupon->counted = true;
+            $orderCoupon->save();
         });
     }
 
@@ -2660,8 +2693,8 @@ class OrdersService
                 ->get();
 
             $paidInstalments = $order->instalments()->where( 'paid', true )->sum( 'amount' );
-            $otherInstalments = $order->instalments()->whereNotIn( 'id', $orderInstalments->only( 'id' )->toArray() )->sum( 'amount' );
-            $dueInstalments = Currency::raw( $orderInstalments->sum( 'amount' ) );
+            // $otherInstalments = $order->instalments()->whereNotIn( 'id', $orderInstalments->only( 'id' )->toArray() )->sum( 'amount' );
+            // $dueInstalments = Currency::raw( $orderInstalments->sum( 'amount' ) );
 
             if ( $orderInstalments->count() > 0 ) {
                 $payableDifference = Currency::define( $order->tendered )
