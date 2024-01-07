@@ -43,8 +43,6 @@ class Options
     {
         Option::truncate();
 
-        $types = app()->make( OrdersService::class )->getTypeLabels();
-
         $defaultOptions = [
             'ns_registration_enabled' => 'no',
             'ns_store_name' => 'NexoPOS',
@@ -81,39 +79,12 @@ class Options
         if ( Helper::installed() && empty( $this->rawOptions ) ) {
             $this->rawOptions = $this->option()
                 ->get()
-                ->mapWithKeys( function ( $option ) {
-                    $option     =   $this->parseOption( $option );
-
+                ->mapWithKeys( function( $option ) {
                     return [
                         $option->key => $option,
                     ];
                 });
         }
-    }
-
-    public function parseOption( $option )
-    {
-        /**
-         * We should'nt run this everytime we
-         * try to pull an option from the database or from the array
-         */
-        if ( ! empty( $option->value ) ) {
-            if ( is_string( $option->value ) ) {
-                $json = json_decode( $option->value, true );
-
-                if ( json_last_error() == JSON_ERROR_NONE ) {
-                    $option->value = $json;
-                }
-            } elseif ( ! is_array( $option->value ) ) {
-                $option->value = match ( $option->value ) {
-                    preg_match( '/[0-9]{1,}/', $option->value ) => (int) $option->value,
-                    preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) => (float) $option->value,
-                    default => $option->value,
-                };
-            }
-        }
-
-        return $option;
     }
 
     /**
@@ -126,12 +97,6 @@ class Options
      **/
     public function set( $key, $value, $expiration = null )
     {
-        /**
-         * We rather like to remove unecessary spaces. That might
-         * cause unwanted behaviors.
-         */
-        $key = trim( strtolower( $key ) );
-
         /**
          * if an option has been found,
          * it will save the new value and update
@@ -171,33 +136,24 @@ class Options
             $option->array = false;
 
             $this->encodeOptionValue( $option, $value );
-        }
 
-        $option->key = $key;
-        $option->array = false;
+            $option->expire_on = $expiration;
 
-        if ( is_array( $value ) ) {
-            $option->value = json_encode( $value );
-        } elseif ( empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) ) {
-            $option->value = '';
+            /**
+             * this should be overridable
+             * from a user option or any
+             * extending this class
+             */
+            $option = $this->beforeSave( $option );
+            $option->save();
         } else {
-            $option->value = $value;
+            $option = $foundOption->first();
         }
-
-        $option->expire_on = $expiration;
-
-        /**
-         * this should be overridable
-         * from a user option or any
-         * extending this class
-         */
-        $option = $this->beforeSave( $option );
-        $option->save();
 
         /**
          * Let's save the new option
          */
-        $this->rawOptions[ $key ] = $this->parseOption( $option );
+        $this->rawOptions[ $key ] = $option;
 
         return $option;
     }
@@ -240,7 +196,7 @@ class Options
             return $this->rawOptions;
         }
 
-        $filtredOptions = collect( $this->rawOptions )->filter( function ( $option ) use ( $key  ) {
+        $filtredOptions = collect( $this->rawOptions )->filter( function( $option ) use ( $key  ) {
             return is_array( $key ) ? in_array( $option->key, $key ) : $option->key === $key;
         });
 
@@ -252,8 +208,8 @@ class Options
 
         return match ( $options->count() ) {
             0 => $default,
-            1 => $filtredOptions->first()->value,
-            default => $filtredOptions->map( fn( $option ) => $option->value )->toArray()
+            1 => $options->first()->value,
+            default => $options->map( fn( $option ) => $option->value )->toArray()
         };
     }
 
@@ -289,7 +245,7 @@ class Options
      **/
     public function delete( string $key ): void
     {
-        $this->rawOptions = collect( $this->rawOptions )->filter( function ( Option $option ) use ( $key ) {
+        $this->rawOptions = collect( $this->rawOptions )->filter( function( Option $option ) use ( $key ) {
             if ( $option->key === $key ) {
                 $option->delete();
 
