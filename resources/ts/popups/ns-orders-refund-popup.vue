@@ -13,7 +13,7 @@
                     <ns-spinner size="24"></ns-spinner>
                 </div>
                 <div class="flex h-full w-full items-center flex-col justify-center" v-if="loaded && refunds.length === 0">
-                    <i class="lar la-frown-open text-4xl"></i>
+                    <i class="las la-laugh-wink text-4xl"></i>
                     <p class="text-sm text-soft-primary text-center">{{ __( 'No refunds made so far. Good news right?' ) }}</p>
                 </div>
                 <template v-if="loaded && refunds.length > 0">
