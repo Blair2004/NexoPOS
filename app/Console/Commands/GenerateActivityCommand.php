@@ -40,11 +40,11 @@ class GenerateActivityCommand extends Command
      */
     public function handle()
     {
-        $date = app()->make( DateService::class );
+        $date = app()->make(DateService::class);
         $rangeStarts = $date->copy()->subMonths(5);
         $totalDays = [];
 
-        while ( ! $rangeStarts->isSameDay( $date ) ) {
+        while (! $rangeStarts->isSameDay($date)) {
             $totalDays[] = $rangeStarts->copy();
             $rangeStarts->addDay(1);
         }
@@ -52,36 +52,36 @@ class GenerateActivityCommand extends Command
         $bar = $this->output->createProgressBar(count($totalDays));
         $bar->start();
 
-        $files = Storage::disk( 'ns' )->allFiles( 'tests/Feature' );
+        $files = Storage::disk('ns')->allFiles('tests/Feature');
 
-        $app = require base_path( 'bootstrap/app.php' );
-        $app->make( HttpKernel::class )->bootstrap();
+        $app = require base_path('bootstrap/app.php');
+        $app->make(HttpKernel::class)->bootstrap();
 
-        foreach ( $totalDays as $day ) {
+        foreach ($totalDays as $day) {
             /**
              * include test files
              */
-            foreach ( $files as $file ) {
-                if ( ! in_array( $file, [
+            foreach ($files as $file) {
+                if (! in_array($file, [
                     'tests/Feature/ResetTest.php',
                 ])) {
-                    include_once base_path( $file );
+                    include_once base_path($file);
 
-                    $path = pathinfo( $file );
-                    $class = collect( explode( '/', $path[ 'dirname' ] ) )
-                        ->push( $path[ 'filename' ] )
-                        ->map( fn( $dir ) => ucwords( $dir ) )
-                        ->join( '\\' );
+                    $path = pathinfo($file);
+                    $class = collect(explode('/', $path[ 'dirname' ]))
+                        ->push($path[ 'filename' ])
+                        ->map(fn($dir) => ucwords($dir))
+                        ->join('\\');
 
                     $object = new $class;
-                    $methods = get_class_methods( $object );
+                    $methods = get_class_methods($object);
                     $method = $methods[0];
-                    $object->defineApp( $app );
+                    $object->defineApp($app);
                     $object->$method();
                 }
             }
 
-            $date->define( $day );
+            $date->define($day);
             $bar->advance();
         }
 

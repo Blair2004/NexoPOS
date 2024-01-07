@@ -14,14 +14,14 @@ use Illuminate\Queue\InteractsWithQueue;
  */
 class AfterExpenseComputedJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( public TransactionHistory $transactionHistory )
+    public function __construct(public TransactionHistory $transactionHistory)
     {
         $this->prepareSerialization();
     }

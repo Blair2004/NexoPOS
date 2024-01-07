@@ -16,7 +16,7 @@ class ModulesAfterDisabledEvent
      *
      * @return void
      */
-    public function __construct( public $module )
+    public function __construct(public $module)
     {
         //
     }

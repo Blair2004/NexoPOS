@@ -17,7 +17,7 @@ class OrderAfterDeletedEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct( public $order )
+    public function __construct(public $order)
     {
         // ...
     }

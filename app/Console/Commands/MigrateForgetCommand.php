@@ -51,46 +51,46 @@ class MigrateForgetCommand extends Command
      */
     public function handle()
     {
-        $module = $this->moduleService->get( $this->argument( 'module' ) );
+        $module = $this->moduleService->get($this->argument('module'));
 
-        if ( $module !== null && $this->argument( 'module' ) !== null ) {
-            if ( ! in_array( $this->option( 'file' ), $module[ 'all-migrations' ] ) ) {
-                if ( $this->option( 'down' ) ) {
-                    $this->moduleService->revertMigrations( $module );
+        if ($module !== null && $this->argument('module') !== null) {
+            if (! in_array($this->option('file'), $module[ 'all-migrations' ])) {
+                if ($this->option('down')) {
+                    $this->moduleService->revertMigrations($module);
                 }
 
-                ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
+                ModuleMigration::where('namespace', $this->argument('module'))
                     ->delete();
             } else {
-                if ( $this->option( 'down' ) ) {
-                    $migrations = ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
+                if ($this->option('down')) {
+                    $migrations = ModuleMigration::where('namespace', $this->argument('module'))
                         ->get()
-                        ->map( fn( $migration ) => $migration->file )
+                        ->map(fn($migration) => $migration->file)
                         ->toArray();
 
-                    $this->moduleService->revertMigrations( $module, $migrations );
+                    $this->moduleService->revertMigrations($module, $migrations);
                 }
 
-                ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
-                    ->where( 'file', $this->option( 'file' ) )
+                ModuleMigration::where('namespace', $this->argument('module'))
+                    ->where('file', $this->option('file'))
                     ->delete();
             }
 
-            Artisan::call( 'cache:clear' );
+            Artisan::call('cache:clear');
 
             return $this->info(
                 sprintf(
-                    __( 'The migration file has been successfully forgotten for the module %s.' ),
+                    __('The migration file has been successfully forgotten for the module %s.'),
                     $module[ 'name' ]
                 )
             );
         } else {
-            $deleted = Migration::where( 'migration', $this->option( 'file' ) )->delete();
-            Artisan::call( 'cache:clear' );
+            $deleted = Migration::where('migration', $this->option('file'))->delete();
+            Artisan::call('cache:clear');
 
             return $this->info(
                 sprintf(
-                    __( '%s migration(s) has been deleted.' ),
+                    __('%s migration(s) has been deleted.'),
                     $deleted
                 )
             );

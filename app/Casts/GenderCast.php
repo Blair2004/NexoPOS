@@ -15,10 +15,10 @@ class GenderCast implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return match ( $value ) {
-            'male' => __( 'Male' ),
-            'female' => __( 'Female' ),
-            default => __( 'Not Defined' ),
+        return match ($value) {
+            'male' => __('Male'),
+            'female' => __('Female'),
+            default => __('Not Defined'),
         };
     }
 

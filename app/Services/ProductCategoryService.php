@@ -16,10 +16,10 @@ class ProductCategoryService
      * @param int category id
      * @return ProductCategory|false
      */
-    public function get( $id )
+    public function get($id)
     {
-        $category = ProductCategory::find( $id );
-        if ( ! $category instanceof ProductCategory ) {
+        $category = ProductCategory::find($id);
+        if (! $category instanceof ProductCategory) {
             return false;
         }
 
@@ -33,9 +33,9 @@ class ProductCategoryService
      * @param string $name
      * @return ProductCategory|null
      */
-    public function getUsingName( $name )
+    public function getUsingName($name)
     {
-        return ProductCategory::where( 'name', $name )->first();
+        return ProductCategory::where('name', $name)->first();
     }
 
     /**
@@ -45,7 +45,7 @@ class ProductCategoryService
      * @param array details
      * @return array
      */
-    public function create( $data, ProductCategory $productCategory = null )
+    public function create($data, ?ProductCategory $productCategory = null)
     {
         $category = $productCategory === null ? new ProductCategory : $productCategory;
         $category->author = Auth::id();
@@ -56,16 +56,16 @@ class ProductCategoryService
         $category->displays_on_pos = $data[ 'displays_on_pos' ] ?? true;
         $category->save();
 
-        ProductCategoryAfterCreatedEvent::dispatch( $category );
+        ProductCategoryAfterCreatedEvent::dispatch($category);
 
         return [
             'status' => 'success',
-            'message' => __( 'The category has been created' ),
-            'data' => compact( 'category' ),
+            'message' => __('The category has been created'),
+            'data' => compact('category'),
         ];
     }
 
-    public function computeProducts( ProductCategory $category )
+    public function computeProducts(ProductCategory $category)
     {
         $category->total_items = $category->products()->count();
         $category->save();
@@ -78,18 +78,18 @@ class ProductCategoryService
      * @param int $category_id
      * @return array
      */
-    public function getCategoryChildrens( $category_id )
+    public function getCategoryChildrens($category_id)
     {
-        $categories = ProductCategory::where( 'parent_id', $category_id )
+        $categories = ProductCategory::where('parent_id', $category_id)
             ->get();
 
-        if ( $categories->count() > 0 ) {
+        if ($categories->count() > 0) {
             return $categories
-                ->map( function ( $category ) {
-                    return $this->getCategoryChildrens( $category->id );
+                ->map(function ($category) {
+                    return $this->getCategoryChildrens($category->id);
                 })
                 ->flatten()
-                ->prepend( $category_id )
+                ->prepend($category_id)
                 ->toArray();
         }
 
@@ -102,18 +102,18 @@ class ProductCategoryService
      * @param int $category_id
      * @return array
      */
-    public function getCategoryParents( $category_id )
+    public function getCategoryParents($category_id)
     {
-        $current = ProductCategory::find( $category_id );
+        $current = ProductCategory::find($category_id);
 
-        if ( $current instanceof ProductCategory ) {
-            if ( ! empty( $current->parent_id ) ) {
-                $parent = ProductCategory::where( 'id', $current->parent_id )->first();
+        if ($current instanceof ProductCategory) {
+            if (! empty($current->parent_id)) {
+                $parent = ProductCategory::where('id', $current->parent_id)->first();
 
-                if ( $parent instanceof ProductCategory ) {
-                    return collect( $this->getCategoryParents( $parent->id ) )
+                if ($parent instanceof ProductCategory) {
+                    return collect($this->getCategoryParents($parent->id))
                         ->flatten()
-                        ->prepend( $current->id )
+                        ->prepend($current->id)
                         ->toArray();
                 }
             }
@@ -121,7 +121,7 @@ class ProductCategoryService
             return [ $current->id ];
         }
 
-        throw new NotFoundException( __( 'The requested category doesn\'t exists' ) );
+        throw new NotFoundException(__('The requested category doesn\'t exists'));
     }
 
     /**
@@ -132,8 +132,8 @@ class ProductCategoryService
      */
     public function getAllCategoryChildrens()
     {
-        $categories = ProductCategory::where( 'parent_id', null )->get();
+        $categories = ProductCategory::where('parent_id', null)->get();
 
-        return $categories->map( fn( $category ) => $this->getCategoryChildrens( $category->id ) )->flatten();
+        return $categories->map(fn($category) => $this->getCategoryChildrens($category->id))->flatten();
     }
 }

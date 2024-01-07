@@ -18,11 +18,11 @@ trait WithCustomerTest
 
     protected function attemptCreateCustomerGroup()
     {
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.customers-groups', [
-                'name' => __( 'Base Customers' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.customers-groups', [
+                'name' => __('Base Customers'),
                 'general' => [
-                    'reward_system_id' => $this->faker->randomElement( RewardSystem::get()->map( fn( $reward ) => $reward->id )->toArray() ),
+                    'reward_system_id' => $this->faker->randomElement(RewardSystem::get()->map(fn($reward) => $reward->id)->toArray()),
                 ],
             ]);
 
@@ -30,47 +30,47 @@ trait WithCustomerTest
             'status' => 'success',
         ]);
 
-        return CustomerGroup::findOrFail( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
+        return CustomerGroup::findOrFail($response->json()[ 'data' ][ 'entry' ][ 'id' ]);
     }
 
     protected function attemptRemoveCreditCustomerAccount()
     {
-        $customer = Customer::where( 'account_amount', 0 )
+        $customer = Customer::where('account_amount', 0)
             ->first();
 
-        if ( $customer instanceof Customer ) {
+        if ($customer instanceof Customer) {
             $response = $this
-                ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', '/api/customers/' . $customer->id . '/account-history', [
+                ->withSession($this->app[ 'session' ]->all())
+                ->json('POST', '/api/customers/' . $customer->id . '/account-history', [
                     'amount' => 500,
-                    'description' => __( 'Test credit account' ),
+                    'description' => __('Test credit account'),
                     'operation' => CustomerAccountHistory::OPERATION_DEDUCT,
                 ]);
 
             return $response->assertJson([ 'status' => 'failed' ]);
         }
 
-        throw new Exception( __( 'No customer with empty account to proceed the test.' ) );
+        throw new Exception(__('No customer with empty account to proceed the test.'));
     }
 
     protected function attemptCreditCustomerAccount()
     {
-        $customer = Customer::where( 'account_amount', 0 )
+        $customer = Customer::where('account_amount', 0)
             ->first();
 
-        if ( $customer instanceof Customer ) {
+        if ($customer instanceof Customer) {
             $response = $this
-                ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', '/api/customers/' . $customer->id . '/account-history', [
+                ->withSession($this->app[ 'session' ]->all())
+                ->json('POST', '/api/customers/' . $customer->id . '/account-history', [
                     'amount' => 500,
-                    'description' => __( 'Test credit account' ),
+                    'description' => __('Test credit account'),
                     'operation' => CustomerAccountHistory::OPERATION_ADD,
                 ]);
 
             return $response->assertJson([ 'status' => 'success' ]);
         }
 
-        throw new Exception( __( 'No customer with empty account to proceed the test.' ) );
+        throw new Exception(__('No customer with empty account to proceed the test.'));
     }
 
     protected function attemptCreateCustomerWithNoEmail()
@@ -78,8 +78,8 @@ trait WithCustomerTest
         $faker = Factory::create();
         $group = CustomerGroup::first();
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.customers', [
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.customers', [
                 'first_name' => $faker->firstName,
                 'general' => [
                     'group_id' => $group->id,
@@ -91,7 +91,7 @@ trait WithCustomerTest
                 ],
             ]);
 
-        $this->attemptTestCustomerGroup( Customer::find( $response->json()[ 'data' ][ 'entry' ][ 'id' ] ) );
+        $this->attemptTestCustomerGroup(Customer::find($response->json()[ 'data' ][ 'entry' ][ 'id' ]));
 
         $response->assertJson([
             'status' => 'success',
@@ -100,7 +100,7 @@ trait WithCustomerTest
 
     protected function attemptCreateCustomersWithSimilarEmail()
     {
-        ns()->option->set( 'ns_customers_force_valid_email', 'yes' );
+        ns()->option->set('ns_customers_force_valid_email', 'yes');
 
         $faker = Factory::create();
         $group = CustomerGroup::first();
@@ -110,8 +110,8 @@ trait WithCustomerTest
          * The first attempt should
          * be successful.
          */
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.customers', [
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.customers', [
                 'first_name' => $faker->firstName,
                 'general' => [
                     'group_id' => $group->id,
@@ -128,16 +128,16 @@ trait WithCustomerTest
             'status' => 'success',
         ]);
 
-        $customer = Customer::find( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
+        $customer = Customer::find($response->json()[ 'data' ][ 'entry' ][ 'id' ]);
 
-        $this->attemptTestCustomerGroup( $customer );
+        $this->attemptTestCustomerGroup($customer);
 
         /**
          * The second should fail as we're
          * using the exact same non-empty email
          */
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.customers', [
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.customers', [
                 'first_name' => $faker->firstName,
                 'general' => [
                     'group_id' => $group->id,
@@ -155,9 +155,9 @@ trait WithCustomerTest
         ]);
     }
 
-    public function attemptTestCustomerGroup( Customer $customer )
+    public function attemptTestCustomerGroup(Customer $customer)
     {
-        $this->assertTrue( $customer->group instanceof CustomerGroup );
+        $this->assertTrue($customer->group instanceof CustomerGroup);
     }
 
     protected function attemptCreateCustomer()
@@ -172,8 +172,8 @@ trait WithCustomerTest
         $firstName = $faker->firstName;
         $lastName = $faker->lastName;
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.customers', [
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.customers', [
                 'first_name' => $firstName,
                 'general' => [
                     'group_id' => $group->id,
@@ -196,7 +196,7 @@ trait WithCustomerTest
             'status' => 'success',
         ]);
 
-        return Customer::with( 'group' )->findOrFail( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
+        return Customer::with('group')->findOrFail($response->json()[ 'data' ][ 'entry' ][ 'id' ]);
     }
 
     protected function attemptCreateCustomerWithInitialTransactions()
@@ -204,17 +204,17 @@ trait WithCustomerTest
         /**
          * @var CustomerService $customerService
          */
-        $customerService = app()->make( CustomerService::class );
+        $customerService = app()->make(CustomerService::class);
 
         $customer = $this->attemptCreateCustomer();
 
-        $this->attemptTestCustomerGroup( $customer );
+        $this->attemptTestCustomerGroup($customer);
 
         /**
          * For each customer
          * let's create a crediting operation
          */
-        if ( $this->faker->randomElement([ true, false ]) ) {
+        if ($this->faker->randomElement([ true, false ])) {
             $randomAmount = $this->faker->randomNumber(3, true);
 
             /**
@@ -230,13 +230,13 @@ trait WithCustomerTest
 
             $history = $result[ 'data' ][ 'customerAccountHistory' ];
 
-            $this->assertSame( (float) $history->amount, (float) $randomAmount, 'The amount is not refected on the history.' );
-            $this->assertSame( (float) $history->next_amount, (float) $randomAmount, 'The amount is not refected on the history.' );
-            $this->assertSame( (float) $history->previous_amount, (float) 0, 'The previous amount is not accurate.' );
+            $this->assertSame((float) $history->amount, (float) $randomAmount, 'The amount is not refected on the history.');
+            $this->assertSame((float) $history->next_amount, (float) $randomAmount, 'The amount is not refected on the history.');
+            $this->assertSame((float) $history->previous_amount, (float) 0, 'The previous amount is not accurate.');
 
             $customer->refresh();
 
-            $this->assertSame( (float) $randomAmount, (float) $customer->account_amount, 'The customer account hasn\'t been updated.' );
+            $this->assertSame((float) $randomAmount, (float) $customer->account_amount, 'The customer account hasn\'t been updated.');
 
             /**
              * Step 2: second control and verification on
@@ -253,19 +253,19 @@ trait WithCustomerTest
 
             $history = $result[ 'data' ][ 'customerAccountHistory' ];
 
-            $this->assertSame( (float) $history->amount, (float) $randomAmount, 'The amount is not refected on the history.' );
-            $this->assertSame( (float) $history->next_amount, (float) 0, 'The amount is not refected on the history.' );
-            $this->assertSame( (float) $history->previous_amount, (float) $randomAmount, 'The previous amount is not accurate.' );
+            $this->assertSame((float) $history->amount, (float) $randomAmount, 'The amount is not refected on the history.');
+            $this->assertSame((float) $history->next_amount, (float) 0, 'The amount is not refected on the history.');
+            $this->assertSame((float) $history->previous_amount, (float) $randomAmount, 'The previous amount is not accurate.');
         }
     }
 
     protected function attemptCreateReward()
     {
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'post', 'api/crud/ns.rewards-system', [
-                'name' => __( 'Sample Reward System' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('post', 'api/crud/ns.rewards-system', [
+                'name' => __('Sample Reward System'),
                 'general' => [
-                    'coupon_id' => $this->faker->randomElement( Coupon::get()->map( fn( $coupon ) => $coupon->id )->toArray() ),
+                    'coupon_id' => $this->faker->randomElement(Coupon::get()->map(fn($coupon) => $coupon->id)->toArray()),
                     'target' => $this->faker->randomElement([ 10, 20, 30 ]),
                 ],
                 'rules' => [
@@ -292,13 +292,13 @@ trait WithCustomerTest
     {
         $accountHistory = CustomerAccountHistory::first();
 
-        if ( $accountHistory instanceof CustomerAccountHistory ) {
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'GET', 'api/customers/' . $accountHistory->customer_id . '/account-history' );
+        if ($accountHistory instanceof CustomerAccountHistory) {
+            $response = $this->withSession($this->app[ 'session' ]->all())
+                ->json('GET', 'api/customers/' . $accountHistory->customer_id . '/account-history');
 
             $response->assertOk();
-            $response = json_decode( $response->getContent(), true );
-            $result = collect( $response[ 'data' ] )->filter( fn( $entry ) => (int) $accountHistory->id === (int) $entry[ 'id' ] );
+            $response = json_decode($response->getContent(), true);
+            $result = collect($response[ 'data' ])->filter(fn($entry) => (int) $accountHistory->id === (int) $entry[ 'id' ]);
 
             return $this->assertTrue(
                 $result->isNotEmpty(),
@@ -306,7 +306,7 @@ trait WithCustomerTest
             );
         }
 
-        throw new Exception( 'Unable to perform the test without a valid history.' );
+        throw new Exception('Unable to perform the test without a valid history.');
     }
 
     protected function attemptSearchCustomers()
@@ -321,8 +321,8 @@ trait WithCustomerTest
         $firstName = $faker->firstName;
         $lastName = $faker->lastName;
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.customers', [
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.customers', [
                 'first_name' => $firstName,
                 'general' => [
                     'group_id' => $group->id,
@@ -345,24 +345,24 @@ trait WithCustomerTest
             'status' => 'success',
         ]);
 
-        $lastCustomer = Customer::where( 'first_name', '!=', null )->orderBy( 'id', 'desc' )->first();
+        $lastCustomer = Customer::where('first_name', '!=', null)->orderBy('id', 'desc')->first();
 
         /**
          * let's now search
          */
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/customers/search', [
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/customers/search', [
                 'search' => $lastCustomer->first_name,
             ]);
 
-        $response->assertJsonPath( '0.id', $lastCustomer->id );
+        $response->assertJsonPath('0.id', $lastCustomer->id);
     }
 
     protected function attemptGetCustomerReward()
     {
         $customer = Customer::first();
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/customers/' . $customer->id . '/rewards' );
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('GET', 'api/customers/' . $customer->id . '/rewards');
 
         $response->assertOk();
     }
@@ -370,8 +370,8 @@ trait WithCustomerTest
     protected function attemptGetCustomerOrders()
     {
         $customer = Customer::first();
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/customers/' . $customer->id . '/orders' );
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('GET', 'api/customers/' . $customer->id . '/orders');
 
         $response->assertOk();
     }
@@ -379,8 +379,8 @@ trait WithCustomerTest
     protected function attemptGetOrdersAddresses()
     {
         $customer = Customer::first();
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/customers/' . $customer->id . '/addresses' );
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('GET', 'api/customers/' . $customer->id . '/addresses');
 
         $response->assertOk();
     }
@@ -388,16 +388,16 @@ trait WithCustomerTest
     protected function attemptGetCustomerGroup()
     {
         $customer = Customer::first();
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/customers/' . $customer->id . '/group' );
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('GET', 'api/customers/' . $customer->id . '/group');
 
         $response->assertOk();
     }
 
-    protected function attemptDeleteCustomer( Customer $customer )
+    protected function attemptDeleteCustomer(Customer $customer)
     {
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'DELETE', 'api/crud/ns.customers/' . $customer->id );
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('DELETE', 'api/crud/ns.customers/' . $customer->id);
 
         $response->assertJson([
             'status' => 'success',
@@ -406,10 +406,10 @@ trait WithCustomerTest
         return $customer;
     }
 
-    protected function attemptUpdateCustomer( Customer $customer )
+    protected function attemptUpdateCustomer(Customer $customer)
     {
-        $faker  =   Factory::create();
-        $group  =   $this->attemptCreateCustomerGroup();
+        $faker = Factory::create();
+        $group = $this->attemptCreateCustomerGroup();
 
         /**
          * Creating a first customer
@@ -418,8 +418,8 @@ trait WithCustomerTest
         $firstName = $faker->firstName;
         $lastName = $faker->lastName;
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', 'api/crud/ns.customers/' . $customer->id, [
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('PUT', 'api/crud/ns.customers/' . $customer->id, [
                 'first_name' => $firstName,
                 'general' => [
                     'group_id' => $group->id,
@@ -442,8 +442,8 @@ trait WithCustomerTest
             'status' => 'success',
         ]);
 
-        $this->assertFalse( $customer->group->id === $group->id );
+        $this->assertFalse($customer->group->id === $group->id);
 
-        return Customer::with( 'group' )->findOrFail( $response->json()[ 'data' ][ 'entry' ][ 'id' ] );
+        return Customer::with('group')->findOrFail($response->json()[ 'data' ][ 'entry' ][ 'id' ]);
     }
 }

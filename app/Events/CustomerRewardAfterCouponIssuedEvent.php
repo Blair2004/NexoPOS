@@ -17,7 +17,7 @@ class CustomerRewardAfterCouponIssuedEvent
      *
      * @return void
      */
-    public function __construct( public CustomerCoupon $customerCoupon )
+    public function __construct(public CustomerCoupon $customerCoupon)
     {
         //
     }

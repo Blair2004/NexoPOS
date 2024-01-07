@@ -30,21 +30,21 @@ class OrderAfterDeletedEventListener
      */
     public function handle(OrderAfterDeletedEvent $event)
     {
-        UncountDeletedOrderForCashierJob::dispatch( $event->order );
-        UncountDeletedOrderForCustomerJob::dispatch( $event->order );
+        UncountDeletedOrderForCashierJob::dispatch($event->order);
+        UncountDeletedOrderForCustomerJob::dispatch($event->order);
 
-        $register = Register::find( $event->order->register_id );
+        $register = Register::find($event->order->register_id);
 
-        if ( $register instanceof Register ) {
-            if ( in_array( $event->order->payment_status, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY ] ) ) {
-                $this->cashRegistersService->saleDelete( $register, $event->order->total, __( 'The transaction was deleted.' ) );
+        if ($register instanceof Register) {
+            if (in_array($event->order->payment_status, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY ])) {
+                $this->cashRegistersService->saleDelete($register, $event->order->total, __('The transaction was deleted.'));
             }
 
-            if ( $event->order->payment_status === Order::PAYMENT_PARTIALLY ) {
-                $this->cashRegistersService->saleDelete( $register, $event->order->tendered, __( 'The transaction was deleted.' ) );
+            if ($event->order->payment_status === Order::PAYMENT_PARTIALLY) {
+                $this->cashRegistersService->saleDelete($register, $event->order->tendered, __('The transaction was deleted.'));
             }
         }
 
-        RefreshReportJob::dispatch( $event->order->updated_at );
+        RefreshReportJob::dispatch($event->order->updated_at);
     }
 }

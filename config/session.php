@@ -181,7 +181,7 @@ return [
     |
     */
 
-    'http_only' => env( 'SESSION_HTTP_ONLY', true ),
+    'http_only' => env('SESSION_HTTP_ONLY', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -196,6 +196,6 @@ return [
     |
     */
 
-    'same_site' => env( 'SESSION_SAME_DOMAIN', 'lax' ),
+    'same_site' => env('SESSION_SAME_DOMAIN', 'lax'),
 
 ];

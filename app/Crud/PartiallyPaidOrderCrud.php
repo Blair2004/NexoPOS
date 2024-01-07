@@ -14,9 +14,9 @@ class PartiallyPaidOrderCrud extends HoldOrderCrud
         parent::__construct();
     }
 
-    public function hook( $query ): void
+    public function hook($query): void
     {
-        $query->orderBy( 'created_at', 'desc' );
-        $query->where( 'payment_status', Order::PAYMENT_PARTIALLY );
+        $query->orderBy('created_at', 'desc');
+        $query->where('payment_status', Order::PAYMENT_PARTIALLY);
     }
 }

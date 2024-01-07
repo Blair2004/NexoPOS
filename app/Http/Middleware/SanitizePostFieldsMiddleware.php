@@ -17,7 +17,7 @@ class SanitizePostFieldsMiddleware
     {
         $input = $request->all();
 
-        array_walk_recursive($input, function(&$input) {
+        array_walk_recursive($input, function (&$input) {
             $input = strip_tags($input);
             $input = htmlspecialchars($input);
             $input = trim($input);

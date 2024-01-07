@@ -24,37 +24,37 @@ class UpdateController extends Controller
 
     public function updateDatabase()
     {
-        return view( 'pages.database.update', [
-            'title' => __( 'Database Update' ),
-            'redirect' => session( 'after_update', ns()->route( 'ns.dashboard.home' ) ),
-            'modules' => collect( $this->modulesService->getEnabled() )->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 )->toArray(),
+        return view('pages.database.update', [
+            'title' => __('Database Update'),
+            'redirect' => session('after_update', ns()->route('ns.dashboard.home')),
+            'modules' => collect($this->modulesService->getEnabled())->filter(fn($module) => count($module[ 'migrations' ]) > 0)->toArray(),
         ]);
     }
 
-    public function runMigration( Request $request )
+    public function runMigration(Request $request)
     {
         /**
          * Proceeding code migration.
          */
-        if ( $request->input( 'file' ) ) {
-            $this->updateService->executeMigrationFromFileName( file: $request->input( 'file' ) );
+        if ($request->input('file')) {
+            $this->updateService->executeMigrationFromFileName(file: $request->input('file'));
         }
 
         /**
          * proceeding the migration for
          * the provided module.
          */
-        if ( $request->input( 'module' ) ) {
-            $module = $request->input( 'module' );
-            foreach ( $module[ 'migrations' ] as $file ) {
-                $response = $this->modulesService->runMigration( $module[ 'namespace' ], $file );
-                AfterMigrationExecutedEvent::dispatch( $module, $response, $file );
+        if ($request->input('module')) {
+            $module = $request->input('module');
+            foreach ($module[ 'migrations' ] as $file) {
+                $response = $this->modulesService->runMigration($module[ 'namespace' ], $file);
+                AfterMigrationExecutedEvent::dispatch($module, $response, $file);
             }
         }
 
         return [
             'status' => 'success',
-            'message' => __( 'The migration has successfully run.' ),
+            'message' => __('The migration has successfully run.'),
         ];
     }
 }

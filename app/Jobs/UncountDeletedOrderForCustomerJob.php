@@ -11,14 +11,14 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class UncountDeletedOrderForCustomerJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( public $order )
+    public function __construct(public $order)
     {
         $this->prepareSerialization();
     }
@@ -30,7 +30,7 @@ class UncountDeletedOrderForCustomerJob implements ShouldQueue
      */
     public function handle()
     {
-        $customer = Customer::find( $this->order->customer_id );
+        $customer = Customer::find($this->order->customer_id);
 
         switch ($this->order->payment_status) {
             case 'paid':

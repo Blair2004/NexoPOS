@@ -19,7 +19,7 @@ class CustomerRewardAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct( public CustomerReward $customerReward, public Customer $customer, public RewardSystem $reward )
+    public function __construct(public CustomerReward $customerReward, public Customer $customer, public RewardSystem $reward)
     {
         // ...
     }

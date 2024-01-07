@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\ProductHistoryAfterUpdatedEvent;
 use App\Services\ProductService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProductHistoryAfterUpdatedEventListener
 {
@@ -14,16 +12,15 @@ class ProductHistoryAfterUpdatedEventListener
      */
     public function __construct(
         protected ProductService $productService
-    )
-    {
+    ) {
         //
     }
 
     /**
      * Handle the event.
      */
-    public function handle( ProductHistoryAfterUpdatedEvent $event): void
+    public function handle(ProductHistoryAfterUpdatedEvent $event): void
     {
-        $this->productService->computeCogsIfNecessary( $event->productHistory );
+        $this->productService->computeCogsIfNecessary($event->productHistory);
     }
 }

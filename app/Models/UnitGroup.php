@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\DateCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -31,6 +30,6 @@ class UnitGroup extends NsModel
 
     public function units()
     {
-        return $this->hasMany( Unit::class, 'group_id' );
+        return $this->hasMany(Unit::class, 'group_id');
     }
 }

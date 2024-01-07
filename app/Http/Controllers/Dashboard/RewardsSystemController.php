@@ -11,7 +11,6 @@ namespace App\Http\Controllers\Dashboard;
 use App\Crud\RewardSystemCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\RewardSystem;
-use Illuminate\Support\Facades\View;
 
 class RewardsSystemController extends DashboardController
 {
@@ -24,17 +23,17 @@ class RewardsSystemController extends DashboardController
     {
         return RewardSystemCrud::form(
             config: [
-                'view' => 'pages.dashboard.rewards-system.create'
+                'view' => 'pages.dashboard.rewards-system.create',
             ]
         );
     }
 
-    public function edit( RewardSystem $reward )
+    public function edit(RewardSystem $reward)
     {
-        return RewardSystemCrud::form( 
+        return RewardSystemCrud::form(
             entry: $reward,
             config: [
-                'view' => 'pages.dashboard.rewards-system.create'
+                'view' => 'pages.dashboard.rewards-system.create',
             ]
         );
     }

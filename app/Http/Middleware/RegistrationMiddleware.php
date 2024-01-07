@@ -16,10 +16,10 @@ class RegistrationMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ( ns()->option->get( 'ns_registration_enabled', 'no' ) === 'yes' ) {
+        if (ns()->option->get('ns_registration_enabled', 'no') === 'yes') {
             return $next($request);
         }
 
-        throw new NotAllowedException( __( 'The registration has been explicitly disabled.' ) );
+        throw new NotAllowedException(__('The registration has been explicitly disabled.'));
     }
 }

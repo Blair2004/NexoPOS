@@ -17,17 +17,17 @@ class DefaultUnitGroupSeeder extends Seeder
     public function run()
     {
         $unitGroup = UnitGroup::create([
-            'name' => __( 'Countable' ),
-            'author' => Role::namespace( 'admin' )->users->first()->id,
+            'name' => __('Countable'),
+            'author' => Role::namespace('admin')->users->first()->id,
         ]);
 
         $piece = Unit::create([
-            'name' => __( 'Piece' ),
+            'name' => __('Piece'),
             'value' => 1,
             'identifier' => 'piece',
             'base_unit' => true,
             'group_id' => $unitGroup->id,
-            'author' => Role::namespace( 'admin' )->users->first()->id,
+            'author' => Role::namespace('admin')->users->first()->id,
         ]);
     }
 }

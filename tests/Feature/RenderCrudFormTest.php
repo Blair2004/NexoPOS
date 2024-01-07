@@ -15,7 +15,7 @@ class RenderCrudFormTest extends TestCase
      */
     public function test_example()
     {
-        Auth::loginUsingId( Role::namespace( 'admin' )->users->first()->id );
+        Auth::loginUsingId(Role::namespace('admin')->users->first()->id);
 
         /**
          * we'll test all crud forms
@@ -42,14 +42,14 @@ class RenderCrudFormTest extends TestCase
             'orders/payments-types',
         ];
 
-        foreach ( $cruds as $crud ) {
+        foreach ($cruds as $crud) {
             echo "* Testing :  $crud\n";
 
             $response = $this
-                ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'GET', '/dashboard/' . $crud . '/create' );
+                ->withSession($this->app[ 'session' ]->all())
+                ->json('GET', '/dashboard/' . $crud . '/create');
 
-            $response->assertDontSee( 'exception' );
+            $response->assertDontSee('exception');
         }
     }
 }

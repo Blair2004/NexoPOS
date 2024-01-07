@@ -25,6 +25,6 @@ class TaxGroup extends NsModel
      */
     public function taxes()
     {
-        return $this->hasMany( Tax::class );
+        return $this->hasMany(Tax::class);
     }
 }

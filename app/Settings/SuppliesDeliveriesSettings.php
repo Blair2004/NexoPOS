@@ -13,10 +13,10 @@ class SuppliesDeliveriesSettings extends SettingsPage
     public function __construct()
     {
         $this->form = [
-            'title' =>  __( 'Supply Delivery' ),
-            'description'   =>  __( 'Configure the delivery feature.' ),
+            'title' => __('Supply Delivery'),
+            'description' => __('Configure the delivery feature.'),
             'tabs' => [
-                'layout' => include( dirname( __FILE__ ) . '/supplies-deliveries/general.php' ),
+                'layout' => include(dirname(__FILE__) . '/supplies-deliveries/general.php'),
             ],
         ];
     }

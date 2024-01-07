@@ -26,6 +26,6 @@ class ProductBeforeDeleteEventListener
      */
     public function handle(ProductBeforeDeleteEvent $event)
     {
-        $this->productService->deleteProductRelations( $event->product );
+        $this->productService->deleteProductRelations($event->product);
     }
 }

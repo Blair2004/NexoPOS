@@ -16,7 +16,7 @@ class FirstExampleTaxesSeeder extends Seeder
      */
     public function run()
     {
-        $author = $author = User::get()->map( fn( $user ) => $user->id )
+        $author = $author = User::get()->map(fn($user) => $user->id)
             ->shuffle()
             ->first();
 

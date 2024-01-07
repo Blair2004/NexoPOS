@@ -23,18 +23,18 @@ return new class extends Migration
      */
     public function up()
     {
-        $permission = Permission::namespace( 'nexopos.reports.payment-types' );
+        $permission = Permission::namespace('nexopos.reports.payment-types');
 
-        if ( ! $permission instanceof Permission ) {
+        if (! $permission instanceof Permission) {
             $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.payment-types' ]);
-            $permission->name = __( 'Read Sales by Payment Types' );
+            $permission->name = __('Read Sales by Payment Types');
             $permission->namespace = 'nexopos.reports.payment-types';
-            $permission->description = __( 'Let the user read the report that shows sales by payment types.' );
+            $permission->description = __('Let the user read the report that shows sales by payment types.');
             $permission->save();
         }
 
-        Role::namespace( 'admin' )->addPermissions( $permission );
-        Role::namespace( 'nexopos.store.administrator' )->addPermissions( $permission );
+        Role::namespace('admin')->addPermissions($permission);
+        Role::namespace('nexopos.store.administrator')->addPermissions($permission);
     }
 
     /**

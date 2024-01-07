@@ -41,38 +41,38 @@ class ReportService
         // ...
     }
 
-    public function refreshFromDashboardDay( DashboardDay $todayReport )
+    public function refreshFromDashboardDay(DashboardDay $todayReport)
     {
-        $previousReport = DashboardDay::forLastRecentDay( $todayReport );
+        $previousReport = DashboardDay::forLastRecentDay($todayReport);
 
         /**
          * when the method is used without defining
          * the dayStarts and dayEnds, this method
          * create these values.
          */
-        $this->defineDate( $todayReport );
+        $this->defineDate($todayReport);
 
-        $this->computeUnpaidOrdersCount( $previousReport, $todayReport );
-        $this->computeUnpaidOrders( $previousReport, $todayReport );
-        $this->computePaidOrders( $previousReport, $todayReport );
-        $this->computePaidOrdersCount( $previousReport, $todayReport );
-        $this->computeOrdersTaxes( $previousReport, $todayReport );
-        $this->computePartiallyPaidOrders( $previousReport, $todayReport );
-        $this->computePartiallyPaidOrdersCount( $previousReport, $todayReport );
-        $this->computeDiscounts( $previousReport, $todayReport );
-        $this->computeIncome( $previousReport, $todayReport );
+        $this->computeUnpaidOrdersCount($previousReport, $todayReport);
+        $this->computeUnpaidOrders($previousReport, $todayReport);
+        $this->computePaidOrders($previousReport, $todayReport);
+        $this->computePaidOrdersCount($previousReport, $todayReport);
+        $this->computeOrdersTaxes($previousReport, $todayReport);
+        $this->computePartiallyPaidOrders($previousReport, $todayReport);
+        $this->computePartiallyPaidOrdersCount($previousReport, $todayReport);
+        $this->computeDiscounts($previousReport, $todayReport);
+        $this->computeIncome($previousReport, $todayReport);
     }
 
-    private function defineDate( DashboardDay $dashboardDay )
+    private function defineDate(DashboardDay $dashboardDay)
     {
-        $this->dayStarts = empty( $this->dayStarts ) ? ( Carbon::parse( $dashboardDay->range_starts )->startOfDay()->toDateTimeString() ) : $this->dayStarts;
-        $this->dayEnds = empty( $this->dayEnds ) ? ( Carbon::parse( $dashboardDay->range_ends )->endOfDay()->toDateTimeString() ) : $this->dayEnds;
+        $this->dayStarts = empty($this->dayStarts) ? (Carbon::parse($dashboardDay->range_starts)->startOfDay()->toDateTimeString()) : $this->dayStarts;
+        $this->dayEnds = empty($this->dayEnds) ? (Carbon::parse($dashboardDay->range_ends)->endOfDay()->toDateTimeString()) : $this->dayEnds;
     }
 
     /**
      * Will compute the report for the current day
      */
-    public function computeDayReport( $dateStart = null, $dateEnd = null )
+    public function computeDayReport($dateStart = null, $dateEnd = null)
     {
         $this->dayStarts = $dateStart ?: $this->dateService->copy()->startOfDay()->toDateTimeString();
         $this->dayEnds = $dateEnd ?: $this->dateService->copy()->endOfDay()->toDateTimeString();
@@ -81,38 +81,38 @@ class ReportService
          * Before proceeding, let's clear everything
          * that is not assigned during this specific time range.
          */
-        $this->clearUnassignedCashFlow( $this->dayStarts, $this->dayEnds );
+        $this->clearUnassignedCashFlow($this->dayStarts, $this->dayEnds);
 
         $todayReport = DashboardDay::firstOrCreate([
             'range_starts' => $this->dayStarts,
             'range_ends' => $this->dayEnds,
-            'day_of_year' => Carbon::parse( $this->dayStarts )->dayOfYear,
+            'day_of_year' => Carbon::parse($this->dayStarts)->dayOfYear,
         ]);
 
-        $this->refreshFromDashboardDay( $todayReport );
+        $this->refreshFromDashboardDay($todayReport);
 
         $todayReport->save();
 
         return $todayReport;
     }
 
-    public function computeDashboardMonth( $todayCarbon = null )
+    public function computeDashboardMonth($todayCarbon = null)
     {
-        if ( $todayCarbon === null ) {
+        if ($todayCarbon === null) {
             $todayCarbon = $this->dateService->copy()->now();
         }
 
         $monthStarts = $todayCarbon->startOfMonth()->toDateTimeString();
         $monthEnds = $todayCarbon->endOfMonth()->toDateTimeString();
 
-        $entries = DashboardDay::from( $monthStarts )
-            ->to( $monthEnds );
+        $entries = DashboardDay::from($monthStarts)
+            ->to($monthEnds);
 
-        $dashboardMonth = DashboardMonth::from( $monthStarts )
-            ->to( $monthEnds )
+        $dashboardMonth = DashboardMonth::from($monthStarts)
+            ->to($monthEnds)
             ->first();
 
-        if ( ! $dashboardMonth instanceof DashboardMonth ) {
+        if (! $dashboardMonth instanceof DashboardMonth) {
             $dashboardMonth = new DashboardMonth;
             $dashboardMonth->range_starts = $monthStarts;
             $dashboardMonth->range_ends = $monthEnds;
@@ -120,18 +120,18 @@ class ReportService
             $dashboardMonth->save();
         }
 
-        $dashboardMonth->month_unpaid_orders = $entries->sum( 'day_unpaid_orders' );
-        $dashboardMonth->month_unpaid_orders_count = $entries->sum( 'day_unpaid_orders_count' );
-        $dashboardMonth->month_paid_orders = $entries->sum( 'day_paid_orders' );
-        $dashboardMonth->month_paid_orders_count = $entries->sum( 'day_paid_orders_count' );
-        $dashboardMonth->month_partially_paid_orders = $entries->sum( 'day_partially_paid_orders' );
-        $dashboardMonth->month_partially_paid_orders_count = $entries->sum( 'day_partially_paid_orders_count' );
-        $dashboardMonth->month_income = $entries->sum( 'day_income' );
-        $dashboardMonth->month_discounts = $entries->sum( 'day_discounts' );
-        $dashboardMonth->month_taxes = $entries->sum( 'day_taxes' );
-        $dashboardMonth->month_wasted_goods_count = $entries->sum( 'day_wasted_goods_count' );
-        $dashboardMonth->month_wasted_goods = $entries->sum( 'day_wasted_goods' );
-        $dashboardMonth->month_expenses = $entries->sum( 'day_expenses' );
+        $dashboardMonth->month_unpaid_orders = $entries->sum('day_unpaid_orders');
+        $dashboardMonth->month_unpaid_orders_count = $entries->sum('day_unpaid_orders_count');
+        $dashboardMonth->month_paid_orders = $entries->sum('day_paid_orders');
+        $dashboardMonth->month_paid_orders_count = $entries->sum('day_paid_orders_count');
+        $dashboardMonth->month_partially_paid_orders = $entries->sum('day_partially_paid_orders');
+        $dashboardMonth->month_partially_paid_orders_count = $entries->sum('day_partially_paid_orders_count');
+        $dashboardMonth->month_income = $entries->sum('day_income');
+        $dashboardMonth->month_discounts = $entries->sum('day_discounts');
+        $dashboardMonth->month_taxes = $entries->sum('day_taxes');
+        $dashboardMonth->month_wasted_goods_count = $entries->sum('day_wasted_goods_count');
+        $dashboardMonth->month_wasted_goods = $entries->sum('day_wasted_goods');
+        $dashboardMonth->month_expenses = $entries->sum('day_expenses');
 
         foreach ([
             'total_unpaid_orders',
@@ -146,7 +146,7 @@ class ReportService
             'total_wasted_goods_count',
             'total_wasted_goods',
             'total_expenses',
-        ] as $field ) {
+        ] as $field) {
             $dashboardMonth->$field = $entries->get()->last()->$field ?? 0;
         }
 
@@ -155,15 +155,15 @@ class ReportService
         return $dashboardMonth;
     }
 
-    public function computeOrdersTaxes( $previousReport, $todayReport )
+    public function computeOrdersTaxes($previousReport, $todayReport)
     {
-        $timeRangeTaxes = Order::from( $this->dayStarts  )
-            ->to( $this->dayEnds )
-            ->paymentStatus( 'paid' )
-            ->sum( 'tax_value' );
+        $timeRangeTaxes = Order::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->paymentStatus('paid')
+            ->sum('tax_value');
 
         $todayReport->day_taxes = $timeRangeTaxes;
-        $todayReport->total_taxes = ( $todayReport->total_taxes ?? 0 ) + $timeRangeTaxes;
+        $todayReport->total_taxes = ($todayReport->total_taxes ?? 0) + $timeRangeTaxes;
     }
 
     /**
@@ -171,9 +171,9 @@ class ReportService
      *
      * @return void
      */
-    public function handleStockAdjustment( ProductHistory $history )
+    public function handleStockAdjustment(ProductHistory $history)
     {
-        if ( in_array( $history->operation_type, [
+        if (in_array($history->operation_type, [
             ProductHistory::ACTION_DEFECTIVE,
             ProductHistory::ACTION_LOST,
             ProductHistory::ACTION_DELETED,
@@ -181,17 +181,17 @@ class ReportService
         ])) {
             $currentDay = DashboardDay::forToday();
 
-            if ( $currentDay instanceof DashboardDay ) {
-                $yesterDay = DashboardDay::forLastRecentDay( $currentDay );
+            if ($currentDay instanceof DashboardDay) {
+                $yesterDay = DashboardDay::forLastRecentDay($currentDay);
                 $currentDay->day_wasted_goods_count += $history->quantity;
                 $currentDay->day_wasted_goods += $history->total_price;
-                $currentDay->total_wasted_goods_count = ( $yesterDay->total_wasted_goods_count ?? 0 ) + $currentDay->day_wasted_goods_count;
-                $currentDay->total_wasted_goods = ( $yesterDay->total_wasted_goods ?? 0 ) + $currentDay->day_wasted_goods;
+                $currentDay->total_wasted_goods_count = ($yesterDay->total_wasted_goods_count ?? 0) + $currentDay->day_wasted_goods_count;
+                $currentDay->total_wasted_goods = ($yesterDay->total_wasted_goods ?? 0) + $currentDay->day_wasted_goods;
                 $currentDay->save();
 
                 return [
                     'status' => 'success',
-                    'message' => __( 'The dashboard report has been updated.' ),
+                    'message' => __('The dashboard report has been updated.'),
                 ];
             }
 
@@ -200,13 +200,13 @@ class ReportService
              *
              * @var NotificationService
              */
-            $message = __( 'A stock operation has recently been detected, however NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
-            $notification = app()->make( NotificationService::class );
+            $message = __('A stock operation has recently been detected, however NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.');
+            $notification = app()->make(NotificationService::class);
             $notification->create([
-                'title' => __( 'Untracked Stock Operation' ),
+                'title' => __('Untracked Stock Operation'),
                 'description' => $message,
                 'url' => 'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
-            ])->dispatchForGroup( Role::namespace( 'admin' ) );
+            ])->dispatchForGroup(Role::namespace('admin'));
 
             return [
                 'status' => 'failed',
@@ -216,7 +216,7 @@ class ReportService
 
         return [
             'status' => 'failed',
-            'message' => __( 'Unsupported action' ),
+            'message' => __('Unsupported action'),
         ];
     }
 
@@ -228,20 +228,20 @@ class ReportService
      * @param string $endAt
      * @return void
      */
-    public function clearUnassignedCashFlow( $startAt, $endsAt )
+    public function clearUnassignedCashFlow($startAt, $endsAt)
     {
-        $cashFlows = TransactionHistory::where( 'created_at', '>=', $startAt )
-            ->where( 'created_at', '<=', $endsAt )
+        $cashFlows = TransactionHistory::where('created_at', '>=', $startAt)
+            ->where('created_at', '<=', $endsAt)
             ->get();
 
-        $cashFlows->each( function ( $cashFlow ) {
+        $cashFlows->each(function ($cashFlow) {
             /**
              * let's clear unassigned to orders
              */
-            if ( $cashFlow->operation === TransactionHistory::OPERATION_CREDIT && ! empty( $cashFlow->order_id ) ) {
-                $order = Order::find( $cashFlow->order_id );
+            if ($cashFlow->operation === TransactionHistory::OPERATION_CREDIT && ! empty($cashFlow->order_id)) {
+                $order = Order::find($cashFlow->order_id);
 
-                if ( ! $order instanceof Order ) {
+                if (! $order instanceof Order) {
                     $cashFlow->delete();
                 }
             }
@@ -249,10 +249,10 @@ class ReportService
             /**
              * let's clear unassigned to procurements
              */
-            if ( $cashFlow->operation === TransactionHistory::OPERATION_DEBIT && ! empty( $cashFlow->procurement_id ) ) {
-                $order = Procurement::find( $cashFlow->procurement_id );
+            if ($cashFlow->operation === TransactionHistory::OPERATION_DEBIT && ! empty($cashFlow->procurement_id)) {
+                $order = Procurement::find($cashFlow->procurement_id);
 
-                if ( ! $order instanceof Procurement ) {
+                if (! $order instanceof Procurement) {
                     $cashFlow->delete();
                 }
             }
@@ -260,10 +260,10 @@ class ReportService
             /**
              * let's clear unassigned to order refund
              */
-            if ( ! empty( $cashFlow->order_refund_id ) ) {
-                $order = OrderRefund::find( $cashFlow->order_refund_id );
+            if (! empty($cashFlow->order_refund_id)) {
+                $order = OrderRefund::find($cashFlow->order_refund_id);
 
-                if ( ! $order instanceof OrderRefund ) {
+                if (! $order instanceof OrderRefund) {
                     $cashFlow->delete();
                 }
             }
@@ -271,10 +271,10 @@ class ReportService
             /**
              * let's clear unassigned to register history
              */
-            if ( ! empty( $cashFlow->register_history_id ) ) {
-                $history = RegisterHistory::find( $cashFlow->register_history_id );
+            if (! empty($cashFlow->register_history_id)) {
+                $history = RegisterHistory::find($cashFlow->register_history_id);
 
-                if ( ! $history instanceof RegisterHistory ) {
+                if (! $history instanceof RegisterHistory) {
                     $cashFlow->delete();
                 }
             }
@@ -282,10 +282,10 @@ class ReportService
             /**
              * let's clear unassigned to customer account history
              */
-            if ( ! empty( $cashFlow->customer_account_history_id ) ) {
-                $history = CustomerAccountHistory::find( $cashFlow->customer_account_history_id );
+            if (! empty($cashFlow->customer_account_history_id)) {
+                $history = CustomerAccountHistory::find($cashFlow->customer_account_history_id);
 
-                if ( ! $history instanceof CustomerAccountHistory ) {
+                if (! $history instanceof CustomerAccountHistory) {
                     $cashFlow->delete();
                 }
             }
@@ -298,9 +298,9 @@ class ReportService
      *
      * @return void
      */
-    public function deleteOrderCashFlow( Order $order )
+    public function deleteOrderCashFlow(Order $order)
     {
-        TransactionHistory::where( 'order_id', $order->id )->delete();
+        TransactionHistory::where('order_id', $order->id)->delete();
     }
 
     /**
@@ -309,27 +309,27 @@ class ReportService
      *
      * @return void
      */
-    public function deleteProcurementCashFlow( Procurement $procurement )
+    public function deleteProcurementCashFlow(Procurement $procurement)
     {
-        TransactionHistory::where( 'procurement_id', $procurement->id )->delete();
+        TransactionHistory::where('procurement_id', $procurement->id)->delete();
     }
 
-    public function computeIncome( $previousReport, $todayReport )
+    public function computeIncome($previousReport, $todayReport)
     {
-        $totalIncome = TransactionHistory::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->operation( TransactionHistory::OPERATION_CREDIT )
-            ->sum( 'value' );
+        $totalIncome = TransactionHistory::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->operation(TransactionHistory::OPERATION_CREDIT)
+            ->sum('value');
 
-        $totalExpenses = TransactionHistory::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->operation( TransactionHistory::OPERATION_DEBIT )
-            ->sum( 'value' );
+        $totalExpenses = TransactionHistory::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->operation(TransactionHistory::OPERATION_DEBIT)
+            ->sum('value');
 
         $todayReport->day_expenses = $totalExpenses;
         $todayReport->day_income = $totalIncome - $totalExpenses;
-        $todayReport->total_income = ( $previousReport->total_income ?? 0 ) + $todayReport->day_income;
-        $todayReport->total_expenses = ( $previousReport->total_expenses ?? 0 ) + $todayReport->day_expenses;
+        $todayReport->total_income = ($previousReport->total_income ?? 0) + $todayReport->day_income;
+        $todayReport->total_expenses = ($previousReport->total_expenses ?? 0) + $todayReport->day_expenses;
     }
 
     /**
@@ -338,15 +338,15 @@ class ReportService
      *
      * @return void
      */
-    private function computeUnpaidOrdersCount( $previousReport, $todayReport )
+    private function computeUnpaidOrdersCount($previousReport, $todayReport)
     {
-        $totalUnpaidOrders = Order::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->paymentStatus( 'unpaid' )
+        $totalUnpaidOrders = Order::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->paymentStatus('unpaid')
             ->count();
 
         $todayReport->day_unpaid_orders_count = $totalUnpaidOrders;
-        $todayReport->total_unpaid_orders_count = ( $previousReport->total_unpaid_orders_count ?? 0 ) + $totalUnpaidOrders;
+        $todayReport->total_unpaid_orders_count = ($previousReport->total_unpaid_orders_count ?? 0) + $totalUnpaidOrders;
     }
 
     /**
@@ -355,15 +355,15 @@ class ReportService
      *
      * @return void
      */
-    private function computeUnpaidOrders( $previousReport, $todayReport )
+    private function computeUnpaidOrders($previousReport, $todayReport)
     {
-        $totalUnpaidOrders = Order::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->paymentStatus( 'unpaid' )
-            ->sum( 'total' );
+        $totalUnpaidOrders = Order::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->paymentStatus('unpaid')
+            ->sum('total');
 
         $todayReport->day_unpaid_orders = $totalUnpaidOrders;
-        $todayReport->total_unpaid_orders = ( $previousReport->total_unpaid_orders ?? 0 ) + $totalUnpaidOrders;
+        $todayReport->total_unpaid_orders = ($previousReport->total_unpaid_orders ?? 0) + $totalUnpaidOrders;
     }
 
     /**
@@ -372,15 +372,15 @@ class ReportService
      *
      * @return void
      */
-    private function computePaidOrders( $previousReport, $todayReport )
+    private function computePaidOrders($previousReport, $todayReport)
     {
-        $totalPaid = Order::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->paymentStatus( 'paid' )
-            ->sum( 'total' );
+        $totalPaid = Order::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->paymentStatus('paid')
+            ->sum('total');
 
         $todayReport->day_paid_orders = $totalPaid;
-        $todayReport->total_paid_orders = ( $previousReport->total_paid_orders ?? 0 ) + $totalPaid;
+        $todayReport->total_paid_orders = ($previousReport->total_paid_orders ?? 0) + $totalPaid;
     }
 
     /**
@@ -389,15 +389,15 @@ class ReportService
      *
      * @return void
      */
-    private function computePaidOrdersCount( $previousReport, $todayReport )
+    private function computePaidOrdersCount($previousReport, $todayReport)
     {
-        $totalPaidOrders = Order::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->paymentStatus( 'paid' )
+        $totalPaidOrders = Order::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->paymentStatus('paid')
             ->count();
 
         $todayReport->day_paid_orders_count = $totalPaidOrders;
-        $todayReport->total_paid_orders_count = ( $previousReport->total_paid_orders_count ?? 0 ) + $totalPaidOrders;
+        $todayReport->total_paid_orders_count = ($previousReport->total_paid_orders_count ?? 0) + $totalPaidOrders;
     }
 
     /**
@@ -406,15 +406,15 @@ class ReportService
      *
      * @return void
      */
-    private function computePartiallyPaidOrders( $previousReport, $todayReport )
+    private function computePartiallyPaidOrders($previousReport, $todayReport)
     {
-        $totalPaid = Order::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->paymentStatus( 'partially_paid' )
-            ->sum( 'total' );
+        $totalPaid = Order::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->paymentStatus('partially_paid')
+            ->sum('total');
 
         $todayReport->day_partially_paid_orders = $totalPaid;
-        $todayReport->total_partially_paid_orders = ( $previousReport->total_partially_paid_orders ?? 0 ) + $totalPaid;
+        $todayReport->total_partially_paid_orders = ($previousReport->total_partially_paid_orders ?? 0) + $totalPaid;
     }
 
     /**
@@ -423,51 +423,51 @@ class ReportService
      *
      * @return void
      */
-    private function computePartiallyPaidOrdersCount( $previousReport, $todayReport )
+    private function computePartiallyPaidOrdersCount($previousReport, $todayReport)
     {
-        $totalPartiallyPaidOrdersCount = Order::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->paymentStatus( 'partially_paid' )
+        $totalPartiallyPaidOrdersCount = Order::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->paymentStatus('partially_paid')
             ->count();
 
         $todayReport->day_partially_paid_orders_count = $totalPartiallyPaidOrdersCount;
-        $todayReport->total_partially_paid_orders_count = ( $previousReport->total_partially_paid_orders_count ?? 0 ) + $totalPartiallyPaidOrdersCount;
+        $todayReport->total_partially_paid_orders_count = ($previousReport->total_partially_paid_orders_count ?? 0) + $totalPartiallyPaidOrdersCount;
     }
 
-    private function computeDiscounts( $previousReport, $todayReport )
+    private function computeDiscounts($previousReport, $todayReport)
     {
-        $totalDiscount = Order::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->paymentStatus( 'paid' )
-            ->sum( 'discount' );
+        $totalDiscount = Order::from($this->dayStarts)
+            ->to($this->dayEnds)
+            ->paymentStatus('paid')
+            ->sum('discount');
 
         $todayReport->day_discounts = $totalDiscount;
-        $todayReport->total_discounts = ( $previousReport->total_discounts ?? 0 ) + $totalDiscount;
+        $todayReport->total_discounts = ($previousReport->total_discounts ?? 0) + $totalDiscount;
     }
 
     /**
      * @deprecated
      */
-    public function increaseDailyExpenses( TransactionHistory $cashFlow, $today = null )
+    public function increaseDailyExpenses(TransactionHistory $cashFlow, $today = null)
     {
         $today = $today === null ? DashboardDay::forToday() : $today;
 
-        if ( $today instanceof DashboardDay ) {
-            if ( $cashFlow->operation === TransactionHistory::OPERATION_DEBIT ) {
-                $yesterday = DashboardDay::forLastRecentDay( $today );
-                $today->day_expenses += $cashFlow->getRawOriginal( 'value' );
-                $today->total_expenses = ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
+        if ($today instanceof DashboardDay) {
+            if ($cashFlow->operation === TransactionHistory::OPERATION_DEBIT) {
+                $yesterday = DashboardDay::forLastRecentDay($today);
+                $today->day_expenses += $cashFlow->getRawOriginal('value');
+                $today->total_expenses = ($yesterday->total_expenses ?? 0) + $today->day_expenses;
                 $today->save();
             } else {
-                $yesterday = DashboardDay::forLastRecentDay( $today );
-                $today->day_income += $cashFlow->getRawOriginal( 'value' );
-                $today->total_income = ( $yesterday->total_income ?? 0 ) + $today->day_income;
+                $yesterday = DashboardDay::forLastRecentDay($today);
+                $today->day_income += $cashFlow->getRawOriginal('value');
+                $today->total_income = ($yesterday->total_income ?? 0) + $today->day_income;
                 $today->save();
             }
 
             return [
                 'status' => 'success',
-                'message' => __( 'The expense has been correctly saved.' ),
+                'message' => __('The expense has been correctly saved.'),
             ];
         }
 
@@ -477,26 +477,26 @@ class ReportService
     /**
      * @deprecated
      */
-    public function reduceDailyExpenses( TransactionHistory $cashFlow, $today = null )
+    public function reduceDailyExpenses(TransactionHistory $cashFlow, $today = null)
     {
         $today = $today === null ? DashboardDay::forToday() : $today;
 
-        if ( $today instanceof DashboardDay ) {
-            if ( $cashFlow->operation === TransactionHistory::OPERATION_CREDIT ) {
-                $yesterday = DashboardDay::forLastRecentDay( $today );
-                $today->day_income -= $cashFlow->getRawOriginal( 'value' );
-                $today->total_income = ( $yesterday->total_income ?? 0 ) + $today->day_income;
+        if ($today instanceof DashboardDay) {
+            if ($cashFlow->operation === TransactionHistory::OPERATION_CREDIT) {
+                $yesterday = DashboardDay::forLastRecentDay($today);
+                $today->day_income -= $cashFlow->getRawOriginal('value');
+                $today->total_income = ($yesterday->total_income ?? 0) + $today->day_income;
                 $today->save();
             } else {
-                $yesterday = DashboardDay::forLastRecentDay( $today );
-                $today->day_expenses -= $cashFlow->getRawOriginal( 'value' );
-                $today->total_expenses = ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
+                $yesterday = DashboardDay::forLastRecentDay($today);
+                $today->day_expenses -= $cashFlow->getRawOriginal('value');
+                $today->total_expenses = ($yesterday->total_expenses ?? 0) + $today->day_expenses;
                 $today->save();
             }
 
             return [
                 'status' => 'success',
-                'message' => __( 'The expense has been correctly saved.' ),
+                'message' => __('The expense has been correctly saved.'),
             ];
         }
 
@@ -510,14 +510,14 @@ class ReportService
          *
          * @var NotificationService
          */
-        $message = __( 'A stock operation has recently been detected, however NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
+        $message = __('A stock operation has recently been detected, however NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.');
 
-        $notification = app()->make( NotificationService::class );
+        $notification = app()->make(NotificationService::class);
         $notification->create([
-            'title' => __( 'Untracked Stock Operation' ),
+            'title' => __('Untracked Stock Operation'),
             'description' => $message,
             'url' => 'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
-        ])->dispatchForGroup( Role::namespace( 'admin' ) );
+        ])->dispatchForGroup(Role::namespace('admin'));
 
         return [
             'status' => 'failed',
@@ -540,10 +540,10 @@ class ReportService
      * @param string $endDate
      * @return Collection
      */
-    public function getFromTimeRange( $startDate, $endDate )
+    public function getFromTimeRange($startDate, $endDate)
     {
-        return DashboardDay::from( $startDate )
-            ->to( $endDate )
+        return DashboardDay::from($startDate)
+            ->to($endDate)
             ->get();
     }
 
@@ -553,7 +553,7 @@ class ReportService
      * @param string $year
      * @return array $reports
      */
-    public function getYearReportFor( $year )
+    public function getYearReportFor($year)
     {
         $date = $this->dateService->now();
         $date->year = $year >= 2019 && $year <= 2099 ? $year : 2020; // validate the date
@@ -565,18 +565,18 @@ class ReportService
         do {
             $currentMonth = $startOfYear->copy();
 
-            $monthReport = DashboardMonth::from( $currentMonth->startOfMonth()->toDateTimeString() )
-                ->to( $currentMonth->endOfMonth()->toDateTimeString() )
+            $monthReport = DashboardMonth::from($currentMonth->startOfMonth()->toDateTimeString())
+                ->to($currentMonth->endOfMonth()->toDateTimeString())
                 ->first();
 
-            if ( ! $monthReport instanceof DashboardMonth ) {
-                $monthReport = $this->computeDashboardMonth( $currentMonth );
+            if (! $monthReport instanceof DashboardMonth) {
+                $monthReport = $this->computeDashboardMonth($currentMonth);
             }
 
-            $reports[ (int) $currentMonth->format( 'm' ) ] = $monthReport;
+            $reports[ (int) $currentMonth->format('m') ] = $monthReport;
 
             $startOfYear->addMonth();
-        } while ( ! $startOfYear->isSameMonth( $endOfYear->copy()->addMonth() ) );
+        } while (! $startOfYear->isSameMonth($endOfYear->copy()->addMonth()));
 
         return $reports;
     }
@@ -589,29 +589,29 @@ class ReportService
      * @param string $sort
      * @return array
      */
-    public function getProductSalesDiff( $startDate, $endDate, $sort )
+    public function getProductSalesDiff($startDate, $endDate, $sort)
     {
-        $startDate = Carbon::parse( $startDate );
-        $endDate = Carbon::parse( $endDate );
-        $diffInDays = Carbon::parse( $startDate )->diffInDays( $endDate );
+        $startDate = Carbon::parse($startDate);
+        $endDate = Carbon::parse($endDate);
+        $diffInDays = Carbon::parse($startDate)->diffInDays($endDate);
 
-        $orderProductTable = Hook::filter( 'ns-model-table', 'nexopos_orders_products' );
-        $productsTable = Hook::filter( 'ns-model-table', 'nexopos_products' );
-        $unitstable = Hook::filter( 'ns-model-table', 'nexopos_units' );
+        $orderProductTable = Hook::filter('ns-model-table', 'nexopos_orders_products');
+        $productsTable = Hook::filter('ns-model-table', 'nexopos_products');
+        $unitstable = Hook::filter('ns-model-table', 'nexopos_units');
 
-        if ( $diffInDays > 0 ) {
+        if ($diffInDays > 0) {
             // check if it's the start and end of the month
-            $isStartOfMonth = Carbon::parse( $startDate )->startOfMonth()->isSameDay( $startDate );
-            $isEndOfMonth = Carbon::parse( $endDate )->endOfMonth()->isSameDay( $endDate );
+            $isStartOfMonth = Carbon::parse($startDate)->startOfMonth()->isSameDay($startDate);
+            $isEndOfMonth = Carbon::parse($endDate)->endOfMonth()->isSameDay($endDate);
 
             if (
                 $isStartOfMonth && $isEndOfMonth
             ) {
-                $startCycle = Carbon::parse( $startDate )->subMonth()->startOfMonth();
-                $endCycle = Carbon::parse( $endDate )->subDay()->subMonth()->endOfMonth();
+                $startCycle = Carbon::parse($startDate)->subMonth()->startOfMonth();
+                $endCycle = Carbon::parse($endDate)->subDay()->subMonth()->endOfMonth();
             } else {
-                $startCycle = Carbon::parse( $startDate )->subDays( $diffInDays + 1 );
-                $endCycle = Carbon::parse( $endDate )->subDays( $diffInDays + 1 );
+                $startCycle = Carbon::parse($startDate)->subDays($diffInDays + 1);
+                $endCycle = Carbon::parse($endDate)->subDays($diffInDays + 1);
             }
 
             $previousDates = [
@@ -625,10 +625,10 @@ class ReportService
                 ],
             ];
 
-            return $this->getBestRecords( $previousDates, $sort );
+            return $this->getBestRecords($previousDates, $sort);
         } else {
-            $startCycle = Carbon::parse( $startDate )->subDay();
-            $endCycle = Carbon::parse( $endDate )->subDay();
+            $startCycle = Carbon::parse($startDate)->subDay();
+            $endCycle = Carbon::parse($endDate)->subDay();
 
             $previousDates = [
                 'previous' => [
@@ -641,7 +641,7 @@ class ReportService
                 ],
             ];
 
-            return $this->getBestRecords( $previousDates, $sort );
+            return $this->getBestRecords($previousDates, $sort);
         }
     }
 
@@ -653,12 +653,12 @@ class ReportService
      * @param int $new
      * @return int
      */
-    private function getDiff( $old, $new )
+    private function getDiff($old, $new)
     {
-        if ( $old > $new ) {
-            return $this->computeDiff( $old, $new, 'decrease' );
+        if ($old > $new) {
+            return $this->computeDiff($old, $new, 'decrease');
         } else {
-            return $this->computeDiff( $old, $new, 'increase' );
+            return $this->computeDiff($old, $new, 'increase');
         }
     }
 
@@ -670,14 +670,14 @@ class ReportService
      * @param string $operation
      * @return int
      */
-    private function computeDiff( $old, $new, $operation )
+    private function computeDiff($old, $new, $operation)
     {
-        if ( $new == 0 ) {
+        if ($new == 0) {
             return 100;
         } else {
-            $change = ( ( $old - $new ) / $new ) * 100;
+            $change = (($old - $new) / $new) * 100;
 
-            return $operation === 'increase' ? abs( $change ) : $change;
+            return $operation === 'increase' ? abs($change) : $change;
         }
     }
 
@@ -689,14 +689,14 @@ class ReportService
      * @param string $sort
      * @return void
      */
-    private function getBestRecords( $previousDates, $sort )
+    private function getBestRecords($previousDates, $sort)
     {
-        $orderProductTable = Hook::filter( 'ns-model-table', 'nexopos_orders_products' );
-        $orderTable = Hook::filter( 'ns-model-table', 'nexopos_orders' );
-        $productsTable = Hook::filter( 'ns-model-table', 'nexopos_products' );
-        $unitstable = Hook::filter( 'ns-model-table', 'nexopos_units' );
+        $orderProductTable = Hook::filter('ns-model-table', 'nexopos_orders_products');
+        $orderTable = Hook::filter('ns-model-table', 'nexopos_orders');
+        $productsTable = Hook::filter('ns-model-table', 'nexopos_products');
+        $unitstable = Hook::filter('ns-model-table', 'nexopos_units');
 
-        switch ( $sort ) {
+        switch ($sort) {
             case 'using_quantity_asc':
                 $sorting = [
                     'column' => 'quantity',
@@ -741,40 +741,40 @@ class ReportService
                 break;
         }
 
-        foreach ( $previousDates as $key => $report ) {
-            $previousDates[ $key ][ 'products' ] = DB::table( $orderProductTable )
+        foreach ($previousDates as $key => $report) {
+            $previousDates[ $key ][ 'products' ] = DB::table($orderProductTable)
                 ->select([
                     $orderProductTable . '.unit_name as unit_name',
                     $orderProductTable . '.product_id as product_id',
                     $orderProductTable . '.name as name',
-                    DB::raw( 'SUM( quantity ) as quantity' ),
-                    DB::raw( 'SUM( total_price ) as total_price' ),
-                    DB::raw( 'SUM( ' . env( 'DB_PREFIX' ) . $orderProductTable . '.tax_value ) as tax_value' ),
+                    DB::raw('SUM( quantity ) as quantity'),
+                    DB::raw('SUM( total_price ) as total_price'),
+                    DB::raw('SUM( ' . env('DB_PREFIX') . $orderProductTable . '.tax_value ) as tax_value'),
                 ])
                 ->groupBy(
                     $orderProductTable . '.unit_name',
                     $orderProductTable . '.product_id',
                     $orderProductTable . '.name'
                 )
-                ->orderBy( $sorting[ 'column' ], $sorting[ 'direction' ] )
-                ->join( $orderTable, $orderTable . '.id', '=', $orderProductTable . '.order_id' )
-                ->where( $orderTable . '.created_at', '>=', $report[ 'startDate' ] )
-                ->where( $orderTable . '.created_at', '<=', $report[ 'endDate' ] )
-                ->whereIn( $orderTable . '.payment_status', [ Order::PAYMENT_PAID ])
+                ->orderBy($sorting[ 'column' ], $sorting[ 'direction' ])
+                ->join($orderTable, $orderTable . '.id', '=', $orderProductTable . '.order_id')
+                ->where($orderTable . '.created_at', '>=', $report[ 'startDate' ])
+                ->where($orderTable . '.created_at', '<=', $report[ 'endDate' ])
+                ->whereIn($orderTable . '.payment_status', [ Order::PAYMENT_PAID ])
                 ->get()
-                ->map( function ( $product ) {
+                ->map(function ($product) {
                     $product->difference = 0;
 
                     return $product;
                 });
         }
 
-        foreach ( $previousDates[ 'current' ][ 'products' ] as $id => &$product ) {
+        foreach ($previousDates[ 'current' ][ 'products' ] as $id => &$product) {
             $default = new stdClass;
             $default->total_price = 0;
             $default->quantity = 0;
 
-            $oldProduct = collect( $previousDates[ 'previous' ][ 'products' ] )->filter( function ( $previousProduct ) use ( $product ) {
+            $oldProduct = collect($previousDates[ 'previous' ][ 'products' ])->filter(function ($previousProduct) use ($product) {
                 return $previousProduct->product_id === $product->product_id;
             })->first() ?: $default;
 
@@ -788,12 +788,12 @@ class ReportService
             $product->evolution = $product->quantity > $oldProduct->quantity ? 'progress' : 'regress';
         }
 
-        $previousDates[ 'current' ][ 'total_price' ] = collect( $previousDates[ 'current' ][ 'products' ] )
-            ->map( fn( $product ) => $product->total_price )
+        $previousDates[ 'current' ][ 'total_price' ] = collect($previousDates[ 'current' ][ 'products' ])
+            ->map(fn($product) => $product->total_price)
             ->sum();
 
-        $previousDates[ 'previous' ][ 'total_price' ] = collect( $previousDates[ 'previous' ][ 'products' ] )
-            ->map( fn( $product ) => $product->total_price )
+        $previousDates[ 'previous' ][ 'total_price' ] = collect($previousDates[ 'previous' ][ 'products' ])
+            ->map(fn($product) => $product->total_price)
             ->sum();
 
         return $previousDates;
@@ -803,9 +803,9 @@ class ReportService
      * Will return a report based
      * on the requested type.
      */
-    public function getSaleReport( string $start, string $end, string $type, $user_id = null, $categories_id = null )
+    public function getSaleReport(string $start, string $end, string $type, $user_id = null, $categories_id = null)
     {
-        switch ( $type ) {
+        switch ($type) {
             case 'products_report':
                 return $this->getProductsReports(
                     start: $start,
@@ -826,10 +826,10 @@ class ReportService
         }
     }
 
-    private function getSalesSummary( $orders )
+    private function getSalesSummary($orders)
     {
-        $allSales = $orders->map( function( $order ) {
-            $productTaxes = $order->products()->sum( 'tax_value' );
+        $allSales = $orders->map(function ($order) {
+            $productTaxes = $order->products()->sum('tax_value');
 
             return [
                 'subtotal' => $order->subtotal,
@@ -842,60 +842,60 @@ class ReportService
         });
 
         return [
-            'sales_discounts' => Currency::define( $allSales->sum( 'sales_discounts' ) )->toFloat(),
-            'product_taxes' => Currency::define( $allSales->sum( 'product_taxes' ) )->toFloat(),
-            'sales_taxes' => Currency::define( $allSales->sum( 'sales_taxes' ) )->toFloat(),
-            'subtotal' => Currency::define( $allSales->sum( 'subtotal' ) )->toFloat(),
-            'shipping' => Currency::define( $allSales->sum( 'shipping' ) )->toFloat(),
-            'total' => Currency::define( $allSales->sum( 'total' ) )->toFloat(),
+            'sales_discounts' => Currency::define($allSales->sum('sales_discounts'))->toFloat(),
+            'product_taxes' => Currency::define($allSales->sum('product_taxes'))->toFloat(),
+            'sales_taxes' => Currency::define($allSales->sum('sales_taxes'))->toFloat(),
+            'subtotal' => Currency::define($allSales->sum('subtotal'))->toFloat(),
+            'shipping' => Currency::define($allSales->sum('shipping'))->toFloat(),
+            'total' => Currency::define($allSales->sum('total'))->toFloat(),
         ];
     }
 
     /**
      * @todo add support for category filter
      */
-    public function getProductsReports( $start, $end, $user_id = null, $categories_id = null )
+    public function getProductsReports($start, $end, $user_id = null, $categories_id = null)
     {
-        $request = Order::paymentStatus( Order::PAYMENT_PAID )
-            ->from( $start )
-            ->to( $end );
+        $request = Order::paymentStatus(Order::PAYMENT_PAID)
+            ->from($start)
+            ->to($end);
 
-        if ( ! empty( $user_id ) ) {
-            $request = $request->where( 'author', $user_id );
+        if (! empty($user_id)) {
+            $request = $request->where('author', $user_id);
         }
 
-        if ( ! empty( $categories_id ) ) {
+        if (! empty($categories_id)) {
             /**
              * Will only pull orders that has products which
              * belongs to the categories id provided
              */
-            $request = $request->whereHas( 'products', function( $query ) use ( $categories_id ) {
-                $query->whereIn( 'product_category_id', $categories_id );
+            $request = $request->whereHas('products', function ($query) use ($categories_id) {
+                $query->whereIn('product_category_id', $categories_id);
             });
 
             /**
              * Will only pull products that belongs to the categories id provided.
              */
             $request = $request->with([
-                'products' => function( $query ) use ( $categories_id ) {
-                    $query->whereIn( 'product_category_id', $categories_id );
+                'products' => function ($query) use ($categories_id) {
+                    $query->whereIn('product_category_id', $categories_id);
                 },
             ]);
         }
 
         $orders = $request->get();
-        $summary = $this->getSalesSummary( $orders );
-        $products = $orders->map( fn( $order ) => $order->products )->flatten();
-        $productsIds = $products->map( fn( $product ) => $product->product_id )->unique();
+        $summary = $this->getSalesSummary($orders);
+        $products = $orders->map(fn($order) => $order->products)->flatten();
+        $productsIds = $products->map(fn($product) => $product->product_id)->unique();
 
         return [
-            'result' => $productsIds->map( function ( $id ) use ( $products ) {
-                $product = $products->where( 'product_id', $id )->first();
-                $filtredProdcuts = $products->where( 'product_id', $id )->all();
+            'result' => $productsIds->map(function ($id) use ($products) {
+                $product = $products->where('product_id', $id)->first();
+                $filtredProdcuts = $products->where('product_id', $id)->all();
 
                 $summable = [ 'quantity', 'discount', 'wholesale_tax_value', 'sale_tax_value', 'tax_value', 'total_price_without_tax', 'total_price', 'total_price_with_tax', 'total_purchase_price' ];
-                foreach ( $summable as $key ) {
-                    $product->$key = collect( $filtredProdcuts )->sum( $key );
+                foreach ($summable as $key) {
+                    $product->$key = collect($filtredProdcuts)->sum($key);
                 }
 
                 return $product;
@@ -904,31 +904,31 @@ class ReportService
         ];
     }
 
-    public function getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id = null, $categories_id = [] )
+    public function getCategoryReports($start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id = null, $categories_id = [])
     {
-        $request = Order::paymentStatus( Order::PAYMENT_PAID )
-            ->from( $start )
-            ->to( $end );
+        $request = Order::paymentStatus(Order::PAYMENT_PAID)
+            ->from($start)
+            ->to($end);
 
-        if ( ! empty( $user_id ) ) {
-            $request = $request->where( 'author', $user_id );
+        if (! empty($user_id)) {
+            $request = $request->where('author', $user_id);
         }
 
-        if ( ! empty( $categories_id ) ) {
+        if (! empty($categories_id)) {
             /**
              * Will only pull orders that has products which
              * belongs to the categories id provided
              */
-            $request = $request->whereHas( 'products', function( $query ) use ( $categories_id ) {
-                $query->whereIn( 'product_category_id', $categories_id );
+            $request = $request->whereHas('products', function ($query) use ($categories_id) {
+                $query->whereIn('product_category_id', $categories_id);
             });
 
             /**
              * Will only pull products that belongs to the categories id provided.
              */
             $request = $request->with([
-                'products' => function( $query ) use ( $categories_id ) {
-                    $query->whereIn( 'product_category_id', $categories_id );
+                'products' => function ($query) use ($categories_id) {
+                    $query->whereIn('product_category_id', $categories_id);
                 },
             ]);
         }
@@ -939,10 +939,10 @@ class ReportService
          * We'll pull the sales
          * summary
          */
-        $summary = $this->getSalesSummary( $orders );
+        $summary = $this->getSalesSummary($orders);
 
-        $products = $orders->map( fn( $order ) => $order->products )->flatten();
-        $category_ids = $orders->map( fn( $order ) => $order->products->map( fn( $product ) => $product->product_category_id ) );
+        $products = $orders->map(fn($order) => $order->products)->flatten();
+        $category_ids = $orders->map(fn($order) => $order->products->map(fn($product) => $product->product_category_id));
 
         $unitIds = $category_ids->flatten()->unique()->toArray();
 
@@ -950,15 +950,15 @@ class ReportService
          * We'll get all category that are listed
          * on the product sold
          */
-        $categories = ProductCategory::whereIn( 'id', $unitIds )
-            ->orderBy( $orderAttribute, $orderDirection )
+        $categories = ProductCategory::whereIn('id', $unitIds)
+            ->orderBy($orderAttribute, $orderDirection)
             ->get();
 
         /**
          * That will sum all the total prices
          */
-        $categories->each( function ( $category ) use ( $products ) {
-            $rawProducts = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
+        $categories->each(function ($category) use ($products) {
+            $rawProducts = collect($products->where('product_category_id', $category->id)->all())->values();
 
             $products = [];
 
@@ -966,14 +966,14 @@ class ReportService
              * this will merge similar products
              * to summarize them.
              */
-            $rawProducts->each( function ( $product ) use ( &$products ) {
-                if ( isset( $products[ $product->product_id ] ) ) {
+            $rawProducts->each(function ($product) use (&$products) {
+                if (isset($products[ $product->product_id ])) {
                     $products[ $product->product_id ][ 'quantity' ] += $product->quantity;
                     $products[ $product->product_id ][ 'tax_value' ] += $product->tax_value;
                     $products[ $product->product_id ][ 'discount' ] += $product->discount;
                     $products[ $product->product_id ][ 'total_price' ] += $product->total_price;
                 } else {
-                    $products[ $product->product_id ] = array_merge( $product->toArray(), [
+                    $products[ $product->product_id ] = array_merge($product->toArray(), [
                         'quantity' => $product->quantity,
                         'tax_value' => $product->tax_value,
                         'discount' => $product->discount,
@@ -982,13 +982,13 @@ class ReportService
                 }
             });
 
-            $category->products = array_values( $products );
+            $category->products = array_values($products);
 
-            $category->total_tax_value = collect( $category->products )->sum( 'tax_value' );
-            $category->total_price = collect( $category->products )->sum( 'total_price' );
-            $category->total_discount = collect( $category->products )->sum( 'discount' );
-            $category->total_sold_items = collect( $category->products )->sum( 'quantity' );
-            $category->total_purchase_price = collect( $category->products )->sum( 'total_purchase_price' );
+            $category->total_tax_value = collect($category->products)->sum('tax_value');
+            $category->total_price = collect($category->products)->sum('total_price');
+            $category->total_discount = collect($category->products)->sum('discount');
+            $category->total_sold_items = collect($category->products)->sum('quantity');
+            $category->total_purchase_price = collect($category->products)->sum('total_purchase_price');
         });
 
         return [
@@ -1000,117 +1000,117 @@ class ReportService
     /**
      * Will returns the details for a specific cashier
      */
-    public function getCashierDashboard( $cashier, $startDate = null, $endDate = null )
+    public function getCashierDashboard($cashier, $startDate = null, $endDate = null)
     {
         $cacheKey = 'cashier-report-' . $cashier;
 
-        if ( ! empty( request()->query( 'refresh' ) ) ) {
-            Cache::forget( $cacheKey );
+        if (! empty(request()->query('refresh'))) {
+            Cache::forget($cacheKey);
         }
 
-        return Cache::remember( $cacheKey, now()->addDay(1), function () use ( $startDate, $cashier, $endDate ) {
+        return Cache::remember($cacheKey, now()->addDay(1), function () use ($startDate, $cashier, $endDate) {
             $startDate = $startDate === null ? ns()->date->getNow()->startOfDay()->toDateTimeString() : $startDate;
             $endDate = $endDate === null ? ns()->date->getNow()->endOfDay()->toDateTimeString() : $endDate;
 
             $totalSales = Order::paid()
-                ->where( 'author', $cashier )
+                ->where('author', $cashier)
                 ->count();
 
             $todaySales = Order::paid()
-                ->where( 'created_at', '>=', $startDate )
-                ->where( 'created_at', '<=', $endDate )
-                ->where( 'author', $cashier )
+                ->where('created_at', '>=', $startDate)
+                ->where('created_at', '<=', $endDate)
+                ->where('author', $cashier)
                 ->count();
 
             $totalSalesAmount = Order::paid()
-                ->where( 'author', $cashier )
-                ->sum( 'total' );
+                ->where('author', $cashier)
+                ->sum('total');
 
             $todaySalesAmount = Order::paid()
-                ->where( 'created_at', '>=', $startDate )
-                ->where( 'created_at', '<=', $endDate )
-                ->where( 'author', $cashier )
-                ->sum( 'total' );
+                ->where('created_at', '>=', $startDate)
+                ->where('created_at', '<=', $endDate)
+                ->where('author', $cashier)
+                ->sum('total');
 
             $totalRefundsAmount = Order::refunded()
-                ->where( 'author', $cashier )
-                ->sum( 'total' );
+                ->where('author', $cashier)
+                ->sum('total');
 
             $todayRefunds = Order::refunded()
-                ->where( 'created_at', '>=', $startDate )
-                ->where( 'created_at', '<=', $endDate )
-                ->where( 'author', $cashier )
-                ->sum( 'total' );
+                ->where('created_at', '>=', $startDate)
+                ->where('created_at', '<=', $endDate)
+                ->where('author', $cashier)
+                ->sum('total');
 
-            $totalCustomers = Customer::where( 'author', $cashier )
+            $totalCustomers = Customer::where('author', $cashier)
                 ->count();
 
-            $todayCustomers = Customer::where( 'created_at', '>=', $startDate )
-                ->where( 'created_at', '<=', $endDate )
-                ->where( 'author', $cashier )
+            $todayCustomers = Customer::where('created_at', '>=', $startDate)
+                ->where('created_at', '<=', $endDate)
+                ->where('author', $cashier)
                 ->count();
 
             /**
              * This will compute the cashier
              * commissions and displays on his dashboard.
              */
-            $module = app()->make( ModulesService::class );
+            $module = app()->make(ModulesService::class);
             $config = [];
 
-            if ( $module->getIfEnabled( 'NsCommissions' ) ) {
+            if ($module->getIfEnabled('NsCommissions')) {
                 $config = [
-                    'today_commissions' => EarnedCommission::for( Auth::id() )
-                        ->where( 'created_at', '>=', ns()->date->getNow()->copy()->startOfDay()->toDateTimeString() )
-                        ->where( 'created_at', '<=', ns()->date->getNow()->copy()->endOfDay()->toDateTimeString() )
-                        ->sum( 'value' ),
-                    'total_commissions' => EarnedCommission::for( Auth::id() )
-                        ->sum( 'value' ),
+                    'today_commissions' => EarnedCommission::for(Auth::id())
+                        ->where('created_at', '>=', ns()->date->getNow()->copy()->startOfDay()->toDateTimeString())
+                        ->where('created_at', '<=', ns()->date->getNow()->copy()->endOfDay()->toDateTimeString())
+                        ->sum('value'),
+                    'total_commissions' => EarnedCommission::for(Auth::id())
+                        ->sum('value'),
                 ];
             }
 
             return array_merge([
                 [
                     'key' => 'created_at',
-                    'value' => ns()->date->getFormatted( Auth::user()->created_at ),
-                    'label' => __( 'Member Since' ),
+                    'value' => ns()->date->getFormatted(Auth::user()->created_at),
+                    'label' => __('Member Since'),
                 ], [
                     'key' => 'total_sales_count',
                     'value' => $totalSales,
-                    'label' => __( 'Total Orders' ),
+                    'label' => __('Total Orders'),
                     'today' => [
                         'key' => 'today_sales_count',
                         'value' => $todaySales,
-                        'label' => __( 'Today\'s Orders' ),
+                        'label' => __('Today\'s Orders'),
                     ],
                 ], [
                     'key' => 'total_sales_amount',
-                    'value' => ns()->currency->define( $totalSalesAmount )->format(),
-                    'label' => __( 'Total Sales' ),
+                    'value' => ns()->currency->define($totalSalesAmount)->format(),
+                    'label' => __('Total Sales'),
                     'today' => [
                         'key' => 'today_sales_amount',
-                        'value' => ns()->currency->define( $todaySalesAmount )->format(),
-                        'label' => __( 'Today\'s Sales' ),
+                        'value' => ns()->currency->define($todaySalesAmount)->format(),
+                        'label' => __('Today\'s Sales'),
                     ],
                 ], [
                     'key' => 'total_refunds_amount',
-                    'value' => ns()->currency->define( $totalRefundsAmount )->format(),
-                    'label' => __( 'Total Refunds' ),
+                    'value' => ns()->currency->define($totalRefundsAmount)->format(),
+                    'label' => __('Total Refunds'),
                     'today' => [
                         'key' => 'today_refunds_amount',
-                        'value' => ns()->currency->define( $todayRefunds )->format(),
-                        'label' => __( 'Today\'s Refunds' ),
+                        'value' => ns()->currency->define($todayRefunds)->format(),
+                        'label' => __('Today\'s Refunds'),
                     ],
                 ], [
                     'key' => 'total_customers',
                     'value' => $totalCustomers,
-                    'label' => __( 'Total Customers' ),
+                    'label' => __('Total Customers'),
                     'today' => [
                         'key' => 'today_customers',
                         'value' => $todayCustomers,
-                        'label' => __( 'Today\'s Customers' ),
+                        'label' => __('Today\'s Customers'),
                     ],
                 ],
-            ], $config );
+            ], $config);
         });
     }
 
@@ -1118,36 +1118,36 @@ class ReportService
      * @param int $year
      * @return array $response
      */
-    public function computeYearReport( $year )
+    public function computeYearReport($year)
     {
         $date = ns()->date->copy();
         $date->year = $year;
         $startOfYear = $date->copy()->startOfYear();
         $endOfYear = $date->copy()->endOfYear();
 
-        while ( ! $startOfYear->isSameMonth( $endOfYear ) ) {
-            $this->computeDashboardMonth( $startOfYear->copy() );
+        while (! $startOfYear->isSameMonth($endOfYear)) {
+            $this->computeDashboardMonth($startOfYear->copy());
             $startOfYear->addMonth();
         }
 
         return [
             'status' => 'success',
-            'message' => __( 'The report has been computed successfully.' ),
+            'message' => __('The report has been computed successfully.'),
         ];
     }
 
-    public function getStockReport( $categories, $units )
+    public function getStockReport($categories, $units)
     {
-        $query = Product::with([ 'unit_quantities' => function( $query ) use ( $units ) {
-            if ( ! empty( $units ) ) {
-                $query->whereIn( 'unit_id', $units );
+        $query = Product::with([ 'unit_quantities' => function ($query) use ($units) {
+            if (! empty($units)) {
+                $query->whereIn('unit_id', $units);
             } else {
                 return false;
             }
         }, 'unit_quantities.unit' ]);
 
-        if ( ! empty( $categories ) ) {
-            $query->whereIn( 'category_id', $categories );
+        if (! empty($categories)) {
+            $query->whereIn('category_id', $categories);
         }
 
         return $query->paginate(50);
@@ -1158,29 +1158,29 @@ class ReportService
      *
      * @return array $products
      */
-    public function getLowStockProducts( $categories, $units )
+    public function getLowStockProducts($categories, $units)
     {
         return ProductUnitQuantity::query()
-            ->where( 'stock_alert_enabled', 1 )
-            ->whereRaw( 'low_quantity > quantity' )
+            ->where('stock_alert_enabled', 1)
+            ->whereRaw('low_quantity > quantity')
             ->with([
                 'product',
-                'unit' => function( $query ) use ( $units ) {
-                    if ( ! empty( $units ) ) {
-                        $query->whereIn( 'id', $units );
+                'unit' => function ($query) use ($units) {
+                    if (! empty($units)) {
+                        $query->whereIn('id', $units);
                     }
                 },
             ])
-            ->whereHas( 'unit', function( $query ) use ( $units ) {
-                if ( ! empty( $units ) ) {
-                    $query->whereIn( 'id', $units );
+            ->whereHas('unit', function ($query) use ($units) {
+                if (! empty($units)) {
+                    $query->whereIn('id', $units);
                 } else {
                     return false;
                 }
             })
-            ->whereHas( 'product', function( $query ) use ( $categories ) {
-                if ( ! empty( $categories ) ) {
-                    $query->whereIn( 'category_id', $categories );
+            ->whereHas('product', function ($query) use ($categories) {
+                if (! empty($categories)) {
+                    $query->whereIn('category_id', $categories);
                 }
 
                 return false;
@@ -1188,7 +1188,7 @@ class ReportService
             ->get();
     }
 
-    public function recomputeTransactions( $fromDate, $toDate )
+    public function recomputeTransactions($fromDate, $toDate)
     {
         TransactionHistory::truncate();
         DashboardDay::truncate();
@@ -1200,22 +1200,22 @@ class ReportService
         /**
          * @var TransactionService
          */
-        $transactionService = app()->make( TransactionService::class );
+        $transactionService = app()->make(TransactionService::class);
 
         $transactionService->recomputeCashFlow(
             $startDateString,
             $endDateString
         );
 
-        $days = ns()->date->getDaysInBetween( $fromDate, $toDate );
+        $days = ns()->date->getDaysInBetween($fromDate, $toDate);
 
-        foreach ( $days as $day ) {
+        foreach ($days as $day) {
             $this->computeDayReport(
                 $day->startOfDay()->toDateTimeString(),
                 $day->endOfDay()->toDateTimeString()
             );
 
-            $this->computeDashboardMonth( $day );
+            $this->computeDashboardMonth($day);
         }
     }
 
@@ -1224,10 +1224,10 @@ class ReportService
      *
      * @return array
      */
-    public function getCustomerStatement( Customer $customer, $rangeStarts = null, $rangeEnds = null )
+    public function getCustomerStatement(Customer $customer, $rangeStarts = null, $rangeEnds = null)
     {
-        $rangeStarts = Carbon::parse( $rangeStarts )->toDateTimeString();
-        $rangeEnds = Carbon::parse( $rangeEnds )->toDateTimeString();
+        $rangeStarts = Carbon::parse($rangeStarts)->toDateTimeString();
+        $rangeEnds = Carbon::parse($rangeEnds)->toDateTimeString();
 
         return [
             'purchases_amount' => $customer->purchases_amount,
@@ -1235,41 +1235,41 @@ class ReportService
             'account_amount' => $customer->account_amount,
             'total_orders' => $customer->orders()->count(),
             'credit_limit_amount' => $customer->credit_limit_amount,
-            'orders' => Order::where( 'customer_id', $customer->id )
+            'orders' => Order::where('customer_id', $customer->id)
                 ->paymentStatusIn([ Order::PAYMENT_PAID, Order::PAYMENT_UNPAID, Order::PAYMENT_REFUNDED, Order::PAYMENT_PARTIALLY ])
-                ->where( 'created_at', '>=', $rangeStarts )
-                ->where( 'created_at', '<=', $rangeEnds )
+                ->where('created_at', '>=', $rangeStarts)
+                ->where('created_at', '<=', $rangeEnds)
                 ->get(),
-            'wallet_transactions' => CustomerAccountHistory::where( 'customer_id', $customer->id )
-                ->where( 'created_at', '>=', $rangeStarts )
-                ->where( 'created_at', '<=', $rangeEnds )
+            'wallet_transactions' => CustomerAccountHistory::where('customer_id', $customer->id)
+                ->where('created_at', '>=', $rangeStarts)
+                ->where('created_at', '<=', $rangeEnds)
                 ->get(),
         ];
     }
 
-    public function combineProductHistory( ProductHistory $productHistory )
+    public function combineProductHistory(ProductHistory $productHistory)
     {
-        $currentDetailedHistory     =   $this->prepareProductHistoryCombinedHistory( $productHistory );
-        $this->saveProductHistoryCombined( $currentDetailedHistory, $productHistory );
+        $currentDetailedHistory = $this->prepareProductHistoryCombinedHistory($productHistory);
+        $this->saveProductHistoryCombined($currentDetailedHistory, $productHistory);
         $currentDetailedHistory->save();
     }
 
     /**
      * Will prepare the product history combined
      */
-    public function prepareProductHistoryCombinedHistory( ProductHistory $productHistory ): ProductHistoryCombined
+    public function prepareProductHistoryCombinedHistory(ProductHistory $productHistory): ProductHistoryCombined
     {
-        $formatedDate               =   $this->dateService->now()->format( 'Y-m-d' );
-        $currentDetailedHistory     =   ProductHistoryCombined::where( 'date', $formatedDate )
-            ->where( 'unit_id', $productHistory->unit_id )
-            ->where( 'product_id', $productHistory->product_id )
+        $formatedDate = $this->dateService->now()->format('Y-m-d');
+        $currentDetailedHistory = ProductHistoryCombined::where('date', $formatedDate)
+            ->where('unit_id', $productHistory->unit_id)
+            ->where('product_id', $productHistory->product_id)
             ->first();
 
         /**
-         * if this is not set, the we're probably doing this for the 
+         * if this is not set, the we're probably doing this for the
          * first time of the day, so we need to pull the current quantity of the product
          */
-        if ( ! $currentDetailedHistory instanceof ProductHistoryCombined ) {
+        if (! $currentDetailedHistory instanceof ProductHistoryCombined) {
             $currentDetailedHistory = new ProductHistoryCombined;
             $currentDetailedHistory->date = $formatedDate;
             $currentDetailedHistory->name = $productHistory->product->name;
@@ -1288,46 +1288,46 @@ class ReportService
     /**
      * Will save the product history combined
      */
-    public function saveProductHistoryCombined( ProductHistoryCombined &$currentDetailedHistory, ProductHistory $productHistory ): ProductHistoryCombined
+    public function saveProductHistoryCombined(ProductHistoryCombined &$currentDetailedHistory, ProductHistory $productHistory): ProductHistoryCombined
     {
-        if ( $productHistory->operation_type === ProductHistory::ACTION_ADDED ) {
+        if ($productHistory->operation_type === ProductHistory::ACTION_ADDED) {
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_DELETED ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_DELETED) {
             $currentDetailedHistory->defective_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_STOCKED ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_STOCKED) {
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_LOST ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_LOST) {
             $currentDetailedHistory->defective_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_REMOVED ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_REMOVED) {
             $currentDetailedHistory->defective_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_SOLD ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_SOLD) {
             $currentDetailedHistory->sold_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_ADJUSTMENT_RETURN ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_ADJUSTMENT_RETURN) {
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_CONVERT_IN ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_CONVERT_IN) {
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_RETURNED ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_RETURNED) {
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_TRANSFER_IN ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_TRANSFER_IN) {
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_TRANSFER_CANCELED ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_TRANSFER_CANCELED) {
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
-        } else if ( $productHistory->operation_type === ProductHistory::ACTION_TRANSFER_REJECTED ) {
+        } elseif ($productHistory->operation_type === ProductHistory::ACTION_TRANSFER_REJECTED) {
             $currentDetailedHistory->procured_quantity += $productHistory->quantity;
         }
-        
-        $currentDetailedHistory->final_quantity = ns()->currency->define( $currentDetailedHistory->initial_quantity )
-            ->additionateBy( $currentDetailedHistory->procured_quantity )
-            ->subtractBy( $currentDetailedHistory->sold_quantity )
-            ->subtractBy( $currentDetailedHistory->defective_quantity )
+
+        $currentDetailedHistory->final_quantity = ns()->currency->define($currentDetailedHistory->initial_quantity)
+            ->additionateBy($currentDetailedHistory->procured_quantity)
+            ->subtractBy($currentDetailedHistory->sold_quantity)
+            ->subtractBy($currentDetailedHistory->defective_quantity)
             ->getRaw();
 
         return $currentDetailedHistory;
     }
 
-    public function getCombinedProductHistory( $date, $categories, $units )
+    public function getCombinedProductHistory($date, $categories, $units)
     {
-        $request    =   DB::query()->select([
+        $request = DB::query()->select([
             'nexopos_products_unit_quantities.*',
             'nexopos_products.category_id as product_category_id',
             'nexopos_units.name as unit_name',
@@ -1340,27 +1340,27 @@ class ReportService
             'nexopos_products_histories_combined.unit_id as history_unit_id',
             'nexopos_products_histories_combined.product_id as history_product_id',
             'nexopos_products_histories_combined.name as history_name',
-        ])->from( 'nexopos_products_unit_quantities' )
-            ->rightJoin( 'nexopos_products', 'nexopos_products.id', '=', 'nexopos_products_unit_quantities.product_id' )
-            ->rightJoin( 'nexopos_products_histories_combined', function( $join ) use ( $date ) {
-                $join->on( 'nexopos_products_histories_combined.product_id', '=', 'nexopos_products_unit_quantities.product_id' );
-                $join->on( 'nexopos_products_histories_combined.unit_id', '=', 'nexopos_products_unit_quantities.unit_id' );
-                $join->where( 'nexopos_products_histories_combined.date', $date );
+        ])->from('nexopos_products_unit_quantities')
+            ->rightJoin('nexopos_products', 'nexopos_products.id', '=', 'nexopos_products_unit_quantities.product_id')
+            ->rightJoin('nexopos_products_histories_combined', function ($join) use ($date) {
+                $join->on('nexopos_products_histories_combined.product_id', '=', 'nexopos_products_unit_quantities.product_id');
+                $join->on('nexopos_products_histories_combined.unit_id', '=', 'nexopos_products_unit_quantities.unit_id');
+                $join->where('nexopos_products_histories_combined.date', $date);
             })
-            ->rightJoin( 'nexopos_units', 'nexopos_units.id', '=', 'nexopos_products_histories_combined.unit_id' );
+            ->rightJoin('nexopos_units', 'nexopos_units.id', '=', 'nexopos_products_histories_combined.unit_id');
 
         /**
          * Will only pull products that belongs to the units id provided.
          */
-        if ( ! empty( $units ) ) {
-            $request->whereIn( 'nexopos_products_histories_combined.unit_id', $units );
+        if (! empty($units)) {
+            $request->whereIn('nexopos_products_histories_combined.unit_id', $units);
         }
 
-        if ( ! empty( $categories ) ) {
-            $request->whereIn( 'nexopos_products.category_id', $categories );
+        if (! empty($categories)) {
+            $request->whereIn('nexopos_products.category_id', $categories);
         }
 
-        $request->where( 'nexopos_products_histories_combined.date', Carbon::parse( $date )->format( 'Y-m-d' ) );
+        $request->where('nexopos_products_histories_combined.date', Carbon::parse($date)->format('Y-m-d'));
 
         return $request->get();
     }
@@ -1373,8 +1373,8 @@ class ReportService
         EnsureCombinedProductHistoryExistsJob::dispatch();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The report will be generated. Try loading the report within few minutes.' )
+            'status' => 'success',
+            'message' => __('The report will be generated. Try loading the report within few minutes.'),
         ];
     }
 }

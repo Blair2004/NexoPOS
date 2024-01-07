@@ -86,21 +86,21 @@ class TransactionHistory extends NsModel
 
     public function transaction()
     {
-        return $this->belongsTo( Transaction::class, 'transaction_id' );
+        return $this->belongsTo(Transaction::class, 'transaction_id');
     }
 
-    public function scopeFrom( $query, $date )
+    public function scopeFrom($query, $date)
     {
-        return $query->where( 'created_at', '>=', $date );
+        return $query->where('created_at', '>=', $date);
     }
 
-    public function scopeOperation( $query, $operation )
+    public function scopeOperation($query, $operation)
     {
-        return $query->where( 'operation', $operation );
+        return $query->where('operation', $operation);
     }
 
-    public function scopeTo( $query, $date )
+    public function scopeTo($query, $date)
     {
-        return $query->where( 'created_at', '<=', $date );
+        return $query->where('created_at', '<=', $date);
     }
 }

@@ -18,7 +18,7 @@ class AfterCustomerAccountHistoryCreatedEvent
      *
      * @return void
      */
-    public function __construct( CustomerAccountHistory $customerAccount )
+    public function __construct(CustomerAccountHistory $customerAccount)
     {
         $this->customerAccount = $customerAccount;
     }

@@ -19,16 +19,16 @@ class TransactionAccount extends NsModel
 
     public function transactions()
     {
-        return $this->hasMany( Transaction::class, 'account_id' );
+        return $this->hasMany(Transaction::class, 'account_id');
     }
 
-    public function scopeAccount( $query, $account )
+    public function scopeAccount($query, $account)
     {
-        return $query->where( 'account', $account );
+        return $query->where('account', $account);
     }
 
     public function histories()
     {
-        return $this->hasMany( TransactionHistory::class, 'transaction_account_id' );
+        return $this->hasMany(TransactionHistory::class, 'transaction_account_id');
     }
 }

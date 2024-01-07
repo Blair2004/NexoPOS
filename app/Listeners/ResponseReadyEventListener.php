@@ -24,16 +24,16 @@ class ResponseReadyEventListener
      * @param  object  $event
      * @return void
      */
-    public function handle( ResponseReadyEvent $event)
+    public function handle(ResponseReadyEvent $event)
     {
-        Cache::forget( 'ns-core-installed' );
+        Cache::forget('ns-core-installed');
 
         /**
          * if the user is authenticated
          * we'll clear all cached permissions
          */
-        if ( Auth::check() ) {
-            Cache::forget( 'ns-all-permissions-' . Auth::id() );
+        if (Auth::check()) {
+            Cache::forget('ns-all-permissions-' . Auth::id());
         }
     }
 }

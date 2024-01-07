@@ -21,15 +21,15 @@ class NotInstalledStateMiddleware
          * we'll try to detect the language
          * from the query string.
          */
-        if ( ! empty( $request->query( 'lang' ) ) ) {
-            $validLanguage = in_array( $request->query( 'lang' ), array_keys( config( 'nexopos.languages' ) ) ) ? $request->query( 'lang' ) : 'en';
-            App::setLocale( $validLanguage );
+        if (! empty($request->query('lang'))) {
+            $validLanguage = in_array($request->query('lang'), array_keys(config('nexopos.languages'))) ? $request->query('lang') : 'en';
+            App::setLocale($validLanguage);
         }
 
-        if ( ! Helper::installed() ) {
+        if (! Helper::installed()) {
             return $next($request);
         }
 
-        throw new NotAllowedException( __( 'You\'re not allowed to see this page.' ) );
+        throw new NotAllowedException(__('You\'re not allowed to see this page.'));
     }
 }

@@ -7,18 +7,18 @@ use Exception;
 
 class MissingDependencyException extends Exception
 {
-    public function __construct( $message = null )
+    public function __construct($message = null)
     {
-        $this->message = $message ?: __('There is a missing dependency issue.' );
+        $this->message = $message ?: __('There is a missing dependency issue.');
     }
 
-    public function render( $request )
+    public function render($request)
     {
-        if ( ! $request->expectsJson() ) {
-            return response()->view( 'pages.errors.missing-dependency', [
-                'title' => __( 'Missing Dependency' ),
+        if (! $request->expectsJson()) {
+            return response()->view('pages.errors.missing-dependency', [
+                'title' => __('Missing Dependency'),
                 'message' => $this->getMessage(),
-                'back' => Helper::getValidPreviousUrl( $request ),
+                'back' => Helper::getValidPreviousUrl($request),
             ]);
         }
 

@@ -20,8 +20,8 @@ class TransactionsHistoryAfterDeletedEventListener
     /**
      * Handle the event.
      */
-    public function handle( TransactionsHistoryAfterDeletedEvent $event)
+    public function handle(TransactionsHistoryAfterDeletedEvent $event)
     {
-        RefreshReportJob::dispatch( $event->transaction->created_at );
+        RefreshReportJob::dispatch($event->transaction->created_at);
     }
 }

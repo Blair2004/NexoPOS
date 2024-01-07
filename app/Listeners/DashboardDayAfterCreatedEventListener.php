@@ -23,7 +23,7 @@ class DashboardDayAfterCreatedEventListener
      * @param  object  $event
      * @return void
      */
-    public function handle( DashboardDayAfterCreatedEvent $event )
+    public function handle(DashboardDayAfterCreatedEvent $event)
     {
         ComputeDashboardMonthReportJob::dispatch();
     }

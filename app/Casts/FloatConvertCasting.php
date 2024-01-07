@@ -15,7 +15,7 @@ class FloatConvertCasting implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return ns()->math->set( $value ?: 0 )->toFloat();
+        return ns()->math->set($value ?: 0)->toFloat();
     }
 
     /**

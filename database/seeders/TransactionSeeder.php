@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\ExpenseCategory;
 use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
 use App\Models\User;
@@ -17,7 +16,7 @@ class TransactionSeeder extends Seeder
      */
     public function run()
     {
-        $author = User::get()->map( fn( $user ) => $user->id )
+        $author = User::get()->map(fn($user) => $user->id)
             ->shuffle()
             ->first();
 

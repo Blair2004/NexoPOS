@@ -16,7 +16,7 @@ class SettingsSavedEvent
      *
      * @return void
      */
-    public function __construct( public $options, public $inputs, public $class )
+    public function __construct(public $options, public $inputs, public $class)
     {
         // ...
     }

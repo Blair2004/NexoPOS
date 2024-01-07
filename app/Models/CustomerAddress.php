@@ -24,12 +24,12 @@ class CustomerAddress extends NsModel
      */
     public function groups()
     {
-        return $this->belongsTo( Customer::class, 'customer_id' );
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function scopeFrom( $query, $id, $type )
+    public function scopeFrom($query, $id, $type)
     {
-        return $query->where( 'customer_id', $id )
-            ->where( 'type', $type );
+        return $query->where('customer_id', $id)
+            ->where('type', $type);
     }
 }

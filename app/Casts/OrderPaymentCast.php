@@ -15,7 +15,7 @@ class OrderPaymentCast implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return ns()->order->getPaymentLabel( $value );
+        return ns()->order->getPaymentLabel($value);
     }
 
     /**

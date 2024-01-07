@@ -57,17 +57,17 @@ class ProcurementProduct extends NsModel
 
     public function procurement()
     {
-        return $this->belongsTo( Procurement::class, 'procurement_id' );
+        return $this->belongsTo(Procurement::class, 'procurement_id');
     }
 
     public function product()
     {
-        return $this->hasOne( Product::class, 'id', 'product_id' );
+        return $this->hasOne(Product::class, 'id', 'product_id');
     }
 
     public function unit()
     {
-        return $this->hasOne( Unit::class, 'id', 'unit_id' );
+        return $this->hasOne(Unit::class, 'id', 'unit_id');
     }
 
     /**
@@ -78,9 +78,9 @@ class ProcurementProduct extends NsModel
      * @param string
      * @return Query;
      */
-    public function scopeGetByProcurement( $query, $param )
+    public function scopeGetByProcurement($query, $param)
     {
-        return $query->where( 'procurement_id', $param );
+        return $query->where('procurement_id', $param);
     }
 
     /**
@@ -91,8 +91,8 @@ class ProcurementProduct extends NsModel
      * @param string $barcode
      * @return QueryBuilder
      */
-    public function scopeBarcode( $query, $barcode )
+    public function scopeBarcode($query, $barcode)
     {
-        return $query->where( 'barcode', $barcode );
+        return $query->where('barcode', $barcode);
     }
 }

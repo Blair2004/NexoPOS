@@ -20,7 +20,7 @@ class TransactionBeforeDeleteEvent
      *
      * @return void
      */
-    public function __construct( public Transaction $transaction )
+    public function __construct(public Transaction $transaction)
     {
         // ...
     }

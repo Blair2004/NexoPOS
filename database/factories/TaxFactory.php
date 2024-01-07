@@ -17,8 +17,8 @@ class TaxFactory extends Factory
         return [
             'name' => $this->faker->name,
             'description' => $this->faker->sentence,
-            'rate' => $this->faker->numberBetween( 1, 20 ),
-            'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+            'rate' => $this->faker->numberBetween(1, 20),
+            'author' => $this->faker->randomElement(User::get()->map(fn($user) => $user->id)),
         ];
     }
 }

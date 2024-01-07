@@ -21,10 +21,10 @@ class FieldsTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $files = Storage::disk( 'ns' )->files( 'app/Fields' );
+        $files = Storage::disk('ns')->files('app/Fields');
 
-        foreach ( $files as $file ) {
-            $path = pathinfo( $file );
+        foreach ($files as $file) {
+            $path = pathinfo($file);
             $class = 'App\Fields\\' . $path[ 'filename' ];
 
             /**
@@ -32,23 +32,23 @@ class FieldsTest extends TestCase
              */
             $object = new $class;
 
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'get', '/api/fields/' . $class::getIdentifier() );
+            $response = $this->withSession($this->app[ 'session' ]->all())
+                ->json('get', '/api/fields/' . $class::getIdentifier());
 
-            $result = collect( json_decode( $response->getContent() ) );
+            $result = collect(json_decode($response->getContent()));
 
-            if ( $result->filter( fn( $field ) => isset( $field->name ) )->count() !== $result->count() ) {
+            if ($result->filter(fn($field) => isset($field->name))->count() !== $result->count()) {
                 $this->assertTrue(
-                    $result->filter( fn( $field ) => isset( $field->name ) )->count() === $result->count(),
-                    sprintf( 'Some fields aren\'t corretly defined for the class %s.', $class )
+                    $result->filter(fn($field) => isset($field->name))->count() === $result->count(),
+                    sprintf('Some fields aren\'t corretly defined for the class %s.', $class)
                 );
             }
         }
 
-        $files = Storage::disk( 'ns' )->files( 'app/Forms' );
+        $files = Storage::disk('ns')->files('app/Forms');
 
-        foreach ( $files as $file ) {
-            $path = pathinfo( $file );
+        foreach ($files as $file) {
+            $path = pathinfo($file);
             $class = 'App\Forms\\' . $path[ 'filename' ];
 
             /**
@@ -56,13 +56,13 @@ class FieldsTest extends TestCase
              */
             $object = new $class;
 
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'get', '/api/forms/' . $object->getIdentifier() );
+            $response = $this->withSession($this->app[ 'session' ]->all())
+                ->json('get', '/api/forms/' . $object->getIdentifier());
 
-            $result = json_decode( $response->getContent() );
+            $result = json_decode($response->getContent());
 
             $this->assertTrue(
-                isset( $result->tabs ),
+                isset($result->tabs),
                 sprintf(
                     'The form %s doesn\'t have tabs defined.',
                     $object->getIdentifier()

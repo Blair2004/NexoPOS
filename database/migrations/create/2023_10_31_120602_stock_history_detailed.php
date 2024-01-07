@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if ( ! Schema::hasTable('nexopos_products_histories_combined')) {
+        if (! Schema::hasTable('nexopos_products_histories_combined')) {
             Schema::create('nexopos_products_histories_combined', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name');
-                $table->date( 'date' );
+                $table->date('date');
                 $table->integer('product_id');
                 $table->integer('unit_id');
                 $table->float('initial_quantity')->default(0);
                 $table->float('sold_quantity')->default(0);
-                $table->float( 'procured_quantity' )->default(0);
-                $table->float( 'defective_quantity' )->default(0);
+                $table->float('procured_quantity')->default(0);
+                $table->float('defective_quantity')->default(0);
                 $table->float('final_quantity')->default(0);
                 $table->string('uuid')->nullable();
                 $table->timestamps();

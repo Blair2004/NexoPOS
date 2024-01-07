@@ -10,8 +10,8 @@ class BestCashiersWidget extends WidgetService
 
     public function __construct()
     {
-        $this->name = __( 'Best Cashiers' );
-        $this->description = __( 'Will display all cashiers who performs well.' );
+        $this->name = __('Best Cashiers');
+        $this->description = __('Will display all cashiers who performs well.');
         $this->permission = 'nexopos.see.best-cashier-widget';
     }
 }

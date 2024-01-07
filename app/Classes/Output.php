@@ -8,14 +8,14 @@ class Output
 {
     protected $output = [];
 
-    public function addOutput( $view )
+    public function addOutput($view)
     {
         $this->output[] = $view;
     }
 
-    public function addView( $view, $options = [])
+    public function addView($view, $options = [])
     {
-        $this->output[] = View::make( $view, $options );
+        $this->output[] = View::make($view, $options);
 
         return $this;
     }
@@ -25,15 +25,15 @@ class Output
         $this->output = [];
     }
 
-    public function setOutput( $view )
+    public function setOutput($view)
     {
         $this->output = [ $view ];
     }
 
     public function __toString()
     {
-        return collect( $this->output )
-            ->map( fn( $output ) => (string) $output )
-            ->join( '' );
+        return collect($this->output)
+            ->map(fn($output) => (string) $output)
+            ->join('');
     }
 }

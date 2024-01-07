@@ -22,7 +22,7 @@ class ClearRequestCacheMiddleware
          * In case any opeartion should occurs
          * once the response is about to bet sent.
          */
-        ResponseReadyEvent::dispatch( $response );
+        ResponseReadyEvent::dispatch($response);
 
         return $response;
     }

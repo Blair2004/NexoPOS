@@ -19,9 +19,9 @@ class Permission extends Model
 
     protected $fillable = [ 'namespace', 'name', 'description' ];
 
-    public function scopeWithNamespace( $query, $param )
+    public function scopeWithNamespace($query, $param)
     {
-        return $query->where( 'namespace', $param );
+        return $query->where('namespace', $param);
     }
 
     /**
@@ -30,21 +30,21 @@ class Permission extends Model
      * @param string permission name
      * @return Permission
      **/
-    public static function namespace( $name )
+    public static function namespace($name)
     {
-        return self::where( 'namespace', $name )->first();
+        return self::where('namespace', $name)->first();
     }
 
-    public static function withNamespaceOrNew( $name )
+    public static function withNamespaceOrNew($name)
     {
-        $instance = self::where( 'namespace', $name )->first();
+        $instance = self::where('namespace', $name)->first();
 
         return $instance instanceof self ? $instance : new self;
     }
 
     public function roles()
     {
-        return $this->belongsToMany( Role::class, 'nexopos_role_permission' );
+        return $this->belongsToMany(Role::class, 'nexopos_role_permission');
     }
 
     /**
@@ -55,9 +55,9 @@ class Permission extends Model
      * @param string search namespace
      * @return Query
      */
-    public function scopeIncludes( $query, $search )
+    public function scopeIncludes($query, $search)
     {
-        return $query->where( 'namespace', 'like', '%' . $search . '%' );
+        return $query->where('namespace', 'like', '%' . $search . '%');
     }
 
     /**
@@ -69,6 +69,6 @@ class Permission extends Model
      */
     public function removeFromRoles()
     {
-        RolePermission::where( 'permission_id', $this->id )->delete();
+        RolePermission::where('permission_id', $this->id)->delete();
     }
 }

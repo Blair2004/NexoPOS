@@ -12,7 +12,7 @@ class CrudEntry implements JsonSerializable
 
     public $__raw;
 
-    public function __construct( $params )
+    public function __construct($params)
     {
         $this->original = $params;
         $this->values = $params;
@@ -22,27 +22,27 @@ class CrudEntry implements JsonSerializable
         $this->{ '$id' } = $params[ 'id' ];
     }
 
-    public function __get( $index )
+    public function __get($index)
     {
         return $this->values[ $index ] ?? null;
     }
 
-    public function __set( $index, $value )
+    public function __set($index, $value)
     {
         $this->values[ $index ] = $value;
     }
 
-    public function __isset( $index )
+    public function __isset($index)
     {
-        return array_key_exists( $index, $this->values );
+        return array_key_exists($index, $this->values);
     }
 
-    public function __unset( $index )
+    public function __unset($index)
     {
-        unset( $this->values[ $index ] );
+        unset($this->values[ $index ]);
     }
 
-    public function getOriginalValue( $index )
+    public function getOriginalValue($index)
     {
         return $this->original[ $index ];
     }
@@ -54,21 +54,22 @@ class CrudEntry implements JsonSerializable
 
     /**
      * use "action" method instead
+     *
      * @deprecated
      */
-    public function addAction( $identifier, $action )
+    public function addAction($identifier, $action)
     {
         $this->values[ '$actions' ][ $identifier ] = $action;
     }
 
-    public function action( $label, $identifier, $url = 'javascript:void(0)', $confirm = null, $type = 'GOTO' )
+    public function action($label, $identifier, $url = 'javascript:void(0)', $confirm = null, $type = 'GOTO')
     {
-        $this->values[ '$actions' ][ $identifier ] = compact( 'label', 'identifier', 'url', 'confirm', 'type' );
+        $this->values[ '$actions' ][ $identifier ] = compact('label', 'identifier', 'url', 'confirm', 'type');
     }
 
-    public function removeAction( $identifier )
+    public function removeAction($identifier)
     {
-        unset( $this->values[ '$actions' ][ $identifier ] );
+        unset($this->values[ '$actions' ][ $identifier ]);
     }
 
     public function toArray()

@@ -50,7 +50,7 @@ return [
 
         'snapshots' => [
             'driver' => 'local',
-            'root' => storage_path( 'snapshots' ),
+            'root' => storage_path('snapshots'),
         ],
 
         'public' => [
@@ -78,22 +78,22 @@ return [
 
         'ns-public' => [
             'driver' => 'local',
-            'root' => base_path( 'public' ),
+            'root' => base_path('public'),
         ],
 
         'ns-modules' => [
             'driver' => 'local',
-            'root' => base_path( 'modules' ),
+            'root' => base_path('modules'),
         ],
 
         'ns-modules-temp' => [
             'driver' => 'local',
-            'root' => storage_path( 'temporary-files/modules' ),
+            'root' => storage_path('temporary-files/modules'),
         ],
 
         'ns-temp' => [
             'driver' => 'local',
-            'root' => storage_path( 'temporary-files' ),
+            'root' => storage_path('temporary-files'),
         ],
     ],
 

@@ -21,9 +21,9 @@ class OrderVoidedEventListener
     /**
      * Handle the event.
      */
-    public function handle( OrderVoidedEvent $event )
+    public function handle(OrderVoidedEvent $event)
     {
-        UncountDeletedOrderForCashierJob::dispatch( $event->order );
-        UncountDeletedOrderForCustomerJob::dispatch( $event->order );
+        UncountDeletedOrderForCashierJob::dispatch($event->order);
+        UncountDeletedOrderForCustomerJob::dispatch($event->order);
     }
 }

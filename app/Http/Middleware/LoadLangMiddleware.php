@@ -18,22 +18,22 @@ class LoadLangMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ( Auth::check() ) {
+        if (Auth::check()) {
             $userAttribute = Auth::user()->attribute;
 
-            $language = ns()->option->get( 'ns_store_language', 'en' );
+            $language = ns()->option->get('ns_store_language', 'en');
 
             /**
              * if the user attribute is not defined,
              * we'll use the default system locale or english by default.
              */
-            if ( $userAttribute instanceof UserAttribute ) {
+            if ($userAttribute instanceof UserAttribute) {
                 $language = Auth::user()->attribute->language;
             }
 
-            App::setLocale( in_array( $language, array_keys( config( 'nexopos.languages' ) ) ) ? $language : 'en' );
+            App::setLocale(in_array($language, array_keys(config('nexopos.languages'))) ? $language : 'en');
         } else {
-            App::setLocale( ns()->option->get( 'ns_store_language', 'en' ) );
+            App::setLocale(ns()->option->get('ns_store_language', 'en'));
         }
 
         /**
@@ -41,7 +41,7 @@ class LoadLangMiddleware
          * we might dispatch an event that will load module
          * locale as well.
          */
-        event( new LocaleDefinedEvent( App::getLocale() ) );
+        event(new LocaleDefinedEvent(App::getLocale()));
 
         return $next($request);
     }

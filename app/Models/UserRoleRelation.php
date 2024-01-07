@@ -14,9 +14,9 @@ class UserRoleRelation extends Model
 
     use HasFactory;
 
-    public function scopeCombinaison( $query, $user, $role )
+    public function scopeCombinaison($query, $user, $role)
     {
-        return $query->where( 'user_id', $user->id )
-            ->where( 'role_id', $role->id );
+        return $query->where('user_id', $user->id)
+            ->where('role_id', $role->id);
     }
 }

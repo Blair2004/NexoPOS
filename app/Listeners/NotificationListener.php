@@ -16,7 +16,7 @@ class NotificationListener
         //
     }
 
-    public function handle( NotificationDeletedEvent $event )
+    public function handle(NotificationDeletedEvent $event)
     {
         $event->notification->delete();
     }

@@ -14,7 +14,7 @@ trait NsSerialize
 
     protected function prepareSerialization()
     {
-        JobBeforeSerializeEvent::dispatch( $this );
+        JobBeforeSerializeEvent::dispatch($this);
     }
 
     public function middleware()

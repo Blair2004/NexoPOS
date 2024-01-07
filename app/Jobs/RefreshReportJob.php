@@ -12,14 +12,14 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class RefreshReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( public $date )
+    public function __construct(public $date)
     {
         $this->prepareSerialization();
     }
@@ -29,9 +29,9 @@ class RefreshReportJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( ReportService $reportService )
+    public function handle(ReportService $reportService)
     {
-        $date = Carbon::parse( $this->date );
+        $date = Carbon::parse($this->date);
 
         $reportService->computeDayReport(
             dateStart: $date->startOfDay()->toDateTimeString(),

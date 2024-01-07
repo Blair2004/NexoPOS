@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::createIfMissing('nexopos_customers_rewards', function (Blueprint $table) {
             $table->id();
-            $table->integer( 'customer_id' );
-            $table->integer( 'reward_id' );
-            $table->string( 'reward_name' );
-            $table->float( 'points', 18, 5 );
-            $table->float( 'target', 18, 5 );
+            $table->integer('customer_id');
+            $table->integer('reward_id');
+            $table->string('reward_name');
+            $table->float('points', 18, 5);
+            $table->float('target', 18, 5);
             $table->timestamps();
         });
     }

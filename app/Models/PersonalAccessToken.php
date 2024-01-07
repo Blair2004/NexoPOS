@@ -19,8 +19,8 @@ class PersonalAccessToken extends SanctumPersonalAccessToken
     protected function createdAt(): Attribute
     {
         return Attribute::make(
-            get: function( $value ) {
-                return $value === null ? null : ns()->date->copy()->parse( $value )->diffForHumans();
+            get: function ($value) {
+                return $value === null ? null : ns()->date->copy()->parse($value)->diffForHumans();
             }
         );
     }
@@ -28,8 +28,8 @@ class PersonalAccessToken extends SanctumPersonalAccessToken
     protected function expiresAt(): Attribute
     {
         return Attribute::make(
-            get: function( $value ) {
-                return $value === null ? null : ns()->date->copy()->parse( $value )->diffForHumans();
+            get: function ($value) {
+                return $value === null ? null : ns()->date->copy()->parse($value)->diffForHumans();
             }
         );
     }
@@ -37,8 +37,8 @@ class PersonalAccessToken extends SanctumPersonalAccessToken
     protected function lastUsedAt(): Attribute
     {
         return Attribute::make(
-            get: function( $value ) {
-                return $value === null ? null : ns()->date->copy()->parse( $value )->diffForHumans();
+            get: function ($value) {
+                return $value === null ? null : ns()->date->copy()->parse($value)->diffForHumans();
             }
         );
     }

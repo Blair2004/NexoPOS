@@ -40,10 +40,10 @@ class CreateUserTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $this->users = app()->make( UsersService::class );
+        $this->users = app()->make(UsersService::class);
 
-        return Role::get()->map( function ( $role ) {
-            $password = Hash::make( Str::random(20) );
+        return Role::get()->map(function ($role) {
+            $password = Hash::make(Str::random(20));
 
             $configuration = [
                 'username' => $this->faker->username(),
@@ -56,11 +56,11 @@ class CreateUserTest extends TestCase
                 ],
             ];
 
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'post', '/api/crud/ns.users', $configuration );
+            $response = $this->withSession($this->app[ 'session' ]->all())
+                ->json('post', '/api/crud/ns.users', $configuration);
 
-            $response->assertJsonPath( 'status', 'success' );
-            $result = json_decode( $response->getContent() );
+            $response->assertJsonPath('status', 'success');
+            $result = json_decode($response->getContent());
 
             /**
              * Step 1: create user with same username
@@ -73,8 +73,8 @@ class CreateUserTest extends TestCase
                     'roles' => $configuration[ 'general' ][ 'roles' ],
                     'active' => true,
                 ]);
-            } catch ( Exception $exception ) {
-                $this->assertTrue( strstr( $exception->getMessage(), 'username' ) !== false );
+            } catch (Exception $exception) {
+                $this->assertTrue(strstr($exception->getMessage(), 'username') !== false);
             }
 
             /**
@@ -88,8 +88,8 @@ class CreateUserTest extends TestCase
                     'roles' => $configuration[ 'general' ][ 'roles' ],
                     'active' => true,
                 ]);
-            } catch ( Exception $exception ) {
-                $this->assertTrue( strstr( $exception->getMessage(), 'email' ) !== false );
+            } catch (Exception $exception) {
+                $this->assertTrue(strstr($exception->getMessage(), 'email') !== false);
             }
 
             /**
@@ -106,11 +106,11 @@ class CreateUserTest extends TestCase
                 ],
             ];
 
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'put', '/api/crud/ns.users/' . $result->data->entry->id, $configuration );
+            $response = $this->withSession($this->app[ 'session' ]->all())
+                ->json('put', '/api/crud/ns.users/' . $result->data->entry->id, $configuration);
 
-            $response->assertJsonPath( 'status', 'success' );
-            $result = json_decode( $response->getContent() );
+            $response->assertJsonPath('status', 'success');
+            $result = json_decode($response->getContent());
 
             return $result->data->entry;
         });
@@ -121,30 +121,30 @@ class CreateUserTest extends TestCase
      */
     public function test_delete_users()
     {
-        Role::get()->map( function( Role $role ) {
-            $role->users()->limit(1)->get()->each( function( User $user ) {
-                $this->attemptAuthenticate( $user );
+        Role::get()->map(function (Role $role) {
+            $role->users()->limit(1)->get()->each(function (User $user) {
+                $this->attemptAuthenticate($user);
 
                 /**
                  * Step 1: attempt to delete himself
                  */
-                $response = $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'delete', '/api/crud/ns.users/' . $user->id );
+                $response = $this->withSession($this->app[ 'session' ]->all())
+                    ->json('delete', '/api/crud/ns.users/' . $user->id);
 
                 $response->assertStatus(403);
             });
         });
 
-        $user = Role::namespace( Role::ADMIN )->users()->first();
+        $user = Role::namespace(Role::ADMIN)->users()->first();
 
         /**
          * Step 2: try to delete a user who has some sales
          */
-        $order = Order::where( 'author', '<>', $user->id )->first();
+        $order = Order::where('author', '<>', $user->id)->first();
 
-        if ( $order instanceof Order ) {
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'delete', '/api/crud/ns.users/' . $order->author );
+        if ($order instanceof Order) {
+            $response = $this->withSession($this->app[ 'session' ]->all())
+                ->json('delete', '/api/crud/ns.users/' . $order->author);
 
             $response->assertStatus(403);
         }
@@ -152,13 +152,13 @@ class CreateUserTest extends TestCase
 
     private function getValidRoutes()
     {
-        return collect( Route::getRoutes() )->filter( function( $route ) {
+        return collect(Route::getRoutes())->filter(function ($route) {
             $uri = $route->uri();
 
             /**
              * For now we'll only test dashboard routes
              */
-            if ( strstr( $uri, 'dashboard' ) && ! strstr( $uri, 'api/' ) ) {
+            if (strstr($uri, 'dashboard') && ! strstr($uri, 'api/')) {
                 return true;
             }
 
@@ -177,10 +177,10 @@ class CreateUserTest extends TestCase
          * to cause a failure because of the email used
          */
         $validRoutes = $this->getValidRoutes();
-        $chunk      =   count( $validRoutes ) / 5;
-        $routes = collect( $validRoutes )->chunk($chunk);
+        $chunk = count($validRoutes) / 5;
+        $routes = collect($validRoutes)->chunk($chunk);
 
-        $this->attemptAllRoutes( $user, $routes[0] );
+        $this->attemptAllRoutes($user, $routes[0]);
     }
 
     /**
@@ -193,11 +193,11 @@ class CreateUserTest extends TestCase
          * Step 1: We'll attempt registering with the email
          * to cause a failure because of the email used
          */
-        $validRoutes= $this->getValidRoutes();
-        $chunk      =   count( $validRoutes ) / 5;
-        $routes = collect( $validRoutes )->chunk($chunk);
+        $validRoutes = $this->getValidRoutes();
+        $chunk = count($validRoutes) / 5;
+        $routes = collect($validRoutes)->chunk($chunk);
 
-        $this->attemptAllRoutes( $user, $routes[1] );
+        $this->attemptAllRoutes($user, $routes[1]);
     }
 
     /**
@@ -210,11 +210,11 @@ class CreateUserTest extends TestCase
          * Step 1: We'll attempt registering with the email
          * to cause a failure because of the email used
          */
-        $validRoutes= $this->getValidRoutes();
-        $chunk      =   count( $validRoutes ) / 5;
-        $routes = collect( $validRoutes )->chunk($chunk);
+        $validRoutes = $this->getValidRoutes();
+        $chunk = count($validRoutes) / 5;
+        $routes = collect($validRoutes)->chunk($chunk);
 
-        $this->attemptAllRoutes( $user, $routes[2] );
+        $this->attemptAllRoutes($user, $routes[2]);
     }
 
     /**
@@ -227,11 +227,11 @@ class CreateUserTest extends TestCase
          * Step 1: We'll attempt registering with the email
          * to cause a failure because of the email used
          */
-        $validRoutes= $this->getValidRoutes();
-        $chunk      =   count( $validRoutes ) / 5;
-        $routes = collect( $validRoutes )->chunk($chunk);
+        $validRoutes = $this->getValidRoutes();
+        $chunk = count($validRoutes) / 5;
+        $routes = collect($validRoutes)->chunk($chunk);
 
-        $this->attemptAllRoutes( $user, $routes[3] );
+        $this->attemptAllRoutes($user, $routes[3]);
     }
 
     /**
@@ -244,21 +244,21 @@ class CreateUserTest extends TestCase
          * Step 1: We'll attempt registering with the email
          * to cause a failure because of the email used
          */
-        $validRoutes= $this->getValidRoutes();
-        $chunk      =   count( $validRoutes ) / 5;
-        $routes = collect( $validRoutes )->chunk($chunk);
+        $validRoutes = $this->getValidRoutes();
+        $chunk = count($validRoutes) / 5;
+        $routes = collect($validRoutes)->chunk($chunk);
 
-        $this->attemptAllRoutes( $user, $routes[4] );
+        $this->attemptAllRoutes($user, $routes[4]);
     }
 
-    private function attemptAllRoutes( $user, $routes )
+    private function attemptAllRoutes($user, $routes)
     {
         $paramsModelBinding = [
-            '/\{customer\}|\{customerAccountHistory\}/' => function() {
+            '/\{customer\}|\{customerAccountHistory\}/' => function () {
                 $customerAccountHistory = CustomerAccountHistory::first()->id;
                 $customer = $customerAccountHistory->customer->id;
 
-                return compact( 'customerAccountHistory', 'customer' );
+                return compact('customerAccountHistory', 'customer');
             },
             '/\{product\}/' => Product::class,
             '/\{provider\}/' => Provider::class,
@@ -275,34 +275,34 @@ class CreateUserTest extends TestCase
             '/\{cashFlow\}/' => CashFlow::class,
         ];
 
-        foreach ( $routes as $route ) {
+        foreach ($routes as $route) {
             $uri = $route->uri();
 
             /**
              * For now we'll only test dashboard routes
              */
-            if ( strstr( $uri, 'dashboard' ) && ! strstr( $uri, 'api/' ) ) {
+            if (strstr($uri, 'dashboard') && ! strstr($uri, 'api/')) {
                 /**
                  * For requests that doesn't support
                  * any paremeters
                  */
-                foreach ( $paramsModelBinding as $expression => $binding ) {
-                    if ( preg_match( $expression, $uri ) ) {
-                        if ( is_array( $binding ) ) {
+                foreach ($paramsModelBinding as $expression => $binding) {
+                    if (preg_match($expression, $uri)) {
+                        if (is_array($binding)) {
                             /**
                              * We want to replace all argument
                              * on the uri by the matching binding collection
                              */
-                            foreach ( $binding as $parameter => $value ) {
-                                $uri = preg_replace( '/\{' . $parameter . '\}/', $value, $uri );
+                            foreach ($binding as $parameter => $value) {
+                                $uri = preg_replace('/\{' . $parameter . '\}/', $value, $uri);
                             }
-                        } elseif ( is_string( $binding ) ) {
+                        } elseif (is_string($binding)) {
                             /**
                              * This are URI with a single parameter
                              * that are replaced once the binding is resolved.
                              */
                             $value = $binding::firstOrFail()->id;
-                            $uri = preg_replace( $expression, $value, $uri );
+                            $uri = preg_replace($expression, $value, $uri);
                         }
 
                         break;
@@ -314,16 +314,16 @@ class CreateUserTest extends TestCase
                  * if some argument remains, we won't test
                  * those routes.
                  */
-                if ( preg_match( '/\{(.+)\}/', $uri ) === 0 ) {
+                if (preg_match('/\{(.+)\}/', $uri) === 0) {
                     $response = $this
-                        ->actingAs( $user )
-                        ->json( 'GET', $uri );
+                        ->actingAs($user)
+                        ->json('GET', $uri);
 
                     $status = $response->baseResponse->getStatusCode();
 
                     $this->assertTrue(
-                        in_array( $status, [ 201, 200, 302, 403 ]),
-                        'Unsupported HTTP response :' . $status . ' uri:' . $uri . ' user role:' . $user->roles->map( fn( $role ) => $role->namespace )->join( ',' )
+                        in_array($status, [ 201, 200, 302, 403 ]),
+                        'Unsupported HTTP response :' . $status . ' uri:' . $uri . ' user role:' . $user->roles->map(fn($role) => $role->namespace)->join(',')
                     );
                 }
             }

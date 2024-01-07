@@ -29,15 +29,15 @@ class OrderAfterUpdatedEventListener
      *
      * @return void
      */
-    public function handle( OrderAfterUpdatedEvent $event)
+    public function handle(OrderAfterUpdatedEvent $event)
     {
         Bus::chain([
-            new ProcessCashRegisterHistoryJob( $event->order ),
-            new IncreaseCashierStatsJob( $event->order ),
-            new ProcessCustomerOwedAndRewardsJob( $event->order ),
-            new TrackOrderCouponsJob( $event->order ),
-            new ResolveInstalmentJob( $event->order ),
-            new ProcessAccountingRecordFromSale( $event->order ),
+            new ProcessCashRegisterHistoryJob($event->order),
+            new IncreaseCashierStatsJob($event->order),
+            new ProcessCustomerOwedAndRewardsJob($event->order),
+            new TrackOrderCouponsJob($event->order),
+            new ResolveInstalmentJob($event->order),
+            new ProcessAccountingRecordFromSale($event->order),
             new ComputeDayReportJob,
         ])->dispatch();
     }

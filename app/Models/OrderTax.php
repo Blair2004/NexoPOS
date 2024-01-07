@@ -26,6 +26,6 @@ class OrderTax extends NsModel
 
     public function order()
     {
-        return $this->belongsTo( Order::class, 'id', 'order_id' );
+        return $this->belongsTo(Order::class, 'id', 'order_id');
     }
 }

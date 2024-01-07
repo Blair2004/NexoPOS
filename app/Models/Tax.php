@@ -20,6 +20,6 @@ class Tax extends NsModel
 
     public function group()
     {
-        $this->belongsTo( Group::class, 'tax_group_id', 'id' );
+        $this->belongsTo(Group::class, 'tax_group_id', 'id');
     }
 }

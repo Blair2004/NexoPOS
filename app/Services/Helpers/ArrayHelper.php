@@ -14,9 +14,9 @@ trait ArrayHelper
      * @param string type
      * @return array
      */
-    public static function arrayDivide( array $array, string $type = '' )
+    public static function arrayDivide(array $array, string $type = '')
     {
-        if ( $array ) {
+        if ($array) {
             $result = [
                 'odd' => [],
                 'even' => [],
@@ -30,7 +30,7 @@ trait ArrayHelper
                 }
             }
 
-            if ( ! empty( $type ) ) {
+            if (! empty($type)) {
                 return $result[ $type ];
             }
 
@@ -46,11 +46,11 @@ trait ArrayHelper
      * @param array collection of Eloquent results
      * @return array of options
      */
-    public static function toOptions( $collections, $config )
+    public static function toOptions($collections, $config)
     {
         $result = [];
-        if ( $collections ) {
-            foreach ( $collections as $collection ) {
+        if ($collections) {
+            foreach ($collections as $collection) {
                 $id = $config[0];
                 $name = $config[1];
                 $result[ $collection->$id ] = $collection->$name;
@@ -69,7 +69,7 @@ trait ArrayHelper
      * @param array [ value, label ]
      * @return array of options
      */
-    public static function toJsOptions( Collection|EloquentCollection $collections, $config, $defaults = [] ): array
+    public static function toJsOptions(Collection|EloquentCollection $collections, $config, $defaults = []): array
     {
         $result = [];
 
@@ -77,17 +77,17 @@ trait ArrayHelper
          * This will populate defaults
          * value for the options
          */
-        if ( ! empty( $defaults ) ) {
-            foreach ( $defaults as $value => $label ) {
-                $result[] = compact( 'label', 'value' );
+        if (! empty($defaults)) {
+            foreach ($defaults as $value => $label) {
+                $result[] = compact('label', 'value');
             }
         }
 
-        if ( $collections ) {
-            foreach ( $collections as $collection ) {
-                if ( is_callable( $config ) ) {
-                    $result[] = $config( $collection );
-                } else if ( ! is_array( $config[1] ) ) {
+        if ($collections) {
+            foreach ($collections as $collection) {
+                if (is_callable($config)) {
+                    $result[] = $config($collection);
+                } elseif (! is_array($config[1])) {
                     $id = $config[0];
                     $name = $config[1];
 
@@ -98,9 +98,9 @@ trait ArrayHelper
                 } else {
                     $name = '';
 
-                    foreach ( $config[1] as $index => $_name ) {
-                        if ( $index + 1 < count( $config[1] ) ) {
-                            $name .= $collection->$_name . ( $config[2] ?? ' ' ); // if separator is not provided
+                    foreach ($config[1] as $index => $_name) {
+                        if ($index + 1 < count($config[1])) {
+                            $name .= $collection->$_name . ($config[2] ?? ' '); // if separator is not provided
                         } else {
                             $name .= $collection->$_name;
                         }
@@ -125,11 +125,11 @@ trait ArrayHelper
      * @param array
      * @return array of options
      */
-    public static function kvToJsOptions( $array )
+    public static function kvToJsOptions($array)
     {
         $final = [];
-        foreach ( $array as $value => $label ) {
-            $final[] = compact( 'label', 'value' );
+        foreach ($array as $value => $label) {
+            $final[] = compact('label', 'value');
         }
 
         return $final;
@@ -141,7 +141,7 @@ trait ArrayHelper
      * @param array
      * @return array of options
      */
-    public static function boolToOptions( $true, $false )
+    public static function boolToOptions($true, $false)
     {
         return [
             [
@@ -162,21 +162,21 @@ trait ArrayHelper
      * @param array $data
      * @return Collection
      */
-    public static function flatArrayWithKeys( $data )
+    public static function flatArrayWithKeys($data)
     {
-        return collect( $data )->mapWithKeys( function ( $data, $index ) {
-            if ( ! is_array( $data ) || is_numeric( $index ) ) {
+        return collect($data)->mapWithKeys(function ($data, $index) {
+            if (! is_array($data) || is_numeric($index)) {
                 return [ $index => $data ];
-            } elseif ( is_array( $data ) ) {
-                if ( array_keys( $data ) !== range(0, count( $data ) - 1) ) {
-                    return self::flatArrayWithKeys( $data );
+            } elseif (is_array($data)) {
+                if (array_keys($data) !== range(0, count($data) - 1)) {
+                    return self::flatArrayWithKeys($data);
                 } else {
-                    return [ $index => json_encode( $data ) ];
+                    return [ $index => json_encode($data) ];
                 }
             }
 
             return [];
-        })->filter( function ( $field ) {
+        })->filter(function ($field) {
             return $field !== false;
         });
     }

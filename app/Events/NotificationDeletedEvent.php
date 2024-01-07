@@ -18,7 +18,7 @@ class NotificationDeletedEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct( public Notification $notification )
+    public function __construct(public Notification $notification)
     {
         // ...
     }
@@ -30,6 +30,6 @@ class NotificationDeletedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel( 'ns.private-channel' );
+        return new PrivateChannel('ns.private-channel');
     }
 }

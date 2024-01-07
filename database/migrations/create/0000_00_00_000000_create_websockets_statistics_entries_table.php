@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'websockets_statistics_entries' ) ) {
+        if (! Schema::hasTable('websockets_statistics_entries')) {
             Schema::create('websockets_statistics_entries', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('app_id');

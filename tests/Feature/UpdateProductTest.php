@@ -18,15 +18,15 @@ class UpdateProductTest extends TestCase
     public function testCreateProduct()
     {
         Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
+            Role::namespace('admin')->users->first(),
             ['*']
         );
 
         $product = Product::get()->random()->first();
 
         $response = $this
-            ->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', '/api/products/' . $product->id, [
+            ->withSession($this->app[ 'session' ]->all())
+            ->json('PUT', '/api/products/' . $product->id, [
                 'name' => 'Sample Product',
                 'variations' => [
                     [
@@ -39,7 +39,7 @@ class UpdateProductTest extends TestCase
                             'barcode' => 'quassas',
                             'barcode_type' => 'ean13',
                             'category_id' => 1,
-                            'description' => __( 'Created via tests' ),
+                            'description' => __('Created via tests'),
                             'product_type' => 'product',
                             'sku' => 'sample-sku',
                             'status' => 'available',

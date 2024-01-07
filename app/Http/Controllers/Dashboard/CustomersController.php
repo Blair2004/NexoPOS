@@ -75,20 +75,20 @@ class CustomersController extends DashboardController
      *
      * @return json response
      */
-    public function get( $customer_id = null )
+    public function get($customer_id = null)
     {
         $customer = Customer::with([
             'group',
             'billing',
             'shipping',
-        ])->find( $customer_id );
+        ])->find($customer_id);
 
-        if ( $customer_id !== null ) {
-            if ( $customer instanceof Customer ) {
+        if ($customer_id !== null) {
+            if ($customer instanceof Customer) {
                 return $customer;
             }
 
-            throw new NotFoundException( __( 'The requested customer cannot be found.' ) );
+            throw new NotFoundException(__('The requested customer cannot be found.'));
         }
 
         return $this->customerService->get();
@@ -100,9 +100,9 @@ class CustomersController extends DashboardController
      * @param int customer id
      * @return json
      */
-    public function delete( $id )
+    public function delete($id)
     {
-        return $this->customerService->delete( $id );
+        return $this->customerService->delete($id);
     }
 
     /**
@@ -114,13 +114,13 @@ class CustomersController extends DashboardController
      *
      * @todo implement security validation
      */
-    public function post( Request $request )
+    public function post(Request $request)
     {
         $data = $request->only([
             'first_name', 'last_name', 'username', 'password', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
         ]);
 
-        return $this->customerService->create( $data );
+        return $this->customerService->create($data);
     }
 
     /**
@@ -132,13 +132,13 @@ class CustomersController extends DashboardController
      *
      * @todo implement a request for the validation
      */
-    public function put( $customer_id, Request $request )
+    public function put($customer_id, Request $request)
     {
         $data = $request->only([
             'first_name', 'last_name', 'username', 'password', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
         ]);
 
-        return $this->customerService->update( $customer_id, $data );
+        return $this->customerService->update($customer_id, $data);
     }
 
     /**
@@ -147,25 +147,25 @@ class CustomersController extends DashboardController
      * @param Customer entity
      * @return json
      */
-    public function getOrders( $id )
+    public function getOrders($id)
     {
-        return $this->customerService->get( $id )
+        return $this->customerService->get($id)
             ->orders()
-            ->orderBy( 'created_at', 'desc' )
+            ->orderBy('created_at', 'desc')
             ->get()
-            ->map( function( Order $order ) {
-                $order->human_status = match ( $order->payment_status ) {
-                    Order::PAYMENT_HOLD => __( 'Hold' ),
-                    Order::PAYMENT_PAID => __( 'Paid' ),
-                    Order::PAYMENT_PARTIALLY => __( 'Partially Paid' ),
-                    Order::PAYMENT_REFUNDED => __( 'Refunded' ),
-                    Order::PAYMENT_UNPAID => __( 'Unpaid' ),
-                    Order::PAYMENT_PARTIALLY_REFUNDED => __( 'Partially Refunded' ),
-                    Order::PAYMENT_VOID => __( 'Void' ),
+            ->map(function (Order $order) {
+                $order->human_status = match ($order->payment_status) {
+                    Order::PAYMENT_HOLD => __('Hold'),
+                    Order::PAYMENT_PAID => __('Paid'),
+                    Order::PAYMENT_PARTIALLY => __('Partially Paid'),
+                    Order::PAYMENT_REFUNDED => __('Refunded'),
+                    Order::PAYMENT_UNPAID => __('Unpaid'),
+                    Order::PAYMENT_PARTIALLY_REFUNDED => __('Partially Refunded'),
+                    Order::PAYMENT_VOID => __('Void'),
                     default => $order->payment_status,
                 };
 
-                $order->human_delivery_status = $this->ordersService->getDeliveryStatus( $order->delivery_status );
+                $order->human_delivery_status = $this->ordersService->getDeliveryStatus($order->delivery_status);
 
                 return $order;
             });
@@ -176,9 +176,9 @@ class CustomersController extends DashboardController
      *
      * @return string
      */
-    public function editCustomer( Customer $customer )
+    public function editCustomer(Customer $customer)
     {
-        return CustomerCrud::form( $customer );
+        return CustomerCrud::form($customer);
     }
 
     /**
@@ -188,9 +188,9 @@ class CustomersController extends DashboardController
      * @param int customer id
      * @return array
      */
-    public function getAddresses( $id )
+    public function getAddresses($id)
     {
-        return $this->customerService->getCustomerAddresses( $id );
+        return $this->customerService->getCustomerAddresses($id);
     }
 
     /**
@@ -199,9 +199,9 @@ class CustomersController extends DashboardController
      * @param string $email
      * @return array
      */
-    public function deleteUsingEmail( $email )
+    public function deleteUsingEmail($email)
     {
-        return $this->customerService->deleteUsingEmail( $email );
+        return $this->customerService->deleteUsingEmail($email);
     }
 
     public function listCoupons()
@@ -211,63 +211,63 @@ class CustomersController extends DashboardController
 
     public function createCoupon()
     {
-        return $this->view( 'pages.dashboard.coupons.create', [
-            'title' => __( 'Create Coupon' ),
-            'description' => __( 'helps you creating a coupon.' ),
-            'src' => ns()->url( '/api/crud/ns.coupons/form-config' ),
-            'returnUrl' => ns()->url( '/dashboard/customers/coupons' ),
+        return $this->view('pages.dashboard.coupons.create', [
+            'title' => __('Create Coupon'),
+            'description' => __('helps you creating a coupon.'),
+            'src' => ns()->url('/api/crud/ns.coupons/form-config'),
+            'returnUrl' => ns()->url('/dashboard/customers/coupons'),
             'submitMethod' => 'POST',
-            'submitUrl' => ns()->url( '/api/crud/ns.coupons' ),
+            'submitUrl' => ns()->url('/api/crud/ns.coupons'),
         ]);
     }
 
-    public function editCoupon( Coupon $coupon )
+    public function editCoupon(Coupon $coupon)
     {
-        return $this->view( 'pages.dashboard.coupons.create', [
-            'title' => __( 'Edit Coupon' ),
-            'description' => __( 'Editing an existing coupon.' ),
-            'src' => ns()->url( '/api/crud/ns.coupons/form-config/' . $coupon->id ),
-            'returnUrl' => ns()->url( '/dashboard/customers/coupons' ),
+        return $this->view('pages.dashboard.coupons.create', [
+            'title' => __('Edit Coupon'),
+            'description' => __('Editing an existing coupon.'),
+            'src' => ns()->url('/api/crud/ns.coupons/form-config/' . $coupon->id),
+            'returnUrl' => ns()->url('/dashboard/customers/coupons'),
             'submitMethod' => 'PUT',
-            'submitUrl' => ns()->url( '/api/crud/ns.coupons/' . $coupon->id ),
+            'submitUrl' => ns()->url('/api/crud/ns.coupons/' . $coupon->id),
         ]);
     }
 
-    public function searchCustomer( Request $request )
+    public function searchCustomer(Request $request)
     {
-        $search = $request->input( 'search' );
+        $search = $request->input('search');
 
-        return $this->customerService->search( $search );
+        return $this->customerService->search($search);
     }
 
-    public function accountTransaction( Customer $customer, Request $request )
+    public function accountTransaction(Customer $customer, Request $request)
     {
-        $validation = Validator::make( $request->all(), [
+        $validation = Validator::make($request->all(), [
             'operation' => 'required',
             'amount' => 'required|integer',
         ]);
 
-        if ( $validation->fails() ) {
-            throw new Exception( __( 'Invalid Request.' ) );
+        if ($validation->fails()) {
+            throw new Exception(__('Invalid Request.'));
         }
 
         return $this->customerService->saveTransaction(
             $customer,
-            $request->input( 'operation' ),
-            $request->input( 'amount' ),
-            $request->input( 'description' )
+            $request->input('operation'),
+            $request->input('amount'),
+            $request->input('description')
         );
     }
 
-    public function getGroup( Customer $customer )
+    public function getGroup(Customer $customer)
     {
         return $customer->group;
     }
 
-    public function getCustomersOrders( Customer $customer )
+    public function getCustomersOrders(Customer $customer)
     {
         return CustomerOrderCrud::table([
-            'src' => ns()->url( '/api/crud/ns.customers-orders' ),
+            'src' => ns()->url('/api/crud/ns.customers-orders'),
             'queryParams' => [
                 'customer_id' => $customer->id,
             ],
@@ -280,7 +280,7 @@ class CustomersController extends DashboardController
      *
      * @return string
      */
-    public function getCustomersRewards( Customer $customer )
+    public function getCustomersRewards(Customer $customer)
     {
         return CustomerRewardCrud::table([
             'queryParams' => [
@@ -295,10 +295,10 @@ class CustomersController extends DashboardController
      *
      * @return string
      */
-    public function editCustomerReward( Customer $customer, CustomerReward $reward )
+    public function editCustomerReward(Customer $customer, CustomerReward $reward)
     {
-        return CustomerRewardCrud::form( $reward, [
-            'returnUrl' => ns()->route( 'ns.dashboard.customers-rewards-list', [ 'customer' => $customer->id ]),
+        return CustomerRewardCrud::form($reward, [
+            'returnUrl' => ns()->route('ns.dashboard.customers-rewards-list', [ 'customer' => $customer->id ]),
             'queryParams' => [
                 'customer_id' => $customer->id,
             ],
@@ -310,10 +310,10 @@ class CustomersController extends DashboardController
      *
      * @return string
      */
-    public function getCustomersCoupons( Customer $customer )
+    public function getCustomersCoupons(Customer $customer)
     {
         return CustomerCouponCrud::table(
-            title:  sprintf( __( '%s Coupons' ), $customer->name ),
+            title: sprintf(__('%s Coupons'), $customer->name),
             queryParams: [
                 'customer_id' => $customer->id,
             ],
@@ -325,9 +325,9 @@ class CustomersController extends DashboardController
      *
      * @return array
      */
-    public function getCustomerCoupons( Customer $customer )
+    public function getCustomerCoupons(Customer $customer)
     {
-        return $customer->coupons()->with( 'coupon' )->get();
+        return $customer->coupons()->with('coupon')->get();
     }
 
     /**
@@ -337,9 +337,9 @@ class CustomersController extends DashboardController
      * @param string $code
      * @return array|string
      */
-    public function loadCoupons( Request $request, $code )
+    public function loadCoupons(Request $request, $code)
     {
-        return $this->customerService->loadCoupon( $code, $request->input( 'customer_id' ) );
+        return $this->customerService->loadCoupon($code, $request->input('customer_id'));
     }
 
     /**
@@ -347,19 +347,19 @@ class CustomersController extends DashboardController
      *
      * @return string
      */
-    public function getCustomerAccountHistory( Customer $customer )
+    public function getCustomerAccountHistory(Customer $customer)
     {
         return CustomerAccountCrud::table([
             'queryParams' => [
                 'customer_id' => $customer->id,
             ],
-            'createUrl' => ns()->url( '/dashboard/customers/' . $customer->id . '/account-history/create' ),
+            'createUrl' => ns()->url('/dashboard/customers/' . $customer->id . '/account-history/create'),
             'description' => sprintf(
-                __( 'Displays the customer account history for %s' ),
+                __('Displays the customer account history for %s'),
                 $customer->first_name . ' ' . $customer->last_name
             ),
             'title' => sprintf(
-                __( 'Account History : %s' ),
+                __('Account History : %s'),
                 $customer->first_name . ' ' . $customer->last_name
             ),
         ]);
@@ -370,32 +370,32 @@ class CustomersController extends DashboardController
      *
      * @return View
      */
-    public function createCustomerAccountHistory( Customer $customer )
+    public function createCustomerAccountHistory(Customer $customer)
     {
-        return CustomerAccountCrud::form( null, [
+        return CustomerAccountCrud::form(null, [
             'queryParams' => [
                 'customer_id' => $customer->id,
             ],
-            'returnUrl' => ns()->url( '/dashboard/customers/' . $customer->id . '/account-history' ),
-            'submitUrl' => ns()->url( '/api/customers/' . $customer->id . '/crud/account-history' ),
+            'returnUrl' => ns()->url('/dashboard/customers/' . $customer->id . '/account-history'),
+            'submitUrl' => ns()->url('/api/customers/' . $customer->id . '/crud/account-history'),
             'description' => sprintf(
-                __( 'Displays the customer account history for %s' ),
+                __('Displays the customer account history for %s'),
                 $customer->name
             ),
             'title' => sprintf(
-                __( 'Account History : %s' ),
+                __('Account History : %s'),
                 $customer->name
             ),
         ]);
     }
 
-    public function recordAccountHistory( Customer $customer, Request $request )
+    public function recordAccountHistory(Customer $customer, Request $request)
     {
         return $this->customerService->saveTransaction(
             $customer,
-            $request->input( 'general.operation' ),
-            $request->input( 'general.amount' ),
-            $request->input( 'general.description' )
+            $request->input('general.operation'),
+            $request->input('general.amount'),
+            $request->input('general.description')
         );
     }
 
@@ -405,9 +405,9 @@ class CustomersController extends DashboardController
      *
      * @return View
      */
-    public function editGeneratedCoupon( CustomerCoupon $coupon )
+    public function editGeneratedCoupon(CustomerCoupon $coupon)
     {
-        return CustomerCouponCrud::form( $coupon );
+        return CustomerCouponCrud::form($coupon);
     }
 
     /**
@@ -426,7 +426,7 @@ class CustomersController extends DashboardController
      *
      * @return array<CustomerReward> $customerRewards
      */
-    public function getCustomerRewards( Customer $customer )
+    public function getCustomerRewards(Customer $customer)
     {
         return $customer->rewards()->paginate(20);
     }
@@ -436,15 +436,15 @@ class CustomersController extends DashboardController
      *
      * @return array
      */
-    public function getAccountHistory( Customer $customer )
+    public function getAccountHistory(Customer $customer)
     {
         return $customer
             ->account_history()
-            ->orderBy( 'created_at', 'desc' )
+            ->orderBy('created_at', 'desc')
             ->paginate(20);
     }
 
-    public function couponHistory( Coupon $coupon )
+    public function couponHistory(Coupon $coupon)
     {
         return CouponOrderHistoryCrud::table([
             'queryParams' => [
@@ -453,10 +453,10 @@ class CustomersController extends DashboardController
         ]);
     }
 
-    public function listCustomerCouponHistory( Customer $customer, CustomerCoupon $customerCoupon )
+    public function listCustomerCouponHistory(Customer $customer, CustomerCoupon $customerCoupon)
     {
         return CustomerCouponHistoryCrud::table(
-            title: sprintf( __( '%s Coupon History' ), $customer->name ),
+            title: sprintf(__('%s Coupon History'), $customer->name),
             queryParams: [
                 'customer_id' => $customer->id,
                 'customer_coupon_id' => $customerCoupon->id,

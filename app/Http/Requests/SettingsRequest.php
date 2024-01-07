@@ -25,15 +25,15 @@ class SettingsRequest extends BaseCrudRequest
      */
     public function rules()
     {
-        $service = Hook::filter( 'ns.settings', false, $this->route( 'identifier' ) );
+        $service = Hook::filter('ns.settings', false, $this->route('identifier'));
 
-        if ( $service instanceof SettingsPage ) {
-            return $service->validateForm( $this );
+        if ($service instanceof SettingsPage) {
+            return $service->validateForm($this);
         }
 
         throw new Exception(
-            sprintf( __( 'Unable to initialize the settings page. The identifier "%s" cannot be instantiated.' ),
-                $this->route( 'identifier' )
-            ) );
+            sprintf(__('Unable to initialize the settings page. The identifier "%s" cannot be instantiated.'),
+                $this->route('identifier')
+            ));
     }
 }

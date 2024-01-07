@@ -12,14 +12,14 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class DecreaseCustomerPurchasesJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( public Customer $customer, public float $total )
+    public function __construct(public Customer $customer, public float $total)
     {
         $this->prepareSerialization();
     }
@@ -29,7 +29,7 @@ class DecreaseCustomerPurchasesJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( CustomerService $customerService )
+    public function handle(CustomerService $customerService)
     {
         $customerService->decreasePurchases(
             customer: $this->customer,

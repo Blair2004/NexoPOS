@@ -23,25 +23,25 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_roles' ) ) {
+        if (! Schema::hasTable('nexopos_roles')) {
             Schema::create('nexopos_roles', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string( 'name' )->unique();
-                $table->string( 'namespace' )->unique();
-                $table->text( 'description' )->nullable();
-                $table->integer( 'reward_system_id' )->nullable();
-                $table->float( 'minimal_credit_payment' )->default(0);
-                $table->integer( 'author' )->nullable(); // when provided match the user id
-                $table->boolean( 'locked' )->default( true ); // means the role can be edited from the frontend.
+                $table->string('name')->unique();
+                $table->string('namespace')->unique();
+                $table->text('description')->nullable();
+                $table->integer('reward_system_id')->nullable();
+                $table->float('minimal_credit_payment')->default(0);
+                $table->integer('author')->nullable(); // when provided match the user id
+                $table->boolean('locked')->default(true); // means the role can be edited from the frontend.
                 $table->timestamps();
             });
         }
 
         // Permissions Relation with Roles
-        if ( ! Schema::hasTable( 'nexopos_role_permission' ) ) {
+        if (! Schema::hasTable('nexopos_role_permission')) {
             Schema::create('nexopos_role_permission', function (Blueprint $table) {
-                $table->integer( 'permission_id' );
-                $table->integer( 'role_id' );
+                $table->integer('permission_id');
+                $table->integer('role_id');
                 $table->primary([ 'permission_id', 'role_id' ]);
             });
         }

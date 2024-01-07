@@ -18,7 +18,7 @@ class ProcurementAfterSaveProductEvent
      *
      * @return void
      */
-    public function __construct( public Procurement $procurement, public ProcurementProduct $product, public array $data )
+    public function __construct(public Procurement $procurement, public ProcurementProduct $product, public array $data)
     {
         // ...
     }

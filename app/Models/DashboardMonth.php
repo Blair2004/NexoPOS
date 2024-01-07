@@ -24,13 +24,13 @@ class DashboardMonth extends NsModel
         'updated' => DashboardMonthAfterUpdatedEvent::class,
     ];
 
-    public function scopeFrom( $query, $param )
+    public function scopeFrom($query, $param)
     {
-        return $query->where( 'range_starts', '>=', $param );
+        return $query->where('range_starts', '>=', $param);
     }
 
-    public function scopeTo( $query, $param )
+    public function scopeTo($query, $param)
     {
-        return $query->where( 'range_ends', '<=', $param );
+        return $query->where('range_ends', '<=', $param);
     }
 }

@@ -16,10 +16,10 @@ class PasswordRecoveryMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ( ns()->option->get( 'ns_recovery_enabled', 'no' ) === 'yes' ) {
+        if (ns()->option->get('ns_recovery_enabled', 'no') === 'yes') {
             return $next($request);
         }
 
-        throw new NotAllowedException( __( 'The recovery has been explicitly disabled.' ) );
+        throw new NotAllowedException(__('The recovery has been explicitly disabled.'));
     }
 }

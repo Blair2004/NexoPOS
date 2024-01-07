@@ -24,26 +24,26 @@ class OrderProductRefund extends NsModel
 
     public function unit()
     {
-        return $this->hasOne( Unit::class, 'id', 'unit_id' );
+        return $this->hasOne(Unit::class, 'id', 'unit_id');
     }
 
     public function product()
     {
-        return $this->hasOne( Product::class, 'id', 'product_id' );
+        return $this->hasOne(Product::class, 'id', 'product_id');
     }
 
     public function orderProduct()
     {
-        return $this->belongsTo( OrderProduct::class, 'order_product_id', 'id' );
+        return $this->belongsTo(OrderProduct::class, 'order_product_id', 'id');
     }
 
     public function order()
     {
-        return $this->belongsTo( Order::class, 'order_id', 'id' );
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
     public function orderRefund()
     {
-        return $this->belongsTo( Order::class, 'order_refund_id', 'id' );
+        return $this->belongsTo(Order::class, 'order_refund_id', 'id');
     }
 }

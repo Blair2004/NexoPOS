@@ -77,53 +77,53 @@ class ProductUnitQuantity extends NsModel
      * @param string $reference
      * @return QueryBuilder
      **/
-    public function scopeBarcode( $query, $reference )
+    public function scopeBarcode($query, $reference)
     {
-        return $query->where( 'barcode', $reference );
+        return $query->where('barcode', $reference);
     }
 
-    public function scopeHidden( $query )
+    public function scopeHidden($query)
     {
-        return $query->where( 'visible', false );
+        return $query->where('visible', false);
     }
 
-    public function scopeVisible( $query )
+    public function scopeVisible($query)
     {
-        return $query->where( 'visible', true );
+        return $query->where('visible', true);
     }
 
     public function unit()
     {
-        return $this->hasOne( Unit::class, 'id', 'unit_id' );
+        return $this->hasOne(Unit::class, 'id', 'unit_id');
     }
 
     public function history()
     {
-        return $this->hasMany( ProductHistoryCombined::class, 'product_id', 'product_id' );
+        return $this->hasMany(ProductHistoryCombined::class, 'product_id', 'product_id');
     }
 
     public function taxes()
     {
-        return $this->hasMany( ProductTax::class, 'unit_quantity_id' );
+        return $this->hasMany(ProductTax::class, 'unit_quantity_id');
     }
 
-    public function scopeWithUnit( Builder $query, $id )
+    public function scopeWithUnit(Builder $query, $id)
     {
-        return $query->where( 'unit_id', $id );
+        return $query->where('unit_id', $id);
     }
 
     public function product()
     {
-        return $this->belongsTo( Product::class, 'product_id', 'id' );
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 
-    public function scopeWithProduct( Builder $query, $id )
+    public function scopeWithProduct(Builder $query, $id)
     {
-        return $query->where( 'product_id', $id );
+        return $query->where('product_id', $id);
     }
 
-    public function scopeStockAlertEnabled( Builder $query )
+    public function scopeStockAlertEnabled(Builder $query)
     {
-        return $query->where( 'stock_alert_enabled', true );
+        return $query->where('stock_alert_enabled', true);
     }
 }

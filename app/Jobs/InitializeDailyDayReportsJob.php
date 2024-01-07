@@ -38,9 +38,9 @@ class InitializeDailyDayReportsJob implements ShouldQueue
          * created entity on the system
          */
         $user = User::first();
-        $date = Carbon::parse( $user->created_at )->endOfDay();
+        $date = Carbon::parse($user->created_at)->endOfDay();
 
-        while ( ! $date->notEqualTo( ns()->date->endOfDay() ) ) {
+        while (! $date->notEqualTo(ns()->date->endOfDay())) {
             $this->reportService->computeDayReport(
                 $date->copy()->startOfday()->toDateTimeString(),
                 $date->copy()->endOfDay()->toDateTimeString()

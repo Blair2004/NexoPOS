@@ -36,7 +36,7 @@ class Unit extends NsModel
 
     public function group()
     {
-        return $this->belongsTo( UnitGroup::class, 'group_id' );
+        return $this->belongsTo(UnitGroup::class, 'group_id');
     }
 
     /**
@@ -47,8 +47,8 @@ class Unit extends NsModel
      * @param string $identifier
      * @return Query
      */
-    public function scopeIdentifier( $query, $identifier )
+    public function scopeIdentifier($query, $identifier)
     {
-        return $query->where( 'identifier', $identifier );
+        return $query->where('identifier', $identifier);
     }
 }

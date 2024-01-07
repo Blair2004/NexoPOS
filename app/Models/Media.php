@@ -23,6 +23,6 @@ class Media extends NsModel
 
     public function user()
     {
-        return $this->belongsTo( User::class );
+        return $this->belongsTo(User::class);
     }
 }

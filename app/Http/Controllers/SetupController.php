@@ -15,39 +15,39 @@ use Illuminate\Support\Facades\DB;
 
 class SetupController extends Controller
 {
-    public function __construct( private SetupService $setup)
+    public function __construct(private SetupService $setup)
     {
         // ...
     }
 
-    public function welcome( Request $request )
+    public function welcome(Request $request)
     {
-        return view( 'pages.setup.welcome', [
-            'title' => __( 'Welcome &mdash; NexoPOS' ),
-            'languages' => config( 'nexopos.languages' ),
-            'lang' => $request->query( 'lang' ) ?: 'en',
+        return view('pages.setup.welcome', [
+            'title' => __('Welcome &mdash; NexoPOS'),
+            'languages' => config('nexopos.languages'),
+            'lang' => $request->query('lang') ?: 'en',
         ]);
     }
 
-    public function checkDatabase( Request $request )
+    public function checkDatabase(Request $request)
     {
-        return $this->setup->saveDatabaseSettings( $request );
+        return $this->setup->saveDatabaseSettings($request);
     }
 
-    public function checkDbConfigDefined( Request $request )
+    public function checkDbConfigDefined(Request $request)
     {
         return $this->setup->testDBConnexion();
     }
 
-    public function saveConfiguration( ApplicationConfigRequest $request )
+    public function saveConfiguration(ApplicationConfigRequest $request)
     {
-        return $this->setup->runMigration( $request->all() );
+        return $this->setup->runMigration($request->all());
     }
 
     public function checkExistingCredentials()
     {
         try {
-            if ( DB::connection()->getPdo() ) {
+            if (DB::connection()->getPdo()) {
                 /**
                  * We believe from here the app should update the .env file to ensure
                  * the APP_URL and others values are updated with the actual domain name.
@@ -61,7 +61,7 @@ class SetupController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'failed',
-            ], 403 );
+            ], 403);
         }
     }
 }

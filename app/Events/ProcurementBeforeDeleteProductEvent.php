@@ -9,7 +9,7 @@ class ProcurementBeforeDeleteProductEvent
 {
     use SerializesModels;
 
-    public function __construct( public ProcurementProduct $product )
+    public function __construct(public ProcurementProduct $product)
     {
         // ...
     }

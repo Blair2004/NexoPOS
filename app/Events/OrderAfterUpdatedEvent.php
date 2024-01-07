@@ -18,7 +18,7 @@ class OrderAfterUpdatedEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct( public Order $order, public $fields = [] )
+    public function __construct(public Order $order, public $fields = [])
     {
         // ...
     }

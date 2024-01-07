@@ -15,10 +15,10 @@ class DiscountTypeCast implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return match ( $value ) {
-            'percentage_discount' => __( 'Percentage' ),
-            'flat_discount' => __( 'Flat' ),
-            default => __( 'Unknown Type' ),
+        return match ($value) {
+            'percentage_discount' => __('Percentage'),
+            'flat_discount' => __('Flat'),
+            default => __('Unknown Type'),
         };
     }
 

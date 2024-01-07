@@ -19,9 +19,9 @@ class OrderDeliveryCast implements CastsAttributes
         /**
          * @var OrdersService $orderService
          */
-        $orderService = app()->make( OrdersService::class );
+        $orderService = app()->make(OrdersService::class);
 
-        return $orderService->getDeliveryStatus( $value );
+        return $orderService->getDeliveryStatus($value);
     }
 
     /**

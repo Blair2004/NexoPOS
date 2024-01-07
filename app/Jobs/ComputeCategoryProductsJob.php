@@ -12,7 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class ComputeCategoryProductsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
@@ -33,6 +33,6 @@ class ComputeCategoryProductsJob implements ShouldQueue
     public function handle(
         ProductCategoryService $productCategoryService
     ) {
-        $productCategoryService->computeProducts( $this->productCategory );
+        $productCategoryService->computeProducts($this->productCategory);
     }
 }

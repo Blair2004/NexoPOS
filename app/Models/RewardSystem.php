@@ -20,11 +20,11 @@ class RewardSystem extends NsModel
 
     public function rules()
     {
-        return $this->hasMany( RewardSystemRule::class, 'reward_id' );
+        return $this->hasMany(RewardSystemRule::class, 'reward_id');
     }
 
     public function coupon()
     {
-        return $this->hasOne( Coupon::class, 'id', 'coupon_id' );
+        return $this->hasOne(Coupon::class, 'id', 'coupon_id');
     }
 }

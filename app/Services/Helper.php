@@ -7,6 +7,6 @@ use App\Services\Helpers\ArrayHelper;
 
 class Helper
 {
-    use ArrayHelper,
-        App;
+    use App,
+        ArrayHelper;
 }

@@ -24,9 +24,9 @@ class PasswordAfterRecoveredEventListener
      * @param  object  $event
      * @return void
      */
-    public function handle( PasswordAfterRecoveredEvent $event )
+    public function handle(PasswordAfterRecoveredEvent $event)
     {
-        Mail::to( $event->user->email )
-            ->queue( new PasswordRecoveredMail( $event->user ) );
+        Mail::to($event->user->email)
+            ->queue(new PasswordRecoveredMail($event->user));
     }
 }

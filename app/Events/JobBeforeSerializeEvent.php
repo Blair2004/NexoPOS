@@ -15,7 +15,7 @@ class JobBeforeSerializeEvent
      *
      * @return void
      */
-    public function __construct( public $job )
+    public function __construct(public $job)
     {
         //
     }

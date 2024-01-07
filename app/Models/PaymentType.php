@@ -18,13 +18,13 @@ class PaymentType extends NsModel
 
     protected $table = 'nexopos_' . 'payments_types';
 
-    public function scopeActive( $query )
+    public function scopeActive($query)
     {
-        return $query->where( 'active', true );
+        return $query->where('active', true);
     }
 
-    public function scopeIdentifier( $query, $identifier )
+    public function scopeIdentifier($query, $identifier)
     {
-        return $query->where( 'identifier', $identifier );
+        return $query->where('identifier', $identifier);
     }
 }

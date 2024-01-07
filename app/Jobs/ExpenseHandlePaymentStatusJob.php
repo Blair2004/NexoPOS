@@ -12,14 +12,14 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class ExpenseHandlePaymentStatusJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( public Order $order, public string $previous, public string $new )
+    public function __construct(public Order $order, public string $previous, public string $new)
     {
         $this->prepareSerialization();
     }
@@ -29,7 +29,7 @@ class ExpenseHandlePaymentStatusJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( TransactionService $transactionService )
+    public function handle(TransactionService $transactionService)
     {
         $transactionService->handlePaymentStatus(
             order: $this->order,

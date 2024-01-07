@@ -19,7 +19,7 @@ class UpdateCashRegisterBalanceFromHistoryJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct( public RegisterHistory $registerHistory )
+    public function __construct(public RegisterHistory $registerHistory)
     {
         //
     }
@@ -29,8 +29,8 @@ class UpdateCashRegisterBalanceFromHistoryJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( CashRegistersService $cashRegistersService )
+    public function handle(CashRegistersService $cashRegistersService)
     {
-        $cashRegistersService->updateRegisterBalance( $this->registerHistory );
+        $cashRegistersService->updateRegisterBalance($this->registerHistory);
     }
 }

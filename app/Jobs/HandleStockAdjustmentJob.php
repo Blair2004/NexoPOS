@@ -12,14 +12,14 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class HandleStockAdjustmentJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( public ProductHistory $history )
+    public function __construct(public ProductHistory $history)
     {
         $this->prepareSerialization();
     }
@@ -29,8 +29,8 @@ class HandleStockAdjustmentJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( ReportService $reportService )
+    public function handle(ReportService $reportService)
     {
-        $reportService->handleStockAdjustment( $this->history );
+        $reportService->handleStockAdjustment($this->history);
     }
 }

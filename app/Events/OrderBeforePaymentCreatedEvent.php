@@ -17,7 +17,7 @@ class OrderBeforePaymentCreatedEvent
      *
      * @return void
      */
-    public function __construct( public $payment, public Customer $customer )
+    public function __construct(public $payment, public Customer $customer)
     {
         // ...
     }

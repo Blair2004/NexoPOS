@@ -16,7 +16,7 @@ class AfterMigrationExecutedEvent
      *
      * @return void
      */
-    public function __construct( public $module, public $response, public $file )
+    public function __construct(public $module, public $response, public $file)
     {
         // ...
     }

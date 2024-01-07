@@ -36,14 +36,14 @@ class ProductCategory extends NsModel
         ],
     ];
 
-    public function scopeDisplayOnPOS( $query, $attribute = true )
+    public function scopeDisplayOnPOS($query, $attribute = true)
     {
-        return $query->where( 'displays_on_pos', $attribute );
+        return $query->where('displays_on_pos', $attribute);
     }
 
     public function products()
     {
-        return $this->hasMany( Product::class, 'category_id' );
+        return $this->hasMany(Product::class, 'category_id');
     }
 
     /**
@@ -52,7 +52,7 @@ class ProductCategory extends NsModel
      */
     public function author()
     {
-        return $this->belongsTo( User::class, 'author' );
+        return $this->belongsTo(User::class, 'author');
     }
 
     /**
@@ -60,6 +60,6 @@ class ProductCategory extends NsModel
      */
     public function subCategories()
     {
-        return $this->hasMany( self::class, 'parent_id' );
+        return $this->hasMany(self::class, 'parent_id');
     }
 }

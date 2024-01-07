@@ -22,7 +22,7 @@ class ModulesBeforeRemovedEventListener
      * @param  object  $event
      * @return void
      */
-    public function handle( ModulesBeforeRemovedEvent $event)
+    public function handle(ModulesBeforeRemovedEvent $event)
     {
         //
     }

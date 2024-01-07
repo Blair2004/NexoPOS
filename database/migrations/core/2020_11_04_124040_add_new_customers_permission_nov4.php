@@ -27,19 +27,19 @@ return new class extends Migration
      */
     public function up()
     {
-        $permission = Permission::namespace( $this->permission );
+        $permission = Permission::namespace($this->permission);
 
-        if ( ! $permission instanceof Permission ) {
+        if (! $permission instanceof Permission) {
             $permission = Permission::firstOrNew([ 'namespace' => $this->permission ]);
             $permission->namespace = $this->permission;
-            $permission->name = __( 'Manage Customer Account History' );
-            $permission->description = __( 'Can add, deduct amount from each customers account.' );
+            $permission->name = __('Manage Customer Account History');
+            $permission->description = __('Can add, deduct amount from each customers account.');
             $permission->save();
         }
 
-        Role::namespace( 'admin' )->addPermissions( $this->permission );
-        Role::namespace( 'nexopos.store.administrator' )->addPermissions( $this->permission );
-        Role::namespace( 'nexopos.store.cashier' )->addPermissions( $this->permission );
+        Role::namespace('admin')->addPermissions($this->permission);
+        Role::namespace('nexopos.store.administrator')->addPermissions($this->permission);
+        Role::namespace('nexopos.store.cashier')->addPermissions($this->permission);
     }
 
     /**
@@ -49,12 +49,12 @@ return new class extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_permissions' ) ) {
-            $permission = Permission::namespace( $this->permission );
+        if (Schema::hasTable('nexopos_permissions')) {
+            $permission = Permission::namespace($this->permission);
 
-            if ( $permission instanceof Permission ) {
-                RolePermission::where( 'permission_id', $permission->id )->delete();
-                Permission::namespace( $this->permission )->delete();
+            if ($permission instanceof Permission) {
+                RolePermission::where('permission_id', $permission->id)->delete();
+                Permission::namespace($this->permission)->delete();
             }
         }
     }

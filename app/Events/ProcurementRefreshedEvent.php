@@ -17,7 +17,7 @@ class ProcurementRefreshedEvent
      *
      * @return void
      */
-    public function __construct( public Procurement $procurement )
+    public function __construct(public Procurement $procurement)
     {
         // ...
     }

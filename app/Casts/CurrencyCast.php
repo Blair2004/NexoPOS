@@ -15,7 +15,7 @@ class CurrencyCast implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return (string) ns()->currency->define( $value );
+        return (string) ns()->currency->define($value);
     }
 
     /**

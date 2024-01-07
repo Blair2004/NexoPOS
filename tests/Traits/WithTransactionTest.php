@@ -11,9 +11,9 @@ trait WithTransactionTest
 {
     protected function attemptCreateTransactionAccount()
     {
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/transactions-accounts', [
-                'name' => __( 'Exploitation Expenses' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/transactions-accounts', [
+                'name' => __('Exploitation Expenses'),
                 'author' => Auth::id(),
                 'account' => '000010',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
@@ -21,9 +21,9 @@ trait WithTransactionTest
 
         $response->assertStatus(200);
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/transactions-accounts', [
-                'name' => __( 'Employee Salaries' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/transactions-accounts', [
+                'name' => __('Employee Salaries'),
                 'author' => Auth::id(),
                 'account' => '000011',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
@@ -31,9 +31,9 @@ trait WithTransactionTest
 
         $response->assertStatus(200);
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/transactions-accounts', [
-                'name' => __( 'Random Expenses' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/transactions-accounts', [
+                'name' => __('Random Expenses'),
                 'author' => Auth::id(),
                 'account' => '000012',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
@@ -49,9 +49,9 @@ trait WithTransactionTest
          */
         $transactionAccount = TransactionAccount::find(1);
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.transactions', [
-                'name' => __( 'Store Rent' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.transactions', [
+                'name' => __('Store Rent'),
                 'general' => [
                     'active' => true,
                     'value' => 1500,
@@ -69,9 +69,9 @@ trait WithTransactionTest
          */
         $transactionAccount = TransactionAccount::find(1);
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.transactions', [
-                'name' => __( 'Material Delivery' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.transactions', [
+                'name' => __('Material Delivery'),
                 'general' => [
                     'active' => true,
                     'value' => 300,
@@ -90,9 +90,9 @@ trait WithTransactionTest
         $transactionAccount = TransactionAccount::find(2);
 
         $role = Role::get()->shuffle()->first();
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.transactions', [
-                'name' => __( 'Store Rent' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.transactions', [
+                'name' => __('Store Rent'),
                 'general' => [
                     'active' => true,
                     'value' => 1500,

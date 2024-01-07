@@ -14,17 +14,17 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( Schema::hasTable( 'nexopos_transacations' ) ) {
-            Schema::table( 'nexopos_transactions', function( Blueprint $table ) {
-                if ( ! Schema::hasColumn( 'nexopos_transactions', 'type' ) ) {
-                    $table->string( 'type' )->nullable();
+        if (Schema::hasTable('nexopos_transacations')) {
+            Schema::table('nexopos_transactions', function (Blueprint $table) {
+                if (! Schema::hasColumn('nexopos_transactions', 'type')) {
+                    $table->string('type')->nullable();
                 }
             });
 
-            Transaction::get()->each( function( $transaction ) {
-                if ( $transaction->recurring ) {
+            Transaction::get()->each(function ($transaction) {
+                if ($transaction->recurring) {
                     $transaction->type = Transaction::TYPE_RECURRING;
-                } elseif ( $transaction->group_id > 0 ) {
+                } elseif ($transaction->group_id > 0) {
                     $transaction->type = Transaction::TYPE_ENTITY;
                 } else {
                     $transaction->type = Transaction::TYPE_DIRECT;
@@ -42,9 +42,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_transactions', function( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_transactions', 'type' ) ) {
-                $table->dropColumn( 'type' );
+        Schema::table('nexopos_transactions', function (Blueprint $table) {
+            if (Schema::hasColumn('nexopos_transactions', 'type')) {
+                $table->dropColumn('type');
             }
         });
     }

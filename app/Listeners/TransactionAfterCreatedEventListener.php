@@ -20,8 +20,8 @@ class TransactionAfterCreatedEventListener
     /**
      * Handle the event.
      */
-    public function handle( TransactionAfterCreatedEvent $event )
+    public function handle(TransactionAfterCreatedEvent $event)
     {
-        ProcessTransactionJob::dispatch( $event->transaction );
+        ProcessTransactionJob::dispatch($event->transaction);
     }
 }

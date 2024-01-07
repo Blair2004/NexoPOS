@@ -10,7 +10,7 @@ use Tests\Traits\WithReportTest;
 
 class CanSeeReportsTest extends TestCase
 {
-    use WithReportTest, WithAuthentication;
+    use WithAuthentication, WithReportTest;
 
     /**
      * A basic feature test example.
@@ -20,7 +20,7 @@ class CanSeeReportsTest extends TestCase
     public function test_canSeeReports()
     {
         Auth::loginUsingId(
-            Role::namespace( 'admin' )->users->first()->id
+            Role::namespace('admin')->users->first()->id
         );
 
         $this->attemptSeeReports();
