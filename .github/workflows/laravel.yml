@@ -39,4 +39,4 @@ jobs:
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
-      run: vendor/bin/phpunit --config phpunit.ci.xml
+      run: vendor/bin/phpunit --config phpunit.xml
