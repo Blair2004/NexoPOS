@@ -2222,18 +2222,19 @@ trait WithOrderTest
         $responseData = $response->json();
 
         $secondFetchCustomer = $firstFetchCustomer->fresh();
-
-        if ($currency->define($secondFetchCustomer->purchases_amount)
+        $purchaseAmount = $currency->define($secondFetchCustomer->purchases_amount)
             ->subtractBy($responseData[ 'data' ][ 'order' ][ 'total' ])
-            ->getRaw() != $currency->getRaw($firstFetchCustomer->purchases_amount)) {
-            throw new Exception(
-                sprintf(
-                    __('The purchase amount hasn\'t been updated correctly. Expected %s, got %s'),
-                    $secondFetchCustomer->purchases_amount - (float) $responseData[ 'data' ][ 'order' ][ 'total' ],
-                    $firstFetchCustomer->purchases_amount
-                )
-            );
-        }
+            ->getRaw();
+
+        $this->assertSame(
+            $purchaseAmount,
+            $currency->getRaw($firstFetchCustomer->purchases_amount),
+            sprintf(
+                __('The purchase amount hasn\'t been updated correctly. Expected %s, got %s'),
+                $secondFetchCustomer->purchases_amount - (float) $responseData[ 'data' ][ 'order' ][ 'total' ],
+                $firstFetchCustomer->purchases_amount
+            )
+        );
 
         /**
          * We'll keep original products amounts and quantity
@@ -2253,6 +2254,7 @@ trait WithOrderTest
                     'identifier' => 'account-payment',
                 ],
                 'total' => $responseData[ 'data' ][ 'order' ][ 'total' ],
+                'refund_shipping' => true,
                 'products' => $responseData[ 'data' ][ 'order' ][ 'products' ],
             ]);
 

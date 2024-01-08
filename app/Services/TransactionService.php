@@ -16,6 +16,7 @@ use App\Models\CustomerAccountHistory;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
+use App\Models\OrderRefund;
 use App\Models\Procurement;
 use App\Models\Role;
 use App\Models\Transaction;
@@ -475,6 +476,37 @@ class TransactionService
     }
 
     /**
+     * Will record a transaction resulting from a paid order
+     *
+     * @return void
+     */
+    public function createTransactionFormRefundedOrderShipping( Order $order, OrderRefund $orderRefund )
+    {
+        /**
+         * If the order shipping is greater than 0
+         * this means the shipping has been refunded
+         */
+        if ( $orderRefund->shipping > 0 ) {
+            $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_REFUNDS );
+
+            $transaction = new Transaction;
+            $transaction->value = $orderRefund->shipping;
+            $transaction->active = true;
+            $transaction->operation = TransactionHistory::OPERATION_DEBIT;
+            $transaction->author = $orderRefund->author;
+            $transaction->order_id = $order->id;
+            $transaction->order_refund_id = $orderRefund->id;
+            $transaction->name = sprintf( __( 'Refund Shipping : %s' ), $order->code );
+            $transaction->id = 0; // this is not assigned to an existing transaction
+            $transaction->account = $transactionAccount;
+            $transaction->created_at = $orderRefund->created_at;
+            $transaction->updated_at = $orderRefund->updated_at;
+
+            $this->recordTransactionHistory( $transaction );
+        }
+    }
+
+    /**
      * Will record a transaction for every refund performed
      *
      * @return void
@@ -616,6 +648,9 @@ class TransactionService
         }
     }
 
+    /**
+     * @deprecated ?
+     */
     public function recomputeTransactionHistory($rangeStarts = null, $rangeEnds = null)
     {
         /**
@@ -678,6 +713,7 @@ class TransactionService
     /**
      * Will process refunded orders
      *
+     * @todo the method might no longer be in use.
      * @param string $rangeStart
      * @param string $rangeEnds
      * @return void

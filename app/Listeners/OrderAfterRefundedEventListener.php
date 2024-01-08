@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\OrderAfterRefundedEvent;
 use App\Jobs\DecreaseCustomerPurchasesJob;
+use App\Jobs\RecordTransactionForShippingJob;
 use App\Jobs\ReduceCashierStatsFromRefundJob;
 use App\Jobs\RefreshOrderJob;
 use Illuminate\Support\Facades\Bus;
@@ -28,6 +29,7 @@ class OrderAfterRefundedEventListener
     public function handle(OrderAfterRefundedEvent $event)
     {
         Bus::chain([
+            new RecordTransactionForShippingJob( $event->order, $event->orderRefund ),
             new RefreshOrderJob($event->order),
             new ReduceCashierStatsFromRefundJob($event->order, $event->orderRefund),
             new DecreaseCustomerPurchasesJob($event->order->customer, $event->orderRefund->total),
