@@ -2139,7 +2139,7 @@ class OrdersService
             $order->payment_status = Order::PAYMENT_REFUNDED;
         } elseif ($order->total > 0 && $totalRefunds > 0) {
             $order->payment_status = Order::PAYMENT_PARTIALLY_REFUNDED;
-        } elseif ($order->tendered >= $order->total && $order->payments->count() > 0) {
+        } elseif ($order->tendered >= $order->total && $order->payments->count() > 0 && $totalRefunds == 0 ) {
             $order->payment_status = Order::PAYMENT_PAID;
         } elseif ((float) $order->tendered < (float) $order->total && (float) $order->tendered > 0) {
             $order->payment_status = Order::PAYMENT_PARTIALLY;
