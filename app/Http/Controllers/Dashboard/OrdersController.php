@@ -171,7 +171,7 @@ class OrdersController extends DashboardController
 
         return View::make( 'pages.dashboard.orders.pos', [
             'title' => sprintf(
-                __( 'POS &mdash; %s' ),
+                __( 'POS' ),
                 ns()->option->get( 'ns_store_name', 'NexoPOS' )
             ),
             'orderTypes' => collect( $this->ordersService->getTypeOptions() )
