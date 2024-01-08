@@ -8,6 +8,7 @@ use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\Provider;
 use App\Models\Register;
+use App\Models\Role;
 use App\Models\Tax;
 use App\Models\TaxGroup;
 use App\Models\TransactionAccount;
