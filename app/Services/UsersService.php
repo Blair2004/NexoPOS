@@ -199,54 +199,6 @@ class UsersService
     }
 
     /**
-     * Activate account using a
-     * code and the user id
-     *
-     * @param string coe
-     * @param int user id
-     * @return AsyncResponse
-     */
-    public function activateAccount( $code, $user_id )
-    {
-        $user = User::find( $user_id );
-        $date = app()->make( DateService::class );
-
-        if ( ! $user instanceof User ) {
-            throw new Exception( __( 'The activation process has failed.' ) );
-        }
-
-        $userOptions = new UserOptions( $user->id );
-        $activationCode = $userOptions->get( 'activation-code' );
-        $expiration = $userOptions->get( 'activation-expiration' );
-
-        if ( $activationCode !== $code ) {
-            throw new Exception(
-                __( 'Unable to activate the account. The activation token is wrong.' )
-            );
-        }
-
-        if ( $date->greaterThan( Carbon::parse( $expiration ) ) ) {
-            throw new Exception(
-                __( 'Unable to activate the account. The activation token has expired.' )
-            );
-        }
-
-        $user->active = true;
-        $user->save();
-
-        /**
-         * we might need to send some
-         * email ?
-         */
-        Hook::action( 'user.activated', $user );
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The account has been successfully activated.' ),
-        ];
-    }
-
-    /**
      * Check if a user belongs to a group
      */
     public function is( string|array $group_name ): bool

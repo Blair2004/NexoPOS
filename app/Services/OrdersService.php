@@ -1999,7 +1999,10 @@ class OrdersService
 
             $order->products;
 
-            Hook::action( 'ns-load-order', $order );
+            /**
+             * @deprecated
+             */
+            Hook::action('ns-load-order', $order);
 
             return $order;
         }
