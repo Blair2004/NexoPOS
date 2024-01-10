@@ -459,7 +459,7 @@ class TransactionService
              * this behave as a flash transaction
              * made only for recording an history.
              */
-            $transaction = new Transaction;
+            $transaction = Transaction::where('procurement_id', $procurement->id)->firstOrNew();
             $transaction->value = $procurement->cost;
             $transaction->active = true;
             $transaction->author = $procurement->author;
@@ -469,8 +469,33 @@ class TransactionService
             $transaction->account = $accountTypeCode;
             $transaction->created_at = $procurement->created_at;
             $transaction->updated_at = $procurement->updated_at;
+            $transaction->save();
+            
+        } else if (
+            $procurement->payment_status === Procurement::PAYMENT_UNPAID &&
+            $procurement->delivery_status === Procurement::STOCKED
+        ) {
+            /**
+             * If the procurement is not paid, we'll
+             * record a liability for the procurement.
+             */
+            $accountTypeCode = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_LIABILITIES );
 
-            $this->recordTransactionHistory( $transaction );
+            /**
+             * this behave as a flash transaction
+             * made only for recording an history.
+             */
+            $transaction = Transaction::where('procurement_id', $procurement->id)->firstOrNew();
+            $transaction->value = $procurement->cost;
+            $transaction->active = true;
+            $transaction->author = $procurement->author;
+            $transaction->procurement_id = $procurement->id;
+            $transaction->name = sprintf( __( 'Procurement Liability : %s' ), $procurement->name );
+            $transaction->id = 0; // this is not assigned to an existing transaction
+            $transaction->account = $accountTypeCode;
+            $transaction->created_at = $procurement->created_at;
+            $transaction->updated_at = $procurement->updated_at;
+            $transaction->save();
         }
     }
 
@@ -645,6 +670,8 @@ class TransactionService
              */
             switch ( $type ) {
                 case TransactionHistory::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' );
+                    break;
+                case TransactionHistory::ACCOUNT_LIABILITIES: $label = __( 'Liabilities Account' );
                     break;
                 case TransactionHistory::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
                     break;

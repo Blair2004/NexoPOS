@@ -47,7 +47,7 @@ const nsPopups      =   createApp({
             }
         })
     },
-    methods: { 
+    methods: {
         closePopup( popup, event ) {
             /**
              * This means we've strictly clicked on the container

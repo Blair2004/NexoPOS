@@ -16,7 +16,7 @@
                     <template v-if="activeTab.fields">
                         <div class="w-full px-4 md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of activeTab.fields">
                             <div class="flex flex-col my-2">
-                                <ns-field :field="field"></ns-field>
+                                <ns-field @saved="handleSaved( $event, field )" :field="field"></ns-field>
                             </div>
                         </div>
                     </template>
@@ -60,7 +60,13 @@ export default {
                     return this.form.tabs[ tab ];
                 }
             }
-        }
+        },
+        activeTabIdentifier() {
+            const values        =   Object.values( this.form.tabs );
+            const tabIdentifier =   Object.keys( this.form.tabs )[ values.indexOf( this.activeTab ) ];
+
+            return tabIdentifier;
+        },
     },
     mounted() {
         const address   =   window.location.href;
@@ -70,6 +76,15 @@ export default {
     },
     methods: {
         __,
+        async handleSaved( event, field ) {
+            const form = await this.loadSettingsForm( this.activeTab );
+
+            form.tabs[ this.activeTabIdentifier ].fields.filter( __field => {
+                    if ( __field.name === field.name && event.data.entry ) {
+                        __field.value = event.data.entry.id;
+                    }
+                })
+        },
         loadComponent( componentName ) {
             return shallowRef( nsExtraComponents[ componentName ] );
         },
@@ -142,60 +157,70 @@ export default {
             nsHooks.doAction( 'ns-settings-change-tab', { tab, instance: this, identifier });
         },
         loadSettingsForm( activeTab = null ) {
+            return new Promise( ( resolve, reject ) => {
+                nsHttpClient.get( this.url ).subscribe({
+                    next: form => {
 
-            nsHttpClient.get( this.url ).subscribe( form => {
-                let i   =   0;
-                let activeTabIdentifier    =   null;
+                        resolve( form );
 
-                /**
-                 * This will force the settings page
-                 * to refresh all the fields.
-                 */
-                this.form   =   {};
+                        let i   =   0;
+                        let activeTabIdentifier    =   null;
 
-                /**
-                 * if we provide a tab that doesn't exists
-                 * then we'll make suer to set it as undefined.
-                 * So the first tab will be used by default.
-                 */
-                activeTab   =   form.tabs[ activeTab ] !== undefined ? activeTab : null;
+                        /**
+                         * This will force the settings page
+                         * to refresh all the fields.
+                         */
+                        this.form   =   {};
 
-                /**
-                 * only if it doesn't have selected
-                 * tab so that we can reload it without resetting the focused tab.
-                 */
-                for( let tab in form.tabs ) {
-                    if ( ! this.formDefined ) {
-                        form.tabs[ tab ].active  =   false;
+                        /**
+                         * if we provide a tab that doesn't exists
+                         * then we'll make suer to set it as undefined.
+                         * So the first tab will be used by default.
+                         */
+                        activeTab   =   form.tabs[ activeTab ] !== undefined ? activeTab : null;
 
-                        if ( activeTab === null && i === 0 ) {
-                            form.tabs[ tab ].active  =   true;
-                            activeTabIdentifier      =   tab;
-                        } else if ( activeTab !== null && tab === activeTab ) {
-                            form.tabs[ tab ].active  =   true;
-                            activeTabIdentifier      =   tab;
+                        /**
+                         * only if it doesn't have selected
+                         * tab so that we can reload it without resetting the focused tab.
+                         */
+                        for( let tab in form.tabs ) {
+                            if ( ! this.formDefined ) {
+                                form.tabs[ tab ].active  =   false;
+
+                                if ( activeTab === null && i === 0 ) {
+                                    form.tabs[ tab ].active  =   true;
+                                    activeTabIdentifier      =   tab;
+                                } else if ( activeTab !== null && tab === activeTab ) {
+                                    form.tabs[ tab ].active  =   true;
+                                    activeTabIdentifier      =   tab;
+                                }
+                            } else {
+                                form.tabs[ tab ].active  =   this.form.tabs[ tab ].active;
+                            }
+
+                            i++;
+
+                            /**
+                             * to avoid unnecessary errors
+                             * let's create empty fields if those
+                             * aren't provided.
+                             */
+                            if ( form.tabs[ tab ].fields === undefined ) {
+                                form.tabs[ tab ].fields     =   [];
+                            }
                         }
-                    } else {
-                        form.tabs[ tab ].active  =   this.form.tabs[ tab ].active;
+
+                        this.form  =    this.validation.createForm( form );
+
+                        nsHooks.doAction( 'ns-settings-loaded', this );
+                        nsHooks.doAction( 'ns-settings-change-tab', { tab : this.activeTab, instance: this, identifier: activeTabIdentifier });
+                    },
+                    error : error => {
+                        nsSnackBar.error( error.message ).subscribe();
+                        reject( error );
                     }
-
-                    i++;
-
-                    /**
-                     * to avoid unnecessary errors
-                     * let's create empty fields if those
-                     * aren't provided.
-                     */
-                    if ( form.tabs[ tab ].fields === undefined ) {
-                        form.tabs[ tab ].fields     =   [];
-                    }
-                }
-
-                this.form  =    this.validation.createForm( form );
-                
-                nsHooks.doAction( 'ns-settings-loaded', this );
-                nsHooks.doAction( 'ns-settings-change-tab', { tab : this.activeTab, instance: this, identifier: activeTabIdentifier });
-            });
+                });
+            })
         }
     }
 }

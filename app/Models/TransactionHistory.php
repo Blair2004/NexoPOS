@@ -78,6 +78,11 @@ class TransactionHistory extends NsModel
      */
     const ACCOUNT_CUSTOMER_DEBIT = '008';
 
+    /**
+     * Unique identifier for liabilities.
+     */
+    const ACCOUNT_LIABILITIES = '009';
+
     protected $dispatchesEvents = [
         'created' => TransactionsHistoryAfterCreatedEvent::class,
         'updated' => TransactionsHistoryAfterUpdatedEvent::class,

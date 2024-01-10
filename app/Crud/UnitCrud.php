@@ -150,7 +150,9 @@ class UnitCrud extends CrudService
                             'validation' => 'required',
                             'value' => $entry->value ?? '',
                         ],  [
-                            'type' => 'select',
+                            'type' => 'search-select',
+                            'component' => 'nsCrudForm',
+                            'props' => UnitGroupCrud::getFormConfig(),
                             'name' => 'group_id',
                             'validation' => 'required',
                             'options' => Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),

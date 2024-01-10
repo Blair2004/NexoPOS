@@ -70,7 +70,7 @@
                                 <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units', 'groups' ].includes( getActiveTabKey( variation.tabs ) )">
                                     <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields" :key="index">
                                         <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
-                                            <ns-field :field="field"></ns-field>
+                                            <ns-field @saved="handleSaved( $event, getActiveTabKey( variation.tabs ), variation_index, field )" :field="field"></ns-field>
                                         </div>
                                     </template>
                                 </div>
@@ -257,6 +257,18 @@ export default {
     methods: {
         __,
         nsCurrency,
+        async handleSaved( event, activeTabKey, variationIndex, field ) {
+            if ( event.data.entry ) {
+                
+                const rawComponent = await this.loadForm();
+
+                rawComponent.form.variations[ variationIndex ].tabs[ activeTabKey ].fields.forEach( __field => {
+                    if ( __field.name === field.name ) {
+                        __field.value   =   event.data.entry.id;
+                    }
+                });
+            }
+        },
         getGroupProducts( tabs ) {
             if ( tabs[ 'groups' ] ) {
                 const products  =   tabs.groups.fields.filter( field => field.name === 'products_subitems' );
@@ -481,7 +493,7 @@ export default {
                             nsSnackBar.info( result.message, __( 'Okay' ), { duration: 3000 }).subscribe();
                         }
 
-                        this.$emit( 'save' );
+                        this.$emit( 'saved' );
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
@@ -579,19 +591,23 @@ export default {
             return form;
         },
         loadForm() {
-            const request   =   nsHttpClient.get( `${this.src}` );
-            this.hasLoaded  =   false;
-            this.hasError   =   false;
+            return new Promise( ( resolve, reject ) => {
+                const request   =   nsHttpClient.get( `${this.src}` );
+                this.hasLoaded  =   false;
+                this.hasError   =   false;
 
-            request.subscribe({
-                next: f => {
-                    this.hasLoaded  =   true;
-                    this.form    =   this.parseForm( f.form );
-                },
-                error: error => {
-                    this.hasError   =   true;
-                }
-            });
+                request.subscribe({
+                    next: f => {
+                        resolve( f );
+                        this.hasLoaded  =   true;
+                        this.form    =   this.parseForm( f.form );
+                    },
+                    error: error => {
+                        reject( error );
+                        this.hasError   =   true;
+                    }
+                });
+            })
         },
         addImage( variation ) {
             variation.tabs.images.groups.push(
@@ -604,8 +620,8 @@ export default {
             variation.tabs.images.groups.splice( index, 1 );
         },
     },
-    mounted() {
-        this.loadForm();
+    async mounted() {
+        await this.loadForm();        
     },
     name: 'ns-manage-products',
 }

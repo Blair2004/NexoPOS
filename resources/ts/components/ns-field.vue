@@ -3,7 +3,7 @@ import { default as nsDateRangePicker } from './ns-date-range-picker.vue';
 import { default as nsDateTimePicker } from './ns-date-time-picker.vue';
 import { default as nsSwitch } from './ns-switch.vue';
 export default {
-    emits: [ 'blur', 'change' ],
+    emits: [ 'blur', 'change', 'saved' ],
     data: () => {
         return {
         }
@@ -68,6 +68,9 @@ export default {
     },
     props: [ 'field' ],
     methods: {
+        handleSaved( field, event ) {
+            this.$emit( 'saved', event );
+        },
         addOption( option ) {
             if( this.field.type === 'select' ) {
                 this.field.options.forEach( option => option.selected = false );
@@ -130,7 +133,7 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
-        <ns-search-select :field="field" @change="changeTouchedState( field, $event )" v-if="isSearchField">
+        <ns-search-select :field="field" @saved="handleSaved( field, $event)" @change="changeTouchedState( field, $event )" v-if="isSearchField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-search-select>

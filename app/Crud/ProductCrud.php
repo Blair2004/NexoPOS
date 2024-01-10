@@ -267,7 +267,9 @@ class ProductCrud extends CrudService
                                     'validation' => 'required',
                                     'value' => $entry->name ?? '',
                                 ], [
-                                    'type' => 'select',
+                                    'type' => 'search-select',
+                                    'component' => 'nsCrudForm',
+                                    'props' => ProductCategoryCrud::getFormConfig(),
                                     'description' => __( 'Select to which category the item is assigned.' ),
                                     'options' => Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
                                     'name' => 'category_id',

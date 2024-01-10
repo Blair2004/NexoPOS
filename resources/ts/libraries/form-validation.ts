@@ -398,9 +398,6 @@ export default class FormValidation {
             const ruleValidated   =   rules[ rule.identifier ];
 
             if ( typeof ruleValidated === 'function' ) {
-                
-                console.log({ ruleVaidated: ruleValidated( field, rule ), field, rule })
-
                 if ( ruleValidated( field, rule ) === false ) {
                     return this.unTrackError( field, rule );                    
                 } else {

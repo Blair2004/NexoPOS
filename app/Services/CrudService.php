@@ -1168,6 +1168,18 @@ class CrudService
                 ->toArray();
         }
 
+        /**
+         * use crud form to render a valid form.
+         * "view" on the $config might be used to use a custom view file.
+         */
+        return View::make( $config[ 'view' ] ?? 'pages.dashboard.crud.form', self::getFormConfig(
+            config: $config,
+            entry: $entry
+        ) );
+    }
+
+    public static function getFormConfig( $config = [], $entry = null )
+    {
         $className = get_called_class();
         $instance = new $className;
         $permissionType = $entry === null ? 'create' : 'update';
@@ -1178,11 +1190,7 @@ class CrudService
          */
         $instance->allowedTo($permissionType);
 
-        /**
-         * use crud form to render a valid form.
-         * "view" on the $config might be used to use a custom view file.
-         */
-        return View::make( $config[ 'view' ] ?? 'pages.dashboard.crud.form', array_merge([
+        return array_merge([
             /**
              * this pull the title either
              * the form is made to create or edit a resource.
@@ -1229,7 +1237,7 @@ class CrudService
              * to every outgoing request on the table
              */
             'queryParams' => [],
-        ], $config));
+        ], $config );
     }
 
     /**
