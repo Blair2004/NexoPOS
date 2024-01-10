@@ -344,9 +344,9 @@
         .ns-payment-wrapper {
             @apply bg-tab-active;
             ul li {
-                @apply bg-input-button text-primary;
+                @apply bg-tab-active-border text-primary;
                 button {
-                    @apply bg-error-primary text-white;
+                    @apply bg-error-tertiary text-white;
                 }
             }
         }
@@ -371,7 +371,7 @@
             @apply border-t-tab-active;
         }
         .ns-payment-footer {
-            @apply bg-tab-inactive;
+            @apply bg-tab-active-border;
         }
     }
 }

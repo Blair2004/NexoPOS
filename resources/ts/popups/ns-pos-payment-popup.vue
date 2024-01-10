@@ -11,6 +11,7 @@ import nsPosLoadingPopupVue from './ns-pos-loading-popup.vue';
 import samplePaymentVue from '~/pages/dashboard/pos/payments/sample-payment.vue';
 import nsSelectPopupVue from './ns-select-popup.vue';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+import { ref } from 'vue';
 
 export default {
     name: 'ns-pos-payment',
@@ -33,7 +34,10 @@ export default {
         }
     },
     mounted() {
-        this.order                      =   this.popup.params.order;
+        this.orderSubscription          =   POS.order.subscribe( order => {
+            this.order  =   ref( order );
+        });
+
         this.activePaymentSubscription  =   POS.selectedPaymentType.subscribe( activePayment => {
             this.activePayment = activePayment;
             if ( activePayment !== null ) {
@@ -54,6 +58,7 @@ export default {
     unmounted() {
         this.activePaymentSubscription.unsubscribe();
         this.paymentTypesSubscription.unsubscribe();
+        this.orderSubscription.unsubscribe();
 
         nsHooks.doAction( 'ns-pos-payment-destroyed', this );
     },    
@@ -152,7 +157,7 @@ export default {
 }
 </script>
 <template>
-    <div id="ns-payment-popup" class="w-screen h-screen p-4 flex overflow-hidden" v-if="order">
+    <div id="ns-payment-popup" class="w-screen h-screen p-8 flex overflow-hidden" v-if="order">
         <div class="flex flex-col flex-auto lg:flex-row shadow-xl">
             <div class="w-full lg:w-56 lg:h-full flex justify-between px-2 lg:px-0 lg:block items-center lg:items-start">
                 <h3 class="lg:hidden text-xl text-center my-4 font-bold lg:my-8">{{ __( 'Gateway' ) }} <span>: {{ activePayment.label }}</span></h3>
@@ -193,7 +198,7 @@ export default {
                                 <span>{{ payment.label}}</span>
                                 <div class="flex items-center">
                                     <span>{{ nsCurrency( payment.value ) }}</span>
-                                    <button @click="deletePayment( payment )" class="rounded-full  h-8 w-8 flex items-center justify-center ml-2">
+                                    <button @click="deletePayment( payment )" class="rounded-full h-8 w-8 flex items-center justify-center ml-2">
                                         <i class="las la-trash-alt"></i>
                                     </button>
                                 </div>
