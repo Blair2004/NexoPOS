@@ -23,7 +23,6 @@ export default {
 
         this.shouldPreventAccidentlRefreshSubscriber    =   this.shouldPreventAccidentalRefresh.subscribe({ 
             next: value => {
-                console.log(value)
                 if ( value ){
                     window.addEventListener( 'beforeunload', this.addAccidentalCloseListener );
                 } else {
@@ -667,6 +666,17 @@ export default {
             }
 
             return __( 'N/A' );
+        },
+
+        handleSavedEvent( event, field ) {
+            if ( event.data ) {
+                field.options.push({
+                    label: event.data.entry.first_name,
+                    value: event.data.entry.id
+                });
+
+                field.value     =   event.data.entry.id;
+            }
         }
     }
 }
@@ -710,7 +720,7 @@ export default {
                             <div class="card-body rounded-br-lg rounded-bl-lg shadow p-2">
                                 <div class="-mx-4 flex flex-wrap" v-if="form.tabs">
                                     <div class="flex px-4 w-full md:w-1/2 lg:w-1/3" :key="index" v-for="(field, index) of form.tabs.general.fields">
-                                        <ns-field :field="field"></ns-field>
+                                        <ns-field @saved="handleSavedEvent( $event, field )" :field="field"></ns-field>
                                     </div>
                                 </div>
                             </div>

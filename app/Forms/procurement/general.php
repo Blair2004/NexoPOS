@@ -1,5 +1,6 @@
 <?php
 
+use App\Crud\ProviderCrud;
 use App\Models\Provider;
 use App\Services\Helper;
 
@@ -59,6 +60,8 @@ return [
         ], [
             'type' => 'search-select',
             'name' => 'provider_id',
+            'component' => 'nsCrudForm',
+            'props' => ProviderCrud::getFormConfig(),
             'value' => $procurement->provider_id ?? '',
             'validation' => 'required',
             'options' => Helper::toJsOptions( Provider::get(), [ 'id', 'first_name' ]),
