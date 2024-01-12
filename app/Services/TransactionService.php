@@ -459,14 +459,13 @@ class TransactionService
              * this behave as a flash transaction
              * made only for recording an history.
              */
-            $transaction = Transaction::where('procurement_id', $procurement->id)->firstOrNew();
+            $transaction = TransactionHistory::where('procurement_id', $procurement->id)->firstOrNew();
             $transaction->value = $procurement->cost;
-            $transaction->active = true;
             $transaction->author = $procurement->author;
             $transaction->procurement_id = $procurement->id;
             $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $accountTypeCode;
+            $transaction->transaction_account_id = $accountTypeCode->id;
+            $transaction->operation = 'debit';
             $transaction->created_at = $procurement->created_at;
             $transaction->updated_at = $procurement->updated_at;
             $transaction->save();
@@ -485,14 +484,13 @@ class TransactionService
              * this behave as a flash transaction
              * made only for recording an history.
              */
-            $transaction = Transaction::where('procurement_id', $procurement->id)->firstOrNew();
+            $transaction = TransactionHistory::where('procurement_id', $procurement->id)->firstOrNew();
             $transaction->value = $procurement->cost;
-            $transaction->active = true;
             $transaction->author = $procurement->author;
             $transaction->procurement_id = $procurement->id;
             $transaction->name = sprintf( __( 'Procurement Liability : %s' ), $procurement->name );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $accountTypeCode;
+            $transaction->transaction_account_id = $accountTypeCode->id;
+            $transaction->operation = 'debit';
             $transaction->created_at = $procurement->created_at;
             $transaction->updated_at = $procurement->updated_at;
             $transaction->save();
