@@ -105,8 +105,7 @@
                                 </div>
                                 <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
                                     <div class="px-4 w-full md:w-1/2 lg:w-1/3">
-                                        <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[0]"></ns-field>
-                                        <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[1]"></ns-field>
+                                        <ns-field v-for="field in getActiveTab( variation.tabs ).fields.filter( field => field.name !== 'selling_group' )" @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="field"></ns-field>
                                     </div>
                                     <template v-if="unitLoaded">
                                         <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
@@ -131,7 +130,7 @@
                                                                 <span>{{ getUnitQuantity( group_fields ) }}</span>
                                                             </div>
                                                             <div class="p-2 mb-2">
-                                                                <ns-field :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
+                                                                <ns-field @saved="handleSavedUnitGroupFields( $event, field )" :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
                                                             </div>
                                                             <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
                                                                 {{ __( 'Delete' ) }}
@@ -619,6 +618,16 @@ export default {
             const index     =   variation.tabs.images.groups.indexOf( group );
             variation.tabs.images.groups.splice( index, 1 );
         },
+        handleSavedUnitGroupFields( event, field ) {
+            if ( event.data ) {
+                field.options.push({
+                    label: event.data.entry.name,
+                    value: event.data.entry.id
+                });
+
+                field.value = event.data.entry.id;
+            }
+        }
     },
     async mounted() {
         await this.loadForm();        
