@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import { nsHooks, nsHttpClient, nsSnackBar } from '../bootstrap';
 import FormValidation from '../libraries/form-validation';
 import { __  } from '~/libraries/lang';
