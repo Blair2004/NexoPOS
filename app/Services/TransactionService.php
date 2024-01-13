@@ -498,6 +498,46 @@ class TransactionService
     }
 
     /**
+     * Create a direct transaction history
+     */
+    public function createTransactionHistory(
+        string $operation,
+        $transaction_id = null,
+        $transaction_account_id = null,
+        $procurement_id = null,
+        $order_refund_id = null,
+        $order_refund_product_id = null,
+        $order_id = null,
+        $order_product_id = null,
+        $register_history_id = null,
+        $customer_account_history_id = null,
+        $name = null,
+        $status = TransactionHistory::STATUS_ACTIVE,
+        $value = 0,
+    ) {
+        $tansactionHistory = new TransactionHistory;
+
+        $tansactionHistory->transaction_id = $transaction_id;
+        $tansactionHistory->operation = $operation;
+        $tansactionHistory->transaction_account_id = $transaction_account_id;
+        $tansactionHistory->procurement_id = $procurement_id;
+        $tansactionHistory->order_refund_id = $order_refund_id;
+        $tansactionHistory->order_refund_product_id = $order_refund_product_id;
+        $tansactionHistory->order_id = $order_id;
+        $tansactionHistory->order_product_id = $order_product_id;
+        $tansactionHistory->register_history_id = $register_history_id;
+        $tansactionHistory->customer_account_history_id = $customer_account_history_id;
+        $tansactionHistory->name = $name;
+        $tansactionHistory->status = $status;
+        $tansactionHistory->value = $value;
+        $tansactionHistory->author = Auth::id();
+
+        $tansactionHistory->save();
+
+        return $tansactionHistory;
+    }
+
+    /**
      * Will record a transaction for every refund performed
      *
      * @return void

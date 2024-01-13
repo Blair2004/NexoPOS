@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderAfterRefundedEvent;
+use App\Jobs\CreateTransactionFromRefundedOrder;
 use App\Jobs\DecreaseCustomerPurchasesJob;
 use App\Jobs\ReduceCashierStatsFromRefundJob;
 use App\Jobs\RefreshOrderJob;
@@ -29,6 +30,7 @@ class OrderAfterRefundedEventListener
     {
         Bus::chain([
             new RefreshOrderJob( $event->order ),
+            new CreateTransactionFromRefundedOrder( $event->orderRefund ),
             new ReduceCashierStatsFromRefundJob( $event->order, $event->orderRefund ),
             new DecreaseCustomerPurchasesJob( $event->order->customer, $event->orderRefund->total ),
         ])->dispatch();

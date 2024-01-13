@@ -38,12 +38,6 @@ class ProcessTransactionJob implements ShouldQueue
             case Transaction::TYPE_SCHEDULED:
                 $this->handleScheduledTransaction( $transactionService, $dateService );
                 break;
-            // case Transaction::TYPE_RECURRING:
-            //     $this->handleRecurringTransaction( $transactionService, $dateService );
-            //     break;
-            // case Transaction::TYPE_ENTITY:
-            //     $this->handleEntityTransaction( $transactionService, $dateService );
-            //     break;
             case Transaction::TYPE_DIRECT:
                 $this->handleDirectTransaction( $transactionService, $dateService );
                 break;

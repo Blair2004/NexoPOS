@@ -231,6 +231,14 @@
                     </table>
                 </div>
                 <div class="h-16 flex flex-shrink-0 border-t border-box-edge" id="cart-bottom-buttons">
+                    <template v-for="button of (new Array(4)).fill()" v-if="Object.keys( cartButtons ).length === 0"> 
+                        <div :class="takeRandomClass()" class="animate-pulse flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center  border-r  flex-auto">
+                            <i class="mx-4 rounded-full bg-slate-300 h-5 w-5"></i>
+                            <div class="text-lg mr-4 hidden md:flex md:flex-auto lg:text-2xl">
+                                <div class="h-2 flex-auto bg-slate-200 rounded"></div>
+                            </div>
+                        </div>
+                    </template>
                     <template v-for="component of cartButtons">
                         <component :is="component" :order="order" :settings="settings"></component>
                     </template>
@@ -343,7 +351,7 @@ export default {
          * everytime the cart reset
          * we restore original buttons.
          */
-        nsHooks.addAction( 'ns-after-cart-reset', 'ns-pos-cart-buttons', () => {
+        nsHooks.addAction( 'ns-before-cart-reset', 'ns-pos-cart-buttons', () => {
             POS.cartButtons.next( this.defaultCartButtons );
         });
 
@@ -393,6 +401,10 @@ export default {
         nsCurrency,
 
         switchTo,
+
+        takeRandomClass() {
+            return 'border-gray-500 bg-gray-400 text-white hover:bg-gray-500';
+        },
 
         openAddQuickProduct() {
             const promise   =   new Promise( ( resolve, reject ) => {
