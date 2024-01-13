@@ -41,7 +41,10 @@ export default {
         popupCloser,
         
         emitAction( action ) {
-            this.popup.params.onAction( action );
+            if ( typeof this.popup.params.onAction === 'function' ) {
+                this.popup.params.onAction( action );
+            }
+            
             this.popup.close();
         }
     }

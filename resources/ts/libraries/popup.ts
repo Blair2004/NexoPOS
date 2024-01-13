@@ -76,10 +76,14 @@ export class Popup {
          * We'll add the new popups
          * to the popups stack.
          */
-        const props     =   Object.keys( params ).filter( param => component.props.includes( param ) ).reduce( ( props, param ) => {
-            props[ param ]  =   params[ param ];
-            return props;
-        }, {});
+        let props   =   {};
+        
+        if ( component.props ) {
+            props     =   Object.keys( params ).filter( param => component.props.includes( param ) ).reduce( ( props, param ) => {
+                props[ param ]  =   params[ param ];
+                return props;
+            }, {});
+        }
         
         const popup     =   {
             hash: `popup-${this.hash()}-${this.hash()}`,
