@@ -178,12 +178,12 @@ window.nsDashboardContent.use( VueHtmlToPaper, {
 });
 
 window.nsComponents          =   Object.assign( allComponents, baseComponents );
-
 /**
  * If anything has to happen before mounting
  * that will be the place to do it.
  */
 nsHooks.doAction( 'ns-before-mount' );
+console.log( 'ns-before-mount' );
 
 const dashboardAsideElement = document.querySelector('#dashboard-aside');
 if (window.nsDashboardAside && dashboardAsideElement) {

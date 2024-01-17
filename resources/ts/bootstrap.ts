@@ -162,3 +162,5 @@ nsHttpClient.defineClient( axios );
 ( window as any ).nsTax              =   Tax;
 
 export { nsSnackBar, nsNotice, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };
+
+console.log( 'bootstrap' );

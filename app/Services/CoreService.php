@@ -414,13 +414,14 @@ class CoreService
             );
         }
 
-        $manifestPath = $module[ 'path' ] . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . 'manifest.json';
+        $manifestPath = rtrim($module['path'], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . 'manifest.json';
 
         if ( ! file_exists( $manifestPath ) ) {
             throw new NotFoundException(
                 sprintf(
-                    __( 'The manifest.json can\'t be located inside the module %s.' ),
-                    $module[ 'name' ]
+                    __( 'The manifest.json can\'t be located inside the module %s on the path: %s' ),
+                    $module[ 'name' ],
+                    $manifestPath
                 )
             );
         }
