@@ -1031,6 +1031,7 @@ class ProcurementService
                 ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
                 ->orWhere( 'barcode', 'LIKE', "%{$argument}%" );
             })
+            ->withStockEnabled()
             ->with( 'unit_quantities.unit' )
             ->limit( $limit )
             ->get()

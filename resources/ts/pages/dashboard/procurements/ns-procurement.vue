@@ -1,7 +1,6 @@
 <script lang="ts">
 import FormValidation from '~/libraries/form-validation';
-import { Subject, BehaviorSubject, forkJoin } from "rxjs";
-import { map } from "rxjs/operators";
+import { BehaviorSubject, forkJoin } from "rxjs";
 import { nsSnackBar, nsHttpClient, nsNotice } from '~/bootstrap';
 import nsManageProducts from '~/pages/dashboard/procurements/manage-products.vue';
 import Tax from "~/libraries/tax";
@@ -131,6 +130,11 @@ export default {
              */
             shouldPreventAccidentalRefresh: new BehaviorSubject( false ),
             shouldPreventAccidentlRefreshSubscriber: null,
+
+            /**
+             * Determine if we should show the info box
+             */
+            showInfo: false,
         }
     },
     watch: {
@@ -687,8 +691,14 @@ export default {
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-primary">{{ form.main.label || __( 'No title is provided' ) }}</label>
-                    <div for="title" class="text-sm my-2 text-primary">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full ns-inset-button border px-2 py-1">{{ __( 'Go Back' ) }}</a>
+                    <div for="title" class="text-sm my-2 -mx-1 flex text-primary">
+                        <div class="px-1" @click="showInfo = !showInfo">
+                            <span v-if="!showInfo" class="cursor-pointer rounded-full ns-inset-button border px-2 py-1">{{ __( 'Show Details' ) }}</span>
+                            <span v-if="showInfo" class="cursor-pointer rounded-full ns-inset-button border px-2 py-1">{{ __( 'Hide Details' ) }}</span>
+                        </div>
+                        <div class="px-1">
+                            <a v-if="returnUrl" :href="returnUrl" class="rounded-full ns-inset-button border px-2 py-1">{{ __( 'Go Back' ) }}</a>
+                        </div>
                     </div>
                 </div>
                 <div :class="form.main.disabled ? 'disabled' : ( form.main.errors.length > 0 ? 'error' : '' )" class="flex border-2 rounded input-group info overflow-hidden">
@@ -707,6 +717,24 @@ export default {
                 <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
+            </div>
+            <div v-if="showInfo" class="rounded border-2 bg-info-primary border-info-tertiary flex">
+                <div class="icon w-16 flex py-4 justify-center">
+                    <i class="las la-info-circle text-4xl"></i>
+                </div>
+                <div class="text flex-auto py-4">
+                    <h3 class="font-bold text-lg">{{ __( 'Important Notes' ) }}</h3>
+                    <ul>
+                        <li>
+                            <i class="las la-hand-point-right">&nbsp;</i>
+                            <span>{{ __( 'Stock Management Products.' ) }}</span>
+                        </li>
+                        <li>
+                            <i class="las la-hand-point-right">&nbsp;</i>
+                            <span>{{ __( 'Doesn\'t work with Grouped Product.' ) }}</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div id="form-container" class="-mx-4 flex flex-wrap mt-4">
                 <div class="px-4 w-full">
