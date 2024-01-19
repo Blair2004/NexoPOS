@@ -19,7 +19,7 @@ class ProcessCashRegisterHistoryJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct( public Order $order )
+    public function __construct(public Order $order)
     {
         //
     }
@@ -29,13 +29,13 @@ class ProcessCashRegisterHistoryJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( CashRegistersService $cashRegistersService )
+    public function handle(CashRegistersService $cashRegistersService)
     {
         /**
          * If the payment status changed from
          * supported payment status to a "Paid" status.
          */
-        if ( $this->order->register_id !== null && $this->order->payment_status === Order::PAYMENT_PAID ) {
+        if ($this->order->register_id !== null && $this->order->payment_status === Order::PAYMENT_PAID) {
             $cashRegistersService->recordCashRegisterHistorySale(
                 order: $this->order
             );

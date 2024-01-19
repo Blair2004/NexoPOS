@@ -13,7 +13,7 @@ trait NsForms
      * Provide a callback notation for
      * a specific method
      */
-    public static function method( string $methodName ): string
+    public static function method(string $methodName): string
     {
         return get_called_class() . '@' . $methodName;
     }
@@ -21,20 +21,20 @@ trait NsForms
     /**
      * Extracts validation from either a crud form or setting page.
      */
-    public function extractValidation( $model = null ): array
+    public function extractValidation($model = null): array
     {
-        $form = $this->getFormObject( model: $model );
+        $form = $this->getFormObject(model: $model);
 
         $rules = [];
 
-        if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
+        if (isset($form[ 'main' ][ 'validation' ])) {
             $rules[ $form[ 'main' ][ 'name' ] ] = $form[ 'main' ][ 'validation' ];
         }
 
-        foreach ( $form[ 'tabs' ] as $tabKey => $tab ) {
-            if ( ! empty( $tab[ 'fields' ] ) ) {
-                foreach ( $tab[ 'fields' ] as $field ) {
-                    if ( isset( $field[ 'validation' ] ) ) {
+        foreach ($form[ 'tabs' ] as $tabKey => $tab) {
+            if (! empty($tab[ 'fields' ])) {
+                foreach ($tab[ 'fields' ] as $field) {
+                    if (isset($field[ 'validation' ])) {
                         $rules[ $tabKey ][ $field[ 'name' ] ] = $field[ 'validation' ];
                     }
                 }
@@ -48,10 +48,10 @@ trait NsForms
      * Returns the array that represent the
      * form object for either the CrudService or the SettingsPage.
      */
-    private function getFormObject( $model = null ): array
+    private function getFormObject($model = null): array
     {
-        if ( is_subclass_of( $this, CrudService::class ) || is_subclass_of( $this, SettingsPage::class ) ) {
-            return Hook::filter( get_class( $this )::method( 'getForm' ), $this->getForm( $model ), compact( 'model' ) );
+        if (is_subclass_of($this, CrudService::class) || is_subclass_of($this, SettingsPage::class)) {
+            return Hook::filter(get_class($this)::method('getForm'), $this->getForm($model), compact('model'));
         }
 
         return [];
@@ -60,17 +60,17 @@ trait NsForms
     /**
      * Isolate Rules that use the Rule class
      */
-    public function isolateArrayRules( array $arrayRules, string $parentKey = '' ): array
+    public function isolateArrayRules(array $arrayRules, string $parentKey = ''): array
     {
         $rules = [];
 
-        foreach ( $arrayRules as $key => $value ) {
-            if ( is_array( $value ) && collect( array_keys( $value ) )->filter( function( $key ) {
-                return is_string( $key );
-            })->count() > 0 ) {
-                $rules = array_merge( $rules, $this->isolateArrayRules( $value, $key ) );
+        foreach ($arrayRules as $key => $value) {
+            if (is_array($value) && collect(array_keys($value))->filter(function ($key) {
+                return is_string($key);
+            })->count() > 0) {
+                $rules = array_merge($rules, $this->isolateArrayRules($value, $key));
             } else {
-                $rules[] = [ ( ! empty( $parentKey ) ? $parentKey . '.' : '' ) . $key, $value ];
+                $rules[] = [ (! empty($parentKey) ? $parentKey . '.' : '') . $key, $value ];
             }
         }
 
@@ -80,39 +80,39 @@ trait NsForms
     /**
      * Return flat fields for the crud form provided
      */
-    public function getFlatForm( array $fields, $model = null ): array
+    public function getFlatForm(array $fields, $model = null): array
     {
-        $form = $this->getFormObject( model: $model );
+        $form = $this->getFormObject(model: $model);
         $data = [];
 
-        if ( isset( $form[ 'main' ][ 'name' ] ) ) {
+        if (isset($form[ 'main' ][ 'name' ])) {
             $data[ $form[ 'main' ][ 'name' ] ] = $fields[ $form[ 'main' ][ 'name' ] ];
         }
 
-        foreach ( $form[ 'tabs' ] as $tabKey => $tab ) {
+        foreach ($form[ 'tabs' ] as $tabKey => $tab) {
             /**
              * if the object bein used is not an instance
              * of a Crud and include the method, let's skip
              * this.
              */
             $keys = [];
-            if ( method_exists( $this, 'getTabsRelations' ) ) {
-                $keys = array_keys( $this->getTabsRelations() );
+            if (method_exists($this, 'getTabsRelations')) {
+                $keys = array_keys($this->getTabsRelations());
             }
 
             /**
              * We're ignoring the tabs
              * that are linked to a model.
              */
-            if ( ! in_array( $tabKey, $keys ) && ! empty( $tab[ 'fields' ] ) ) {
-                foreach ( $tab[ 'fields' ] as $field ) {
-                    $value = data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
+            if (! in_array($tabKey, $keys) && ! empty($tab[ 'fields' ])) {
+                foreach ($tab[ 'fields' ] as $field) {
+                    $value = data_get($fields, $tabKey . '.' . $field[ 'name' ]);
 
                     /**
                      * if the field doesn't have any value
                      * we'll omit it. To avoid filling wrong value
                      */
-                    if ( ! empty( $value ) || (int) $value === 0 ) {
+                    if (! empty($value) || (int) $value === 0) {
                         $data[ $field[ 'name' ] ] = $value;
                     }
                 }
@@ -123,10 +123,10 @@ trait NsForms
          * We'll add custom fields
          * that might be added by modules
          */
-        $fieldsToIgnore = array_keys( collect( $form[ 'tabs' ] )->toArray() );
+        $fieldsToIgnore = array_keys(collect($form[ 'tabs' ])->toArray());
 
-        foreach ( $fields as $field => $value ) {
-            if ( ! in_array( $field, $fieldsToIgnore ) ) {
+        foreach ($fields as $field => $value) {
+            if (! in_array($field, $fieldsToIgnore)) {
                 $data[ $field ] = $value;
             }
         }
@@ -139,11 +139,11 @@ trait NsForms
      * for inserting. The data is parsed from the defined
      * form on the Request.
      */
-    public function getPlainData( Request $request, $model = null ): array
+    public function getPlainData(Request $request, $model = null): array
     {
         $fields = $request->post();
 
-        return $this->getFlatForm( $fields, $model );
+        return $this->getFlatForm($fields, $model);
     }
 
     /**
@@ -164,7 +164,7 @@ trait NsForms
                     $formValue[$tabIdentifier] = [];
                 }
 
-                $formValue[$tabIdentifier] = $this->extractFields( $tab[ 'fields' ] );
+                $formValue[$tabIdentifier] = $this->extractFields($tab[ 'fields' ]);
             }
         }
 

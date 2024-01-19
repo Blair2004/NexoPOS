@@ -17,39 +17,39 @@ trait WithAccountingTest
     {
         $accounts = [
             [
-                'name' => __( 'Stock Procurement' ),
+                'name' => __('Stock Procurement'),
                 'account' => '000001',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
-                'name' => __( 'Sales' ),
+                'name' => __('Sales'),
                 'account' => '000002',
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
-                'name' => __( 'Customer Credit (cash-in)' ),
+                'name' => __('Customer Credit (cash-in)'),
                 'account' => '000003',
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
-                'name' => __( 'Customer Credit (cash-out)' ),
+                'name' => __('Customer Credit (cash-out)'),
                 'account' => '000004',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
-                'name' => __( 'Sale Refunds' ),
+                'name' => __('Sale Refunds'),
                 'account' => '000005',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
-                'name' => __( 'Stock Return (spoiled items)' ),
+                'name' => __('Stock Return (spoiled items)'),
                 'account' => '000006',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
-                'name' => __( 'Stock Return (unspoiled items)' ),
+                'name' => __('Stock Return (unspoiled items)'),
                 'account' => '000007',
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
-                'name' => __( 'Cash Register (cash-in)' ),
+                'name' => __('Cash Register (cash-in)'),
                 'account' => '000008',
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
-                'name' => __( 'Cash Register (cash-out)' ),
+                'name' => __('Cash Register (cash-out)'),
                 'account' => '000009',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
@@ -59,17 +59,17 @@ trait WithAccountingTest
             ],
         ];
 
-        foreach ( $accounts as $account ) {
-            $transactionAccount = TransactionAccount::where( 'account', $account[ 'account' ] )
+        foreach ($accounts as $account) {
+            $transactionAccount = TransactionAccount::where('account', $account[ 'account' ])
                 ->first();
 
             /**
              * in case the test is executed twice, we don't want to repeatedly
              * record the same account on the database.
              */
-            if ( ! $transactionAccount instanceof TransactionAccount ) {
-                $response = $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'POST', 'api/crud/ns.transactions-accounts', [
+            if (! $transactionAccount instanceof TransactionAccount) {
+                $response = $this->withSession($this->app[ 'session' ]->all())
+                    ->json('POST', 'api/crud/ns.transactions-accounts', [
                         'name' => $account[ 'name' ],
                         'general' => [
                             'operation' => $account[ 'operation' ],
@@ -92,24 +92,24 @@ trait WithAccountingTest
         ns()->option->set( 'ns_liabilities_account', TransactionAccount::where( 'account', '000010' )->first()->id );
     }
 
-    protected function attemptCheckProcurementRecord( $procurement_id )
+    protected function attemptCheckProcurementRecord($procurement_id)
     {
         /**
          * @var Procurement
          */
-        $procurement = Procurement::find( $procurement_id );
+        $procurement = Procurement::find($procurement_id);
 
         /**
          * @var TransactionHistory
          */
-        $transactionHistory = TransactionHistory::where( 'procurement', $procurement_id )->first();
+        $transactionHistory = TransactionHistory::where('procurement', $procurement_id)->first();
 
-        $assignedCategoryID = ns()->option->get( 'ns_procurement_cashflow_account' );
+        $assignedCategoryID = ns()->option->get('ns_procurement_cashflow_account');
 
-        $this->assertTrue( $procurement instanceof Procurement, __( 'Unable to retreive the procurement using the id provided.' ) );
-        $this->assertTrue( $transactionHistory instanceof TransactionHistory, __( 'Unable to retreive the cashflow using the provided procurement id' ) );
-        $this->assertTrue( $transactionHistory->transaction_account_id == $assignedCategoryID, __( 'The assigned account doens\'t match what was set for procurement cash flow.' ) );
-        $this->assertEquals( $procurement->cost, $transactionHistory->value, __( 'The cash flow records doesn\'t match the procurement cost.' ) );
+        $this->assertTrue($procurement instanceof Procurement, __('Unable to retreive the procurement using the id provided.'));
+        $this->assertTrue($transactionHistory instanceof TransactionHistory, __('Unable to retreive the cashflow using the provided procurement id'));
+        $this->assertTrue($transactionHistory->transaction_account_id == $assignedCategoryID, __('The assigned account doens\'t match what was set for procurement cash flow.'));
+        $this->assertEquals($procurement->cost, $transactionHistory->value, __('The cash flow records doesn\'t match the procurement cost.'));
     }
 
     protected function attemptCheckSalesTaxes()
@@ -117,7 +117,7 @@ trait WithAccountingTest
         /**
          * @var ReportService $reportService
          */
-        $reportService = app()->make( ReportService::class );
+        $reportService = app()->make(ReportService::class);
 
         /**
          * This will be used as a reference to check if
@@ -136,38 +136,38 @@ trait WithAccountingTest
          *
          * @var TestService
          */
-        $procurementsDetails = app()->make( TestService::class );
-        $procurementData = $procurementsDetails->prepareProcurement( ns()->date->now(), [
+        $procurementsDetails = app()->make(TestService::class);
+        $procurementData = $procurementsDetails->prepareProcurement(ns()->date->now(), [
             'total_products' => 2,
-        ] );
+        ]);
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/procurements', $procurementData );
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/procurements', $procurementData);
 
         $response->assertStatus(200);
 
-        $array = json_decode( $response->getContent(), true );
+        $array = json_decode($response->getContent(), true);
         $procurement = $array[ 'data' ][ 'procurement' ];
 
         $currentDashboardDay = DashboardDay::forToday();
 
-        $expenseCategoryID = ns()->option->get( 'ns_procurement_cashflow_account' );
-        $totalExpenses = TransactionHistory::where( 'created_at', '>=', $dashboardDay->range_starts )
-            ->where( 'created_at', '<=', $dashboardDay->range_ends )
-            ->where( 'transaction_account_id', $expenseCategoryID )
-            ->where( 'procurement_id', $procurement[ 'id' ] )
-            ->sum( 'value' );
+        $expenseCategoryID = ns()->option->get('ns_procurement_cashflow_account');
+        $totalExpenses = TransactionHistory::where('created_at', '>=', $dashboardDay->range_starts)
+            ->where('created_at', '<=', $dashboardDay->range_ends)
+            ->where('transaction_account_id', $expenseCategoryID)
+            ->where('procurement_id', $procurement[ 'id' ])
+            ->sum('value');
 
         $this->assertEquals(
-            Currency::raw( $dashboardDay->day_expenses + $procurement[ 'cost' ] ),
-            Currency::raw( $currentDashboardDay->day_expenses ),
-            __( 'hasn\'t affected the expenses' )
+            Currency::raw($dashboardDay->day_expenses + $procurement[ 'cost' ]),
+            Currency::raw($currentDashboardDay->day_expenses),
+            __('hasn\'t affected the expenses')
         );
 
         $this->assertEquals(
-            Currency::raw( $totalExpenses ),
-            Currency::raw( $procurement[ 'cost' ] ),
-            __( 'The procurement doesn\'t match with the cash flow.' )
+            Currency::raw($totalExpenses),
+            Currency::raw($procurement[ 'cost' ]),
+            __('The procurement doesn\'t match with the cash flow.')
         );
     }
 }

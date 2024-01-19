@@ -26,9 +26,9 @@ class Option extends NsModel
         'user_id' => 'integer',
     ];
 
-    public function scopeKey( $query, $key )
+    public function scopeKey($query, $key)
     {
-        return $query->where( 'key', $key )->first();
+        return $query->where('key', $key)->first();
     }
 
     /**
@@ -37,8 +37,8 @@ class Option extends NsModel
      * @param string key
      * @return array
      **/
-    public function scopeAllkeys( $query, $key )
+    public function scopeAllkeys($query, $key)
     {
-        return $query->where( 'key', $key )->get();
+        return $query->where('key', $key)->get();
     }
 }

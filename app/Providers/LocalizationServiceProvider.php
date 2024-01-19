@@ -17,7 +17,7 @@ class LocalizationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Event::listen( function( LocaleDefinedEvent $event ) {
+        Event::listen(function (LocaleDefinedEvent $event) {
             $this->loadModuleLocale();
         });
     }
@@ -34,23 +34,23 @@ class LocalizationServiceProvider extends ServiceProvider
 
     protected function loadModuleLocale()
     {
-        $moduleService = app()->make( ModulesService::class );
+        $moduleService = app()->make(ModulesService::class);
         $active = $moduleService->getEnabled();
 
-        foreach ( $active as $module ) {
+        foreach ($active as $module) {
             if (
-                isset( $module[ 'langFiles' ] ) &&
-                isset( $module[ 'langFiles' ][ app()->getLocale() ] ) &&
-                Storage::disk( 'ns-modules' )->exists( $module[ 'langFiles' ][ app()->getLocale() ] )
+                isset($module[ 'langFiles' ]) &&
+                isset($module[ 'langFiles' ][ app()->getLocale() ]) &&
+                Storage::disk('ns-modules')->exists($module[ 'langFiles' ][ app()->getLocale() ])
             ) {
-                $locales = json_decode( file_get_contents( base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'langFiles' ][ app()->getLocale() ] ) ), true );
-                $newLocales = collect( $locales )->mapWithKeys( function( $value, $key ) use ( $module ) {
+                $locales = json_decode(file_get_contents(base_path('modules' . DIRECTORY_SEPARATOR . $module[ 'langFiles' ][ app()->getLocale() ])), true);
+                $newLocales = collect($locales)->mapWithKeys(function ($value, $key) use ($module) {
                     $key = $module[ 'namespace' ] . '.' . $key;
 
                     return [ $key => $value ];
                 })->toArray();
 
-                app( 'translator' )->addLines( $newLocales, app()->getLocale() );
+                app('translator')->addLines($newLocales, app()->getLocale());
             }
         }
     }

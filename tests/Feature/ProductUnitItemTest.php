@@ -16,7 +16,7 @@ class ProductUnitItemTest extends TestCase
         /**
          * @var UnitService $unitService
          */
-        $unitService = app()->make( UnitService::class );
+        $unitService = app()->make(UnitService::class);
 
         $quantity = 5;
         $result = 10;
@@ -33,7 +33,7 @@ class ProductUnitItemTest extends TestCase
             quantity: $quantity
         );
 
-        $partB = (float) ( ( $from->value * $quantity ) / $to->value );
+        $partB = (float) (($from->value * $quantity) / $to->value);
 
         $this->assertTrue(
             $partA === $partB
@@ -45,7 +45,7 @@ class ProductUnitItemTest extends TestCase
         /**
          * @var UnitService $unitService
          */
-        $unitService = app()->make( UnitService::class );
+        $unitService = app()->make(UnitService::class);
         $purchasePrice = 100;
         $partB = (float) 50;
 

@@ -14,9 +14,9 @@ class UnpaidOrderCrud extends HoldOrderCrud
         parent::__construct();
     }
 
-    public function hook( $query ): void
+    public function hook($query): void
     {
-        $query->orderBy( 'created_at', 'desc' );
-        $query->where( 'payment_status', Order::PAYMENT_UNPAID );
+        $query->orderBy('created_at', 'desc');
+        $query->where('payment_status', Order::PAYMENT_UNPAID);
     }
 }

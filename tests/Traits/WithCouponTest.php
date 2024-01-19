@@ -23,8 +23,8 @@ trait WithCouponTest
          * @var TestResponse
          */
         $customers = Customer::get()->take(3);
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'post', 'api/crud/ns.coupons', [
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('post', 'api/crud/ns.coupons', [
                 'name' => $this->faker->name,
                 'general' => [
                     'type' => 'percentage_discount',
@@ -33,35 +33,35 @@ trait WithCouponTest
                     'limit_usage' => $this->faker->randomElement([ 100, 200, 400 ]),
                 ],
                 'selected_products' => [
-                    'products' => Product::select( 'id' )
+                    'products' => Product::select('id')
                         ->get()
-                        ->map( fn( $product ) => $product->id )
+                        ->map(fn($product) => $product->id)
                         ->toArray(),
                 ],
                 'selected_categories' => [
-                    'categories' => ProductCategory::select( 'id' )
+                    'categories' => ProductCategory::select('id')
                         ->get()
-                        ->map( fn( $product ) => $product->id )
+                        ->map(fn($product) => $product->id)
                         ->toArray(),
                 ],
                 'selected_customers' => [
-                    'customers' => $customers->map( fn( $customer ) => $customer->id )->toArray(),
+                    'customers' => $customers->map(fn($customer) => $customer->id)->toArray(),
                 ],
             ]);
 
-        $response->assertJsonPath( 'status', 'success' );
+        $response->assertJsonPath('status', 'success');
 
         $entry = $response->json()[ 'data' ][ 'entry' ];
 
-        $coupon = Coupon::with( 'customers' )->find( $entry[ 'id' ] );
+        $coupon = Coupon::with('customers')->find($entry[ 'id' ]);
 
-        $ids = $customers->map( fn( $customer ) => $customer->id )->toArray();
+        $ids = $customers->map(fn($customer) => $customer->id)->toArray();
 
         /**
          * Checks if the customers assigned are returned
          * once we load the coupon.
          */
-        $coupon->customers->each( fn( $couponCustomer ) => $this->assertTrue( in_array( $couponCustomer->customer_id, $ids ) ) );
+        $coupon->customers->each(fn($couponCustomer) => $this->assertTrue(in_array($couponCustomer->customer_id, $ids)));
 
         return $response;
     }
@@ -77,8 +77,8 @@ trait WithCouponTest
         $coupon = Coupon::first();
         $customers = Customer::get()->take(3);
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'put', 'api/crud/ns.coupons/' . $coupon->id, [
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('put', 'api/crud/ns.coupons/' . $coupon->id, [
                 'name' => $this->faker->name,
                 'general' => [
                     'type' => 'percentage_discount',
@@ -87,28 +87,28 @@ trait WithCouponTest
                     'limit_usage' => $this->faker->randomElement([ 100, 200, 400 ]),
                 ],
                 'selected_products' => [
-                    'products' => Product::select( 'id' )
+                    'products' => Product::select('id')
                         ->get()
-                        ->map( fn( $product ) => $product->id )
+                        ->map(fn($product) => $product->id)
                         ->toArray(),
                 ],
                 'selected_categories' => [
-                    'categories' => ProductCategory::select( 'id' )
+                    'categories' => ProductCategory::select('id')
                         ->get()
-                        ->map( fn( $product ) => $product->id )
+                        ->map(fn($product) => $product->id)
                         ->toArray(),
                 ],
                 'selected_customers' => [
-                    'categories' => $customers->map( fn( $customer ) => $customer->id )->toArray(),
+                    'categories' => $customers->map(fn($customer) => $customer->id)->toArray(),
                 ],
             ]);
 
-        $response->assertJsonPath( 'status', 'success' );
+        $response->assertJsonPath('status', 'success');
     }
 
     protected function attemptAssigningANonExistingCoupon()
     {
-        $customer = Customer::get( 'id' )->random();
+        $customer = Customer::get('id')->random();
 
         $products = [
             $this->orderProduct(
@@ -140,7 +140,7 @@ trait WithCouponTest
         $this->shouldMakePayment = false;
         $this->shouldRefund = false;
 
-        $this->processOrders( $order, function( $response ) {
+        $this->processOrders($order, function ($response) {
             $response->assertJson([
                 'status' => 'failed',
             ]);
@@ -149,20 +149,20 @@ trait WithCouponTest
 
     public function attemptUseExaustedCoupon()
     {
-        $customer = Customer::get( 'id' )->random();
+        $customer = Customer::get('id')->random();
 
         /**
          * @var TaxService $taxService
          */
-        $taxService = app()->make( TaxService::class );
+        $taxService = app()->make(TaxService::class);
 
         /**
          * @var CustomerService $customerService
          */
-        $customerService = app()->make( CustomerService::class );
+        $customerService = app()->make(CustomerService::class);
 
         $couponResponse = $this->attemptCreatecoupon()->json();
-        $coupon = Coupon::find( $couponResponse[ 'data' ][ 'entry' ][ 'id' ] );
+        $coupon = Coupon::find($couponResponse[ 'data' ][ 'entry' ][ 'id' ]);
 
         // We only want this to be used once.
         $coupon->limit_usage = 1;
@@ -178,8 +178,8 @@ trait WithCouponTest
         $customerCoupon->usage = 1;
         $customerCoupon->save();
 
-        $this->assertTrue( $customerCoupon->coupon_id === $coupon->id, 'The coupon ID doesn\'t matches' );
-        $this->assertTrue( $customer->coupons()->where( 'coupon_id', $coupon->id )->first() instanceof CustomerCoupon, 'The customer doesn\'t have any coupon assigned.' );
+        $this->assertTrue($customerCoupon->coupon_id === $coupon->id, 'The coupon ID doesn\'t matches');
+        $this->assertTrue($customer->coupons()->where('coupon_id', $coupon->id)->first() instanceof CustomerCoupon, 'The customer doesn\'t have any coupon assigned.');
 
         $products = [
             $this->orderProduct(
@@ -189,12 +189,12 @@ trait WithCouponTest
             ),
         ];
 
-        $subTotal = collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
+        $subTotal = collect($products)->map(fn($product) => $product[ 'unit_price' ] * $product[ 'quantity' ])->sum();
         $couponValue = 0;
 
-        if ( $coupon instanceof Coupon ) {
-            $couponValue = match ( $coupon->type ) {
-                Coupon::TYPE_PERCENTAGE => $taxService->getPercentageOf( $subTotal, $coupon->discount_value ),
+        if ($coupon instanceof Coupon) {
+            $couponValue = match ($coupon->type) {
+                Coupon::TYPE_PERCENTAGE => $taxService->getPercentageOf($subTotal, $coupon->discount_value),
                 Coupon::TYPE_FLAT => $coupon->discount_value
             };
         }
@@ -222,7 +222,7 @@ trait WithCouponTest
          * the order shouldn't be placed
          * as the coupon usage is exhausted
          */
-        $this->processOrders( $order, function( $response ) {
+        $this->processOrders($order, function ($response) {
             $response->assertJson([
                 'status' => 'failed',
             ]);
@@ -231,20 +231,20 @@ trait WithCouponTest
 
     public function attemptUseCouponTillUsageIsExhausted()
     {
-        $customer = Customer::get( 'id' )->random();
+        $customer = Customer::get('id')->random();
 
         /**
          * @var TaxService $taxService
          */
-        $taxService = app()->make( TaxService::class );
+        $taxService = app()->make(TaxService::class);
 
         /**
          * @var CustomerService $customerService
          */
-        $customerService = app()->make( CustomerService::class );
+        $customerService = app()->make(CustomerService::class);
 
         $couponResponse = $this->attemptCreatecoupon()->json();
-        $coupon = Coupon::find( $couponResponse[ 'data' ][ 'entry' ][ 'id' ] );
+        $coupon = Coupon::find($couponResponse[ 'data' ][ 'entry' ][ 'id' ]);
 
         // We only want this to be used once.
         $coupon->limit_usage = 2;
@@ -255,8 +255,8 @@ trait WithCouponTest
             coupon: $coupon
         );
 
-        $this->assertTrue( $customerCoupon->coupon_id === $coupon->id, 'The coupon ID doesn\'t matches' );
-        $this->assertTrue( $customer->coupons()->where( 'coupon_id', $coupon->id )->first() instanceof CustomerCoupon, 'The customer doesn\'t have any coupon assigned.' );
+        $this->assertTrue($customerCoupon->coupon_id === $coupon->id, 'The coupon ID doesn\'t matches');
+        $this->assertTrue($customer->coupons()->where('coupon_id', $coupon->id)->first() instanceof CustomerCoupon, 'The customer doesn\'t have any coupon assigned.');
 
         $products = [
             $this->orderProduct(
@@ -266,12 +266,12 @@ trait WithCouponTest
             ),
         ];
 
-        $subTotal = collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
+        $subTotal = collect($products)->map(fn($product) => $product[ 'unit_price' ] * $product[ 'quantity' ])->sum();
         $couponValue = 0;
 
-        if ( $coupon instanceof Coupon ) {
-            $couponValue = match ( $coupon->type ) {
-                Coupon::TYPE_PERCENTAGE => $taxService->getPercentageOf( $subTotal, $coupon->discount_value ),
+        if ($coupon instanceof Coupon) {
+            $couponValue = match ($coupon->type) {
+                Coupon::TYPE_PERCENTAGE => $taxService->getPercentageOf($subTotal, $coupon->discount_value),
                 Coupon::TYPE_FLAT => $coupon->discount_value
             };
         }
@@ -299,7 +299,7 @@ trait WithCouponTest
          * the order shouldn't be placed
          * as the coupon usage is exhausted
          */
-        $this->processOrders( $order, function( $response ) {
+        $this->processOrders($order, function ($response) {
             $response->assertJson([
                 'status' => 'success',
             ]);
@@ -307,9 +307,9 @@ trait WithCouponTest
 
         $customerCoupon->refresh();
 
-        $this->assertTrue( $customerCoupon->usage === 1, 'The coupon usage hasn\'t increased after a use.' );
+        $this->assertTrue($customerCoupon->usage === 1, 'The coupon usage hasn\'t increased after a use.');
 
-        $this->processOrders( $order, function( $response ) {
+        $this->processOrders($order, function ($response) {
             $response->assertJson([
                 'status' => 'success',
             ]);
@@ -317,10 +317,10 @@ trait WithCouponTest
 
         $customerCoupon->refresh();
 
-        $this->assertTrue( $customerCoupon->usage === 2, 'The coupon usage hasn\'t increased after a second use.' );
+        $this->assertTrue($customerCoupon->usage === 2, 'The coupon usage hasn\'t increased after a second use.');
 
         // be cause we only had 2 possible usage for that coupon.
-        $this->processOrders( $order, function( $response ) {
+        $this->processOrders($order, function ($response) {
             $response->assertJson([
                 'status' => 'failed',
             ]);
@@ -332,9 +332,9 @@ trait WithCouponTest
         /**
          * @var TaxService $taxService
          */
-        $taxService = app()->make( TaxService::class );
+        $taxService = app()->make(TaxService::class);
         $couponResponse = $this->attemptCreatecoupon()->json();
-        $coupon = Coupon::find( $couponResponse[ 'data' ][ 'entry' ][ 'id' ] );
+        $coupon = Coupon::find($couponResponse[ 'data' ][ 'entry' ][ 'id' ]);
         $products = [
             $this->orderProduct(
                 name: 'Test Product',
@@ -343,17 +343,17 @@ trait WithCouponTest
             ),
         ];
 
-        $subTotal = collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
+        $subTotal = collect($products)->map(fn($product) => $product[ 'unit_price' ] * $product[ 'quantity' ])->sum();
         $couponValue = 0;
 
-        if ( $coupon instanceof Coupon ) {
-            $couponValue = match ( $coupon->type ) {
-                Coupon::TYPE_PERCENTAGE => $taxService->getPercentageOf( $subTotal, $coupon->discount_value ),
+        if ($coupon instanceof Coupon) {
+            $couponValue = match ($coupon->type) {
+                Coupon::TYPE_PERCENTAGE => $taxService->getPercentageOf($subTotal, $coupon->discount_value),
                 Coupon::TYPE_FLAT => $coupon->discount_value
             };
         }
 
-        $customer = Customer::get( 'id' )->random();
+        $customer = Customer::get('id')->random();
 
         /**
          * First of all, we'll delete all generated coupon.
@@ -379,25 +379,25 @@ trait WithCouponTest
             ],
         ];
 
-        $result = $this->processOrders( $order );
+        $result = $this->processOrders($order);
 
         /**
          * We'll now try to figure out if there is a coupon generated
          * for the customer we've selected.
          */
         $this->assertTrue(
-            OrderCoupon::where( 'order_id', $result[0][ 'order-creation' ][ 'data' ][ 'order' ][ 'id' ] )
-                ->where( 'coupon_id', $coupon->id )
+            OrderCoupon::where('order_id', $result[0][ 'order-creation' ][ 'data' ][ 'order' ][ 'id' ])
+                ->where('coupon_id', $coupon->id)
                 ->first() instanceof OrderCoupon,
             'No coupon history was created when the order was placed.'
         );
 
         $customerCoupon = $customer->coupons()->first();
 
-        $this->assertTrue( $customer->coupons()->where( 'coupon_id', $couponResponse[ 'data' ][ 'entry' ][ 'id' ] )->first() instanceof CustomerCoupon, 'The coupon assigned to the order is not assigned to the customer' );
-        $this->assertTrue( $customer->coupons()->count() === 1, 'No coupon was created while using the coupon on the customer sale.' );
-        $this->assertTrue( (int) $customerCoupon->coupon_id === (int) $coupon->id, 'The customer generated coupon doesn\'t match the coupon created earlier.' );
-        $this->assertTrue( (int) $customerCoupon->usage === 1, 'The coupon usage hasn\'t increased.' );
+        $this->assertTrue($customer->coupons()->where('coupon_id', $couponResponse[ 'data' ][ 'entry' ][ 'id' ])->first() instanceof CustomerCoupon, 'The coupon assigned to the order is not assigned to the customer');
+        $this->assertTrue($customer->coupons()->count() === 1, 'No coupon was created while using the coupon on the customer sale.');
+        $this->assertTrue((int) $customerCoupon->coupon_id === (int) $coupon->id, 'The customer generated coupon doesn\'t match the coupon created earlier.');
+        $this->assertTrue((int) $customerCoupon->usage === 1, 'The coupon usage hasn\'t increased.');
 
         /**
          * We'll make another test to make sure
@@ -421,10 +421,10 @@ trait WithCouponTest
             ],
         ];
 
-        $result = $this->processOrders( $order );
+        $result = $this->processOrders($order);
 
         $customerCoupon = $customer->coupons()->first();
-        $this->assertTrue( (int) $customerCoupon->usage === 2, 'The coupon usage hasn\'t increased.' );
+        $this->assertTrue((int) $customerCoupon->usage === 2, 'The coupon usage hasn\'t increased.');
 
         return $result;
     }

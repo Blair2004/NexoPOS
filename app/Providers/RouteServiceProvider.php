@@ -34,8 +34,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ( request()->header( 'x-forwarded-proto' ) === 'https' ) {
-            URL::forceScheme( 'https' );
+        if (request()->header('x-forwarded-proto') === 'https') {
+            URL::forceScheme('https');
         }
 
         parent::boot();
@@ -94,9 +94,9 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapModulesRoutes()
     {
         // make module class
-        $Modules = app()->make( ModulesService::class );
+        $Modules = app()->make(ModulesService::class);
 
-        foreach ( $Modules->getEnabled() as $module ) {
+        foreach ($Modules->getEnabled() as $module) {
             /**
              * We might check if the module is active
              */
@@ -105,69 +105,69 @@ class RouteServiceProvider extends ServiceProvider
             /**
              * @deprecated this inclusion seems useless now
              */
-            $controllers = Storage::disk( 'ns-modules' )->files( $module[ 'controllers-relativePath' ] );
+            $controllers = Storage::disk('ns-modules')->files($module[ 'controllers-relativePath' ]);
 
-            foreach ( $controllers as $controller ) {
-                $fileInfo = pathinfo(  $controller );
-                if ( $fileInfo[ 'extension' ] == 'php' ) {
-                    include_once base_path( 'modules' ) . DIRECTORY_SEPARATOR . $controller;
+            foreach ($controllers as $controller) {
+                $fileInfo = pathinfo($controller);
+                if ($fileInfo[ 'extension' ] == 'php') {
+                    include_once base_path('modules') . DIRECTORY_SEPARATOR . $controller;
                 }
             }
 
-            $domain = pathinfo( env( 'APP_URL' ) );
+            $domain = pathinfo(env('APP_URL'));
 
             /**
              * will load all web.php file as dashboard routes.
              */
-            if ( $module[ 'routes-file' ] !== false ) {
-                if ( env( 'NS_WILDCARD_ENABLED' ) ) {
+            if ($module[ 'routes-file' ] !== false) {
+                if (env('NS_WILDCARD_ENABLED')) {
                     /**
                      * The defined route should only be applicable
                      * to the main domain.
                      */
-                    $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
+                    $domainString = ($domain[ 'filename' ] ?: 'localhost') . (isset($domain[ 'extension' ]) ? '.' . $domain[ 'extension' ] : '');
 
-                    Route::domain( $domainString )->group( function() use ( $module ) {
-                        $this->mapModuleWebRoutes( $module );
+                    Route::domain($domainString)->group(function () use ($module) {
+                        $this->mapModuleWebRoutes($module);
                     });
                 } else {
-                    $this->mapModuleWebRoutes( $module );
+                    $this->mapModuleWebRoutes($module);
                 }
             }
 
             /**
              * will load api.php file has api file
              */
-            if ( $module[ 'api-file' ] !== false ) {
-                if ( env( 'NS_WILDCARD_ENABLED' ) ) {
+            if ($module[ 'api-file' ] !== false) {
+                if (env('NS_WILDCARD_ENABLED')) {
                     /**
                      * The defined route should only be applicable
                      * to the main domain.
                      */
-                    $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
+                    $domainString = ($domain[ 'filename' ] ?: 'localhost') . (isset($domain[ 'extension' ]) ? '.' . $domain[ 'extension' ] : '');
 
-                    Route::domain( $domainString )->group( function() use ( $module ) {
-                        $this->mapModuleApiRoutes( $module );
+                    Route::domain($domainString)->group(function () use ($module) {
+                        $this->mapModuleApiRoutes($module);
                     });
                 } else {
-                    $this->mapModuleApiRoutes( $module );
+                    $this->mapModuleApiRoutes($module);
                 }
             }
         }
     }
 
-    public function mapModuleWebRoutes( $module )
+    public function mapModuleWebRoutes($module)
     {
         Route::middleware([ 'web', 'ns.installed', 'ns.check-application-health', CheckMigrationStatus::class ])
-            ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
-            ->group( $module[ 'routes-file' ] );
+            ->namespace('Modules\\' . $module[ 'namespace' ] . '\Http\Controllers')
+            ->group($module[ 'routes-file' ]);
     }
 
-    public function mapModuleApiRoutes( $module )
+    public function mapModuleApiRoutes($module)
     {
-        Route::prefix( 'api/' )
-                    ->middleware([ 'ns.installed', 'api' ])
-                    ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
-                    ->group( $module[ 'api-file' ] );
+        Route::prefix('api/')
+            ->middleware([ 'ns.installed', 'api' ])
+            ->namespace('Modules\\' . $module[ 'namespace' ] . '\Http\Controllers')
+            ->group($module[ 'api-file' ]);
     }
 }

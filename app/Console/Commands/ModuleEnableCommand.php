@@ -41,19 +41,19 @@ class ModuleEnableCommand extends Command
     public function handle()
     {
         try {
-            $result = $this->modulesService->enable( $this->argument( 'identifier' ) );
+            $result = $this->modulesService->enable($this->argument('identifier'));
 
             /**
              * we'll configure the response
              * according to the result.
              */
-            if ( $result[ 'status' ] === 'success' ) {
-                $this->info( $result[ 'message' ] );
+            if ($result[ 'status' ] === 'success') {
+                $this->info($result[ 'message' ]);
             } else {
-                $this->error( $result[ 'message' ] );
+                $this->error($result[ 'message' ]);
             }
-        } catch ( Exception $exception ) {
-            $this->error( $exception->getMessage() );
+        } catch (Exception $exception) {
+            $this->error($exception->getMessage());
         }
     }
 }

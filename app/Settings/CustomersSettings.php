@@ -13,13 +13,13 @@ class CustomersSettings extends SettingsPage
 
     public function __construct()
     {
-        $options = app()->make( Options::class );
+        $options = app()->make(Options::class);
 
         $this->form = [
-            'title' => __( 'Customers Settings' ),
-            'description' => __( 'Configure the customers settings of the application.' ),
+            'title' => __('Customers Settings'),
+            'description' => __('Configure the customers settings of the application.'),
             'tabs' => [
-                'general' => include( dirname( __FILE__ ) . '/customers/general.php' ),
+                'general' => include(dirname(__FILE__) . '/customers/general.php'),
             ],
         ];
     }

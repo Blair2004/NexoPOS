@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'mimes' =>  [
+    'mimes' => [
         'aac' => 'audio/aac',
         'abw' => 'application/x-abiword',
         'arc' => 'application/octet-stream',
@@ -64,5 +64,5 @@ return [
         'xul' => 'application/vnd.mozilla.xul+xml',
         'zip' => 'application/zip',
         '7z' => 'application/x-7z-compressed',
-    ]
+    ],
 ];

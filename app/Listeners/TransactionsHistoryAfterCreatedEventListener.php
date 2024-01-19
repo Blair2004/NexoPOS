@@ -20,8 +20,8 @@ class TransactionsHistoryAfterCreatedEventListener
     /**
      * Handle the event.
      */
-    public function handle( TransactionsHistoryAfterCreatedEvent $event )
+    public function handle(TransactionsHistoryAfterCreatedEvent $event)
     {
-        RefreshReportJob::dispatch( $event->transactionHistory->created_at );
+        RefreshReportJob::dispatch($event->transactionHistory->created_at);
     }
 }

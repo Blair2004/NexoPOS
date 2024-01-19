@@ -16,7 +16,7 @@ class TransactionBeforeUpdateEvent
      *
      * @return void
      */
-    public function __construct( public Transaction $transaction, public $request )
+    public function __construct(public Transaction $transaction, public $request)
     {
         // ...
     }

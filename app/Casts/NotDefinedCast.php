@@ -15,7 +15,7 @@ class NotDefinedCast implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return empty( $value ) ? __( 'Not Defined' ) : $value;
+        return empty($value) ? __('Not Defined') : $value;
     }
 
     /**

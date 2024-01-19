@@ -17,7 +17,7 @@ class ProcurementProductBeforeUpdateEvent
      *
      * @return void
      */
-    public function __construct( public ProcurementProduct $product )
+    public function __construct(public ProcurementProduct $product)
     {
         // ...
     }

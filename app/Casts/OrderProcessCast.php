@@ -19,9 +19,9 @@ class OrderProcessCast implements CastsAttributes
         /**
          * @var OrdersService $orderService
          */
-        $orderService = app()->make( OrdersService::class );
+        $orderService = app()->make(OrdersService::class);
 
-        return $orderService->getProcessStatus( $value );
+        return $orderService->getProcessStatus($value);
     }
 
     /**

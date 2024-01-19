@@ -142,9 +142,9 @@ class CrudService
      * This defines the casts that applies
      * to every entry on a crud table.
      */
-    protected $casts    =   [
-        'created_at'    =>  DateCast::class,
-        'updated_at'    =>  DateCast::class,
+    protected $casts = [
+        'created_at' => DateCast::class,
+        'updated_at' => DateCast::class,
     ];
 
     /**
@@ -248,14 +248,14 @@ class CrudService
         $resource = $this->getCrudInstance($namespace);
         $model = $resource->getModel();
         $isEditing = $id !== null;
-        $entry = !$isEditing ? new $model : $model::find($id);
+        $entry = ! $isEditing ? new $model : $model::find($id);
 
         /**
          * let's keep old form inputs
          */
         $unfiltredInputs = $inputs;
 
-        if (method_exists($resource, 'filterPostInputs') && !$isEditing) {
+        if (method_exists($resource, 'filterPostInputs') && ! $isEditing) {
             $inputs = $resource->filterPostInputs($inputs, null);
         }
 
@@ -273,7 +273,7 @@ class CrudService
             $isEditing ? $entry : null
         );
 
-        if (method_exists($resource, 'beforePost') && !$isEditing) {
+        if (method_exists($resource, 'beforePost') && ! $isEditing) {
             $resource->beforePost($unfiltredInputs, null, $inputs);
         }
 
@@ -286,8 +286,8 @@ class CrudService
          * by any other handler than the CrudService
          */
         if (
-            (!$isEditing && !$resource->disablePost) ||
-            ($isEditing && !$resource->disablePut)
+            (! $isEditing && ! $resource->disablePost) ||
+            ($isEditing && ! $resource->disablePut)
         ) {
             $fillable = Hook::filter(
                 get_class($resource) . '@getFillable',
@@ -299,7 +299,7 @@ class CrudService
                  * If the fields where explicitly added
                  * on field that must be ignored we should skip that.
                  */
-                if (!in_array($name, $resource->skippable)) {
+                if (! in_array($name, $resource->skippable)) {
                     /**
                      * If submitted field are part of fillable fields
                      */
@@ -318,7 +318,7 @@ class CrudService
                          * sanitizing input to remove
                          * all script tags
                          */
-                        if (!empty($entry->$name)) {
+                        if (! empty($entry->$name)) {
                             $entry->$name = strip_tags($entry->$name);
                         }
                     }
@@ -329,7 +329,7 @@ class CrudService
              * If fillable is empty or if "author" it's explicitly
              * mentionned on the fillable array.
              */
-            $columns    =   array_keys($this->getColumns());
+            $columns = array_keys($this->getColumns());
 
             if (empty($fillable) || (
                 in_array('author', $fillable)
@@ -341,7 +341,7 @@ class CrudService
              * if timestamp are provided we'll disable the timestamp feature.
              * In case a field is not provided, the default value is used.
              */
-            if (!empty($entry->created_at) || !empty($entry->updated_at)) {
+            if (! empty($entry->created_at) || ! empty($entry->updated_at)) {
                 $entry->timestamps = false;
                 $entry->created_at = $entry->created_at ?: ns()->date->toDateTimeString();
                 $entry->updated_at = $entry->updated_at ?: ns()->date->toDateTimeString();
@@ -359,14 +359,14 @@ class CrudService
                 $localKey = $relationParams[1];
                 $foreignKey = $relationParams[2];
 
-                if (!empty($fields)) {
+                if (! empty($fields)) {
                     $model = $class::where($localKey, $entry->$foreignKey)->first();
 
                     /**
                      * no relation has been found
                      * so we'll store that.
                      */
-                    if (!$model instanceof $class) {
+                    if (! $model instanceof $class) {
                         $model = new $relationParams[0]; // should be the class;
                     }
 
@@ -388,7 +388,7 @@ class CrudService
         /**
          * Create an event after crud POST
          */
-        if (!$isEditing && method_exists($resource, 'afterPost')) {
+        if (! $isEditing && method_exists($resource, 'afterPost')) {
             $resource->afterPost($unfiltredInputs, $entry, $inputs);
         }
 
@@ -416,7 +416,7 @@ class CrudService
      * @param string feature name
      * @return boolean/null
      */
-    public function isEnabled($feature): bool|null
+    public function isEnabled($feature): ?bool
     {
         return $this->features[$feature] ?? false;
     }
@@ -549,7 +549,7 @@ class CrudService
          * We're caching the table columns, since we would like to
          * avoid many DB Calls
          */
-        if (!empty(Cache::get('table-columns-' . $table)) && true === false) {
+        if (! empty(Cache::get('table-columns-' . $table)) && true === false) {
             $columns = Cache::get('table-columns-' . $table);
         } else {
             $columns = Schema::getColumnListing($table);
@@ -575,7 +575,7 @@ class CrudService
 
             collect($this->getRelations())->each(function ($relation) use (&$relations, &$relatedTables) {
                 if (isset($relation[0])) {
-                    if (!is_array($relation[0])) {
+                    if (! is_array($relation[0])) {
                         $relations[] = $relation;
 
                         /**
@@ -609,7 +609,7 @@ class CrudService
                 /**
                  * We're caching the columns to avoid once again many DB request
                  */
-                if (!empty(Cache::get('table-columns-' . $relation[0])) && true == false) {
+                if (! empty(Cache::get('table-columns-' . $relation[0])) && true == false) {
                     $columns = Cache::get('table-columns-' . $relation[0]);
                 } else {
                     /**
@@ -631,7 +631,7 @@ class CrudService
                     $columns = collect(Schema::getColumnListing(count($hasAlias) === 2 ? trim($hasAlias[0]) : $relation[0]))
                         ->filter(function ($column) use ($pick, $table, $aliasName) {
                             $picked = $pick[$aliasName ? trim($aliasName) : $table] ?? [];
-                            if (!empty($picked)) {
+                            if (! empty($picked)) {
                                 if (in_array($column, $picked)) {
                                     return true;
                                 } else {
@@ -789,7 +789,7 @@ class CrudService
              * @todo we might need to get the filter from the resource
              * so that we can parse correctly the provider query filters.
              */
-            if (!empty($filters)) {
+            if (! empty($filters)) {
                 foreach ($filters as $key => $value) {
                     /**
                      * we won't handle empty value
@@ -800,7 +800,7 @@ class CrudService
 
                     $definition = collect($this->queryFilters)->filter(fn ($filter) => $filter['name'] === $key)->first();
 
-                    if (!empty($definition)) {
+                    if (! empty($definition)) {
                         switch ($definition['type']) {
                             case 'daterangepicker':
                                 if ($value['startDate'] !== null && $value['endDate'] !== null) {
@@ -913,11 +913,11 @@ class CrudService
              * We'll define a raw property
              * that will have default uncasted values.
              */
-            if (!isset($entry->__raw)) {
+            if (! isset($entry->__raw)) {
                 $entry->__raw = new \stdClass;
             }
 
-            if (!empty($casts)) {
+            if (! empty($casts)) {
                 foreach ($casts as $column => $cast) {
                     if (class_exists($cast)) {
                         $castObject = new $cast;
@@ -1021,7 +1021,7 @@ class CrudService
         /**
          * In case nothing handle this crud
          */
-        if (!class_exists($crudClass)) {
+        if (! class_exists($crudClass)) {
             throw new Exception(__('Unhandled crud resource'));
         }
 
@@ -1072,7 +1072,7 @@ class CrudService
         $final = [];
 
         foreach ($form['tabs'] as $tabKey => $tab) {
-            if (!empty($tab['fields'])) {
+            if (! empty($tab['fields'])) {
                 foreach ($tab['fields'] as $field) {
                     if (isset($field['value'])) {
                         $final[$tabKey][$field['name']] = $field['value'];
@@ -1085,14 +1085,14 @@ class CrudService
     }
 
     /**
-     * Will returns the defeind tabs relations.
+     * Will returns the defined tabs relations.
      */
     public function getTabsRelations(): array
     {
         return $this->tabsRelations;
     }
 
-    public static function table(array $config = [], string|null $title = null, string|null $description = null, string|null $src = null, string|null $createUrl = null, array $queryParams = null): ContractView
+    public static function table(array $config = [], ?string $title = null, ?string $description = null, ?string $src = null, ?string $createUrl = null, ?array $queryParams = null): ContractView
     {
         $className = get_called_class();
         $instance = new $className;
@@ -1113,7 +1113,7 @@ class CrudService
          */
         $instance->allowedTo('read');
 
-        $labels     =   Hook::filter($instance::method('getLabels'), $instance->getLabels());
+        $labels = Hook::filter($instance::method('getLabels'), $instance->getLabels());
 
         return View::make('pages.dashboard.crud.table', array_merge([
             /**
@@ -1207,7 +1207,7 @@ class CrudService
              * this automatically build a source URL based on the identifier
              * provided. But can be overwritten with the config.
              */
-            'src' => $config['src'] ?? (ns()->url('/api/crud/' . $instance->namespace . '/' . (!empty($entry) ? 'form-config/' . $entry->id : 'form-config'))),
+            'src' => $config['src'] ?? (ns()->url('/api/crud/' . $instance->namespace . '/' . (! empty($entry) ? 'form-config/' . $entry->id : 'form-config'))),
 
             /**
              * this use the built in links to create a return URL.
@@ -1257,7 +1257,7 @@ class CrudService
      * retrieve one of the declared permissions
      * the name must either be "create", "read", "update", "delete".
      */
-    public function getPermission(string|null $name): bool|string
+    public function getPermission(?string $name): bool|string
     {
         return $this->permissions[$name] ?? false;
     }
@@ -1265,9 +1265,9 @@ class CrudService
     /**
      * Shortcut for filtering CRUD methods
      */
-    public static function filterMethod(string $methodName, callable | array $callback, $priority = 10, $arguments = 1 ): mixed
+    public static function filterMethod(string $methodName, callable|array $callback, $priority = 10, $arguments = 1): mixed
     {
-        return Hook::addFilter(self::method($methodName), $callback, $priority, $arguments );
+        return Hook::addFilter(self::method($methodName), $callback, $priority, $arguments);
     }
 
     /**
@@ -1299,7 +1299,7 @@ class CrudService
                 $countDependency = $request->count() - 1;
 
                 if ($dependencyFound instanceof $class) {
-                    if (isset($model->{$indexes['local_name']}) && !empty($indexes['foreign_name'])) {
+                    if (isset($model->{$indexes['local_name']}) && ! empty($indexes['foreign_name'])) {
                         /**
                          * if the foreign name is an array
                          * we'll pull the first model set as linked
@@ -1399,7 +1399,7 @@ class CrudService
         return [];
     }
 
-    public function getTableFooter( Output $output ): Output
+    public function getTableFooter(Output $output): Output
     {
         return $output;
     }

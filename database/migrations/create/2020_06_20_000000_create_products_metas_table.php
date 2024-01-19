@@ -16,14 +16,14 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_products_metas' ) ) {
-            Schema::createIfMissing( 'nexopos_products_metas', function( Blueprint $table ) {
-                $table->bigIncrements( 'id' );
-                $table->integer( 'product_id' );
-                $table->string( 'key' );
-                $table->text( 'value' )->nullable();
-                $table->integer( 'author' );
-                $table->string( 'uuid' )->nullable();
+        if (! Schema::hasTable('nexopos_products_metas')) {
+            Schema::createIfMissing('nexopos_products_metas', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->integer('product_id');
+                $table->string('key');
+                $table->text('value')->nullable();
+                $table->integer('author');
+                $table->string('uuid')->nullable();
                 $table->timestamps();
             });
         }
@@ -36,8 +36,8 @@ return new class extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_products_metas' ) ) {
-            Schema::dropIfExists( 'nexopos_products_metas' );
+        if (Schema::hasTable('nexopos_products_metas')) {
+            Schema::dropIfExists('nexopos_products_metas');
         }
     }
 };

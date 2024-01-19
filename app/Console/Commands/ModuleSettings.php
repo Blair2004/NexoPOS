@@ -40,37 +40,37 @@ class ModuleSettings extends Command
      */
     public function handle()
     {
-        $modules = app()->make( ModulesService::class );
+        $modules = app()->make(ModulesService::class);
 
         /**
          * Check if module is defined
          */
-        if ( $module = $modules->get( $this->argument( 'namespace' ) ) ) {
+        if ($module = $modules->get($this->argument('namespace'))) {
             $settingsPath = $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Settings' . DIRECTORY_SEPARATOR;
 
             /**
              * Define the file name
              */
-            $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
+            $name = ucwords(Str::camel($this->argument('name')));
             $fileName = $settingsPath . $name;
-            $namespace = $this->argument( 'namespace' );
+            $namespace = $this->argument('namespace');
 
-            $fileExists = Storage::disk( 'ns-modules' )->exists(
+            $fileExists = Storage::disk('ns-modules')->exists(
                 $fileName . '.php'
             );
 
-            if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
-                $path = Storage::disk( 'ns-modules' )->put(
-                    $fileName . '.php', view( 'generate.modules.settings', compact(
+            if (! $fileExists || ($fileExists && $this->option('force'))) {
+                $path = Storage::disk('ns-modules')->put(
+                    $fileName . '.php', view('generate.modules.settings', compact(
                         'modules', 'module', 'name', 'namespace'
-                    ) ) );
+                    )));
 
-                return $this->info( 'The settings has been created !' );
+                return $this->info('The settings has been created !');
             }
 
-            return $this->error( 'The settings already exists !' );
+            return $this->error('The settings already exists !');
         }
 
-        return $this->error( 'Unable to located the module !' );
+        return $this->error('Unable to located the module !');
     }
 }

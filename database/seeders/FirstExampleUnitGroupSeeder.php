@@ -17,7 +17,7 @@ class FirstExampleUnitGroupSeeder extends Seeder
      */
     public function run()
     {
-        $author = User::get()->map( fn( $user ) => $user->id )
+        $author = User::get()->map(fn($user) => $user->id)
             ->shuffle()
             ->first();
 

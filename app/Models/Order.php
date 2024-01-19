@@ -142,87 +142,87 @@ class Order extends NsModel
 
     public function user()
     {
-        return $this->hasOne( User::class, 'id', 'author' );
+        return $this->hasOne(User::class, 'id', 'author');
     }
 
     public function refunds()
     {
-        return $this->hasMany( OrderRefund::class, 'order_id', 'id' );
+        return $this->hasMany(OrderRefund::class, 'order_id', 'id');
     }
 
     public function payments()
     {
-        return $this->hasMany( OrderPayment::class, 'order_id' );
+        return $this->hasMany(OrderPayment::class, 'order_id');
     }
 
     public function customer()
     {
-        return $this->hasOne( Customer::class, 'id', 'customer_id' );
+        return $this->hasOne(Customer::class, 'id', 'customer_id');
     }
 
     public function taxes()
     {
-        return $this->hasMany( OrderTax::class, 'order_id', 'id' );
+        return $this->hasMany(OrderTax::class, 'order_id', 'id');
     }
 
     public function coupons()
     {
-        return $this->hasMany( OrderCoupon::class, 'order_id', 'id' );
+        return $this->hasMany(OrderCoupon::class, 'order_id', 'id');
     }
 
     public function instalments()
     {
-        return $this->hasMany( OrderInstalment::class, 'order_id', 'id' );
+        return $this->hasMany(OrderInstalment::class, 'order_id', 'id');
     }
 
     public function shipping_address()
     {
-        return $this->hasOne( OrderShippingAddress::class );
+        return $this->hasOne(OrderShippingAddress::class);
     }
 
     public function billing_address()
     {
-        return $this->hasOne( OrderBillingAddress::class );
+        return $this->hasOne(OrderBillingAddress::class);
     }
 
-    public function scopeFrom( $query, $range_starts )
+    public function scopeFrom($query, $range_starts)
     {
-        return $query->where( 'created_at', '>=', $range_starts );
+        return $query->where('created_at', '>=', $range_starts);
     }
 
-    public function scopeTo( $query, $range_ends )
+    public function scopeTo($query, $range_ends)
     {
-        return $query->where( 'created_at', '<=', $range_ends );
+        return $query->where('created_at', '<=', $range_ends);
     }
 
-    public function scopePaid( $query )
+    public function scopePaid($query)
     {
-        return $query->where( 'payment_status', self::PAYMENT_PAID );
+        return $query->where('payment_status', self::PAYMENT_PAID);
     }
 
-    public function scopeRefunded( $query )
+    public function scopeRefunded($query)
     {
-        return $query->where( 'payment_status', self::PAYMENT_REFUNDED );
+        return $query->where('payment_status', self::PAYMENT_REFUNDED);
     }
 
-    public function scopePaymentStatus( $query, $status )
+    public function scopePaymentStatus($query, $status)
     {
-        return $query->where( 'payment_status', $status );
+        return $query->where('payment_status', $status);
     }
 
-    public function scopePaymentExpired( $query )
+    public function scopePaymentExpired($query)
     {
-        $date = app()->make( DateService::class );
+        $date = app()->make(DateService::class);
 
         return $query
-            ->whereIn( 'payment_status', [ Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ])
-            ->where( 'final_payment_date', '<>', null )
-            ->where( 'final_payment_date', '<', $date->now()->toDateTimeString() );
+            ->whereIn('payment_status', [ Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ])
+            ->where('final_payment_date', '<>', null)
+            ->where('final_payment_date', '<', $date->now()->toDateTimeString());
     }
 
-    public function scopePaymentStatusIn( $query, array $statuses )
+    public function scopePaymentStatusIn($query, array $statuses)
     {
-        return $query->whereIn( 'payment_status', $statuses );
+        return $query->whereIn('payment_status', $statuses);
     }
 
     /**
@@ -233,17 +233,17 @@ class Order extends NsModel
      */
     public function getCombinedProductsAttribute()
     {
-        if ( ns()->option->get( 'ns_invoice_merge_similar_products', 'no' ) === 'yes' ) {
+        if (ns()->option->get('ns_invoice_merge_similar_products', 'no') === 'yes') {
             $combinaison = [];
 
-            $this->products()->with( 'unit' )->get()->each( function( $product ) use ( &$combinaison ) {
+            $this->products()->with('unit')->get()->each(function ($product) use (&$combinaison) {
                 $values = $product->toArray();
 
-                extract( $values );
+                extract($values);
 
-                $keys = array_keys( $combinaison );
-                $stringified = Hook::filter( 'ns-products-combinaison-identifier', $product_id . '-' . $order_id . '-' . $discount . '-' . $product_category_id . '-' . $status, $product );
-                $combinaisonAttributes = Hook::filter( 'ns-products-combinaison-attributes', [
+                $keys = array_keys($combinaison);
+                $stringified = Hook::filter('ns-products-combinaison-identifier', $product_id . '-' . $order_id . '-' . $discount . '-' . $product_category_id . '-' . $status, $product);
+                $combinaisonAttributes = Hook::filter('ns-products-combinaison-attributes', [
                     'quantity',
                     'total_price_without_tax',
                     'total_price',
@@ -252,17 +252,17 @@ class Order extends NsModel
                     'discount',
                 ]);
 
-                if ( in_array( $stringified, $keys ) ) {
-                    foreach ( $combinaisonAttributes as $attribute ) {
+                if (in_array($stringified, $keys)) {
+                    foreach ($combinaisonAttributes as $attribute) {
                         $combinaison[ $stringified ][ $attribute ] += (float) $product->$attribute;
                     }
                 } else {
                     $rawProduct = $product->toArray();
 
-                    unset( $rawProduct[ 'id' ] );
-                    unset( $rawProduct[ 'created_at' ] );
-                    unset( $rawProduct[ 'updated_at' ] );
-                    unset( $rawProduct[ 'procurement_product_id' ] );
+                    unset($rawProduct[ 'id' ]);
+                    unset($rawProduct[ 'created_at' ]);
+                    unset($rawProduct[ 'updated_at' ]);
+                    unset($rawProduct[ 'procurement_product_id' ]);
 
                     $combinaison[ $stringified ] = $rawProduct;
                 }
@@ -271,7 +271,7 @@ class Order extends NsModel
             /**
              * that's nasty.
              */
-            return collect( json_decode( json_encode( $combinaison ) ) );
+            return collect(json_decode(json_encode($combinaison)));
         }
 
         return $this->products()->get();

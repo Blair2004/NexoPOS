@@ -30,9 +30,9 @@ class Coupon extends NsModel
 
     const TYPE_FLAT = 'flat_discount';
 
-    public function scopeCode( $query, $code )
+    public function scopeCode($query, $code)
     {
-        return $query->where( 'code', $code );
+        return $query->where('code', $code);
     }
 
     public function customerCoupon()
@@ -46,12 +46,12 @@ class Coupon extends NsModel
 
     public function categories()
     {
-        return $this->hasMany( CouponCategory::class );
+        return $this->hasMany(CouponCategory::class);
     }
 
     public function products()
     {
-        return $this->hasMany( CouponProduct::class );
+        return $this->hasMany(CouponProduct::class);
     }
 
     public function customers()

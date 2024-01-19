@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\OrderAfterRefundedEvent;
 use App\Jobs\CreateTransactionFromRefundedOrder;
 use App\Jobs\DecreaseCustomerPurchasesJob;
+use App\Jobs\RecordTransactionForShippingJob;
 use App\Jobs\ReduceCashierStatsFromRefundJob;
 use App\Jobs\RefreshOrderJob;
 use Illuminate\Support\Facades\Bus;

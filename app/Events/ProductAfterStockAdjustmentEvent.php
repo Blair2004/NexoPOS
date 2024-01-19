@@ -16,7 +16,7 @@ class ProductAfterStockAdjustmentEvent
      *
      * @return void
      */
-    public function __construct( public ProductHistory $history )
+    public function __construct(public ProductHistory $history)
     {
         // ...
     }

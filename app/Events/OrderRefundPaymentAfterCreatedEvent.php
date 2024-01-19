@@ -17,7 +17,7 @@ class OrderRefundPaymentAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct( public OrderRefund $refund )
+    public function __construct(public OrderRefund $refund)
     {
         // ...
     }

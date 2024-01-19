@@ -32,9 +32,9 @@ class BarcodeService
      * Will generate code
      * for provided barcode type
      */
-    public function generate( string $type ): string
+    public function generate(string $type): string
     {
-        return $this->generateRandomBarcode( $type );
+        return $this->generateRandomBarcode($type);
     }
 
     /**
@@ -42,12 +42,12 @@ class BarcodeService
      *
      * @return string generated code.
      */
-    public function generateRandomBarcode( $code ): string
+    public function generateRandomBarcode($code): string
     {
         $factory = Factory::create();
 
         do {
-            switch ( $code ) {
+            switch ($code) {
                 case self::TYPE_EAN8:
                     $barcode = $factory->ean8();
                     break;
@@ -73,8 +73,8 @@ class BarcodeService
                     break;
             }
 
-            $product = Product::where( 'barcode', $barcode )->first();
-        } while ( $product instanceof Product );
+            $product = Product::where('barcode', $barcode)->first();
+        } while ($product instanceof Product);
 
         return $barcode;
     }
@@ -86,11 +86,11 @@ class BarcodeService
      * @param string $type
      * @return void
      */
-    public function generateBarcode( $barcode, $type )
+    public function generateBarcode($barcode, $type)
     {
         $generator = new BarcodeGeneratorPNG;
 
-        switch ( $type ) {
+        switch ($type) {
             case 'ean8': $realType = $generator::TYPE_EAN_8;
                 break;
             case 'ean13': $realType = $generator::TYPE_EAN_13;
@@ -112,14 +112,14 @@ class BarcodeService
         }
 
         try {
-            Storage::disk( 'public' )->put(
-                Hook::filter( 'ns-media-path', 'products/barcodes/' . $barcode . '.png' ),
-                $generator->getBarcode( $barcode, $realType, 3, 30 )
+            Storage::disk('public')->put(
+                Hook::filter('ns-media-path', 'products/barcodes/' . $barcode . '.png'),
+                $generator->getBarcode($barcode, $realType, 3, 30)
             );
-        } catch ( Exception $exception ) {
+        } catch (Exception $exception) {
             throw new Exception(
                 sprintf(
-                    __( 'An error has occurred while creating a barcode "%s" using the type "%s" for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ( $exception->getMessage() ?: __( 'N/A' ) ) ),
+                    __('An error has occurred while creating a barcode "%s" using the type "%s" for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ($exception->getMessage() ?: __('N/A'))),
                     $barcode,
                     $realType
                 )
@@ -130,13 +130,13 @@ class BarcodeService
     /**
      * @deprecated
      */
-    public function generateBarcodeValue( $type )
+    public function generateBarcodeValue($type)
     {
         $faker = (new Factory)->create();
 
-        switch ( $type ) {
-            case self::TYPE_CODE39: return strtoupper( Str::random(10) );
-            case self::TYPE_CODE128: return strtoupper( Str::random(10) );
+        switch ($type) {
+            case self::TYPE_CODE39: return strtoupper(Str::random(10));
+            case self::TYPE_CODE128: return strtoupper(Str::random(10));
             case self::TYPE_EAN8: return $faker->randomNumber(8, true);
             case self::TYPE_EAN13: return $faker->randomNumber(6, true) . $faker->randomNumber(6, true);
             case self::TYPE_UPCA: return $faker->randomNumber(5, true) . $faker->randomNumber(6, true);

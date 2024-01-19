@@ -26,21 +26,21 @@ class ProductSubItem extends Model
 
     public function unit()
     {
-        return $this->hasOne( Unit::class, 'id', 'unit_id' );
+        return $this->hasOne(Unit::class, 'id', 'unit_id');
     }
 
     public function product()
     {
-        return $this->hasOne( Product::class, 'id', 'product_id' );
+        return $this->hasOne(Product::class, 'id', 'product_id');
     }
 
     public function parent()
     {
-        return $this->hasOne( Product::class, 'id', 'parent_id' );
+        return $this->hasOne(Product::class, 'id', 'parent_id');
     }
 
     public function unit_quantity()
     {
-        return $this->hasOne( ProductUnitQuantity::class, 'id', 'unit_quantity_id' );
+        return $this->hasOne(ProductUnitQuantity::class, 'id', 'unit_quantity_id');
     }
 }

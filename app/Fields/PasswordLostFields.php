@@ -11,10 +11,10 @@ class PasswordLostFields extends FieldsService
 
     public function get()
     {
-        $fields = Hook::filter( 'ns-password-lost-fields', [
+        $fields = Hook::filter('ns-password-lost-fields', [
             [
-                'label' => __( 'Email' ),
-                'description' => __( 'Provide your email.' ),
+                'label' => __('Email'),
+                'description' => __('Provide your email.'),
                 'validation' => 'required',
                 'name' => 'email',
                 'type' => 'text',

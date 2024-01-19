@@ -16,22 +16,22 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_providers' ) ) {
-            Schema::createIfMissing( 'nexopos_providers', function( Blueprint $table ) {
-                $table->bigIncrements( 'id' );
-                $table->string( 'first_name' );
-                $table->string( 'last_name' )->nullable();
-                $table->string( 'email' )
+        if (! Schema::hasTable('nexopos_providers')) {
+            Schema::createIfMissing('nexopos_providers', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('first_name');
+                $table->string('last_name')->nullable();
+                $table->string('email')
                     ->unique()
                     ->nullable();
-                $table->string( 'phone' )->nullable();
-                $table->string( 'address_1' )->nullable();
-                $table->string( 'address_2' )->nullable();
-                $table->integer( 'author' );
-                $table->text( 'description' )->nullable();
-                $table->float( 'amount_due', 18, 5 )->default(0);
-                $table->float( 'amount_paid', 18, 5 )->default(0);
-                $table->string( 'uuid' )->nullable();
+                $table->string('phone')->nullable();
+                $table->string('address_1')->nullable();
+                $table->string('address_2')->nullable();
+                $table->integer('author');
+                $table->text('description')->nullable();
+                $table->float('amount_due', 18, 5)->default(0);
+                $table->float('amount_paid', 18, 5)->default(0);
+                $table->string('uuid')->nullable();
                 $table->timestamps();
             });
         }
@@ -44,8 +44,8 @@ return new class extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_providers' ) ) {
-            Schema::dropIfExists( 'nexopos_providers' );
+        if (Schema::hasTable('nexopos_providers')) {
+            Schema::dropIfExists('nexopos_providers');
         }
     }
 };

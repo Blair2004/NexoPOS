@@ -11,7 +11,7 @@ class Module
 
     protected $file;
 
-    public function __construct( $file )
+    public function __construct($file)
     {
         $this->file = $file;
     }
@@ -19,23 +19,23 @@ class Module
     /**
      * @deprecated
      */
-    public static function namespace( $namespace )
+    public static function namespace($namespace)
     {
         /**
          * @var ModulesService
          */
-        $modules = app()->make( ModulesService::class );
-        $module = $modules->get( $namespace );
+        $modules = app()->make(ModulesService::class);
+        $module = $modules->get($namespace);
 
         /**
          * when there is a match
          * for the requested module
          */
-        if ( $module ) {
-            return new Module( $module );
+        if ($module) {
+            return new Module($module);
         }
 
-        throw new Exception( __( 'Unable to locate the requested module.' ) );
+        throw new Exception(__('Unable to locate the requested module.'));
     }
 
     /**
@@ -46,9 +46,9 @@ class Module
      *
      * @deprecated
      */
-    public function loadFile( $file )
+    public function loadFile($file)
     {
-        $filePath = Str::finish( $this->module[ 'path' ] . $file, '.php' );
+        $filePath = Str::finish($this->module[ 'path' ] . $file, '.php');
         require $filePath;
     }
 }

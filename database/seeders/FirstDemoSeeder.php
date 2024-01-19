@@ -13,9 +13,9 @@ class FirstDemoSeeder extends Seeder
      */
     public function run()
     {
-        $this->call( RewardSystemSeeder::class );
-        $this->call( CustomerGroupSeeder::class );
-        $this->call( TransactionSeeder::class );
-        $this->call( FirstExampleProviderSeeder::class );
+        $this->call(RewardSystemSeeder::class);
+        $this->call(CustomerGroupSeeder::class);
+        $this->call(TransactionSeeder::class);
+        $this->call(FirstExampleProviderSeeder::class);
     }
 }

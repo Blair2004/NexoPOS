@@ -15,4 +15,4 @@ jobs:
           node-version: '16'
           check-latest: true
       - run: npm install
-      - run: npm run prod
+      - run: npm run build

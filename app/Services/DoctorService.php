@@ -19,30 +19,30 @@ use Illuminate\Support\Str;
 
 class DoctorService
 {
-    public function __construct( protected Command $command)
+    public function __construct(protected Command $command)
     {
         // ...
     }
 
     public function createUserAttribute(): array
     {
-        User::get()->each( function( User $user ) {
-            $this->createAttributeForUser( $user );
+        User::get()->each(function (User $user) {
+            $this->createAttributeForUser($user);
         });
 
         return [
             'status' => 'success',
-            'message' => __( 'The user attributes has been updated.' ),
+            'message' => __('The user attributes has been updated.'),
         ];
     }
 
-    public function createAttributeForUser( User $user )
+    public function createAttributeForUser(User $user)
     {
-        if ( ! $user->attribute instanceof UserAttribute ) {
+        if (! $user->attribute instanceof UserAttribute) {
             $attribute = new UserAttribute;
             $attribute->user_id = $user->id;
-            $attribute->language = ns()->option->get( 'ns_store_language', 'en' );
-            $attribute->theme = ns()->option->get( 'ns_default_theme', 'dark' );
+            $attribute->language = ns()->option->get('ns_store_language', 'en');
+            $attribute->theme = ns()->option->get('ns_default_theme', 'dark');
             $attribute->save();
         }
     }
@@ -54,25 +54,25 @@ class DoctorService
     {
         $rolesLabels = [
             Role::ADMIN => [
-                'name' => __( 'Administrator' ),
+                'name' => __('Administrator'),
             ],
             Role::STOREADMIN => [
-                'name' => __( 'Store Administrator' ),
+                'name' => __('Store Administrator'),
             ],
             Role::STORECASHIER => [
-                'name' => __( 'Store Cashier' ),
+                'name' => __('Store Cashier'),
             ],
             Role::USER => [
-                'name' => __( 'User' ),
+                'name' => __('User'),
             ],
         ];
 
-        foreach ( array_keys( $rolesLabels ) as $roleNamespace ) {
-            $role = Role::where( 'namespace', $roleNamespace )
+        foreach (array_keys($rolesLabels) as $roleNamespace) {
+            $role = Role::where('namespace', $roleNamespace)
                 ->first();
 
-            if ( ! $role instanceof Role ) {
-                Role::where( 'name', $rolesLabels[ $roleNamespace ][ 'name' ] )->delete();
+            if (! $role instanceof Role) {
+                Role::where('name', $rolesLabels[ $roleNamespace ][ 'name' ])->delete();
 
                 $role = new Role;
                 $role->namespace = $roleNamespace;
@@ -86,15 +86,15 @@ class DoctorService
     public function fixDuplicateOptions()
     {
         $options = Option::get();
-        $options->each( function( $option ) {
+        $options->each(function ($option) {
             try {
                 $option->refresh();
-                if ( $option instanceof Option ) {
-                    Option::where( 'key', $option->key )
-                        ->where( 'id', '<>', $option->id )
+                if ($option instanceof Option) {
+                    Option::where('key', $option->key)
+                        ->where('id', '<>', $option->id)
                         ->delete();
                 }
-            } catch ( Exception $exception ) {
+            } catch (Exception $exception) {
                 // the option might be deleted, let's skip that.
             }
         });
@@ -102,13 +102,13 @@ class DoctorService
 
     public function fixOrphanOrderProducts()
     {
-        $orderIds = Order::get( 'id' );
+        $orderIds = Order::get('id');
 
-        $query = OrderProduct::whereNotIn( 'order_id', $orderIds );
+        $query = OrderProduct::whereNotIn('order_id', $orderIds);
         $total = $query->count();
         $query->delete();
 
-        return sprintf( __( '%s products were freed' ), $total );
+        return sprintf(__('%s products were freed'), $total);
     }
 
     /**
@@ -122,16 +122,16 @@ class DoctorService
         /**
          * Set version to close setup
          */
-        $domain = Str::replaceFirst( 'http://', '', url( '/' ) );
-        $domain = Str::replaceFirst( 'https://', '', $domain );
-        $withoutPort = explode( ':', $domain )[0];
+        $domain = Str::replaceFirst('http://', '', url('/'));
+        $domain = Str::replaceFirst('https://', '', $domain);
+        $withoutPort = explode(':', $domain)[0];
 
-        if ( ! env( 'SESSION_DOMAIN', false ) ) {
-            ns()->envEditor->set( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', $withoutPort ) );
+        if (! env('SESSION_DOMAIN', false)) {
+            ns()->envEditor->set('SESSION_DOMAIN', Str::replaceFirst('http://', '', $withoutPort));
         }
 
-        if ( ! env( 'SANCTUM_STATEFUL_DOMAINS', false ) ) {
-            ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'localhost', '127.0.0.1' ])->unique()->join(',') );
+        if (! env('SANCTUM_STATEFUL_DOMAINS', false)) {
+            ns()->envEditor->set('SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'localhost', '127.0.0.1' ])->unique()->join(','));
         }
     }
 
@@ -144,20 +144,20 @@ class DoctorService
         /**
          * @var TransactionService $transactionService
          */
-        $transactionService = app()->make( TransactionService::class );
+        $transactionService = app()->make(TransactionService::class);
 
-        TransactionHistory::where( 'order_id', '>', 0 )->delete();
-        TransactionHistory::where( 'order_refund_id', '>', 0 )->delete();
+        TransactionHistory::where('order_id', '>', 0)->delete();
+        TransactionHistory::where('order_refund_id', '>', 0)->delete();
 
         /**
          * Step 1: Recompute from order sales
          */
-        $orders = Order::paymentStatus( Order::PAYMENT_PAID )->get();
+        $orders = Order::paymentStatus(Order::PAYMENT_PAID)->get();
 
-        $this->command->info( __( 'Restoring cash flow from paid orders...' ) );
+        $this->command->info(__('Restoring cash flow from paid orders...'));
 
-        $this->command->withProgressBar( $orders, function( $order ) use ( $transactionService ) {
-            $transactionService->handleCreatedOrder( $order );
+        $this->command->withProgressBar($orders, function ($order) use ($transactionService) {
+            $transactionService->handleCreatedOrder($order);
         });
 
         $this->command->newLine();
@@ -165,15 +165,15 @@ class DoctorService
         /**
          * Step 2: Recompute from refund
          */
-        $this->command->info( __( 'Restoring cash flow from refunded orders...' ) );
+        $this->command->info(__('Restoring cash flow from refunded orders...'));
 
         $orders = Order::paymentStatusIn([
             Order::PAYMENT_REFUNDED,
             Order::PAYMENT_PARTIALLY_REFUNDED,
         ])->get();
 
-        $this->command->withProgressBar( $orders, function( $order ) use ( $transactionService ) {
-            $order->refundedProducts()->with( 'orderProduct' )->get()->each( function( $orderRefundedProduct ) use ( $order, $transactionService ) {
+        $this->command->withProgressBar($orders, function ($order) use ($transactionService) {
+            $order->refundedProducts()->with('orderProduct')->get()->each(function ($orderRefundedProduct) use ($order, $transactionService) {
                 $transactionService->createTransactionFromRefund(
                     order: $order,
                     orderProductRefund: $orderRefundedProduct,
@@ -187,30 +187,30 @@ class DoctorService
 
     public function clearTemporaryFiles()
     {
-        $directories = Storage::disk( 'ns-modules-temp' )->directories();
-        $deleted = collect( $directories )->filter( fn( $directory ) => Storage::disk( 'ns-modules-temp' )->deleteDirectory( $directory ) );
+        $directories = Storage::disk('ns-modules-temp')->directories();
+        $deleted = collect($directories)->filter(fn($directory) => Storage::disk('ns-modules-temp')->deleteDirectory($directory));
 
-        $this->command->info( sprintf(
-            __( '%s on %s directories were deleted.' ),
-            count( $directories ),
+        $this->command->info(sprintf(
+            __('%s on %s directories were deleted.'),
+            count($directories),
             $deleted->count()
-        ) );
+        ));
 
-        $files = Storage::disk( 'ns-modules-temp' )->files();
-        $deleted = collect( $files )->filter( fn( $file ) => Storage::disk( 'ns-modules-temp' )->delete( $file ) );
+        $files = Storage::disk('ns-modules-temp')->files();
+        $deleted = collect($files)->filter(fn($file) => Storage::disk('ns-modules-temp')->delete($file));
 
-        $this->command->info( sprintf(
-            __( '%s on %s files were deleted.' ),
-            count( $files ),
+        $this->command->info(sprintf(
+            __('%s on %s files were deleted.'),
+            count($files),
             $deleted->count()
-        ) );
+        ));
     }
 
     public function fixCustomers()
     {
         $this->command
-            ->withProgressBar( Customer::with([ 'billing', 'shipping' ])->get(), function( $customer ) {
-                if ( ! $customer->billing instanceof CustomerBillingAddress ) {
+            ->withProgressBar(Customer::with([ 'billing', 'shipping' ])->get(), function ($customer) {
+                if (! $customer->billing instanceof CustomerBillingAddress) {
                     $billing = new CustomerBillingAddress;
                     $billing->customer_id = $customer->id;
                     $billing->first_name = $customer->first_name;
@@ -221,7 +221,7 @@ class DoctorService
                     $billing->save();
                 }
 
-                if ( ! $customer->shipping instanceof CustomerShippingAddress ) {
+                if (! $customer->shipping instanceof CustomerShippingAddress) {
                     $shipping = new CustomerShippingAddress;
                     $shipping->customer_id = $customer->id;
                     $shipping->first_name = $customer->first_name;
@@ -240,7 +240,7 @@ class DoctorService
      */
     public function clearBrokenModuleLinks(): array
     {
-        $dir = base_path( 'public/modules' );
+        $dir = base_path('public/modules');
         $files = scandir($dir);
         $deleted = [];
 
@@ -260,8 +260,8 @@ class DoctorService
         return [
             'status' => 'sucess',
             'message' => sprintf(
-                __( '%s link were deleted' ),
-                count( $deleted )
+                __('%s link were deleted'),
+                count($deleted)
             ),
         ];
     }

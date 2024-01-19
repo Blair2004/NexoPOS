@@ -19,10 +19,10 @@ class TestAllDateTimeOptions extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $timezones = config( 'nexopos.timezones' );
+        $timezones = config('nexopos.timezones');
 
-        foreach ( $timezones as $zone => $name ) {
-            $this->assertTrue( new DateService( 'now', $zone ) instanceof DateService );
+        foreach ($timezones as $zone => $name) {
+            $this->assertTrue(new DateService('now', $zone) instanceof DateService);
         }
     }
 }

@@ -25,7 +25,7 @@ class CrudPutRequest extends BaseCrudRequest
     public function rules()
     {
         $service = new CrudService;
-        $resource = $service->getCrudInstance( $this->route( 'namespace' ) );
+        $resource = $service->getCrudInstance($this->route('namespace'));
 
         /**
          * We do pass the model here as
@@ -33,23 +33,23 @@ class CrudPutRequest extends BaseCrudRequest
          * during validation.
          */
         $arrayRules = $resource->extractValidation(
-            model: $resource->getModel()::find( $this->route( 'id' ) )
+            model: $resource->getModel()::find($this->route('id'))
         );
 
         /**
          * As validation might uses array with Rule class, we want to
          * properly exclude that, so that the array is not converted into dots.
          */
-        $isolatedRules = $resource->isolateArrayRules( $arrayRules );
+        $isolatedRules = $resource->isolateArrayRules($arrayRules);
 
         /**
          * This will flat the rules to create a dot-like
          * validation rules array
          */
-        $flatRules = collect( $isolatedRules )->mapWithKeys( function( $rule ) {
+        $flatRules = collect($isolatedRules)->mapWithKeys(function ($rule) {
             return [ $rule[0] => $rule[1] ];
         })->toArray();
 
-        return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), $flatRules );
+        return Hook::filter('ns.validation.' . $this->route('namespace'), $flatRules);
     }
 }

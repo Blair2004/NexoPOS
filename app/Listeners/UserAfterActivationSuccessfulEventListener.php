@@ -24,12 +24,12 @@ class UserAfterActivationSuccessfulEventListener
      * @param  object  $event
      * @return void
      */
-    public function handle( UserAfterActivationSuccessfulEvent $event)
+    public function handle(UserAfterActivationSuccessfulEvent $event)
     {
         /**
          * For every user who's activated, we will assign
          * default widget to their account.
          */
-        $this->widgetService->addDefaultWidgetsToAreas( $event->user );
+        $this->widgetService->addDefaultWidgetsToAreas($event->user);
     }
 }

@@ -19,7 +19,7 @@ class OrderPaymentAfterCreatedEventListener
     /**
      * Handle the event.
      */
-    public function handle( OrderAfterPaymentCreatedEvent $event )
+    public function handle(OrderAfterPaymentCreatedEvent $event)
     {
         // ...
     }

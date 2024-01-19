@@ -13,14 +13,14 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class CheckCustomerAccountJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( public Customer $customer, public $payment )
+    public function __construct(public Customer $customer, public $payment)
     {
         $this->prepareSerialization();
     }
@@ -30,10 +30,10 @@ class CheckCustomerAccountJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( CustomerService $customerService )
+    public function handle(CustomerService $customerService)
     {
-        if ( $this->payment[ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
-            $customerService->canReduceCustomerAccount( $this->customer, $this->payment[ 'value' ] );
+        if ($this->payment[ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT) {
+            $customerService->canReduceCustomerAccount($this->customer, $this->payment[ 'value' ]);
         }
     }
 }

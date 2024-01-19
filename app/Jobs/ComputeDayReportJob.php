@@ -11,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class ComputeDayReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
@@ -28,7 +28,7 @@ class ComputeDayReportJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( ReportService $reportService )
+    public function handle(ReportService $reportService)
     {
         $reportService->computeDayReport();
     }

@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::createIfMissing( 'nexopos_orders_instalments', function( Blueprint $table ) {
-            $table->bigIncrements( 'id' );
-            $table->float( 'amount', 18, 5 )->default(0);
-            $table->integer( 'order_id' )->nullable();
-            $table->boolean( 'paid' )->default(false);
-            $table->integer( 'payment_id' )->nullable();
-            $table->datetime( 'date' );
+        Schema::createIfMissing('nexopos_orders_instalments', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->float('amount', 18, 5)->default(0);
+            $table->integer('order_id')->nullable();
+            $table->boolean('paid')->default(false);
+            $table->integer('payment_id')->nullable();
+            $table->datetime('date');
         });
     }
 
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( 'nexopos_orders_instalments' );
+        Schema::dropIfExists('nexopos_orders_instalments');
     }
 };

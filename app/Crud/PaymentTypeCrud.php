@@ -111,7 +111,7 @@ class PaymentTypeCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter($this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2);
     }
 
     /**
@@ -123,15 +123,15 @@ class PaymentTypeCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title' => __( 'Payment Types List' ),
-            'list_description' => __( 'Display all payment types.' ),
-            'no_entry' => __( 'No payment types has been registered' ),
-            'create_new' => __( 'Add a new payment type' ),
-            'create_title' => __( 'Create a new payment type' ),
-            'create_description' => __( 'Register a new payment type and save it.' ),
-            'edit_title' => __( 'Edit payment type' ),
-            'edit_description' => __( 'Modify  Payment Type.' ),
-            'back_to_list' => __( 'Return to Payment Types' ),
+            'list_title' => __('Payment Types List'),
+            'list_description' => __('Display all payment types.'),
+            'no_entry' => __('No payment types has been registered'),
+            'create_new' => __('Add a new payment type'),
+            'create_title' => __('Create a new payment type'),
+            'create_description' => __('Register a new payment type and save it.'),
+            'edit_title' => __('Edit payment type'),
+            'edit_description' => __('Modify  Payment Type.'),
+            'back_to_list' => __('Return to Payment Types'),
         ];
     }
 
@@ -139,7 +139,7 @@ class PaymentTypeCrud extends CrudService
      * Check whether a feature is enabled
      *
      **/
-    public function isEnabled( $feature ): bool
+    public function isEnabled($feature): bool
     {
         return false; // by default
     }
@@ -150,44 +150,44 @@ class PaymentTypeCrud extends CrudService
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null )
+    public function getForm($entry = null)
     {
         return [
             'main' => [
-                'label' => __( 'Label' ),
+                'label' => __('Label'),
                 'name' => 'label',
                 'value' => $entry->label ?? '',
                 'validation' => 'required',
-                'description' => __( 'Provide a label to the resource.' ),
+                'description' => __('Provide a label to the resource.'),
             ],
             'tabs' => [
                 'general' => [
-                    'label' => __( 'General' ),
+                    'label' => __('General'),
                     'fields' => [
                         [
                             'type' => 'switch',
-                            'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'options' => Helper::kvToJsOptions([ __('No'), __('Yes') ]),
                             'name' => 'active',
-                            'label' => __( 'Active' ),
+                            'label' => __('Active'),
                             'validation' => 'required',
                             'value' => $entry->active ?? '',
                         ], [
                             'type' => 'number',
                             'name' => 'priority',
-                            'label' => __( 'Priority' ),
+                            'label' => __('Priority'),
                             'value' => $entry->priority ?? '',
-                            'description' => __( 'Define the order for the payment. The lower the number is, the first it will display on the payment popup. Must start from "0".' ),
+                            'description' => __('Define the order for the payment. The lower the number is, the first it will display on the payment popup. Must start from "0".'),
                             'validation' => 'required',
                         ], [
                             'type' => 'text',
                             'name' => 'identifier',
-                            'label' => __( 'Identifier' ),
+                            'label' => __('Identifier'),
                             'validation' => 'required',
                             'value' => $entry->identifier ?? '',
                         ], [
                             'type' => 'textarea',
                             'name' => 'description',
-                            'label' => __( 'Description' ),
+                            'label' => __('Description'),
                             'value' => $entry->description ?? '',
                         ],
                     ],
@@ -202,14 +202,14 @@ class PaymentTypeCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPostInputs( $inputs )
+    public function filterPostInputs($inputs)
     {
-        $payment = PaymentType::where( 'identifier', $inputs[ 'identifier' ] )->first();
+        $payment = PaymentType::where('identifier', $inputs[ 'identifier' ])->first();
 
         $inputs[ 'priority' ] = (int) $inputs[ 'priority' ] < 0 ? 0 : $inputs[ 'priority' ];
 
-        if ( $payment instanceof PaymentType ) {
-            throw new NotAllowedException( __( 'A payment type having the same identifier already exists.' ) );
+        if ($payment instanceof PaymentType) {
+            throw new NotAllowedException(__('A payment type having the same identifier already exists.'));
         }
 
         return $inputs;
@@ -221,7 +221,7 @@ class PaymentTypeCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, PaymentType $entry )
+    public function filterPutInputs($inputs, PaymentType $entry)
     {
         $inputs[ 'priority' ] = (int) $inputs[ 'priority' ] < 0 ? 0 : $inputs[ 'priority' ];
 
@@ -229,7 +229,7 @@ class PaymentTypeCrud extends CrudService
          * the identifier should not
          * be edited for readonly payment type
          */
-        if ( $entry->readonly ) {
+        if ($entry->readonly) {
             $inputs[ 'identifier' ] = $entry->identifier;
         }
 
@@ -242,16 +242,16 @@ class PaymentTypeCrud extends CrudService
      * @param  Request $request
      * @return  void
      */
-    public function beforePost( $request )
+    public function beforePost($request)
     {
-        if ( $this->permissions[ 'create' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'create' ] );
+        if ($this->permissions[ 'create' ] !== false) {
+            ns()->restrict($this->permissions[ 'create' ]);
         } else {
             throw new NotAllowedException;
         }
 
-        Cache::forget( 'nexopos.pos.payments' );
-        Cache::forget( 'nexopos.pos.payments-key' );
+        Cache::forget('nexopos.pos.payments');
+        Cache::forget('nexopos.pos.payments-key');
 
         return $request;
     }
@@ -262,7 +262,7 @@ class PaymentTypeCrud extends CrudService
      * @param  Request $request
      * @return  void
      */
-    public function afterPost( $request, PaymentType $entry )
+    public function afterPost($request, PaymentType $entry)
     {
         return $request;
     }
@@ -273,9 +273,9 @@ class PaymentTypeCrud extends CrudService
      * @param  string
      * @return  mixed
      */
-    public function get( $param )
+    public function get($param)
     {
-        switch ( $param ) {
+        switch ($param) {
             case 'model': return $this->model;
                 break;
         }
@@ -288,16 +288,16 @@ class PaymentTypeCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function beforePut( $request, $entry )
+    public function beforePut($request, $entry)
     {
-        if ( $this->permissions[ 'update' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'update' ] );
+        if ($this->permissions[ 'update' ] !== false) {
+            ns()->restrict($this->permissions[ 'update' ]);
         } else {
             throw new NotAllowedException;
         }
 
-        Cache::forget( 'nexopos.pos.payments' );
-        Cache::forget( 'nexopos.pos.payments-key' );
+        Cache::forget('nexopos.pos.payments');
+        Cache::forget('nexopos.pos.payments-key');
 
         return $request;
     }
@@ -309,7 +309,7 @@ class PaymentTypeCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $request, $entry )
+    public function afterPut($request, $entry)
     {
         return $request;
     }
@@ -319,9 +319,9 @@ class PaymentTypeCrud extends CrudService
      *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model )
+    public function beforeDelete($namespace, $id, $model)
     {
-        if ( $namespace == 'ns.payments-types' ) {
+        if ($namespace == 'ns.payments-types') {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -331,18 +331,18 @@ class PaymentTypeCrud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
              **/
-            if ( $this->permissions[ 'delete' ] !== false ) {
-                ns()->restrict( $this->permissions[ 'delete' ] );
+            if ($this->permissions[ 'delete' ] !== false) {
+                ns()->restrict($this->permissions[ 'delete' ]);
             } else {
                 throw new NotAllowedException;
             }
 
-            if ( $model->readonly ) {
-                throw new NotAllowedException( __( 'Unable to delete a read-only payments type.' ) );
+            if ($model->readonly) {
+                throw new NotAllowedException(__('Unable to delete a read-only payments type.'));
             }
 
-            Cache::forget( 'nexopos.pos.payments' );
-            Cache::forget( 'nexopos.pos.payments-key' );
+            Cache::forget('nexopos.pos.payments');
+            Cache::forget('nexopos.pos.payments-key');
         }
     }
 
@@ -353,37 +353,37 @@ class PaymentTypeCrud extends CrudService
     {
         return [
             'identifier' => [
-                'label' => __( 'Identifier' ),
+                'label' => __('Identifier'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'label' => [
-                'label' => __( 'Label' ),
+                'label' => __('Label'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'active' => [
-                'label' => __( 'Active' ),
+                'label' => __('Active'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'priority' => [
-                'label' => __( 'Priority' ),
+                'label' => __('Priority'),
                 '$direction' => '',
                 '$sort' => true,
             ],
             'created_at' => [
-                'label' => __( 'Created On' ),
+                'label' => __('Created On'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'readonly' => [
-                'label' => __( 'Readonly' ),
+                'label' => __('Readonly'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'user_username' => [
-                'label' => __( 'Author' ),
+                'label' => __('Author'),
                 '$direction' => '',
                 '$sort' => false,
             ],
@@ -393,26 +393,26 @@ class PaymentTypeCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions(CrudEntry $entry, $namespace)
     {
-        $entry->readonly = $entry->readonly ? __( 'Yes' ) : __( 'No' );
-        $entry->active = $entry->active ? __( 'Yes' ) : __( 'No' );
+        $entry->readonly = $entry->readonly ? __('Yes') : __('No');
+        $entry->active = $entry->active ? __('Yes') : __('No');
 
         // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
+        $entry->addAction('edit', [
+            'label' => __('Edit'),
             'namespace' => 'edit',
             'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+            'url' => ns()->url('/dashboard/' . $this->slug . '/edit/' . $entry->id),
         ]);
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
+        $entry->addAction('delete', [
+            'label' => __('Delete'),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.payments-types/' . $entry->id ),
+            'url' => ns()->url('/api/crud/ns.payments-types/' . $entry->id),
             'confirm' => [
-                'message' => __( 'Would you like to delete this ?' ),
+                'message' => __('Would you like to delete this ?'),
             ],
         ]);
 
@@ -425,18 +425,18 @@ class PaymentTypeCrud extends CrudService
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request )
+    public function bulkAction(Request $request)
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        if ( $request->input( 'action' ) == 'delete_selected' ) {
+        if ($request->input('action') == 'delete_selected') {
             /**
              * Will control if the user has the permissoin to do that.
              */
-            if ( $this->permissions[ 'delete' ] !== false ) {
-                ns()->restrict( $this->permissions[ 'delete' ] );
+            if ($this->permissions[ 'delete' ] !== false) {
+                ns()->restrict($this->permissions[ 'delete' ]);
             } else {
                 throw new NotAllowedException;
             }
@@ -446,17 +446,17 @@ class PaymentTypeCrud extends CrudService
                 'failed' => 0,
             ];
 
-            foreach ( $request->input( 'entries' ) as $id ) {
-                $entity = $this->model::find( $id );
+            foreach ($request->input('entries') as $id) {
+                $entity = $this->model::find($id);
 
-                if ( $entity->readonly ) {
+                if ($entity->readonly) {
                     $status[ 'failed' ]++;
                     break;
                 }
 
-                if ( $entity instanceof PaymentType ) {
-                    Cache::forget( 'nexopos.pos.payments' );
-                    Cache::forget( 'nexopos.pos.payments-key' );
+                if ($entity instanceof PaymentType) {
+                    Cache::forget('nexopos.pos.payments');
+                    Cache::forget('nexopos.pos.payments-key');
 
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -468,7 +468,7 @@ class PaymentTypeCrud extends CrudService
             return $status;
         }
 
-        return Hook::filter( $this->namespace . '-catch-action', false, $request );
+        return Hook::filter($this->namespace . '-catch-action', false, $request);
     }
 
     /**
@@ -478,12 +478,12 @@ class PaymentTypeCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
-            'list' => ns()->url( 'dashboard/' . 'orders/payments-types' ),
-            'create' => ns()->url( 'dashboard/' . 'orders/payments-types/create' ),
-            'edit' => ns()->url( 'dashboard/' . 'orders/payments-types/edit/' ),
-            'post' => ns()->url( 'api/crud/' . 'ns.payments-types' ),
-            'put' => ns()->url( 'api/crud/' . 'ns.payments-types/{id}' . '' ),
+        return [
+            'list' => ns()->url('dashboard/' . 'orders/payments-types'),
+            'create' => ns()->url('dashboard/' . 'orders/payments-types/create'),
+            'edit' => ns()->url('dashboard/' . 'orders/payments-types/edit/'),
+            'post' => ns()->url('api/crud/' . 'ns.payments-types'),
+            'put' => ns()->url('api/crud/' . 'ns.payments-types/{id}' . ''),
         ];
     }
 
@@ -494,11 +494,11 @@ class PaymentTypeCrud extends CrudService
      **/
     public function getBulkActions(): array
     {
-        return Hook::filter( $this->namespace . '-bulk', [
+        return Hook::filter($this->namespace . '-bulk', [
             [
-                'label' => __( 'Delete Selected Groups' ),
+                'label' => __('Delete Selected Groups'),
                 'identifier' => 'delete_selected',
-                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                'url' => ns()->route('ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
                 ]),
             ],

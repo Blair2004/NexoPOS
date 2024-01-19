@@ -51,6 +51,9 @@ const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = defineAsync
 declare const systemOptions;
 declare const systemUrls;
 
+declare const systemOptions;
+declare const systemUrls;
+
 export class POS {
     private _cartButtons: BehaviorSubject<{ [key: string]: any }>;
     private _products: BehaviorSubject<OrderProduct[]>;
@@ -561,6 +564,8 @@ export class POS {
         } else if (type === 'exclusive') {
             return this.getPriceWithTax(value, rate, type) - value;
         }
+
+        return 0;
     }
 
     computeTaxes() {

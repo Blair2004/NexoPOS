@@ -14,7 +14,7 @@
         "beyondcode/laravel-websockets": "^1.11",
         "brianium/paratest": "^7.1",
         "brick/math": "^0.10.2",
-        "dekor/php-array-table": "^1.0",
+        "dekor/php-array-table": "^2.0",
         "doctrine/dbal": "^3.0",
         "fakerphp/faker": "^1.12",
         "gumlet/php-image-resize": "^2.0",

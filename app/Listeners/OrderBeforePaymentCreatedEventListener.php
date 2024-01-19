@@ -22,8 +22,8 @@ class OrderBeforePaymentCreatedEventListener
      *
      * @return void
      */
-    public function handle( OrderBeforePaymentCreatedEvent $event)
+    public function handle(OrderBeforePaymentCreatedEvent $event)
     {
-        CheckCustomerAccountJob::dispatchSync( $event->customer, $event->payment );
+        CheckCustomerAccountJob::dispatchSync($event->customer, $event->payment);
     }
 }

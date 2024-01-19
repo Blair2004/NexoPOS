@@ -56,7 +56,7 @@ class ResetCommand extends Command
      */
     public function handle()
     {
-        switch ( $this->option( 'mode' ) ) {
+        switch ($this->option('mode')) {
             case 'soft':
                 return $this->softReset();
                 break;
@@ -68,24 +68,24 @@ class ResetCommand extends Command
                 $this->initializeRole();
                 $this->demoService->run([
                     'mode' => 'grocery',
-                    'create_sales' => $this->option( 'with-sales' ) && $this->option( 'with-procurements' ) ? true : false,
-                    'create_procurements' => $this->option( 'with-procurements' ) ? true : false,
+                    'create_sales' => $this->option('with-sales') && $this->option('with-procurements') ? true : false,
+                    'create_procurements' => $this->option('with-procurements') ? true : false,
                 ]);
-                $this->info( __( 'The demo has been enabled.' ) );
+                $this->info(__('The demo has been enabled.'));
                 break;
             default:
-                $this->error( __( 'Unsupported reset mode.' ) );
+                $this->error(__('Unsupported reset mode.'));
                 break;
         }
     }
 
     private function initializeRole()
     {
-        if ( $this->option( 'user' ) === 'default' ) {
-            $user = Role::namespace( 'admin' )->users->first();
-            Auth::loginUsingId( $user->id );
+        if ($this->option('user') === 'default') {
+            $user = Role::namespace('admin')->users->first();
+            Auth::loginUsingId($user->id);
         } else {
-            Auth::loginUsingId( $this->option( 'user' ) );
+            Auth::loginUsingId($this->option('user'));
         }
     }
 
@@ -96,7 +96,7 @@ class ResetCommand extends Command
     {
         $result = $this->resetService->hardReset();
 
-        $this->info( $result[ 'message' ] );
+        $this->info($result[ 'message' ]);
     }
 
     /**
@@ -106,6 +106,6 @@ class ResetCommand extends Command
     {
         $result = $this->resetService->softReset();
 
-        $this->info( $result[ 'message' ] );
+        $this->info($result[ 'message' ]);
     }
 }

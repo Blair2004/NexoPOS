@@ -10,8 +10,8 @@ class SaleCardWidget extends WidgetService
 
     public function __construct()
     {
-        $this->name = __( 'Sale Card Widget' );
-        $this->description = __( 'Will display current and overall sales.' );
+        $this->name = __('Sale Card Widget');
+        $this->description = __('Will display current and overall sales.');
         $this->permission = 'nexopos.see.sale-card-widget';
     }
 }

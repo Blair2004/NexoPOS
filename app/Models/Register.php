@@ -30,33 +30,33 @@ class Register extends NsModel
 
     const STATUS_INUSE = 'in-use';
 
-    public function scopeClosed( $query )
+    public function scopeClosed($query)
     {
-        return $query->where( 'status', self::STATUS_CLOSED );
+        return $query->where('status', self::STATUS_CLOSED);
     }
 
-    public function scopeOpened( $query )
+    public function scopeOpened($query)
     {
-        return $query->where( 'status', self::STATUS_OPENED );
+        return $query->where('status', self::STATUS_OPENED);
     }
 
-    public function scopeInUse( $query )
+    public function scopeInUse($query)
     {
-        return $query->where( 'status', self::STATUS_INUSE );
+        return $query->where('status', self::STATUS_INUSE);
     }
 
-    public function scopeDisabled( $query )
+    public function scopeDisabled($query)
     {
-        return $query->where( 'status', self::STATUS_DISABLED );
+        return $query->where('status', self::STATUS_DISABLED);
     }
 
-    public function scopeUsedBy( $query, $user )
+    public function scopeUsedBy($query, $user)
     {
-        return $query->where( 'used_by', $user );
+        return $query->where('used_by', $user);
     }
 
     public function history()
     {
-        return $this->hasMany( RegisterHistory::class, 'register_id', 'id' );
+        return $this->hasMany(RegisterHistory::class, 'register_id', 'id');
     }
 }

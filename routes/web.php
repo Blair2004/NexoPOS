@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-$domain = pathinfo( env( 'APP_URL' ) );
+$domain = pathinfo(env('APP_URL'));
 
 /**
  * If something has to happen
@@ -29,18 +29,18 @@ BeforeStartWebRouteEvent::dispatch();
  * on the system. In order to enable it, the user
  * will have to follow these instructions https://my.nexopos.com/en/documentation/wildcards
  */
-if ( env( 'NS_WILDCARD_ENABLED' ) ) {
+if (env('NS_WILDCARD_ENABLED')) {
     /**
      * The defined route should only be applicable
      * to the main domain.
      */
-    $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
+    $domainString = ($domain[ 'filename' ] ?: 'localhost') . (isset($domain[ 'extension' ]) ? '.' . $domain[ 'extension' ] : '');
 
-    Route::domain( $domainString )->group( function() {
-        include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'web-base.php';
+    Route::domain($domainString)->group(function () {
+        include dirname(__FILE__) . DIRECTORY_SEPARATOR . 'web-base.php';
     });
 } else {
-    include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'web-base.php';
+    include dirname(__FILE__) . DIRECTORY_SEPARATOR . 'web-base.php';
 }
 
 /**
@@ -48,11 +48,11 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
  * vie server. For some reason we're unable to
  * configure that correctly on vite.config.js
  */
-Route::get( '__vite_ping', function() {
-    $filePath = base_path( 'public/hot' );
+Route::get('__vite_ping', function () {
+    $filePath = base_path('public/hot');
 
-    if ( file_exists( $filePath ) ) {
-        return redirect( file_get_contents( $filePath ) . '/__vite_ping' );
+    if (file_exists($filePath)) {
+        return redirect(file_get_contents($filePath) . '/__vite_ping');
     }
 });
 
@@ -60,4 +60,4 @@ Route::get( '__vite_ping', function() {
  * for local Vue 3 components development
  * those routes are registered.
  */
-Route::get( '__dev__', [ DevController::class, 'index' ]);
+Route::get('__dev__', [ DevController::class, 'index' ]);

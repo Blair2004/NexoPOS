@@ -18,7 +18,7 @@ class OrderProductAfterSavedEvent
      *
      * @return void
      */
-    public function __construct( public OrderProduct $product, public Order $order, public array $postData )
+    public function __construct(public OrderProduct $product, public Order $order, public array $postData)
     {
         // ...
     }

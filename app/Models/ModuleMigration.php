@@ -16,8 +16,8 @@ class ModuleMigration extends NsModel
 
     public $timestamps = false;
 
-    public function scopeNamespace( $query, $namespace )
+    public function scopeNamespace($query, $namespace)
     {
-        return $query->where( 'namespace', $namespace );
+        return $query->where('namespace', $namespace);
     }
 }

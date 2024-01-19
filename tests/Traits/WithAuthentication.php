@@ -7,9 +7,9 @@ use Laravel\Sanctum\Sanctum;
 
 trait WithAuthentication
 {
-    protected function attemptAuthenticate( $user = null, $role = 'admin' )
+    protected function attemptAuthenticate($user = null, $role = 'admin')
     {
-        $user = $user === null ? $this->attemptGetAnyUserFromRole( $role ) : $user;
+        $user = $user === null ? $this->attemptGetAnyUserFromRole($role) : $user;
 
         Sanctum::actingAs(
             $user,
@@ -17,8 +17,8 @@ trait WithAuthentication
         );
     }
 
-    protected function attemptGetAnyUserFromRole( $name = 'admin' )
+    protected function attemptGetAnyUserFromRole($name = 'admin')
     {
-        return Role::namespace( $name )->users->random();
+        return Role::namespace($name)->users->random();
     }
 }

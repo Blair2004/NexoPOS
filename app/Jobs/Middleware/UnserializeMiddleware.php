@@ -6,10 +6,10 @@ use App\Events\JobAfterUnserializeEvent;
 
 class UnserializeMiddleware
 {
-    public function handle( $job, $next )
+    public function handle($job, $next)
     {
-        JobAfterUnserializeEvent::dispatch( $job );
+        JobAfterUnserializeEvent::dispatch($job);
 
-        return $next( $job );
+        return $next($job);
     }
 }

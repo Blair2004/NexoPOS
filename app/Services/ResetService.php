@@ -14,7 +14,7 @@ class ResetService
 {
     public function softReset()
     {
-        $tables = Hook::filter( 'ns-wipeable-tables', [
+        $tables = Hook::filter('ns-wipeable-tables', [
             'nexopos_coupons',
             'nexopos_coupons_products',
             'nexopos_coupons_categories',
@@ -77,9 +77,9 @@ class ResetService
             'nexopos_units_groups',
         ]);
 
-        foreach ( $tables as $table ) {
-            if ( Hook::filter( 'ns-reset-table', $table ) !== false && Schema::hasTable( Hook::filter( 'ns-reset-table', $table ) ) ) {
-                DB::table( Hook::filter( 'ns-table-name', $table ) )->truncate();
+        foreach ($tables as $table) {
+            if (Hook::filter('ns-reset-table', $table) !== false && Schema::hasTable(Hook::filter('ns-reset-table', $table))) {
+                DB::table(Hook::filter('ns-table-name', $table))->truncate();
             }
         }
 
@@ -87,11 +87,11 @@ class ResetService
          * Customers stills needs to be cleared
          * so we'll remove them manually.
          */
-        Customer::get()->each( fn( $customer ) => app()->make( CustomerService::class )->delete( $customer ) );
+        Customer::get()->each(fn($customer) => app()->make(CustomerService::class)->delete($customer));
 
         return [
             'status' => 'success',
-            'message' => __( 'The table has been truncated.' ),
+            'message' => __('The table has been truncated.'),
         ];
     }
 
@@ -107,44 +107,44 @@ class ResetService
          * this will only apply clearing all tables
          * when we're not using sqlite.
          */
-        if ( env( 'DB_CONNECTION' ) !== 'sqlite' ) {
+        if (env('DB_CONNECTION') !== 'sqlite') {
             $tables = DB::select('SHOW TABLES');
 
-            foreach ( $tables as $table ) {
-                $table_name = array_values( (array) $table )[0];
+            foreach ($tables as $table) {
+                $table_name = array_values((array) $table)[0];
                 DB::statement('SET FOREIGN_KEY_CHECKS = 0');
                 DB::statement("DROP TABLE `$table_name`");
                 DB::statement('SET FOREIGN_KEY_CHECKS = 1');
             }
         } else {
-            file_put_contents( database_path( 'database.sqlite' ), '' );
+            file_put_contents(database_path('database.sqlite'), '');
         }
 
-        Artisan::call( 'key:generate', [ '--force' => true ] );
-        Artisan::call( 'ns:cookie generate' );
+        Artisan::call('key:generate', [ '--force' => true ]);
+        Artisan::call('ns:cookie generate');
 
-        exec( 'rm -rf public/storage' );
+        exec('rm -rf public/storage');
 
         AfterHardResetEvent::dispatch();
 
         return [
             'status' => 'success',
-            'message' => __( 'The database has been wiped out.' ),
+            'message' => __('The database has been wiped out.'),
         ];
     }
 
-    public function handleCustom( $data )
+    public function handleCustom($data)
     {
         /**
          * @var string $mode
          * @var bool $create_sales
          * @var bool $create_procurements
          */
-        extract( $data );
+        extract($data);
 
-        return Hook::filter( 'ns-handle-custom-reset', [
+        return Hook::filter('ns-handle-custom-reset', [
             'status' => 'failed',
-            'message' => __( 'No custom handler for the reset "' . $mode . '"' ),
-        ], $data );
+            'message' => __('No custom handler for the reset "' . $mode . '"'),
+        ], $data);
     }
 }

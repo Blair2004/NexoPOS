@@ -107,7 +107,7 @@ class TaxCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter($this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2);
     }
 
     /**
@@ -119,15 +119,15 @@ class TaxCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title' => __( 'Taxes List' ),
-            'list_description' => __( 'Display all taxes.' ),
-            'no_entry' => __( 'No taxes has been registered' ),
-            'create_new' => __( 'Add a new tax' ),
-            'create_title' => __( 'Create a new tax' ),
-            'create_description' => __( 'Register a new tax and save it.' ),
-            'edit_title' => __( 'Edit tax' ),
-            'edit_description' => __( 'Modify  Tax.' ),
-            'back_to_list' => __( 'Return to Taxes' ),
+            'list_title' => __('Taxes List'),
+            'list_description' => __('Display all taxes.'),
+            'no_entry' => __('No taxes has been registered'),
+            'create_new' => __('Add a new tax'),
+            'create_title' => __('Create a new tax'),
+            'create_description' => __('Register a new tax and save it.'),
+            'edit_title' => __('Edit tax'),
+            'edit_description' => __('Modify  Tax.'),
+            'back_to_list' => __('Return to Taxes'),
         ];
     }
 
@@ -135,7 +135,7 @@ class TaxCrud extends CrudService
      * Check whether a feature is enabled
      *
      **/
-    public function isEnabled( $feature ): bool
+    public function isEnabled($feature): bool
     {
         return false; // by default
     }
@@ -146,40 +146,40 @@ class TaxCrud extends CrudService
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null )
+    public function getForm($entry = null)
     {
         return [
             'main' => [
-                'label' => __( 'Name' ),
+                'label' => __('Name'),
                 'name' => 'name',
                 'value' => $entry->name ?? '',
-                'description' => __( 'Provide a name to the tax.' ),
+                'description' => __('Provide a name to the tax.'),
                 'validation' => 'required',
             ],
             'tabs' => [
                 'general' => [
-                    'label' => __( 'General' ),
+                    'label' => __('General'),
                     'fields' => [
                         [
                             'type' => 'select',
-                            'options' => Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
+                            'options' => Helper::toJsOptions(TaxGroup::get(), [ 'id', 'name' ]),
                             'name' => 'tax_group_id',
-                            'label' => __( 'Parent' ),
-                            'description' => __( 'Assign the tax to a tax group.' ),
+                            'label' => __('Parent'),
+                            'description' => __('Assign the tax to a tax group.'),
                             'value' => $entry->tax_group_id ?? '',
                             'validation' => 'required',
                         ], [
                             'type' => 'text',
                             'name' => 'rate',
-                            'label' => __( 'Rate' ),
-                            'description' => __( 'Define the rate value for the tax.' ),
+                            'label' => __('Rate'),
+                            'description' => __('Define the rate value for the tax.'),
                             'value' => $entry->rate ?? '',
                             'validation' => 'required',
                         ], [
                             'type' => 'textarea',
                             'name' => 'description',
-                            'description' => __( 'Provide a description to the tax.' ),
-                            'label' => __( 'Description' ),
+                            'description' => __('Provide a description to the tax.'),
+                            'label' => __('Description'),
                             'value' => $entry->description ?? '',
                         ],
                     ],
@@ -194,7 +194,7 @@ class TaxCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPostInputs( $inputs )
+    public function filterPostInputs($inputs)
     {
         return $inputs;
     }
@@ -205,7 +205,7 @@ class TaxCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, Tax $entry )
+    public function filterPutInputs($inputs, Tax $entry)
     {
         return $inputs;
     }
@@ -216,10 +216,10 @@ class TaxCrud extends CrudService
      * @param  Request $request
      * @return  void
      */
-    public function beforePost( $request )
+    public function beforePost($request)
     {
-        if ( $this->permissions[ 'create' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'create' ] );
+        if ($this->permissions[ 'create' ] !== false) {
+            ns()->restrict($this->permissions[ 'create' ]);
         } else {
             throw new NotAllowedException;
         }
@@ -233,7 +233,7 @@ class TaxCrud extends CrudService
      * @param  Request $request
      * @return  void
      */
-    public function afterPost( $request, Tax $entry )
+    public function afterPost($request, Tax $entry)
     {
         return $request;
     }
@@ -244,9 +244,9 @@ class TaxCrud extends CrudService
      * @param  string
      * @return  mixed
      */
-    public function get( $param )
+    public function get($param)
     {
-        switch ( $param ) {
+        switch ($param) {
             case 'model': return $this->model;
                 break;
         }
@@ -259,10 +259,10 @@ class TaxCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function beforePut( $request, $entry )
+    public function beforePut($request, $entry)
     {
-        if ( $this->permissions[ 'update' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'update' ] );
+        if ($this->permissions[ 'update' ] !== false) {
+            ns()->restrict($this->permissions[ 'update' ]);
         } else {
             throw new NotAllowedException;
         }
@@ -277,7 +277,7 @@ class TaxCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $request, $entry )
+    public function afterPut($request, $entry)
     {
         return $request;
     }
@@ -287,9 +287,9 @@ class TaxCrud extends CrudService
      *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model )
+    public function beforeDelete($namespace, $id, $model)
     {
-        if ( $namespace == 'ns.taxes' ) {
+        if ($namespace == 'ns.taxes') {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -299,8 +299,8 @@ class TaxCrud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
              **/
-            if ( $this->permissions[ 'delete' ] !== false ) {
-                ns()->restrict( $this->permissions[ 'delete' ] );
+            if ($this->permissions[ 'delete' ] !== false) {
+                ns()->restrict($this->permissions[ 'delete' ]);
             } else {
                 throw new NotAllowedException;
             }
@@ -314,27 +314,27 @@ class TaxCrud extends CrudService
     {
         return [
             'name' => [
-                'label' => __( 'Name' ),
+                'label' => __('Name'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'parent_name' => [
-                'label' => __( 'Parent' ),
+                'label' => __('Parent'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'rate' => [
-                'label' => __( 'Rate' ),
+                'label' => __('Rate'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'user_username' => [
-                'label' => __( 'Author' ),
+                'label' => __('Author'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'created_at' => [
-                'label' => __( 'Created At' ),
+                'label' => __('Created At'),
                 '$direction' => '',
                 '$sort' => false,
             ],
@@ -344,25 +344,25 @@ class TaxCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions(CrudEntry $entry, $namespace)
     {
-        $entry->rate = sprintf( '%s%%', $entry->rate );
+        $entry->rate = sprintf('%s%%', $entry->rate);
 
         // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
+        $entry->addAction('edit', [
+            'label' => __('Edit'),
             'namespace' => 'edit',
             'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . 'taxes' . '/edit/' . $entry->id ),
+            'url' => ns()->url('/dashboard/' . 'taxes' . '/edit/' . $entry->id),
         ]);
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
+        $entry->addAction('delete', [
+            'label' => __('Delete'),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.taxes/' . $entry->id ),
+            'url' => ns()->url('/api/crud/ns.taxes/' . $entry->id),
             'confirm' => [
-                'message' => __( 'Would you like to delete this ?' ),
+                'message' => __('Would you like to delete this ?'),
             ],
         ]);
 
@@ -375,18 +375,18 @@ class TaxCrud extends CrudService
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request )
+    public function bulkAction(Request $request)
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        if ( $request->input( 'action' ) == 'delete_selected' ) {
+        if ($request->input('action') == 'delete_selected') {
             /**
              * Will control if the user has the permissoin to do that.
              */
-            if ( $this->permissions[ 'delete' ] !== false ) {
-                ns()->restrict( $this->permissions[ 'delete' ] );
+            if ($this->permissions[ 'delete' ] !== false) {
+                ns()->restrict($this->permissions[ 'delete' ]);
             } else {
                 throw new NotAllowedException;
             }
@@ -396,9 +396,9 @@ class TaxCrud extends CrudService
                 'failed' => 0,
             ];
 
-            foreach ( $request->input( 'entries' ) as $id ) {
-                $entity = $this->model::find( $id );
-                if ( $entity instanceof Tax ) {
+            foreach ($request->input('entries') as $id) {
+                $entity = $this->model::find($id);
+                if ($entity instanceof Tax) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -409,7 +409,7 @@ class TaxCrud extends CrudService
             return $status;
         }
 
-        return Hook::filter( $this->namespace . '-catch-action', false, $request );
+        return Hook::filter($this->namespace . '-catch-action', false, $request);
     }
 
     /**
@@ -419,12 +419,12 @@ class TaxCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
-            'list' => ns()->url( 'dashboard/' . 'taxes' ),
-            'create' => ns()->url( 'dashboard/' . 'taxes/create' ),
-            'edit' => ns()->url( 'dashboard/' . 'taxes/edit/' ),
-            'post' => ns()->url( 'api/crud/' . 'ns.taxes' ),
-            'put' => ns()->url( 'api/crud/' . 'ns.taxes/{id}' . '' ),
+        return [
+            'list' => ns()->url('dashboard/' . 'taxes'),
+            'create' => ns()->url('dashboard/' . 'taxes/create'),
+            'edit' => ns()->url('dashboard/' . 'taxes/edit/'),
+            'post' => ns()->url('api/crud/' . 'ns.taxes'),
+            'put' => ns()->url('api/crud/' . 'ns.taxes/{id}' . ''),
         ];
     }
 
@@ -435,11 +435,11 @@ class TaxCrud extends CrudService
      **/
     public function getBulkActions(): array
     {
-        return Hook::filter( $this->namespace . '-bulk', [
+        return Hook::filter($this->namespace . '-bulk', [
             [
-                'label' => __( 'Delete Selected Groups' ),
+                'label' => __('Delete Selected Groups'),
                 'identifier' => 'delete_selected',
-                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                'url' => ns()->route('ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
                 ]),
             ],

@@ -29,6 +29,6 @@ class CustomerAccountHistory extends NsModel
 
     public function customer()
     {
-        return $this->hasOne( Customer::class, 'id', 'customer_id' );
+        return $this->hasOne(Customer::class, 'id', 'customer_id');
     }
 }

@@ -7,8 +7,8 @@ use App\Services\UserOptions;
 
 class UserObserver
 {
-    public function retrieved( User $user )
+    public function retrieved(User $user)
     {
-        $user->options = new UserOptions( $user->id );
+        $user->options = new UserOptions($user->id);
     }
 }

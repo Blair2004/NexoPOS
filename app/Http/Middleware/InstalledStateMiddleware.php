@@ -16,12 +16,12 @@ class InstalledStateMiddleware
      */
     public function handle($request, Closure $next)
     {
-        InstalledStateBeforeCheckedEvent::dispatch( $next, $request );
+        InstalledStateBeforeCheckedEvent::dispatch($next, $request);
 
-        if ( Helper::installed() ) {
+        if (Helper::installed()) {
             return $next($request);
         }
 
-        return redirect()->route( 'ns.do-setup' );
+        return redirect()->route('ns.do-setup');
     }
 }

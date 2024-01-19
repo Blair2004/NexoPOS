@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::createIfMissing( 'nexopos_payments_types', function (Blueprint $table) {
+        Schema::createIfMissing('nexopos_payments_types', function (Blueprint $table) {
             $table->id();
-            $table->string( 'label' );
-            $table->string( 'identifier' );
-            $table->integer( 'priority' )->default(0);
-            $table->text( 'description' )->nullable();
-            $table->integer( 'author' );
-            $table->boolean( 'active' )->default( true );
-            $table->boolean( 'readonly' )->default( false );
+            $table->string('label');
+            $table->string('identifier');
+            $table->integer('priority')->default(0);
+            $table->text('description')->nullable();
+            $table->integer('author');
+            $table->boolean('active')->default(true);
+            $table->boolean('readonly')->default(false);
             $table->timestamps();
         });
     }

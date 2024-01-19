@@ -29,7 +29,7 @@ class CrudPostRequest extends BaseCrudRequest
         /**
          * Let's initialize the CRUD resource
          */
-        $resource = $service->getCrudInstance( $this->route( 'namespace' ) );
+        $resource = $service->getCrudInstance($this->route('namespace'));
 
         /**
          * Now let's extract the validation rules
@@ -41,15 +41,15 @@ class CrudPostRequest extends BaseCrudRequest
          * As rules might contains complex array (with Rule class),
          * we don't want that array to be transformed using the dot key form.
          */
-        $isolatedRules = $resource->isolateArrayRules( $arrayRules );
+        $isolatedRules = $resource->isolateArrayRules($arrayRules);
 
         /**
          * Let's properly flat everything.
          */
-        $flatRules = collect( $isolatedRules )->mapWithKeys( function( $rule ) {
+        $flatRules = collect($isolatedRules)->mapWithKeys(function ($rule) {
             return [ $rule[0] => $rule[1] ];
         })->toArray();
 
-        return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), $flatRules );
+        return Hook::filter('ns.validation.' . $this->route('namespace'), $flatRules);
     }
 }

@@ -142,7 +142,7 @@ class CustomerCouponHistoryCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'addActions' ], 10, 2 );
+        Hook::addFilter($this->namespace . '-crud-actions', [ $this, 'addActions' ], 10, 2);
     }
 
     /**
@@ -151,22 +151,22 @@ class CustomerCouponHistoryCrud extends CrudService
     public function getLabels(): array
     {
         return [
-            'list_title' => __( 'Customer Coupon Histories List' ),
-            'list_description' => __( 'Display all customer coupon histories.' ),
-            'no_entry' => __( 'No customer coupon histories has been registered' ),
-            'create_new' => __( 'Add a new customer coupon history' ),
-            'create_title' => __( 'Create a new customer coupon history' ),
-            'create_description' => __( 'Register a new customer coupon history and save it.' ),
-            'edit_title' => __( 'Edit customer coupon history' ),
-            'edit_description' => __( 'Modify  Customer Coupon History.' ),
-            'back_to_list' => __( 'Return to Customer Coupon Histories' ),
+            'list_title' => __('Customer Coupon Histories List'),
+            'list_description' => __('Display all customer coupon histories.'),
+            'no_entry' => __('No customer coupon histories has been registered'),
+            'create_new' => __('Add a new customer coupon history'),
+            'create_title' => __('Create a new customer coupon history'),
+            'create_description' => __('Register a new customer coupon history and save it.'),
+            'edit_title' => __('Edit customer coupon history'),
+            'edit_description' => __('Modify  Customer Coupon History.'),
+            'back_to_list' => __('Return to Customer Coupon Histories'),
         ];
     }
 
     /**
      * Defines the forms used to create and update entries.
      */
-    public function getForm( OrderCoupon $entry = null ): array
+    public function getForm(?OrderCoupon $entry = null): array
     {
         return [
             // ...
@@ -179,7 +179,7 @@ class CustomerCouponHistoryCrud extends CrudService
      * @param array of fields
      * @return array of fields
      */
-    public function filterPostInputs( $inputs ): array
+    public function filterPostInputs($inputs): array
     {
         return $inputs;
     }
@@ -190,7 +190,7 @@ class CustomerCouponHistoryCrud extends CrudService
      * @param array of fields
      * @return array of fields
      */
-    public function filterPutInputs( array $inputs, OrderCoupon $entry )
+    public function filterPutInputs(array $inputs, OrderCoupon $entry)
     {
         return $inputs;
     }
@@ -199,10 +199,10 @@ class CustomerCouponHistoryCrud extends CrudService
      * Trigger actions that are executed before the
      * crud entry is created.
      */
-    public function beforePost( array $request ): array
+    public function beforePost(array $request): array
     {
-        if ( $this->permissions[ 'create' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'create' ] );
+        if ($this->permissions[ 'create' ] !== false) {
+            ns()->restrict($this->permissions[ 'create' ]);
         } else {
             throw new NotAllowedException;
         }
@@ -214,7 +214,7 @@ class CustomerCouponHistoryCrud extends CrudService
      * Trigger actions that will be executed
      * after the entry has been created.
      */
-    public function afterPost( array $request, OrderCoupon $entry ): array
+    public function afterPost(array $request, OrderCoupon $entry): array
     {
         return $request;
     }
@@ -223,11 +223,11 @@ class CustomerCouponHistoryCrud extends CrudService
      * A shortcut and secure way to access
      * senstive value on a read only way.
      */
-    public function get( string $param ): mixed
+    public function get(string $param): mixed
     {
-        switch( $param ) {
+        switch ($param) {
             case 'model': return $this->model;
-            break;
+                break;
         }
     }
 
@@ -235,10 +235,10 @@ class CustomerCouponHistoryCrud extends CrudService
      * Trigger actions that are executed before
      * the crud entry is updated.
      */
-    public function beforePut( array $request, OrderCoupon $entry ): array
+    public function beforePut(array $request, OrderCoupon $entry): array
     {
-        if ( $this->permissions[ 'update' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'update' ] );
+        if ($this->permissions[ 'update' ] !== false) {
+            ns()->restrict($this->permissions[ 'update' ]);
         } else {
             throw new NotAllowedException;
         }
@@ -250,7 +250,7 @@ class CustomerCouponHistoryCrud extends CrudService
      * This trigger actions that are executed after
      * the crud entry is successfully updated.
      */
-    public function afterPut( array $request, OrderCoupon $entry ): array
+    public function afterPut(array $request, OrderCoupon $entry): array
     {
         return $request;
     }
@@ -259,9 +259,9 @@ class CustomerCouponHistoryCrud extends CrudService
      * This triggers actions that will be executed ebfore
      * the crud entry is deleted.
      */
-    public function beforeDelete( $namespace, $id, $model ): void
+    public function beforeDelete($namespace, $id, $model): void
     {
-        if ( $namespace == 'ns.customers-coupons-history' ) {
+        if ($namespace == 'ns.customers-coupons-history') {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -271,8 +271,8 @@ class CustomerCouponHistoryCrud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
              **/
-            if ( $this->permissions[ 'delete' ] !== false ) {
-                ns()->restrict( $this->permissions[ 'delete' ] );
+            if ($this->permissions[ 'delete' ] !== false) {
+                ns()->restrict($this->permissions[ 'delete' ]);
             } else {
                 throw new NotAllowedException;
             }
@@ -286,32 +286,32 @@ class CustomerCouponHistoryCrud extends CrudService
     {
         return [
             'name' => [
-                'label' => __( 'Name' ),
+                'label' => __('Name'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'value' => [
-                'label' => __( 'Value' ),
+                'label' => __('Value'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'order_code' => [
-                'label' => __( 'Order Code' ),
+                'label' => __('Order Code'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'coupon_name' => [
-                'label' => __( 'Coupon Name' ),
+                'label' => __('Coupon Name'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'user_username' => [
-                'label' => __( 'Author' ),
+                'label' => __('Author'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'created_at' => [
-                'label' => __( 'Created At' ),
+                'label' => __('Created At'),
                 '$direction' => '',
                 '$sort' => false,
             ],
@@ -321,26 +321,26 @@ class CustomerCouponHistoryCrud extends CrudService
     /**
      * Define row actions.
      */
-    public function addActions( CrudEntry $entry, $namespace ): CrudEntry
+    public function addActions(CrudEntry $entry, $namespace): CrudEntry
     {
-        $entry->value = (string) ns()->currency->define( $entry->value );
+        $entry->value = (string) ns()->currency->define($entry->value);
 
         /**
          * Declaring entry actions
          */
         $entry->action(
             identifier: 'edit',
-            label: __( 'Edit' ),
-            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+            label: __('Edit'),
+            url: ns()->url('/dashboard/' . $this->slug . '/edit/' . $entry->id)
         );
 
         $entry->action(
             identifier: 'delete',
-            label: __( 'Delete' ),
+            label: __('Delete'),
             type: 'DELETE',
-            url: ns()->url( '/api/crud/ns.customers-coupons-history/' . $entry->id ),
+            url: ns()->url('/api/crud/ns.customers-coupons-history/' . $entry->id),
             confirm: [
-                'message' => __( 'Would you like to delete this ?' ),
+                'message' => __('Would you like to delete this ?'),
             ]
         );
 
@@ -351,18 +351,18 @@ class CustomerCouponHistoryCrud extends CrudService
      * trigger actions that are executed
      * when a bulk actio is posted.
      */
-    public function bulkAction( Request $request ): array
+    public function bulkAction(Request $request): array
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        if ( $request->input( 'action' ) == 'delete_selected' ) {
+        if ($request->input('action') == 'delete_selected') {
             /**
              * Will control if the user has the permissoin to do that.
              */
-            if ( $this->permissions[ 'delete' ] !== false ) {
-                ns()->restrict( $this->permissions[ 'delete' ] );
+            if ($this->permissions[ 'delete' ] !== false) {
+                ns()->restrict($this->permissions[ 'delete' ]);
             } else {
                 throw new NotAllowedException;
             }
@@ -372,9 +372,9 @@ class CustomerCouponHistoryCrud extends CrudService
                 'failed' => 0,
             ];
 
-            foreach ( $request->input( 'entries' ) as $id ) {
-                $entity = $this->model::find( $id );
-                if ( $entity instanceof OrderCoupon ) {
+            foreach ($request->input('entries') as $id) {
+                $entity = $this->model::find($id);
+                if ($entity instanceof OrderCoupon) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -385,12 +385,12 @@ class CustomerCouponHistoryCrud extends CrudService
             return $status;
         }
 
-        return Hook::filter( $this->namespace . '-catch-action', false, $request );
+        return Hook::filter($this->namespace . '-catch-action', false, $request);
     }
 
     public function hook($query): void
     {
-        $query->where( 'customer_coupon_id', request()->query( 'customer_coupon_id' ) );
+        $query->where('customer_coupon_id', request()->query('customer_coupon_id'));
     }
 
     /**
@@ -398,12 +398,12 @@ class CustomerCouponHistoryCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
-            'list' => ns()->url( 'dashboard/' . '/' ),
-            'create' => ns()->url( 'dashboard/' . '//create' ),
-            'edit' => ns()->url( 'dashboard/' . '//edit/' ),
-            'post' => ns()->url( 'api/crud/' . 'ns.customers-coupons-history' ),
-            'put' => ns()->url( 'api/crud/' . 'ns.customers-coupons-history/{id}' . '' ),
+        return [
+            'list' => ns()->url('dashboard/' . '/'),
+            'create' => ns()->url('dashboard/' . '//create'),
+            'edit' => ns()->url('dashboard/' . '//edit/'),
+            'post' => ns()->url('api/crud/' . 'ns.customers-coupons-history'),
+            'put' => ns()->url('api/crud/' . 'ns.customers-coupons-history/{id}' . ''),
         ];
     }
 
@@ -412,11 +412,11 @@ class CustomerCouponHistoryCrud extends CrudService
      **/
     public function getBulkActions(): array
     {
-        return Hook::filter( $this->namespace . '-bulk', [
+        return Hook::filter($this->namespace . '-bulk', [
             [
-                'label' => __( 'Delete Selected Groups' ),
+                'label' => __('Delete Selected Groups'),
                 'identifier' => 'delete_selected',
-                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                'url' => ns()->route('ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
                 ]),
             ],

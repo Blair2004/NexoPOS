@@ -15,7 +15,7 @@ class ProductBeforeCreatedEvent
     /**
      * Create a new event instance.
      */
-    public function __construct( public Product $product )
+    public function __construct(public Product $product)
     {
         //
     }

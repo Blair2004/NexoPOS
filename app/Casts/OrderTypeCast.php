@@ -19,9 +19,9 @@ class OrderTypeCast implements CastsAttributes
         /**
          * @var OrdersService $orderService
          */
-        $orderService = app()->make( OrdersService::class );
+        $orderService = app()->make(OrdersService::class);
 
-        return $orderService->getTypeLabel( $value );
+        return $orderService->getTypeLabel($value);
     }
 
     /**

@@ -23,9 +23,9 @@ class DashboardDayAfterUpdatedEventListener
      * @param  object  $event
      * @return void
      */
-    public function handle( DashboardDayAfterUpdatedEvent $event)
+    public function handle(DashboardDayAfterUpdatedEvent $event)
     {
         ComputeDashboardMonthReportJob::dispatch()
-            ->delay( now()->addSeconds(10) );
+            ->delay(now()->addSeconds(10));
     }
 }

@@ -18,26 +18,26 @@ class TestStoreCrud extends TestCase
     public function testExample()
     {
         Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
+            Role::namespace('admin')->users->first(),
             ['*']
         );
 
         $store = Store::first();
-        ns()->store->setStore( $store );
+        ns()->store->setStore($store);
 
-        $files = Storage::disk( 'ns' )->allFiles( 'app/Crud' );
+        $files = Storage::disk('ns')->allFiles('app/Crud');
 
-        foreach ( $files as $file ) {
-            $path = pathinfo( $file );
+        foreach ($files as $file) {
+            $path = pathinfo($file);
             $class = 'App\Crud\\' . $path[ 'filename' ];
             $object = new $class;
             $columns = $object->getColumns();
             $entries = $object->getEntries();
             $form = $object->getForm();
 
-            $this->assertIsArray( $columns, 'Crud Columns' );
-            $this->assertIsArray( $form, 'Crud Form' );
-            $this->assertArrayHasKey( 'data', $entries, 'Crud Response' );
+            $this->assertIsArray($columns, 'Crud Columns');
+            $this->assertIsArray($form, 'Crud Form');
+            $this->assertArrayHasKey('data', $entries, 'Crud Response');
         }
     }
 }

@@ -8,9 +8,9 @@ trait WithUnitTest
 {
     protected function attemptCreateUnitGroup()
     {
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.units-groups', [
-                'name' => __( 'Liquids' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.units-groups', [
+                'name' => __('Liquids'),
             ]);
 
         $response->assertJson([
@@ -23,9 +23,9 @@ trait WithUnitTest
     protected function attemptCreateUnit()
     {
         $group = UnitGroup::get()->shuffle()->first();
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.units', [
-                'name' => __( 'Piece' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.units', [
+                'name' => __('Piece'),
                 'general' => [
                     'base_unit' => true,
                     'value' => 1,
@@ -38,9 +38,9 @@ trait WithUnitTest
             'status' => 'success',
         ]);
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.units', [
-                'name' => __( 'Dozen' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.units', [
+                'name' => __('Dozen'),
                 'general' => [
                     'base_unit' => false,
                     'value' => 12,
@@ -53,9 +53,9 @@ trait WithUnitTest
             'status' => 'success',
         ]);
 
-        $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.units', [
-                'name' => __( 'Thirty' ),
+        $response = $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/crud/ns.units', [
+                'name' => __('Thirty'),
                 'general' => [
                     'base_unit' => false,
                     'value' => 30,

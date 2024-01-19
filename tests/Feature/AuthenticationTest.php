@@ -66,8 +66,8 @@ class AuthenticationTest extends TestCase
         $user->activation_expiration = now()->addDay();
         $user->save();
 
-        $response = $this->get('/auth/activate/' . $user->id . '/' . $user->activation_token );
-        $response->assertRedirect( ns()->route( 'ns.login' ) );
+        $response = $this->get('/auth/activate/' . $user->id . '/' . $user->activation_token);
+        $response->assertRedirect(ns()->route('ns.login'));
 
         /**
          * Step 2: Check for invalid token
@@ -78,8 +78,8 @@ class AuthenticationTest extends TestCase
         $user->activation_expiration = now()->addDay();
         $user->save();
 
-        $response = $this->get('/auth/activate/' . $user->id . '/' . Str::random(10) );
-        $response->assertRedirect( ns()->route( 'ns.login' ) );
+        $response = $this->get('/auth/activate/' . $user->id . '/' . Str::random(10));
+        $response->assertRedirect(ns()->route('ns.login'));
 
         /**
          * Step 3: Check for expired token
@@ -90,8 +90,8 @@ class AuthenticationTest extends TestCase
         $user->activation_expiration = now()->subDays(5);
         $user->save();
 
-        $response = $this->get('/auth/activate/' . $user->id . '/' . $user->activation_token );
-        $response->assertRedirect( ns()->route( 'ns.login' ) );
+        $response = $this->get('/auth/activate/' . $user->id . '/' . $user->activation_token);
+        $response->assertRedirect(ns()->route('ns.login'));
 
         /**
          * Step 4: Check for active user
@@ -102,8 +102,8 @@ class AuthenticationTest extends TestCase
         $user->activation_expiration = now()->subDays(5);
         $user->save();
 
-        $response = $this->get('/auth/activate/' . $user->id . '/' . $user->activation_token );
-        $response->assertRedirect( ns()->route( 'ns.login' ) );
+        $response = $this->get('/auth/activate/' . $user->id . '/' . $user->activation_token);
+        $response->assertRedirect(ns()->route('ns.login'));
     }
 
     /**
@@ -136,28 +136,28 @@ class AuthenticationTest extends TestCase
 
         $path = '/new-password/' . $user->id . '/' . $user->activation_token;
 
-        $response = $this->get( $path );
-        $response->assertSee( 'The token has expired. Please request a new activation token.' );
+        $response = $this->get($path);
+        $response->assertSee('The token has expired. Please request a new activation token.');
         $response->assertStatus(200);
     }
 
     public function testSubmitRegistrationForm()
     {
         $password = $this->faker->password();
-        $registration_validated = ns()->option->get( 'ns_registration_validated', 'yes' );
+        $registration_validated = ns()->option->get('ns_registration_validated', 'yes');
 
         /**
          * Step 1: test registration with
          * valid informations
          */
-        ns()->option->set( 'ns_registration_enabled', 'yes' );
+        ns()->option->set('ns_registration_enabled', 'yes');
 
         $username = $this->faker->userName();
         $email = $this->faker->email();
 
         $response = $this
             ->withSession([])
-            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
+            ->withHeader('X-CSRF-TOKEN', csrf_token())
             ->post(
                 '/auth/sign-up', [
                     'username' => $username,
@@ -167,30 +167,30 @@ class AuthenticationTest extends TestCase
                 ]
             );
 
-        $response->assertRedirect( route( 'ns.login', [
+        $response->assertRedirect(route('ns.login', [
             'status' => 'success',
             'message' => $registration_validated === 'no' ?
-                __( 'Your Account has been successfully created.' ) :
-                __( 'Your Account has been created but requires email validation.' ),
-        ]) );
+                __('Your Account has been successfully created.') :
+                __('Your Account has been created but requires email validation.'),
+        ]));
 
         /**
          * Step 1: we'll verify if the user
          * attribute are created after his registration.
          */
-        $user = User::where( 'email', $email )->first();
+        $user = User::where('email', $email)->first();
 
-        $this->assertTrue( $user->attribute()->count() > 0, 'The created user doesn\'t have any attribute.' );
+        $this->assertTrue($user->attribute()->count() > 0, 'The created user doesn\'t have any attribute.');
 
         /**
          * Step 2: test with invalid password and email
          * valid informations
          */
-        ns()->option->set( 'ns_registration_enabled', 'yes' );
+        ns()->option->set('ns_registration_enabled', 'yes');
 
         $response = $this
             ->withSession([])
-            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
+            ->withHeader('X-CSRF-TOKEN', csrf_token())
             ->post(
                 '/auth/sign-up', [
                     'username' => $this->faker->userName(),
@@ -200,7 +200,7 @@ class AuthenticationTest extends TestCase
                 ]
             );
 
-        $response->assertRedirect( ns()->route( 'ns.register' ) );
+        $response->assertRedirect(ns()->route('ns.register'));
         $response->assertSessionHasErrors([
             'email' => 'The email field must be a valid email address.',
         ]);
@@ -208,11 +208,11 @@ class AuthenticationTest extends TestCase
         /**
          * Step 3: test with invalid password
          */
-        ns()->option->set( 'ns_registration_enabled', 'yes' );
+        ns()->option->set('ns_registration_enabled', 'yes');
 
         $response = $this
             ->withSession([])
-            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
+            ->withHeader('X-CSRF-TOKEN', csrf_token())
             ->post(
                 '/auth/sign-up', [
                     'username' => $this->faker->userName(),
@@ -222,9 +222,9 @@ class AuthenticationTest extends TestCase
                 ]
             );
 
-        $response->assertRedirect( ns()->route( 'ns.register' ) );
+        $response->assertRedirect(ns()->route('ns.register'));
         $response->assertSessionHasErrors([
-            'password_confirm'  =>  'The password confirm field must match password.'
+            'password_confirm' => 'The password confirm field must match password.',
         ]);
     }
 
@@ -234,38 +234,38 @@ class AuthenticationTest extends TestCase
          * Step 1: with recovery enabled
          * we'll launch recovery process
          */
-        ns()->option->set( 'ns_recovery_enabled', 'yes' );
+        ns()->option->set('ns_recovery_enabled', 'yes');
 
         $user = User::first();
 
         $response = $this
             ->withSession([])
-            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
-            ->post( '/auth/password-lost', [
+            ->withHeader('X-CSRF-TOKEN', csrf_token())
+            ->post('/auth/password-lost', [
                 'email' => $user->email,
             ]);
 
-        $response->assertJsonPath( 'data.redirectTo', route( 'ns.intermediate', [
+        $response->assertJsonPath('data.redirectTo', route('ns.intermediate', [
             'route' => 'ns.login',
             'from' => 'ns.password-lost',
-        ]) );
+        ]));
 
         /**
          * Step 2: with recovery disabled
          * we'll launch recovery process
          */
-        ns()->option->set( 'ns_recovery_enabled', 'no' );
+        ns()->option->set('ns_recovery_enabled', 'no');
 
         $user = User::first();
 
         $response = $this
             ->withSession([])
-            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
-            ->post( '/auth/password-lost', [
+            ->withHeader('X-CSRF-TOKEN', csrf_token())
+            ->post('/auth/password-lost', [
                 'email' => $user->email,
             ]);
 
-        $response->assertSee( 'The recovery has been explicitly disabled' );
+        $response->assertSee('The recovery has been explicitly disabled');
     }
 
     public function testSubmitLoginForm()
@@ -279,14 +279,14 @@ class AuthenticationTest extends TestCase
 
         $response = $this
             ->withSession([])
-            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
-            ->post( '/auth/sign-in', [
+            ->withHeader('X-CSRF-TOKEN', csrf_token())
+            ->post('/auth/sign-in', [
                 'username' => $user->username,
                 'password' => 123456,
                 '_token' => csrf_token(),
             ]);
 
-        $response->assertRedirect( ns()->route( 'ns.welcome' ) );
+        $response->assertRedirect(ns()->route('ns.welcome'));
 
         /**
          * Step 2: With wrong password
@@ -297,14 +297,14 @@ class AuthenticationTest extends TestCase
 
         $response = $this
             ->withSession([])
-            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
-            ->post( '/auth/sign-in', [
+            ->withHeader('X-CSRF-TOKEN', csrf_token())
+            ->post('/auth/sign-in', [
                 'username' => $user->username,
                 'password' => 654321,
                 '_token' => csrf_token(),
             ]);
 
-        $response->assertRedirect( ns()->route( 'ns.login' ) );
+        $response->assertRedirect(ns()->route('ns.login'));
     }
 
     public function testSubmitNewPasswordForm()
@@ -312,7 +312,7 @@ class AuthenticationTest extends TestCase
         /**
          * Step 1: Attempt for account in normal condition
          */
-        ns()->option->set( 'ns_recovery_enabled', 'yes' );
+        ns()->option->set('ns_recovery_enabled', 'yes');
 
         $user = User::first();
         $user->active = true;
@@ -325,7 +325,7 @@ class AuthenticationTest extends TestCase
 
         $response = $this
             ->withSession([])
-            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
+            ->withHeader('X-CSRF-TOKEN', csrf_token())
             ->post(
                 'auth/new-password/' . $user->id . '/' . $user->activation_token, [
                     'password' => $password,
@@ -333,15 +333,15 @@ class AuthenticationTest extends TestCase
                 ]
             );
 
-        $response->assertJsonPath( 'data.redirectTo', route( 'ns.intermediate', [
+        $response->assertJsonPath('data.redirectTo', route('ns.intermediate', [
             'route' => 'ns.login',
             'from' => 'ns.password-updated',
-        ]) );
+        ]));
 
         /**
          * Step 2: Attempt for account recovery when it's disabled
          */
-        ns()->option->set( 'ns_recovery_enabled', 'no' );
+        ns()->option->set('ns_recovery_enabled', 'no');
 
         $user = User::first();
         $user->active = true;
@@ -353,7 +353,7 @@ class AuthenticationTest extends TestCase
 
         $response = $this
             ->withSession([])
-            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
+            ->withHeader('X-CSRF-TOKEN', csrf_token())
             ->post(
                 'auth/new-password/' . $user->id . '/' . $user->activation_token, [
                     'password' => $password,
@@ -361,6 +361,6 @@ class AuthenticationTest extends TestCase
                 ]
             );
 
-        $response->assertSee( 'The recovery has been explicitly disabled.' );
+        $response->assertSee('The recovery has been explicitly disabled.');
     }
 }

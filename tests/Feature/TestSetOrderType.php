@@ -16,13 +16,13 @@ class TestSetOrderType extends TestCase
     public function test_set_settings()
     {
         Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
+            Role::namespace('admin')->users->first(),
             ['*']
         );
 
-        ns()->option->set( 'ns_pos_order_types', [ 'takeaway', 'delivery' ]);
+        ns()->option->set('ns_pos_order_types', [ 'takeaway', 'delivery' ]);
 
-        $this->assertEquals( ns()->option->get( 'ns_pos_order_types' )[0], 'takeaway' );
-        $this->assertEquals( ns()->option->get( 'ns_pos_order_types' )[1], 'delivery' );
+        $this->assertEquals(ns()->option->get('ns_pos_order_types')[0], 'takeaway');
+        $this->assertEquals(ns()->option->get('ns_pos_order_types')[1], 'delivery');
     }
 }

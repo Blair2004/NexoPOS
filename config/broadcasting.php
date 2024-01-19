@@ -37,11 +37,11 @@ return [
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'useTLS' => env( 'NS_SOCKET_SECURED', false ) ? true : false,
-                'host' => env( 'NS_SOCKET_DOMAIN', env( 'SESSION_DOMAIN' ) ),
-                'port' => env( 'NS_SOCKET_PORT', 6001 ),
-                'scheme' => env( 'NS_SOCKET_SECURED', false ) ? 'https' : 'http',
-                'encrypted' => env( 'NS_SOCKET_SECURED', false ) ? true : false,
+                'useTLS' => env('NS_SOCKET_SECURED', false) ? true : false,
+                'host' => env('NS_SOCKET_DOMAIN', env('SESSION_DOMAIN')),
+                'port' => env('NS_SOCKET_PORT', 6001),
+                'scheme' => env('NS_SOCKET_SECURED', false) ? 'https' : 'http',
+                'encrypted' => env('NS_SOCKET_SECURED', false) ? true : false,
                 'curl_options' => [
                     CURLOPT_SSL_VERIFYHOST => 0,
                     CURLOPT_SSL_VERIFYPEER => 0,

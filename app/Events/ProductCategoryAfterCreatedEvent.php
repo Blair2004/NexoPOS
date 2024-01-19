@@ -16,7 +16,7 @@ class ProductCategoryAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct( public ProductCategory $category )
+    public function __construct(public ProductCategory $category)
     {
         // ...
     }

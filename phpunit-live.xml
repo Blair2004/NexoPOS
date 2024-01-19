@@ -3,6 +3,7 @@
   <testsuites>
     <testsuite name="Sequential-1">
       <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
+      <directory suffix="TestLanguageFileValidity.php">./tests/Feature</directory>
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
     </testsuite>
     <testsuite name="Parallel-1">

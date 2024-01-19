@@ -176,7 +176,6 @@ export default {
             this.breadcrumbs            =   breadcrumbs;
             this.$forceUpdate();
         });
-
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection         =   section;
             this.$forceUpdate();

@@ -16,7 +16,7 @@ class ModulesBeforeRemovedEvent
      *
      * @return void
      */
-    public function __construct( public array $module )
+    public function __construct(public array $module)
     {
         //
     }

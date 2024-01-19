@@ -22,8 +22,8 @@ class CreateUnitTest extends TestCase
         /**
          * We'll skip the execution from here.
          */
-        if ( ! $this->execute ) {
-            return $this->assertTrue( true );
+        if (! $this->execute) {
+            return $this->assertTrue(true);
         }
 
         $this->attemptAuthenticate();

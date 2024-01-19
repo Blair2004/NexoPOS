@@ -19,7 +19,7 @@ class TransactionsHistoryBeforeDeletedEventListener
     /**
      * Handle the event.
      */
-    public function handle( TransactionsHistoryBeforeDeleteEvent $event)
+    public function handle(TransactionsHistoryBeforeDeleteEvent $event)
     {
         // ...
     }

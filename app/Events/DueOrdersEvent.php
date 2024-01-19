@@ -17,7 +17,7 @@ class DueOrdersEvent
      *
      * @return void
      */
-    public function __construct( public Collection $orders )
+    public function __construct(public Collection $orders)
     {
         // ...
     }

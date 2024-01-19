@@ -16,7 +16,7 @@ class TransactionAfterRefreshEvent
      *
      * @return void
      */
-    public function __construct( public $event, public $date )
+    public function __construct(public $event, public $date)
     {
         // ...
     }

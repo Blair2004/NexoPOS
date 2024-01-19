@@ -58,43 +58,43 @@ class Transaction extends NsModel
     {
         parent::boot();
 
-        static::addGlobalScope( 'account', function($builder) {
-            $builder->with( 'account' );
+        static::addGlobalScope('account', function ($builder) {
+            $builder->with('account');
         });
     }
 
     public function account()
     {
-        return $this->belongsTo( TransactionAccount::class, 'account_id' );
+        return $this->belongsTo(TransactionAccount::class, 'account_id');
     }
 
-    public function scopeScheduled( $query )
+    public function scopeScheduled($query)
     {
-        return $query->where( 'type', self::TYPE_SCHEDULED );
+        return $query->where('type', self::TYPE_SCHEDULED);
     }
 
-    public function scopeScheduledAfterDate( $query, $date )
+    public function scopeScheduledAfterDate($query, $date)
     {
-        return $query->where( 'scheduled_date', '>=', $date );
+        return $query->where('scheduled_date', '>=', $date);
     }
 
-    public function scopeScheduledBeforeDate( $query, $date )
+    public function scopeScheduledBeforeDate($query, $date)
     {
-        return $query->where( 'scheduled_date', '<=', $date );
+        return $query->where('scheduled_date', '<=', $date);
     }
 
-    public function scopeRecurring( $query )
+    public function scopeRecurring($query)
     {
-        return $query->where( 'recurring', true );
+        return $query->where('recurring', true);
     }
 
-    public function scopeNotRecurring( $query )
+    public function scopeNotRecurring($query)
     {
-        return $query->where( 'recurring', false );
+        return $query->where('recurring', false);
     }
 
-    public function scopeActive( $query )
+    public function scopeActive($query)
     {
-        return $query->where( 'active', true );
+        return $query->where('active', true);
     }
 }

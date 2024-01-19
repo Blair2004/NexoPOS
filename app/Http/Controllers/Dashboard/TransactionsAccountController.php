@@ -24,7 +24,7 @@ class TransactionsAccountController extends DashboardController
      **/
     public function index()
     {
-        return View::make( 'NexoPOS::index' );
+        return View::make('NexoPOS::index');
     }
 
     /**
@@ -47,8 +47,8 @@ class TransactionsAccountController extends DashboardController
         return TransactionAccountCrud::form();
     }
 
-    public function editTransactionsAccounts( TransactionAccount $account )
+    public function editTransactionsAccounts(TransactionAccount $account)
     {
-        return TransactionAccountCrud::form( $account );
+        return TransactionAccountCrud::form($account);
     }
 }

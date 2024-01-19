@@ -18,8 +18,8 @@ class UnitFactory extends Factory
             'name' => $this->faker->name,
             'description' => $this->faker->sentence,
             'base_unit' => $this->faker->randomElement([ 0, 1 ]),
-            'value' => $this->faker->numberBetween( 5, 20 ),
-            'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+            'value' => $this->faker->numberBetween(5, 20),
+            'author' => $this->faker->randomElement(User::get()->map(fn($user) => $user->id)),
         ];
     }
 }

@@ -90,21 +90,21 @@ class Procurement extends NsModel
 
     public function products()
     {
-        return $this->hasMany( ProcurementProduct::class, 'procurement_id' );
+        return $this->hasMany(ProcurementProduct::class, 'procurement_id');
     }
 
     public function provider()
     {
-        return $this->belongsTo( Provider::class );
+        return $this->belongsTo(Provider::class);
     }
 
-    public function scopePending( $query )
+    public function scopePending($query)
     {
-        return $query->where( 'delivery_status', self::PENDING );
+        return $query->where('delivery_status', self::PENDING);
     }
 
-    public function scopeAutoApproval( $query )
+    public function scopeAutoApproval($query)
     {
-        return $query->where( 'automatic_approval', true );
+        return $query->where('automatic_approval', true);
     }
 }

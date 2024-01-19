@@ -39,13 +39,13 @@ class EventServiceProvider extends ServiceProvider
         /**
          * @var ModulesService
          */
-        $modulesServices = app()->make( ModulesService::class );
+        $modulesServices = app()->make(ModulesService::class);
 
-        $paths = collect( $modulesServices->getEnabled() )->map( function( $module ) {
-            return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
+        $paths = collect($modulesServices->getEnabled())->map(function ($module) {
+            return base_path('modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners');
         })
             ->values()
-            ->push( $this->app->path('Listeners') )
+            ->push($this->app->path('Listeners'))
             ->toArray();
 
         return $paths;
@@ -58,7 +58,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Hook::addFilter( 'ns-dashboard-menus', [ MenusFilter::class, 'injectRegisterMenus' ]);
+        Hook::addFilter('ns-dashboard-menus', [ MenusFilter::class, 'injectRegisterMenus' ]);
     }
 
     public function shouldDiscoverEvents()

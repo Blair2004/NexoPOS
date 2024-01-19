@@ -13,7 +13,7 @@ class CheckMathLibraryTest extends TestCase
      */
     public function test_decimal_precision()
     {
-        ns()->option->set( 'ns_currency_precision', 5 );
+        ns()->option->set('ns_currency_precision', 5);
 
         $this->assertEquals(
             ns()->currency->define(0.1)
@@ -43,7 +43,7 @@ class CheckMathLibraryTest extends TestCase
             (float) 0.00007
         );
 
-        ns()->option->set( 'ns_currency_precision', 0 );
+        ns()->option->set('ns_currency_precision', 0);
 
         $this->assertEquals(
             ns()->currency->define(0.2)

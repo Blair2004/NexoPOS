@@ -16,8 +16,8 @@ class DefaultCategorySeeder extends Seeder
     public function run()
     {
         return ProductCategory::create([
-            'name' => __( 'Default Category' ),
-            'author' => Role::namespace( 'admin' )->users->first()->id,
+            'name' => __('Default Category'),
+            'author' => Role::namespace('admin')->users->first()->id,
         ]);
     }
 }

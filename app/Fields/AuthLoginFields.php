@@ -11,16 +11,16 @@ class AuthLoginFields extends FieldsService
 
     public function get()
     {
-        $fields = Hook::filter( 'ns-login-fields', [
+        $fields = Hook::filter('ns-login-fields', [
             [
-                'label' => __( 'Username' ),
-                'description' => __( 'Provide your username.' ),
+                'label' => __('Username'),
+                'description' => __('Provide your username.'),
                 'validation' => 'required',
                 'name' => 'username',
                 'type' => 'text',
             ], [
-                'label' => __( 'Password' ),
-                'description' => __( 'Provide your password.' ),
+                'label' => __('Password'),
+                'description' => __('Provide your password.'),
                 'validation' => 'required',
                 'name' => 'password',
                 'type' => 'password',

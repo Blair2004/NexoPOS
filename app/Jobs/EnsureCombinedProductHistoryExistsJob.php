@@ -26,20 +26,20 @@ class EnsureCombinedProductHistoryExistsJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle( DateService $dateService ): void
+    public function handle(DateService $dateService): void
     {
-        $now            =   $dateService->now()->clone()->startOfDay()->format( 'Y-m-d' );
+        $now = $dateService->now()->clone()->startOfDay()->format('Y-m-d');
 
         // retreive the first ProductHistory that was created during that day using $now
-        $productHistoryCombined =   ProductHistoryCombined::where( 'created_at', '>', $now  )->first();
+        $productHistoryCombined = ProductHistoryCombined::where('created_at', '>', $now)->first();
 
-        if ( ! $productHistoryCombined instanceof ProductHistoryCombined ) {
+        if (! $productHistoryCombined instanceof ProductHistoryCombined) {
             // retrieve products with stock enabled by chunk of 20 and dispatch the job ProcessProductHistoryCombinedByChunkJob
-            $delay      =   10;
-            Product::withStockEnabled()->chunk( 20, function( $products ) use ( &$delay ) {
-                ProcessProductHistoryCombinedByChunkJob::dispatch( $products )->delay( now()->addSeconds( $delay ) );
-                $delay  +=  10;
-            } );
+            $delay = 10;
+            Product::withStockEnabled()->chunk(20, function ($products) use (&$delay) {
+                ProcessProductHistoryCombinedByChunkJob::dispatch($products)->delay(now()->addSeconds($delay));
+                $delay += 10;
+            });
         }
     }
 }

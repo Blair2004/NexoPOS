@@ -19,6 +19,6 @@ class OrderCoupon extends NsModel
 
     public function customerCoupon()
     {
-        return $this->belongsTo( CustomerCoupon::class, 'customer_coupon_id' );
+        return $this->belongsTo(CustomerCoupon::class, 'customer_coupon_id');
     }
 }

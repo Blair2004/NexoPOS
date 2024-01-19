@@ -15,7 +15,7 @@ class YesNoBoolCast implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return (bool) $value ? __( 'Yes' ) : __( 'No' );
+        return (bool) $value ? __('Yes') : __('No');
     }
 
     /**

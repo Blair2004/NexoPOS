@@ -75,17 +75,17 @@ class OrderProduct extends NsModel
 
     public function unit()
     {
-        return $this->hasOne( Unit::class, 'id', 'unit_id' );
+        return $this->hasOne(Unit::class, 'id', 'unit_id');
     }
 
     public function order()
     {
-        return $this->belongsTo( Order::class, 'order_id', 'id' );
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
     public function product()
     {
-        return $this->hasOne( Product::class, 'id', 'product_id' );
+        return $this->hasOne(Product::class, 'id', 'product_id');
     }
 
     public function refunded_products()
@@ -97,8 +97,8 @@ class OrderProduct extends NsModel
         );
     }
 
-    public function scopeValidProducts( $query )
+    public function scopeValidProducts($query)
     {
-        return $query->where( 'quantity', '>', 0 );
+        return $query->where('quantity', '>', 0);
     }
 }

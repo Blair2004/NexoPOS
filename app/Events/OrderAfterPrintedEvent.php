@@ -18,7 +18,7 @@ class OrderAfterPrintedEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct( public Order $order, public $doc )
+    public function __construct(public Order $order, public $doc)
     {
         // ...
     }

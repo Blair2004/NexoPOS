@@ -49,37 +49,37 @@ class ModulesMigrateCommand extends Command
      */
     public function handle()
     {
-        $module = $this->modulesService->get( $this->argument( 'moduleNamespace' ) );
+        $module = $this->modulesService->get($this->argument('moduleNamespace'));
 
-        if ( empty( $module ) ) {
+        if (empty($module)) {
             throw new NotFoundException(
                 sprintf(
-                    __( 'Unable to find a module having the identifier "%".' ),
-                    $this->argument( 'moduleNamespace' )
+                    __('Unable to find a module having the identifier "%s".'),
+                    $this->argument('moduleNamespace')
                 )
             );
         }
 
-        $migratedFiles = $this->modulesService->getModuleAlreadyMigratedFiles( $module );
-        $unmigratedFiles = $this->modulesService->getModuleUnmigratedFiles( $module, $migratedFiles );
+        $migratedFiles = $this->modulesService->getModuleAlreadyMigratedFiles($module);
+        $unmigratedFiles = $this->modulesService->getModuleUnmigratedFiles($module, $migratedFiles);
 
-        if ( count( $unmigratedFiles ) === 0 ) {
-            return $this->info( sprintf(
-                __( 'There is no migrations to perform for the module "%s"' ),
+        if (count($unmigratedFiles) === 0) {
+            return $this->info(sprintf(
+                __('There is no migrations to perform for the module "%s"'),
                 $module[ 'name' ]
-            ) );
+            ));
         }
 
-        $this->withProgressBar( $unmigratedFiles, function( $file ) use ( $module ) {
-            $response = $this->modulesService->runMigration( $module[ 'namespace' ], $file );
-            AfterMigrationExecutedEvent::dispatch( $module, $response, $file );
+        $this->withProgressBar($unmigratedFiles, function ($file) use ($module) {
+            $response = $this->modulesService->runMigration($module[ 'namespace' ], $file);
+            AfterMigrationExecutedEvent::dispatch($module, $response, $file);
         });
 
         $this->newLine();
 
-        $this->info( sprintf(
-            __( 'The module migration has successfully been performed for the module "%s"' ),
+        $this->info(sprintf(
+            __('The module migration has successfully been performed for the module "%s"'),
             $module[ 'name' ]
-        ) );
+        ));
     }
 }

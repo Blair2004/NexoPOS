@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::createIfMissing( 'nexopos_medias', function (Blueprint $table) {
+        Schema::createIfMissing('nexopos_medias', function (Blueprint $table) {
             $table->increments('id');
-            $table->string( 'name' )->unique();
-            $table->string( 'extension' );
-            $table->string( 'slug' );
-            $table->integer( 'user_id' );
+            $table->string('name')->unique();
+            $table->string('extension');
+            $table->string('slug');
+            $table->integer('user_id');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( 'nexopos_medias' );
+        Schema::dropIfExists('nexopos_medias');
     }
 };

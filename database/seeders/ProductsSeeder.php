@@ -20,12 +20,12 @@ class ProductsSeeder extends Seeder
         return ProductCategory::factory()
             ->count(2)
             ->create()
-            ->each( function( $category ) {
+            ->each(function ($category) {
                 Product::factory()
                     ->count(3)
                     ->create([ 'category_id' => $category->id ])
-                    ->each( function( $product ) {
-                        UnitGroup::find( $product->unit_group )->units->each( function( $unit ) use ( $product ) {
+                    ->each(function ($product) {
+                        UnitGroup::find($product->unit_group)->units->each(function ($unit) use ($product) {
                             ProductUnitQuantity::factory()
                                 ->count(1)
                                 ->create([

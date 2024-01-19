@@ -17,7 +17,7 @@ class DashboardDayAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct( public DashboardDay $dashboardDay )
+    public function __construct(public DashboardDay $dashboardDay)
     {
         // ...
     }

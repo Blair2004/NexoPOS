@@ -27,27 +27,27 @@ class OrderPayment extends NsModel
 
     public function order()
     {
-        return $this->belongsTo( Order::class, 'order_id', 'id' );
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
-    public function scopeWithOrder( $query, $order_id )
+    public function scopeWithOrder($query, $order_id)
     {
-        return $query->where( 'order_id', $order_id );
+        return $query->where('order_id', $order_id);
     }
 
     public function type()
     {
-        return $this->hasOne( PaymentType::class, 'identifier', 'identifier' );
+        return $this->hasOne(PaymentType::class, 'identifier', 'identifier');
     }
 
     public function getPaymentLabelAttribute()
     {
-        $paymentTypes = Cache::remember( 'nexopos.pos.payments-key', '3600', function() {
-            return PaymentType::active()->get()->mapWithKeys( function( $paymentType ) {
+        $paymentTypes = Cache::remember('nexopos.pos.payments-key', '3600', function () {
+            return PaymentType::active()->get()->mapWithKeys(function ($paymentType) {
                 return [ $paymentType->identifier => $paymentType->label ];
             });
         });
 
-        return $paymentTypes[ $this->identifier ] ?? __( 'Unknown Payment' );
+        return $paymentTypes[ $this->identifier ] ?? __('Unknown Payment');
     }
 }

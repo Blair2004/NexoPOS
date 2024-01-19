@@ -19,7 +19,7 @@ class CashRegisterActionsTest extends TestCase
     public function testCreateCashRegisterWithActions()
     {
         Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
+            Role::namespace('admin')->users->first(),
             ['*']
         );
 

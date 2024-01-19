@@ -23,13 +23,13 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_users_attributes' ) ) {
-            Schema::create( 'nexopos_users_attributes', function( Blueprint $table ) {
-                $table->bigIncrements( 'id' );
-                $table->integer( 'user_id' );
-                $table->string( 'avatar_link' )->nullable();
-                $table->string( 'theme' )->nullable();
-                $table->string( 'language' )->nullable();
+        if (! Schema::hasTable('nexopos_users_attributes')) {
+            Schema::create('nexopos_users_attributes', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->integer('user_id');
+                $table->string('avatar_link')->nullable();
+                $table->string('theme')->nullable();
+                $table->string('language')->nullable();
             });
         }
     }
@@ -41,6 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( 'nexopos_users_attributes' );
+        Schema::dropIfExists('nexopos_users_attributes');
     }
 };

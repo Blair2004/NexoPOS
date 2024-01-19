@@ -37,10 +37,10 @@ class DemoService extends DemoCoreService
         $this->faker = (new Factory)->create();
     }
 
-    public function extractProductFields( $fields )
+    public function extractProductFields($fields)
     {
-        $primary = collect( $fields[ 'variations' ] )
-            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
+        $primary = collect($fields[ 'variations' ])
+            ->filter(fn($variation) => isset($variation[ '$primary' ]))
             ->first();
 
         $source = $primary;
@@ -50,11 +50,11 @@ class DemoService extends DemoCoreService
          * this is made to ensure the array
          * provided aren't flatten
          */
-        unset( $primary[ 'units' ] );
-        unset( $primary[ 'images' ] );
+        unset($primary[ 'units' ]);
+        unset($primary[ 'images' ]);
 
         $primary[ 'identification' ][ 'name' ] = $fields[ 'name' ];
-        $primary = Helper::flatArrayWithKeys( $primary )->toArray();
+        $primary = Helper::flatArrayWithKeys($primary)->toArray();
         $primary[ 'product_type' ] = 'product';
 
         /**
@@ -64,14 +64,14 @@ class DemoService extends DemoCoreService
         $primary[ 'images' ] = $source[ 'images' ];
         $primary[ 'units' ] = $source[ 'units' ];
 
-        unset( $primary[ '$primary' ] );
+        unset($primary[ '$primary' ]);
 
         /**
          * As foreign fields aren't handled with
          * they are complex (array), this methods allow
          * external script to reinject those complex fields.
          */
-        $primary = Hook::filter( 'ns-create-products-inputs', $primary, $source );
+        $primary = Hook::filter('ns-create-products-inputs', $primary, $source);
 
         /**
          * the method "create" is capable of
@@ -85,14 +85,14 @@ class DemoService extends DemoCoreService
      *
      * @return void
      */
-    public function run( $data )
+    public function run($data)
     {
         /**
          * @var string $mode
          * @var bool $create_sales
          * @var bool $create_procurements
          */
-        extract( $data );
+        extract($data);
 
         $this->createBaseSettings();
         $this->prepareDefaultUnitSystem();
@@ -103,11 +103,11 @@ class DemoService extends DemoCoreService
         $this->createTaxes();
         $this->createProducts();
 
-        if ( $create_procurements ) {
+        if ($create_procurements) {
             $this->performProcurement();
         }
 
-        if ( $create_sales && $create_procurements ) {
+        if ($create_sales && $create_procurements) {
             $this->createSales();
         }
     }
@@ -115,13 +115,13 @@ class DemoService extends DemoCoreService
     public function createProducts()
     {
         $categories = [
-            json_decode( file_get_contents( base_path( 'database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'bedding-n-bath.json' ) ) ),
-            json_decode( file_get_contents( base_path( 'database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'furniture.json' ) ) ),
-            json_decode( file_get_contents( base_path( 'database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'kitchen-dinning.json' ) ) ),
-            json_decode( file_get_contents( base_path( 'database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'decors.json' ) ) ),
+            json_decode(file_get_contents(base_path('database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'bedding-n-bath.json'))),
+            json_decode(file_get_contents(base_path('database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'furniture.json'))),
+            json_decode(file_get_contents(base_path('database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'kitchen-dinning.json'))),
+            json_decode(file_get_contents(base_path('database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'decors.json'))),
         ];
 
-        foreach ( $categories as $category ) {
+        foreach ($categories as $category) {
             $result = $this->categoryService->create([
                 'name' => $category->name,
                 'preview_url' => $category->image,
@@ -129,9 +129,9 @@ class DemoService extends DemoCoreService
 
             $createdCategory = $result[ 'data' ][ 'category' ];
 
-            foreach ( $category->products as $product ) {
+            foreach ($category->products as $product) {
                 $random = Str::random(8);
-                $unitGroup = UnitGroup::with( 'units' )->where( 'name', __( 'Countable' ) )->first();
+                $unitGroup = UnitGroup::with('units')->where('name', __('Countable'))->first();
                 $newProduct = [
                     'product_type' => 'product',
                     'name' => $product->name,
@@ -139,7 +139,7 @@ class DemoService extends DemoCoreService
                     'barcode' => $random,
                     'barcode_type' => 'code128',
                     'category_id' => $createdCategory[ 'id' ],
-                    'description' => __( 'generated' ),
+                    'description' => __('generated'),
                     'type' => 'dematerialized',
                     'status' => 'available',
                     'stock_management' => 'enabled', // Arr::random([ 'disabled', 'enabled' ]),
@@ -148,17 +148,17 @@ class DemoService extends DemoCoreService
                     'images' => [
                         [
                             'featured' => true,
-                            'url' => asset( $product->image ),
+                            'url' => asset($product->image),
                         ],
                     ],
                     'units' => [
                         'selling_group' => $unitGroup
-                            ->units->map( function( $unit ) use ( $product ) {
+                            ->units->map(function ($unit) use ($product) {
                                 return [
                                     'sale_price_edit' => $product->price * $unit->value,
-                                    'wholesale_price_edit' => ns()->currency->getPercentageValue( $product->price, 10, 'substract' ) * $unit->value,
+                                    'wholesale_price_edit' => ns()->currency->getPercentageValue($product->price, 10, 'substract') * $unit->value,
                                     'unit_id' => $unit->id,
-                                    'preview_url' => asset( $product->image ),
+                                    'preview_url' => asset($product->image),
                                 ];
                             }),
                         'unit_group' => $unitGroup->id,
@@ -168,10 +168,10 @@ class DemoService extends DemoCoreService
                 /**
                  * if groups is provided
                  */
-                if ( isset( $product->groups ) ) {
-                    $subProducts = collect( $product->groups )->map( function( $productName ) {
-                        $subProduct = Product::where( 'name', $productName )
-                            ->with( 'unit_quantities' )
+                if (isset($product->groups)) {
+                    $subProducts = collect($product->groups)->map(function ($productName) {
+                        $subProduct = Product::where('name', $productName)
+                            ->with('unit_quantities')
                             ->first();
 
                         /**
@@ -194,7 +194,7 @@ class DemoService extends DemoCoreService
                     ];
                 }
 
-                $result = $this->productService->create( $newProduct );
+                $result = $this->productService->create($newProduct);
             }
         }
     }

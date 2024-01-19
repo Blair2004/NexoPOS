@@ -14,9 +14,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_products_histories', function( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_products_histories', 'order_product_id' ) ) {
-                $table->integer( 'order_product_id' )->nullable();
+        Schema::table('nexopos_products_histories', function (Blueprint $table) {
+            if (! Schema::hasColumn('nexopos_products_histories', 'order_product_id')) {
+                $table->integer('order_product_id')->nullable();
             }
         });
 

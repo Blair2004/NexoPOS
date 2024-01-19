@@ -9,7 +9,7 @@ use Tests\Traits\WithOrderTest;
 
 class OrderRefundTest extends TestCase
 {
-    use WithOrderTest, WithAuthentication;
+    use WithAuthentication, WithOrderTest;
 
     /**
      * A basic feature test example.

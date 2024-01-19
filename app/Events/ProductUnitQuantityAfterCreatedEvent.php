@@ -17,7 +17,7 @@ class ProductUnitQuantityAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct( public ProductUnitQuantity $productUnitQuantity )
+    public function __construct(public ProductUnitQuantity $productUnitQuantity)
     {
         //
     }

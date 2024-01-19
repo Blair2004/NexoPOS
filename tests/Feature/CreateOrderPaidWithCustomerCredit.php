@@ -27,23 +27,23 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
     public function test_make_order_on_credit()
     {
         Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
+            Role::namespace('admin')->users->first(),
             ['*']
         );
 
         /**
          * @var CurrencyService
          */
-        $currency = app()->make( CurrencyService::class );
+        $currency = app()->make(CurrencyService::class);
         $faker = Factory::create();
 
         $customer = Customer::first();
         $customer->credit_limit_amount = 5;
         $customer->save();
 
-        $products = Product::with( 'unit_quantities' )->get()->shuffle()->take(3);
-        $products = $products->map( function( $product ) use ( $faker ) {
-            $unitElement = $faker->randomElement( $product->unit_quantities );
+        $products = Product::with('unit_quantities')->get()->shuffle()->take(3);
+        $products = $products->map(function ($product) use ($faker) {
+            $unitElement = $faker->randomElement($product->unit_quantities);
 
             $data = array_merge([
                 'name' => $product->name,
@@ -52,25 +52,25 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 'tax_type' => 'inclusive',
                 'tax_group_id' => 1,
                 'unit_id' => $unitElement->unit_id,
-            ], $this->customProductParams );
+            ], $this->customProductParams);
 
-            if ( $faker->randomElement([ true ]) ) {
+            if ($faker->randomElement([ true ])) {
                 $data[ 'product_id' ] = $product->id;
                 $data[ 'unit_quantity_id' ] = $unitElement->id;
             }
 
             return $data;
-        })->filter( function( $product ) {
+        })->filter(function ($product) {
             return $product[ 'quantity' ] > 0;
         });
 
         $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
-        $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
+        $subtotal = ns()->currency->getRaw($products->map(function ($product) use ($currency) {
             return $currency
-                ->define( $product[ 'unit_price' ] )
-                ->multiplyBy( $product[ 'quantity' ] )
+                ->define($product[ 'unit_price' ])
+                ->multiplyBy($product[ 'quantity' ])
                 ->getRaw();
-        })->sum() );
+        })->sum());
 
         $orderDetails = [
             'customer_id' => $customer->id,
@@ -85,31 +85,31 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
          */
         $this->defaultProcessing = true;
 
-        $response = $this->processOrders( $orderDetails, function( $response, $data ) {
-            $order = Order::find( $data[ 'data' ][ 'order' ][ 'id' ] );
+        $response = $this->processOrders($orderDetails, function ($response, $data) {
+            $order = Order::find($data[ 'data' ][ 'order' ][ 'id' ]);
         });
 
         $this->defaultProcessing = false;
     }
 
-    public function processOrders( array $orderDetails, callable $callback = null )
+    public function processOrders(array $orderDetails, ?callable $callback = null)
     {
         $responses = [];
         /**
          * @var CurrencyService
          */
-        $currency = app()->make( CurrencyService::class );
+        $currency = app()->make(CurrencyService::class);
         $faker = Factory::create();
 
-        for ( $i = 0; $i < $this->count; $i++ ) {
+        for ($i = 0; $i < $this->count; $i++) {
             $singleResponse = [];
 
-            $products = Product::with( 'unit_quantities' )->get()->shuffle()->take(3);
+            $products = Product::with('unit_quantities')->get()->shuffle()->take(3);
             $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
             $discountRate = $faker->numberBetween(0, 5);
 
-            $products = $products->map( function( $product ) use ( $faker ) {
-                $unitElement = $faker->randomElement( $product->unit_quantities );
+            $products = $products->map(function ($product) use ($faker) {
+                $unitElement = $faker->randomElement($product->unit_quantities);
 
                 $data = array_merge([
                     'name' => 'Fees',
@@ -118,24 +118,24 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                     'tax_type' => 'inclusive',
                     'tax_group_id' => 1,
                     'unit_id' => $unitElement->unit_id,
-                ], $this->customProductParams );
+                ], $this->customProductParams);
 
-                if ( $faker->randomElement([ false, true ]) ) {
+                if ($faker->randomElement([ false, true ])) {
                     $data[ 'product_id' ] = $product->id;
                     $data[ 'unit_quantity_id' ] = $unitElement->id;
                 }
 
                 return $data;
-            })->filter( function( $product ) {
+            })->filter(function ($product) {
                 return $product[ 'quantity' ] > 0;
             });
 
-            $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
+            $subtotal = ns()->currency->getRaw($products->map(function ($product) use ($currency) {
                 return $currency
-                    ->define( $product[ 'unit_price' ] )
-                    ->multiplyBy( $product[ 'quantity' ] )
+                    ->define($product[ 'unit_price' ])
+                    ->multiplyBy($product[ 'quantity' ])
                     ->getRaw();
-            })->sum() );
+            })->sum());
 
             $allCoupons = [];
             $totalCoupons = 0;
@@ -146,13 +146,13 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 'rate' => 0,
             ];
 
-            $discountCoupons = $currency->define( $discount[ 'value' ] )
-                ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
+            $discountCoupons = $currency->define($discount[ 'value' ])
+                ->additionateBy($allCoupons[0][ 'value' ] ?? 0)
                 ->getRaw();
 
             $dateString = ns()->date->startOfDay()->addHours(
-                $faker->numberBetween( 0, 23 )
-            )->format( 'Y-m-d H:m:s' );
+                $faker->numberBetween(0, 23)
+            )->format('Y-m-d H:m:s');
 
             $customer = Customer::get()->random();
 
@@ -175,9 +175,9 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                         'country' => 'United State Seattle',
                     ],
                 ],
-                'author' => ! empty( $this->users ) // we want to randomise the users
-                    ? collect( $this->users )->suffle()->first()
-                    : User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
+                'author' => ! empty($this->users) // we want to randomise the users
+                    ? collect($this->users)->suffle()->first()
+                    : User::get('id')->pluck('id')->shuffle()->first(),
                 'coupons' => $allCoupons,
                 'subtotal' => $subtotal,
                 'shipping' => $shippingFees,
@@ -185,23 +185,23 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 'payments' => $this->shouldMakePayment ? [
                     [
                         'identifier' => 'cash-payment',
-                        'value' => $currency->define( $subtotal )
-                            ->additionateBy( $shippingFees )
+                        'value' => $currency->define($subtotal)
+                            ->additionateBy($shippingFees)
                             ->subtractBy(
                                 $discountCoupons
                             )
                             ->getRaw(),
                     ],
                 ] : [],
-            ], $orderDetails );
+            ], $orderDetails);
 
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/orders', $orderData );
+            $response = $this->withSession($this->app[ 'session' ]->all())
+                ->json('POST', 'api/orders', $orderData);
 
-            $amount = ns()->currency->define( 5 )->format();
+            $amount = ns()->currency->define(5)->format();
 
             $response->assertStatus(403);
-            $response->assertJsonPath( 'message', 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: ' . $amount . '.' );
+            $response->assertJsonPath('message', 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: ' . $amount . '.');
         }
 
         return $responses;

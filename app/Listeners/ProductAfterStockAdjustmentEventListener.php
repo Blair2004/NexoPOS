@@ -24,6 +24,6 @@ class ProductAfterStockAdjustmentEventListener
      */
     public function handle(ProductAfterStockAdjustmentEvent $event)
     {
-        HandleStockAdjustmentJob::dispatch( $event->history );
+        HandleStockAdjustmentJob::dispatch($event->history);
     }
 }

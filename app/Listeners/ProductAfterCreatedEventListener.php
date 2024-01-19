@@ -30,8 +30,8 @@ class ProductAfterCreatedEventListener
      */
     public function handle(ProductAfterCreatedEvent $event)
     {
-        $this->productService->generateProductBarcode( $event->product );
+        $this->productService->generateProductBarcode($event->product);
 
-        ComputeCategoryProductsJob::dispatch( $event->product->category );
+        ComputeCategoryProductsJob::dispatch($event->product->category);
     }
 }

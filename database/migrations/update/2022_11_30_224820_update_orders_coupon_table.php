@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_orders_coupons', function( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_orders_coupons', 'coupon_id' ) ) {
-                $table->integer( 'coupon_id' )->nullable();
+        Schema::table('nexopos_orders_coupons', function (Blueprint $table) {
+            if (! Schema::hasColumn('nexopos_orders_coupons', 'coupon_id')) {
+                $table->integer('coupon_id')->nullable();
             }
         });
     }
@@ -27,9 +27,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_orders_coupons', function( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_orders_coupons', 'coupon_id' ) ) {
-                $table->dropColumn( 'coupon_id' );
+        Schema::table('nexopos_orders_coupons', function (Blueprint $table) {
+            if (Schema::hasColumn('nexopos_orders_coupons', 'coupon_id')) {
+                $table->dropColumn('coupon_id');
             }
         });
     }

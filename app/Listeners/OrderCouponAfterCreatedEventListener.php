@@ -19,7 +19,7 @@ class OrderCouponAfterCreatedEventListener
     /**
      * Handle the event.
      */
-    public function handle( OrderCouponAfterCreatedEvent $event)
+    public function handle(OrderCouponAfterCreatedEvent $event)
     {
         // ...
     }

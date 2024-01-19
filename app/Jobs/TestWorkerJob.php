@@ -21,7 +21,7 @@ class TestWorkerJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct( $notification_id )
+    public function __construct($notification_id)
     {
         $this->notification_id = $notification_id;
     }
@@ -31,11 +31,11 @@ class TestWorkerJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( Options $options, NotificationService $notification )
+    public function handle(Options $options, NotificationService $notification)
     {
-        if ( $options->get( 'ns_workers_enabled' ) === 'await_confirm' ) {
-            $options->set( 'ns_workers_enabled', 'yes' );
-            $notification->deleteHavingIdentifier( $this->notification_id );
+        if ($options->get('ns_workers_enabled') === 'await_confirm') {
+            $options->set('ns_workers_enabled', 'yes');
+            $notification->deleteHavingIdentifier($this->notification_id);
         }
     }
 }

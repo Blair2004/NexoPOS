@@ -8,6 +8,7 @@ use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\Provider;
 use App\Models\Register;
+use App\Models\Role;
 use App\Models\Tax;
 use App\Models\TaxGroup;
 use App\Models\TransactionAccount;
@@ -58,34 +59,34 @@ class DemoCoreService
      */
     public function prepareDefaultUnitSystem()
     {
-        $group = UnitGroup::where( 'name', __( 'Countable' ) )->first();
+        $group = UnitGroup::where('name', __('Countable'))->first();
 
-        if ( ! $group instanceof UnitGroup ) {
+        if (! $group instanceof UnitGroup) {
             $group = new UnitGroup;
-            $group->name = __( 'Countable' );
-            $group->author = Auth::id();
+            $group->name = __('Countable');
+            $group->author = Role::namespace('admin')->users()->first()->id;
             $group->save();
         }
 
-        $unit = Unit::identifier( 'piece' )->first();
+        $unit = Unit::identifier('piece')->first();
 
-        if ( ! $unit instanceof Unit ) {
+        if (! $unit instanceof Unit) {
             $unit = new Unit;
-            $unit->name = __( 'Piece' );
+            $unit->name = __('Piece');
             $unit->identifier = 'piece';
             $unit->description = '';
-            $unit->author = Auth::id();
+            $unit->author = Role::namespace('admin')->users()->first()->id;
             $unit->group_id = $group->id;
             $unit->base_unit = true;
             $unit->value = 1;
             $unit->save();
         }
 
-        $unit = Unit::identifier( 'small-box' )->first();
+        $unit = Unit::identifier('small-box')->first();
 
-        if ( ! $unit instanceof Unit ) {
+        if (! $unit instanceof Unit) {
             $unit = new Unit;
-            $unit->name = __( 'Small Box' );
+            $unit->name = __('Small Box');
             $unit->identifier = 'small-box';
             $unit->description = '';
             $unit->author = Auth::id();
@@ -95,11 +96,11 @@ class DemoCoreService
             $unit->save();
         }
 
-        $unit = Unit::identifier( 'box' )->first();
+        $unit = Unit::identifier('box')->first();
 
-        if ( ! $unit instanceof Unit ) {
+        if (! $unit instanceof Unit) {
             $unit = new Unit;
-            $unit->name = __( 'Box' );
+            $unit->name = __('Box');
             $unit->identifier = 'box';
             $unit->description = '';
             $unit->author = Auth::id();
@@ -112,16 +113,16 @@ class DemoCoreService
 
     public function createBaseSettings()
     {
-        $orderTypes = app()->make( OrdersService::class )->getTypeLabels();
+        $orderTypes = app()->make(OrdersService::class)->getTypeLabels();
 
         /**
          * @var Options $optionService
          */
-        $optionService = app()->make( Options::class );
+        $optionService = app()->make(Options::class);
 
         $optionService->set(
             'ns_pos_order_types',
-            array_keys( $orderTypes )
+            array_keys($orderTypes)
         );
 
         $optionService->set(
@@ -138,13 +139,13 @@ class DemoCoreService
     public function createRegisters()
     {
         $register = new Register;
-        $register->name = __( 'Terminal A' );
+        $register->name = __('Terminal A');
         $register->status = Register::STATUS_CLOSED;
         $register->author = ns()->getValidAuthor();
         $register->save();
 
         $register = new Register;
-        $register->name = __( 'Terminal B' );
+        $register->name = __('Terminal B');
         $register->status = Register::STATUS_CLOSED;
         $register->author = ns()->getValidAuthor();
         $register->save();
@@ -155,55 +156,55 @@ class DemoCoreService
         /**
          * @var TransactionService $transactionService
          */
-        $transactionService = app()->make( TransactionService::class );
+        $transactionService = app()->make(TransactionService::class);
 
         $transactionService->createAccount([
-            'name' => __( 'Sales Account' ),
+            'name' => __('Sales Account'),
             'operation' => 'credit',
             'account' => '001',
         ]);
 
-        ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::account( '001' )->first()->id );
+        ns()->option->set('ns_sales_cashflow_account', TransactionAccount::account('001')->first()->id);
 
         $transactionService->createAccount([
-            'name' => __( 'Procurements Account' ),
+            'name' => __('Procurements Account'),
             'operation' => 'debit',
             'account' => '002',
         ]);
 
-        ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::account( '002' )->first()->id );
+        ns()->option->set('ns_procurement_cashflow_account', TransactionAccount::account('002')->first()->id);
 
         $transactionService->createAccount([
-            'name' => __( 'Sale Refunds Account' ),
+            'name' => __('Sale Refunds Account'),
             'operation' => 'debit',
             'account' => '003',
         ]);
 
-        ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::account( '003' )->first()->id );
+        ns()->option->set('ns_sales_refunds_account', TransactionAccount::account('003')->first()->id);
 
         $transactionService->createAccount([
-            'name' => __( 'Spoiled Goods Account' ),
+            'name' => __('Spoiled Goods Account'),
             'operation' => 'debit',
             'account' => '006',
         ]);
 
-        ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::account( '006' )->first()->id );
+        ns()->option->set('ns_stock_return_spoiled_account', TransactionAccount::account('006')->first()->id);
 
         $transactionService->createAccount([
-            'name' => __( 'Customer Crediting Account' ),
+            'name' => __('Customer Crediting Account'),
             'operation' => 'credit',
             'account' => '007',
         ]);
 
-        ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::account( '007' )->first()->id );
+        ns()->option->set('ns_customer_crediting_cashflow_account', TransactionAccount::account('007')->first()->id);
 
         $transactionService->createAccount([
-            'name' => __( 'Customer Debiting Account' ),
+            'name' => __('Customer Debiting Account'),
             'operation' => 'credit',
             'account' => '008',
         ]);
 
-        ns()->option->set( 'ns_customer_debitting_cashflow_account', TransactionAccount::account( '008' )->first()->id );
+        ns()->option->set('ns_customer_debitting_cashflow_account', TransactionAccount::account('008')->first()->id);
     }
 
     public function createCustomers()
@@ -224,34 +225,34 @@ class DemoCoreService
      */
     public function createTaxes()
     {
-        $taxGroup = TaxGroup::where( 'name', __( 'GST' ) )->first();
+        $taxGroup = TaxGroup::where('name', __('GST'))->first();
 
-        if ( ! $taxGroup instanceof TaxGroup ) {
+        if (! $taxGroup instanceof TaxGroup) {
             $taxGroup = new TaxGroup;
-            $taxGroup->name = __( 'GST' );
-            $taxGroup->author = Auth::id();
+            $taxGroup->name = __('GST');
+            $taxGroup->author = Role::namespace('admin')->users()->first()->id;
             $taxGroup->save();
         }
 
-        $tax = Tax::where( 'name', __( 'SGST' ) )->first();
+        $tax = Tax::where('name', __('SGST'))->first();
 
-        if ( ! $tax instanceof Tax ) {
+        if (! $tax instanceof Tax) {
             $tax = new Tax;
-            $tax->name = __( 'SGST' );
+            $tax->name = __('SGST');
             $tax->rate = 8;
             $tax->tax_group_id = $taxGroup->id;
-            $tax->author = Auth::id();
+            $tax->author = Role::namespace('admin')->users()->first()->id;
             $tax->save();
         }
 
-        $tax = Tax::where( 'name', __( 'CGST' ) )->first();
+        $tax = Tax::where('name', __('CGST'))->first();
 
-        if ( ! $tax instanceof Tax ) {
+        if (! $tax instanceof Tax) {
             $tax = new Tax;
-            $tax->name = __( 'CGST' );
+            $tax->name = __('CGST');
             $tax->rate = 8;
             $tax->tax_group_id = $taxGroup->id;
-            $tax->author = Auth::id();
+            $tax->author = Role::namespace('admin')->users()->first()->id;
             $tax->save();
         }
     }
@@ -263,19 +264,19 @@ class DemoCoreService
         /**
          * @var TaxService
          */
-        $taxService = app()->make( TaxService::class );
+        $taxService = app()->make(TaxService::class);
 
         /**
          * @var CurrencyService
          */
-        $currencyService = app()->make( CurrencyService::class );
+        $currencyService = app()->make(CurrencyService::class);
 
         $taxType = Arr::random([ 'inclusive', 'exclusive' ]);
         $taxGroup = TaxGroup::get()->random();
         $margin = 25;
 
         $this->procurementService->create([
-            'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
+            'name' => sprintf(__('Sample Procurement %s'), Str::random(5)),
             'general' => [
                 'provider_id' => Provider::get()->random()->id,
                 'payment_status' => Procurement::PAYMENT_PAID,
@@ -283,11 +284,11 @@ class DemoCoreService
                 'automatic_approval' => 1,
             ],
             'products' => Product::withStockEnabled()
-                ->with( 'unitGroup' )
+                ->with('unitGroup')
                 ->get()
-                ->map( function( $product ) {
-                    return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
-                        $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
+                ->map(function ($product) {
+                    return $product->unitGroup->units->map(function ($unit) use ($product) {
+                        $unitQuantity = $product->unit_quantities->filter(fn($q) => (int) $q->unit_id === (int) $unit->id)->first();
 
                         return (object) [
                             'unit' => $unit,
@@ -295,7 +296,7 @@ class DemoCoreService
                             'product' => $product,
                         ];
                     });
-                })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+                })->flatten()->map(function ($data) use ($taxService, $taxType, $taxGroup, $margin, $faker) {
                     return [
                         'product_id' => $data->product->id,
                         'gross_purchase_price' => 15,
@@ -338,41 +339,41 @@ class DemoCoreService
         /**
          * @var ReportService $reportService
          */
-        $reportService = app()->make( ReportService::class );
+        $reportService = app()->make(ReportService::class);
         $dates = [];
         $startOfRange = ns()->date->clone()->subDays($this->daysRange);
 
-        for ( $i = 0; $i <= $this->daysRange; $i++ ) {
+        for ($i = 0; $i <= $this->daysRange; $i++) {
             $dates[] = $startOfRange->clone();
             $startOfRange->addDay();
         }
 
-        $allProducts = Product::with( 'unit_quantities' )->get();
-        $allCustomers   =   Customer::get();
+        $allProducts = Product::with('unit_quantities')->get();
+        $allCustomers = Customer::get();
 
-        for ( $i = 0; $i < $this->orderCount; $i++ ) {
-            $currentDate = Arr::random( $dates );
+        for ($i = 0; $i < $this->orderCount; $i++) {
+            $currentDate = Arr::random($dates);
 
             /**
              * @var CurrencyService
              */
-            $currency = app()->make( CurrencyService::class );
+            $currency = app()->make(CurrencyService::class);
             $faker = Factory::create();
-            
+
             $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
             $discountRate = $faker->numberBetween(0, 5);
 
-            $products   =   $allProducts->shuffle()->take(3);
+            $products = $allProducts->shuffle()->take(3);
 
-            $products = $products->map( function( $product ) use ( $faker ) {
-                $unitElement = $faker->randomElement( $product->unit_quantities );
+            $products = $products->map(function ($product) use ($faker) {
+                $unitElement = $faker->randomElement($product->unit_quantities);
 
                 return array_merge([
                     'product_id' => $product->id,
                     'quantity' => $faker->numberBetween(1, 10),
                     'unit_price' => $unitElement->sale_price,
                     'unit_quantity_id' => $unitElement->id,
-                ], $this->customProductParams );
+                ], $this->customProductParams);
             });
 
             /**
@@ -382,16 +383,16 @@ class DemoCoreService
             $customerFirstPurchases = $customer->purchases_amount;
             $customerFirstOwed = $customer->owed_amount;
 
-            $subtotal = ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
+            $subtotal = ns()->currency->getRaw($products->map(function ($product) use ($currency) {
                 return $currency
-                    ->define( $product[ 'unit_price' ] )
-                    ->multiplyBy( $product[ 'quantity' ] )
+                    ->define($product[ 'unit_price' ])
+                    ->multiplyBy($product[ 'quantity' ])
                     ->getRaw();
-            })->sum() );
+            })->sum());
 
             $customerCoupon = CustomerCoupon::get()->last();
 
-            if ( $customerCoupon instanceof CustomerCoupon ) {
+            if ($customerCoupon instanceof CustomerCoupon) {
                 $allCoupons = [
                     [
                         'customer_coupon_id' => $customerCoupon->id,
@@ -400,9 +401,9 @@ class DemoCoreService
                         'type' => 'percentage_discount',
                         'code' => $customerCoupon->code,
                         'limit_usage' => $customerCoupon->coupon->limit_usage,
-                        'value' => $currency->define( $customerCoupon->coupon->discount_value )
-                            ->multiplyBy( $subtotal )
-                            ->divideBy( 100 )
+                        'value' => $currency->define($customerCoupon->coupon->discount_value)
+                            ->multiplyBy($subtotal)
+                            ->divideBy(100)
                             ->getRaw(),
                         'discount_value' => $customerCoupon->coupon->discount_value,
                         'minimum_cart_value' => $customerCoupon->coupon->minimum_cart_value,
@@ -410,24 +411,24 @@ class DemoCoreService
                     ],
                 ];
 
-                $totalCoupons = collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+                $totalCoupons = collect($allCoupons)->map(fn($coupon) => $coupon[ 'value' ])->sum();
             } else {
                 $allCoupons = [];
                 $totalCoupons = 0;
             }
 
-            $discountValue = $currency->define( $discountRate )
-                ->multiplyBy( $subtotal )
-                ->divideBy( 100 )
+            $discountValue = $currency->define($discountRate)
+                ->multiplyBy($subtotal)
+                ->divideBy(100)
                 ->getRaw();
 
-            $discountCoupons = $currency->define( $discountValue )
-                ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
+            $discountCoupons = $currency->define($discountValue)
+                ->additionateBy($allCoupons[0][ 'value' ] ?? 0)
                 ->getRaw();
 
             $dateString = $currentDate->startOfDay()->addHours(
-                $faker->numberBetween( 0, 23 )
-            )->format( 'Y-m-d H:m:s' );
+                $faker->numberBetween(0, 23)
+            )->format('Y-m-d H:m:s');
 
             $orderData = array_merge([
                 'customer_id' => $customer->id,
@@ -454,17 +455,17 @@ class DemoCoreService
                 'payments' => $this->shouldMakePayment ? [
                     [
                         'identifier' => 'cash-payment',
-                        'value' => $currency->define( $subtotal )
-                            ->additionateBy( $shippingFees )
+                        'value' => $currency->define($subtotal)
+                            ->additionateBy($shippingFees)
                             ->subtractBy(
                                 $discountCoupons
                             )
                             ->getRaw(),
                     ],
                 ] : [],
-            ], $this->customOrderParams );
+            ], $this->customOrderParams);
 
-            $result = $this->orderService->create( $orderData );
+            $result = $this->orderService->create($orderData);
         }
     }
 }

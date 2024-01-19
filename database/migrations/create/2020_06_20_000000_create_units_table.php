@@ -16,18 +16,18 @@ return new class extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_units' ) ) {
-            Schema::createIfMissing( 'nexopos_units', function( Blueprint $table ) {
-                $table->bigIncrements( 'id' );
-                $table->string( 'name' );
-                $table->string( 'identifier' )->unique();
-                $table->text( 'description' )->nullable();
-                $table->integer( 'author' );
-                $table->integer( 'group_id' );
-                $table->float( 'value', 18, 5 );
-                $table->string( 'preview_url' )->nullable();
-                $table->boolean( 'base_unit' ); // 0, 1
-                $table->string( 'uuid' )->nullable();
+        if (! Schema::hasTable('nexopos_units')) {
+            Schema::createIfMissing('nexopos_units', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('name');
+                $table->string('identifier')->unique();
+                $table->text('description')->nullable();
+                $table->integer('author');
+                $table->integer('group_id');
+                $table->float('value', 18, 5);
+                $table->string('preview_url')->nullable();
+                $table->boolean('base_unit'); // 0, 1
+                $table->string('uuid')->nullable();
                 $table->timestamps();
             });
         }
@@ -40,8 +40,8 @@ return new class extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_units' ) ) {
-            Schema::dropIfExists( 'nexopos_units' );
+        if (Schema::hasTable('nexopos_units')) {
+            Schema::dropIfExists('nexopos_units');
         }
     }
 };

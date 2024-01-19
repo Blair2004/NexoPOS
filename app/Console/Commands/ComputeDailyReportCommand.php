@@ -39,10 +39,10 @@ class ComputeDailyReportCommand extends Command
      */
     public function handle()
     {
-        if ( $this->option( 'compute' ) ) {
-            if ( $this->option( 'type' ) === 'day' ) {
+        if ($this->option('compute')) {
+            if ($this->option('type') === 'day') {
                 $this->computeDayReport();
-            } elseif ( $this->option( 'type' ) === 'month' ) {
+            } elseif ($this->option('type') === 'month') {
                 $this->computeMonthReport();
             }
         }
@@ -50,76 +50,76 @@ class ComputeDailyReportCommand extends Command
 
     public function computeMonthReport()
     {
-        $from = Carbon::parse( $this->option( 'from' ) );
+        $from = Carbon::parse($this->option('from'));
         $monthCursor = $from->copy();
         $currentDate = ns()->date->getNow();
         $dates = collect([]);
 
-        while ( ! $monthCursor->isSameMonth( $currentDate->copy()->addMonth() ) ) {
-            $dates->push( $monthCursor->copy() );
+        while (! $monthCursor->isSameMonth($currentDate->copy()->addMonth())) {
+            $dates->push($monthCursor->copy());
             $monthCursor->addMonth();
         }
 
-        if ( $dates->count() === 0 ) {
-            return $this->error( __( 'An invalid date were provided. Make sure it a prior date to the actual server date.' ) );
+        if ($dates->count() === 0) {
+            return $this->error(__('An invalid date were provided. Make sure it a prior date to the actual server date.'));
         }
 
-        $this->info( sprintf(
-            __( 'Computing report from %s...' ),
-            $from->format( 'Y-m' ),
-        ) );
+        $this->info(sprintf(
+            __('Computing report from %s...'),
+            $from->format('Y-m'),
+        ));
 
         $this->newLine();
 
         /**
          * @var ReportService
          */
-        $reportService = app()->make( ReportService::class );
+        $reportService = app()->make(ReportService::class);
 
         /**
          * let's show how it progresses
          */
-        $this->withProgressBar( $dates, function( $date ) use ( $reportService ) {
-            $reportService->computeDashboardMonth( $date );
+        $this->withProgressBar($dates, function ($date) use ($reportService) {
+            $reportService->computeDashboardMonth($date);
         });
 
         $this->newLine();
 
-        $this->info( __( 'The operation was successful.' ) );
+        $this->info(__('The operation was successful.'));
     }
 
     public function computeDayReport()
     {
-        $from = Carbon::parse( $this->option( 'from' ) );
+        $from = Carbon::parse($this->option('from'));
         $dayCursor = $from->copy();
         $currentDate = ns()->date->getNow();
         $dates = collect([]);
 
-        while ( ! $dayCursor->isSameDay( $currentDate->copy()->addDay() ) ) {
-            $dates->push( $dayCursor->copy() );
+        while (! $dayCursor->isSameDay($currentDate->copy()->addDay())) {
+            $dates->push($dayCursor->copy());
             $dayCursor->addDay();
         }
 
-        if ( $dates->count() === 0 ) {
-            return $this->error( __( 'An invalid date were provided. Make sure it a prior date to the actual server date.' ) );
+        if ($dates->count() === 0) {
+            return $this->error(__('An invalid date were provided. Make sure it a prior date to the actual server date.'));
         }
 
-        $this->info( sprintf(
-            __( 'Computing report from %s...' ),
-            $from->format( 'Y-m-d' ),
-        ) );
+        $this->info(sprintf(
+            __('Computing report from %s...'),
+            $from->format('Y-m-d'),
+        ));
 
         $this->newLine();
 
         /**
          * @var ReportService
          */
-        $reportService = app()->make( ReportService::class );
+        $reportService = app()->make(ReportService::class);
 
         /**
          * let's show how it progresses
          */
-        $this->withProgressBar( $dates, function( $date ) use ( $reportService ) {
+        $this->withProgressBar($dates, function ($date) use ($reportService) {
             $reportService->computeDayReport(
                 $date->startOfDay()->toDateTimeString(),
                 $date->endOfDay()->toDateTimeString()
@@ -128,6 +128,6 @@ class ComputeDailyReportCommand extends Command
 
         $this->newLine();
 
-        $this->info( __( 'The operation was successful.' ) );
+        $this->info(__('The operation was successful.'));
     }
 }

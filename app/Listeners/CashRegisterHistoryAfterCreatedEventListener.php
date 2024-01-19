@@ -20,8 +20,8 @@ class CashRegisterHistoryAfterCreatedEventListener
     /**
      * Handle the event.
      */
-    public function handle( CashRegisterHistoryAfterCreatedEvent $event): void
+    public function handle(CashRegisterHistoryAfterCreatedEvent $event): void
     {
-        UpdateCashRegisterBalanceFromHistoryJob::dispatch( $event->registerHistory );
+        UpdateCashRegisterBalanceFromHistoryJob::dispatch($event->registerHistory);
     }
 }

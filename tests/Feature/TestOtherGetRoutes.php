@@ -22,31 +22,31 @@ class TestOtherGetRoutes extends TestCase
 
         $routes = Route::getRoutes();
 
-        foreach ( $routes as $route ) {
+        foreach ($routes as $route) {
             $uri = $route->uri();
 
-            if ( in_array( 'GET', $route->methods() ) ) {
+            if (in_array('GET', $route->methods())) {
                 /**
                  * We'll test both known API and dashboard to see if
                  * there is any error thrown.
                  */
-                if ( strstr( $uri, 'api/' ) && ! preg_match( '/\{\w+\??\}/', $uri ) ) {
-                    $response = $this->withSession( $this->app[ 'session' ]->all() )
-                        ->json( 'GET', $uri );
+                if (strstr($uri, 'api/') && ! preg_match('/\{\w+\??\}/', $uri)) {
+                    $response = $this->withSession($this->app[ 'session' ]->all())
+                        ->json('GET', $uri);
 
                     /**
                      * Route that allow exception
                      */
-                    if ( in_array( $response->status(), [ 200, 403 ] ) ) {
-                        if ( in_array( $uri, [
+                    if (in_array($response->status(), [ 200, 403 ])) {
+                        if (in_array($uri, [
                             'api/cash-registers/used',
-                        ] ) ) {
+                        ])) {
                             $response->assertStatus(403);
                         } else {
                             $response->assertStatus(200);
                         }
                     } else {
-                        throw new Exception( 'Not supported status detected.' );
+                        throw new Exception('Not supported status detected.');
                     }
                 }
             }
@@ -63,26 +63,26 @@ class TestOtherGetRoutes extends TestCase
         $routes = Route::getRoutes();
         $user = $this->attemptGetAnyUserFromRole();
 
-        foreach ( $routes as $route ) {
+        foreach ($routes as $route) {
             $uri = $route->uri();
 
-            if ( in_array( 'GET', $route->methods() ) ) {
+            if (in_array('GET', $route->methods())) {
                 /**
                  * We'll test both known API and dashboard to see if
                  * there is any error thrown.
                  */
-                if ( ( strstr( $uri, 'dashboard' ) ) && ! strstr( $uri, 'api/' ) && ! preg_match( '/\{\w+\??\}/', $uri ) ) {
-                    $response = $this->actingAs( $user )
-                        ->json( 'GET', $uri );
+                if ((strstr($uri, 'dashboard')) && ! strstr($uri, 'api/') && ! preg_match('/\{\w+\??\}/', $uri)) {
+                    $response = $this->actingAs($user)
+                        ->json('GET', $uri);
 
-                    if ( $response->status() == 200 ) {
-                        if ( $uri === 'dashboard/pos' ) {
-                            $response->assertSee( 'ns-pos' ); // pos component
+                    if ($response->status() == 200) {
+                        if ($uri === 'dashboard/pos') {
+                            $response->assertSee('ns-pos'); // pos component
                         } else {
-                            $response->assertSee( 'dashboard-body' );
+                            $response->assertSee('dashboard-body');
                         }
                     } else {
-                        throw new Exception( 'Not supported status detected.' );
+                        throw new Exception('Not supported status detected.');
                     }
                 }
             }

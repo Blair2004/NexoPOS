@@ -29,19 +29,19 @@ class CategoryController extends DashboardController
         // ...
     }
 
-    public function get( $id = null )
+    public function get($id = null)
     {
-        if ( ! empty( $id ) ) {
-            $category = ProductCategory::find( $id );
-            if ( ! $category instanceof ProductCategory ) {
-                throw new Exception( __( 'Unable to find the category using the provided identifier' ) );
+        if (! empty($id)) {
+            $category = ProductCategory::find($id);
+            if (! $category instanceof ProductCategory) {
+                throw new Exception(__('Unable to find the category using the provided identifier'));
             }
 
             return $category;
         }
 
-        if ( request()->query( 'parent' ) === 'true' ) {
-            return ProductCategory::where( 'parent_id', null )->get();
+        if (request()->query('parent') === 'true') {
+            return ProductCategory::where('parent_id', null)->get();
         }
 
         return ProductCategory::get();
@@ -54,29 +54,29 @@ class CategoryController extends DashboardController
      * @param number id
      * @return json
      */
-    public function delete( $id )
+    public function delete($id)
     {
-        $category = ProductCategory::find( $id );
+        $category = ProductCategory::find($id);
 
-        if ( $category instanceof ProductCategory ) {
+        if ($category instanceof ProductCategory) {
             /**
              * prevent deleting a category
              * which might have some categories
              * linked to it.
              */
-            if ( $category->subCategories->count() > 0 ) {
-                throw new NotFoundException( __( 'Can\'t delete a category having sub categories linked to it.' ) );
+            if ($category->subCategories->count() > 0) {
+                throw new NotFoundException(__('Can\'t delete a category having sub categories linked to it.'));
             }
 
             $category->delete();
 
             return [
                 'status' => 'success',
-                'message' => __( 'The category has been deleted.' ),
+                'message' => __('The category has been deleted.'),
             ];
         }
 
-        throw new NotFoundException( __( 'Unable to find the category using the provided identifier.' ) );
+        throw new NotFoundException(__('Unable to find the category using the provided identifier.'));
     }
 
     /**
@@ -86,24 +86,24 @@ class CategoryController extends DashboardController
      * @param request
      * @return json
      */
-    public function post( Request $request ) // must be a specific form request with a validation
+    public function post(Request $request) // must be a specific form request with a validation
     {
         /**
          * let's retrieve if the parent exists
          */
-        $parentCategory = ProductCategory::find( $request->input( 'parent_id' ) );
-        if ( ! $parentCategory instanceof ProductCategory && intval( $request->input( 'parent_id' ) ) !== 0 ) {
-            throw new NotFoundException( __( 'Unable to find the attached category parent' ) );
+        $parentCategory = ProductCategory::find($request->input('parent_id'));
+        if (! $parentCategory instanceof ProductCategory && intval($request->input('parent_id')) !== 0) {
+            throw new NotFoundException(__('Unable to find the attached category parent'));
         }
 
         $fields = $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
-        if ( empty( $fields ) ) {
-            throw new NotFoundException( __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' ) );
+        if (empty($fields)) {
+            throw new NotFoundException(__('Unable to proceed. The request doesn\'t provide enough data which could be handled'));
         }
 
         $category = new ProductCategory;
 
-        foreach ( $fields as $name => $field ) {
+        foreach ($fields as $name => $field) {
             $category->$name = $field;
         }
 
@@ -112,8 +112,8 @@ class CategoryController extends DashboardController
 
         return [
             'status' => 'success',
-            'message' => __( 'The category has been correctly saved' ),
-            'data' => compact( 'category' ),
+            'message' => __('The category has been correctly saved'),
+            'data' => compact('category'),
         ];
     }
 
@@ -124,24 +124,24 @@ class CategoryController extends DashboardController
      * @param int category id
      * @return json
      */
-    public function put( $id, Request $request ) // must use a specific request which include a validation
+    public function put($id, Request $request) // must use a specific request which include a validation
     {
         /**
          * @todo we should make sure the parent id
          * is not similar to the current category
          * id. We could also check circular categories
          */
-        $category = ProductCategory::find( $id );
-        if ( ! $category instanceof ProductCategory && $request->input( 'parent_id' ) !== 0 ) {
-            throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
+        $category = ProductCategory::find($id);
+        if (! $category instanceof ProductCategory && $request->input('parent_id') !== 0) {
+            throw new NotFoundException(__('Unable to find the category using the provided identifier'));
         }
 
         $fields = $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
-        if ( empty( $fields ) ) {
-            throw new NotFoundException( __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' ) );
+        if (empty($fields)) {
+            throw new NotFoundException(__('Unable to proceed. The request doesn\'t provide enough data which could be handled'));
         }
 
-        foreach ( $fields as $name => $field ) {
+        foreach ($fields as $name => $field) {
             $category->$name = $field;
         }
 
@@ -150,8 +150,8 @@ class CategoryController extends DashboardController
 
         return [
             'status' => 'success',
-            'message' => __( 'The category has been updated' ),
-            'data' => compact( 'category' ),
+            'message' => __('The category has been updated'),
+            'data' => compact('category'),
         ];
     }
 
@@ -161,15 +161,15 @@ class CategoryController extends DashboardController
      * @param number category id
      * @return json
      */
-    public function getCategoriesProducts( $id )
+    public function getCategoriesProducts($id)
     {
-        $category = ProductCategory::find( $id );
-        if ( ! $category instanceof ProductCategory ) {
-            throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
+        $category = ProductCategory::find($id);
+        if (! $category instanceof ProductCategory) {
+            throw new NotFoundException(__('Unable to find the category using the provided identifier'));
         }
 
         return $category->products()
-            ->whereIn( 'product_type', [ 'product', 'variation' ])
+            ->whereIn('product_type', [ 'product', 'variation' ])
             ->onSale()
             ->get();
     }
@@ -180,15 +180,15 @@ class CategoryController extends DashboardController
      * @param number category id
      * @return json
      */
-    public function getCategoriesVariations( $id )
+    public function getCategoriesVariations($id)
     {
-        $category = ProductCategory::find( $id );
-        if ( ! $category instanceof ProductCategory ) {
-            throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
+        $category = ProductCategory::find($id);
+        if (! $category instanceof ProductCategory) {
+            throw new NotFoundException(__('Unable to find the category using the provided identifier'));
         }
 
         return $category->products->products()
-            ->whereIn( 'product_type', [ 'variation' ])
+            ->whereIn('product_type', [ 'variation' ])
             ->onSale()
             ->get();
     }
@@ -223,42 +223,42 @@ class CategoryController extends DashboardController
     /**
      * Edit an existing category
      */
-    public function editCategory( ProductCategory $category )
+    public function editCategory(ProductCategory $category)
     {
-        return ProductCategoryCrud::form( $category );
+        return ProductCategoryCrud::form($category);
     }
 
-    public function computeCategoryProducts( ProductCategory $category )
+    public function computeCategoryProducts(ProductCategory $category)
     {
-        $this->categoryService->computeProducts( $category );
+        $this->categoryService->computeProducts($category);
 
-        return redirect( url()->previous() )
-            ->with( 'message', __( 'The category products has been refreshed' ) );
+        return redirect(url()->previous())
+            ->with('message', __('The category products has been refreshed'));
     }
 
-    public function getCategories( $id = '0' )
+    public function getCategories($id = '0')
     {
-        if ( $id !== '0' ) {
-            $category = ProductCategory::where( 'id', $id )
+        if ($id !== '0') {
+            $category = ProductCategory::where('id', $id)
                 ->displayOnPOS()
-                ->where( function( $query ) {
-                    $this->applyHideCategories( $query );
+                ->where(function ($query) {
+                    $this->applyHideCategories($query);
                 })
-                ->with( 'subCategories' )
+                ->with('subCategories')
                 ->first();
 
             return [
                 'products' => $category->products()
-                    ->with( 'galleries', 'tax_group.taxes' )
+                    ->with('galleries', 'tax_group.taxes')
                     ->onSale()
-                    ->where( function( $query ) {
-                        $this->applyHideProducts( $query );
+                    ->where(function ($query) {
+                        $this->applyHideProducts($query);
                     })
                     ->trackingDisabled()
                     ->get()
-                    ->map( function( $product ) {
-                        if ( $product->unit_quantities()->count() === 1 ) {
-                            $product->load( 'unit_quantities.unit' );
+                    ->map(function ($product) {
+                        if ($product->unit_quantities()->count() === 1) {
+                            $product->load('unit_quantities.unit');
                         }
 
                         return $product;
@@ -267,7 +267,7 @@ class CategoryController extends DashboardController
                     ->subCategories()
                     ->displayOnPOS()
                     ->get(),
-                'previousCategory' => ProductCategory::find( $category->parent_id ) ?? null, // means should return to the root
+                'previousCategory' => ProductCategory::find($category->parent_id) ?? null, // means should return to the root
                 'currentCategory' => $category, // means should return to the root
             ];
         }
@@ -276,49 +276,49 @@ class CategoryController extends DashboardController
             'products' => [],
             'previousCategory' => false,
             'currentCategory' => false,
-            'categories' => ProductCategory::where(function( $query ) {
-                    $query->where( 'parent_id', null )
-                        ->orWhere( 'parent_id', 0 );
-                })
-                ->where( function( $query ) {
-                    $this->applyHideCategories( $query );
+            'categories' => ProductCategory::where(function ($query) {
+                $query->where('parent_id', null)
+                    ->orWhere('parent_id', 0);
+            })
+                ->where(function ($query) {
+                    $this->applyHideCategories($query);
                 })
                 ->displayOnPOS()
                 ->get(),
         ];
     }
 
-    private function applyHideProducts( $query )
+    private function applyHideProducts($query)
     {
-        $exhaustedHidden = ns()->option->get( 'ns_pos_hide_exhausted_products' );
+        $exhaustedHidden = ns()->option->get('ns_pos_hide_exhausted_products');
 
-        if ( $exhaustedHidden === 'yes' ) {
-            $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
+        if ($exhaustedHidden === 'yes') {
+            $query->where('stock_management', Product::STOCK_MANAGEMENT_DISABLED);
 
-            $query->orWhere( function ( $query ) {
-                $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
-                
-                $query->whereHas( 'unit_quantities', function( $query ) {
-                    $query->where( 'quantity', '>', 0 );
+            $query->orWhere(function ($query) {
+                $query->where('stock_management', Product::STOCK_MANAGEMENT_ENABLED);
+
+                $query->whereHas('unit_quantities', function ($query) {
+                    $query->where('quantity', '>', 0);
                 });
             });
         }
     }
 
-    private function applyHideCategories( $query )
+    private function applyHideCategories($query)
     {
-        $exhaustedHidden = ns()->option->get( 'ns_pos_hide_empty_categories' );
+        $exhaustedHidden = ns()->option->get('ns_pos_hide_empty_categories');
 
-        if ( $exhaustedHidden === 'yes' ) {
-            $query->whereHas( 'products', function( $query ) {
-                $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
+        if ($exhaustedHidden === 'yes') {
+            $query->whereHas('products', function ($query) {
+                $query->where('stock_management', Product::STOCK_MANAGEMENT_DISABLED);
             });
 
             $query->orWhereHas('products', function ($query) {
-                $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
-                
-                $query->whereHas( 'unit_quantities', function( $query ) {
-                    $query->where( 'quantity', '>', 0 );
+                $query->where('stock_management', Product::STOCK_MANAGEMENT_ENABLED);
+
+                $query->whereHas('unit_quantities', function ($query) {
+                    $query->where('quantity', '>', 0);
                 });
             });
         }

@@ -37,7 +37,7 @@ class UpdateCommand extends Command
      */
     public function handle()
     {
-        if ( $this->option( 'module' ) ) {
+        if ($this->option('module')) {
             $this->proceedUpdateModule();
         } else {
             $this->proceedCoreUpdate();
@@ -55,39 +55,39 @@ class UpdateCommand extends Command
      */
     private function proceedCoreUpdate()
     {
-        switch ( $this->argument( 'argument' ) ) {
+        switch ($this->argument('argument')) {
             case 'dev':
                 $this->proceedDevPull();
                 break;
             default:
-                $this->proceedTagUpdate( $this->argument( 'argument' ) );
+                $this->proceedTagUpdate($this->argument('argument'));
                 break;
         }
     }
 
-    private function proceedTagUpdate( $tag )
+    private function proceedTagUpdate($tag)
     {
-        $gitpath = env( 'NS_GIT', 'git' );
+        $gitpath = env('NS_GIT', 'git');
 
-        $this->info( __( 'Downloading latest dev build...' ) );
+        $this->info(__('Downloading latest dev build...'));
 
-        if ( $this->option( 'force' ) ) {
-            $this->info( __( 'Reset project to HEAD...' ) );
-            $this->line( exec( "{$gitpath} reset HEAD --hard" ) );
+        if ($this->option('force')) {
+            $this->info(__('Reset project to HEAD...'));
+            $this->line(exec("{$gitpath} reset HEAD --hard"));
         }
 
-        $this->line( exec( "{$gitpath} pull" ) );
+        $this->line(exec("{$gitpath} pull"));
         $this->build();
     }
 
     private function build()
     {
-        $composerpath = env( 'NS_COMPOSER', 'composer' );
-        $npmpath = env( 'NS_NPM', 'npm' );
+        $composerpath = env('NS_COMPOSER', 'composer');
+        $npmpath = env('NS_NPM', 'npm');
 
-        $this->line( exec( "{$npmpath} i" ) );
-        $this->line( exec( "{$composerpath} i" ) );
-        $this->line( exec( "{$npmpath} run prod" ) );
+        $this->line(exec("{$npmpath} i"));
+        $this->line(exec("{$composerpath} i"));
+        $this->line(exec("{$npmpath} run prod"));
     }
 
     /**
@@ -96,16 +96,16 @@ class UpdateCommand extends Command
      */
     private function proceedDevPull()
     {
-        $gitpath = env( 'NS_GIT', 'git' );
+        $gitpath = env('NS_GIT', 'git');
 
-        $this->info( __( 'Downloading latest dev build...' ) );
+        $this->info(__('Downloading latest dev build...'));
 
-        if ( $this->option( 'force' ) ) {
-            $this->info( __( 'Reset project to HEAD...' ) );
-            $this->line( exec( "{$gitpath} reset HEAD --hard" ) );
+        if ($this->option('force')) {
+            $this->info(__('Reset project to HEAD...'));
+            $this->line(exec("{$gitpath} reset HEAD --hard"));
         }
 
-        $this->line( exec( "{$gitpath} pull" ) );
+        $this->line(exec("{$gitpath} pull"));
         $this->build();
     }
 }

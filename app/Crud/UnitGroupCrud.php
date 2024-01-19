@@ -77,7 +77,7 @@ class UnitGroupCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter($this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2);
     }
 
     /**
@@ -89,15 +89,15 @@ class UnitGroupCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title' => __( 'Unit Groups List' ),
-            'list_description' => __( 'Display all unit groups.' ),
-            'no_entry' => __( 'No unit groups has been registered' ),
-            'create_new' => __( 'Add a new unit group' ),
-            'create_title' => __( 'Create a new unit group' ),
-            'create_description' => __( 'Register a new unit group and save it.' ),
-            'edit_title' => __( 'Edit unit group' ),
-            'edit_description' => __( 'Modify  Unit Group.' ),
-            'back_to_list' => __( 'Return to Unit Groups' ),
+            'list_title' => __('Unit Groups List'),
+            'list_description' => __('Display all unit groups.'),
+            'no_entry' => __('No unit groups has been registered'),
+            'create_new' => __('Add a new unit group'),
+            'create_title' => __('Create a new unit group'),
+            'create_description' => __('Register a new unit group and save it.'),
+            'edit_title' => __('Edit unit group'),
+            'edit_description' => __('Modify  Unit Group.'),
+            'back_to_list' => __('Return to Unit Groups'),
         ];
     }
 
@@ -105,7 +105,7 @@ class UnitGroupCrud extends CrudService
      * Check whether a feature is enabled
      *
      **/
-    public function isEnabled( $feature ): bool
+    public function isEnabled($feature): bool
     {
         return false; // by default
     }
@@ -116,25 +116,25 @@ class UnitGroupCrud extends CrudService
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null )
+    public function getForm($entry = null)
     {
         return [
             'main' => [
-                'label' => __( 'Name' ),
+                'label' => __('Name'),
                 'name' => 'name',
                 'value' => $entry->name ?? '',
-                'description' => __( 'Provide a name to the resource.' ),
+                'description' => __('Provide a name to the resource.'),
                 'validation' => 'required',
             ],
             'tabs' => [
                 'general' => [
-                    'label' => __( 'General' ),
+                    'label' => __('General'),
                     'fields' => [
                         [
                             'type' => 'textarea',
                             'name' => 'description',
                             'value' => $entry->description ?? '',
-                            'label' => __( 'Description' ),
+                            'label' => __('Description'),
                         ],
                     ],
                 ],
@@ -148,7 +148,7 @@ class UnitGroupCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPostInputs( $inputs )
+    public function filterPostInputs($inputs)
     {
         return $inputs;
     }
@@ -159,7 +159,7 @@ class UnitGroupCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, UnitGroup $entry )
+    public function filterPutInputs($inputs, UnitGroup $entry)
     {
         return $inputs;
     }
@@ -170,9 +170,9 @@ class UnitGroupCrud extends CrudService
      * @param  Request $request
      * @return  void
      */
-    public function beforePost( $request )
+    public function beforePost($request)
     {
-        $this->allowedTo( 'create' );
+        $this->allowedTo('create');
 
         return $request;
     }
@@ -183,7 +183,7 @@ class UnitGroupCrud extends CrudService
      * @param  Request $request
      * @return  void
      */
-    public function afterPost( $request, UnitGroup $entry )
+    public function afterPost($request, UnitGroup $entry)
     {
         return $request;
     }
@@ -194,9 +194,9 @@ class UnitGroupCrud extends CrudService
      * @param  string
      * @return  mixed
      */
-    public function get( $param )
+    public function get($param)
     {
-        switch ( $param ) {
+        switch ($param) {
             case 'model': return $this->model;
                 break;
         }
@@ -209,9 +209,9 @@ class UnitGroupCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function beforePut( $request, $entry )
+    public function beforePut($request, $entry)
     {
-        $this->allowedTo( 'update' );
+        $this->allowedTo('update');
 
         return $request;
     }
@@ -223,7 +223,7 @@ class UnitGroupCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $request, $entry )
+    public function afterPut($request, $entry)
     {
         return $request;
     }
@@ -233,10 +233,10 @@ class UnitGroupCrud extends CrudService
      *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model )
+    public function beforeDelete($namespace, $id, $model)
     {
-        if ( $namespace == 'ns.units-groups' ) {
-            $this->allowedTo( 'delete' );
+        if ($namespace == 'ns.units-groups') {
+            $this->allowedTo('delete');
         }
     }
 
@@ -247,17 +247,17 @@ class UnitGroupCrud extends CrudService
     {
         return [
             'name' => [
-                'label' => __( 'Name' ),
+                'label' => __('Name'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'user_username' => [
-                'label' => __( 'Author' ),
+                'label' => __('Author'),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'created_at' => [
-                'label' => __( 'Created At' ),
+                'label' => __('Created At'),
                 '$direction' => '',
                 '$sort' => false,
             ],
@@ -267,23 +267,23 @@ class UnitGroupCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions(CrudEntry $entry, $namespace)
     {
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
+        $entry->addAction('edit', [
+            'label' => __('Edit'),
             'namespace' => 'edit',
             'type' => 'GOTO',
             'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'units/groups' . '/edit/' . $entry->id ),
+            'url' => ns()->url('/dashboard/' . 'units/groups' . '/edit/' . $entry->id),
         ]);
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
+        $entry->addAction('delete', [
+            'label' => __('Delete'),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.units-groups/' . $entry->id ),
+            'url' => ns()->url('/api/crud/ns.units-groups/' . $entry->id),
             'confirm' => [
-                'message' => __( 'Would you like to delete this ?' ),
+                'message' => __('Would you like to delete this ?'),
             ],
         ]);
 
@@ -296,29 +296,29 @@ class UnitGroupCrud extends CrudService
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request )
+    public function bulkAction(Request $request)
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( UsersService::class );
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
+        $user = app()->make(UsersService::class);
+        if (! $user->is([ 'admin', 'supervisor' ])) {
             return response()->json([
                 'status' => 'failed',
-                'message' => __( 'You\'re not allowed to do this operation' ),
-            ], 403 );
+                'message' => __('You\'re not allowed to do this operation'),
+            ], 403);
         }
 
-        if ( $request->input( 'action' ) == 'delete_selected' ) {
+        if ($request->input('action') == 'delete_selected') {
             $status = [
                 'success' => 0,
                 'failed' => 0,
             ];
 
-            foreach ( $request->input( 'entries' ) as $id ) {
-                $entity = $this->model::find( $id );
-                if ( $entity instanceof UnitGroup ) {
+            foreach ($request->input('entries') as $id) {
+                $entity = $this->model::find($id);
+                if ($entity instanceof UnitGroup) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -329,7 +329,7 @@ class UnitGroupCrud extends CrudService
             return $status;
         }
 
-        return Hook::filter( $this->namespace . '-catch-action', false, $request );
+        return Hook::filter($this->namespace . '-catch-action', false, $request);
     }
 
     /**
@@ -339,12 +339,12 @@ class UnitGroupCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
-            'list' => ns()->url( 'dashboard/' . 'units/groups' ),
-            'create' => ns()->url( 'dashboard/' . 'units/groups/create' ),
-            'edit' => ns()->url( 'dashboard/' . 'units/groups/edit/' ),
-            'post' => ns()->url( 'api/crud/' . 'ns.units-groups' ),
-            'put' => ns()->url( 'api/crud/' . 'ns.units-groups/{id}' . '' ),
+        return [
+            'list' => ns()->url('dashboard/' . 'units/groups'),
+            'create' => ns()->url('dashboard/' . 'units/groups/create'),
+            'edit' => ns()->url('dashboard/' . 'units/groups/edit/'),
+            'post' => ns()->url('api/crud/' . 'ns.units-groups'),
+            'put' => ns()->url('api/crud/' . 'ns.units-groups/{id}' . ''),
         ];
     }
 
@@ -355,11 +355,11 @@ class UnitGroupCrud extends CrudService
      **/
     public function getBulkActions(): array
     {
-        return Hook::filter( $this->namespace . '-bulk', [
+        return Hook::filter($this->namespace . '-bulk', [
             [
-                'label' => __( 'Delete Selected Groups' ),
+                'label' => __('Delete Selected Groups'),
                 'identifier' => 'delete_selected',
-                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                'url' => ns()->route('ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
                 ]),
             ],

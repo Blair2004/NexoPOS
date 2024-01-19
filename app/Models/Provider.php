@@ -32,6 +32,6 @@ class Provider extends NsModel
 
     public function procurements()
     {
-        return $this->hasMany( Procurement::class );
+        return $this->hasMany(Procurement::class);
     }
 }
