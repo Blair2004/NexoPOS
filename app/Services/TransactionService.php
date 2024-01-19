@@ -16,7 +16,6 @@ use App\Models\CustomerAccountHistory;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
-use App\Models\OrderRefund;
 use App\Models\Procurement;
 use App\Models\Role;
 use App\Models\Transaction;
@@ -464,14 +463,14 @@ class TransactionService
             $transaction->value = $procurement->cost;
             $transaction->author = $procurement->author;
             $transaction->procurement_id = $procurement->id;
-            $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
+            $transaction->name = sprintf(__('Procurement : %s'), $procurement->name);
             $transaction->transaction_account_id = $accountTypeCode->id;
             $transaction->operation = 'debit';
             $transaction->created_at = $procurement->created_at;
             $transaction->updated_at = $procurement->updated_at;
             $transaction->save();
-            
-        } else if (
+
+        } elseif (
             $procurement->payment_status === Procurement::PAYMENT_UNPAID &&
             $procurement->delivery_status === Procurement::STOCKED
         ) {
@@ -479,7 +478,7 @@ class TransactionService
              * If the procurement is not paid, we'll
              * record a liability for the procurement.
              */
-            $accountTypeCode = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_LIABILITIES );
+            $accountTypeCode = $this->getTransactionAccountByCode(TransactionHistory::ACCOUNT_LIABILITIES);
 
             /**
              * this behave as a flash transaction
@@ -489,7 +488,7 @@ class TransactionService
             $transaction->value = $procurement->cost;
             $transaction->author = $procurement->author;
             $transaction->procurement_id = $procurement->id;
-            $transaction->name = sprintf( __( 'Procurement Liability : %s' ), $procurement->name );
+            $transaction->name = sprintf(__('Procurement Liability : %s'), $procurement->name);
             $transaction->transaction_account_id = $accountTypeCode->id;
             $transaction->operation = 'debit';
             $transaction->created_at = $procurement->created_at;
@@ -713,9 +712,9 @@ class TransactionService
             switch ($type) {
                 case TransactionHistory::ACCOUNT_CUSTOMER_CREDIT: $label = __('Customer Credit Account');
                     break;
-                case TransactionHistory::ACCOUNT_LIABILITIES: $label = __( 'Liabilities Account' );
+                case TransactionHistory::ACCOUNT_LIABILITIES: $label = __('Liabilities Account');
                     break;
-                case TransactionHistory::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
+                case TransactionHistory::ACCOUNT_CUSTOMER_DEBIT: $label = __('Customer Debit Account');
                     break;
                 case TransactionHistory::ACCOUNT_PROCUREMENTS: $label = __('Procurements Account');
                     break;
@@ -748,6 +747,7 @@ class TransactionService
      * Will process refunded orders
      *
      * @todo the method might no longer be in use.
+     *
      * @param string $rangeStart
      * @param string $rangeEnds
      * @return void

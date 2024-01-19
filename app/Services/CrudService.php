@@ -1172,13 +1172,13 @@ class CrudService
          * use crud form to render a valid form.
          * "view" on the $config might be used to use a custom view file.
          */
-        return View::make( $config[ 'view' ] ?? 'pages.dashboard.crud.form', self::getFormConfig(
+        return View::make($config[ 'view' ] ?? 'pages.dashboard.crud.form', self::getFormConfig(
             config: $config,
             entry: $entry
-        ) );
+        ));
     }
 
-    public static function getFormConfig( $config = [], $entry = null )
+    public static function getFormConfig($config = [], $entry = null)
     {
         $className = get_called_class();
         $instance = new $className;
@@ -1237,7 +1237,7 @@ class CrudService
              * to every outgoing request on the table
              */
             'queryParams' => [],
-        ], $config );
+        ], $config);
     }
 
     /**

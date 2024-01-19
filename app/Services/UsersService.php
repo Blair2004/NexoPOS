@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Classes\Hook;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Mail\ActivateYourAccountMail;
@@ -13,7 +12,6 @@ use App\Models\User;
 use App\Models\UserAttribute;
 use App\Models\UserRoleRelation;
 use App\Models\UserWidget;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\Auth;

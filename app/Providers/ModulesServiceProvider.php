@@ -48,7 +48,7 @@ class ModulesServiceProvider extends ServiceProvider
         $this->app->singleton(ModulesService::class, function ($app) {
             $this->modules = new ModulesService;
 
-            if ( Helper::installed(true)) {
+            if (Helper::installed(true)) {
                 $this->modules->load();
 
                 collect($this->modules->getEnabled())->each(fn($module) => $this->modules->boot($module));

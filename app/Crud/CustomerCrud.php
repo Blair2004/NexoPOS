@@ -207,13 +207,13 @@ class CustomerCrud extends CrudService
                             'description' => __('Set what should be the limit of the purchase on credit.'),
                         ], [
                             'type' => 'search-select',
-                            'label' => __( 'Group' ),
+                            'label' => __('Group'),
                             'name' => 'group_id',
                             'value' => $entry->group_id ?? '',
-                            'component' =>  'nsCrudForm',
-                            'props' =>  CustomerGroupCrud::getFormConfig(),
-                            'options' => Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
-                            'description' => __( 'Assign the customer to a group' ),
+                            'component' => 'nsCrudForm',
+                            'props' => CustomerGroupCrud::getFormConfig(),
+                            'options' => Helper::toJsOptions(CustomerGroup::all(), [ 'id', 'name' ]),
+                            'description' => __('Assign the customer to a group'),
                         ], [
                             'type' => 'datetimepicker',
                             'label' => __('Birth Date'),

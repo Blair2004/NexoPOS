@@ -53,7 +53,7 @@ trait WithAccountingTest
                 'account' => '000009',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
-                'name' => __( 'Liabilities' ),
+                'name' => __('Liabilities'),
                 'account' => '000010',
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ],
@@ -82,14 +82,14 @@ trait WithAccountingTest
             }
         }
 
-        ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::where( 'account', '000001' )->first()->id );
-        ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::where( 'account', '000002' )->first()->id );
-        ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::where( 'account', '000003' )->first()->id );
-        ns()->option->set( 'ns_customer_debitting_cashflow_account', TransactionAccount::where( 'account', '000004' )->first()->id );
-        ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::where( 'account', '000005' )->first()->id );
-        ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::where( 'account', '000006' )->first()->id );
-        ns()->option->set( 'ns_stock_return_unspoiled_account', TransactionAccount::where( 'account', '000007' )->first()->id );
-        ns()->option->set( 'ns_liabilities_account', TransactionAccount::where( 'account', '000010' )->first()->id );
+        ns()->option->set('ns_procurement_cashflow_account', TransactionAccount::where('account', '000001')->first()->id);
+        ns()->option->set('ns_sales_cashflow_account', TransactionAccount::where('account', '000002')->first()->id);
+        ns()->option->set('ns_customer_crediting_cashflow_account', TransactionAccount::where('account', '000003')->first()->id);
+        ns()->option->set('ns_customer_debitting_cashflow_account', TransactionAccount::where('account', '000004')->first()->id);
+        ns()->option->set('ns_sales_refunds_account', TransactionAccount::where('account', '000005')->first()->id);
+        ns()->option->set('ns_stock_return_spoiled_account', TransactionAccount::where('account', '000006')->first()->id);
+        ns()->option->set('ns_stock_return_unspoiled_account', TransactionAccount::where('account', '000007')->first()->id);
+        ns()->option->set('ns_liabilities_account', TransactionAccount::where('account', '000010')->first()->id);
     }
 
     protected function attemptCheckProcurementRecord($procurement_id)

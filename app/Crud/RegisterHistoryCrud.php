@@ -444,9 +444,9 @@ class RegisterHistoryCrud extends CrudService
         switch ($type) {
             case 'unchanged': return __('Unchanged');
                 break;
-            case 'negative': return __( 'Shortage' );
+            case 'negative': return __('Shortage');
                 break;
-            case 'positive': return __( 'Overage' );
+            case 'positive': return __('Overage');
                 break;
             default: return __('N/A');
                 break;

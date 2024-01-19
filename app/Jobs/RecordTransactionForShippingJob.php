@@ -6,7 +6,6 @@ use App\Models\Order;
 use App\Models\OrderRefund;
 use App\Services\TransactionService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -19,7 +18,7 @@ class RecordTransactionForShippingJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct( public Order $order, public OrderRefund $orderRefund )
+    public function __construct(public Order $order, public OrderRefund $orderRefund)
     {
         //
     }
@@ -27,7 +26,7 @@ class RecordTransactionForShippingJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle( TransactionService $transactionService ): void
+    public function handle(TransactionService $transactionService): void
     {
         $transactionService->createTransactionFormRefundedOrderShipping(
             order: $this->order,

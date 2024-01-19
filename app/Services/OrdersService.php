@@ -586,9 +586,9 @@ class OrdersService
                         }
 
                         /**
-                     * for the product that was already tracked
-                     * we'll just update the price and quantity
-                     */
+                         * for the product that was already tracked
+                         * we'll just update the price and quantity
+                         */
                         $adjustment[ 'orderProduct' ]->unit_price = $adjustment[ 'unit_price' ];
                         $adjustment[ 'orderProduct' ]->total_price = $adjustment[ 'total_price' ];
                         $adjustment[ 'orderProduct' ]->save();
@@ -2142,7 +2142,7 @@ class OrdersService
             $order->payment_status = Order::PAYMENT_REFUNDED;
         } elseif ($order->total > 0 && $totalRefunds > 0) {
             $order->payment_status = Order::PAYMENT_PARTIALLY_REFUNDED;
-        } elseif ($order->tendered >= $order->total && $order->payments->count() > 0 && $totalRefunds == 0 ) {
+        } elseif ($order->tendered >= $order->total && $order->payments->count() > 0 && $totalRefunds == 0) {
             $order->payment_status = Order::PAYMENT_PAID;
         } elseif ((float) $order->tendered < (float) $order->total && (float) $order->tendered > 0) {
             $order->payment_status = Order::PAYMENT_PARTIALLY;
@@ -2196,10 +2196,10 @@ class OrdersService
                     $orderProduct->load('product');
                     $product = $orderProduct->product;
                     /**
-                 * we do proceed by doing an initial return
-                 * only if the product is not a quick product/service
-                 * we'll also check if the linked product still exists.
-                 */
+                     * we do proceed by doing an initial return
+                     * only if the product is not a quick product/service
+                     * we'll also check if the linked product still exists.
+                     */
                     if (
                         ($orderProduct->product_id > 0 && $product instanceof Product) &&
                         (

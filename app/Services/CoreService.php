@@ -419,7 +419,7 @@ class CoreService
         if (! file_exists($manifestPath)) {
             throw new NotFoundException(
                 sprintf(
-                    __( 'The manifest.json can\'t be located inside the module %s on the path: %s' ),
+                    __('The manifest.json can\'t be located inside the module %s on the path: %s'),
                     $module[ 'name' ],
                     $manifestPath
                 )

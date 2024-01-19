@@ -1030,8 +1030,8 @@ class ProcurementService
                     ->orWhere('barcode', 'LIKE', "%{$argument}%");
             })
             ->withStockEnabled()
-            ->with( 'unit_quantities.unit' )
-            ->limit( $limit )
+            ->with('unit_quantities.unit')
+            ->limit($limit)
             ->get()
             ->map(function ($product) {
                 $units = json_decode($product->purchase_unit_ids);

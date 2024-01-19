@@ -20,10 +20,10 @@ class EnvEditor
     {
         $result = [];
 
-        if ( is_file( $filePath ) === false ) {
+        if (is_file($filePath) === false) {
             return $result;
         }
-        
+
         $file = fopen($filePath, 'r');
         if ($file) {
             while (($line = fgets($file)) !== false) {
