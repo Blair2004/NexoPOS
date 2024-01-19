@@ -19,6 +19,11 @@ class EnvEditor
     public function read( $filePath )
     {
         $result = [];
+
+        if ( is_file( $filePath ) === false ) {
+            return $result;
+        }
+        
         $file = fopen($filePath, 'r');
         if ($file) {
             while (($line = fgets($file)) !== false) {
