@@ -1082,11 +1082,11 @@ export class POS {
          * There should be a better
          * way of writing this.
          */
-        if ( options.ns_pos_printing_enabled_for === 'all_orders' ) {
-            this.print.process( order.id, 'sale', mode );
-        } else if ( options.ns_pos_printing_enabled_for === 'partially_paid_orders' && [ 'paid', 'partially_paid' ].includes( order.payment_status ) ) {
-            this.print.process( order.id, 'sale', mode );
-        } else if ( options.ns_pos_printing_enabled_for === 'only_paid_orders' && [ 'paid' ].includes( order.payment_status ) ) {
+        if ( 
+            ( options.ns_pos_printing_enabled_for === 'all_orders'  ) ||
+            ( options.ns_pos_printing_enabled_for === 'partially_paid_orders' && [ 'paid', 'partially_paid' ].includes( order.payment_status ) ) ||
+            ( options.ns_pos_printing_enabled_for === 'only_paid_orders' && [ 'paid' ].includes( order.payment_status ) )
+        ) {
             this.print.process( order.id, 'sale', mode );
         } else {
             return false;
