@@ -45,7 +45,7 @@
     "ts-jest": "^29.1.1",
     "ts-loader": "^9.3.1",
     "typescript": "^4.8.4",
-    "vite": "^4.3.1",
+    "vite": "^4.5.2",
     "vite-plugin-mkcert": "^1.16.0",
     "vue-loader": "^17.0.1",
     "vue-template-compiler": "^2.6.12",
