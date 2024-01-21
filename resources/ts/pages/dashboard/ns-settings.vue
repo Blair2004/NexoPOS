@@ -143,8 +143,10 @@ export default {
                 
                 nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
 
-                nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) )
-                    .subscribe();
+                if ( error.message ) {
+                    nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) )
+                        .subscribe();
+                }
             }                
         },
         setActive( tab, identifier ) {

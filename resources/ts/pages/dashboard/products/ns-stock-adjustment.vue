@@ -102,8 +102,8 @@ export default {
 
                         const defaultUnit = result[0].filter( unitQuantity => unitQuantity.unit.base_unit );
 
-                        const action = this.actions.filter( action => action.value === 'deleted' );
-                        let defaultAction = action.length === 1 ? action[0] : { value: 'deleted' };
+                        const action = this.actions.filter( action => action.value === 'set' );
+                        let defaultAction = action.length === 1 ? action[0] : { value: 'set' };
 
                         suggestion.selected                         =   false;
                         suggestion.quantities                       =   result[0];
@@ -367,7 +367,16 @@ export default {
                     </tr>
                     <tr :key="product.id" v-for="product of products">
                         <td class="p-2 border">
-                            <h3 class="font-bold cursor-pointer" @click="product.selected  =   ! product.selected"><input type="checkbox" :checked="product.selected" name="" id=""> {{ product.name }} ({{ ( product.accurate_tracking === 1 ? product.available_quantity : product.adjust_unit.quantity ) || 0 }})</h3>
+                            <div class="flex justify-between">
+                                <div>
+                                    <h3 class="font-bold cursor-pointer" @click="product.selected  =   ! product.selected"><input type="checkbox" :checked="product.selected" name="" id=""> {{ product.name }} ({{ ( product.accurate_tracking === 1 ? product.available_quantity : product.adjust_unit.quantity ) || 0 }})</h3>
+                                </div>
+                                <div>
+                                    <span class="md:hidden cursor-pointer border-dashed border-b border-info-secondary" @click="openQuantityPopup( product )">
+                                        {{ __( 'Quantity' ) }} : {{ product.adjust_quantity }}
+                                    </span>
+                                </div>
+                            </div>
                             <div class="flex -mx-2 md:flex-row flex-wrap">
                                 <div class="px-2 w-1/2 md:w-auto" @click="selectAdjustmentUnit( product )">
                                     <div class="text-xs cursor-pointer border-b border-dashed border-info-secondary py-1">
@@ -405,7 +414,7 @@ export default {
                                 </div>
                                 <div class="px-2 w-1/2 md:w-auto" @click="removeProduct( product )">
                                     <div class="text-xs cursor-pointer border-b border-dashed border-danger-secondary py-1">
-                                        <span class="text-xs">{{ __( 'Delete' ) }}</span>
+                                        <span class="text-xs">{{ __( 'Remove' ) }}</span>
                                     </div>
                                 </div>
                             </div>
