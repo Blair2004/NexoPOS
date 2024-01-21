@@ -14,7 +14,7 @@
     "@babel/preset-typescript": "^7.22.15",
     "@jest/globals": "^29.6.4",
     "@types/jest": "^29.5.4",
-    "@types/node": "^18.8.4",
+    "@types/node": "^20.11.5",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",
     "@vue/eslint-config-typescript": "^11.0.2",
@@ -52,7 +52,7 @@
     "wildcard": "^2.0.0"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^35.2.1",
+    "@ckeditor/ckeditor5-build-classic": "^41.0.0",
     "@ckeditor/ckeditor5-vue": "^4.0.1",
     "@dicebear/avatars": "^4.10.3",
     "@dicebear/avatars-avataaars-sprites": "^4.10.5",
