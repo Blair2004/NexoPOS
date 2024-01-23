@@ -29,6 +29,7 @@ return [
         'ar' => 'Arabic',
         'pt' => 'Portuguese',
         'tr' => 'Türkçe',
+        'km' => 'ភាសាខ្មែរ',
         'vi' => 'Vietnamese',
         'sq' => 'Shqiptare',
     ],
