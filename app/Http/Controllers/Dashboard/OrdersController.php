@@ -136,7 +136,7 @@ class OrdersController extends DashboardController
         return $this->ordersService->deleteOrderProduct($order, $productId);
     }
 
-    public function getOrders(?Order $id = null)
+    public function getOrders(Order $id = null)
     {
         if ($id instanceof Order) {
             $id->load('customer');

@@ -88,7 +88,7 @@ class WidgetService
      * Return a boolean if the logged user
      * is allowed to see the current widget
      */
-    public function canAccess(?User $user = null): bool
+    public function canAccess(User $user = null): bool
     {
         return ! $this->permission ?: ($user == null ? Gate::allows($this->permission) : Gate::forUser($user)->allows($this->permission));
     }

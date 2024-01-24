@@ -84,7 +84,7 @@ class OrdersService
      * @param Order|null $order (optional)
      * @return array
      */
-    public function create($fields, ?Order $order = null)
+    public function create($fields, Order $order = null)
     {
         $isNew = ! $order instanceof Order;
         $customer = $this->__customerIsDefined($fields);
@@ -1223,7 +1223,7 @@ class OrdersService
     /**
      * @return SupportCollection $items
      */
-    private function __checkProductStock(SupportCollection $items, ?Order $order = null)
+    private function __checkProductStock(SupportCollection $items, Order $order = null)
     {
         $session_identifier = Str::random('10');
 
@@ -1303,7 +1303,7 @@ class OrdersService
      * @param array Order Product
      * @return array Order Product (updated)
      */
-    public function __buildOrderProduct(array $orderProduct, ?ProductUnitQuantity $productUnitQuantity = null, ?Product $product = null)
+    public function __buildOrderProduct(array $orderProduct, ProductUnitQuantity $productUnitQuantity = null, Product $product = null)
     {
         /**
          * This will calculate the product default field
@@ -1394,7 +1394,7 @@ class OrdersService
         }
     }
 
-    public function computeProduct($fields, ?Product $product = null, ?ProductUnitQuantity $productUnitQuantity = null)
+    public function computeProduct($fields, Product $product = null, ProductUnitQuantity $productUnitQuantity = null)
     {
         $sale_price = ($fields[ 'unit_price' ] ?? $productUnitQuantity->sale_price);
 

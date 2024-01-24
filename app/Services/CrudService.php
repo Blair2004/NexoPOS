@@ -1092,7 +1092,7 @@ class CrudService
         return $this->tabsRelations;
     }
 
-    public static function table(array $config = [], ?string $title = null, ?string $description = null, ?string $src = null, ?string $createUrl = null, ?array $queryParams = null): ContractView
+    public static function table(array $config = [], string $title = null, string $description = null, string $src = null, string $createUrl = null, array $queryParams = null): ContractView
     {
         $className = get_called_class();
         $instance = new $className;

@@ -653,7 +653,7 @@ class CustomerService
      * @param array $group
      * @return array $response
      */
-    public function createGroup($fields, ?CustomerGroup $group = null)
+    public function createGroup($fields, CustomerGroup $group = null)
     {
         if ($group === null) {
             $group = CustomerGroup::where('name', $fields[ 'name' ])->first();

@@ -163,7 +163,7 @@ trait WithTaxTest
         $this->assertCheck($details);
     }
 
-    private function assertCheck($details, ?callable $callback = null)
+    private function assertCheck($details, callable $callback = null)
     {
         /**
          * @var TaxService

@@ -33,7 +33,7 @@ class NotificationService
     /**
      * @param array $config [ 'title', 'url', 'identifier', 'source', 'dismissable', 'description' ]
      */
-    public function create(string|array $title, string $description = '', string $url = '#', ?string $identifier = null, string $source = 'system', bool $dismissable = true)
+    public function create(string|array $title, string $description = '', string $url = '#', string $identifier = null, string $source = 'system', bool $dismissable = true)
     {
         if (is_array($title)) {
             extract($title);

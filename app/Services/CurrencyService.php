@@ -196,7 +196,7 @@ class CurrencyService
     /**
      * return a raw value for the provided number
      */
-    public function getRaw(float|null|BigDecimal $value = null): float
+    public function getRaw(float|BigDecimal $value = null): float
     {
         if ($value === null) {
             return $this->value->dividedBy(1, $this->decimal_precision, RoundingMode::HALF_UP)->toFloat();

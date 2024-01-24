@@ -10,7 +10,7 @@ class UnitsFields extends FieldsService
 {
     protected static $identifier = 'ns.units-fields';
 
-    public function get(?Unit $model = null)
+    public function get(Unit $model = null)
     {
         $name = new \stdClass;
         $name->name = 'name';
