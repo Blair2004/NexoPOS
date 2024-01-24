@@ -31,7 +31,7 @@ class TestLanguageFileValidity extends TestCase
         if (! empty($content)) {
             @json_decode($content);
 
-            return  json_last_error() === JSON_ERROR_NONE;
+            return json_last_error() === JSON_ERROR_NONE;
         }
 
         return false;

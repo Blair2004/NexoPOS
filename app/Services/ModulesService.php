@@ -81,7 +81,7 @@ class ModulesService
      *
      * @param string path to load
      */
-    public function load(?string $dir = null): void
+    public function load(string $dir = null): void
     {
         /**
          * If we're not loading a specific module directory
@@ -331,7 +331,7 @@ class ModulesService
      * Will check for a specific module or all the module
      * enabled if there is a dependency error.
      */
-    public function dependenciesCheck(?array $module = null): void
+    public function dependenciesCheck(array $module = null): void
     {
         if ($module === null) {
             collect($this->getEnabled())->each(function ($module) {

@@ -92,7 +92,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
         $this->defaultProcessing = false;
     }
 
-    public function processOrders(array $orderDetails, ?callable $callback = null)
+    public function processOrders(array $orderDetails, callable $callback = null)
     {
         $responses = [];
         /**

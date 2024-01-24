@@ -97,7 +97,7 @@ class TransactionService
      *
      * @throws NotFoundException
      */
-    public function get(?int $id = null): Collection|Transaction
+    public function get(int $id = null): Collection|Transaction
     {
         if ($id === null) {
             return Transaction::get();
@@ -134,7 +134,7 @@ class TransactionService
      * Retreive a specific account type
      * or all account type
      */
-    public function getTransactionAccountByID(?int $id = null)
+    public function getTransactionAccountByID(int $id = null)
     {
         if ($id !== null) {
             $account = TransactionAccount::find($id);
@@ -355,7 +355,7 @@ class TransactionService
      *
      * @return array of process results.
      */
-    public function handleRecurringTransactions(?Carbon $date = null)
+    public function handleRecurringTransactions(Carbon $date = null)
     {
         if ($date === null) {
             $date = $this->dateService->copy();

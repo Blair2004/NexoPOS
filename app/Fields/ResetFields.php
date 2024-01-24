@@ -11,7 +11,7 @@ class ResetFields extends FieldsService
 {
     protected static $identifier = 'ns.reset';
 
-    public function get(?Unit $model = null)
+    public function get(Unit $model = null)
     {
         $this->fields = [
             [

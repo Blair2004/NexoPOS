@@ -9,7 +9,7 @@ class ProcurementFields extends FieldsService
 {
     protected static $identifier = 'ns.procurement-fields';
 
-    public function get(?Procurement $model = null)
+    public function get(Procurement $model = null)
     {
         $name = new \stdClass;
         $name->name = 'name';

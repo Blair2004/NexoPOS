@@ -1194,7 +1194,7 @@ class ProductService
         $orderProductQuantity,
         Product $product,
         Unit $parentUnit,
-        ?OrderProduct $orderProduct = null): EloquentCollection
+        OrderProduct $orderProduct = null): EloquentCollection
     {
         $product->load('sub_items');
 
@@ -1391,7 +1391,7 @@ class ProductService
                 unit_id: $unit_id
             );
 
-            if ( $currentQuantity < $quantity ) {
+            if ($currentQuantity < $quantity) {
                 $action = ProductHistory::ACTION_ADDED;
                 $adjustQuantity = $quantity - $currentQuantity;
 
@@ -1401,7 +1401,7 @@ class ProductService
                     quantity: $adjustQuantity,
                     oldQuantity: $currentQuantity
                 );
-            } elseif ( $currentQuantity > $quantity ) {
+            } elseif ($currentQuantity > $quantity) {
                 $action = ProductHistory::ACTION_REMOVED;
                 $adjustQuantity = $currentQuantity - $quantity;
 
@@ -1695,7 +1695,7 @@ class ProductService
      * Will return the last purchase price
      * defined for the provided product
      */
-    public function getLastPurchasePrice(?Product $product, Unit $unit, ?string $before = null): float|int
+    public function getLastPurchasePrice(?Product $product, Unit $unit, string $before = null): float|int
     {
         if ($product instanceof Product) {
             $request = ProcurementProduct::where('product_id', $product->id)
@@ -1861,7 +1861,7 @@ class ProductService
      * Convert quantity from a source unit ($from) to a destination unit ($to)
      * using the provided quantity and product.
      */
-    public function convertUnitQuantities(Product $product, Unit $from, float $quantity, Unit $to, ?ProcurementProduct $procurementProduct = null): array
+    public function convertUnitQuantities(Product $product, Unit $from, float $quantity, Unit $to, ProcurementProduct $procurementProduct = null): array
     {
         if ($product->stock_management !== Product::STOCK_MANAGEMENT_ENABLED) {
             throw new NotAllowedException(__('You cannot convert unit on a product having stock management disabled.'));
