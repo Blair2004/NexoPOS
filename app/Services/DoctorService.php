@@ -8,6 +8,7 @@ use App\Models\CustomerShippingAddress;
 use App\Models\Option;
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\ProductUnitQuantity;
 use App\Models\Role;
 use App\Models\TransactionHistory;
 use App\Models\User;
@@ -264,5 +265,28 @@ class DoctorService
                 count($deleted)
             ),
         ];
+    }
+
+    public function setUnitVisibility( string $products, bool $visibility)
+    {
+        $products = explode(',', $products);
+
+        if ( $products[ 0 ] === 'all' ) {
+            $products = ProductUnitQuantity::get()->pluck('product_id');
+        }
+
+        $this->command->info(sprintf(
+            __('%s products will be updated'),
+            count($products)
+        ));
+
+        $this->command->withProgressBar($products, function ($product) use ( $visibility ) {
+            $product = ProductUnitQuantity::where('product_id', $product)->first();
+
+            if ($product instanceof OrderProduct) {
+                $product->visible = $visibility;
+                $product->save();
+            }
+        });
     }
 }
