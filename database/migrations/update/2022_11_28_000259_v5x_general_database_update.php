@@ -76,6 +76,7 @@ return new class extends Migration
          */
         include_once base_path() . '/database/permissions/widgets.php';
         include_once base_path() . '/database/permissions/transactions.php';
+        include_once base_path() . '/database/permissions/transactions-accounts.php';
         include_once base_path() . '/database/permissions/reports.php';
 
         /**
