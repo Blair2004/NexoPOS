@@ -283,7 +283,7 @@ class DoctorService
         $this->command->withProgressBar($products, function ($product) use ( $visibility ) {
             $product = ProductUnitQuantity::where('product_id', $product)->first();
 
-            if ($product instanceof OrderProduct) {
+            if ( $product instanceof ProductUnitQuantity ) {
                 $product->visible = $visibility;
                 $product->save();
             }
