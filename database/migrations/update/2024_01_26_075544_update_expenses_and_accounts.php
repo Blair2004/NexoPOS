@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Permission;
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,13 +17,21 @@ return new class extends Migration
             Schema::rename('nexopos_expenses', 'nexopos_transactions');
         }
 
-        if (Schema::hasTable('nexopos_expense_categories')) {
-            Schema::rename('nexopos_expense_categories', 'nexopos_transactions_accounts');
+        if (Schema::hasTable('nexopos_expenses_categories')) {
+            Schema::rename('nexopos_expenses_categories', 'nexopos_transactions_accounts');
         }
         
         if (Schema::hasTable('nexopos_cash_flow')) {
             Schema::rename('nexopos_cash_flow', 'nexopos_transactions_histories');
         }
+
+        include_once base_path() . '/database/permissions/transactions-accounts.php';
+
+        $admin = Role::namespace(Role::ADMIN);
+        $storeAdmin = Role::namespace(Role::STOREADMIN);
+
+        $admin->addPermissions(Permission::includes('.transactions-account')->get()->map(fn($permission) => $permission->namespace));
+        $storeAdmin->addPermissions(Permission::includes('.transactions-account')->get()->map(fn($permission) => $permission->namespace));
     }
 
     /**
