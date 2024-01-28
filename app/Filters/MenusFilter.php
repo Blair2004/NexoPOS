@@ -31,7 +31,7 @@ class MenusFilter
             unset($menus[ 'pos' ]);
         }
 
-        if (ns()->option->get('ns_orders_allow_unpaid') === 'yes') {
+        if (ns()->option->get('ns_orders_allow_unpaid') === 'yes' && isset( $menus[ 'orders' ] ) ) {
             $menus = array_insert_after($menus, 'orders', [
                 'orders' => [
                     'label' => __('Orders'),
