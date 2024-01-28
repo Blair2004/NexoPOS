@@ -76,6 +76,7 @@ return new class extends Migration
          */
         include_once base_path() . '/database/permissions/widgets.php';
         include_once base_path() . '/database/permissions/transactions.php';
+        include_once base_path() . '/database/permissions/transactions-accounts.php';
         include_once base_path() . '/database/permissions/reports.php';
 
         /**
@@ -213,7 +214,7 @@ return new class extends Migration
         });
 
         Schema::table('nexopos_procurements_products', function (Blueprint $table) {
-            if (Schema::hasColumn('nexopos_procurements_products', 'convert_unit_id')) {
+            if (!Schema::hasColumn('nexopos_procurements_products', 'convert_unit_id')) {
                 $table->integer('convert_unit_id')->nullable();
             }
         });

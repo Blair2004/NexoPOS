@@ -9,7 +9,7 @@ class UnitsGroupsFields extends FieldsService
 {
     protected static $identifier = 'ns.units-group-fields';
 
-    public function get(?UnitGroup $model = null)
+    public function get(UnitGroup $model = null)
     {
         $name = new \stdClass;
         $name->name = 'name';

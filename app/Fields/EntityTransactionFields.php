@@ -13,7 +13,7 @@ class EntityTransactionFields extends FieldsService
 {
     protected static $identifier = Transaction::TYPE_ENTITY;
 
-    public function __construct(?Transaction $transaction = null)
+    public function __construct(Transaction $transaction = null)
     {
         $this->fields = Hook::filter('ns-direct-transactions-fields', [
             [

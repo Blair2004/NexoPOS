@@ -166,7 +166,7 @@ class CustomerCouponHistoryCrud extends CrudService
     /**
      * Defines the forms used to create and update entries.
      */
-    public function getForm(?OrderCoupon $entry = null): array
+    public function getForm(OrderCoupon $entry = null): array
     {
         return [
             // ...

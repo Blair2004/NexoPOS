@@ -12,7 +12,7 @@ class ScheduledTransactionFields extends FieldsService
 {
     protected static $identifier = Transaction::TYPE_SCHEDULED;
 
-    public function __construct(?Transaction $transaction = null)
+    public function __construct(Transaction $transaction = null)
     {
         $this->fields = Hook::filter('ns-scheduled-transactions-fields', [
             [

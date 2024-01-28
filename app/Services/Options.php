@@ -190,7 +190,7 @@ class Options
     /**
      * Get options
      **/
-    public function get(?string $key = null, mixed $default = null)
+    public function get(string $key = null, mixed $default = null)
     {
         if ($key === null) {
             return $this->rawOptions;

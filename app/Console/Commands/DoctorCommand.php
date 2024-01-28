@@ -23,6 +23,8 @@ class DoctorCommand extends Command
         {--fix-domains}
         {--fix-orphan-orders-products}
         {--fix-transactions-orders}
+        {--set-unit-visibility=}
+        {--products=}
         {--fix-duplicate-options}';
 
     /**
@@ -91,6 +93,13 @@ class DoctorCommand extends Command
 
         if ($this->option('clear-modules-temp')) {
             return $doctorService->clearTemporaryFiles();
+        }
+
+        if ( $this->option( 'set-unit-visibility' ) ) {
+            return $doctorService->setUnitVisibility( 
+                products: $this->option( 'products' ),
+                visibility: $this->option( 'set-unit-visibility' )
+            );
         }
 
         if ($this->option('fix-orders-products')) {

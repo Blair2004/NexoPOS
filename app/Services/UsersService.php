@@ -271,7 +271,7 @@ class UsersService
      * Stores the widgets details
      * on the provided area
      */
-    public function storeWidgetsOnAreas(array $config, ?User $user = null): array
+    public function storeWidgetsOnAreas(array $config, User $user = null): array
     {
         $userId = $user !== null ? $user->id : Auth::user()->id;
 
@@ -314,7 +314,7 @@ class UsersService
      * Will generate a token for either the
      * logged user or for the provided user
      */
-    public function createToken($name, ?User $user = null): array
+    public function createToken($name, User $user = null): array
     {
         if ($user === null) {
             /**
@@ -336,7 +336,7 @@ class UsersService
      * Returns all generated token
      * using the provided user or the logged one.
      */
-    public function getTokens(?User $user = null): EloquentCollection
+    public function getTokens(User $user = null): EloquentCollection
     {
         if ($user === null) {
             /**
@@ -348,7 +348,7 @@ class UsersService
         return $user->tokens()->orderBy('created_at', 'desc')->get();
     }
 
-    public function deleteToken($tokenId, ?User $user = null)
+    public function deleteToken($tokenId, User $user = null)
     {
         if ($user === null) {
             /**

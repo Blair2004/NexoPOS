@@ -179,7 +179,7 @@ class CustomerCrud extends CrudService
      * @param  object/null
      * @return  array of field
      */
-    public function getForm(?Customer $entry = null)
+    public function getForm(Customer $entry = null)
     {
         return [
             'main' => [

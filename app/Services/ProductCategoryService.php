@@ -45,7 +45,7 @@ class ProductCategoryService
      * @param array details
      * @return array
      */
-    public function create($data, ?ProductCategory $productCategory = null)
+    public function create($data, ProductCategory $productCategory = null)
     {
         $category = $productCategory === null ? new ProductCategory : $productCategory;
         $category->author = Auth::id();

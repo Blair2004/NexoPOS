@@ -1194,7 +1194,7 @@ class ProductService
         $orderProductQuantity,
         Product $product,
         Unit $parentUnit,
-        ?OrderProduct $orderProduct = null): EloquentCollection
+        OrderProduct $orderProduct = null): EloquentCollection
     {
         $product->load('sub_items');
 
@@ -1386,20 +1386,45 @@ class ProductService
         } elseif (
             in_array($action, [ ProductHistory::ACTION_SET ])
         ) {
-            $this->setQuantity($product_id, $unit_id, $quantity);
+            $currentQuantity = $this->getQuantity(
+                product_id: $product_id,
+                unit_id: $unit_id
+            );
+
+            if ($currentQuantity < $quantity) {
+                $action = ProductHistory::ACTION_ADDED;
+                $adjustQuantity = $quantity - $currentQuantity;
+
+                $this->increaseUnitQuantities(
+                    product_id: $product_id,
+                    unit_id: $unit_id,
+                    quantity: $adjustQuantity,
+                    oldQuantity: $currentQuantity
+                );
+            } elseif ($currentQuantity > $quantity) {
+                $action = ProductHistory::ACTION_REMOVED;
+                $adjustQuantity = $currentQuantity - $quantity;
+
+                $this->reduceUnitQuantities(
+                    product_id: $product_id,
+                    unit_id: $unit_id,
+                    quantity: $adjustQuantity,
+                    oldQuantity: $currentQuantity
+                );
+            }
 
             return $this->recordStockHistory(
                 product_id: $product_id,
                 action: $action,
                 unit_id: $unit_id,
                 unit_price: $unit_price,
-                quantity: $quantity,
+                quantity: $adjustQuantity,
                 total_price: $total_price,
                 procurement_product_id: $procurementProduct?->id ?: null,
                 procurement_id: $procurementProduct->procurement_id ?? null,
                 order_id: isset($orderProduct) ? $orderProduct->order_id : null,
                 order_product_id: isset($orderProduct) ? $orderProduct->id : null,
-                old_quantity: $oldQuantity,
+                old_quantity: $currentQuantity,
                 new_quantity: $quantity
             );
         }
@@ -1670,7 +1695,7 @@ class ProductService
      * Will return the last purchase price
      * defined for the provided product
      */
-    public function getLastPurchasePrice(?Product $product, Unit $unit, ?string $before = null): float|int
+    public function getLastPurchasePrice(?Product $product, Unit $unit, string $before = null): float|int
     {
         if ($product instanceof Product) {
             $request = ProcurementProduct::where('product_id', $product->id)
@@ -1836,7 +1861,7 @@ class ProductService
      * Convert quantity from a source unit ($from) to a destination unit ($to)
      * using the provided quantity and product.
      */
-    public function convertUnitQuantities(Product $product, Unit $from, float $quantity, Unit $to, ?ProcurementProduct $procurementProduct = null): array
+    public function convertUnitQuantities(Product $product, Unit $from, float $quantity, Unit $to, ProcurementProduct $procurementProduct = null): array
     {
         if ($product->stock_management !== Product::STOCK_MANAGEMENT_ENABLED) {
             throw new NotAllowedException(__('You cannot convert unit on a product having stock management disabled.'));
