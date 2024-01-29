@@ -25,7 +25,7 @@
         "laravel/tinker": "^2.0",
         "laravie/parser": "^2.1",
         "nikic/php-parser": "^4.14",
-        "phpoffice/phpspreadsheet": "^1.17",
+        "phpoffice/phpspreadsheet": "^2.0",
         "picqer/php-barcode-generator": "^2.1",
         "predis/predis": "^2.0",
         "pusher/pusher-php-server": "^7.0",
