@@ -22,7 +22,7 @@
     "axios": "^1.6.7",
     "babel-loader": "^8.2.5",
     "cross-env": "^7.0.2",
-    "cssnano": "^5.1.13",
+    "cssnano": "^6.0.3",
     "eslint": "^8.26.0",
     "eslint-plugin-vue": "^9.6.0",
     "jest": "^29.6.4",
