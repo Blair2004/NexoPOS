@@ -24,13 +24,16 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { __ } from '~/libraries/lang';
 import FormValidation from '~/libraries/form-validation';
 import popupResolver from '~/libraries/popup-resolver';
 import popupCloser from '~/libraries/popup-closer';
 import { forkJoin } from 'rxjs';
 import { nsSnackBar } from '~/bootstrap';
+
+declare const POS;
+
 export default {
     name: 'ns-pos-quick-product-popup',
     props: [ 'popup' ],
@@ -115,7 +118,7 @@ export default {
                             });
 
                             // if we have at least one tax group, this latest is selected by default.
-                            if ( result[1][0].id !== undefined ) {
+                            if ( result[1].length > 0 && result[1][0].id !== undefined ) {
                                 field.value = result[1][0].id || this.options.ns_pos_tax_group;
                             }
                         }
@@ -148,7 +151,7 @@ export default {
             this.loaded     =   true;
 
             setTimeout(() => {
-                this.$popup.container.querySelector( '#name' ).select();
+                this.$el.querySelector( '#name' ).select();
             }, 100);
         }
     },

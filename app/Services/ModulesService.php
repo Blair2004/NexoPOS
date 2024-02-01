@@ -16,6 +16,7 @@ use Error as GlobalError;
 use Exception;
 use Illuminate\Contracts\View\View as ViewView;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
@@ -1110,7 +1111,7 @@ class ModulesService
     /**
      * Enables module using a provided namespace
      */
-    public function enable(string $namespace): array
+    public function enable(string $namespace): array | JsonResponse
     {
         $this->checkManagementStatus();
 

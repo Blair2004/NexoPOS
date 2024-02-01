@@ -80,7 +80,7 @@ class ModuleMigrations extends Command
                 $this->createMigration();
             }
         } else {
-            $this->info('Unable to locate the module.');
+            $this->info( "Unable to locate the module \"{$this->argument('namespace')}\"" );
         }
     }
 
