@@ -44,6 +44,10 @@ class AboutSettings extends SettingsPage
                 __('Max Execution Time') => sprintf(__('%s Second(s)'), ini_get('max_execution_time')),
                 __('Memory Limit') => ini_get('memory_limit'),
             ],
+            'developpers'   =>  [
+                __( 'User' )    =>  exec( 'whoami' ),
+                __( 'Path' )    =>  base_path(),
+            ]
         ]);
     }
 }
