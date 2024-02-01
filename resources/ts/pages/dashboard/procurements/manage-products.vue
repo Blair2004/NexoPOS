@@ -122,20 +122,32 @@
                                                         <span>{{ __( 'New Group' ) }}</span>
                                                     </div>
                                                 </div>
-                                                <div class="-mx-4 flex flex-wrap">
-                                                    <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
+                                                <ns-tabs @changeTab="variation.activeUnitTab = $event" :active="variation.activeUnitTab || 'foo'">
+                                                    <ns-tabs-item padding="p-2" v-for="(group_fields,index) of field.groups" :identifier="'tab-' + getGroupId( group_fields )" :label="getFirstSelectedUnit( group_fields )">
                                                         <div class="shadow rounded overflow-hidden bg-box-elevation-background text-primary">
                                                             <div class="border-b text-sm p-2 flex justify-between text-primary border-box-elevation-edge">
                                                                 <span>{{ __( 'Available Quantity' ) }}</span>
                                                                 <span>{{ getUnitQuantity( group_fields ) }}</span>
                                                             </div>
                                                             <div class="p-2 mb-2">
-                                                                <ns-field @saved="handleSavedUnitGroupFields( $event, field )" :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
+                                                                <div class="md:-mx-2 flex flex-wrap">
+                                                                    <div class="w-full md:w-1/2 p-2" v-for="(field,index) of group_fields" :key="index">
+                                                                        <ns-field @saved="handleSavedUnitGroupFields( $event, field )" :field="field"></ns-field>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                             <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
                                                                 {{ __( 'Delete' ) }}
                                                             </div>
                                                         </div>
+                                                    </ns-tabs-item>
+                                                </ns-tabs>
+                                            </div>
+                                            <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
+                                                
+                                                <div class="-mx-4 flex flex-wrap">
+                                                    <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
+                                                        
                                                     </div>
                                                 </div>
                                             </div>
@@ -627,6 +639,28 @@ export default {
 
                 field.value = event.data.entry.id;
             }
+        },
+        getGroupId( group_field ) {
+            const field = group_field.filter( field => field.name === 'id' );
+
+            if ( field.length > 0 ) {
+                return field[0].value;
+            }
+
+            return false;
+        },
+        getFirstSelectedUnit( group_fields ) {
+            const field = group_fields.filter( field => field.name === 'unit_id' );
+
+            if ( field.length > 0 ) {
+                const option    =   field[0].options.filter( option => option.value === field[0].value );
+
+                if ( option.length > 0 ) {
+                    return option[0].label;
+                }
+            }
+
+            return __( 'No Unit Selected' );
         }
     },
     async mounted() {
