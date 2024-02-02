@@ -278,11 +278,11 @@ class UnitService
     public function getConvertedQuantity(Unit $from, Unit $to, float $quantity): float|int
     {
         return ns()->currency->define(
-            ns()->currency
-                ->define($from->value)
-                ->multipliedBy($quantity)
-                ->getRaw()
-        )
+                ns()->currency
+                    ->define($from->value)
+                    ->multipliedBy($quantity)
+                    ->getRaw()
+            )
             ->dividedBy($to->value)
             ->getRaw();
     }

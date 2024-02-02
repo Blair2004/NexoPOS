@@ -82,6 +82,16 @@ class ProductsController extends DashboardController
         return $this->productService->create($primary);
     }
 
+    public function convertUnits( Request $request, Product $product )
+    {
+        return $this->productService->convertUnitQuantities(
+            product: $product,
+            from: Unit::findOrFail( $request->input('from') ),
+            to: Unit::findOrFail( $request->input('to') ),
+            quantity: $request->input('fromQuantity')
+        );
+    }
+
     /**
      * returns a list of available
      * product

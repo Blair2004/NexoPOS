@@ -1875,6 +1875,18 @@ class ProductService
             ->where('unit_id', $to->id)
             ->first();
 
+        if ($unitQuantityFrom->quantity < $quantity) {
+            throw new NotAllowedException(
+                sprintf( 
+                    __('The source unit "(%s)" for the product "%s", does not have enough quantity "%s". "%s" is required for the conversion.' ),
+                    $from->name,
+                    $product->name,
+                    $unitQuantityFrom->quantity,
+                    $quantity
+                )
+            );
+        }
+
         if ($from->id === $to->id) {
             throw new NotAllowedException(
                 __('The source and the destination unit can\'t be the same. What are you trying to do ?')
@@ -1923,6 +1935,16 @@ class ProductService
                     $from->group->name
                 )
             );
+        }
+
+        /**
+         * avoid converting unnecessary quantity, in order
+         * to avoid having a quantity with a lot of decimal.
+         * @todo this should be skippable if the user has enabled decimal quantity
+         */
+        if ( $from->value < $to->value ) {
+            $totalPossibleSlots     =   floor( ( $from->value * $quantity ) / $to->value );
+            $quantity               =   $totalPossibleSlots * $to->value;
         }
 
         $lastFromPurchasePrice = $this->getLastPurchasePrice(

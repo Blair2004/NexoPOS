@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Casts\ProductTypeCast;
 use App\Exceptions\NotAllowedException;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -99,6 +100,10 @@ class ProductCrud extends CrudService
      * @param TaxService
      */
     protected $taxService;
+
+    public $casts   =   [
+        'type'  =>  ProductTypeCast::class,
+    ];
 
     /**
      * Define Constructor
@@ -694,14 +699,8 @@ class ProductCrud extends CrudService
             default => 'text-info-tertiary'
         };
 
-        $entry->type = match ($entry->type) {
-            'materialized' => __('Materialized'),
-            'dematerialized' => __('Dematerialized'),
-            'grouped' => __('Grouped'),
-            default => sprintf(__('Unknown Type: %s'), $entry->type),
-        };
-
-        $entry->type = '<strong class="' . $class . ' ">' . $entry->type . '</strong>';
+        $entry->rawType             =   $entry->getOriginalValue('type');
+        $entry->rawStockManagement  =   $entry->getOriginalValue('stock_management');
 
         $entry->stock_management = $entry->stock_management === 'enabled' ? __('Enabled') : __('Disabled');
         $entry->status = $entry->status === 'available' ? __('Available') : __('Hidden');

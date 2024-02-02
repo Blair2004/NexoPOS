@@ -78,7 +78,7 @@ export default {
             .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
     watch: {
-        value() {        
+        value() {
             if ( this.value.toString().length > 0 ) {
                 if ( this.floating ) {
                     this.screenValue    =   Math.round( this.value * this.number ).toString();
@@ -110,6 +110,11 @@ export default {
         },
 
         inputValue( key ) {
+            // count a screenValue numbers if it's a string, if it's not, let's convert it to string first
+            if ( typeof this.screenValue !== 'string' ) {
+                this.screenValue    =   this.screenValue.toString();
+            }
+
             let number    =   parseInt( 
                 1 + ( new Array( this.cursor ) )
                 .fill('')
@@ -125,7 +130,7 @@ export default {
                     this.screenValue    =   '0';
                     this.allSelected    =   false;
                 } else {
-                    this.screenValue    =   this.screenValue.toString().substr( 0, this.screenValue.length - 1 );
+                    this.screenValue    =   this.screenValue.substr( 0, this.screenValue.length - 1 );
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
                 if ( this.limit > 0 && this.screenValue.length >= this.limit ) {
