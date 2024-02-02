@@ -595,4 +595,53 @@ trait WithProductTest
 
         $this->assertNotEquals($oldQuantity, $productQuantity->quantity);
     }
+
+    protected function attemptProductConversion()
+    {
+        /**
+         * @var ProductService
+         */
+        $productService = app()->make( ProductService::class );
+
+        $product = Product::where('type', Product::TYPE_MATERIALIZED)
+            ->has( 'unit_quantities', '>=', 2 )
+            ->with('unit_quantities.unit')
+            ->first();
+
+        $firstUnitQuantity = $product->unit_quantities->first();
+        $secondUnitQuantity = $product->unit_quantities->last();
+
+        /**
+         * We'll create a conversion that should fail
+         * because it will cause a float value
+         */
+        $response   =   $this->performConversionRequest( $product, [
+            'from'  =>  $firstUnitQuantity->unit->id,
+            'to'    =>  $secondUnitQuantity->unit->id,
+            'quantity'  =>  1
+        ]);
+
+        $response->assertStatus(403);
+
+        /**
+         * We'll create a conversion that should pass
+         */
+        $response   =   $this->performConversionRequest( $product, [
+            'from'  =>  $firstUnitQuantity->unit->id,
+            'to'    =>  $secondUnitQuantity->unit->id,
+            'quantity'  =>  $secondUnitQuantity->unit->value
+        ]);
+
+        $response->assertStatus(200);
+
+        $refreshedSecondUnitQuantity    =   $secondUnitQuantity->fresh();
+
+        $this->assertSame( $secondUnitQuantity->quantity + 1, $refreshedSecondUnitQuantity->quantity );
+    }
+
+    private function performConversionRequest( Product $product, $data )
+    {
+        return $this->withSession($this->app[ 'session' ]->all())
+            ->json('POST', 'api/products/' . $product->id . '/units/conversion', $data );        
+    }
 }

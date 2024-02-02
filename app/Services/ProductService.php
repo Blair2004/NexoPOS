@@ -1867,6 +1867,10 @@ class ProductService
             throw new NotAllowedException(__('You cannot convert unit on a product having stock management disabled.'));
         }
 
+        if ( $quantity == 0 ) {
+            throw new NotAllowedException(__('The quantity to convert can\'t be zero.'));
+        }
+
         $unitQuantityFrom = ProductUnitQuantity::where('product_id', $product->id)
             ->where('unit_id', $from->id)
             ->first();
@@ -1947,6 +1951,31 @@ class ProductService
             $quantity               =   $totalPossibleSlots * $to->value;
         }
 
+        /**
+         * This quantity will be added removed
+         * from the source ProductUnitQuantity
+         */
+        $finalDestinationQuantity = $this->unitService->getConvertedQuantity(
+            from: $from,
+            to: $to,
+            quantity: $quantity
+        );
+
+        /**
+         * unless if decimal values are allowed
+         * we should prevent a convertion that cause float numbers
+         */
+        if ( $finalDestinationQuantity < 1 ) {
+            throw new NotAllowedException( 
+                sprintf(
+                    __( 'The conversion from "%s" will cause a decimal value less than one count of the destination unit "%s".' ),
+                    $from->name,
+                    $finalDestinationQuantity,
+                    $to->name
+                )
+            );
+        }
+
         $lastFromPurchasePrice = $this->getLastPurchasePrice(
             product: $product,
             unit: $from
@@ -1969,16 +1998,6 @@ class ProductService
         $lastToPurchasePrice = $this->getLastPurchasePrice(
             product: $product,
             unit: $to
-        );
-
-        /**
-         * This quantity will be added removed
-         * from the source ProductUnitQuantity
-         */
-        $finalDestinationQuantity = $this->unitService->getConvertedQuantity(
-            from: $from,
-            to: $to,
-            quantity: $quantity
         );
 
         $this->handleStockAdjustmentRegularProducts(

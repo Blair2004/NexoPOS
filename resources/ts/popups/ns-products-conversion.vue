@@ -177,8 +177,7 @@ export default {
             nsHttpClient.post( `/api/products/${this.unitQuantity.product_id}/units/conversion`, {
                 from: this.unitPair.from.unit.id,
                 to: this.unitPair.to.unit.id,
-                fromQuantity: this.unitPair.from.realQuantity,
-                toQuantity: this.unitPair.to.quantity,
+                quantity: this.unitPair.from.realQuantity
             }).subscribe({
                 next: result => {
                     this.isLoading  =   false;

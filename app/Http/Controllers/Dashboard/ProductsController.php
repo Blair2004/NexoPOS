@@ -88,7 +88,7 @@ class ProductsController extends DashboardController
             product: $product,
             from: Unit::findOrFail( $request->input('from') ),
             to: Unit::findOrFail( $request->input('to') ),
-            quantity: $request->input('fromQuantity')
+            quantity: $request->input('quantity')
         );
     }
 
