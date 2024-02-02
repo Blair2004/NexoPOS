@@ -11,61 +11,61 @@ class CreateProductTest extends TestCase
 {
     use WithAuthentication, WithCategoryTest, WithProductTest;
 
-    // /**
-    //  * @depends testCreateProducts
-    //  */
-    // public function testCreateGroupedProducts()
-    // {
-    //     $this->attemptAuthenticate();
+    /**
+     * @depends testCreateProducts
+     */
+    public function testCreateGroupedProducts()
+    {
+        $this->attemptAuthenticate();
 
-    //     for ($i = 0; $i < 5; $i++) {
-    //         $this->attemptCreateGroupedProduct();
-    //     }
-    // }
+        for ($i = 0; $i < 5; $i++) {
+            $this->attemptCreateGroupedProduct();
+        }
+    }
 
-    // /**
-    //  * @depends testCreateGroupedProducts
-    //  */
-    // public function testDeleteProducts()
-    // {
-    //     $this->attemptAuthenticate();
-    //     $this->attemptDeleteProducts();
-    // }
+    /**
+     * @depends testCreateGroupedProducts
+     */
+    public function testDeleteProducts()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptDeleteProducts();
+    }
 
-    // /**
-    //  * A basic feature test example.
-    //  *
-    //  * @return void
-    //  */
-    // public function testCreateProducts()
-    // {
-    //     $this->attemptAuthenticate();
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function testCreateProducts()
+    {
+        $this->attemptAuthenticate();
 
-    //     for ($i = 0; $i <= 3; $i++) {
-    //         $this->attemptSetProduct();
-    //     }
+        for ($i = 0; $i <= 3; $i++) {
+            $this->attemptSetProduct();
+        }
 
-    //     $this->attemptDeleteCategory();
-    // }
+        $this->attemptDeleteCategory();
+    }
 
-    // public function testEditProductByChangingCategory()
-    // {
-    //     $this->attemptAuthenticate();
-    //     $this->attemptChangeProductCategory();
-    // }
+    public function testEditProductByChangingCategory()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptChangeProductCategory();
+    }
 
-    // public function testSearchableAreSearchable()
-    // {
-    //     $this->attemptAuthenticate();
+    public function testSearchableAreSearchable()
+    {
+        $this->attemptAuthenticate();
 
-    //     return $this->attemptTestSearchable();
-    // }
+        return $this->attemptTestSearchable();
+    }
 
-    // public function testNotSearchableAreSearchable()
-    // {
-    //     $this->attemptAuthenticate();
-    //     $this->attemptNotSearchableAreSearchable();
-    // }
+    public function testNotSearchableAreSearchable()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptNotSearchableAreSearchable();
+    }
 
     public function testProductConversion()
     {
