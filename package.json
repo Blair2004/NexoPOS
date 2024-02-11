@@ -65,7 +65,7 @@
     "currency.js": "^2.0.4",
     "dayjs": "^1.11.7",
     "jspdf": "^2.1.1",
-    "laravel-vite-plugin": "^0.7.4",
+    "laravel-vite-plugin": "^1.0",
     "mathjs": "^11.8.0",
     "mini-css-extract-plugin": "^2.6.1",
     "moment": "^2.29.4",
