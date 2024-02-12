@@ -16,7 +16,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { __ } from '~/libraries/lang';
 export default {
     props: [ 'popup' ],

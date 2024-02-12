@@ -25,7 +25,10 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+
+declare const nsLang, nsLanguages;
+
 import { __ } from "~/libraries/lang";
 export default {
     data() {
