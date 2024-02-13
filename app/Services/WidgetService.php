@@ -106,10 +106,10 @@ class WidgetService
             $widgetInstance = new $widget;
 
             return (object) [
-                'className' => $widget,
+                'class-name' => $widget,
                 'instance' => $widgetInstance,
                 'name' => $widgetInstance->getName(),
-                'component' => $widgetInstance->getVueComponent(),
+                'component-name' => $widgetInstance->getVueComponent(),
                 'canAccess' => $widgetInstance->canAccess(),
             ];
         });
@@ -214,8 +214,8 @@ class WidgetService
             $widgetInstance = new $widgetClass;
 
             $areaWidgets[ $areas[ $index % 3 ] ][] = [
-                'className' => $widgetClass,
-                'componentName' => $widgetInstance->getVueComponent(),
+                'class-name' => $widgetClass,
+                'component-name' => $widgetInstance->getVueComponent(),
             ];
         }
 

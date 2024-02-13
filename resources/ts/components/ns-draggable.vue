@@ -8,7 +8,7 @@
   import { ref, onMounted, onUnmounted } from 'vue';
   
   export default {
-    emits: ['drag-start', 'drag-end', 'hovered'],
+    emits: ['drag-start', 'drag-end' ],
     name: 'ns-draggable',
     props: {
         widget: {
@@ -51,7 +51,6 @@
                 dom: wrapper,
             };
 
-            emit( 'hovered', null );
             emit( 'drag-start', props.widget );
         };
     
@@ -85,9 +84,10 @@
 
                 if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
                     dropZone.style.border = '2px dashed #ccc';
-                    emit( 'hovered', dropZone);
+                    dropZone.setAttribute( 'hovered', 'true' );
                 } else {
                     dropZone.style.border = '2px solid rgb(255 255 255 / 0%)';
+                    dropZone.setAttribute( 'hovered', 'false' );
                 }
             }); 
         };

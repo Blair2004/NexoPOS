@@ -9,11 +9,6 @@ import { ref } from 'vue';
 
 export default {
     name: 'ns-dropzone',
-    props: {
-        dragged: {
-            required: true,
-        }
-    },
     emits: ['dropped'],
     mounted() {
     },    

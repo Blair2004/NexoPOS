@@ -1,35 +1,23 @@
 <template>
     <div class="flex md:-mx-2 flex-wrap">
-        <div class="w-full md:px-2 md:w-1/2 lg:w-1/3 xl:1/4" v-for="column in columns" :key="column.name">
+        <div class="w-full md:px-2 md:w-1/2 lg:w-1/3 xl:1/4" :column-name="column.name" v-for="(column,index) in columns" :key="column.name">
             <!-- v-for="widget in column.widets" -->
-            <ns-dropzone :data-attr="widget.id" @dropped="handleDropped( $event )" :dragged="dragged" v-for="widget in column.widgets">
+            <ns-dropzone v-for="widget in column.widgets">
                 <ns-draggable 
-                    @hovered="handleHoveredZone( $event )"
-                    @dragging="handleDragging( $event )"
+                    :component-name="widget[ 'component-name' ]"
                     @drag-end="handleEndDragging( $event )"
-                    @drag-start="handleStartDragging( $event, column )" :widget="widget">
-                    <component :is="widget.component" :widget="widget"></component>
+                    :widget="widget">
+                    <component @onRemove="handleRemoveWidget( widget, column )" :is="widget.component" :widget="widget"></component>
                 </ns-draggable>
             </ns-dropzone>
-            <!-- <draggable @change="handleChange( column, $event )" item-key="componentName" :group="column.parent" :list="column.widgets" class="mb-4 px-4 w-full lg:w-1/2 xl:w-1/3">
-                <template #item="{element}">
-                    <div class="mb-4">
-                        <component @onRemove="handleRemoveWidget( element, column )" :is="element.component"></component>
-                    </div>
-                </template>
-                v-if="column.widgets.length === 0"
-                <template #footer>
-                    <div @click="openWidgetAdded( column )" class="cursor-pointer border-2 border-dashed h-16 flex items-center justify-center">
-                        <span class="text-sm text-primary" type="info">{{ __( 'Click here to add widgets' ) }}</span>
-                    </div>
-                </template>
-            </draggable> -->
+            <div v-if="hasUnusedWidgets" @click="openWidgetAdded( column )" class="widget-placeholder cursor-pointer border-2 border-dashed h-16 flex items-center justify-center">
+                <span class="text-sm text-primary" type="info">{{ __( 'Click here to add widgets' ) }}</span>
+            </div>
         </div>
     </div>
 </template>
 <script lang="ts">
 import { shallowRef } from '@vue/reactivity';
-// import draggable from 'vuedraggable';
 import { __ } from '~/libraries/lang';
 import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
 import { nsSnackBar } from '~/bootstrap';
@@ -56,54 +44,128 @@ export default {
         this.widgets     =   this.rawWidgets.map( widget => {
             return { 
                 name: widget.name, 
-                componentName: widget.component, 
-                className: widget.className,
-                component: shallowRef( window[ widget.component ])
+                'component-name': widget[ 'component-name' ], 
+                'class-name' : widget[ 'class-name' ],
+                component: shallowRef( window[ widget[ 'component-name' ] ])
             };
         });
 
         this.columns    =   this.rawColumns.map( column => {
             column.widgets.forEach( widget => {
-                widget.component        =   shallowRef( window[ widget.identifier ] );
-                widget.componentName    =   widget.identifier;
-                widget.className        =   widget.class_name;
+                widget.component            =   shallowRef( window[ widget.identifier ] );
+                widget[ 'class-name' ]      =   widget.class_name;
+                widget[ 'component-name' ]  =   widget.identifier;
             });
 
             return column;
         });
+
+        setTimeout( () => {
+            // Select all elements whose parent has the class '.widget-placeholder'
+            var elements = document.querySelectorAll('.widget-placeholder');
+
+            document.addEventListener('mousemove', (event) => {
+                // Loop over all elements
+                for (var i = 0; i < elements.length; i++) {
+                    // Get the bounding rectangle of the current element
+                    var rect = elements[i].getBoundingClientRect();
+
+                    // Check if the mouse coordinates are within the bounding rectangle
+                    if (event.clientX >= rect.left && event.clientX <= rect.right &&
+                        event.clientY >= rect.top && event.clientY <= rect.bottom) {
+                        // The mouse is currently above the current element
+                        elements[i].setAttribute( 'hovered', 'true' );
+                        break;
+                    } else {
+                        elements[i].setAttribute( 'hovered', 'false' );
+                    }
+                }
+            });
+        }, 10 );
+    },
+    computed: {
+        hasUnusedWidgets() {
+            const alreadyUsedWidgets     =   this.columns.map( _column => _column.widgets ).flat();
+
+            return this.widgets.filter( widget => {
+                const namesOnly     =   alreadyUsedWidgets.map( widget => widget[ 'component-name' ] );
+                return ! namesOnly.includes( widget[ 'component-name' ] );
+            }).length > 0;
+        }
     },
     methods: {
         __,
+        
+        handleEndDragging( widget ) {
+            const hoveredZone   =   document.querySelector( '.ns-drop-zone[hovered="true"]' );
 
-        handleDropped( event ) {
-            console.log({
-                action: 'drag-dropped',
-                event
-            });
-        },
+            if ( hoveredZone ) {
+                const hoveredColumnElement      =   hoveredZone.closest( '[column-name]' );
+                const hoveredColumnName         =   hoveredColumnElement.getAttribute( 'column-name' )
+                const hoveredFilteredColumn     =   this.columns.filter( column => column.name === hoveredColumnName );
+                const hoveredWidget             =   hoveredFilteredColumn[0].widgets.filter( __widget => {
+                    return __widget[ 'component-name' ]  === hoveredZone.querySelector( '.ns-draggable-item' ).getAttribute( 'component-name' );
+                });
 
-        handleDragging( event ) {
-            // console.log({
-            //     action: 'dragging',
-            //     event
-            // });
-        },
-        handleEndDragging( event ) {
-            console.log({
-                action: 'drag-end',
-                event
-            });
-        },
-        handleStartDragging( widget, column ) {
-            this.dragged    =   { widget, column };
-            console.log( this.dragged );
-        },
+                const previousWidgetElement     =   document.querySelector( `[component-name="${widget[ 'component-name' ]}"]`);
+                const previousColumnElement     =   previousWidgetElement.closest( '[column-name]' );
+                const previousColumnName        =   previousColumnElement.getAttribute( 'column-name' );
+                const previousFilteredColumn    =   this.columns.filter( column => column.name === previousColumnName );
+                const previousWidget            =   previousFilteredColumn[0].widgets.filter( __widget => {
+                    return __widget[ 'component-name' ]  === previousWidgetElement.getAttribute( 'component-name' );
+                });
 
-        handleHoveredZone( event ) {
-            console.log({
-                action: 'hovered',
-                event
-            });
+                /**
+                 * If the previous widget is the same as the hovered widget, we don't need to do anything.
+                 */
+                if ( previousWidget[0][ 'component-name' ] === hoveredWidget[0][ 'component-name' ] ) {
+                    return;
+                }
+
+                const previousPosition          =   previousWidget[0].position;
+                const hoveredPosition           =   hoveredWidget[0].position;
+
+                previousWidget[0].column        =   hoveredColumnName;
+                previousWidget[0].position      =   hoveredPosition;
+
+                hoveredWidget[0].column         =   previousColumnName;
+                hoveredWidget[0].position       =   previousPosition;
+
+                hoveredFilteredColumn[0].widgets[hoveredPosition]       =   previousWidget[0];
+                previousFilteredColumn[0].widgets[previousPosition]     =   hoveredWidget[0];
+
+                this.handleChange( hoveredFilteredColumn[0] );
+                this.handleChange( previousFilteredColumn[0] );
+
+                hoveredZone.style.border = '2px solid rgb(255 255 255 / 0%)';
+                hoveredZone.setAttribute( 'hovered', 'false' );
+            }
+
+            const hoveredPlaceHolderZone    =   document.querySelector( '.widget-placeholder[hovered="true"]' );
+
+            if ( hoveredPlaceHolderZone ) {
+
+                const columnName    =   hoveredPlaceHolderZone.closest( '[column-name]' ).getAttribute( 'column-name' );
+
+                if ( widget === columnName ) {
+                    console.log( 'The widget is already in the same column.' );
+                    return;
+                }
+
+                // let's remove the widget from the previous column
+                const previousColumn    =   this.columns.filter( column => column.name === widget.column )[0];
+                const index             =   previousColumn.widgets.indexOf( widget );
+                previousColumn.widgets.splice( index, 1 );
+
+                const column        =   this.columns.filter( column => column.name === columnName )[0];
+                widget.position     =   column.widgets.length;
+                widget.column       =   columnName;
+
+                column.widgets.push( widget );
+
+                this.handleChange( previousColumn );
+                this.handleChange( column );
+            }
         },
 
         handleChange( column, event ) {
@@ -128,18 +190,20 @@ export default {
                  * We want to get the widgets that are already used
                  * and make sure not to allow a new usage.
                  */
-                const alreadyUsedWidgets     =   this.columns.filter( _column => {
+                const otherColumnUsedWidgets     =   this.columns.filter( _column => {
                     if ( _column.name !== column.name ) {
+                        console.log( _column.name );
                         return _column.widgets.length > 0;
                     }
                     return false;
                 }).map( _column => _column.widgets ).flat();
 
-                const currentlyUsedWidgetNames   =   column.widgets.map( widget => widget.componentName );
+                const columnUsedWidgetNames   =   column.widgets.map( widget => widget[ 'component-name' ] );
 
                 const notUsedWidgets   =   this.widgets.filter( widget => {
-                    const namesOnly     =   alreadyUsedWidgets.map( widget => widget.componentName );
-                    return ! namesOnly.includes( widget.componentName );
+                    const namesOnly     =   otherColumnUsedWidgets.map( widget => widget[ 'component-name' ] );
+                    namesOnly.push( ...columnUsedWidgetNames );
+                    return ! namesOnly.includes( widget[ 'component-name' ] );
                 })
                 .map( widget => {
                     return {
@@ -148,9 +212,9 @@ export default {
                     }
                 });
 
-                const widgets    =   await new Promise( ( resolve, reject ) => {
+                const widgets    =   await new Promise<any[]>( ( resolve, reject ) => {
                     const value     =   notUsedWidgets.filter( widget => {
-                        return currentlyUsedWidgetNames.includes( widget.componentName );
+                        return columnUsedWidgetNames.includes( widget[ 'component-name' ] );
                     });
 
                     Popup.show( nsSelectPopupVue, {
@@ -163,9 +227,15 @@ export default {
                         description: __( 'Select with widget you want to add to the column.' )
                     });
                 }); 
-                
+
                 const index     =   this.columns.indexOf( column );
-                this.columns[ index ].widgets  =   widgets;
+
+                this.columns[ index ].widgets  =   [ ...this.columns[ index ].widgets, ...widgets ].map( (widget, index) => {
+                    widget.position     =   index;
+                    widget.column       =   column.name;
+                    return widget;
+                });
+
                 this.handleChange( this.columns[ index ] );
                 
             } catch( exception ) {

@@ -280,7 +280,7 @@ class UsersService
          * @var array $column
          */
         foreach ($column[ 'widgets' ] as $position => $columnWidget) {
-            $widget = UserWidget::where('identifier', $columnWidget[ 'componentName' ])
+            $widget = UserWidget::where('identifier', $columnWidget[ 'component-name' ])
                 ->where('column', $column[ 'name' ])
                 ->where('user_id', $userId)
                 ->first();
@@ -289,15 +289,15 @@ class UsersService
                 $widget = new UserWidget;
             }
 
-            $widget->identifier = $columnWidget[ 'componentName' ];
-            $widget->class_name = $columnWidget[ 'className' ] ?? '';
+            $widget->identifier = $columnWidget[ 'component-name' ];
+            $widget->class_name = $columnWidget[ 'class-name' ];
             $widget->position = $position;
             $widget->user_id = $userId;
             $widget->column = $column[ 'name' ];
             $widget->save();
         }
 
-        $identifiers = collect($column[ 'widgets' ])->map(fn($widget) => $widget[ 'componentName' ])->toArray();
+        $identifiers = collect($column[ 'widgets' ])->map(fn($widget) => $widget[ 'component-name' ])->toArray();
 
         UserWidget::whereNotIn('identifier', $identifiers)
             ->where('column', $column[ 'name' ])
