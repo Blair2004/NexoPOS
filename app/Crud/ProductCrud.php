@@ -430,11 +430,36 @@ class ProductCrud extends CrudService
                                     'groups' => ($entry instanceof Product ? ProductUnitQuantity::withProduct($entry->id)
                                         ->get()
                                         ->map(function ($productUnitQuantity) use ($fields) {
-                                            return collect($fields)->map(function ($field) use ($productUnitQuantity) {
-                                                $field[ 'value' ] = $productUnitQuantity->{ $field[ 'name' ] };
-
+                                            // get label of field having as name "unit_group"
+                                            $field     =   collect( $fields )->filter( fn( $field ) => $field[ 'name' ] === 'unit_id' )->map( function( $field ) use ( $productUnitQuantity ) {
+                                                $field[ 'value' ]   =   $productUnitQuantity->{ $field[ 'name' ] };
                                                 return $field;
                                             });
+
+                                            $optionLabel    =   __( 'Unammed Section' );
+
+                                            if ( $field->isNotEmpty() ) {
+                                                $option    =   collect( $field[0][ 'options' ] )->filter( fn( $option ) => $option[ 'value' ] === $field[0][ 'value' ] );
+                                                $optionLabel    =   $option->first()[ 'label' ];
+                                            }
+
+                                            return [
+                                                'fields'    =>  collect($fields)->map(function ($field) use ($productUnitQuantity) {
+
+                                                    /**
+                                                     * When the unit is assigned, a UnitQuantity model is created
+                                                     * for the product. It shouldn't be possible to change the unit,
+                                                     * to prevent loosing a reference to the created UnitQuantity.
+                                                     */
+                                                    if ( $field[ 'name' ] === 'unit_id' ) {
+                                                        $field[ 'disabled' ]    =   true;
+                                                    }
+
+                                                    $field[ 'value' ] = $productUnitQuantity->{ $field[ 'name' ] };    
+                                                    return $field;
+                                                }),
+                                                'label' =>  $optionLabel
+                                            ];
                                         }) : []),
                                     'options' => $entry instanceof Product ? UnitGroup::find($entry->unit_group)->units : [],
                                 ],

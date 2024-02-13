@@ -164,6 +164,19 @@ class ProductService
         }
 
         /**
+         * We want to check here if the unit quantities 
+         * attached to the product uses the same unit_id
+         */
+        if ($data[ 'units' ]) {
+            $unitIds = collect($data[ 'units' ][ 'selling_group' ])->map(fn($group) => $group[ 'unit_id' ]);
+            $unitIds->each(function ($unitId) use ($unitIds) {
+                if ($unitIds->filter(fn($id) => $id === $unitId)->count() > 1) {
+                    throw new NotAllowedException(__('You cannot assign the same unit to more than one selling unit.'));
+                }
+            });
+        }
+
+        /**
          * check if it's a simple product or not
          */
         if ($data[ 'product_type' ] === 'product') {
@@ -335,6 +348,19 @@ class ProductService
          */
         if ($data[ 'type' ] === Product::TYPE_GROUPED) {
             $this->checkGroupProduct($data[ 'groups' ]);
+        }
+
+        /**
+         * We want to check here if the unit quantities 
+         * attached to the product uses the same unit_id
+         */
+        if ($data[ 'units' ]) {
+            $unitIds = collect($data[ 'units' ][ 'selling_group' ])->map(fn($group) => $group[ 'unit_id' ]);
+            $unitIds->each(function ($unitId) use ($unitIds) {
+                if ($unitIds->filter(fn($id) => $id === $unitId)->count() > 1) {
+                    throw new NotAllowedException(__('You cannot assign the same unit to more than one selling unit.'));
+                }
+            });
         }
 
         switch ($data[ 'product_type' ]) {

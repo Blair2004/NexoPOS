@@ -1,0 +1,7 @@
+import{_ as o}from"./preload-helper-BQ24v_F8.js";import{c as m}from"./bootstrap-h44pvWEh.js";import{b as n}from"./components-CWKTJgzL.js";import{d as t}from"./runtime-core.esm-bundler-RT2b-_3S.js";import"./currency-lOMYG1Wf.js";import"./ns-alert-popup-SVrn5Xft.js";import"./_plugin-vue_export-helper-DlAUqK2U.js";import"./ns-avatar-image-CAD6xUGA.js";import"./index.es-Br67aBEV.js";import"./ns-prompt-popup-CS34bXnT.js";nsExtraComponents.nsRegister=t(()=>o(()=>import("./ns-register-DXnfFW-J.js"),__vite__mapDeps([0,1,2,3,4]),import.meta.url));nsExtraComponents.nsLogin=t(()=>o(()=>import("./ns-login-DVEn2Wfa.js"),__vite__mapDeps([5,1,2,3,4]),import.meta.url));nsExtraComponents.nsPasswordLost=t(()=>o(()=>import("./ns-password-lost-B-YoflGZ.js"),__vite__mapDeps([6,2,1,3,4]),import.meta.url));nsExtraComponents.nsNewPassword=t(()=>o(()=>import("./ns-new-password-U_R31Idz.js"),__vite__mapDeps([7,2,1,3,4]),import.meta.url));window.nsHttpClient=nsHttpClient;window.authVueComponent=m({components:{...nsExtraComponents,...n}});for(let r in n)window.authVueComponent.component(r,n[r]);window.authVueComponent.mount("#page-container");
+function __vite__mapDeps(indexes) {
+  if (!__vite__mapDeps.viteFileDeps) {
+    __vite__mapDeps.viteFileDeps = ["./ns-register-DXnfFW-J.js","./bootstrap-h44pvWEh.js","./currency-lOMYG1Wf.js","./runtime-core.esm-bundler-RT2b-_3S.js","./_plugin-vue_export-helper-DlAUqK2U.js","./ns-login-DVEn2Wfa.js","./ns-password-lost-B-YoflGZ.js","./ns-new-password-U_R31Idz.js"]
+  }
+  return indexes.map((i) => __vite__mapDeps.viteFileDeps[i])
+}
