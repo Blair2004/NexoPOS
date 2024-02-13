@@ -1,7 +1,7 @@
 <script lang="ts">
 import moment from "moment";
-import DateRangePicker from 'vue2-daterange-picker';
-import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
+import DateRangePicker from 'vue3-daterange-picker';
+// import 'vue3-daterange-picker/dist/vue3-daterange-picker.css';
 import { __ } from '~/libraries/lang';
 
 declare const ns;

@@ -3,7 +3,6 @@ import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
 import popupCloser from "~/libraries/popup-closer";
 import { __ } from '~/libraries/lang';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
-import VueUpload from 'vue-upload-component';
 import { fileIcons } from '~/shared/file-icons';
 import { Popup } from '~/libraries/popup';
 import { nsAlertPopup } from '~/components/components';
@@ -11,9 +10,6 @@ import { nsAlertPopup } from '~/components/components';
 export default {
     name: 'ns-media',
     props: [ 'popup' ],
-    components: {
-        VueUpload
-    },
     data() {
         return {
             searchFieldDebounce: null,
