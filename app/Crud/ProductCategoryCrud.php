@@ -352,7 +352,7 @@ class ProductCategoryCrud extends CrudService
 
         $entry->action(
             identifier: 'compute',
-            label: _('Compute Products'),
+            label: __('Compute Products'),
             type: 'GOTO',
             url: ns()->url('/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id),
         );
