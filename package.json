@@ -27,7 +27,7 @@
     "@wordpress/hooks": "^3.51.0",
     "chart.js": "^4.4.1",
     "currency.js": "^2.0.4",
-    "laravel-echo": "^1.15.3",
+    "laravel-echo": "^1.16.0",
     "lodash": "^4.17.21",
     "mathjs": "^12.3.2",
     "moment": "^2.30.1",
