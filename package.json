@@ -35,7 +35,7 @@
     "pusher-js": "^8.4.0-rc2",
     "qrcode": "^1.5.3",
     "rxjs": "^7.8.1",
-    "vue-router": "^4.2.5",
+    "vue-router": "^4.3.0",
     "vue3-daterange-picker": "^1.0.1",
     "vuedraggable": "^2.24.3"
   }
