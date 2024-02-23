@@ -29,7 +29,7 @@
     "currency.js": "^2.0.4",
     "laravel-echo": "^1.15.3",
     "lodash": "^4.17.21",
-    "mathjs": "^12.3.2",
+    "mathjs": "^12.4.0",
     "moment": "^2.30.1",
     "numeral": "^2.0.6",
     "pusher-js": "^8.4.0-rc2",
