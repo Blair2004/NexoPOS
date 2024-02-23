@@ -77,7 +77,7 @@
                                 </h3>
                                 <div class="-mx-1 flex product-options">
                                     <div class="px-1"> 
-                                        <a @click="remove( product )" class="hover:text-error-secondary cursor-pointer outline-none border-dashed py-1 border-b border-error-secondary text-sm">
+                                        <a @click="removeUsingIndex( index )" class="hover:text-error-secondary cursor-pointer outline-none border-dashed py-1 border-b border-error-secondary text-sm">
                                             <i class="las la-trash text-xl"></i>
                                         </a>
                                     </div>
@@ -599,13 +599,13 @@ export default {
                 });
             }
         },
-        remove( product ) {
+        removeUsingIndex( index ) {
             Popup.show( PosConfirmPopup, {
                 title: __( 'Confirm Your Action' ),
                 message: __( 'Would you like to delete this product ?' ),
                 onAction( action ) {
                     if ( action ) {
-                        POS.removeProduct( product );
+                        POS.removeProductUsingIndex( index );
                     }
                 }
             });
