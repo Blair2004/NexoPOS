@@ -31,12 +31,13 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { __ } from '~/libraries/lang';
-import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
 import FormValidation from '~/libraries/form-validation';
 import nsField from '~/components/ns-field.vue';
 import { shallowRef } from '@vue/reactivity';
+
+declare const nsExtraComponents, nsHooks, nsHttpClient, nsSnackBar;
 
 export default {
     name: 'ns-settings',

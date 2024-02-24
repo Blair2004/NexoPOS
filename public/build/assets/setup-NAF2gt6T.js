@@ -1,0 +1,7 @@
+import{_ as o}from"./preload-helper-BQ24v_F8.js";import{b as e}from"./components-CSb5I62o.js";import{c as p,a as n}from"./vue-router-a91u3jqz.js";import{c as i}from"./tax-BACo6kIE.js";import"./ns-alert-popup-DDoxXsJC.js";import"./currency-ZXKMLAC0.js";import"./_plugin-vue_export-helper-DlAUqK2U.js";import"./runtime-core.esm-bundler-DCfIpxDt.js";import"./ns-avatar-image-C_oqdj76.js";import"./index.es-BED_8l8F.js";import"./bootstrap-B7E2wy_a.js";import"./ns-prompt-popup-BbWKrSku.js";const a=()=>o(()=>import("./welcome-D5rLz8t9.js"),__vite__mapDeps([0,1,2,3]),import.meta.url),s=()=>o(()=>import("./database-BASL5exY.js"),__vite__mapDeps([4,5,1,3,2]),import.meta.url),_=()=>o(()=>import("./setup-configuration-C6NfPKhb.js"),__vite__mapDeps([6,5,1,3,7,2]),import.meta.url),c=[{path:"/",component:a},{path:"/database",component:s},{path:"/configuration",component:_}],m=p({routes:c,history:n()}),t=i({});t.use(m);for(let r in e)t.component(r,e[r]);t.mount("#nexopos-setup");window.nsRouter=m;
+function __vite__mapDeps(indexes) {
+  if (!__vite__mapDeps.viteFileDeps) {
+    __vite__mapDeps.viteFileDeps = ["./welcome-D5rLz8t9.js","./currency-ZXKMLAC0.js","./_plugin-vue_export-helper-DlAUqK2U.js","./runtime-core.esm-bundler-DCfIpxDt.js","./database-BASL5exY.js","./tax-BACo6kIE.js","./setup-configuration-C6NfPKhb.js","./bootstrap-B7E2wy_a.js"]
+  }
+  return indexes.map((i) => __vite__mapDeps.viteFileDeps[i])
+}
