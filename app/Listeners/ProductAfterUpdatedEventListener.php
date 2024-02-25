@@ -25,19 +25,19 @@ class ProductAfterUpdatedEventListener
      *
      * @return void
      */
-    public function handle(ProductAfterUpdatedEvent $event)
+    public function handle( ProductAfterUpdatedEvent $event )
     {
-        $this->productService->generateProductBarcode($event->product);
+        $this->productService->generateProductBarcode( $event->product );
 
         /**
          * We'll pull the category stored
          * and check if it's different from the new defined category.
          * This will help computing total items for the old category.
          */
-        $oldCategoryId = session()->pull('product_category_id');
+        $oldCategoryId = session()->pull( 'product_category_id' );
 
-        if ($oldCategoryId !== $event->product->category->id) {
-            ComputeCategoryProductsJob::dispatch(ProductCategory::find($oldCategoryId));
+        if ( $oldCategoryId !== $event->product->category->id ) {
+            ComputeCategoryProductsJob::dispatch( ProductCategory::find( $oldCategoryId ) );
         }
 
         /**
@@ -45,6 +45,6 @@ class ProductAfterUpdatedEventListener
          * for the newly defined category. If it's the same category,
          * then a new count will only be made.
          */
-        ComputeCategoryProductsJob::dispatch($event->product->category);
+        ComputeCategoryProductsJob::dispatch( $event->product->category );
     }
 }

@@ -15,7 +15,7 @@ class ResponseReadyEvent
      *
      * @return void
      */
-    public function __construct(public $response)
+    public function __construct( public $response )
     {
         //
     }

@@ -17,7 +17,7 @@ class OrderCouponBeforeCreatedEvent
      *
      * @return void
      */
-    public function __construct(public Coupon $coupon, public Order $order)
+    public function __construct( public Coupon $coupon, public Order $order )
     {
         // ...
     }

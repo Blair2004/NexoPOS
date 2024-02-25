@@ -17,7 +17,7 @@ class CustomerRewardAfterCouponIssuedEvent
      *
      * @return void
      */
-    public function __construct(public CustomerCoupon $customerCoupon)
+    public function __construct( public CustomerCoupon $customerCoupon )
     {
         //
     }
@@ -29,6 +29,6 @@ class CustomerRewardAfterCouponIssuedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

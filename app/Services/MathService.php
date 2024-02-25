@@ -6,8 +6,8 @@ use Brick\Math\BigNumber;
 
 class MathService
 {
-    public function set($value)
+    public function set( $value )
     {
-        return BigNumber::of($value);
+        return BigNumber::of( $value );
     }
 }

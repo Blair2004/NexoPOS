@@ -8,7 +8,7 @@ class ProcurementAfterDeleteEvent
 {
     use SerializesModels;
 
-    public function __construct(public $procurement_data)
+    public function __construct( public $procurement_data )
     {
         // ...
     }

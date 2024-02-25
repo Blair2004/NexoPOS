@@ -18,22 +18,22 @@ class ProductsSeeder extends Seeder
     public function run()
     {
         return ProductCategory::factory()
-            ->count(2)
+            ->count( 2 )
             ->create()
-            ->each(function ($category) {
+            ->each( function ( $category ) {
                 Product::factory()
-                    ->count(3)
-                    ->create([ 'category_id' => $category->id ])
-                    ->each(function ($product) {
-                        UnitGroup::find($product->unit_group)->units->each(function ($unit) use ($product) {
+                    ->count( 3 )
+                    ->create( [ 'category_id' => $category->id ] )
+                    ->each( function ( $product ) {
+                        UnitGroup::find( $product->unit_group )->units->each( function ( $unit ) use ( $product ) {
                             ProductUnitQuantity::factory()
-                                ->count(1)
-                                ->create([
+                                ->count( 1 )
+                                ->create( [
                                     'product_id' => $product->id,
                                     'unit_id' => $unit->id,
-                                ]);
-                        });
-                    });
-            });
+                                ] );
+                        } );
+                    } );
+            } );
     }
 }

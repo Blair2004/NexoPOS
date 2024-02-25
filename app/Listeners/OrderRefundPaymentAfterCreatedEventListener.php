@@ -19,10 +19,10 @@ class OrderRefundPaymentAfterCreatedEventListener
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param  object $event
      * @return void
      */
-    public function handle(OrderRefundPaymentAfterCreatedEvent $event)
+    public function handle( OrderRefundPaymentAfterCreatedEvent $event )
     {
         /**
          * the refund can't always be made from the register where the order

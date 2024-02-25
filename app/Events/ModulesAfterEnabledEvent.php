@@ -16,7 +16,7 @@ class ModulesAfterEnabledEvent
      *
      * @return void
      */
-    public function __construct(public $module)
+    public function __construct( public $module )
     {
         //
     }
@@ -28,6 +28,6 @@ class ModulesAfterEnabledEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel( 'channel-name' );
     }
 }

@@ -33,13 +33,13 @@ class NotificationService
     /**
      * @param array $config [ 'title', 'url', 'identifier', 'source', 'dismissable', 'description' ]
      */
-    public function create(string|array $title, string $description = '', string $url = '#', string $identifier = null, string $source = 'system', bool $dismissable = true)
+    public function create( string|array $title, string $description = '', string $url = '#', ?string $identifier = null, string $source = 'system', bool $dismissable = true )
     {
-        if (is_array($title)) {
-            extract($title);
+        if ( is_array( $title ) ) {
+            extract( $title );
         }
 
-        if ($description && $title) {
+        if ( $description && $title ) {
             $this->title = $title;
             $this->url = $url ?: '#';
             $this->identifier = $identifier ?? $this->generateRandomIdentifier();
@@ -50,61 +50,61 @@ class NotificationService
             return $this;
         }
 
-        throw new Exception(__('Missing required parameters to create a notification'));
+        throw new Exception( __( 'Missing required parameters to create a notification' ) );
     }
 
     /**
      * Will dispatch a notification for all the roles
      * that has permissions belonging to the parameter
      */
-    public function dispatchForPermissions(array $permissions): void
+    public function dispatchForPermissions( array $permissions ): void
     {
-        $rolesGroups = collect($permissions)
-            ->map(fn($permissionName) => Permission::with('roles')->withNamespace($permissionName))
-            ->filter(fn($permission) => $permission instanceof Permission)
-            ->map(fn($permission) => $permission->roles);
+        $rolesGroups = collect( $permissions )
+            ->map( fn( $permissionName ) => Permission::with( 'roles' )->withNamespace( $permissionName ) )
+            ->filter( fn( $permission ) => $permission instanceof Permission )
+            ->map( fn( $permission ) => $permission->roles );
 
         $uniqueRoles = [];
 
-        $rolesGroups->each(function ($group) use (&$uniqueRoles) {
-            foreach ($group as $role) {
-                if (! isset($uniqueRoles[ $role->namespace ])) {
+        $rolesGroups->each( function ( $group ) use ( &$uniqueRoles ) {
+            foreach ( $group as $role ) {
+                if ( ! isset( $uniqueRoles[ $role->namespace ] ) ) {
                     $uniqueRoles[ $role->namespace ] = $role;
                 }
             }
-        });
+        } );
 
-        if (empty($uniqueRoles)) {
-            Log::alert('A notification was dispatched for permissions that aren\'t assigned.', $permissions);
+        if ( empty( $uniqueRoles ) ) {
+            Log::alert( 'A notification was dispatched for permissions that aren\'t assigned.', $permissions );
         }
 
-        $this->dispatchForGroup($uniqueRoles);
+        $this->dispatchForGroup( $uniqueRoles );
     }
 
     /**
      * Dispatch notification for a specific
      * users which belong to a user group
      *
-     * @param Role $role
+     * @param  Role $role
      * @return void
      */
-    public function dispatchForGroup($role)
+    public function dispatchForGroup( $role )
     {
-        if (is_array($role)) {
-            collect($role)->each(function ($role) {
-                $this->dispatchForGroup($role);
-            });
-        } elseif ($role instanceof Collection) {
-            $role->each(function ($role) {
-                $this->dispatchForGroup($role);
-            });
-        } elseif (is_string($role)) {
-            $roleInstance = Role::namespace($role);
-            $this->dispatchForGroup($roleInstance);
+        if ( is_array( $role ) ) {
+            collect( $role )->each( function ( $role ) {
+                $this->dispatchForGroup( $role );
+            } );
+        } elseif ( $role instanceof Collection ) {
+            $role->each( function ( $role ) {
+                $this->dispatchForGroup( $role );
+            } );
+        } elseif ( is_string( $role ) ) {
+            $roleInstance = Role::namespace( $role );
+            $this->dispatchForGroup( $roleInstance );
         } else {
-            $role->users->map(function ($user) {
-                $this->__makeNotificationFor($user);
-            });
+            $role->users->map( function ( $user ) {
+                $this->__makeNotificationFor( $user );
+            } );
         }
 
         NotificationCreatedEvent::dispatch();
@@ -114,15 +114,15 @@ class NotificationService
      * Dispatch notification for specific
      * groups using array of group namespace provided
      */
-    public function dispatchForGroupNamespaces(array $namespaces)
+    public function dispatchForGroupNamespaces( array $namespaces )
     {
-        $this->dispatchForGroup(Role::in($namespaces)->get());
+        $this->dispatchForGroup( Role::in( $namespaces )->get() );
     }
 
-    private function __makeNotificationFor($user)
+    private function __makeNotificationFor( $user )
     {
-        $this->notification = Notification::identifiedBy($this->identifier)
-            ->for($user->id)
+        $this->notification = Notification::identifiedBy( $this->identifier )
+            ->for( $user->id )
             ->first();
 
         /**
@@ -130,7 +130,7 @@ class NotificationService
          * has already been issued for the user, we should avoid
          * issuing new notification.
          */
-        if (! $this->notification instanceof Notification) {
+        if ( ! $this->notification instanceof Notification ) {
             $this->notification = new Notification;
             $this->notification->user_id = $user->id;
             $this->notification->title = $this->title;
@@ -149,14 +149,14 @@ class NotificationService
             $this->notification->save();
         }
 
-        NotificationDispatchedEvent::dispatch($this->notification);
+        NotificationDispatchedEvent::dispatch( $this->notification );
     }
 
-    public function dispatchForUsers(Collection $users)
+    public function dispatchForUsers( Collection $users )
     {
-        $users->map(function ($user) {
-            $this->__makeNotificationFor($user);
-        });
+        $users->map( function ( $user ) {
+            $this->__makeNotificationFor( $user );
+        } );
     }
 
     /**
@@ -165,39 +165,39 @@ class NotificationService
      */
     public function generateRandomIdentifier()
     {
-        $date = app()->make(DateService::class);
+        $date = app()->make( DateService::class );
 
-        return 'notification-' . Str::random(10) . '-' . $date->format('d-m-y');
+        return 'notification-' . Str::random( 10 ) . '-' . $date->format( 'd-m-y' );
     }
 
-    public function deleteHavingIdentifier($identifier)
+    public function deleteHavingIdentifier( $identifier )
     {
-        Notification::identifiedBy($identifier)
+        Notification::identifiedBy( $identifier )
             ->get()
-            ->each(function ($notification) {
-                NotificationDeletedEvent::dispatch($notification);
-                $this->proceedDeleteNotification($notification);
-            });
+            ->each( function ( $notification ) {
+                NotificationDeletedEvent::dispatch( $notification );
+                $this->proceedDeleteNotification( $notification );
+            } );
     }
 
-    public function deleteSingleNotification($id)
+    public function deleteSingleNotification( $id )
     {
-        $notification = Notification::find($id);
+        $notification = Notification::find( $id );
 
-        NotificationDeletedEvent::dispatch($notification);
+        NotificationDeletedEvent::dispatch( $notification );
 
-        $this->proceedDeleteNotification($notification);
+        $this->proceedDeleteNotification( $notification );
     }
 
-    public function deleteNotificationsFor(User $user)
+    public function deleteNotificationsFor( User $user )
     {
-        Notification::for($user->id)
+        Notification::for( $user->id )
             ->get()
-            ->each(function ($notification) {
-                NotificationDeletedEvent::dispatch($notification);
+            ->each( function ( $notification ) {
+                NotificationDeletedEvent::dispatch( $notification );
 
-                $this->proceedDeleteNotification($notification);
-            });
+                $this->proceedDeleteNotification( $notification );
+            } );
     }
 
     /**
@@ -205,9 +205,9 @@ class NotificationService
      *
      * @return void
      */
-    public function proceedDeleteNotification(Notification $notification)
+    public function proceedDeleteNotification( Notification $notification )
     {
-        if (! env('NS_SOCKET_ENABLED', false)) {
+        if ( ! env( 'NS_SOCKET_ENABLED', false ) ) {
             $notification->delete();
         }
     }

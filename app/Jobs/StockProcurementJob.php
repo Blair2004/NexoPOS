@@ -33,7 +33,7 @@ class StockProcurementJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ProcurementService $procurementService)
+    public function handle( ProcurementService $procurementService )
     {
         $procurementService->stockAwaitingProcurements();
     }

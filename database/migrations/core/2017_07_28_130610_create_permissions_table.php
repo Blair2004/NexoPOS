@@ -23,14 +23,14 @@ return new class extends Migration
      */
     public function up()
     {
-        if (! Schema::hasTable('nexopos_permissions')) {
-            Schema::create('nexopos_permissions', function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('name')->unique();
-                $table->string('namespace')->unique();
-                $table->text('description');
+        if ( ! Schema::hasTable( 'nexopos_permissions' ) ) {
+            Schema::create( 'nexopos_permissions', function ( Blueprint $table ) {
+                $table->increments( 'id' );
+                $table->string( 'name' )->unique();
+                $table->string( 'namespace' )->unique();
+                $table->text( 'description' );
                 $table->timestamps();
-            });
+            } );
         }
     }
 
@@ -41,6 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_permissions');
+        Schema::dropIfExists( 'nexopos_permissions' );
     }
 };

@@ -28,7 +28,7 @@ class ComputeDashboardMonthReportJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ReportService $reportService)
+    public function handle( ReportService $reportService )
     {
         $reportService->computeDashboardMonth();
     }

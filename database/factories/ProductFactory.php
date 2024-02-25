@@ -17,12 +17,12 @@ class ProductFactory extends Factory
 
     public function definition()
     {
-        $unitGroup = $this->faker->randomElement(UnitGroup::get());
+        $unitGroup = $this->faker->randomElement( UnitGroup::get() );
 
         /**
          * @var TaxService
          */
-        $taxType = $this->faker->randomElement([ 'inclusive', 'exclusive' ]);
+        $taxType = $this->faker->randomElement( [ 'inclusive', 'exclusive' ] );
         $taxGroup = TaxGroup::get()->first();
 
         return [
@@ -31,12 +31,12 @@ class ProductFactory extends Factory
             'barcode' => $this->faker->word,
             'tax_type' => $taxType,
             'tax_group_id' => $taxGroup->id, // assuming there is only one group
-            'stock_management' => $this->faker->randomElement([ 'enabled', 'disabled' ]),
-            'barcode_type' => $this->faker->randomElement([ 'ean13' ]),
-            'sku' => $this->faker->word . date('s'),
-            'type' => $this->faker->randomElement([ 'materialized', 'dematerialized']),
+            'stock_management' => $this->faker->randomElement( [ 'enabled', 'disabled' ] ),
+            'barcode_type' => $this->faker->randomElement( [ 'ean13' ] ),
+            'sku' => $this->faker->word . date( 's' ),
+            'type' => $this->faker->randomElement( [ 'materialized', 'dematerialized'] ),
             'unit_group' => $unitGroup->id,
-            'author' => $this->faker->randomElement(User::get()->map(fn($user) => $user->id)),
+            'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
         ];
     }
 }

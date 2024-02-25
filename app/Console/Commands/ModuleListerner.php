@@ -40,39 +40,39 @@ class ModuleListerner extends Command
      */
     public function handle()
     {
-        $modules = app()->make(ModulesService::class);
+        $modules = app()->make( ModulesService::class );
 
         /**
          * Check if module is defined
          */
-        if ($module = $modules->get($this->argument('namespace'))) {
+        if ( $module = $modules->get( $this->argument( 'namespace' ) ) ) {
             /**
              * Define Variables
              */
             $listenerPath = $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' . DIRECTORY_SEPARATOR;
-            $name = ucwords(Str::camel($this->argument('name')));
+            $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
             $fileName = $listenerPath . $name;
-            $namespace = $this->argument('namespace');
+            $namespace = $this->argument( 'namespace' );
             $relativePath = 'modules' . DIRECTORY_SEPARATOR . $fileName;
 
-            $fileExists = Storage::disk('ns-modules')->exists(
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
                 $fileName . '.php'
             );
 
-            if (! $fileExists || ($fileExists && $this->option('force'))) {
-                Storage::disk('ns-modules')->put($fileName . '.php', view('generate.modules.listener', compact(
+            if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
+                Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'generate.modules.listener', compact(
                     'modules', 'module', 'name', 'namespace'
-                )));
+                ) ) );
 
-                return $this->info(sprintf(
-                    __('The listener has been created on the path "%s"!'),
+                return $this->info( sprintf(
+                    __( 'The listener has been created on the path "%s"!' ),
                     $relativePath . '.php'
-                ));
+                ) );
             }
 
-            return $this->error('The listener already exists !');
+            return $this->error( 'The listener already exists !' );
         }
 
-        return $this->error('Unable to locate the module !');
+        return $this->error( 'Unable to locate the module !' );
     }
 }

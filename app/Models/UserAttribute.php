@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
- * @property int $user_id
+ * @property int   $id
+ * @property int   $user_id
  * @property mixed $avatar_link
  * @property mixed $theme
  * @property mixed $language

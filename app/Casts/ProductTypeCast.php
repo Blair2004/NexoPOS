@@ -11,20 +11,20 @@ class ProductTypeCast implements CastsAttributes
     /**
      * Cast the given value.
      *
-     * @param  array<string, mixed>  $attributes
+     * @param array<string, mixed> $attributes
      */
-    public function get(Model | CrudEntry $model, string $key, mixed $value, array $attributes): mixed
+    public function get( Model|CrudEntry $model, string $key, mixed $value, array $attributes ): mixed
     {
-        $class = match ($value) {
+        $class = match ( $value ) {
             'grouped' => 'text-success-tertiary',
             default => 'text-info-tertiary'
         };
 
-        $value  =    match ( $value ) {
-            'materialized' => __('Materialized'),
-            'dematerialized' => __('Dematerialized'),
-            'grouped' => __('Grouped'),
-            default => sprintf(__('Unknown Type: %s'), $value),
+        $value = match ( $value ) {
+            'materialized' => __( 'Materialized' ),
+            'dematerialized' => __( 'Dematerialized' ),
+            'grouped' => __( 'Grouped' ),
+            default => sprintf( __( 'Unknown Type: %s' ), $value ),
         };
 
         return '<strong class="' . $class . ' ">' . $value . '</strong>';
@@ -33,9 +33,9 @@ class ProductTypeCast implements CastsAttributes
     /**
      * Prepare the given value for storage.
      *
-     * @param  array<string, mixed>  $attributes
+     * @param array<string, mixed> $attributes
      */
-    public function set(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function set( Model $model, string $key, mixed $value, array $attributes ): mixed
     {
         return $value;
     }

@@ -17,10 +17,10 @@ class ProductBeforeUpdatedEventListener
     /**
      * Handle the event.
      */
-    public function handle(ProductBeforeUpdatedEvent $event): void
+    public function handle( ProductBeforeUpdatedEvent $event ): void
     {
         $original = $event->product->getOriginal();
 
-        session()->put('product_category_id', $original[ 'category_id' ]);
+        session()->put( 'product_category_id', $original[ 'category_id' ] );
     }
 }

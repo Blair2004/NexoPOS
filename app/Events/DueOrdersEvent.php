@@ -17,7 +17,7 @@ class DueOrdersEvent
      *
      * @return void
      */
-    public function __construct(public Collection $orders)
+    public function __construct( public Collection $orders )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class DueOrdersEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

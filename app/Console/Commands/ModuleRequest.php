@@ -50,13 +50,13 @@ class ModuleRequest extends Command
      */
     public function getModule()
     {
-        $modules = app()->make(ModulesService::class);
-        $this->module = $modules->get($this->argument('namespace'));
+        $modules = app()->make( ModulesService::class );
+        $this->module = $modules->get( $this->argument( 'namespace' ) );
 
-        if ($this->module) {
+        if ( $this->module ) {
             $this->createRequest();
         } else {
-            $this->info('Unable to locate the module.');
+            $this->info( 'Unable to locate the module.' );
         }
     }
 
@@ -65,14 +65,14 @@ class ModuleRequest extends Command
      *
      * @return string content
      */
-    public function streamContent($content)
+    public function streamContent( $content )
     {
-        switch ($content) {
+        switch ( $content ) {
             case 'migration':
-                return view('generate.modules.request', [
+                return view( 'generate.modules.request', [
                     'module' => $this->module,
-                    'name' => $this->argument('name'),
-                ]);
+                    'name' => $this->argument( 'name' ),
+                ] );
         }
     }
 
@@ -81,34 +81,34 @@ class ModuleRequest extends Command
      */
     public function createRequest()
     {
-        $requestName = Str::studly($this->argument('name'));
+        $requestName = Str::studly( $this->argument( 'name' ) );
         $fileName = $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $requestName . '.php';
 
         /**
          * Make sure the migration don't exist yet
          */
-        $fileExists = Storage::disk('ns-modules')->exists(
+        $fileExists = Storage::disk( 'ns-modules' )->exists(
             $fileName
         );
 
-        if (! $fileExists || ($fileExists && $this->option('force'))) {
-            return $this->info(sprintf(
-                __('A request with the same name has been found !'),
+        if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
+            return $this->info( sprintf(
+                __( 'A request with the same name has been found !' ),
                 $requestName
-            ));
+            ) );
         }
 
         /**
          * Create Migration file
          */
-        Storage::disk('ns-modules')->put(
+        Storage::disk( 'ns-modules' )->put(
             $fileName,
-            $this->streamContent('migration')
+            $this->streamContent( 'migration' )
         );
 
         /**
          * Closing creating migration
          */
-        $this->info('The request has been successfully created !');
+        $this->info( 'The request has been successfully created !' );
     }
 }

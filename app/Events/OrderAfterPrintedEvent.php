@@ -18,7 +18,7 @@ class OrderAfterPrintedEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(public Order $order, public $doc)
+    public function __construct( public Order $order, public $doc )
     {
         // ...
     }
@@ -30,6 +30,6 @@ class OrderAfterPrintedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

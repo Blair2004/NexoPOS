@@ -17,7 +17,7 @@ class OrderBeforePaymentCreatedEvent
      *
      * @return void
      */
-    public function __construct(public $payment, public Customer $customer)
+    public function __construct( public $payment, public Customer $customer )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class OrderBeforePaymentCreatedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

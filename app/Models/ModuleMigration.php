@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
+ * @property int    $id
  * @property string $file
  */
 class ModuleMigration extends NsModel
@@ -16,8 +16,8 @@ class ModuleMigration extends NsModel
 
     public $timestamps = false;
 
-    public function scopeNamespace($query, $namespace)
+    public function scopeNamespace( $query, $namespace )
     {
-        return $query->where('namespace', $namespace);
+        return $query->where( 'namespace', $namespace );
     }
 }

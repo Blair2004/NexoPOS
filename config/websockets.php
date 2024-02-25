@@ -8,7 +8,7 @@ return [
      * Set a custom dashboard configuration
      */
     'dashboard' => [
-        'port' => env('NS_SOCKET_PORT', 6001),
+        'port' => env( 'NS_SOCKET_PORT', 6001 ),
     ],
 
     /*
@@ -23,13 +23,13 @@ return [
      */
     'apps' => [
         [
-            'id' => env('PUSHER_APP_ID'),
-            'name' => env('APP_NAME'),
-            'key' => env('PUSHER_APP_KEY'),
-            'secret' => env('PUSHER_APP_SECRET'),
-            'path' => env('PUSHER_APP_PATH'),
+            'id' => env( 'PUSHER_APP_ID' ),
+            'name' => env( 'APP_NAME' ),
+            'key' => env( 'PUSHER_APP_KEY' ),
+            'secret' => env( 'PUSHER_APP_SECRET' ),
+            'path' => env( 'PUSHER_APP_PATH' ),
             'capacity' => null,
-            'host' => env('NS_SOCKET_DOMAIN', env('SESSION_DOMAIN')),
+            'host' => env( 'NS_SOCKET_DOMAIN', env( 'SESSION_DOMAIN' ) ),
             'enable_client_messages' => false,
             'enable_statistics' => true,
         ],
@@ -119,18 +119,18 @@ return [
          * certificate chain of issuers. The private key also may be contained
          * in a separate file specified by local_pk.
          */
-        'local_cert' => env('NS_SSL_LOCAL_CERT', null),
+        'local_cert' => env( 'NS_SSL_LOCAL_CERT', null ),
 
         /*
          * Path to local private key file on filesystem in case of separate files for
          * certificate (local_cert) and private key.
          */
-        'local_pk' => env('NS_SSL_LOCAL_PK', null),
+        'local_pk' => env( 'NS_SSL_LOCAL_PK', null ),
 
         /*
          * Passphrase for your local_cert file.
          */
-        'passphrase' => env('NS_SSL_PASSPHRASE', null),
+        'passphrase' => env( 'NS_SSL_PASSPHRASE', null ),
 
         'verify_peer' => false,
     ],

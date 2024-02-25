@@ -85,14 +85,14 @@ class ProviderProductsCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -108,27 +108,27 @@ class ProviderProductsCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter($this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2);
+        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
         return [
-            'list_title' => __('Provider Products List'),
-            'list_description' => __('Display all Provider Products.'),
-            'no_entry' => __('No Provider Products has been registered'),
-            'create_new' => __('Add a new Provider Product'),
-            'create_title' => __('Create a new Provider Product'),
-            'create_description' => __('Register a new Provider Product and save it.'),
-            'edit_title' => __('Edit Provider Product'),
-            'edit_description' => __('Modify Provider Product.'),
-            'back_to_list' => __('Return to Provider Products'),
+            'list_title' => __( 'Provider Products List' ),
+            'list_description' => __( 'Display all Provider Products.' ),
+            'no_entry' => __( 'No Provider Products has been registered' ),
+            'create_new' => __( 'Add a new Provider Product' ),
+            'create_title' => __( 'Create a new Provider Product' ),
+            'create_description' => __( 'Register a new Provider Product and save it.' ),
+            'edit_title' => __( 'Edit Provider Product' ),
+            'edit_description' => __( 'Modify Provider Product.' ),
+            'back_to_list' => __( 'Return to Provider Products' ),
         ];
     }
 
@@ -136,7 +136,7 @@ class ProviderProductsCrud extends CrudService
      * Check whether a feature is enabled
      *
      **/
-    public function isEnabled($feature): bool
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -145,20 +145,20 @@ class ProviderProductsCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
-    public function getForm($entry = null)
+    public function getForm( $entry = null )
     {
         return [
             'main' => [
-                'label' => __('Name'),
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description' => __('Provide a name to the resource.'),
+                'description' => __( 'Provide a name to the resource.' ),
             ],
             'tabs' => [
                 'general' => [
-                    'label' => __('General'),
+                    'label' => __( 'General' ),
                     'fields' => [
                         // ...
                     ],
@@ -171,9 +171,9 @@ class ProviderProductsCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
-    public function filterPostInputs($inputs)
+    public function filterPostInputs( $inputs )
     {
         return $inputs;
     }
@@ -182,9 +182,9 @@ class ProviderProductsCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
-    public function filterPutInputs($inputs, ProcurementProduct $entry)
+    public function filterPutInputs( $inputs, ProcurementProduct $entry )
     {
         return $inputs;
     }
@@ -193,12 +193,12 @@ class ProviderProductsCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
-    public function beforePost($request)
+    public function beforePost( $request )
     {
-        if ($this->permissions[ 'create' ] !== false) {
-            ns()->restrict($this->permissions[ 'create' ]);
+        if ( $this->permissions[ 'create' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'create' ] );
         } else {
             throw new NotAllowedException;
         }
@@ -210,9 +210,9 @@ class ProviderProductsCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
-    public function afterPost($request, ProcurementProduct $entry)
+    public function afterPost( $request, ProcurementProduct $entry )
     {
         return $request;
     }
@@ -221,11 +221,11 @@ class ProviderProductsCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
-    public function get($param)
+    public function get( $param )
     {
-        switch ($param) {
+        switch ( $param ) {
             case 'model': return $this->model;
                 break;
         }
@@ -234,14 +234,14 @@ class ProviderProductsCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
-    public function beforePut($request, $entry)
+    public function beforePut( $request, $entry )
     {
-        if ($this->permissions[ 'update' ] !== false) {
-            ns()->restrict($this->permissions[ 'update' ]);
+        if ( $this->permissions[ 'update' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'update' ] );
         } else {
             throw new NotAllowedException;
         }
@@ -252,11 +252,11 @@ class ProviderProductsCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
-    public function afterPut($request, $entry)
+    public function afterPut( $request, $entry )
     {
         return $request;
     }
@@ -264,11 +264,11 @@ class ProviderProductsCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
-    public function beforeDelete($namespace, $id, $model)
+    public function beforeDelete( $namespace, $id, $model )
     {
-        if ($namespace == 'ns.providers-products') {
+        if ( $namespace == 'ns.providers-products' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -278,8 +278,8 @@ class ProviderProductsCrud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
              **/
-            if ($this->permissions[ 'delete' ] !== false) {
-                ns()->restrict($this->permissions[ 'delete' ]);
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
                 throw new NotAllowedException;
             }
@@ -293,54 +293,54 @@ class ProviderProductsCrud extends CrudService
     {
         return [
             'name' => [
-                'label' => __('Name'),
+                'label' => __( 'Name' ),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'purchase_price' => [
-                'label' => __('Purchase Price'),
+                'label' => __( 'Purchase Price' ),
                 '$direction' => '',
                 'width' => '100px',
                 '$sort' => false,
             ],
             'quantity' => [
-                'label' => __('Quantity'),
+                'label' => __( 'Quantity' ),
                 '$direction' => '',
                 'width' => '100px',
                 '$sort' => false,
             ],
             'tax_group_name' => [
-                'label' => __('Tax Group'),
+                'label' => __( 'Tax Group' ),
                 '$direction' => '',
                 'width' => '100px',
                 '$sort' => false,
             ],
             'barcode' => [
-                'label' => __('Barcode'),
+                'label' => __( 'Barcode' ),
                 '$direction' => '',
                 'width' => '100px',
                 '$sort' => false,
             ],
             'expiration_date' => [
-                'label' => __('Expiration Date'),
+                'label' => __( 'Expiration Date' ),
                 '$direction' => '',
                 'width' => '100px',
                 '$sort' => false,
             ],
             'tax_type' => [
-                'label' => __('Tax Type'),
+                'label' => __( 'Tax Type' ),
                 '$direction' => '',
                 'width' => '100px',
                 '$sort' => false,
             ],
             'tax_value' => [
-                'label' => __('Tax Value'),
+                'label' => __( 'Tax Value' ),
                 '$direction' => '',
                 'width' => '100px',
                 '$sort' => false,
             ],
             'total_purchase_price' => [
-                'label' => __('Total Price'),
+                'label' => __( 'Total Price' ),
                 '$direction' => '',
                 'width' => '100px',
                 '$sort' => false,
@@ -351,57 +351,57 @@ class ProviderProductsCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions(CrudEntry $entry, $namespace)
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->purchase_price = ns()->currency->define($entry->purchase_price)->format();
-        $entry->tax_value = ns()->currency->define($entry->tax_value)->format();
-        $entry->total_purchase_price = ns()->currency->define($entry->total_purchase_price)->format();
-        $entry->expiration_date = $entry->expiration_date ?: __('N/A');
+        $entry->purchase_price = ns()->currency->define( $entry->purchase_price )->format();
+        $entry->tax_value = ns()->currency->define( $entry->tax_value )->format();
+        $entry->total_purchase_price = ns()->currency->define( $entry->total_purchase_price )->format();
+        $entry->expiration_date = $entry->expiration_date ?: __( 'N/A' );
 
         // you can make changes here
-        $entry->addAction('edit', [
-            'label' => __('Edit'),
+        $entry->addAction( 'edit', [
+            'label' => __( 'Edit' ),
             'namespace' => 'edit',
             'type' => 'GOTO',
-            'url' => ns()->url('/dashboard/' . $this->slug . '/edit/' . $entry->id),
-        ]);
+            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+        ] );
 
-        $entry->addAction('delete', [
-            'label' => __('Delete'),
+        $entry->addAction( 'delete', [
+            'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url('/api/crud/ns.providers-products/' . $entry->id),
+            'url' => ns()->url( '/api/crud/ns.providers-products/' . $entry->id ),
             'confirm' => [
-                'message' => __('Would you like to delete this ?'),
+                'message' => __( 'Would you like to delete this ?' ),
             ],
-        ]);
+        ] );
 
         return $entry;
     }
 
-    public function hook($query): void
+    public function hook( $query ): void
     {
-        $query->whereIn('procurement_id', explode(',', request()->query('procurements')));
+        $query->whereIn( 'procurement_id', explode( ',', request()->query( 'procurements' ) ) );
     }
 
     /**
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
-    public function bulkAction(Request $request)
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        if ($request->input('action') == 'delete_selected') {
+        if ( $request->input( 'action' ) == 'delete_selected' ) {
             /**
              * Will control if the user has the permissoin to do that.
              */
-            if ($this->permissions[ 'delete' ] !== false) {
-                ns()->restrict($this->permissions[ 'delete' ]);
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
                 throw new NotAllowedException;
             }
@@ -411,9 +411,9 @@ class ProviderProductsCrud extends CrudService
                 'failed' => 0,
             ];
 
-            foreach ($request->input('entries') as $id) {
-                $entity = $this->model::find($id);
-                if ($entity instanceof ProcurementProduct) {
+            foreach ( $request->input( 'entries' ) as $id ) {
+                $entity = $this->model::find( $id );
+                if ( $entity instanceof ProcurementProduct ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -424,18 +424,18 @@ class ProviderProductsCrud extends CrudService
             return $status;
         }
 
-        return Hook::filter($this->namespace . '-catch-action', false, $request);
+        return Hook::filter( $this->namespace . '-catch-action', false, $request );
     }
 
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
         return [
-            'list' => ns()->url('dashboard/' . '/dashboard/providers'),
+            'list' => ns()->url( 'dashboard/' . '/dashboard/providers' ),
             'create' => false,
             'edit' => false,
             'post' => false,
@@ -446,25 +446,25 @@ class ProviderProductsCrud extends CrudService
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
-        return Hook::filter($this->namespace . '-bulk', [
+        return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label' => __('Delete Selected Groups'),
+                'label' => __( 'Delete Selected Groups' ),
                 'identifier' => 'delete_selected',
-                'url' => ns()->route('ns.api.crud-bulk-actions', [
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

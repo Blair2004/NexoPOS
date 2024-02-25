@@ -18,7 +18,7 @@ class ProcessProductHistoryCombinedByChunkJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public $products)
+    public function __construct( public $products )
     {
         //
     }
@@ -26,24 +26,24 @@ class ProcessProductHistoryCombinedByChunkJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(ReportService $reportService): void
+    public function handle( ReportService $reportService ): void
     {
-        $this->products->each(function ($product) use ($reportService) {
+        $this->products->each( function ( $product ) use ( $reportService ) {
             // retreive the unit quantity for this product
-            $unitQuantities = ProductUnitQuantity::where('product_id', $product->id)
+            $unitQuantities = ProductUnitQuantity::where( 'product_id', $product->id )
                 ->get();
 
-            $unitQuantities->each(function ($unitQuantity) use ($reportService, $product) {
-                $lastProductHistory = ProductHistory::where('product_id', $product->id)
-                    ->where('unit_id', $unitQuantity->unit_id)
-                    ->orderBy('id', 'desc')
+            $unitQuantities->each( function ( $unitQuantity ) use ( $reportService, $product ) {
+                $lastProductHistory = ProductHistory::where( 'product_id', $product->id )
+                    ->where( 'unit_id', $unitQuantity->unit_id )
+                    ->orderBy( 'id', 'desc' )
                     ->first();
 
-                if ($lastProductHistory instanceof ProductHistory) {
-                    $reportService->prepareProductHistoryCombinedHistory($lastProductHistory)
+                if ( $lastProductHistory instanceof ProductHistory ) {
+                    $reportService->prepareProductHistoryCombinedHistory( $lastProductHistory )
                         ->save();
                 }
-            });
-        });
+            } );
+        } );
     }
 }

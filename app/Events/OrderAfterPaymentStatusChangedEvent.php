@@ -16,7 +16,7 @@ class OrderAfterPaymentStatusChangedEvent
      *
      * @return void
      */
-    public function __construct(public Order $order, public $previous, public $new)
+    public function __construct( public Order $order, public $previous, public $new )
     {
         // ...
     }

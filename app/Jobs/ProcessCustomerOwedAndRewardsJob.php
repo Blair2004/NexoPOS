@@ -20,7 +20,7 @@ class ProcessCustomerOwedAndRewardsJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Order $order)
+    public function __construct( public Order $order )
     {
         $this->prepareSerialization();
     }
@@ -30,14 +30,14 @@ class ProcessCustomerOwedAndRewardsJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(CustomerService $customerService)
+    public function handle( CustomerService $customerService )
     {
-        $this->order->load('customer');
+        $this->order->load( 'customer' );
 
-        if ($this->order->customer instanceof Customer) {
-            $customerService->updateCustomerOwedAmount($this->order->customer);
-            $customerService->computeReward($this->order);
-            $customerService->increaseCustomerPurchase($this->order);
+        if ( $this->order->customer instanceof Customer ) {
+            $customerService->updateCustomerOwedAmount( $this->order->customer );
+            $customerService->computeReward( $this->order );
+            $customerService->increaseCustomerPurchase( $this->order );
         }
     }
 }

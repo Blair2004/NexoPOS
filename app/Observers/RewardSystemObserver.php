@@ -6,8 +6,8 @@ use App\Models\RewardSystemRule;
 
 class RewardSystemObserver
 {
-    public function deleting($reward)
+    public function deleting( $reward )
     {
-        RewardSystemRule::attachedTo($reward->id)->delete();
+        RewardSystemRule::attachedTo( $reward->id )->delete();
     }
 }

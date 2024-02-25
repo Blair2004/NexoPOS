@@ -48,10 +48,10 @@ class GenerateModuleCommand extends Command
      */
     public function handle()
     {
-        if (Helper::installed()) {
+        if ( Helper::installed() ) {
             $this->askInformations();
         } else {
-            $this->error('NexoPOS is not yet installed.');
+            $this->error( 'NexoPOS is not yet installed.' );
         }
     }
 
@@ -62,17 +62,17 @@ class GenerateModuleCommand extends Command
      */
     public function askInformations()
     {
-        $this->module[ 'namespace' ] = ucwords($this->ask('Define the module namespace'));
-        $this->module[ 'name' ] = $this->ask('Define the module name');
-        $this->module[ 'author' ] = $this->ask('Define the Author Name');
-        $this->module[ 'description' ] = $this->ask('Define a short description');
+        $this->module[ 'namespace' ] = ucwords( $this->ask( 'Define the module namespace' ) );
+        $this->module[ 'name' ] = $this->ask( 'Define the module name' );
+        $this->module[ 'author' ] = $this->ask( 'Define the Author Name' );
+        $this->module[ 'description' ] = $this->ask( 'Define a short description' );
         $this->module[ 'version' ] = '1.0';
-        $this->module[ 'force' ] = $this->option('force');
+        $this->module[ 'force' ] = $this->option( 'force' );
 
         $table = [ 'Namespace', 'Name', 'Author', 'Description', 'Version' ];
-        $this->table($table, [ $this->module ]);
+        $this->table( $table, [ $this->module ] );
 
-        if (! $this->confirm('Would you confirm theses informations')) {
+        if ( ! $this->confirm( 'Would you confirm theses informations' ) ) {
             $this->askInformations();
         }
 
@@ -81,12 +81,12 @@ class GenerateModuleCommand extends Command
          * happens, we can still suggest the user to restart.
          */
         try {
-            $response = $this->moduleService->generateModule($this->module);
-            $this->info($response[ 'message' ]);
-        } catch (NotAllowedException $exception) {
-            $this->error('A similar module has been found');
+            $response = $this->moduleService->generateModule( $this->module );
+            $this->info( $response[ 'message' ] );
+        } catch ( NotAllowedException $exception ) {
+            $this->error( 'A similar module has been found' );
 
-            if ($this->confirm('Would you like to restart ?')) {
+            if ( $this->confirm( 'Would you like to restart ?' ) ) {
                 $this->askInformations();
             }
         }

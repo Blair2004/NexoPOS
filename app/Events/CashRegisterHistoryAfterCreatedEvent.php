@@ -16,7 +16,7 @@ class CashRegisterHistoryAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct(public RegisterHistory $registerHistory)
+    public function __construct( public RegisterHistory $registerHistory )
     {
         // ...
     }

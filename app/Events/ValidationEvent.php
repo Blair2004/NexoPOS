@@ -9,7 +9,7 @@ use App\Services\Validation;
 
 class ValidationEvent
 {
-    public function __construct(public Validation $validation)
+    public function __construct( public Validation $validation )
     {
         // ...
     }
@@ -23,19 +23,19 @@ class ValidationEvent
      */
     public function unitsGroups()
     {
-        return $this->validation->from(UnitsGroupsFields::class)
-            ->extract('get');
+        return $this->validation->from( UnitsGroupsFields::class )
+            ->extract( 'get' );
     }
 
     public function unitValidation()
     {
-        return $this->validation->from(UnitsFields::class)
-            ->extract('get');
+        return $this->validation->from( UnitsFields::class )
+            ->extract( 'get' );
     }
 
     public function procurementValidation()
     {
-        return $this->validation->from(ProcurementFields::class)
-            ->extract('get');
+        return $this->validation->from( ProcurementFields::class )
+            ->extract( 'get' );
     }
 }

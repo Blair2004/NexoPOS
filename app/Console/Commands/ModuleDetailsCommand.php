@@ -35,27 +35,27 @@ class ModuleDetailsCommand extends Command
     public function listAllModules()
     {
         $header = [
-            __('Name'),
-            __('Namespace'),
-            __('Version'),
-            __('Author'),
-            __('Enabled'),
+            __( 'Name' ),
+            __( 'Namespace' ),
+            __( 'Version' ),
+            __( 'Author' ),
+            __( 'Enabled' ),
         ];
 
         $modulesList = $this->modulesService->get();
         $modulesTable = [];
 
-        foreach ($modulesList as $module) {
+        foreach ( $modulesList as $module ) {
             $modulesTable[] = [
                 $module[ 'name' ],
                 $module[ 'namespace' ],
                 $module[ 'version' ],
                 $module[ 'author' ],
-                $module[ 'enabled' ] ? __('Yes') : __('No'),
+                $module[ 'enabled' ] ? __( 'Yes' ) : __( 'No' ),
             ];
         }
 
-        $this->table($header, $modulesTable);
+        $this->table( $header, $modulesTable );
     }
 
     /**
@@ -65,7 +65,7 @@ class ModuleDetailsCommand extends Command
      */
     public function handle()
     {
-        if (empty($this->argument('identifier'))) {
+        if ( empty( $this->argument( 'identifier' ) ) ) {
             $this->listAllModules();
         } else {
             $this->listSingleModule();
@@ -77,32 +77,32 @@ class ModuleDetailsCommand extends Command
         /**
          * @var ModulesService
          */
-        $moduleService = app()->make(ModulesService::class);
+        $moduleService = app()->make( ModulesService::class );
 
-        $module = $moduleService->get($this->argument('identifier'));
+        $module = $moduleService->get( $this->argument( 'identifier' ) );
 
-        if (empty($module)) {
-            $this->error(__('Unable to find the requested module.'));
+        if ( empty( $module ) ) {
+            $this->error( __( 'Unable to find the requested module.' ) );
         }
 
         $entries = [
-            [ __('Name'), $module[ 'name' ] ],
-            [ __('Version'), $module[ 'version' ] ],
-            [ __('Enabled'), $module[ 'enabled' ] ? __('Yes') : __('No') ],
-            [ __('Path'), $module[ 'path' ] ],
-            [ __('Index'), $module[ 'index-file' ] ],
-            [ __('Entry Class'), $module[ 'entry-class' ] ],
-            [ __('Routes'), $module[ 'routes-file' ] ],
-            [ __('Api'), $module[ 'api-file' ] ],
-            [ __('Controllers'), $module[ 'controllers-relativePath' ] ],
-            [ __('Views'), $module[ 'views-path' ] ],
-            [ __('Api File'), $module[ 'api-file' ] ],
-            [ __('Migrations'), collect($module[ 'all-migrations' ] ?? [])->join("\n") ],
+            [ __( 'Name' ), $module[ 'name' ] ],
+            [ __( 'Version' ), $module[ 'version' ] ],
+            [ __( 'Enabled' ), $module[ 'enabled' ] ? __( 'Yes' ) : __( 'No' ) ],
+            [ __( 'Path' ), $module[ 'path' ] ],
+            [ __( 'Index' ), $module[ 'index-file' ] ],
+            [ __( 'Entry Class' ), $module[ 'entry-class' ] ],
+            [ __( 'Routes' ), $module[ 'routes-file' ] ],
+            [ __( 'Api' ), $module[ 'api-file' ] ],
+            [ __( 'Controllers' ), $module[ 'controllers-relativePath' ] ],
+            [ __( 'Views' ), $module[ 'views-path' ] ],
+            [ __( 'Api File' ), $module[ 'api-file' ] ],
+            [ __( 'Migrations' ), collect( $module[ 'all-migrations' ] ?? [] )->join( "\n" ) ],
         ];
 
-        return $this->table([
-            __('Attribute'),
-            __('Value'),
-        ], $entries);
+        return $this->table( [
+            __( 'Attribute' ),
+            __( 'Value' ),
+        ], $entries );
     }
 }

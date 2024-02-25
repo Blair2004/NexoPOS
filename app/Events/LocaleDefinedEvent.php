@@ -15,7 +15,7 @@ class LocaleDefinedEvent
      *
      * @return void
      */
-    public function __construct(public $locale)
+    public function __construct( public $locale )
     {
         // ...
     }

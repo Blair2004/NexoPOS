@@ -14,23 +14,23 @@ class DateService extends Carbon
 
     private $timezone;
 
-    public function __construct($time = 'now', $timezone = 'Europe/London')
+    public function __construct( $time = 'now', $timezone = 'Europe/London' )
     {
-        parent::__construct($time, $timezone);
+        parent::__construct( $time, $timezone );
 
-        if (Helper::installed()) {
+        if ( Helper::installed() ) {
             $this->timezone = $timezone;
-            $this->options = app()->make(Options::class);
+            $this->options = app()->make( Options::class );
 
-            if (Auth::check()) {
-                $language = Auth::user()->attribute->language ?: $this->options->get('ns_store_language', 'light');
+            if ( Auth::check() ) {
+                $language = Auth::user()->attribute->language ?: $this->options->get( 'ns_store_language', 'light' );
             } else {
-                $language = $this->options->get('ns_store_language', 'en');
+                $language = $this->options->get( 'ns_store_language', 'en' );
             }
 
-            $longForm = $this->getLongLocaleCode($language);
+            $longForm = $this->getLongLocaleCode( $language );
 
-            $this->locale($longForm);
+            $this->locale( $longForm );
         }
     }
 
@@ -38,9 +38,9 @@ class DateService extends Carbon
      * Return the long locale form
      * for a short version provided
      */
-    public function getLongLocaleCode(string $locale): string
+    public function getLongLocaleCode( string $locale ): string
     {
-        return match ($locale) {
+        return match ( $locale ) {
             'fr' => 'fr_FR',
             'en' => 'en_US',
             'es' => 'es_ES',
@@ -53,22 +53,22 @@ class DateService extends Carbon
         };
     }
 
-    public function define($time, $timezone = 'Europe/London')
+    public function define( $time, $timezone = 'Europe/London' )
     {
-        $this->__construct($time, $timezone);
+        $this->__construct( $time, $timezone );
     }
 
     /**
      * Get the defined date format.
      */
-    public function getFormatted(string $date, string $mode = 'full'): string
+    public function getFormatted( string $date, string $mode = 'full' ): string
     {
-        switch ($mode) {
+        switch ( $mode ) {
             case 'short':
-                return $this->parse($date)->format($this->options->get('ns_date_format', 'Y-m-d'));
+                return $this->parse( $date )->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
                 break;
             case 'full':
-                return $this->parse($date)->format($this->options->get('ns_datetime_format', 'Y-m-d H:i:s'));
+                return $this->parse( $date )->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
                 break;
         }
     }
@@ -79,26 +79,26 @@ class DateService extends Carbon
      */
     public function getNow(): DateService
     {
-        return $this->now($this->timezone);
+        return $this->now( $this->timezone );
     }
 
     /**
      * Return a formatted string the current date/time
      * usign a defined format (full or short)
      */
-    public function getNowFormatted(string $mode = 'full'): string
+    public function getNowFormatted( string $mode = 'full' ): string
     {
-        switch ($mode) {
+        switch ( $mode ) {
             case 'short':
-                return $this->format($this->options->get('ns_date_format', 'Y-m-d'));
+                return $this->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
                 break;
             case 'full':
-                return $this->format($this->options->get('ns_datetime_format', 'Y-m-d H:i:s'));
+                return $this->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
                 break;
         }
     }
 
-    public function convertFormatToMomment($format)
+    public function convertFormatToMomment( $format )
     {
         $replacements = [
             'd' => 'DD',
@@ -140,7 +140,7 @@ class DateService extends Carbon
             'U' => 'X',
         ];
 
-        $momentFormat = strtr($format, $replacements);
+        $momentFormat = strtr( $format, $replacements );
 
         return $momentFormat;
     }
@@ -148,15 +148,15 @@ class DateService extends Carbon
     /**
      * Get days as an array between two dates.
      */
-    public function getDaysInBetween(Carbon $startRange, Carbon $endRange): array
+    public function getDaysInBetween( Carbon $startRange, Carbon $endRange ): array
     {
-        if ($startRange->lessThan($endRange) && $startRange->diffInDays($endRange) >= 1) {
+        if ( $startRange->lessThan( $endRange ) && $startRange->diffInDays( $endRange ) >= 1 ) {
             $days = [];
 
             do {
                 $days[] = $startRange->copy();
                 $startRange->addDay();
-            } while (! $startRange->isSameDay($endRange));
+            } while ( ! $startRange->isSameDay( $endRange ) );
 
             $days[] = $endRange->copy();
 

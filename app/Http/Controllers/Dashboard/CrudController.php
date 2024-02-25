@@ -26,9 +26,9 @@ class CrudController extends DashboardController
 {
     public function __construct()
     {
-        $this->middleware(function ($request, $next) {
-            return $next($request);
-        });
+        $this->middleware( function ( $request, $next ) {
+            return $next( $request );
+        } );
     }
 
     /**
@@ -38,44 +38,44 @@ class CrudController extends DashboardController
      * @param void
      * @return view
      */
-    public function crudDelete($namespace, $id)
+    public function crudDelete( $namespace, $id )
     {
         /**
          * Catch event before deleting user
          */
         $service = new CrudService;
-        $resource = $service->getCrudInstance($namespace);
+        $resource = $service->getCrudInstance( $namespace );
         $modelClass = $resource->getModel();
-        $model = $modelClass::find($id);
+        $model = $modelClass::find( $id );
 
-        if (! $model instanceof $modelClass) {
-            throw new NotFoundException(__('Unable to delete an entry that no longer exists.'));
+        if ( ! $model instanceof $modelClass ) {
+            throw new NotFoundException( __( 'Unable to delete an entry that no longer exists.' ) );
         }
 
         /**
          * Run the filter before deleting
          */
-        if (method_exists($resource, 'beforeDelete')) {
+        if ( method_exists( $resource, 'beforeDelete' ) ) {
             /**
              * the callback should return an empty value to proceed.
              */
-            if (! empty($response = $resource->beforeDelete($namespace, $id, $model))) {
+            if ( ! empty( $response = $resource->beforeDelete( $namespace, $id, $model ) ) ) {
                 return $response;
             }
         }
 
-        $resource->handleDependencyForDeletion($model);
+        $resource->handleDependencyForDeletion( $model );
 
         $model->delete();
 
         /**
          * That will trigger everytime an instance is deleted.
          */
-        event(new CrudAfterDeleteEvent($resource, (object) $model->toArray()));
+        event( new CrudAfterDeleteEvent( $resource, (object) $model->toArray() ) );
 
         return [
             'status' => 'success',
-            'message' => __('The entry has been successfully deleted.'),
+            'message' => __( 'The entry has been successfully deleted.' ),
         ];
     }
 
@@ -85,28 +85,28 @@ class CrudController extends DashboardController
      *
      * @return void
      */
-    public function crudPost(string $namespace, CrudPostRequest $request)
+    public function crudPost( string $namespace, CrudPostRequest $request )
     {
         $service = new CrudService;
-        $inputs = $request->getPlainData($namespace);
+        $inputs = $request->getPlainData( $namespace );
 
-        return $service->submitRequest($namespace, $inputs);
+        return $service->submitRequest( $namespace, $inputs );
     }
 
     /**
      * Dashboard CRUD PUT
      * receive and treat a PUT request for CRUD resource
      *
-     * @param string $namespace
-     * @param int $id primary key
+     * @param  string $namespace
+     * @param  int    $id        primary key
      * @return void
      */
-    public function crudPut($namespace, $id, CrudPutRequest $request)
+    public function crudPut( $namespace, $id, CrudPutRequest $request )
     {
         $service = new CrudService;
-        $inputs = $request->getPlainData($namespace);
+        $inputs = $request->getPlainData( $namespace );
 
-        return $service->submitRequest($namespace, $inputs, $id);
+        return $service->submitRequest( $namespace, $inputs, $id );
     }
 
     /**
@@ -114,22 +114,22 @@ class CrudController extends DashboardController
      *
      * @return array of results
      */
-    public function crudList(string $namespace)
+    public function crudList( string $namespace )
     {
-        $crudClass = Hook::filter('ns-crud-resource', $namespace);
+        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
          */
-        if (! class_exists($crudClass)) {
-            throw new Exception(sprintf(__('Unable to load the CRUD resource : %s.'), $crudClass));
+        if ( ! class_exists( $crudClass ) ) {
+            throw new Exception( sprintf( __( 'Unable to load the CRUD resource : %s.' ), $crudClass ) );
         }
 
         /**
          * @var CrudService
          */
         $resource = new $crudClass;
-        $resource->allowedTo('read');
+        $resource->allowedTo( 'read' );
 
         return $resource->getEntries();
     }
@@ -140,15 +140,15 @@ class CrudController extends DashboardController
      * @param string namespace
      * @return void
      */
-    public function crudBulkActions(string $namespace, Request $request)
+    public function crudBulkActions( string $namespace, Request $request )
     {
-        $crudClass = Hook::filter('ns-crud-resource', $namespace);
+        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
          */
-        if (! class_exists($crudClass)) {
-            throw new Exception(__('Unhandled crud resource'));
+        if ( ! class_exists( $crudClass ) ) {
+            throw new Exception( __( 'Unhandled crud resource' ) );
         }
 
         $resource = new $crudClass;
@@ -157,12 +157,12 @@ class CrudController extends DashboardController
          * Check if an entry is selected,
          * else throw an error
          */
-        if ($request->input('entries') == null) {
-            throw new Exception(__('You need to select at least one item to delete'));
+        if ( $request->input( 'entries' ) == null ) {
+            throw new Exception( __( 'You need to select at least one item to delete' ) );
         }
 
-        if ($request->input('action') == null) {
-            throw new Exception(__('You need to define which action to perform'));
+        if ( $request->input( 'action' ) == null ) {
+            throw new Exception( __( 'You need to define which action to perform' ) );
         }
 
         /**
@@ -170,12 +170,12 @@ class CrudController extends DashboardController
          * we're expecting an array response with successful
          * operations and failed operations.
          */
-        $response = Hook::filter(get_class($resource) . '@bulkAction', $resource->bulkAction($request), $request);
+        $response = Hook::filter( get_class( $resource ) . '@bulkAction', $resource->bulkAction( $request ), $request );
 
         return [
             'status' => 'success',
             'message' => sprintf(
-                $response[ 'message' ] ?? __('%s has been processed, %s has not been processed.'),
+                $response[ 'message' ] ?? __( '%s has been processed, %s has not been processed.' ),
                 $response[ 'success' ] ?? 0,
                 $response[ 'failed' ] ?? 0
             ),
@@ -189,9 +189,9 @@ class CrudController extends DashboardController
      * @param string resource namespace
      * @return CRUD Response
      */
-    public function crudGet(string $namespace, Request $request)
+    public function crudGet( string $namespace, Request $request )
     {
-        $crudClass = Hook::filter('ns-crud-resource', $namespace);
+        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
          * Let's check it the resource has a method to retrieve an item
@@ -199,12 +199,12 @@ class CrudController extends DashboardController
          * @var CrudService
          */
         $resource = new $crudClass;
-        $resource->allowedTo('read');
+        $resource->allowedTo( 'read' );
 
-        if (method_exists($resource, 'getEntries')) {
-            return $resource->getEntries($request);
+        if ( method_exists( $resource, 'getEntries' ) ) {
+            return $resource->getEntries( $request );
         } else {
-            throw new Exception(__('Unable to retrieve items. The current CRUD resource doesn\'t implement "getEntries" methods'));
+            throw new Exception( __( 'Unable to retrieve items. The current CRUD resource doesn\'t implement "getEntries" methods' ) );
         }
     }
 
@@ -214,23 +214,23 @@ class CrudController extends DashboardController
      * @param string CRUD resource namespace
      * @return TableConfig
      */
-    public function getColumns(string $namespace)
+    public function getColumns( string $namespace )
     {
-        $crudClass = Hook::filter('ns-crud-resource', $namespace);
+        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
         $resource = new $crudClass;
-        $resource->allowedTo('read');
+        $resource->allowedTo( 'read' );
 
-        if (method_exists($resource, 'getEntries')) {
+        if ( method_exists( $resource, 'getEntries' ) ) {
             return Hook::filter(
-                get_class($resource) . '@getColumns',
+                get_class( $resource ) . '@getColumns',
                 $resource->getColumns()
             );
         }
 
-        return response()->json([
+        return response()->json( [
             'status' => 'failed',
-            'message' => __('Unable to proceed. No matching CRUD resource has been found.'),
-        ], 403);
+            'message' => __( 'Unable to proceed. No matching CRUD resource has been found.' ),
+        ], 403 );
     }
 
     /**
@@ -238,41 +238,41 @@ class CrudController extends DashboardController
      *
      * @return array
      */
-    public function getConfig(string $namespace)
+    public function getConfig( string $namespace )
     {
-        $crudClass = Hook::filter('ns-crud-resource', $namespace);
+        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
 
-        if (! class_exists($crudClass)) {
-            throw new Exception(sprintf(
-                __('The class "%s" is not defined. Does that crud class exists ? Make sure you\'ve registered the instance if it\'s the case.'),
+        if ( ! class_exists( $crudClass ) ) {
+            throw new Exception( sprintf(
+                __( 'The class "%s" is not defined. Does that crud class exists ? Make sure you\'ve registered the instance if it\'s the case.' ),
                 $crudClass
-            ));
+            ) );
         }
 
         $resource = new $crudClass;
-        $resource->allowedTo('read');
+        $resource->allowedTo( 'read' );
 
-        if (method_exists($resource, 'getEntries')) {
+        if ( method_exists( $resource, 'getEntries' ) ) {
             return [
                 'columns' => Hook::filter(
-                    get_class($resource) . '@getColumns',
+                    get_class( $resource ) . '@getColumns',
                     $resource->getColumns()
                 ),
-                'queryFilters' => Hook::filter(get_class($resource) . '@getQueryFilters', $resource->getQueryFilters()),
-                'labels' => Hook::filter(get_class($resource) . '@getLabels', $resource->getLabels()),
-                'links' => Hook::filter(get_class($resource) . '@getFilteredLinks', $resource->getFilteredLinks() ?? []),
-                'bulkActions' => Hook::filter(get_class($resource) . '@getBulkActions', $resource->getBulkActions()),
-                'prependOptions' => Hook::filter(get_class($resource) . '@getPrependOptions', $resource->getPrependOptions()),
-                'showOptions' => Hook::filter(get_class($resource) . '@getShowOptions', $resource->getShowOptions()),
-                'headerButtons' => Hook::filter(get_class($resource) . '@getHeaderButtons', $resource->getHeaderButtons()),
+                'queryFilters' => Hook::filter( get_class( $resource ) . '@getQueryFilters', $resource->getQueryFilters() ),
+                'labels' => Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
+                'links' => Hook::filter( get_class( $resource ) . '@getFilteredLinks', $resource->getFilteredLinks() ?? [] ),
+                'bulkActions' => Hook::filter( get_class( $resource ) . '@getBulkActions', $resource->getBulkActions() ),
+                'prependOptions' => Hook::filter( get_class( $resource ) . '@getPrependOptions', $resource->getPrependOptions() ),
+                'showOptions' => Hook::filter( get_class( $resource ) . '@getShowOptions', $resource->getShowOptions() ),
+                'headerButtons' => Hook::filter( get_class( $resource ) . '@getHeaderButtons', $resource->getHeaderButtons() ),
                 'namespace' => $namespace,
             ];
         }
 
-        return response()->json([
+        return response()->json( [
             'status' => 'failed',
-            'message' => __('Unable to proceed. No matching CRUD resource has been found.'),
-        ], 403);
+            'message' => __( 'Unable to proceed. No matching CRUD resource has been found.' ),
+        ], 403 );
     }
 
     /**
@@ -281,46 +281,46 @@ class CrudController extends DashboardController
      * @param namespace
      * @return array | AsyncResponse
      */
-    public function getFormConfig(string $namespace, $id = null)
+    public function getFormConfig( string $namespace, $id = null )
     {
-        $crudClass = Hook::filter('ns-crud-resource', $namespace);
-        $resource = new $crudClass(compact('namespace', 'id'));
-        $resource->allowedTo('read');
+        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+        $resource = new $crudClass( compact( 'namespace', 'id' ) );
+        $resource->allowedTo( 'read' );
 
-        if (method_exists($resource, 'getEntries')) {
-            $model = $resource->get('model');
-            $model = $model::find($id);
-            $form = $resource->getForm($model);
+        if ( method_exists( $resource, 'getEntries' ) ) {
+            $model = $resource->get( 'model' );
+            $model = $model::find( $id );
+            $form = $resource->getForm( $model );
 
             /**
              * @since 4.4.3
              */
-            $form = Hook::filter(get_class($resource)::method('getForm'), $form, compact('model'));
+            $form = Hook::filter( get_class( $resource )::method( 'getForm' ), $form, compact( 'model' ) );
             $config = [
                 'form' => $form,
-                'labels' => Hook::filter(get_class($resource) . '@getLabels', $resource->getLabels()),
-                'links' => Hook::filter(get_class($resource) . '@getLinks', $resource->getLinks()),
+                'labels' => Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
+                'links' => Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ),
                 'namespace' => $namespace,
             ];
 
             return $config;
         }
 
-        return response()->json([
+        return response()->json( [
             'status' => 'failed',
-            'message' => __('Unable to proceed. No matching CRUD resource has been found.'),
-        ], 403);
+            'message' => __( 'Unable to proceed. No matching CRUD resource has been found.' ),
+        ], 403 );
     }
 
     /**
      * Export the entries as a CSV file
      *
-     * @param string $namespace
-     * @return array $response
+     * @param  string $namespace
+     * @return array  $response
      */
-    public function exportCrud($namespace, Request $request)
+    public function exportCrud( $namespace, Request $request )
     {
-        $crudClass = Hook::filter('ns-crud-resource', $namespace);
+        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
 
         $resource = new $crudClass;
         $spreadsheet = new Spreadsheet;
@@ -330,10 +330,10 @@ class CrudController extends DashboardController
          * only users having read capability
          * can download a CSV file.
          */
-        $resource->allowedTo('read');
+        $resource->allowedTo( 'read' );
 
         $columns = Hook::filter(
-            get_class($resource) . '@getColumns',
+            get_class( $resource ) . '@getColumns',
             $resource->getExportColumns() ?: $resource->getColumns()
         );
 
@@ -345,14 +345,14 @@ class CrudController extends DashboardController
         $sheetCol2 = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' ];
         $sheetColumns = [];
 
-        foreach ($sheetCol1 as $col) {
-            foreach ($sheetCol2 as $col2) {
+        foreach ( $sheetCol1 as $col ) {
+            foreach ( $sheetCol2 as $col2 ) {
                 $sheetColumns[] = $col . $col2;
             }
         }
 
-        if (count(array_values($columns)) > count($sheetColumns)) {
-            throw new Exception(__('The crud columns exceed the maximum column that can be exported (27)'));
+        if ( count( array_values( $columns ) ) > count( $sheetColumns ) ) {
+            throw new Exception( __( 'The crud columns exceed the maximum column that can be exported (27)' ) );
         }
 
         /**
@@ -360,8 +360,8 @@ class CrudController extends DashboardController
          * we'll make sure to use them instead of the
          * default columns.
          */
-        foreach (array_values($columns) as $index => $column) {
-            $sheet->setCellValue($sheetColumns[ $index ] . '1', $column[ 'label' ]);
+        foreach ( array_values( $columns ) as $index => $column ) {
+            $sheet->setCellValue( $sheetColumns[ $index ] . '1', $column[ 'label' ] );
         }
 
         /**
@@ -374,24 +374,24 @@ class CrudController extends DashboardController
          * let's check if the request include
          * specific entries to export
          */
-        if ($request->input('entries')) {
-            $config[ 'pick' ] = $request->input('entries');
+        if ( $request->input( 'entries' ) ) {
+            $config[ 'pick' ] = $request->input( 'entries' );
         }
 
-        $entries = $resource->getEntries($config);
+        $entries = $resource->getEntries( $config );
         $totalColumns = 0;
 
         /**
          * We can't export if there is
          * nothing to export, so we'll skip that.
          */
-        if (count($entries[ 'data' ]) === 0) {
-            throw new NotAllowedException(__('Unable to export if there is nothing to export.'));
+        if ( count( $entries[ 'data' ] ) === 0 ) {
+            throw new NotAllowedException( __( 'Unable to export if there is nothing to export.' ) );
         }
 
-        foreach ($entries[ 'data' ] as $rowIndex => $entry) {
-            foreach ($columns as $columnName => $column) {
-                $sheet->setCellValue($sheetColumns[ $totalColumns ] . ($rowIndex + 2), strip_tags($entry->$columnName));
+        foreach ( $entries[ 'data' ] as $rowIndex => $entry ) {
+            foreach ( $columns as $columnName => $column ) {
+                $sheet->setCellValue( $sheetColumns[ $totalColumns ] . ( $rowIndex + 2 ), strip_tags( $entry->$columnName ) );
                 $totalColumns++;
             }
             $totalColumns = 0;
@@ -401,51 +401,51 @@ class CrudController extends DashboardController
          * We'll emit an event to allow any procees
          * to edit the current file.
          */
-        CrudBeforeExportEvent::dispatch($sheet, $totalColumns, $rowIndex, $sheetColumns, $entries);
+        CrudBeforeExportEvent::dispatch( $sheet, $totalColumns, $rowIndex, $sheetColumns, $entries );
 
         /**
          * let's define what will be the output name
          * of the exported file.
          */
-        if (! is_dir(storage_path('app/public/exports'))) {
-            mkdir(storage_path('app/public/exports'));
+        if ( ! is_dir( storage_path( 'app/public/exports' ) ) ) {
+            mkdir( storage_path( 'app/public/exports' ) );
         }
 
-        $dateFormat = Str::slug(ns()->date->toDateTimeString());
-        $relativePath = 'exports/' . Str::slug($resource->getLabels()[ 'list_title' ]) . '-' . $dateFormat . '.csv';
-        $fileName = storage_path('app/public/' . $relativePath);
+        $dateFormat = Str::slug( ns()->date->toDateTimeString() );
+        $relativePath = 'exports/' . Str::slug( $resource->getLabels()[ 'list_title' ] ) . '-' . $dateFormat . '.csv';
+        $fileName = storage_path( 'app/public/' . $relativePath );
 
         /**
          * We'll prepare the writer
          * and output the file.
          */
-        $writer = new Csv($spreadsheet);
-        $writer->save($fileName);
+        $writer = new Csv( $spreadsheet );
+        $writer->save( $fileName );
 
         /**
          * We'll hide the asset URL behind random lettes
          */
-        $hash = Str::random(20);
+        $hash = Str::random( 20 );
 
-        Cache::put($hash, $relativePath, now()->addMinutes(5));
+        Cache::put( $hash, $relativePath, now()->addMinutes( 5 ) );
 
         return [
-            'url' => route('ns.dashboard.crud-download', compact('hash')),
+            'url' => route( 'ns.dashboard.crud-download', compact( 'hash' ) ),
         ];
     }
 
-    public function downloadSavedFile($hash)
+    public function downloadSavedFile( $hash )
     {
-        $relativePath = Cache::pull($hash);
+        $relativePath = Cache::pull( $hash );
 
-        if ($relativePath === null) {
-            throw new NotAllowedException(__('This link has expired.'));
+        if ( $relativePath === null ) {
+            throw new NotAllowedException( __( 'This link has expired.' ) );
         }
 
-        if (Storage::disk('public')->exists($relativePath)) {
-            return Storage::disk('public')->download($relativePath);
+        if ( Storage::disk( 'public' )->exists( $relativePath ) ) {
+            return Storage::disk( 'public' )->download( $relativePath );
         }
 
-        throw new NotFoundException(__('The requested file cannot be downloaded or has already been downloaded.'));
+        throw new NotFoundException( __( 'The requested file cannot be downloaded or has already been downloaded.' ) );
     }
 }

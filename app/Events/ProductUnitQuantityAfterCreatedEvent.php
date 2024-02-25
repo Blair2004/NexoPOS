@@ -17,7 +17,7 @@ class ProductUnitQuantityAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct(public ProductUnitQuantity $productUnitQuantity)
+    public function __construct( public ProductUnitQuantity $productUnitQuantity )
     {
         //
     }
@@ -29,6 +29,6 @@ class ProductUnitQuantityAfterCreatedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel( 'channel-name' );
     }
 }

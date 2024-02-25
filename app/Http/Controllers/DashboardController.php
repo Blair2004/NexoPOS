@@ -28,17 +28,17 @@ class DashboardController extends Controller
 
     public function home()
     {
-        return View::make('pages.dashboard.home', [
-            'title' => __('Dashboard'),
-        ]);
+        return View::make( 'pages.dashboard.home', [
+            'title' => __( 'Dashboard' ),
+        ] );
     }
 
     /**
      * @deprecated
      */
-    protected function view($path, $data = [])
+    protected function view( $path, $data = [] )
     {
-        return view($path, $data);
+        return view( $path, $data );
     }
 
     public function getCards()
@@ -46,27 +46,27 @@ class DashboardController extends Controller
         $todayStarts = $this->dateService->copy()->startOfDay()->toDateTimeString();
         $todayEnds = $this->dateService->copy()->endOfDay()->toDateTimeString();
 
-        return DashboardDay::from($todayStarts)
-            ->to($todayEnds)
+        return DashboardDay::from( $todayStarts )
+            ->to( $todayEnds )
             ->first() ?: [];
     }
 
     public function getBestCustomers()
     {
-        return Customer::orderBy('purchases_amount', 'desc')->limit(5)->get();
+        return Customer::orderBy( 'purchases_amount', 'desc' )->limit( 5 )->get();
     }
 
     public function getRecentsOrders()
     {
-        return Order::orderBy('created_at', 'desc')->with('user')->limit(10)->get();
+        return Order::orderBy( 'created_at', 'desc' )->with( 'user' )->limit( 10 )->get();
     }
 
     public function getBestCashiers()
     {
-        return Role::namespace('nexopos.store.cashier')
+        return Role::namespace( 'nexopos.store.cashier' )
             ->users()
-            ->orderBy('total_sales', 'desc')
-            ->limit(10)
+            ->orderBy( 'total_sales', 'desc' )
+            ->limit( 10 )
             ->get();
     }
 
@@ -75,45 +75,45 @@ class DashboardController extends Controller
      * Output object on the footer. Useful to create
      * custom output per page.
      *
-     * @param string $name
+     * @param  string $name
      * @return void
      */
-    public function hookOutput($name)
+    public function hookOutput( $name )
     {
-        Hook::addAction('ns-dashboard-footer', function (Output $output) use ($name) {
-            Hook::action($name, $output);
-        }, 15);
+        Hook::addAction( 'ns-dashboard-footer', function ( Output $output ) use ( $name ) {
+            Hook::action( $name, $output );
+        }, 15 );
     }
 
     public function getWeekReports()
     {
         $weekMap = [
             0 => [
-                'label' => __('Sunday'),
+                'label' => __( 'Sunday' ),
                 'value' => 'SU',
             ],
             1 => [
-                'label' => __('Monday'),
+                'label' => __( 'Monday' ),
                 'value' => 'MO',
             ],
             2 => [
-                'label' => __('Tuesday'),
+                'label' => __( 'Tuesday' ),
                 'value' => 'TU',
             ],
             3 => [
-                'label' => __('Wednesday'),
+                'label' => __( 'Wednesday' ),
                 'value' => 'WE',
             ],
             4 => [
-                'label' => __('Thursday'),
+                'label' => __( 'Thursday' ),
                 'value' => 'TH',
             ],
             5 => [
-                'label' => __('Friday'),
+                'label' => __( 'Friday' ),
                 'value' => 'FR',
             ],
             6 => [
-                'label' => __('Saturday'),
+                'label' => __( 'Saturday' ),
                 'value' => 'SA',
             ],
         ];
@@ -123,27 +123,27 @@ class DashboardController extends Controller
         $lastWeekStarts = $currentWeekStarts->copy()->subDay()->startOfWeek();
         $lastWeekEnds = $currentWeekStarts->copy()->subDay()->endOfWeek();
 
-        DashboardDay::from($currentWeekStarts->toDateTimeString())
-            ->to($currentWeekEnds->toDateTimeString())
+        DashboardDay::from( $currentWeekStarts->toDateTimeString() )
+            ->to( $currentWeekEnds->toDateTimeString() )
             ->get()
-            ->each(function ($report) use (&$weekMap) {
-                if (! isset($weekMap[ Carbon::parse($report->range_starts)->dayOfWeek ][ 'current' ][ 'entries' ])) {
-                    $weekMap[ Carbon::parse($report->range_starts)->dayOfWeek ][ 'current' ][ 'entries' ] = [];
+            ->each( function ( $report ) use ( &$weekMap ) {
+                if ( ! isset( $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'current' ][ 'entries' ] ) ) {
+                    $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'current' ][ 'entries' ] = [];
                 }
 
-                $weekMap[ Carbon::parse($report->range_starts)->dayOfWeek ][ 'current' ][ 'entries' ][] = $report;
-            });
+                $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'current' ][ 'entries' ][] = $report;
+            } );
 
-        DashboardDay::from($lastWeekStarts->toDateTimeString())
-            ->to($lastWeekEnds->toDateTimeString())
+        DashboardDay::from( $lastWeekStarts->toDateTimeString() )
+            ->to( $lastWeekEnds->toDateTimeString() )
             ->get()
-            ->each(function ($report) use (&$weekMap) {
-                if (! isset($weekMap[ Carbon::parse($report->range_starts)->dayOfWeek ][ 'previous' ][ 'entries' ])) {
-                    $weekMap[ Carbon::parse($report->range_starts)->dayOfWeek ][ 'previous' ][ 'entries' ] = [];
+            ->each( function ( $report ) use ( &$weekMap ) {
+                if ( ! isset( $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'previous' ][ 'entries' ] ) ) {
+                    $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'previous' ][ 'entries' ] = [];
                 }
 
-                $weekMap[ Carbon::parse($report->range_starts)->dayOfWeek ][ 'previous' ][ 'entries' ][] = $report;
-            });
+                $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'previous' ][ 'entries' ][] = $report;
+            } );
 
         return [
             'range_starts' => $lastWeekStarts->toDateTimeString(),

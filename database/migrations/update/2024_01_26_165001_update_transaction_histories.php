@@ -15,13 +15,13 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_transactions_histories', 'expense_category_id' ) ) {
                 $table->renameColumn( 'expense_category_id', 'transaction_account_id' );
             }
-        });
+        } );
 
         Schema::table( 'nexopos_procurements_products', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_procurements_products', 'tax_group_id' ) ) {
-                $table->unsignedBigInteger('tax_group_id')->nullable()->change();
+                $table->unsignedBigInteger( 'tax_group_id' )->nullable()->change();
             }
-        });
+        } );
     }
 
     /**

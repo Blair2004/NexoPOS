@@ -25,7 +25,7 @@ class ProcurementBeforeDeleteProductEventListener
      *
      * @return void
      */
-    public function handle(ProcurementBeforeDeleteProductEvent $event)
+    public function handle( ProcurementBeforeDeleteProductEvent $event )
     {
         // ...
     }

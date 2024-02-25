@@ -13,7 +13,7 @@ class FieldsService
 
     public static function getIdentifier(): string
     {
-        if (isset(get_called_class()::$identifier)) {
+        if ( isset( get_called_class()::$identifier ) ) {
             return get_called_class()::$identifier;
         }
 
@@ -22,7 +22,7 @@ class FieldsService
          * identifier must be set statically to avoid any
          * field build while just retreiving the identifier.
          */
-        if (isset(( new self )->identifier)) {
+        if ( isset( ( new self )->identifier ) ) {
             return get_called_class()::$identifier;
         }
     }

@@ -19,7 +19,7 @@ class ReduceCashierStatsFromRefundJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Order $order, public OrderRefund $orderRefund)
+    public function __construct( public Order $order, public OrderRefund $orderRefund )
     {
         $this->prepareSerialization();
     }

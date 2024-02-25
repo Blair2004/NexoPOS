@@ -16,7 +16,7 @@ class CustomerBeforeDeletedEvent
      *
      * @return void
      */
-    public function __construct(public Customer $customer)
+    public function __construct( public Customer $customer )
     {
         // ...
     }

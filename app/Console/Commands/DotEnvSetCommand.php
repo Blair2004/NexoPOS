@@ -37,12 +37,12 @@ class DotEnvSetCommand extends Command
      */
     public function handle()
     {
-        if (in_array(strtoupper($this->argument('key')), [ 'NS_AUTHORIZATION' ])) {
-            return $this->error(__('The authorization token can\'t be changed manually.'));
+        if ( in_array( strtoupper( $this->argument( 'key' ) ), [ 'NS_AUTHORIZATION' ] ) ) {
+            return $this->error( __( 'The authorization token can\'t be changed manually.' ) );
         }
 
-        ns()->envEditor->set(strtoupper($this->argument('key')), $this->option('v'));
+        ns()->envEditor->set( strtoupper( $this->argument( 'key' ) ), $this->option( 'v' ) );
 
-        $this->info('The environment value has been set.');
+        $this->info( 'The environment value has been set.' );
     }
 }

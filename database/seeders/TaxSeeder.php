@@ -15,8 +15,8 @@ class TaxSeeder extends Seeder
     public function run()
     {
         return TaxGroup::factory()
-            ->count(5)
-            ->hasTaxes(2)
+            ->count( 5 )
+            ->hasTaxes( 2 )
             ->create();
     }
 }

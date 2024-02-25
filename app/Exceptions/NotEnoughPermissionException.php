@@ -12,24 +12,24 @@ class NotEnoughPermissionException extends Exception
         return 403;
     }
 
-    public function __construct($message = null)
+    public function __construct( $message = null )
     {
-        $this->message = $message ?: __('You\'re not allowed to see that page.');
+        $this->message = $message ?: __( 'You\'re not allowed to see that page.' );
     }
 
-    public function render($request)
+    public function render( $request )
     {
-        if (! $request->expectsJson()) {
-            return response()->view('pages.errors.not-enough-permissions', [
-                'title' => __('Not Enough Permissions'),
+        if ( ! $request->expectsJson() ) {
+            return response()->view( 'pages.errors.not-enough-permissions', [
+                'title' => __( 'Not Enough Permissions' ),
                 'message' => $this->getMessage(),
-                'back' => Helper::getValidPreviousUrl($request),
-            ]);
+                'back' => Helper::getValidPreviousUrl( $request ),
+            ] );
         }
 
-        return response()->json([
+        return response()->json( [
             'status' => 'failed',
             'message' => $this->getMessage(),
-        ], 401);
+        ], 401 );
     }
 }

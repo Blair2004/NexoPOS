@@ -15,7 +15,7 @@ class ProductBeforeUpdatedEvent
     /**
      * Create a new event instance.
      */
-    public function __construct(public Product $product)
+    public function __construct( public Product $product )
     {
         //
     }
@@ -28,7 +28,7 @@ class ProductBeforeUpdatedEvent
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel( 'channel-name' ),
         ];
     }
 }

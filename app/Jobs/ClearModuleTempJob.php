@@ -28,7 +28,7 @@ class ClearModuleTempJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ModulesService $modulesService)
+    public function handle( ModulesService $modulesService )
     {
         $modulesService->clearTemporaryFiles();
     }

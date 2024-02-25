@@ -9,7 +9,7 @@ class ProcurementAfterDeleteProductEvent
 {
     use SerializesModels;
 
-    public function __construct(public $product_id, public Procurement $procurement)
+    public function __construct( public $product_id, public Procurement $procurement )
     {
         // ...
     }

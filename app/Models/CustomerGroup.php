@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int $id
- * @property string $uuid
- * @property string $description
- * @property int $author
+ * @property int            $id
+ * @property string         $uuid
+ * @property string         $description
+ * @property int            $author
  * @property \Carbon\Carbon $updated_at
  */
 class CustomerGroup extends NsModel
@@ -25,11 +25,11 @@ class CustomerGroup extends NsModel
      */
     public function customers()
     {
-        return $this->hasMany(Customer::class, 'group_id');
+        return $this->hasMany( Customer::class, 'group_id' );
     }
 
     public function reward()
     {
-        return $this->hasOne(RewardSystem::class, 'id', 'reward_system_id');
+        return $this->hasOne( RewardSystem::class, 'id', 'reward_system_id' );
     }
 }

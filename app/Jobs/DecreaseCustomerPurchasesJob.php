@@ -19,7 +19,7 @@ class DecreaseCustomerPurchasesJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Customer $customer, public float $total)
+    public function __construct( public Customer $customer, public float $total )
     {
         $this->prepareSerialization();
     }
@@ -29,7 +29,7 @@ class DecreaseCustomerPurchasesJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(CustomerService $customerService)
+    public function handle( CustomerService $customerService )
     {
         $customerService->decreasePurchases(
             customer: $this->customer,

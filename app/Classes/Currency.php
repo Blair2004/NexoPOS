@@ -6,9 +6,9 @@ use App\Services\CurrencyService;
 
 class Currency
 {
-    public static function define($amount)
+    public static function define( $amount )
     {
-        return ns()->currency->define($amount);
+        return ns()->currency->define( $amount );
     }
 
     /**
@@ -17,13 +17,13 @@ class Currency
      *
      * @param float $amount
      */
-    public static function fresh($amount): CurrencyService
+    public static function fresh( $amount ): CurrencyService
     {
-        return ns()->currency->fresh($amount);
+        return ns()->currency->fresh( $amount );
     }
 
-    public static function raw($amount)
+    public static function raw( $amount )
     {
-        return ns()->currency->getRaw($amount);
+        return ns()->currency->getRaw( $amount );
     }
 }

@@ -21,7 +21,7 @@ class CreateExpenseFromRefundJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Order $order, public OrderProductRefund $orderProductRefund, public OrderProduct $orderProduct)
+    public function __construct( public Order $order, public OrderProductRefund $orderProductRefund, public OrderProduct $orderProduct )
     {
         //
     }
@@ -31,7 +31,7 @@ class CreateExpenseFromRefundJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(TransactionService $transactionService)
+    public function handle( TransactionService $transactionService )
     {
         $transactionService->createTransactionFromRefund(
             order: $this->order,

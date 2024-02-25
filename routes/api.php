@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware( 'auth:sanctum' )->get( '/user', function ( Request $request ) {
     return $request->user();
-});
+} );
 
-$domain = pathinfo(env('APP_URL'));
+$domain = pathinfo( env( 'APP_URL' ) );
 
 /**
  * If something has to happen
@@ -32,16 +32,16 @@ BeforeStartApiRouteEvent::dispatch();
  * on the system. In order to enable it, the user
  * will have to follow these instructions https://my.nexopos.com/en/documentation/wildcards
  */
-if (env('NS_WILDCARD_ENABLED')) {
+if ( env( 'NS_WILDCARD_ENABLED' ) ) {
     /**
      * The defined route should only be applicable
      * to the main domain.
      */
-    $domainString = ($domain[ 'filename' ] ?: 'localhost') . (isset($domain[ 'extension' ]) ? '.' . $domain[ 'extension' ] : '');
+    $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
 
-    Route::domain($domainString)->group(function () {
-        include dirname(__FILE__) . DIRECTORY_SEPARATOR . 'api-base.php';
-    });
+    Route::domain( $domainString )->group( function () {
+        include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'api-base.php';
+    } );
 } else {
-    include dirname(__FILE__) . DIRECTORY_SEPARATOR . 'api-base.php';
+    include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'api-base.php';
 }

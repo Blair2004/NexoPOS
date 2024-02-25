@@ -4,21 +4,21 @@ use dekor\ArrayToTextTable;
 use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\Route;
 
-if (env('APP_DEBUG')) {
-    Route::get('/routes', function () {
-        $values = collect(array_values((array) app('router')->getRoutes())[1])->map(function (RoutingRoute $route) {
+if ( env( 'APP_DEBUG' ) ) {
+    Route::get( '/routes', function () {
+        $values = collect( array_values( (array) app( 'router' )->getRoutes() )[1] )->map( function ( RoutingRoute $route ) {
             return [
                 'domain' => $route->getDomain(),
                 'uri' => $route->uri(),
-                'methods' => collect($route->methods())->join(', '),
+                'methods' => collect( $route->methods() )->join( ', ' ),
                 'name' => $route->getName(),
             ];
-        })->values();
+        } )->values();
 
-        return ( new ArrayToTextTable($values->toArray()) )->render();
-    });
+        return ( new ArrayToTextTable( $values->toArray() ) )->render();
+    } );
 
-    Route::get('/exceptions/{class}', function ($class) {
+    Route::get( '/exceptions/{class}', function ( $class ) {
         $exceptions = [
             \App\Exceptions\CoreException::class,
             \App\Exceptions\CoreVersionMismatchException::class,
@@ -31,10 +31,10 @@ if (env('APP_DEBUG')) {
             \App\Exceptions\ValidationException::class,
         ];
 
-        if (in_array($class, $exceptions)) {
+        if ( in_array( $class, $exceptions ) ) {
             throw new $class;
         }
 
-        return abort(404, 'Exception not found.');
-    });
+        return abort( 404, 'Exception not found.' );
+    } );
 }

@@ -18,7 +18,7 @@ class UncountDeletedOrderForCustomerJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public $order)
+    public function __construct( public $order )
     {
         $this->prepareSerialization();
     }
@@ -30,9 +30,9 @@ class UncountDeletedOrderForCustomerJob implements ShouldQueue
      */
     public function handle()
     {
-        $customer = Customer::find($this->order->customer_id);
+        $customer = Customer::find( $this->order->customer_id );
 
-        switch ($this->order->payment_status) {
+        switch ( $this->order->payment_status ) {
             case 'paid':
                 $customer->purchases_amount -= $this->order->total;
                 break;

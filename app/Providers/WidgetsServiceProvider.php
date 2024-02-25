@@ -12,7 +12,7 @@ class WidgetsServiceProvider extends ServiceProvider
         /**
          * @var WidgetService $widgetService
          */
-        $widgetService = app()->make(WidgetService::class);
+        $widgetService = app()->make( WidgetService::class );
 
         $widgetService->bootWidgetsAreas();
     }

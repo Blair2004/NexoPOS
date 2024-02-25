@@ -15,8 +15,8 @@ class CustomerGroupSeeder extends Seeder
     public function run()
     {
         return CustomerGroup::factory()
-            ->count(10)
-            ->hasCustomers(10)
+            ->count( 10 )
+            ->hasCustomers( 10 )
             ->create();
     }
 }

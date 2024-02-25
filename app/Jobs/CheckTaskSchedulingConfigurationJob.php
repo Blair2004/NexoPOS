@@ -31,14 +31,14 @@ class CheckTaskSchedulingConfigurationJob implements ShouldQueue
      */
     public function handle()
     {
-        if (env('QUEUE_CONNECTION') !== 'sync') {
+        if ( env( 'QUEUE_CONNECTION' ) !== 'sync' ) {
             /**
              * @var NotificationService
              */
-            $notification = app()->make(NotificationService::class);
-            $notification->deleteHavingIdentifier(NotificationsEnum::NSWORKERDISABLED);
+            $notification = app()->make( NotificationService::class );
+            $notification->deleteHavingIdentifier( NotificationsEnum::NSWORKERDISABLED );
 
-            ns()->option->set('ns_jobs_last_activity', ns()->date->toDateTimeString());
+            ns()->option->set( 'ns_jobs_last_activity', ns()->date->toDateTimeString() );
         }
     }
 }

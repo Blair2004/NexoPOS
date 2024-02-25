@@ -21,7 +21,7 @@ class OrderBeforeDeleteEventListener
      *
      * @return void
      */
-    public function handle(OrderBeforeDeleteEvent $event)
+    public function handle( OrderBeforeDeleteEvent $event )
     {
         // ...
     }

@@ -16,7 +16,7 @@ class OrderAfterUpdatedDeliveryStatus
      *
      * @return void
      */
-    public function __construct(public Order $order)
+    public function __construct( public Order $order )
     {
         // ...
     }

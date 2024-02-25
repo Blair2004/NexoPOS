@@ -13,7 +13,7 @@ class OrderAfterCreatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public Order $order, public $fields)
+    public function __construct( public Order $order, public $fields )
     {
         // ...
     }
@@ -25,6 +25,6 @@ class OrderAfterCreatedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

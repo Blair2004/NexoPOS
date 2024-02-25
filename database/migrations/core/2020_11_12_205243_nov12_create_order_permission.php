@@ -26,18 +26,18 @@ return new class extends Migration
      */
     public function up()
     {
-        $permission = Permission::namespace(self::permissionName);
+        $permission = Permission::namespace( self::permissionName );
 
-        if (! $permission instanceof Permission) {
-            $permission = Permission::firstOrNew([ 'namespace' => self::permissionName ]);
+        if ( ! $permission instanceof Permission ) {
+            $permission = Permission::firstOrNew( [ 'namespace' => self::permissionName ] );
             $permission->namespace = self::permissionName;
-            $permission->name = __('Make Payment To Orders');
-            $permission->description = __('Allow the user to perform additional payment for a specific incomplete order.');
+            $permission->name = __( 'Make Payment To Orders' );
+            $permission->description = __( 'Allow the user to perform additional payment for a specific incomplete order.' );
             $permission->save();
         }
 
-        Role::namespace('admin')->addPermissions($permission);
-        Role::namespace('nexopos.store.administrator')->addPermissions($permission);
+        Role::namespace( 'admin' )->addPermissions( $permission );
+        Role::namespace( 'nexopos.store.administrator' )->addPermissions( $permission );
     }
 
     /**
@@ -47,8 +47,8 @@ return new class extends Migration
      */
     public function down()
     {
-        if (Schema::hasTable('nexopos_permissions')) {
-            $permission = Permission::namespace(self::permissionName);
+        if ( Schema::hasTable( 'nexopos_permissions' ) ) {
+            $permission = Permission::namespace( self::permissionName );
             $permission->removeFromRoles();
         }
     }

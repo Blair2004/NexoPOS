@@ -19,8 +19,8 @@ class ProductHistoryAfterUpdatedEventListener
     /**
      * Handle the event.
      */
-    public function handle(ProductHistoryAfterUpdatedEvent $event): void
+    public function handle( ProductHistoryAfterUpdatedEvent $event ): void
     {
-        $this->productService->computeCogsIfNecessary($event->productHistory);
+        $this->productService->computeCogsIfNecessary( $event->productHistory );
     }
 }

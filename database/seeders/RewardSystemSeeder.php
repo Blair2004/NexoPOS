@@ -15,9 +15,9 @@ class RewardSystemSeeder extends Seeder
     public function run()
     {
         return RewardSystem::factory()
-            ->count(20)
-            ->hasRules(4)
-            ->hasCoupon(1)
+            ->count( 20 )
+            ->hasRules( 4 )
+            ->hasCoupon( 1 )
             ->create();
     }
 }

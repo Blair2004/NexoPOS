@@ -16,7 +16,7 @@ class ModulesBeforeRemovedEvent
      *
      * @return void
      */
-    public function __construct(public array $module)
+    public function __construct( public array $module )
     {
         //
     }
@@ -28,6 +28,6 @@ class ModulesBeforeRemovedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel( 'channel-name' );
     }
 }

@@ -25,14 +25,14 @@ class ProcurementAfterCreateEventListener
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param  object $event
      * @return void
      */
-    public function handle(ProcurementAfterCreateEvent $event)
+    public function handle( ProcurementAfterCreateEvent $event )
     {
-        $this->procurementService->refresh($event->procurement);
-        $this->providerService->computeSummary($event->procurement->provider);
-        $this->procurementService->handleProcurement($event->procurement);
-        $this->transactionService->handleProcurementTransaction($event->procurement);
+        $this->procurementService->refresh( $event->procurement );
+        $this->providerService->computeSummary( $event->procurement->provider );
+        $this->procurementService->handleProcurement( $event->procurement );
+        $this->transactionService->handleProcurementTransaction( $event->procurement );
     }
 }

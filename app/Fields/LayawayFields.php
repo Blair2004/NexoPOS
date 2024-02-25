@@ -12,8 +12,8 @@ class LayawayFields extends FieldsService
     {
         $fields = [
             [
-                'label' => __('Installments'),
-                'description' => __('Define the installments for the current order.'),
+                'label' => __( 'Installments' ),
+                'description' => __( 'Define the installments for the current order.' ),
                 'name' => 'total_instalments',
                 'type' => 'number',
             ],

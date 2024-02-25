@@ -13,7 +13,7 @@ class ProcurementRequest extends FormRequest
      */
     public function authorize()
     {
-        return ns()->allowedTo([ 'nexopos.create.procurements' ]);
+        return ns()->allowedTo( [ 'nexopos.create.procurements' ] );
     }
 
     /**

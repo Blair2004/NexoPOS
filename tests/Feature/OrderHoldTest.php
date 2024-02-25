@@ -20,7 +20,7 @@ class OrderHoldTest extends TestCase
     {
         $this->attemptAuthenticate();
         $response = $this->attemptCreateHoldOrder();
-        $order = Order::find($response->json('data.order.id'));
-        $this->attemptUpdateHoldOrder($order);
+        $order = Order::find( $response->json( 'data.order.id' ) );
+        $this->attemptUpdateHoldOrder( $order );
     }
 }

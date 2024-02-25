@@ -7,19 +7,19 @@ use Illuminate\Http\Exceptions\PostTooLargeException as ExceptionsPostTooLargeEx
 
 class PostTooLargeException extends ExceptionsPostTooLargeException
 {
-    public function render($request)
+    public function render( $request )
     {
-        if (! $request->expectsJson()) {
-            return response()->view('pages.errors.not-allowed', [
-                'title' => __('Post Too Large'),
-                'message' => __('The submitted request is more large than expected. Consider increasing your "post_max_size" on your PHP.ini'),
-                'back' => Helper::getValidPreviousUrl($request),
-            ]);
+        if ( ! $request->expectsJson() ) {
+            return response()->view( 'pages.errors.not-allowed', [
+                'title' => __( 'Post Too Large' ),
+                'message' => __( 'The submitted request is more large than expected. Consider increasing your "post_max_size" on your PHP.ini' ),
+                'back' => Helper::getValidPreviousUrl( $request ),
+            ] );
         }
 
-        return response()->json([
+        return response()->json( [
             'status' => 'failed',
-            'message' => __('The submitted request is more large than expected. Consider increasing your "post_max_size" on your PHP.ini'),
-        ], 401);
+            'message' => __( 'The submitted request is more large than expected. Consider increasing your "post_max_size" on your PHP.ini' ),
+        ], 401 );
     }
 }

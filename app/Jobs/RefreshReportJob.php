@@ -19,7 +19,7 @@ class RefreshReportJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public $date)
+    public function __construct( public $date )
     {
         $this->prepareSerialization();
     }
@@ -29,9 +29,9 @@ class RefreshReportJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ReportService $reportService)
+    public function handle( ReportService $reportService )
     {
-        $date = Carbon::parse($this->date);
+        $date = Carbon::parse( $this->date );
 
         $reportService->computeDayReport(
             dateStart: $date->startOfDay()->toDateTimeString(),

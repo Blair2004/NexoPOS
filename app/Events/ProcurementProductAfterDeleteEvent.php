@@ -17,7 +17,7 @@ class ProcurementProductAfterDeleteEvent
      *
      * @return void
      */
-    public function __construct(public ProcurementProduct $product)
+    public function __construct( public ProcurementProduct $product )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class ProcurementProductAfterDeleteEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

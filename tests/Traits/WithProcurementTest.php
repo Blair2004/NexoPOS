@@ -24,49 +24,49 @@ trait WithProcurementTest
         /**
          * @var TestService
          */
-        $testService = app()->make(TestService::class);
+        $testService = app()->make( TestService::class );
 
         $provider = Provider::get()->random();
-        $currentExpenseValue = TransactionHistory::where('transaction_account_id', ns()->option->get('ns_procurement_cashflow_account'))->sum('value');
-        $procurementsDetails = $testService->prepareProcurement(ns()->date->now(), [
+        $currentExpenseValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => 'unpaid',
             'general.provider_id' => $provider->id,
             'general.delivery_status' => Procurement::DELIVERED,
             'total_products' => 10,
-        ]);
+        ] );
 
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('POST', 'api/procurements', $procurementsDetails);
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
 
-        $decode = json_decode($response->getContent(), true);
+        $decode = json_decode( $response->getContent(), true );
 
-        $newExpensevalue = TransactionHistory::where('transaction_account_id', ns()->option->get('ns_procurement_cashflow_account'))->sum('value');
+        $newExpensevalue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $procurement = $decode[ 'data' ][ 'procurement' ];
 
         /**
          * Step 1: there shouldn't be a change on the expenses
          */
-        $this->assertTrue((float) $currentExpenseValue === (float) $newExpensevalue, 'The expenses has changed for an unpaid procurement.');
-        $this->assertTrue((float) $provider->amount_due !== (float) $provider->fresh()->amount_due, 'The due amount for the provider hasn\'t changed, while it should.');
+        $this->assertTrue( (float) $currentExpenseValue === (float) $newExpensevalue, 'The expenses has changed for an unpaid procurement.' );
+        $this->assertTrue( (float) $provider->amount_due !== (float) $provider->fresh()->amount_due, 'The due amount for the provider hasn\'t changed, while it should.' );
 
         /**
          * Step 2: update the procurement to paid
          */
-        $currentTransactionValue = TransactionHistory::where('transaction_account_id', ns()->option->get('ns_procurement_cashflow_account'))->sum('value');
+        $currentTransactionValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
 
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('GET', 'api/procurements/' . $procurement[ 'id' ] . '/set-as-paid');
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/procurements/' . $procurement[ 'id' ] . '/set-as-paid' );
 
         $response->assertOk();
-        $decode = json_decode($response->getContent(), true);
+        $decode = json_decode( $response->getContent(), true );
 
-        $newTransaction = TransactionHistory::where('transaction_account_id', ns()->option->get('ns_procurement_cashflow_account'))->sum('value');
-        $existingTransaction = TransactionHistory::where('procurement_id', $procurement[ 'id' ])->first();
+        $newTransaction = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
+        $existingTransaction = TransactionHistory::where( 'procurement_id', $procurement[ 'id' ] )->first();
 
-        $this->assertEquals(1, TransactionHistory::where('procurement_id', $procurement[ 'id' ])->count(), 'There is more than 1 cash flow created for the same procurement.');
-        $this->assertEquals(ns()->currency->getRaw($existingTransaction->value), ns()->currency->getRaw($procurement[ 'cost' ]), 'The cash flow value doesn\'t match the procurement cost.');
-        $this->assertTrue($existingTransaction instanceof TransactionHistory, 'No cash flow was created after the procurement was marked as paid.');
-        $this->assertTrue((float) $currentTransactionValue !== (float) $newTransaction, 'The transactions hasn\'t changed for the previously unpaid procurement.');
+        $this->assertEquals( 1, TransactionHistory::where( 'procurement_id', $procurement[ 'id' ] )->count(), 'There is more than 1 cash flow created for the same procurement.' );
+        $this->assertEquals( ns()->currency->getRaw( $existingTransaction->value ), ns()->currency->getRaw( $procurement[ 'cost' ] ), 'The cash flow value doesn\'t match the procurement cost.' );
+        $this->assertTrue( $existingTransaction instanceof TransactionHistory, 'No cash flow was created after the procurement was marked as paid.' );
+        $this->assertTrue( (float) $currentTransactionValue !== (float) $newTransaction, 'The transactions hasn\'t changed for the previously unpaid procurement.' );
     }
 
     protected function attemptCreateProcurement()
@@ -74,20 +74,20 @@ trait WithProcurementTest
         /**
          * @var TestService
          */
-        $testService = app()->make(TestService::class);
+        $testService = app()->make( TestService::class );
 
-        $currentExpenseValue = TransactionHistory::where('transaction_account_id', ns()->option->get('ns_procurement_cashflow_account'))->sum('value');
-        $procurementsDetails = $testService->prepareProcurement(ns()->date->now(), [
+        $currentExpenseValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => Procurement::PAYMENT_UNPAID,
             'general.delivery_status' => Procurement::PENDING,
             'total_products' => 10,
-        ]);
+        ] );
 
         /**
          * Query: We store the procurement with an unpaid status.
          */
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('POST', 'api/procurements', $procurementsDetails);
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
 
         $response->assertOk();
 
@@ -97,8 +97,8 @@ trait WithProcurementTest
          * Check: at the point, there shouldn't be any expense recorded.
          * The procurement is not paid.
          */
-        $existingExpense = TransactionHistory::where('procurement_id', $procurementId)->first();
-        $this->assertTrue(! $existingExpense instanceof TransactionHistory, __('A cash flow has been created for an unpaid procurement.'));
+        $existingExpense = TransactionHistory::where( 'procurement_id', $procurementId )->first();
+        $this->assertTrue( ! $existingExpense instanceof TransactionHistory, __( 'A cash flow has been created for an unpaid procurement.' ) );
 
         /**
          * Query: we store the procurement now with a paid status
@@ -109,8 +109,8 @@ trait WithProcurementTest
         /**
          * Query: We store the procurement with an unpaid status.
          */
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('PUT', 'api/procurements/' . $procurementId, $procurementsDetails);
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/procurements/' . $procurementId, $procurementsDetails );
 
         $response->assertOk();
 
@@ -120,8 +120,8 @@ trait WithProcurementTest
          * Check: at the point, there shouldn't be any expense recorded.
          * The procurement is not paid.
          */
-        $existingExpense = CashFlow::where('procurement_id', $procurementId)->first();
-        $this->assertTrue(! $existingExpense instanceof CashFlow, __('A cash flow has been created for an unpaid procurement.'));
+        $existingExpense = CashFlow::where( 'procurement_id', $procurementId )->first();
+        $this->assertTrue( ! $existingExpense instanceof CashFlow, __( 'A cash flow has been created for an unpaid procurement.' ) );
 
         /**
          * Query: we store the procurement now with a paid status
@@ -129,8 +129,8 @@ trait WithProcurementTest
         $procurementsDetails[ 'general' ][ 'payment_status' ] = Procurement::PAYMENT_PAID;
         $procurementsDetails[ 'general' ][ 'delivery_status' ] = Procurement::DELIVERED;
 
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('PUT', 'api/nexopos/v4/procurements/' . $procurementId, $procurementsDetails);
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/nexopos/v4/procurements/' . $procurementId, $procurementsDetails );
 
         $response->assertOk();
 
@@ -139,21 +139,21 @@ trait WithProcurementTest
          * and check if the accounts are valid.
          */
         $responseData = $response->json();
-        $newExpensevalue = TransactionHistory::where('transaction_account_id', ns()->option->get('ns_procurement_cashflow_account'))->sum('value');
-        $existingExpense = TransactionHistory::where('procurement_id', $responseData[ 'data' ][ 'procurement' ][ 'id' ])->first();
+        $newExpensevalue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
+        $existingExpense = TransactionHistory::where( 'procurement_id', $responseData[ 'data' ][ 'procurement' ][ 'id' ] )->first();
 
-        $this->assertTrue($existingExpense instanceof TransactionHistory, __('No cash flow were created for the paid procurement.'));
-        $this->assertSame((float) $existingExpense[ 'value' ], (float) $responseData[ 'data' ][ 'procurement' ][ 'cost' ], __('The attached procurement value doesn\'t match the transaction value.'));
+        $this->assertTrue( $existingExpense instanceof TransactionHistory, __( 'No cash flow were created for the paid procurement.' ) );
+        $this->assertSame( (float) $existingExpense[ 'value' ], (float) $responseData[ 'data' ][ 'procurement' ][ 'cost' ], __( 'The attached procurement value doesn\'t match the transaction value.' ) );
 
-        $response->assertJson([ 'status' => 'success' ]);
+        $response->assertJson( [ 'status' => 'success' ] );
 
         /**
          * We'll check if the expense value
          * has increased due to the procurement
          */
         $this->assertEquals(
-            Currency::raw($newExpensevalue),
-            Currency::raw((float) $currentExpenseValue + (float) $responseData[ 'data' ][ 'procurement' ][ 'cost' ])
+            Currency::raw( $newExpensevalue ),
+            Currency::raw( (float) $currentExpenseValue + (float) $responseData[ 'data' ][ 'procurement' ][ 'cost' ] )
         );
     }
 
@@ -162,39 +162,39 @@ trait WithProcurementTest
         /**
          * @var TestService
          */
-        $testService = app()->make(TestService::class);
+        $testService = app()->make( TestService::class );
 
         /**
          * @var ProductService
          */
-        $productService = app()->make(ProductService::class);
+        $productService = app()->make( ProductService::class );
 
         /**
          * @var UnitService
          */
-        $unitService = app()->make(UnitService::class);
+        $unitService = app()->make( UnitService::class );
 
-        $procurementsDetails = $testService->prepareProcurement(ns()->date->now(), [
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => Procurement::PAYMENT_PAID,
             'general.delivery_status' => Procurement::DELIVERED,
             'total_products' => 5,
             'total_unit_quantities' => 1,
-        ]);
+        ] );
 
         $product = $procurementsDetails[ 'products' ][0];
-        $unit = Unit::with('group')->find($product[ 'unit_id' ]);
+        $unit = Unit::with( 'group' )->find( $product[ 'unit_id' ] );
 
         // lets get the group excluding the base unit
-        $group = $unit->group()->with([
-            'units' => function ($query) {
-                $query->where('base_unit', 0);
+        $group = $unit->group()->with( [
+            'units' => function ( $query ) {
+                $query->where( 'base_unit', 0 );
             },
-        ])->first();
+        ] )->first();
 
         // We assign a different not base unit to the product to ensure
         // while converting, it creates quantities on the base unit
         $product[ 'unit_id' ] = $group->units->last()->id;
-        $baseUnit = Unit::where('base_unit', true)->where('group_id', $group->id)->first();
+        $baseUnit = Unit::where( 'base_unit', true )->where( 'group_id', $group->id )->first();
 
         // This is the quantity of the product using
         // the base unit as reference
@@ -215,8 +215,8 @@ trait WithProcurementTest
 
         // Now we'll save the requests and check first if the conversion
         // succeeded. Then we'll make sure to delete and see if the stock is updated
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('POST', 'api/procurements', $procurementsDetails);
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
 
         $response->assertOk();
         $procurement = $response->json()[ 'data' ][ 'procurement' ];
@@ -228,7 +228,7 @@ trait WithProcurementTest
             unit_id: $product[ 'unit_id' ]
         );
 
-        $this->assertSame($OtherQuantity, $newOtherQuantity, 'The quantity of the source of the conversion has changed. ');
+        $this->assertSame( $OtherQuantity, $newOtherQuantity, 'The quantity of the source of the conversion has changed. ' );
 
         // The quantity of the destination product must change
         // after a conversion.
@@ -238,45 +238,45 @@ trait WithProcurementTest
         );
 
         $receivedQuantity = $unitService->getConvertedQuantity(
-            from: Unit::find($product[ 'unit_id' ]),
+            from: Unit::find( $product[ 'unit_id' ] ),
             to: $baseUnit,
             quantity: $product[ 'quantity' ]
         );
 
         $this->assertTrue(
-            (float) $receivedQuantity === ns()->currency->define($newBaseQuantity)->subtractBy($baseQuantity)->toFloat(),
+            (float) $receivedQuantity === ns()->currency->define( $newBaseQuantity )->subtractBy( $baseQuantity )->toFloat(),
             sprintf(
                 'The destination hasn\'t receieve the quantity %s it should have received from conversion',
                 $receivedQuantity
             )
         );
 
-        $this->assertTrue($baseQuantity < $newBaseQuantity, 'The destination product inventory hasn\'t changed with the conversion.');
+        $this->assertTrue( $baseQuantity < $newBaseQuantity, 'The destination product inventory hasn\'t changed with the conversion.' );
 
         // Let's check if after a conversion there is an history created
         // an history necessarilly result into a stock. There is no need to test that here
-        $productHistory = ProductHistory::where('product_id', $product[ 'product_id' ])
-            ->where('unit_id', $product[ 'unit_id' ])
-            ->where('procurement_id', $procurement[ 'id' ])
-            ->where('operation_type', ProductHistory::ACTION_CONVERT_OUT)
+        $productHistory = ProductHistory::where( 'product_id', $product[ 'product_id' ] )
+            ->where( 'unit_id', $product[ 'unit_id' ] )
+            ->where( 'procurement_id', $procurement[ 'id' ] )
+            ->where( 'operation_type', ProductHistory::ACTION_CONVERT_OUT )
             ->first();
 
-        $this->assertTrue($productHistory instanceof ProductHistory);
+        $this->assertTrue( $productHistory instanceof ProductHistory );
 
         // We'll now check if there has been an incoming conversion
         // again it's not necessary to test the quantity as the history results in a stock adjustment
-        $productHistory = ProductHistory::where('product_id', $product[ 'product_id' ])
-            ->where('unit_id', $baseUnit->id)
-            ->where('procurement_id', $procurement[ 'id' ])
-            ->where('operation_type', ProductHistory::ACTION_CONVERT_IN)
+        $productHistory = ProductHistory::where( 'product_id', $product[ 'product_id' ] )
+            ->where( 'unit_id', $baseUnit->id )
+            ->where( 'procurement_id', $procurement[ 'id' ] )
+            ->where( 'operation_type', ProductHistory::ACTION_CONVERT_IN )
             ->first();
 
-        $this->assertTrue($productHistory instanceof ProductHistory);
+        $this->assertTrue( $productHistory instanceof ProductHistory );
 
         // Now we'll delete the procurement to see wether the product
         // that was converted are removed from inventory
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('DELETE', 'api/procurements/' . $procurement[ 'id' ]);
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', 'api/procurements/' . $procurement[ 'id' ] );
 
         // We test here if the base item which as received stock
         // loose it because of the procurement deletion
@@ -287,7 +287,7 @@ trait WithProcurementTest
             unit_id: $baseUnit->id
         );
 
-        $this->assertSame($baseQuantity, $lastNewBaseQuantity, 'The product doesn\'t have the original quantity after deletion');
+        $this->assertSame( $baseQuantity, $lastNewBaseQuantity, 'The product doesn\'t have the original quantity after deletion' );
     }
 
     protected function attemptDeleteProcurement()
@@ -295,25 +295,25 @@ trait WithProcurementTest
         /**
          * @var TestService
          */
-        $testService = app()->make(TestService::class);
+        $testService = app()->make( TestService::class );
 
         /**
          * @var ProductService
          */
-        $productService = app()->make(ProductService::class);
+        $productService = app()->make( ProductService::class );
 
-        $procurementsDetails = $testService->prepareProcurement(ns()->date->now(), [
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => Procurement::PAYMENT_PAID,
             'general.delivery_status' => Procurement::DELIVERED,
             'total_products' => 5,
             'total_unit_quantities' => 1,
-        ]);
+        ] );
 
         /**
          * We need to retreive the quantities for the products
          * that will be procured
          */
-        $initialQuantities = collect($procurementsDetails[ 'products' ])->map(function ($product) use ($productService) {
+        $initialQuantities = collect( $procurementsDetails[ 'products' ] )->map( function ( $product ) use ( $productService ) {
             return [
                 'product_id' => $product[ 'product_id' ],
                 'unit_id' => $product[ 'unit_id' ],
@@ -323,13 +323,13 @@ trait WithProcurementTest
                     unit_id: $product[ 'unit_id' ]
                 ),
             ];
-        });
+        } );
 
         /**
          * Query: We store the procurement with an unpaid status.
          */
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('POST', 'api/procurements', $procurementsDetails);
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
 
         $response->assertOk();
 
@@ -343,17 +343,17 @@ trait WithProcurementTest
          * We'll not compare the previous quantity with the new quantity and see if
          * that's the result of the addition of the previous quantity plus the procured quantity
          */
-        collect($products)->map(function ($product) use ($productService, $initialQuantities) {
+        collect( $products )->map( function ( $product ) use ( $productService, $initialQuantities ) {
             $currentQuantity = $productService->getQuantity(
                 product_id: $product[ 'product_id' ],
                 unit_id: $product[ 'unit_id' ]
             );
 
-            $initialQuantity = collect($initialQuantities)->filter(fn($q) => (int) $q[ 'product_id' ] === (int) $product[ 'product_id' ] && (int) $q[ 'unit_id' ] === (int) $product[ 'unit_id' ])->first();
+            $initialQuantity = collect( $initialQuantities )->filter( fn( $q ) => (int) $q[ 'product_id' ] === (int) $product[ 'product_id' ] && (int) $q[ 'unit_id' ] === (int) $product[ 'unit_id' ] )->first();
 
             $this->assertSame(
-                ns()->currency->define($currentQuantity)->getRaw(),
-                ns()->currency->define($initialQuantity[ 'current_quantity' ])->additionateBy($initialQuantity[ 'procured_quantity' ])->getRaw(),
+                ns()->currency->define( $currentQuantity )->getRaw(),
+                ns()->currency->define( $initialQuantity[ 'current_quantity' ] )->additionateBy( $initialQuantity[ 'procured_quantity' ] )->getRaw(),
                 sprintf(
                     'The product "%s" didn\'t has it\'s inventory updated after a procurement. "%s" is the actual value, "%s" was added and "%s" was expected.',
                     $product[ 'name' ],
@@ -362,9 +362,9 @@ trait WithProcurementTest
                     $initialQuantity[ 'current_quantity' ] + $initialQuantity[ 'procured_quantity' ]
                 )
             );
-        });
+        } );
 
-        $quantities = collect($products)->map(fn($product) => [
+        $quantities = collect( $products )->map( fn( $product ) => [
             'product_id' => $product[ 'product_id' ],
             'unit_id' => $product[ 'unit_id' ],
             'name' => $product[ 'name' ],
@@ -373,26 +373,26 @@ trait WithProcurementTest
                 product_id: $product[ 'product_id' ],
                 unit_id: $product[ 'unit_id' ]
             ),
-        ]);
+        ] );
 
         /**
          * lets now delete to see if products
          * was returned
          */
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('DELETE', 'api/procurements/' . $response->json()[ 'data' ][ 'procurement' ][ 'id' ]);
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', 'api/procurements/' . $response->json()[ 'data' ][ 'procurement' ][ 'id' ] );
 
-        collect($quantities)->map(function ($product) use ($productService, $initialQuantities) {
+        collect( $quantities )->map( function ( $product ) use ( $productService, $initialQuantities ) {
             $currentQuantity = $productService->getQuantity(
                 product_id: $product[ 'product_id' ],
                 unit_id: $product[ 'unit_id' ]
             );
 
-            $actualProduct = collect($initialQuantities)->filter(fn($q) => (int) $q[ 'product_id' ] === (int) $product[ 'product_id' ] && (int) $q[ 'unit_id' ] === (int) $product[ 'unit_id' ])->first();
+            $actualProduct = collect( $initialQuantities )->filter( fn( $q ) => (int) $q[ 'product_id' ] === (int) $product[ 'product_id' ] && (int) $q[ 'unit_id' ] === (int) $product[ 'unit_id' ] )->first();
 
             $this->assertSame(
-                ns()->currency->define($currentQuantity)->getRaw(),
-                ns()->currency->define($product[ 'current_quantity' ])->subtractBy($product[ 'procured_quantity' ])->getRaw(),
+                ns()->currency->define( $currentQuantity )->getRaw(),
+                ns()->currency->define( $product[ 'current_quantity' ] )->subtractBy( $product[ 'procured_quantity' ] )->getRaw(),
                 sprintf(
                     'The product "%s" didn\'t has it\'s inventory updated after a procurement deletion. "%s" is the actual value, "%s" was removed and "%s" was expected.',
                     $product[ 'name' ],
@@ -401,7 +401,7 @@ trait WithProcurementTest
                     $product[ 'current_quantity' ] - $product[ 'procured_quantity' ]
                 )
             );
-        });
+        } );
     }
 
     protected function attemptCreateProcurementWithConversion()
@@ -414,38 +414,38 @@ trait WithProcurementTest
         /**
          * @var TaxService $taxService
          */
-        $taxService = app()->make(TaxService::class);
+        $taxService = app()->make( TaxService::class );
 
         /**
          * @var ProductService $productService
          */
-        $productService = app()->make(ProductService::class);
+        $productService = app()->make( ProductService::class );
 
         /**
          * @var UnitService $unitService
          */
-        $unitService = app()->make(UnitService::class);
+        $unitService = app()->make( UnitService::class );
 
         $products = Product::withStockEnabled()
-            ->with('unitGroup')
-            ->take(5)
+            ->with( 'unitGroup' )
+            ->take( 5 )
             ->get()
-            ->map(function ($product) {
-                return $product->unitGroup->units()->where('base_unit', 0)->limit(1)->get()->map(function ($unit) use ($product) {
-                    $unitQuantity = $product->unit_quantities->filter(fn($q) => (int) $q->unit_id === (int) $unit->id)->first();
+            ->map( function ( $product ) {
+                return $product->unitGroup->units()->where( 'base_unit', 0 )->limit( 1 )->get()->map( function ( $unit ) use ( $product ) {
+                    $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
 
                     return (object) [
                         'unit' => $unit,
                         'unitQuantity' => $unitQuantity,
                         'product' => $product,
                     ];
-                });
-            })->flatten()->map(function ($data) use ($taxService, $taxType, $taxGroup, $margin, $faker) {
-                $quantity = $faker->numberBetween(10, 99);
+                } );
+            } )->flatten()->map( function ( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+                $quantity = $faker->numberBetween( 10, 99 );
 
-                $newUnit = UnitGroup::with([ 'units' => function ($query) use ($data) {
-                    $query->whereNotIn('id', [ $data->unit->id ]);
-                }])->find($data->unit->group_id)->units->first();
+                $newUnit = UnitGroup::with( [ 'units' => function ( $query ) use ( $data ) {
+                    $query->whereNotIn( 'id', [ $data->unit->id ] );
+                }] )->find( $data->unit->group_id )->units->first();
 
                 return [
                     'convert_unit_id' => $newUnit->id,
@@ -481,56 +481,56 @@ trait WithProcurementTest
                     ) * $quantity,
                     'unit_id' => $data->unit->id,
                 ];
-            });
+            } );
 
         /**
          * @var TestService
          */
-        $testService = app()->make(TestService::class);
+        $testService = app()->make( TestService::class );
 
-        $currentExpenseValue = TransactionHistory::where('transaction_account_id', ns()->option->get('ns_procurement_cashflow_account'))->sum('value');
-        $procurementsDetails = $testService->prepareProcurement(ns()->date->now(), [
+        $currentExpenseValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => Procurement::PAYMENT_PAID,
             'general.delivery_status' => Procurement::DELIVERED,
             'products' => $products,
-        ]);
+        ] );
 
         /**
          * Query: We store the procurement with an unpaid status.
          */
-        $response = $this->withSession($this->app[ 'session' ]->all())
-            ->json('POST', 'api/procurements', $procurementsDetails);
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
 
         $response->assertOk();
 
         $products = $response->json()[ 'data' ][ 'products' ];
 
-        collect($products)->each(function ($product) use ($unitService) {
-            $productHistory = ProductHistory::where('operation_type', ProductHistory::ACTION_CONVERT_OUT)
-                ->where('procurement_id', $product[ 'procurement_id' ])
-                ->where('procurement_product_id', $product[ 'id' ])
-                ->where('quantity', $product[ 'quantity' ])
+        collect( $products )->each( function ( $product ) use ( $unitService ) {
+            $productHistory = ProductHistory::where( 'operation_type', ProductHistory::ACTION_CONVERT_OUT )
+                ->where( 'procurement_id', $product[ 'procurement_id' ] )
+                ->where( 'procurement_product_id', $product[ 'id' ] )
+                ->where( 'quantity', $product[ 'quantity' ] )
                 ->first();
 
-            $this->assertTrue($productHistory instanceof ProductHistory, 'No product history was created after the conversion.');
+            $this->assertTrue( $productHistory instanceof ProductHistory, 'No product history was created after the conversion.' );
 
             /**
              * check if correct unit was received by the destination unit
              */
             $destinationQuantity = $unitService->getConvertedQuantity(
-                from: Unit::find($product[ 'unit_id' ]),
-                to: Unit::find($product[ 'convert_unit_id' ]),
+                from: Unit::find( $product[ 'unit_id' ] ),
+                to: Unit::find( $product[ 'convert_unit_id' ] ),
                 quantity: $product[ 'quantity' ]
             );
 
-            $destinationHistory = ProductHistory::where('operation_type', ProductHistory::ACTION_CONVERT_IN)
-                ->where('procurement_id', $product[ 'procurement_id' ])
-                ->where('procurement_product_id', $product[ 'id' ])
-                ->where('unit_id', $product[ 'convert_unit_id' ])
-                ->where('quantity', $destinationQuantity)
+            $destinationHistory = ProductHistory::where( 'operation_type', ProductHistory::ACTION_CONVERT_IN )
+                ->where( 'procurement_id', $product[ 'procurement_id' ] )
+                ->where( 'procurement_product_id', $product[ 'id' ] )
+                ->where( 'unit_id', $product[ 'convert_unit_id' ] )
+                ->where( 'quantity', $destinationQuantity )
                 ->first();
 
-            $this->assertTrue($destinationHistory instanceof ProductHistory, 'No product history was created after the conversion.');
-        });
+            $this->assertTrue( $destinationHistory instanceof ProductHistory, 'No product history was created after the conversion.' );
+        } );
     }
 }

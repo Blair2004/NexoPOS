@@ -56,26 +56,26 @@ class CrudServiceProvider extends ServiceProvider
          * every crud class on the system should be
          * added here in order to be available and supported.
          */
-        Hook::addFilter('ns-crud-resource', function ($namespace) {
+        Hook::addFilter( 'ns-crud-resource', function ( $namespace ) {
             /**
              * We'll attempt autoloading crud that explicitely
              * defined they want to be autoloaded. We expect classes to have 2
              * constant: AUTOLOAD=true, IDENTIFIER=<string>.
              */
-            $classes = Cache::get('crud-classes', function () {
-                $files = collect(Storage::disk('ns')->files('app/Crud'));
+            $classes = Cache::get( 'crud-classes', function () {
+                $files = collect( Storage::disk( 'ns' )->files( 'app/Crud' ) );
 
-                return $files->map(fn($file) => 'App\Crud\\' . pathinfo($file)[ 'filename' ])
-                    ->filter(fn($class) => (defined($class . '::AUTOLOAD') && defined($class . '::IDENTIFIER')));
-            });
+                return $files->map( fn( $file ) => 'App\Crud\\' . pathinfo( $file )[ 'filename' ] )
+                    ->filter( fn( $class ) => ( defined( $class . '::AUTOLOAD' ) && defined( $class . '::IDENTIFIER' ) ) );
+            } );
 
             /**
              * We pull the cached classes and checks if the
              * class has autoload and identifier defined.
              */
-            $class = collect($classes)->filter(fn($class) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace);
+            $class = collect( $classes )->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace );
 
-            if ($class->count() === 1) {
+            if ( $class->count() === 1 ) {
                 return $class->first();
             }
 
@@ -85,34 +85,34 @@ class CrudServiceProvider extends ServiceProvider
              *
              * @var ModulesService $modulesService
              */
-            $modulesService = app()->make(ModulesService::class);
+            $modulesService = app()->make( ModulesService::class );
 
-            $classes = collect($modulesService->getEnabled())->map(function ($module) use ($namespace) {
-                $classes = Cache::get('modules-crud-classes-' . $module[ 'namespace' ], function () use ($module) {
-                    $files = collect(Storage::disk('ns')->files('modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Crud'));
+            $classes = collect( $modulesService->getEnabled() )->map( function ( $module ) use ( $namespace ) {
+                $classes = Cache::get( 'modules-crud-classes-' . $module[ 'namespace' ], function () use ( $module ) {
+                    $files = collect( Storage::disk( 'ns' )->files( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Crud' ) );
 
-                    return $files->map(fn($file) => 'Modules\\' . $module[ 'namespace' ] . '\Crud\\' . pathinfo($file)[ 'filename' ])
-                        ->filter(fn($class) => (defined($class . '::AUTOLOAD') && defined($class . '::IDENTIFIER')));
-                });
+                    return $files->map( fn( $file ) => 'Modules\\' . $module[ 'namespace' ] . '\Crud\\' . pathinfo( $file )[ 'filename' ] )
+                        ->filter( fn( $class ) => ( defined( $class . '::AUTOLOAD' ) && defined( $class . '::IDENTIFIER' ) ) );
+                } );
 
                 /**
                  * We pull the cached classes and checks if the
                  * class has autoload and identifier defined.
                  */
-                $class = collect($classes)->filter(fn($class) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace);
+                $class = collect( $classes )->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace );
 
-                if ($class->count() === 1) {
+                if ( $class->count() === 1 ) {
                     return $class->first();
                 }
 
                 return false;
-            })->filter();
+            } )->filter();
 
             /**
              * If the namespace match a module crud instance,
              * we'll use that first result
              */
-            if ($classes->isNotEmpty()) {
+            if ( $classes->isNotEmpty() ) {
                 return $classes->flatten()->first();
             }
 
@@ -120,7 +120,7 @@ class CrudServiceProvider extends ServiceProvider
              * We'll still allow users to define crud
              * manually from this section.
              */
-            return match ($namespace) {
+            return match ( $namespace ) {
                 'ns.orders' => OrderCrud::class,
                 'ns.orders-instalments' => OrderInstalmentCrud::class,
                 'ns.payments-types' => PaymentTypeCrud::class,
@@ -158,6 +158,6 @@ class CrudServiceProvider extends ServiceProvider
                 'ns.providers-products' => ProviderProductsCrud::class,
                 default => $namespace,
             };
-        });
+        } );
     }
 }

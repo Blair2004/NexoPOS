@@ -24,15 +24,15 @@ class OrderAfterProductRefundedEventListener
      *
      * @return void
      */
-    public function handle(OrderAfterProductRefundedEvent $event)
+    public function handle( OrderAfterProductRefundedEvent $event )
     {
-        Bus::chain([
+        Bus::chain( [
             // new RefreshOrderJob($event->order), this already called on OrderAfterRefundEvent
             new CreateExpenseFromRefundJob(
                 order: $event->order,
                 orderProduct: $event->orderProduct,
                 orderProductRefund: $event->orderProductRefund
             ),
-        ])->dispatch();
+        ] )->dispatch();
     }
 }

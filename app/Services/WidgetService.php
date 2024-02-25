@@ -54,9 +54,9 @@ class WidgetService
      */
     protected $description;
 
-    public function __construct(private UsersService $usersService)
+    public function __construct( private UsersService $usersService )
     {
-        $this->widgets = Hook::filter('ns-dashboard-widgets', [
+        $this->widgets = Hook::filter( 'ns-dashboard-widgets', [
             IncompleteSaleCardWidget::class,
             ExpenseCardWidget::class,
             SaleCardWidget::class,
@@ -65,7 +65,7 @@ class WidgetService
             OrdersChartWidget::class,
             OrdersSummaryWidget::class,
             BestCashiersWidget::class,
-        ]);
+        ] );
     }
 
     /**
@@ -88,9 +88,9 @@ class WidgetService
      * Return a boolean if the logged user
      * is allowed to see the current widget
      */
-    public function canAccess(User $user = null): bool
+    public function canAccess( ?User $user = null ): bool
     {
-        return ! $this->permission ?: ($user == null ? Gate::allows($this->permission) : Gate::forUser($user)->allows($this->permission));
+        return ! $this->permission ?: ( $user == null ? Gate::allows( $this->permission ) : Gate::forUser( $user )->allows( $this->permission ) );
     }
 
     /**
@@ -99,7 +99,7 @@ class WidgetService
      */
     public function getAllWidgets(): Collection
     {
-        return collect($this->widgets)->map(function ($widget) {
+        return collect( $this->widgets )->map( function ( $widget ) {
             /**
              * @var WidgetService $widgetInstance
              */
@@ -112,7 +112,7 @@ class WidgetService
                 'component-name' => $widgetInstance->getVueComponent(),
                 'canAccess' => $widgetInstance->canAccess(),
             ];
-        });
+        } );
     }
 
     /**
@@ -122,9 +122,9 @@ class WidgetService
     public function getWidgets(): Collection
     {
         return $this->getAllWidgets()
-            ->filter(function ($widget) {
+            ->filter( function ( $widget ) {
                 return $widget->canAccess;
-            });
+            } );
     }
 
     /**
@@ -149,13 +149,13 @@ class WidgetService
      * Declare widgets classes that
      * should be registered
      */
-    public function registerWidgets(string|array $widget): void
+    public function registerWidgets( string|array $widget ): void
     {
-        if (! is_array($widget)) {
+        if ( ! is_array( $widget ) ) {
             $this->widgets[] = $widget;
         } else {
-            foreach ($widget as $_widget) {
-                $this->registerWidgets($_widget);
+            foreach ( $widget as $_widget ) {
+                $this->registerWidgets( $_widget );
             }
         }
     }
@@ -163,7 +163,7 @@ class WidgetService
     /**
      * Register widgets areas.
      */
-    public function registerWidgetsArea(string $name, Closure $columns): void
+    public function registerWidgetsArea( string $name, Closure $columns ): void
     {
         $this->widgetAreas[ $name ] = $columns;
     }
@@ -171,25 +171,25 @@ class WidgetService
     /**
      * Get the widget defined for a specifc area.
      */
-    public function getWidgetsArea(string $name): Collection
+    public function getWidgetsArea( string $name ): Collection
     {
         $widgets = $this->widgetAreas[ $name ] ?? [];
 
-        if (! empty($widgets())) {
-            return collect($widgets())->map(function ($widget) use ($name) {
-                return array_merge($widget, [
+        if ( ! empty( $widgets() ) ) {
+            return collect( $widgets() )->map( function ( $widget ) use ( $name ) {
+                return array_merge( $widget, [
                     'parent' => $name,
-                ]);
-            });
+                ] );
+            } );
         }
 
-        return collect([]);
+        return collect( [] );
     }
 
     /**
      * Will assign the widget to the provider user.
      */
-    public function addDefaultWidgetsToAreas(User $user): void
+    public function addDefaultWidgetsToAreas( User $user ): void
     {
         $areas = [
             'first-column',
@@ -199,15 +199,15 @@ class WidgetService
 
         $areaWidgets = [];
 
-        $widgetClasses = collect($this->widgets)->filter(function ($class) use ($user) {
-            return ( new $class )->canAccess($user);
-        })->toArray();
+        $widgetClasses = collect( $this->widgets )->filter( function ( $class ) use ( $user ) {
+            return ( new $class )->canAccess( $user );
+        } )->toArray();
 
         /**
          * This will assign all widgets
          * to available areas.
          */
-        foreach ($widgetClasses as $index => $widgetClass) {
+        foreach ( $widgetClasses as $index => $widgetClass ) {
             /**
              * @var WidgetService $widgetInstance
              */
@@ -223,7 +223,7 @@ class WidgetService
          * We're now storing widgets to
          * each relevant area.
          */
-        foreach ($areaWidgets as $areaName => $widgets) {
+        foreach ( $areaWidgets as $areaName => $widgets ) {
             $config = [
                 'column' => [
                     'name' => $areaName,
@@ -244,21 +244,21 @@ class WidgetService
     public function bootWidgetsAreas(): void
     {
         $widgetArea = function () {
-            return collect([ 'first', 'second', 'third' ])->map(function ($column) {
+            return collect( [ 'first', 'second', 'third' ] )->map( function ( $column ) {
                 $columnName = $column . '-column';
 
                 return [
                     'name' => $columnName,
-                    'widgets' => UserWidget::where('user_id', Auth::id())
-                        ->where('column', $columnName)
-                        ->orderBy('position')
+                    'widgets' => UserWidget::where( 'user_id', Auth::id() )
+                        ->where( 'column', $columnName )
+                        ->orderBy( 'position' )
                         ->get()
-                        ->filter(fn($widget) => Gate::allows(( new $widget->class_name )->getPermission()))
+                        ->filter( fn( $widget ) => Gate::allows( ( new $widget->class_name )->getPermission() ) )
                         ->values(),
                 ];
-            })->toArray();
+            } )->toArray();
         };
 
-        $this->registerWidgetsArea('ns-dashboard-widgets', $widgetArea);
+        $this->registerWidgetsArea( 'ns-dashboard-widgets', $widgetArea );
     }
 }

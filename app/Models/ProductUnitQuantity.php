@@ -9,30 +9,30 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
- * @property int $product_id
- * @property string $type
- * @property string $preview_url
- * @property string $expiration_date
- * @property int $unit_id
- * @property string $barcode
- * @property float $quantity
- * @property float $low_quantity
- * @property bool $stock_alert_enabled
- * @property float $sale_price
- * @property float $sale_price_edit
- * @property float $sale_price_without_tax
- * @property float $sale_price_with_tax
- * @property float $sale_price_tax
- * @property float $wholesale_price
- * @property float $wholesale_price_edit
- * @property float $wholesale_price_with_tax
- * @property float $wholesale_price_without_tax
- * @property float $wholesale_price_tax
- * @property float $custom_price
- * @property float $custom_price_edit
- * @property float $custom_price_with_tax
- * @property float $custom_price_without_tax
+ * @property int     $id
+ * @property int     $product_id
+ * @property string  $type
+ * @property string  $preview_url
+ * @property string  $expiration_date
+ * @property int     $unit_id
+ * @property string  $barcode
+ * @property float   $quantity
+ * @property float   $low_quantity
+ * @property bool    $stock_alert_enabled
+ * @property float   $sale_price
+ * @property float   $sale_price_edit
+ * @property float   $sale_price_without_tax
+ * @property float   $sale_price_with_tax
+ * @property float   $sale_price_tax
+ * @property float   $wholesale_price
+ * @property float   $wholesale_price_edit
+ * @property float   $wholesale_price_with_tax
+ * @property float   $wholesale_price_without_tax
+ * @property float   $wholesale_price_tax
+ * @property float   $custom_price
+ * @property float   $custom_price_edit
+ * @property float   $custom_price_with_tax
+ * @property float   $custom_price_without_tax
  * @property Product $product
  */
 class ProductUnitQuantity extends NsModel
@@ -73,57 +73,57 @@ class ProductUnitQuantity extends NsModel
     /**
      * Fetch products unique a barcode filter
      *
-     * @param QueryBuilder $query
-     * @param string $reference
+     * @param  QueryBuilder $query
+     * @param  string       $reference
      * @return QueryBuilder
      **/
-    public function scopeBarcode($query, $reference)
+    public function scopeBarcode( $query, $reference )
     {
-        return $query->where('barcode', $reference);
+        return $query->where( 'barcode', $reference );
     }
 
-    public function scopeHidden($query)
+    public function scopeHidden( $query )
     {
-        return $query->where('visible', false);
+        return $query->where( 'visible', false );
     }
 
-    public function scopeVisible($query)
+    public function scopeVisible( $query )
     {
-        return $query->where('visible', true);
+        return $query->where( 'visible', true );
     }
 
     public function unit()
     {
-        return $this->hasOne(Unit::class, 'id', 'unit_id');
+        return $this->hasOne( Unit::class, 'id', 'unit_id' );
     }
 
     public function history()
     {
-        return $this->hasMany(ProductHistoryCombined::class, 'product_id', 'product_id');
+        return $this->hasMany( ProductHistoryCombined::class, 'product_id', 'product_id' );
     }
 
     public function taxes()
     {
-        return $this->hasMany(ProductTax::class, 'unit_quantity_id');
+        return $this->hasMany( ProductTax::class, 'unit_quantity_id' );
     }
 
-    public function scopeWithUnit(Builder $query, $id)
+    public function scopeWithUnit( Builder $query, $id )
     {
-        return $query->where('unit_id', $id);
+        return $query->where( 'unit_id', $id );
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id', 'id');
+        return $this->belongsTo( Product::class, 'product_id', 'id' );
     }
 
-    public function scopeWithProduct(Builder $query, $id)
+    public function scopeWithProduct( Builder $query, $id )
     {
-        return $query->where('product_id', $id);
+        return $query->where( 'product_id', $id );
     }
 
-    public function scopeStockAlertEnabled(Builder $query)
+    public function scopeStockAlertEnabled( Builder $query )
     {
-        return $query->where('stock_alert_enabled', true);
+        return $query->where( 'stock_alert_enabled', true );
     }
 }

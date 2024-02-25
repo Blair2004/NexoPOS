@@ -17,7 +17,7 @@ class CreateTransactionFromRefundedOrder implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public OrderRefund $orderRefund)
+    public function __construct( public OrderRefund $orderRefund )
     {
         //
     }
@@ -28,14 +28,14 @@ class CreateTransactionFromRefundedOrder implements ShouldQueue
     public function handle(
         TransactionService $transactionService
     ): void {
-        if ($this->orderRefund->shipping > 0) {
+        if ( $this->orderRefund->shipping > 0 ) {
             $transactionService->createTransactionHistory(
                 value: $this->orderRefund->shipping,
                 name: 'Refunded Shipping Fees',
                 order_id: $this->orderRefund->order->id,
                 order_refund_id: $this->orderRefund->id,
                 operation: 'debit',
-                transaction_account_id: ns()->option->get('ns_sales_refunds_account'),
+                transaction_account_id: ns()->option->get( 'ns_sales_refunds_account' ),
             );
         }
     }

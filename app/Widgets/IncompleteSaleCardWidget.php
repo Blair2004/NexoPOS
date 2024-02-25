@@ -10,8 +10,8 @@ class IncompleteSaleCardWidget extends WidgetService
 
     public function __construct()
     {
-        $this->name = __('Incomplete Sale Card Widget');
-        $this->description = __('Will display a card of current and overall incomplete sales.');
+        $this->name = __( 'Incomplete Sale Card Widget' );
+        $this->description = __( 'Will display a card of current and overall incomplete sales.' );
         $this->permission = 'nexopos.see.incomplete-sale-card-widget';
     }
 }

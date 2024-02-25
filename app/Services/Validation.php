@@ -14,7 +14,7 @@ class Validation
      * @param string from class
      * @return self
      */
-    public function from($class)
+    public function from( $class )
     {
         $this->class = $class;
 
@@ -28,20 +28,20 @@ class Validation
      * @param string method to call
      * @return array
      */
-    public function extract($method, $model = null)
+    public function extract( $method, $model = null )
     {
-        if (class_exists($this->class)) {
+        if ( class_exists( $this->class ) ) {
             $object = new $this->class;
-            $fields = $object->$method($model);
-            $validation = collect($fields)->mapWithKeys(function ($field) {
+            $fields = $object->$method( $model );
+            $validation = collect( $fields )->mapWithKeys( function ( $field ) {
                 return [
-                    $field->name => ! empty($field->validation) ? $field->validation : '',
+                    $field->name => ! empty( $field->validation ) ? $field->validation : '',
                 ];
-            })->toArray();
+            } )->toArray();
 
             return $validation;
         }
 
-        throw new Exception(sprintf(__('unable to find this validation class %s.'), $this->class));
+        throw new Exception( sprintf( __( 'unable to find this validation class %s.' ), $this->class ) );
     }
 }

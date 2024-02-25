@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
+ * @property int    $id
  * @property string $customer_id
- * @property int $order_id
- * @property float $amount
+ * @property int    $order_id
+ * @property float  $amount
  * @property string $operation
- * @property int $author
+ * @property int    $author
  * @property string $description
  */
 class CustomerAccountHistory extends NsModel
@@ -29,6 +29,6 @@ class CustomerAccountHistory extends NsModel
 
     public function customer()
     {
-        return $this->hasOne(Customer::class, 'id', 'customer_id');
+        return $this->hasOne( Customer::class, 'id', 'customer_id' );
     }
 }

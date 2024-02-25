@@ -51,76 +51,76 @@ class DoctorCommand extends Command
      */
     public function handle()
     {
-        $doctorService = new DoctorService($this);
+        $doctorService = new DoctorService( $this );
 
-        if ($this->option('fix-roles')) {
+        if ( $this->option( 'fix-roles' ) ) {
             $doctorService->restoreRoles();
 
-            return $this->info('The roles where correctly restored.');
+            return $this->info( 'The roles where correctly restored.' );
         }
 
-        if ($this->option('fix-users-attributes')) {
+        if ( $this->option( 'fix-users-attributes' ) ) {
             $doctorService->createUserAttribute();
 
-            return $this->info('The users attributes were fixed.');
+            return $this->info( 'The users attributes were fixed.' );
         }
 
-        if ($this->option('fix-duplicate-options')) {
+        if ( $this->option( 'fix-duplicate-options' ) ) {
             $doctorService->fixDuplicateOptions();
 
-            return $this->info('The duplicated options were cleared.');
+            return $this->info( 'The duplicated options were cleared.' );
         }
 
-        if ($this->option('fix-customers')) {
+        if ( $this->option( 'fix-customers' ) ) {
             $doctorService->fixCustomers();
 
-            return $this->info('The customers were fixed.');
+            return $this->info( 'The customers were fixed.' );
         }
 
-        if ($this->option('fix-domains')) {
+        if ( $this->option( 'fix-domains' ) ) {
             $doctorService->fixDomains();
 
-            return $this->info('The domain is correctly configured.');
+            return $this->info( 'The domain is correctly configured.' );
         }
 
-        if ($this->option('fix-orphan-orders-products')) {
-            return $this->info($doctorService->fixOrphanOrderProducts());
+        if ( $this->option( 'fix-orphan-orders-products' ) ) {
+            return $this->info( $doctorService->fixOrphanOrderProducts() );
         }
 
-        if ($this->option('fix-transactions-orders')) {
+        if ( $this->option( 'fix-transactions-orders' ) ) {
             return $doctorService->fixTransactionsOrders();
         }
 
-        if ($this->option('clear-modules-temp')) {
+        if ( $this->option( 'clear-modules-temp' ) ) {
             return $doctorService->clearTemporaryFiles();
         }
 
         if ( $this->option( 'set-unit-visibility' ) ) {
-            return $doctorService->setUnitVisibility( 
+            return $doctorService->setUnitVisibility(
                 products: $this->option( 'products' ),
                 visibility: $this->option( 'set-unit-visibility' )
             );
         }
 
-        if ($this->option('fix-orders-products')) {
-            $products = OrderProduct::where('total_purchase_price', 0)->get();
+        if ( $this->option( 'fix-orders-products' ) ) {
+            $products = OrderProduct::where( 'total_purchase_price', 0 )->get();
 
             /**
              * @var ProductService
              */
-            $productService = app()->make(ProductService::class);
+            $productService = app()->make( ProductService::class );
 
-            $this->withProgressBar($products, function (OrderProduct $orderProduct) use ($productService) {
+            $this->withProgressBar( $products, function ( OrderProduct $orderProduct ) use ( $productService ) {
                 $orderProduct->total_purchase_price = $productService->getLastPurchasePrice(
                     product: $orderProduct->product,
                     unit: $orderProduct->unit,
                 ) * $orderProduct->quantity;
                 $orderProduct->save();
-            });
+            } );
 
             $this->newLine();
 
-            $this->info('The products were successfully updated');
+            $this->info( 'The products were successfully updated' );
         }
     }
 }

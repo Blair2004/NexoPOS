@@ -13,13 +13,13 @@ class WorkersSettings extends SettingsPage
 
     public function __construct()
     {
-        $options = app()->make(Options::class);
+        $options = app()->make( Options::class );
 
         $this->form = [
-            'title' => __('Workers Settings'),
-            'description' => __('Configure how background operations works.'),
+            'title' => __( 'Workers Settings' ),
+            'description' => __( 'Configure how background operations works.' ),
             'tabs' => [
-                'general' => include(dirname(__FILE__) . '/workers/general.php'),
+                'general' => include ( dirname( __FILE__ ) . '/workers/general.php' ),
             ],
         ];
     }

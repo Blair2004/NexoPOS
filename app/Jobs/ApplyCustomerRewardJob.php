@@ -21,7 +21,7 @@ class ApplyCustomerRewardJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Customer $customer, public CustomerReward $customerReward, public RewardSystem $reward)
+    public function __construct( public Customer $customer, public CustomerReward $customerReward, public RewardSystem $reward )
     {
         $this->prepareSerialization();
     }
@@ -31,7 +31,7 @@ class ApplyCustomerRewardJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(CustomerService $customerService)
+    public function handle( CustomerService $customerService )
     {
         $customerService->applyReward(
             customer: $this->customer,

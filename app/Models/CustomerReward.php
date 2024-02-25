@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
- * @property int $reward_id
- * @property string $reward_name
- * @property float $target
+ * @property int            $id
+ * @property int            $reward_id
+ * @property string         $reward_name
+ * @property float          $target
  * @property \Carbon\Carbon $updated_at
  */
 class CustomerReward extends NsModel

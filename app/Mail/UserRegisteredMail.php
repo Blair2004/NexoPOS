@@ -20,7 +20,7 @@ class UserRegisteredMail extends Mailable
      *
      * @return void
      */
-    public function __construct(User $admin, User $user)
+    public function __construct( User $admin, User $user )
     {
         $this->admin = $admin;
         $this->user = $user;
@@ -34,8 +34,8 @@ class UserRegisteredMail extends Mailable
     public function build()
     {
         return $this
-            ->subject(ns()->option->get('ns_notifications_registrations_administrator_email_title', __('[NexoPOS] A New User Has Registered')))
-            ->from(ns()->option->get('ns_store_email', 'notifications@nexopos.com'))
-            ->markdown('mails/user-registered-mail');
+            ->subject( ns()->option->get( 'ns_notifications_registrations_administrator_email_title', __( '[NexoPOS] A New User Has Registered' ) ) )
+            ->from( ns()->option->get( 'ns_store_email', 'notifications@nexopos.com' ) )
+            ->markdown( 'mails/user-registered-mail' );
     }
 }

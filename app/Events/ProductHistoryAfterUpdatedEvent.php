@@ -15,7 +15,7 @@ class ProductHistoryAfterUpdatedEvent
     /**
      * Create a new event instance.
      */
-    public function __construct(public ProductHistory $productHistory)
+    public function __construct( public ProductHistory $productHistory )
     {
         //
     }
@@ -28,7 +28,7 @@ class ProductHistoryAfterUpdatedEvent
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel( 'channel-name' ),
         ];
     }
 }

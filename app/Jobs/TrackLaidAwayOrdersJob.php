@@ -29,7 +29,7 @@ class TrackLaidAwayOrdersJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(OrdersService $ordersService)
+    public function handle( OrdersService $ordersService )
     {
         /**
          * for order thas has already expired

@@ -27,25 +27,25 @@ class SettingsListener
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param  object $event
      * @return void
      */
-    public function handle(SettingsSavedEvent $event)
+    public function handle( SettingsSavedEvent $event )
     {
-        $options = app()->make(Options::class);
+        $options = app()->make( Options::class );
 
-        if ($options->get('ns_workers_enabled') === 'await_confirm') {
+        if ( $options->get( 'ns_workers_enabled' ) === 'await_confirm' ) {
             $notification_id = NotificationsEnum::NSWORKERDISABLED;
 
-            TestWorkerJob::dispatch($notification_id)
-                ->delay(now());
+            TestWorkerJob::dispatch( $notification_id )
+                ->delay( now() );
 
-            $this->notificationService->create([
-                'title' => __('Workers Aren\'t Running'),
-                'description' => __('The workers has been enabled, but it looks like NexoPOS can\'t run workers. This usually happen if supervisor is not configured correctly.'),
+            $this->notificationService->create( [
+                'title' => __( 'Workers Aren\'t Running' ),
+                'description' => __( 'The workers has been enabled, but it looks like NexoPOS can\'t run workers. This usually happen if supervisor is not configured correctly.' ),
                 'url' => 'https://laravel.com/docs/8.x/queues#supervisor-configuration',
                 'identifier' => $notification_id,
-            ])->dispatchForGroup(Role::namespace('admin'));
+            ] )->dispatchForGroup( Role::namespace( 'admin' ) );
         }
     }
 }

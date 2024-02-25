@@ -19,23 +19,23 @@ class CrudEditEntitiesTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        collect(Storage::disk('ns')->files('app/Crud'))
-            ->map(function ($fileName) {
-                $fileName = collect(explode('/', $fileName));
-                $file = pathinfo($fileName->last());
+        collect( Storage::disk( 'ns' )->files( 'app/Crud' ) )
+            ->map( function ( $fileName ) {
+                $fileName = collect( explode( '/', $fileName ) );
+                $file = pathinfo( $fileName->last() );
 
                 return 'App\\Crud\\' . $file[ 'filename' ];
-            })
-            ->each(function ($class) {
+            } )
+            ->each( function ( $class ) {
                 $object = new $class;
 
-                if (! empty($object->getNamespace())) {
+                if ( ! empty( $object->getNamespace() ) ) {
                     $response = $this
-                        ->withSession($this->app[ 'session' ]->all())
-                        ->json('GET', '/api/crud/' . $object->getNamespace() . '/form-config');
+                        ->withSession( $this->app[ 'session' ]->all() )
+                        ->json( 'GET', '/api/crud/' . $object->getNamespace() . '/form-config' );
 
                     $response->assertOk();
                 }
-            });
+            } );
     }
 }

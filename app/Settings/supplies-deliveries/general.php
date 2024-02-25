@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'label' => __('Supplies'),
+    'label' => __( 'Supplies' ),
     'fields' => [
         //
     ],

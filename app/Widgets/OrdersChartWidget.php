@@ -10,8 +10,8 @@ class OrdersChartWidget extends WidgetService
 
     public function __construct()
     {
-        $this->name = __('Orders Chart');
-        $this->description = __('Will display a chart of weekly sales.');
+        $this->name = __( 'Orders Chart' );
+        $this->description = __( 'Will display a chart of weekly sales.' );
         $this->permission = 'nexopos.see.orders-chart-widget';
     }
 }

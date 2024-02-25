@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DRIVER', 'local'),
+    'default' => env( 'FILESYSTEM_DRIVER', 'local' ),
 
     /*
     |--------------------------------------------------------------------------
@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'cloud' => env('FILESYSTEM_CLOUD', 's3'),
+    'cloud' => env( 'FILESYSTEM_CLOUD', 's3' ),
 
     /*
     |--------------------------------------------------------------------------
@@ -45,30 +45,30 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => storage_path( 'app' ),
         ],
 
         'snapshots' => [
             'driver' => 'local',
-            'root' => storage_path('snapshots'),
+            'root' => storage_path( 'snapshots' ),
         ],
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL') . '/storage',
+            'root' => storage_path( 'app/public' ),
+            'url' => env( 'APP_URL' ) . '/storage',
             'visibility' => 'public',
             'throw' => true,
         ],
 
         's3' => [
             'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
+            'key' => env( 'AWS_ACCESS_KEY_ID' ),
+            'secret' => env( 'AWS_SECRET_ACCESS_KEY' ),
+            'region' => env( 'AWS_DEFAULT_REGION' ),
+            'bucket' => env( 'AWS_BUCKET' ),
+            'url' => env( 'AWS_URL' ),
+            'endpoint' => env( 'AWS_ENDPOINT' ),
         ],
 
         'ns' => [
@@ -78,22 +78,22 @@ return [
 
         'ns-public' => [
             'driver' => 'local',
-            'root' => base_path('public'),
+            'root' => base_path( 'public' ),
         ],
 
         'ns-modules' => [
             'driver' => 'local',
-            'root' => base_path('modules'),
+            'root' => base_path( 'modules' ),
         ],
 
         'ns-modules-temp' => [
             'driver' => 'local',
-            'root' => storage_path('temporary-files/modules'),
+            'root' => storage_path( 'temporary-files/modules' ),
         ],
 
         'ns-temp' => [
             'driver' => 'local',
-            'root' => storage_path('temporary-files'),
+            'root' => storage_path( 'temporary-files' ),
         ],
     ],
 
@@ -109,7 +109,7 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        public_path( 'storage' ) => storage_path( 'app/public' ),
     ],
 
 ];

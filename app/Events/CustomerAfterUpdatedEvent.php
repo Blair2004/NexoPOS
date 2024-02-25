@@ -17,7 +17,7 @@ class CustomerAfterUpdatedEvent
      *
      * @return void
      */
-    public function __construct(public Customer $customer)
+    public function __construct( public Customer $customer )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class CustomerAfterUpdatedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

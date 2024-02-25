@@ -17,7 +17,7 @@ class DashboardDayAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct(public DashboardDay $dashboardDay)
+    public function __construct( public DashboardDay $dashboardDay )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class DashboardDayAfterCreatedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }
