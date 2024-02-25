@@ -216,8 +216,6 @@ class ModulesService
                  */
                 if (Helper::installed()) {
                     $modules = $this->options->get('enabled_modules', []);
-                    $config[ 'migrations' ] = $this->__getModuleMigration($config);
-                    $config[ 'all-migrations' ] = $this->getAllModuleMigrationFiles($config);
                     $config[ 'enabled' ] = in_array($config[ 'namespace' ], (array) $modules) ? true : false;
                 }
 
@@ -290,6 +288,16 @@ class ModulesService
         } else {
             Log::error(sprintf(__('No config.xml has been found on the directory : %s. This folder is ignored'), $dir));
         }
+    }
+
+    public function loadModulesMigrations(): void
+    {
+        $this->modules  =   collect( $this->modules )->mapWithKeys( function( $config, $key ) {
+            $config[ 'migrations' ] = $this->__getModuleMigration($config);
+            $config[ 'all-migrations' ] = $this->getAllModuleMigrationFiles($config);
+
+            return [ $key => $config ];
+        })->toArray();
     }
 
     /**

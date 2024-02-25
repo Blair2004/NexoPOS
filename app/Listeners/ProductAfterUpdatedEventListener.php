@@ -36,7 +36,7 @@ class ProductAfterUpdatedEventListener
          */
         $oldCategoryId = session()->pull('product_category_id');
 
-        if ($oldCategoryId !== $event->product->category->id) {
+        if ($oldCategoryId !== $event->product->category->id && $oldCategoryId !== null ) {
             ComputeCategoryProductsJob::dispatch(ProductCategory::find($oldCategoryId));
         }
 

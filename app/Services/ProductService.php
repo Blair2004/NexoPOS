@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Events\ProductAfterCreatedEvent;
 use App\Events\ProductAfterStockAdjustmentEvent;
+use App\Events\ProductAfterUpdatedEvent;
+use App\Events\ProductBeforeCreatedEvent;
+use App\Events\ProductBeforeUpdatedEvent;
 use App\Events\ProductResetEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
@@ -268,6 +272,8 @@ class ProductService
         $product = new Product;
         $mode = 'create';
 
+        event( new ProductBeforeCreatedEvent( $product ) );
+
         foreach ($data as $field => $value) {
             if (! in_array($field, [ 'variations' ])) {
                 $fields = $data;
@@ -303,6 +309,8 @@ class ProductService
         }
 
         $editUrl = ns()->route('ns.products-edit', [ 'product' => $product->id ]);
+
+        event( new ProductAfterCreatedEvent( $product ) );
 
         return [
             'status' => 'success',
@@ -403,6 +411,8 @@ class ProductService
 
         $mode = 'update';
 
+        event( new ProductBeforeUpdatedEvent( $product ) );
+
         $this->releaseProductTaxes($product);
 
         if (empty($fields[ 'barcode' ])) {
@@ -457,6 +467,8 @@ class ProductService
         }
 
         $editUrl = ns()->route('ns.products-edit', [ 'product' => $product->id ]);
+
+        event( new ProductAfterUpdatedEvent( $product ) );
 
         return [
             'status' => 'success',
@@ -638,6 +650,8 @@ class ProductService
         }
 
         $parent->save();
+        
+        event( new ProductAfterUpdatedEvent( $parent ) );
 
         return [
             'status' => 'success',
@@ -1755,6 +1769,9 @@ class ProductService
     public function createProductVariation(Product $parent, $fields)
     {
         $product = new Product;
+
+        event( new ProductBeforeCreatedEvent( $product ) );
+
         $mode = 'create';
 
         foreach ($fields as $field => $value) {
@@ -1767,6 +1784,8 @@ class ProductService
         $product->category_id = $parent->category_id;
         $product->product_type = 'variation';
         $product->save();
+
+        event( new ProductAfterCreatedEvent( $product ) );
 
         /**
          * compute product tax
@@ -1793,6 +1812,8 @@ class ProductService
         $product = Product::find($id);
         $mode = 'update';
 
+        event( new ProductBeforeUpdatedEvent( $product ) );
+
         foreach ($fields as $field => $value) {
             /**
              * we'll update the data
@@ -1814,6 +1835,8 @@ class ProductService
          * main product
          */
         // $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
+
+        event( new ProductAfterUpdatedEvent( $product ) );
 
         return [
             'status' => 'success',
