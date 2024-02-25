@@ -242,7 +242,7 @@
     "isEntry": true
   },
   "resources/ts/app.ts": {
-    "file": "assets/app-JuqL4cEp.js",
+    "file": "assets/app-CJbQQOo1.js",
     "src": "resources/ts/app.ts",
     "isEntry": true,
     "imports": [
@@ -547,7 +547,7 @@
     ]
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue": {
-    "file": "assets/ns-pos-registers-button-DtACbwjp.js",
+    "file": "assets/ns-pos-registers-button-CF_QkPkz.js",
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -638,7 +638,7 @@
     "isDynamicEntry": true
   },
   "resources/ts/pages/dashboard/procurements/ns-procurement.vue": {
-    "file": "assets/ns-procurement-BBnvx__O.js",
+    "file": "assets/ns-procurement-CzyqVG0e.js",
     "src": "resources/ts/pages/dashboard/procurements/ns-procurement.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -956,7 +956,7 @@
     ]
   },
   "resources/ts/pos-init.ts": {
-    "file": "assets/pos-init-DLwGrqTj.js",
+    "file": "assets/pos-init-7XJP_1sT.js",
     "src": "resources/ts/pos-init.ts",
     "isEntry": true,
     "imports": [
