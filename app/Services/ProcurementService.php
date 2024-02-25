@@ -81,6 +81,19 @@ class ProcurementService
         return Procurement::get();
     }
 
+    public function procurementName()
+    {
+        $lastProcurement = Procurement::orderBy( 'id', 'desc' )->first();
+
+        if ( $lastProcurement instanceof Procurement ) {
+            $number = str_pad( $lastProcurement->id + 1, 5, "0", STR_PAD_LEFT );
+        } else {
+            $number = str_pad( 1, 5, "0", STR_PAD_LEFT );
+        }
+
+        return sprintf( __( 'Procurement %s' ), $number );
+    }
+
     /**
      * create a procurement
      * using the provided informations
@@ -121,7 +134,7 @@ class ProcurementService
          * and ProcurementAfterCreateEvent to trigger while saving
          */
         Procurement::withoutEvents(function () use ($procurement, $data) {
-            $procurement->name = $data[ 'name' ];
+            $procurement->name = $data[ 'name' ] ?: $this->procurementName();
 
             foreach ($data[ 'general' ] as $field => $value) {
                 $procurement->$field = $value;

@@ -882,8 +882,8 @@ class ProductCrud extends CrudService
                     collect($variation[ 'tabs' ][ 'units' ][ 'fields' ])->filter(function ($field) {
                         return $field[ 'type' ] === 'group';
                     })->each(function ($field) use (&$groups) {
-                        $groups[ $field[ 'name' ] ] = collect($field[ 'groups' ])
-                            ->map(fn($fields) => $this->extractFields($fields))
+                        $groups[ $field[ 'name' ] ] = collect($field[ 'groups' ] )
+                            ->map(fn($group) => $this->extractFields($group[ 'fields' ] ))
                             ->toArray();
                     });
 

@@ -612,6 +612,13 @@ trait WithProductTest
         $secondUnitQuantity = $product->unit_quantities->last();
 
         /**
+         * We'll provide some quantity to ensure
+         * it doesn't fails because of the missing quantity.
+         */
+        $firstUnitQuantity->quantity = 1000;
+        $firstUnitQuantity->save();
+
+        /**
          * We'll create a conversion that should fail
          * because it will cause a float value
          */
