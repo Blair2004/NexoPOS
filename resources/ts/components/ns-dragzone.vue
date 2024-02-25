@@ -16,6 +16,14 @@
         </div>
     </div>
 </template>
+<style scoped>
+.light .widget-placeholder {
+    @apply border-slate-600;
+}
+.dark .widget-placeholder {
+    @apply border-slate-400;
+}
+</style>
 <script lang="ts">
 import { shallowRef } from '@vue/reactivity';
 import { __ } from '~/libraries/lang';
@@ -25,6 +33,7 @@ import nsDropzone from '~/components/ns-dropzone.vue';
 import nsDraggable from '~/components/ns-draggable.vue';
 
 declare const Popup;
+declare const ns;
 
 export default {
     name: 'ns-dragzone',
@@ -36,6 +45,7 @@ export default {
     data() {
         return {
             widgets: [],
+            theme: ns.theme,
             dragged: null,
             columns: [],
         }
@@ -137,7 +147,6 @@ export default {
                 this.handleChange( hoveredFilteredColumn[0] );
                 this.handleChange( previousFilteredColumn[0] );
 
-                hoveredZone.style.border = '2px solid rgb(255 255 255 / 0%)';
                 hoveredZone.setAttribute( 'hovered', 'false' );
             }
 
