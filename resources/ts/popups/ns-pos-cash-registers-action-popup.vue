@@ -56,6 +56,7 @@ export default {
             register_id: null, // conditionnally provider
             validation: new FormValidation,
             fields: [],
+            isSubmitting: false,
         }
     },
     mounted() {
@@ -106,6 +107,12 @@ export default {
             })
         },
         triggerSubmit() {
+            if ( this.isSubmitting ) {
+                return;
+            }
+
+            this.isSubmitting    =   true;
+
             const fields    =   this.validation.extractFields( this.fields );
             fields.amount   =   this.amount === '' ? 0 : this.amount;
 
@@ -115,9 +122,11 @@ export default {
                         this.popup.params.resolve( result );
                         this.popup.close();
                         nsSnackBar.success( result.message ).subscribe();
+                        this.isSubmitting    =   false;
                     }, 
                     error: ( error ) => {
                         nsSnackBar.error( error.message ).subscribe();
+                        this.isSubmitting    =   false;
                     }
                 });
         },
