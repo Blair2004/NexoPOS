@@ -2673,7 +2673,7 @@
     "You cannot assign the same unit to more than one selling unit.": "لا يمكنك تعيين نفس الوحدة لأكثر من وحدة بيع واحدة.",
     "The quantity to convert can\\'t be zero.": "الكمية المراد تحويلها لا يمكن أن تكون صفرًا.",
     "The source unit \"(%s)\" for the product \"%s": "وحدة المصدر \"(%s)\" للمنتج \"%s\"",
-    "The conversion from \"%s\" will cause a decimal value less than one count of the destination unit \"%s\".": "سيؤدي التحويل من \"%s\" إلى قيمة عشرية أقل من عدد واحد من وحدة الوجهة "%s".",
+    "The conversion from \"%s\" will cause a decimal value less than one count of the destination unit \"%s\".": "سيؤدي التحويل من \"%s\" إلى قيمة عشرية أقل من عدد واحد من وحدة الوجهة \"%s\".",
     "{customer_first_name}: displays the customer first name.": "{customer_first_name}: يعرض الاسم الأول للعميل.",
     "{customer_last_name}: displays the customer last name.": "{customer_last_name}: يعرض اسم العائلة للعميل.",
     "No Unit Selected": "لم يتم تحديد وحدة",
