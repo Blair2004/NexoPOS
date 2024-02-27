@@ -51,7 +51,14 @@ class ModulesServiceProvider extends ServiceProvider
             if ( Helper::installed( true ) ) {
                 $this->modules->load();
 
-                collect( $this->modules->getEnabled() )->each( fn( $module ) => $this->modules->boot( $module ) );
+                /**
+                 * We want to make sure all modules are loaded, before
+                 * we can trigger the migrations. As some migrations may
+                 * have a dependency on another module.
+                 */
+                $this->modules->loadModulesMigrations();
+
+                collect($this->modules->getEnabled())->each(fn($module) => $this->modules->boot($module));
 
                 /**
                  * trigger register method only for enabled modules
