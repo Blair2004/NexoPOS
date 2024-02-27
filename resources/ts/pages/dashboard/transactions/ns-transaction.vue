@@ -208,7 +208,7 @@ export default {
              * for the expense we know supports
              * recurring behavior
              */
-            if ( [ 'ns.recurring-transactions', 'ns.salary-transactions' ].includes( this.selectedConfiguration.identifier ) ) {
+            if ( [ 'ns.recurring-transaction', 'ns.salary-transaction' ].includes( this.selectedConfiguration.identifier ) ) {
                 tabs.push({
                     label: __( 'Conditions' ),
                     identifier: 'recurrence'
@@ -263,7 +263,7 @@ export default {
              */
             result.fields.forEach( field => {
                 if ( field.name === 'recurring' ) {
-                    if ([ 'ns.recurring-transactions', 'ns.salary-transactions' ].includes( result.identifier ) ) {
+                    if ([ 'ns.recurring-transaction', 'ns.salary-transaction' ].includes( result.identifier ) ) {
                         field.value =   true;
                     } else {
                         field.value =   false;
