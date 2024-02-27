@@ -43,7 +43,7 @@ return [
             'description' => __( 'You must create a customer to which each sales are attributed when the walking customer doesn\'t register.' ),
             'name' => 'ns_customers_default',
             'value' => ns()->option->get( 'ns_customers_default', 'no' ),
-            'options' => Helper::toJsOptions( Customer::get(), [ 'id', 'name' ] ),
+            'options' => Helper::toJsOptions( Customer::get(), [ 'id', [ 'first_name', 'last_name' ] ] ),
         ], [
             'type' => 'select',
             'label' => __( 'Default Customer Group' ),

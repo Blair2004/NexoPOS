@@ -26,6 +26,7 @@ export default {
             options: null,
             print: new Print({ urls: systemUrls, options: systemOptions }),
             settings: null,
+            orderDetailLoaded: false,
         }
     },
     components: {
@@ -66,12 +67,14 @@ export default {
         },
 
         loadOrderDetails( orderId ) {
+            this.orderDetailLoaded  =   false;
             forkJoin([
                 nsHttpClient.get( `/api/orders/${orderId}` ),
                 nsHttpClient.get( `/api/orders/${orderId}/products` ),
                 nsHttpClient.get( `/api/orders/${orderId}/payments` ),
             ])
                 .subscribe( result => {
+                    this.orderDetailLoaded  =   true;
                     this.order              =   result[0];
                     this.products           =   result[1];
                     this.payments           =   result[2];
@@ -189,7 +192,7 @@ export default {
                 <ns-spinner></ns-spinner>
             </div>
         </div> 
-        <div class="p-2 flex justify-between border-t ns-box-footer">
+        <div v-if="orderDetailLoaded" class="p-2 flex justify-between border-t ns-box-footer">
             <div>
                 <ns-button v-if="isVoidable" @click="voidOrder()" type="error">
                     <i class="las la-ban"></i>
