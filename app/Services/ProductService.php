@@ -1933,14 +1933,17 @@ class ProductService
             );
         }
 
+        /**
+         * if the unitQuantityTo is missing, we might then
+         * create a new unit with price set to 0.
+         */
         if ( ! $unitQuantityTo instanceof ProductUnitQuantity ) {
-            throw new NotFoundException(
-                sprintf(
-                    __( 'There is no destination unit quantity having the name %s for the item %s' ),
-                    $from->name,
-                    $product->name
-                )
-            );
+            $unitQuantityTo = new ProductUnitQuantity;
+            $unitQuantityTo->product_id = $product->id;
+            $unitQuantityTo->unit_id = $to->id;
+            $unitQuantityTo->quantity = 0;
+            $unitQuantityTo->visible = false;
+            $unitQuantityTo->save();            
         }
 
         if ( ! $this->unitService->isFromSameGroup( $from, $to ) ) {
