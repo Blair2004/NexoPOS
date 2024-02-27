@@ -1,6 +1,6 @@
 <template>
     <tr class="ns-table-row" :class="row.$cssClass ? row.$cssClass : 'border text-sm'">
-        <td class="font-sans p-2">
+        <td v-if="showCheckboxes" class="font-sans p-2">
             <ns-checkbox @change="handleChanged( $event )" :checked="row.$checked"> </ns-checkbox>
         </td>
         <td v-if="prependOptions && showOptions" class="font-sans p-2">
@@ -57,7 +57,7 @@ import { nsEvent, nsHttpClient, nsSnackBar } from "~/bootstrap";
 import { __ } from '~/libraries/lang';
 export default {
     props: [
-        'options', 'row', 'columns', 'prependOptions', 'showOptions'
+        'options', 'row', 'columns', 'prependOptions', 'showOptions', 'showCheckboxes'
     ],
     data: () => {
         return {

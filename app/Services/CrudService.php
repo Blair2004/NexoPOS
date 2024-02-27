@@ -125,6 +125,11 @@ class CrudService
     protected $showOptions = true;
 
     /**
+     * Determine if checkboxes should be displayed
+     */
+    protected $showCheckboxes = true;
+
+    /**
      * Will enforce slug to be defined as
      * a protected property.
      *
@@ -1276,6 +1281,14 @@ class CrudService
     public function getShowOptions(): bool
     {
         return $this->showOptions;
+    }
+
+    /**
+     * Return if the table show display raw checkboxes.
+     */
+    public function getShowCheckboxes(): bool
+    {
+        return $this->showCheckboxes;
     }
 
     /**

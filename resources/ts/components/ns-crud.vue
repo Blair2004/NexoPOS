@@ -50,7 +50,7 @@
                 <table class="table ns-table w-full" v-if="Object.values( columns ).length > 0">
                     <thead>
                         <tr>
-                            <th class="text-center px-2 border w-16 py-2">
+                            <th v-if="showCheckBox" class="text-center px-2 border w-16 py-2">
                                 <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
                             <th v-if="prependOptions && showOptions" class="text-left px-2 py-2 w-16 border"></th>
@@ -75,6 +75,7 @@
                                 :columns="columns"
                                 :prependOptions="prependOptions"
                                 :showOptions="showOptions"
+                                :showCheckboxes="showCheckboxes"
                                 :row="row"
                                 @reload="refresh()"
                                 @toggled="handleShowOptions( $event )"></ns-table-row>
@@ -132,6 +133,7 @@ export default {
         return {
             prependOptions: false,
             showOptions: true,
+            showCheckboxes: true,
             isRefreshing: false,
             sortColumn: '',
             searchInput: '',
@@ -325,6 +327,7 @@ export default {
                 this.queryFilters   =   f.queryFilters;
                 this.prependOptions =   f.prependOptions;
                 this.showOptions    =   f.showOptions;
+                this.showCheckboxes =   f.showCheckboxes;
                 this.headerButtons  =   f.headerButtons || [];
                 this.refresh();
             }, ( error ) => {

@@ -53,6 +53,10 @@ class GlobalProductHistoryCrud extends CrudService
         'delete' => false,
     ];
 
+    protected $showOptions  =   false;
+    
+    protected $showCheckboxes  =   false;
+
     public $casts = [
         'operation_type' => ProductHistoryActionCast::class,
     ];
