@@ -117,11 +117,14 @@ class BarcodeService
                 $generator->getBarcode( $barcode, $realType, 3, 30 )
             );
         } catch ( Exception $exception ) {
+            $insight    =   ( $exception->getMessage() ?: __( 'N/A' ) );
+
             throw new Exception(
                 sprintf(
-                    __( 'An error has occurred while creating a barcode "%s" using the type "%s" for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ( $exception->getMessage() ?: __( 'N/A' ) ) ),
+                    __( 'An error has occurred while creating a barcode "%s" using the type "%s" for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : %s' ),
                     $barcode,
-                    $realType
+                    $realType, 
+                    $insight
                 )
             );
         }
