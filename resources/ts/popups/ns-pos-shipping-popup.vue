@@ -32,10 +32,14 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { nsHttpClient } from '~/bootstrap';
 import resolveIfQueued from "~/libraries/popup-resolver";
 import FormValidation from '~/libraries/form-validation';
+import popupCloser from "~/libraries/popup-closer";
+
+declare const __, POS;
+
 export default {
     name: 'ns-pos-shipping-popup',
     props: [ 'popup' ],
@@ -62,6 +66,8 @@ export default {
     },
     mounted() {
         this.orderSubscription  =   POS.order.subscribe( order => this.order = order ); 
+
+        this.popupCloser();
 
         this.loadForm();
     },
@@ -95,6 +101,7 @@ export default {
     },
     methods: {
         __,
+        popupCloser,
         
         resolveIfQueued,
 

@@ -69,6 +69,7 @@ export default {
             this.settings           =   settings;
         });
         this.loadFields();
+        this.popupCloser();
     },
     unmounted() {
         this.settingsSubscription.unsubscribe();

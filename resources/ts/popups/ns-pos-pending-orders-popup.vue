@@ -42,7 +42,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { nsEvent, nsHttpClient } from '~/bootstrap';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import nsPosOrderProductsPopupVue from './ns-pos-order-products-popup.vue';
@@ -50,6 +50,9 @@ import nsPosPendingOrders from './ns-pos-pending-orders.vue';
 import { __ } from '~/libraries/lang';
 import popupResolver from '~/libraries/popup-resolver';
 import popupCloser from '~/libraries/popup-closer';
+
+declare const POS, Popup;
+
 export default {
     props: [ 'popup' ],
     components: {
@@ -122,6 +125,7 @@ export default {
     },
     mounted() {
         this.loadOrderFromType( this.active );
+        this.popupCloser();
     }
 }
 </script>

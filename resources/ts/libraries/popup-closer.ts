@@ -10,9 +10,19 @@ export default function() {
          * We'll listen to "esc" keypress
          * but proceed in certain conditions.
          */
-        nsHotPress.create( 'popup-esc' )
+        nsHotPress.create( `popup-esc-${this.popup.hash}` )
             .whenPressed( 'escape', ( event ) => {
                 event.preventDefault();
+
+                const currentPopup = document.querySelector( `#${this.popup.hash}` );
+
+                /**
+                 * If the popup is not focused then
+                 * we don't want to close it.
+                 */
+                if ( currentPopup && currentPopup.getAttribute( 'focused' ) !== 'true' ) {
+                    return;
+                }
 
                 /**
                  * We want to check if there is a popup that is
@@ -31,7 +41,7 @@ export default function() {
                     }
 
                     this.popup.close();
-                    nsHotPress.destroy( 'popup-esc' );
+                    nsHotPress.destroy( `popup-esc-${this.popup.hash}` );
                 }
             })
     }
