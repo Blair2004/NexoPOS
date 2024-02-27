@@ -141,10 +141,10 @@ class AuthenticationTest extends TestCase
         $response->assertStatus( 200 );
     }
 
-    public function generateUsername($faker, $minLength = 10) {
-        $username = $faker->userName;
+    public function generateUsername($minLength = 10) {
+        $username = $this->faker->userName();
         while(strlen($username) < $minLength) {
-            $username .= $faker->randomLetter;
+            $username .= $this->faker->randomLetter();
         }
         return $username;
     }
