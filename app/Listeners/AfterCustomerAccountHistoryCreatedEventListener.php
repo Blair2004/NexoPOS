@@ -25,9 +25,9 @@ class AfterCustomerAccountHistoryCreatedEventListener
      *
      * @return void
      */
-    public function handle(AfterCustomerAccountHistoryCreatedEvent $event)
+    public function handle( AfterCustomerAccountHistoryCreatedEvent $event )
     {
-        $this->transactionService->handleCustomerCredit($event->customerAccount);
-        $this->customerService->updateCustomerAccount($event->customerAccount);
+        $this->transactionService->handleCustomerCredit( $event->customerAccount );
+        $this->customerService->updateCustomerAccount( $event->customerAccount );
     }
 }

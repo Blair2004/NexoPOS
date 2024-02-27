@@ -19,7 +19,7 @@ class CustomerRewardAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct(public CustomerReward $customerReward, public Customer $customer, public RewardSystem $reward)
+    public function __construct( public CustomerReward $customerReward, public Customer $customer, public RewardSystem $reward )
     {
         // ...
     }
@@ -31,6 +31,6 @@ class CustomerRewardAfterCreatedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

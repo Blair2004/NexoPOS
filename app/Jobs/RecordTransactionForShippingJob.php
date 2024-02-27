@@ -18,7 +18,7 @@ class RecordTransactionForShippingJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public Order $order, public OrderRefund $orderRefund)
+    public function __construct( public Order $order, public OrderRefund $orderRefund )
     {
         //
     }
@@ -26,7 +26,7 @@ class RecordTransactionForShippingJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(TransactionService $transactionService): void
+    public function handle( TransactionService $transactionService ): void
     {
         $transactionService->createTransactionFormRefundedOrderShipping(
             order: $this->order,

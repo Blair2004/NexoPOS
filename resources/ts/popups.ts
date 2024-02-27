@@ -42,6 +42,7 @@ const nsPopups      =   createApp({
     mounted() {
         nsState.subscribe( state => {
             if ( state.popups !== undefined ) {
+                document.body.focus();
                 this.popups     =   shallowRef( state.popups );
                 this.$forceUpdate();
             }

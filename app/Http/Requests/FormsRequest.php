@@ -28,16 +28,16 @@ class FormsRequest extends FormRequest
     public function rules()
     {
         $service = new CrudService;
-        $instance = Events::filter('ns.forms', [], $this->route('resource'));
+        $instance = Events::filter( 'ns.forms', [], $this->route( 'resource' ) );
 
-        if (! $instance instanceof SettingsPage) {
-            throw new Exception(sprintf(
+        if ( ! $instance instanceof SettingsPage ) {
+            throw new Exception( sprintf(
                 '%s is not an instanceof "%s".',
-                $this->route('resource'),
+                $this->route( 'resource' ),
                 SettingsPage::class
-            ));
+            ) );
         }
 
-        return $instance->validateForm($this);
+        return $instance->validateForm( $this );
     }
 }

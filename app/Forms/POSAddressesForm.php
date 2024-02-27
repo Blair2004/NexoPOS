@@ -14,9 +14,9 @@ class POSAddressesForm extends SettingsPage
     {
         $this->form = [
             'tabs' => [
-                'general' => include(dirname(__FILE__) . '/pos/general.php'),
-                'billing' => include(dirname(__FILE__) . '/pos/billing.php'),
-                'shipping' => include(dirname(__FILE__) . '/pos/shipping.php'),
+                'general' => include ( dirname( __FILE__ ) . '/pos/general.php' ),
+                'billing' => include ( dirname( __FILE__ ) . '/pos/billing.php' ),
+                'shipping' => include ( dirname( __FILE__ ) . '/pos/shipping.php' ),
             ],
         ];
     }

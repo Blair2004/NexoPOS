@@ -22,18 +22,18 @@ return new class extends Migration
      */
     public function up()
     {
-        if (! Schema::hasTable('nexopos_notifications')) {
-            Schema::createIfMissing('nexopos_notifications', function (Blueprint $table) {
+        if ( ! Schema::hasTable( 'nexopos_notifications' ) ) {
+            Schema::createIfMissing( 'nexopos_notifications', function ( Blueprint $table ) {
                 $table->id();
-                $table->integer('user_id');
-                $table->string('identifier');
-                $table->string('title');
-                $table->text('description');
-                $table->string('url')->default('#');
-                $table->string('source')->default('system');
-                $table->boolean('dismissable')->default(true);
+                $table->integer( 'user_id' );
+                $table->string( 'identifier' );
+                $table->string( 'title' );
+                $table->text( 'description' );
+                $table->string( 'url' )->default( '#' );
+                $table->string( 'source' )->default( 'system' );
+                $table->boolean( 'dismissable' )->default( true );
                 $table->timestamps();
-            });
+            } );
         }
     }
 
@@ -44,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_notifications');
+        Schema::dropIfExists( 'nexopos_notifications' );
     }
 };

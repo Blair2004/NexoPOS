@@ -26,19 +26,19 @@ class ModuleDeleteCommand extends Command
      *
      * @return int
      */
-    public function handle(ModulesService $modulesService)
+    public function handle( ModulesService $modulesService )
     {
-        $module = $modulesService->get($this->argument('identifier'));
+        $module = $modulesService->get( $this->argument( 'identifier' ) );
 
-        if ($module !== null && $this->confirm(sprintf(__('Would you like to delete "%s"?'), $module[ 'name' ]))) {
-            $result = $modulesService->delete($this->argument('identifier'));
+        if ( $module !== null && $this->confirm( sprintf( __( 'Would you like to delete "%s"?' ), $module[ 'name' ] ) ) ) {
+            $result = $modulesService->delete( $this->argument( 'identifier' ) );
 
-            return match ($result[ 'status' ]) {
-                'danger' => $this->error($result[ 'message' ]),
-                'success' => $this->info($result[ 'message' ]),
+            return match ( $result[ 'status' ] ) {
+                'danger' => $this->error( $result[ 'message' ] ),
+                'success' => $this->info( $result[ 'message' ] ),
             };
         }
 
-        return $this->error(sprintf(__('Unable to find a module having as namespace "%s"'), $this->argument('identifier')));
+        return $this->error( sprintf( __( 'Unable to find a module having as namespace "%s"' ), $this->argument( 'identifier' ) ) );
     }
 }

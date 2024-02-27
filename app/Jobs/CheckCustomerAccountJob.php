@@ -20,7 +20,7 @@ class CheckCustomerAccountJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Customer $customer, public $payment)
+    public function __construct( public Customer $customer, public $payment )
     {
         $this->prepareSerialization();
     }
@@ -30,10 +30,10 @@ class CheckCustomerAccountJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(CustomerService $customerService)
+    public function handle( CustomerService $customerService )
     {
-        if ($this->payment[ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT) {
-            $customerService->canReduceCustomerAccount($this->customer, $this->payment[ 'value' ]);
+        if ( $this->payment[ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
+            $customerService->canReduceCustomerAccount( $this->customer, $this->payment[ 'value' ] );
         }
     }
 }

@@ -7,7 +7,7 @@
                     <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
                 </div>
             </div>
-            <div class="body flex flex-col h-64">
+            <div class="body flex flex-col h-64" :class="customers.length === 0 ? 'body flex items-center justify-center flex-col h-64' : ''">
                 <div v-if="! hasLoaded" class="w-full flex items-center justify-center">
                     <ns-spinner size="12" border="4"></ns-spinner>
                 </div>

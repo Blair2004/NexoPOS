@@ -18,11 +18,11 @@ class CouponProduct extends NsModel
 
     public function coupon()
     {
-        return $this->belongsTo(Coupon::class);
+        return $this->belongsTo( Coupon::class );
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo( Product::class, 'product_id' );
     }
 }

@@ -17,7 +17,7 @@ class OrderRefundPaymentAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct(public OrderRefund $refund)
+    public function __construct( public OrderRefund $refund )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class OrderRefundPaymentAfterCreatedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

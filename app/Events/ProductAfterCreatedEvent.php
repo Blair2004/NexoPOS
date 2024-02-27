@@ -17,7 +17,7 @@ class ProductAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct(public Product $product)
+    public function __construct( public Product $product )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class ProductAfterCreatedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

@@ -26,10 +26,10 @@ class ProcurementAfterDeleteEventListener
      *
      * @return void
      */
-    public function handle(ProcurementAfterDeleteEvent $event)
+    public function handle( ProcurementAfterDeleteEvent $event )
     {
         $this->providerService->computeSummary(
-            Provider::find($event->procurement_data[ 'provider_id' ])
+            Provider::find( $event->procurement_data[ 'provider_id' ] )
         );
     }
 }

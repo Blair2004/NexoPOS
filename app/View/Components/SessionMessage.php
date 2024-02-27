@@ -23,6 +23,6 @@ class SessionMessage extends Component
      */
     public function render()
     {
-        return view('components.session-message');
+        return view( 'components.session-message' );
     }
 }

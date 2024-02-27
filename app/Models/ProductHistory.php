@@ -8,25 +8,25 @@ use App\Events\ProductHistoryAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
- * @property int $product_id
- * @property int $procurement_id
- * @property int $procurement_product_id
- * @property int $order_id
- * @property int $order_product_id
- * @property mixed $operation_type
- * @property int $unit_id
- * @property float $before_quantity
- * @property float $quantity
- * @property float $after_quantity
- * @property float $unit_price
- * @property float $total_price
- * @property string $description
- * @property int $author
- * @property mixed $uuid
+ * @property int            $id
+ * @property int            $product_id
+ * @property int            $procurement_id
+ * @property int            $procurement_product_id
+ * @property int            $order_id
+ * @property int            $order_product_id
+ * @property mixed          $operation_type
+ * @property int            $unit_id
+ * @property float          $before_quantity
+ * @property float          $quantity
+ * @property float          $after_quantity
+ * @property float          $unit_price
+ * @property float          $total_price
+ * @property string         $description
+ * @property int            $author
+ * @property mixed          $uuid
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property Product $product
+ * @property Product        $product
  */
 class ProductHistory extends NsModel
 {
@@ -113,27 +113,27 @@ class ProductHistory extends NsModel
     /**
      * alias of scopeFindProduct
      *
-     * @param QueryBuilder $query
-     * @param int $product_id
+     * @param  QueryBuilder $query
+     * @param  int          $product_id
      * @return QueryBuilder
      */
-    public function scopeWithProduct($query, $product_id)
+    public function scopeWithProduct( $query, $product_id )
     {
-        return $query->where('product_id', $product_id);
+        return $query->where( 'product_id', $product_id );
     }
 
-    public function scopeFindProduct($query, $id)
+    public function scopeFindProduct( $query, $id )
     {
-        return $query->where('product_id', $id);
+        return $query->where( 'product_id', $id );
     }
 
     public function unit()
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo( Unit::class );
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo( Product::class );
     }
 }

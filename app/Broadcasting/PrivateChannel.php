@@ -21,7 +21,7 @@ class PrivateChannel
      *
      * @return array|bool
      */
-    public function join(User $user)
+    public function join( User $user )
     {
         return true;
     }

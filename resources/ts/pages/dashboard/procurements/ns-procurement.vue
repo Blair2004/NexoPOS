@@ -492,13 +492,13 @@ export default {
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe({
-                    next: data => {
-                        popup.close();
-                        
+                    next: data => {                        
                         if ( data.status === 'success' ) {
                             this.shouldPreventAccidentalRefresh.next(false);
                             return document.location   =   this.returnUrl;
                         }
+
+                        popup.close();
                         this.formValidation.enableForm( this.form );
                     }, 
                     error: ( error ) => {

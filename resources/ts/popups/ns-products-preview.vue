@@ -23,7 +23,11 @@
                             </thead>
                             <tbody>
                                 <tr v-for="unitQuantity of unitQuantities" :key="unitQuantity.id">
-                                    <td class="p-1 border text-left">{{ unitQuantity.unit.name }}</td>
+                                    <td class="p-1 border text-left">{{ unitQuantity.unit.name }} 
+                                        <template v-if="product.rawType === 'materialized' && product.rawStockManagement === 'enabled'">
+                                            &mdash; <a @click="convert( unitQuantity, product )" class="text-sm text-info-secondary hover:underline border-dashed" href="javascript:void(0)">{{ __( 'Convert' ) }}</a>
+                                        </template>
+                                    </td>
                                     <td class="p-1 border text-right">{{ nsCurrency( unitQuantity.sale_price  ) }}</td>
                                     <td class="p-1 border text-right">{{ nsCurrency( unitQuantity.wholesale_price  ) }}</td>
                                     <td class="p-1 border text-right">{{ unitQuantity.quantity }}</td>
@@ -37,14 +41,18 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { nsCurrency } from '~/filters/currency';
 import { nsHttpClient } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
+import nsProductsConversion from './ns-products-conversion.vue';
+
+declare const Popup;
+
 
 export default {
     name: 'ns-products-preview',
-    props: [ 'popup' ],
+    props: [ 'popup', 'product' ],
     computed: {
         product() {
             return this.popup.params.product
@@ -61,12 +69,31 @@ export default {
             }
         },
         loadProductQuantities() {
+            console.log( 'is loadinfg' );
             this.hasLoadedUnitQuantities            =   false;
             nsHttpClient.get( `/api/products/${this.product.id}/units/quantities` )
-                .subscribe( result => {
-                    this.unitQuantities             =   result;
-                    this.hasLoadedUnitQuantities    =   true;
+                .subscribe({
+                    next: result => {
+                        this.unitQuantities             =   result;
+                        this.hasLoadedUnitQuantities    =   true;
+                    }
                 })
+        },
+        async convert( unitQuantity, product ) {
+            try {
+                const promise   =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsProductsConversion, {
+                        unitQuantity,
+                        product,
+                        resolve, 
+                        reject
+                    })
+                });
+
+                this.loadProductQuantities();
+            } catch( exception ) {
+                console.log({ exception })
+            }
         }
     },
     data() {

@@ -6,12 +6,12 @@ use App\Services\TaxService;
 
 trait WithTaxService
 {
-    public function getPercentageOf($value, $rate)
+    public function getPercentageOf( $value, $rate )
     {
         /**
          * @var TaxService $taxService
          */
-        $taxService = app()->make(TaxService::class);
+        $taxService = app()->make( TaxService::class );
 
         return $taxService->getPercentageOf(
             value: $value,

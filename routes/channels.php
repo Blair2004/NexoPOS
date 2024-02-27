@@ -14,4 +14,4 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('ns.private-channel', PrivateChannel::class);
+Broadcast::channel( 'ns.private-channel', PrivateChannel::class );

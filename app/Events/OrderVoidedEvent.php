@@ -17,7 +17,7 @@ class OrderVoidedEvent
      *
      * @return void
      */
-    public function __construct(public Order $order)
+    public function __construct( public Order $order )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class OrderVoidedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

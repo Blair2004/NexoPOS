@@ -54,13 +54,16 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import resolveIfQueued from "~/libraries/popup-resolver";
 import { Popup } from '~/libraries/popup';
 import nsPosCustomersVue from './ns-pos-customers.vue';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
+import popupCloser from '~/libraries/popup-closer';
+
+declare const POS;
 
 export default {
     props: [ 'popup' ],
@@ -95,12 +98,15 @@ export default {
         this.getRecentCustomers();
 
         this.$refs.searchField.focus();
+
+        this.popupCloser();
     },
     unmounted() {
         this.orderSubscription.unsubscribe();
     },
     methods: {
         __,
+        popupCloser,
         nsCurrency,
         
         /**

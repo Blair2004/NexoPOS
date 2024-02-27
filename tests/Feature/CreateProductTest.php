@@ -18,7 +18,7 @@ class CreateProductTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        for ($i = 0; $i < 5; $i++) {
+        for ( $i = 0; $i < 5; $i++ ) {
             $this->attemptCreateGroupedProduct();
         }
     }
@@ -41,7 +41,7 @@ class CreateProductTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        for ($i = 0; $i <= 3; $i++) {
+        for ( $i = 0; $i <= 3; $i++ ) {
             $this->attemptSetProduct();
         }
 
@@ -65,5 +65,11 @@ class CreateProductTest extends TestCase
     {
         $this->attemptAuthenticate();
         $this->attemptNotSearchableAreSearchable();
+    }
+
+    public function testProductConversion()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptProductConversion();
     }
 }

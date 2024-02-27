@@ -57,22 +57,22 @@ class ProcurementController extends DashboardController
      * create a procurement
      * using the provided informations
      */
-    public function create(ProcurementRequest $request)
+    public function create( ProcurementRequest $request )
     {
-        return $this->procurementService->create($request->only([
+        return $this->procurementService->create( $request->only( [
             'general', 'name', 'products',
-        ]));
+        ] ) );
     }
 
-    public function edit(Procurement $procurement, ProcurementRequest $request)
+    public function edit( Procurement $procurement, ProcurementRequest $request )
     {
-        if ($procurement->delivery_status === Procurement::STOCKED) {
-            throw new NotAllowedException(__('Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.'));
+        if ( $procurement->delivery_status === Procurement::STOCKED ) {
+            throw new NotAllowedException( __( 'Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.' ) );
         }
 
-        return $this->procurementService->edit($procurement->id, $request->only([
+        return $this->procurementService->edit( $procurement->id, $request->only( [
             'general', 'name', 'products',
-        ]));
+        ] ) );
     }
 
     /**
@@ -82,19 +82,19 @@ class ProcurementController extends DashboardController
      * @param int procurement id
      * @return array response
      */
-    public function procure($procurement_id, Request $request)
+    public function procure( $procurement_id, Request $request )
     {
-        $procurement = $this->procurementService->get($procurement_id);
+        $procurement = $this->procurementService->get( $procurement_id );
 
         return $this->procurementService->saveProducts(
             $procurement,
-            collect($request->input('items'))
+            collect( $request->input( 'items' ) )
         );
     }
 
-    public function resetProcurement($procurement_id)
+    public function resetProcurement( $procurement_id )
     {
-        return $this->procurementService->resetProcurement($procurement_id);
+        return $this->procurementService->resetProcurement( $procurement_id );
     }
 
     /**
@@ -103,31 +103,31 @@ class ProcurementController extends DashboardController
      * @param int procurement_id
      * @return Collection
      */
-    public function procurementProducts($procurement_id)
+    public function procurementProducts( $procurement_id )
     {
-        return $this->procurementService->getProducts($procurement_id)->map(function ($product) {
+        return $this->procurementService->getProducts( $procurement_id )->map( function ( $product ) {
             $product->unit;
 
             return $product;
-        });
+        } );
     }
 
     /**
      * Will change the payment status
      * for a procurement.
      */
-    public function changePaymentStatus(Procurement $procurement, Request $request)
+    public function changePaymentStatus( Procurement $procurement, Request $request )
     {
-        if ($procurement->payment_status === Procurement::PAYMENT_PAID) {
-            throw new NotAllowedException(__('You cannot change the status of an already paid procurement.'));
+        if ( $procurement->payment_status === Procurement::PAYMENT_PAID ) {
+            throw new NotAllowedException( __( 'You cannot change the status of an already paid procurement.' ) );
         }
 
-        $procurement->payment_status = $request->input('payment_status');
+        $procurement->payment_status = $request->input( 'payment_status' );
         $procurement->save();
 
         return [
             'status' => 'success',
-            'message' => __('The procurement payment status has been changed successfully.'),
+            'message' => __( 'The procurement payment status has been changed successfully.' ),
         ];
     }
 
@@ -137,10 +137,10 @@ class ProcurementController extends DashboardController
      *
      * @return array
      */
-    public function setAsPaid(Procurement $procurement)
+    public function setAsPaid( Procurement $procurement )
     {
-        if ($procurement->payment_status === Procurement::PAYMENT_PAID) {
-            throw new NotAllowedException(__('You cannot change the status of an already paid procurement.'));
+        if ( $procurement->payment_status === Procurement::PAYMENT_PAID ) {
+            throw new NotAllowedException( __( 'You cannot change the status of an already paid procurement.' ) );
         }
 
         $procurement->payment_status = Procurement::PAYMENT_PAID;
@@ -148,7 +148,7 @@ class ProcurementController extends DashboardController
 
         return [
             'status' => 'success',
-            'message' => __('The procurement has been marked as paid.'),
+            'message' => __( 'The procurement has been marked as paid.' ),
         ];
     }
 
@@ -161,15 +161,15 @@ class ProcurementController extends DashboardController
      * @param int product_id
      * @return array response
      */
-    public function editProduct(Request $request, $procurement_id, $product_id)
+    public function editProduct( Request $request, $procurement_id, $product_id )
     {
-        if ($this->procurementService->hasProduct($procurement_id, $product_id)) {
-            return $this->procurementService->updateProcurementProduct($product_id, $request->only([ 'quantity', 'unit_id', 'purchase_price' ]));
+        if ( $this->procurementService->hasProduct( $procurement_id, $product_id ) ) {
+            return $this->procurementService->updateProcurementProduct( $product_id, $request->only( [ 'quantity', 'unit_id', 'purchase_price' ] ) );
         }
 
         throw new NotAllowedException(
             sprintf(
-                __('The product which id is %s doesnt\'t belong to the procurement which id is %s'),
+                __( 'The product which id is %s doesnt\'t belong to the procurement which id is %s' ),
                 $product_id,
                 $procurement_id
             )
@@ -182,13 +182,13 @@ class ProcurementController extends DashboardController
      * @param int procurement id
      * @return array response
      */
-    public function refreshProcurement(Procurement $id)
+    public function refreshProcurement( Procurement $id )
     {
-        ProcurementRefreshJob::dispatch($id);
+        ProcurementRefreshJob::dispatch( $id );
 
         return [
             'status' => 'success',
-            'message' => __('The refresh process has started. You\'ll get informed once it\'s complete.'),
+            'message' => __( 'The refresh process has started. You\'ll get informed once it\'s complete.' ),
         ];
     }
 
@@ -198,9 +198,9 @@ class ProcurementController extends DashboardController
      * @param int product_id
      * @return array response
      */
-    public function deleteProcurementProduct($product_id)
+    public function deleteProcurementProduct( $product_id )
     {
-        $procurementProduct = ProcurementProduct::find($product_id);
+        $procurementProduct = ProcurementProduct::find( $product_id );
 
         return $this->procurementService->deleteProduct(
             $procurementProduct,
@@ -215,14 +215,14 @@ class ProcurementController extends DashboardController
      * @param int procurement id
      * @return array operation result
      */
-    public function deleteProcurement($procurement_id)
+    public function deleteProcurement( $procurement_id )
     {
-        return $this->procurementService->delete($procurement_id);
+        return $this->procurementService->delete( $procurement_id );
     }
 
-    public function bulkUpdateProducts($procurement_id, Request $request)
+    public function bulkUpdateProducts( $procurement_id, Request $request )
     {
-        return $this->procurementService->bulkUpdateProducts($procurement_id, $request->input('items'));
+        return $this->procurementService->bulkUpdateProducts( $procurement_id, $request->input( 'items' ) );
     }
 
     /**
@@ -240,74 +240,74 @@ class ProcurementController extends DashboardController
      */
     public function createProcurement()
     {
-        ns()->restrict([ 'nexopos.create.procurements' ]);
+        ns()->restrict( [ 'nexopos.create.procurements' ] );
 
-        return View::make('pages.dashboard.procurements.create', Hook::filter('ns-create-procurement-labels', [
-            'title' => __('New Procurement'),
-            'description' => __('Make a new procurement.'),
-        ]));
+        return View::make( 'pages.dashboard.procurements.create', Hook::filter( 'ns-create-procurement-labels', [
+            'title' => __( 'New Procurement' ),
+            'description' => __( 'Make a new procurement.' ),
+        ] ) );
     }
 
-    public function updateProcurement(Procurement $procurement)
+    public function updateProcurement( Procurement $procurement )
     {
-        ns()->restrict([ 'nexopos.update.procurements' ]);
+        ns()->restrict( [ 'nexopos.update.procurements' ] );
 
-        if ($procurement->delivery_status === Procurement::STOCKED) {
-            throw new NotAllowedException(__('Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.'));
+        if ( $procurement->delivery_status === Procurement::STOCKED ) {
+            throw new NotAllowedException( __( 'Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.' ) );
         }
 
-        return View::make('pages.dashboard.procurements.edit', Hook::filter('ns-update-procurement-labels', [
-            'title' => __('Edit Procurement'),
-            'description' => __('Perform adjustment on existing procurement.'),
+        return View::make( 'pages.dashboard.procurements.edit', Hook::filter( 'ns-update-procurement-labels', [
+            'title' => __( 'Edit Procurement' ),
+            'description' => __( 'Perform adjustment on existing procurement.' ),
             'procurement' => $procurement,
-        ]));
+        ] ) );
     }
 
-    public function procurementInvoice(Procurement $procurement)
+    public function procurementInvoice( Procurement $procurement )
     {
-        ns()->restrict([ 'nexopos.read.procurements' ]);
+        ns()->restrict( [ 'nexopos.read.procurements' ] );
 
-        return View::make('pages.dashboard.procurements.invoice', [
-            'title' => sprintf(__('%s - Invoice'), $procurement->name),
-            'description' => __('list of product procured.'),
+        return View::make( 'pages.dashboard.procurements.invoice', [
+            'title' => sprintf( __( '%s - Invoice' ), $procurement->name ),
+            'description' => __( 'list of product procured.' ),
             'procurement' => $procurement,
             'options' => $this->options,
-        ]);
+        ] );
     }
 
-    public function searchProduct(Request $request)
+    public function searchProduct( Request $request )
     {
-        return $this->procurementService->searchProduct($request->input('search'));
+        return $this->procurementService->searchProduct( $request->input( 'search' ) );
     }
 
-    public function searchProcurementProduct(Request $request)
+    public function searchProcurementProduct( Request $request )
     {
         $products = Product::query()
             ->trackingDisabled()
             ->withStockEnabled()
             ->notGrouped()
-            ->with('unit_quantities.unit')
-            ->where(function ($query) use ($request) {
-                $query->where('sku', 'LIKE', "%{$request->input('argument')}%")
-                    ->orWhere('name', 'LIKE', "%{$request->input('argument')}%")
-                    ->orWhere('barcode', 'LIKE', "%{$request->input('argument')}%");
-            })
-            ->limit(8)
+            ->with( 'unit_quantities.unit' )
+            ->where( function ( $query ) use ( $request ) {
+                $query->where( 'sku', 'LIKE', "%{$request->input( 'argument' )}%" )
+                    ->orWhere( 'name', 'LIKE', "%{$request->input( 'argument' )}%" )
+                    ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'argument' )}%" );
+            } )
+            ->limit( 8 )
             ->get()
-            ->map(function ($product) {
-                $units = json_decode($product->purchase_unit_ids);
+            ->map( function ( $product ) {
+                $units = json_decode( $product->purchase_unit_ids );
 
-                if ($units) {
+                if ( $units ) {
                     $product->purchase_units = collect();
-                    collect($units)->each(function ($unitID) use (&$product) {
-                        $product->purchase_units->push(Unit::find($unitID));
-                    });
+                    collect( $units )->each( function ( $unitID ) use ( &$product ) {
+                        $product->purchase_units->push( Unit::find( $unitID ) );
+                    } );
                 }
 
                 return $product;
-            });
+            } );
 
-        if (! $products->isEmpty()) {
+        if ( ! $products->isEmpty() ) {
             return [
                 'from' => 'products',
                 'products' => $products,
@@ -316,7 +316,7 @@ class ProcurementController extends DashboardController
 
         return [
             'from' => 'procurements',
-            'product' => $this->procurementService->searchProcurementProduct($request->input('argument')),
+            'product' => $this->procurementService->searchProcurementProduct( $request->input( 'argument' ) ),
         ];
     }
 
@@ -325,8 +325,8 @@ class ProcurementController extends DashboardController
         return ProcurementProductCrud::table();
     }
 
-    public function editProcurementProduct(ProcurementProduct $product)
+    public function editProcurementProduct( ProcurementProduct $product )
     {
-        return ProcurementProductCrud::form($product);
+        return ProcurementProductCrud::form( $product );
     }
 }

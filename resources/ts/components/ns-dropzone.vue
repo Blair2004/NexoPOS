@@ -16,8 +16,6 @@ export default {
         const dropZone = ref(null);
 
         const handleDrop = (event) => {
-            console.log( dropZone.value );
-            dropZone.value.style.border = '2px solid rgb(255 255 255 / 0%)';
             const id = event.dataTransfer.getData("text");
             emit('dropped', id);
         };
@@ -28,7 +26,10 @@ export default {
 </script>
   
 <style scoped>
-    .ns-drop-zone {
-        border: 2px solid rgb(255 255 255 / 0%);
+    .light .ns-drop-zone {
+        @apply border-2 border-dashed border-slate-600
+    }
+    .dark .ns-drop-zone {
+        @apply border-2 border-dashed border-slate-400
     }
 </style>

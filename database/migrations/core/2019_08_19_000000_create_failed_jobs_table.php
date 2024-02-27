@@ -23,15 +23,15 @@ return new class extends Migration
      */
     public function up()
     {
-        if (! Schema::hasTable('failed_jobs')) {
-            Schema::create('failed_jobs', function (Blueprint $table) {
+        if ( ! Schema::hasTable( 'failed_jobs' ) ) {
+            Schema::create( 'failed_jobs', function ( Blueprint $table ) {
                 $table->id();
-                $table->text('connection');
-                $table->text('queue');
-                $table->longText('payload');
-                $table->longText('exception');
-                $table->timestamp('failed_at')->useCurrent();
-            });
+                $table->text( 'connection' );
+                $table->text( 'queue' );
+                $table->longText( 'payload' );
+                $table->longText( 'exception' );
+                $table->timestamp( 'failed_at' )->useCurrent();
+            } );
         }
     }
 
@@ -42,6 +42,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('failed_jobs');
+        Schema::dropIfExists( 'failed_jobs' );
     }
 };

@@ -10,28 +10,28 @@ class OrderDeliveryCast implements CastsAttributes
     /**
      * Cast the given value.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
+     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @param  mixed                               $value
      * @return mixed
      */
-    public function get($model, string $key, $value, array $attributes)
+    public function get( $model, string $key, $value, array $attributes )
     {
         /**
          * @var OrdersService $orderService
          */
-        $orderService = app()->make(OrdersService::class);
+        $orderService = app()->make( OrdersService::class );
 
-        return $orderService->getDeliveryStatus($value);
+        return $orderService->getDeliveryStatus( $value );
     }
 
     /**
      * Prepare the given value for storage.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
+     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @param  mixed                               $value
      * @return mixed
      */
-    public function set($model, string $key, $value, array $attributes)
+    public function set( $model, string $key, $value, array $attributes )
     {
         return $value;
     }

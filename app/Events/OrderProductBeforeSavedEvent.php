@@ -16,7 +16,7 @@ class OrderProductBeforeSavedEvent
      *
      * @return void
      */
-    public function __construct(public OrderProduct $orderProduct, public $data)
+    public function __construct( public OrderProduct $orderProduct, public $data )
     {
         // ...
     }

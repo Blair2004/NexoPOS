@@ -156,15 +156,15 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     public function getLabels(): array
     {
         return [
-            'list_title'            =>  __( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
-            'list_description'      =>  __( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
-            'no_entry'              =>  __( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
-            'create_new'            =>  __( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_title'          =>  __( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_description'    =>  __( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
-            'edit_title'            =>  __( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'edit_description'      =>  __( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
-            'back_to_list'          =>  __( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
+            'list_title'            =>  {{ '__' }}( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
+            'list_description'      =>  {{ '__' }}( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
+            'no_entry'              =>  {{ '__' }}( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
+            'create_new'            =>  {{ '__' }}( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
+            'create_title'          =>  {{ '__' }}( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
+            'create_description'    =>  {{ '__' }}( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
+            'edit_title'            =>  {{ '__' }}( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
+            'edit_description'      =>  {{ '__' }}( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
+            'back_to_list'          =>  {{ '__' }}( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
         ];
     }
 
@@ -175,19 +175,19 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     {
         return [
             'main' =>  [
-                'label'         =>  __( 'Name' ),
+                'label'         =>  {{ '__' }}( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  {{ '__' }}( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
                 'general'   =>  [
-                    'label'     =>  __( 'General' ),
+                    'label'     =>  {{ '__' }}( 'General' ),
                     'fields'    =>  [
                         @foreach( $Schema::getColumnListing( $table_name ) as $column )[
                             'type'  =>  'text',
                             'name'  =>  '{{ $column }}',
-                            'label' =>  __( '{{ ucwords( $column ) }}' ),
+                            'label' =>  {{ '__' }}( '{{ ucwords( $column ) }}' ),
                             'value' =>  $entry->{{ $column }} ?? '',
                         ], @endforeach
                     ]
@@ -281,7 +281,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
              *
              *  return response([
              *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
+             *      'message'   =>  {{ '__' }}( 'You\re not allowed to do that.' )
              *  ], 403 );
             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
@@ -300,7 +300,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         return [
             @foreach( $Schema::getColumnListing( $table_name ) as $column )
 '{{ $column }}'  =>  [
-                'label'  =>  __( '{{ ucwords( $column ) }}' ),
+                'label'  =>  {{ '__' }}( '{{ ucwords( $column ) }}' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -318,17 +318,17 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
          */
         $entry->action( 
             identifier: 'edit',
-            label: __( 'Edit' ),
+            label: {{ '__' }}( 'Edit' ),
             url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
         );
         
         $entry->action( 
             identifier: 'delete',
-            label: __( 'Delete' ),
+            label: {{ '__' }}( 'Delete' ),
             type: 'DELETE',
             url: ns()->url( '/api/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
             confirm: [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+                'message'  =>  {{ '__' }}( 'Would you like to delete this ?' ),
             ]
         );
         
@@ -399,7 +399,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Entries' ),
+                'label'         =>  {{ '__' }}( 'Delete Selected Entries' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace

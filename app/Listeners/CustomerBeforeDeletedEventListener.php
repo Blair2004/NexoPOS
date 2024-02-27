@@ -19,8 +19,8 @@ class CustomerBeforeDeletedEventListener
     /**
      * Handle the event.
      */
-    public function handle(CustomerBeforeDeletedEvent $event): void
+    public function handle( CustomerBeforeDeletedEvent $event ): void
     {
-        $this->customerService->deleteCustomerAttributes($event->customer->id);
+        $this->customerService->deleteCustomerAttributes( $event->customer->id );
     }
 }

@@ -16,7 +16,7 @@ class OrderAfterProductStockCheckedEvent
      *
      * @return void
      */
-    public function __construct(public $items, public $session_identifier)
+    public function __construct( public $items, public $session_identifier )
     {
         // ...
     }
@@ -28,6 +28,6 @@ class OrderAfterProductStockCheckedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

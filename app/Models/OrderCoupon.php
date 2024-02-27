@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
- * @property string $uuid
- * @property int $author
- * @property float $value
+ * @property int            $id
+ * @property string         $uuid
+ * @property int            $author
+ * @property float          $value
  * @property \Carbon\Carbon $updated_at
  */
 class OrderCoupon extends NsModel
@@ -19,6 +19,6 @@ class OrderCoupon extends NsModel
 
     public function customerCoupon()
     {
-        return $this->belongsTo(CustomerCoupon::class, 'customer_coupon_id');
+        return $this->belongsTo( CustomerCoupon::class, 'customer_coupon_id' );
     }
 }

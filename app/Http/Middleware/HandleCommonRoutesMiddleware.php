@@ -13,12 +13,12 @@ class HandleCommonRoutesMiddleware
      *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle( Request $request, Closure $next )
     {
-        $resultRequest = Hook::filter('ns-common-routes', false, $request, $next);
+        $resultRequest = Hook::filter( 'ns-common-routes', false, $request, $next );
 
-        if ($resultRequest === false) {
-            return $next($request);
+        if ( $resultRequest === false ) {
+            return $next( $request );
         }
 
         return $resultRequest;

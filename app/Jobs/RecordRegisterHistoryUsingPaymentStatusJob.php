@@ -19,7 +19,7 @@ class RecordRegisterHistoryUsingPaymentStatusJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Order $order, public string $previous, public string $new)
+    public function __construct( public Order $order, public string $previous, public string $new )
     {
         //
     }
@@ -31,7 +31,7 @@ class RecordRegisterHistoryUsingPaymentStatusJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(CashRegistersService $cashRegistersService)
+    public function handle( CashRegistersService $cashRegistersService )
     {
         $cashRegistersService->createRegisterHistoryUsingPaymentStatus(
             order: $this->order,

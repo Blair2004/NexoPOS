@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int $id
- * @property string $uuid
- * @property string $description
- * @property int $author
+ * @property int            $id
+ * @property string         $uuid
+ * @property string         $description
+ * @property int            $author
  * @property \Carbon\Carbon $updated_at
  */
 class TaxGroup extends NsModel
@@ -25,6 +25,6 @@ class TaxGroup extends NsModel
      */
     public function taxes()
     {
-        return $this->hasMany(Tax::class);
+        return $this->hasMany( Tax::class );
     }
 }

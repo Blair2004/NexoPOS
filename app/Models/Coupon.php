@@ -5,18 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
- * @property mixed $name
- * @property mixed $code
- * @property mixed $type
- * @property float $discount_value
+ * @property int            $id
+ * @property mixed          $name
+ * @property mixed          $code
+ * @property mixed          $type
+ * @property float          $discount_value
  * @property \Carbon\Carbon $valid_until
- * @property float $minimum_cart_value
- * @property float $maximum_cart_value
+ * @property float          $minimum_cart_value
+ * @property float          $maximum_cart_value
  * @property \Carbon\Carbon $valid_hours_start
  * @property \Carbon\Carbon $valid_hours_end
- * @property float $limit_usage
- * @property int $author
+ * @property float          $limit_usage
+ * @property int            $author
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */
@@ -30,9 +30,9 @@ class Coupon extends NsModel
 
     const TYPE_FLAT = 'flat_discount';
 
-    public function scopeCode($query, $code)
+    public function scopeCode( $query, $code )
     {
-        return $query->where('code', $code);
+        return $query->where( 'code', $code );
     }
 
     public function customerCoupon()
@@ -46,12 +46,12 @@ class Coupon extends NsModel
 
     public function categories()
     {
-        return $this->hasMany(CouponCategory::class);
+        return $this->hasMany( CouponCategory::class );
     }
 
     public function products()
     {
-        return $this->hasMany(CouponProduct::class);
+        return $this->hasMany( CouponProduct::class );
     }
 
     public function customers()

@@ -20,11 +20,11 @@ class CouponCustomerGroup extends Model
 
     public function coupon()
     {
-        return $this->belongsTo(Coupon::class);
+        return $this->belongsTo( Coupon::class );
     }
 
     public function group()
     {
-        return $this->hasOne(CustomerGroup::class);
+        return $this->hasOne( CustomerGroup::class );
     }
 }

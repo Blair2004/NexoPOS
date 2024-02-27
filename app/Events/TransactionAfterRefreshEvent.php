@@ -16,7 +16,7 @@ class TransactionAfterRefreshEvent
      *
      * @return void
      */
-    public function __construct(public $event, public $date)
+    public function __construct( public $event, public $date )
     {
         // ...
     }
@@ -28,6 +28,6 @@ class TransactionAfterRefreshEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

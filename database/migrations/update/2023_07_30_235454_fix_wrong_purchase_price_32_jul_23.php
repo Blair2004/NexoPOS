@@ -18,28 +18,28 @@ return new class extends Migration
      */
     public function up()
     {
-        $this->productService = app()->make(ProductService::class);
+        $this->productService = app()->make( ProductService::class );
 
         /**
          * will ensure a single product
          * is handled every time.
          */
-        $cached = json_decode(Cache::get('fix_wrong_purchase_prices', '[]'));
+        $cached = json_decode( Cache::get( 'fix_wrong_purchase_prices', '[]' ) );
 
-        OrderProduct::whereNotIn('id', $cached)->get()->each(function (OrderProduct $orderProduct) use ($cached) {
-            $product = Product::find($orderProduct->product_id);
+        OrderProduct::whereNotIn( 'id', $cached )->get()->each( function ( OrderProduct $orderProduct ) use ( $cached ) {
+            $product = Product::find( $orderProduct->product_id );
             $lastPurchasePrice = $this->productService->getLastPurchasePrice(
                 product: $product,
                 unit: $orderProduct->unit,
                 before: $orderProduct->created_at
             );
-            $orderProduct->total_purchase_price = Currency::fresh($lastPurchasePrice)->multipliedBy($orderProduct->quantity)->getRaw();
+            $orderProduct->total_purchase_price = Currency::fresh( $lastPurchasePrice )->multipliedBy( $orderProduct->quantity )->getRaw();
             $orderProduct->save();
 
             $cached[] = $orderProduct->id;
 
-            Cache::put('fix_wrong_purchase_prices', json_encode($cached), now()->addDay());
-        });
+            Cache::put( 'fix_wrong_purchase_prices', json_encode( $cached ), now()->addDay() );
+        } );
     }
 
     /**

@@ -15,7 +15,7 @@ class AfterMigrationStatusCheckedEvent
      *
      * @return void
      */
-    public function __construct(public $next, public $request)
+    public function __construct( public $next, public $request )
     {
         // ...
     }

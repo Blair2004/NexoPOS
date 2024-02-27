@@ -17,7 +17,7 @@ class OrderAfterInstalmentPaidEvent
      *
      * @return void
      */
-    public function __construct(public OrderInstalment $instalment, public Order $order)
+    public function __construct( public OrderInstalment $instalment, public Order $order )
     {
         // ...
     }

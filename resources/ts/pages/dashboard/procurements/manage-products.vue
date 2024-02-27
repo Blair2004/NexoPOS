@@ -105,7 +105,7 @@
                                 </div>
                                 <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
                                     <div class="px-4 w-full md:w-1/2 lg:w-1/3">
-                                        <ns-field v-for="field in getActiveTab( variation.tabs ).fields.filter( field => field.name !== 'selling_group' )" @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="field"></ns-field>
+                                        <ns-field v-for="field in getActiveTab( variation.tabs ).fields.filter( field => field.name !== 'selling_group' )" @change="loadAvailableUnits( getActiveTab( variation.tabs ), field )" :field="field"></ns-field>
                                     </div>
                                     <template v-if="unitLoaded">
                                         <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
@@ -122,22 +122,26 @@
                                                         <span>{{ __( 'New Group' ) }}</span>
                                                     </div>
                                                 </div>
-                                                <div class="-mx-4 flex flex-wrap">
-                                                    <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
+                                                <ns-tabs v-if="field.groups.length > 0" @changeTab="variation.activeUnitTab = $event" :active="variation.activeUnitTab || 'tab-0'">
+                                                    <ns-tabs-item padding="p-2" v-for="(group,index) of field.groups" :identifier="'tab-' + ( index )" :label="group.label">
                                                         <div class="shadow rounded overflow-hidden bg-box-elevation-background text-primary">
                                                             <div class="border-b text-sm p-2 flex justify-between text-primary border-box-elevation-edge">
                                                                 <span>{{ __( 'Available Quantity' ) }}</span>
-                                                                <span>{{ getUnitQuantity( group_fields ) }}</span>
+                                                                <span>{{ getUnitQuantity( group.fields ) }}</span>
                                                             </div>
                                                             <div class="p-2 mb-2">
-                                                                <ns-field @saved="handleSavedUnitGroupFields( $event, field )" :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
+                                                                <div class="md:-mx-2 flex flex-wrap">
+                                                                    <div class="w-full md:w-1/2 p-2" v-for="(field,index) of group.fields" :key="index">
+                                                                        <ns-field @change="handleUnitGroupFieldChanged($event, group)" @saved="handleSavedUnitGroupFields( $event, field )" :field="field"></ns-field>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
+                                                            <div @click="removeUnitPriceGroup( group, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
                                                                 {{ __( 'Delete' ) }}
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                    </ns-tabs-item>
+                                                </ns-tabs>
                                             </div>
                                         </template>
                                     </template>
@@ -161,13 +165,17 @@
         </template>
     </div>
 </template>
-<script>
+<script lang="ts">
 import FormValidation from '~/libraries/form-validation'
 import { nsSnackBar, nsHttpClient } from '~/bootstrap';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';
 import nsProductGroup from './ns-product-group.vue';
 import { nsCurrency } from '~/filters/currency';
+import { reactive } from "vue";
+
+declare const Popup, nsSnackbar;
+
 export default {
     components: {
         nsProductGroup
@@ -180,7 +188,7 @@ export default {
             _sampleVariation: null,
             unitLoaded: false,
             unitLoadError: false,
-            form: '',
+            form: reactive({}),
             hasLoaded: false,
             hasError: false,
         }
@@ -256,6 +264,11 @@ export default {
     methods: {
         __,
         nsCurrency,
+        handleUnitGroupFieldChanged( event, group ) {
+            if ( event.name === 'unit_id' ) {
+                group.label     =   this.getFirstSelectedUnit( group.fields );
+            }
+        },
         async handleSaved( event, activeTabKey, variationIndex, field ) {
             if ( event.data.entry ) {
                 
@@ -298,41 +311,44 @@ export default {
          * The user want to remove a group
          * we might need confirmation before proceeding.
          */
-        removeUnitPriceGroup( group_fields, group ) {
-            const hasIdField    =   group_fields.filter( field => field.name === 'id' && field.value !== undefined );
+        removeUnitPriceGroup( group, groups ) {
+            const hasIdField    =   group.fields.filter( field => field.name === 'id' && field.value !== undefined );
                 Popup.show( nsPosConfirmPopupVue, {
                     title: __( 'Confirm Your Action' ),
                     message: __( 'Would you like to delete this group ?' ),
                     onAction: ( action ) => {
                         if ( action ) {
                             if ( hasIdField.length > 0 ) {
-                                this.confirmUnitQuantityDeletion({ group_fields, group });
+                                this.confirmUnitQuantityDeletion({ group, groups });
                             } else {
-                                const index     =   group.indexOf( group_fields );
-                                group.splice( index, 1 );
+                                const index     =   groups.indexOf( group );
+                                groups.splice( index, 1 );
                             }
                         }
                     }
                 });
         },
 
-        confirmUnitQuantityDeletion({ group_fields, group }) {
+        confirmUnitQuantityDeletion({ group, groups }) {
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Your Attention Is Required' ),
                 size: 'w-3/4-screen h-2/5-screen',
                 message: __( 'The current unit you\'re about to delete has a reference on the database and it might have already procured stock. Deleting that reference will remove procured stock. Would you proceed ?' ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        const id    =   group_fields.filter( f => f.name === 'id' )
-                        .map( f => f.value )[0];
+                        const id    =   group.fields.filter( f => f.name === 'id' )
+                            .map( f => f.value )[0];
 
                         nsHttpClient.delete( `/api/products/units/quantity/${id}`)
-                            .subscribe( result => {
-                                const index     =   group.indexOf( group_fields );
-                                group.splice( index, 1 );
-                                nsSnackBar.success( result.message ).subscribe();
-                            }, ( error ) => {
-                                nsSnackbar.error( error.message ).subscribe();
+                            .subscribe({
+                                next: (result: { status: string, message: string }) => {
+                                    const index     =   groups.indexOf( group );
+                                    groups.splice( index, 1 );
+                                    nsSnackBar.success( result.message ).subscribe();
+                                }, 
+                                error: ( error ) => {
+                                    nsSnackbar.error( error.message ).subscribe();
+                                }
                             });
                     }
                 }
@@ -349,7 +365,17 @@ export default {
             }
 
             if( field.options.length > field.groups.length ) {
-                field.groups.push(JSON.parse( JSON.stringify( field.fields ) ) );
+                const oldGroups     =   field.groups;
+
+                field.groups   =   [];
+
+                setTimeout( () => {
+                    field.groups    =   [...oldGroups, {
+                        label: this.getFirstSelectedUnit( field.fields ),
+                        fields: JSON.parse( JSON.stringify( field.fields ) )
+                    }];
+                }, 1);
+
             } else {
                 nsSnackBar.error( __( 'There shoulnd\'t be more option than there are units.' ) ).subscribe();
             }
@@ -360,14 +386,19 @@ export default {
          * we need to pull units attached to and make them available
          * for every groups. Validation should prevent duplicated units.
          */
-        loadAvailableUnits( unit_section ) {
+        loadAvailableUnits( unit_section, field ) {
+            
+            if( field.name !== 'unit_group' ) {
+                return;
+            }
+
             this.unitLoaded     =   false;
             this.unitLoadError  =   false;
             const unitGroup     =   unit_section.fields.filter( f => f.name === 'unit_group' )[0].value;
             
             nsHttpClient.get( this.unitsUrl.replace( '{id}', unitGroup ) )
                 .subscribe({
-                    next: result => {
+                    next: (result: any[]) => {
                         /**
                          * For each group, we'll loop to find
                          * the field that allow to choose the unit
@@ -390,8 +421,6 @@ export default {
                         });
 
                         this.unitLoaded = true;
-
-                        this.$forceUpdate();
                     },
                     error: error => {
                         this.unitLoadError  =   true;
@@ -430,9 +459,8 @@ export default {
                 return v.tabs.units.fields
                     .filter( field => field.type === 'group' )
                     .forEach( fields_groups => {
-                        const uniqueness    =   new Object;
-                        fields_groups.groups.forEach( fields => {
-                            validation.push( this.formValidation.validateFields( fields ) );
+                        fields_groups.groups.forEach( group => {
+                            validation.push( this.formValidation.validateFields( group.fields ) );
                         });
                 });
             });
@@ -466,8 +494,8 @@ export default {
 
                     v.tabs.units.fields.filter( field => field.type === 'group' )
                         .forEach( field => {
-                            groups[ field.name ]    =   field.groups.map( fields => {
-                                return this.formValidation.extractFields( fields );
+                            groups[ field.name ]    =   field.groups.map( group => {
+                                return this.formValidation.extractFields( group.fields );
                             })
                         });
 
@@ -526,7 +554,14 @@ export default {
              * load sub units based on the selection.
              */
             if ( activeIndex === 'units' ) {
-                this.loadAvailableUnits( tabs[ activeIndex ] );
+                /**
+                 * @warning assuming the first field will alway be the unit selection field
+                 */
+                const field     =   tabs[ activeIndex ].fields.filter( field => field.name === 'unit_group' );
+
+                if ( field.length > 0 ) {
+                    this.loadAvailableUnits( tabs[ activeIndex ], field[0] );
+                }
             }
         },
         duplicate( variation ) {
@@ -596,10 +631,10 @@ export default {
                 this.hasError   =   false;
 
                 request.subscribe({
-                    next: f => {
+                    next: (f:any) => {
                         resolve( f );
                         this.hasLoaded  =   true;
-                        this.form    =   this.parseForm( f.form );
+                        this.form    =   reactive(this.parseForm( f.form ));
                     },
                     error: error => {
                         reject( error );
@@ -627,6 +662,28 @@ export default {
 
                 field.value = event.data.entry.id;
             }
+        },
+        getGroupId( group_fields ) {
+            const field = group_fields.filter( field => field.name === 'id' );
+
+            if ( field.length > 0 ) {
+                return field[0].value;
+            }
+
+            return false;
+        },
+        getFirstSelectedUnit( group_fields ) {    
+            const field = group_fields.filter( field => field.name === 'unit_id' );
+            
+            if ( field.length > 0 ) {
+                const option    =   field[0].options.filter( option => option.value === field[0].value );
+
+                if ( option.length > 0 ) {
+                    return option[0].label;
+                }
+            }
+
+            return __( 'No Unit Selected' );
         }
     },
     async mounted() {

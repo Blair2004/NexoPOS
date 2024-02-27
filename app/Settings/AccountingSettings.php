@@ -13,10 +13,10 @@ class AccountingSettings extends SettingsPage
     public function __construct()
     {
         $this->form = [
-            'title' => __('Accounting'),
-            'description' => __('Configure the accounting feature'),
+            'title' => __( 'Accounting' ),
+            'description' => __( 'Configure the accounting feature' ),
             'tabs' => [
-                'general' => include(dirname(__FILE__) . '/accounting/general.php'),
+                'general' => include ( dirname( __FILE__ ) . '/accounting/general.php' ),
             ],
         ];
     }

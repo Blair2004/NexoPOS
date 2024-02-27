@@ -24,10 +24,10 @@ class OrderAfterPaymentStatusChangedEventListener
      *
      * @return void
      */
-    public function handle(OrderAfterPaymentStatusChangedEvent $event)
+    public function handle( OrderAfterPaymentStatusChangedEvent $event )
     {
-        ExpenseHandlePaymentStatusJob::dispatch($event->order, $event->previous, $event->new);
-        ProcessCustomerOwedAndRewardsJob::dispatch($event->order);
-        RecordRegisterHistoryUsingPaymentStatusJob::dispatch($event->order, $event->previous, $event->new);
+        ExpenseHandlePaymentStatusJob::dispatch( $event->order, $event->previous, $event->new );
+        ProcessCustomerOwedAndRewardsJob::dispatch( $event->order );
+        RecordRegisterHistoryUsingPaymentStatusJob::dispatch( $event->order, $event->previous, $event->new );
     }
 }

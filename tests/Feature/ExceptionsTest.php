@@ -13,7 +13,7 @@ class ExceptionsTest extends TestCase
      */
     public function testExceptionsOutput()
     {
-        collect([
+        collect( [
             \App\Exceptions\CoreException::class,
             \App\Exceptions\CoreVersionMismatchException::class,
             \App\Exceptions\MethodNotAllowedHttpException::class,
@@ -23,10 +23,10 @@ class ExceptionsTest extends TestCase
             \App\Exceptions\NotFoundException::class,
             \App\Exceptions\QueryException::class,
             \App\Exceptions\ValidationException::class,
-        ])->each(function ($class) {
+        ] )->each( function ( $class ) {
             $instance = new $class;
-            $response = $this->get('exceptions/' . $class);
-            $response->assertSee($instance->getMessage());
-        });
+            $response = $this->get( 'exceptions/' . $class );
+            $response->assertSee( $instance->getMessage() );
+        } );
     }
 }

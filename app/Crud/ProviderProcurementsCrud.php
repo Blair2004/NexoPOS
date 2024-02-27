@@ -87,14 +87,14 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -115,34 +115,34 @@ class ProviderProcurementsCrud extends CrudService
     {
         parent::__construct();
 
-        $this->providerService = app()->make(ProviderService::class);
+        $this->providerService = app()->make( ProviderService::class );
 
-        Hook::addFilter($this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2);
+        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
-    public function hook($query): void
+    public function hook( $query ): void
     {
-        $query->where('provider_id', request()->query('provider_id'));
+        $query->where( 'provider_id', request()->query( 'provider_id' ) );
     }
 
     /**
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
         return [
-            'list_title' => __('Provider Procurements List'),
-            'list_description' => __('Display all provider procurements.'),
-            'no_entry' => __('No provider procurements has been registered'),
-            'create_new' => __('Add a new provider procurement'),
-            'create_title' => __('Create a new provider procurement'),
-            'create_description' => __('Register a new provider procurement and save it.'),
-            'edit_title' => __('Edit provider procurement'),
-            'edit_description' => __('Modify  Provider Procurement.'),
-            'back_to_list' => __('Return to Provider Procurements'),
+            'list_title' => __( 'Provider Procurements List' ),
+            'list_description' => __( 'Display all provider procurements.' ),
+            'no_entry' => __( 'No provider procurements has been registered' ),
+            'create_new' => __( 'Add a new provider procurement' ),
+            'create_title' => __( 'Create a new provider procurement' ),
+            'create_description' => __( 'Register a new provider procurement and save it.' ),
+            'edit_title' => __( 'Edit provider procurement' ),
+            'edit_description' => __( 'Modify  Provider Procurement.' ),
+            'back_to_list' => __( 'Return to Provider Procurements' ),
         ];
     }
 
@@ -150,7 +150,7 @@ class ProviderProcurementsCrud extends CrudService
      * Check whether a feature is enabled
      *
      **/
-    public function isEnabled($feature): bool
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -159,65 +159,65 @@ class ProviderProcurementsCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
-    public function getForm($entry = null)
+    public function getForm( $entry = null )
     {
         return [
             'main' => [
-                'label' => __('Name'),
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description' => __('Provide a name to the resource.'),
+                'description' => __( 'Provide a name to the resource.' ),
             ],
             'tabs' => [
                 'general' => [
-                    'label' => __('General'),
+                    'label' => __( 'General' ),
                     'fields' => [
                         [
                             'type' => 'text',
                             'name' => 'name',
-                            'label' => __('Name'),
+                            'label' => __( 'Name' ),
                             'value' => $entry->name ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'delivery_status',
-                            'label' => __('Delivery Status'),
+                            'label' => __( 'Delivery Status' ),
                             'value' => $entry->delivery_status ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'delivery_time',
-                            'label' => __('Delivered On'),
+                            'label' => __( 'Delivered On' ),
                             'value' => $entry->delivery_time ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'invoice_reference',
-                            'label' => __('Invoice'),
+                            'label' => __( 'Invoice' ),
                             'value' => $entry->invoice_reference ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'payment_status',
-                            'label' => __('Payment Status'),
+                            'label' => __( 'Payment Status' ),
                             'value' => $entry->payment_status ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'tax_value',
-                            'label' => __('Tax'),
+                            'label' => __( 'Tax' ),
                             'value' => $entry->tax_value ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'total_items',
-                            'label' => __('Total Items'),
+                            'label' => __( 'Total Items' ),
                             'value' => $entry->total_items ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'value',
-                            'label' => __('Value'),
+                            'label' => __( 'Value' ),
                             'value' => $entry->value ?? '',
                         ], [
                             'type' => 'text',
                             'name' => 'created_at',
-                            'label' => __('Created_at'),
+                            'label' => __( 'Created_at' ),
                             'value' => $entry->created_at ?? '',
                         ],
                     ],
@@ -230,9 +230,9 @@ class ProviderProcurementsCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
-    public function filterPostInputs($inputs)
+    public function filterPostInputs( $inputs )
     {
         return $inputs;
     }
@@ -241,9 +241,9 @@ class ProviderProcurementsCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
-    public function filterPutInputs($inputs, Procurement $entry)
+    public function filterPutInputs( $inputs, Procurement $entry )
     {
         return $inputs;
     }
@@ -252,12 +252,12 @@ class ProviderProcurementsCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
-    public function beforePost($request)
+    public function beforePost( $request )
     {
-        if ($this->permissions[ 'create' ] !== false) {
-            ns()->restrict($this->permissions[ 'create' ]);
+        if ( $this->permissions[ 'create' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'create' ] );
         } else {
             throw new NotAllowedException;
         }
@@ -269,9 +269,9 @@ class ProviderProcurementsCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
-    public function afterPost($request, Procurement $entry)
+    public function afterPost( $request, Procurement $entry )
     {
         return $request;
     }
@@ -280,11 +280,11 @@ class ProviderProcurementsCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
-    public function get($param)
+    public function get( $param )
     {
-        switch ($param) {
+        switch ( $param ) {
             case 'model': return $this->model;
                 break;
         }
@@ -293,14 +293,14 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
-    public function beforePut($request, $entry)
+    public function beforePut( $request, $entry )
     {
-        if ($this->permissions[ 'update' ] !== false) {
-            ns()->restrict($this->permissions[ 'update' ]);
+        if ( $this->permissions[ 'update' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'update' ] );
         } else {
             throw new NotAllowedException;
         }
@@ -311,11 +311,11 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
-    public function afterPut($request, $entry)
+    public function afterPut( $request, $entry )
     {
         return $request;
     }
@@ -323,11 +323,11 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
-    public function beforeDelete($namespace, $id, $model)
+    public function beforeDelete( $namespace, $id, $model )
     {
-        if ($namespace == 'ns.providers-procurements') {
+        if ( $namespace == 'ns.providers-procurements' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -337,8 +337,8 @@ class ProviderProcurementsCrud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
              **/
-            if ($this->permissions[ 'delete' ] !== false) {
-                ns()->restrict($this->permissions[ 'delete' ]);
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
                 throw new NotAllowedException;
             }
@@ -352,46 +352,46 @@ class ProviderProcurementsCrud extends CrudService
     {
         return [
             'name' => [
-                'label' => __('Name'),
+                'label' => __( 'Name' ),
                 '$direction' => '',
                 'width' => '200px',
                 '$sort' => false,
             ],
             'delivery_status' => [
-                'label' => __('Delivery'),
+                'label' => __( 'Delivery' ),
                 '$direction' => '',
                 'width' => '120px',
                 '$sort' => false,
             ],
             'payment_status' => [
-                'label' => __('Payment'),
+                'label' => __( 'Payment' ),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'tax_value' => [
-                'label' => __('Tax'),
+                'label' => __( 'Tax' ),
                 '$direction' => '',
                 'width' => '100px',
                 '$sort' => false,
             ],
             'total_items' => [
-                'label' => __('Items'),
+                'label' => __( 'Items' ),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'value' => [
-                'label' => __('Value'),
+                'label' => __( 'Value' ),
                 '$direction' => '',
                 'width' => '150px',
                 '$sort' => false,
             ],
             'user_username' => [
-                'label' => __('By'),
+                'label' => __( 'By' ),
                 '$direction' => '',
                 '$sort' => false,
             ],
             'created_at' => [
-                'label' => __('Created At'),
+                'label' => __( 'Created At' ),
                 'width' => '200px',
                 '$direction' => '',
                 '$sort' => false,
@@ -402,24 +402,24 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions(CrudEntry $entry, $namespace)
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->tax_value = (string) ns()->currency->define($entry->tax_value);
-        $entry->value = (string) ns()->currency->define($entry->value);
+        $entry->tax_value = (string) ns()->currency->define( $entry->tax_value );
+        $entry->value = (string) ns()->currency->define( $entry->value );
 
-        $entry->delivery_status = $this->providerService->getDeliveryStatusLabel($entry->delivery_status);
-        $entry->payment_status = $this->providerService->getPaymentStatusLabel($entry->payment_status);
+        $entry->delivery_status = $this->providerService->getDeliveryStatusLabel( $entry->delivery_status );
+        $entry->payment_status = $this->providerService->getPaymentStatusLabel( $entry->payment_status );
 
         // you can make changes here
-        $entry->addAction('delete', [
-            'label' => __('Delete'),
+        $entry->addAction( 'delete', [
+            'label' => __( 'Delete' ),
             'namespace' => 'delete',
             'type' => 'DELETE',
-            'url' => ns()->url('/api/crud/ns.procurements/' . $entry->id),
+            'url' => ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
             'confirm' => [
-                'message' => __('Would you like to delete this ?'),
+                'message' => __( 'Would you like to delete this ?' ),
             ],
-        ]);
+        ] );
 
         return $entry;
     }
@@ -428,20 +428,20 @@ class ProviderProcurementsCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
-    public function bulkAction(Request $request)
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        if ($request->input('action') == 'delete_selected') {
+        if ( $request->input( 'action' ) == 'delete_selected' ) {
             /**
              * Will control if the user has the permissoin to do that.
              */
-            if ($this->permissions[ 'delete' ] !== false) {
-                ns()->restrict($this->permissions[ 'delete' ]);
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
                 throw new NotAllowedException;
             }
@@ -451,9 +451,9 @@ class ProviderProcurementsCrud extends CrudService
                 'failed' => 0,
             ];
 
-            foreach ($request->input('entries') as $id) {
-                $entity = $this->model::find($id);
-                if ($entity instanceof Procurement) {
+            foreach ( $request->input( 'entries' ) as $id ) {
+                $entity = $this->model::find( $id );
+                if ( $entity instanceof Procurement ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -464,18 +464,18 @@ class ProviderProcurementsCrud extends CrudService
             return $status;
         }
 
-        return Hook::filter($this->namespace . '-catch-action', false, $request);
+        return Hook::filter( $this->namespace . '-catch-action', false, $request );
     }
 
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
         return [
-            'list' => ns()->url('dashboard/' . '/providers/procurements'),
+            'list' => ns()->url( 'dashboard/' . '/providers/procurements' ),
             'create' => false,
             'edit' => false,
             'post' => false,
@@ -486,25 +486,25 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
-        return Hook::filter($this->namespace . '-bulk', [
+        return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label' => __('Delete Selected Groups'),
+                'label' => __( 'Delete Selected Groups' ),
                 'identifier' => 'delete_selected',
-                'url' => ns()->route('ns.api.crud-bulk-actions', [
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

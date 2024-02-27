@@ -15,7 +15,7 @@ class OrderAfterCheckPerformedEvent
      *
      * @return void
      */
-    public function __construct(public $fields, public $order)
+    public function __construct( public $fields, public $order )
     {
         // ...
     }

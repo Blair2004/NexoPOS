@@ -21,7 +21,7 @@ class RecomputeCashFlowForDate implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public $fromDate, public $toDate)
+    public function __construct( public $fromDate, public $toDate )
     {
         //
     }
@@ -31,22 +31,22 @@ class RecomputeCashFlowForDate implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ReportService $reportService)
+    public function handle( ReportService $reportService )
     {
         $wasLoggedIn = true;
 
-        if (! Auth::check()) {
+        if ( ! Auth::check() ) {
             $wasLoggedIn = false;
-            $user = Role::namespace('admin')->users->first();
-            Auth::login($user);
+            $user = Role::namespace( 'admin' )->users->first();
+            Auth::login( $user );
         }
 
-        $this->fromDate = Carbon::parse($this->fromDate);
-        $this->toDate = Carbon::parse($this->toDate);
+        $this->fromDate = Carbon::parse( $this->fromDate );
+        $this->toDate = Carbon::parse( $this->toDate );
 
-        $reportService->recomputeTransactions($this->fromDate, $this->toDate);
+        $reportService->recomputeTransactions( $this->fromDate, $this->toDate );
 
-        if (! $wasLoggedIn) {
+        if ( ! $wasLoggedIn ) {
             Auth::logout();
         }
     }

@@ -55,16 +55,16 @@ class CreateUserCommand extends Command
         /**
          * We might need to throttle this command.
          */
-        if (Role::namespace('admin')->users->count() > 0) {
-            $this->line('Administrator Authentication');
-            $username = $this->ask('Provide your username');
-            $password = $this->secret('Provide your password');
+        if ( Role::namespace( 'admin' )->users->count() > 0 ) {
+            $this->line( 'Administrator Authentication' );
+            $username = $this->ask( 'Provide your username' );
+            $password = $this->secret( 'Provide your password' );
 
-            if (! Auth::attempt(compact('username', 'password'))) {
-                return $this->error('Incorrect username or password.');
+            if ( ! Auth::attempt( compact( 'username', 'password' ) ) ) {
+                return $this->error( 'Incorrect username or password.' );
             }
 
-            $this->info('You\'re authenticated');
+            $this->info( 'You\'re authenticated' );
         }
 
         /**
@@ -72,7 +72,7 @@ class CreateUserCommand extends Command
          *
          * @return bool
          */
-        if ($this->checkUsername() === false) {
+        if ( $this->checkUsername() === false ) {
             return true;
         }
 
@@ -81,7 +81,7 @@ class CreateUserCommand extends Command
          *
          * @return bool
          */
-        if ($this->checkEmail() === false) {
+        if ( $this->checkEmail() === false ) {
             return true;
         }
 
@@ -90,7 +90,7 @@ class CreateUserCommand extends Command
          *
          * @return bool
          */
-        if ($this->checkPassword() === false) {
+        if ( $this->checkPassword() === false ) {
             return true;
         }
 
@@ -99,7 +99,7 @@ class CreateUserCommand extends Command
          *
          * @return bool
          */
-        if ($this->checkPasswordConfirm() === false) {
+        if ( $this->checkPasswordConfirm() === false ) {
             return true;
         }
 
@@ -108,23 +108,23 @@ class CreateUserCommand extends Command
          *
          * @return bool
          */
-        if ($this->checkRole() === false) {
+        if ( $this->checkRole() === false ) {
             return true;
         }
 
-        if (User::whereUsername($this->username)->first()) {
-            return $this->error('The username is already in use.');
+        if ( User::whereUsername( $this->username )->first() ) {
+            return $this->error( 'The username is already in use.' );
         }
 
-        if (strlen($this->password) < 5) {
-            return $this->error('The provided password is too short.');
+        if ( strlen( $this->password ) < 5 ) {
+            return $this->error( 'The provided password is too short.' );
         }
 
         $user = new User;
         $user->username = $this->username;
         $user->email = $this->email;
-        $user->password = Hash::make($this->password);
-        $user->role_id = Role::namespace($this->role)->firstOrFail()->id;
+        $user->password = Hash::make( $this->password );
+        $user->role_id = Role::namespace( $this->role )->firstOrFail()->id;
         $user->save();
 
         /**
@@ -136,20 +136,20 @@ class CreateUserCommand extends Command
         $user->active = Auth::user() instanceof User ? 1 : 0;
         $user->save();
 
-        $this->info('A new account has been created');
+        $this->info( 'A new account has been created' );
     }
 
     public function checkRole()
     {
-        while (true) {
-            $this->role = $this->anticipate('New Account Role. [Q] Quit', Role::get()->map(fn($role) => $role->namespace)->toArray());
+        while ( true ) {
+            $this->role = $this->anticipate( 'New Account Role. [Q] Quit', Role::get()->map( fn( $role ) => $role->namespace )->toArray() );
 
-            if ($this->role === 'Q') {
+            if ( $this->role === 'Q' ) {
                 return false;
             }
 
-            if (! Role::namespace($this->role)->first() instanceof Role) {
-                $this->error('The provided role identifier is not valid.');
+            if ( ! Role::namespace( $this->role )->first() instanceof Role ) {
+                $this->error( 'The provided role identifier is not valid.' );
             } else {
                 break;
             }
@@ -158,15 +158,15 @@ class CreateUserCommand extends Command
 
     public function checkPasswordConfirm()
     {
-        while (true) {
-            $this->password_confirm = $this->secret('New Account Password Confirmation. [Q] Quit');
+        while ( true ) {
+            $this->password_confirm = $this->secret( 'New Account Password Confirmation. [Q] Quit' );
 
-            if ($this->password_confirm === 'Q') {
+            if ( $this->password_confirm === 'Q' ) {
                 return false;
             }
 
-            if ($this->password_confirm !== $this->password) {
-                $this->error('The password confirmation doesn\'t match the password.');
+            if ( $this->password_confirm !== $this->password ) {
+                $this->error( 'The password confirmation doesn\'t match the password.' );
             } else {
                 break;
             }
@@ -175,15 +175,15 @@ class CreateUserCommand extends Command
 
     public function checkPassword()
     {
-        while (true) {
-            $this->password = $this->secret('New Account Password. [Q] Quit.');
+        while ( true ) {
+            $this->password = $this->secret( 'New Account Password. [Q] Quit.' );
 
-            if ($this->password === 'Q') {
+            if ( $this->password === 'Q' ) {
                 return false;
             }
 
-            if (strlen($this->password) < 5) {
-                $this->error('The provided password is too short.');
+            if ( strlen( $this->password ) < 5 ) {
+                $this->error( 'The provided password is too short.' );
             } else {
                 break;
             }
@@ -192,25 +192,25 @@ class CreateUserCommand extends Command
 
     public function checkEmail()
     {
-        while (true) {
-            $this->email = $this->ask('New Account Email. [Q] Quit.');
+        while ( true ) {
+            $this->email = $this->ask( 'New Account Email. [Q] Quit.' );
 
-            $validator = Validator::make([
+            $validator = Validator::make( [
                 'email' => $this->email,
             ], [
                 'email' => 'required|email',
-            ]);
+            ] );
 
-            if ($this->email === 'Q') {
+            if ( $this->email === 'Q' ) {
                 return false;
             }
 
-            if (User::whereUsername($this->username)->first() instanceof User) {
-                return $this->error('The username is already in use.');
+            if ( User::whereUsername( $this->username )->first() instanceof User ) {
+                return $this->error( 'The username is already in use.' );
             }
 
-            if ($validator->fails()) {
-                $this->error('The provided email is not valid.');
+            if ( $validator->fails() ) {
+                $this->error( 'The provided email is not valid.' );
             } else {
                 break;
             }
@@ -219,25 +219,25 @@ class CreateUserCommand extends Command
 
     public function checkUsername()
     {
-        while (true) {
-            $this->username = $this->ask('New Account Username. [Q] Quit.');
+        while ( true ) {
+            $this->username = $this->ask( 'New Account Username. [Q] Quit.' );
 
-            $validator = Validator::make([
+            $validator = Validator::make( [
                 'username' => $this->username,
             ], [
                 'username' => 'required|min:5',
-            ]);
+            ] );
 
-            if ($this->username === 'Q') {
+            if ( $this->username === 'Q' ) {
                 return false;
             }
 
-            if (User::whereUsername($this->username)->first() instanceof User) {
-                return $this->error('The username is already in use.');
+            if ( User::whereUsername( $this->username )->first() instanceof User ) {
+                return $this->error( 'The username is already in use.' );
             }
 
-            if ($validator->fails()) {
-                $this->error('The provided username is not valid.');
+            if ( $validator->fails() ) {
+                $this->error( 'The provided username is not valid.' );
             } else {
                 break;
             }

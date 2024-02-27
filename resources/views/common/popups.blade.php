@@ -4,6 +4,7 @@
         v-for="(popup,key) of popups" 
         @click="closePopup( popup, $event )" 
         :id="popup.hash"
+        :focused="key === popups.length - 1"
         :class="defaultClass">
         <div class="zoom-out-entrance popup-body" @click="preventPropagation( $event )">
         <!-- @refresh="handleClose( popup, $event)"  -->

@@ -23,12 +23,12 @@ class CouponFactory extends Factory
     public function definition()
     {
         return [
-            'name' => __('Sample Coupon'),
+            'name' => __( 'Sample Coupon' ),
             'type' => 'percentage_discount',
-            'code' => 'CP-' . ($this->faker->randomDigit) . ($this->faker->randomDigit) . ($this->faker->randomDigit) . ($this->faker->randomDigit) . ($this->faker->randomDigit),
-            'author' => $this->faker->randomElement(User::get()->map(fn($user) => $user->id)),
-            'discount_value' => $this->faker->randomElement([ 10, 15, 20, 25 ]),
-            'limit_usage' => $this->faker->randomElement([ 1, 5, 10 ]),
+            'code' => 'CP-' . ( $this->faker->randomDigit ) . ( $this->faker->randomDigit ) . ( $this->faker->randomDigit ) . ( $this->faker->randomDigit ) . ( $this->faker->randomDigit ),
+            'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+            'discount_value' => $this->faker->randomElement( [ 10, 15, 20, 25 ] ),
+            'limit_usage' => $this->faker->randomElement( [ 1, 5, 10 ] ),
         ];
     }
 }

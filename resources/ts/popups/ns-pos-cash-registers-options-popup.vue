@@ -97,7 +97,7 @@ export default {
                     ...response
                 });
             } catch( exception ) {
-                throw exception;
+                console.log({exception});
             }
         },
 

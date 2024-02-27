@@ -18,7 +18,7 @@ class OrderProductAfterSavedEvent
      *
      * @return void
      */
-    public function __construct(public OrderProduct $product, public Order $order, public array $postData)
+    public function __construct( public OrderProduct $product, public Order $order, public array $postData )
     {
         // ...
     }
@@ -30,6 +30,6 @@ class OrderProductAfterSavedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

@@ -39,7 +39,7 @@ class Options
      *
      * @param array $options
      */
-    public function setDefault($options = []): void
+    public function setDefault( $options = [] ): void
     {
         Option::truncate();
 
@@ -49,10 +49,10 @@ class Options
             'ns_pos_order_types' => [ 'takeaway', 'delivery' ],
         ];
 
-        $options = array_merge($defaultOptions, $options);
+        $options = array_merge( $defaultOptions, $options );
 
-        foreach ($options as $key => $value) {
-            $this->set($key, $value);
+        foreach ( $options as $key => $value ) {
+            $this->set( $key, $value );
         }
     }
 
@@ -63,7 +63,7 @@ class Options
      */
     public function option()
     {
-        return Option::where('user_id', null);
+        return Option::where( 'user_id', null );
     }
 
     /**
@@ -76,14 +76,14 @@ class Options
     {
         $this->options = [];
 
-        if (Helper::installed() && empty($this->rawOptions)) {
+        if ( Helper::installed() && empty( $this->rawOptions ) ) {
             $this->rawOptions = $this->option()
                 ->get()
-                ->mapWithKeys(function ($option) {
+                ->mapWithKeys( function ( $option ) {
                     return [
                         $option->key => $option,
                     ];
-                });
+                } );
         }
     }
 
@@ -95,18 +95,18 @@ class Options
      * @param bool force set
      * @return void
      **/
-    public function set($key, $value, $expiration = null)
+    public function set( $key, $value, $expiration = null )
     {
         /**
          * if an option has been found,
          * it will save the new value and update
          * the option object.
          */
-        $foundOption = collect($this->rawOptions)->map(function ($option, $index) use ($value, $key, $expiration) {
-            if ($key === $index) {
+        $foundOption = collect( $this->rawOptions )->map( function ( $option, $index ) use ( $value, $key, $expiration ) {
+            if ( $key === $index ) {
                 $this->hasFound = true;
 
-                $this->encodeOptionValue($option, $value);
+                $this->encodeOptionValue( $option, $value );
 
                 $option->expire_on = $expiration;
 
@@ -115,14 +115,14 @@ class Options
                  * from a user option or any
                  * extending this class
                  */
-                $option = $this->beforeSave($option);
+                $option = $this->beforeSave( $option );
                 $option->save();
 
                 return $option;
             }
 
             return false;
-        })
+        } )
             ->filter();
 
         /**
@@ -130,12 +130,12 @@ class Options
          * it will create a new Option model
          * and store with, then save it on the option model
          */
-        if ($foundOption->isEmpty()) {
+        if ( $foundOption->isEmpty() ) {
             $option = new Option;
-            $option->key = trim(strtolower($key));
+            $option->key = trim( strtolower( $key ) );
             $option->array = false;
 
-            $this->encodeOptionValue($option, $value);
+            $this->encodeOptionValue( $option, $value );
 
             $option->expire_on = $expiration;
 
@@ -144,7 +144,7 @@ class Options
              * from a user option or any
              * extending this class
              */
-            $option = $this->beforeSave($option);
+            $option = $this->beforeSave( $option );
             $option->save();
         } else {
             $option = $foundOption->first();
@@ -161,12 +161,12 @@ class Options
     /**
      * Encodes the value for the option before saving.
      */
-    public function encodeOptionValue(Option $option, mixed $value): void
+    public function encodeOptionValue( Option $option, mixed $value ): void
     {
-        if (is_array($value)) {
+        if ( is_array( $value ) ) {
             $option->array = true;
-            $option->value = json_encode($value);
-        } elseif (empty($value) && ! (bool) preg_match('/[0-9]{1,}/', $value)) {
+            $option->value = json_encode( $value );
+        } elseif ( empty( $value ) && ! (bool) preg_match( '/[0-9]{1,}/', $value ) ) {
             $option->value = '';
         } else {
             $option->value = $value;
@@ -176,13 +176,13 @@ class Options
     /**
      * Sanitizes values before storing on the database.
      */
-    public function beforeSave(Option $option)
+    public function beforeSave( Option $option )
     {
         /**
          * sanitizing input to remove
          * all script tags
          */
-        $option->value = strip_tags($option->value);
+        $option->value = strip_tags( $option->value );
 
         return $option;
     }
@@ -190,48 +190,48 @@ class Options
     /**
      * Get options
      **/
-    public function get(string $key = null, mixed $default = null)
+    public function get( ?string $key = null, mixed $default = null )
     {
-        if ($key === null) {
+        if ( $key === null ) {
             return $this->rawOptions;
         }
 
-        $filtredOptions = collect($this->rawOptions)->filter(function ($option) use ($key) {
-            return is_array($key) ? in_array($option->key, $key) : $option->key === $key;
-        });
+        $filtredOptions = collect( $this->rawOptions )->filter( function ( $option ) use ( $key ) {
+            return is_array( $key ) ? in_array( $option->key, $key ) : $option->key === $key;
+        } );
 
-        $options = $filtredOptions->map(function ($option) {
-            $this->decodeOptionValue($option);
+        $options = $filtredOptions->map( function ( $option ) {
+            $this->decodeOptionValue( $option );
 
             return $option;
-        });
+        } );
 
-        return match ($options->count()) {
+        return match ( $options->count() ) {
             0 => $default,
             1 => $options->first()->value,
-            default => $options->map(fn($option) => $option->value)->toArray()
+            default => $options->map( fn( $option ) => $option->value )->toArray()
         };
     }
 
-    public function decodeOptionValue($option)
+    public function decodeOptionValue( $option )
     {
         /**
          * We should'nt run this everytime we
          * try to pull an option from the database or from the array
          */
-        if (! empty($option->value) && $option->isClean()) {
-            if (is_string($option->value) && $option->array) {
-                $json = json_decode($option->value, true);
+        if ( ! empty( $option->value ) && $option->isClean() ) {
+            if ( is_string( $option->value ) && $option->array ) {
+                $json = json_decode( $option->value, true );
 
-                if (json_last_error() == JSON_ERROR_NONE) {
+                if ( json_last_error() == JSON_ERROR_NONE ) {
                     $option->value = $json;
                 } else {
                     $option->value = null;
                 }
-            } elseif (! $option->array) {
-                if (preg_match('/^[0-9]{1,}$/', $option->value)) {
+            } elseif ( ! $option->array ) {
+                if ( preg_match( '/^[0-9]{1,}$/', $option->value ) ) {
                     $option->value = (int) $option->value;
-                } elseif (preg_match('/^[0-9]{1,}\.[0-9]{1,}$/', $option->value)) {
+                } elseif ( preg_match( '/^[0-9]{1,}\.[0-9]{1,}$/', $option->value ) ) {
                     $option->value = (float) $option->value;
                 } else {
                     $option->value = $option->value;
@@ -243,16 +243,16 @@ class Options
     /**
      * Delete an option using a specific key.
      **/
-    public function delete(string $key): void
+    public function delete( string $key ): void
     {
-        $this->rawOptions = collect($this->rawOptions)->filter(function (Option $option) use ($key) {
-            if ($option->key === $key) {
+        $this->rawOptions = collect( $this->rawOptions )->filter( function ( Option $option ) use ( $key ) {
+            if ( $option->key === $key ) {
                 $option->delete();
 
                 return false;
             }
 
             return true;
-        });
+        } );
     }
 }

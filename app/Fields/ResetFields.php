@@ -11,31 +11,31 @@ class ResetFields extends FieldsService
 {
     protected static $identifier = 'ns.reset';
 
-    public function get(Unit $model = null)
+    public function get( ?Unit $model = null )
     {
         $this->fields = [
             [
                 'name' => 'mode',
-                'label' => __('Mode'),
+                'label' => __( 'Mode' ),
                 'validation' => 'required',
                 'type' => 'select',
-                'options' => Helper::kvToJsOptions(Hook::filter('ns-reset-options', [
-                    'wipe_all' => __('Wipe All'),
-                    'wipe_plus_grocery' => __('Wipe Plus Grocery'),
-                ])),
-                'description' => __('Choose what mode applies to this demo.'),
+                'options' => Helper::kvToJsOptions( Hook::filter( 'ns-reset-options', [
+                    'wipe_all' => __( 'Wipe All' ),
+                    'wipe_plus_grocery' => __( 'Wipe Plus Grocery' ),
+                ] ) ),
+                'description' => __( 'Choose what mode applies to this demo.' ),
             ], [
                 'name' => 'create_sales',
-                'label' => __('Create Sales (needs Procurements)'),
+                'label' => __( 'Create Sales (needs Procurements)' ),
                 'type' => 'checkbox',
                 'value' => 1,
-                'description' => __('Set if the sales should be created.'),
+                'description' => __( 'Set if the sales should be created.' ),
             ], [
                 'name' => 'create_procurements',
-                'label' => __('Create Procurements'),
+                'label' => __( 'Create Procurements' ),
                 'type' => 'checkbox',
                 'value' => 1,
-                'description' => __('Will create procurements.'),
+                'description' => __( 'Will create procurements.' ),
             ],
         ];
 

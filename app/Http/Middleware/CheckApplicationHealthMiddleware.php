@@ -14,7 +14,7 @@ class CheckApplicationHealthMiddleware
      *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle( Request $request, Closure $next )
     {
         /**
          * Will check if either "redis" or "supervisor" is configured
@@ -26,7 +26,7 @@ class CheckApplicationHealthMiddleware
          * We'll only perform this is the QUEUE_CONNECTION
          * has a supported value. Otherwise it's performed asynchronously see app/Console/Kernel.php
          */
-        if (in_array(env('QUEUE_CONNECTION'), [ 'sync' ])) {
+        if ( in_array( env( 'QUEUE_CONNECTION' ), [ 'sync' ] ) ) {
             /**
              * Will check if Cron Jobs are
              * correctly set for NexoPOS
@@ -46,11 +46,11 @@ class CheckApplicationHealthMiddleware
          *
          * @var ModulesService
          */
-        $modules = app()->make(ModulesService::class);
+        $modules = app()->make( ModulesService::class );
         $modules->dependenciesCheck();
 
         AfterAppHealthCheckedEvent::dispatch();
 
-        return $next($request);
+        return $next( $request );
     }
 }

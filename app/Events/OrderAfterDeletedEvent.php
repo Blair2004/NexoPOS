@@ -17,7 +17,7 @@ class OrderAfterDeletedEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(public $order)
+    public function __construct( public $order )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class OrderAfterDeletedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

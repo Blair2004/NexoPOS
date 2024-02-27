@@ -33,6 +33,6 @@ class ComputeCategoryProductsJob implements ShouldQueue
     public function handle(
         ProductCategoryService $productCategoryService
     ) {
-        $productCategoryService->computeProducts($this->productCategory);
+        $productCategoryService->computeProducts( $this->productCategory );
     }
 }

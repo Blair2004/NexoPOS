@@ -25,8 +25,8 @@ class ProductAfterDeleteEventListener
      *
      * @return void
      */
-    public function handle(ProductAfterDeleteEvent $event)
+    public function handle( ProductAfterDeleteEvent $event )
     {
-        $this->productCategoryService->computeProducts($event->product->category);
+        $this->productCategoryService->computeProducts( $event->product->category );
     }
 }

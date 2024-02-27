@@ -91,9 +91,9 @@ export default {
         changeTouchedState( field, $event ){
             if ( $event.stopPropagation ) {
                 $event.stopPropagation();
-                field.touched    =    true;
-                this.$emit( 'change', field );
             }
+            field.touched    =    true;
+            this.$emit( 'change', field );
         },
         refreshMultiselect() {
             this.field.value    =   this.field.options

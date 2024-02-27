@@ -13,9 +13,9 @@ class DefaultSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(DefaultCategorySeeder::class);
-        $this->call(DefaultUnitGroupSeeder::class);
-        $this->call(DefaultProviderSeeder::class);
-        $this->call(CustomerGroupSeeder::class);
+        $this->call( DefaultCategorySeeder::class );
+        $this->call( DefaultUnitGroupSeeder::class );
+        $this->call( DefaultProviderSeeder::class );
+        $this->call( CustomerGroupSeeder::class );
     }
 }

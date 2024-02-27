@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
- * @property int $author
- * @property string $uuid
+ * @property int            $id
+ * @property int            $author
+ * @property string         $uuid
  * @property \Carbon\Carbon $updated_at
  */
 class OrderBillingAddress extends NsModel
@@ -19,16 +19,16 @@ class OrderBillingAddress extends NsModel
 
     protected static function booted()
     {
-        static::addGlobalScope('type', function (Builder $builder) {
-            $builder->where('type', 'billing');
-        });
+        static::addGlobalScope( 'type', function ( Builder $builder ) {
+            $builder->where( 'type', 'billing' );
+        } );
 
-        static::creating(function ($address) {
+        static::creating( function ( $address ) {
             $address->type = 'billing';
-        });
+        } );
 
-        static::updating(function ($address) {
+        static::updating( function ( $address ) {
             $address->type = 'billing';
-        });
+        } );
     }
 }

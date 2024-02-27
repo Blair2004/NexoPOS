@@ -10,8 +10,8 @@ class ProfileWidget extends WidgetService
 
     public function __construct()
     {
-        $this->name = __('Profile');
-        $this->description = __('Will display a profile widget with user stats.');
+        $this->name = __( 'Profile' );
+        $this->description = __( 'Will display a profile widget with user stats.' );
         $this->permission = 'nexopos.see.profile-widget';
     }
 }

@@ -6,6 +6,8 @@
   
   <script lang="ts">
   import { ref, onMounted, onUnmounted } from 'vue';
+
+  declare const ns;
   
   export default {
     emits: ['drag-start', 'drag-end' ],
@@ -83,10 +85,8 @@
                 const { clientX, clientY } = e;
 
                 if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
-                    dropZone.style.border = '2px dashed #ccc';
                     dropZone.setAttribute( 'hovered', 'true' );
                 } else {
-                    dropZone.style.border = '2px solid rgb(255 255 255 / 0%)';
                     dropZone.setAttribute( 'hovered', 'false' );
                 }
             }); 
@@ -134,5 +134,17 @@
   <style>
   .ns-draggable-item {
     user-select: none;
+  }
+  .dark .ns-drop-zone[hovered="true"] {
+    @apply border-slate-400;
+  }
+  .dark .ns-drop-zone[hovered="false"], .dark .ns-drop-zone:not([hovered]) {
+    @apply border-transparent;
+  }
+  .light .ns-drop-zone[hovered="true"] {
+    @apply border-slate-700;
+  }
+  .light .ns-drop-zone[hovered="false"], .light .ns-drop-zone:not([hovered]) {
+    @apply border-transparent;
   }
   </style>

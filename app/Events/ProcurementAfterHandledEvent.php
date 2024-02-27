@@ -17,7 +17,7 @@ class ProcurementAfterHandledEvent
      *
      * @return void
      */
-    public function __construct(public Procurement $procurement)
+    public function __construct( public Procurement $procurement )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class ProcurementAfterHandledEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

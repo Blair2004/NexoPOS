@@ -166,7 +166,7 @@ export default {
         <ns-spinner />
     </div>
     <div class="form flex-auto" v-if="Object.values( form ).length > 0" :class="popup ? 'bg-box-background w-95vw md:w-2/3-screen' : ''" id="crud-form" >
-        <div class="box-header border-b box-border p-2 flex justify-between items-center" v-if="popup">
+        <div class="box-header border-b border-box-edge box-border p-2 flex justify-between items-center" v-if="popup">
             <h2 class="text-primary font-bold text-lg">{{ popup.params.title }}</h2>
             <div>
                 <ns-close-button @click="handleClose()"></ns-close-button>

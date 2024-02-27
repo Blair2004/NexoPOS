@@ -13,16 +13,16 @@ class OrderPaymentFields extends FieldsService
     {
         $fields = [
             [
-                'label' => __('Select Payment'),
-                'description' => __('choose the payment type.'),
+                'label' => __( 'Select Payment' ),
+                'description' => __( 'choose the payment type.' ),
                 'validation' => 'required',
                 'name' => 'identifier',
                 'type' => 'select',
-                'options' => collect(PaymentType::active()->get())->map(function ($payment) {
+                'options' => collect( PaymentType::active()->get() )->map( function ( $payment ) {
                     $payment[ 'value' ] = $payment[ 'identifier' ];
 
                     return $payment;
-                }),
+                } ),
             ],
         ];
 

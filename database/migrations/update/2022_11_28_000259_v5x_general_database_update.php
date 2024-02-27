@@ -36,39 +36,39 @@ return new class extends Migration
         /**
          * @var UsersService $usersService
          */
-        $usersService = app()->make(UsersService::class);
+        $usersService = app()->make( UsersService::class );
 
         /**
          * @var DoctorService $doctorService
          */
-        $doctorService = app()->make(DoctorService::class);
+        $doctorService = app()->make( DoctorService::class );
 
         /**
          * @var CoreService $coreService
          */
-        $coreService = app()->make(CoreService::class);
+        $coreService = app()->make( CoreService::class );
 
-        Schema::table('nexopos_roles', function (Blueprint $table) {
-            if (! Schema::hasColumn('nexopos_roles', 'dashid')) {
-                $table->removeColumn('dashid');
+        Schema::table( 'nexopos_roles', function ( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_roles', 'dashid' ) ) {
+                $table->removeColumn( 'dashid' );
             }
-        });
+        } );
 
         /**
          * let's create a constant which will allow the creation,
          * since these files are included as migration file
          */
-        if (! defined('NEXO_CREATE_PERMISSIONS')) {
-            define('NEXO_CREATE_PERMISSIONS', true);
+        if ( ! defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
+            define( 'NEXO_CREATE_PERMISSIONS', true );
         }
 
         /**
          * We're deleting here all permissions that are
          * no longer used by the system.
          */
-        Permission::where('namespace', 'like', '%.expense')->each(function (Permission $permission) {
+        Permission::where( 'namespace', 'like', '%.expense' )->each( function ( Permission $permission ) {
             $permission->removeFromRoles();
-        });
+        } );
 
         /**
          * let's include the files that will create permissions
@@ -82,22 +82,22 @@ return new class extends Migration
         /**
          * We'll now defined default permissions
          */
-        $admin = Role::namespace(Role::ADMIN);
-        $storeAdmin = Role::namespace(Role::STOREADMIN);
-        $storeCashier = Role::namespace(Role::STORECASHIER);
+        $admin = Role::namespace( Role::ADMIN );
+        $storeAdmin = Role::namespace( Role::STOREADMIN );
+        $storeCashier = Role::namespace( Role::STORECASHIER );
 
-        $admin->addPermissions(Permission::includes('-widget')->get()->map(fn($permission) => $permission->namespace));
-        $admin->addPermissions(Permission::includes('.transactions')->get()->map(fn($permission) => $permission->namespace));
-        $admin->addPermissions(Permission::includes('.transactions-account')->get()->map(fn($permission) => $permission->namespace));
-        $admin->addPermissions(Permission::includes('.reports')->get()->map(fn($permission) => $permission->namespace));
+        $admin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $admin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $admin->addPermissions( Permission::includes( '.transactions-account' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $admin->addPermissions( Permission::includes( '.reports' )->get()->map( fn( $permission ) => $permission->namespace ) );
         //
-        $storeAdmin->addPermissions(Permission::includes('-widget')->get()->map(fn($permission) => $permission->namespace));
-        $storeAdmin->addPermissions(Permission::includes('.transactions')->get()->map(fn($permission) => $permission->namespace));
-        $storeAdmin->addPermissions(Permission::includes('.transactions-account')->get()->map(fn($permission) => $permission->namespace));
+        $storeAdmin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.transactions' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.transactions-account' )->get()->map( fn( $permission ) => $permission->namespace ) );
 
-        $storeCashier->addPermissions(Permission::whereIn('namespace', [
+        $storeCashier->addPermissions( Permission::whereIn( 'namespace', [
             ( new ProfileWidget )->getPermission(),
-        ])->get()->map(fn($permission) => $permission->namespace));
+        ] )->get()->map( fn( $permission ) => $permission->namespace ) );
 
         /**
          * We need to register the permissions as gates,
@@ -116,168 +116,168 @@ return new class extends Migration
          *
          * @var WidgetService $widgetService
          */
-        $widgetService = app()->make(WidgetService::class);
+        $widgetService = app()->make( WidgetService::class );
 
-        User::get()->each(fn($user) => $widgetService->addDefaultWidgetsToAreas($user));
+        User::get()->each( fn( $user ) => $widgetService->addDefaultWidgetsToAreas( $user ) );
 
         /**
          * We're make the users table to be able to receive customers
          */
-        Schema::table('nexopos_users', function (Blueprint $table) {
-            if (! Schema::hasColumn('nexopos_users', 'birth_date')) {
-                $table->datetime('birth_date')->nullable();
+        Schema::table( 'nexopos_users', function ( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_users', 'birth_date' ) ) {
+                $table->datetime( 'birth_date' )->nullable();
             }
-            if (! Schema::hasColumn('nexopos_users', 'purchases_amount')) {
-                $table->float('purchases_amount')->default(0);
+            if ( ! Schema::hasColumn( 'nexopos_users', 'purchases_amount' ) ) {
+                $table->float( 'purchases_amount' )->default( 0 );
             }
-            if (! Schema::hasColumn('nexopos_users', 'owed_amount')) {
-                $table->float('owed_amount')->default(0);
+            if ( ! Schema::hasColumn( 'nexopos_users', 'owed_amount' ) ) {
+                $table->float( 'owed_amount' )->default( 0 );
             }
-            if (! Schema::hasColumn('nexopos_users', 'credit_limit_amount')) {
-                $table->float('credit_limit_amount')->default(0);
+            if ( ! Schema::hasColumn( 'nexopos_users', 'credit_limit_amount' ) ) {
+                $table->float( 'credit_limit_amount' )->default( 0 );
             }
-            if (! Schema::hasColumn('nexopos_users', 'account_amount')) {
-                $table->float('account_amount')->default(0);
+            if ( ! Schema::hasColumn( 'nexopos_users', 'account_amount' ) ) {
+                $table->float( 'account_amount' )->default( 0 );
             }
-            if (! Schema::hasColumn('nexopos_users', 'first_name')) {
-                $table->string('first_name')->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_users', 'first_name' ) ) {
+                $table->string( 'first_name' )->nullable();
             }
-            if (! Schema::hasColumn('nexopos_users', 'last_name')) {
-                $table->string('last_name')->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_users', 'last_name' ) ) {
+                $table->string( 'last_name' )->nullable();
             }
-            if (! Schema::hasColumn('nexopos_users', 'gender')) {
-                $table->string('gender')->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_users', 'gender' ) ) {
+                $table->string( 'gender' )->nullable();
             }
-            if (! Schema::hasColumn('nexopos_users', 'phone')) {
-                $table->string('phone')->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_users', 'phone' ) ) {
+                $table->string( 'phone' )->nullable();
             }
-            if (! Schema::hasColumn('nexopos_users', 'pobox')) {
-                $table->string('pobox')->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_users', 'pobox' ) ) {
+                $table->string( 'pobox' )->nullable();
             }
-            if (! Schema::hasColumn('nexopos_users', 'group_id')) {
-                $table->integer('group_id')->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_users', 'group_id' ) ) {
+                $table->integer( 'group_id' )->nullable();
             }
-        });
+        } );
 
         /**
          * Coupons can now be added to
          * customer groups.
          */
-        Schema::table('nexopos_coupons', function (Blueprint $table) {
-            if (! Schema::hasColumn('nexopos_coupons', 'groups_id')) {
-                $table->string('groups_id')->nullable();
+        Schema::table( 'nexopos_coupons', function ( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_coupons', 'groups_id' ) ) {
+                $table->string( 'groups_id' )->nullable();
             }
 
-            if (! Schema::hasColumn('nexopos_coupons', 'customers_id')) {
-                $table->string('customers_id')->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_coupons', 'customers_id' ) ) {
+                $table->string( 'customers_id' )->nullable();
             }
-        });
+        } );
 
-        if (! Schema::hasTable('nexopos_coupons_customers')) {
-            Schema::create('nexopos_coupons_customers', function (Blueprint $table) {
+        if ( ! Schema::hasTable( 'nexopos_coupons_customers' ) ) {
+            Schema::create( 'nexopos_coupons_customers', function ( Blueprint $table ) {
                 $table->id();
-                $table->integer('coupon_id');
-                $table->integer('customer_id');
-            });
+                $table->integer( 'coupon_id' );
+                $table->integer( 'customer_id' );
+            } );
         }
 
-        if (! Schema::hasTable('nexopos_coupons_customers_groups')) {
-            Schema::create('nexopos_coupons_customers_groups', function (Blueprint $table) {
+        if ( ! Schema::hasTable( 'nexopos_coupons_customers_groups' ) ) {
+            Schema::create( 'nexopos_coupons_customers_groups', function ( Blueprint $table ) {
                 $table->id();
-                $table->integer('coupon_id');
-                $table->integer('group_id');
-            });
+                $table->integer( 'coupon_id' );
+                $table->integer( 'group_id' );
+            } );
         }
 
         /**
          * rename the provider columns
          */
-        Schema::table('nexopos_providers', function (Blueprint $table) {
-            if (Schema::hasColumn('nexopos_providers', 'name')) {
-                $table->renameColumn('name', 'first_name');
+        Schema::table( 'nexopos_providers', function ( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_providers', 'name' ) ) {
+                $table->renameColumn( 'name', 'first_name' );
             }
-            if (Schema::hasColumn('nexopos_providers', 'surname')) {
-                $table->renameColumn('surname', 'last_name');
+            if ( Schema::hasColumn( 'nexopos_providers', 'surname' ) ) {
+                $table->renameColumn( 'surname', 'last_name' );
             }
-        });
+        } );
 
-        Schema::table('nexopos_cash_flow', function (Blueprint $table) {
-            if (Schema::hasColumn('nexopos_cash_flow', 'order_refund_product_id')) {
-                $table->integer('order_refund_product_id');
+        Schema::table( 'nexopos_cash_flow', function ( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'order_refund_product_id' ) ) {
+                $table->integer( 'order_refund_product_id' );
             }
-            if (Schema::hasColumn('nexopos_cash_flow', 'order_product_id')) {
-                $table->integer('order_product_id');
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'order_product_id' ) ) {
+                $table->integer( 'order_product_id' );
             }
-            if (Schema::hasColumn('nexopos_cash_flow', 'transaction_id')) {
-                $table->renameColumn('transaction_id', 'transaction_id');
+            if ( Schema::hasColumn( 'nexopos_cash_flow', 'transaction_id' ) ) {
+                $table->renameColumn( 'transaction_id', 'transaction_id' );
             }
-        });
+        } );
 
-        Schema::table('nexopos_procurements_products', function (Blueprint $table) {
-            if (!Schema::hasColumn('nexopos_procurements_products', 'convert_unit_id')) {
-                $table->integer('convert_unit_id')->nullable();
+        Schema::table( 'nexopos_procurements_products', function ( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_procurements_products', 'convert_unit_id' ) ) {
+                $table->integer( 'convert_unit_id' )->nullable();
             }
-        });
+        } );
 
-        Schema::table('nexopos_customers_addresses', function (Blueprint $table) {
-            if (Schema::hasColumn('nexopos_customers_addresses', 'name')) {
-                $table->renameColumn('name', 'first_name');
+        Schema::table( 'nexopos_customers_addresses', function ( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_customers_addresses', 'name' ) ) {
+                $table->renameColumn( 'name', 'first_name' );
             }
-            if (Schema::hasColumn('nexopos_customers_addresses', 'surname')) {
-                $table->renameColumn('surname', 'last_name');
+            if ( Schema::hasColumn( 'nexopos_customers_addresses', 'surname' ) ) {
+                $table->renameColumn( 'surname', 'last_name' );
             }
-        });
+        } );
 
-        Schema::table('nexopos_orders_coupons', function (Blueprint $table) {
-            if (! Schema::hasColumn('nexopos_orders_coupons', 'counted')) {
-                $table->boolean('counted')->default(false);
+        Schema::table( 'nexopos_orders_coupons', function ( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_orders_coupons', 'counted' ) ) {
+                $table->boolean( 'counted' )->default( false );
             }
-        });
+        } );
 
-        Schema::table('nexopos_orders_addresses', function (Blueprint $table) {
-            if (Schema::hasColumn('nexopos_orders_addresses', 'name')) {
-                $table->renameColumn('name', 'first_name');
+        Schema::table( 'nexopos_orders_addresses', function ( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_orders_addresses', 'name' ) ) {
+                $table->renameColumn( 'name', 'first_name' );
             }
-            if (Schema::hasColumn('nexopos_orders_addresses', 'surname')) {
-                $table->renameColumn('surname', 'last_name');
+            if ( Schema::hasColumn( 'nexopos_orders_addresses', 'surname' ) ) {
+                $table->renameColumn( 'surname', 'last_name' );
             }
-        });
+        } );
 
-        Schema::table('nexopos_products_unit_quantities', function (Blueprint $table) {
-            if (! Schema::hasColumn('nexopos_products_unit_quantities', 'convert_unit_id')) {
-                $table->integer('convert_unit_id')->nullable();
-            }
-
-            if (! Schema::hasColumn('nexopos_products_unit_quantities', 'visible')) {
-                $table->integer('visible')->nullable();
+        Schema::table( 'nexopos_products_unit_quantities', function ( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'convert_unit_id' ) ) {
+                $table->integer( 'convert_unit_id' )->nullable();
             }
 
-            if (! Schema::hasColumn('nexopos_products_unit_quantities', 'cogs')) {
-                $table->integer('cogs')->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'visible' ) ) {
+                $table->integer( 'visible' )->nullable();
             }
-        });
 
-        Schema::table('nexopos_products', function (Blueprint $table) {
-            if (! Schema::hasColumn('nexopos_products', 'auto_cogs')) {
-                $table->boolean('auto_cogs')->default(true);
+            if ( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'cogs' ) ) {
+                $table->integer( 'cogs' )->nullable();
             }
-        });
+        } );
+
+        Schema::table( 'nexopos_products', function ( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_products', 'auto_cogs' ) ) {
+                $table->boolean( 'auto_cogs' )->default( true );
+            }
+        } );
 
         /**
          * Let's convert customers into users
          */
-        $firstAdministrator = Role::namespace(Role::ADMIN)->users()->first();
-        $faker = (new Factory)->create();
+        $firstAdministrator = Role::namespace( Role::ADMIN )->users()->first();
+        $faker = ( new Factory )->create();
 
-        if (Schema::hasTable('nexopos_customers')) {
-            $users = DB::table('nexopos_customers')->get('*')->map(function ($customer) use ($faker, $usersService, $doctorService, $firstAdministrator) {
-                $user = User::where('email', $customer->email)
-                    ->orWhere('username', $customer->email)
+        if ( Schema::hasTable( 'nexopos_customers' ) ) {
+            $users = DB::table( 'nexopos_customers' )->get( '*' )->map( function ( $customer ) use ( $faker, $usersService, $doctorService, $firstAdministrator ) {
+                $user = User::where( 'email', $customer->email )
+                    ->orWhere( 'username', $customer->email )
                     ->firstOrNew();
 
                 $user->birth_date = $customer->birth_date;
-                $user->username = ($customer->email ?? 'user-') . $faker->randomNumber(5);
-                $user->email = ($customer->email ?? $user->username) . '@nexopos.com';
+                $user->username = ( $customer->email ?? 'user-' ) . $faker->randomNumber( 5 );
+                $user->email = ( $customer->email ?? $user->username ) . '@nexopos.com';
                 $user->purchases_amount = $customer->purchases_amount ?: 0;
                 $user->owed_amount = $customer->owed_amount ?: 0;
                 $user->credit_limit_amount = $customer->credit_limit_amount ?: 0;
@@ -290,48 +290,48 @@ return new class extends Migration
                 $user->group_id = $customer->group_id;
                 $user->author = $firstAdministrator->id;
                 $user->active = true;
-                $user->password = Hash::make(Str::random(10)); // every customer has a random password.
+                $user->password = Hash::make( Str::random( 10 ) ); // every customer has a random password.
                 $user->save();
 
                 /**
                  * We'll assign the user to the role that was created based.
                  */
-                $usersService->setUserRole($user, [ Role::namespace(Role::STORECUSTOMER)->id ]);
-                $doctorService->createAttributeForUser($user);
+                $usersService->setUserRole( $user, [ Role::namespace( Role::STORECUSTOMER )->id ] );
+                $doctorService->createAttributeForUser( $user );
 
                 return [
                     'old_id' => $customer->id,
                     'new_id' => $user->id,
                     'user' => $user,
                 ];
-            });
+            } );
 
             /**
              * Every models that was pointing to the old customer id
              * must be update to support the new customer id which is not
              * set on the users table.
              */
-            $users->each(function ($data) {
-                foreach ([ Order::class, CustomerAccountHistory::class, CustomerCoupon::class, CustomerAddress::class, CustomerReward::class ] as $class) {
-                    $class::where('customer_id', $data[ 'old_id' ])->get()->each(function ($address) use ($data) {
+            $users->each( function ( $data ) {
+                foreach ( [ Order::class, CustomerAccountHistory::class, CustomerCoupon::class, CustomerAddress::class, CustomerReward::class ] as $class ) {
+                    $class::where( 'customer_id', $data[ 'old_id' ] )->get()->each( function ( $address ) use ( $data ) {
                         $address->customer_id = $data[ 'new_id' ];
                         $address->save();
-                    });
+                    } );
                 }
-            });
+            } );
 
-            Schema::drop('nexopos_customers');
-            Schema::drop('nexopos_customers_metas');
+            Schema::drop( 'nexopos_customers' );
+            Schema::drop( 'nexopos_customers_metas' );
         }
 
         /**
          * We noticed taxes were saved as a negative value on order products
          * this will fix those value by storing absolute values.
          */
-        OrderProduct::get('tax_value')->each(function ($orderProduct) {
-            $orderProduct->tax_value = abs($orderProduct->tax_value);
+        OrderProduct::get( 'tax_value' )->each( function ( $orderProduct ) {
+            $orderProduct->tax_value = abs( $orderProduct->tax_value );
             $orderProduct->save();
-        });
+        } );
 
         /**
          * We'll drop permissions we no longer use
@@ -341,10 +341,10 @@ return new class extends Migration
          * 1: This permission is a duplicate one, and can easilly be confused
          * with "nexopos.customers.manage-account-history"
          */
-        $permission = Permission::namespace('nexopos.customers.manage-account');
+        $permission = Permission::namespace( 'nexopos.customers.manage-account' );
 
-        if ($permission instanceof Permission) {
-            RolePermission::where('permission_id', $permission->id)->delete();
+        if ( $permission instanceof Permission ) {
+            RolePermission::where( 'permission_id', $permission->id )->delete();
             $permission->delete();
         }
 
@@ -353,20 +353,20 @@ return new class extends Migration
          */
         $options = Option::get();
 
-        $options->each(function ($option) {
-            $json = json_decode($option->value, true);
+        $options->each( function ( $option ) {
+            $json = json_decode( $option->value, true );
 
-            if (preg_match('/^[0-9]{1,}$/', $option->value)) {
+            if ( preg_match( '/^[0-9]{1,}$/', $option->value ) ) {
                 $option->value = (int) $option->value;
-            } elseif (preg_match('/^[0-9]{1,}\.[0-9]{1,}$/', $option->value)) {
+            } elseif ( preg_match( '/^[0-9]{1,}\.[0-9]{1,}$/', $option->value ) ) {
                 $option->value = (float) $option->value;
-            } elseif (json_last_error() == JSON_ERROR_NONE) {
+            } elseif ( json_last_error() == JSON_ERROR_NONE ) {
                 $option->value = $json;
                 $option->array = 1;
             }
 
             $option->save();
-        });
+        } );
     }
 
     /**

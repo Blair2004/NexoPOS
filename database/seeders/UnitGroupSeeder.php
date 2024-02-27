@@ -15,8 +15,8 @@ class UnitGroupSeeder extends Seeder
     public function run()
     {
         return UnitGroup::factory()
-            ->count(5)
-            ->hasUnits(8)
+            ->count( 5 )
+            ->hasUnits( 8 )
             ->create();
     }
 }

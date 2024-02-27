@@ -11,20 +11,20 @@ class SanitizePostFieldsMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle( Request $request, Closure $next ): Response
     {
         $input = $request->all();
 
-        array_walk_recursive($input, function (&$input) {
-            $input = strip_tags($input);
-            $input = htmlspecialchars($input);
-            $input = trim($input);
-        });
+        array_walk_recursive( $input, function ( &$input ) {
+            $input = strip_tags( $input );
+            $input = htmlspecialchars( $input );
+            $input = trim( $input );
+        } );
 
-        $request->merge($input);
+        $request->merge( $input );
 
-        return $next($request);
+        return $next( $request );
     }
 }

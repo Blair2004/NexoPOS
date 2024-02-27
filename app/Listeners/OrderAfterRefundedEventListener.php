@@ -26,13 +26,13 @@ class OrderAfterRefundedEventListener
      *
      * @return void
      */
-    public function handle(OrderAfterRefundedEvent $event)
+    public function handle( OrderAfterRefundedEvent $event )
     {
-        Bus::chain([
-            new RefreshOrderJob($event->order),
-            new CreateTransactionFromRefundedOrder($event->orderRefund),
-            new ReduceCashierStatsFromRefundJob($event->order, $event->orderRefund),
-            new DecreaseCustomerPurchasesJob($event->order->customer, $event->orderRefund->total),
-        ])->dispatch();
+        Bus::chain( [
+            new RefreshOrderJob( $event->order ),
+            new CreateTransactionFromRefundedOrder( $event->orderRefund ),
+            new ReduceCashierStatsFromRefundJob( $event->order, $event->orderRefund ),
+            new DecreaseCustomerPurchasesJob( $event->order->customer, $event->orderRefund->total ),
+        ] )->dispatch();
     }
 }

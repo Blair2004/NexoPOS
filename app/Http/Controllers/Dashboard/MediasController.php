@@ -22,10 +22,10 @@ class MediasController extends DashboardController
 
     public function showMedia()
     {
-        return View::make('pages.dashboard.medias.list', [
-            'title' => __('Manage Medias'),
-            'description' => __('Upload and manage medias (photos).'),
-        ]);
+        return View::make( 'pages.dashboard.medias.list', [
+            'title' => __( 'Manage Medias' ),
+            'description' => __( 'Upload and manage medias (photos).' ),
+        ] );
     }
 
     /**
@@ -43,44 +43,44 @@ class MediasController extends DashboardController
      *
      * @return json
      */
-    public function updateMedia(Media $media, Request $request)
+    public function updateMedia( Media $media, Request $request )
     {
-        $validation = Validator::make($request->all(), [
+        $validation = Validator::make( $request->all(), [
             'name' => 'required',
-        ]);
+        ] );
 
-        if ($validation->fails()) {
-            throw new NotAllowedException('An error occured while updating the media file.');
+        if ( $validation->fails() ) {
+            throw new NotAllowedException( 'An error occured while updating the media file.' );
         }
 
-        $media->name = $request->input('name');
+        $media->name = $request->input( 'name' );
         $media->save();
 
         return [
             'status' => 'success',
-            'message' => __('The media name was successfully updated.'),
+            'message' => __( 'The media name was successfully updated.' ),
         ];
     }
 
-    public function bulkDeleteMedias(Request $request)
+    public function bulkDeleteMedias( Request $request )
     {
-        ns()->restrict('nexopos.delete.medias');
+        ns()->restrict( 'nexopos.delete.medias' );
 
         $result = [];
 
-        foreach ($request->input('ids') as $id) {
-            $result[] = $this->mediaService->deleteMedia($id);
+        foreach ( $request->input( 'ids' ) as $id ) {
+            $result[] = $this->mediaService->deleteMedia( $id );
         }
 
         return [
             'status' => 'success',
-            'message' => __('The operation was successful.'),
-            'data' => compact('result'),
+            'message' => __( 'The operation was successful.' ),
+            'data' => compact( 'result' ),
         ];
     }
 
-    public function uploadMedias(Request $request)
+    public function uploadMedias( Request $request )
     {
-        return $this->mediaService->upload($request->file('file'));
+        return $this->mediaService->upload( $request->file( 'file' ) );
     }
 }

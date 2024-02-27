@@ -16,7 +16,7 @@ class TransactionAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct(public Transaction $transaction, public array $inputs)
+    public function __construct( public Transaction $transaction, public array $inputs )
     {
         // ...
     }

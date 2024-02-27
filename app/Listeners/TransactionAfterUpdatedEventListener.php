@@ -20,8 +20,8 @@ class TransactionAfterUpdatedEventListener
     /**
      * Handle the event.
      */
-    public function handle(TransactionAfterUpdatedEvent $event)
+    public function handle( TransactionAfterUpdatedEvent $event )
     {
-        ProcessTransactionJob::dispatch($event->transaction);
+        ProcessTransactionJob::dispatch( $event->transaction );
     }
 }

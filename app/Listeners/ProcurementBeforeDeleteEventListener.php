@@ -25,9 +25,9 @@ class ProcurementBeforeDeleteEventListener
      *
      * @return void
      */
-    public function handle(ProcurementBeforeDeleteEvent $event)
+    public function handle( ProcurementBeforeDeleteEvent $event )
     {
-        $this->procurementService->attemptProductsStockRemoval($event->procurement);
-        $this->procurementService->deleteProcurementProducts($event->procurement);
+        $this->procurementService->attemptProductsStockRemoval( $event->procurement );
+        $this->procurementService->deleteProcurementProducts( $event->procurement );
     }
 }

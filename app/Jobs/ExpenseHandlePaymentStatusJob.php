@@ -19,7 +19,7 @@ class ExpenseHandlePaymentStatusJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Order $order, public string $previous, public string $new)
+    public function __construct( public Order $order, public string $previous, public string $new )
     {
         $this->prepareSerialization();
     }
@@ -29,7 +29,7 @@ class ExpenseHandlePaymentStatusJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(TransactionService $transactionService)
+    public function handle( TransactionService $transactionService )
     {
         $transactionService->handlePaymentStatus(
             order: $this->order,

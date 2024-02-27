@@ -28,19 +28,19 @@ class NotificationsController extends DashboardController
      */
     public function getNotifications()
     {
-        return Notification::for(Auth::id())->orderBy('id', 'desc')->get();
+        return Notification::for( Auth::id() )->orderBy( 'id', 'desc' )->get();
     }
 
     /**
      * @return array
      */
-    public function deleteSingleNotification($id)
+    public function deleteSingleNotification( $id )
     {
-        $this->notificationService->deleteSingleNotification($id);
+        $this->notificationService->deleteSingleNotification( $id );
 
         return [
             'status' => 'success',
-            'message' => __('The notification has been successfully deleted'),
+            'message' => __( 'The notification has been successfully deleted' ),
         ];
     }
 
@@ -49,11 +49,11 @@ class NotificationsController extends DashboardController
      */
     public function deletAllNotifications()
     {
-        $this->notificationService->deleteNotificationsFor(Auth::user());
+        $this->notificationService->deleteNotificationsFor( Auth::user() );
 
         return [
             'status' => 'success',
-            'message' => __('All the notifications have been cleared.'),
+            'message' => __( 'All the notifications have been cleared.' ),
         ];
     }
 }

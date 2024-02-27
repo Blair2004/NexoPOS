@@ -26,10 +26,10 @@ class ResetController extends DashboardController
      *
      * @return array $array
      */
-    public function hardReset(Request $request)
+    public function hardReset( Request $request )
     {
-        if ($request->input('authorization') !== env('NS_AUTHORIZATION')) {
-            throw new Exception(__('Invalid authorization code provided.'));
+        if ( $request->input( 'authorization' ) !== env( 'NS_AUTHORIZATION' ) ) {
+            throw new Exception( __( 'Invalid authorization code provided.' ) );
         }
 
         return $this->resetService->hardReset();
@@ -40,13 +40,13 @@ class ResetController extends DashboardController
      *
      * @return array
      */
-    public function truncateWithDemo(Request $request)
+    public function truncateWithDemo( Request $request )
     {
-        $this->resetService->softReset($request);
+        $this->resetService->softReset( $request );
 
-        switch ($request->input('mode')) {
+        switch ( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
-                $this->demoService->run($request->all());
+                $this->demoService->run( $request->all() );
                 break;
             case 'wipe_plus_simple':
                 ( new FirstDemoSeeder )->run();
@@ -63,7 +63,7 @@ class ResetController extends DashboardController
 
         return [
             'status' => 'success',
-            'message' => __('The database has been successfully seeded.'),
+            'message' => __( 'The database has been successfully seeded.' ),
         ];
     }
 }

@@ -17,7 +17,7 @@ class BeforeSaveOrderTaxEvent
      *
      * @return void
      */
-    public function __construct(public OrderTax $orderTax, public array $tax)
+    public function __construct( public OrderTax $orderTax, public array $tax )
     {
         //
     }
@@ -29,6 +29,6 @@ class BeforeSaveOrderTaxEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel( 'channel-name' );
     }
 }

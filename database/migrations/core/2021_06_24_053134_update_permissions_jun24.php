@@ -23,18 +23,18 @@ return new class extends Migration
      */
     public function up()
     {
-        $permission = Permission::namespace('nexopos.reports.products-report');
+        $permission = Permission::namespace( 'nexopos.reports.products-report' );
 
-        if (! $permission instanceof Permission) {
-            $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.products-report' ]);
-            $permission->name = __('See Products Report');
+        if ( ! $permission instanceof Permission ) {
+            $permission = Permission::firstOrNew( [ 'namespace' => 'nexopos.reports.products-report' ] );
+            $permission->name = __( 'See Products Report' );
             $permission->namespace = 'nexopos.reports.products-report';
-            $permission->description = __('Let you see the Products report');
+            $permission->description = __( 'Let you see the Products report' );
             $permission->save();
         }
 
-        Role::namespace('admin')->addPermissions($permission);
-        Role::namespace('nexopos.store.administrator')->addPermissions($permission);
+        Role::namespace( 'admin' )->addPermissions( $permission );
+        Role::namespace( 'nexopos.store.administrator' )->addPermissions( $permission );
     }
 
     /**

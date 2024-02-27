@@ -16,7 +16,7 @@ class TransactionBeforeCreatedEvent
      *
      * @return void
      */
-    public function __construct(public array $inputs)
+    public function __construct( public array $inputs )
     {
         // ...
     }
@@ -28,6 +28,6 @@ class TransactionBeforeCreatedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

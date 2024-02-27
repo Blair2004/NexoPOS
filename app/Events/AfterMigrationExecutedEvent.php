@@ -16,7 +16,7 @@ class AfterMigrationExecutedEvent
      *
      * @return void
      */
-    public function __construct(public $module, public $response, public $file)
+    public function __construct( public $module, public $response, public $file )
     {
         // ...
     }
@@ -28,6 +28,6 @@ class AfterMigrationExecutedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

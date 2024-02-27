@@ -49,19 +49,19 @@ class ProvidersController extends DashboardController
         return ProviderCrud::form();
     }
 
-    public function editProvider(Provider $provider)
+    public function editProvider( Provider $provider )
     {
-        return ProviderCrud::form($provider);
+        return ProviderCrud::form( $provider );
     }
 
-    public function providerProcurements($provider_id)
+    public function providerProcurements( $provider_id )
     {
-        return $this->providerService->procurements($provider_id);
+        return $this->providerService->procurements( $provider_id );
     }
 
-    public function deleteProvider($id)
+    public function deleteProvider( $id )
     {
-        return $this->providerService->delete($id);
+        return $this->providerService->delete( $id );
     }
 
     /**
@@ -70,17 +70,17 @@ class ProvidersController extends DashboardController
      *
      * @return string
      */
-    public function listProvidersProcurements(Provider $provider)
+    public function listProvidersProcurements( Provider $provider )
     {
-        return ProviderProcurementsCrud::table([
+        return ProviderProcurementsCrud::table( [
             'queryParams' => [
                 'provider_id' => $provider->id,
             ],
             'title' => sprintf(
-                __('Procurements by "%s"'),
+                __( 'Procurements by "%s"' ),
                 $provider->name
             ),
-        ]);
+        ] );
     }
 
     /**
@@ -89,19 +89,19 @@ class ProvidersController extends DashboardController
      *
      * @return array
      */
-    public function listProvidersProducts(Provider $provider)
+    public function listProvidersProducts( Provider $provider )
     {
         $procurements = $provider
             ->procurements()
-            ->get('id')
-            ->map(fn($procurement) => $procurement->id)
+            ->get( 'id' )
+            ->map( fn( $procurement ) => $procurement->id )
             ->toArray();
 
-        return ProviderProductsCrud::table([
-            'title' => sprintf(__('%s\'s Products'), $provider->name),
+        return ProviderProductsCrud::table( [
+            'title' => sprintf( __( '%s\'s Products' ), $provider->name ),
             'queryParams' => [
                 'procurements' => $procurements,
             ],
-        ]);
+        ] );
     }
 }

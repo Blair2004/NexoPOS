@@ -8,30 +8,30 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property string $id
- * @property string $name
- * @property string $tax_type
- * @property int $tax_group_id
- * @property float $tax_value
- * @property string $product_type
- * @property string $type
- * @property bool $accurate_tracking
- * @property bool $auto_cogs
- * @property string $status
- * @property string $stock_management Can either be "enabled" or "disabled"
- * @property string $barcode
- * @property string $barcode_type
- * @property string $sku
- * @property string $description
- * @property int $thumbnail_id
- * @property int $category_id
- * @property int $parent_id
- * @property int $unit_group
- * @property string $on_expiration
- * @property bool $expires whether or not the product has expired
- * @property bool $searchable
- * @property int $author
- * @property string $uuid
+ * @property string   $id
+ * @property string   $name
+ * @property string   $tax_type
+ * @property int      $tax_group_id
+ * @property float    $tax_value
+ * @property string   $product_type
+ * @property string   $type
+ * @property bool     $accurate_tracking
+ * @property bool     $auto_cogs
+ * @property string   $status
+ * @property string   $stock_management  Can either be "enabled" or "disabled"
+ * @property string   $barcode
+ * @property string   $barcode_type
+ * @property string   $sku
+ * @property string   $description
+ * @property int      $thumbnail_id
+ * @property int      $category_id
+ * @property int      $parent_id
+ * @property int      $unit_group
+ * @property string   $on_expiration
+ * @property bool     $expires           whether or not the product has expired
+ * @property bool     $searchable
+ * @property int      $author
+ * @property string   $uuid
  * @property TaxGroup $tax_group
  *
  * @method static Builder trackingEnabled()
@@ -104,7 +104,7 @@ class Product extends NsModel
 
     public function category()
     {
-        return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
+        return $this->belongsTo( ProductCategory::class, 'category_id', 'id' );
     }
 
     /**
@@ -113,9 +113,9 @@ class Product extends NsModel
      * @param Builder
      * @return Builder
      */
-    public function scopeTrackingEnabled($query)
+    public function scopeTrackingEnabled( $query )
     {
-        return $query->where('accurate_tracking', true);
+        return $query->where( 'accurate_tracking', true );
     }
 
     /**
@@ -124,26 +124,26 @@ class Product extends NsModel
      * @param Builder
      * @return Builder
      */
-    public function scopeType($query, $type)
+    public function scopeType( $query, $type )
     {
-        return $query->where('type', $type);
+        return $query->where( 'type', $type );
     }
 
     /**
      * Add a scope that filter product
      * that aren't grouped
      */
-    public function scopeNotGrouped(Builder $query)
+    public function scopeNotGrouped( Builder $query )
     {
-        return $query->where('type', '!=', self::TYPE_GROUPED);
+        return $query->where( 'type', '!=', self::TYPE_GROUPED );
     }
 
     /**
      * Filter products if they are grouped products.
      */
-    public function scopeGrouped(Builder $query)
+    public function scopeGrouped( Builder $query )
     {
-        return $query->where('type', self::TYPE_GROUPED);
+        return $query->where( 'type', self::TYPE_GROUPED );
     }
 
     /**
@@ -151,31 +151,31 @@ class Product extends NsModel
      *
      * @alias scopeGrouped
      */
-    public function scopeIsGroup(Builder $query)
+    public function scopeIsGroup( Builder $query )
     {
-        return $query->where('type', self::TYPE_GROUPED);
+        return $query->where( 'type', self::TYPE_GROUPED );
     }
 
     /**
      * Filter product that doesn't
      * belong to a group
      */
-    public function scopeNotInGroup(Builder $query)
+    public function scopeNotInGroup( Builder $query )
     {
-        $subItemsIds = ProductSubItem::get('id')->map(fn($entry) => $entry->id)->toArray();
+        $subItemsIds = ProductSubItem::get( 'id' )->map( fn( $entry ) => $entry->id )->toArray();
 
-        return $query->whereNotIn('id', $subItemsIds);
+        return $query->whereNotIn( 'id', $subItemsIds );
     }
 
     /**
      * Filter products that are
      * included as a sub_items.
      */
-    public function scopeInGroup(Builder $query)
+    public function scopeInGroup( Builder $query )
     {
-        $subItemsIds = ProductSubItem::get('id')->map(fn($entry) => $entry->id)->toArray();
+        $subItemsIds = ProductSubItem::get( 'id' )->map( fn( $entry ) => $entry->id )->toArray();
 
-        return $query->whereIn('id', $subItemsIds);
+        return $query->whereIn( 'id', $subItemsIds );
     }
 
     /**
@@ -184,9 +184,9 @@ class Product extends NsModel
      * @param Builder
      * @return Builder
      */
-    public function scopeTrackingDisabled($query)
+    public function scopeTrackingDisabled( $query )
     {
-        return $query->where('accurate_tracking', false);
+        return $query->where( 'accurate_tracking', false );
     }
 
     /**
@@ -196,9 +196,9 @@ class Product extends NsModel
      * @param string barcode
      * @return Builder
      */
-    public function scopeFindUsingBarcode($query, $barcode)
+    public function scopeFindUsingBarcode( $query, $barcode )
     {
-        return $query->where('barcode', $barcode);
+        return $query->where( 'barcode', $barcode );
     }
 
     /**
@@ -208,21 +208,21 @@ class Product extends NsModel
      * @param string barcode
      * @return Builder
      */
-    public function scopeBarcode($query, $barcode)
+    public function scopeBarcode( $query, $barcode )
     {
-        return $this->scopeFindUsingBarcode($query, $barcode);
+        return $this->scopeFindUsingBarcode( $query, $barcode );
     }
 
     /**
      * get a product using a barcode
      *
-     * @param Builder $query
-     * @param string $sku
+     * @param  Builder $query
+     * @param  string  $sku
      * @return Builder
      */
-    public function scopeSku($query, $sku)
+    public function scopeSku( $query, $sku )
     {
-        return $this->scopeFindUsingSKU($query, $sku);
+        return $this->scopeFindUsingSKU( $query, $sku );
     }
 
     /**
@@ -231,9 +231,9 @@ class Product extends NsModel
      * @param Builder
      * @return Builder
      */
-    public function scopeOnSale($query)
+    public function scopeOnSale( $query )
     {
-        return $query->where('status', self::STATUS_AVAILABLE);
+        return $query->where( 'status', self::STATUS_AVAILABLE );
     }
 
     /**
@@ -242,9 +242,9 @@ class Product extends NsModel
      * @param Builder
      * @return Builder
      */
-    public function scopeHidden($query)
+    public function scopeHidden( $query )
     {
-        return $query->where('status', self::STATUS_UNAVAILABLE);
+        return $query->where( 'status', self::STATUS_UNAVAILABLE );
     }
 
     /**
@@ -254,54 +254,54 @@ class Product extends NsModel
      * @param string sku
      * @return Builder
      */
-    public function scopeFindUsingSKU($query, $sku)
+    public function scopeFindUsingSKU( $query, $sku )
     {
-        return $query->where('sku', $sku);
+        return $query->where( 'sku', $sku );
     }
 
     public function unit_quantities()
     {
-        return $this->hasMany(ProductUnitQuantity::class, 'product_id');
+        return $this->hasMany( ProductUnitQuantity::class, 'product_id' );
     }
 
     public function unitGroup()
     {
-        return $this->hasOne(UnitGroup::class, 'id', 'unit_group');
+        return $this->hasOne( UnitGroup::class, 'id', 'unit_group' );
     }
 
     public function product_taxes()
     {
-        return $this->hasMany(ProductTax::class, 'product_id');
+        return $this->hasMany( ProductTax::class, 'product_id' );
     }
 
     public function tax_group()
     {
-        return $this->hasOne(TaxGroup::class, 'id', 'tax_group_id');
+        return $this->hasOne( TaxGroup::class, 'id', 'tax_group_id' );
     }
 
     public function variations()
     {
-        return $this->hasMany(Product::class, 'parent_id');
+        return $this->hasMany( Product::class, 'parent_id' );
     }
 
     public function galleries()
     {
-        return $this->hasMany(ProductGallery::class, 'product_id', 'id');
+        return $this->hasMany( ProductGallery::class, 'product_id', 'id' );
     }
 
     public function procurementHistory()
     {
-        return $this->hasMany(ProcurementProduct::class, 'product_id', 'id');
+        return $this->hasMany( ProcurementProduct::class, 'product_id', 'id' );
     }
 
     public function sub_items()
     {
-        return $this->hasMany(ProductSubItem::class, 'parent_id', 'id');
+        return $this->hasMany( ProductSubItem::class, 'parent_id', 'id' );
     }
 
     public function history()
     {
-        return $this->hasMany(ProductHistory::class, 'product_id', 'id');
+        return $this->hasMany( ProductHistory::class, 'product_id', 'id' );
     }
 
     /**
@@ -310,9 +310,9 @@ class Product extends NsModel
      * @param Builder $query
      * @return Builder;
      */
-    public function scopeOnlyVariations($query)
+    public function scopeOnlyVariations( $query )
     {
-        return $query->where('product_type', 'variation');
+        return $query->where( 'product_type', 'variation' );
     }
 
     /**
@@ -321,9 +321,9 @@ class Product extends NsModel
      * @param Builder $query
      * @return Builder;
      */
-    public function scopeExcludeVariations($query)
+    public function scopeExcludeVariations( $query )
     {
-        return $query->where('product_type', '!=', 'variation');
+        return $query->where( 'product_type', '!=', 'variation' );
     }
 
     /**
@@ -333,9 +333,9 @@ class Product extends NsModel
      * @param Builder $query
      * @return Builder;
      */
-    public function scopeWithStockEnabled($query)
+    public function scopeWithStockEnabled( $query )
     {
-        return $query->where('stock_management', Product::STOCK_MANAGEMENT_ENABLED);
+        return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
     }
 
     /**
@@ -345,21 +345,21 @@ class Product extends NsModel
      * @param Builder $query
      * @return Builder;
      */
-    public function scopeWithStockDisabled($query)
+    public function scopeWithStockDisabled( $query )
     {
-        return $query->where('stock_management', Product::STOCK_MANAGEMENT_DISABLED);
+        return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
     }
 
     /**
      * Filter query by getitng product with
      * accurate stock enabled or not.
      *
-     * @param Builder $query
+     * @param  Builder $query
      * @return Builder
      */
-    public function scopeAccurateTracking($query, $argument = true)
+    public function scopeAccurateTracking( $query, $argument = true )
     {
-        return $query->where('accurate_tracking', $argument);
+        return $query->where( 'accurate_tracking', $argument );
     }
 
     /**
@@ -368,8 +368,8 @@ class Product extends NsModel
      * @param Builder
      * @return Builder
      */
-    public function scopeSearchable($query, $attribute = true)
+    public function scopeSearchable( $query, $attribute = true )
     {
-        return $query->where('searchable', $attribute);
+        return $query->where( 'searchable', $attribute );
     }
 }

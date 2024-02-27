@@ -3,10 +3,10 @@
 namespace App\Models;
 
 /**
- * @property int $id
- * @property string $uuid
- * @property int $author
- * @property bool $featured
+ * @property int            $id
+ * @property string         $uuid
+ * @property int            $author
+ * @property bool           $featured
  * @property \Carbon\Carbon $updated_at
  */
 class ProductGallery extends NsModel
@@ -30,6 +30,6 @@ class ProductGallery extends NsModel
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo( Product::class );
     }
 }

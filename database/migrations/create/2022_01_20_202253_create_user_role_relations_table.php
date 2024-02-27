@@ -26,26 +26,26 @@ return new class extends Migration
      */
     public function up()
     {
-        if (! Schema::hasTable('nexopos_users_roles_relations')) {
-            Schema::create('nexopos_users_roles_relations', function (Blueprint $table) {
+        if ( ! Schema::hasTable( 'nexopos_users_roles_relations' ) ) {
+            Schema::create( 'nexopos_users_roles_relations', function ( Blueprint $table ) {
                 $table->id();
-                $table->integer('role_id');
-                $table->integer('user_id');
+                $table->integer( 'role_id' );
+                $table->integer( 'user_id' );
                 $table->timestamps();
-            });
+            } );
         }
 
-        if (Schema::hasColumn('nexopos_users', 'role_id')) {
-            Role::get()->each(function ($role) {
-                User::where('role_id', $role->id)
+        if ( Schema::hasColumn( 'nexopos_users', 'role_id' ) ) {
+            Role::get()->each( function ( $role ) {
+                User::where( 'role_id', $role->id )
                     ->get()
-                    ->each(function ($user) use ($role) {
+                    ->each( function ( $user ) use ( $role ) {
                         $relation = new UserRoleRelation;
                         $relation->user_id = $user->id;
                         $relation->role_id = $role->id;
                         $relation->save();
-                    });
-            });
+                    } );
+            } );
         }
     }
 
@@ -56,6 +56,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_users_roles_relations');
+        Schema::dropIfExists( 'nexopos_users_roles_relations' );
     }
 };

@@ -8,6 +8,6 @@ class DevController extends DashboardController
 {
     public function index()
     {
-        return View::make('dev.index');
+        return View::make( 'dev.index' );
     }
 }

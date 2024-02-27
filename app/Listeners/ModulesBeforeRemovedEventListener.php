@@ -19,10 +19,10 @@ class ModulesBeforeRemovedEventListener
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param  object $event
      * @return void
      */
-    public function handle(ModulesBeforeRemovedEvent $event)
+    public function handle( ModulesBeforeRemovedEvent $event )
     {
         //
     }

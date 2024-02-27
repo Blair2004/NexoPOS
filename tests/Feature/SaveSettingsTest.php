@@ -20,32 +20,32 @@ class SaveSettingsTest extends TestCase
     public function testSaveSettings()
     {
         Sanctum::actingAs(
-            Role::namespace('admin')->users->first(),
+            Role::namespace( 'admin' )->users->first(),
             ['*']
         );
 
-        collect(Storage::disk('ns')->files('app/Settings'))
-            ->map(function ($fileName) {
-                $fileName = collect(explode('/', $fileName));
-                $file = pathinfo($fileName->last());
+        collect( Storage::disk( 'ns' )->files( 'app/Settings' ) )
+            ->map( function ( $fileName ) {
+                $fileName = collect( explode( '/', $fileName ) );
+                $file = pathinfo( $fileName->last() );
 
                 return 'App\\Settings\\' . $file[ 'filename' ];
-            })
-            ->filter(function ($class) {
+            } )
+            ->filter( function ( $class ) {
                 $object = new $class;
 
-                return array_key_exists('tabs', $object->getForm());
-            })
-            ->each(function ($class) {
+                return array_key_exists( 'tabs', $object->getForm() );
+            } )
+            ->each( function ( $class ) {
                 $object = new $class;
                 $form = $object->getForm();
 
-                $form = collect($object->getForm()[ 'tabs' ])->mapWithKeys(function ($value, $key) {
+                $form = collect( $object->getForm()[ 'tabs' ] )->mapWithKeys( function ( $value, $key ) {
                     return [
-                        $key => collect($value[ 'fields' ])
-                            ->mapWithKeys(function ($field) {
+                        $key => collect( $value[ 'fields' ] )
+                            ->mapWithKeys( function ( $field ) {
                                 return [
-                                    $field[ 'name' ] => match ($field[ 'name' ]) {
+                                    $field[ 'name' ] => match ( $field[ 'name' ] ) {
                                         'ns_store_language' => 'en',
                                         'ns_currency_symbol' => '$',
                                         'ns_currency_iso' => 'USD',
@@ -55,43 +55,43 @@ class SaveSettingsTest extends TestCase
                                         'ns_datetime_timezone' => 'Europe/London',
                                         'ns_datetime_format' => 'Y-m-d H:i',
                                         default => (
-                                            match ($field[ 'type' ]) {
-                                                'text', 'textarea' => strstr($field[ 'name' ], 'email') ? $this->faker->email() : $this->faker->text(20),
-                                                'select' => ! empty($field[ 'options' ]) ? collect($field[ 'options' ])->random()[ 'value' ] : '',
+                                            match ( $field[ 'type' ] ) {
+                                                'text', 'textarea' => strstr( $field[ 'name' ], 'email' ) ? $this->faker->email() : $this->faker->text( 20 ),
+                                                'select' => ! empty( $field[ 'options' ] ) ? collect( $field[ 'options' ] )->random()[ 'value' ] : '',
                                                 default => $field[ 'value' ]
                                             }
                                         )
                                     },
                                 ];
-                            }),
+                            } ),
                     ];
-                })->toArray();
+                } )->toArray();
 
-                if (! empty($object->getIdentifier())) {
+                if ( ! empty( $object->getIdentifier() ) ) {
                     $response = $this
-                        ->withSession($this->app[ 'session' ]->all())
-                        ->json('POST', '/api/settings/' . $object->getIdentifier(), $form);
+                        ->withSession( $this->app[ 'session' ]->all() )
+                        ->json( 'POST', '/api/settings/' . $object->getIdentifier(), $form );
 
-                    $response->assertJsonPath('status', 'success');
+                    $response->assertJsonPath( 'status', 'success' );
 
-                    foreach ($form as $tab => $fields) {
-                        foreach ($fields as $name => $value) {
-                            $value = ns()->option->get($name);
+                    foreach ( $form as $tab => $fields ) {
+                        foreach ( $fields as $name => $value ) {
+                            $value = ns()->option->get( $name );
 
-                            if (! is_array($value)) {
+                            if ( ! is_array( $value ) ) {
                                 $this->assertTrue(
-                                    ns()->option->get($name) == $value,
+                                    ns()->option->get( $name ) == $value,
                                     sprintf(
                                         'Failed to assert that "%s" option has as value %s. Current value: %s',
                                         $name,
                                         $value,
-                                        ns()->option->get($name)
+                                        ns()->option->get( $name )
                                     )
                                 );
                             }
                         }
                     }
                 }
-            });
+            } );
     }
 }

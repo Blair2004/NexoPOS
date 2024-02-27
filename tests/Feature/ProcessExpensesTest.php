@@ -28,12 +28,12 @@ class ProcessExpensesTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $transaction = $this->createTransaction([
+        $transaction = $this->createTransaction( [
             'name' => 'Rent',
             'occurrence' => Transaction::OCCURRENCE_START_OF_MONTH,
-        ]);
+        ] );
 
-        $this->executeReccuringTransaction($transaction);
+        $this->executeReccuringTransaction( $transaction );
     }
 
     /**
@@ -45,31 +45,31 @@ class ProcessExpensesTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $date = app()->make(DateService::class);
+        $date = app()->make( DateService::class );
 
-        $transaction = $this->createTransaction([
+        $transaction = $this->createTransaction( [
             'name' => 'Scheduled Transaction',
             'occurrence' => null,
             'active' => true,
             'recurring' => false,
             'type' => ScheduledTransactionFields::getIdentifier(),
-            'scheduled_date' => $date->copy()->addMinutes(2)->toDateTimeString(),
-        ]);
+            'scheduled_date' => $date->copy()->addMinutes( 2 )->toDateTimeString(),
+        ] );
 
-        $this->executeScheduledTransaction($transaction);
+        $this->executeScheduledTransaction( $transaction );
     }
 
-    private function executeScheduledTransaction($transaction)
+    private function executeScheduledTransaction( $transaction )
     {
-        $scheduledCarbon = Carbon::parse($transaction->scheduled_date);
+        $scheduledCarbon = Carbon::parse( $transaction->scheduled_date );
 
-        ns()->date->setDateTimeFrom($scheduledCarbon);
+        ns()->date->setDateTimeFrom( $scheduledCarbon );
 
         DetectScheduledTransactionsJob::dispatchSync();
 
-        $cashFlow = TransactionHistory::where('transaction_id', $transaction->id)->first();
+        $cashFlow = TransactionHistory::where( 'transaction_id', $transaction->id )->first();
 
-        $this->assertTrue($cashFlow instanceof TransactionHistory, 'No cash flow record were saved after the scheduled transaction.');
+        $this->assertTrue( $cashFlow instanceof TransactionHistory, 'No cash flow record were saved after the scheduled transaction.' );
     }
 
     /**
@@ -81,12 +81,12 @@ class ProcessExpensesTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $transaction = $this->createTransaction([
+        $transaction = $this->createTransaction( [
             'name' => 'Rent',
             'occurrence' => Transaction::OCCURRENCE_SPECIFIC_DAY,
-        ]);
+        ] );
 
-        $this->executeReccuringTransaction($transaction);
+        $this->executeReccuringTransaction( $transaction );
     }
 
     /**
@@ -98,12 +98,12 @@ class ProcessExpensesTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $transaction = $this->createTransaction([
+        $transaction = $this->createTransaction( [
             'name' => 'Delivery',
             'occurrence' => Transaction::OCCURRENCE_END_OF_MONTH,
-        ]);
+        ] );
 
-        $this->executeReccuringTransaction($transaction);
+        $this->executeReccuringTransaction( $transaction );
     }
 
     /**
@@ -115,12 +115,12 @@ class ProcessExpensesTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $transaction = $this->createTransaction([
+        $transaction = $this->createTransaction( [
             'name' => 'Reccurring Middle Of Month',
             'occurrence' => Transaction::OCCURRENCE_MIDDLE_OF_MONTH,
-        ]);
+        ] );
 
-        $this->executeReccuringTransaction($transaction);
+        $this->executeReccuringTransaction( $transaction );
     }
 
     /**
@@ -132,12 +132,12 @@ class ProcessExpensesTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $transaction = $this->createTransaction([
+        $transaction = $this->createTransaction( [
             'name' => 'Reccurring On Month Starts',
             'occurrence' => Transaction::OCCURRENCE_X_AFTER_MONTH_STARTS,
-        ]);
+        ] );
 
-        $this->executeReccuringTransaction($transaction);
+        $this->executeReccuringTransaction( $transaction );
     }
 
     /**
@@ -149,15 +149,15 @@ class ProcessExpensesTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        $transaction = $this->createTransaction([
+        $transaction = $this->createTransaction( [
             'name' => 'Reccurring On Month Ends',
             'occurrence' => Transaction::OCCURRENCE_X_BEFORE_MONTH_ENDS,
-        ]);
+        ] );
 
-        $this->executeReccuringTransaction($transaction);
+        $this->executeReccuringTransaction( $transaction );
     }
 
-    private function createTransaction($config)
+    private function createTransaction( $config )
     {
         /**
          * We don't want to execute multiple transactions
@@ -167,7 +167,7 @@ class ProcessExpensesTest extends TestCase
 
         $occurrence = $config[ 'occurrence' ] ?? Transaction::OCCURRENCE_START_OF_MONTH;
 
-        $range = match ($occurrence) {
+        $range = match ( $occurrence ) {
             Transaction::OCCURRENCE_START_OF_MONTH,
             Transaction::OCCURRENCE_END_OF_MONTH,
             Transaction::OCCURRENCE_MIDDLE_OF_MONTH => 1,
@@ -177,42 +177,42 @@ class ProcessExpensesTest extends TestCase
             default => 1,
         };
 
-        $response = $this->json('POST', '/api/transactions', [
-            'name' => $config[ 'name' ] ?? $this->faker->paragraph(2),
+        $response = $this->json( 'POST', '/api/transactions', [
+            'name' => $config[ 'name' ] ?? $this->faker->paragraph( 2 ),
             'active' => true,
-            'account_id' => TransactionAccount::get('id')->random()->id,
-            'description' => $this->faker->paragraph(5),
-            'value' => $this->faker->randomNumber(2),
+            'account_id' => TransactionAccount::get( 'id' )->random()->id,
+            'description' => $this->faker->paragraph( 5 ),
+            'value' => $this->faker->randomNumber( 2 ),
             'recurring' => $config[ 'recurring' ] ?? true,
             'type' => $config[ 'type' ] ?? ReccurringTransactionFields::getIdentifier(),
             'group_id' => $config[ 'group_id' ] ?? null,
             'occurrence' => $occurrence,
             'scheduled_date' => $config[ 'scheduled_date'] ?? null,
-            'occurrence_value' => $this->faker->numberBetween(1, $range),
-        ]);
+            'occurrence_value' => $this->faker->numberBetween( 1, $range ),
+        ] );
 
-        $response->assertJsonPath('status', 'success');
+        $response->assertJsonPath( 'status', 'success' );
         $responseJson = $response->json();
         $transaction = $responseJson[ 'data' ][ 'transaction' ];
 
-        return Transaction::find($transaction[ 'id' ]);
+        return Transaction::find( $transaction[ 'id' ] );
     }
 
-    private function executeReccuringTransaction($transaction)
+    private function executeReccuringTransaction( $transaction )
     {
         $currentDay = now()->startOfMonth();
 
         /**
          * @var TransactionService
          */
-        $transactionService = app()->make(TransactionService::class);
+        $transactionService = app()->make( TransactionService::class );
 
-        while (! $currentDay->isLastOfMonth()) {
-            $result = $transactionService->handleRecurringTransactions($currentDay);
+        while ( ! $currentDay->isLastOfMonth() ) {
+            $result = $transactionService->handleRecurringTransactions( $currentDay );
 
-            switch ($transaction->occurrence) {
+            switch ( $transaction->occurrence ) {
                 case Transaction::OCCURRENCE_START_OF_MONTH:
-                    if ((int) $currentDay->day === 1) {
+                    if ( (int) $currentDay->day === 1 ) {
                         $this->assertTrue(
                             $result[ 'data' ][0][ 'status' ] === 'success',
                             'The transaction hasn\'t been triggered at the first day of the month.'
@@ -227,7 +227,7 @@ class ProcessExpensesTest extends TestCase
                     }
                     break;
                 case Transaction::OCCURRENCE_END_OF_MONTH:
-                    if ($currentDay->isLastOfMonth()) {
+                    if ( $currentDay->isLastOfMonth() ) {
                         $this->assertTrue(
                             $result[ 'data' ][0][ 'status' ] === 'success',
                             'The transaction hasn\'t been triggered at the last day of the month.'
@@ -242,7 +242,7 @@ class ProcessExpensesTest extends TestCase
                     }
                     break;
                 case Transaction::OCCURRENCE_MIDDLE_OF_MONTH:
-                    if ((int) $currentDay->day === 15) {
+                    if ( (int) $currentDay->day === 15 ) {
                         $this->assertTrue(
                             $result[ 'data' ][0][ 'status' ] === 'success',
                             'The transaction hasn\'t been triggered at the middle of the month.'
@@ -257,7 +257,7 @@ class ProcessExpensesTest extends TestCase
                     }
                     break;
                 case Transaction::OCCURRENCE_SPECIFIC_DAY:
-                    if ((int) $currentDay->day === (int) $transaction->occurrence_value) {
+                    if ( (int) $currentDay->day === (int) $transaction->occurrence_value ) {
                         $this->assertTrue(
                             $result[ 'data' ][0][ 'status' ] === 'success',
                             'The transction hasn\'t been triggered at a specific day of the month.'
@@ -272,7 +272,7 @@ class ProcessExpensesTest extends TestCase
                     }
                     break;
                 case Transaction::OCCURRENCE_X_AFTER_MONTH_STARTS:
-                    if ((int) $currentDay->copy()->startOfMonth()->addDays($transaction->occurrence_value)->isSameDay($currentDay)) {
+                    if ( (int) $currentDay->copy()->startOfMonth()->addDays( $transaction->occurrence_value )->isSameDay( $currentDay ) ) {
                         $this->assertTrue(
                             $result[ 'data' ][0][ 'status' ] === 'success',
                             'The transaction hasn\'t been triggered x days after the month started.'
@@ -287,7 +287,7 @@ class ProcessExpensesTest extends TestCase
                     }
                     break;
                 case Transaction::OCCURRENCE_X_BEFORE_MONTH_ENDS:
-                    if ((int) $currentDay->copy()->endOfMonth()->subDays($transaction->occurrence_value)->isSameDay($currentDay)) {
+                    if ( (int) $currentDay->copy()->endOfMonth()->subDays( $transaction->occurrence_value )->isSameDay( $currentDay ) ) {
                         $this->assertTrue(
                             $result[ 'data' ][0][ 'status' ] === 'success',
                             'The transaction hasn\'t been triggered x days before the month ended.'

@@ -10,8 +10,8 @@ class BestCustomersWidget extends WidgetService
 
     public function __construct()
     {
-        $this->name = __('Best Customers');
-        $this->description = __('Will display all customers with the highest purchases.');
+        $this->name = __( 'Best Customers' );
+        $this->description = __( 'Will display all customers with the highest purchases.' );
         $this->permission = 'nexopos.see.best-customers-widget';
     }
 }

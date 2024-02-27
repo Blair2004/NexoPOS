@@ -19,7 +19,7 @@ class CombiningProductsTest extends TestCase
     public function test_combined_products()
     {
         Sanctum::actingAs(
-            Role::namespace('admin')->users->first(),
+            Role::namespace( 'admin' )->users->first(),
             ['*']
         );
 

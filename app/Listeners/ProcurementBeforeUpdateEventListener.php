@@ -25,8 +25,8 @@ class ProcurementBeforeUpdateEventListener
      *
      * @return void
      */
-    public function handle(ProcurementBeforeUpdateEvent $event)
+    public function handle( ProcurementBeforeUpdateEvent $event )
     {
-        $this->providerService->cancelPaymentForProcurement($event->procurement);
+        $this->providerService->cancelPaymentForProcurement( $event->procurement );
     }
 }

@@ -19,7 +19,7 @@ class RefreshOrderJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Order $order)
+    public function __construct( public Order $order )
     {
         $this->prepareSerialization();
     }
@@ -29,8 +29,8 @@ class RefreshOrderJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(OrdersService $ordersService)
+    public function handle( OrdersService $ordersService )
     {
-        $ordersService->refreshOrder($this->order);
+        $ordersService->refreshOrder( $this->order );
     }
 }

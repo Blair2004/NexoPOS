@@ -13,18 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::createIfMissing('nexopos_customers_coupons', function (Blueprint $table) {
+        Schema::createIfMissing( 'nexopos_customers_coupons', function ( Blueprint $table ) {
             $table->id();
-            $table->string('name');
-            $table->integer('usage')->default(0);
-            $table->integer('limit_usage');
-            $table->boolean('active')->default(true);
-            $table->string('code');
-            $table->integer('coupon_id');
-            $table->integer('customer_id');
-            $table->integer('author');
+            $table->string( 'name' );
+            $table->integer( 'usage' )->default( 0 );
+            $table->integer( 'limit_usage' );
+            $table->boolean( 'active' )->default( true );
+            $table->string( 'code' );
+            $table->integer( 'coupon_id' );
+            $table->integer( 'customer_id' );
+            $table->integer( 'author' );
             $table->timestamps();
-        });
+        } );
     }
 
     /**
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_customers_coupons');
+        Schema::dropIfExists( 'nexopos_customers_coupons' );
     }
 };

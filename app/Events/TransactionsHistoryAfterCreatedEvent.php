@@ -16,7 +16,7 @@ class TransactionsHistoryAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct(public TransactionHistory $transactionHistory)
+    public function __construct( public TransactionHistory $transactionHistory )
     {
         // ...
     }

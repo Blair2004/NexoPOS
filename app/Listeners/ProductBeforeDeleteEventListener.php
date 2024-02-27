@@ -21,11 +21,11 @@ class ProductBeforeDeleteEventListener
     /**
      * Handle the event.
      *
-     * @param  \App\Events\ProductBeforeDeleteProductEvent  $event
+     * @param  \App\Events\ProductBeforeDeleteProductEvent $event
      * @return void
      */
-    public function handle(ProductBeforeDeleteEvent $event)
+    public function handle( ProductBeforeDeleteEvent $event )
     {
-        $this->productService->deleteProductRelations($event->product);
+        $this->productService->deleteProductRelations( $event->product );
     }
 }
