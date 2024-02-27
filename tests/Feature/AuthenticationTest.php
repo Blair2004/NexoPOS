@@ -141,9 +141,17 @@ class AuthenticationTest extends TestCase
         $response->assertStatus( 200 );
     }
 
+    public function generateUsername($faker, $minLength = 10) {
+        $username = $faker->userName;
+        while(strlen($username) < $minLength) {
+            $username .= $faker->randomLetter;
+        }
+        return $username;
+    }
+
     public function testSubmitRegistrationForm()
     {
-        $password = $this->faker->password();
+        $password = $this->faker->password(8);
         $registration_validated = ns()->option->get( 'ns_registration_validated', 'yes' );
 
         /**
@@ -152,7 +160,7 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
-        $username = $this->faker->userName();
+        $username = $this->generateUsername(6);
         $email = $this->faker->email();
 
         $response = $this
