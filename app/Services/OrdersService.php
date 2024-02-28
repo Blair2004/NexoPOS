@@ -87,6 +87,20 @@ class OrdersService
     public function create( $fields, ?Order $order = null )
     {
         $isNew = ! $order instanceof Order;
+
+        /**
+         * if the order is being edited, we need to
+         * keep a reference to the previous order to be able to compare
+         * the changes that has been made.
+         */
+        if ( $order instanceof Order ) {
+            $order->load( 'payments' );
+            $order->load( 'products' );
+            $order->load( 'coupons' );
+
+            $previousOrder =  clone $order;
+        }
+
         $customer = $this->__customerIsDefined( $fields );
         $fields[ 'products' ] = $this->__buildOrderProducts( $fields['products'] );
 
@@ -210,7 +224,11 @@ class OrdersService
          */
         $isNew ?
             event( new OrderAfterCreatedEvent( $order, $fields ) ) :
-            event( new OrderAfterUpdatedEvent( $order, $fields ) );
+            event( new OrderAfterUpdatedEvent(
+                newOrder: $order, 
+                prevOrder: $previousOrder,
+                fields: $fields 
+            ) );
 
         return [
             'status' => 'success',
@@ -2080,7 +2098,7 @@ class OrdersService
      */
     public function refreshOrder( Order $order )
     {
-        $previousPaymentStatus = $order->payment_status;
+        $prevOrder  =   clone $order;
 
         $products = $this->getOrderProducts( $order->id );
 
@@ -2152,9 +2170,10 @@ class OrdersService
 
         $order->save();
 
-        if ( $previousPaymentStatus !== $order->payment_status ) {
-            OrderAfterPaymentStatusChangedEvent::dispatch( $order, $previousPaymentStatus, $order->payment_status );
-        }
+        event( new OrderAfterUpdatedEvent(
+            newOrder: $order,
+            prevOrder: $prevOrder
+        ) );
 
         return [
             'status' => 'success',
