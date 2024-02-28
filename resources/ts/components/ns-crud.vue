@@ -50,7 +50,7 @@
                 <table class="table ns-table w-full" v-if="Object.values( columns ).length > 0">
                     <thead>
                         <tr>
-                            <th v-if="showCheckBox" class="text-center px-2 border w-16 py-2">
+                            <th v-if="showCheckboxes" class="text-center px-2 border w-16 py-2">
                                 <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
                             <th v-if="prependOptions && showOptions" class="text-left px-2 py-2 w-16 border"></th>
