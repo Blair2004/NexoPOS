@@ -33,3 +33,11 @@ if ( ! Permission::namespace( 'nexopos.pos.cart-discount' ) instanceof Permissio
     $pos->description = __( 'Let the user add discount on cart.' );
     $pos->save();
 }
+
+if ( ! Permission::namespace( 'nexopos.pos.delete-order-product' ) instanceof Permission ) {
+    $pos = Permission::firstOrNew( [ 'namespace' => 'nexopos.pos.delete-order-product' ] );
+    $pos->name = __( 'POS: Delete Order Products' );
+    $pos->namespace = 'nexopos.pos.delete-order-product';
+    $pos->description = __( 'Let the user delete order products on POS.' );
+    $pos->save();
+}

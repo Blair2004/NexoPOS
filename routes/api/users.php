@@ -12,3 +12,4 @@ Route::post( '/users/widgets', [ UsersController::class, 'configureWidgets' ] );
 Route::post( '/users/create-token', [ UsersController::class, 'createToken' ] );
 Route::get( '/users/tokens', [ UsersController::class, 'getTokens' ] );
 Route::delete( '/users/tokens/{id}', [ UsersController::class, 'deleteToken' ] );
+Route::post( '/users/check-permission', [ UsersController::class, 'checkPermission' ] );
