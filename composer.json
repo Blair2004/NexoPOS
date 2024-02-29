@@ -32,7 +32,7 @@
         "spatie/laravel-db-snapshots": "^2.2",
         "symfony/http-client": "^6.0",
         "symfony/mailgun-mailer": "^6.0",
-        "tormjens/eventy": "^0.8"
+        "tormjens/eventy": "^0.9"
     },
     "require-dev": {
         "laravel/pint": "^1.1.1",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5aa17f5a5f3b3da9ea5091567be93e83",
+    "content-hash": "ad6643d2b0209298a8a0045b70eef20d",
     "packages": [
         {
             "name": "beyondcode/laravel-websockets",
@@ -3811,71 +3811,6 @@
                 }
             ],
             "time": "2023-02-08T01:06:31+00:00"
-        },
-        {
-            "name": "opis/closure",
-            "version": "3.6.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/opis/closure.git",
-                "reference": "3d81e4309d2a927abbe66df935f4bb60082805ad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/opis/closure/zipball/3d81e4309d2a927abbe66df935f4bb60082805ad",
-                "reference": "3d81e4309d2a927abbe66df935f4bb60082805ad",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.4 || ^7.0 || ^8.0"
-            },
-            "require-dev": {
-                "jeremeamia/superclosure": "^2.0",
-                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.6.x-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "functions.php"
-                ],
-                "psr-4": {
-                    "Opis\\Closure\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marius Sarca",
-                    "email": "marius.sarca@gmail.com"
-                },
-                {
-                    "name": "Sorin Sarca",
-                    "email": "sarca_sorin@hotmail.com"
-                }
-            ],
-            "description": "A library that can be used to serialize closures (anonymous functions) and arbitrary objects.",
-            "homepage": "https://opis.io/closure",
-            "keywords": [
-                "anonymous functions",
-                "closure",
-                "function",
-                "serializable",
-                "serialization",
-                "serialize"
-            ],
-            "support": {
-                "issues": "https://github.com/opis/closure/issues",
-                "source": "https://github.com/opis/closure/tree/3.6.3"
-            },
-            "time": "2022-01-27T09:35:39+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -10278,21 +10213,21 @@
         },
         {
             "name": "tormjens/eventy",
-            "version": "0.8",
+            "version": "0.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tormjens/eventy.git",
-                "reference": "3af91bd1d98114d19aa8b4ff983f872bdcc55c44"
+                "reference": "b5327c71def04352ef1febf4797cef860f7e3789"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tormjens/eventy/zipball/3af91bd1d98114d19aa8b4ff983f872bdcc55c44",
-                "reference": "3af91bd1d98114d19aa8b4ff983f872bdcc55c44",
+                "url": "https://api.github.com/repos/tormjens/eventy/zipball/b5327c71def04352ef1febf4797cef860f7e3789",
+                "reference": "b5327c71def04352ef1febf4797cef860f7e3789",
                 "shasum": ""
             },
             "require": {
                 "illuminate/support": ">=5.3",
-                "opis/closure": "^3.5",
+                "laravel/serializable-closure": "^1.3",
                 "php": ">=7.0"
             },
             "require-dev": {
@@ -10342,9 +10277,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tormjens/eventy/issues",
-                "source": "https://github.com/tormjens/eventy/tree/0.8"
+                "source": "https://github.com/tormjens/eventy/tree/0.9.3"
             },
-            "time": "2021-10-22T08:33:10+00:00"
+            "time": "2023-08-29T08:43:45+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
