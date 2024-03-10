@@ -68,22 +68,6 @@ window.timespan         =   timespan;
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
 
-if ( ns.websocket.enabled ) {
-    window.Echo             =   new Echo({
-        broadcaster: 'pusher',
-        key: ns.websocket.key,
-        wsHost: ns.websocket.host,
-        wsPort: ns.websocket.port,
-        wssPort: ns.websocket.port,
-        namespace: '',
-        forceTLS: ns.websocket.secured,
-        disableStats: true,
-        encrypted: ns.websocket.secured,
-        enabledTransports: ns.websocket.secured ? [ 'ws', 'wss' ] : [ 'ws' ],
-        disabledTransports: ns.websocket.secured ? ['sockjs', 'xhr_polling', 'xhr_streaming'] : []
-    })
-}
-
 const nsEvent           =   new EventEmitter;
 const nsHttpClient      =   new HttpClient;
 const nsSnackBar        =   new SnackBar;
@@ -162,5 +146,3 @@ nsHttpClient.defineClient( axios );
 ( window as any ).nsTax              =   Tax;
 
 export { nsSnackBar, nsNotice, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };
-
-console.log( 'bootstrap' );
