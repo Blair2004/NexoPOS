@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Events\SettingsSavedEvent;
 use App\Traits\NsForms;
 use Illuminate\Http\Request;
@@ -137,17 +138,23 @@ class SettingsPage
         /**
          * @var Options
          */
-        $options = app()->make( Options::class );
+        $options = app()->make(Options::class);
+        $data = [];
+        $inputs = Hook::filter( SettingsPage::method( 'saveForm' ), $this->getPlainData($request) );
 
-        foreach ( $this->getPlainData( $request ) as $key => $value ) {
-            if ( empty( $value ) ) {
-                $options->delete( $key );
+        foreach ( $inputs as $key => $value) {
+            if ( $value === null ) {
+                $options->delete($key);
             } else {
-                $options->set( $key, $value );
+                $options->set($key, $value);
+                $data[ $key ] = $value;
             }
         }
 
-        event( new SettingsSavedEvent( $options->get(), $request->all(), get_class( $this ) ) );
+        event( new SettingsSavedEvent(
+            data: $data, 
+            settingsClass: get_class($this) 
+        ) );
 
         return [
             'status' => 'success',
