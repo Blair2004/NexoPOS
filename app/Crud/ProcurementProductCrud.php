@@ -359,23 +359,12 @@ class ProcurementProductCrud extends CrudService
             $entry->$label = (string) ns()->currency->define( $entry->$label );
         }
 
-        // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
-        ] );
-
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.procurements-products/' . $entry->id ),
-            'confirm' => [
-                'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ] );
+        $entry->action(
+            label: __( 'Edit' ),
+            identifier: 'edit',
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+        );
 
         return $entry;
     }
@@ -447,13 +436,7 @@ class ProcurementProductCrud extends CrudService
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
-            [
-                'label' => __( 'Delete Selected Groups' ),
-                'identifier' => 'delete_selected',
-                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' => $this->namespace,
-                ] ),
-            ],
+            // ...
         ] );
     }
 
