@@ -116,8 +116,6 @@ class ProviderProcurementsCrud extends CrudService
         parent::__construct();
 
         $this->providerService = app()->make( ProviderService::class );
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     public function hook( $query ): void
@@ -402,7 +400,7 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->tax_value = (string) ns()->currency->define( $entry->tax_value );
         $entry->value = (string) ns()->currency->define( $entry->value );
@@ -411,15 +409,15 @@ class ProviderProcurementsCrud extends CrudService
         $entry->payment_status = $this->providerService->getPaymentStatusLabel( $entry->payment_status );
 
         // you can make changes here
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'delete', // Prioritize 'identifier'
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ] );
+            ] 
+        );
 
         return $entry;
     }

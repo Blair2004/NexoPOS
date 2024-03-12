@@ -145,7 +145,6 @@ export default {
          */
         triggerPopup( action, row ) {
             const component     =   (window).nsExtraComponents[ action.component ];
-            console.log({ action });
 
             /**
              * it might be relaying on manual popups.

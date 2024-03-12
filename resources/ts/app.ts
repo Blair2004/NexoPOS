@@ -40,6 +40,7 @@ const nsPaymentTypesReport          =   defineAsyncComponent( () => import( './p
 const nsCustomersStatementReport    =   defineAsyncComponent( () => import( './pages/dashboard/reports/ns-customers-statement-report.vue' ) );
 const nsStockAdjustment             =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-stock-adjustment.vue' ) );
 const nsOrderInvoice                =   defineAsyncComponent( () => import( './pages/dashboard/orders/ns-order-invoice.vue' ) );
+const nsPrintLabel                  =   defineAsyncComponent( () => import( './pages/dashboard/products/ns-print-label.vue' ) );
 
 declare const window;
 declare let nsExtraComponents;   
@@ -64,6 +65,7 @@ const allComponents    =   Object.assign({
     nsMedia,
     nsTransaction,
     nsDashboard,
+    nsPrintLabel,
 
     nsNotifications,
     nsSaleReport,

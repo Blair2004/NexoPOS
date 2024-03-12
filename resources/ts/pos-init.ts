@@ -24,6 +24,7 @@ import { nsCurrency } from "./filters/currency";
 import Print from "./libraries/print";
 import Tax from "./libraries/tax";
 import * as math from "mathjs"
+import nsPosLoadingPopupVue from "./popups/ns-pos-loading-popup.vue";
 
 
 /**
@@ -1575,8 +1576,43 @@ export class POS {
         this._types.next(types);
     }
 
-    removeProductUsingIndex(index) {
+    async removeProductUsingIndex(index) {
         const products = this._products.getValue();
+        const product   =   products[index];
+
+        /**
+         * if the product is persistent,
+         * we should check on the database if the user is allowed
+         * to delete those products.
+         */
+        if ( product.id ) {
+            try {
+                await new Promise((resolve, reject) => {
+                    const popup = Popup.show( nsPosLoadingPopupVue );
+                    nsHttpClient.post(`/api/users/check-permission/`, {
+                        permission: 'nexopos.pos.delete-order-product'
+                    }).subscribe({
+                        next: (response: any) => {
+                            popup.close();
+                            resolve( response );
+                        },
+                        error: error => {
+                            popup.close();
+                            reject( error );
+                        }
+                    })
+                });
+
+                this.resumeRemovingProductUsingIndex( index, products );
+            } catch( exception ) {
+                nsNotice.error( __( 'Forbidden Action' ), __( 'You are not allowed to remove this product.' ) );
+            }
+        } else {
+            this.resumeRemovingProductUsingIndex( index, products );
+        }
+    }
+
+    private resumeRemovingProductUsingIndex( index, products ) {
         products.splice(index, 1);
         this.products.next(products);
         nsHooks.doAction( 'ns-after-cart-changed' );

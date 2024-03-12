@@ -112,8 +112,6 @@ class ProductCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
-
         $this->taxService = app()->make( TaxService::class );
     }
 
@@ -719,7 +717,7 @@ class ProductCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $class = match ( $entry->type ) {
             'grouped' => 'text-success-tertiary',
@@ -805,7 +803,6 @@ class ProductCrud extends CrudService
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity = $this->model::find( $id );
                 if ( $entity instanceof Product ) {
-                    $this->deleteProductAttachedRelation( $entity );
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {

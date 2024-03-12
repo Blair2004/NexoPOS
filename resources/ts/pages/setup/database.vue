@@ -68,6 +68,9 @@ export default {
         isMySQL() {
             return this.form.database_driver === 'mysql';
         },
+        isMariaDB() {
+            return this.form.database_driver === 'mariadb';
+        },
         isSqlite() {
             return this.form.database_driver === 'sqlite';
         }
@@ -131,6 +134,9 @@ export default {
                         label: 'MySQL',
                         value: 'mysql',
                     }, {
+                        label: 'MariaDB',
+                        value: 'mariadb',
+                    }, {
                         label: 'SQLite',
                         value: 'sqlite',
                     }],
@@ -141,7 +147,7 @@ export default {
                     name: 'hostname',
                     value : 'localhost',
                     show: ( form ) => {
-                        return form.database_driver === 'mysql';
+                        return [ 'mysql', 'mariadb' ].includes( form.database_driver );
                     }
                 }, {
                     label: __( 'Username' ),
@@ -149,7 +155,7 @@ export default {
                     name: 'username',
                     value : 'root',
                     show: ( form ) => {
-                        return form.database_driver === 'mysql';
+                        return [ 'mysql', 'mariadb' ].includes( form.database_driver );
                     }
                 }, {
                     label: __( 'Password' ),
@@ -157,7 +163,7 @@ export default {
                     name: 'password',
                     value : '',
                     show: ( form ) => {
-                        return form.database_driver === 'mysql';
+                        return [ 'mysql', 'mariadb' ].includes( form.database_driver );
                     }
                 }, {
                     label: __( 'Database Name' ),
@@ -165,7 +171,7 @@ export default {
                     name: 'database_name',
                     value : 'nexopos_v4',
                     show: ( form ) => {
-                        return form.database_driver === 'mysql';
+                        return [ 'mysql', 'mariadb' ].includes( form.database_driver );
                     }
                 }, {
                     label: __( 'Database Prefix' ),
@@ -174,7 +180,7 @@ export default {
                     value : 'ns_',
                     validation: 'required',
                     show: ( form ) => {
-                        return form.database_driver === 'mysql';
+                        return [ 'mysql', 'mariadb' ].includes( form.database_driver );
                     }
                 }, {
                     label: __( 'Port' ),
@@ -183,7 +189,7 @@ export default {
                     value : '3306',
                     validation: 'required',
                     show: ( form ) => {
-                        return form.database_driver === 'mysql';
+                        return [ 'mysql', 'mariadb' ].includes( form.database_driver );
                     }
                 }
             ]);

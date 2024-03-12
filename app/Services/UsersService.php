@@ -364,4 +364,10 @@ class UsersService
             'message' => __( 'The token has been successfully deleted.' ),
         ];
     }
+
+    public function checkPermission( $permission, ?User $user = null ): bool
+    {
+        ns()->restrict( $permission );
+        return true;
+    }
 }

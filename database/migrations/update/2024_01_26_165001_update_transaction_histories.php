@@ -15,7 +15,16 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_transactions_histories', 'expense_category_id' ) ) {
                 $table->renameColumn( 'expense_category_id', 'transaction_account_id' );
             }
-        } );
+            if ( Schema::hasColumn( 'nexopos_transactions_histories', 'expense_id' ) ) {
+                $table->renameColumn( 'expense_id', 'transaction_id' );
+            }
+            if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'order_product_id' ) ) {
+                $table->integer( 'order_product_id' )->nullable();
+            }
+            if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'order_refund_product_id' ) ) {
+                $table->integer( 'order_refund_product_id' )->nullable();
+            }
+        });
 
         Schema::table( 'nexopos_procurements_products', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_procurements_products', 'tax_group_id' ) ) {

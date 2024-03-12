@@ -111,8 +111,6 @@ class ProcurementProductCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -353,29 +351,18 @@ class ProcurementProductCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         foreach ( [ 'gross_purchase_price', 'net_purchase_price', 'total_purchase_price', 'purchase_price' ] as $label ) {
             $entry->$label = (string) ns()->currency->define( $entry->$label );
         }
 
-        // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
-        ] );
-
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.procurements-products/' . $entry->id ),
-            'confirm' => [
-                'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ] );
+        $entry->action(
+            label: __( 'Edit' ),
+            identifier: 'edit',
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+        );
 
         return $entry;
     }
@@ -447,13 +434,7 @@ class ProcurementProductCrud extends CrudService
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
-            [
-                'label' => __( 'Delete Selected Groups' ),
-                'identifier' => 'delete_selected',
-                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' => $this->namespace,
-                ] ),
-            ],
+            // ...
         ] );
     }
 

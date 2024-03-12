@@ -102,7 +102,6 @@ if ( Auth::check() ) {
         }
     </script>
     @vite([ 'resources/ts/lang-loader.ts' ])
-@include( 'common.header-socket' )
 </head>
 <body <?php echo in_array( app()->getLocale(), config( 'nexopos.rtl-languages' ) ) ? 'dir="rtl"' : "";?>>
     <div class="h-full w-full flex flex-col">

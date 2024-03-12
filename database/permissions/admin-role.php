@@ -51,5 +51,4 @@ $admin->addPermissions( Permission::includes( '.trucks' )->get()->map( fn( $perm
 $admin->addPermissions( Permission::includes( '.units' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $admin->addPermissions( Permission::includes( '.manage-payments-types' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $admin->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
-$admin->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $admin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );

@@ -106,8 +106,6 @@ class ProductHistoryCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -439,7 +437,7 @@ class ProductHistoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->orders_code = $entry->orders_code ?: __( 'N/A' );
         $entry->procurements_name = $entry->procurements_name ?: __( 'N/A' );

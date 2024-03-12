@@ -208,4 +208,21 @@ class UsersController extends DashboardController
     {
         return $this->usersService->deleteToken( $tokenId );
     }
+
+    public function checkPermission( Request $request )
+    {
+        $result     =   $this->usersService->checkPermission( $request->input( 'permission' ) );
+
+        if ( $result ) {
+            return response()->json( [
+                'status'    =>  'success',
+                'message'   =>  __( 'The permission is granted' )
+            ] );
+        } else {
+            return response()->json( [
+                'status'    =>  'error',
+                'message'   =>  __( 'The permission is denied' )
+            ], 403 );
+        }
+    }
 }

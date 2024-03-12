@@ -5,6 +5,7 @@ namespace App\Crud;
 use App\Exceptions\NotAllowedException;
 use App\Models\ProductUnitQuantity;
 use App\Models\User;
+use App\Services\CrudEntry;
 use App\Services\CrudService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -89,8 +90,6 @@ class ProductUnitQuantitiesCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -344,7 +343,7 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         return $entry;
     }

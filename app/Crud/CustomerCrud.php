@@ -132,8 +132,6 @@ class CustomerCrud extends CrudService
 
         $this->options = app()->make( Options::class );
         $this->customerService = app()->make( CustomerService::class );
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**

@@ -86,15 +86,6 @@ class RolesCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
-
-        $this->dashboardOptions = Hook::filter( 'ns-dashboard-identifiers', [
-            'none' => __( 'No Dashboard' ),
-            'store' => __( 'Store Dashboard' ),
-            'cashier' => __( 'Cashier Dashboard' ),
-            'default' => __( 'Default Dashboard' ),
-        ] );
     }
 
     /**
@@ -334,39 +325,39 @@ class RolesCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->locked = (bool) $entry->locked;
 
         // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id ),
-        ] );
-
-        $entry->addAction( 'clone', [
-            'label' => __( 'Clone' ),
-            'namespace' => 'clone',
-            'type' => 'GET',
-            'confirm' => [
+        $entry->action(
+            identifier: 'edit',
+            label: __( 'Edit' ),
+            type: 'GOTO', 
+            url: ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id )
+        );
+        
+        // Snippet 2
+        $entry->action(
+            identifier: 'clone',
+            label: __( 'Clone' ),
+            type: 'GET',
+            confirm: [
                 'message' => __( 'Would you like to clone this role ?' ),
-            ],
-            'index' => 'id',
-            'url' => ns()->url( '/api/' . 'users/roles/' . $entry->id . '/clone' ),
-        ] );
-
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.roles/' . $entry->id ),
-            'confirm' => [
+            ], 
+            url: ns()->url( '/api/' . 'users/roles/' . $entry->id . '/clone' )
+        );
+        
+        // Snippet 3
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.roles/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ] );
+            ] 
+        ); 
 
         return $entry;
     }

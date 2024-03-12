@@ -71,7 +71,6 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
         ]));?>
     </script>
     @vite([ 'resources/ts/lang-loader.ts' ])
-@include( 'common.header-socket' )
 </head>
 <body>
     @yield( 'layout.base.body' )

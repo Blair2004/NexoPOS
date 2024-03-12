@@ -6,6 +6,7 @@ use App\Models\TransactionAccount;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
+use App\Services\UsersService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -72,8 +73,6 @@ class TransactionAccountCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -291,26 +290,25 @@ class TransactionAccountCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id ),
-        ] );
-
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.transactions-accounts/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'edit',
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id )
+        );
+        
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.transactions-accounts/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ] );
+            ] 
+        ); 
 
         return $entry;
     }

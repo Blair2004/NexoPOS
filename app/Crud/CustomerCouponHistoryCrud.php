@@ -141,8 +141,6 @@ class CustomerCouponHistoryCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'addActions' ], 10, 2 );
     }
 
     /**
@@ -321,7 +319,7 @@ class CustomerCouponHistoryCrud extends CrudService
     /**
      * Define row actions.
      */
-    public function addActions( CrudEntry $entry, $namespace ): CrudEntry
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->value = (string) ns()->currency->define( $entry->value );
 
@@ -331,8 +329,8 @@ class CustomerCouponHistoryCrud extends CrudService
         $entry->action(
             identifier: 'edit',
             label: __( 'Edit' ),
-            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
-        );
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ) 
+        ); 
 
         $entry->action(
             identifier: 'delete',

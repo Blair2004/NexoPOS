@@ -114,8 +114,6 @@ class CustomerCouponCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -364,7 +362,7 @@ class CustomerCouponCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->user_username = $entry->user_username ?: __( 'N/A' );
 
@@ -379,30 +377,32 @@ class CustomerCouponCrud extends CrudService
 
         $entry->coupon_type = $entry->coupon_type === 'percentage_discount' ? __( 'Percentage' ) : __( 'Flat' );
 
+        // Snippet 1: No changes needed, assuming 'identifier' is already in place
         $entry->action(
             label: __( 'Usage History' ),
             type: 'GOTO',
             url: ns()->url( '/dashboard/customers/' . $entry->customer_id . '/coupons/' . $entry->id . '/history/' ),
-            identifier: 'usage.history'
+            identifier: 'usage.history' 
         );
 
-        // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
-        ] );
+        // Snippet 2: 'namespace' likely needs replacement
+        $entry->action(
+            label: __( 'Edit' ),
+            identifier: 'edit', // Replace 'namespace' with 'identifier'
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.customers-coupons/' . $entry->id ),
-            'confirm' => [
+        // Snippet 3: 'namespace' likely needs replacement
+        $entry->action(
+            label: __( 'Delete' ),
+            identifier: 'delete',  // Replace 'namespace' with 'identifier'
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.customers-coupons/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
-        ] );
+        );
 
         return $entry;
     }

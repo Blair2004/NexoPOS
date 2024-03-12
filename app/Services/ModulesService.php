@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\XMLParser;
 use App\Events\ModulesAfterDisabledEvent;
 use App\Events\ModulesAfterEnabledEvent;
 use App\Events\ModulesAfterRemovedEvent;
@@ -26,8 +27,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Laravie\Parser\Xml\Document;
-use Laravie\Parser\Xml\Reader;
 use PhpParser\Error;
 use PhpParser\ParserFactory;
 use SimpleXMLElement;
@@ -36,11 +35,7 @@ class ModulesService
 {
     private $modules = [];
 
-    private $xmlParser;
-
     private Options $options;
-
-    private $modulesPath;
 
     const CACHE_MIGRATION_LABEL = 'module-migration-';
 
@@ -52,9 +47,6 @@ class ModulesService
              */
             $this->options = app()->make( Options::class );
         }
-
-        $this->modulesPath = base_path( 'modules' ) . DIRECTORY_SEPARATOR;
-        $this->xmlParser = new Reader( new Document );
 
         /**
          * creates the directory modules
@@ -141,16 +133,8 @@ class ModulesService
             $xmlContent = file_get_contents( $xmlConfigPath );
 
             try {
-                $xml = $this->xmlParser->extract( $xmlContent );
-                $config = $xml->parse( [
-                    'namespace' => [ 'uses' => 'namespace' ],
-                    'version' => [ 'uses' => 'version' ],
-                    'author' => [ 'uses' => 'author' ],
-                    'description' => [ 'uses' => 'description' ],
-                    'dependencies' => [ 'uses' => 'dependencies' ],
-                    'name' => [ 'uses' => 'name' ],
-                    'core' => [ 'uses' => 'core' ],
-                ] );
+                $parser     = new XMLParser($xmlConfigPath);
+                $config     = ( array ) $parser->getXMLObject();
             } catch ( Exception $exception ) {
                 throw new Exception( sprintf(
                     __( 'Failed to parse the configuration file on the following path "%s"' ),

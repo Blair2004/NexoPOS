@@ -85,8 +85,6 @@ class ProductCategoryCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -338,7 +336,7 @@ class ProductCategoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->parent_name = $entry->parent_name === null ? __( 'No Parent' ) : $entry->parent_name;
         $entry->displays_on_pos = (int) $entry->displays_on_pos === 1 ? __( 'Yes' ) : __( 'No' );

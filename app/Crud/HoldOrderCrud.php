@@ -111,8 +111,6 @@ class HoldOrderCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
-
         $this->bulkActions = [];
     }
 
@@ -459,7 +457,7 @@ class HoldOrderCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->action(
             label: __( 'Continue' ),

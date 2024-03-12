@@ -125,8 +125,6 @@ class CouponCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -660,7 +658,7 @@ class CouponCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace ): CrudEntry
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         switch ( $entry->type ) {
             case 'percentage_discount':
