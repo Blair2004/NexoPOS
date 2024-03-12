@@ -6,6 +6,7 @@ use App\Exceptions\NotAllowedException;
 use App\Models\RegisterHistory;
 use App\Models\User;
 use App\Services\CashRegistersService;
+use App\Services\CrudEntry;
 use App\Services\CrudService;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -116,8 +117,6 @@ class RegisterHistoryCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
         $this->registerService = app()->make( CashRegistersService::class );
     }
@@ -402,7 +401,7 @@ class RegisterHistoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         switch ( $entry->action ) {
             case RegisterHistory::ACTION_SALE:

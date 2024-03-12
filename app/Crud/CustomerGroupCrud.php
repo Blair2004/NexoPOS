@@ -75,8 +75,6 @@ class CustomerGroupCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     protected $permissions = [
@@ -300,29 +298,27 @@ class CustomerGroupCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->reward_system_id = $entry->reward_system_id === 0 ? __( 'N/A' ) : $entry->reward_system_id;
 
-        $entry->addAction( 'edit_customers_groups', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit_customers_group',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( 'dashboard/customers/groups/edit/' . $entry->id ),
-        ] );
-
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'index' => 'id',
-            'url' => ns()->url( '/api/crud/ns.customers-groups/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'edit_customers_group', 
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/groups/edit/' . $entry->id ) 
+        );
+        
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.customers-groups/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
                 'title' => __( 'Delete a licence' ),
-            ],
-        ] );
+            ] 
+        ); 
 
         $entry->reward_name = $entry->reward_name ?: __( 'N/A' );
 

@@ -85,8 +85,6 @@ class RewardSystemCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -378,30 +376,28 @@ class RewardSystemCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->name = $entry->name . ' (' . RewardSystem::find( $entry->id )->rules()->count() . ')';
 
         // you can make changes here
-        $entry->addAction( 'edit.rewards', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit.licence',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/customers/rewards-system/edit/' . $entry->id ),
-        ] );
+        $entry->action(
+            identifier: 'edit.rewards', 
+            label: __( 'Edit' ),
+            type: 'GOTO', 
+            url: ns()->url( '/dashboard/customers/rewards-system/edit/' . $entry->id ) 
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'index' => 'id',
-            'url' => ns()->url( '/api/crud/ns.rewards-system/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.rewards-system/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this reward system ?' ),
                 'title' => __( 'Delete a licence' ),
-            ],
-        ] );
+            ] 
+        ); 
 
         return $entry;
     }

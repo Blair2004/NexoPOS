@@ -112,8 +112,6 @@ class OrderCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
-
         /**
          * This will allow module to change the bound
          * class for the default User model.
@@ -535,7 +533,7 @@ class OrderCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->{ '$cssClass' } = match ( $entry->__raw->payment_status ) {
             Order::PAYMENT_PAID => 'success border text-sm',

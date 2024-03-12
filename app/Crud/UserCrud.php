@@ -138,8 +138,6 @@ class UserCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
-
         $this->userService = app()->make( UsersService::class );
         $this->options = app()->make( Options::class );
     }
@@ -660,7 +658,7 @@ class UserCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->action(
             identifier: 'edit_customers_group',

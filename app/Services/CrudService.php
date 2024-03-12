@@ -941,13 +941,19 @@ class CrudService
              * We'll allow any resource to mutate the
              * entries but make sure to keep the originals.
              */
-            $entry = Hook::filter( $this->namespace . '-crud-actions', $entry );
-            $entry = Hook::filter( get_class( $this )::method( 'setActions' ), $entry );
+            if ( method_exists( $this, 'setActions' ) ) {
+                $entry  =   Hook::addFilter( get_class( $this )::method( 'setActions' ), $this->setActions( $entry ) );
+            }
 
             return $entry;
         } );
 
         return $entries;
+    }
+
+    protected function setActions( CrudEntry $entry ): CrudEntry
+    {
+        return $entry;
     }
 
     protected function hookTableName( $tableName ): string

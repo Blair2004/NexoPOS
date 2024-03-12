@@ -111,8 +111,6 @@ class ProcurementProductCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -353,7 +351,7 @@ class ProcurementProductCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         foreach ( [ 'gross_purchase_price', 'net_purchase_price', 'total_purchase_price', 'purchase_price' ] as $label ) {
             $entry->$label = (string) ns()->currency->define( $entry->$label );

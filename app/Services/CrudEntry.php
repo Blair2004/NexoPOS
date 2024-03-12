@@ -49,6 +49,8 @@ class CrudEntry implements JsonSerializable
 
     public function jsonSerialize()
     {
+        $this->filterActions();
+
         return $this->values;
     }
 
@@ -62,9 +64,9 @@ class CrudEntry implements JsonSerializable
         $this->values[ '$actions' ][ $identifier ] = $action;
     }
 
-    public function action( $label, $identifier, $url = 'javascript:void(0)', $confirm = null, $type = 'GOTO' )
+    public function action( $label, $identifier, $url = 'javascript:void(0)', $confirm = null, $type = 'GOTO', $permissions = [] )
     {
-        $this->values[ '$actions' ][ $identifier ] = compact( 'label', 'identifier', 'url', 'confirm', 'type' );
+        $this->values[ '$actions' ][ $identifier ] = compact( 'label', 'identifier', 'url', 'confirm', 'type', 'permissions' );
     }
 
     public function removeAction( $identifier )
@@ -72,8 +74,24 @@ class CrudEntry implements JsonSerializable
         unset( $this->values[ '$actions' ][ $identifier ] );
     }
 
+    private function filterActions()
+    {
+        /**
+         * if the $actions are set, and permissions are provided, we'll filter the actions
+         * to restrict it to allowed users.
+         */
+        if ( isset( $this->values[ '$actions' ] ) ) {
+            $this->values[ '$actions' ] = collect( $this->values[ '$actions' ] )->filter( function( $action ) {
+                return ( isset( $action[ 'permissions' ] ) && count( $action[ 'permissions' ] ) > 0 ) 
+                    ? ns()->allowedTo( $action[ 'permissions' ] ) : true;
+            })->toArray();
+        }
+    }
+
     public function toArray()
     {
+        $this->filterActions();
+
         return $this->values;
     }
 }

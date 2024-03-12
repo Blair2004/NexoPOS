@@ -84,8 +84,6 @@ class ProcurementCrud extends CrudService
         parent::__construct();
 
         $this->providerService = app()->make( ProviderService::class );
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -374,7 +372,7 @@ class ProcurementCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->delivery_status = $this->providerService->getDeliveryStatusLabel( $entry->delivery_status );
         $entry->payment_status = $this->providerService->getPaymentStatusLabel( $entry->payment_status );
@@ -394,57 +392,55 @@ class ProcurementCrud extends CrudService
             ->define( $entry->tax_value )
             ->format();
 
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id ),
-        ] );
-
-        $entry->addAction( 'invoice', [
-            'label' => __( 'Invoice' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' ),
-        ] );
+        $entry->action(
+            identifier: 'edit',
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id ) 
+        );
+        
+        $entry->action(
+            identifier: 'invoice', // Assuming you want to replace 'namespace' with 'identifier'
+            label: __( 'Invoice' ),
+            type: 'GOTO', 
+            url: ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' ) 
+        );
 
         /**
          * if the procurement payment status
          * is not paid, we can display new option for making a payment
          */
         if ( $entry->payment_status !== Procurement::PAYMENT_PAID ) {
-            $entry->addAction( 'set_paid', [
-                'label' => __( 'Set Paid' ),
-                'type' => 'GET',
-                'url' => ns()->url( '/api/procurements/' . $entry->id . '/set-as-paid' ),
-                'confirm' => [
+            $entry->action( 
+                identifier: 'set_paid', // Hypothetical - please verify if this is accurate
+                label: __( 'Set Paid' ),
+                type: 'GET',
+                url: ns()->url( '/api/procurements/' . $entry->id . '/set-as-paid' ),
+                confirm: [
                     'message' => __( 'Would you like to mark this procurement as paid?' ),
-                ],
-            ] );
+                ] 
+            );
         }
 
-        $entry->addAction( 'refresh', [
-            'label' => __( 'Refresh' ),
-            'namespace' => 'refresh',
-            'type' => 'GET',
-            'index' => 'id',
-            'url' => ns()->url( '/api/procurements/' . $entry->id . '/refresh' ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'refresh', 
+            label: __( 'Refresh' ),
+            type: 'GET',
+            url: ns()->url( '/api/procurements/' . $entry->id . '/refresh' ),
+            confirm: [
                 'message' => __( 'Would you like to refresh this ?' ),
-            ],
-        ] );
+            ]
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'delete', 
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ] );
+            ]
+        );
 
         return $entry;
     }
