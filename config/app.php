@@ -169,7 +169,6 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\TelescopeServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\ModulesServiceProvider::class,
         App\Providers\AuthServiceProvider::class,

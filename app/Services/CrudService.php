@@ -152,6 +152,8 @@ class CrudService
         'updated_at' => DateCast::class,
     ];
 
+    protected $model;
+
     /**
      * Define permissions for using
      * the current resource
@@ -942,7 +944,7 @@ class CrudService
              * entries but make sure to keep the originals.
              */
             if ( method_exists( $this, 'setActions' ) ) {
-                $entry  =   Hook::addFilter( get_class( $this )::method( 'setActions' ), $this->setActions( $entry ) );
+                Hook::addAction( get_class( $this )::method( 'setActions' ), $this->setActions( $entry ) );
             }
 
             return $entry;
