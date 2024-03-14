@@ -1,6 +1,8 @@
-import { defineAsyncComponent } from 'vue';
-import { createApp } from 'vue/dist/vue.esm-bundler';
 import * as components from './components/components';
+
+import { NsHotPress }       from './libraries/ns-hotpress';
+import { createApp } from 'vue/dist/vue.esm-bundler';
+import { defineAsyncComponent } from 'vue';
 
 declare let nsExtraComponents;
 declare const window;
@@ -10,6 +12,7 @@ nsExtraComponents.nsLogin           =   defineAsyncComponent( () => import( './p
 nsExtraComponents.nsPasswordLost    =   defineAsyncComponent( () => import( './pages/auth/ns-password-lost.vue' ) );
 nsExtraComponents.nsNewPassword     =   defineAsyncComponent( () => import( './pages/auth/ns-new-password.vue' ) );
 
+window.nsHotPress                   =   new NsHotPress;
 window.nsHttpClient                 =   nsHttpClient;
 window.authVueComponent             =   createApp({
     components: {

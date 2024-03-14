@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class SetupService
 {
@@ -114,6 +115,10 @@ class SetupService
         ns()->envEditor->set( 'APP_URL', url()->to( '/' ) );
         ns()->envEditor->set( 'SESSION_DOMAIN', $domain[ 'host' ] );
         ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'host' ] . ( isset( $domain[ 'port' ] ) ? ':' . $domain[ 'port' ] : '' ) );
+
+        ns()->envEditor->set( 'REVERB_APP_ID', 'app-key-' . Str::random( 10 ) );
+        ns()->envEditor->set( 'REVERB_APP_KEY', 'app-key-' . Str::random( 10 ) );
+        ns()->envEditor->set( 'REVERB_APP_SECRET', Str::uuid() );
     }
 
     public function updateAppDBConfiguration( $data )
