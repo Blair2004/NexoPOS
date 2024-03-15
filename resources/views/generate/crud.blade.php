@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\CrudEntry;
+use App\Classes\CrudTable;
+use App\Classes\CrudInput;
 use App\Exceptions\NotAllowedException;
 use TorMorten\Eventy\Facades\Events as Hook;
 use {{ trim( $model_name ) }};
@@ -295,15 +297,14 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
+        return CrudTable::column(
             @foreach( $Schema::getColumnListing( $table_name ) as $column )
-'{{ $column }}'  =>  [
-                'label'  =>  {{ '__' }}( '{{ ucwords( $column ) }}' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
+            CrudTable::column(
+                identifier: '{{ $column }}',
+                label: {{ '__' }}( '{{ ucwords( $column ) }}' ),
+            ),
             @endforeach
-        ];
+        );
     }
 
     /**

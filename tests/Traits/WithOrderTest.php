@@ -237,7 +237,7 @@ trait WithOrderTest
 
         $totalCashing = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
-            ->action( RegisterHistory::ACTION_CASHING )->sum( 'value' );
+            ->action( RegisterHistory::ACTION_CASHIN )->sum( 'value' );
 
         $totalSales = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )

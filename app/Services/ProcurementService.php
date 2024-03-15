@@ -271,7 +271,7 @@ class ProcurementService
 
         return [
             'status' => 'success',
-            'message' => sprintf( __( 'The procurement has been deleted. %s included stock record(s) has been deleted as well.' ), $totalDeletions ),
+            'message' => __( 'The procurement has been deleted.' ),
         ];
     }
 

@@ -37,7 +37,7 @@ trait WithCashRegisterTest
          * cashing on the cash register
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHING . '/' . $register->id, [
+            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHIN . '/' . $register->id, [
                 'amount' => 100,
             ] );
 
@@ -83,7 +83,7 @@ trait WithCashRegisterTest
         /**
          * @var CashRegistersService
          */
-        $cashOpeningBalance = 0;
+        $cashOpeningBalance = 100;
         $cashRegisterService = app()->make( CashRegistersService::class );
         $cashRegisterService->openRegister( $register, $cashOpeningBalance, 'test opening amount' );
 
@@ -96,6 +96,9 @@ trait WithCashRegisterTest
         if ( $registerHistory instanceof RegisterHistory ) {
             $this->assertTrue( $registerHistory->value == $cashOpeningBalance, 'The cash opening operation amount doesn\'t match' );
         }
+
+        $register->refresh();
+        $this->assertTrue( $register->balance == $cashOpeningBalance, 'The register balance doesn\'t match' );
 
         /**
          * should not be able to cash-out
@@ -144,6 +147,152 @@ trait WithCashRegisterTest
 
         $this->assertTrue( $registerHistory instanceof RegisterHistory, 'No register history were created after a closing operation' );
         $this->assertTrue( $registerHistory->value == $closingBalance, 'The cash-out operation amount doesn\'t match' );
+
+        return $register;
+    }
+
+    protected function attemptCashInRegister( Register $register )
+    {
+        $initialBalance     =   $register->balance;
+        
+        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHIN . '/' . $register->id, [
+                'amount' => 100,
+            ]);
+
+        $response->assertStatus( 200 );
+
+        /**
+         * We'll check the current balande of the register
+         */
+        $register->refresh();
+
+        $this->assertTrue( $register->balance == 100 + $initialBalance, 'The register balance doesn\'t match' );
+    }
+
+    protected function attemptCashOutRegister( Register $register )
+    {
+        $initialBalance     =   $register->balance;
+        
+        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHOUT . '/' . $register->id, [
+                'amount' => 100,
+            ]);
+
+        $response->assertStatus( 200 );
+
+        /**
+         * We'll check the current balande of the register
+         */
+        $register->refresh();
+        
+        $this->assertTrue( $register->balance == 0, 'The register balance doesn\'t match' );
+    }
+
+    protected function attemptCloseRegisterWithInvalidAmount()
+    {
+        $register = $this->attemptCreateRegister();
+
+        /**
+         * We'll first open the cash register with
+         * a valid amount.
+         */
+        $this->attemptOpenRegister( $register );
+
+        /**
+         * We'll then attempt to close the register
+         * with an invalid amount.
+         */
+        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/cash-registers/close/' . $register->id, [
+                'amount' => 50,
+            ]);
+
+        $response->asserOk();
+
+        /**
+         * We should check the register history and check
+         * if that claim a shortage
+         */
+        $transactionHistory     =   RegisterHistory::where( 'register_id', $register->id )
+            ->where( 'action', RegisterHistory::ACTION_CLOSING )
+            ->orderBy( 'id', 'desc' )
+            ->first();
+
+        $this->assertTrue( $transactionHistory->transaction_type === 'positive', 'The transaction type doesn\'t match' );
+    }
+
+    protected function attemptOpenRegister( Register $register )
+    {
+        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/cash-registers/open/' . $register->id, [
+                'amount' => 100,
+            ]);
+
+        $response->assertStatus( 200 );
+
+        /**
+         * We'll check the current balande of the register
+         */
+        $register->refresh();
+        $this->assertTrue( $register->balance == 100, 'The register balance doesn\'t match' );
+
+        /**
+         * We'll check if there is an history created for that register
+         */
+        $registerHistory = RegisterHistory::where( 'register_id', $register->id )
+            ->orderBy( 'id', 'desc' )
+            ->first();
+
+        $this->assertTrue( $registerHistory instanceof RegisterHistory, 'No register history were created after a closing operation' );
+
+        /**
+         * The last register history transaction should match
+         * the transaction we've registered above.
+         */
+        $this->assertTrue( $registerHistory->value == 100, 'The cash opening operation amount doesn\'t match' );
+    }
+
+    protected function attemptCloseRegister( Register $register )
+    {
+        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/cash-registers/close/' . $register->id, [
+                'amount' => $register->balance,
+            ]);
+
+        $response->assertStatus( 200 );
+
+        /**
+         * We'll check the current balande of the register
+         */
+        $register->refresh();
+        $this->assertTrue( $register->balance == 0, 'The register balance doesn\'t match' );
+
+        /**
+         * We'll check if there is an history created for that register
+         */
+        $registerHistory = RegisterHistory::where( 'register_id', $register->id )
+            ->where( 'action', RegisterHistory::ACTION_CLOSING )
+            ->orderBy( 'id', 'desc' )
+            ->first();
+
+        $this->assertTrue( $registerHistory instanceof RegisterHistory, 'No register history were created after a closing operation' );
+        $this->assertTrue( $registerHistory->transaction_type === 'unchanged', 'The closing balance doesn\'t match the register balance' );
+    }
+
+    protected function attemptUpdateRegister( Register $register )
+    {
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'PUT', 'api/crud/ns.registers', [
+                'name' => $register->name . ' updated',
+                'general' => [
+                    'status' => Register::STATUS_CLOSED,
+                ],
+            ] );
+
+        $response->assertJson( [
+            'status' => 'success',
+        ]);
     }
 
     protected function attemptCreateRegister()
@@ -160,22 +309,15 @@ trait WithCashRegisterTest
             'status' => 'success',
         ] );
 
-        global $argv;
+        $data   =   $response->json();
 
-        $argv = json_decode( $response->getContent(), true );
+        return Register::find( $data[ 'data' ][ 'id' ] );
     }
 
-    protected function attemptDeleteRegister()
+    protected function attemptDeleteRegister( Register $register )
     {
-        global $argv;
-
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'DELETE', 'api/crud/ns.registers/' . $argv[ 'data' ][ 'entry' ][ 'id' ], [
-                'name' => __( 'Register' ),
-                'general' => [
-                    'status' => Register::STATUS_CLOSED,
-                ],
-            ] );
+            ->json( 'DELETE', 'api/crud/ns.registers/' . $register->id );
 
         $response->assertJson( [
             'status' => 'success',

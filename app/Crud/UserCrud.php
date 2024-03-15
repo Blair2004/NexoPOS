@@ -6,6 +6,7 @@ use App\Casts\CurrencyCast;
 use App\Casts\GenderCast;
 use App\Casts\NotDefinedCast;
 use App\Casts\YesNoBoolCast;
+use App\Classes\CrudTable;
 use App\Events\UserAfterActivationSuccessfulEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\CustomerBillingAddress;
@@ -14,6 +15,7 @@ use App\Models\CustomerShippingAddress;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\CrudEntry;
+use App\Services\CrudInput;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\Options;
@@ -606,53 +608,43 @@ class UserCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-            'username' => [
-                'label' => __( 'Username' ),
-                '$direction' => '',
-                '$sort' => true,
-            ],
-            'active' => [
-                'label' => __( 'Active' ),
-                '$direction' => '',
-                '$sort' => true,
-            ],
-            'group_name' => [
-                'label' => __( 'Group Name' ),
-                '$direction' => '',
-                '$sort' => true,
-            ],
-            'account_amount' => [
-                'label' => __( 'Wallet Balance' ),
-                '$direction' => '',
-                '$sort' => true,
-            ],
-            'owed_amount' => [
-                'label' => __( 'Owed Amount' ),
-                '$direction' => '',
-                '$sort' => true,
-            ],
-            'purchases_amount' => [
-                'label' => __( 'Total Purchases' ),
-                '$direction' => '',
-                '$sort' => true,
-            ],
-            'email' => [
-                'label' => __( 'Email' ),
-                '$direction' => '',
-                '$sort' => true,
-            ],
-            'rolesNames' => [
-                'label' => __( 'Roles' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Created At' ),
-                '$direction' => '',
-                '$sort' => true,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column(
+                identifier: 'username',
+                label: __( 'Username' ),
+                attributes: [
+                    CrudTable::attribute(
+                        column: 'active',
+                        label: __( 'Active' )
+                    ),
+                    CrudTable::attribute(
+                        column: 'email',
+                        label: __( 'Email' )
+                    )
+                ]
+            ),
+            CrudTable::column(
+                label: __( 'Wallet' ),
+                identifier: 'account_amount',
+            ),
+            CrudTable::column(
+                label: __( 'Owed' ),
+                identifier: 'owed_amount'
+            ),
+            CrudTable::column(
+                label: __( 'Purchases' ),
+                identifier: 'purchases_amount'
+            ),
+            CrudTable::column(
+                label: __( 'Roles' ),
+                identifier: 'rolesNames',
+                sort: false
+            ),
+            CrudTable::column(
+                label: __( 'Created At' ),
+                identifier: 'created_at'
+            )
+        );
     }
 
     /**

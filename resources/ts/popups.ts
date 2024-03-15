@@ -59,8 +59,10 @@ const nsPopups      =   createApp({
                     [ undefined, true ].includes( popup.config.closeOnOverlayClick )
                 )
             ) {
-                event.stopPropagation();
-                popup.close();
+                if ( popup.params && popup.params.reject ) {
+                    popup.params.reject( false );
+                    event.stopPropagation();
+                }
             }
         },
         preventPropagation( event ) {

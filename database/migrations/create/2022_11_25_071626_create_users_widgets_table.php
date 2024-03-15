@@ -15,8 +15,7 @@ return new class extends Migration
     {
         if ( ! Schema::hasTable( 'nexopos_users_widgets' ) ) {
             Schema::create( 'nexopos_users_widgets', function ( Blueprint $table ) {
-                $table->char( 'uuid' );
-                $table->integer( 'id' )->primary()->autoIncrement();
+                $table->char( 'id' )->primary();
                 $table->string( 'identifier' );
                 $table->string( 'column' );
                 $table->string( 'class_name' );

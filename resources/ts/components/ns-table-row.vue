@@ -26,7 +26,17 @@
                 <a target="_blank" :href="row[ identifier ].href" v-html="sanitizeHTML( row[ identifier ].label )"></a>
             </template>
             <template v-if="typeof row[ identifier ] === 'string' || typeof row[ identifier ] === 'number'">
-                <div v-html="sanitizeHTML( row[ identifier ] )"></div>
+                <template v-if="column.attributes && column.attributes.length > 0">
+                    <h3 class="fond-bold text-lg" v-html="sanitizeHTML( row[ identifier ] )"></h3>
+                    <div class="flex -mx-1 text-xs">
+                        <div class="px-1" v-for="attribute of column.attributes">
+                            <strong>{{ attribute.label }}</strong>: {{ row[ attribute.column ] }}
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <div v-html="sanitizeHTML( row[ identifier ] )"></div>
+                </template>
             </template>
             <template v-if="row[ identifier ] === null">
                 <div>{{ __( 'Undefined' ) }}</div>
@@ -65,7 +75,7 @@ export default {
         }
     },
     mounted() {
-        
+        console.log( this );
     },
     methods: {
         __,
