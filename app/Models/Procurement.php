@@ -80,8 +80,6 @@ class Procurement extends NsModel
     const PAYMENT_PAID = 'paid';
 
     protected $dispatchesEvents = [
-        'creating' => ProcurementBeforeCreateEvent::class,
-        'created' => ProcurementAfterCreateEvent::class,
         'deleting' => ProcurementBeforeDeleteEvent::class,
         'updating' => ProcurementBeforeUpdateEvent::class,
         'updated' => ProcurementAfterUpdateEvent::class,

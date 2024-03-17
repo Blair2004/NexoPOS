@@ -28,7 +28,9 @@ class CreateRegisterTest extends TestCase
     public function testUpdateRegister( Register $register )
     {
         $this->attemptAuthenticate();
-        return $this->attemptUpdateRegister( $register );
+        $this->attemptUpdateRegister( $register );
+
+        return $register;
     }
 
     /**
@@ -37,7 +39,9 @@ class CreateRegisterTest extends TestCase
     public function testDeleteRegister( Register $register )
     {
         $this->attemptAuthenticate();
-        return $this->attemptDeleteRegister( $register );
+        $this->attemptDeleteRegister( $register );
+
+        return $register;
     }
 
     public function testOpenRegister()
@@ -56,6 +60,8 @@ class CreateRegisterTest extends TestCase
     {
         $this->attemptAuthenticate();
         $this->attemptCashInRegister( $register );
+
+        return $register;
     }
 
     /**
@@ -65,6 +71,8 @@ class CreateRegisterTest extends TestCase
     {
         $this->attemptAuthenticate();
         $this->attemptCashOutRegister( $register );
+
+        return $register;
     }
 
     /**

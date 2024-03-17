@@ -172,6 +172,8 @@ trait WithCashRegisterTest
 
     protected function attemptCashOutRegister( Register $register )
     {
+        $register->refresh();
+
         $initialBalance     =   $register->balance;
         
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
@@ -186,7 +188,7 @@ trait WithCashRegisterTest
          */
         $register->refresh();
         
-        $this->assertTrue( $register->balance == 0, 'The register balance doesn\'t match' );
+        $this->assertTrue( $register->balance == $initialBalance - 100, 'The register balance doesn\'t match' );
     }
 
     protected function attemptCloseRegisterWithInvalidAmount()
@@ -283,7 +285,7 @@ trait WithCashRegisterTest
     protected function attemptUpdateRegister( Register $register )
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', 'api/crud/ns.registers', [
+            ->json( 'PUT', 'api/crud/ns.registers/' . $register->id, [
                 'name' => $register->name . ' updated',
                 'general' => [
                     'status' => Register::STATUS_CLOSED,
@@ -293,6 +295,8 @@ trait WithCashRegisterTest
         $response->assertJson( [
             'status' => 'success',
         ]);
+
+        return $register;
     }
 
     protected function attemptCreateRegister()
@@ -311,7 +315,7 @@ trait WithCashRegisterTest
 
         $data   =   $response->json();
 
-        return Register::find( $data[ 'data' ][ 'id' ] );
+        return Register::find( $data[ 'data' ][ 'entry' ][ 'id' ] );
     }
 
     protected function attemptDeleteRegister( Register $register )
