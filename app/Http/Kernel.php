@@ -9,6 +9,7 @@ use App\Http\Middleware\LoadLangMiddleware;
 use App\Http\Middleware\ProtectRoutePermissionMiddleware;
 use App\Http\Middleware\ProtectRouteRoleMiddleware;
 use App\Http\Middleware\SanitizePostFieldsMiddleware;
+use App\Http\Middleware\ThrottleMiddelware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
@@ -49,7 +50,7 @@ class Kernel extends HttpKernel
         'api' => [
             EnsureFrontendRequestsAreStateful::class,
             LoadLangMiddleware::class,
-            'throttle:80,1',
+            ThrottleMiddelware::class . ':80,1',
         ],
     ];
 
