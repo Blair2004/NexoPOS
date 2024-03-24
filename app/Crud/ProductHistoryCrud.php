@@ -101,6 +101,11 @@ class ProductHistoryCrud extends CrudService
     public $fillable = [];
 
     /**
+     * Show checkboxes
+     */
+    protected $showCheckboxes = false;
+
+    /**
      * Define Constructor
      */
     public function __construct()

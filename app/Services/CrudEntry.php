@@ -47,6 +47,11 @@ class CrudEntry implements JsonSerializable
         return $this->original[ $index ];
     }
 
+    public function getRawValue( $index )
+    {
+        return $this->original[ $index ] ?? null;
+    }
+
     public function jsonSerialize()
     {
         $this->filterActions();

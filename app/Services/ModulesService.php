@@ -1149,12 +1149,12 @@ class ModulesService
              */
             try {
                 $code = file_get_contents( $module[ 'index-file' ] );
-                $parser = ( new ParserFactory )->createForNewestSupportedVersion();
+                $parser = ( new ParserFactory )->createForHostVersion();
                 $parser->parse( $code );
 
                 foreach ( $module[ 'providers' ] as $provider ) {
                     $code = file_get_contents( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $provider );
-                    $parser = ( new ParserFactory )->createForNewestSupportedVersion();
+                    $parser = ( new ParserFactory )->createForHostVersion();
                     $parser->parse( $code );
                 }
             } catch ( Error $error ) {

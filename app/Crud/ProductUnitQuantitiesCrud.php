@@ -85,6 +85,16 @@ class ProductUnitQuantitiesCrud extends CrudService
     public $fillable = [];
 
     /**
+     * showing the options here is pointless.
+     */
+    protected $showOptions  =   false;
+
+    /**
+     * Bulk options are uselss here.
+     */
+    protected $showCheckboxes   = false;
+
+    /**
      * Define Constructor
      */
     public function __construct()
