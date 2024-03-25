@@ -142,15 +142,6 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     protected $showOptions = true;
 
     /**
-     * Here goes the CRUD constructor. Here you can change the behavior 
-     * of the crud component.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Return the label used for the crud object.
     **/
     public function getLabels(): array
