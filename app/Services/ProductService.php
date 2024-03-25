@@ -766,37 +766,54 @@ class ProductService
      */
     public function computeCogsIfNecessary( ProductHistory $productHistory ): void
     {
-        $productHistory->load( 'product' );
+        $productHistory->load( 'product', 'unit' );
 
         /**
          * if the value is explicitely defined
          * then we'll skip the automatic detection
          */
         if ( $productHistory->product instanceof Product && $productHistory->product->auto_cogs ) {
-            $productHistories = ProductHistory::where( 'unit_id', $productHistory->unit_id )->where( 'product_id', $productHistory->product_id )
-                ->whereIn( 'operation_type', [
-                    ProductHistory::ACTION_CONVERT_IN,
-                    ProductHistory::ACTION_STOCKED,
-                    // we might need to consider futher conversion option.
-                ] )
-                ->get();
+            $this->computeCogs( $productHistory->product, $productHistory->unit );
+        }
+    }
 
-            $totalQuantities = $productHistories->map( fn( $productHistory ) => $productHistory->quantity )->sum();
-            $sums = $productHistories->map( fn( $productHistory ) => $productHistory->total_price )->sum();
+    /**
+     * Compute cogs for the provided product and unit.
+     * @param Product $product
+     * @param Unit $unit
+     */
+    public function computeCogs( Product $product = null, Unit $unit = null, ProductUnitQuantity $productUnitQuantity = null ): null | ProductUnitQuantity
+    {
+        $unit_id    =   $productUnitQuantity->unit_id ?? $unit->id;
+        $product_id =   $productUnitQuantity->product_id ?? $product->id;
 
-            if ( $sums > 0 && $totalQuantities > 0 ) {
-                $cogs = ns()->currency->define( $sums )->divideBy( $totalQuantities )->toFloat();
+        $productHistories = ProductHistory::where( 'unit_id', $unit_id )->where( 'product_id', $product_id )
+            ->whereIn( 'operation_type', [
+                ProductHistory::ACTION_CONVERT_IN,
+                ProductHistory::ACTION_STOCKED,
+                // we might need to consider futher conversion option.
+            ] )
+            ->get();
 
-                $productUnitQuantity = ProductUnitQuantity::where( 'unit_id', $productHistory->unit_id )
-                    ->where( 'product_id', $productHistory->product_id )
-                    ->first();
+        $totalQuantities = $productHistories->map( fn( $productHistory ) => $productHistory->quantity )->sum();
+        $sums = $productHistories->map( fn( $productHistory ) => $productHistory->total_price )->sum();
 
-                if ( $productUnitQuantity instanceof ProductUnitQuantity ) {
-                    $productUnitQuantity->cogs = $cogs;
-                    $productUnitQuantity->save();
-                }
+        if ( $sums > 0 && $totalQuantities > 0 ) {
+            $cogs = ns()->currency->define( $sums )->divideBy( $totalQuantities )->toFloat();
+
+            $productUnitQuantity = $productUnitQuantity ?: ProductUnitQuantity::where( 'unit_id', $unit_id )
+                ->where( 'product_id', $product_id )
+                ->first();
+
+            if ( $productUnitQuantity instanceof ProductUnitQuantity ) {
+                $productUnitQuantity->cogs = $cogs;
+                $productUnitQuantity->save();
+
+                return $productUnitQuantity;
             }
         }
+
+        return null;
     }
 
     /**
@@ -1729,6 +1746,19 @@ class ProductService
             'message' => sprintf( __( '%s products(s) has been deleted.' ), count( $result ) ),
             'data' => compact( 'result' ),
         ];
+    }
+
+    public function getCogs( Product $product, Unit $unit )
+    {
+        $productUnitQuantity    =   ProductUnitQuantity::where( 'product_id', $product->id )
+            ->where( 'unit_id', $unit->id )
+            ->first();
+
+        if ( ! $productUnitQuantity instanceof ProductUnitQuantity ) {
+            return 0;
+        }
+
+        return $productUnitQuantity->cogs;
     }
 
     /**

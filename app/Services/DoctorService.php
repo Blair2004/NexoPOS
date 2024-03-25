@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Classes\Currency;
+use App\Console\Commands\DoctorCommand;
 use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerShippingAddress;
@@ -46,6 +48,32 @@ class DoctorService
             $attribute->theme = ns()->option->get( 'ns_default_theme', 'dark' );
             $attribute->save();
         }
+    }
+
+    public function fixProductsCogs()
+    {
+        $products   =   ProductUnitQuantity::get([ 'unit_id', 'product_id', 'cogs' ]);
+
+        /**
+         * @var ProductService $productService
+         */
+        $productService     =   app()->make( ProductService::class );
+
+        $this->command->withProgressBar( $products, function( ProductUnitQuantity $productUnitQuantity ) use ( $productService ) {
+            $productService->computeCogs( productUnitQuantity: $productUnitQuantity );
+
+            $allProducts    =   OrderProduct::where( 'product_id', $productUnitQuantity->product_id )
+                ->where( 'unit_id', $productUnitQuantity->unit_id )
+                ->get();
+
+            $allProducts->each( function( $orderProduct ) use ( $productUnitQuantity ) {
+                $orderProduct->total_purchase_price = Currency::define( $productUnitQuantity->cogs )->multipliedBy( $orderProduct->quantity )->toFloat();
+                $orderProduct->save();
+            });
+        });
+
+        $this->command->newLine();
+        $this->command->line( __( 'All products cogs were computed' ) );
     }
 
     /**

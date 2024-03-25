@@ -25,7 +25,8 @@ class DoctorCommand extends Command
         {--fix-transactions-orders}
         {--set-unit-visibility=}
         {--products=}
-        {--fix-duplicate-options}';
+        {--fix-duplicate-options}
+        {--fix-products-cogs}';
 
     /**
      * The console command description.
@@ -89,6 +90,10 @@ class DoctorCommand extends Command
 
         if ( $this->option( 'fix-transactions-orders' ) ) {
             return $doctorService->fixTransactionsOrders();
+        }
+
+        if ( $this->option( 'fix-products-cogs' ) ) {
+            return $doctorService->fixProductsCogs();
         }
 
         if ( $this->option( 'clear-modules-temp' ) ) {

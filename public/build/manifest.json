@@ -245,7 +245,7 @@
     "isEntry": true
   },
   "resources/ts/app.ts": {
-    "file": "assets/app-OSP6EjaZ.js",
+    "file": "assets/app-zhIKiG5r.js",
     "src": "resources/ts/app.ts",
     "isEntry": true,
     "imports": [
@@ -790,7 +790,7 @@
     ]
   },
   "resources/ts/pages/dashboard/reports/ns-sale-report.vue": {
-    "file": "assets/ns-sale-report-BRWfJDgO.js",
+    "file": "assets/ns-sale-report-BtkAQRMG.js",
     "src": "resources/ts/pages/dashboard/reports/ns-sale-report.vue",
     "isDynamicEntry": true,
     "imports": [

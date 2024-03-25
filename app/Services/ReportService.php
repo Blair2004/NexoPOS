@@ -910,6 +910,8 @@ class ReportService
             ->from( $start )
             ->to( $end );
 
+        $request->with( 'products' );
+
         if ( ! empty( $user_id ) ) {
             $request = $request->where( 'author', $user_id );
         }
@@ -983,13 +985,12 @@ class ReportService
             } );
 
             $category->products = array_values( $products );
-
             $category->total_tax_value = collect( $category->products )->sum( 'tax_value' );
             $category->total_price = collect( $category->products )->sum( 'total_price' );
             $category->total_discount = collect( $category->products )->sum( 'discount' );
             $category->total_sold_items = collect( $category->products )->sum( 'quantity' );
             $category->total_purchase_price = collect( $category->products )->sum( 'total_purchase_price' );
-        } );
+        });
 
         return [
             'result' => $categories->toArray(),

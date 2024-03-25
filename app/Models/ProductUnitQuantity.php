@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float   $custom_price_with_tax
  * @property float   $custom_price_without_tax
  * @property Product $product
+ * @property Unit    $unit
  */
 class ProductUnitQuantity extends NsModel
 {

@@ -9,7 +9,7 @@
             </div>
             <div class="px-2">
                 <button @click="loadReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
-                    <i class="las la-sync-alt text-xl"></i>
+                    <i :class="isLoading ? 'animate-spin' : ''" class="las la-sync-alt text-xl"></i>
                     <span class="pl-2">{{ __( 'Load' ) }}</span>
                 </button>
             </div>
@@ -103,8 +103,10 @@
                                 <th class="border p-2 text-left">{{ __( 'Products' ) }}</th>
                                 <th width="150" class="border p-2">{{ __( 'Quantity' ) }}</th>
                                 <th width="150" class="border p-2">{{ __( 'Discounts' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Cost' ) }}</th>
                                 <th width="150" class="border p-2">{{ __( 'Taxes' ) }}</th>
                                 <th width="150" class="border p-2">{{ __( 'Total' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Profit' ) }}</th>
                             </tr>
                         </thead>
                         <tbody class="text-primary">
@@ -112,8 +114,10 @@
                                 <td class="p-2 border">{{ product.name }}</td>
                                 <td class="p-2 border text-right">{{ product.quantity }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( product.discount ) }}</td>
+                                <td class="p-2 border text-right">{{ nsCurrency( product.total_purchase_price ) }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( product.tax_value ) }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( product.total_price ) }}</td>
+                                <td class="p-2 border text-right">{{ nsCurrency( product.total_price - product.total_purchase_price ) }}</td>
                             </tr>
                         </tbody>
                         <tfoot class="text-primary font-semibold">
@@ -121,8 +125,10 @@
                                 <td class="p-2 border text-primary"></td>
                                 <td class="p-2 border text-right text-primary">{{ computeTotal( result, 'quantity' ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'discount' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_purchase_price' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'tax_value' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) - computeTotal( result, 'total_purchase_price' ) ) }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -211,6 +217,7 @@
                                 <th class="border p-2 text-left">{{ __( 'Category' ) }}</th>
                                 <th width="100" class="border p-2">{{ __( 'Quantity' ) }}</th>
                                 <th width="150" class="border p-2">{{ __( 'Discounts' ) }}</th>
+                                <th width="150" class="border p-2">{{ __( 'Cost' ) }}</th>
                                 <th width="150" class="border p-2">{{ __( 'Taxes' ) }}</th>
                                 <th width="150" class="border p-2">{{ __( 'Total' ) }}</th>
                             </tr>
@@ -221,6 +228,7 @@
                                     <td class="p-2 border text-left border-info-primary">{{ category.name }}</td>
                                     <td class="p-2 border text-right border-info-primary">{{ computeTotal( category.products, 'quantity' ) }}</td>
                                     <td class="p-2 border text-right border-info-primary">{{ nsCurrency( computeTotal( category.products, 'discount' ) ) }}</td>
+                                    <td class="p-2 border text-right border-info-primary">{{ nsCurrency( computeTotal( category.products, 'total_purchase_price' ) ) }}</td>
                                     <td class="p-2 border text-right border-info-primary">{{ nsCurrency( computeTotal( category.products, 'tax_value' ) ) }}</td>
                                     <td class="p-2 border text-right border-info-primary">{{ nsCurrency( computeTotal( category.products, 'total_price' ) ) }}</td>
                                 </tr>
@@ -231,6 +239,7 @@
                                 <td class="p-2 border text-primary"></td>
                                 <td class="p-2 border text-right text-primary">{{ computeTotal( result, 'total_sold_items' ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_discount' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_purchase_price' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_tax_value' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
                             </tr>
@@ -267,6 +276,7 @@ export default {
                 value: ns.date.moment.endOf( 'day' ).format()
             },
             result: [],
+            isLoading: false,
             users: [],
             ns: window.ns,
             summary: {},
@@ -280,13 +290,13 @@ export default {
                 options: [
                     {
                         label: __( 'Categories Detailed' ),
-                        name: 'categories_report',
+                        value: 'categories_report',
                     }, {
                         label: __( 'Categories Summary' ),
-                        name: 'categories_summary',
+                        value: 'categories_summary',
                     }, {
                         label: __( 'Products' ),
-                        name: 'products_report',
+                        value: 'products_report',
                     }
                 ],
                 description: __( 'Allow you to choose the report type.' ),
@@ -343,11 +353,11 @@ export default {
                     });
                 });
 
-                this.reportType.value   =   result[0].name;
+                this.reportType.value   =   result;
                 this.result             =   [];
                 this.loadReport();
             } catch( exception ) {
-                // ...
+                console.log({ exception })
             }
         },
 
@@ -356,11 +366,13 @@ export default {
                 /**
                  * let's try to pull the users first.
                  */
+                this.isLoading  =   true;
                 const result    =   await new Promise( ( resolve, reject ) => {
                     nsHttpClient.get( `/api/users` )
                         .subscribe({
                             next: (users) => {
                                 this.users      =   users;
+                                this.isLoading  =   false;
 
                                 this.filterUser.options     =   [
                                     {
@@ -382,18 +394,24 @@ export default {
                                 });
                             },
                             error: error => {
+                                this.isLoading  =   false;
                                 nsSnackBar.error( __( 'No user was found for proceeding the filtering.' ) );
                                 reject( error );
                             }
                         });
-                });
+                });  
+                
+                const searchUser  =   this.users.filter( __user => __user.id === result );
 
-                this.selectedUser       =   result[0].label;
-                this.filterUser.value   =   result[0].value;
-                this.result             =   [];
-                this.loadReport();
+                if ( searchUser.length > 0 ) {
+                    let user    =   searchUser[0];
+                    this.selectedUser       =   `${user.username} ${(user.first_name || user.last_name) ? user.first_name + ' ' + user.last_name : '' }`;
+                    this.filterUser.value   =   result;
+                    this.result             =   [];
+                    this.loadReport();
+                }
             } catch( exception ) {
-                // ...
+                console.log({ exception });
             }
         },
 
@@ -401,10 +419,12 @@ export default {
             try {
                 let categories  =   [];
 
+                this.isLoading  =   true;
                 const result    =   await new Promise( ( resolve, reject ) => {
                     nsHttpClient.get( `/api/categories` )
                         .subscribe({
                             next: (retreivedCategories) => {
+                                this.isLoading  =   false;
                                 categories  =   retreivedCategories;
                                 this.filterCategory.options     =   [
                                     ...retreivedCategories.map( category => {
@@ -422,6 +442,7 @@ export default {
                                 });
                             },
                             error: error => {
+                                this.isLoading  =   false;
                                 nsSnackBar.error( __( 'No category was found for proceeding the filtering.' ) );
                                 reject( error );
                             }
@@ -451,7 +472,7 @@ export default {
 
         getType( type ) {
             const option    =   this.reportType.options.filter( option => {
-                return option.name === type;
+                return option.value === type;
             });
 
             if ( option.length > 0 ) {
@@ -473,6 +494,7 @@ export default {
                 return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
             }
 
+            this.isLoading  =   true;
             nsHttpClient.post( '/api/reports/sale-report', { 
                 startDate: this.startDateField.value,
                 endDate: this.endDateField.value,
@@ -481,10 +503,12 @@ export default {
                 categories_id: this.filterCategory.value
             }).subscribe({
                 next: response => {
+                    this.isLoading  =   false;
                     this.result     =   response.result;
                     this.summary    =   response.summary;
                 }, 
                 error : ( error ) => {
+                    this.isLoading  =   false;
                     nsSnackBar.error( error.message ).subscribe();
                 }
             });
