@@ -91,7 +91,7 @@ export default {
                         nsSnackBar.success( result.message ).subscribe();
                     },
                     error: error => {
-                        if ( error.status === 'failed' ) {
+                        if ( error.status === 'error' ) {
                             Popup.show( nsPosConfirmPopupVue, {
                                 title: __( 'Update Instalment Date' ),
                                 message: __( 'Would you like to mark that instalment as due today ? If you confirm the instalment will be marked as paid.' ),

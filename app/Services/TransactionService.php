@@ -404,14 +404,14 @@ class TransactionService
                         }
 
                         return [
-                            'status' => 'failed',
+                            'status' => 'error',
                             'message' => sprintf( __( 'The transaction "%s" has already been processed.' ), $transaction->name ),
                         ];
                     }
                 }
 
                 return [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => sprintf( __( 'The transactions "%s" hasn\'t been proceesed, as it\'s out of date.' ), $transaction->name ),
                 ];
             } );

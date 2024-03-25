@@ -2474,7 +2474,7 @@ class OrdersService
             'pending' => __( 'Pending' ),
             'ongoing' => __( 'Ongoing' ),
             'delivered' => __( 'Delivered' ),
-            'failed' => __( 'Failed' ),
+            'error' => __( 'error' ),
             'not-available' => __( 'Not Available' ),
         ];
     }
@@ -2589,7 +2589,7 @@ class OrdersService
         }
 
         return [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'No orders to handle for the moment.' ),
         ];
     }

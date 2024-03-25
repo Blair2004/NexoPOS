@@ -155,7 +155,7 @@ class User extends Authenticatable
         }
 
         return [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'Unable to identifier the provided role.' ),
         ];
     }

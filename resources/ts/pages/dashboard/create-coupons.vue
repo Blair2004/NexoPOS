@@ -84,7 +84,7 @@ export default {
                         duration: 5000
                     }).subscribe();
 
-                    if ( error.status === 'failed' ) {
+                    if ( error.status === 'error' ) {
                         this.formValidation.triggerError( this.form, error.data );
                     }
 

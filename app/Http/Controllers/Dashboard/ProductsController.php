@@ -279,7 +279,7 @@ class ProductsController extends DashboardController
             'status' => 'success',
             'message' => __( 'The single variation has been deleted.' ),
         ] : [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => sprintf( __( 'The the variation hasn\'t been deleted because it might not exist or is not assigned to the parent product "%s".' ), $product->name ),
         ];
     }

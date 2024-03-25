@@ -66,7 +66,7 @@ export default {
                 } catch( exception ) {
                     if ( exception === false ) {
                         return reject({
-                            status: 'failed',
+                            status: 'error',
                             message: __( 'You must choose a register before proceeding.' )
                         });
                     }

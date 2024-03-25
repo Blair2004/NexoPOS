@@ -60,7 +60,7 @@ class SetupController extends Controller
             }
         } catch ( \Exception $e ) {
             return response()->json( [
-                'status' => 'failed',
+                'status' => 'error',
             ], 403 );
         }
     }

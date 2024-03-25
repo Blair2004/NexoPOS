@@ -622,7 +622,7 @@ export class POS {
                     })
             } else {
                 return reject({
-                    status: 'failed',
+                    status: 'error',
                     message: __('No tax group assigned to the order')
                 })
             }
@@ -752,7 +752,7 @@ export class POS {
                 if (result.order.instalments.length === 0 && result.order.tendered < expected) {
                     const message = __(`Before saving this order, a minimum payment of {amount} is required`).replace('{amount}', nsCurrency(expected));
                     Popup.show(nsAlertPopup, { title: __('Unable to proceed'), message });
-                    return reject({ status: 'failed', message });
+                    return reject({ status: 'error', message });
                 } else {
                     const paymentType = this.selectedPaymentType.getValue();
                     const expectedSlice = result.order.instalments.filter(payment => payment.amount >= expected && moment( payment.date ).isSame( ns.date.moment.startOf( 'day' ), 'day' ) );
@@ -794,7 +794,7 @@ export class POS {
         
                                     resolve({ status: 'success', message: __('Layaway defined'), data: { order: result.order } });
                                 } else {
-                                    reject({ status: 'failed', message: __( 'The request was canceled' ) })
+                                    reject({ status: 'error', message: __( 'The request was canceled' ) })
                                 }
                             }
                         });
@@ -834,7 +834,7 @@ export class POS {
                 if (order.payments.length === 0 && order.total > 0 && order.total > order.tendered) {
                     if (this.options.getValue().ns_orders_allow_partial === 'no') {
                         const message = __('Partially paid orders are disabled.');
-                        return reject({ status: 'failed', message });
+                        return reject({ status: 'error', message });
                     } else if (minimalPayment >= 0) {
                         try {
                             const result = await this.canProceedAsLaidAway(order);
@@ -894,7 +894,7 @@ export class POS {
                     });
             }
 
-            return reject({ status: 'failed', message: __('An order is currently being processed.') });
+            return reject({ status: 'error', message: __('An order is currently being processed.') });
         });
     }
 

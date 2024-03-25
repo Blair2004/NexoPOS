@@ -378,7 +378,7 @@ class ProviderCrud extends CrudService
         $user = app()->make( UsersService::class );
         if ( ! $user->is( [ 'admin', 'supervisor' ] ) ) {
             return response()->json( [
-                'status' => 'failed',
+                'status' => 'error',
                 'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
@@ -386,7 +386,7 @@ class ProviderCrud extends CrudService
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -395,7 +395,7 @@ class ProviderCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 

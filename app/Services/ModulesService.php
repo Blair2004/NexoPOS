@@ -695,7 +695,7 @@ class ModulesService
                 $this->clearTemporaryFiles();
 
                 return [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => __( 'Invalid Module provided.' ),
                 ];
             }
@@ -1041,13 +1041,13 @@ class ModulesService
             }
 
             return [
-                'status' => 'failed',
+                'status' => 'error',
                 'message' => sprintf( __( 'The migration file doens\'t have a valid class name. Expected class : %s' ), $className ),
             ];
         }
 
         return [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => sprintf( __( 'Unable to locate the following file : %s' ), $filePath ),
         ];
     }
@@ -1083,7 +1083,7 @@ class ModulesService
          */
         if ( ! method_exists( $object, $method ) ) {
             return [
-                'status' => 'failed',
+                'status' => 'error',
                 'message' => sprintf( __( 'The migration file doens\'t have a valid method name. Expected method : %s' ), $method ),
             ];
         }
@@ -1159,7 +1159,7 @@ class ModulesService
                 }
             } catch ( Error $error ) {
                 return response()->json( [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => sprintf(
                         __( 'An Error Occurred "%s": %s' ),
                         $module[ 'name' ],
@@ -1178,7 +1178,7 @@ class ModulesService
                 $this->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
             } catch ( GlobalError $error ) {
                 return response()->json( [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => sprintf(
                         __( 'An Error Occurred "%s": %s' ),
                         $module[ 'name' ],

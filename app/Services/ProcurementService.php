@@ -374,7 +374,7 @@ class ProcurementService
                 }
 
                 $errors[] = [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => sprintf( __( 'Unable to have a unit group id for the product using the reference "%s" as "%s"' ), $identifier, $argument ),
                 ];
             }
@@ -383,7 +383,7 @@ class ProcurementService
                 extract( $this->__procureForUnitGroup( compact( 'procurementProduct', 'storedunitReference', 'itemsToSave', 'item' ) ) );
             } catch ( Exception $exception ) {
                 $errors[] = [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => $exception->getMessage(),
                     'data' => [
                         'product' => collect( $item )->only( [ 'id', 'name', 'sku', 'barcode' ] ),

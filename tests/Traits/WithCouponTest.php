@@ -142,7 +142,7 @@ trait WithCouponTest
 
         $this->processOrders( $order, function ( $response ) {
             $response->assertJson( [
-                'status' => 'failed',
+                'status' => 'error',
             ] );
         } );
     }
@@ -224,7 +224,7 @@ trait WithCouponTest
          */
         $this->processOrders( $order, function ( $response ) {
             $response->assertJson( [
-                'status' => 'failed',
+                'status' => 'error',
             ] );
         } );
     }
@@ -322,7 +322,7 @@ trait WithCouponTest
         // be cause we only had 2 possible usage for that coupon.
         $this->processOrders( $order, function ( $response ) {
             $response->assertJson( [
-                'status' => 'failed',
+                'status' => 'error',
             ] );
         } );
     }

@@ -92,13 +92,13 @@ class Order extends NsModel
 
     const PROCESSING_READY = 'ready';
 
-    const PROCESSING_FAILED = 'failed';
+    const PROCESSING_FAILED = 'error';
 
     const DELIVERY_PENDING = 'pending';
 
     const DELIVERY_ONGOING = 'ongoing';
 
-    const DELIVERY_FAILED = 'failed';
+    const DELIVERY_FAILED = 'error';
 
     // @todo check if it's still useful
     const DELIVERY_COMPLETED = 'completed';

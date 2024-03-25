@@ -13,7 +13,7 @@ class RenderCrudFormTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function test_render_crud_forms()
     {
         Auth::loginUsingId( Role::namespace( 'admin' )->users->first()->id );
 

@@ -441,14 +441,14 @@ class PaymentTypeCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity = $this->model::find( $id );
 
                 if ( $entity->readonly ) {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                     break;
                 }
 
@@ -459,7 +459,7 @@ class PaymentTypeCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 

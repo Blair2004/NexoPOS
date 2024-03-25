@@ -209,13 +209,13 @@ class ReportService
             ] )->dispatchForGroup( Role::namespace( 'admin' ) );
 
             return [
-                'status' => 'failed',
+                'status' => 'error',
                 'message' => $message,
             ];
         }
 
         return [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'Unsupported action' ),
         ];
     }
@@ -520,7 +520,7 @@ class ReportService
         ] )->dispatchForGroup( Role::namespace( 'admin' ) );
 
         return [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => $message,
         ];
     }

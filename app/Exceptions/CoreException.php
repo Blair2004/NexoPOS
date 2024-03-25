@@ -21,7 +21,7 @@ class CoreException extends Exception
 
         if ( $request->expectsJson() ) {
             return response()->json( [
-                'status' => 'failed',
+                'status' => 'error',
                 'message' => $message,
                 'exception' => $exception::class,
                 'previous' => $back,

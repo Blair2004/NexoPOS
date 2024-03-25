@@ -116,7 +116,7 @@ class UserProfileForm extends SettingsPage
                 $validator->errors()->add( 'security.old_password', __( 'Wrong password provided' ) );
 
                 return [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => __( 'Wrong old password provided' ),
                 ];
             } else {

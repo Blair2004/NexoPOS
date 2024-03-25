@@ -391,7 +391,7 @@ class TaxCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -400,7 +400,7 @@ class TaxCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 

@@ -64,7 +64,7 @@ class Handler extends ExceptionHandler
     protected function unauthenticated( $request, AuthenticationException $exception )
     {
         if ( $request->expectsJson() ) {
-            return response()->json( [ 'status' => 'failed', 'message' => __( 'You\'re not authenticated.' ) ], 401 );
+            return response()->json( [ 'status' => 'error', 'message' => __( 'You\'re not authenticated.' ) ], 401 );
         }
 
         return redirect()->guest( ns()->route( 'ns.login' ) );
@@ -128,7 +128,7 @@ class Handler extends ExceptionHandler
 
         if ( env( 'APP_DEBUG', true ) ) {
             return response()->json( [
-                'status' => 'failed',
+                'status' => 'error',
                 'message' => $message,
                 'previous' => $back,
                 'file' => $exception->getFile(),
@@ -137,7 +137,7 @@ class Handler extends ExceptionHandler
             ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : $code );
         } else {
             return response()->json( [
-                'status' => 'failed',
+                'status' => 'error',
                 'message' => __( 'An error occured while performing your request.' ),
                 'previous' => $back,
             ], method_exists( $exception, 'getStatusCode' ) ? $exception->getStatusCode() : $code );

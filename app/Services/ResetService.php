@@ -143,7 +143,7 @@ class ResetService
         extract( $data );
 
         return Hook::filter( 'ns-handle-custom-reset', [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'No custom handler for the reset "' . $mode . '"' ),
         ], $data );
     }

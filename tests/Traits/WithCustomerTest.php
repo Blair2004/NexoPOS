@@ -47,7 +47,7 @@ trait WithCustomerTest
                     'operation' => CustomerAccountHistory::OPERATION_DEDUCT,
                 ] );
 
-            return $response->assertJson( [ 'status' => 'failed' ] );
+            return $response->assertJson( [ 'status' => 'error' ] );
         }
 
         throw new Exception( __( 'No customer with empty account to proceed the test.' ) );
@@ -151,7 +151,7 @@ trait WithCustomerTest
             ] );
 
         $response->assertJson( [
-            'status' => 'failed',
+            'status' => 'error',
         ] );
     }
 

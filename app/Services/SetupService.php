@@ -48,42 +48,42 @@ class SetupService
                     $message = [
                         'name' => 'hostname',
                         'message' => __( 'Unable to reach the host' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1045:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Unable to connect to the database using the credentials provided.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1049:
                     $message = [
                         'name' => 'database_name',
                         'message' => __( 'Unable to select the database.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1044:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Access denied for this user.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1698:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Incorrect Authentication Plugin Provided.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 default:
                     $message = [
                         'name' => 'hostname',
                         'message' => $e->getMessage(),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
             }
@@ -281,42 +281,42 @@ class SetupService
                     $message = [
                         'name' => 'hostname',
                         'message' => __( 'Unable to reach the host' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1045:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Unable to connect to the database using the credentials provided.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1049:
                     $message = [
                         'name' => 'database_name',
                         'message' => __( 'Unable to select the database.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1044:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Access denied for this user.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1698:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Incorrect Authentication Plugin Provided.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 default:
                     $message = [
                         'name' => 'hostname',
                         'message' => $e->getMessage(),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
             }

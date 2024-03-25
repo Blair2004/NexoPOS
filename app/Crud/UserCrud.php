@@ -7,6 +7,7 @@ use App\Casts\GenderCast;
 use App\Casts\NotDefinedCast;
 use App\Casts\YesNoBoolCast;
 use App\Classes\CrudTable;
+use App\Classes\JsonResponse;
 use App\Events\UserAfterActivationSuccessfulEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\CustomerBillingAddress;
@@ -713,16 +714,15 @@ class UserCrud extends CrudService
          */
         $user = app()->make( UsersService::class );
         if ( ! $user->is( [ 'admin', 'supervisor' ] ) ) {
-            return response()->json( [
-                'status' => 'failed',
-                'message' => __( 'You\'re not allowed to do this operation' ),
-            ], 403 );
+            return JsonResponse::error(
+                message: __( 'You\'re not allowed to do this operation' )
+            );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             /**
@@ -738,7 +738,7 @@ class UserCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 

@@ -18,7 +18,7 @@ class PostTooLargeException extends ExceptionsPostTooLargeException
         }
 
         return response()->json( [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'The submitted request is more large than expected. Consider increasing your "post_max_size" on your PHP.ini' ),
         ], 401 );
     }

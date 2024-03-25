@@ -127,7 +127,7 @@ export default {
 
                 if ( result.data && result.data.results ) {
                     result.data.results.forEach( response => {
-                        if ( response.status === 'failed' ) {
+                        if ( response.status === 'error' ) {
                             nsSnackBar.error( response.message ).subscribe();
                         } else {
                             nsSnackBar.success( response.message ).subscribe();
