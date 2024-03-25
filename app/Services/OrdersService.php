@@ -1092,6 +1092,8 @@ class OrdersService
                 $orderProduct = new OrderProduct;
             }
 
+            $orderProduct->load( 'product' );
+
             /**
              * this can be useful to allow injecting
              * data that can later on be compted.
@@ -1146,15 +1148,19 @@ class OrdersService
             $orderProduct->discount_type = $product[ 'discount_type' ] ?? 'none';
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
-            $orderProduct->total_purchase_price = $this->currencyService->define(
-                    $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getCogs(
-                        product: $product[ 'product' ],
-                        unit: $unit
-                    ) )
-                    ->multipliedBy( $product[ 'quantity' ] )
-                    ->getRaw()
-                )
-                ->getRaw();
+            $orderProduct->total_purchase_price = 0;
+
+            if ( $orderProduct->product instanceof Product ) {
+                $orderProduct->total_purchase_price = $this->currencyService->define(
+                        $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getCogs(
+                            product: $product[ 'product' ],
+                            unit: $unit
+                        ) )
+                        ->multipliedBy( $product[ 'quantity' ] )
+                        ->getRaw()
+                    )
+                    ->getRaw();
+            }
 
             $this->computeOrderProduct( $orderProduct );
 
