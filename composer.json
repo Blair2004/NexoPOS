@@ -29,7 +29,7 @@
         "predis/predis": "^2.2",
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-db-snapshots": "^2.2",
-        "symfony/http-client": "^6.0",
+        "symfony/http-client": "^7.0",
         "symfony/mailgun-mailer": "^6.0",
         "tormjens/eventy": "^0.8",
         "vlucas/phpdotenv": "^5.6"
