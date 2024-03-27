@@ -414,44 +414,58 @@ class CoreService
             );
         }
 
-        $manifestPath = rtrim( $module['path'], DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . 'manifest.json';
+        $ds     =   DIRECTORY_SEPARATOR;
 
-        if ( ! file_exists( $manifestPath ) ) {
-            throw new NotFoundException(
-                sprintf(
-                    __( 'The manifest.json can\'t be located inside the module %s on the path: %s' ),
-                    $module[ 'name' ],
-                    $manifestPath
-                )
-            );
-        }
+        $possiblePaths  =   [
+            rtrim( $module['path'], $ds ) . $ds . 'Public' . $ds . 'build' . $ds . '.vite' . $ds . 'manifest.json',
+            rtrim( $module['path'], $ds ) . $ds . 'Public' . $ds . 'build' . $ds . 'manifest.json'
+        ];
 
-        $manifestArray = json_decode( file_get_contents( $manifestPath ), true );
-
-        if ( ! isset( $manifestArray[ $fileName ] ) ) {
-            throw new NotFoundException(
-                sprintf(
-                    __( 'the requested file "%s" can\'t be located inside the manifest.json for the module %s.' ),
-                    $fileName,
-                    $module[ 'name' ]
-                )
-            );
-        }
-
-        /**
-         * checks if a css file is declared as well
-         */
-        $jsUrl = asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
         $assets = collect( [] );
+        $errors =   [];
 
-        if ( ! empty( $manifestArray[ $fileName ][ 'css' ] ) ) {
-            $assets = collect( $manifestArray[ $fileName ][ 'css' ] )->map( function ( $url ) use ( $moduleId ) {
-                return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $url ) . '"/>';
-            } );
+        foreach( $possiblePaths as $manifestPath ) {
+            if ( ! file_exists( $manifestPath ) ) {
+                $errors[]   =   $manifestPath;
+                continue;
+            }
+    
+            $manifestArray = json_decode( file_get_contents( $manifestPath ), true );
+    
+            if ( ! isset( $manifestArray[ $fileName ] ) ) {
+                throw new NotFoundException(
+                    sprintf(
+                        __( 'the requested file "%s" can\'t be located inside the manifest.json for the module %s.' ),
+                        $fileName,
+                        $module[ 'name' ]
+                    )
+                );
+            }
+    
+            /**
+             * checks if a css file is declared as well
+             */
+            $jsUrl = asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
+
+            if ( ! empty( $manifestArray[ $fileName ][ 'css' ] ) ) {
+                $assets = collect( $manifestArray[ $fileName ][ 'css' ] )->map( function ( $url ) use ( $moduleId ) {
+                    return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $url ) . '"/>';
+                } );
+            }
+    
+            $assets->prepend( '<script type="module" src="' . $jsUrl . '"></script>' );
         }
 
-        $assets->prepend( '<script type="module" src="' . $jsUrl . '"></script>' );
+        if ( count( $errors ) === count( $possiblePaths ) ) {
+            throw new NotFoundException(
+                sprintf(
+                    __( 'The manifest file for the module %s wasn\'t found on all possible directories: %s.' ),
+                    $module[ 'name' ],
+                    collect( $errors )->join( ', ' ),
+                )
+            );
+        }
 
-        return $assets->join( '' );
+        return $assets->flatten()->join( '' );
     }
 }
