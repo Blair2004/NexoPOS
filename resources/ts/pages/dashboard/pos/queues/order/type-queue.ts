@@ -1,6 +1,5 @@
 import { Queue } from "~/contracts/queue";
 import { Popup } from "~/libraries/popup";
-import { resolve } from "path";
 import orderTypePopup from '~/popups/ns-pos-order-type-popup.vue';
 
 export class TypeQueue implements Queue {

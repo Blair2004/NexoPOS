@@ -10,6 +10,11 @@ use App\Services\TestService;
 
 trait WithTaxTest
 {
+    const TAX_FLAT = 'flat_vat';
+    const TAX_VARIABLE = 'variable_vat';
+    const TAX_PRODUCTS_VAT = 'products_vat';
+    const TAX_PRODUCTS_VAVT = 'products_variable_vat';
+
     protected function attemptProductTaxVariable()
     {
         /**

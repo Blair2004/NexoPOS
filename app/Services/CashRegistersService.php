@@ -106,7 +106,7 @@ class CashRegistersService
 
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
-        $registerHistory->action = RegisterHistory::ACTION_CASHING;
+        $registerHistory->action = RegisterHistory::ACTION_CASHIN;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
@@ -341,7 +341,7 @@ class CashRegistersService
     public function getActionLabel( string $label ): string
     {
         switch ( $label ) {
-            case RegisterHistory::ACTION_CASHING:
+            case RegisterHistory::ACTION_CASHIN:
                 return __( 'Cash In' );
                 break;
             case RegisterHistory::ACTION_CASHOUT:

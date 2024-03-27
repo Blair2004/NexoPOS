@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class SetupService
 {
@@ -47,42 +48,42 @@ class SetupService
                     $message = [
                         'name' => 'hostname',
                         'message' => __( 'Unable to reach the host' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1045:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Unable to connect to the database using the credentials provided.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1049:
                     $message = [
                         'name' => 'database_name',
                         'message' => __( 'Unable to select the database.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1044:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Access denied for this user.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1698:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Incorrect Authentication Plugin Provided.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 default:
                     $message = [
                         'name' => 'hostname',
                         'message' => $e->getMessage(),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
             }
@@ -114,6 +115,10 @@ class SetupService
         ns()->envEditor->set( 'APP_URL', url()->to( '/' ) );
         ns()->envEditor->set( 'SESSION_DOMAIN', $domain[ 'host' ] );
         ns()->envEditor->set( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'host' ] . ( isset( $domain[ 'port' ] ) ? ':' . $domain[ 'port' ] : '' ) );
+
+        ns()->envEditor->set( 'REVERB_APP_ID', 'app-key-' . Str::random( 10 ) );
+        ns()->envEditor->set( 'REVERB_APP_KEY', 'app-key-' . Str::random( 10 ) );
+        ns()->envEditor->set( 'REVERB_APP_SECRET', Str::uuid() );
     }
 
     public function updateAppDBConfiguration( $data )
@@ -276,42 +281,42 @@ class SetupService
                     $message = [
                         'name' => 'hostname',
                         'message' => __( 'Unable to reach the host' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1045:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Unable to connect to the database using the credentials provided.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1049:
                     $message = [
                         'name' => 'database_name',
                         'message' => __( 'Unable to select the database.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1044:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Access denied for this user.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 case 1698:
                     $message = [
                         'name' => 'username',
                         'message' => __( 'Incorrect Authentication Plugin Provided.' ),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
                 default:
                     $message = [
                         'name' => 'hostname',
                         'message' => $e->getMessage(),
-                        'status' => 'failed',
+                        'status' => 'error',
                     ];
                     break;
             }

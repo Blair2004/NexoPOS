@@ -565,7 +565,7 @@ class CustomerCrud extends CrudService
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -580,7 +580,7 @@ class CustomerCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 

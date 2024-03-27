@@ -160,7 +160,7 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
-        $username = $this->generateUsername(6);
+        $username = $this->generateUsername(10);
         $email = $this->faker->email();
 
         $response = $this
@@ -201,7 +201,7 @@ class AuthenticationTest extends TestCase
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 '/auth/sign-up', [
-                    'username' => $this->faker->userName(),
+                    'username' => $this->generateUsername(10),
                     'password' => $password,
                     'password_confirm' => $password,
                     'email' => 'not-a-valid-email',
@@ -223,7 +223,7 @@ class AuthenticationTest extends TestCase
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 '/auth/sign-up', [
-                    'username' => $this->faker->userName(),
+                    'username' => $this->generateUsername(10),
                     'password' => $password,
                     'password_confirm' => $password . 'not-the-same',
                     'email' => $this->faker->email(),

@@ -215,7 +215,7 @@ class MediaService
         }
 
         return [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'Unable to find the media.' ),
         ];
     }

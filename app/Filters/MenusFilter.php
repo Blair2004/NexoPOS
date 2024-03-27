@@ -11,6 +11,7 @@ class MenusFilter
                 'registers' => [
                     'label' => __( 'POS' ),
                     'icon' => 'la-cash-register',
+                    'permissions'   =>  [ 'nexopos.create.orders' ],
                     'childrens' => [
                         'pos' => [
                             'label' => __( 'Open POS' ),
@@ -18,10 +19,12 @@ class MenusFilter
                         ],
                         'create' => [
                             'label' => __( 'Create Register' ),
+                            'permissions' => [ 'nexopos.create.registers' ],
                             'href' => ns()->route( 'ns.dashboard.registers-create' ),
                         ],
                         'list' => [
                             'label' => __( 'Registers List' ),
+                            'permissions' => [ 'nexopos.create.registers' ],
                             'href' => ns()->route( 'ns.dashboard.registers-list' ),
                         ],
                     ],

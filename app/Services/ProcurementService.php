@@ -127,7 +127,7 @@ class ProcurementService
          * we'll make sure to trigger some event before
          * performing some change on the procurement
          */
-        event( new ProcurementBeforeCreateEvent( $procurement ) );
+        event( new ProcurementBeforeCreateEvent( $procurement, $data ) );
 
         /**
          * We don't want the event ProcurementBeforeCreateEvent
@@ -271,7 +271,7 @@ class ProcurementService
 
         return [
             'status' => 'success',
-            'message' => sprintf( __( 'The procurement has been deleted. %s included stock record(s) has been deleted as well.' ), $totalDeletions ),
+            'message' => __( 'The procurement has been deleted.' ),
         ];
     }
 
@@ -374,7 +374,7 @@ class ProcurementService
                 }
 
                 $errors[] = [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => sprintf( __( 'Unable to have a unit group id for the product using the reference "%s" as "%s"' ), $identifier, $argument ),
                 ];
             }
@@ -383,7 +383,7 @@ class ProcurementService
                 extract( $this->__procureForUnitGroup( compact( 'procurementProduct', 'storedunitReference', 'itemsToSave', 'item' ) ) );
             } catch ( Exception $exception ) {
                 $errors[] = [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => $exception->getMessage(),
                     'data' => [
                         'product' => collect( $item )->only( [ 'id', 'name', 'sku', 'barcode' ] ),
@@ -806,7 +806,7 @@ class ProcurementService
                  * Record the deletion on the product
                  * history
                  */
-                $this->productService->stockAdjustment( 'deleted', [
+                $this->productService->stockAdjustment( ProductHistory::ACTION_DELETED, [
                     'total_price' => $procurementProduct->total_purchase_price,
                     'unit_price' => $procurementProduct->purchase_price,
                     'unit_id' => $procurementProduct->unit_id,
@@ -1036,7 +1036,8 @@ class ProcurementService
             ->whereIn( 'type', [
                 Product::TYPE_DEMATERIALIZED,
                 Product::TYPE_MATERIALIZED,
-            ] )
+            ])
+            ->notGrouped()
             ->where( function ( $query ) use ( $argument ) {
                 $query->orWhere( 'name', 'LIKE', "%{$argument}%" )
                     ->orWhere( 'sku', 'LIKE', "%{$argument}%" )

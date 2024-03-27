@@ -47,21 +47,16 @@ class CrudEntry implements JsonSerializable
         return $this->original[ $index ];
     }
 
+    public function getRawValue( $index )
+    {
+        return $this->original[ $index ] ?? null;
+    }
+
     public function jsonSerialize()
     {
         $this->filterActions();
 
         return $this->values;
-    }
-
-    /**
-     * use "action" method instead
-     *
-     * @deprecated
-     */
-    public function addAction( $identifier, $action )
-    {
-        $this->values[ '$actions' ][ $identifier ] = $action;
     }
 
     public function action( $label, $identifier, $url = 'javascript:void(0)', $confirm = null, $type = 'GOTO', $permissions = [] )

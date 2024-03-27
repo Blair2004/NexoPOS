@@ -135,7 +135,7 @@ class UnitService
             $unit = Unit::find( $id );
             if ( ! $unit instanceof Unit ) {
                 throw new NotFoundException( [
-                    'status' => 'failed',
+                    'status' => 'error',
                     'message' => __( 'Unable to find the Unit using the provided id.' ),
                 ] );
             }
@@ -174,7 +174,7 @@ class UnitService
             $group = $this->getGroups( $fields[ 'group_id' ] );
         } catch ( \Exception $exception ) {
             throw new NotFoundException( [
-                'status' => 'failed',
+                'status' => 'error',
                 'message' => __( 'Unable to find the unit group to which this unit is attached.' ),
             ] );
         }

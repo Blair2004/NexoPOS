@@ -50,7 +50,7 @@ export default class Print {
             params,
             promise: () => new Promise( ( resolve, reject ) => {
                 reject({
-                    status: 'failed',
+                    status: 'error',
                     message: __( `The selected print gateway doesn't support this type of printing.`, 'NsPrintAdapter' )
                 });
             }),

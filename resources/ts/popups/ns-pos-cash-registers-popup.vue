@@ -87,13 +87,10 @@ export default {
             switch( register.status ) {
                 case 'in-use':
                     return 'elevation-surface warning cursor-not-allowed';
-                break;
                 case 'disabled':
                     return 'elevation-surface cursor-not-allowed';
-                break;
                 case 'available':
                     return 'elevation-surface success';
-                break;
             }
             return 'elevation-surface hoverable cursor-pointer';
         }
@@ -109,7 +106,7 @@ export default {
             id="ns-pos-cash-registers-popup"
             class="w-95vw md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg ns-box' : ''">
             <div class="title p-2 border-b ns-box-header flex justify-between items-center">
-                <h3 class="font-semibold">{{ __( 'Open The Register' ) }}</h3>
+                <h3 class="font-semibold">{{ __( 'Open The Cash Register' ) }}</h3>
                 <div v-if="settings">
                     <a :href="settings.urls.orders_url" class="rounded-full border ns-close-button px-3 text-sm py-1">{{ __( 'Exit To Orders' ) }}</a>
                 </div>

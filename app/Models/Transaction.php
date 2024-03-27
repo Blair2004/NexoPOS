@@ -31,6 +31,7 @@ class Transaction extends NsModel
 
     protected $casts = [
         'recurring' => 'boolean',
+        'occurrence_value' => 'integer',
         'active' => 'boolean',
     ];
 

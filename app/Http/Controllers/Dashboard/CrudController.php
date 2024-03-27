@@ -177,7 +177,7 @@ class CrudController extends DashboardController
             'message' => sprintf(
                 $response[ 'message' ] ?? __( '%s has been processed, %s has not been processed.' ),
                 $response[ 'success' ] ?? 0,
-                $response[ 'failed' ] ?? 0
+                $response[ 'error' ] ?? 0
             ),
             'data' => $response,
         ];
@@ -228,7 +228,7 @@ class CrudController extends DashboardController
         }
 
         return response()->json( [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'Unable to proceed. No matching CRUD resource has been found.' ),
         ], 403 );
     }
@@ -271,7 +271,7 @@ class CrudController extends DashboardController
         }
 
         return response()->json( [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'Unable to proceed. No matching CRUD resource has been found.' ),
         ], 403 );
     }
@@ -308,7 +308,7 @@ class CrudController extends DashboardController
         }
 
         return response()->json( [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'Unable to proceed. No matching CRUD resource has been found.' ),
         ], 403 );
     }

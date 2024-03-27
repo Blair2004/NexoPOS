@@ -314,7 +314,7 @@ export default {
             return this.visibleSection === 'cart';
         },
         customerName() {
-            return this.order.customer ? `${this.order.customer.first_name} ${this.order.customer.last_name}` : 'N/A';
+            return this.order.customer ? `${this.order.customer.first_name || this.order.customer.last_name ? this.getFirstName() : this.getUserName() }` : 'N/A';
         },
         couponName() {
             return __( 'Apply Coupon' );
@@ -401,6 +401,14 @@ export default {
         nsCurrency,
 
         switchTo,
+
+        getFirstName() {
+            return `${this.order.customer.first_name || ''} ${this.order.customer.last_name || '' }`;
+        },
+
+        getUserName() {
+            return this.order.customer.username;
+        },
 
         takeRandomClass() {
             return 'border-gray-500 bg-gray-400 text-white hover:bg-gray-500';

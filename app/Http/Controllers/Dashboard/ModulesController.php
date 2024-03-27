@@ -92,7 +92,7 @@ class ModulesController extends DashboardController
         $module = $this->modules->get( $namespace );
         $result = $this->modules->runMigration( $module[ 'namespace' ], $request->input( 'version' ), $request->input( 'file' ) );
 
-        if ( $result[ 'status' ] === 'failed' ) {
+        if ( $result[ 'status' ] === 'error' ) {
             throw new Exception( $result[ 'message' ] );
         }
 

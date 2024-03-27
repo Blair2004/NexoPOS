@@ -90,7 +90,7 @@ class CashRegistersController extends DashboardController
                 $request->input( 'amount' ),
                 $request->input( 'description' )
             );
-        } elseif ( $action === RegisterHistory::ACTION_CASHING ) {
+        } elseif ( $action === RegisterHistory::ACTION_CASHIN ) {
             return $this->registersService->cashIn(
                 $register,
                 $request->input( 'amount' ),
@@ -140,7 +140,7 @@ class CashRegistersController extends DashboardController
 
                 $actions->each( function ( $session ) {
                     switch ( $session->action ) {
-                        case RegisterHistory::ACTION_CASHING:
+                        case RegisterHistory::ACTION_CASHIN:
                             $session->label = __( 'Cash In' );
                             break;
                         case RegisterHistory::ACTION_CASHOUT:

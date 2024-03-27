@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\CrudEntry;
+use App\Classes\CrudTable;
+use App\Classes\CrudInput;
 use App\Exceptions\NotAllowedException;
 use TorMorten\Eventy\Facades\Events as Hook;
 use {{ trim( $model_name ) }};
@@ -138,15 +140,6 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * set to "true". Otherwise it will be hidden.
      */
     protected $showOptions = true;
-
-    /**
-     * Here goes the CRUD constructor. Here you can change the behavior 
-     * of the crud component.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Return the label used for the crud object.
@@ -295,15 +288,14 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
+        return CrudTable::column(
             @foreach( $Schema::getColumnListing( $table_name ) as $column )
-'{{ $column }}'  =>  [
-                'label'  =>  {{ '__' }}( '{{ ucwords( $column ) }}' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
+            CrudTable::column(
+                identifier: '{{ $column }}',
+                label: {{ '__' }}( '{{ ucwords( $column ) }}' ),
+            ),
             @endforeach
-        ];
+        );
     }
 
     /**
@@ -358,7 +350,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
             $status     =   [
                 'success'   =>  0,
-                'failed'    =>  0
+                'error'    =>  0
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -367,7 +359,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
             return $status;

@@ -20,7 +20,7 @@ trait WithCategoryTest
                 ->json( 'DELETE', 'api/crud/ns.products-categories/' . $product->category_id );
 
             return $response->assertJson( [
-                'status' => 'failed',
+                'status' => 'error',
             ] );
         }
 

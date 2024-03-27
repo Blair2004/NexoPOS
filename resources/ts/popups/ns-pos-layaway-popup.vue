@@ -206,7 +206,7 @@ export default {
             this.refreshTotalPayments();
         },
         close() {
-            this.popup.params.reject({ status: 'failed', message: __( 'You must define layaway settings before proceeding.' ) });
+            this.popup.params.reject({ status: 'error', message: __( 'You must define layaway settings before proceeding.' ) });
             this.popup.close();
         },
         skipInstalments() {

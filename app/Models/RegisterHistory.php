@@ -27,7 +27,7 @@ class RegisterHistory extends NsModel
 
     const ACTION_CLOSING = 'register-closing';
 
-    const ACTION_CASHING = 'register-cash-in';
+    const ACTION_CASHIN = 'register-cash-in';
 
     const ACTION_CASHOUT = 'register-cash-out';
 
@@ -38,7 +38,7 @@ class RegisterHistory extends NsModel
     const ACTION_REFUND = 'register-refund';
 
     const IN_ACTIONS = [
-        self::ACTION_CASHING,
+        self::ACTION_CASHIN,
         self::ACTION_OPENING,
         self::ACTION_SALE,
     ];

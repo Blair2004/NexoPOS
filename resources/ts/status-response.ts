@@ -1,4 +1,4 @@
 export interface StatusResponse {
-    status: 'success' | 'failed';
+    status: 'success' | 'error';
     message: string;
 }

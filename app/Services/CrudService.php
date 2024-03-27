@@ -944,7 +944,7 @@ class CrudService
              * entries but make sure to keep the originals.
              */
             if ( method_exists( $this, 'setActions' ) ) {
-                Hook::addAction( get_class( $this )::method( 'setActions' ), $this->setActions( $entry ) );
+                Hook::action( get_class( $this )::method( 'setActions' ), $this->setActions( $entry ) );
             }
 
             return $entry;

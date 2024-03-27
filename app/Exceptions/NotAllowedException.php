@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Classes\JsonResponse;
 use App\Services\Helper;
 use Exception;
 
@@ -27,9 +28,8 @@ class NotAllowedException extends Exception
             ] );
         }
 
-        return response()->json( [
-            'status' => 'failed',
-            'message' => $this->getMessage() ?: __( 'The action you tried to perform is not allowed.' ),
-        ], 401 );
+        return JsonResponse::error(
+            message: $this->getMessage() ?: __( 'The action you tried to perform is not allowed.' )
+        );
     }
 }

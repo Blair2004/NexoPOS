@@ -25,7 +25,7 @@ class ValidationException extends MainValidationException
         }
 
         return response()->json( [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'Unable to proceed the form is not valid' ),
             'data' => [
                 'errors' => $this->toHumanError(),

@@ -37,7 +37,6 @@ export default {
     data() {
         return {
             types: [],
-            typeSubscription: null,
             settingsSubscription: null,
             urls: {}
         }
@@ -48,23 +47,17 @@ export default {
             this.urls    =   settings.urls;
         });
         
-        this.typeSubscription   =   POS.types.subscribe( types => {
-            this.types  =   types;
+        this.types   =   POS.types.getValue();
 
-            if ( Object.values( this.types ).length === 1 ) {
-                /**
-                 * we'll automatically select the first payment type
-                 * if only one is provided. 
-                 */ 
-                
-                this.select( Object.keys( this.types )[0] );
-            }
-        });
+        if ( Object.values( this.types ).length === 1 ) {
+            /**
+             * we'll automatically select the first payment type
+             * if only one is provided. 
+             */ 
+            this.select( Object.keys( this.types )[0] );
+        }
 
         this.popupCloser();
-    },
-    unmounted() {
-        this.typeSubscription.unsubscribe();
     },
     methods: {
         __,
@@ -90,6 +83,7 @@ export default {
                 POS.types.next( this.types );
                 this.resolveIfQueued( selectedType );
             } catch( exception ) {
+                throw exception;
                 // ...
             }
         }

@@ -23,7 +23,7 @@ class NotFoundException extends Exception
         }
 
         return response()->json( [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => $this->getMessage(),
         ], 401 );
     }

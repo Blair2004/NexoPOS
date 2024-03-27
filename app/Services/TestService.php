@@ -201,6 +201,7 @@ class TestService
         $taxGroup = TaxGroup::get()->random();
         $margin = 25;
         $request = Product::withStockEnabled()
+            ->notGrouped()
             ->limit( $details[ 'total_products' ] ?? -1 )
             ->with( [
                 'unitGroup',

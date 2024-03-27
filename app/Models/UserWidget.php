@@ -15,7 +15,7 @@ class UserWidget extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $fillable = [ 'column', 'identifier', 'id', 'column', 'position', 'user_id' ];
+    protected $fillable = [ 'column', 'identifier', 'class_name', 'column', 'position', 'user_id' ];
 
     protected $table = 'nexopos_users_widgets';
 }

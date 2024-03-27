@@ -42,7 +42,7 @@ export default {
 
         closePopup() {
             this.popupResolver({
-                status: 'failed',
+                status: 'error',
                 button: 'close_popup'
             });
         },

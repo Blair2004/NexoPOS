@@ -64,6 +64,12 @@ export default {
 
                     resolve( response );
                 } catch( exception ) {
+                    if ( exception === false ) {
+                        return reject({
+                            status: 'error',
+                            message: __( 'You must choose a register before proceeding.' )
+                        });
+                    }
                     reject( exception );
                 }
             }));
