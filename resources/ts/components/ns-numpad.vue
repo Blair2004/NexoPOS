@@ -1,18 +1,22 @@
 <template>
-    <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
+    <div id="numpad" class="grid grid-flow-row divide-x divide-y border-r border-b border-input-edge grid-cols-3 grid-rows-3">
         <div 
             @click="inputValue( key )"
-            :key="index" 
+            :key="index"
             v-for="(key,index) of keys" 
-            class="select-none ns-numpad-key border-l border-b h-24 font-bold flex items-center justify-center cursor-pointer">
+            :class="index === 0 ? 'border-l border-t' : ''"
+            class="select-none ns-numpad-key h-24 font-bold flex items-center justify-center cursor-pointer">
             <span v-if="key.value !== undefined">{{ key.value }}</span>
             <i v-if="key.icon" class="las" :class="key.icon"></i>
         </div>
         <slot name="numpad-footer"></slot>
     </div>
 </template>
-<script>
-import { __ } from '@/libraries/lang';
+<script lang="ts">
+import { __ } from '~/libraries/lang';
+
+declare const ns, nsHotPress, nsState;
+
 export default {
     name: 'ns-numpad',
     props: [ 'value', 'currency', 'floating', 'limit' ],
@@ -26,6 +30,7 @@ export default {
             ),
             screenValue: 0,
             order: null,
+            popupSubscription: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
             allSelected: true,
@@ -35,6 +40,11 @@ export default {
                 ...([1,2,3].map( key => ({ identifier: key, value: key }))),
                 ...[{ identifier: 'backspace', icon : 'la-backspace' },{ identifier: 0, value: 0 },{ identifier: 'next', value: __( 'Enter' ) }],
             ]
+        }
+    },
+    unmounted() {
+        if ( this.popupSubscription ) {
+            this.popupSubscription.unsubscribe();
         }
     },
     mounted() {
@@ -49,35 +59,66 @@ export default {
          */
         const numbers   =   ( new Array(10) ).fill('').map( ( v,i ) => i );
 
+        // will trigger if any state changes occurs on nsState
+        this.popupSubscription  =   nsState.subscribe( state => {
+            setTimeout( () => {
+                const isInPopup     =   this.$el.closest('.is-popup');
+                this.numpadKeyboardWorking = ( isInPopup && isInPopup.getAttribute('focused') === 'true' );
+            }, 100 );
+        });
+
+
+        /**
+         * We'll no check if the popup is focused 
+         * or if it's active
+         */        
         nsHotPress
             .create( 'numpad-keys' )
             .whenVisible([ '.is-popup' ])
             .whenPressed( numbers, ( event, value ) => {
-                this.inputValue({ value });
+                if ( this.numpadKeyboardWorking ) {
+                    this.inputValue({ value });
+                }
             })
 
         nsHotPress
             .create( 'numpad-backspace' )
             .whenVisible([ '.is-popup' ])
-            .whenPressed( 'backspace', () => this.inputValue({ identifier: 'backspace' }))
+            .whenPressed( 'backspace', () => {
+                if ( this.numpadKeyboardWorking ) {
+                    this.inputValue({ identifier: 'backspace' });
+                }
+            })
 
         nsHotPress
             .create( 'numpad-increase' )
             .whenVisible([ '.is-popup' ])
-            .whenPressed( '+', () => this.increaseBy({ value: 1 }))
+            .whenPressed( '+', () => {
+                if ( this.numpadKeyboardWorking ) {
+                    this.increaseBy({ value: 1 });
+                }
+            })
 
         nsHotPress
             .create( 'numpad-reduce' )
             .whenVisible([ '.is-popup' ])
-            .whenPressed( '-', () => this.increaseBy({ value: -1 }))
+            .whenPressed( '-', () => {
+                if ( this.numpadKeyboardWorking ) {
+                    this.increaseBy({ value: -1 });
+                }
+            })
 
         nsHotPress
             .create( 'numpad-save' )
             .whenVisible([ '.is-popup' ])
-            .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
+            .whenPressed( 'enter', () => {
+                if ( this.numpadKeyboardWorking ) {
+                    this.inputValue({ identifier: 'next' });
+                }
+            });
     },
     watch: {
-        value() {        
+        value() {
             if ( this.value.toString().length > 0 ) {
                 if ( this.floating ) {
                     this.screenValue    =   Math.round( this.value * this.number ).toString();
@@ -109,6 +150,11 @@ export default {
         },
 
         inputValue( key ) {
+            // count a screenValue numbers if it's a string, if it's not, let's convert it to string first
+            if ( typeof this.screenValue !== 'string' ) {
+                this.screenValue    =   this.screenValue.toString();
+            }
+
             let number    =   parseInt( 
                 1 + ( new Array( this.cursor ) )
                 .fill('')
@@ -124,7 +170,7 @@ export default {
                     this.screenValue    =   '0';
                     this.allSelected    =   false;
                 } else {
-                    this.screenValue    =   this.screenValue.toString().substr( 0, this.screenValue.length - 1 );
+                    this.screenValue    =   this.screenValue.substr( 0, this.screenValue.length - 1 );
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
                 if ( this.limit > 0 && this.screenValue.length >= this.limit ) {

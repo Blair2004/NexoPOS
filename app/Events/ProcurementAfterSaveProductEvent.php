@@ -30,6 +30,6 @@ class ProcurementAfterSaveProductEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

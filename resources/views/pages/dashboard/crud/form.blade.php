@@ -6,12 +6,13 @@ use App\Classes\Output;
 
 @section( 'layout.dashboard.body' )
 <div class="h-full flex flex-col flex-auto">
-    @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
+    @include( Hook::filter( 'ns-dashboard-header-file', '../common/dashboard-header' ) )
     <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
         @include( 'common.dashboard.title' )
         <ns-crud-form 
             return-url="{{ $returnUrl }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
+            :query-params='@json( $queryParams ?? [] )'
             submit-url="{{ $submitUrl }}"
             src="{{ $src }}">
             <template v-slot:title>{{ $mainFieldLabel ?? __( 'mainFieldLabel not defined' ) }}</template>
@@ -25,5 +26,9 @@ use App\Classes\Output;
 
 @section( 'layout.dashboard.footer' )
     @parent
-    {!! ( string ) Hook::filter( 'ns-crud-form-footer', new Output, $namespace ) !!}
+    <?php
+    $output     =   new Output;
+    Hook::action( 'ns-crud-form-footer', $output, $namespace )
+    ?>
+    {!! ( string ) $output !!}
 @endsection

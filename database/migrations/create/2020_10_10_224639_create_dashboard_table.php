@@ -14,20 +14,20 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_dashboard_days' ) ) {
-            Schema::createIfMissing( 'nexopos_dashboard_days', function (Blueprint $table) {
+            Schema::createIfMissing( 'nexopos_dashboard_days', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'id' ) ) {
                     $table->bigIncrements( 'id' );
                 }
-            });
+            } );
         }
 
         if ( Schema::hasTable( 'nexopos_dashboard_days' ) ) {
-            Schema::table( 'nexopos_dashboard_days', function (Blueprint $table) {
+            Schema::table( 'nexopos_dashboard_days', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'id' ) ) {
                     $table->bigIncrements( 'id' );
                 }
 
-                foreach ([
+                foreach ( [
                     'total_unpaid_orders',
                     'day_unpaid_orders',
 
@@ -65,12 +65,12 @@ return new class extends Migration
                     'day_expenses',
                 ] as $column ) {
                     if ( ! Schema::hasColumn( 'nexopos_dashboard_days', $column ) ) {
-                        $table->float( $column, 18, 5 )->default(0);
+                        $table->float( $column, 18, 5 )->default( 0 );
                     }
                 }
 
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'day_of_year' ) ) {
-                    $table->integer( 'day_of_year' )->default(0);
+                    $table->integer( 'day_of_year' )->default( 0 );
                 }
 
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'range_starts' ) ) {
@@ -80,7 +80,7 @@ return new class extends Migration
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'range_ends' ) ) {
                     $table->datetime( 'range_ends' )->nullable();
                 }
-            });
+            } );
         }
 
         if ( ! Schema::hasTable( 'nexopos_dashboard_weeks' ) ) {
@@ -88,24 +88,24 @@ return new class extends Migration
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'id' ) ) {
                     $table->bigIncrements( 'id' );
                 }
-            });
+            } );
         }
 
         if ( Schema::hasTable( 'nexopos_dashboard_weeks' ) ) {
             Schema::table( 'nexopos_dashboard_weeks', function ( Blueprint $table ) {
-                foreach ([
+                foreach ( [
                     'total_gross_income',
                     'total_taxes',
                     'total_expenses',
                     'total_net_income',
                 ] as $column ) {
                     if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', $column ) ) {
-                        $table->float( $column, 18, 5 )->default(0);
+                        $table->float( $column, 18, 5 )->default( 0 );
                     }
                 }
 
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'week_number' ) ) {
-                    $table->integer( 'week_number' )->default(0);
+                    $table->integer( 'week_number' )->default( 0 );
                 }
 
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'range_starts' ) ) {
@@ -115,7 +115,7 @@ return new class extends Migration
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'range_ends' ) ) {
                     $table->datetime( 'range_ends' )->nullable();
                 }
-            });
+            } );
         }
     }
 

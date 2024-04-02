@@ -58,8 +58,6 @@ export default {
             if ( current + 3 < count ) {
                 result.push( '...', count );
             }
-
-            console.log( result );
             
             return result.filter( f => f > 0 || typeof f === 'string' );
         },

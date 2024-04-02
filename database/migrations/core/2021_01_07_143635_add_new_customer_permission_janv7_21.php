@@ -26,7 +26,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Permission::namespace( 'nexopos.customers.manage-account' ) instanceof Permission ) {
-            $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.customers.manage-account' ]);
+            $permission = Permission::firstOrNew( [ 'namespace' => 'nexopos.customers.manage-account' ] );
             $permission->namespace = 'nexopos.customers.manage-account';
             $permission->name = __( 'Manage Customers Account' );
             $permission->description = __( 'Allow to manage customer virtual deposit account.' );

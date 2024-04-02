@@ -41,12 +41,6 @@ class CrudTest extends TestCase
                     'slug' => 'crud/{namespace}/form-config/{id?}',
                     'verb' => 'get',
                 ], [
-                    // 'slug'  =>  'crud/{namespace}/{id}',
-                    // 'verb'  =>  'put',
-                ], [
-                    // 'slug'  =>  'crud/{namespace}',
-                    // 'verb'  =>  'post',
-                ], [
                     'slug' => 'crud/{namespace}/export',
                     'verb' => 'post',
                 ], [
@@ -81,12 +75,14 @@ class CrudTest extends TestCase
                     if ( preg_match( '/\{id\?\}/', $slug ) ) {
                         $response = $this
                             ->withSession( $this->app[ 'session' ]->all() )
-                            ->json( strtoupper( $config[ 'verb' ] ), '/api/nexopos/v4/' . $slug, [
+                            ->json( strtoupper( $config[ 'verb' ] ), '/api/' . $slug, [
                                 'entries' => [ 1 ],
                                 'action' => 'unknown',
-                            ]);
+                            ] );
 
-                        $response->assertOk();
+                        if ( $response->status() !== 200 ) {
+                            $response->assertOk();
+                        }
                     }
                 }
             }

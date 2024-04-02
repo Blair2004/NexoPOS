@@ -3,7 +3,7 @@
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3 class="text-primary">{{ __( 'Search Product' ) }}</h3>
             <div>
-                <ns-close-button @click="$popup.close()"></ns-close-button>
+                <ns-close-button @click="popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="flex-auto overflow-hidden flex flex-col">
@@ -16,8 +16,9 @@
             <div class="overflow-y-auto ns-scrollbar flex-auto relative">
                 <ul class="ns-vertical-menu">
                     <li v-for="product of products" :key="product.id" @click="addToCart( product )" class="cursor-pointer p-2 flex justify-between border-b">
-                        <div class="text-primary">
-                            {{ product.name }}
+                        <div class="">
+                            <h2 class="text-primary">{{ product.name }}</h2>
+                            <small class="text-soft-secondary text-xs">{{ product.category.name }}</small>
                         </div>
                         <div></div>
                     </li>
@@ -33,13 +34,14 @@
     </div>
 </template>
 <script>
-import popupCloser from "@/libraries/popup-closer";
-import popupResolver from '@/libraries/popup-resolver';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import popupCloser from "~/libraries/popup-closer";
+import popupResolver from '~/libraries/popup-resolver';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 export default {
     name: 'ns-pos-search-product',
+    props: [ 'popup' ],
     data() {
         return {
             searchValue: '',
@@ -78,7 +80,7 @@ export default {
         popupResolver,
 
         addToCart( product ) {
-            this.$popup.close();
+            this.popup.close();
 
             if ( parseInt( product.accurate_tracking ) === 1 ) {
                 return Popup.show( nsPosConfirmPopupVue, {
@@ -86,7 +88,7 @@ export default {
                     message: __( 'The product "{product}" can\'t be added from a search field, as "Accurate Tracking" is enabled. Would you like to learn more ?' ).replace( '{product}', product.name ),
                     onAction: ( action ) => {
                         if ( action ) {
-                            window.open( 'https://my.nexopos.com/en/troubleshooting/accurate-tracking', '_blank' );
+                            window.open( 'https://my.nexopos.com/en/documentation/troubleshooting/accurate-tracking', '_blank' );
                         }
                     }
                 });
@@ -97,7 +99,7 @@ export default {
 
         search() {
             this.isLoading  =   true;
-            nsHttpClient.post( '/api/nexopos/v4/products/search', { search: this.searchValue })
+            nsHttpClient.post( '/api/products/search', { search: this.searchValue })
                 .subscribe({
                     next: result => {
                         this.isLoading  =   false;

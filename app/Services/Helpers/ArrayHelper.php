@@ -22,8 +22,8 @@ trait ArrayHelper
                 'even' => [],
             ];
 
-            foreach ($array as $k => $v) {
-                if ($k % 2 == 0) {
+            foreach ( $array as $k => $v ) {
+                if ( $k % 2 == 0 ) {
                     $result[ 'even' ][] = $v;
                 } else {
                     $result[ 'odd' ][] = $v;
@@ -86,10 +86,11 @@ trait ArrayHelper
         if ( $collections ) {
             foreach ( $collections as $collection ) {
                 
-                $collection     =   ( object ) $collection;
-
                 $id = $config[0];
-                if ( ! is_array( $config[1] ) ) {
+
+                if ( is_callable( $config ) ) {
+                    $result[] = $config( $collection );
+                } elseif ( ! is_array( $config[1] ) ) {
                     $name = $config[1];
 
                     $result[] = [
@@ -137,10 +138,30 @@ trait ArrayHelper
     }
 
     /**
+     * Key Value To Js Options
+     *
+     * @param array
+     * @return array of options
+     */
+    public static function boolToOptions( $true, $false )
+    {
+        return [
+            [
+                'label' => $true,
+                'value' => true,
+            ],
+            [
+                'label' => $false,
+                'value' => false,
+            ],
+        ];
+    }
+
+    /**
      * flat multidimensional array using
      * keys
      *
-     * @param array $data
+     * @param  array      $data
      * @return Collection
      */
     public static function flatArrayWithKeys( $data )
@@ -149,7 +170,7 @@ trait ArrayHelper
             if ( ! is_array( $data ) || is_numeric( $index ) ) {
                 return [ $index => $data ];
             } elseif ( is_array( $data ) ) {
-                if ( array_keys( $data ) !== range(0, count( $data ) - 1) ) {
+                if ( array_keys( $data ) !== range( 0, count( $data ) - 1 ) ) {
                     return self::flatArrayWithKeys( $data );
                 } else {
                     return [ $index => json_encode( $data ) ];
@@ -157,8 +178,8 @@ trait ArrayHelper
             }
 
             return [];
-        })->filter( function ( $field ) {
+        } )->filter( function ( $field ) {
             return $field !== false;
-        });
+        } );
     }
 }

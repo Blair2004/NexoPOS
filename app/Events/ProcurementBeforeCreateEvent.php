@@ -17,7 +17,7 @@ class ProcurementBeforeCreateEvent
      *
      * @return void
      */
-    public function __construct( public Procurement $procurement )
+    public function __construct( public Procurement $procurement, public array $data )
     {
         // ...
     }
@@ -29,6 +29,6 @@ class ProcurementBeforeCreateEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

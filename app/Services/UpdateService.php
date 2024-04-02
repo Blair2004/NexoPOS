@@ -22,7 +22,7 @@ class UpdateService
          * in case the option ignoreMigration
          * is set to "true".
          */
-        $migrations = collect([]);
+        $migrations = collect( [] );
 
         if ( $ignoreMigrations === false ) {
             $migrations = Migration::get()->map( fn( $migration ) => $migration->migration );
@@ -35,10 +35,10 @@ class UpdateService
                     $fileInfo = pathinfo( $file );
 
                     return $fileInfo[ 'filename' ];
-                });
+                } );
 
             return $files;
-        })->flatten()->diff( $migrations );
+        } )->flatten()->diff( $migrations );
     }
 
     /**
@@ -59,7 +59,7 @@ class UpdateService
     {
         $file = $this->getMatchingFullPath( $file );
         $pathinfo = pathinfo( $file );
-        $type = collect( explode( '/', $pathinfo[ 'dirname' ]) )->last();
+        $type = collect( explode( '/', $pathinfo[ 'dirname' ] ) )->last();
 
         $class = require base_path( $file );
 
@@ -84,7 +84,7 @@ class UpdateService
                 $fileInfo = pathinfo( $file );
 
                 return [ $fileInfo[ 'filename' ] => $file ];
-            });
+            } );
 
         return $files[ $file ];
     }
@@ -92,7 +92,7 @@ class UpdateService
     public function executeMigration( $file, $method = 'up' )
     {
         $pathinfo = pathinfo( $file );
-        $type = collect( explode( '/', $pathinfo[ 'dirname' ]) )->last();
+        $type = collect( explode( '/', $pathinfo[ 'dirname' ] ) )->last();
 
         $class = require base_path( $file );
 

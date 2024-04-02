@@ -24,7 +24,7 @@ class ExtractTranslation extends Command
      *
      * @var string
      */
-    protected $description = 'Will perform various operation regarding translation for NexoPOS 4.x and it\'s modules';
+    protected $description = 'Will perform various operation regarding translation for NexoPOS and it\'s modules';
 
     /**
      * Create a new command instance.
@@ -64,7 +64,7 @@ class ExtractTranslation extends Command
             $mode = 'J';
             $link = public_path( 'lang' );
             $target = base_path( 'lang' );
-            $link = exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
+            $link = exec( "mklink /{$mode} \"{$link}\" \"{$target}\"" );
         }
 
         return $this->info( 'Language Symbolic Link has been created !' );
@@ -74,9 +74,9 @@ class ExtractTranslation extends Command
      * That will extrac tthe language string
      * for a specific language code
      *
-     * @param string $lang
-     * @param array $module
-     * @param Collection $files
+     * @param  string     $lang
+     * @param  array      $module
+     * @param  Collection $files
      * @return void
      */
     private function extractForModuleLanguage( $lang, $module, $files )
@@ -100,10 +100,10 @@ class ExtractTranslation extends Command
 
             if ( ! empty( $module ) ) {
                 $directories = Storage::disk( 'ns' )->directories( $module[ 'relativePath' ] );
-                $files = collect([]);
+                $files = collect( [] );
 
                 foreach ( $directories as $directory ) {
-                    if ( ! in_array( basename( $directory ), [ 'node_modules', 'vendor', 'Public', '.git' ]) ) {
+                    if ( ! in_array( basename( $directory ), [ 'node_modules', 'vendor', 'Public', '.git' ] ) ) {
                         $files->push( Storage::disk( 'ns' )->allFiles( $directory ) );
                     }
                 }
@@ -146,8 +146,8 @@ class ExtractTranslation extends Command
      * Will perform string extraction for
      * the system files
      *
-     * @param string $lang
-     * @param array $files
+     * @param  string $lang
+     * @param  array  $files
      * @return void
      */
     private function extractLanguageForSystem( $lang, $files )
@@ -166,9 +166,9 @@ class ExtractTranslation extends Command
      * Will merge translation files
      * by deleting old string that aren't referenced
      *
-     * @param array $newTranslation
-     * @param string $filePath
-     * @return array $updatedTranslation
+     * @param  array  $newTranslation
+     * @param  string $filePath
+     * @return array  $updatedTranslation
      */
     private function flushTranslation( $newTranslation, $filePath )
     {
@@ -185,14 +185,14 @@ class ExtractTranslation extends Command
             $purgedTranslation = collect( $existingTranslation )
                 ->filter( function ( $translation, $key ) use ( $newTranslation ) {
                     return in_array( $key, array_keys( $newTranslation ) );
-                });
+                } );
 
             /**
              * pull new keys
              */
             $newKeys = collect( $newTranslation )->filter( function ( $translation, $key ) use ( $existingTranslation ) {
                 return ! in_array( $key, array_keys( $existingTranslation ) );
-            });
+            } );
 
             return array_merge( $purgedTranslation->toArray(), $newKeys->toArray() );
         }
@@ -208,7 +208,7 @@ class ExtractTranslation extends Command
             $info = pathinfo( $file );
 
             return in_array( $info[ 'extension' ], $supportedExtensions );
-        });
+        } );
 
         $exportable = [];
 
@@ -218,17 +218,17 @@ class ExtractTranslation extends Command
          */
         $this->withProgressBar( $filtered, function ( $file ) use ( &$exportable ) {
             $fileContent = Storage::disk( 'ns' )->get( $file );
-            preg_match_all('/\_\_[m]?\(\s*[\'\"\`]([\w\s\+\"\\/\d\-é&\[\]\@*$#\.\?\%,;)\{\}]*)[\'\"\`]\s*(\,?\s*[\'\"\`]?(\w)*[\'\"\`]?\s*)?\)/', $fileContent, $output_array);
+            preg_match_all( '/__[m]?\(\s*(?(?=[\'"`](?:[\s\S]*?)[\'"`](?:,\s*(?:[^)]*))?)[\'"`]([\s\S]*?)[\'"`](?:,\s*(?:[^)]*))?|)\s*\)/', $fileContent, $output_array );
 
             if ( isset( $output_array[1] ) ) {
                 foreach ( $output_array[1] as $string ) {
                     $exportable[ $string ] = compact( 'file', 'string' );
                 }
             }
-        });
+        } );
 
         return collect( $exportable )->mapWithKeys( function ( $exportable ) {
             return [ $exportable[ 'string' ] => $exportable[ 'string' ] ];
-        })->toArray();
+        } )->toArray();
     }
 }

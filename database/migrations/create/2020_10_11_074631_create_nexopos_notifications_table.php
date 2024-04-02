@@ -23,7 +23,7 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_notifications' ) ) {
-            Schema::createIfMissing( 'nexopos_notifications', function (Blueprint $table) {
+            Schema::createIfMissing( 'nexopos_notifications', function ( Blueprint $table ) {
                 $table->id();
                 $table->integer( 'user_id' );
                 $table->string( 'identifier' );
@@ -33,7 +33,7 @@ return new class extends Migration
                 $table->string( 'source' )->default( 'system' );
                 $table->boolean( 'dismissable' )->default( true );
                 $table->timestamps();
-            });
+            } );
         }
     }
 

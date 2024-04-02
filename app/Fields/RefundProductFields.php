@@ -8,7 +8,7 @@ use App\Services\Helper;
 
 class RefundProductFields extends FieldsService
 {
-    protected $identifier = 'ns.refund-product';
+    protected static $identifier = 'ns.refund-product';
 
     public function get()
     {
@@ -25,10 +25,10 @@ class RefundProductFields extends FieldsService
                 'validation' => 'required',
                 'name' => 'condition',
                 'type' => 'select',
-                'options' => Helper::kvToJsOptions([
+                'options' => Helper::kvToJsOptions( [
                     OrderProduct::CONDITION_DAMAGED => __( 'Damaged' ),
                     OrderProduct::CONDITION_UNSPOILED => __( 'Unspoiled' ),
-                ]),
+                ] ),
             ], [
                 'label' => __( 'Other Observations' ),
                 'description' => __( 'Describe in details the condition of the returned product.' ),

@@ -20,11 +20,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CustomersGroupsController extends DashboardController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function listCustomersGroups()
     {
         return CustomerGroupCrud::table();
@@ -92,11 +87,11 @@ class CustomersGroupsController extends DashboardController
      */
     public function post( Request $request )
     {
-        $fields = $request->only([
+        $fields = $request->only( [
             'name',
             'description',
             'reward_system_id',
-        ]);
+        ] );
 
         $group = new CustomerGroup;
         foreach ( $fields as $name => $value ) {
@@ -122,11 +117,11 @@ class CustomersGroupsController extends DashboardController
     public function put( Request $request, $id )
     {
         $group = CustomerGroup::find( $id );
-        $fields = $request->only([
+        $fields = $request->only( [
             'name',
             'description',
             'reward_system_id',
-        ]);
+        ] );
 
         if ( $group instanceof CustomerGroup ) {
             foreach ( $fields as $name => $value ) {
@@ -169,7 +164,7 @@ class CustomersGroupsController extends DashboardController
                 ->forEach( function ( $customer ) use ( $toModel ) {
                     $customer->group_id = $toModel->id;
                     $customer->save();
-                });
+                } );
 
             return [
                 'status' => 'success',
@@ -188,7 +183,7 @@ class CustomersGroupsController extends DashboardController
                     ->forEach( function ( $customer ) use ( $toModel ) {
                         $customer->group_id = $toModel->id;
                         $customer->save();
-                    });
+                    } );
             }
 
             return [

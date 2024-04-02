@@ -10,7 +10,7 @@ return [
             'type' => 'switch',
             'name' => '_use_customer_billing',
             'label' => __( 'Use Customer Billing' ),
-            'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+            'options' => Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
             'description' => __( 'Define whether the customer billing information should be used.' ),
         ],
         ...( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],

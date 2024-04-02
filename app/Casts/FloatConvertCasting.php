@@ -9,11 +9,11 @@ class FloatConvertCasting implements CastsAttributes
     /**
      * Cast the given value.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
+     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @param  mixed                               $value
      * @return mixed
      */
-    public function get($model, string $key, $value, array $attributes)
+    public function get( $model, string $key, $value, array $attributes )
     {
         return ns()->math->set( $value ?: 0 )->toFloat();
     }
@@ -21,11 +21,11 @@ class FloatConvertCasting implements CastsAttributes
     /**
      * Prepare the given value for storage.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  mixed  $value
+     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @param  mixed                               $value
      * @return mixed
      */
-    public function set($model, string $key, $value, array $attributes)
+    public function set( $model, string $key, $value, array $attributes )
     {
         return $value;
     }

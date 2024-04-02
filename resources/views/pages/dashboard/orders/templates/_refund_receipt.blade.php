@@ -1,7 +1,5 @@
 <?php
-use App\Models\Order;
 use App\Classes\Hook;
-use App\Classes\Currency;
 use App\Models\PaymentType;
 use App\Services\OrdersService;
 

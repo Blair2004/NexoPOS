@@ -19,14 +19,14 @@ class OrderRefundPaymentAfterCreatedEventListener
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param  object $event
      * @return void
      */
-    public function handle( OrderRefundPaymentAfterCreatedEvent $event)
+    public function handle( OrderRefundPaymentAfterCreatedEvent $event )
     {
         /**
-         * the refund can't always be made from the register the order
-         * has been created. We need to consider the fact refund can't lead
+         * the refund can't always be made from the register where the order
+         * has been created. We need to consider the fact that refund can't lead
          * to cash drawer disbursement.
          */
     }

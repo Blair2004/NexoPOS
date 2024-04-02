@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Order;
-use App\Services\ExpenseService;
+use App\Services\TransactionService;
 use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,7 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class ExpenseHandlePaymentStatusJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
@@ -29,9 +29,9 @@ class ExpenseHandlePaymentStatusJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle( ExpenseService $expenseService )
+    public function handle( TransactionService $transactionService )
     {
-        $expenseService->handlePaymentStatus(
+        $transactionService->handlePaymentStatus(
             order: $this->order,
             new: $this->new,
             previous: $this->previous

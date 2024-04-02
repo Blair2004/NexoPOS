@@ -35,15 +35,15 @@ return new class extends Migration
         $deleteHistory->description = __( 'Allow to delete an expense history.' );
         $deleteHistory->save();
 
-        Role::namespace( 'admin' )->addPermissions([
+        Role::namespace( 'admin' )->addPermissions( [
             $readHistory,
             $deleteHistory,
-        ]);
+        ] );
 
-        Role::namespace( 'nexopos.store.administrator' )->addPermissions([
+        Role::namespace( 'nexopos.store.administrator' )->addPermissions( [
             $readHistory,
             $deleteHistory,
-        ]);
+        ] );
     }
 
     /**

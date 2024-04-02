@@ -16,7 +16,7 @@ class SettingsSavedEvent
      *
      * @return void
      */
-    public function __construct( public $options, public $inputs, public $class )
+    public function __construct(public $data, public $settingsClass )
     {
         // ...
     }
@@ -28,6 +28,6 @@ class SettingsSavedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

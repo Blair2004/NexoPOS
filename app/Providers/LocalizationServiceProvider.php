@@ -19,7 +19,7 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         Event::listen( function ( LocaleDefinedEvent $event ) {
             $this->loadModuleLocale();
-        });
+        } );
     }
 
     /**
@@ -48,7 +48,7 @@ class LocalizationServiceProvider extends ServiceProvider
                     $key = $module[ 'namespace' ] . '.' . $key;
 
                     return [ $key => $value ];
-                })->toArray();
+                } )->toArray();
 
                 app( 'translator' )->addLines( $newLocales, app()->getLocale() );
             }

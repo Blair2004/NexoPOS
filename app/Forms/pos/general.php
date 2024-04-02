@@ -9,9 +9,9 @@ return [
             'type' => 'select',
             'name' => 'shipping_type',
             'label' => __( 'Shipping Type' ),
-            'options' => Helper::kvToJsOptions([
+            'options' => Helper::kvToJsOptions( [
                 'flat' => __( 'Flat' ),
-            ]),
+            ] ),
             'description' => __( 'Define how the shipping is calculated.' ),
         ], [
             'type' => 'number',

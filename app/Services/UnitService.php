@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Auth;
 
 class UnitService
 {
-    public function __construct( CurrencyService $currency )
+    public function __construct( public CurrencyService $currency )
     {
-        $this->currency = $currency;
+        // ...
     }
 
     public function createGroup( $data )
@@ -72,6 +72,20 @@ class UnitService
     }
 
     /**
+     * Get sibling units
+     * Used to retreive other units that belongs to
+     * the same unit group and the defined unit.
+     */
+    public function getSiblingUnits( Unit $unit )
+    {
+        $unit->load( [ 'group.units' => function ( $query ) use ( $unit ) {
+            $query->whereNotIn( 'id', [ $unit->id ] );
+        }] );
+
+        return $unit->group->units;
+    }
+
+    /**
      * Create a unit using the provided informations
      *
      * @param array unit array
@@ -90,7 +104,7 @@ class UnitService
             $group->units->map( function ( $unit ) {
                 $unit->base_unit = false;
                 $unit->save();
-            });
+            } );
         }
 
         $unit = new Unit;
@@ -120,10 +134,10 @@ class UnitService
         if ( $id !== null ) {
             $unit = Unit::find( $id );
             if ( ! $unit instanceof Unit ) {
-                throw new NotFoundException([
-                    'status' => 'failed',
+                throw new NotFoundException( [
+                    'status' => 'error',
                     'message' => __( 'Unable to find the Unit using the provided id.' ),
-                ]);
+                ] );
             }
 
             return $unit;
@@ -157,12 +171,12 @@ class UnitService
         $unit = Unit::findOrFail( $id );
 
         try {
-            $group = $this->getGroups( $fields[ 'group_id' ]);
+            $group = $this->getGroups( $fields[ 'group_id' ] );
         } catch ( \Exception $exception ) {
-            throw new NotFoundException([
-                'status' => 'failed',
+            throw new NotFoundException( [
+                'status' => 'error',
                 'message' => __( 'Unable to find the unit group to which this unit is attached.' ),
-            ]);
+            ] );
         }
 
         /**
@@ -176,7 +190,7 @@ class UnitService
                     $unit->base_unit = false;
                     $unit->save();
                 }
-            });
+            } );
         }
 
         foreach ( $fields as $field => $value ) {
@@ -220,7 +234,7 @@ class UnitService
             ->get()
             ->filter( function ( $unit ) {
                 return $unit->base_unit;
-            });
+            } );
 
         $unitCount = $baseUnit->count();
 
@@ -248,6 +262,40 @@ class UnitService
         return $this->currency->value( $value )
             ->multiplyBy( $quantity )
             ->get();
+    }
+
+    /**
+     * Checks wether two units belongs to the same unit group.
+     */
+    public function isFromSameGroup( Unit $from, Unit $to ): bool
+    {
+        return $from->group_id === $to->group_id;
+    }
+
+    /**
+     * Will returns the final quantity of a converted unit.
+     */
+    public function getConvertedQuantity( Unit $from, Unit $to, float $quantity ): float|int
+    {
+        return ns()->currency->define(
+            ns()->currency
+                ->define( $from->value )
+                ->multipliedBy( $quantity )
+                ->getRaw()
+        )
+            ->dividedBy( $to->value )
+            ->getRaw();
+    }
+
+    /**
+     * Using the source unit, will return the purchase price
+     * for a converted unit.
+     */
+    public function getPurchasePriceFromUnit( $purchasePrice, Unit $from, Unit $to )
+    {
+        return ns()->currency->define(
+            ns()->currency->define( $purchasePrice )->dividedBy( $from->value )->toFloat()
+        )->multipliedBy( $to->value )->getRaw();
     }
 
     public function deleteUnit( $id )

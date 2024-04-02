@@ -7,7 +7,6 @@ use App\Models\RewardSystem;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -54,14 +53,14 @@ class CustomerGroupCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -76,8 +75,6 @@ class CustomerGroupCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     protected $permissions = [
@@ -91,7 +88,7 @@ class CustomerGroupCrud extends CrudService
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -121,7 +118,7 @@ class CustomerGroupCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -179,7 +176,7 @@ class CustomerGroupCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -192,7 +189,7 @@ class CustomerGroupCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, CustomerGroup $entry )
     {
@@ -205,7 +202,7 @@ class CustomerGroupCrud extends CrudService
      * After Crud POST
      *
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPost( $inputs )
     {
@@ -216,7 +213,7 @@ class CustomerGroupCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -230,7 +227,7 @@ class CustomerGroupCrud extends CrudService
      * After Crud PUT
      *
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $inputs )
     {
@@ -238,29 +235,9 @@ class CustomerGroupCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw AccessDeniedException
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id )
     {
@@ -272,7 +249,7 @@ class CustomerGroupCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -282,7 +259,7 @@ class CustomerGroupCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $id )
     {
@@ -291,10 +268,8 @@ class CustomerGroupCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -323,29 +298,27 @@ class CustomerGroupCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->reward_system_id = $entry->reward_system_id === 0 ? __( 'N/A' ) : $entry->reward_system_id;
 
-        $entry->addAction( 'edit_customers_groups', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit_customers_group',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( 'dashboard/customers/groups/edit/' . $entry->id ),
-        ]);
-
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-groups/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'edit_customers_group', 
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( 'dashboard/customers/groups/edit/' . $entry->id ) 
+        );
+        
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.customers-groups/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
                 'title' => __( 'Delete a licence' ),
-            ],
-        ]);
+            ] 
+        ); 
 
         $entry->reward_name = $entry->reward_name ?: __( 'N/A' );
 
@@ -356,7 +329,7 @@ class CustomerGroupCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -364,11 +337,11 @@ class CustomerGroupCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( 'App\Services\Users' );
+        $user = app()->make( 'App\Services\UsersService' );
 
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status' => 'failed',
+        if ( ! $user->is( [ 'admin', 'supervisor' ] ) ) {
+            return response()->json( [
+                'status' => 'error',
                 'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
@@ -376,7 +349,7 @@ class CustomerGroupCrud extends CrudService
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -385,7 +358,7 @@ class CustomerGroupCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -398,23 +371,23 @@ class CustomerGroupCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
         return [
-            'list' => ns()->url(  'dashboard/customers/groups' ),
-            'create' => ns()->url(  'dashboard/customers/groups/create' ),
-            'edit' => ns()->url(  'dashboard/customers/groups/edit' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-groups' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-groups/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/customers/groups' ),
+            'create' => ns()->url( 'dashboard/customers/groups/create' ),
+            'edit' => ns()->url( 'dashboard/customers/groups/edit' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-groups' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-groups/{id}' . '' ),
         ];
     }
 
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -424,15 +397,15 @@ class CustomerGroupCrud extends CrudService
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

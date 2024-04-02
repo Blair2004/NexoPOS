@@ -28,14 +28,18 @@ return new class extends Migration
 
         OrderProduct::whereNotIn( 'id', $cached )->get()->each( function ( OrderProduct $orderProduct ) use ( $cached ) {
             $product = Product::find( $orderProduct->product_id );
-            $lastPurchasePrice = $this->productService->getLastPurchasePrice( $product, $orderProduct->created_at );
+            $lastPurchasePrice = $this->productService->getLastPurchasePrice(
+                product: $product,
+                unit: $orderProduct->unit,
+                before: $orderProduct->created_at
+            );
             $orderProduct->total_purchase_price = Currency::fresh( $lastPurchasePrice )->multipliedBy( $orderProduct->quantity )->getRaw();
             $orderProduct->save();
 
             $cached[] = $orderProduct->id;
 
             Cache::put( 'fix_wrong_purchase_prices', json_encode( $cached ), now()->addDay() );
-        });
+        } );
     }
 
     /**

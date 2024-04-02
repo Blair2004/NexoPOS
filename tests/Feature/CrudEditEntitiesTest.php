@@ -25,17 +25,17 @@ class CrudEditEntitiesTest extends TestCase
                 $file = pathinfo( $fileName->last() );
 
                 return 'App\\Crud\\' . $file[ 'filename' ];
-            })
+            } )
             ->each( function ( $class ) {
                 $object = new $class;
 
                 if ( ! empty( $object->getNamespace() ) ) {
                     $response = $this
                         ->withSession( $this->app[ 'session' ]->all() )
-                        ->json( 'GET', '/api/nexopos/v4/crud/' . $object->getNamespace() . '/form-config' );
+                        ->json( 'GET', '/api/crud/' . $object->getNamespace() . '/form-config' );
 
                     $response->assertOk();
                 }
-            });
+            } );
     }
 }

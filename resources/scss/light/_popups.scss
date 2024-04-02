@@ -1,0 +1,62 @@
+#alert-popup, #confirm-popup, #prompt-popup {
+    @apply bg-popup-surface;
+
+    h2 {
+        @apply text-secondary;
+    }
+
+    p {
+        @apply text-primary;
+    }
+
+    .action-buttons {
+        @apply border-box-edge text-primary;
+
+        button:hover {
+            @apply bg-info-tertiary text-white;
+        }
+
+        hr {
+            @apply border-box-edge;
+        }
+    }
+}
+
+.is-popup {
+    background: rgb(0 0 0 / 40%);
+
+    .elevation-surface {
+        @apply bg-box-elevation-background border-box-elevation-edge text-primary;
+        &.hoverable:hover {
+            @apply bg-box-elevation-hover text-primary;
+        }
+
+        &.success {
+            @apply bg-success-primary border-success-secondary text-primary;
+            &.hoverable:hover {
+                @apply bg-success-secondary text-primary;
+            }
+        }
+        
+        &.error {
+            @apply bg-error-primary border-error-secondary text-primary;
+            &.hoverable:hover {
+                @apply bg-error-secondary text-primary;
+            }
+        }
+    
+        &.info {
+            @apply bg-info-primary border-info-secondary text-primary;
+            &.hoverable:hover {
+                @apply bg-info-secondary text-primary;
+            }
+        }
+    
+        &.warning {
+            @apply bg-warning-primary border-warning-secondary text-primary;
+            &.hoverable:hover {
+                @apply bg-warning-secondary text-primary;
+            }
+        }
+    }
+}

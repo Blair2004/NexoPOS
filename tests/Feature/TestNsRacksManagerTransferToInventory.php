@@ -38,7 +38,7 @@ class TestNsRacksManagerTransferToInventory extends TestCase
 
         $faker = Factory::create();
 
-        $store = Store::find(4);
+        $store = Store::find( 4 );
         Store::switchTo( $store );
 
         /**
@@ -66,7 +66,7 @@ class TestNsRacksManagerTransferToInventory extends TestCase
          */
         $currencyService = app()->make( CurrencyService::class );
 
-        $taxType = Arr::random([ 'inclusive', 'exclusive' ]);
+        $taxType = Arr::random( [ 'inclusive', 'exclusive' ] );
         $taxGroup = TaxGroup::get()->random();
         $margin = 25;
 
@@ -83,15 +83,15 @@ class TestNsRacksManagerTransferToInventory extends TestCase
         /**
          * Step 1 : make a procurement
          */
-        $procurementService->create([
-            'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
+        $procurementService->create( [
+            'name' => sprintf( __( 'Sample Procurement %s' ), Str::random( 5 ) ),
             'general' => [
                 'provider_id' => Provider::get()->random()->id,
                 'payment_status' => Procurement::PAYMENT_PAID,
                 'delivery_status' => Procurement::DELIVERED,
                 'automatic_approval' => 1,
             ],
-            'products' => Product::whereIn( 'id', [ $rackProduct->product_id ])
+            'products' => Product::whereIn( 'id', [ $rackProduct->product_id ] )
                 ->with( 'unitGroup' )
                 ->get()
                 ->map( function ( $product ) {
@@ -101,8 +101,8 @@ class TestNsRacksManagerTransferToInventory extends TestCase
                             'unitQuantity' => $product->unit_quantities->filter( fn( $q ) => $q->unit_id === $unit->id )->first(),
                             'product' => $product,
                         ];
-                    });
-                })->flatten()->map( function ( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker, $rack ) {
+                    } );
+                } )->flatten()->map( function ( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker, $rack ) {
                     return [
                         'product_id' => $data->product->id,
                         'gross_purchase_price' => 15,
@@ -115,7 +115,7 @@ class TestNsRacksManagerTransferToInventory extends TestCase
                                 $margin
                             )
                         ),
-                        'quantity' => $faker->numberBetween(10, 50),
+                        'quantity' => $faker->numberBetween( 10, 50 ),
                         'rack_id' => $rack->id, // we've defined the rack id
                         'tax_group_id' => $taxGroup->id,
                         'tax_type' => $taxType,
@@ -137,8 +137,8 @@ class TestNsRacksManagerTransferToInventory extends TestCase
                         ) * 250,
                         'unit_id' => $data->unit->id,
                     ];
-                }),
-        ]);
+                } ),
+        ] );
 
         $processedQuantity = 2;
 

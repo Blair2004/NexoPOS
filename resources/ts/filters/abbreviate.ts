@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-const nsAbbreviate  =   Vue.filter( 'abbreviate', ( value ) => {
+const nsAbbreviate  =   ( value ) => {
     var newValue = value;
     if (value >= 1000) {
         var suffixes = ["", "k", "m", "b","t"];
@@ -15,6 +15,6 @@ const nsAbbreviate  =   Vue.filter( 'abbreviate', ( value ) => {
         newValue = shortValue+suffixes[suffixNum];
     }
     return newValue;
-});
+}
 
 export { nsAbbreviate };

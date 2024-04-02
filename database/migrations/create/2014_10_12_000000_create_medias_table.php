@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::createIfMissing( 'nexopos_medias', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::createIfMissing( 'nexopos_medias', function ( Blueprint $table ) {
+            $table->increments( 'id' );
             $table->string( 'name' )->unique();
             $table->string( 'extension' );
             $table->string( 'slug' );
             $table->integer( 'user_id' );
             $table->timestamps();
-        });
+        } );
     }
 
     /**

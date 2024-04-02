@@ -37,7 +37,7 @@ class Validation
                 return [
                     $field->name => ! empty( $field->validation ) ? $field->validation : '',
                 ];
-            })->toArray();
+            } )->toArray();
 
             return $validation;
         }

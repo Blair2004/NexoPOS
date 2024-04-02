@@ -8,7 +8,6 @@ use App\Models\RewardSystemRule;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -55,14 +54,14 @@ class RewardSystemCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -86,15 +85,13 @@ class RewardSystemCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -124,7 +121,7 @@ class RewardSystemCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -168,8 +165,8 @@ class RewardSystemCrud extends CrudService
                     $field[ 'value' ] = $rule[ $field[ 'name' ] ] ?? '';
 
                     return $field;
-                });
-            }) ?? [] ) : [],
+                } );
+            } ) ?? [] ) : [],
             'ruleForm' => $ruleForm,
             'tabs' => [
                 'general' => [
@@ -180,7 +177,7 @@ class RewardSystemCrud extends CrudService
                             'name' => 'coupon_id',
                             'value' => $entry->coupon_id ?? '',
                             'label' => __( 'Coupon' ),
-                            'options' => Helper::toJsOptions( Coupon::get(), [ 'id', 'name' ]),
+                            'options' => Helper::toJsOptions( Coupon::get(), [ 'id', 'name' ] ),
                             'validation' => 'required',
                             'description' => __( 'Decide which coupon you would apply to the system.' ),
                         ], [
@@ -207,7 +204,7 @@ class RewardSystemCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -218,7 +215,7 @@ class RewardSystemCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, RewardSystem $entry )
     {
@@ -229,7 +226,7 @@ class RewardSystemCrud extends CrudService
      * After Crud POST
      *
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, RewardSystem $entry )
     {
@@ -248,7 +245,7 @@ class RewardSystemCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -262,7 +259,7 @@ class RewardSystemCrud extends CrudService
      * After Crud PUT
      *
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -275,9 +272,9 @@ class RewardSystemCrud extends CrudService
          */
         $ids = collect( $rules )->filter( function ( $rule ) {
             return isset( $rule[ 'id' ] );
-        })->map( function ( $rule ) {
+        } )->map( function ( $rule ) {
             return $rule[ 'id' ];
-        });
+        } );
 
         /**
          * Delete all rules that aren't submitted
@@ -311,29 +308,9 @@ class RewardSystemCrud extends CrudService
     }
 
     /**
-     * Protect an access to a specific crud UI
-     *
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-     **/
-    public function canAccess( $fields )
-    {
-        $users = app()->make( Users::class );
-
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status' => 'success',
-                'message' => __( 'The access is granted.' ),
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
-
-    /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id )
     {
@@ -345,7 +322,7 @@ class RewardSystemCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -355,7 +332,7 @@ class RewardSystemCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $rewardSystem )
     {
@@ -364,10 +341,8 @@ class RewardSystemCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -401,30 +376,28 @@ class RewardSystemCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->name = $entry->name . ' (' . RewardSystem::find( $entry->id )->rules()->count() . ')';
 
         // you can make changes here
-        $entry->addAction( 'edit.rewards', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit.licence',
-            'type' => 'GOTO',
-            'index' => 'id',
-            'url' => ns()->url( '/dashboard/customers/rewards-system/edit/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'edit.rewards', 
+            label: __( 'Edit' ),
+            type: 'GOTO', 
+            url: ns()->url( '/dashboard/customers/rewards-system/edit/' . $entry->id ) 
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'index' => 'id',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.rewards-system/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.rewards-system/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this reward system ?' ),
                 'title' => __( 'Delete a licence' ),
-            ],
-        ]);
+            ] 
+        ); 
 
         return $entry;
     }
@@ -433,7 +406,7 @@ class RewardSystemCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -441,11 +414,11 @@ class RewardSystemCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user = app()->make( 'App\Services\Users' );
+        $user = app()->make( 'App\Services\UsersService' );
 
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status' => 'failed',
+        if ( ! $user->is( [ 'admin', 'supervisor' ] ) ) {
+            return response()->json( [
+                'status' => 'error',
                 'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
@@ -453,7 +426,7 @@ class RewardSystemCrud extends CrudService
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -462,7 +435,7 @@ class RewardSystemCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -475,21 +448,23 @@ class RewardSystemCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
         return [
-            'list' => 'ns.rewards_system',
-            'create' => 'ns.rewards_system/create',
-            'edit' => 'ns.rewards_system/edit/#',
+            'list' => ns()->url( '/dashboard/rewards-system' ),
+            'create' => ns()->url( '/dashboard/rewards-system/create' ),
+            'edit' => ns()->url( '/dashboard/rewards-system/edit/{id}' ),
+            'post' => ns()->url( '/api/crud/' . $this->getMainRoute() ),
+            'put' => ns()->url( '/api/crud/' . $this->getMainRoute() . '/{id}' ),
         ];
     }
 
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -500,15 +475,15 @@ class RewardSystemCrud extends CrudService
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

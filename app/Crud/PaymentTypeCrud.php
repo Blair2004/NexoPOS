@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -89,14 +88,14 @@ class PaymentTypeCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -111,15 +110,13 @@ class PaymentTypeCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -149,7 +146,7 @@ class PaymentTypeCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -167,7 +164,7 @@ class PaymentTypeCrud extends CrudService
                     'fields' => [
                         [
                             'type' => 'switch',
-                            'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'options' => Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
                             'name' => 'active',
                             'label' => __( 'Active' ),
                             'validation' => 'required',
@@ -201,7 +198,7 @@ class PaymentTypeCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -220,7 +217,7 @@ class PaymentTypeCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, PaymentType $entry )
     {
@@ -241,7 +238,7 @@ class PaymentTypeCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -261,7 +258,7 @@ class PaymentTypeCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, PaymentType $entry )
     {
@@ -272,7 +269,7 @@ class PaymentTypeCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -285,9 +282,9 @@ class PaymentTypeCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $entry )
     {
@@ -306,9 +303,9 @@ class PaymentTypeCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -318,7 +315,7 @@ class PaymentTypeCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
     {
@@ -349,10 +346,8 @@ class PaymentTypeCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'identifier' => [
@@ -396,28 +391,28 @@ class PaymentTypeCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->readonly = $entry->readonly ? __( 'Yes' ) : __( 'No' );
         $entry->active = $entry->active ? __( 'Yes' ) : __( 'No' );
 
         // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
-        ]);
-
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.payments-types/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'edit',
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ), 
+        );
+        
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.payments-types/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ]);
+            ] 
+        );
 
         return $entry;
     }
@@ -426,7 +421,7 @@ class PaymentTypeCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -446,14 +441,14 @@ class PaymentTypeCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity = $this->model::find( $id );
 
                 if ( $entity->readonly ) {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                     break;
                 }
 
@@ -464,7 +459,7 @@ class PaymentTypeCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -477,7 +472,7 @@ class PaymentTypeCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
@@ -485,15 +480,15 @@ class PaymentTypeCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'orders/payments-types' ),
             'create' => ns()->url( 'dashboard/' . 'orders/payments-types/create' ),
             'edit' => ns()->url( 'dashboard/' . 'orders/payments-types/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.payments-types' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.payments-types/{id}' . '' ),
         ];
     }
 
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -503,15 +498,15 @@ class PaymentTypeCrud extends CrudService
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

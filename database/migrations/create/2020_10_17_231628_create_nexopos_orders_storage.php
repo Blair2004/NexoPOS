@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::createIfMissing( 'nexopos_orders_storage', function (Blueprint $table) {
+        Schema::createIfMissing( 'nexopos_orders_storage', function ( Blueprint $table ) {
             $table->id();
             $table->integer( 'product_id' )->nullable();
             $table->integer( 'unit_quantity_id' )->nullable();
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer( 'quantity' )->nullable();
             $table->string( 'session_identifier' );
             $table->timestamps();
-        });
+        } );
     }
 
     /**

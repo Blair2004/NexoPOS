@@ -1,32 +1,32 @@
-import Vue from 'vue';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import * as components from './components/components';
-import FormValidation from './libraries/form-validation';
 
-const nsRegister            =   () => import( './pages/auth/ns-register.vue' );
-const nsLogin               =   () => import( './pages/auth/ns-login.vue' );
-const nsPasswordLost        =   () => import( './pages/auth/ns-password-lost.vue' );
-const nsNewPassword         =   () => import( './pages/auth/ns-new-password.vue' );
+import { NsHotPress }       from './libraries/ns-hotpress';
+import { createApp } from 'vue/dist/vue.esm-bundler';
+import { defineAsyncComponent } from 'vue';
 
-const nsState               =   window[ 'nsState' ];
-const nsScreen              =   window[ 'nsScreen' ];
-const nsExtraComponents     =   window[ 'nsExtraComponents' ];
+declare let nsExtraComponents;
+declare const window;
 
-(<any>window)[ 'nsComponents' ]          =   Object.assign( components, nsExtraComponents, {
-    nsRegister,
-    nsLogin,
-    nsPasswordLost,
-    nsNewPassword
-});
+nsExtraComponents.nsRegister        =   defineAsyncComponent( () => import( './pages/auth/ns-register.vue' ) );
+nsExtraComponents.nsLogin           =   defineAsyncComponent( () => import( './pages/auth/ns-login.vue' ) );
+nsExtraComponents.nsPasswordLost    =   defineAsyncComponent( () => import( './pages/auth/ns-password-lost.vue' ) );
+nsExtraComponents.nsNewPassword     =   defineAsyncComponent( () => import( './pages/auth/ns-new-password.vue' ) );
 
-(<any>window)[ 'authVueComponent' ]      =   new Vue({
-    el: '#page-container',
+window.nsHotPress                   =   new NsHotPress;
+window.nsHttpClient                 =   nsHttpClient;
+window.authVueComponent             =   createApp({
     components: {
-        nsLogin,
-        nsRegister,
-        nsPasswordLost,
-        nsNewPassword,
         ...nsExtraComponents,
         ...components
     }
 });
+
+/**
+ * Global component registration.
+ * Those components are widely used on the app.
+ */
+for( let name in components ) {
+    window.authVueComponent.component( name, components[ name ] );
+}
+
+window.authVueComponent.mount( '#page-container' );

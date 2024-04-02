@@ -6,7 +6,7 @@ use App\Classes\Output;
 
 @section( 'layout.dashboard.body' )
 <div>
-    @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
+    @include( Hook::filter( 'ns-dashboard-header-file', '../common/dashboard-header' ) )
     <div id="dashboard-content" class="px-4">
         @include( 'common.dashboard.title' )
         <ns-crud 
@@ -25,6 +25,10 @@ use App\Classes\Output;
 $identifier    =   collect( explode( '/', $src ) )
     ->filter( fn( $segment ) => ! empty( $segment ) )
     ->last();
+
+$output     =   new Output;
+Hook::action( 'ns-crud-footer', $output, $identifier );
+Hook::action( $instance::method( 'getTableFooter' ), $instance->getTableFooter( $output ), $instance );
 ?>
-{!! ( string ) Hook::filter( 'ns-crud-footer', new Output, $identifier ) !!}
+{!! ( string ) $output !!}
 @endsection

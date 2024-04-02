@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int $id
+ * @property int $category_id
+ */
 class CouponCategory extends NsModel
 {
     use HasFactory;

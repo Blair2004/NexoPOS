@@ -20,9 +20,9 @@
                             </span>
                             <div class="flex items-center">
                                 <div class="flex items-center px-2 h-full border-r">
-                                    <span
-                                        v-if="! instalment.price_clicked"
-                                        @click="togglePriceEdition( instalment )">{{ instalment.amount | currency }}</span>
+                                    <span 
+                                        v-if="! instalment.price_clicked" 
+                                        @click="togglePriceEdition( instalment )">{{ nsCurrency( instalment.amount ) }}</span>
                                     <span v-if="instalment.price_clicked">
                                         <input ref="amount"
                                             v-model="instalment.amount"
@@ -63,15 +63,15 @@
                         <li class="flex justify-between p-2 border-r border-b border-l elevation-surface">
                             <div class="flex items-center justify-center">
                                 <span>
-                                    {{ __( 'Total :' ) }} {{ order.total | currency }}
+                                    {{ __( 'Total :' ) }} {{ nsCurrency( order.total ) }}
                                 </span>
                                 <span class="ml-1 text-sm">
-                                    ({{ __( 'Remaining :' ) }} {{ order.total - totalInstalments | currency }})
+                                    ({{ __( 'Remaining :' ) }} {{ nsCurrency( order.total - totalInstalments ) }})
                                 </span>
                             </div>
                             <div class="-mx-2 flex flex-wrap items-center">
                                 <span class="px-2">
-                                    {{ __( 'Instalments:' ) }} {{ totalInstalments | currency }}
+                                    {{ __( 'Instalments:' ) }} {{ nsCurrency( totalInstalments ) }}
                                 </span>
                                 <span class="px-2">
                                     <div class="ns-button info">
@@ -87,12 +87,13 @@
     </div>
 </template>
 <script>
-import Labels from "@/libraries/labels";
-import { __ } from '@/libraries/lang';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import nsPosOrderInstalmentsPayment from '@/pages/dashboard/orders/ns-order-instalments-payment.vue';
-import Print from '@/libraries/print';
+import Labels from "~/libraries/labels";
+import { __ } from '~/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import nsPosOrderInstalmentsPayment from '~/pages/dashboard/orders/ns-order-instalments-payment.vue';
+import Print from '~/libraries/print';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
     props: [ 'order' ],
@@ -120,8 +121,9 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         loadInstalments() {
-            nsHttpClient.get( `/api/nexopos/v4/orders/${this.order.id}/instalments` )
+            nsHttpClient.get( `/api/orders/${this.order.id}/instalments` )
                 .subscribe( instalments => {
                     this.original       =   instalments;
                     this.instalments    =   instalments.map( instalment => {
@@ -152,7 +154,7 @@ export default {
                 message: __( 'Would you like to create this instalment ?' ),
                 onAction: action => {
                     if ( action ) {
-                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments`, { instalment })
+                        nsHttpClient.post( `/api/orders/${this.order.id}/instalments`, { instalment })
                             .subscribe({
                                 next: result => {
                                     this.loadInstalments();
@@ -172,7 +174,7 @@ export default {
                 message: __( 'Would you like to delete this instalment ?' ),
                 onAction: action => {
                     if ( action ) {
-                        nsHttpClient.delete( `/api/nexopos/v4/orders/${this.order.id}/instalments/${instalment.id}` )
+                        nsHttpClient.delete( `/api/orders/${this.order.id}/instalments/${instalment.id}` )
                             .subscribe({
                                 next: result => {
                                     const index     =   this.instalments.indexOf( instalment );
@@ -220,7 +222,7 @@ export default {
                 message: __( 'Would you like to update that instalment ?' ),
                 onAction: action => {
                     if ( action ) {
-                        nsHttpClient.put( `/api/nexopos/v4/orders/${this.order.id}/instalments/${instalment.id}`, { instalment })
+                        nsHttpClient.put( `/api/orders/${this.order.id}/instalments/${instalment.id}`, { instalment })
                             .subscribe({
                                 next: result => {
                                     nsSnackBar.success( result.message ).subscribe();

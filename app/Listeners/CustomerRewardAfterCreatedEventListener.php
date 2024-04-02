@@ -18,7 +18,7 @@ class CustomerRewardAfterCreatedEventListener
     /**
      * Handle the event.
      */
-    public function handle( CustomerRewardAfterCreatedEvent $event)
+    public function handle( CustomerRewardAfterCreatedEvent $event )
     {
         ApplyCustomerRewardJob::dispatch( $event->customer, $event->customerReward, $event->reward );
     }

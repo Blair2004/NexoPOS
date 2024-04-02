@@ -1,0 +1,30 @@
+.ns-scrollbar {
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+        @apply bg-black/50;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        @apply bg-scroll-thumb;
+    }
+}
+.is-popup {
+    .ns-scrollbar {
+        &::-webkit-scrollbar-thumb {
+            @apply bg-scroll-popup-thumb;
+        }
+    }
+}
+
+ul.ns-vertical-menu {
+    @apply bg-box-background;
+    li {
+        @apply text-primary border-box-edge;
+        &:hover, &.active {
+            @apply bg-floating-menu-selected text-primary;
+        }
+    }
+}

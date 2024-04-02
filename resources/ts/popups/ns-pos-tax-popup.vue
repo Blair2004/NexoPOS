@@ -19,8 +19,8 @@
                 <ns-tabs-item padding="0" :label="__( 'Summary' )" identifier="summary" :active="false">
                     <div class="p-2" v-if="order">
                         <div v-for="tax of order.taxes" :key="tax.id" class="mb-2 border shadow p-2 w-full flex justify-between items-center elevation-surface">
-                            <span>{{ tax.tax_name }}</span>
-                            <span>{{ tax.tax_value | currency  }}</span>
+                            <span>{{ tax.name }}</span>
+                            <span>{{ nsCurrency( tax.tax_value ) }}</span>
                         </div>
                         <div class="p-2 text-center text-primary" v-if="order.taxes.length === 0">{{ __( 'No tax is active' ) }}</div>
                     </div>
@@ -28,12 +28,8 @@
                 <ns-tabs-item padding="0" :label="__( 'Product Taxes' )" identifier="product_taxes" :active="false">
                     <div class="p-2" v-if="order">
                         <div class="border shadow p-2 w-full flex justify-between items-center elevation-surface">
-                            <span>{{ __( 'Exclusive Taxes' ) }}</span>
-                            <span>{{ order.products_exclusive_tax_value | currency  }}</span>
-                        </div>
-                        <div class="border shadow p-2 w-full flex justify-between items-center elevation-surface">
-                            <span>{{ __( 'Inclusive Taxes' ) }}</span>
-                            <span>{{ order.products_inclusive_tax_value | currency  }}</span>
+                            <span>{{ __( 'Product Taxes' ) }}</span>
+                            <span>{{ nsCurrency( order.products_tax_value )  }}</span>
                         </div>
                     </div>
                 </ns-tabs-item>
@@ -42,13 +38,16 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import FormValidation from '@/libraries/form-validation';
-import popupCloser from '@/libraries/popup-closer';
-import popupResolver from '@/libraries/popup-resolver';
-import { __ } from '@/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import FormValidation from '~/libraries/form-validation';
+import popupCloser from '~/libraries/popup-closer';
+import popupResolver from '~/libraries/popup-resolver';
+import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     name: 'ns-pos-tax-popup',
+    props: [ 'popup' ],
     data() {
         return {
             validation: new FormValidation,
@@ -92,10 +91,10 @@ export default {
         this.loadGroups();
         this.popupCloser();
 
-        this.activeTab      =   this.$popupParams.activeTab || 'settings';
+        this.activeTab      =   this.popup.params.activeTab || 'settings';
 
         this.group_fields.forEach( field => {
-            field.value     =   this.$popupParams[ field.name ] || undefined;
+            field.value     =   this.popup.params[ field.name ] || undefined;
         });
 
         this.orderSubscriber    =   POS.order.subscribe( order => {
@@ -114,12 +113,13 @@ export default {
             }
         });
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
         this.optionsSubscriber.unsubscribe();
     },
     methods: {
         __,
+        nsCurrency,
         popupCloser,
         popupResolver,
 
@@ -148,7 +148,7 @@ export default {
             this.popupResolver( fields );
         },  
         loadGroups() {
-            nsHttpClient.get( `/api/nexopos/v4/taxes/groups` )
+            nsHttpClient.get( `/api/taxes/groups` )
                 .subscribe( groups => {
                     this.groups     =   groups;
                     this.group_fields.forEach( field => {

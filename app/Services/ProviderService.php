@@ -134,7 +134,7 @@ class ProviderService
     /**
      * Will return a human redale status
      *
-     * @param string $label
+     * @param  string $label
      * @return string
      */
     public function getDeliveryStatusLabel( $label )
@@ -160,7 +160,7 @@ class ProviderService
     /**
      * Will return the payment status label
      *
-     * @param string $label
+     * @param  string $label
      * @return string
      */
     public function getPaymentStatusLabel( $label )

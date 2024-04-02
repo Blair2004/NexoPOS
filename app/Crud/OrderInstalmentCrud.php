@@ -7,7 +7,6 @@ use App\Models\OrderInstalment;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -67,7 +66,7 @@ class OrderInstalmentCrud extends CrudService
      */
     public $relations = [
         [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_instalments.order_id' ],
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'order.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'order.customer_id' ],
     ];
 
     /**
@@ -94,14 +93,14 @@ class OrderInstalmentCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -116,15 +115,13 @@ class OrderInstalmentCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -154,7 +151,7 @@ class OrderInstalmentCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -204,7 +201,7 @@ class OrderInstalmentCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -215,7 +212,7 @@ class OrderInstalmentCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, OrderInstalment $entry )
     {
@@ -226,7 +223,7 @@ class OrderInstalmentCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -243,7 +240,7 @@ class OrderInstalmentCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, OrderInstalment $entry )
     {
@@ -254,7 +251,7 @@ class OrderInstalmentCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -267,9 +264,9 @@ class OrderInstalmentCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $entry )
     {
@@ -285,9 +282,9 @@ class OrderInstalmentCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -297,7 +294,7 @@ class OrderInstalmentCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
     {
@@ -321,10 +318,8 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'customer_name' => [
@@ -358,29 +353,29 @@ class OrderInstalmentCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->amount = (string) ns()->currency->define( $entry->amount );
         $entry->{ '$cssClass' } = $entry->paid == 0 ? 'error' : 'success';
         $entry->paid = (bool) $entry->paid ? __( 'Yes' ) : __( 'No' );
         $entry->date = ns()->date->getFormatted( $entry->date );
         // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
-        ]);
-
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.orders-instalments/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'edit',
+            label: __( 'Edit' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ), 
+        );
+        
+        $entry->action(
+            identifier: 'delete',
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.orders-instalments/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ]);
+            ] 
+        );
 
         return $entry;
     }
@@ -389,7 +384,7 @@ class OrderInstalmentCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -409,7 +404,7 @@ class OrderInstalmentCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -418,7 +413,7 @@ class OrderInstalmentCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -431,7 +426,7 @@ class OrderInstalmentCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
@@ -439,15 +434,15 @@ class OrderInstalmentCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'orders/instalments' ),
             'create' => false,
             'edit' => ns()->url( 'dashboard/' . 'orders/instalments/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.orders-instalments' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.orders-instalments/{id}' . '' ),
         ];
     }
 
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -457,15 +452,15 @@ class OrderInstalmentCrud extends CrudService
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

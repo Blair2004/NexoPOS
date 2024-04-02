@@ -1,0 +1,26 @@
+.ns-floating-notice {
+    &.info {
+        @apply border-info-tertiary bg-info-primary;
+        h2, p {
+            @apply text-primary;
+        }
+    }
+    &.error {
+        @apply border-error-tertiary bg-error-primary;
+        h2, p {
+            @apply text-primary;
+        }
+    }
+    &.warning {
+        @apply border-warning-tertiary bg-warning-primary;
+        h2, p {
+            @apply text-primary;
+        }
+    }
+    &.success {
+        @apply border-success-tertiary bg-success-primary;
+        h2, p {
+            @apply text-primary;
+        }
+    }
+}

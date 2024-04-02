@@ -12,7 +12,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function up()
     {
@@ -26,14 +26,14 @@ return new class extends Migration
                 $table->string( 'uuid' )->nullable();
                 $table->integer( 'author' );
                 $table->timestamps();
-            });
+            } );
         }
     }
 
     /**
      * Reverse the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function down()
     {

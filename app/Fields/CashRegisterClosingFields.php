@@ -7,7 +7,7 @@ use App\Services\FieldsService;
 
 class CashRegisterClosingFields extends FieldsService
 {
-    protected $identifier = 'ns.cash-registers-closing';
+    protected static $identifier = 'ns.cash-registers-closing';
 
     public function get()
     {
@@ -24,7 +24,7 @@ class CashRegisterClosingFields extends FieldsService
                 'name' => 'description',
                 'type' => 'textarea',
             ],
-        ]);
+        ] );
 
         return $fields;
     }

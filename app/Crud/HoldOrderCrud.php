@@ -4,10 +4,8 @@ namespace App\Crud;
 
 use App\Exceptions\NotAllowedException;
 use App\Models\Order;
-use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -25,7 +23,7 @@ class HoldOrderCrud extends CrudService
      *
      * @param  string
      */
-    protected $identifier = 'ns.hold-orders';
+    const IDENTIFIER = 'ns.hold-orders';
 
     /**
      * Define namespace
@@ -59,8 +57,8 @@ class HoldOrderCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        [ 'nexopos_users', 'nexopos_orders.author', '=', 'nexopos_users.id' ],
-        [ 'nexopos_customers', 'nexopos_customers.id', '=', 'nexopos_orders.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'nexopos_orders.customer_id' ],
+        [ 'nexopos_users as user', 'nexopos_orders.author', '=', 'user.id' ],
     ];
 
     /**
@@ -81,21 +79,21 @@ class HoldOrderCrud extends CrudService
      * ]
      */
     public $pick = [
-        'nexopos_users' => [ 'username' ],
-        'nexopos_customers' => [ 'name' ],
+        'user' => [ 'username' ],
+        'customer' => [ 'username', 'first_name', 'last_name' ],
     ];
 
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -113,8 +111,6 @@ class HoldOrderCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
-
         $this->bulkActions = [];
     }
 
@@ -128,7 +124,7 @@ class HoldOrderCrud extends CrudService
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -158,7 +154,7 @@ class HoldOrderCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -313,7 +309,7 @@ class HoldOrderCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -324,7 +320,7 @@ class HoldOrderCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, Order $entry )
     {
@@ -335,7 +331,7 @@ class HoldOrderCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -352,7 +348,7 @@ class HoldOrderCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, Order $entry )
     {
@@ -363,7 +359,7 @@ class HoldOrderCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -376,9 +372,9 @@ class HoldOrderCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $entry )
     {
@@ -394,9 +390,9 @@ class HoldOrderCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -406,7 +402,7 @@ class HoldOrderCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
     {
@@ -430,10 +426,8 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'code' => [
@@ -463,13 +457,13 @@ class HoldOrderCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
-        $entry->addAction( 'ns.open', [
-            'label' => __( 'Continue' ),
-            'namespace' => 'ns.open',
-            'type' => 'POPUP',
-        ]);
+        $entry->action(
+            label: __( 'Continue' ),
+            identifier: 'ns.open',
+            type: 'POPUP',
+        );
 
         return $entry;
     }
@@ -478,7 +472,7 @@ class HoldOrderCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -498,7 +492,7 @@ class HoldOrderCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -507,7 +501,7 @@ class HoldOrderCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -520,7 +514,7 @@ class HoldOrderCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
@@ -536,7 +530,7 @@ class HoldOrderCrud extends CrudService
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -546,7 +540,7 @@ class HoldOrderCrud extends CrudService
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

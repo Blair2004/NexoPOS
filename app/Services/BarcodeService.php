@@ -57,16 +57,16 @@ class BarcodeService
                 case self::TYPE_CODABAR:
                 case self::TYPE_CODE128:
                 case self::TYPE_CODE39:
-                    $barcode = Str::random(10);
+                    $barcode = Str::random( 10 );
                     break;
                 case self::TYPE_CODE11:
-                    $barcode = rand(1000000000, 999999999);
+                    $barcode = rand( 1000000000, 999999999 );
                     break;
                 case self::TYPE_UPCA:
-                    $barcode = rand(10000000000, 99999999999);
+                    $barcode = rand( 10000000000, 99999999999 );
                     break;
                 case self::TYPE_UPCA:
-                    $barcode = rand(1000000, 9999999);
+                    $barcode = rand( 1000000, 9999999 );
                     break;
                 default:
                     $barcode = $factory->isbn10();
@@ -82,8 +82,8 @@ class BarcodeService
     /**
      * generate barcode using a code and a code type
      *
-     * @param string $barcode
-     * @param string $type
+     * @param  string $barcode
+     * @param  string $type
      * @return void
      */
     public function generateBarcode( $barcode, $type )
@@ -117,11 +117,14 @@ class BarcodeService
                 $generator->getBarcode( $barcode, $realType, 3, 30 )
             );
         } catch ( Exception $exception ) {
+            $insight    =   ( $exception->getMessage() ?: __( 'N/A' ) );
+
             throw new Exception(
                 sprintf(
-                    __( 'An error has occurred while creating a barcode "%s" using the type "%s" for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ( $exception->getMessage() ?: __( 'N/A' ) ) ),
+                    __( 'An error has occurred while creating a barcode "%s" using the type "%s" for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : %s' ),
                     $barcode,
-                    $realType
+                    $realType, 
+                    $insight
                 )
             );
         }
@@ -132,17 +135,17 @@ class BarcodeService
      */
     public function generateBarcodeValue( $type )
     {
-        $faker = (new Factory)->create();
+        $faker = ( new Factory )->create();
 
         switch ( $type ) {
-            case self::TYPE_CODE39: return strtoupper( Str::random(10) );
-            case self::TYPE_CODE128: return strtoupper( Str::random(10) );
-            case self::TYPE_EAN8: return $faker->randomNumber(8, true);
-            case self::TYPE_EAN13: return $faker->randomNumber(6, true) . $faker->randomNumber(6, true);
-            case self::TYPE_UPCA: return $faker->randomNumber(5, true) . $faker->randomNumber(6, true);
-            case self::TYPE_UPCE: return $faker->randomNumber(6, true);
-            case self::TYPE_CODABAR: return $faker->randomNumber(8, true) . $faker->randomNumber(8, true);
-            case self::TYPE_CODE11: return $faker->randomNumber(5, true) . '-' . $faker->randomNumber(4, true);
+            case self::TYPE_CODE39: return strtoupper( Str::random( 10 ) );
+            case self::TYPE_CODE128: return strtoupper( Str::random( 10 ) );
+            case self::TYPE_EAN8: return $faker->randomNumber( 8, true );
+            case self::TYPE_EAN13: return $faker->randomNumber( 6, true ) . $faker->randomNumber( 6, true );
+            case self::TYPE_UPCA: return $faker->randomNumber( 5, true ) . $faker->randomNumber( 6, true );
+            case self::TYPE_UPCE: return $faker->randomNumber( 6, true );
+            case self::TYPE_CODABAR: return $faker->randomNumber( 8, true ) . $faker->randomNumber( 8, true );
+            case self::TYPE_CODE11: return $faker->randomNumber( 5, true ) . '-' . $faker->randomNumber( 4, true );
         }
     }
 }

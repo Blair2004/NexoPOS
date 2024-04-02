@@ -26,7 +26,7 @@ class UpdateProductTest extends TestCase
 
         $response = $this
             ->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', '/api/nexopos/v4/products/' . $product->id, [
+            ->json( 'PUT', '/api/products/' . $product->id, [
                 'name' => 'Sample Product',
                 'variations' => [
                     [
@@ -55,15 +55,15 @@ class UpdateProductTest extends TestCase
                                 [
                                     'sale_price' => 10,
                                     'wholesale_price' => 9.55,
-                                    'unit_id' => UnitGroup::find(2)->units->random()->first()->id,
+                                    'unit_id' => UnitGroup::find( 2 )->units->random()->first()->id,
                                 ],
                             ],
                             'unit_group' => 2,
                         ],
                     ],
                 ],
-            ]);
+            ] );
 
-        $response->assertStatus(200);
+        $response->assertStatus( 200 );
     }
 }

@@ -2,13 +2,13 @@
 
 use App\Services\Helper;
 
-$audios = Helper::kvToJsOptions([
+$audios = Helper::kvToJsOptions( [
     '' => __( 'Disabled' ),
     url( '/audio/bubble.mp3' ) => __( 'Bubble' ),
     url( '/audio/ding.mp3' ) => __( 'Ding' ),
     url( '/audio/pop.mp3' ) => __( 'Pop' ),
     url( '/audio/cash-sound.mp3' ) => __( 'Cash Sound' ),
-]);
+] );
 
 return [
     'label' => __( 'Layout' ),
@@ -16,10 +16,10 @@ return [
         [
             'name' => 'ns_pos_layout',
             'value' => ns()->option->get( 'ns_pos_layout' ),
-            'options' => Helper::kvToJsOptions([
+            'options' => Helper::kvToJsOptions( [
                 'grocery_shop' => __( 'Retail Layout' ),
                 'clothing_shop' => __( 'Clothing Shop' ),
-            ]),
+            ] ),
             'label' => __( 'POS Layout' ),
             'type' => 'select',
             'description' => __( 'Change the layout of the POS.' ),

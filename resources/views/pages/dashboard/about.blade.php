@@ -39,7 +39,7 @@
                     @endforeach
                 </tbody>
             </table>
-
+            
             <br>
 
             <table class="table ns-table">
@@ -58,6 +58,31 @@
                     @endforeach
                 </tbody>
             </table>
+
+            @if ( env( 'APP_DEBUG' ) )
+            <br>
+
+            <table class="table ns-table">
+                <thead>
+                    <tr>
+                        <th colspan="2" class="p-2">{{ __( 'Developper Section' ) }}</th>
+                    </tr>
+                    <tr class="info">
+                        <th class="p-2">{{ __( 'Configurations' ) }}</th>
+                        <th class="p-2">{{ __( 'Status' ) }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach( $developpers as $label => $value )
+                    <tr>
+                        <td class="p-2">{{ $label }}</td>
+                        <td class="p-2 text-right">{{ $value }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            @endif
         </div>
     </div>
 @endsection

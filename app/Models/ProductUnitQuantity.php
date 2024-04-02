@@ -9,31 +9,32 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
- * @property int $product_id
- * @property string $type
- * @property string $preview_url
- * @property string $expiration_date
- * @property int $unit_id
- * @property string $barcode
- * @property float $quantity
- * @property float $low_quantity
- * @property bool $stock_alert_enabled
- * @property float $sale_price
- * @property float $sale_price_edit
- * @property float $sale_price_without_tax
- * @property float $sale_price_with_tax
- * @property float $sale_price_tax
- * @property float $wholesale_price
- * @property float $wholesale_price_edit
- * @property float $wholesale_price_with_tax
- * @property float $wholesale_price_without_tax
- * @property float $wholesale_price_tax
- * @property float $custom_price
- * @property float $custom_price_edit
- * @property float $custom_price_with_tax
- * @property float $custom_price_without_tax
+ * @property int     $id
+ * @property int     $product_id
+ * @property string  $type
+ * @property string  $preview_url
+ * @property string  $expiration_date
+ * @property int     $unit_id
+ * @property string  $barcode
+ * @property float   $quantity
+ * @property float   $low_quantity
+ * @property bool    $stock_alert_enabled
+ * @property float   $sale_price
+ * @property float   $sale_price_edit
+ * @property float   $sale_price_without_tax
+ * @property float   $sale_price_with_tax
+ * @property float   $sale_price_tax
+ * @property float   $wholesale_price
+ * @property float   $wholesale_price_edit
+ * @property float   $wholesale_price_with_tax
+ * @property float   $wholesale_price_without_tax
+ * @property float   $wholesale_price_tax
+ * @property float   $custom_price
+ * @property float   $custom_price_edit
+ * @property float   $custom_price_with_tax
+ * @property float   $custom_price_without_tax
  * @property Product $product
+ * @property Unit    $unit
  */
 class ProductUnitQuantity extends NsModel
 {
@@ -73,8 +74,8 @@ class ProductUnitQuantity extends NsModel
     /**
      * Fetch products unique a barcode filter
      *
-     * @param QueryBuilder $query
-     * @param string $reference
+     * @param  QueryBuilder $query
+     * @param  string       $reference
      * @return QueryBuilder
      **/
     public function scopeBarcode( $query, $reference )
@@ -82,9 +83,24 @@ class ProductUnitQuantity extends NsModel
         return $query->where( 'barcode', $reference );
     }
 
+    public function scopeHidden( $query )
+    {
+        return $query->where( 'visible', false );
+    }
+
+    public function scopeVisible( $query )
+    {
+        return $query->where( 'visible', true );
+    }
+
     public function unit()
     {
         return $this->hasOne( Unit::class, 'id', 'unit_id' );
+    }
+
+    public function history()
+    {
+        return $this->hasMany( ProductHistoryCombined::class, 'product_id', 'product_id' );
     }
 
     public function taxes()
@@ -99,7 +115,7 @@ class ProductUnitQuantity extends NsModel
 
     public function product()
     {
-        return $this->hasOne( Product::class, 'id', 'product_id' );
+        return $this->belongsTo( Product::class, 'product_id', 'id' );
     }
 
     public function scopeWithProduct( Builder $query, $id )

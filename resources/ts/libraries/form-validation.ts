@@ -1,16 +1,18 @@
+import { shallowRef } from "vue";
+
 declare const nsExtraComponents;
 
 export default class FormValidation {
     validateFields( fields ) {
         return fields.map( field => {
-            this.checkField( field );
+            this.checkField( field, fields, { touchField: false } );
             return field.errors ? field.errors.length === 0 : 0;
         }).filter( f => f === false ).length === 0;
     }
 
     validateFieldsErrors( fields ) {
         return fields.map( field => {
-            this.checkField( field );
+            this.checkField( field, fields, { touchField: false });
             return field.errors;
         }).flat();
     }
@@ -62,7 +64,7 @@ export default class FormValidation {
     }
 
     validateField( field ) {
-        return this.checkField( field );
+        return this.checkField( field, [], { touchField: false } );
     }
 
     fieldsValid( fields ) {
@@ -75,6 +77,7 @@ export default class FormValidation {
             field.type      =   field.type      || 'text',
             field.errors    =   field.errors    || [];
             field.disabled  =   field.disabled  || false;
+            field.touched   =   false;
 
             /**
              * extra component should use the "component" attribute provided
@@ -82,22 +85,43 @@ export default class FormValidation {
              */
             if ( field.type === 'custom' && typeof field.component === 'string' ) {
                 const componentName     =   field.component;
-                field.component         =   nsExtraComponents[ field.component ];
+                field.component         =   shallowRef( nsExtraComponents[ field.component ] );
 
                 if ( field.component ) {
                     /**
                      * we make sure to make the current field(s)
                      * available for the custom component.
                      */
-                    field.component.$field      =   field;
-                    field.component.$fields     =   fields;
+                    field.component.value.$field      =   field;
+                    field.component.value.$fields     =   fields;
                 } else {
-                    throw `Failed to load a custom component. "${componentName}" is not provided as an extra component. More details here: https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-a-custom-vue-component`;
+                    throw `Failed to load a custom component. "${componentName}" is not provided as an extra component. More details here: "https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-a-custom-vue-component"`;
                 }
             }
             
             return field;
         });
+    }
+
+    /**
+     * Checks wether a for is touched or not.
+     * @param form current form to perform the check
+     * @returns bool
+     */
+    isFormUntouched( form ) {
+        let isFormUntouched = true;
+
+        if ( form.main ) {
+            isFormUntouched     =   form.main.touched ? false : isFormUntouched;
+        }
+
+        if ( form.tabs ) {
+            for( let tab in form.tabs ) {
+                isFormUntouched =   form.tabs[ tab ].fields.filter( field => field.touched ).length > 0 ? false : isFormUntouched;
+            }
+        }
+
+        return isFormUntouched;
     }
 
     createForm( form ) {
@@ -161,14 +185,39 @@ export default class FormValidation {
         return form;
     }
 
-    checkField( field ) {
+    checkField( field, fields = [], options = {
+        touchField: true
+    } ) {
         if ( field.validation !== undefined ) {
             field.errors    =   [];
-            const rules     =   this.detectValidationRules( field.validation );
-            rules.forEach( rule => {
-                this.fieldPassCheck( field, rule );
-            });
+            const rules     =   this.detectValidationRules( field.validation ).filter( rule => rule != undefined );
+            const ruleNames =   rules.map( rule => rule.identifier );
+
+            /**
+             * when the rule "sometimes" is defined. The field will be processed only if there is a value provided.
+             */
+            if ( ruleNames.includes( 'sometimes' ) ) {
+                if ( field.value !== undefined && field.value.length > 0 ) {
+                    rules.forEach( rule => {
+                        this.fieldPassCheck( field, rule, fields );
+                    });
+                }
+            } else {
+                rules.forEach( rule => {
+                    this.fieldPassCheck( field, rule, fields );
+                });
+            }
         }
+
+        /**
+         * By default, the field is not touched when
+         * we want to perform a verification. But 
+         * that option can enable a touching behavior.
+         */
+        if ( options.touchField ) {
+            field.touched = true;
+        }
+
         return field;
     }
 
@@ -202,29 +251,27 @@ export default class FormValidation {
 
     detectValidationRules( validation ) {
         const execRule  =   ( rule ) => {
-            let finalRules          =   [];
             const minRule 			=	/(min)\:([0-9])+/g;
+            const sometimesRule     =	/(sometimes)/g;
             const maxRule 			=	/(max)\:([0-9])+/g;
-            const matchRule         =   /(same):(\w+)/g;
+            const sameRule          =   /(same):(\w+)/g;
+            const diffRule          =   /(different):(\w+)/g;
             let result;
 
             if ([ 'email', 'required' ].includes( rule ) ) {
                 return {
                     identifier : rule
                 };
-            } else if( result =   minRule.exec( rule ) ) {
-                return {
-                    identifier : result[1],
-                    value: result[2]
+            } else if ( rule.length > 0 ) {
+                result = minRule.exec( rule ) || maxRule.exec( rule ) || sameRule.exec( rule ) || diffRule.exec( rule ) || sometimesRule.exec( rule );
+
+                if ( result !== null ) {
+                    return {
+                        identifier : result[1],
+                        value: result[2]
+                    }
                 }
-            } else if( result =   maxRule.exec( rule ) ) {
-                return {
-                    identifier : result[1],
-                    value: result[2]
-                }
-            }
-            
-            return rule;
+            } 
         };
 
         if ( Array.isArray( validation ) ) {
@@ -242,7 +289,6 @@ export default class FormValidation {
      * @param {Object} data 
      */
     triggerError( form, data ) {
-        console.log( data );
         if ( data.errors ) {
             for( let index in data.errors ) {
                 let path    =   index.split( '.' ).filter( exp => {
@@ -314,42 +360,52 @@ export default class FormValidation {
         }
     }
 
-    fieldPassCheck( field, rule ) {
+    trackError( field, rule, fields ) {
+        field.errors.push({
+            identifier: rule.identifier,
+            invalid: true,
+            name: field.name,
+            rule,
+            fields
+        })
+    }
 
-        if ( rule.identifier === 'required' ) {
-            if ( field.value === undefined || field.value === null || field.value.length === 0 ) {
-                // because we would like to stop the validation here
-                return field.errors.push({
-                    identifier: rule.identifier,
-                    invalid: true,
-                    name: field.name
-                })
-            } else {
-                field.errors.forEach( ( error, index ) => {
-                    if ( error.identifier === rule.identifier && error.invalid === true ) {
-                        field.errors.splice( index, 1 );
-                    }
-                });
+    unTrackError( field, rule ) {
+        field.errors.forEach( ( error, index ) => {
+            if ( error.identifier === rule.identifier && error.invalid === true ) {
+                field.errors.splice( index, 1 );
             }
-        }
+        });
+    }
 
-        if ( rule.identifier === 'email' && field.value.length > 0 ) {
-            if ( ! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test( field.value ) ) {
-                // because we would like to stop the validation here
-                return field.errors.push({
-                    identifier: rule.identifier,
-                    invalid: true,
-                    name: field.name
-                })
-            } else {
-                field.errors.forEach( ( error, index ) => {
-                    if ( error[ rule.identifier ] === true ) {
-                        field.errors.splice( index, 1 );
-                    }
-                });
+    fieldPassCheck( field, rule, fields ) {
+        if ( rule !== undefined ) {
+            const rules     =   {
+                required: ( field, rule ) => field.value === undefined || field.value === null || field.value.length === 0,
+                email: ( field, rule ) => field.value.length > 0 && ! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test( field.value ),
+                same: ( field, rule ) => {
+                    const similar = fields.filter( field => field.name === rule.value )
+                    return similar.length === 1 && ( [ 'string', 'number' ].includes( typeof field.value ) && field.value.length > 0 && similar[0].value !== field.value );
+                },
+                different: ( field, rule ) => {
+                    const similar = fields.filter( field => field.name === rule.value )
+                    return similar.length === 1 && ( [ 'string', 'number' ].includes( typeof field.value ) && field.value.length > 0 && similar[0].value === field.value );
+                },
+                min: ( field, rule ) => field.value && field.value.length < parseInt( rule.value ),
+                max: ( field, rule ) => field.value && field.value.length > parseInt( rule.value )
             }
-        }
 
-        return field;
+            const ruleValidated   =   rules[ rule.identifier ];
+
+            if ( typeof ruleValidated === 'function' ) {
+                if ( ruleValidated( field, rule ) === false ) {
+                    return this.unTrackError( field, rule );                    
+                } else {
+                    return this.trackError( field, rule, fields );
+                }
+            }
+    
+            return field;
+        }
     }
 }

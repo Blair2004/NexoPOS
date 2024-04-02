@@ -7,7 +7,7 @@ use App\Services\Helper;
 
 class CustomersAccountFields extends FieldsService
 {
-    protected $identifier = 'ns.customers-account';
+    protected static $identifier = 'ns.customers-account';
 
     public function get()
     {
@@ -18,10 +18,10 @@ class CustomersAccountFields extends FieldsService
                 'validation' => 'required',
                 'name' => 'operation',
                 'type' => 'select',
-                'options' => Helper::kvToJsOptions([
+                'options' => Helper::kvToJsOptions( [
                     'add' => __( 'Add' ),
                     'deduct' => __( 'Deduct' ),
-                ]),
+                ] ),
             ], [
                 'label' => __( 'Amount' ),
                 'description' => __( 'Determine the amount of the transaction.' ),

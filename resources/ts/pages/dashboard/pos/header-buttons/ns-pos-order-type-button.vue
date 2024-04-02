@@ -1,18 +1,14 @@
 <script>
-import { Popup } from '@/libraries/popup';
-import nsPosOrderTypePopupVue from '@/popups/ns-pos-order-type-popup.vue';
-import { __ } from '@/libraries/lang';
+import { Popup } from '~/libraries/popup';
+import nsPosOrderTypePopupVue from '~/popups/ns-pos-order-type-popup.vue';
+import { __ } from '~/libraries/lang';
 
 export default {
     name: 'ns-pos-delivery-button',
     methods: {
         __,
         openOrderTypeSelection() {
-            const popup     =   new Popup({
-                primarySelector: '#pos-app',
-                popupClass : 'shadow-lg bg-white w-3/5 md:w-2/3 lg:w-2/5 xl:w-2/4',
-            });
-            popup.open( nsPosOrderTypePopupVue );
+            Popup.show( nsPosOrderTypePopupVue );
         }
     },
     beforeDestroy() {
@@ -34,7 +30,7 @@ export default {
                 nsHotPress
                     .create( 'ns_pos_keyboard_order_type' )
                     .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.openOrderTypeSelection();
                 });

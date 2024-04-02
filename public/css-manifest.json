@@ -1,10 +1,16 @@
 {
-  "animations.css": "animations.cb4544d9bb06aeaa8e48.css",
-  "app.css": "app.fd019f689f87eb441ab3.css",
-  "typography.css": "typography.5d798833a07dd150efa8.css",
-  "fonts.css": "fonts.64053e5a2ec1dd65399b.css",
-  "light.css": "light.4d84b75697bee3a4f7ec.css",
-  "dark.css": "dark.27ee9f62809c1ef1073e.css",
-  "vue2-daterange-picker.css": "vue2-daterange-picker.fe9e4f57ad74c98c9324.css",
-  "grid.css": "grid.02de9031306c45f5b9f2.css"
+  "grid.scss": "grid.02de9031306c45f5b9f2.scss",
+  "app.scss": "app.e0334755de0154e150c4.scss",
+  "light.scss": "light.0f5cc7d56a3b6181da7d.scss",
+  "typography.scss": "typography.5d798833a07dd150efa8.scss",
+  "animations.scss": "animations.6427e7be654ba187bbeb.scss",
+  "dark.scss": "dark.233504020ba1f8dd59e8.scss",
+<<<<<<< HEAD
+  "fonts.scss": "fonts.20f7a806116a5816fe06.scss",
+  "line-awesome.scss": "line-awesome.0f6d36dda760ace91bcb.scss",
+=======
+  "fonts.scss": "fonts.f7e1d0b9dd5969824d8e.scss",
+  "line-awesome.scss": "line-awesome.532e7db520cc7d6c43ac.scss",
+>>>>>>> 614fa07f5032505c8f04263e95d1038cd62bf6da
+  "vue2-daterange-picker.css": "vue2-daterange-picker.fe9e4f57ad74c98c9324.css"
 }

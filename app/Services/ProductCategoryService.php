@@ -30,7 +30,7 @@ class ProductCategoryService
      * Get a specific category using
      * a defined name
      *
-     * @param string $name
+     * @param  string               $name
      * @return ProductCategory|null
      */
     public function getUsingName( $name )
@@ -45,7 +45,7 @@ class ProductCategoryService
      * @param array details
      * @return array
      */
-    public function create( $data, ProductCategory $productCategory = null )
+    public function create( $data, ?ProductCategory $productCategory = null )
     {
         $category = $productCategory === null ? new ProductCategory : $productCategory;
         $category->author = Auth::id();
@@ -75,7 +75,7 @@ class ProductCategoryService
      * Retrieve all the child category
      * that belongs to a specific category
      *
-     * @param int $category_id
+     * @param  int   $category_id
      * @return array
      */
     public function getCategoryChildrens( $category_id )
@@ -87,7 +87,7 @@ class ProductCategoryService
             return $categories
                 ->map( function ( $category ) {
                     return $this->getCategoryChildrens( $category->id );
-                })
+                } )
                 ->flatten()
                 ->prepend( $category_id )
                 ->toArray();
@@ -99,7 +99,7 @@ class ProductCategoryService
     /**
      * Retreive category parents
      *
-     * @param int $category_id
+     * @param  int   $category_id
      * @return array
      */
     public function getCategoryParents( $category_id )

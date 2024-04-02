@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Setup;
+use App\Services\SetupService;
 use Illuminate\Console\Command;
 
 class SetupCommand extends Command
@@ -12,7 +12,7 @@ class SetupCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:setup {--store_name=} {--admin_username=} {--admin_email=} {--admin_password=}';
+    protected $signature = 'ns:setup {--store_name=} {--admin_username=} {--admin_email=} {--admin_password=} {--language=en}';
 
     /**
      * The console command description.
@@ -28,6 +28,8 @@ class SetupCommand extends Command
     private $admin_email;
 
     private $admin_password;
+
+    private $language;
 
     /**
      * determine if the actual command requis
@@ -62,19 +64,21 @@ class SetupCommand extends Command
             $this->admin_email = $this->option( 'admin_email' );
             $this->admin_username = $this->option( 'admin_username' );
             $this->admin_password = $this->option( 'admin_password' );
+            $this->language = $this->option( 'language' );
             $this->requireConfirmation = false;
         }
 
         if (
-            env( 'DB_HOST', null  ) === null ||
-            env( 'DB_DATABASE', null  ) === null ||
-            env( 'DB_USERNAME', null  ) === null ||
-            env( 'DB_PASSWORD', null  ) === null ||
-            env( 'DB_PREFIX', null  ) === null
+            env( 'DB_HOST', null ) === null ||
+            env( 'DB_DATABASE', null ) === null ||
+            env( 'DB_USERNAME', null ) === null ||
+            env( 'DB_PASSWORD', null ) === null ||
+            env( 'DB_PREFIX', null ) === null
         ) {
             return $this->error( __( 'Unable to proceed, looks like the database can\'t be used.' ) );
         }
 
+        $this->setupLanguage();
         $this->setupStoreName();
         $this->setupAdminUsername();
         $this->setupAdminPassword();
@@ -87,17 +91,17 @@ class SetupCommand extends Command
 
         if ( in_array( strtolower( $answer ), [ 'y', 'yes' ] ) || $this->requireConfirmation === false ) {
             /**
-             * @var Setup $service
+             * @var SetupService $service
              */
-            $service = app()->make( Setup::class );
-            $service->runMigration([
+            $service = app()->make( SetupService::class );
+            $service->runMigration( [
                 'admin_username' => $this->admin_username,
                 'admin_email' => $this->admin_email,
                 'password' => $this->admin_password,
                 'ns_store_name' => $this->ns_store_name,
-            ]);
+            ] );
 
-            return $this->info( 'Thank you, NexoPOS 4.x has been successfully installed.' );
+            return $this->info( 'Thank you, NexoPOS has been successfully installed.' );
         } else {
             return $this->info( 'The installation has been aborded.' );
         }
@@ -133,6 +137,19 @@ class SetupCommand extends Command
             if ( strlen( $this->admin_password ) < 6 ) {
                 $this->error( __( 'Please provide at least 6 characters for the administrator password.' ) );
                 $this->admin_password = null;
+            }
+        }
+    }
+
+    private function setupLanguage()
+    {
+        while ( empty( $this->language ) ) {
+            $langIndex = $this->choice( __( 'In which language would you like to install NexoPOS ?' ), array_values( config( 'nexopos.languages' ) ) );
+            $this->language = array_keys( config( 'nexopos.languages' ) )[ $langIndex ];
+
+            if ( strlen( $this->language ) != 2 ) {
+                $this->error( __( 'You must define the language of installation.' ) );
+                $this->language = null;
             }
         }
     }

@@ -6,6 +6,7 @@ use App\Classes\Hook;
 use App\Models\Media;
 use Exception;
 use Gumlet\ImageResize;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -21,25 +22,38 @@ class MediaService
         'thumb' => [ 280, 181 ],
     ];
 
-    /**
-     * Supported File Extensions
-     *
-     * @var array<string>
-     */
-    private $extensions = [];
+    private $mimeExtensions;
 
     /**
      * image extensions
      *
      * @var array<string>
      */
-    private $images_extensions = [ 'png', 'jpg', 'jpeg', 'gif' ];
+    private $imageExtensions = [ 'png', 'jpg', 'jpeg', 'gif' ];
 
-    public function __construct( $data )
+    public function __construct( private DateService $dateService )
     {
-        extract( $data );
-        $this->extensions = $extensions;
-        $this->date = app()->make( DateService::class );
+        $this->mimeExtensions = config( 'medias.mimes' );
+    }
+
+    public function getMimes()
+    {
+        return Hook::filter( 'ns-media-mimes', $this->mimeExtensions );
+    }
+
+    public function getMimeExtensions()
+    {
+        return array_keys( $this->getMimes() );
+    }
+
+    /**
+     * Return all mimes that can be
+     * used as images.
+     */
+    public function getImageMimes(): Collection
+    {
+        return Hook::filter( 'ns-media-image-ext', collect( $this->mimeExtensions )
+            ->filter( fn( $value, $key ) => in_array( $key, $this->imageExtensions ) ) );
     }
 
     /**
@@ -53,10 +67,9 @@ class MediaService
         /**
          * getting file extension
          */
-        // $extension  =   $file->extension();
         $extension = strtolower( $file->getClientOriginalExtension() );
 
-        if ( in_array( $extension, $this->extensions ) ) {
+        if ( in_array( $extension, $this->getMimeExtensions() ) ) {
             $uploadedInfo = pathinfo( $file->getClientOriginalName() );
             $fileName = Str::slug( $uploadedInfo[ 'filename' ], '-' );
             $fileName = ( $customName == null ? $fileName : $customName );
@@ -71,12 +84,12 @@ class MediaService
             $media = Media::where( 'name', $fullFileName )->first();
 
             if ( $media instanceof Media ) {
-                $fileName = $fileName . Str::slug( $this->date->toDateTimeString() );
+                $fileName = $fileName . Str::slug( $this->dateService->toDateTimeString() );
                 $fullFileName = $fileName . '.' . strtolower( $file->getClientOriginalExtension() );
             }
 
-            $year = $this->date->year;
-            $month = sprintf( '%02d', $this->date->month );
+            $year = $this->dateService->year;
+            $month = sprintf( '%02d', $this->dateService->month );
             $folderPath = Hook::filter( 'ns-media-path', $year . DIRECTORY_SEPARATOR . $month . DIRECTORY_SEPARATOR );
             $indexPath = $folderPath . 'index.html';
 
@@ -94,7 +107,7 @@ class MediaService
                 $fullFileName
             );
 
-            if ( in_array( $extension, $this->images_extensions ) ) {
+            if ( in_array( $extension, $this->imageExtensions ) ) {
                 /**
                  * Resizing the images
                  */
@@ -202,7 +215,7 @@ class MediaService
         }
 
         return [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'Unable to find the media.' ),
         ];
     }
@@ -217,6 +230,7 @@ class MediaService
     {
         $per_page = request()->query( 'per_page' ) ?? 20;
         $user_id = request()->query( 'user_id' );
+        $search = request()->query( 'search' ) ?? null;
 
         $mediaQuery = Media::with( 'user' )
             ->orderBy( 'updated_at', 'desc' );
@@ -229,7 +243,11 @@ class MediaService
             $mediaQuery->where( 'user_id', $user_id );
         }
 
-        $medias = $mediaQuery->paginate($per_page);
+        if ( ! empty( $search ) ) {
+            $mediaQuery->where( 'name', 'like', "%$search%" );
+        }
+
+        $medias = $mediaQuery->paginate( $per_page );
 
         /**
          * populating the media
@@ -255,7 +273,7 @@ class MediaService
         /**
          * provide others url if the media is an image
          */
-        if ( in_array( $media->extension, $this->images_extensions ) ) {
+        if ( in_array( $media->extension, $this->imageExtensions ) ) {
             foreach ( $this->sizes as $name => $sizes ) {
                 $media->sizes->$name = Storage::disk( 'public' )->url( $media->slug . '-' . $name . '.' . $media->extension );
             }
@@ -277,7 +295,7 @@ class MediaService
             $file = Storage::disk( 'public' )->path( $media->slug . ( ! empty( $size ) ? '-' . $size : '' ) . '.' . $media->extension );
 
             if ( is_file( $file ) ) {
-                return Storage::disk( 'public' )->download( $media->slug . ( ! empty( $size ) ? '-' . $size : '' ) . '.' . $media->extension  );
+                return Storage::disk( 'public' )->download( $media->slug . ( ! empty( $size ) ? '-' . $size : '' ) . '.' . $media->extension );
             }
 
             throw new Exception( __( 'Unable to find the requested file.' ) );

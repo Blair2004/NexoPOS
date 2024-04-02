@@ -11,7 +11,7 @@ $isDue  =   in_array( $order->payment_status, [ Order::PAYMENT_PARTIALLY, Order:
 
 @section( 'layout.dashboard.body' )
 <div>
-    @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
+    @include( Hook::filter( 'ns-dashboard-header-file', '../common/dashboard-header' ) )
     <div id="dashboard-content" class="px-4">
         @include( 'common.dashboard.title' )
         <div class="my-2">

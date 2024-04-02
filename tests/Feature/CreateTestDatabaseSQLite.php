@@ -15,6 +15,6 @@ class CreateTestDatabaseSQLite extends TestCase
     {
         file_put_contents( base_path( 'tests/database.sqlite' ), '' );
 
-        $this->assertTrue(true);
+        $this->assertTrue( true );
     }
 }

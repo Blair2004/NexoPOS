@@ -25,7 +25,7 @@ class StockProcurementJob implements ShouldQueue
      */
     public function __construct()
     {
-        $this->procurementService = app()->make( ProcurementService::class );
+        // ...
     }
 
     /**
@@ -33,8 +33,8 @@ class StockProcurementJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( ProcurementService $procurementService )
     {
-        $this->procurementService->stockAwaitingProcurements();
+        $procurementService->stockAwaitingProcurements();
     }
 }

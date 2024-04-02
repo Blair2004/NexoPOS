@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware( 'auth:sanctum' )->get( '/user', function ( Request $request ) {
     return $request->user();
-});
+} );
 
 $domain = pathinfo( env( 'APP_URL' ) );
 
@@ -41,7 +41,7 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
 
     Route::domain( $domainString )->group( function () {
         include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'api-base.php';
-    });
+    } );
 } else {
     include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'api-base.php';
 }

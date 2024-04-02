@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+    height: 100%;
+    font-family: 'Jost';
+    width: 100%;
+}
+
+.bg-overlay {
+    background:rgb(51 51 51 / 26%);
+}
+
+[v-cloak] > * { display:none }
+
+.loader {
+    border-top-color: #3498db !important;
+    &.slow {
+        -webkit-animation: spinner 1.5s linear infinite;
+        animation: spinner 1.5s linear infinite;
+    }
+    &.fast {
+        -webkit-animation: spinner 0.7s linear infinite;
+        animation: spinner 0.7s linear infinite;
+    }
+}
+
+@-webkit-keyframes spinner {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+button {
+    @apply rounded-none;
+}
+
+#editor {
+    h1 {
+        @apply text-5xl font-bold;
+    }
+    
+    h2 {
+        @apply text-4xl font-bold;
+    }
+    
+    h3 {
+        @apply text-3xl font-bold;
+    }
+    
+    h4 {
+        @apply text-2xl font-bold;
+    }
+    
+    h5 {
+        @apply text-xl font-bold;
+    }
+}
+
+#grid-items {
+    .vue-recycle-scroller__item-wrapper {
+        @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-0 overflow-y-auto;
+    }
+    .vue-recycle-scroller__item-view {
+        @apply cursor-pointer border h-32 lg:h-40 border-gray-200 flex flex-col items-center justify-center overflow-hidden;
+        &:hover {
+            @apply bg-gray-200;
+        }
+    }
+}
+
+/**
+ * Components
+**/
+.popup-heading {
+    @apply p-2 flex justify-between items-center;
+    h3 {
+        @apply font-semibold;
+    }
+}

@@ -23,5 +23,5 @@ use App\Classes\Output;
 @section( 'layout.base.footer' )
     @parent
     {!! Hook::filter( 'ns-password-recovery-footer', new Output ) !!}
-    <script src="{{ asset( ns()->isProduction() ? 'js/auth.min.js' : 'js/auth.js' ) }}"></script>
+    @vite([ 'resources/ts/auth.ts' ])
 @endsection

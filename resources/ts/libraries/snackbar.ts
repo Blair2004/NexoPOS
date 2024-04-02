@@ -1,5 +1,4 @@
-import { sample } from "lodash";
-import * as rx from 'rx';
+import { Observable } from 'rxjs';
 
 declare const window:any;
 
@@ -17,12 +16,12 @@ export class SnackBar {
     }
 
     show( message, label, options: SnackBarOptions = { duration: 3000, type : 'info' }) {
-        return rx.Observable.create( observer => {
+        return new Observable( observer => {
             const { buttonNode, textNode, snackWrapper, sampleSnack }        =   this.__createSnack({ message, label, type : options.type });
 
             buttonNode.addEventListener( 'click', ( event ) => {
-                observer.onNext( buttonNode );
-                observer.onCompleted();
+                observer.next( buttonNode );
+                observer.complete();
                 sampleSnack.remove();
             });
 

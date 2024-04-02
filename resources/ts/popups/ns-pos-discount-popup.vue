@@ -11,7 +11,7 @@
         </div>
         <div id="screen" class="h-16 ns-box-body text-white flex items-center justify-center">
             <h1 class="font-bold text-3xl">
-                <span v-if="mode === 'flat'">{{ finalValue  | currency }}</span>
+                <span v-if="mode === 'flat'">{{ nsCurrency( finalValue ) }}</span>
                 <span v-if="mode === 'percentage'">{{ finalValue }}%</span>
             </h1>
         </div>
@@ -32,10 +32,13 @@
         </div>
     </div>
 </template>
-<script>
-import { __ } from '@/libraries/lang';
+<script lang="ts">
+import { nsCurrency } from '~/filters/currency';
+import { __ } from '~/libraries/lang';
+
 export default {
     name: 'ns-pos-discount-popup',
+    props: [ 'popup' ],
     data() {
         return {
             finalValue: 1,
@@ -54,39 +57,34 @@ export default {
         }
     },
     mounted() {
-        this.mode           =   this.$popupParams.reference.discount_type || 'percentage';
-        this.type           =   this.$popupParams.type;
+        this.mode           =   this.popup.params.reference.discount_type || 'percentage';
+        this.type           =   this.popup.params.type;
 
         if ( this.mode === 'percentage' ) {
-            this.finalValue     =   this.$popupParams.reference.discount_percentage || 1;
+            this.finalValue     =   this.popup.params.reference.discount_percentage || 1;
         } else {
-            this.finalValue     =   this.$popupParams.reference.discount || 1;
+            this.finalValue     =   this.popup.params.reference.discount || 1;
         }
-
-        this.$popup.event.subscribe( (action ) =>  {
-            if ( action.event === 'click-overlay' ) {
-                this.$popup.close();
-            }
-        })
     },
     methods: {
         __,
+        nsCurrency,
         
         setPercentageType( mode ) {
             this.mode       =   mode;
         },
         closePopup() {
-            this.$popup.close();
+            this.popup.close();
         },
 
         inputValue( key ) {
             if ( key.identifier === 'next' ) {
-                this.$popupParams.onSubmit({
+                this.popup.params.onSubmit({
                     discount_type           :   this.mode,
                     discount_percentage     :   this.mode === 'percentage' ? this.finalValue : undefined,
                     discount                :   this.mode === 'flat' ? this.finalValue : undefined
                 });
-                this.$popup.close();
+                this.popup.close();
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {
                     this.finalValue     =   0;

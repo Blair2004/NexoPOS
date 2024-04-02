@@ -10,7 +10,7 @@ use Tests\Traits\WithReportTest;
 
 class CanSeeReportsTest extends TestCase
 {
-    use WithReportTest, WithAuthentication;
+    use WithAuthentication, WithReportTest;
 
     /**
      * A basic feature test example.

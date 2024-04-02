@@ -23,15 +23,16 @@
     </div>
 </template>
 <script>
-import popuCloser from "@/libraries/popup-closer";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import FormValidation from '@/libraries/form-validation';
-import { __ } from '@/libraries/lang';
+import popuCloser from "~/libraries/popup-closer";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import FormValidation from '~/libraries/form-validation';
+import { __ } from '~/libraries/lang';
 export default {
+    props: [ 'popup' ],
     mounted() {
         this.popuCloser();
         this.loadFields();
-        this.product    =   this.$popupParams.product;
+        this.product    =   this.popup.params.product;
     },
     data() {
         return {
@@ -44,8 +45,8 @@ export default {
         __,
         popuCloser,
         close() {
-            this.$popupParams.reject( false ); 
-            this.$popup.close();
+            this.popup.params.reject( false ); 
+            this.popup.close();
         },
 
         addProduct() {
@@ -54,8 +55,7 @@ export default {
             if ( this.formValidation.fieldsValid( this.fields ) ) {
                 const fields    =   this.formValidation.extractFields( this.fields );
                 const product   =   { ...this.product, ...fields };
-                this.$popupParams.resolve( product );
-                console.log( fields, product );
+                this.popup.params.resolve( product );
                 return this.close();
             }
 
@@ -63,7 +63,7 @@ export default {
         },
 
         loadFields() {
-            nsHttpClient.get( '/api/nexopos/v4/fields/ns.refund-product' )
+            nsHttpClient.get( '/api/fields/ns.refund-product' )
                 .subscribe( fields => {
                     this.fields     =   this.formValidation.createFields( fields );
                     this.fields.forEach( field => {

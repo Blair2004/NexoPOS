@@ -106,14 +106,14 @@ class CustomerAccountCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -133,8 +133,6 @@ class CustomerAccountCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
         /**
          * We'll define custom export columns
@@ -183,18 +181,18 @@ class CustomerAccountCrud extends CrudService
                 'label' => __( 'Operation Type' ),
                 'name' => 'payment_status',
                 'description' => __( 'Restrict the orders by the payment status.' ),
-                'options' => Helper::kvToJsOptions([
+                'options' => Helper::kvToJsOptions( [
                     CustomerAccountHistory::OPERATION_ADD => __( 'Crediting (Add)' ),
                     CustomerAccountHistory::OPERATION_REFUND => __( 'Refund (Add)' ),
                     CustomerAccountHistory::OPERATION_DEDUCT => __( 'Deducting (Remove)' ),
                     CustomerAccountHistory::OPERATION_PAYMENT => __( 'Payment (Remove)' ),
-                ]),
+                ] ),
             ], [
                 'type' => 'select',
                 'label' => __( 'Author' ),
                 'name' => 'nexopos_customers_account_history.author',
                 'description' => __( 'Restrict the records by the author.' ),
-                'options' => Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ]),
+                'options' => Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ] ),
             ],
         ];
 
@@ -207,7 +205,7 @@ class CustomerAccountCrud extends CrudService
          * This will add a footer summary to
          * every exportation
          */
-        Event::listen( CrudBeforeExportEvent::class, [ $this, 'addFooterSummary' ]);
+        Event::listen( CrudBeforeExportEvent::class, [ $this, 'addFooterSummary' ] );
     }
 
     public function hook( $query ): void
@@ -228,19 +226,19 @@ class CustomerAccountCrud extends CrudService
             if ( in_array( $entry->getOriginalValue( 'operation' ), [
                 CustomerAccountHistory::OPERATION_ADD,
                 CustomerAccountHistory::OPERATION_REFUND,
-            ])) {
+            ] ) ) {
                 return $entry->getOriginalValue( 'amount' );
             }
-        })->sum();
+        } )->sum();
 
         $totalNegative = collect( $event->entries[ 'data' ] )->map( function ( $entry ) {
             if ( in_array( $entry->getOriginalValue( 'operation' ), [
                 CustomerAccountHistory::OPERATION_DEDUCT,
                 CustomerAccountHistory::OPERATION_PAYMENT,
-            ])) {
+            ] ) ) {
                 return $entry->getOriginalValue( 'amount' );
             }
-        })->sum();
+        } )->sum();
 
         // total value
         $event->sheet->setCellValue(
@@ -253,7 +251,7 @@ class CustomerAccountCrud extends CrudService
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -283,7 +281,7 @@ class CustomerAccountCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -307,10 +305,10 @@ class CustomerAccountCrud extends CrudService
                             'value' => $entry->amount ?? '',
                         ], [
                             'type' => 'select',
-                            'options' => Helper::kvToJsOptions([
+                            'options' => Helper::kvToJsOptions( [
                                 CustomerAccountHistory::OPERATION_DEDUCT => __( 'Deduct' ),
                                 CustomerAccountHistory::OPERATION_ADD => __( 'Add' ),
-                            ]),
+                            ] ),
                             'description' => __( 'Define what operation will occurs on the customer account.' ),
                             'name' => 'operation',
                             'validation' => 'required',
@@ -332,7 +330,7 @@ class CustomerAccountCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -343,7 +341,7 @@ class CustomerAccountCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, CustomerAccountHistory $entry )
     {
@@ -354,7 +352,7 @@ class CustomerAccountCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -371,7 +369,7 @@ class CustomerAccountCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, CustomerAccountHistory $entry )
     {
@@ -382,7 +380,7 @@ class CustomerAccountCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -395,9 +393,9 @@ class CustomerAccountCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $entry )
     {
@@ -413,9 +411,9 @@ class CustomerAccountCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -425,7 +423,7 @@ class CustomerAccountCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
     {
@@ -449,10 +447,8 @@ class CustomerAccountCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'previous_amount' => [
@@ -496,7 +492,7 @@ class CustomerAccountCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->{ 'order_code' } = $entry->{ 'order_code' } === null ? __( 'N/A' ) : $entry->{ 'order_code' };
         $entry->operation = $this->customerService->getCustomerAccountOperationLabel( $entry->operation );
@@ -505,22 +501,22 @@ class CustomerAccountCrud extends CrudService
         $entry->next_amount = (string) ns()->currency->define( $entry->next_amount );
 
         // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
-        ]);
+        $entry->action(
+            identifier: 'edit',
+            label: __('Edit'), 
+            type: 'GOTO',
+            url: ns()->url('/dashboard/' . $this->slug . '/edit/' . $entry->id) 
+        ); 
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-account-history/' . $entry->id ),
-            'confirm' => [
-                'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ]);
+        $entry->action(
+            identifier: 'delete',
+            label: __('Delete'), 
+            type: 'DELETE',
+            url: ns()->url('/api/crud/ns.customers-account-history/' . $entry->id),
+            confirm: [
+                'message' => __('Would you like to delete this?'),
+            ] 
+        );
 
         return $entry;
     }
@@ -529,7 +525,7 @@ class CustomerAccountCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -549,7 +545,7 @@ class CustomerAccountCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -558,7 +554,7 @@ class CustomerAccountCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -571,7 +567,7 @@ class CustomerAccountCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
@@ -579,15 +575,15 @@ class CustomerAccountCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'customers/' . '/account-history' ),
             'create' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/create' ),
             'edit' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-account-history' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-account-history/{id}' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-account-history' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-account-history/{id}' ),
         ];
     }
 
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -597,15 +593,15 @@ class CustomerAccountCrud extends CrudService
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

@@ -20,7 +20,7 @@
     </div>
 </template>
 <script>
-import nsPosCart from './ns-pos-cart';
+import nsPosCart from './ns-pos-cart.vue';
 import nsPosGrid from './ns-pos-grid.vue';
 
 export default {
@@ -49,7 +49,7 @@ export default {
         }, 500 ); 
         
     },
-    destroyed() {
+    unmounted() {
         this.visibleSectionSubscriber.unsubscribe();
     },
     data() {

@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\ProviderService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -88,14 +87,14 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -117,8 +116,6 @@ class ProviderProcurementsCrud extends CrudService
         parent::__construct();
 
         $this->providerService = app()->make( ProviderService::class );
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     public function hook( $query ): void
@@ -130,7 +127,7 @@ class ProviderProcurementsCrud extends CrudService
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -160,7 +157,7 @@ class ProviderProcurementsCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -231,7 +228,7 @@ class ProviderProcurementsCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -242,7 +239,7 @@ class ProviderProcurementsCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, Procurement $entry )
     {
@@ -253,7 +250,7 @@ class ProviderProcurementsCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -270,7 +267,7 @@ class ProviderProcurementsCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, Procurement $entry )
     {
@@ -281,7 +278,7 @@ class ProviderProcurementsCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -294,9 +291,9 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $entry )
     {
@@ -312,9 +309,9 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -324,7 +321,7 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
     {
@@ -348,10 +345,8 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'name' => [
@@ -405,7 +400,7 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->tax_value = (string) ns()->currency->define( $entry->tax_value );
         $entry->value = (string) ns()->currency->define( $entry->value );
@@ -414,15 +409,15 @@ class ProviderProcurementsCrud extends CrudService
         $entry->payment_status = $this->providerService->getPaymentStatusLabel( $entry->payment_status );
 
         // you can make changes here
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            identifier: 'delete', // Prioritize 'identifier'
+            label: __( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ]);
+            ] 
+        );
 
         return $entry;
     }
@@ -431,7 +426,7 @@ class ProviderProcurementsCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -451,7 +446,7 @@ class ProviderProcurementsCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -460,7 +455,7 @@ class ProviderProcurementsCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -473,7 +468,7 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
@@ -489,7 +484,7 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -499,15 +494,15 @@ class ProviderProcurementsCrud extends CrudService
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

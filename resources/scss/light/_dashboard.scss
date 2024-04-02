@@ -1,0 +1,115 @@
+#main-container, #page-container {
+    @apply bg-surface;
+}
+
+.card-widget {
+    h1, h2, h3, h4, h5, h6, i {
+        @apply text-white;
+    }
+}
+
+#dashboard-aside > div {
+    @apply bg-gray-900;
+    .ns-aside-menu {
+        @apply text-gray-200 hover:bg-gray-700;
+        &.toggled {
+            @apply border-blue-800 bg-blue-800;
+        }
+        &.normal {
+            @apply border-transparent bg-gray-900;
+        }
+        .notification-label {
+            @apply bg-red-600 text-white;
+        }
+    }
+    .ns-aside-submenu {
+        @apply border-blue-800 bg-gray-800 hover:bg-gray-700;
+        &.active {
+            @apply text-white;
+        }
+        &.normal {
+            @apply text-gray-100;
+        }
+    }
+}
+
+#dashboard-body {
+    @apply bg-surface;
+}
+
+.ns-toggle-button {
+    @apply border-input-edge text-primary;
+    &:hover {
+        @apply bg-tab-active border-transparent text-gray-700;
+    }
+}
+
+.ns-avatar { 
+    @apply text-primary border-input-edge;
+
+    &:hover {
+        @apply bg-box-background text-primary border-transparent;
+    }
+
+    &.toggled {
+        @apply bg-box-background text-primary border-transparent;
+    }
+}
+
+.pending-drag {
+    @apply border-transparent;
+}
+.awaiting-drop {
+    @apply border-gray-400;
+}
+.drag-over {
+    @apply border-blue-400;
+}
+
+/**
+ * Notifications Wrapper
+**/
+
+#notificaton-wrapper {
+    #notification-button {
+        &.panel-visible {
+            @apply bg-box-background;
+        }
+        &.panel-hidden {
+            @apply border-input-edge;
+        }
+
+        &:hover {
+            @apply bg-box-background text-primary;
+        }
+
+        @apply text-primary;
+    }
+
+    #notification-center > div > div {
+        @apply bg-box-background;
+    }
+
+    .clear-all {
+        @apply text-primary;
+
+        &:hover {
+            @apply bg-input-button-hover text-typography;
+        }
+    }
+
+    .notification-card {
+        h1 {
+            @apply text-secondary;
+        }
+        p {
+            @apply text-primary;
+        }
+
+        .date {
+            @apply text-gray-400;
+        }
+    
+        @apply border-box-edge;
+    }
+}

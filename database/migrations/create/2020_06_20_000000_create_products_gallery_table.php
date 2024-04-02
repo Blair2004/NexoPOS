@@ -12,7 +12,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function up()
     {
@@ -23,19 +23,19 @@ return new class extends Migration
                 $table->integer( 'product_id' );
                 $table->integer( 'media_id' )->nullable();
                 $table->string( 'url' )->nullable();
-                $table->integer( 'order' )->default(0);
-                $table->boolean( 'featured' )->default(0);
+                $table->integer( 'order' )->default( 0 );
+                $table->boolean( 'featured' )->default( 0 );
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
-            });
+            } );
         }
     }
 
     /**
      * Reverse the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function down()
     {

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Order;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithOrderTest;
@@ -18,6 +19,8 @@ class OrderHoldTest extends TestCase
     public function testPostingOrder()
     {
         $this->attemptAuthenticate();
-        $this->attemptCreateHoldOrder();
+        $response = $this->attemptCreateHoldOrder();
+        $order = Order::find( $response->json( 'data.order.id' ) );
+        $this->attemptUpdateHoldOrder( $order );
     }
 }

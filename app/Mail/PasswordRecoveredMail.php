@@ -33,6 +33,6 @@ class PasswordRecoveredMail extends Mailable
         return $this
             ->from( ns()->option->get( 'ns_store_email', 'contact@nexopos.com' ), ns()->option->get( 'ns_store_name', env( 'APP_NAME' ) ) )
             ->to( $this->user->email )
-            ->markdown('mails/password-recovered-mail');
+            ->markdown( 'mails/password-recovered-mail' );
     }
 }

@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
-        "module": "ES2020",
-        "outDir": "./resources/js",
-        "target": "ES6",
+        "module": "ESNext",
+        "target": "ESNext",
         "moduleResolution": "node",
         "skipLibCheck": true,
         "esModuleInterop": true,
+        "isolatedModules": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,
         "sourceMap": true,
@@ -13,22 +13,22 @@
             "es2019",
             "DOM"
         ],
-        "rootDir": "./",
-        "baseUrl": "./",
+        "rootDir": ".",
+        "baseUrl": ".",
         "paths": {
-            "@/*": [
-                "resources/ts/*"
+            "~/*": [
+                "./resources/ts/*"
             ]
-        },
+        }
     },
     "files": [
-        "./vue-shims.d.ts", 
+        "./vue-shims.d.ts",
         "./resources/ts/status-response.ts"
     ],
     "include": [
-        "resources/ts/**/*.ts",
-        "resources/ts/**/*.js",
-        "resources/ts/**/*.vue",
+        "./resources/ts/**/*.ts",
+        "./resources/ts/**/*.js",
+        "./resources/ts/**/*.vue",
     ],
     "exclude": [
         "node_modules"

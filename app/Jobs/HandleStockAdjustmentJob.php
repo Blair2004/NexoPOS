@@ -12,7 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class HandleStockAdjustmentJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.

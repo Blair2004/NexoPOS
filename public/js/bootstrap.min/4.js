@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunknexopos_4x=self.webpackChunknexopos_4x||[]).push([[4],{2004:(n,e,s)=>{s.r(e),s.d(e,{default:()=>t});const l={name:"ns-pos-loading-popup"};const t=(0,s(1900).Z)(l,(function(){var n=this.$createElement;return(this._self._c||n)("ns-spinner")}),[],!1,null,null,null).exports}}]);

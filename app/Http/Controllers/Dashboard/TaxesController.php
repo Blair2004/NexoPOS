@@ -14,6 +14,7 @@ use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use App\Models\Tax;
 use App\Models\TaxGroup;
+use App\Services\DateService;
 use App\Services\TaxService;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,14 +22,11 @@ use Illuminate\Support\Facades\View;
 
 class TaxesController extends DashboardController
 {
-    private $taxService;
-
     public function __construct(
-        TaxService $taxService
+        protected TaxService $taxService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
-        $this->taxService = $taxService;
+        // ...
     }
 
     public function get( $id = null )
@@ -88,9 +86,9 @@ class TaxesController extends DashboardController
          * on this element and check the permisions.
          * The validation should check whether the type is "grouped" or "simple"
          */
-        $fields = $request->only([
+        $fields = $request->only( [
             'name', 'rate', 'description', 'type', 'parent_id',
-        ]);
+        ] );
 
         $this->taxService->create( $fields );
 
@@ -109,9 +107,9 @@ class TaxesController extends DashboardController
      */
     public function put( $id, Request $request ) // must use a specific request which include a validation
     {
-        $fields = $request->only([
+        $fields = $request->only( [
             'name', 'rate', 'description', 'type', 'parent_id',
-        ]);
+        ] );
 
         $tax = $this->taxService->update( $id, $fields );
 

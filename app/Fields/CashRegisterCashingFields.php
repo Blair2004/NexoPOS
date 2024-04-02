@@ -7,7 +7,7 @@ use App\Services\FieldsService;
 
 class CashRegisterCashingFields extends FieldsService
 {
-    protected $identifier = 'ns.cash-registers-cashing';
+    protected static $identifier = 'ns.cash-registers-cashing';
 
     public function get()
     {
@@ -24,7 +24,7 @@ class CashRegisterCashingFields extends FieldsService
                 'name' => 'description',
                 'type' => 'textarea',
             ],
-        ]);
+        ] );
 
         return $fields;
     }

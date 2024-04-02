@@ -12,7 +12,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function up()
     {
@@ -26,7 +26,7 @@ return new class extends Migration
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
-            });
+            } );
         }
 
         if ( ! Schema::hasTable( 'nexopos_taxes_groups' ) ) {
@@ -37,14 +37,14 @@ return new class extends Migration
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
-            });
+            } );
         }
     }
 
     /**
      * Reverse the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function down()
     {

@@ -183,7 +183,7 @@ class CrudGeneratorCommand extends Command
             if ( count( $parameters ) != 3 ) {
                 $this->error( __( 'Not enough parameters provided for the relation.' ) );
 
-                return $this->askRelation(false);
+                return $this->askRelation( false );
             }
 
             $this->crudDetails[ 'relations' ][] = [
@@ -192,7 +192,7 @@ class CrudGeneratorCommand extends Command
                 $this->crudDetails[ 'table_name' ] . '.' . trim( $parameters[1] ),
             ];
 
-            return $this->askRelation(false);
+            return $this->askRelation( false );
         } elseif ( $name === 'S' ) {
             return $this->askFillable();
         } elseif ( $name == 'Q' ) {
@@ -268,7 +268,7 @@ class CrudGeneratorCommand extends Command
 
             return $this->info( sprintf(
                 __( 'The CRUD resource "%s" has been generated at %s' ),
-                $this->crudDetails[ 'model_name' ],
+                $this->crudDetails[ 'resource_name' ],
                 $fileName
             ) );
         }

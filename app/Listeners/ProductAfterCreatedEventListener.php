@@ -28,7 +28,7 @@ class ProductAfterCreatedEventListener
      *
      * @return void
      */
-    public function handle(ProductAfterCreatedEvent $event)
+    public function handle( ProductAfterCreatedEvent $event )
     {
         $this->productService->generateProductBarcode( $event->product );
 

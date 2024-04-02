@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helper;
 use Illuminate\Validation\ValidationException as MainValidationException;
 
 class ValidationException extends MainValidationException
@@ -10,7 +11,7 @@ class ValidationException extends MainValidationException
 
     public function __construct( $validator = null )
     {
-        $this->validator = $validator ?: __('An error occurred while validating the form.' );
+        $this->validator = $validator ?: __( 'An error occurred while validating the form.' );
     }
 
     public function render( $request )
@@ -19,11 +20,12 @@ class ValidationException extends MainValidationException
             return response()->view( 'pages.errors.not-allowed', [
                 'title' => __( 'An error has occurred' ),
                 'message' => __( 'Unable to proceed, the submitted form is not valid.' ),
-            ]);
+                'back' => Helper::getValidPreviousUrl( $request ),
+            ] );
         }
 
-        return response()->json([
-            'status' => 'failed',
+        return response()->json( [
+            'status' => 'error',
             'message' => __( 'Unable to proceed the form is not valid' ),
             'data' => [
                 'errors' => $this->toHumanError(),
@@ -54,8 +56,8 @@ class ValidationException extends MainValidationException
                         case 'validation.email' :  return __( 'This field is not a valid email.' );
                         default: return $message;
                     }
-                });
-            });
+                } );
+            } );
         }
 
         return $errors;

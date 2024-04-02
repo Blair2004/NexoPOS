@@ -28,7 +28,7 @@ return new class extends Migration
         $permission = Permission::namespace( 'nexopos.manage-payments-types' );
 
         if ( ! $permission instanceof Permission ) {
-            $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.manage-payments-types' ]);
+            $permission = Permission::firstOrNew( [ 'namespace' => 'nexopos.manage-payments-types' ] );
             $permission->namespace = 'nexopos.manage-payments-types';
             $permission->name = __( 'Manage Order Payment Types' );
             $permission->description = __( 'Allow to create, update and delete payments type.' );

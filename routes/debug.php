@@ -13,10 +13,10 @@ if ( env( 'APP_DEBUG' ) ) {
                 'methods' => collect( $route->methods() )->join( ', ' ),
                 'name' => $route->getName(),
             ];
-        })->values();
+        } )->values();
 
         return ( new ArrayToTextTable( $values->toArray() ) )->render();
-    });
+    } );
 
     Route::get( '/exceptions/{class}', function ( $class ) {
         $exceptions = [
@@ -35,6 +35,6 @@ if ( env( 'APP_DEBUG' ) ) {
             throw new $class;
         }
 
-        return abort(404, 'Exception not found.' );
-    });
+        return abort( 404, 'Exception not found.' );
+    } );
 }

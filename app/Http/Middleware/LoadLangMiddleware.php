@@ -16,7 +16,7 @@ class LoadLangMiddleware
      *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle( Request $request, Closure $next )
     {
         if ( Auth::check() ) {
             $userAttribute = Auth::user()->attribute;
@@ -43,6 +43,6 @@ class LoadLangMiddleware
          */
         event( new LocaleDefinedEvent( App::getLocale() ) );
 
-        return $next($request);
+        return $next( $request );
     }
 }

@@ -4,6 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int            $id
+ * @property string         $uuid
+ * @property string         $description
+ * @property int            $group_id
+ * @property float          $value
+ * @property bool           $base_unit
+ * @property \Carbon\Carbon $updated_at
+ */
 class Unit extends NsModel
 {
     use HasFactory;
@@ -34,8 +43,8 @@ class Unit extends NsModel
      * retrieve a unit using a defined
      * identifier
      *
-     * @param Query $query
-     * @param string $identifier
+     * @param  Query  $query
+     * @param  string $identifier
      * @return Query
      */
     public function scopeIdentifier( $query, $identifier )

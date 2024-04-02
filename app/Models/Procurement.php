@@ -10,6 +10,26 @@ use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int            $id
+ * @property mixed          $name
+ * @property int            $provider_id
+ * @property float          $value
+ * @property float          $cost
+ * @property float          $tax_value
+ * @property mixed          $invoice_reference
+ * @property bool           $automatic_approval
+ * @property \Carbon\Carbon $delivery_time
+ * @property \Carbon\Carbon $invoice_date
+ * @property mixed          $payment_status
+ * @property mixed          $delivery_status
+ * @property int            $total_items
+ * @property string         $description
+ * @property int            $author
+ * @property mixed          $uuid
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
 class Procurement extends NsModel
 {
     use HasFactory;
@@ -60,8 +80,6 @@ class Procurement extends NsModel
     const PAYMENT_PAID = 'paid';
 
     protected $dispatchesEvents = [
-        'creating' => ProcurementBeforeCreateEvent::class,
-        'created' => ProcurementAfterCreateEvent::class,
         'deleting' => ProcurementBeforeDeleteEvent::class,
         'updating' => ProcurementBeforeUpdateEvent::class,
         'updated' => ProcurementAfterUpdateEvent::class,

@@ -11,6 +11,7 @@ class MenusFilter
                 'registers' => [
                     'label' => __( 'POS' ),
                     'icon' => 'la-cash-register',
+                    'permissions'   =>  [ 'nexopos.create.orders' ],
                     'childrens' => [
                         'pos' => [
                             'label' => __( 'Open POS' ),
@@ -18,20 +19,22 @@ class MenusFilter
                         ],
                         'create' => [
                             'label' => __( 'Create Register' ),
+                            'permissions' => [ 'nexopos.create.registers' ],
                             'href' => ns()->route( 'ns.dashboard.registers-create' ),
                         ],
                         'list' => [
                             'label' => __( 'Registers List' ),
+                            'permissions' => [ 'nexopos.create.registers' ],
                             'href' => ns()->route( 'ns.dashboard.registers-list' ),
                         ],
                     ],
                 ],
-            ]);
+            ] );
 
             unset( $menus[ 'pos' ] );
         }
 
-        if ( ns()->option->get( 'ns_orders_allow_unpaid' ) === 'yes' ) {
+        if ( ns()->option->get( 'ns_orders_allow_unpaid' ) === 'yes' && isset( $menus[ 'orders' ] ) ) {
             $menus = array_insert_after( $menus, 'orders', [
                 'orders' => [
                     'label' => __( 'Orders' ),
@@ -43,9 +46,9 @@ class MenusFilter
                                 'permissions' => [ 'nexopos.read.orders-instalments' ],
                                 'href' => ns()->route( 'ns.dashboard.orders-instalments' ),
                             ],
-                        ]),
+                        ] ),
                 ],
-            ]);
+            ] );
         }
 
         return $menus;

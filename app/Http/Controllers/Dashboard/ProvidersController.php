@@ -13,6 +13,7 @@ use App\Crud\ProviderProcurementsCrud;
 use App\Crud\ProviderProductsCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Provider;
+use App\Services\DateService;
 use App\Services\Options;
 use App\Services\ProviderService;
 use App\Services\Validation;
@@ -20,15 +21,12 @@ use App\Services\Validation;
 class ProvidersController extends DashboardController
 {
     public function __construct(
-        ProviderService $providerService,
-        Options $options,
-        Validation $validation
+        protected ProviderService $providerService,
+        protected Options $options,
+        protected Validation $validation,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
-        $this->options = $options;
-        $this->providerService = $providerService;
-        $this->validation = $validation;
+        // ...
     }
 
     /**
@@ -74,7 +72,7 @@ class ProvidersController extends DashboardController
      */
     public function listProvidersProcurements( Provider $provider )
     {
-        return ProviderProcurementsCrud::table([
+        return ProviderProcurementsCrud::table( [
             'queryParams' => [
                 'provider_id' => $provider->id,
             ],
@@ -82,7 +80,7 @@ class ProvidersController extends DashboardController
                 __( 'Procurements by "%s"' ),
                 $provider->name
             ),
-        ]);
+        ] );
     }
 
     /**
@@ -99,11 +97,11 @@ class ProvidersController extends DashboardController
             ->map( fn( $procurement ) => $procurement->id )
             ->toArray();
 
-        return ProviderProductsCrud::table([
+        return ProviderProductsCrud::table( [
             'title' => sprintf( __( '%s\'s Products' ), $provider->name ),
             'queryParams' => [
                 'procurements' => $procurements,
             ],
-        ]);
+        ] );
     }
 }

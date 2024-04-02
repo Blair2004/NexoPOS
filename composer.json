@@ -10,42 +10,44 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.0.0",
-        "beyondcode/laravel-websockets": "^1.11",
+        "php": "^8.2.0",
+        "brianium/paratest": "^7.1",
         "brick/math": "^0.11.0",
         "dekor/php-array-table": "^2.0",
         "doctrine/dbal": "^3.0",
         "fakerphp/faker": "^1.12",
-        "fruitcake/laravel-cors": "^3.0",
         "gumlet/php-image-resize": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "jackiedo/dotenv-editor": "^2.0",
-        "laravel/framework": "^9.0",
-        "laravel/sanctum": "^3.0",
-        "laravel/telescope": "^4.0",
+        "laravel/framework": "^11.0",
+        "laravel/reverb": "@beta",
+        "laravel/sanctum": "^4.0",
+        "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.0",
-        "laravie/parser": "^2.1",
-        "nikic/php-parser": "^4.14",
-        "phpoffice/phpspreadsheet": "^1.17",
+        "nikic/php-parser": "^5.0",
+        "phpoffice/phpspreadsheet": "^2.0",
         "picqer/php-barcode-generator": "^2.1",
-        "predis/predis": "^2.0",
+        "predis/predis": "^2.2",
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-db-snapshots": "^2.2",
         "symfony/http-client": "^6.0",
         "symfony/mailgun-mailer": "^6.0",
-        "tormjens/eventy": "^0.8"
+        "tormjens/eventy": "^0.8",
+        "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
         "laravel/pint": "^1.1.1",
         "mockery/mockery": "^1.3.1",
-        "nunomaduro/collision": "^6.1",
-        "phpunit/phpunit": "^9.2",
-        "spatie/laravel-ignition": "^1.0"
+        "nunomaduro/collision": "^8.1",
+        "phpunit/phpunit": "^10.0",
+        "spatie/laravel-ignition": "^2.0"
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "extra": {
         "laravel": {
@@ -65,7 +67,7 @@
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
@@ -82,7 +84,8 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi",
-            "@php artisan storage:link --ansi"
+            "@php artisan storage:link --ansi",
+            "@php artisan ns:translate --symlink"
         ]
     }
 }

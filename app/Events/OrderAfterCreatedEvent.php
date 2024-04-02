@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 
 class OrderAfterCreatedEvent implements ShouldBroadcast
 {
-    use SerializesModels, Dispatchable, InteractsWithSockets;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct( public Order $order, public $fields )
     {

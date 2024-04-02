@@ -41,15 +41,15 @@ class GenerateActivityCommand extends Command
     public function handle()
     {
         $date = app()->make( DateService::class );
-        $rangeStarts = $date->copy()->subMonths(5);
+        $rangeStarts = $date->copy()->subMonths( 5 );
         $totalDays = [];
 
         while ( ! $rangeStarts->isSameDay( $date ) ) {
             $totalDays[] = $rangeStarts->copy();
-            $rangeStarts->addDay(1);
+            $rangeStarts->addDay( 1 );
         }
 
-        $bar = $this->output->createProgressBar(count($totalDays));
+        $bar = $this->output->createProgressBar( count( $totalDays ) );
         $bar->start();
 
         $files = Storage::disk( 'ns' )->allFiles( 'tests/Feature' );
@@ -64,7 +64,7 @@ class GenerateActivityCommand extends Command
             foreach ( $files as $file ) {
                 if ( ! in_array( $file, [
                     'tests/Feature/ResetTest.php',
-                ])) {
+                ] ) ) {
                     include_once base_path( $file );
 
                     $path = pathinfo( $file );

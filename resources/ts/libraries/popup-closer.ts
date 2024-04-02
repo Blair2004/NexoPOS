@@ -2,38 +2,27 @@ declare const nsHotPress;
 
 /**
  * Must be used on component
- * that has the $popup object defined.
+ * that has the popup object defined.
  */
 export default function() {
-    const keys  =   Object.keys( this );
-    
-    if ( keys.includes( '$popup' ) ) {
-
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                if ( this.$popupParams && this.$popupParams.reject !== undefined ) {
-                    this.$popupParams.reject( false );
-                }
-
-                this.$popup.close();
-            }
-    
-            if ( action.event === 'press-esc' ) {
-                if ( this.$popupParams && this.$popupParams.reject !== undefined ) {
-                    this.$popupParams.reject( false );
-                }
-
-                this.$popup.close();
-            }
-        });
-
+    if ( this.popup !== undefined ) {
         /**
          * We'll listen to "esc" keypress
          * but proceed in certain conditions.
          */
-        nsHotPress.create( 'popup-esc' )
+        nsHotPress.create( `popup-esc-${this.popup.hash}` )
             .whenPressed( 'escape', ( event ) => {
                 event.preventDefault();
+
+                const currentPopup = document.querySelector( `#${this.popup.hash}` );
+
+                /**
+                 * If the popup is not focused then
+                 * we don't want to close it.
+                 */
+                if ( currentPopup && currentPopup.getAttribute( 'focused' ) !== 'true' ) {
+                    return;
+                }
 
                 /**
                  * We want to check if there is a popup that is
@@ -47,12 +36,12 @@ export default function() {
                  * then we can close this one.
                  */
                 if ( possiblePopup === null ) {
-                    if ( this.$popupParams && this.$popupParams.reject !== undefined ) {
-                        this.$popupParams.reject( false );
+                    if ( this.popup.params && this.popup.params.reject !== undefined ) {
+                        this.popup.params.reject( false );
                     }
 
-                    this.$popup.close();
-                    nsHotPress.destroy( 'popup-esc' );
+                    this.popup.close();
+                    nsHotPress.destroy( `popup-esc-${this.popup.hash}` );
                 }
             })
     }

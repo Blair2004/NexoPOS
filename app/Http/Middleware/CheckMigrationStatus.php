@@ -15,10 +15,10 @@ class CheckMigrationStatus
      *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle( Request $request, Closure $next )
     {
         if ( ns()->update->getMigrations()->count() > 0 ) {
-            session([ 'after_update' => url()->current() ]);
+            session( [ 'after_update' => url()->current() ] );
 
             return redirect( ns()->route( 'ns.database-update' ) );
         }
@@ -35,6 +35,6 @@ class CheckMigrationStatus
 
         AfterMigrationStatusCheckedEvent::dispatch( $next, $request );
 
-        return $next($request);
+        return $next( $request );
     }
 }

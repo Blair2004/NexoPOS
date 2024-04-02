@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int            $id
+ * @property string         $uuid
+ * @property string         $description
+ * @property int            $author
+ * @property \Carbon\Carbon $updated_at
+ */
 class UnitGroup extends NsModel
 {
     use HasFactory;

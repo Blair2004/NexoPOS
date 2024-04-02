@@ -9,22 +9,22 @@ trait WithUnitTest
     protected function attemptCreateUnitGroup()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units-groups', [
+            ->json( 'POST', 'api/crud/ns.units-groups', [
                 'name' => __( 'Liquids' ),
-            ]);
+            ] );
 
-        $response->assertJson([
+        $response->assertJson( [
             'status' => 'success',
-        ]);
+        ] );
 
-        $response->assertStatus(200);
+        $response->assertStatus( 200 );
     }
 
     protected function attemptCreateUnit()
     {
         $group = UnitGroup::get()->shuffle()->first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units', [
+            ->json( 'POST', 'api/crud/ns.units', [
                 'name' => __( 'Piece' ),
                 'general' => [
                     'base_unit' => true,
@@ -32,14 +32,14 @@ trait WithUnitTest
                     'identifier' => 'piece',
                     'group_id' => $group->id,
                 ],
-            ]);
+            ] );
 
-        $response->assertJson([
+        $response->assertJson( [
             'status' => 'success',
-        ]);
+        ] );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units', [
+            ->json( 'POST', 'api/crud/ns.units', [
                 'name' => __( 'Dozen' ),
                 'general' => [
                     'base_unit' => false,
@@ -47,14 +47,14 @@ trait WithUnitTest
                     'identifier' => 'dozen',
                     'group_id' => $group->id,
                 ],
-            ]);
+            ] );
 
-        $response->assertJson([
+        $response->assertJson( [
             'status' => 'success',
-        ]);
+        ] );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units', [
+            ->json( 'POST', 'api/crud/ns.units', [
                 'name' => __( 'Thirty' ),
                 'general' => [
                     'base_unit' => false,
@@ -62,10 +62,10 @@ trait WithUnitTest
                     'identifier' => 'thirty',
                     'group_id' => $group->id,
                 ],
-            ]);
+            ] );
 
-        $response->assertJson([
+        $response->assertJson( [
             'status' => 'success',
-        ]);
+        ] );
     }
 }

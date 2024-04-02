@@ -11,13 +11,13 @@ class RegistrationMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse) $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle( Request $request, Closure $next )
     {
         if ( ns()->option->get( 'ns_registration_enabled', 'no' ) === 'yes' ) {
-            return $next($request);
+            return $next( $request );
         }
 
         throw new NotAllowedException( __( 'The registration has been explicitly disabled.' ) );

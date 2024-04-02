@@ -17,4 +17,4 @@ Route::get( '/intermediate/{route}/{from}', function ( $route, $from ) {
     }
 
     return redirect( route( $route ) )->with( 'message', $message );
-})->name( 'ns.intermediate' );
+} )->name( 'ns.intermediate' );

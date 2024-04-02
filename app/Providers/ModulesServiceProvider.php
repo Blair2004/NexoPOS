@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\ModulesBootedEvent;
 use App\Events\ModulesLoadedEvent;
+use App\Services\Helper;
 use App\Services\ModulesService;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,7 +27,7 @@ class ModulesServiceProvider extends ServiceProvider
          */
         collect( $modules->getEnabled() )->each( function ( $module ) use ( $modules ) {
             $modules->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
-        });
+        } );
 
         $this->commands( $this->modulesCommands );
 
@@ -47,11 +48,18 @@ class ModulesServiceProvider extends ServiceProvider
         $this->app->singleton( ModulesService::class, function ( $app ) {
             $this->modules = new ModulesService;
 
-            if ( ns()->installed( true ) ) {
+            if ( Helper::installed( true ) ) {
                 $this->modules->load();
-    
-                collect( $this->modules->getEnabled() )->each( fn( $module ) => $this->modules->boot( $module ) );
-    
+
+                /**
+                 * We want to make sure all modules are loaded, before
+                 * we can trigger the migrations. As some migrations may
+                 * have a dependency on another module.
+                 */
+                $this->modules->loadModulesMigrations();
+
+                collect($this->modules->getEnabled())->each(fn($module) => $this->modules->boot($module));
+
                 /**
                  * trigger register method only for enabled modules
                  * service providers that extends ModulesServiceProvider.
@@ -64,14 +72,14 @@ class ModulesServiceProvider extends ServiceProvider
                         $this->modulesCommands,
                         array_keys( $module[ 'commands' ] )
                     );
-    
+
                     $this->modules->triggerServiceProviders( $module, 'register', ServiceProvider::class );
-                });
-    
+                } );
+
                 event( new ModulesLoadedEvent( $this->modules->get() ) );
             }
 
             return $this->modules;
-        });
+        } );
     }
 }

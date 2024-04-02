@@ -27,21 +27,10 @@ ns.currency         =   <?php echo json_encode( $json );?>;
 ns.authentication   =   <?php echo json_encode( $authentication );?>;
 ns.base_url         =   '{{ url( "/" ) }}';
 </script>
-
-@if ( ns()->isProduction() )
-<script src="{{ mix( 'js/manifest.js' ) }}"></script>
-<script src="{{ mix( 'js/vendor.js' ) }}"></script>
-<script src="{{ mix( 'js/bootstrap.min/bootstrap.js' ) }}"></script>
-<script src="{{ mix( 'js/popups.min.js' ) }}"></script>
-@else
-<script src="{{ asset( 'js/manifest.js' ) }}"></script>
-<script src="{{ asset( 'js/vendor.js' ) }}"></script>
-<script src="{{ asset( 'js/bootstrap.js' ) }}"></script>
-<script src="{{ asset( 'js/popups.js' ) }}"></script>
-@endif
+@vite([ 'resources/ts/bootstrap.ts' ])
 <?php 
     $output     =   new Output;
-    Hook::action( 'ns-dashboard-footer', $output );
+    Hook::action( 'ns-footer', $output );
     echo ( string ) $output;
 ?>
 @yield( 'layout.dashboard.footer.inject' )

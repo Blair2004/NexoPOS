@@ -1,0 +1,108 @@
+:root {
+    --typography: 55 65 81;
+    --surface: 209 213 219;
+    --surface-soft: 229 231 235;
+    --surface-hard: 250 250 250;
+    --popup-surface: 250 250 250;
+    --input-edge: 156 163 175;
+    --input-background: 229 231 235;
+    --input-disabled: 156 163 175;
+    --input-button: 244 244 245;
+    --input-button-hover: 228 228 231; 
+    --input-button-active: 212 212 216;
+    --input-option-hover: 107 114 128;
+
+    --box-background: 250 250 250;
+    --box-edge: 209 213 219;
+    --box-elevation-background: 241 245 249;
+    --box-elevation-edge: 203 213 225;
+    --box-elevation-hover: 203 213 225;
+    
+    --crud-button-edge: 209 213 219;
+    --crud-input-background: 209 213 219;
+    --pos-button-edge: 209 213 219;
+
+    --numpad-background: 107 114 128;
+    --numpad-typography: 55 65 81;
+    --numpad-edge: 209 213 219;
+    --numpad-hover: 203 213 225;
+    --numpad-hover-edge: 209 213 219;
+
+    --option-hover: 107 114 128;
+
+    --scroll-thumb: 30 64 175;
+    --scroll-track: 0 0 0;
+    --scroll-popup-thumb: 71 85 105;
+
+    --pre: 107 114 128;
+
+    --tab-active: 250 250 250;
+    --tab-active-border: 209 213 219;
+    --tab-inactive: 229 231 235;
+
+    --tab-table-th: 209 213 219;
+    --tab-table-th-edge: 209 213 219;
+    --table-th: 229 231 235;
+    --table-th-edge: 209 213 219;
+
+    --floating-menu: 255 255 255;
+    --floating-menu-hover: 241 245 249;
+    --floating-menu-selected: 226 232 240;
+    --floating-menu-edge: 226 232 240;
+
+    --primary: 55 65 81;
+    --secondary: 31 41 55;
+    --tertiary: 17 24 39;
+
+    --soft-primary: 75 85 99;
+    --soft-secondary: 107 114 128;
+    --soft-tertiary: 156 163 175;
+
+    --info-primary: 191 219 254;
+    --info-secondary: 96 165 250;
+    --info-tertiary: 37 99 235;
+
+    --info-light-primary: 191 219 254;
+    --info-light-secondary: 147 197 253;
+    --info-light-tertiary: 96 165 250;
+
+    --error-primary: 254 202 202;
+    --error-secondary: 248 113 113;
+    --error-tertiary: 220 38 38;
+
+    --error-light-primary: 254 202 202;
+    --error-light-secondary: 252 165 165;
+    --error-light-tertiary: 248 113 113;
+
+    --success-primary: 187 247 208;
+    --success-secondary: 74 222 128;
+    --success-tertiary: 22 163 74;
+
+    --success-light-primary: 187 247 208;
+    --success-light-secondary: 134 239 172;
+    --success-light-tertiary: 74 222 128;
+
+    --warning-primary: 254 215 170;
+    --warning-secondary: 251 146 60;
+    --warning-tertiary: 234 88 12;
+
+    --warning-light-primary: 255 237 213;
+    --warning-light-secondary: 254 215 170;
+    --warning-light-tertiary: 253 186 116;
+
+    --danger-primary: 202 138 4;
+    --danger-secondary: 161 98 7;
+    --danger-tertiary: 133 77 14;
+
+    --danger-light-primary: 254 249 195;
+    --danger-light-secondary: 254 240 138;
+    --danger-light-tertiary: 253 224 71;
+
+    --default-primary: 203 213 225;
+    --default-secondary: 148 163 184;
+    --default-tertiary: 107 114 128;
+
+    --default-light-primary: 226 232 240;
+    --default-light-secondary: 203 213 225;
+    --default-light-tertiary: 148 163 184;
+}

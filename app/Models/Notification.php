@@ -4,11 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int            $id
+ * @property int            $user_id
+ * @property string         $source
+ * @property string         $description
+ * @property bool           $dismissable
+ * @property \Carbon\Carbon $updated_at
+ */
 class Notification extends NsModel
 {
     use HasFactory;
 
     protected $table = 'nexopos_notifications';
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
 
     public function user()
     {

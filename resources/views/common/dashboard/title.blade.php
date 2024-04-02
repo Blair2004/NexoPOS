@@ -5,7 +5,7 @@ use App\Classes\Output;
 ?>
 <?php
     $output     =   new Output;
-    Hook::action( 'ns-dashboard-before-title', $output );
+    Hook::action( 'ns-dashboard-before-title', $output, $identifier ?? null );
     echo ( string ) $output;
 ?>
 
@@ -17,6 +17,6 @@ use App\Classes\Output;
 
 <?php
     $output     =   new Output;
-    Hook::action( 'ns-dashboard-after-title', $output );
+    Hook::action( 'ns-dashboard-after-title', $output, $identifier ?? null );
     echo ( string ) $output;
 ?>

@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Jobs\ComputeDayReportJob;
 use App\Jobs\IncreaseCashierStatsJob;
@@ -29,16 +30,28 @@ class OrderAfterUpdatedEventListener
      *
      * @return void
      */
-    public function handle( OrderAfterUpdatedEvent $event)
+    public function handle( OrderAfterUpdatedEvent $event )
     {
-        Bus::chain([
-            new ProcessCashRegisterHistoryJob( $event->order ),
-            new IncreaseCashierStatsJob( $event->order ),
-            new ProcessCustomerOwedAndRewardsJob( $event->order ),
-            new TrackOrderCouponsJob( $event->order ),
-            new ResolveInstalmentJob( $event->order ),
-            new ProcessAccountingRecordFromSale( $event->order ),
+        Bus::chain( [
+            new ProcessCashRegisterHistoryJob( $event->newOrder ),
+            new IncreaseCashierStatsJob( $event->newOrder ),
+            new ProcessCustomerOwedAndRewardsJob( $event->newOrder ),
+            new TrackOrderCouponsJob( $event->newOrder ),
+            new ResolveInstalmentJob( $event->newOrder ),
+            new ProcessAccountingRecordFromSale( $event->newOrder ),
             new ComputeDayReportJob,
-        ])->dispatch();
+        ] )->dispatch();
+
+        /**
+         * if the order payment status has changed from the 
+         * previous order, we need to dispatch an event OrderAfterPaymentStatusChangedEvent
+         */
+        if ( $event->newOrder->payment_status != $event->prevOrder->payment_status ) {
+            event( new OrderAfterPaymentStatusChangedEvent( 
+                order: $event->newOrder, 
+                previous: $event->prevOrder->payment_status,
+                new: $event->newOrder->payment_status 
+            ) );
+        }
     }
 }

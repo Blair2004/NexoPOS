@@ -7,9 +7,9 @@ use App\Services\FieldsService;
 
 class ProcurementFields extends FieldsService
 {
-    protected $identifier = 'ns.procurement-fields';
+    protected static $identifier = 'ns.procurement-fields';
 
-    public function get( Procurement $model = null )
+    public function get( ?Procurement $model = null )
     {
         $name = new \stdClass;
         $name->name = 'name';
@@ -33,11 +33,11 @@ class ProcurementFields extends FieldsService
          * let's populate the value
          * using a clear method
          */
-        return collect([ $name, $description, $provider_id ])->map( function ( $field ) use ( $model ) {
+        return collect( [ $name, $description, $provider_id ] )->map( function ( $field ) use ( $model ) {
             $field->value = $this->__getValue( $model, $field->name );
 
             return $field;
-        })->toArray();
+        } )->toArray();
     }
 
     private function __getValue( $model, $field )

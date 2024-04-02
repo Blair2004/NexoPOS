@@ -16,7 +16,7 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class ClearHoldOrdersJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
@@ -35,23 +35,11 @@ class ClearHoldOrdersJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
-    {
-        /**
-         * @var Options
-         */
-        $options = app()->make( Options::class );
-
-        /**
-         * @var DateService
-         */
-        $date = app()->make( DateService::class );
-
-        /**
-         * @var NotificationService;
-         */
-        $notification = app()->make( NotificationService::class );
-
+    public function handle(
+        Options $options,
+        DateService $date,
+        NotificationService $notification
+    ) {
         $deleted = Order::paymentStatus( Order::PAYMENT_HOLD )
             ->get()
             ->filter( function ( $order ) use ( $options, $date ) {
@@ -71,21 +59,21 @@ class ClearHoldOrdersJob implements ShouldQueue
                 }
 
                 return false;
-            });
+            } );
 
         if ( $deleted->count() > 0 ) {
             /**
              * Dispatch notification
              * to let admins know it has been cleared.
              */
-            $notification->create([
+            $notification->create( [
                 'title' => __( 'Hold Order Cleared' ),
                 'identifier' => self::class,
-                'description' => sprintf( __( '%s order(s) has recently been deleted as they has expired.' ), $deleted->count() ),
-            ])->dispatchForGroup([
+                'description' => sprintf( __( '%s order(s) has recently been deleted as they have expired.' ), $deleted->count() ),
+            ] )->dispatchForGroup( [
                 Role::namespace( 'admin' ),
                 Role::namespace( 'nexopos.store.administrator' ),
-            ]);
+            ] );
         }
     }
 }

@@ -6,10 +6,9 @@ use App\Classes\Hook;
 use App\Classes\Schema;
 use App\Events\AfterHardResetEvent;
 use App\Events\BeforeHardResetEvent;
-use App\Models\Migration;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class ResetService
 {
@@ -19,22 +18,22 @@ class ResetService
             'nexopos_coupons',
             'nexopos_coupons_products',
             'nexopos_coupons_categories',
+            'nexopos_coupons_customers',
+            'nexopos_coupons_customers_groups',
 
-            'nexopos_customers',
             'nexopos_customers_account_history',
             'nexopos_customers_addresses',
             'nexopos_customers_coupons',
             'nexopos_customers_groups',
-            'nexopos_customers_metas',
             'nexopos_customers_rewards',
 
             'nexopos_dashboard_days',
             'nexopos_dashboard_weeks',
             'nexopos_dashboard_months',
 
-            'nexopos_expenses',
-            'nexopos_expenses_categories',
-            'nexopos_cash_flow',
+            'nexopos_transactions',
+            'nexopos_transactions_accounts',
+            'nexopos_transactions_histories',
 
             'nexopos_medias',
             'nexopos_notifications',
@@ -57,6 +56,7 @@ class ResetService
             'nexopos_products',
             'nexopos_products_categories',
             'nexopos_products_histories',
+            'nexopos_products_histories_combined',
             'nexopos_products_galleries',
             'nexopos_products_metas',
             'nexopos_products_taxes',
@@ -75,13 +75,19 @@ class ResetService
 
             'nexopos_units',
             'nexopos_units_groups',
-        ]);
+        ] );
 
         foreach ( $tables as $table ) {
             if ( Hook::filter( 'ns-reset-table', $table ) !== false && Schema::hasTable( Hook::filter( 'ns-reset-table', $table ) ) ) {
                 DB::table( Hook::filter( 'ns-table-name', $table ) )->truncate();
             }
         }
+
+        /**
+         * Customers stills needs to be cleared
+         * so we'll remove them manually.
+         */
+        Customer::get()->each( fn( $customer ) => app()->make( CustomerService::class )->delete( $customer ) );
 
         return [
             'status' => 'success',
@@ -92,44 +98,27 @@ class ResetService
     /**
      * Will completely wipe the database
      * forcing a new installation to be made
-     *
-     * @return void
      */
-    public function hardReset()
+    public function hardReset(): array
     {
         BeforeHardResetEvent::dispatch();
 
-        Artisan::call( 'migrate:reset', [
-            '--path' => 'database/migrations/2022_10_28_123458_setup_migration_table.php',
-            '--force' => true,
-        ]);
-
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/core',
-            '--force' => true,
-        ]);
-
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/create',
-            '--force' => true,
-        ]);
-
-        Artisan::call( 'migrate:reset', [
-            '--path' => '/database/migrations/update',
-            '--force' => true,
-        ]);
-
         /**
-         * only if the table already exists.
+         * this will only apply clearing all tables
+         * when we're not using sqlite.
          */
-        if ( Schema::hasTable( 'migrations' ) ) {
-            Migration::truncate();
-        }
+        if ( env( 'DB_CONNECTION' ) !== 'sqlite' ) {
+            $tables = DB::select( 'SHOW TABLES' );
 
-        DotenvEditor::load();
-        DotenvEditor::deleteKey( 'NS_VERSION' );
-        DotenvEditor::deleteKey( 'NS_AUTHORIZATION' );
-        DotenvEditor::save();
+            foreach ( $tables as $table ) {
+                $table_name = array_values( (array) $table )[0];
+                DB::statement( 'SET FOREIGN_KEY_CHECKS = 0' );
+                DB::statement( "DROP TABLE `$table_name`" );
+                DB::statement( 'SET FOREIGN_KEY_CHECKS = 1' );
+            }
+        } else {
+            file_put_contents( database_path( 'database.sqlite' ), '' );
+        }
 
         Artisan::call( 'key:generate', [ '--force' => true ] );
         Artisan::call( 'ns:cookie generate' );
@@ -140,7 +129,7 @@ class ResetService
 
         return [
             'status' => 'success',
-            'message' => __( 'The database has been hard reset.' ),
+            'message' => __( 'The database has been wiped out.' ),
         ];
     }
 
@@ -148,13 +137,13 @@ class ResetService
     {
         /**
          * @var string $mode
-         * @var bool $create_sales
-         * @var bool $create_procurements
+         * @var bool   $create_sales
+         * @var bool   $create_procurements
          */
         extract( $data );
 
         return Hook::filter( 'ns-handle-custom-reset', [
-            'status' => 'failed',
+            'status' => 'error',
             'message' => __( 'No custom handler for the reset "' . $mode . '"' ),
         ], $data );
     }

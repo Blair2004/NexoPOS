@@ -22,6 +22,6 @@ class EloquenizeArrayService
                     default => $query->where( $fieldName, $arguments[ 'value' ] )
                 };
             }
-        });
+        } );
     }
 }

@@ -26,7 +26,7 @@ return new class extends Migration
         $permission = Permission::namespace( 'nexopos.reports.payment-types' );
 
         if ( ! $permission instanceof Permission ) {
-            $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.reports.payment-types' ]);
+            $permission = Permission::firstOrNew( [ 'namespace' => 'nexopos.reports.payment-types' ] );
             $permission->name = __( 'Read Sales by Payment Types' );
             $permission->namespace = 'nexopos.reports.payment-types';
             $permission->description = __( 'Let the user read the report that shows sales by payment types.' );

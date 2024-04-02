@@ -13,7 +13,7 @@ class ProcurementRequest extends FormRequest
      */
     public function authorize()
     {
-        return ns()->allowedTo([ 'nexopos.create.procurements' ]);
+        return ns()->allowedTo( [ 'nexopos.create.procurements' ] );
     }
 
     /**
@@ -24,7 +24,6 @@ class ProcurementRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
             'general.delivery_status' => 'required',
             'general.payment_status' => 'required',
             'general.provider_id' => 'required',

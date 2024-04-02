@@ -195,11 +195,11 @@ class CreateUserCommand extends Command
         while ( true ) {
             $this->email = $this->ask( 'New Account Email. [Q] Quit.' );
 
-            $validator = Validator::make([
+            $validator = Validator::make( [
                 'email' => $this->email,
             ], [
                 'email' => 'required|email',
-            ]);
+            ] );
 
             if ( $this->email === 'Q' ) {
                 return false;
@@ -222,11 +222,11 @@ class CreateUserCommand extends Command
         while ( true ) {
             $this->username = $this->ask( 'New Account Username. [Q] Quit.' );
 
-            $validator = Validator::make([
+            $validator = Validator::make( [
                 'username' => $this->username,
             ], [
                 'username' => 'required|min:5',
-            ]);
+            ] );
 
             if ( $this->username === 'Q' ) {
                 return false;

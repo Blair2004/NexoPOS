@@ -18,7 +18,7 @@ class OrderAfterUpdatedEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct( public Order $order, public $fields = [] )
+    public function __construct( public Order $newOrder, public Order $prevOrder, public $fields = [] )
     {
         // ...
     }
@@ -30,6 +30,6 @@ class OrderAfterUpdatedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel( 'ns.private-channel' );
     }
 }

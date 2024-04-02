@@ -13,7 +13,7 @@ class Output
         $this->output[] = $view;
     }
 
-    public function addView( $view, $options = [])
+    public function addView( $view, $options = [] )
     {
         $this->output[] = View::make( $view, $options );
 

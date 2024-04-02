@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * @property int $id
- * @property int $order_id
- * @property float $value
- * @property int $author
+ * @property int    $id
+ * @property int    $order_id
+ * @property float  $value
+ * @property int    $author
  * @property string $identifier
  * @property string $uuid
  */
@@ -45,8 +45,8 @@ class OrderPayment extends NsModel
         $paymentTypes = Cache::remember( 'nexopos.pos.payments-key', '3600', function () {
             return PaymentType::active()->get()->mapWithKeys( function ( $paymentType ) {
                 return [ $paymentType->identifier => $paymentType->label ];
-            });
-        });
+            } );
+        } );
 
         return $paymentTypes[ $this->identifier ] ?? __( 'Unknown Payment' );
     }

@@ -6,38 +6,38 @@ use App\Casts\FloatConvertCasting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property int $id
- * @property string $name
- * @property int $product_id
- * @property int $product_category_id
- * @property int $procurement_product_id
- * @property int $unit_id
- * @property int $unit_quantity_id
- * @property int $order_id
- * @property float $quantity
- * @property string $discount_type
- * @property float $discount
- * @property float $discount_percentage
- * @property float $price_without_tax
- * @property float $unit_price
- * @property int $tax_group_id
- * @property string $tax_type
- * @property int $wholesale_tax_value
- * @property string $mode
- * @property float $sale_tax_value
- * @property float $tax_value
- * @property float $price_with_tax
- * @property string $unit_name
- * @property float $total_price_without_tax
- * @property float $total_price
- * @property float $total_price_with_tax
- * @property float $total_purchase_price
- * @property string $return_condition
- * @property string $return_observations
- * @property string $uuid
- * @property int $status
- * @property Order $order
- * @property Unit $unit
+ * @property int     $id
+ * @property string  $name
+ * @property int     $product_id
+ * @property int     $product_category_id
+ * @property int     $procurement_product_id
+ * @property int     $unit_id
+ * @property int     $unit_quantity_id
+ * @property int     $order_id
+ * @property float   $quantity
+ * @property string  $discount_type
+ * @property float   $discount
+ * @property float   $discount_percentage
+ * @property float   $price_without_tax
+ * @property float   $unit_price
+ * @property int     $tax_group_id
+ * @property string  $tax_type
+ * @property int     $wholesale_tax_value
+ * @property string  $mode
+ * @property float   $sale_tax_value
+ * @property float   $tax_value
+ * @property float   $price_with_tax
+ * @property string  $unit_name
+ * @property float   $total_price_without_tax
+ * @property float   $total_price
+ * @property float   $total_price_with_tax
+ * @property float   $total_purchase_price
+ * @property string  $return_condition
+ * @property string  $return_observations
+ * @property string  $uuid
+ * @property int     $status
+ * @property Order   $order
+ * @property Unit    $unit
  * @property Product $product
  */
 class OrderProduct extends NsModel

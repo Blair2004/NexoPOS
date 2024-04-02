@@ -3,7 +3,7 @@
         <div class="p-2 flex justify-between text-primary items-center ns-box-header border-b">
             <h3 class="font-semibold">{{ __( 'Orders' ) }}</h3>
             <div>
-                <ns-close-button @click="$popup.close()"></ns-close-button>
+                <ns-close-button @click="popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="p-2 flex overflow-hidden flex-auto ns-box-body">
@@ -37,20 +37,24 @@
         <div class="p-2 flex justify-between ns-box-footer border-t">
             <div></div>
             <div>
-                <ns-button type="info">{{ __( 'Close' ) }}</ns-button>
+                <ns-button @click="popup.close()" type="info">{{ __( 'Close' ) }}</ns-button>
             </div>
         </div>
     </div>
 </template>
-<script>
-import { nsEvent, nsHttpClient } from '@/bootstrap';
+<script lang="ts">
+import { nsEvent, nsHttpClient } from '~/bootstrap';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import nsPosOrderProductsPopupVue from './ns-pos-order-products-popup.vue';
-import nsPosPendingOrders from './ns-pos-pending-orders';
-import { __ } from '@/libraries/lang';
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
+import nsPosPendingOrders from './ns-pos-pending-orders.vue';
+import { __ } from '~/libraries/lang';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
+
+declare const POS, Popup;
+
 export default {
+    props: [ 'popup' ],
     components: {
         nsPosPendingOrders
     },
@@ -60,7 +64,7 @@ export default {
         popupCloser,
         
         searchOrder( search ) {
-            nsHttpClient.get( `/api/nexopos/v4/crud/${this.active}?search=${search}` )
+            nsHttpClient.get( `/api/crud/${this.active}?search=${search}` )
                 .subscribe( (result) => {
                     this.orders     =   result.data;
                 })
@@ -73,11 +77,11 @@ export default {
 
         openOrder( order ) {
             POS.loadOrder( order.id );
-            this.$popup.close();
+            this.popup.close();
         },
 
         loadOrderFromType( type ) {
-            nsHttpClient.get( `/api/nexopos/v4/crud/${type}` )
+            nsHttpClient.get( `/api/crud/${type}` )
                 .subscribe( result => {
                     this.orders     =   result.data;
                 });
@@ -120,13 +124,7 @@ export default {
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.$popup.close();
-            }
-        });
         this.loadOrderFromType( this.active );
-        
         this.popupCloser();
     }
 }

@@ -96,10 +96,11 @@ class ModuleDetailsCommand extends Command
             [ __( 'Api' ), $module[ 'api-file' ] ],
             [ __( 'Controllers' ), $module[ 'controllers-relativePath' ] ],
             [ __( 'Views' ), $module[ 'views-path' ] ],
-            [ __( 'Dashboard' ), $module[ 'dashboard-path' ] ],
+            [ __( 'Api File' ), $module[ 'api-file' ] ],
+            [ __( 'Migrations' ), collect( $module[ 'all-migrations' ] ?? [] )->join( "\n" ) ],
         ];
 
-        return $this->table([
+        return $this->table( [
             __( 'Attribute' ),
             __( 'Value' ),
         ], $entries );

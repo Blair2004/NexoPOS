@@ -73,7 +73,7 @@ class ModulesMigrateCommand extends Command
         $this->withProgressBar( $unmigratedFiles, function ( $file ) use ( $module ) {
             $response = $this->modulesService->runMigration( $module[ 'namespace' ], $file );
             AfterMigrationExecutedEvent::dispatch( $module, $response, $file );
-        });
+        } );
 
         $this->newLine();
 

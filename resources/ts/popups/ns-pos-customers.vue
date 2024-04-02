@@ -3,18 +3,18 @@
         <div class="ns-header p-2 flex justify-between items-center border-b">
             <h3 class="font-semibold">{{ __( 'Customers' ) }}</h3>
             <div>
-                <ns-close-button @click="$popup.close()"></ns-close-button>
+                <ns-close-button @click="popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="ns-body flex-auto flex p-2 overflow-y-auto">
             <ns-tabs :active="activeTab" @active="activeTab = $event">
-                <ns-tabs-item identifier="create-customers" label="New Customer">
+                <ns-tabs-item identifier="create-customers" :label="__( 'New Customer' )">
                     <ns-crud-form
                         v-if="options.ns_pos_customers_creation_enabled === 'yes'"
                         @updated="prefillForm( $event )"
                         @save="handleSavedCustomer( $event )"
-                        submit-url="/api/nexopos/v4/crud/ns.customers"
-                        src="/api/nexopos/v4/crud/ns.customers/form-config">
+                        submit-url="/api/crud/ns.customers"
+                        src="/api/crud/ns.customers/form-config">
                         <template v-slot:title>{{ __( 'Customer Name' ) }}</template>
                         <template v-slot:save>{{ __( 'Save Customer' ) }}</template>
                     </ns-crud-form>
@@ -24,7 +24,7 @@
                         <p>{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
                     </div>
                 </ns-tabs-item>
-                <ns-tabs-item identifier="account-payment" :label="__( 'Customer Account' )" class="flex" style="padding:0!important">
+                <ns-tabs-item identifier="account-payment" :label="__( 'Customer Account' )" class="flex" padding="p-0 flex">
                     <div class="flex-auto w-full flex items-center justify-center flex-col p-4" v-if="customer === null">
                         <i class="lar la-frown text-6xl"></i>
                         <h3 class="font-medium text-2xl">{{ __( 'No Customer Selected' ) }}</h3>
@@ -35,39 +35,41 @@
                     </div>
                     <div v-if="customer" class="flex flex-col flex-auto">
                         <div class="flex-auto p-2 flex flex-col">
-                            <div class="-mx-4 flex flex-wrap ns-tab-cards">
+                            <div class="flex flex-wrap">
                                 <div class="px-4 mb-4 w-full">
-                                    <h2 class="font-semibold">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
+                                    <h2 class="font-semibold">{{ __( 'Summary For' ) }} : {{ customer.first_name }}</h2>
                                 </div>
-                                <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-success-secondary to-green-700 p-2 flex flex-col text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
-                                        <div class="w-full flex justify-end">
-                                            <h2 class="font-bold">{{ customer.purchases_amount | currency }}</h2>
+                                <div class="flex flex-wrap ns-tab-cards -mx-2 w-full">
+                                    <div class="px-2 mb-4 w-full md:w-1/4 flex">
+                                        <div class="rounded-lg shadow w-full bg-transparent bg-gradient-to-br from-success-secondary to-green-700 p-2 flex flex-col text-white">
+                                            <h3 class="font-medium text-lg">{{ __( 'Purchases' ) }}</h3>
+                                            <div class="w-full flex justify-end">
+                                                <h2 class="font-bold">{{ nsCurrency( customer.purchases_amount ) }}</h2>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-error-secondary to-red-700 p-2 text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Total Owed' ) }}</h3>
-                                        <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ customer.owed_amount | currency }}</h2>
+                                    <div class="px-2 mb-4 w-full md:w-1/4 flex">
+                                        <div class="rounded-lg shadow w-full bg-transparent bg-gradient-to-br from-error-secondary to-red-700 p-2 text-white">
+                                            <h3 class="font-medium text-lg">{{ __( 'Owed' ) }}</h3>
+                                            <div class="w-full flex justify-end">
+                                                <h2 class="font-bold">{{ nsCurrency( customer.owed_amount ) }}</h2>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Wallet Amount' ) }}</h3>
-                                        <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ customer.account_amount | currency }}</h2>
+                                    <div class="px-2 mb-4 w-full md:w-1/4 flex">
+                                        <div class="rounded-lg shadow w-full bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
+                                            <h3 class="font-medium text-lg">{{ __( 'Wallet Amount' ) }}</h3>
+                                            <div class="w-full flex justify-end">
+                                                <h2 class="font-bold">{{ nsCurrency( customer.account_amount ) }}</h2>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-teal-500 to-teal-700 p-2 text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Credit Limit' ) }}</h3>
-                                        <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ customer.credit_limit_amount | currency }}</h2>
+                                    <div class="px-2 mb-4 w-full md:w-1/4 flex">
+                                        <div class="rounded-lg shadow w-full bg-transparent bg-gradient-to-br from-teal-500 to-teal-700 p-2 text-white">
+                                            <h3 class="font-medium text-lg">{{ __( 'Credit Limit' ) }}</h3>
+                                            <div class="w-full flex justify-end">
+                                                <h2 class="font-bold">{{ nsCurrency( customer.credit_limit_amount ) }}</h2>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +103,7 @@
                                                                         <h3 class="font-bold">{{ __( 'Code' ) }}: {{ order.code }}</h3>
                                                                         <div class="md:-mx-2 w-full flex flex-col md:flex-row">
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/4">
-                                                                                <small>{{ __( 'Total' ) }}: {{ order.total | currency }}</small>
+                                                                                <small>{{ __( 'Total' ) }}: {{ nsCurrency( order.total ) }}</small>
                                                                             </div>
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/4">
                                                                                 <small>{{ __( 'Status' ) }}: {{ order.human_status }}</small>
@@ -151,7 +153,7 @@
                                                                         <h3 class="font-bold">{{ __( 'Transaction' ) }}: {{ getWalletHistoryLabel( history.operation ) }}</h3>
                                                                         <div class="md:-mx-2 w-full flex flex-col md:flex-row">
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/3">
-                                                                                <small>{{ __( 'Amount' ) }}: {{ history.amount | currency }}</small>
+                                                                                <small>{{ __( 'Amount' ) }}: {{ nsCurrency( amount ) }}</small>
                                                                             </div>
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/3">
                                                                                 <small>{{ __( 'Date' ) }}: {{ history.created_at }}</small>
@@ -203,7 +205,7 @@
                                                                         ({{ coupon.coupon.discount_value }}%)
                                                                     </span>
                                                                     <span v-if="coupon.coupon.type === 'flat_discount'">
-                                                                        ({{ coupon.coupon.discount_value | currency }})
+                                                                        ({{ nsCurrency( value ) }})
                                                                     </span>
                                                                 </td>
                                                                 <td class="border p-2 text-right">
@@ -275,21 +277,23 @@
 </template>
 <script>
 
-import closeWithOverlayClicked from "@/libraries/popup-closer";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { Popup } from '@/libraries/popup';
+import closeWithOverlayClicked from "~/libraries/popup-closer";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { Popup } from '~/libraries/popup';
 import nsPosCustomerSelectPopupVue from './ns-pos-customer-select-popup.vue';
 import nsCustomersTransactionPopupVue from './ns-customers-transaction-popup.vue';
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 import nsPosCouponsLoadPopupVue from './ns-pos-coupons-load-popup.vue';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
-import nsPaginate from '@/components/ns-paginate.vue';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
+import nsPaginate from '~/components/ns-paginate.vue';
 import nsOrderPreviewPopup from './ns-orders-preview-popup.vue';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-customers',
+    props: [ 'popup' ],
     data() {
         return {
             activeTab: 'create-customers',
@@ -312,7 +316,7 @@ export default {
     components: {
         nsPaginate
     },
-    destroyed() {
+    unmounted() {
         this.subscription.unsubscribe();
         this.optionsSubscriber.unsubscribe();
     },
@@ -324,12 +328,11 @@ export default {
         });
 
         this.subscription   =   POS.order.subscribe( order => {
-
             this.order  =   order;
 
-            if ( this.$popupParams.customer !== undefined ) {
+            if ( this.popup.params.customer !== undefined ) {
                 this.activeTab  =   'account-payment';
-                this.customer   =   this.$popupParams.customer;
+                this.customer   =   this.popup.params.customer;
                 this.loadCustomerOrders();
             } else if ( order.customer !== undefined ) {
                 this.activeTab  =   'account-payment';
@@ -342,6 +345,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
 
         reload() {
             this.loadCustomerOrders();
@@ -415,7 +419,7 @@ export default {
 
         loadAccounHistory() {
             this.isLoadingHistory   =   true;
-            nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/account-history` )
+            nsHttpClient.get( `/api/customers/${this.customer.id}/account-history` )
                 .subscribe({
                     next: ( result ) => {
                         this.walletHistories    =   result.data;
@@ -429,7 +433,7 @@ export default {
 
         loadCoupons() {
             this.isLoadingCoupons   =   true;
-            nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/coupons` )
+            nsHttpClient.get( `/api/customers/${this.customer.id}/coupons` )
                 .subscribe({
                     next: ( coupons ) => {
                         this.coupons            =   coupons;
@@ -440,8 +444,8 @@ export default {
                     }
                 });
         },
-
-        loadRewards( url = `/api/nexopos/v4/customers/${this.customer.id}/rewards` ) {
+        
+        loadRewards( url = `/api/customers/${this.customer.id}/rewards` ) {
             this.isLoadingRewards   =   true;
             nsHttpClient.get( url )
                 .subscribe({
@@ -456,19 +460,20 @@ export default {
         },
 
         prefillForm( event ) {
-            if ( this.$popupParams.name !== undefined ) {
-                event.main.value     =   this.$popupParams.name;
+            if ( this.popup.params.name !== undefined ) {
+                event.main.value     =   this.popup.params.name;
             }
         },
 
         openCustomerSelection() {
-            this.$popup.close();
-            Popup.show( nsPosCustomerSelectPopupVue );
+            this.popup.close( _ => {
+                Popup.show( nsPosCustomerSelectPopupVue );
+            });
         },
 
         loadCustomerOrders() {
             this.isLoadingOrders    =   true;
-            nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/orders` )
+            nsHttpClient.get( `/api/customers/${this.customer.id}/orders` )
                 .subscribe({
                     next: orders => {
                         this.orders     =   orders;
@@ -541,8 +546,8 @@ export default {
 
         handleSavedCustomer( response ) {
             nsSnackBar.success( response.message ).subscribe();
-            POS.selectCustomer( response.entry );
-            this.$popup.close();
+            POS.selectCustomer( response.data.entry );
+            this.popup.close();
         }
     }
 }

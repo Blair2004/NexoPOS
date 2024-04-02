@@ -39,7 +39,7 @@ class ComputeYearlyReportJob implements ShouldQueue
     {
         $reportService->computeYearReport( $this->year );
 
-        $notificationService->create([
+        $notificationService->create( [
             'title' => __( 'Report Refreshed' ),
             'identifier' => 'ns-refreshed-annual-' . $this->year,
             'description' => sprintf(
@@ -47,9 +47,9 @@ class ComputeYearlyReportJob implements ShouldQueue
                 $this->year
             ),
             'url' => route( ns()->routeName( 'ns.dashboard.reports-annual' ) ),
-        ])->dispatchForGroup([
+        ] )->dispatchForGroup( [
             'admin',
             'nexopos.store.administrator',
-        ]);
+        ] );
     }
 }

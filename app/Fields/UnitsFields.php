@@ -8,9 +8,9 @@ use App\Services\FieldsService;
 
 class UnitsFields extends FieldsService
 {
-    protected $identifier = 'ns.unit-fields';
+    protected static $identifier = 'ns.units-fields';
 
-    public function get( Unit $model = null )
+    public function get( ?Unit $model = null )
     {
         $name = new \stdClass;
         $name->name = 'name';
@@ -46,11 +46,11 @@ class UnitsFields extends FieldsService
          * let's populate the value
          * using a clear method
          */
-        return collect([ $name, $description, $group_id, $value, $base_unit ])->map( function ( $field ) use ( $model ) {
+        return collect( [ $name, $description, $group_id, $value, $base_unit ] )->map( function ( $field ) use ( $model ) {
             $field->value = $this->__getValue( $model, $field->name );
 
             return $field;
-        })->toArray();
+        } )->toArray();
     }
 
     private function __getValue( $model, $field )

@@ -2,15 +2,16 @@
 
 namespace App\Services;
 
-use App\Models\AccountType;
 use App\Models\Customer;
 use App\Models\CustomerCoupon;
 use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\Provider;
+use App\Models\Register;
 use App\Models\Role;
 use App\Models\Tax;
 use App\Models\TaxGroup;
+use App\Models\TransactionAccount;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use Database\Seeders\CustomerGroupSeeder;
@@ -88,7 +89,7 @@ class DemoCoreService
             $unit->name = __( 'Small Box' );
             $unit->identifier = 'small-box';
             $unit->description = '';
-            $unit->author = Role::namespace( 'admin' )->users()->first()->id;
+            $unit->author = Auth::id();
             $unit->group_id = $group->id;
             $unit->base_unit = true;
             $unit->value = 6;
@@ -102,7 +103,7 @@ class DemoCoreService
             $unit->name = __( 'Box' );
             $unit->identifier = 'box';
             $unit->description = '';
-            $unit->author = Role::namespace( 'admin' )->users()->first()->id;
+            $unit->author = Auth::id();
             $unit->group_id = $group->id;
             $unit->base_unit = true;
             $unit->value = 12;
@@ -135,70 +136,85 @@ class DemoCoreService
         );
     }
 
+    public function createRegisters()
+    {
+        $register = new Register;
+        $register->name = __( 'Terminal A' );
+        $register->status = Register::STATUS_CLOSED;
+        $register->author = ns()->getValidAuthor();
+        $register->save();
+
+        $register = new Register;
+        $register->name = __( 'Terminal B' );
+        $register->status = Register::STATUS_CLOSED;
+        $register->author = ns()->getValidAuthor();
+        $register->save();
+    }
+
     public function createAccountingAccounts()
     {
         /**
-         * @var ExpenseService $expenseService
+         * @var TransactionService $transactionService
          */
-        $expenseService = app()->make( ExpenseService::class );
+        $transactionService = app()->make( TransactionService::class );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount( [
             'name' => __( 'Sales Account' ),
             'operation' => 'credit',
             'account' => '001',
-        ]);
+        ] );
 
-        ns()->option->set( 'ns_sales_cashflow_account', AccountType::account( '001' )->first()->id );
+        ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::account( '001' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount( [
             'name' => __( 'Procurements Account' ),
             'operation' => 'debit',
             'account' => '002',
-        ]);
+        ] );
 
-        ns()->option->set( 'ns_procurement_cashflow_account', AccountType::account( '002' )->first()->id );
+        ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::account( '002' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount( [
             'name' => __( 'Sale Refunds Account' ),
             'operation' => 'debit',
             'account' => '003',
-        ]);
+        ] );
 
-        ns()->option->set( 'ns_sales_refunds_account', AccountType::account( '003' )->first()->id );
+        ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::account( '003' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount( [
             'name' => __( 'Spoiled Goods Account' ),
             'operation' => 'debit',
             'account' => '006',
-        ]);
+        ] );
 
-        ns()->option->set( 'ns_stock_return_spoiled_account', AccountType::account( '006' )->first()->id );
+        ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::account( '006' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount( [
             'name' => __( 'Customer Crediting Account' ),
             'operation' => 'credit',
             'account' => '007',
-        ]);
+        ] );
 
-        ns()->option->set( 'ns_customer_crediting_cashflow_account', AccountType::account( '007' )->first()->id );
+        ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::account( '007' )->first()->id );
 
-        $expenseService->createAccount([
+        $transactionService->createAccount( [
             'name' => __( 'Customer Debiting Account' ),
             'operation' => 'credit',
             'account' => '008',
-        ]);
+        ] );
 
-        ns()->option->set( 'ns_customer_debitting_cashflow_account', AccountType::account( '008' )->first()->id );
+        ns()->option->set( 'ns_customer_debitting_cashflow_account', TransactionAccount::account( '008' )->first()->id );
     }
 
     public function createCustomers()
     {
-        (new CustomerGroupSeeder)->run();
+        ( new CustomerGroupSeeder )->run();
     }
 
     public function createProviders()
     {
-        (new DefaultProviderSeeder)->run();
+        ( new DefaultProviderSeeder )->run();
     }
 
     /**
@@ -255,12 +271,12 @@ class DemoCoreService
          */
         $currencyService = app()->make( CurrencyService::class );
 
-        $taxType = Arr::random([ 'inclusive', 'exclusive' ]);
+        $taxType = Arr::random( [ 'inclusive', 'exclusive' ] );
         $taxGroup = TaxGroup::get()->random();
         $margin = 25;
 
-        $this->procurementService->create([
-            'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
+        $this->procurementService->create( [
+            'name' => sprintf( __( 'Sample Procurement %s' ), Str::random( 5 ) ),
             'general' => [
                 'provider_id' => Provider::get()->random()->id,
                 'payment_status' => Procurement::PAYMENT_PAID,
@@ -279,8 +295,8 @@ class DemoCoreService
                             'unitQuantity' => $unitQuantity,
                             'product' => $product,
                         ];
-                    });
-                })->flatten()->map( function ( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+                    } );
+                } )->flatten()->map( function ( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
                     return [
                         'product_id' => $data->product->id,
                         'gross_purchase_price' => 15,
@@ -293,7 +309,7 @@ class DemoCoreService
                                 $margin
                             )
                         ),
-                        'quantity' => $faker->numberBetween(500, 1000),
+                        'quantity' => $faker->numberBetween( 500, 1000 ),
                         'tax_group_id' => $taxGroup->id,
                         'tax_type' => $taxType,
                         'tax_value' => $taxService->getTaxGroupVatValue(
@@ -314,8 +330,8 @@ class DemoCoreService
                         ) * 250,
                         'unit_id' => $data->unit->id,
                     ];
-                }),
-        ]);
+                } ),
+        ] );
     }
 
     public function createSales()
@@ -325,12 +341,15 @@ class DemoCoreService
          */
         $reportService = app()->make( ReportService::class );
         $dates = [];
-        $startOfRange = ns()->date->clone()->subDays($this->daysRange);
+        $startOfRange = ns()->date->clone()->subDays( $this->daysRange );
 
         for ( $i = 0; $i <= $this->daysRange; $i++ ) {
             $dates[] = $startOfRange->clone();
             $startOfRange->addDay();
         }
+
+        $allProducts = Product::with( 'unit_quantities' )->get();
+        $allCustomers = Customer::get();
 
         for ( $i = 0; $i < $this->orderCount; $i++ ) {
             $currentDate = Arr::random( $dates );
@@ -340,34 +359,36 @@ class DemoCoreService
              */
             $currency = app()->make( CurrencyService::class );
             $faker = Factory::create();
-            $products = Product::with( 'unit_quantities' )->get()->shuffle()->take(3);
-            $shippingFees = $faker->randomElement([10, 15, 20, 25, 30, 35, 40]);
-            $discountRate = $faker->numberBetween(0, 5);
+
+            $shippingFees = $faker->randomElement( [10, 15, 20, 25, 30, 35, 40] );
+            $discountRate = $faker->numberBetween( 0, 5 );
+
+            $products = $allProducts->shuffle()->take( 3 );
 
             $products = $products->map( function ( $product ) use ( $faker ) {
                 $unitElement = $faker->randomElement( $product->unit_quantities );
 
-                return array_merge([
+                return array_merge( [
                     'product_id' => $product->id,
-                    'quantity' => $faker->numberBetween(1, 10),
+                    'quantity' => $faker->numberBetween( 1, 10 ),
                     'unit_price' => $unitElement->sale_price,
                     'unit_quantity_id' => $unitElement->id,
                 ], $this->customProductParams );
-            });
+            } );
 
             /**
              * testing customer balance
              */
-            $customer = Customer::get()->random();
+            $customer = $allCustomers->random();
             $customerFirstPurchases = $customer->purchases_amount;
             $customerFirstOwed = $customer->owed_amount;
 
-            $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ($currency) {
+            $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ( $currency ) {
                 return $currency
                     ->define( $product[ 'unit_price' ] )
                     ->multiplyBy( $product[ 'quantity' ] )
                     ->getRaw();
-            })->sum() );
+            } )->sum() );
 
             $customerCoupon = CustomerCoupon::get()->last();
 
@@ -409,7 +430,7 @@ class DemoCoreService
                 $faker->numberBetween( 0, 23 )
             )->format( 'Y-m-d H:m:s' );
 
-            $orderData = array_merge([
+            $orderData = array_merge( [
                 'customer_id' => $customer->id,
                 'type' => [ 'identifier' => 'takeaway' ],
                 'discount_type' => 'percentage',
@@ -417,13 +438,13 @@ class DemoCoreService
                 'discount_percentage' => $discountRate,
                 'addresses' => [
                     'shipping' => [
-                        'name' => 'First Name Delivery',
-                        'surname' => 'Surname',
+                        'first_name' => 'Paul',
+                        'last_name' => 'Walker',
                         'country' => 'Cameroon',
                     ],
                     'billing' => [
-                        'name' => 'EBENE Voundi',
-                        'surname' => 'Antony Hervé',
+                        'first_name' => 'EBENE Voundi',
+                        'last_name' => 'Antony Hervé',
                         'country' => 'United State Seattle',
                     ],
                 ],

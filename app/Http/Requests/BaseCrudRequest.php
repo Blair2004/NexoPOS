@@ -12,6 +12,6 @@ class BaseCrudRequest extends FormRequest
         $service = new CrudService;
         $resource = $service->getCrudInstance( $this->route( 'namespace' ) );
 
-        return $service->getPlainData( $resource, $this, $entry );
+        return $resource->getPlainData( $this, $entry );
     }
 }

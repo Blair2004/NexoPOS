@@ -30,9 +30,15 @@ class SaveSettingsTest extends TestCase
                 $file = pathinfo( $fileName->last() );
 
                 return 'App\\Settings\\' . $file[ 'filename' ];
-            })
+            } )
+            ->filter( function ( $class ) {
+                $object = new $class;
+
+                return array_key_exists( 'tabs', $object->getForm() );
+            } )
             ->each( function ( $class ) {
                 $object = new $class;
+                $form = $object->getForm();
 
                 $form = collect( $object->getForm()[ 'tabs' ] )->mapWithKeys( function ( $value, $key ) {
                     return [
@@ -50,21 +56,21 @@ class SaveSettingsTest extends TestCase
                                         'ns_datetime_format' => 'Y-m-d H:i',
                                         default => (
                                             match ( $field[ 'type' ] ) {
-                                                'text', 'textarea' => strstr( $field[ 'name' ], 'email' ) ? $this->faker->email() : $this->faker->text(20),
+                                                'text', 'textarea' => strstr( $field[ 'name' ], 'email' ) ? $this->faker->email() : $this->faker->text( 20 ),
                                                 'select' => ! empty( $field[ 'options' ] ) ? collect( $field[ 'options' ] )->random()[ 'value' ] : '',
                                                 default => $field[ 'value' ]
                                             }
                                         )
                                     },
                                 ];
-                            }),
+                            } ),
                     ];
-                })->toArray();
+                } )->toArray();
 
-                if ( ! empty( $object->getNamespace() ) ) {
+                if ( ! empty( $object->getIdentifier() ) ) {
                     $response = $this
                         ->withSession( $this->app[ 'session' ]->all() )
-                        ->json( 'POST', '/api/nexopos/v4/settings/' . $object->getNamespace(), $form );
+                        ->json( 'POST', '/api/settings/' . $object->getIdentifier(), $form );
 
                     $response->assertJsonPath( 'status', 'success' );
 
@@ -86,6 +92,6 @@ class SaveSettingsTest extends TestCase
                         }
                     }
                 }
-            });
+            } );
     }
 }

@@ -1,7 +1,7 @@
-import { Order } from "@/interfaces/order";
-import { Popup } from "@/libraries/popup";
-import { Queue } from "@/contracts/queue";
-import { default as nsCustomerSelectionPopup }  from '@/popups/ns-pos-customer-select-popup.vue';
+import { Order } from "~/interfaces/order";
+import { Popup } from "~/libraries/popup";
+import { Queue } from "~/contracts/queue";
+import { default as nsCustomerSelectionPopup }  from '~/popups/ns-pos-customer-select-popup.vue';
 
 export class CustomerQueue implements Queue {
     constructor( private order: Order ) {};

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env( 'APP_NAME', 'Laravel' ),
 
     /*
     |--------------------------------------------------------------------------
@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+    'env' => env( 'APP_ENV', 'production' ),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool) env( 'APP_DEBUG', false ),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,9 +52,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env( 'APP_URL', 'http://localhost' ),
 
-    'asset_url' => env('ASSET_URL', null),
+    'asset_url' => env( 'ASSET_URL', null ),
 
     /*
     |--------------------------------------------------------------------------
@@ -119,7 +119,7 @@ return [
     |
     */
 
-    'key' => env('APP_KEY'),
+    'key' => env( 'APP_KEY' ),
 
     'cipher' => 'AES-256-CBC',
 
@@ -169,17 +169,18 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\TelescopeServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\ModulesServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
         App\Providers\CrudServiceProvider::class,
         App\Providers\SettingsPageProvider::class,
         App\Providers\FormsProvider::class,
         App\Providers\LocalizationServiceProvider::class,
+        App\Providers\WidgetsServiceProvider::class,
     ],
 
     /*

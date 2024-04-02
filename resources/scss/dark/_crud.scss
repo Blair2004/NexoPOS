@@ -1,0 +1,90 @@
+/**
+ * Crud
+**/
+#crud-table {
+    @apply bg-box-background;
+
+    #crud-table-header {
+        @apply border-box-edge;
+    }
+
+    .ns-crud-input {
+        @apply bg-crud-input-background;
+
+        input, select {
+            @apply text-primary;
+        }
+    }
+    
+    .ns-table-row {
+        @apply border-table-th-edge;
+
+        td {
+            @apply border-table-th-edge text-typography;
+        }
+
+        .ns-menu-wrapper > div {
+            @apply bg-box-elevation-background;
+        }
+
+        .ns-action-button {
+            @apply text-secondary;
+
+            &:hover {
+                @apply bg-info-secondary text-white;
+            }
+
+            &:focus {
+                @apply outline-none;
+            }
+        }
+    }
+
+    .ns-crud-button, .ns-crud-input-button {
+        @apply border-crud-button-edge bg-transparent text-typography;
+
+        &.table-filters-enabled {
+            @apply bg-info-primary text-primary;
+        }
+    
+        &.table-filters-disabled {
+            @apply text-secondary border-crud-button-edge;
+        }
+
+        &:hover {
+            @apply border-transparent bg-input-button-hover text-typography;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+
+    .footer {
+        @apply border-box-edge;
+    }
+}
+
+#crud-form {
+    .ns-crud-button, .ns-crud-input-button {
+        @apply border-crud-button-edge bg-transparent text-typography;
+
+        &.table-filters-enabled {
+            @apply bg-info-primary text-primary;
+        }
+    
+        &.table-filters-disabled {
+            @apply text-secondary border-crud-button-edge;
+        }
+
+        &:hover {
+            @apply border-transparent bg-input-button-hover text-typography;
+        }
+    }
+    .ns-crud-input {
+        @apply bg-input-background border-input-background;
+
+        input {
+            @apply text-primary bg-crud-button-edge;
+        }
+    }
+}

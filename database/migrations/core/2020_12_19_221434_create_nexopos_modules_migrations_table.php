@@ -24,11 +24,11 @@ return new class extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_modules_migrations' ) ) {
-            Schema::create('nexopos_modules_migrations', function (Blueprint $table) {
+            Schema::create( 'nexopos_modules_migrations', function ( Blueprint $table ) {
                 $table->id();
                 $table->string( 'namespace' );
                 $table->string( 'file' );
-            });
+            } );
         }
     }
 

@@ -2,12 +2,12 @@
 
 namespace App\Crud;
 
+use App\Casts\ProductHistoryActionCast;
 use App\Exceptions\NotAllowedException;
 use App\Models\ProductHistory;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -53,6 +53,14 @@ class GlobalProductHistoryCrud extends CrudService
         'delete' => false,
     ];
 
+    protected $showOptions  =   false;
+    
+    protected $showCheckboxes  =   false;
+
+    public $casts = [
+        'operation_type' => ProductHistoryActionCast::class,
+    ];
+
     /**
      * Adding relation
      * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
@@ -91,14 +99,14 @@ class GlobalProductHistoryCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -130,15 +138,13 @@ class GlobalProductHistoryCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -168,7 +174,7 @@ class GlobalProductHistoryCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -181,7 +187,7 @@ class GlobalProductHistoryCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -192,7 +198,7 @@ class GlobalProductHistoryCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, ProductHistory $entry )
     {
@@ -203,7 +209,7 @@ class GlobalProductHistoryCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -220,7 +226,7 @@ class GlobalProductHistoryCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, ProductHistory $entry )
     {
@@ -231,7 +237,7 @@ class GlobalProductHistoryCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -244,9 +250,9 @@ class GlobalProductHistoryCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $entry )
     {
@@ -262,9 +268,9 @@ class GlobalProductHistoryCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -274,7 +280,7 @@ class GlobalProductHistoryCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
     {
@@ -298,10 +304,8 @@ class GlobalProductHistoryCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'product_name' => [
@@ -367,68 +371,21 @@ class GlobalProductHistoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->procurement_name = $entry->procurement_name ?: __( 'N/A' );
         $entry->order_code = $entry->order_code ?: __( 'N/A' );
         $entry->total_price = ns()->currency->fresh( $entry->total_price )->format();
 
-        switch ( $entry->operation_type ) {
-            case ProductHistory::ACTION_ADDED :
-            case ProductHistory::ACTION_ADJUSTMENT_RETURN :
-            case ProductHistory::ACTION_RETURNED :
-            case ProductHistory::ACTION_STOCKED :
-            case ProductHistory::ACTION_TRANSFER_CANCELED :
-            case ProductHistory::ACTION_TRANSFER_IN :
-            case ProductHistory::ACTION_VOID_RETURN :
-                $entry->{ '$cssClass' } = 'info border text-sm';
-                break;
-            default:
-                $entry->{ '$cssClass' } = 'success border text-sm';
-                break;
-        }
-
-        switch ( $entry->operation_type ) {
-            case ProductHistory::ACTION_ADDED: $entry->operation_type = __( 'Added' );
-                break;
-            case ProductHistory::ACTION_ADJUSTMENT_RETURN: $entry->operation_type = __( 'Stock Return' );
-                break;
-            case ProductHistory::ACTION_ADJUSTMENT_SALE: $entry->operation_type = __( 'Sale Adjustment' );
-                break;
-            case ProductHistory::ACTION_DEFECTIVE: $entry->operation_type = __( 'Defective' );
-                break;
-            case ProductHistory::ACTION_DELETED: $entry->operation_type = __( 'Deleted' );
-                break;
-            case ProductHistory::ACTION_LOST: $entry->operation_type = __( 'Lost' );
-                break;
-            case ProductHistory::ACTION_REMOVED: $entry->operation_type = __( 'Removed' );
-                break;
-            case ProductHistory::ACTION_RETURNED: $entry->operation_type = __( 'Stock Return' );
-                break;
-            case ProductHistory::ACTION_SOLD: $entry->operation_type = __( 'Sold' );
-                break;
-            case ProductHistory::ACTION_STOCKED: $entry->operation_type = __( 'Stocked' );
-                break;
-            case ProductHistory::ACTION_TRANSFER_CANCELED: $entry->operation_type = __( 'Transfer Canceled' );
-                break;
-            case ProductHistory::ACTION_TRANSFER_IN: $entry->operation_type = __( 'Incoming Transfer' );
-                break;
-            case ProductHistory::ACTION_TRANSFER_OUT: $entry->operation_type = __( 'Outgoing Transfer' );
-                break;
-            case ProductHistory::ACTION_VOID_RETURN: $entry->operation_type = __( 'Void Return' );
-                break;
-        }
-
         // you can make changes here
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.global-products-history/' . $entry->id ),
-            'confirm' => [
+        $entry->action(
+            label: __( 'Delete' ),
+            identifier: 'delete',
+            url: ns()->url( '/api/crud/ns.global-products-history/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ],
-        ]);
+            ]
+        );
 
         return $entry;
     }
@@ -442,7 +399,7 @@ class GlobalProductHistoryCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -462,7 +419,7 @@ class GlobalProductHistoryCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -471,7 +428,7 @@ class GlobalProductHistoryCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -484,7 +441,7 @@ class GlobalProductHistoryCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
@@ -492,15 +449,15 @@ class GlobalProductHistoryCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . '/products/history' ),
             'create' => ns()->url( 'dashboard/' . '/products/history/create' ),
             'edit' => ns()->url( 'dashboard/' . '/products/history/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.global-products-history' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.global-products-history/{id}' . '' ),
         ];
     }
 
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -510,15 +467,15 @@ class GlobalProductHistoryCrud extends CrudService
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

@@ -20,7 +20,7 @@ class DashboardDayAfterCreatedEventListener
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param  object $event
      * @return void
      */
     public function handle( DashboardDayAfterCreatedEvent $event )

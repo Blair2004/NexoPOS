@@ -5,8 +5,8 @@ namespace App\Crud;
 use App\Exceptions\NotAllowedException;
 use App\Models\ProductUnitQuantity;
 use App\Models\User;
+use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -20,7 +20,7 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * default identifier
      */
-    protected $identifier = 'products/units';
+    const IDENTIFIER = 'products/units';
 
     /**
      * Define namespace
@@ -68,14 +68,14 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -85,20 +85,28 @@ class ProductUnitQuantitiesCrud extends CrudService
     public $fillable = [];
 
     /**
+     * showing the options here is pointless.
+     */
+    protected $showOptions  =   false;
+
+    /**
+     * Bulk options are uselss here.
+     */
+    protected $showCheckboxes   = false;
+
+    /**
      * Define Constructor
      */
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -135,7 +143,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -200,7 +208,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -211,7 +219,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, ProductUnitQuantity $entry )
     {
@@ -222,7 +230,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -239,7 +247,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, ProductUnitQuantity $entry )
     {
@@ -250,7 +258,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -263,9 +271,9 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $entry )
     {
@@ -279,9 +287,9 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -291,7 +299,7 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
     {
@@ -315,10 +323,8 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'products_name' => [
@@ -347,7 +353,7 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         return $entry;
     }
@@ -356,7 +362,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -376,7 +382,7 @@ class ProductUnitQuantitiesCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -385,7 +391,7 @@ class ProductUnitQuantitiesCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -398,7 +404,7 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
@@ -414,7 +420,7 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -424,15 +430,15 @@ class ProductUnitQuantitiesCrud extends CrudService
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

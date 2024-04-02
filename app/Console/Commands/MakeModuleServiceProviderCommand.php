@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Helper;
 use App\Services\ModulesService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -47,14 +48,14 @@ class MakeModuleServiceProviderCommand extends Command
      */
     public function handle()
     {
-        if ( ns()->installed() ) {
+        if ( Helper::installed() ) {
             if ( ! empty( $this->argument( 'namespace' ) && ! empty( $this->argument( 'name' ) ) ) ) {
                 $modules = app()->make( ModulesService::class );
 
                 /**
                  * Check if the module exists
                  */
-                if ( $module = $modules->get( $this->argument( 'namespace') ) ) {
+                if ( $module = $modules->get( $this->argument( 'namespace' ) ) ) {
                     $fileName = ucwords( Str::camel( $this->argument( 'name' ) ) );
 
                     if ( in_array( $fileName, [ 'CoreServiceProvider' ] ) ) {
@@ -70,7 +71,7 @@ class MakeModuleServiceProviderCommand extends Command
                             view( 'generate.modules.providers', [
                                 'module' => $module,
                                 'className' => $fileName,
-                            ])
+                            ] )
                         );
 
                         return $this->info( 'The service provider "' . $fileName . '" has been created for "' . $module[ 'name' ] . '"' );
@@ -82,7 +83,7 @@ class MakeModuleServiceProviderCommand extends Command
                 }
             }
         } else {
-            $this->info( 'NexoPOS is not yet installed.' );
+            $this->error( 'NexoPOS is not yet installed.' );
         }
     }
 }

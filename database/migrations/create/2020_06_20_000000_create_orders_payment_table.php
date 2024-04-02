@@ -12,7 +12,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function up()
     {
@@ -20,19 +20,19 @@ return new class extends Migration
             Schema::createIfMissing( 'nexopos_orders_payments', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'order_id' );
-                $table->float( 'value', 18, 5 )->default(0);
+                $table->float( 'value', 18, 5 )->default( 0 );
                 $table->integer( 'author' );
                 $table->string( 'identifier' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
-            });
+            } );
         }
     }
 
     /**
      * Reverse the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function down()
     {

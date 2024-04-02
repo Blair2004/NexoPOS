@@ -32,16 +32,15 @@ class CrudPutRequest extends BaseCrudRequest
          * it might be used to ignore record
          * during validation.
          */
-        $arrayRules = $service->extractCrudValidation(
-            $resource,
-            $resource->getModel()::find( $this->route( 'id' ) )
+        $arrayRules = $resource->extractValidation(
+            model: $resource->getModel()::find( $this->route( 'id' ) )
         );
 
         /**
          * As validation might uses array with Rule class, we want to
          * properly exclude that, so that the array is not converted into dots.
          */
-        $isolatedRules = $service->isolateArrayRules( $arrayRules );
+        $isolatedRules = $resource->isolateArrayRules( $arrayRules );
 
         /**
          * This will flat the rules to create a dot-like
@@ -49,7 +48,7 @@ class CrudPutRequest extends BaseCrudRequest
          */
         $flatRules = collect( $isolatedRules )->mapWithKeys( function ( $rule ) {
             return [ $rule[0] => $rule[1] ];
-        })->toArray();
+        } )->toArray();
 
         return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), $flatRules );
     }

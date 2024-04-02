@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::createIfMissing( 'nexopos_orders_instalments', function ( Blueprint $table ) {
             $table->bigIncrements( 'id' );
-            $table->float( 'amount', 18, 5 )->default(0);
+            $table->float( 'amount', 18, 5 )->default( 0 );
             $table->integer( 'order_id' )->nullable();
-            $table->boolean( 'paid' )->default(false);
+            $table->boolean( 'paid' )->default( false );
             $table->integer( 'payment_id' )->nullable();
             $table->datetime( 'date' );
-        });
+        } );
     }
 
     /**

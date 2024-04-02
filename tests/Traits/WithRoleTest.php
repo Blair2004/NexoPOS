@@ -16,20 +16,19 @@ trait WithRoleTest
             Role::STOREADMIN,
             Role::STORECASHIER,
             Role::USER,
-        ])->first();
+        ] )->first();
 
         $response = $this->submitRequest( ( new RolesCrud )->getNamespace(), [
             'name' => $role->name,
             'general' => [
                 'namespace' => $role->namespace,
-                'dashid' => $role->dashid,
             ],
-        ]);
+        ] );
 
         /**
          * The attempt should fail.
          */
-        $response->assertStatus(422);
+        $response->assertStatus( 500 );
     }
 
     public function attemptEditReservedRole()
@@ -39,7 +38,7 @@ trait WithRoleTest
             Role::STOREADMIN,
             Role::STORECASHIER,
             Role::USER,
-        ])->first();
+        ] )->first();
 
         $this->submitRequest( ( new RolesCrud )->getNamespace() . '/' . $role->id, [
             'name' => $role->name,
@@ -61,13 +60,13 @@ trait WithRoleTest
             Role::STOREADMIN,
             Role::STORECASHIER,
             Role::USER,
-        ])->first();
+        ] )->first();
 
         $response = $this->submitRequest( ( new RolesCrud )->getNamespace() . '/' . $role->id, [], 'DELETE' );
 
         /**
          * A system role can't be deleted
          */
-        $response->assertStatus(500);
+        $response->assertStatus( 500 );
     }
 }

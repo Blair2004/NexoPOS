@@ -1,5 +1,8 @@
 <template>
     <div id="permission-wrapper">
+        <div class="my-2">
+            <input ref="search" v-model="searchText" type="text" :placeholder="__( 'Press &quot;/&quot; to search permissions' )" class="border-2 p-2 w-full outline-none bg-input-background border-input-edge text-primary">
+        </div>
         <div class="rounded shadow ns-box flex">
             <div id="permissions" class="w- bg-gray-800 flex-shrink-0">
                 <div class="h-24 py-4 px-2 border-b border-gray-700 text-gray-100 flex justify-between items-center">
@@ -13,10 +16,10 @@
                         </button>
                     </div>
                 </div>
-                <div :key="permission.id" v-for="permission of permissions" :class="toggled ? 'w-24' : 'w-54'" class="p-2 border-b border-gray-700 text-gray-100">
+                <div :key="permission.id" v-for="permission of filteredPermissions" :class="toggled ? 'w-24' : 'w-54'" class="p-2 border-b border-gray-700 text-gray-100">
                     <a href="javascript:void(0)" :title="permission.namespace">
                         <span v-if="! toggled">{{ permission.name }}</span>
-                        <span v-if="toggled">{{ permission.name | truncate(5) }}</span>
+                        <span v-if="toggled">{{ permission.name }}</span>
                     </a>
                 </div>
             </div>
@@ -28,7 +31,7 @@
                             <span class="mx-1"><ns-checkbox @change="selectAllPermissions( role )" :field="role.field"></ns-checkbox></span>
                         </div>
                     </div>
-                    <div :key="permission.id" v-for="permission of permissions" class="permission flex">
+                    <div :key="permission.id" v-for="permission of filteredPermissions" class="permission flex">
                         <div v-for="role of roles" :key="role.id" class="border-b border-table-th-edge w-56 flex-shrink-0 p-2 flex items-center justify-center border-r">
                             <ns-checkbox @change="submitPermissions( role, role.fields[ permission.namespace ] )" :field="role.fields[ permission.namespace ]"></ns-checkbox>
                         </div>
@@ -39,10 +42,10 @@
     </div>
 </template>
 <script>
-import { nsTruncate } from '@/filters/truncate';
+import { nsTruncate } from '~/filters/truncate';
 import { forkJoin } from "rxjs";
-import { nsHttpClient, nsSnackBar } from "../../bootstrap";
-import { __ } from '@/libraries/lang';
+import { nsHttpClient, nsSnackBar } from "~/bootstrap";
+import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-permissions',
     filters: [
@@ -53,10 +56,37 @@ export default {
             permissions: [],
             toggled: false,
             roles: [],
+            searchText: '',
+        }
+    },
+    computed: {
+        filteredPermissions() {
+            if ( this.searchText.length !== 0 ) {
+                return this.permissions.filter( permission => {
+                    const expression       =   new RegExp( this.searchText, 'i' );
+                    return expression.test( permission.name ) || expression.test( permission.namespace );
+                });
+            }
+
+            return this.permissions;
         }
     },
     mounted() {
         this.loadPermissionsAndRoles();
+        nsHotPress
+            .create( 'ns-permissions' )
+            .whenPressed( 'shift+/', ( event ) => {
+                this.$refs[ 'search' ].focus();
+                setTimeout( () => {
+                    this.searchText     =   '';
+                }, 5 );
+            })
+            .whenPressed( '/', ( event ) => {
+                this.$refs[ 'search' ].focus();
+                setTimeout( () => {
+                    this.searchText     =   '';
+                }, 5 );
+            });
     },
     methods: {
         __,
@@ -66,21 +96,51 @@ export default {
          * @param {object} role
          * @return void
          */
-        selectAllPermissions( role ) {
+        async selectAllPermissions( role ) {
             const roles   =   new Object;
             roles[ role.namespace ]                     =   new Object;
 
+            let confirmed   =   false;
+
+            /**
+             * If we're attempting to edit a system role
+             * we should warn the user about that.
+             */
+            if ( role.locked ) {
+                confirmed   =   await new Promise( ( resolve, reject) => {
+                    Popup.show( nsConfirmPopup, { 
+                        title: __( 'Confirm Your Action' ), 
+                        message: __( 'Would you like to bulk edit a system role ?' ),
+                        onAction: action => {
+                            if ( action ) {
+                                return resolve( true );
+                            }
+                            return resolve( false );
+                        }
+                    })
+                });
+            }
+
             if ( 
                 ! role.locked ||
-                ( role.locked && confirm( this.$slots[ 'bulk-edit-system-role' ] ? this.$slots[ 'bulk-edit-system-role' ][0].text : 'No message has been provided for "bulk-edit-system-role"' ) )
-                
+                ( role.locked && confirmed )
             ) {    
-                for( let permission in role.fields ) {
+                const editedRoles   =   this.filterObjectByKeys( role.fields, this.filteredPermissions.map( permission => permission.namespace ) );
+
+                for( let permission in editedRoles ) {
                     role.fields[ permission ].value             =   role.field.value;
                     roles[ role.namespace ][ permission ]       =   role.field.value;
                 }    
 
-                nsHttpClient.put( '/api/nexopos/v4/users/roles', roles )
+                /**
+                 * This will only update the currently
+                 * filtered permissions.
+                 */
+                const filtredRoles    =   this.arrayToObject( this.filteredPermissions, 'namespace', ( permission ) => {
+                    return roles[ role.namespace ][ permission.namespace ];
+                });
+
+                nsHttpClient.put( '/api/users/roles', roles )
                     .subscribe( result => {
                         nsSnackBar.success( result.message, null, {
                             duration: 3000
@@ -96,6 +156,29 @@ export default {
             }
         },
 
+        filterObjectByKeys( object, keys ) {
+            return Object.fromEntries(
+                Object.entries(object).filter(([key]) => keys.includes(key))
+            );
+        },
+
+        /**
+         * Maps an array to convert it into an object
+         * @param {collect} array 
+         * @param {string} key 
+         * @param {any} value 
+         */
+        arrayToObject( array, key, valueCallback ) {
+            return Object.assign(
+                {}, 
+                ...array.map(item => {
+                    return {
+                        [item[ key ]]: valueCallback( item )
+                    };
+                })
+            );
+        },
+
         /**
          * Submit role and permissions change
          * @param {Role} role
@@ -108,7 +191,7 @@ export default {
             roles[ role.namespace ]                     =   new Object;
             roles[ role.namespace ][ permission.name ]  =   permission.value;
 
-            nsHttpClient.put( '/api/nexopos/v4/users/roles', roles )
+            nsHttpClient.put( '/api/users/roles', roles )
                 .subscribe( result => {
                     nsSnackBar.success( result.message, null, {
                         duration: 3000
@@ -121,10 +204,10 @@ export default {
          * @return void
          */
         loadPermissionsAndRoles() {
-            return forkJoin(
-                nsHttpClient.get( '/api/nexopos/v4/users/roles' ),
-                nsHttpClient.get( '/api/nexopos/v4/users/permissions' ),
-            ).subscribe( result => {
+            return forkJoin([
+                nsHttpClient.get( '/api/users/roles' ),
+                nsHttpClient.get( '/api/users/permissions' ),
+            ]).subscribe( result => {
                 this.permissions    =   result[1];
                 this.roles          =   result[0].map( role => {
                     let isChecked           =   false;

@@ -24,30 +24,25 @@ use App\Models\OrderInstalment;
 use App\Models\OrderPayment;
 use App\Models\OrderRefund;
 use App\Models\PaymentType;
+use App\Services\DateService;
 use App\Services\Options;
 use App\Services\OrdersService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class OrdersController extends DashboardController
 {
-    /** @var OrdersService */
-    private $ordersService;
-
-    /** @var OptionsService */
-    private $optionsService;
-
     private $paymentTypes;
 
     public function __construct(
-        OrdersService $ordersService,
-        Options $options
+        private OrdersService $ordersService,
+        private Options $optionsService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
-        $this->optionsService = $options;
-        $this->ordersService = $ordersService;
-
         $this->middleware( function ( $request, $next ) {
+            /**
+             * @todo must be refactored
+             */
             $this->paymentTypes = PaymentType::orderBy( 'priority', 'asc' )
                 ->active()
                 ->get()
@@ -55,20 +50,20 @@ class OrdersController extends DashboardController
                     $payment->selected = $index === 0;
 
                     return $payment;
-                });
+                } );
 
             return $next( $request );
-        });
+        } );
     }
 
     public function create( Request $request )
     {
-        return $this->ordersService->create( $request->all() );
+        return $this->ordersService->create( $request->post() );
     }
 
     public function updateOrder( Order $id, Request $request )
     {
-        return $this->ordersService->create( $request->all(), $id );
+        return $this->ordersService->create( $request->post(), $id );
     }
 
     public function addProductToOrder( $order_id, Request $request )
@@ -89,22 +84,22 @@ class OrdersController extends DashboardController
 
         $orderPayment->load( 'order' );
 
-        return $this->view( 'pages.dashboard.orders.templates.payment-receipt', [
+        return View::make( 'pages.dashboard.orders.templates.payment-receipt', [
             'payment' => $orderPayment,
             'order' => $order,
             'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function ( $payment ) {
                 return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
-            }),
+            } ),
             'ordersService' => app()->make( OrdersService::class ),
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
             'title' => sprintf( __( 'Payment Receipt &mdash; %s' ), $order->code ),
-        ]);
+        ] );
     }
 
     public function listOrders()
     {
-        Hook::addFilter(
+        Hook::addAction(
             'ns-crud-footer',
             fn( Output $output ) => $output
                 ->addView( 'pages.dashboard.orders.footer' )
@@ -141,7 +136,7 @@ class OrdersController extends DashboardController
         return $this->ordersService->deleteOrderProduct( $order, $productId );
     }
 
-    public function getOrders( Order $id = null )
+    public function getOrders( ?Order $id = null )
     {
         if ( $id instanceof Order ) {
             $id->load( 'customer' );
@@ -174,27 +169,27 @@ class OrdersController extends DashboardController
                 ->addView( 'pages.dashboard.orders.footer' )
         );
 
-        return $this->view( 'pages.dashboard.orders.pos', [
+        return View::make( 'pages.dashboard.orders.pos', [
             'title' => sprintf(
-                __( 'POS &mdash; %s' ),
+                __( 'POS' ),
                 ns()->option->get( 'ns_store_name', 'NexoPOS' )
             ),
             'orderTypes' => collect( $this->ordersService->getTypeOptions() )
                 ->filter( function ( $type, $label ) {
                     return in_array( $label, ns()->option->get( 'ns_pos_order_types' ) ?: [] );
-                }),
+                } ),
             'options' => Hook::filter( 'ns-pos-options', [
                 'ns_pos_printing_document' => ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
                 'ns_orders_allow_partial' => ns()->option->get( 'ns_orders_allow_partial', 'no' ),
                 'ns_orders_allow_unpaid' => ns()->option->get( 'ns_orders_allow_unpaid', 'no' ),
                 'ns_pos_customers_creation_enabled' => ns()->option->get( 'ns_pos_customers_creation_enabled', 'no' ),
-                'ns_pos_order_types' => ns()->option->get( 'ns_pos_order_types', []),
-                'ns_pos_order_sms' => ns()->option->get( 'ns_pos_order_sms', 'no'),
-                'ns_pos_sound_enabled' => ns()->option->get( 'ns_pos_sound_enabled', 'yes'),
-                'ns_pos_quick_product' => ns()->option->get( 'ns_pos_quick_product', 'no'),
+                'ns_pos_order_types' => ns()->option->get( 'ns_pos_order_types', [] ),
+                'ns_pos_order_sms' => ns()->option->get( 'ns_pos_order_sms', 'no' ),
+                'ns_pos_sound_enabled' => ns()->option->get( 'ns_pos_sound_enabled', 'yes' ),
+                'ns_pos_quick_product' => ns()->option->get( 'ns_pos_quick_product', 'no' ),
                 'ns_pos_quick_product_default_unit' => ns()->option->get( 'ns_pos_quick_product_default_unit', 0 ),
-                'ns_pos_price_with_tax' => ns()->option->get( 'ns_pos_price_with_tax', 'no'),
-                'ns_pos_unit_price_ediable' => ns()->option->get( 'ns_pos_unit_price_ediable', 'no'),
+                'ns_pos_price_with_tax' => ns()->option->get( 'ns_pos_price_with_tax', 'no' ),
+                'ns_pos_unit_price_ediable' => ns()->option->get( 'ns_pos_unit_price_ediable', 'no' ),
                 'ns_pos_printing_enabled_for' => ns()->option->get( 'ns_pos_printing_enabled_for', 'only_paid_orders' ),
                 'ns_pos_registers_enabled' => ns()->option->get( 'ns_pos_registers_enabled', 'no' ),
                 'ns_pos_idle_counter' => ns()->option->get( 'ns_pos_idle_counter', 0 ),
@@ -211,15 +206,17 @@ class OrdersController extends DashboardController
                 'ns_pos_allow_wholesale_price' => ns()->option->get( 'ns_pos_allow_wholesale_price', 'no' ) === 'yes' ? true : false,
                 'ns_pos_allow_decimal_quantities' => ns()->option->get( 'ns_pos_allow_decimal_quantities', 'no' ) === 'yes' ? true : false,
                 'ns_pos_force_autofocus' => ns()->option->get( 'ns_pos_force_autofocus', 'no' ) === 'yes' ? true : false,
-            ]),
+            ] ),
             'urls' => [
                 'sale_printing_url' => Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
                 'orders_url' => ns()->route( 'ns.dashboard.orders' ),
                 'dashboard_url' => ns()->route( 'ns.dashboard.home' ),
+                'categories_url' => ns()->route( 'ns.dashboard.products.categories.create' ),
                 'registers_url' => ns()->route( 'ns.dashboard.registers-create' ),
+                'order_type_url' => ns()->route( 'ns.dashboard.settings', [ 'settings' => 'pos?tab=features' ] ),
             ],
             'paymentTypes' => $this->paymentTypes,
-        ]);
+        ] );
     }
 
     public function orderInvoice( Order $order )
@@ -238,13 +235,13 @@ class OrdersController extends DashboardController
         $order->paymentStatus = $this->ordersService->getPaymentLabel( $order->payment_status );
         $order->deliveryStatus = $this->ordersService->getPaymentLabel( $order->delivery_status );
 
-        return $this->view( 'pages.dashboard.orders.templates.invoice', [
+        return View::make( 'pages.dashboard.orders.templates.invoice', [
             'order' => $order,
             'options' => $optionsService->get(),
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
             'title' => sprintf( __( 'Order Invoice &mdash; %s' ), $order->code ),
-        ]);
+        ] );
     }
 
     public function orderRefundReceipt( OrderRefund $refund )
@@ -254,13 +251,13 @@ class OrdersController extends DashboardController
 
         $refund->refunded_products = Hook::filter( 'ns-refund-receipt-products', $refund->refunded_products );
 
-        return $this->view( 'pages.dashboard.orders.templates.refund-receipt', [
+        return View::make( 'pages.dashboard.orders.templates.refund-receipt', [
             'refund' => $refund,
             'ordersService' => app()->make( OrdersService::class ),
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
             'title' => sprintf( __( 'Order Refund Receipt &mdash; %s' ), $refund->order->code ),
-        ]);
+        ] );
     }
 
     public function orderReceipt( Order $order )
@@ -271,15 +268,15 @@ class OrdersController extends DashboardController
         $order->load( 'billing_address' );
         $order->load( 'user' );
 
-        return $this->view( 'pages.dashboard.orders.templates.receipt', [
+        return View::make( 'pages.dashboard.orders.templates.receipt', [
             'order' => $order,
             'title' => sprintf( __( 'Order Receipt &mdash; %s' ), $order->code ),
             'optionsService' => $this->optionsService,
             'ordersService' => $this->ordersService,
             'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function ( $payment ) {
                 return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
-            }),
-        ]);
+            } ),
+        ] );
     }
 
     public function voidOrder( Order $order, Request $request )
@@ -300,12 +297,12 @@ class OrdersController extends DashboardController
     /**
      * Will perform a payment on a specific order
      *
-     * @param Request $request
+     * @param  Request $request
      * @return array
      */
     public function addPayment( Order $order, OrderPaymentRequest $request )
     {
-        return $this->ordersService->makeOrderSinglePayment([
+        return $this->ordersService->makeOrderSinglePayment( [
             'identifier' => $request->input( 'identifier' ),
             'value' => $request->input( 'value' ),
         ], $order );

@@ -52,6 +52,7 @@ class ModuleEvent extends Command
             $eventsPath = $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Events' . DIRECTORY_SEPARATOR;
             $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
             $fileName = $eventsPath . $name;
+            $fullRelativePath = 'modules' . DIRECTORY_SEPARATOR . $fileName;
             $namespace = $this->argument( 'namespace' );
             $fileExists = Storage::disk( 'ns-modules' )->exists(
                 $fileName . '.php'
@@ -62,7 +63,10 @@ class ModuleEvent extends Command
                     'modules', 'module', 'name', 'namespace'
                 ) ) );
 
-                return $this->info( 'The event has been created !' );
+                return $this->info( sprintf(
+                    __( 'The event has been created at the following path "%s"!' ),
+                    $fullRelativePath . '.php'
+                ) );
             }
 
             return $this->error( 'The event already exists !' );

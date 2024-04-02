@@ -53,7 +53,7 @@ class ComputeDailyReportCommand extends Command
         $from = Carbon::parse( $this->option( 'from' ) );
         $monthCursor = $from->copy();
         $currentDate = ns()->date->getNow();
-        $dates = collect([]);
+        $dates = collect( [] );
 
         while ( ! $monthCursor->isSameMonth( $currentDate->copy()->addMonth() ) ) {
             $dates->push( $monthCursor->copy() );
@@ -81,7 +81,7 @@ class ComputeDailyReportCommand extends Command
          */
         $this->withProgressBar( $dates, function ( $date ) use ( $reportService ) {
             $reportService->computeDashboardMonth( $date );
-        });
+        } );
 
         $this->newLine();
 
@@ -93,7 +93,7 @@ class ComputeDailyReportCommand extends Command
         $from = Carbon::parse( $this->option( 'from' ) );
         $dayCursor = $from->copy();
         $currentDate = ns()->date->getNow();
-        $dates = collect([]);
+        $dates = collect( [] );
 
         while ( ! $dayCursor->isSameDay( $currentDate->copy()->addDay() ) ) {
             $dates->push( $dayCursor->copy() );
@@ -124,7 +124,7 @@ class ComputeDailyReportCommand extends Command
                 $date->startOfDay()->toDateTimeString(),
                 $date->endOfDay()->toDateTimeString()
             );
-        });
+        } );
 
         $this->newLine();
 

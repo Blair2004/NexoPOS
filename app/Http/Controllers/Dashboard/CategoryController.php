@@ -12,7 +12,9 @@ use App\Crud\GlobalProductHistoryCrud;
 use App\Crud\ProductCategoryCrud;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
+use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Services\DateService;
 use App\Services\ProductCategoryService;
 use Exception;
 use Illuminate\Http\Request;
@@ -20,15 +22,11 @@ use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends DashboardController
 {
-    /**
-     * @param ProductCategoryService
-     */
-    public $categoryService;
-
     public function __construct(
-        ProductCategoryService $categoryService
+        protected ProductCategoryService $categoryService,
+        protected DateService $dateService
     ) {
-        $this->categoryService = $categoryService;
+        // ...
     }
 
     public function get( $id = null )
@@ -98,7 +96,7 @@ class CategoryController extends DashboardController
             throw new NotFoundException( __( 'Unable to find the attached category parent' ) );
         }
 
-        $fields = $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
+        $fields = $request->only( [ 'name', 'parent_id', 'description', 'media_id' ] );
         if ( empty( $fields ) ) {
             throw new NotFoundException( __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' ) );
         }
@@ -138,7 +136,7 @@ class CategoryController extends DashboardController
             throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
         }
 
-        $fields = $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
+        $fields = $request->only( [ 'name', 'parent_id', 'description', 'media_id' ] );
         if ( empty( $fields ) ) {
             throw new NotFoundException( __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' ) );
         }
@@ -171,8 +169,8 @@ class CategoryController extends DashboardController
         }
 
         return $category->products()
-            ->whereIn( 'product_type', [ 'product', 'variation' ])
-            ->searchable()
+            ->whereIn( 'product_type', [ 'product', 'variation' ] )
+            ->onSale()
             ->get();
     }
 
@@ -190,8 +188,8 @@ class CategoryController extends DashboardController
         }
 
         return $category->products->products()
-            ->whereIn( 'product_type', [ 'variation' ])
-            ->searchable()
+            ->whereIn( 'product_type', [ 'variation' ] )
+            ->onSale()
             ->get();
     }
 
@@ -243,14 +241,19 @@ class CategoryController extends DashboardController
         if ( $id !== '0' ) {
             $category = ProductCategory::where( 'id', $id )
                 ->displayOnPOS()
+                ->where( function ( $query ) {
+                    $this->applyHideCategories( $query );
+                } )
                 ->with( 'subCategories' )
                 ->first();
 
             return [
                 'products' => $category->products()
                     ->with( 'galleries', 'tax_group.taxes' )
-                    ->searchable()
                     ->onSale()
+                    ->where( function ( $query ) {
+                        $this->applyHideProducts( $query );
+                    } )
                     ->trackingDisabled()
                     ->get()
                     ->map( function ( $product ) {
@@ -259,7 +262,7 @@ class CategoryController extends DashboardController
                         }
 
                         return $product;
-                    }),
+                    } ),
                 'categories' => $category
                     ->subCategories()
                     ->displayOnPOS()
@@ -273,13 +276,52 @@ class CategoryController extends DashboardController
             'products' => [],
             'previousCategory' => false,
             'currentCategory' => false,
-            'categories' => ProductCategory::where(function ( $query ) {
+            'categories' => ProductCategory::where( function ( $query ) {
                 $query->where( 'parent_id', null )
-                        ->orWhere( 'parent_id', 0 );
-            })
+                    ->orWhere( 'parent_id', 0 );
+            } )
+                ->where( function ( $query ) {
+                    $this->applyHideCategories( $query );
+                } )
                 ->displayOnPOS()
                 ->get(),
         ];
+    }
+
+    private function applyHideProducts( $query )
+    {
+        $exhaustedHidden = ns()->option->get( 'ns_pos_hide_exhausted_products' );
+
+        if ( $exhaustedHidden === 'yes' ) {
+            $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
+
+            $query->orWhere( function ( $query ) {
+                $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
+
+                $query->whereHas( 'unit_quantities', function ( $query ) {
+                    $query->where( 'quantity', '>', 0 );
+                } );
+            } );
+        }
+    }
+
+    private function applyHideCategories( $query )
+    {
+        $exhaustedHidden = ns()->option->get( 'ns_pos_hide_empty_categories' );
+
+        if ( $exhaustedHidden === 'yes' ) {
+            $query->whereHas( 'products', function ( $query ) {
+                $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
+            } );
+
+            $query->orWhereHas( 'products', function ( $query ) {
+                $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
+
+                $query->whereHas( 'unit_quantities', function ( $query ) {
+                    $query->where( 'quantity', '>', 0 );
+                } );
+            } );
+        }
     }
 
     /**

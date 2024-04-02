@@ -74,7 +74,7 @@ class ProductCommand extends Command
                 tax_group_id: $productUnitQuantity->product->tax_group_id,
                 tax_type: $productUnitQuantity->product->tax_type
             );
-        });
+        } );
 
         $this->newLine();
 
@@ -87,7 +87,7 @@ class ProductCommand extends Command
 
         $products = $this->withProgressBar( $queryBuilder->get(), function ( $product ) {
             $this->productService->generateProductBarcode( $product );
-        });
+        } );
 
         $this->newLine();
 
@@ -120,8 +120,8 @@ class ProductCommand extends Command
                 'groups' => [
                     'product_subitems' => $subItems->map( fn( $subItem ) => $subItem->toArray() )->toArray(),
                 ],
-            ]) );
-        });
+            ] ) );
+        } );
 
         $this->newLine();
 
@@ -136,7 +136,7 @@ class ProductCommand extends Command
         if ( ! empty( $this->option( 'where' ) ) || ! empty( $this->option( 'orWhere' ) ) ) {
             $query = ( new Product )->newQuery();
 
-            foreach ([ 'where', 'orWhere' ] as $option ) {
+            foreach ( [ 'where', 'orWhere' ] as $option ) {
                 if ( ! empty( $this->option( $option ) ) ) {
                     foreach ( $this->option( $option ) as $optionStatement ) {
                         $equalStatement = explode( ':', $optionStatement );

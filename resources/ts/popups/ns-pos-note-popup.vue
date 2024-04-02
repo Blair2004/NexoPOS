@@ -10,18 +10,19 @@
             <ns-field v-for="(field, index) of fields" :key="index" :field="field"></ns-field>
         </div>
         <div class="p-2 flex justify-end border-t ns-box-footer">
-            <ns-button type="info" @click="saveNote()">Save</ns-button>
+            <ns-button type="info" @click="saveNote()">{{ __( 'Save' ) }}</ns-button>
         </div>
     </div>
 </template>
 <script>
-import FormValidation from '@/libraries/form-validation';
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import FormValidation from '~/libraries/form-validation';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
+import { nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     name: "ns-pos-note-popup",
+    props: [ 'popup' ],
     data() {
         return {
             validation: new FormValidation,
@@ -53,9 +54,9 @@ export default {
         this.popupCloser();
         this.fields.forEach( field => {
             if ( field.name === 'note' ) {
-                field.value     =   this.$popupParams.note;
+                field.value     =   this.popup.params.note;
             } else if ( field.name === 'note_visibility' ) {
-                field.value     =   this.$popupParams.note_visibility;
+                field.value     =   this.popup.params.note_visibility;
             }
         });
     },
@@ -73,7 +74,6 @@ export default {
                 const errors    =   this.validation.validateFieldsErrors( this.fields );
                 this.validation.triggerFieldsErrors( this.fields, errors );
                 this.$forceUpdate();
-                console.log( this.fields );
                 return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
 

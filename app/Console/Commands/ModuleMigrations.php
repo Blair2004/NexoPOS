@@ -16,7 +16,7 @@ class ModuleMigrations extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:migration {namespace} {--forget=}';
+    protected $signature = 'modules:migration {namespace} {--forget} {--forgetPath=}';
 
     /**
      * The console command description.
@@ -24,6 +24,26 @@ class ModuleMigrations extends Command
      * @var string
      */
     protected $description = 'Create a module migration';
+
+    /**
+     * @var array
+     */
+    protected $module;
+
+    /**
+     * @var string
+     */
+    protected $migration;
+
+    /**
+     * @var string
+     */
+    protected $table;
+
+    /**
+     * @var array
+     */
+    protected $schema;
 
     /**
      * Create a new command instance.
@@ -60,7 +80,7 @@ class ModuleMigrations extends Command
                 $this->createMigration();
             }
         } else {
-            $this->info( 'Unable to locate the module.' );
+            $this->info( "Unable to locate the module \"{$this->argument( 'namespace' )}\"" );
         }
     }
 
@@ -71,7 +91,7 @@ class ModuleMigrations extends Command
      */
     public function passDeleteMigration()
     {
-        if ( $this->option( 'forget' ) === 'all' ) {
+        if ( $this->option( 'forget' ) ) {
             /**
              * This will revert the migration
              * for a specific module.
@@ -95,8 +115,10 @@ class ModuleMigrations extends Command
             Artisan::call( 'cache:clear' );
 
             return false;
-        } elseif ( ! empty( $this->option( 'forget' ) ) ) {
-            $path = str_replace( 'modules/', '', $this->option( 'forget' ) );
+        }
+
+        if ( $this->option( 'forgetPath' ) ) {
+            $path = str_replace( 'modules/', '', $this->option( 'forgetPath' ) );
 
             /**
              * This will revert the migration
@@ -105,7 +127,7 @@ class ModuleMigrations extends Command
              * @var ModulesService
              */
             $moduleService = app()->make( ModulesService::class );
-            $moduleService->revertMigrations( $this->module, [ $path ]);
+            $moduleService->revertMigrations( $this->module, [ $path ] );
 
             /**
              * We'll make sure to clear the migration as
@@ -154,7 +176,7 @@ class ModuleMigrations extends Command
                     'migration' => $this->migration,
                     'table' => $this->table,
                     'schema' => $this->schema,
-                ]);
+                ] );
         }
     }
 

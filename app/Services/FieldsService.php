@@ -4,8 +4,6 @@ namespace App\Services;
 
 class FieldsService
 {
-    protected $identifier;
-
     protected $fields = [];
 
     public function get()
@@ -13,8 +11,19 @@ class FieldsService
         return $this->fields;
     }
 
-    public function getIdentifier(): string
+    public static function getIdentifier(): string
     {
-        return $this->identifier;
+        if ( isset( get_called_class()::$identifier ) ) {
+            return get_called_class()::$identifier;
+        }
+
+        /**
+         * @todo set as a migration measure.
+         * identifier must be set statically to avoid any
+         * field build while just retreiving the identifier.
+         */
+        if ( isset( ( new self )->identifier ) ) {
+            return get_called_class()::$identifier;
+        }
     }
 }

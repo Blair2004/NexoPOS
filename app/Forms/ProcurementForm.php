@@ -9,7 +9,7 @@ use App\Services\SettingsPage;
 
 class ProcurementForm extends SettingsPage
 {
-    protected $identifier = 'ns.procurement';
+    const IDENTIFIER = 'ns.procurement';
 
     public $form;
 
@@ -39,17 +39,9 @@ class ProcurementForm extends SettingsPage
                     'label' => __( 'Unit Price' ),
                     'type' => 'text',
                 ],
-                'tax_group_id' => [
-                    'label' => __( 'Tax' ),
-                    'type' => 'tax_group_id',
-                ],
                 'tax_value' => [
                     'label' => __( 'Tax Value' ),
                     'type' => 'currency',
-                ],
-                'unit_quantities' => [
-                    'label' => __( 'UOM' ),
-                    'type' => 'unit_quantities',
                 ],
                 'quantity' => [
                     'label' => __( 'Quantity' ),
@@ -59,7 +51,7 @@ class ProcurementForm extends SettingsPage
                     'label' => __( 'Total Price' ),
                     'type' => 'currency',
                 ],
-            ]),
+            ] ),
             'products' => isset( $procurement ) ? $procurement->products->map( function ( $_product ) {
                 $product = Product::findOrFail( $_product->product_id );
                 $product->load( 'unit_quantities.unit' )->get();
@@ -67,15 +59,15 @@ class ProcurementForm extends SettingsPage
                 $_product->procurement = array_merge( $_product->toArray(), [
                     '$invalid' => false,
                     'purchase_price_edit' => $_product->purchase_price,
-                ]);
+                ] );
 
                 $_product->unit_quantities = $product->unit_quantities;
 
                 return $_product;
-            }) : [],
+            } ) : [],
             'tabs' => [
-                'general' => include( dirname( __FILE__ ) . '/procurement/general.php' ),
+                'general' => include ( dirname( __FILE__ ) . '/procurement/general.php' ),
             ],
-        ]);
+        ] );
     }
 }

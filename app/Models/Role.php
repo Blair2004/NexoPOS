@@ -4,8 +4,15 @@ namespace App\Models;
 
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
+/**
+ * @property int            $total_stores
+ * @property string         $description
+ * @property bool           $locked
+ * @property \Carbon\Carbon $updated_at
+ */
 class Role extends NsRootModel
 {
     use HasFactory;
@@ -30,25 +37,14 @@ class Role extends NsRootModel
     const STORECASHIER = 'nexopos.store.cashier';
 
     /**
+     * @var string STOREDRIVER store role with purchasing capacity
+     */
+    const STORECUSTOMER = 'nexopos.store.customer';
+
+    /**
      * @var string USER base role with no or less permissions
      */
     const USER = 'user';
-
-    /**
-     * Default dashboard identifier.
-     * Store dashboard
-     */
-    const DASHID_STORE = 'store';
-
-    /**
-     * Store cashier dashboard.
-     */
-    const DASHID_CASHIER = 'cashier';
-
-    /**
-     * Default dashboard for other users.
-     */
-    const DASHID_DEFAULT = 'default';
 
     protected $cats = [
         'locked' => 'boolean',
@@ -85,10 +81,8 @@ class Role extends NsRootModel
 
     /**
      * Relation with Permissions
-     *
-     * @return void
      **/
-    public function permissions()
+    public function permissions(): BelongsToMany
     {
         return $this->belongsToMany( Permission::class, 'nexopos_role_permission' );
     }
@@ -110,22 +104,10 @@ class Role extends NsRootModel
     }
 
     /**
-     * @param string namespace
-     *
-     * @deprecated
-     *
-     * @return Role
-     */
-    public static function withNamespace( $name )
-    {
-        return self::where( 'namespace', $name );
-    }
-
-    /**
      * Filter group matching the array provided as an argument
      *
      * @param Query
-     * @param array $arguments
+     * @param  array $arguments
      * @return Query
      */
     public function scopeIn( $query, $arguments )
@@ -148,7 +130,7 @@ class Role extends NsRootModel
                 return self::__createRelation( $this, $permission, $silent );
             }
 
-            throw new Exception( sprintf( __( 'Unable to find the permission with the namespace "%s".'), $permissions ) );
+            throw new Exception( sprintf( __( 'Unable to find the permission with the namespace "%s".' ), $permissions ) );
         } elseif ( $permissions instanceof Collection ) {
             /**
              * looping over provided permissions
@@ -156,7 +138,7 @@ class Role extends NsRootModel
              */
             $permissions->each( function ( $permissionNamespace ) {
                 $this->addPermissions( $permissionNamespace );
-            });
+            } );
         } elseif ( is_array( $permissions ) ) {
             /**
              * looping over provided permissions
@@ -164,7 +146,7 @@ class Role extends NsRootModel
              */
             collect( $permissions )->each( function ( $permissionNamespace ) {
                 $this->addPermissions( $permissionNamespace );
-            });
+            } );
         } elseif ( $permissions instanceof Permission ) {
             return $this->addPermissions( $permissions->namespace, $silent );
         }
@@ -173,9 +155,9 @@ class Role extends NsRootModel
     /**
      * create relation between role and permissions
      *
-     * @param Role $role
-     * @param Permission $permission
-     * @param bool $silent
+     * @param  Role       $role
+     * @param  Permission $permission
+     * @param  bool       $silent
      * @return void
      */
     private static function __createRelation( $role, $permission, $silent = true )
@@ -217,14 +199,14 @@ class Role extends NsRootModel
         if ( $permissionNamespace instanceof Collection ) {
             $permissionNamespace->each( fn( $permission ) => $this->removePermissions( $permission instanceof Permission ? $permission->namespace : $permission ) );
         } else {
-            $permission = Permission::where([ 'namespace' => $permissionNamespace ])
+            $permission = Permission::where( [ 'namespace' => $permissionNamespace ] )
                 ->first();
 
             if ( $permission instanceof Permission ) {
-                RolePermission::where([
+                RolePermission::where( [
                     'role_id' => $this->id,
                     'permission_id' => $permission->id,
-                ])->delete();
+                ] )->delete();
             } else {
                 throw new Exception( sprintf(
                     __( 'Unable to remove the permissions "%s". It doesn\'t exists.' ),

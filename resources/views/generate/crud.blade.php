@@ -14,39 +14,50 @@ namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
-use App\Services\Users;
 use App\Services\CrudEntry;
+use App\Classes\CrudTable;
+use App\Classes\CrudInput;
 use App\Exceptions\NotAllowedException;
-use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use {{ trim( $model_name ) }};
 
 class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 {
     /**
+     * Defines if the crud class should be automatically discovered by NexoPOS.
+     * If set to "true", you won't need to register that class on the "CrudServiceProvider".
+     */
+    const AUTOLOAD = true;
+
+    /**
      * define the base table
      * @param string
      */
-    protected $table      =   '{{ strtolower( trim( $table_name ) ) }}';
+    protected $table = '{{ strtolower( trim( $table_name ) ) }}';
 
     /**
      * default slug
      * @param string
      */
-    protected $slug   =   '{{ strtolower( trim( $route_name ) ) }}';
+    protected $slug = '{{ strtolower( trim( $route_name ) ) }}';
 
     /**
      * Define namespace
      * @param string
      */
-    protected $namespace  =   '{{ strtolower( trim( $namespace ) ) }}';
+    protected $namespace = '{{ strtolower( trim( $namespace ) ) }}';
+
+    /**
+     * To be able to autoload the class, we need to define
+     * the identifier on a constant.
+     */
+    const IDENTIFIER = '{{ strtolower( trim( $namespace ) ) }}';
 
     /**
      * Model Used
      * @param string
      */
-    protected $model      =   {{ trim( $lastClassName ) }}::class;
+    protected $model = {{ trim( $lastClassName ) }}::class;
 
     /**
      * Define permissions
@@ -65,9 +76,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * @param array
      */
     public $relations   =  [
-        @if( isset( $relations ) && count( $relations ) > 0 )@foreach( $relations as $relation )[ '{{ strtolower( trim( $relation[0] ) ) }}', '{{ strtolower( trim( $relation[2] ) ) }}', '=', '{{ strtolower( trim( $relation[1] ) ) }}' ],
-        @endforeach
-        @endif
+        @if( isset( $relations ) && count( $relations ) > 0 ) @foreach( $relations as $relation )[ '{{ strtolower( trim( $relation[0] ) ) }}', '{{ strtolower( trim( $relation[2] ) ) }}', '=', '{{ strtolower( trim( $relation[1] ) ) }}' ],
+        @endforeach @endif
     ];
 
     /**
@@ -82,7 +92,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * Export Columns defines the columns that
      * should be included on the exported csv file.
      */
-    protected $exportColumns    =   []; // @getColumns will be used by default.
+    protected $exportColumns = []; // @getColumns will be used by default.
 
     /**
      * Pick
@@ -93,110 +103,82 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [];
+    public $pick = [];
 
     /**
      * Define where statement
      * @var array
     **/
-    protected $listWhere    =   [];
+    protected $listWhere = [];
 
     /**
      * Define where in statement
      * @var array
      */
-    protected $whereIn      =   [];
-
-    /**
-     * Fields which will be filled during post/put
-     */
-    @php
-    $fields         =   explode( ',', $fillable );
-    foreach( $fields as &$field ) {
-        $field      =   trim( $field );
-    }
-    @endphp
+    protected $whereIn = [];
 
     /**
      * If few fields should only be filled
      * those should be listed here.
      */
-    public $fillable    =   {!! json_encode( $fillable ?: [] ) !!};
+    public $fillable = {!! json_encode( $fillable ?: [] ) !!};
 
     /**
      * If fields should be ignored during saving
      * those fields should be listed here
      */
-    public $skippable   =   [];
+    public $skippable = [];
 
     /**
      * Determine if the options column should display
      * before the crud columns
      */
-    protected $prependOptions     =   false;
+    protected $prependOptions = false;
 
     /**
-     * Define Constructor
-     * @param
+     * Will make the options column available per row if
+     * set to "true". Otherwise it will be hidden.
      */
-    public function __construct()
-    {
-        parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'addActions' ], 10, 2 );
-    }
+    protected $showOptions = true;
 
     /**
-     * Return the label used for the crud
-     * instance
-     * @return array
+     * Return the label used for the crud object.
     **/
-    public function getLabels()
+    public function getLabels(): array
     {
         return [
-            'list_title'            =>  __( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
-            'list_description'      =>  __( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
-            'no_entry'              =>  __( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
-            'create_new'            =>  __( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_title'          =>  __( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_description'    =>  __( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
-            'edit_title'            =>  __( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'edit_description'      =>  __( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
-            'back_to_list'          =>  __( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
+            'list_title'            =>  {{ '__' }}( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
+            'list_description'      =>  {{ '__' }}( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
+            'no_entry'              =>  {{ '__' }}( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
+            'create_new'            =>  {{ '__' }}( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
+            'create_title'          =>  {{ '__' }}( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
+            'create_description'    =>  {{ '__' }}( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
+            'edit_title'            =>  {{ '__' }}( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
+            'edit_description'      =>  {{ '__' }}( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
+            'back_to_list'          =>  {{ '__' }}( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
         ];
     }
 
     /**
-     * Check whether a feature is enabled
-     * @return boolean
-    **/
-    public function isEnabled( $feature ): bool
-    {
-        return false; // by default
-    }
-
-    /**
-     * Fields
-     * @param object/null
-     * @return array of field
+     * Defines the forms used to create and update entries.
      */
-    public function getForm( $entry = null )
+    public function getForm( {{ trim( $lastClassName ) }} $entry = null ): array
     {
         return [
             'main' =>  [
-                'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'label'         =>  {{ '__' }}( 'Name' ),
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
+                'description'   =>  {{ '__' }}( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
                 'general'   =>  [
-                    'label'     =>  __( 'General' ),
+                    'label'     =>  {{ '__' }}( 'General' ),
                     'fields'    =>  [
                         @foreach( $Schema::getColumnListing( $table_name ) as $column )[
                             'type'  =>  'text',
                             'name'  =>  '{{ $column }}',
-                            'label' =>  __( '{{ ucwords( $column ) }}' ),
+                            'label' =>  {{ '__' }}( '{{ ucwords( $column ) }}' ),
                             'value' =>  $entry->{{ $column }} ?? '',
                         ], @endforeach
                     ]
@@ -210,7 +192,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * @param array of fields
      * @return array of fields
      */
-    public function filterPostInputs( $inputs )
+    public function filterPostInputs( $inputs ): array
     {
         return $inputs;
     }
@@ -220,45 +202,37 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * @param array of fields
      * @return array of fields
      */
-    public function filterPutInputs( $inputs, {{ trim( $lastClassName ) }} $entry )
+    public function filterPutInputs( array $inputs, {{ trim( $lastClassName ) }} $entry )
     {
         return $inputs;
     }
 
     /**
-     * Before saving a record
-     * @param Request $request
-     * @return void
+     * Trigger actions that are executed before the
+     * crud entry is created.
      */
-    public function beforePost( $request )
+    public function beforePost( array $request ): array
     {
-        if ( $this->permissions[ 'create' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'create' ] );
-        } else {
-            throw new NotAllowedException;
-        }
+        $this->allowedTo( 'create' );
 
         return $request;
     }
 
     /**
-     * After saving a record
-     * @param Request $request
-     * @param {{ trim( $lastClassName ) }} $entry
-     * @return void
+     * Trigger actions that will be executed 
+     * after the entry has been created.
      */
-    public function afterPost( $request, {{ trim( $lastClassName ) }} $entry )
+    public function afterPost( array $request, {{ trim( $lastClassName ) }} $entry ): array
     {
         return $request;
     }
 
 
     /**
-     * get
-     * @param string
-     * @return mixed
+     * A shortcut and secure way to access
+     * senstive value on a read only way.
      */
-    public function get( $param )
+    public function get( string $param ): mixed
     {
         switch( $param ) {
             case 'model' : return $this->model ; break;
@@ -266,38 +240,31 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     }
 
     /**
-     * Before updating a record
-     * @param Request $request
-     * @param object entry
-     * @return void
+     * Trigger actions that are executed before
+     * the crud entry is updated.
      */
-    public function beforePut( $request, $entry )
+    public function beforePut( array $request, {{ trim( $lastClassName ) }} $entry ): array
     {
-        if ( $this->permissions[ 'update' ] !== false ) {
-            ns()->restrict( $this->permissions[ 'update' ] );
-        } else {
-            throw new NotAllowedException;
-        }
+        $this->allowedTo( 'update' );
 
         return $request;
     }
 
     /**
-     * After updating a record
-     * @param Request $request
-     * @param object entry
-     * @return void
+     * This trigger actions that are executed after
+     * the crud entry is successfully updated.
      */
-    public function afterPut( $request, $entry )
+    public function afterPut( array $request, {{ trim( $lastClassName ) }} $entry ): array
     {
         return $request;
     }
 
     /**
-     * Before Delete
-     * @return void
+     * This triggers actions that will be executed ebfore
+     * the crud entry is deleted.
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model ): void
+    {
         if ( $namespace == '{{ strtolower( trim( $namespace ) ) }}' ) {
             /**
              *  Perform an action before deleting an entry
@@ -305,7 +272,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
              *
              *  return response([
              *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
+             *      'message'   =>  {{ '__' }}( 'You\re not allowed to do that.' )
              *  ], 403 );
             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
@@ -317,56 +284,53 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     }
 
     /**
-     * Define Columns
-     * @return array of columns configuration
+     * Define columns and how it is structured.
      */
-    public function getColumns() {
-        return [
+    public function getColumns(): array
+    {
+        return CrudTable::column(
             @foreach( $Schema::getColumnListing( $table_name ) as $column )
-'{{ $column }}'  =>  [
-                'label'  =>  __( '{{ ucwords( $column ) }}' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
+            CrudTable::column(
+                identifier: '{{ $column }}',
+                label: {{ '__' }}( '{{ ucwords( $column ) }}' ),
+            ),
             @endforeach
-        ];
+        );
     }
 
     /**
-     * Define actions
+     * Define row actions.
      */
-    public function addActions( CrudEntry $entry, $namespace )
+    public function addActions( CrudEntry $entry, $namespace ): CrudEntry
     {
         /**
          * Declaring entry actions
          */
-        $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
-        ]);
-
-        $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+        $entry->action( 
+            identifier: 'edit',
+            label: {{ '__' }}( 'Edit' ),
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        );
+        
+        $entry->action( 
+            identifier: 'delete',
+            label: {{ '__' }}( 'Delete' ),
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
+            confirm: [
+                'message'  =>  {{ '__' }}( 'Would you like to delete this ?' ),
             ]
-        ]);
-
+        );
+        
         return $entry;
     }
 
 
     /**
-     * Bulk Delete Action
-     * @param  object Request with object
-     * @return  false/array
+     * trigger actions that are executed
+     * when a bulk actio is posted.
      */
-    public function bulkAction( Request $request )
+    public function bulkAction( Request $request ): array
     {
         /**
          * Deleting licence is only allowed for admin
@@ -386,7 +350,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
             $status     =   [
                 'success'   =>  0,
-                'failed'    =>  0
+                'error'    =>  0
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -395,7 +359,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
             return $status;
@@ -405,8 +369,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     }
 
     /**
-     * get Links
-     * @return array of links
+     * Defines links used on the CRUD object.
      */
     public function getLinks(): array
     {
@@ -414,20 +377,19 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             'list'      =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
             'create'    =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
             'edit'      =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
+            'post'      =>  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
+            'put'       =>  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
         ];
     }
 
     /**
-     * Get Bulk actions
-     * @return array of actions
+     * Defines the bulk actions.
     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
+                'label'         =>  {{ '__' }}( 'Delete Selected Entries' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace
@@ -437,10 +399,9 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     }
 
     /**
-     * get exports
-     * @return array of export formats
+     * Defines the export configuration.
     **/
-    public function getExports()
+    public function getExports(): array
     {
         return [];
     }

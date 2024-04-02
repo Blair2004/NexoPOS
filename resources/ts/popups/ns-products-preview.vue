@@ -5,7 +5,7 @@
                 {{ __( 'Previewing :' ) }} {{ product.name }}
             </div>
             <div>
-                <ns-close-button @click="$popup.close()"></ns-close-button>
+                <ns-close-button @click="popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="flex-auto overflow-y-auto ns-box-body">
@@ -23,9 +23,13 @@
                             </thead>
                             <tbody>
                                 <tr v-for="unitQuantity of unitQuantities" :key="unitQuantity.id">
-                                    <td class="p-1 border text-left">{{ unitQuantity.unit.name }}</td>
-                                    <td class="p-1 border text-right">{{ unitQuantity.sale_price | currency }}</td>
-                                    <td class="p-1 border text-right">{{ unitQuantity.wholesale_price | currency }}</td>
+                                    <td class="p-1 border text-left">{{ unitQuantity.unit.name }} 
+                                        <template v-if="product.rawType === 'materialized' && product.rawStockManagement === 'enabled'">
+                                            &mdash; <a @click="convert( unitQuantity, product )" class="text-sm text-info-secondary hover:underline border-dashed" href="javascript:void(0)">{{ __( 'Convert' ) }}</a>
+                                        </template>
+                                    </td>
+                                    <td class="p-1 border text-right">{{ nsCurrency( unitQuantity.sale_price  ) }}</td>
+                                    <td class="p-1 border text-right">{{ nsCurrency( unitQuantity.wholesale_price  ) }}</td>
                                     <td class="p-1 border text-right">{{ unitQuantity.quantity }}</td>
                                 </tr>
                             </tbody>
@@ -37,18 +41,26 @@
         </div>
     </div>
 </template>
-<script>
-import { nsHttpClient } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+<script lang="ts">
+import { nsCurrency } from '~/filters/currency';
+import { nsHttpClient } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import nsProductsConversion from './ns-products-conversion.vue';
+
+declare const Popup;
+
+
 export default {
     name: 'ns-products-preview',
+    props: [ 'popup', 'product' ],
     computed: {
         product() {
-            return this.$popupParams.product
+            return this.popup.params.product
         }
     },
     methods: {
         __,
+        nsCurrency,
         changeActiveTab( event ) {
             this.active     =   event;
 
@@ -57,12 +69,31 @@ export default {
             }
         },
         loadProductQuantities() {
+            console.log( 'is loadinfg' );
             this.hasLoadedUnitQuantities            =   false;
-            nsHttpClient.get( `/api/nexopos/v4/products/${this.product.id}/units/quantities` )
-                .subscribe( result => {
-                    this.unitQuantities             =   result;
-                    this.hasLoadedUnitQuantities    =   true;
+            nsHttpClient.get( `/api/products/${this.product.id}/units/quantities` )
+                .subscribe({
+                    next: result => {
+                        this.unitQuantities             =   result;
+                        this.hasLoadedUnitQuantities    =   true;
+                    }
                 })
+        },
+        async convert( unitQuantity, product ) {
+            try {
+                const promise   =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsProductsConversion, {
+                        unitQuantity,
+                        product,
+                        resolve, 
+                        reject
+                    })
+                });
+
+                this.loadProductQuantities();
+            } catch( exception ) {
+                console.log({ exception })
+            }
         }
     },
     data() {
@@ -74,11 +105,6 @@ export default {
     },
     mounted() {
         this.loadProductQuantities();
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.$popup.close();
-            }
-        });
     }
 }
 </script>

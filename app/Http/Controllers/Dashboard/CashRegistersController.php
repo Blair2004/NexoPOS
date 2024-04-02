@@ -15,6 +15,7 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Register;
 use App\Models\RegisterHistory;
 use App\Services\CashRegistersService;
+use App\Services\DateService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,9 +23,10 @@ use Illuminate\Support\Facades\Auth;
 class CashRegistersController extends DashboardController
 {
     public function __construct(
-        protected CashRegistersService $registersService
+        protected CashRegistersService $registersService,
+        protected DateService $dateService
     ) {
-        parent::__construct();
+        // ...
     }
 
     public function listRegisters()
@@ -59,7 +61,7 @@ class CashRegistersController extends DashboardController
             $this->registersService->getRegisterDetails( $register );
 
             return $register;
-        });
+        } );
     }
 
     public function performAction( Request $request, $action, Register $register )
@@ -88,7 +90,7 @@ class CashRegistersController extends DashboardController
                 $request->input( 'amount' ),
                 $request->input( 'description' )
             );
-        } elseif ( $action === RegisterHistory::ACTION_CASHING ) {
+        } elseif ( $action === RegisterHistory::ACTION_CASHIN ) {
             return $this->registersService->cashIn(
                 $register,
                 $request->input( 'amount' ),
@@ -138,14 +140,11 @@ class CashRegistersController extends DashboardController
 
                 $actions->each( function ( $session ) {
                     switch ( $session->action ) {
-                        case RegisterHistory::ACTION_CASHING:
+                        case RegisterHistory::ACTION_CASHIN:
                             $session->label = __( 'Cash In' );
                             break;
                         case RegisterHistory::ACTION_CASHOUT:
                             $session->label = __( 'Cash Out' );
-                            break;
-                        case RegisterHistory::ACTION_CHANGE:
-                            $session->label = __( 'Give Change' );
                             break;
                         case RegisterHistory::ACTION_CLOSING:
                             $session->label = __( 'Closing' );
@@ -160,7 +159,7 @@ class CashRegistersController extends DashboardController
                             $session->label = __( 'Refund' );
                             break;
                     }
-                });
+                } );
 
                 return $actions;
             }
@@ -178,11 +177,11 @@ class CashRegistersController extends DashboardController
      */
     public function getRegisterHistory( Register $register )
     {
-        return RegisterHistoryCrud::table([
+        return RegisterHistoryCrud::table( [
             'title' => sprintf( __( 'Register History For : %s' ), $register->name ),
             'queryParams' => [
                 'register_id' => $register->id,
             ],
-        ]);
+        ] );
     }
 }

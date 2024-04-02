@@ -170,6 +170,7 @@ class HotConfig {
         this.callbacks.push({
             action, callback
         });
+        return this;
     }
 
     clearCallbacks() {

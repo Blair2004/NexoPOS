@@ -1,19 +1,21 @@
 <script>
-import FormValidation from '@/libraries/form-validation';
-import resolveIfQueued from "@/libraries/popup-resolver";
-import { default as CashPayment } from "@/pages/dashboard/pos/payments/cash-payment";
-import { default as CreditCardPayment } from "@/pages/dashboard/pos/payments/creditcard-payment";
-import { default as BankPayment } from '@/pages/dashboard/pos/payments/bank-payment.vue';
-import { default as AccountPayment } from '@/pages/dashboard/pos/payments/account-payment.vue';
-import { Popup } from '@/libraries/popup';
+import { nsSnackBar } from '~/bootstrap';
+import resolveIfQueued from "~/libraries/popup-resolver";
+import { Popup } from '~/libraries/popup';
+import { __ } from '~/libraries/lang';
+import CashPayment from "~/pages/dashboard/pos/payments/cash-payment.vue";
+import CreditCardPayment from "~/pages/dashboard/pos/payments/creditcard-payment.vue";
+import BankPayment from '~/pages/dashboard/pos/payments/bank-payment.vue';
+import AccountPayment from '~/pages/dashboard/pos/payments/account-payment.vue';
 import nsPosLoadingPopupVue from './ns-pos-loading-popup.vue';
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
-import samplePaymentVue from '@/pages/dashboard/pos/payments/sample-payment.vue';
+import samplePaymentVue from '~/pages/dashboard/pos/payments/sample-payment.vue';
 import nsSelectPopupVue from './ns-select-popup.vue';
+import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+import { ref } from 'vue';
 
 export default {
     name: 'ns-pos-payment',
+    props: [ 'popup' ],
     data() {
         return { 
             paymentTypesSubscription: null,
@@ -22,28 +24,26 @@ export default {
             showPayment: false,
             orderSubscription: null,
             currentPaymentComponent: null,
+            activePaymentSubscription: null,
         } 
     },
     computed: {
-        activePayment() {
-            let payment;
-            return ( payment = this.paymentsType.filter( p => p.selected ) ).length > 0 ? payment[0] : false;
-        },
         expectedPayment() {
             const minimalPaymentPercent     =   this.order.customer.group.minimal_credit_payment;
             return ( this.order.total * minimalPaymentPercent ) / 100;
         }
     },
     mounted() {
-        this.$popup.event.subscribe( action => {
-            switch( action.event ) {
-                case 'click-overlay': 
-                    this.closePopup();
-                break;
-            }
+        this.orderSubscription          =   POS.order.subscribe( order => {
+            this.order  =   ref( order );
         });
 
-        this.order                      =   this.$popupParams.order;
+        this.activePaymentSubscription  =   POS.selectedPaymentType.subscribe( activePayment => {
+            this.activePayment = activePayment;
+            if ( activePayment !== null ) {
+                this.loadPaymentComponent( activePayment );
+            }
+        });
         this.paymentTypesSubscription   =   POS.paymentsType.subscribe( paymentsType => {
             this.paymentsType   =   paymentsType;
             paymentsType.filter( payment => {
@@ -55,37 +55,35 @@ export default {
 
         nsHooks.doAction( 'ns-pos-payment-mounted', this );
     },
-    watch: {
-        activePayment( value ) {
-            this.loadPaymentComponent( value );
-        }
-    },
-    destroyed() {
+    unmounted() {
+        this.activePaymentSubscription.unsubscribe();
         this.paymentTypesSubscription.unsubscribe();
+        this.orderSubscription.unsubscribe();
 
         nsHooks.doAction( 'ns-pos-payment-destroyed', this );
     },    
     methods: {
         __, 
+        nsCurrency,
         
         resolveIfQueued,
 
         loadPaymentComponent( payment ) {
             switch( payment.identifier ) {
                 case 'cash-payment':
-                    this.currentPaymentComponent    =   CashPayment;
+                    this.currentPaymentComponent    =   shallowRef( CashPayment );
                 break;
                 case 'creditcard-payment':
-                    this.currentPaymentComponent    =   CreditCardPayment;
+                    this.currentPaymentComponent    =   shallowRef( CreditCardPayment );
                 break;
                 case 'bank-payment':
-                    this.currentPaymentComponent    =   BankPayment;
+                    this.currentPaymentComponent    =   shallowRef( BankPayment );
                 break;
                 case 'account-payment':
-                    this.currentPaymentComponent    =   AccountPayment;
+                    this.currentPaymentComponent    =   shallowRef( AccountPayment );
                 break;
                 default: 
-                    this.currentPaymentComponent    =   samplePaymentVue;
+                    this.currentPaymentComponent    =   shallowRef( samplePaymentVue );
                 break;
             }
         },
@@ -115,7 +113,7 @@ export default {
             POS.setPaymentActive( payment );
         },
         closePopup() {
-            this.$popup.close();
+            this.popup.close();
             POS.selectedPaymentType.next( null );
         },
         deletePayment( payment ) {
@@ -140,7 +138,7 @@ export default {
                     POS.printOrderReceipt( result.data.order, 'silent' );
     
                     // close payment popup
-                    this.$popup.close();
+                    this.popup.close();
                 }, ( error ) => {
                     // close loading popup
                     popup.close();
@@ -159,7 +157,7 @@ export default {
 }
 </script>
 <template>
-    <div id="ns-payment-popup" class="w-screen h-screen p-4 flex overflow-hidden" v-if="order">
+    <div id="ns-payment-popup" class="w-screen h-screen p-8 flex overflow-hidden" v-if="order">
         <div class="flex flex-col flex-auto lg:flex-row shadow-xl">
             <div class="w-full lg:w-56 lg:h-full flex justify-between px-2 lg:px-0 lg:block items-center lg:items-start">
                 <h3 class="lg:hidden text-xl text-center my-4 font-bold lg:my-8">{{ __( 'Gateway' ) }} <span>: {{ activePayment.label }}</span></h3>
@@ -199,8 +197,8 @@ export default {
                             <li :key="index" v-for="(payment,index) of order.payments" class="p-2 flex justify-between mb-2 items-center">
                                 <span>{{ payment.label}}</span>
                                 <div class="flex items-center">
-                                    <span>{{ payment.value | currency }}</span>
-                                    <button @click="deletePayment( payment )" class="rounded-full  h-8 w-8 flex items-center justify-center ml-2">
+                                    <span>{{ nsCurrency( payment.value ) }}</span>
+                                    <button @click="deletePayment( payment )" class="rounded-full h-8 w-8 flex items-center justify-center ml-2">
                                         <i class="las la-trash-alt"></i>
                                     </button>
                                 </div>
@@ -229,7 +227,7 @@ export default {
                             <span ><i class="las la-cash-register"></i> {{ __( 'Submit Payment' ) }}</span>
                         </ns-button>
                         <ns-button v-if="order.tendered < order.total" @click="submitOrder({ payment_status: 'unpaid' })" :type="order.tendered >= order.total ? 'success' : 'info'">
-                            <span><i class="las la-bookmark"></i> {{ __( 'Layaway' ) }} &mdash; {{ expectedPayment | currency }}</span>
+                            <span><i class="las la-bookmark"></i> {{ __( 'Layaway' ) }} &mdash; {{ nsCurrency( expectedPayment ) }}</span>
                         </ns-button>
                     </div>
                 </div>

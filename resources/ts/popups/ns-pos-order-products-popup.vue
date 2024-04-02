@@ -1,6 +1,8 @@
 <script>
-import { nsHttpClient } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+import { nsHttpClient } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+
 export default {
     data() {
         return {
@@ -8,9 +10,10 @@ export default {
             isLoading: false,
         }
     },
+    props: [ 'popup' ],
     computed: {
         order() {
-            return this.$popupParams.order;
+            return this.popup.params.order;
         }
     },
     mounted() {
@@ -18,23 +21,24 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         close() {
-            this.$popupParams.reject( false );
-            this.$popup.close();
+            this.popup.params.reject( false );
+            this.popup.close();
         },
         loadProducts() {
             this.isLoading  =   true;
-            const id    =   this.$popupParams.order.id;
+            const id    =   this.popup.params.order.id;
 
-            nsHttpClient.get( `/api/nexopos/v4/orders/${id}/products` )
+            nsHttpClient.get( `/api/orders/${id}/products` )
                 .subscribe( result => {
                     this.isLoading  =   false;
                     this.products   =   result;
                 })
         },
         openOrder() {
-            this.$popup.close();
-            this.$popupParams.resolve( this.order );
+            this.popup.close();
+            this.popup.params.resolve( this.order );
         }
     }
 }
@@ -58,7 +62,7 @@ export default {
                     <div class="flex-col border-b border-info-primary py-2">
                         <div class="title font-semibold text-primary flex justify-between">
                             <span>{{ product.name }} (x{{ product.quantity }})</span>
-                            <span>{{ product.total_price | currency }}</span>
+                            <span>{{ nsCurrency( price ) }}</span>
                         </div>
                         <div class="text-sm text-primary">
                             <ul>

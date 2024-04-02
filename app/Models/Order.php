@@ -9,6 +9,8 @@ use App\Services\DateService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
+ * ns-generated-comments
+ *
  * @property int id
  * @property string description
  * @property string code
@@ -90,13 +92,13 @@ class Order extends NsModel
 
     const PROCESSING_READY = 'ready';
 
-    const PROCESSING_FAILED = 'failed';
+    const PROCESSING_FAILED = 'error';
 
     const DELIVERY_PENDING = 'pending';
 
     const DELIVERY_ONGOING = 'ongoing';
 
-    const DELIVERY_FAILED = 'failed';
+    const DELIVERY_FAILED = 'error';
 
     // @todo check if it's still useful
     const DELIVERY_COMPLETED = 'completed';
@@ -213,7 +215,7 @@ class Order extends NsModel
         $date = app()->make( DateService::class );
 
         return $query
-            ->whereIn( 'payment_status', [ Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ])
+            ->whereIn( 'payment_status', [ Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ] )
             ->where( 'final_payment_date', '<>', null )
             ->where( 'final_payment_date', '<', $date->now()->toDateTimeString() );
     }
@@ -248,7 +250,7 @@ class Order extends NsModel
                     'total_purchase_price',
                     'total_price_with_tax',
                     'discount',
-                ]);
+                ] );
 
                 if ( in_array( $stringified, $keys ) ) {
                     foreach ( $combinaisonAttributes as $attribute ) {
@@ -264,7 +266,7 @@ class Order extends NsModel
 
                     $combinaison[ $stringified ] = $rawProduct;
                 }
-            });
+            } );
 
             /**
              * that's nasty.

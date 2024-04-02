@@ -12,7 +12,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function up()
     {
@@ -24,17 +24,17 @@ return new class extends Migration
                 $table->text( 'description' )->nullable();
                 $table->integer( 'used_by' )->nullable();
                 $table->integer( 'author' );
-                $table->float( 'balance', 18, 5 )->default(0);
+                $table->float( 'balance', 18, 5 )->default( 0 );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
-            });
+            } );
         }
     }
 
     /**
      * Reverse the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function down()
     {

@@ -15,27 +15,21 @@ use App\Services\Helper;
 class {{ ucwords( $name ) }} extends SettingsPage
 {
     protected $form;
-    protected $identifier      =   '{{ Str::slug( $name ) }}';
+    const identifier      =   '{{ Str::slug( $name ) }}';
 
     public function __construct()
     {
         /**
-         * @var ModulesService $module
+         * @var ModulesService
          */
         $module     =   app()->make( ModulesService::class );
-
-        /**
-         * define the settings labels
-         */
-        $this->labels   =   [
-            'title'         =>  __m( 'Settings', '{{ $module[ 'namespace' ] }}'' ),
-            'description'   =>  __m( 'No description has been provided.', '{{ $module[ 'namespace' ] }}'' )
-        ];
 
         /**
          * Settings Form definition.
          */
         $this->form     =   [
+            'title'         =>  __m( 'Settings', '{{ $module[ 'namespace' ] }}'' ),
+            'description'   =>  __m( 'No description has been provided.', '{{ $module[ 'namespace' ] }}'' )
             'tabs'      =>  [
                 'general'   =>  [
                     'label'     =>  __m( 'General Settings', '{{ $module[ 'namespace' ] }}' ),

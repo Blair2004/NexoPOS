@@ -12,7 +12,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function up()
     {
@@ -21,19 +21,19 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'author' );
                 $table->string( 'name' );
-                $table->float( 'target', 18, 5 )->default(0);
+                $table->float( 'target', 18, 5 )->default( 0 );
                 $table->text( 'description' )->nullable();
                 $table->integer( 'coupon_id' )->nullable();
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
-            });
+            } );
         }
     }
 
     /**
      * Reverse the migrations.
      *
-     * @return  void
+     * @return void
      */
     public function down()
     {

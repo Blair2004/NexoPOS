@@ -14,43 +14,38 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\Users;
+use App\Services\DateService;
+use App\Services\UsersService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 
 class UsersController extends DashboardController
 {
-    /**
-     * @param Users
-     */
-    protected $usersService;
-
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        protected UsersService $usersService,
+        protected DateService $dateService
+    ) {
+        // ...
     }
 
     public function listUsers()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
-            'title' => __( 'Users List' ),
-            'createUrl' => url( '/dashboard/users/create' ),
-            'description' => __( 'Manage all users available.' ),
-            'src' => url( '/api/nexopos/v4/crud/ns.users' ),
-        ]);
+        return UserCrud::table();
     }
 
     public function createUser()
     {
-        ns()->restrict([ 'create.users' ]);
+        ns()->restrict( [ 'create.users' ] );
 
         return UserCrud::form();
     }
 
     public function editUser( User $user )
     {
-        ns()->restrict([ 'update.users' ]);
+        ns()->restrict( [ 'update.users' ] );
 
         if ( $user->id === Auth::id() ) {
             return redirect( ns()->route( 'ns.dashboard.users.profile' ) );
@@ -61,9 +56,9 @@ class UsersController extends DashboardController
 
     public function getUsers( User $user )
     {
-        ns()->restrict([ 'read.users' ]);
+        ns()->restrict( [ 'read.users' ] );
 
-        return User::get([ 'username', 'id', 'email' ]);
+        return User::get( [ 'username', 'id', 'email' ] );
     }
 
     /**
@@ -76,12 +71,12 @@ class UsersController extends DashboardController
         /**
          * force permissions check
          */
-        ns()->restrict([ 'update.roles' ]);
+        ns()->restrict( [ 'update.roles' ] );
 
-        return $this->view( 'pages.dashboard.users.permission-manager', [
+        return View::make( 'pages.dashboard.users.permission-manager', [
             'title' => __( 'Permission Manager' ),
             'description' => __( 'Manage all permissions and roles' ),
-        ]);
+        ] );
     }
 
     /**
@@ -91,14 +86,14 @@ class UsersController extends DashboardController
      */
     public function getProfile()
     {
-        ns()->restrict([ 'manage.profile' ]);
+        ns()->restrict( [ 'manage.profile' ] );
 
-        return $this->view( 'pages.dashboard.users.profile', [
+        return View::make( 'pages.dashboard.users.profile', [
             'title' => __( 'My Profile' ),
             'description' => __( 'Change your personal settings' ),
-            'src' => url( '/api/nexopos/v4/forms/ns.user-profile' ),
-            'submitUrl' => url( '/api/nexopos/v4/users/profile'),
-        ]);
+            'src' => url( '/api/forms/ns.user-profile' ),
+            'submitUrl' => url( '/api/users/profile' ),
+        ] );
     }
 
     /**
@@ -128,7 +123,7 @@ class UsersController extends DashboardController
      */
     public function updateRole( Request $request )
     {
-        ns()->restrict([ 'update.roles' ]);
+        ns()->restrict( [ 'update.roles' ] );
 
         $roles = $request->all();
 
@@ -157,7 +152,7 @@ class UsersController extends DashboardController
      */
     public function rolesList()
     {
-        ns()->restrict([ 'read.roles' ]);
+        ns()->restrict( [ 'read.roles' ] );
 
         return RolesCrud::table();
     }
@@ -169,7 +164,7 @@ class UsersController extends DashboardController
      */
     public function editRole( Role $role )
     {
-        ns()->restrict([ 'update.roles' ]);
+        ns()->restrict( [ 'update.roles' ] );
 
         return RolesCrud::form( $role );
     }
@@ -181,10 +176,53 @@ class UsersController extends DashboardController
 
     public function cloneRole( Role $role )
     {
-        ns()->restrict([ 'create.roles' ]);
-
-        $this->usersService = app()->make( Users::class );
+        ns()->restrict( [ 'create.roles' ] );
 
         return $this->usersService->cloneRole( $role );
+    }
+
+    public function configureWidgets( Request $request )
+    {
+        return $this->usersService->storeWidgetsOnAreas( $request->only( [ 'column' ] ) );
+    }
+
+    public function createToken( Request $request )
+    {
+        $validation = Validator::make( $request->all(), [
+            'name' => 'required',
+        ] );
+
+        if ( ! $validation->passes() ) {
+            throw new Exception( __( 'The provided data aren\'t valid' ) );
+        }
+
+        return $this->usersService->createToken( $request->input( 'name' ) );
+    }
+
+    public function getTokens()
+    {
+        return $this->usersService->getTokens();
+    }
+
+    public function deleteToken( $tokenId )
+    {
+        return $this->usersService->deleteToken( $tokenId );
+    }
+
+    public function checkPermission( Request $request )
+    {
+        $result     =   $this->usersService->checkPermission( $request->input( 'permission' ) );
+
+        if ( $result ) {
+            return response()->json( [
+                'status'    =>  'success',
+                'message'   =>  __( 'The permission is granted' )
+            ] );
+        } else {
+            return response()->json( [
+                'status'    =>  'error',
+                'message'   =>  __( 'The permission is denied' )
+            ], 403 );
+        }
     }
 }

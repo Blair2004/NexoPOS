@@ -41,7 +41,7 @@ class Module
     /**
      * Include specific module file
      *
-     * @param string $file
+     * @param  string $file
      * @return void
      *
      * @deprecated

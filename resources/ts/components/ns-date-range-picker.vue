@@ -1,15 +1,14 @@
 <script lang="ts">
-import Vue from 'vue';
 import moment from "moment";
-import DateRangePicker from 'vue2-daterange-picker';
-import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
-import { __ } from '@/libraries/lang';
+import DateRangePicker from 'vue3-daterange-picker';
+// import 'vue3-daterange-picker/dist/vue3-daterange-picker.css';
+import { __ } from '~/libraries/lang';
 
 declare const ns;
 
-export default Vue.extend({
+export default {
     name: 'ns-date-range-picker',
-    data: () => {
+    data() {
         return {
             dateRange: {
                 startDate: null,
@@ -68,7 +67,7 @@ export default Vue.extend({
         }
     },
     props: [ 'placeholder', 'leading', 'type', 'field' ],
-})
+}
 </script>
 <template>
     <div class="flex flex-auto flex-col mb-2 ns-date-range-picker">
@@ -105,11 +104,6 @@ export default Vue.extend({
                 </template>
             </date-range-picker>
         </div>
-        <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
-        <p :key="index" v-for="(error, index) of field.errors" class="text-xs text-red-400">
-            <slot v-if="error.identifier === 'required'" :name="error.identifier">{{ __( 'This field is required.' ) }}</slot>
-            <slot v-if="error.identifier === 'email'" :name="error.identifier">{{ __( 'This field must contain a valid email address.' ) }}</slot>
-            <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>
-        </p>
+        <ns-field-description :field="field"></ns-field-description>
     </div>
 </template>

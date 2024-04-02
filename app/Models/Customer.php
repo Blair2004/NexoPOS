@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int id
- * @property string name
- * @property string surname
+ * @property string first_name
+ * @property string last_name
  * @property string description
  * @property int author
  * @property string gender
@@ -22,11 +24,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property float credit_limit_amount
  * @property float account_amount
  */
-class Customer extends NsModel
+class Customer extends UserScope
 {
     use HasFactory;
 
-    protected $table = 'nexopos_' . 'customers';
+    protected $table = 'nexopos_' . 'users';
 
     protected $isDependencyFor = [
         Order::class => [
@@ -37,6 +39,19 @@ class Customer extends NsModel
         ],
     ];
 
+    protected static function booted()
+    {
+        static::addGlobalScope( 'customers', function ( Builder $builder ) {
+            $role = DB::table( 'nexopos_roles' )->where( 'namespace', Role::STORECUSTOMER )->first();
+
+            $userRoleRelations = DB::table( 'nexopos_users_roles_relations' )
+                ->where( 'role_id', $role->id )
+                ->get( [ 'user_id', 'role_id' ] );
+
+            $builder->whereIn( 'id', $userRoleRelations->map( fn( $role ) => $role->user_id )->toArray() );
+        } );
+    }
+
     /**
      * define the relationship
      *
@@ -44,17 +59,29 @@ class Customer extends NsModel
      */
     public function group()
     {
-        return $this->belongsTo( CustomerGroup::class, 'group_id' );
+        return $this->belongsTo(
+            related: CustomerGroup::class,
+            foreignKey: 'group_id',
+            ownerKey: 'id'
+        );
     }
 
     public function coupons()
     {
-        return $this->hasMany( CustomerCoupon::class, 'customer_id' );
+        return $this->hasMany(
+            related: CustomerCoupon::class,
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     public function rewards()
     {
-        return $this->hasMany( CustomerReward::class, 'customer_id' );
+        return $this->hasMany(
+            related: CustomerReward::class,
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     /**
@@ -64,45 +91,46 @@ class Customer extends NsModel
      */
     public function orders()
     {
-        return $this->hasMany( Order::class, 'customer_id' );
+        return $this->hasMany(
+            related: Order::class,
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     public function addresses()
     {
-        return $this->hasMany( CustomerAddress::class, 'customer_id' );
+        return $this->hasMany(
+            related: CustomerAddress::class,
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     public function billing()
     {
-        return $this->hasOne( CustomerBillingAddress::class, 'customer_id' );
+        return $this->hasOne(
+            related: CustomerBillingAddress::class,
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     public function shipping()
     {
-        return $this->hasOne( CustomerShippingAddress::class, 'customer_id' );
+        return $this->hasOne(
+            related: CustomerShippingAddress::class,
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 
     public function account_history()
     {
-        return $this->hasMany( CustomerAccountHistory::class, 'customer_id' );
-    }
-
-    /**
-     * Get customer using email
-     *
-     * @param Query
-     * @param string email
-     */
-    public function scopeByEmail( $query, $email )
-    {
-        return $query->where( 'email', $email );
-    }
-
-    /**
-     * get customers from groups
-     */
-    public function scopeFromGroup( $query, $index )
-    {
-        return $query->where( 'parent_id', $index );
+        return $this->hasMany(
+            related: CustomerAccountHistory::class,
+            foreignKey: 'customer_id',
+            localKey: 'id'
+        );
     }
 }

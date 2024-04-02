@@ -35,74 +35,66 @@
                     <li><a @click="loadCategories( bread )" v-for="bread of breadcrumbs" :key="bread.id" href="javascript:void(0)" class="px-3">{{ bread.name }} <i class="las la-angle-right"></i></a></li>
                 </ul>
             </div>
-            <div id="grid-items" class="overflow-hidden h-full flex-col flex">
-                <div v-if="! rebuildGridComplete" class="h-full w-full flex-col flex items-center justify-center">
-                    <ns-spinner></ns-spinner>
-                    <span class="my-2">{{ __( 'Rebuilding...' ) }}</span>
+            <div id="grid-items" class="overflow-y-auto h-full flex-col flex">
+                <div v-if="hasCategories" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                    <div @click="loadCategories( category )" v-for="category of categories" :key="category.id" 
+                        class="cell-item w-full h-36 cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative">
+                        <div class="h-full w-full flex items-center justify-center">
+                            <img v-if="category.preview_url" :src="category.preview_url" class="object-cover h-full" :alt="category.name">
+                            <i class="las la-image text-6xl" v-if="! category.preview_url"></i>
+                        </div>
+                        <div class="w-full absolute z-10 -bottom-10">
+                            <div class="cell-item-label relative w-full flex items-center justify-center -top-10 h-20 py-2">
+                                <h3 class="text-sm font-bold py-2 text-center">{{ category.name }}</h3>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <template v-if="rebuildGridComplete">
 
-                    <VirtualCollection
-                        :cellSizeAndPositionGetter="cellSizeAndPositionGetter"
-                        :collection="categories"
-                        :height="gridItemsHeight"
-                        :width="gridItemsWidth"
-                        v-if="hasCategories"
-                    >
-                        <div slot="cell" class="w-full h-full" slot-scope="{ data }">
-                            <div @click="loadCategories( data )" :key="data.id" class="cell-item w-full h-full cursor-pointer border flex flex-col items-center justify-center overflow-hidden">
-                                <div class="h-full w-full flex items-center justify-center">
-                                    <img v-if="data.preview_url" :src="data.preview_url" class="object-cover h-full" :alt="data.name">
-                                    <i class="las la-image text-6xl" v-if="! data.preview_url"></i>
-                                </div>
-                                <div class="h-0 w-full">
-                                    <div class="cell-item-label relative w-full flex items-center justify-center -top-10 h-20 py-2">
-                                        <h3 class="text-sm font-bold py-2 text-center">{{ data.name }}</h3>
-                                    </div>
-                                </div>
+                <div v-if="! hasCategories && ! hasProducts && ! isLoading" class="h-full w-full flex flex-col items-center justify-center">
+                    <i class="las la-frown-open text-8xl text-primary"></i>
+                    <p class="w-1/2 md:w-2/3 text-center text-primary">
+                        {{ __( 'Looks like there is either no products and no categories. How about creating those first to get started ?' ) }}
+                    </p>
+                    <br>
+                    <ns-link target="blank" type="info" :href="createCategoryUrl">{{ __( 'Create Categories' ) }}</ns-link>
+                </div>
+
+                <div  v-if="! hasCategories" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                    <div @click="addToTheCart( product )" v-for="product of products" :key="product.id" 
+                        class="cell-item w-full h-36 cursor-pointer border flex flex-col items-center justify-center overflow-hidden relative">
+                        <div class="h-full w-full flex items-center justify-center overflow-hidden">
+                            <img v-if="product.galleries && product.galleries.filter( i => i.featured ).length > 0" :src="product.galleries.filter( i => i.featured )[0].url" class="object-cover h-full" :alt="product.name"/>
+                            <img v-else-if="hasNoFeatured( product )" :src="product.galleries[0].url" class="object-cover h-full" :alt="product.name"/>
+                            <i v-else="! product.galleries || product.galleries.filter( i => i.featured ).length === 0" class="las la-image text-6xl"></i>
+                        </div>
+                        <div class="w-full absolute z-10 -bottom-10">
+                            <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
+                                <h3 class="text-sm text-center w-full">{{ product.name }}</h3>
+                                <template v-if="options.ns_pos_gross_price_used === 'yes'">
+                                    <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
+                                        {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
+                                    </span>
+                                </template>
+                                <template v-if="options.ns_pos_gross_price_used === 'no'">
+                                    <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
+                                        {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
+                                    </span>
+                                </template>
                             </div>
                         </div>
-                    </VirtualCollection>
-                    <VirtualCollection
-                        :cellSizeAndPositionGetter="cellSizeAndPositionGetter"
-                        :collection="products"
-                        :height="gridItemsHeight"
-                        :width="gridItemsWidth"
-                        v-if="! hasCategories">
-                        <div slot="cell" class="w-full h-full" slot-scope="{ data }">
-                            <div @click="addToTheCart( data )" :key="data.id" class="cell-item w-full h-full cursor-pointer border flex flex-col items-center justify-center overflow-hidden">
-                                <div class="h-full w-full flex items-center justify-center overflow-hidden">
-                                    <img v-if="data.galleries && data.galleries.filter( i => i.featured === 1 ).length > 0" :src="data.galleries.filter( i => i.featured === 1 )[0].url" class="object-cover h-full" :alt="data.name">
-                                    <i v-if="! data.galleries || data.galleries.filter( i => i.featured === 1 ).length === 0" class="las la-image text-6xl"></i>
-                                </div>
-                                <div class="h-0 w-full">
-                                    <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
-                                        <h3 class="text-sm text-center w-full">{{ data.name }}</h3>
-                                        <template v-if="options.ns_pos_price_with_tax === 'no'">
-                                            <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
-                                                {{ data.unit_quantities[0].sale_price_without_tax | currency }}
-                                            </span>
-                                        </template>
-                                        <template v-if="options.ns_pos_price_with_tax === 'yes'">
-                                            <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
-                                                {{ data.unit_quantities[0].sale_price_with_tax | currency }}
-                                            </span>
-                                        </template>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </VirtualCollection>
-                </template>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
 <script >
 import { nsHttpClient, nsSnackBar } from '../../../bootstrap'
-import switchTo from "@/libraries/pos-section-switch";
-import nsPosSearchProductVue from '@/popups/ns-pos-search-product.vue';
-import { __ } from '@/libraries/lang';
+import switchTo from "~/libraries/pos-section-switch";
+import nsPosSearchProductVue from '~/popups/ns-pos-search-product.vue';
+import { __ } from '~/libraries/lang';
+import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-grid',
@@ -120,7 +112,7 @@ export default {
             orderSubscription: null,
             visibleSectionSubscriber: null,
             currentCategory: null,
-            settings: false,
+            settings: {},
             settingsSubscriber: null,
             options: false,
             optionsSubscriber: null,
@@ -128,15 +120,19 @@ export default {
             searchTimeout: null,
             gridItemsWidth: 0,
             gridItemsHeight:0,
-            screenSubscriber: null,
-            rebuildGridTimeout: null,
-            rebuildGridComplete: false,
             isLoading: false,
         }
     },
     computed: {
         hasCategories() {
             return this.categories.length > 0;
+        },
+        hasProducts() {
+            return this.products.length > 0;
+        },
+        createCategoryUrl() {
+            // link to create category defined on OrdersController.
+            return POS.settings.getValue().urls.categories_url; 
         }
     },
     watch: {
@@ -167,30 +163,21 @@ export default {
 
         this.settingsSubscriber         =   POS.settings.subscribe( settings => {
             this.settings               =   settings;
+            this.$forceUpdate();
         });
 
         this.optionsSubscriber          =   POS.options.subscribe( options => {
             this.options                =   options;
+            this.$forceUpdate();
         });
 
         this.breadcrumbsSubsribe        =   POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
             this.breadcrumbs            =   breadcrumbs;
+            this.$forceUpdate();
         });
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection         =   section;
-        });
-
-        /**
-         * Screen subscriber, this ensure the POS
-         * can quickly detect the type of the viewport.
-         */
-        this.screenSubscriber       =   POS.screen.subscribe( screen => {
-            clearTimeout( this.rebuildGridTimeout );
-            this.rebuildGridComplete    =   false;
-            this.rebuildGridTimeout     =   setTimeout( () => {
-                this.rebuildGridComplete     =   true;
-                this.computeGridWidth();
-            }, 500 );
+            this.$forceUpdate();
         });
 
         this.orderSubscription      =   POS.order.subscribe( order => this.order = order );
@@ -212,7 +199,7 @@ export default {
                 nsHotPress
                     .create( 'search-popup' )
                     .whenNotVisible([ '.is-popup', '#product-search' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.openSearchPopup();
                 });
@@ -229,7 +216,7 @@ export default {
                 nsHotPress
                     .create( 'toggle-merge' )
                     .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.posToggleMerge();
                 });
@@ -237,11 +224,10 @@ export default {
         }
 
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscription.unsubscribe();
         this.breadcrumbsSubsribe.unsubscribe();
         this.visibleSectionSubscriber.unsubscribe();
-        this.screenSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
         this.optionsSubscriber.unsubscribe();
 
@@ -251,7 +237,8 @@ export default {
         nsHotPress.destroy( 'toggle-merge' );
     },
     methods: {
-        __,
+        __, 
+        nsCurrency,
 
         switchTo,
 
@@ -259,6 +246,9 @@ export default {
             POS.set( 'ns_pos_items_merge', ! this.settings.ns_pos_items_merge );
         },
 
+        /**
+         * @deprecated
+         */
         computeGridWidth() {
             if ( document.getElementById( 'grid-items' ) !== null ) {
                 this.gridItemsWidth     =   document.getElementById( 'grid-items' ).offsetWidth;
@@ -311,9 +301,13 @@ export default {
             Popup.show( nsPosSearchProductVue );
         },
 
+        hasNoFeatured( product ) {
+            return product.galleries && product.galleries.length > 0 && product.galleries.filter( i => i.featured ).length === 0;
+        },
+
         submitSearch( value ) {
             if ( value.length > 0 ) {
-                nsHttpClient.get( `/api/nexopos/v4/products/search/using-barcode/${value}` )
+                nsHttpClient.get( `/api/products/search/using-barcode/${value}` )
                     .subscribe({
                         next: result => {
                             this.barcode     =   '';
@@ -343,19 +337,11 @@ export default {
 
         loadCategories( parent ) {
             this.isLoading  =   true;
-            nsHttpClient.get( `/api/nexopos/v4/categories/pos/${ parent ? parent.id : ''}` )
+            nsHttpClient.get( `/api/categories/pos/${ parent ? parent.id : ''}` )
                 .subscribe({
                     next: (result ) => {
-                        this.categories         =   result.categories.map( category => {
-                            return {
-                                data    :   category
-                            }
-                        });
-                        this.products           =   result.products.map( product => {
-                            return {
-                                data: product
-                            }
-                        });
+                        this.categories         =   result.categories;
+                        this.products           =   result.products;
                         this.previousCategory   =   result.previousCategory;
                         this.currentCategory    =   result.currentCategory;
                         this.updateBreadCrumb( this.currentCategory );

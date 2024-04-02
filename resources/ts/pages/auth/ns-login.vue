@@ -15,9 +15,9 @@
         </div>
         <div class="flex justify-between items-center border-t ns-box-footer p-3">
             <div>
-                <ns-button @click="signIn()" class="justify-between" type="info">
-                    <ns-spinner class="mr-2" v-if="isSubitting" size="6" border="2"></ns-spinner>
-                    <template>{{ __( 'Sign In' ) }}</template>
+                <ns-button :disabled="isSubitting" @click="signIn()" class="justify-between" type="info">
+                    <ns-spinner class="mr-2" v-if="isSubitting" size="6"></ns-spinner>
+                    <span>{{ __( 'Sign In' ) }}</span>
                 </ns-button>
             </div>
             <div v-if="showRegisterButton">
@@ -28,9 +28,9 @@
 </template>
 <script>
 import { forkJoin } from 'rxjs';
-import FormValidation from '@/libraries/form-validation';
-import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import FormValidation from '~/libraries/form-validation';
+import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-login',
     props: [ 'showRecoveryLink', 'showRegisterButton' ],
@@ -43,13 +43,13 @@ export default {
         }
     },
     mounted() {
-        forkJoin([
-            nsHttpClient.get( '/api/nexopos/v4/fields/ns.login' ),
-            nsHttpClient.get( '/sanctum/csrf-cookie' ),
-        ])
+        forkJoin({
+            login: nsHttpClient.get( '/api/fields/ns.login' ),
+            csrf: nsHttpClient.get( '/sanctum/csrf-cookie' ),
+        })
         .subscribe({
             next: result => {
-                this.fields         =   this.validation.createFields( result[0] );
+                this.fields         =   this.validation.createFields( result.login );
                 this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
 
                 /**
@@ -96,7 +96,7 @@ export default {
                             this.validation.triggerFieldsErrors( this.fields, error.data );
                         }
 
-                        nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) ).subscribe();
                     }
                 })
             }

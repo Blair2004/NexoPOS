@@ -17,7 +17,7 @@ class ProductCategoryFactory extends Factory
         return [
             'name' => $this->faker->name,
             'description' => $this->faker->sentence,
-            'displays_on_pos' => $this->faker->randomElement([ true, false ]),
+            'displays_on_pos' => $this->faker->randomElement( [ true, false ] ),
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
         ];
     }

@@ -15,7 +15,7 @@ class CustomerOrderCrud extends OrderCrud
      *
      * @param  string
      */
-    protected $identifier = 'dashboard/customers/orders';
+    const IDENTIFIER = 'dashboard/customers/orders';
 
     /**
      * Define namespace
@@ -43,7 +43,7 @@ class CustomerOrderCrud extends OrderCrud
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -84,7 +84,7 @@ class CustomerOrderCrud extends OrderCrud
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -254,7 +254,7 @@ class CustomerOrderCrud extends OrderCrud
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -265,7 +265,7 @@ class CustomerOrderCrud extends OrderCrud
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, Order $entry )
     {
@@ -276,7 +276,7 @@ class CustomerOrderCrud extends OrderCrud
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -293,7 +293,7 @@ class CustomerOrderCrud extends OrderCrud
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, Order $entry )
     {
@@ -304,7 +304,7 @@ class CustomerOrderCrud extends OrderCrud
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -317,9 +317,9 @@ class CustomerOrderCrud extends OrderCrud
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $entry )
     {
@@ -335,9 +335,9 @@ class CustomerOrderCrud extends OrderCrud
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -347,7 +347,7 @@ class CustomerOrderCrud extends OrderCrud
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
     {
@@ -373,7 +373,7 @@ class CustomerOrderCrud extends OrderCrud
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -393,7 +393,7 @@ class CustomerOrderCrud extends OrderCrud
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -402,7 +402,7 @@ class CustomerOrderCrud extends OrderCrud
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -415,7 +415,7 @@ class CustomerOrderCrud extends OrderCrud
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
@@ -423,15 +423,15 @@ class CustomerOrderCrud extends OrderCrud
             'list' => ns()->url( 'dashboard/' . 'dashboard/customers/orders' ),
             'create' => ns()->url( 'dashboard/' . 'dashboard/customers/orders/create' ),
             'edit' => ns()->url( 'dashboard/' . 'dashboard/customers/orders/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers.orders' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers.orders/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers.orders' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers.orders/{id}' . '' ),
         ];
     }
 
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -441,15 +441,15 @@ class CustomerOrderCrud extends OrderCrud
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

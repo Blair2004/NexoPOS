@@ -1,40 +1,39 @@
 <?php
 
-use App\Exceptions\NotFoundException;
 use App\Services\CoreService;
 use illuminate\Support\Facades\Route;
 
-if (! function_exists('array_insert')) {
+if ( ! function_exists( 'array_insert' ) ) {
     /**
      * Insert an array into another array before/after a certain key
      *
      * Merge the elements of the $array array after, or before, the designated $key from the $input array.
      * It returns the resulting array.
      *
-     * @param array  $input  The input array.
-     * @param mixed  $insert The value to merge.
-     * @param mixed  $key    The key from the $input to merge $insert next to.
-     * @param string $pos    Wether to splice $insert before or after the $key.
-     * @return array Returns the resulting array.
+     * @param  array  $input  The input array.
+     * @param  mixed  $insert The value to merge.
+     * @param  mixed  $key    The key from the $input to merge $insert next to.
+     * @param  string $pos    Wether to splice $insert before or after the $key.
+     * @return array  Returns the resulting array.
      */
-    function array_insert(array $input, $insert, $key, $pos = 'after')
+    function array_insert( array $input, $insert, $key, $pos = 'after' )
     {
-        if (! is_string($key) && ! is_int($key)) {
-            trigger_error('array_insert(): The key should be a string or an integer', E_USER_ERROR);
+        if ( ! is_string( $key ) && ! is_int( $key ) ) {
+            trigger_error( 'array_insert(): The key should be a string or an integer', E_USER_ERROR );
         }
-        $offset = array_search($key, array_keys($input));
+        $offset = array_search( $key, array_keys( $input ) );
 
-        if ('after' === $pos) {
+        if ( $pos === 'after' ) {
             $offset++;
         } else {
             $offset--;
         }
 
-        if (false !== $offset) {
-            $result = array_slice($input, 0, $offset);
-            $result = array_merge($result, (array) $insert, array_slice($input, $offset));
+        if ( $offset !== false ) {
+            $result = array_slice( $input, 0, $offset );
+            $result = array_merge( $result, (array) $insert, array_slice( $input, $offset ) );
         } else {
-            $result = array_merge($input, (array) $insert);
+            $result = array_merge( $input, (array) $insert );
         }
 
         return $result;
@@ -45,14 +44,14 @@ if (! function_exists('array_insert')) {
  * Insert a value or key/value pair after a specific key in an array.  If key doesn't exist, value is appended
  * to the end of the array.
  *
- * @param string $key
+ * @param  string $key
  * @return array
  */
 function array_insert_after( array $array, $key, array $new )
 {
     $keys = array_keys( $array );
     $index = array_search( $key, $keys );
-    $pos = false === $index ? count( $array ) : $index + 1;
+    $pos = $index === false ? count( $array ) : $index + 1;
 
     return array_merge( array_slice( $array, 0, $pos ), $new, array_slice( $array, $pos ) );
 }
@@ -67,7 +66,7 @@ function array_insert_after( array $array, $key, array $new )
  **/
 function array_insert_before( $array, $key, $new )
 {
-    return array_insert( $array, $new, $key, $pos = 'before');
+    return array_insert( $array, $new, $key, $pos = 'before' );
 }
 
 /**
@@ -98,21 +97,21 @@ function generate_timezone_list()
 
     $timezone_offsets = [];
     foreach ( $timezones as $timezone ) {
-        $tz = new DateTimeZone($timezone);
-        $timezone_offsets[$timezone] = $tz->getOffset(new DateTime);
+        $tz = new DateTimeZone( $timezone );
+        $timezone_offsets[$timezone] = $tz->getOffset( new DateTime );
     }
 
     // sort timezone by offset
-    asort($timezone_offsets);
+    asort( $timezone_offsets );
 
     $timezone_list = [];
     foreach ( $timezone_offsets as $timezone => $offset ) {
         $offset_prefix = $offset < 0 ? '-' : '+';
-        $offset_formatted = gmdate( 'H:i', abs($offset) );
+        $offset_formatted = gmdate( 'H:i', abs( $offset ) );
 
-        $pretty_offset = "UTC${offset_prefix}${offset_formatted}";
+        $pretty_offset = "UTC{$offset_prefix}{$offset_formatted}";
 
-        $timezone_list[$timezone] = "(${pretty_offset}) $timezone";
+        $timezone_list[$timezone] = "({$pretty_offset}) $timezone";
     }
 
     return $timezone_list;
@@ -184,7 +183,7 @@ function execThis( $className )
         $class = $vars[0];
         $method = $vars[1];
 
-        return (new $class)->$method();
+        return ( new $class )->$method();
     }
     throw new Exception( sprintf( __( 'Unable to execute the following class callback string : %s' ), $className ) );
 }
@@ -201,44 +200,15 @@ function ns(): CoreService
  * Returns a translated version for a string defined
  * under a module namespace.
  *
- * @param string $key
- * @param string $namespace
+ * @param  string $key
+ * @param  string $namespace
  * @return string $result
  */
 function __m( $key, $namespace = 'default' )
 {
-    if ( app( 'translator' )->has( $namespace . '.' . $key  ) ) {
+    if ( app( 'translator' )->has( $namespace . '.' . $key ) ) {
         return app( 'translator' )->get( $namespace . '.' . $key );
     }
 
     return $key;
-}
-
-/**
- * Will load css assert
- *
- * @param string $path
- * @return string
- */
-function loadcss( $path )
-{
-    if ( in_array( strtolower( env( 'NS_ENV' ) ), [ 'prod', 'production' ]) ) {
-        $files = json_decode( file_get_contents( base_path( 'public/css-manifest.json' ) ), true );
-
-        if ( isset( $files[ $path ] ) ) {
-            return asset( 'css/' . $files[ $path ] );
-        }
-
-        throw new NotFoundException( sprintf(
-            __( 'Unable to find the requested asset file "%s".'),
-            asset( 'css/' . $path )
-        ) );
-    } else {
-        return asset( 'css/' . $path );
-
-        throw new NotFoundException( sprintf(
-            __( 'Unable to find the requested asset file "%s".'),
-            asset( 'css/' . $path )
-        ) );
-    }
 }

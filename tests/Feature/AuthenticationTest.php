@@ -19,8 +19,8 @@ class AuthenticationTest extends TestCase
      */
     public function testCanSeeLoginPage()
     {
-        $response = $this->get('/sign-in');
-        $response->assertStatus(200);
+        $response = $this->get( '/sign-in' );
+        $response->assertStatus( 200 );
     }
 
     /**
@@ -30,8 +30,8 @@ class AuthenticationTest extends TestCase
      */
     public function testCanSeeRegistrationPage()
     {
-        $response = $this->get('/sign-up');
-        $response->assertStatus(200);
+        $response = $this->get( '/sign-up' );
+        $response->assertStatus( 200 );
     }
 
     /**
@@ -43,8 +43,8 @@ class AuthenticationTest extends TestCase
      */
     public function testCanSeeRecovery()
     {
-        $response = $this->get('/sign-up');
-        $response->assertStatus(200);
+        $response = $this->get( '/sign-up' );
+        $response->assertStatus( 200 );
     }
 
     /**
@@ -62,11 +62,11 @@ class AuthenticationTest extends TestCase
          */
         $user = User::first();
         $user->active = false;
-        $user->activation_token = Str::random(10);
+        $user->activation_token = Str::random( 10 );
         $user->activation_expiration = now()->addDay();
         $user->save();
 
-        $response = $this->get('/auth/activate/' . $user->id . '/' . $user->activation_token );
+        $response = $this->get( '/auth/activate/' . $user->id . '/' . $user->activation_token );
         $response->assertRedirect( ns()->route( 'ns.login' ) );
 
         /**
@@ -74,11 +74,11 @@ class AuthenticationTest extends TestCase
          */
         $user = User::first();
         $user->active = false;
-        $user->activation_token = Str::random(10);
+        $user->activation_token = Str::random( 10 );
         $user->activation_expiration = now()->addDay();
         $user->save();
 
-        $response = $this->get('/auth/activate/' . $user->id . '/' . Str::random(10) );
+        $response = $this->get( '/auth/activate/' . $user->id . '/' . Str::random( 10 ) );
         $response->assertRedirect( ns()->route( 'ns.login' ) );
 
         /**
@@ -86,11 +86,11 @@ class AuthenticationTest extends TestCase
          */
         $user = User::first();
         $user->active = false;
-        $user->activation_token = Str::random(10);
-        $user->activation_expiration = now()->subDays(5);
+        $user->activation_token = Str::random( 10 );
+        $user->activation_expiration = now()->subDays( 5 );
         $user->save();
 
-        $response = $this->get('/auth/activate/' . $user->id . '/' . $user->activation_token );
+        $response = $this->get( '/auth/activate/' . $user->id . '/' . $user->activation_token );
         $response->assertRedirect( ns()->route( 'ns.login' ) );
 
         /**
@@ -98,11 +98,11 @@ class AuthenticationTest extends TestCase
          */
         $user = User::first();
         $user->active = true;
-        $user->activation_token = Str::random(10);
-        $user->activation_expiration = now()->subDays(5);
+        $user->activation_token = Str::random( 10 );
+        $user->activation_expiration = now()->subDays( 5 );
         $user->save();
 
-        $response = $this->get('/auth/activate/' . $user->id . '/' . $user->activation_token );
+        $response = $this->get( '/auth/activate/' . $user->id . '/' . $user->activation_token );
         $response->assertRedirect( ns()->route( 'ns.login' ) );
     }
 
@@ -115,8 +115,8 @@ class AuthenticationTest extends TestCase
      */
     public function testCanSeePasswordLostForm()
     {
-        $response = $this->get('/password-lost');
-        $response->assertStatus(200);
+        $response = $this->get( '/password-lost' );
+        $response->assertStatus( 200 );
     }
 
     /**
@@ -130,20 +130,28 @@ class AuthenticationTest extends TestCase
     {
         $user = User::first();
         $user->active = true;
-        $user->activation_token = Str::random(10);
-        $user->activation_expiration = now()->subDays(5);
+        $user->activation_token = Str::random( 10 );
+        $user->activation_expiration = now()->subDays( 5 );
         $user->save();
 
         $path = '/new-password/' . $user->id . '/' . $user->activation_token;
 
         $response = $this->get( $path );
         $response->assertSee( 'The token has expired. Please request a new activation token.' );
-        $response->assertStatus(200);
+        $response->assertStatus( 200 );
+    }
+
+    public function generateUsername($minLength = 10) {
+        $username = $this->faker->userName();
+        while(strlen($username) < $minLength) {
+            $username .= $this->faker->randomLetter();
+        }
+        return $username;
     }
 
     public function testSubmitRegistrationForm()
     {
-        $password = $this->faker->password();
+        $password = $this->faker->password(8);
         $registration_validated = ns()->option->get( 'ns_registration_validated', 'yes' );
 
         /**
@@ -152,15 +160,18 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
+        $username = $this->generateUsername(10);
+        $email = $this->faker->email();
+
         $response = $this
-            ->withSession([])
+            ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 '/auth/sign-up', [
-                    'username' => $this->faker->userName(),
+                    'username' => $username,
                     'password' => $password,
                     'password_confirm' => $password,
-                    'email' => $this->faker->email(),
+                    'email' => $email,
                 ]
             );
 
@@ -169,27 +180,60 @@ class AuthenticationTest extends TestCase
             'message' => $registration_validated === 'no' ?
                 __( 'Your Account has been successfully created.' ) :
                 __( 'Your Account has been created but requires email validation.' ),
-        ]) );
+        ] ) );
 
         /**
-         * Step 1: test with invalid password and email
+         * Step 1: we'll verify if the user
+         * attribute are created after his registration.
+         */
+        $user = User::where( 'email', $email )->first();
+
+        $this->assertTrue( $user->attribute()->count() > 0, 'The created user doesn\'t have any attribute.' );
+
+        /**
+         * Step 2: test with invalid password and email
          * valid informations
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
         $response = $this
-            ->withSession([])
+            ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 '/auth/sign-up', [
-                    'username' => $this->faker->userName(),
+                    'username' => $this->generateUsername(10),
                     'password' => $password,
-                    'password_confirm' => $password . '122',
+                    'password_confirm' => $password,
                     'email' => 'not-a-valid-email',
                 ]
             );
 
-        $response->assertSee( 'Unable to proceed, the submitted form is not valid.' );
+        $response->assertRedirect( ns()->route( 'ns.register' ) );
+        $response->assertSessionHasErrors( [
+            'email' => 'The email field must be a valid email address.',
+        ] );
+
+        /**
+         * Step 3: test with invalid password
+         */
+        ns()->option->set( 'ns_registration_enabled', 'yes' );
+
+        $response = $this
+            ->withSession( [] )
+            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
+            ->post(
+                '/auth/sign-up', [
+                    'username' => $this->generateUsername(10),
+                    'password' => $password,
+                    'password_confirm' => $password . 'not-the-same',
+                    'email' => $this->faker->email(),
+                ]
+            );
+
+        $response->assertRedirect( ns()->route( 'ns.register' ) );
+        $response->assertSessionHasErrors( [
+            'password_confirm' => 'The password confirm field must match password.',
+        ] );
     }
 
     public function testSubmitPasswordRecoveryForm()
@@ -203,16 +247,16 @@ class AuthenticationTest extends TestCase
         $user = User::first();
 
         $response = $this
-            ->withSession([])
+            ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post( '/auth/password-lost', [
                 'email' => $user->email,
-            ]);
+            ] );
 
         $response->assertJsonPath( 'data.redirectTo', route( 'ns.intermediate', [
             'route' => 'ns.login',
             'from' => 'ns.password-lost',
-        ]) );
+        ] ) );
 
         /**
          * Step 2: with recovery disabled
@@ -223,11 +267,11 @@ class AuthenticationTest extends TestCase
         $user = User::first();
 
         $response = $this
-            ->withSession([])
+            ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post( '/auth/password-lost', [
                 'email' => $user->email,
-            ]);
+            ] );
 
         $response->assertSee( 'The recovery has been explicitly disabled' );
     }
@@ -238,17 +282,17 @@ class AuthenticationTest extends TestCase
          * Step 1: With exact password
          */
         $user = User::first();
-        $user->password = Hash::make(123456);
+        $user->password = Hash::make( 123456 );
         $user->save();
 
         $response = $this
-            ->withSession([])
+            ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post( '/auth/sign-in', [
                 'username' => $user->username,
                 'password' => 123456,
                 '_token' => csrf_token(),
-            ]);
+            ] );
 
         $response->assertRedirect( ns()->route( 'ns.welcome' ) );
 
@@ -256,17 +300,17 @@ class AuthenticationTest extends TestCase
          * Step 2: With wrong password
          */
         $user = User::first();
-        $user->password = Hash::make(123456);
+        $user->password = Hash::make( 123456 );
         $user->save();
 
         $response = $this
-            ->withSession([])
+            ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post( '/auth/sign-in', [
                 'username' => $user->username,
                 'password' => 654321,
                 '_token' => csrf_token(),
-            ]);
+            ] );
 
         $response->assertRedirect( ns()->route( 'ns.login' ) );
     }
@@ -280,7 +324,7 @@ class AuthenticationTest extends TestCase
 
         $user = User::first();
         $user->active = true;
-        $user->activation_token = Str::random(10);
+        $user->activation_token = Str::random( 10 );
         $user->activation_expiration = ns()->date->addDay();
         $user->save();
 
@@ -288,7 +332,7 @@ class AuthenticationTest extends TestCase
         $password = '123456';
 
         $response = $this
-            ->withSession([])
+            ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 'auth/new-password/' . $user->id . '/' . $user->activation_token, [
@@ -300,7 +344,7 @@ class AuthenticationTest extends TestCase
         $response->assertJsonPath( 'data.redirectTo', route( 'ns.intermediate', [
             'route' => 'ns.login',
             'from' => 'ns.password-updated',
-        ]) );
+        ] ) );
 
         /**
          * Step 2: Attempt for account recovery when it's disabled
@@ -309,14 +353,14 @@ class AuthenticationTest extends TestCase
 
         $user = User::first();
         $user->active = true;
-        $user->activation_token = Str::random(10);
+        $user->activation_token = Str::random( 10 );
         $user->activation_expiration = ns()->date->addDay();
         $user->save();
 
         $password = $this->faker->password();
 
         $response = $this
-            ->withSession([])
+            ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 'auth/new-password/' . $user->id . '/' . $user->activation_token, [

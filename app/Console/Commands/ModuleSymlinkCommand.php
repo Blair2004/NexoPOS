@@ -45,7 +45,7 @@ class ModuleSymlinkCommand extends Command
 
             $this->withProgressBar( $modules, function ( $module ) use ( $moduleService ) {
                 $moduleService->createSymLink( $module[ 'namespace' ] );
-            });
+            } );
 
             $this->newLine();
 

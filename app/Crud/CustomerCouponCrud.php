@@ -7,7 +7,6 @@ use App\Models\CustomerCoupon;
 use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
-use App\Services\Users;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -63,7 +62,7 @@ class CustomerCouponCrud extends CrudService
         'leftJoin' => [
             [ 'nexopos_users as user', 'user.id', '=', 'nexopos_customers_coupons.author' ],
         ],
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ],
+        [ 'nexopos_users as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ],
         [ 'nexopos_coupons as coupon', 'coupon.id', '=', 'nexopos_customers_coupons.coupon_id' ],
     ];
 
@@ -93,14 +92,14 @@ class CustomerCouponCrud extends CrudService
     /**
      * Define where statement
      *
-     * @var  array
+     * @var array
      **/
     protected $listWhere = [];
 
     /**
      * Define where in statement
      *
-     * @var  array
+     * @var array
      */
     protected $whereIn = [];
 
@@ -115,15 +114,13 @@ class CustomerCouponCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
      * Return the label used for the crud
      * instance
      *
-     * @return  array
+     * @return array
      **/
     public function getLabels()
     {
@@ -153,7 +150,7 @@ class CustomerCouponCrud extends CrudService
      * Fields
      *
      * @param  object/null
-     * @return  array of field
+     * @return array of field
      */
     public function getForm( $entry = null )
     {
@@ -191,7 +188,7 @@ class CustomerCouponCrud extends CrudService
      * Filter POST input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -202,7 +199,7 @@ class CustomerCouponCrud extends CrudService
      * Filter PUT input fields
      *
      * @param  array of fields
-     * @return  array of fields
+     * @return array of fields
      */
     public function filterPutInputs( $inputs, CustomerCoupon $entry )
     {
@@ -213,7 +210,7 @@ class CustomerCouponCrud extends CrudService
      * Before saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function beforePost( $request )
     {
@@ -230,7 +227,7 @@ class CustomerCouponCrud extends CrudService
      * After saving a record
      *
      * @param  Request $request
-     * @return  void
+     * @return void
      */
     public function afterPost( $request, CustomerCoupon $entry )
     {
@@ -241,7 +238,7 @@ class CustomerCouponCrud extends CrudService
      * get
      *
      * @param  string
-     * @return  mixed
+     * @return mixed
      */
     public function get( $param )
     {
@@ -254,9 +251,9 @@ class CustomerCouponCrud extends CrudService
     /**
      * Before updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function beforePut( $request, $entry )
     {
@@ -272,9 +269,9 @@ class CustomerCouponCrud extends CrudService
     /**
      * After updating a record
      *
-     * @param  Request $request
+     * @param Request $request
      * @param  object entry
-     * @return  void
+     * @return void
      */
     public function afterPut( $request, $entry )
     {
@@ -284,7 +281,7 @@ class CustomerCouponCrud extends CrudService
     /**
      * Before Delete
      *
-     * @return  void
+     * @return void
      */
     public function beforeDelete( $namespace, $id, $model )
     {
@@ -315,17 +312,10 @@ class CustomerCouponCrud extends CrudService
 
     /**
      * Define Columns
-     *
-     * @return  array of columns configuration
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
-            'customer_name' => [
-                'label' => __( 'Customer' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
             'name' => [
                 'label' => __( 'Name' ),
                 '$direction' => '',
@@ -372,7 +362,7 @@ class CustomerCouponCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         $entry->user_username = $entry->user_username ?: __( 'N/A' );
 
@@ -387,23 +377,32 @@ class CustomerCouponCrud extends CrudService
 
         $entry->coupon_type = $entry->coupon_type === 'percentage_discount' ? __( 'Percentage' ) : __( 'Flat' );
 
-        // you can make changes here
-        $entry->addAction( 'edit', [
-            'label' => __( 'Edit' ),
-            'namespace' => 'edit',
-            'type' => 'GOTO',
-            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
-        ]);
+        // Snippet 1: No changes needed, assuming 'identifier' is already in place
+        $entry->action(
+            label: __( 'Usage History' ),
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/customers/' . $entry->customer_id . '/coupons/' . $entry->id . '/history/' ),
+            identifier: 'usage.history' 
+        );
 
-        $entry->addAction( 'delete', [
-            'label' => __( 'Delete' ),
-            'namespace' => 'delete',
-            'type' => 'DELETE',
-            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-coupons/' . $entry->id ),
-            'confirm' => [
+        // Snippet 2: 'namespace' likely needs replacement
+        $entry->action(
+            label: __( 'Edit' ),
+            identifier: 'edit', // Replace 'namespace' with 'identifier'
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        );
+
+        // Snippet 3: 'namespace' likely needs replacement
+        $entry->action(
+            label: __( 'Delete' ),
+            identifier: 'delete',  // Replace 'namespace' with 'identifier'
+            type: 'DELETE',
+            url: ns()->url( '/api/crud/ns.customers-coupons/' . $entry->id ),
+            confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ],
-        ]);
+        );
 
         return $entry;
     }
@@ -412,7 +411,7 @@ class CustomerCouponCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return    false/array
+     * @return  false/array
      */
     public function bulkAction( Request $request )
     {
@@ -432,7 +431,7 @@ class CustomerCouponCrud extends CrudService
 
             $status = [
                 'success' => 0,
-                'failed' => 0,
+                'error' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -441,7 +440,7 @@ class CustomerCouponCrud extends CrudService
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
-                    $status[ 'failed' ]++;
+                    $status[ 'error' ]++;
                 }
             }
 
@@ -454,7 +453,7 @@ class CustomerCouponCrud extends CrudService
     /**
      * get Links
      *
-     * @return  array of links
+     * @return array of links
      */
     public function getLinks(): array
     {
@@ -462,15 +461,15 @@ class CustomerCouponCrud extends CrudService
             'list' => ns()->route( 'ns.dashboard.customers-coupons-generated-list' ),
             'create' => '#', // ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/create' ),
             'edit' => ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/{id}' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.customers-coupons' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.customers-coupons/{id}' ),
         ];
     }
 
     /**
      * Get Bulk actions
      *
-     * @return  array of actions
+     * @return array of actions
      **/
     public function getBulkActions(): array
     {
@@ -480,15 +479,15 @@ class CustomerCouponCrud extends CrudService
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,
-                ]),
+                ] ),
             ],
-        ]);
+        ] );
     }
 
     /**
      * get exports
      *
-     * @return  array of export formats
+     * @return array of export formats
      **/
     public function getExports()
     {

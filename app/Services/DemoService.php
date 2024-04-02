@@ -34,7 +34,7 @@ class DemoService extends DemoCoreService
         $this->productService = $productService;
         $this->procurementService = $procurementService;
         $this->orderService = $ordersService;
-        $this->faker = (new Factory)->create();
+        $this->faker = ( new Factory )->create();
     }
 
     public function extractProductFields( $fields )
@@ -89,13 +89,14 @@ class DemoService extends DemoCoreService
     {
         /**
          * @var string $mode
-         * @var bool $create_sales
-         * @var bool $create_procurements
+         * @var bool   $create_sales
+         * @var bool   $create_procurements
          */
         extract( $data );
 
         $this->createBaseSettings();
         $this->prepareDefaultUnitSystem();
+        $this->createRegisters();
         $this->createCustomers();
         $this->createAccountingAccounts();
         $this->createProviders();
@@ -121,15 +122,15 @@ class DemoService extends DemoCoreService
         ];
 
         foreach ( $categories as $category ) {
-            $result = $this->categoryService->create([
+            $result = $this->categoryService->create( [
                 'name' => $category->name,
                 'preview_url' => $category->image,
-            ]);
+            ] );
 
             $createdCategory = $result[ 'data' ][ 'category' ];
 
             foreach ( $category->products as $product ) {
-                $random = Str::random(8);
+                $random = Str::random( 8 );
                 $unitGroup = UnitGroup::with( 'units' )->where( 'name', __( 'Countable' ) )->first();
                 $newProduct = [
                     'product_type' => 'product',
@@ -159,7 +160,7 @@ class DemoService extends DemoCoreService
                                     'unit_id' => $unit->id,
                                     'preview_url' => asset( $product->image ),
                                 ];
-                            }),
+                            } ),
                         'unit_group' => $unitGroup->id,
                     ],
                 ];
@@ -182,10 +183,10 @@ class DemoService extends DemoCoreService
                             'product_id' => $subProduct->id,
                             'unit_id' => $unitQuantity->unit_id,
                             'unit_quantity_id' => $unitQuantity->id,
-                            'quantity' => $this->faker->numberBetween(1, 5),
+                            'quantity' => $this->faker->numberBetween( 1, 5 ),
                             'sale_price' => $unitQuantity->sale_price,
                         ];
-                    });
+                    } );
 
                     $newProduct[ 'type' ] = 'grouped';
                     $newProduct[ 'groups' ] = [

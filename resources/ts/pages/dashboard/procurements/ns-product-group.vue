@@ -27,10 +27,12 @@
                                     </div>
                                     <ul>
                                         <li @click="toggleUnitField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
-                                            <span>{{ __( 'Unit' ) }}:</span>
-                                            <select @change="redefineUnit( product )" ref="unitField" type="text" v-model="product.unit_quantity_id">
-                                                <option :key="unitQuantity.id" :value="unitQuantity.id" v-for="unitQuantity of product.unit_quantities">{{ unitQuantity.unit.name }}</option>
-                                            </select>
+                                            <span>{{ __( 'Unit' ) }}:</span> 
+                                            <div class="input-group">
+                                                <select @change="redefineUnit( product )" ref="unitField" type="text" v-model="product.unit_quantity_id">
+                                                    <option :key="unitQuantity.id" :value="unitQuantity.id" v-for="unitQuantity of product.unit_quantities">{{ unitQuantity.unit.name }} ({{ unitQuantity.quantity }})</option>
+                                                </select>
+                                            </div>
                                         </li>
                                         <li @click="toggleQuantityField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
                                             <span>{{ __( 'Quantity' ) }}:</span>
@@ -38,8 +40,8 @@
                                             <input ref="quantityField" type="text" v-model="product.quantity" v-if="product._quantity_toggled">
                                         </li>
                                         <li @click="togglePriceField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
-                                            <span>{{ __( 'Price' ) }}:</span>
-                                            <span v-if="! product._price_toggled" class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.sale_price | currency }}</span>
+                                            <span>{{ __( 'Price' ) }}:</span> 
+                                            <span v-if="! product._price_toggled" class="cursor-pointer border-b border-dashed border-info-secondary">{{ nsCurrency( product.sale_price ) }}</span>
                                             <input ref="priceField" type="text" v-model="product.sale_price" v-if="product._price_toggled">
                                         </li>
                                     </ul>
@@ -54,7 +56,7 @@
                         <tfoot v-if="products.length > 0">
                             <tr>
                                 <td class="w-1/2 border p-2 text-left">{{ __( 'Total' ) }}</td>
-                                <td class="w-1/2 border p-2 text-right">{{ totalProducts | currency }}</td>
+                                <td class="w-1/2 border p-2 text-right">{{ nsCurrency( totalProducts ) }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -64,11 +66,13 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { Popup } from '@/libraries/popup';
-import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
+import { __ } from '~/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { Popup } from '~/libraries/popup';
+import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     name: 'ns-product-group',
     props: [ 'fields' ],
@@ -118,6 +122,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         setSalePrice() {
             this.$emit( 'updateSalePrice', this.totalProducts );
         },
@@ -235,12 +240,16 @@ export default {
             }
         },
         searchProducts( search ) {
-            nsHttpClient.post( `/api/nexopos/v4/products/search`, {
-                search,
+            nsHttpClient.post( `/api/products/search`, { 
+                search, 
                 arguments: {
                     type: {
                         comparison: '<>',
                         value: 'grouped'
+                    },
+                    searchable: {
+                        comparison: 'in',
+                        value: [ 0, 1 ]
                     }
                 }
             }).subscribe({

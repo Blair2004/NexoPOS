@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function up()
     {
-        $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.create.products-labels' ]);
+        $permission = Permission::firstOrNew( [ 'namespace' => 'nexopos.create.products-labels' ] );
         $permission->name = __( 'Create Products Labels' );
         $permission->description = __( 'Allow the user to create products labels' );
         $permission->save();

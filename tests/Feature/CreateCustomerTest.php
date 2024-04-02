@@ -18,7 +18,10 @@ class CreateCustomerTest extends TestCase
     public function testCreateCustomers()
     {
         $this->attemptAuthenticate();
-        $this->attemptCreateCustomer();
+
+        for ( $i = 0; $i < 5; $i++ ) {
+            $this->attemptCreateCustomerWithInitialTransactions();
+        }
     }
 
     public function testCreateCustomerWithNoEmail()
@@ -31,5 +34,11 @@ class CreateCustomerTest extends TestCase
     {
         $this->attemptAuthenticate();
         $this->attemptCreateCustomersWithSimilarEmail();
+    }
+
+    public function testAttemptSearchCustomer()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptSearchCustomers();
     }
 }

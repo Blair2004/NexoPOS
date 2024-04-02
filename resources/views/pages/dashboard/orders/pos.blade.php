@@ -1,14 +1,16 @@
 <?php
 use App\Models\User;
-?>
-@extends( 'layout.base' )
+use Illuminate\Support\Facades\Gate;
 
-@section( 'layout.base.header' )
+?>
+@extends( 'layout.dashboard-blank' )
+
+@section( 'layout.dashboard.header' )
     @parent
-    @yield( 'layout.base.header.pos' )
+    @yield( 'layout.dashboard.header.pos' )
 @endsection
 
-@section( 'layout.base.body' )
+@section( 'layout.dashboard.body' )
 <div id="pos-app" class="h-full w-full relative">
     <div id="loader" class="top-0 anim-duration-500 fade-in-entrance left-0 absolute w-full z-50 h-full flex flex-col items-center justify-center">
         @if ( ns()->option->get( 'ns_store_square_logo', false ) )
@@ -22,9 +24,10 @@ use App\Models\User;
 </div>
 @endsection
 
-@section( 'layout.base.footer' )
+@section( 'layout.dashboard.footer' )
     @parent
-    <script src="{{ asset( ns()->isProduction() ? 'js/pos-init.min.js' : 'js/pos-init.js' ) }}"></script>
+    @include( 'common.popups' )
+    @vite([ 'resources/ts/pos-init.ts' ])
     <script>
         const nsShortcuts   =   <?php echo json_encode([
             'ns_pos_keyboard_cancel_order'      =>  ns()->option->get( 'ns_pos_keyboard_cancel_order' ),
@@ -40,23 +43,25 @@ use App\Models\User;
         ]);?>
     </script>
     <script>
-    POS.defineTypes(<?php echo json_encode( $orderTypes );?>);
-    POS.defineOptions( <?php echo json_encode( $options );?>);
-    POS.defineSettings({
-        barcode_search          :   true,
-        text_search             :   false,
-        edit_purchase_price     :   <?php echo User::allowedTo( 'nexopos.pos.edit-purchase-price' ) ? 'true' : 'false';?>,
-        edit_settings           :   <?php echo User::allowedTo( 'nexopos.pos.edit-settings' ) ? 'true' : 'false';?>,
-        products_discount       :   <?php echo User::allowedTo( 'nexopos.pos.products-discount' ) ? 'true' : 'false';?>,
-        cart_discount           :   <?php echo User::allowedTo( 'nexopos.pos.cart-discount' ) ? 'true' : 'false';?>,
-        breadcrumb              :   [],
-        products_queue          :   [],
-        ns_pos_items_merge      :   <?php echo ns()->option->get( 'ns_pos_items_merge', 'no' ) === 'yes' ? 'true' : 'false';?>,
-        unit_price_editable     :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
-        urls                    :   <?php echo json_encode( $urls );?>
-    });
+    document.addEventListener( 'DOMContentLoaded', () => {
+        POS.defineTypes(<?php echo json_encode( $orderTypes );?>);
+        POS.defineOptions( <?php echo json_encode( $options );?>);
+        POS.defineSettings({
+            barcode_search          :   true,
+            text_search             :   false,
+            edit_purchase_price     :   <?php echo Gate::allows( 'nexopos.pos.edit-purchase-price' ) ? 'true' : 'false';?>,
+            edit_settings           :   <?php echo Gate::allows( 'nexopos.pos.edit-settings' ) ? 'true' : 'false';?>,
+            products_discount       :   <?php echo Gate::allows( 'nexopos.pos.products-discount' ) ? 'true' : 'false';?>,
+            cart_discount           :   <?php echo Gate::allows( 'nexopos.pos.cart-discount' ) ? 'true' : 'false';?>,
+            breadcrumb              :   [],
+            products_queue          :   [],
+            ns_pos_items_merge      :   <?php echo ns()->option->get( 'ns_pos_items_merge', 'no' ) === 'yes' ? 'true' : 'false';?>,
+            unit_price_editable     :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
+            urls                    :   <?php echo json_encode( $urls );?>
+        });
 
-    POS.definedPaymentsType( <?php echo json_encode( $paymentTypes );?> );
+        POS.definedPaymentsType( <?php echo json_encode( $paymentTypes );?> );
+    });
 
     /**
      * At the moment of the execution, the POS script
@@ -64,5 +69,5 @@ use App\Models\User;
      * working only when those component are loaded.
      */
     </script>
-    <script src="{{ asset( ns()->isProduction() ? 'js/pos.min.js' : 'js/pos.js' ) }}"></script>
+    @vite([ 'resources/ts/pos.ts' ])
 @endsection

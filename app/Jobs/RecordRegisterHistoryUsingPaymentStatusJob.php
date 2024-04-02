@@ -12,20 +12,22 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class RecordRegisterHistoryUsingPaymentStatusJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( public Order $order, public string $previous, public string $new  )
+    public function __construct( public Order $order, public string $previous, public string $new )
     {
         //
     }
 
     /**
      * Execute the job.
+     *
+     * @todo check if this is still necessary
      *
      * @return void
      */

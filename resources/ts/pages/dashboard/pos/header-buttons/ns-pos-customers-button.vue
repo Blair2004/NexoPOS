@@ -1,15 +1,16 @@
 <script>
-import { Popup } from '@/libraries/popup';
-import { default as nsPosCustomers } from '@/popups/ns-pos-customers';
-import { __ } from '@/libraries/lang';
+import { Popup } from '~/libraries/popup';
+import { __ } from '~/libraries/lang';
+import { defineAsyncComponent } from 'vue';
 
 export default {
     name: 'ns-pos-customers-button',
     methods: {
         __,
         openCustomerPopup() {
-            const popup     =   new Popup;
-            popup.open( nsPosCustomers );
+            Popup.show( defineAsyncComponent({
+                loader: () => import( '~/popups/ns-pos-customers.vue' )
+            }) );
         }
     },
     beforeDestroy() {
@@ -31,7 +32,7 @@ export default {
                 nsHotPress
                     .create( 'ns_pos_keyboard_create_customer' )
                     .whenNotVisible([ '.is-popup' ])
-                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                    .whenPressed( nsShortcuts[ shortcut ] !== null ? nsShortcuts[ shortcut ].join( '+' ) : null, ( event ) => {
                         event.preventDefault();
                         this.openCustomerPopup();
                 });

@@ -24,11 +24,11 @@ class UpdateController extends Controller
 
     public function updateDatabase()
     {
-        return view( 'pages.database-update', [
+        return view( 'pages.database.update', [
             'title' => __( 'Database Update' ),
             'redirect' => session( 'after_update', ns()->route( 'ns.dashboard.home' ) ),
             'modules' => collect( $this->modulesService->getEnabled() )->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 )->toArray(),
-        ]);
+        ] );
     }
 
     public function runMigration( Request $request )

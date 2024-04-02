@@ -1,6 +1,4 @@
-import Vue from 'vue';
-
-const nsTruncate    =   Vue.filter('truncate', function (value, length) {
+export const nsTruncate   =   (value, length) => {
     if ( !value ) {
         return '';
     } 
@@ -12,7 +10,4 @@ const nsTruncate    =   Vue.filter('truncate', function (value, length) {
     } else {
         return value
     }
-})
-  
-
-export { nsTruncate };
+}

@@ -7,12 +7,12 @@
                         <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
                             <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Total Sales' ) }}</h6>
                             <h3 class="text-2xl font-black">
-                                {{ ( report.total_sales_amount ) | currency( 'abbreviate' ) }}
+                                {{ nsCurrency( report.total_sales_amount, 'abbreviate' ) }}
                             </h3>
                         </div>
                         <div class="w-1/2 md:w-full flex flex-col px-2 justify-end items-end">
                             <h6 class="font-bold inline-block text-right md:hidden">{{ __( 'Total Sales' ) }}</h6>
-                            <h4 class="text-xs text-right">+{{ ( report.today_sales_amount ) | currency }} {{ __( 'Today' ) }}</h4>
+                            <h4 class="text-xs text-right">+{{ nsCurrency( report.today_sales_amount ) }} {{ __( 'Today' ) }}</h4>
                         </div>
                     </div>
                 </div>
@@ -23,12 +23,12 @@
                         <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
                             <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Total Refunds' ) }}</h6>
                             <h3 class="text-2xl font-black">
-                                {{ ( report.total_refunds_amount ) | currency( 'abbreviate' ) }}
+                                {{ nsCurrency( report.total_refunds_amount, 'abbreviate' ) }}
                             </h3>
                         </div>
                         <div class="w-1/2 md:w-full flex flex-col px-2 justify-end items-end">
                             <h6 class="font-bold inline-block text-right md:hidden">{{ __( 'Total Refunds' ) }}</h6>
-                            <h4 class="text-xs text-right">+{{ ( report.today_refunds_amount ) | currency }} {{ __( 'Today' ) }}</h4>
+                            <h4 class="text-xs text-right">+{{ nsCurrency( report.today_refunds_amount ) }} {{ __( 'Today' ) }}</h4>
                         </div>
                     </div>
                 </div>
@@ -55,12 +55,12 @@
                         <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
                             <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Commissions' ) }}</h6>
                             <h3 class="text-2xl font-black">
-                                {{ ( report.total_commissions ) | currency }}
+                                {{ nsCurrency( report.total_commissions ) }}
                             </h3>
                         </div>
                         <div class="w-1/2 md:w-full flex flex-col px-2 justify-end items-end">
                             <h6 class="font-bold inline-block text-right md:hidden">{{ __( 'Commissions' ) }}</h6>
-                            <h4 class="text-xs text-right">+{{ ( report.today_commissions ) | currency }} {{ __( 'Today' ) }}</h4>
+                            <h4 class="text-xs text-right">+{{ nsCurrency( report.today_commissions ) }} {{ __( 'Today' ) }}</h4>
                         </div>
                     </div>
                 </div>
@@ -70,11 +70,11 @@
             <ul v-if="report.today_orders && report.today_orders.length > 0" class="bg-white shadow-lg rounded overflow-hidden">
                 <li v-for="order of report.today_orders" :key="order.id" class="p-2 border-b-2 border-blue-400">
                     <h3 class="font-semibold text-lg flex justify-between">
-                        <span>{{ __( 'Total' ) }} : {{ order.total | currency }}</span>
+                        <span>{{ __( 'Total' ) }} : {{  nsCurrency( order.total ) }}</span>
                         <span>{{ order.code }}</span>
                     </h3>
                     <ul class="pt-2 flex -mx-1 text-sm text-gray-700">
-                        <li class="px-1">{{ __( 'Discount' ) }} : {{ order.discount | currency }}</li>
+                        <li class="px-1">{{ __( 'Discount' ) }} : {{ nsCurrency( order.discount ) }}</li>
                         <li class="px-1">{{ __( 'Status' ) }} : {{ getOrderStatus( order.payment_status ) }}</li>
                     </ul>
                 </li>
@@ -86,6 +86,8 @@
     </div>
 </template>
 <script>
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     name: 'ns-cashier-dashboard',
     props: [ 'showCommission' ],

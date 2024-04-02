@@ -64,9 +64,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes()
     {
-        Route::middleware('web')
-            ->namespace($this->namespace)
-            ->group(base_path('routes/web.php'));
+        Route::middleware( 'web' )
+            ->namespace( $this->namespace )
+            ->group( base_path( 'routes/web.php' ) );
     }
 
     /**
@@ -78,10 +78,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
-        Route::prefix('api')
-            ->middleware('api')
-            ->namespace($this->namespace)
-            ->group(base_path('routes/api.php'));
+        Route::prefix( 'api' )
+            ->middleware( 'api' )
+            ->namespace( $this->namespace )
+            ->group( base_path( 'routes/api.php' ) );
     }
 
     /**
@@ -108,7 +108,7 @@ class RouteServiceProvider extends ServiceProvider
             $controllers = Storage::disk( 'ns-modules' )->files( $module[ 'controllers-relativePath' ] );
 
             foreach ( $controllers as $controller ) {
-                $fileInfo = pathinfo(  $controller );
+                $fileInfo = pathinfo( $controller );
                 if ( $fileInfo[ 'extension' ] == 'php' ) {
                     include_once base_path( 'modules' ) . DIRECTORY_SEPARATOR . $controller;
                 }
@@ -129,7 +129,7 @@ class RouteServiceProvider extends ServiceProvider
 
                     Route::domain( $domainString )->group( function () use ( $module ) {
                         $this->mapModuleWebRoutes( $module );
-                    });
+                    } );
                 } else {
                     $this->mapModuleWebRoutes( $module );
                 }
@@ -148,7 +148,7 @@ class RouteServiceProvider extends ServiceProvider
 
                     Route::domain( $domainString )->group( function () use ( $module ) {
                         $this->mapModuleApiRoutes( $module );
-                    });
+                    } );
                 } else {
                     $this->mapModuleApiRoutes( $module );
                 }
@@ -158,16 +158,16 @@ class RouteServiceProvider extends ServiceProvider
 
     public function mapModuleWebRoutes( $module )
     {
-        Route::middleware([ 'web', 'ns.installed', 'ns.check-application-health', CheckMigrationStatus::class ])
+        Route::middleware( [ 'web', 'ns.installed', 'ns.check-application-health', CheckMigrationStatus::class ] )
             ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
             ->group( $module[ 'routes-file' ] );
     }
 
     public function mapModuleApiRoutes( $module )
     {
-        Route::prefix( 'api/nexopos/v4' )
-                    ->middleware([ 'ns.installed', 'api' ])
-                    ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
-                    ->group( $module[ 'api-file' ] );
+        Route::prefix( 'api/' )
+            ->middleware( [ 'ns.installed', 'api' ] )
+            ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
+            ->group( $module[ 'api-file' ] );
     }
 }

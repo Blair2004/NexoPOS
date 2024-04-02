@@ -7,10 +7,10 @@
     </div>
 </template>
 <script>
-import { default as nsPosCashRegistersPopupVue } from '@/popups/ns-pos-cash-registers-popup.vue';
-import nsPosCashRegistersOptionsPopupVue from '@/popups/ns-pos-cash-registers-options-popup.vue';
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import nsPosCashRegistersPopupVue from '~/popups/ns-pos-cash-registers-popup.vue';
+import nsPosCashRegistersOptionsPopupVue from '~/popups/ns-pos-cash-registers-options-popup.vue';
+import { nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 
 export default {
     data() {
@@ -45,12 +45,14 @@ export default {
             }
         },
         registerInitialQueue() {
-            POS.initialQueue.push( async () => {
+            POS.initialQueue.push( () => new Promise( async ( resolve, reject ) => {
                 try {
                     const response  =   await new Promise( ( resolve, reject ) => {
                         if ( this.settings.register === undefined ) {
-                            Popup.show( nsPosCashRegistersPopupVue, { resolve, reject });
+                            return Popup.show( nsPosCashRegistersPopupVue, { resolve, reject });
                         }
+
+                        resolve({ data: { register: this.settings.register } });
                     });
 
                     /**
@@ -60,11 +62,17 @@ export default {
                     POS.set( 'register', response.data.register ); 
                     this.setRegister( response.data.register );
 
-                    return response;
+                    resolve( response );
                 } catch( exception ) {
-                    throw exception;
+                    if ( exception === false ) {
+                        return reject({
+                            status: 'error',
+                            message: __( 'You must choose a register before proceeding.' )
+                        });
+                    }
+                    reject( exception );
                 }
-            });
+            }));
         },
         setButtonName() {
             if ( this.settings.register === undefined ) {
@@ -85,7 +93,7 @@ export default {
             }
         }
     },
-    destroyed() {
+    unmounted() {
         this.orderSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
     },

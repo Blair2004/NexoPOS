@@ -7,7 +7,7 @@ use App\Services\FieldsService;
 
 class OrderPaymentFields extends FieldsService
 {
-    protected $identifier = 'ns.order-payments';
+    protected static $identifier = 'ns.order-payments';
 
     public function get()
     {
@@ -22,7 +22,7 @@ class OrderPaymentFields extends FieldsService
                     $payment[ 'value' ] = $payment[ 'identifier' ];
 
                     return $payment;
-                }),
+                } ),
             ],
         ];
 

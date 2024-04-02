@@ -10,45 +10,39 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\ModuleUploadRequest;
+use App\Services\DateService;
 use App\Services\ModulesService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 class ModulesController extends DashboardController
 {
-    /**
-     * @var ModulesService
-     */
-    protected $modules;
-
     public function __construct(
-        ModulesService $modules
+        protected ModulesService $modules,
+        protected DateService $dateService
     ) {
-        parent::__construct();
-
         $this->middleware( function ( $request, $next ) {
-            ns()->restrict([ 'manage.modules' ]);
+            ns()->restrict( [ 'manage.modules' ] );
 
             return $next( $request );
-        });
-
-        $this->modules = $modules;
+        } );
     }
 
     public function listModules( $page = '' )
     {
-        return $this->view( 'pages.dashboard.modules.list', [
+        return View::make( 'pages.dashboard.modules.list', [
             'title' => __( 'Modules List' ),
             'description' => __( 'List all available modules.' ),
-        ]);
+        ] );
     }
 
     public function downloadModule( $identifier )
     {
-        ns()->restrict([ 'manage.modules' ]);
+        ns()->restrict( [ 'manage.modules' ] );
 
         $module = $this->modules->get( $identifier );
         $download = $this->modules->extract( $identifier );
@@ -89,7 +83,7 @@ class ModulesController extends DashboardController
      *
      * @param string module namespace
      * @return Request $request
-     * @return array response
+     * @return array   response
      *
      * @deprecated
      */
@@ -98,7 +92,7 @@ class ModulesController extends DashboardController
         $module = $this->modules->get( $namespace );
         $result = $this->modules->runMigration( $module[ 'namespace' ], $request->input( 'version' ), $request->input( 'file' ) );
 
-        if ( $result[ 'status' ] === 'failed' ) {
+        if ( $result[ 'status' ] === 'error' ) {
             throw new Exception( $result[ 'message' ] );
         }
 
@@ -134,10 +128,10 @@ class ModulesController extends DashboardController
 
     public function showUploadModule()
     {
-        return $this->view( 'pages.dashboard.modules.upload', [
+        return View::make( 'pages.dashboard.modules.upload', [
             'title' => __( 'Upload A Module' ),
             'description' => __( 'Extends NexoPOS features with some new modules.' ),
-        ]);
+        ] );
     }
 
     /**

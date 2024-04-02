@@ -72,7 +72,7 @@ class ModuleRequest extends Command
                 return view( 'generate.modules.request', [
                     'module' => $this->module,
                     'name' => $this->argument( 'name' ),
-                ]);
+                ] );
         }
     }
 

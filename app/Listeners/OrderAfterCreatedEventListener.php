@@ -27,12 +27,12 @@ class OrderAfterCreatedEventListener
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param  object $event
      * @return void
      */
     public function handle( OrderAfterCreatedEvent $event )
     {
-        Bus::chain([
+        Bus::chain( [
             new ProcessCashRegisterHistoryJob( $event->order ),
             new IncreaseCashierStatsJob( $event->order ),
             new ProcessCustomerOwedAndRewardsJob( $event->order ),
@@ -40,6 +40,6 @@ class OrderAfterCreatedEventListener
             new ResolveInstalmentJob( $event->order ),
             new ProcessAccountingRecordFromSale( $event->order ),
             new ComputeDayReportJob,
-        ])->dispatch();
+        ] )->dispatch();
     }
 }

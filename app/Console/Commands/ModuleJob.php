@@ -53,6 +53,7 @@ class ModuleJob extends Command
             $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
             $fileName = $jobsPath . $name;
             $namespace = $this->argument( 'namespace' );
+            $relativePath = 'modules' . DIRECTORY_SEPARATOR . $fileName;
 
             $fileExists = Storage::disk( 'ns-modules' )->exists(
                 $fileName . '.php'
@@ -63,7 +64,13 @@ class ModuleJob extends Command
                     'modules', 'module', 'name', 'namespace'
                 ) ) );
 
-                return $this->info( 'The job has been created !' );
+                return $this->info(
+                    sprintf(
+                        'Job %s created successfully in %s',
+                        $name,
+                        $relativePath . '.php'
+                    )
+                );
             }
 
             return $this->error( 'The job already exists !' );

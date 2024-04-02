@@ -28,7 +28,7 @@ class OrderAfterDeletedEventListener
      *
      * @return void
      */
-    public function handle(OrderAfterDeletedEvent $event)
+    public function handle( OrderAfterDeletedEvent $event )
     {
         UncountDeletedOrderForCashierJob::dispatch( $event->order );
         UncountDeletedOrderForCustomerJob::dispatch( $event->order );

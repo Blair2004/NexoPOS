@@ -7,7 +7,7 @@ use App\Services\FieldsService;
 
 class PasswordLostFields extends FieldsService
 {
-    protected $identifier = 'ns.password-lost';
+    protected static $identifier = 'ns.password-lost';
 
     public function get()
     {
@@ -19,7 +19,7 @@ class PasswordLostFields extends FieldsService
                 'name' => 'email',
                 'type' => 'text',
             ],
-        ]);
+        ] );
 
         return $fields;
     }
