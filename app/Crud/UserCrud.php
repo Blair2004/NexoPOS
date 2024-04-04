@@ -613,7 +613,7 @@ class UserCrud extends CrudService
             CrudTable::column(
                 identifier: 'username',
                 label: __( 'Username' ),
-                attributes: [
+                attributes: CrudTable::attributes(
                     CrudTable::attribute(
                         column: 'active',
                         label: __( 'Active' )
@@ -622,7 +622,7 @@ class UserCrud extends CrudService
                         column: 'email',
                         label: __( 'Email' )
                     )
-                ]
+                )
             ),
             CrudTable::column(
                 label: __( 'Wallet' ),

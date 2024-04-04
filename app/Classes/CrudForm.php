@@ -22,6 +22,6 @@ class CrudForm
 
     public static function fields( ...$args )
     {
-        return collect( $args )->toArray();
+        return collect( $args )->filter()->toArray();
     }
 }
