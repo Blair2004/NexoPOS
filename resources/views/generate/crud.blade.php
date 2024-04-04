@@ -17,6 +17,7 @@ use App\Services\CrudService;
 use App\Services\CrudEntry;
 use App\Classes\CrudTable;
 use App\Classes\CrudInput;
+use App\Classes\CrudForm;
 use App\Exceptions\NotAllowedException;
 use TorMorten\Eventy\Facades\Events as Hook;
 use {{ trim( $model_name ) }};
@@ -161,30 +162,34 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Defines the forms used to create and update entries.
+     * @param {{ trim( $lastClassName ) }} $entry
+     * @return array
      */
     public function getForm( {{ trim( $lastClassName ) }} $entry = null ): array
     {
-        return [
-            'main' =>  [
-                'label'         =>  {{ '__' }}( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  {{ '__' }}( 'Provide a name to the resource.' )
-            ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  {{ '__' }}( 'General' ),
-                    'fields'    =>  [
-                        @foreach( $Schema::getColumnListing( $table_name ) as $column )[
-                            'type'  =>  'text',
-                            'name'  =>  '{{ $column }}',
-                            'label' =>  {{ '__' }}( '{{ ucwords( $column ) }}' ),
-                            'value' =>  $entry->{{ $column }} ?? '',
-                        ], @endforeach
-                    ]
-                ]
-            ]
-        ];
+        return CrudForm::form(
+            main: CrudInput::text(
+                label: {{ '__' }}( 'Name' ),
+                name: 'name',
+                validation: 'required',
+                description: {{ '__' }}( 'Provide a name to the resource.' ),
+            ),
+            tabs: CrudForm::tabs(
+                CrudForm::tab(
+                    identifier: 'general',
+                    label: {{ '__' }}( 'General' ),
+                    fields: CrudForm::fields(
+                        @foreach( $Schema::getColumnListing( $table_name ) as $column )CrudInput::text(
+                            label: {{ '__' }}( '{{ ucwords( $column ) }}' ),
+                            name: '{{ $column }}',
+                            validation: 'required',
+                            description: {{ '__' }}( 'Provide a name to the resource.' ),
+                        ),
+                        @endforeach
+                    )
+                )
+            )
+        );
     }
 
     /**

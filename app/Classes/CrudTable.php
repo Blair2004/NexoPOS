@@ -21,4 +21,9 @@ class CrudTable
     {
         return compact( 'label', 'column' );
     }
+
+    public static function attributes( ...$attributes )
+    {
+        return $attributes;
+    }
 }
