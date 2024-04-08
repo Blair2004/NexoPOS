@@ -17,6 +17,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class ProductCategoryCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.products-categories';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_products_categories';

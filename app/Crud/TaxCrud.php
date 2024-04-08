@@ -15,6 +15,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class TaxCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.taxes';
+
+    /**
      * define the base table
      *
      * @param  string

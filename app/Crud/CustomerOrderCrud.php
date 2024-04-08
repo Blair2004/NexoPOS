@@ -11,11 +11,14 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class CustomerOrderCrud extends OrderCrud
 {
     /**
-     * default identifier
-     *
-     * @param  string
+     * Define the autoload status
      */
-    const IDENTIFIER = 'dashboard/customers/orders';
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.customers-orders';
 
     /**
      * Define namespace

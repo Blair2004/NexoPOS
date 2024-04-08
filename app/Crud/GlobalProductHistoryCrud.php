@@ -14,6 +14,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class GlobalProductHistoryCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.global-products-history';
+
+    /**
      * define the base table
      *
      * @param  string

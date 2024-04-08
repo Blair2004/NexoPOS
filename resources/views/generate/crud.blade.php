@@ -25,8 +25,8 @@ use {{ trim( $model_name ) }};
 class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 {
     /**
-     * Defines if the crud class should be automatically discovered by NexoPOS.
-     * If set to "true", you won't need to register that class on the "CrudServiceProvider".
+     * Defines if the crud class should be automatically discovered.
+     * If set to "true", no need register that class on the "CrudServiceProvider".
      */
     const AUTOLOAD = true;
 
@@ -143,21 +143,30 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     protected $showOptions = true;
 
     /**
+     * In case this crud instance is used on a search-select field,
+     * the following attributes are used to auto-populate the "options" attribute.
+     */
+    protected $optionAttribute = [
+        'value' => 'id',
+        'label' => 'name'
+    ];
+
+    /**
      * Return the label used for the crud object.
     **/
     public function getLabels(): array
     {
-        return [
-            'list_title'            =>  {{ '__' }}( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
-            'list_description'      =>  {{ '__' }}( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
-            'no_entry'              =>  {{ '__' }}( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
-            'create_new'            =>  {{ '__' }}( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_title'          =>  {{ '__' }}( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_description'    =>  {{ '__' }}( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
-            'edit_title'            =>  {{ '__' }}( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'edit_description'      =>  {{ '__' }}( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
-            'back_to_list'          =>  {{ '__' }}( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
-        ];
+        return CrudTable::labels(
+            list_title:  {{ '__' }}( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
+            list_description:  {{ '__' }}( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
+            no_entry:  {{ '__' }}( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
+            create_new:  {{ '__' }}( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
+            create_title:  {{ '__' }}( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
+            create_description:  {{ '__' }}( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
+            edit_title:  {{ '__' }}( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
+            edit_description:  {{ '__' }}( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
+            back_to_list:  {{ '__' }}( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
+        );
     }
 
     /**
@@ -306,7 +315,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     /**
      * Define row actions.
      */
-    public function addActions( CrudEntry $entry, $namespace ): CrudEntry
+    public function addActions( CrudEntry $entry ): CrudEntry
     {
         /**
          * Declaring entry actions
@@ -378,13 +387,13 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function getLinks(): array
     {
-        return  [
-            'list'      =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
-            'create'    =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
-            'post'      =>  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
-            'put'       =>  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
-        ];
+        return  CrudTable::links(
+            list:  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
+            create:  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
+            edit:  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
+            post:  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
+            put:  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
+        );
     }
 
     /**

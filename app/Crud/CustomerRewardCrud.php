@@ -13,6 +13,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class CustomerRewardCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.customers-rewards';
+
+    /**
      * define the base table
      *
      * @param  string

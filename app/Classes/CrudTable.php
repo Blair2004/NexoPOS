@@ -12,9 +12,9 @@ class CrudTable
         })->toArray();
     }
 
-    public static function column( $label, $identifier, $sort = false, $attributes = [] )
+    public static function column( $label, $identifier, $sort = false, $attributes = [], $width = 'auto', $minWidth = 'auto', $maxWidth= 'auto', $direction = '' )
     {
-        return compact( 'identifier', 'label', 'sort', 'attributes' );
+        return compact( 'identifier', 'label', 'sort', 'attributes', 'width', 'direction', 'maxWidth', 'minWidth' );
     }
 
     public static function attribute( $label, $column )
@@ -25,5 +25,15 @@ class CrudTable
     public static function attributes( ...$attributes )
     {
         return $attributes;
+    }
+
+    public static function labels( $list_title, $list_description, $no_entry, $create_new, $create_title, $create_description, $edit_title, $edit_description, $back_to_list )
+    {
+        return compact( 'list_title', 'list_description', 'no_entry', 'create_new', 'create_title', 'create_description', 'edit_title', 'edit_description', 'back_to_list' );
+    }
+
+    public static function links( $list, $create, $edit, $post, $put )
+    {
+        return compact( 'list', 'create', 'edit', 'post', 'put' );
     }
 }

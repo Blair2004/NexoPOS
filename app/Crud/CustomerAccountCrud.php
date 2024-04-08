@@ -17,6 +17,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class CustomerAccountCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.customers-account-history';
+
+    /**
      * define the base table
      *
      * @param  string

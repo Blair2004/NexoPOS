@@ -19,6 +19,14 @@ return new class extends Migration
                 if ( ! Schema::hasColumn( 'nexopos_transactions', 'type' ) ) {
                     $table->string( 'type' )->nullable();
                 }
+
+                if ( ! Schema::hasColumn( 'nexopos_transactions', 'scheduled_date' ) ) {
+                    $table->dateTime( 'scheduled_date' )->nullable();
+                }
+
+                if ( ! Schema::hasColumn( 'nexopos_transactions', 'account_id' ) ) {
+                    $table->integer( 'account_id' )->nullable();
+                }
             } );
 
             Transaction::get()->each( function ( $transaction ) {

@@ -19,6 +19,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class ProductCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.products';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_products';
@@ -184,7 +194,7 @@ class ProductCrud extends CrudService
                 'errors' => [],
                 'name' => 'convert_unit_id',
                 'label' => __( 'Convert Unit' ),
-                'validation' => 'different:unit_id',
+                // 'validation' => 'different:variations.*.units.selling_group.*.unit_id',
                 'options' => Helper::toJsOptions( $units, [ 'id', 'name' ] ),
                 'value' => '',
                 'description' => __( 'The unit that is selected for convertion by default.' ),
@@ -264,13 +274,6 @@ class ProductCrud extends CrudService
                             'label' => __( 'Identification' ),
                             'fields' => [
                                 [
-                                    'type' => 'text',
-                                    'name' => 'name',
-                                    'description' => __( 'Product unique name. If it\' variation, it should be relevant for that variation' ),
-                                    'label' => __( 'Name' ),
-                                    'validation' => 'required',
-                                    'value' => $entry->name ?? '',
-                                ], [
                                     'type' => 'search-select',
                                     'component' => 'nsCrudForm',
                                     'props' => ProductCategoryCrud::getFormConfig(),
@@ -859,7 +862,7 @@ class ProductCrud extends CrudService
         return [];
     }
 
-    public function getExtractedProductForm( $product )
+    public function getExtractedProductForm( $product = null )
     {
         $rawForm = $this->getForm( $product );
 
@@ -872,7 +875,7 @@ class ProductCrud extends CrudService
                         $data[ '$primary' ] = true;
                     }
 
-                    $data[ 'images' ] = $variation[ 'tabs' ][ 'images' ][ 'groups' ]->map( function ( $fields ) {
+                    $data[ 'images' ] = collect( $variation[ 'tabs' ][ 'images' ][ 'groups' ] )->map( function ( $fields ) {
                         return $this->extractFields( $fields );
                     } )->toArray();
 

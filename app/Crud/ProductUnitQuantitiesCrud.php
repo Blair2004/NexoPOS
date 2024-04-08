@@ -13,14 +13,19 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class ProductUnitQuantitiesCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.products-units';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_products_unit_quantities';
-
-    /**
-     * default identifier
-     */
-    const IDENTIFIER = 'products/units';
 
     /**
      * Define namespace

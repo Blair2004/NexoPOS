@@ -15,6 +15,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class PaymentTypeCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.payments-types';
+
+    /**
      * define the base table
      *
      * @param  string

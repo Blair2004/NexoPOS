@@ -3,6 +3,8 @@
 namespace App\Crud;
 
 use App\Casts\NotDefinedCast;
+use App\Classes\CrudForm;
+use App\Classes\FormInput;
 use App\Exceptions\NotAllowedException;
 use App\Models\Coupon;
 use App\Models\CouponCategory;
@@ -25,6 +27,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 
 class CouponCrud extends CrudService
 {
+    /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.coupons';
+
     /**
      * define the base table
      *
@@ -165,149 +177,128 @@ class CouponCrud extends CrudService
      */
     public function getForm( $entry = null )
     {
-        return [
-            'main' => [
-                'label' => __( 'Name' ),
-                'name' => 'name',
-                'value' => $entry->name ?? '',
-                'validation' => 'required',
-                'description' => __( 'Provide a name to the resource.' ),
-            ],
-            'tabs' => [
-                'general' => [
-                    'label' => __( 'General' ),
-                    'active' => false,
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'name' => 'code',
-                            'label' => __( 'Coupon Code' ),
-                            'validation' => [
+        return CrudForm::form(
+            main: FormInput::text(
+                label: __( 'Name' ),
+                name: 'name',
+                value: $entry->name ?? '',
+                validation: 'required',
+                description: __( 'Provide a name to the resource.' ),
+            ),
+            tabs: CrudForm::tabs(
+                CrudForm::tab(
+                    identifier: 'general',
+                    label: __( 'General' ),
+                    fields: CrudForm::fields(
+                        FormInput::text(
+                            label: __( 'Coupon Code' ),
+                            name: 'code',
+                            validation: [
                                 'required',
                                 Rule::unique( 'nexopos_coupons', 'code' )->ignore( $entry !== null ? $entry->id : 0 ),
                             ],
-                            'description' => __( 'Might be used while printing the coupon.' ),
-                            'value' => $entry->code ?? '',
-                        ], [
-                            'type' => 'select',
-                            'name' => 'type',
-                            'validation' => 'required',
-                            'options' => Helper::kvToJsOptions( [
+                            description: __( 'Might be used while printing the coupon.' ),
+                            value: $entry->code ?? '',
+                        ),
+                        FormInput::select(
+                            name: 'type',
+                            validation: 'required',
+                            options: Helper::kvToJsOptions( [
                                 'percentage_discount' => __( 'Percentage Discount' ),
                                 'flat_discount' => __( 'Flat Discount' ),
                             ] ),
-                            'label' => __( 'Type' ),
-                            'value' => $entry->type ?? '',
-                            'description' => __( 'Define which type of discount apply to the current coupon.' ),
-                        ], [
-                            'type' => 'text',
-                            'name' => 'discount_value',
-                            'label' => __( 'Discount Value' ),
-                            'description' => __( 'Define the percentage or flat value.' ),
-                            'value' => $entry->discount_value ?? '',
-                        ], [
-                            'type' => 'datetime',
-                            'name' => 'valid_until',
-                            'label' => __( 'Valid Until' ),
-                            'description' => __( 'Determine Until When the coupon is valid.' ),
-                            'value' => $entry->valid_until ?? '',
-                        ], [
-                            'type' => 'number',
-                            'name' => 'minimum_cart_value',
-                            'label' => __( 'Minimum Cart Value' ),
-                            'description' => __( 'What is the minimum value of the cart to make this coupon eligible.' ),
-                            'value' => $entry->minimum_cart_value ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'maximum_cart_value',
-                            'label' => __( 'Maximum Cart Value' ),
-                            'description' => __( 'The value above which the current coupon can\'t apply.' ),
-                            'value' => $entry->maximum_cart_value ?? '',
-                        ], [
-                            'type' => 'datetimepicker',
-                            'name' => 'valid_hours_start',
-                            'label' => __( 'Valid Hours Start' ),
-                            'description' => __( 'Define form which hour during the day the coupons is valid.' ),
-                            'value' => $entry->valid_hours_start ?? '',
-                        ], [
-                            'type' => 'datetimepicker',
-                            'name' => 'valid_hours_end',
-                            'label' => __( 'Valid Hours End' ),
-                            'description' => __( 'Define to which hour during the day the coupons end stop valid.' ),
-                            'value' => $entry->valid_hours_end ?? '',
-                        ], [
-                            'type' => 'number',
-                            'name' => 'limit_usage',
-                            'label' => __( 'Limit Usage' ),
-                            'description' => __( 'Define how many time a coupons can be redeemed.' ),
-                            'value' => $entry->limit_usage ?? '',
-                        ],
-                    ],
-                ],
-                'selected_products' => [
-                    'label' => __( 'Products' ),
-                    'active' => true,
-                    'fields' => [
-                        [
-                            'type' => 'multiselect',
-                            'name' => 'products',
-                            'options' => Helper::toJsOptions( Product::get(), [ 'id', 'name' ] ),
-                            'label' => __( 'Select Products' ),
-                            'value' => $entry instanceof Coupon ? $entry->products->map( fn( $product ) => $product->product_id )->toArray() : [],
-                            'description' => __( 'The following products will be required to be present on the cart, in order for this coupon to be valid.' ),
-                        ],
-                    ],
-                ],
-                'selected_categories' => [
-                    'label' => __( 'Categories' ),
-                    'active' => false,
-                    'fields' => [
-                        [
-                            'type' => 'multiselect',
-                            'name' => 'categories',
-                            'options' => Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ] ),
-                            'label' => __( 'Select Categories' ),
-                            'value' => $entry instanceof Coupon ? $entry->categories->map( fn( $category ) => $category->category_id )->toArray() : [],
-                            'description' => __( 'The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.' ),
-                        ],
-                    ],
-                ],
-                'selected_groups' => [
-                    'label' => __( 'Customer Groups' ),
-                    'active' => false,
-                    'fields' => [
-                        [
-                            'type' => 'multiselect',
-                            'name' => 'groups',
-                            'options' => CustomerGroup::get( [ 'name', 'id' ] )->map( fn( $group ) => [
+                            label: __( 'Type' ),
+                            value: $entry->type ?? '',
+                            description: __( 'Define which type of discount apply to the current coupon.' ),
+                        ),
+                        FormInput::text(
+                            label: __( 'Discount Value' ),
+                            name: 'discount_value',
+                            description: __( 'Define the percentage or flat value.' ),
+                            value: $entry->discount_value ?? '',
+                        ),
+                        FormInput::datetime(
+                            label: __( 'Valid Until' ),
+                            name: 'valid_until',
+                            description: __( 'Determine Until When the coupon is valid.' ),
+                            value: $entry->valid_until ?? '',
+                        ),
+                        FormInput::number(
+                            label: __( 'Minimum Cart Value' ),
+                            name: 'minimum_cart_value',
+                            description: __( 'What is the minimum value of the cart to make this coupon eligible.' ),
+                            value: $entry->minimum_cart_value ?? '',
+                        ),
+                        FormInput::text(
+                            label: __( 'Maximum Cart Value' ),
+                            name: 'maximum_cart_value',
+                            description: __( 'The value above which the current coupon can\'t apply.' ),
+                            value: $entry->maximum_cart_value ?? '',
+                        ),
+                        FormInput::datetime(
+                            label: __( 'Valid Hours Start' ),
+                            name: 'valid_hours_start',
+                            description: __( 'Define form which hour during the day the coupons is valid.' ),
+                            value: $entry->valid_hours_start ?? '',
+                        ),
+                        FormInput::datetime(
+                            label: __( 'Valid Hours End' ),
+                            name: 'valid_hours_end',
+                            description: __( 'Define to which hour during the day the coupons end stop valid.' ),
+                            value: $entry->valid_hours_end ?? '',
+                        ),
+                        FormInput::number(
+                            label: __( 'Limit Usage' ),
+                            name: 'limit_usage',
+                            description: __( 'Define how many time a coupons can be redeemed.' ),
+                            value: $entry->limit_usage ?? '',
+                        ),                        
+                    )
+                ),
+                CrudForm::tab(
+                    identifier: 'selected_products',
+                    label: __( 'Products' ),
+                    fields: CrudForm::fields(
+                        FormInput::multiselect(
+                            name: 'products',
+                            options: Helper::toJsOptions( Product::get(), [ 'id', 'name' ] ),
+                            label: __( 'Select Products' ),
+                            value: $entry instanceof Coupon ? $entry->products->map( fn( $product ) => $product->product_id )->toArray() : [],
+                            description: __( 'The following products will be required to be present on the cart, in order for this coupon to be valid.' ),
+                        ),
+                    )
+                ),
+                CrudForm::tab(
+                    identifier: 'selected_categories',
+                    label: __( 'Categories' ),
+                    fields: CrudForm::fields(
+                        FormInput::multiselect(
+                            name: 'categories',
+                            options: Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ] ),
+                            label: __( 'Select Categories' ),
+                            value: $entry instanceof Coupon ? $entry->categories->map( fn( $category ) => $category->category_id )->toArray() : [],
+                            description: __( 'The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.' ),
+                        ),
+                    )
+                ),
+                CrudForm::tab(
+                    identifier: 'selected_groups',
+                    label: __( 'Customer Groups' ),
+                    fields: CrudForm::fields(
+                        FormInput::multiselect(
+                            name: 'groups',
+                            options: CustomerGroup::get( [ 'name', 'id' ] )->map( fn( $group ) => [
                                 'label' => $group->name,
                                 'value' => $group->id,
                             ] ),
-                            'label' => __( 'Assigned To Customer Group' ),
-                            'description' => __( 'Only the customers who belongs to the selected groups will be able to use the coupon.' ),
-                            'value' => $entry instanceof Coupon ? $entry->groups->map( fn( $group ) => $group->group_id )->toArray() : [],
-                        ],
-                    ],
-                ],
-                'selected_customers' => [
-                    'label' => __( 'Customers' ),
-                    'active' => false,
-                    'fields' => [
-                        [
-                            'type' => 'multiselect',
-                            'name' => 'customers',
-                            'options' => Customer::get( [ 'first_name', 'id' ] )->map( fn( $customer ) => [
-                                'label' => $customer->first_name,
-                                'value' => $customer->id,
-                            ] ),
-                            'label' => __( 'Assigned To Customers' ),
-                            'description' => __( 'Only the customers selected will be ale to use the coupon.' ),
-                            'value' => $entry instanceof Coupon ? $entry->customers->map( fn( $customer ) => $customer->customer_id )->toArray() : [],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+                            label: __( 'Assigned To Customer Group' ),
+                            description: __( 'Only the customers who belongs to the selected groups will be able to use the coupon.' ),
+                            value: $entry instanceof Coupon ? $entry->groups->map( fn( $group ) => $group->group_id )->toArray() : [],
+                        ),
+                    )
+                ),
+            )
+        );
     }
 
     /**

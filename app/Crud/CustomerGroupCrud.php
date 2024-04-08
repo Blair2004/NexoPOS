@@ -14,6 +14,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class CustomerGroupCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.customers-groups';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_customers_groups';

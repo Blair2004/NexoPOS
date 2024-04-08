@@ -15,6 +15,7 @@ use App\Crud\ProductUnitQuantitiesCrud;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
+use App\Http\Requests\ProductRequest;
 use App\Models\ProcurementProduct;
 use App\Models\Product;
 use App\Models\ProductHistory;
@@ -111,7 +112,7 @@ class ProductsController extends DashboardController
      * @param int product id
      * @return array
      */
-    public function updateProduct( Request $request, Product $product )
+    public function updateProduct( ProductRequest $request, Product $product )
     {
         $productCrud = new ProductCrud;
         $form = $productCrud->getFlatForm( $request->post(), $product );

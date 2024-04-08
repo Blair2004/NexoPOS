@@ -14,6 +14,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class RegisterCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.cash-registers';
+
+    /**
      * define the base table
      *
      * @param  string
@@ -32,7 +42,7 @@ class RegisterCrud extends CrudService
      *
      * @param  string
      */
-    protected $namespace = 'ns.registers';
+    protected $namespace = 'ns.cash-registers';
 
     /**
      * Model Used

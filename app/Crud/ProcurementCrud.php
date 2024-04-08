@@ -13,14 +13,19 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class ProcurementCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.procurements';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_procurements';
-
-    /**
-     * base route name
-     */
-    const IDENTIFIER = '/procurements';
 
     /**
      * Define namespace

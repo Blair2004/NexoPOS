@@ -85,12 +85,12 @@ class CrudInput
         );
     }
 
-    public static function select( $label, $name, $options, $value = '', $validation = '', $description = '', $disabled = false, $type = 'select' )
+    public static function select( $label, $name, $options, $value = '', $validation = '', $description = '', $disabled = false, $type = 'select', $component = '', $props = [] )
     {
-        return compact( 'label', 'name', 'validation', 'options', 'value', 'description', 'disabled', 'type' );
+        return compact( 'label', 'name', 'validation', 'options', 'value', 'description', 'disabled', 'type', 'component', 'props' );
     }
 
-    public static function searchSelect( $label, $name, $value = '', $options = [], $validation = '', $description = '', $disabled = false )
+    public static function searchSelect( $label, $name, $value = '', $options = [], $validation = '', $description = '', $disabled = false, $component = '', $props = [] )
     {
         return self::select(
             label: $label,
@@ -99,7 +99,9 @@ class CrudInput
             description: $description,
             options: $options,
             value: $value,
-            type: 'search-select'
+            type: 'search-select',
+            component: $component,
+            props: $props
         );
     }
 

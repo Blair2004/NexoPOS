@@ -14,6 +14,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class UnitCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.units';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_units';

@@ -12,6 +12,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class ProviderProductsCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.providers-products';
+
+    /**
      * define the base table
      *
      * @param  string

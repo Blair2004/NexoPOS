@@ -191,6 +191,15 @@ class CrudService
     protected $mainRoute;
 
     /**
+     * Define the attributes to use while using
+     * the crud component on a search-select field.
+     */
+    protected $optionAttributes = [
+        'label' => 'name',
+        'value' =>  'id'
+    ];
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -1246,11 +1255,22 @@ class CrudService
             'namespace' => $instance->getNamespace(),
 
             /**
+             * We'll return here the select attribute that will
+             * be used to automatically popuplate "options" entry of select and search-select field
+             */
+            'optionAttributes'   =>  $instance->getOptionAttributes(),
+
+            /**
              * to provide custom query params
              * to every outgoing request on the table
              */
             'queryParams' => [],
         ], $config );
+    }
+
+    public function getOptionAttributes()
+    {
+        return $this->optionAttributes;
     }
 
     /**

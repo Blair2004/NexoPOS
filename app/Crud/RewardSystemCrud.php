@@ -15,6 +15,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class RewardSystemCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.rewards-system';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_rewards_system';

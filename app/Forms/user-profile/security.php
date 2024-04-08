@@ -19,7 +19,7 @@ return [
             'name' => 'password_confirm',
             'type' => 'password',
             'description' => __( 'Change your password with a better stronger password.' ),
-            'validation' => 'same:password',
+            'validation' => 'same:security.password',
         ],
     ],
 ];

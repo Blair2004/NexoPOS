@@ -13,6 +13,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class CustomerCouponCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.customers-coupons';
+
+    /**
      * define the base table
      *
      * @param  string

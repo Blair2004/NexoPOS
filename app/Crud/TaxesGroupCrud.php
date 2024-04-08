@@ -12,6 +12,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class TaxesGroupCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.taxes-groups';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_taxes_groups';

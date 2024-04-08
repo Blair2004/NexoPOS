@@ -121,43 +121,8 @@ class CrudServiceProvider extends ServiceProvider
              * manually from this section.
              */
             return match ( $namespace ) {
-                'ns.orders' => OrderCrud::class,
-                'ns.orders-instalments' => OrderInstalmentCrud::class,
-                'ns.payments-types' => PaymentTypeCrud::class,
-                'ns.hold-orders' => HoldOrderCrud::class,
-                'ns.unpaid-orders' => UnpaidOrderCrud::class,
-                'ns.partially-paid-orders' => PartiallyPaidOrderCrud::class,
-                'ns.coupons' => CouponCrud::class,
-                'ns.customers' => CustomerCrud::class,
-                'ns.customers-groups' => CustomerGroupCrud::class,
-                'ns.customers-rewards' => CustomerRewardCrud::class,
-                'ns.customers-orders' => CustomerOrderCrud::class,
-                'ns.customers-coupons' => CustomerCouponCrud::class,
-                'ns.rewards-system' => RewardSystemCrud::class,
-                'ns.providers' => ProviderCrud::class,
-                'ns.transactions-accounts' => TransactionAccountCrud::class,
-                'ns.transactions-history' => TransactionsHistoryCrud::class,
-                'ns.transactions' => TransactionCrud::class,
-                'ns.units-groups' => UnitGroupCrud::class,
-                'ns.units' => UnitCrud::class,
-                'ns.products' => ProductCrud::class,
-                'ns.products-categories' => ProductCategoryCrud::class,
-                'ns.products-units' => ProductUnitQuantitiesCrud::class,
-                'ns.products-histories' => ProductHistoryCrud::class,
-                'ns.taxes' => TaxCrud::class,
-                'ns.taxes-groups' => TaxesGroupCrud::class,
-                'ns.users' => UserCrud::class,
-                'ns.registers' => RegisterCrud::class,
-                'ns.registers-hitory' => RegisterHistoryCrud::class,
-                'ns.procurements' => ProcurementCrud::class,
-                'ns.procurements-products' => ProcurementProductCrud::class,
-                'ns.roles' => RolesCrud::class,
-                'ns.global-products-history' => GlobalProductHistoryCrud::class,
-                'ns.providers-procurements' => ProviderProcurementsCrud::class,
-                'ns.customers-account-history' => CustomerAccountCrud::class,
-                'ns.providers-products' => ProviderProductsCrud::class,
                 default => $namespace,
             };
-        } );
+        });
     }
 }

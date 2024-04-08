@@ -28,8 +28,8 @@
             <template v-if="typeof row[ identifier ] === 'string' || typeof row[ identifier ] === 'number'">
                 <template v-if="column.attributes && column.attributes.length > 0">
                     <h3 class="fond-bold text-lg" v-html="sanitizeHTML( row[ identifier ] )"></h3>
-                    <div class="flex -mx-1 text-xs">
-                        <div class="px-1" v-for="attribute of column.attributes">
+                    <div class="flex md:-mx-1 md:flex-wrap flex-col md:flex-row text-xs">
+                        <div class="md:px-1 w-full md:w-1/2 lg:w-2/4" v-for="attribute of column.attributes">
                             <strong>{{ attribute.label }}</strong>: {{ row[ attribute.column ] }}
                         </div>
                     </div>

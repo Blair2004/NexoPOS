@@ -32,6 +32,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class CustomerCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.customers';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_users';
@@ -51,7 +61,7 @@ class CustomerCrud extends CrudService
     /**
      * Model Used
      */
-    protected $model = \App\Models\Customer::class;
+    protected $model = Customer::class;
 
     /**
      * Determine if the options column should display
