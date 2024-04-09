@@ -42,7 +42,7 @@ class RegisterHistoryCrud extends CrudService
      *
      * @param  string
      */
-    protected $namespace = 'ns.cash-registers-hitory';
+    protected $namespace = 'ns.cash-registers-history';
 
     /**
      * Model Used

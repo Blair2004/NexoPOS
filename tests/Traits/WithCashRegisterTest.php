@@ -12,7 +12,7 @@ trait WithCashRegisterTest
     protected function attemptCreateCashRegisterWithActions()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.registers', [
+            ->json( 'POST', 'api/crud/ns.cash-registers', [
                 'name' => __( 'Test Cash Register' ),
                 'general' => [
                     'status' => Register::STATUS_CLOSED,
@@ -67,7 +67,7 @@ trait WithCashRegisterTest
     protected function attemptCreateRegisterTransactions()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.registers', [
+            ->json( 'POST', 'api/crud/ns.cash-registers', [
                 'name' => __( 'Cash Register' ),
                 'general' => [
                     'status' => Register::STATUS_CLOSED,
@@ -285,7 +285,7 @@ trait WithCashRegisterTest
     protected function attemptUpdateRegister( Register $register )
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', 'api/crud/ns.registers/' . $register->id, [
+            ->json( 'PUT', 'api/crud/ns.cash-registers/' . $register->id, [
                 'name' => $register->name . ' updated',
                 'general' => [
                     'status' => Register::STATUS_CLOSED,
@@ -302,7 +302,7 @@ trait WithCashRegisterTest
     protected function attemptCreateRegister()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/crud/ns.registers', [
+            ->json( 'POST', 'api/crud/ns.cash-registers', [
                 'name' => __( 'Register' ),
                 'general' => [
                     'status' => Register::STATUS_CLOSED,
@@ -321,7 +321,7 @@ trait WithCashRegisterTest
     protected function attemptDeleteRegister( Register $register )
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'DELETE', 'api/crud/ns.registers/' . $register->id );
+            ->json( 'DELETE', 'api/crud/ns.cash-registers/' . $register->id );
 
         $response->assertJson( [
             'status' => 'success',
