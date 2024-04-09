@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Classes\CrudTable;
 use App\Events\CrudBeforeExportEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\CustomerAccountHistory;
@@ -265,17 +266,17 @@ class CustomerAccountCrud extends CrudService
      **/
     public function getLabels()
     {
-        return [
-            'list_title' => __( 'Customer Accounts List' ),
-            'list_description' => __( 'Display all customer accounts.' ),
-            'no_entry' => __( 'No customer accounts has been registered' ),
-            'create_new' => __( 'Add a new customer account' ),
-            'create_title' => __( 'Create a new customer account' ),
-            'create_description' => __( 'Register a new customer account and save it.' ),
-            'edit_title' => __( 'Edit customer account' ),
-            'edit_description' => __( 'Modify  Customer Account.' ),
-            'back_to_list' => __( 'Return to Customer Accounts' ),
-        ];
+        return CrudTable::labels(
+            list_title: __( 'Customer Accounts List' ),
+            list_description: __( 'Display all customer accounts.' ),
+            no_entry: __( 'No customer accounts has been registered' ),
+            create_new: __( 'Add a new customer account' ),
+            create_title: __( 'Create a new customer account' ),
+            create_description: __( 'Register a new customer account and save it.' ),
+            edit_title: __( 'Edit customer account' ),
+            edit_description: __( 'Modify  Customer Account.' ),
+            back_to_list: __( 'Return to Customer Accounts' ),
+        );
     }
 
     /**

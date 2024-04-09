@@ -187,17 +187,6 @@ class CouponOrderHistoryCrud extends CrudService
     }
 
     /**
-     * Fields
-     *
-     * @param object/null
-     * @return array of field
-     */
-    public function getForm( $entry = null )
-    {
-        return [];
-    }
-
-    /**
      * Filter POST input fields
      *
      * @param array of fields

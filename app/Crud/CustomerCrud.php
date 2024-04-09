@@ -6,6 +6,7 @@ use App\Casts\CurrencyCast;
 use App\Casts\DateCast;
 use App\Casts\GenderCast;
 use App\Casts\NotDefinedCast;
+use App\Classes\CrudTable;
 use App\Events\CustomerAfterCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerBeforeDeletedEvent;
@@ -152,17 +153,17 @@ class CustomerCrud extends CrudService
      **/
     public function getLabels()
     {
-        return [
-            'list_title' => __( 'Customers List' ),
-            'list_description' => __( 'Display all customers.' ),
-            'no_entry' => __( 'No customers has been registered' ),
-            'create_new' => __( 'Add a new customer' ),
-            'create_title' => __( 'Create a new customer' ),
-            'create_description' => __( 'Register a new customer and save it.' ),
-            'edit_title' => __( 'Edit customer' ),
-            'edit_description' => __( 'Modify  Customer.' ),
-            'back_to_list' => __( 'Return to Customers' ),
-        ];
+        return CrudTable::labels(
+            list_title: __( 'Customers List' ),
+            list_description: __( 'Display all customers.' ),
+            no_entry: __( 'No customers has been registered' ),
+            create_new: __( 'Add a new customer' ),
+            create_title: __( 'Create a new customer' ),
+            create_description: __( 'Register a new customer and save it.' ),
+            edit_title: __( 'Edit customer' ),
+            edit_description: __( 'Modify  Customer.' ),
+            back_to_list: __( 'Return to Customers' ),
+        );
     }
 
     /**
@@ -464,41 +465,23 @@ class CustomerCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-            'first_name' => [
-                'label' => __( 'First Name' ),
-            ],
-            'last_name' => [
-                'label' => __( 'Last Name' ),
-            ],
-            'phone' => [
-                'label' => __( 'Phone' ),
-            ],
-            'email' => [
-                'label' => __( 'Email' ),
-            ],
-            'group_name' => [
-                'label' => __( 'Group' ),
-            ],
-            'account_amount' => [
-                'label' => __( 'Account Credit' ),
-            ],
-            'owed_amount' => [
-                'label' => __( 'Owed Amount' ),
-            ],
-            'purchases_amount' => [
-                'label' => __( 'Purchase Amount' ),
-            ],
-            'gender' => [
-                'label' => __( 'Gender' ),
-            ],
-            'user_username' => [
-                'label' => __( 'Author' ),
-            ],
-            'created_at' => [
-                'label' => __( 'Created At' ),
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column( 
+                label: __( 'First Name' ), 
+                identifier: 'first_name',
+                attributes: CrudTable::attributes(
+                    CrudTable::attribute( __( 'Last name' ), 'last_name' ),
+                    CrudTable::attribute( __( 'Group' ), 'group_name' ),
+                    CrudTable::attribute( __( 'Gender' ), 'gender' ),
+                )
+            ),
+            CrudTable::column( __( 'Phone' ), 'phone' ),
+            CrudTable::column( __( 'Email' ), 'email' ),
+            CrudTable::column( __( 'Account Credit' ), 'account_amount' ),
+            CrudTable::column( __( 'Owed Amount' ), 'owed_amount' ),
+            CrudTable::column( __( 'Purchase Amount' ), 'purchases_amount' ),
+            CrudTable::column( __( 'Author' ), 'user_username' ),
+        );
     }
 
     /**
@@ -607,13 +590,13 @@ class CustomerCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return [
-            'list' => ns()->url( '/dashboard/customers' ),
-            'create' => ns()->url( '/dashboard/customers/create' ),
-            'edit' => ns()->url( '/dashboard/customers/edit/{id}' ),
-            'post' => ns()->url( '/api/crud/ns.customers' ),
-            'put' => ns()->url( '/api/crud/ns.customers/{id}' ),
-        ];
+        return CrudTable::links(
+            list: ns()->url( '/dashboard/customers' ),
+            create: ns()->url( '/dashboard/customers/create' ),
+            edit: ns()->url( '/dashboard/customers/edit/{id}' ),
+            post: ns()->url( '/api/crud/ns.customers' ),
+            put: ns()->url( '/api/crud/ns.customers/{id}' ),
+        );
     }
 
     /**
