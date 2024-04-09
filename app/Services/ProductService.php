@@ -287,8 +287,8 @@ class ProductService
 
         event( new ProductBeforeCreatedEvent( $product ) );
 
-        foreach ($data as $field => $value) {
-            if (! in_array($field, [ 'variations' ])) {
+        foreach ( $data as $field => $value ) {
+            if ( ! in_array( $field, [ 'variations' ] ) ) {
                 $fields = $data;
                 $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
             }
@@ -439,7 +439,7 @@ class ProductService
 
         event( new ProductBeforeUpdatedEvent( $product ) );
 
-        $this->releaseProductTaxes($product);
+        $this->releaseProductTaxes( $product );
 
         if ( empty( $fields[ 'barcode' ] ) ) {
             $fields[ 'barcode' ] = $this->barcodeService->generateRandomBarcode( $fields[ 'barcode_type' ] );
@@ -676,7 +676,7 @@ class ProductService
         }
 
         $parent->save();
-        
+
         event( new ProductAfterUpdatedEvent( $parent ) );
 
         return [
@@ -779,13 +779,11 @@ class ProductService
 
     /**
      * Compute cogs for the provided product and unit.
-     * @param Product $product
-     * @param Unit $unit
      */
-    public function computeCogs( Product $product = null, Unit $unit = null, ProductUnitQuantity $productUnitQuantity = null ): null | ProductUnitQuantity
+    public function computeCogs( ?Product $product = null, ?Unit $unit = null, ?ProductUnitQuantity $productUnitQuantity = null ): ?ProductUnitQuantity
     {
-        $unit_id    =   $productUnitQuantity->unit_id ?? $unit->id;
-        $product_id =   $productUnitQuantity->product_id ?? $product->id;
+        $unit_id = $productUnitQuantity->unit_id ?? $unit->id;
+        $product_id = $productUnitQuantity->product_id ?? $product->id;
 
         $productHistories = ProductHistory::where( 'unit_id', $unit_id )->where( 'product_id', $product_id )
             ->whereIn( 'operation_type', [
@@ -1750,7 +1748,7 @@ class ProductService
 
     public function getCogs( Product $product, Unit $unit )
     {
-        $productUnitQuantity    =   ProductUnitQuantity::where( 'product_id', $product->id )
+        $productUnitQuantity = ProductUnitQuantity::where( 'product_id', $product->id )
             ->where( 'unit_id', $unit->id )
             ->first();
 
@@ -1870,7 +1868,7 @@ class ProductService
 
         event( new ProductBeforeUpdatedEvent( $product ) );
 
-        foreach ($fields as $field => $value) {
+        foreach ( $fields as $field => $value ) {
             /**
              * we'll update the data
              * since the variation don't need to
@@ -1996,7 +1994,7 @@ class ProductService
             $unitQuantityTo->unit_id = $to->id;
             $unitQuantityTo->quantity = 0;
             $unitQuantityTo->visible = false;
-            $unitQuantityTo->save();            
+            $unitQuantityTo->save();
         }
 
         if ( ! $this->unitService->isFromSameGroup( $from, $to ) ) {

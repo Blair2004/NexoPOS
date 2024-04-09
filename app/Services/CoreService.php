@@ -414,24 +414,25 @@ class CoreService
             );
         }
 
-        $ds     =   DIRECTORY_SEPARATOR;
+        $ds = DIRECTORY_SEPARATOR;
 
-        $possiblePaths  =   [
+        $possiblePaths = [
             rtrim( $module['path'], $ds ) . $ds . 'Public' . $ds . 'build' . $ds . '.vite' . $ds . 'manifest.json',
-            rtrim( $module['path'], $ds ) . $ds . 'Public' . $ds . 'build' . $ds . 'manifest.json'
+            rtrim( $module['path'], $ds ) . $ds . 'Public' . $ds . 'build' . $ds . 'manifest.json',
         ];
 
         $assets = collect( [] );
-        $errors =   [];
+        $errors = [];
 
-        foreach( $possiblePaths as $manifestPath ) {
+        foreach ( $possiblePaths as $manifestPath ) {
             if ( ! file_exists( $manifestPath ) ) {
-                $errors[]   =   $manifestPath;
+                $errors[] = $manifestPath;
+
                 continue;
             }
-    
+
             $manifestArray = json_decode( file_get_contents( $manifestPath ), true );
-    
+
             if ( ! isset( $manifestArray[ $fileName ] ) ) {
                 throw new NotFoundException(
                     sprintf(
@@ -441,7 +442,7 @@ class CoreService
                     )
                 );
             }
-    
+
             /**
              * checks if a css file is declared as well
              */
@@ -452,7 +453,7 @@ class CoreService
                     return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $url ) . '"/>';
                 } );
             }
-    
+
             $assets->prepend( '<script type="module" src="' . $jsUrl . '"></script>' );
         }
 

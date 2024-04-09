@@ -347,7 +347,7 @@ class ProviderCrud extends CrudService
         $entry->action(
             identifier: 'see-procurements',
             label: __( 'See Procurements' ),
-            type: 'GOTO', 
+            type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'providers/' . $entry->id . '/procurements/' )
         );
 
@@ -355,7 +355,7 @@ class ProviderCrud extends CrudService
         $entry->action(
             identifier: 'see-products',
             label: __( 'See Products' ),
-            type: 'GOTO', 
+            type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'providers/' . $entry->id . '/products/' )
         );
 
@@ -367,8 +367,8 @@ class ProviderCrud extends CrudService
             url: ns()->url( '/api/crud/ns.providers/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

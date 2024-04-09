@@ -426,7 +426,7 @@ class ProviderProcurementsCrud extends CrudService
             url: ns()->url( '/api/crud/ns.procurements/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
+            ]
         );
 
         return $entry;

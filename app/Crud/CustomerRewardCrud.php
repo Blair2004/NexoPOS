@@ -354,7 +354,7 @@ class CustomerRewardCrud extends CrudService
             identifier: 'edit',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . $this->getSlug() . '/edit/' . $entry->id ) 
+            url: ns()->url( '/dashboard/' . $this->getSlug() . '/edit/' . $entry->id )
         );
 
         // Snippet 2
@@ -365,8 +365,8 @@ class CustomerRewardCrud extends CrudService
             url: ns()->url( '/api/crud/ns.customers-rewards/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

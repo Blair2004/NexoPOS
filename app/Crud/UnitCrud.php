@@ -339,7 +339,7 @@ class UnitCrud extends CrudService
             type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'units' . '/edit/' . $entry->id )
         );
-        
+
         // Snippet 2
         $entry->action(
             identifier: 'delete',
@@ -348,8 +348,8 @@ class UnitCrud extends CrudService
             url: ns()->url( '/api/crud/ns.units/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

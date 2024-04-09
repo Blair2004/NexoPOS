@@ -11,7 +11,6 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderAfterInstalmentPaidEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
-use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterProductStockCheckedEvent;
 use App\Events\OrderAfterRefundedEvent;
@@ -98,7 +97,7 @@ class OrdersService
             $order->load( 'products' );
             $order->load( 'coupons' );
 
-            $previousOrder =  clone $order;
+            $previousOrder = clone $order;
         }
 
         $customer = $this->__customerIsDefined( $fields );
@@ -225,9 +224,9 @@ class OrdersService
         $isNew ?
             event( new OrderAfterCreatedEvent( $order, $fields ) ) :
             event( new OrderAfterUpdatedEvent(
-                newOrder: $order, 
+                newOrder: $order,
                 prevOrder: $previousOrder,
-                fields: $fields 
+                fields: $fields
             ) );
 
         return [
@@ -1152,13 +1151,13 @@ class OrdersService
 
             if ( $orderProduct->product instanceof Product ) {
                 $orderProduct->total_purchase_price = $this->currencyService->define(
-                        $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getCogs(
-                            product: $product[ 'product' ],
-                            unit: $unit
-                        ) )
+                    $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getCogs(
+                        product: $product[ 'product' ],
+                        unit: $unit
+                    ) )
                         ->multipliedBy( $product[ 'quantity' ] )
                         ->getRaw()
-                    )
+                )
                     ->getRaw();
             }
 
@@ -2104,7 +2103,7 @@ class OrdersService
      */
     public function refreshOrder( Order $order )
     {
-        $prevOrder  =   clone $order;
+        $prevOrder = clone $order;
 
         $products = $this->getOrderProducts( $order->id );
 

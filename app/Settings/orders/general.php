@@ -45,11 +45,11 @@ return SettingForm::tabs(
                 name: 'ns_orders_quotation_expiration',
                 value: ns()->option->get( 'ns_orders_quotation_expiration' ),
                 description: __( 'Quotations will get deleted after they defined they has reached.' ),
-                options: Helper::kvToJsOptions( collect([ 3, 5, 10, 15, 30 ])->mapWithKeys( function ( $days ) {
+                options: Helper::kvToJsOptions( collect( [ 3, 5, 10, 15, 30 ] )->mapWithKeys( function ( $days ) {
                     return [
                         $days => sprintf( __( '%s Days' ), $days ),
                     ];
-                })),
+                } ) ),
             ),
         )
     )

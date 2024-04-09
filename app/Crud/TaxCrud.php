@@ -363,7 +363,7 @@ class TaxCrud extends CrudService
             type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'taxes' . '/edit/' . $entry->id )
         );
-        
+
         $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
@@ -371,8 +371,8 @@ class TaxCrud extends CrudService
             url: ns()->url( '/api/crud/ns.taxes/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

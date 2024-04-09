@@ -2,41 +2,6 @@
 
 namespace App\Providers;
 
-use App\Crud\CouponCrud;
-use App\Crud\CustomerAccountCrud;
-use App\Crud\CustomerCouponCrud;
-use App\Crud\CustomerCrud;
-use App\Crud\CustomerGroupCrud;
-use App\Crud\CustomerOrderCrud;
-use App\Crud\CustomerRewardCrud;
-use App\Crud\GlobalProductHistoryCrud;
-use App\Crud\HoldOrderCrud;
-use App\Crud\OrderCrud;
-use App\Crud\OrderInstalmentCrud;
-use App\Crud\PartiallyPaidOrderCrud;
-use App\Crud\PaymentTypeCrud;
-use App\Crud\ProcurementCrud;
-use App\Crud\ProcurementProductCrud;
-use App\Crud\ProductCategoryCrud;
-use App\Crud\ProductCrud;
-use App\Crud\ProductHistoryCrud;
-use App\Crud\ProductUnitQuantitiesCrud;
-use App\Crud\ProviderCrud;
-use App\Crud\ProviderProcurementsCrud;
-use App\Crud\ProviderProductsCrud;
-use App\Crud\RegisterCrud;
-use App\Crud\RegisterHistoryCrud;
-use App\Crud\RewardSystemCrud;
-use App\Crud\RolesCrud;
-use App\Crud\TaxCrud;
-use App\Crud\TaxesGroupCrud;
-use App\Crud\TransactionAccountCrud;
-use App\Crud\TransactionCrud;
-use App\Crud\TransactionsHistoryCrud;
-use App\Crud\UnitCrud;
-use App\Crud\UnitGroupCrud;
-use App\Crud\UnpaidOrderCrud;
-use App\Crud\UserCrud;
 use App\Services\ModulesService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -123,6 +88,6 @@ class CrudServiceProvider extends ServiceProvider
             return match ( $namespace ) {
                 default => $namespace,
             };
-        });
+        } );
     }
 }

@@ -16,7 +16,7 @@ class OrdersSettings extends SettingsPage
     {
         $options = app()->make( Options::class );
 
-        $this->form     =   SettingForm::form(
+        $this->form = SettingForm::form(
             title: __( 'Orders Settings' ),
             description: __( 'configure settings that applies to orders.' ),
             tabs: include ( dirname( __FILE__ ) . '/orders/general.php' )

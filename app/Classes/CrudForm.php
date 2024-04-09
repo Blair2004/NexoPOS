@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Classes;
 
 class CrudForm
@@ -10,9 +11,9 @@ class CrudForm
 
     public static function tabs( ...$args )
     {
-        return collect( $args )->mapWithKeys( function( $tab ) {
+        return collect( $args )->mapWithKeys( function ( $tab ) {
             return [ $tab['identifier'] => $tab ];
-        })->toArray();
+        } )->toArray();
     }
 
     public static function tab( $identifier, $label, $fields )

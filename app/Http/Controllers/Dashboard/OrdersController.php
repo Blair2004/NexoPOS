@@ -50,10 +50,10 @@ class OrdersController extends DashboardController
                     $payment->selected = $index === 0;
 
                     return $payment;
-                });
+                } );
 
             return $next( $request );
-        });
+        } );
     }
 
     public function create( Request $request )
@@ -94,7 +94,7 @@ class OrdersController extends DashboardController
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
             'title' => sprintf( __( 'Payment Receipt &mdash; %s' ), $order->code ),
-        ]);
+        ] );
     }
 
     public function listOrders()

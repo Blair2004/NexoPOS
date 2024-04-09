@@ -252,7 +252,7 @@ class CouponCrud extends CrudService
                             name: 'limit_usage',
                             description: __( 'Define how many time a coupons can be redeemed.' ),
                             value: $entry->limit_usage ?? '',
-                        ),                        
+                        ),
                     )
                 ),
                 CrudForm::tab(

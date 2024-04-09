@@ -343,10 +343,10 @@ class RolesCrud extends CrudService
         $entry->action(
             identifier: 'edit',
             label: __( 'Edit' ),
-            type: 'GOTO', 
+            type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id )
         );
-        
+
         // Snippet 2
         $entry->action(
             identifier: 'clone',
@@ -354,10 +354,10 @@ class RolesCrud extends CrudService
             type: 'GET',
             confirm: [
                 'message' => __( 'Would you like to clone this role ?' ),
-            ], 
+            ],
             url: ns()->url( '/api/' . 'users/roles/' . $entry->id . '/clone' )
         );
-        
+
         // Snippet 3
         $entry->action(
             identifier: 'delete',
@@ -366,8 +366,8 @@ class RolesCrud extends CrudService
             url: ns()->url( '/api/crud/ns.roles/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

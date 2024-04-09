@@ -20,9 +20,9 @@ trait NsForms
 
     public function extractProductValidaton( $model = null ): array
     {
-        $form   =   $this->getFormObject( $model );
+        $form = $this->getFormObject( $model );
 
-        $rules  =   [];
+        $rules = [];
 
         if ( isset( $form['main']['validation'] ) ) {
             $rules[$form['main']['name']] = $form['main']['validation'];
@@ -39,7 +39,7 @@ trait NsForms
                         if ( isset( $field[ 'groups' ] ) ) {
                             foreach ( $field[ 'groups' ] as $index => $groupField ) {
                                 if ( isset( $groupField[ 'fields' ] ) ) {
-                                    foreach( $groupField[ 'fields' ] as $__field ) {
+                                    foreach ( $groupField[ 'fields' ] as $__field ) {
                                         if ( isset( $__field[ 'validation' ] ) ) {
                                             $rules[ 'variations' ][ '*' ][ $tabIdentifier ][ $field[ 'name' ] ][ '*' ][ $__field[ 'name' ] ] = $__field[ 'validation' ];
                                         }

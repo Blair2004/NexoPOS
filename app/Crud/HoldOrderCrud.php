@@ -12,7 +12,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class HoldOrderCrud extends CrudService
 {
     const AUTOLOAD = true;
-    
+
     /**
      * define the base table
      *

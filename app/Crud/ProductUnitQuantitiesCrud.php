@@ -92,12 +92,12 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * showing the options here is pointless.
      */
-    protected $showOptions  =   false;
+    protected $showOptions = false;
 
     /**
      * Bulk options are uselss here.
      */
-    protected $showCheckboxes   = false;
+    protected $showCheckboxes = false;
 
     /**
      * Define Constructor

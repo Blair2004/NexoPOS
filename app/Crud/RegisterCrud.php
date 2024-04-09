@@ -371,17 +371,17 @@ class RegisterCrud extends CrudService
 
         // you can make changes here
         $entry->action(
-            identifier: 'edit', 
+            identifier: 'edit',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id ) 
+            url: ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id )
         );
 
         $entry->action(
-            identifier: 'register-history', // Prioritize 'identifier' 
+            identifier: 'register-history', // Prioritize 'identifier'
             label: __( 'Register History' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id ) 
+            url: ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id )
         );
 
         $entry->action(
@@ -391,8 +391,8 @@ class RegisterCrud extends CrudService
             url: ns()->url( '/api/crud/ns.registers/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

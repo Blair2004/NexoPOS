@@ -514,19 +514,19 @@ class CustomerAccountCrud extends CrudService
         // you can make changes here
         $entry->action(
             identifier: 'edit',
-            label: __('Edit'), 
+            label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url('/dashboard/' . $this->slug . '/edit/' . $entry->id) 
-        ); 
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        );
 
         $entry->action(
             identifier: 'delete',
-            label: __('Delete'), 
+            label: __( 'Delete' ),
             type: 'DELETE',
-            url: ns()->url('/api/crud/ns.customers-account-history/' . $entry->id),
+            url: ns()->url( '/api/crud/ns.customers-account-history/' . $entry->id ),
             confirm: [
-                'message' => __('Would you like to delete this?'),
-            ] 
+                'message' => __( 'Would you like to delete this?' ),
+            ]
         );
 
         return $entry;

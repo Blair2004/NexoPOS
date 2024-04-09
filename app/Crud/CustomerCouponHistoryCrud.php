@@ -335,8 +335,8 @@ class CustomerCouponHistoryCrud extends CrudService
         $entry->action(
             identifier: 'edit',
             label: __( 'Edit' ),
-            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ) 
-        ); 
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        );
 
         $entry->action(
             identifier: 'delete',

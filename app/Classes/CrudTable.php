@@ -1,18 +1,19 @@
 <?php
+
 namespace App\Classes;
 
 class CrudTable
 {
     public static function columns( ...$args )
     {
-        return collect( $args )->mapWithKeys( function( $column ) {
+        return collect( $args )->mapWithKeys( function ( $column ) {
             return [
-                $column[ 'identifier' ] => $column
+                $column[ 'identifier' ] => $column,
             ];
-        })->toArray();
+        } )->toArray();
     }
 
-    public static function column( $label, $identifier, $sort = false, $attributes = [], $width = 'auto', $minWidth = 'auto', $maxWidth= 'auto', $direction = '' )
+    public static function column( $label, $identifier, $sort = false, $attributes = [], $width = 'auto', $minWidth = 'auto', $maxWidth = 'auto', $direction = '' )
     {
         return compact( 'identifier', 'label', 'sort', 'attributes', 'width', 'direction', 'maxWidth', 'minWidth' );
     }

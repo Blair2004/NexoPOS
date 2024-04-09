@@ -392,7 +392,7 @@ class CustomerCouponCrud extends CrudService
             label: __( 'Usage History' ),
             type: 'GOTO',
             url: ns()->url( '/dashboard/customers/' . $entry->customer_id . '/coupons/' . $entry->id . '/history/' ),
-            identifier: 'usage.history' 
+            identifier: 'usage.history'
         );
 
         // Snippet 2: 'namespace' likely needs replacement

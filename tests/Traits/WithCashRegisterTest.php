@@ -153,12 +153,12 @@ trait WithCashRegisterTest
 
     protected function attemptCashInRegister( Register $register )
     {
-        $initialBalance     =   $register->balance;
-        
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+        $initialBalance = $register->balance;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHIN . '/' . $register->id, [
                 'amount' => 100,
-            ]);
+            ] );
 
         $response->assertStatus( 200 );
 
@@ -174,12 +174,12 @@ trait WithCashRegisterTest
     {
         $register->refresh();
 
-        $initialBalance     =   $register->balance;
-        
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+        $initialBalance = $register->balance;
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHOUT . '/' . $register->id, [
                 'amount' => 100,
-            ]);
+            ] );
 
         $response->assertStatus( 200 );
 
@@ -187,7 +187,7 @@ trait WithCashRegisterTest
          * We'll check the current balande of the register
          */
         $register->refresh();
-        
+
         $this->assertTrue( $register->balance == $initialBalance - 100, 'The register balance doesn\'t match' );
     }
 
@@ -205,10 +205,10 @@ trait WithCashRegisterTest
          * We'll then attempt to close the register
          * with an invalid amount.
          */
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/cash-registers/close/' . $register->id, [
                 'amount' => 50,
-            ]);
+            ] );
 
         $response->asserOk();
 
@@ -216,7 +216,7 @@ trait WithCashRegisterTest
          * We should check the register history and check
          * if that claim a shortage
          */
-        $transactionHistory     =   RegisterHistory::where( 'register_id', $register->id )
+        $transactionHistory = RegisterHistory::where( 'register_id', $register->id )
             ->where( 'action', RegisterHistory::ACTION_CLOSING )
             ->orderBy( 'id', 'desc' )
             ->first();
@@ -226,10 +226,10 @@ trait WithCashRegisterTest
 
     protected function attemptOpenRegister( Register $register )
     {
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/cash-registers/open/' . $register->id, [
                 'amount' => 100,
-            ]);
+            ] );
 
         $response->assertStatus( 200 );
 
@@ -257,10 +257,10 @@ trait WithCashRegisterTest
 
     protected function attemptCloseRegister( Register $register )
     {
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/cash-registers/close/' . $register->id, [
                 'amount' => $register->balance,
-            ]);
+            ] );
 
         $response->assertStatus( 200 );
 
@@ -294,7 +294,7 @@ trait WithCashRegisterTest
 
         $response->assertJson( [
             'status' => 'success',
-        ]);
+        ] );
 
         return $register;
     }
@@ -313,7 +313,7 @@ trait WithCashRegisterTest
             'status' => 'success',
         ] );
 
-        $data   =   $response->json();
+        $data = $response->json();
 
         return Register::find( $data[ 'data' ][ 'entry' ][ 'id' ] );
     }

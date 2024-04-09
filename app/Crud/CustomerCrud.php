@@ -466,8 +466,8 @@ class CustomerCrud extends CrudService
     public function getColumns(): array
     {
         return CrudTable::columns(
-            CrudTable::column( 
-                label: __( 'First Name' ), 
+            CrudTable::column(
+                label: __( 'First Name' ),
                 identifier: 'first_name',
                 attributes: CrudTable::attributes(
                     CrudTable::attribute( __( 'Last name' ), 'last_name' ),

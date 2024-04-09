@@ -330,8 +330,8 @@ class OrderCrud extends CrudService
     public function getColumns(): array
     {
         return CrudTable::columns(
-            CrudTable::column( 
-                label: __( 'Code' ), 
+            CrudTable::column(
+                label: __( 'Code' ),
                 identifier: 'code',
                 width: '170px'
             ),

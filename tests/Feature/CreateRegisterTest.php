@@ -19,6 +19,7 @@ class CreateRegisterTest extends TestCase
     public function testCreateRegister()
     {
         $this->attemptAuthenticate();
+
         return $this->attemptCreateRegisterTransactions();
     }
 
@@ -77,7 +78,6 @@ class CreateRegisterTest extends TestCase
 
     /**
      * @depends testCashOutRegister
-     
      */
     public function testCloseRegister( $register )
     {

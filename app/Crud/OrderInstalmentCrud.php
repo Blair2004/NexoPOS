@@ -374,9 +374,9 @@ class OrderInstalmentCrud extends CrudService
             identifier: 'edit',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ), 
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
         );
-        
+
         $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
@@ -384,7 +384,7 @@ class OrderInstalmentCrud extends CrudService
             url: ns()->url( '/api/crud/ns.orders-instalments/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
+            ]
         );
 
         return $entry;

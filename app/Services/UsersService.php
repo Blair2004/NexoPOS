@@ -368,6 +368,7 @@ class UsersService
     public function checkPermission( $permission, ?User $user = null ): bool
     {
         ns()->restrict( $permission );
+
         return true;
     }
 }

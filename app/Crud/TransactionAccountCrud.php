@@ -309,7 +309,7 @@ class TransactionAccountCrud extends CrudService
             type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id )
         );
-        
+
         $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
@@ -317,8 +317,8 @@ class TransactionAccountCrud extends CrudService
             url: ns()->url( '/api/crud/ns.transactions-accounts/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

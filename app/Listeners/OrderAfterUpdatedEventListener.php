@@ -43,14 +43,14 @@ class OrderAfterUpdatedEventListener
         ] )->dispatch();
 
         /**
-         * if the order payment status has changed from the 
+         * if the order payment status has changed from the
          * previous order, we need to dispatch an event OrderAfterPaymentStatusChangedEvent
          */
         if ( $event->newOrder->payment_status != $event->prevOrder->payment_status ) {
-            event( new OrderAfterPaymentStatusChangedEvent( 
-                order: $event->newOrder, 
+            event( new OrderAfterPaymentStatusChangedEvent(
+                order: $event->newOrder,
                 previous: $event->prevOrder->payment_status,
-                new: $event->newOrder->payment_status 
+                new: $event->newOrder->payment_status
             ) );
         }
     }

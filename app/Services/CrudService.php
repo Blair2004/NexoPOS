@@ -196,7 +196,7 @@ class CrudService
      */
     protected $optionAttributes = [
         'label' => 'name',
-        'value' =>  'id'
+        'value' => 'id',
     ];
 
     /**
@@ -1258,7 +1258,7 @@ class CrudService
              * We'll return here the select attribute that will
              * be used to automatically popuplate "options" entry of select and search-select field
              */
-            'optionAttributes'   =>  $instance->getOptionAttributes(),
+            'optionAttributes' => $instance->getOptionAttributes(),
 
             /**
              * to provide custom query params

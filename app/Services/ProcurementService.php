@@ -1036,7 +1036,7 @@ class ProcurementService
             ->whereIn( 'type', [
                 Product::TYPE_DEMATERIALIZED,
                 Product::TYPE_MATERIALIZED,
-            ])
+            ] )
             ->notGrouped()
             ->where( function ( $query ) use ( $argument ) {
                 $query->orWhere( 'name', 'LIKE', "%{$argument}%" )

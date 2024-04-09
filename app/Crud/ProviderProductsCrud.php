@@ -371,7 +371,7 @@ class ProviderProductsCrud extends CrudService
             identifier: 'edit',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ) 
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
         );
 
         $entry->action(
@@ -381,7 +381,7 @@ class ProviderProductsCrud extends CrudService
             url: ns()->url( '/api/crud/ns.providers-products/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
+            ]
         );
 
         return $entry;

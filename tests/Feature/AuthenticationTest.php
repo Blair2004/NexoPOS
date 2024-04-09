@@ -141,17 +141,19 @@ class AuthenticationTest extends TestCase
         $response->assertStatus( 200 );
     }
 
-    public function generateUsername($minLength = 10) {
+    public function generateUsername( $minLength = 10 )
+    {
         $username = $this->faker->userName();
-        while(strlen($username) < $minLength) {
+        while ( strlen( $username ) < $minLength ) {
             $username .= $this->faker->randomLetter();
         }
+
         return $username;
     }
 
     public function testSubmitRegistrationForm()
     {
-        $password = $this->faker->password(8);
+        $password = $this->faker->password( 8 );
         $registration_validated = ns()->option->get( 'ns_registration_validated', 'yes' );
 
         /**
@@ -160,7 +162,7 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
-        $username = $this->generateUsername(10);
+        $username = $this->generateUsername( 10 );
         $email = $this->faker->email();
 
         $response = $this
@@ -201,7 +203,7 @@ class AuthenticationTest extends TestCase
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 '/auth/sign-up', [
-                    'username' => $this->generateUsername(10),
+                    'username' => $this->generateUsername( 10 ),
                     'password' => $password,
                     'password_confirm' => $password,
                     'email' => 'not-a-valid-email',
@@ -223,7 +225,7 @@ class AuthenticationTest extends TestCase
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 '/auth/sign-up', [
-                    'username' => $this->generateUsername(10),
+                    'username' => $this->generateUsername( 10 ),
                     'password' => $password,
                     'password_confirm' => $password . 'not-the-same',
                     'email' => $this->faker->email(),

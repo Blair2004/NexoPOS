@@ -990,7 +990,7 @@ class ReportService
             $category->total_discount = collect( $category->products )->sum( 'discount' );
             $category->total_sold_items = collect( $category->products )->sum( 'quantity' );
             $category->total_purchase_price = collect( $category->products )->sum( 'total_purchase_price' );
-        });
+        } );
 
         return [
             'result' => $categories->toArray(),

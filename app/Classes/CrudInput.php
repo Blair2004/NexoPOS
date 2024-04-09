@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Classes;
 
 class CrudInput
@@ -8,7 +9,7 @@ class CrudInput
         return compact( 'label', 'name', 'value', 'validation', 'description', 'disabled', 'type' );
     }
 
-    public static function password( $label, $name, $validation = '', $description = '', $disabled = false ) 
+    public static function password( $label, $name, $validation = '', $description = '', $disabled = false )
     {
         return self::text(
             label: $label,
@@ -20,7 +21,7 @@ class CrudInput
         );
     }
 
-    public static function email( $label, $name, $value = '', $validation = '', $description = '', $disabled = false ) 
+    public static function email( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::text(
             label: $label,
@@ -33,7 +34,7 @@ class CrudInput
         );
     }
 
-    public static function number( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'number' ) 
+    public static function number( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'number' )
     {
         return self::text(
             label: $label,
@@ -46,7 +47,7 @@ class CrudInput
         );
     }
 
-    public static function tel( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'tel' ) 
+    public static function tel( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'tel' )
     {
         return self::text(
             label: $label,
@@ -59,7 +60,7 @@ class CrudInput
         );
     }
 
-    public static function hidden( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'hidden' ) 
+    public static function hidden( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'hidden' )
     {
         return self::text(
             label: $label,
@@ -72,7 +73,7 @@ class CrudInput
         );
     }
 
-    public static function date( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'date' ) 
+    public static function date( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'date' )
     {
         return self::text(
             label: $label,
@@ -105,7 +106,7 @@ class CrudInput
         );
     }
 
-    public static function textarea( $label, $name, $value = '', $validation = '', $description = '', $disabled = false ) 
+    public static function textarea( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::text(
             label: $label,
@@ -118,7 +119,7 @@ class CrudInput
         );
     }
 
-    public static function checkbox( $label, $name, $value = '', $validation = '', $description = '', $disabled = false ) 
+    public static function checkbox( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::text(
             label: $label,
@@ -131,7 +132,7 @@ class CrudInput
         );
     }
 
-    public static function multiselect( $label, $name, $value = '', $options, $validation = '', $description = '', $disabled = false ) 
+    public static function multiselect( $label, $name, $value, $options, $validation = '', $description = '', $disabled = false )
     {
         return self::select(
             label: $label,
@@ -145,7 +146,7 @@ class CrudInput
         );
     }
 
-    public static function inlineMultiselect( $label, $name, $value = '', $options, $validation = '', $description = '', $disabled = false )
+    public static function inlineMultiselect( $label, $name, $value, $options, $validation = '', $description = '', $disabled = false )
     {
         return self::select(
             label: $label,
@@ -158,8 +159,8 @@ class CrudInput
             value: $value
         );
     }
-    
-    public static function selectAudio( $label, $name, $value = '', $options, $validation = '', $description = '', $disabled = false ) 
+
+    public static function selectAudio( $label, $name, $value, $options, $validation = '', $description = '', $disabled = false )
     {
         return self::select(
             label: $label,
@@ -173,7 +174,7 @@ class CrudInput
         );
     }
 
-    public static function switch( $label, $name, $options, $value = '', $validation = '', $description = '', $disabled = false ) 
+    public static function switch( $label, $name, $options, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::select(
             label: $label,
@@ -186,8 +187,8 @@ class CrudInput
             type: 'switch'
         );
     }
-   
-    public static function media( $label, $name, $value = '', $validation = '', $description = '', $disabled = false ) 
+
+    public static function media( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::text(
             label: $label,
@@ -200,7 +201,7 @@ class CrudInput
         );
     }
 
-    public static function ckeditor( $label, $name, $value = '', $validation = '', $description = '', $disabled = false ) 
+    public static function ckeditor( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::text(
             label: $label,
@@ -212,8 +213,8 @@ class CrudInput
             value: $value
         );
     }
-    
-    public static function datetime( $label, $name, $value = '', $validation = '', $description = '', $disabled = false ) 
+
+    public static function datetime( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::text(
             label: $label,
@@ -226,7 +227,7 @@ class CrudInput
         );
     }
 
-    public static function daterange( $label, $name, $value = '', $validation = '', $description = '', $disabled = false ) 
+    public static function daterange( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::text(
             label: $label,
@@ -239,7 +240,7 @@ class CrudInput
         );
     }
 
-    public static function custom( $label, $name, $type, $value = '', $validation = '', $description = '', $disabled = false, $options = [] ) 
+    public static function custom( $label, $name, $type, $value = '', $validation = '', $description = '', $disabled = false, $options = [] )
     {
         return self::select(
             label: $label,

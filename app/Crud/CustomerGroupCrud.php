@@ -298,12 +298,12 @@ class CustomerGroupCrud extends CrudService
         $entry->reward_system_id = $entry->reward_system_id === 0 ? __( 'N/A' ) : $entry->reward_system_id;
 
         $entry->action(
-            identifier: 'edit_customers_group', 
+            identifier: 'edit_customers_group',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( 'dashboard/customers/groups/edit/' . $entry->id ) 
+            url: ns()->url( 'dashboard/customers/groups/edit/' . $entry->id )
         );
-        
+
         $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
@@ -312,8 +312,8 @@ class CustomerGroupCrud extends CrudService
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
                 'title' => __( 'Delete a licence' ),
-            ] 
-        ); 
+            ]
+        );
 
         $entry->reward_name = $entry->reward_name ?: __( 'N/A' );
 
