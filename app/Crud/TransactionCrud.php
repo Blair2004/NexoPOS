@@ -6,6 +6,7 @@ use App\Casts\CurrencyCast;
 use App\Casts\TransactionOccurrenceCast;
 use App\Casts\TransactionTypeCast;
 use App\Casts\YesNoBoolCast;
+use App\Classes\CrudTable;
 use App\Events\TransactionAfterCreatedEvent;
 use App\Events\TransactionAfterUpdatedEvent;
 use App\Events\TransactionBeforeCreatedEvent;
@@ -518,13 +519,13 @@ class TransactionCrud extends CrudService
      */
     public function getLinks(): array
     {
-        return [
-            'list' => ns()->url( 'dashboard/' . 'accounting/transactions' ),
-            'create' => ns()->url( 'dashboard/' . 'accounting/transactions/create' ),
-            'edit' => ns()->url( 'dashboard/' . 'accounting/transactions/edit/{id}' ),
-            'post' => ns()->url( 'api/crud/' . 'ns.transactions' ),
-            'put' => ns()->url( 'api/crud/' . 'ns.transactions/' . '{id}' ),
-        ];
+        return CrudTable::links(
+            list: ns()->url( 'dashboard/' . 'accounting/transactions' ),
+            create: ns()->url( 'dashboard/' . 'accounting/transactions/create' ),
+            edit: ns()->url( 'dashboard/' . 'accounting/transactions/edit/{id}' ),
+            post: ns()->url( 'api/crud/' . 'ns.transactions' ),
+            put: ns()->url( 'api/crud/' . 'ns.transactions/' . '{id}' ),
+        );
     }
 
     /**
