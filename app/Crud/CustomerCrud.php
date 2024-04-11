@@ -470,11 +470,11 @@ class CustomerCrud extends CrudService
                 label: __( 'First Name' ),
                 identifier: 'first_name',
                 attributes: CrudTable::attributes(
-                    CrudTable::attribute( __( 'Last name' ), 'last_name' ),
                     CrudTable::attribute( __( 'Group' ), 'group_name' ),
                     CrudTable::attribute( __( 'Gender' ), 'gender' ),
                 )
             ),
+            CrudTable::column( __( 'Last name' ), 'last_name' ),
             CrudTable::column( __( 'Phone' ), 'phone' ),
             CrudTable::column( __( 'Email' ), 'email' ),
             CrudTable::column( __( 'Account Credit' ), 'account_amount' ),
