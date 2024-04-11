@@ -2665,14 +2665,25 @@ class OrdersService
      */
     public function getSoldStock( $startDate, $endDate, $categories = [], $units = [] )
     {
+        $selectedColumns    =   [ 'product_id', 'name', 'unit_name', 'unit_price', 'quantity', 'total_purchase_price', 'tax_value', 'total_price' ];
+        $groupColumns    =   [ 'product_id', 'unit_id', 'name', 'unit_name' ];
+        $selectedColumns    =   [ 
+            ...$groupColumns, 
+            DB::raw( 'SUM(quantity) as quantity' ),
+            DB::raw( 'SUM(tax_value) as tax_value' ),
+            DB::raw( 'SUM(total_purchase_price) as total_purchase_price' ),
+            DB::raw( 'SUM(total_price) as total_price' ),
+        ];
         $rangeStarts = Carbon::parse( $startDate )->toDateTimeString();
         $rangeEnds = Carbon::parse( $endDate )->toDateTimeString();
 
         $products = OrderProduct::whereHas( 'order', function ( Builder $query ) {
             $query->where( 'payment_status', Order::PAYMENT_PAID );
         } )
-            ->where( 'created_at', '>=', $rangeStarts )
-            ->where( 'created_at', '<=', $rangeEnds );
+        ->select( $selectedColumns )
+        ->groupByRaw( join( ', ', $groupColumns ) )
+        ->where( 'created_at', '>=', $rangeStarts )
+        ->where( 'created_at', '<=', $rangeEnds );
 
         if ( ! empty( $categories ) ) {
             $products->whereIn( 'product_category_id', $categories );
