@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Casts\CurrencyCast;
 use App\Exceptions\NotAllowedException;
 use App\Models\TransactionHistory;
 use App\Models\User;
@@ -69,7 +70,9 @@ class TransactionsHistoryCrud extends CrudService
      * @param array
      */
     public $relations = [
-        [ 'nexopos_transactions as transaction', 'transaction.id', '=', 'nexopos_transactions_histories.transaction_id' ],
+        'leftJoin' => [
+            [ 'nexopos_transactions as transaction', 'transaction.id', '=', 'nexopos_transactions_histories.transaction_id' ]
+        ],
         [ 'nexopos_users as users', 'users.id', '=', 'nexopos_transactions_histories.author' ],
         [ 'nexopos_transactions_accounts as transactions_accounts', 'transactions_accounts.id', '=', 'nexopos_transactions_histories.transaction_account_id' ],
     ];
@@ -138,6 +141,10 @@ class TransactionsHistoryCrud extends CrudService
     protected $prependOptions = false;
 
     protected $showOptions = false;
+
+    protected $casts    =   [
+        'value' =>  CurrencyCast::class,
+    ];
 
     /**
      * Define Constructor

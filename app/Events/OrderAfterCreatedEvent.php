@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Order;
+use App\Traits\NsSerialize;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -11,11 +12,11 @@ use Illuminate\Queue\SerializesModels;
 
 class OrderAfterCreatedEvent implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, InteractsWithSockets, NsSerialize;
 
     public function __construct( public Order $order, public $fields )
     {
-        // ...
+        $this->prepareSerialization();
     }
 
     /**

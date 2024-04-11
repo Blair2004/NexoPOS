@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Product;
 use App\Models\ProductHistoryCombined;
 use App\Services\DateService;
+use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -13,14 +14,14 @@ use Illuminate\Queue\SerializesModels;
 
 class EnsureCombinedProductHistoryExistsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
 
     /**
      * Create a new job instance.
      */
-    public function __construct()
+    public function __construct( public $date = null )
     {
-        //
+        $this->prepareSerialization();
     }
 
     /**
@@ -28,18 +29,17 @@ class EnsureCombinedProductHistoryExistsJob implements ShouldQueue
      */
     public function handle( DateService $dateService ): void
     {
-        $now = $dateService->now()->clone()->startOfDay()->format( 'Y-m-d' );
-
-        // retreive the first ProductHistory that was created during that day using $now
-        $productHistoryCombined = ProductHistoryCombined::where( 'created_at', '>', $now )->first();
-
-        if ( ! $productHistoryCombined instanceof ProductHistoryCombined ) {
-            // retrieve products with stock enabled by chunk of 20 and dispatch the job ProcessProductHistoryCombinedByChunkJob
-            $delay = 10;
-            Product::withStockEnabled()->chunk( 20, function ( $products ) use ( &$delay ) {
-                ProcessProductHistoryCombinedByChunkJob::dispatch( $products )->delay( now()->addSeconds( $delay ) );
-                $delay += 10;
-            } );
+        if ( $this->date !== null ) {
+            $now = $dateService->parse( $this->date )->startOfDay()->format( 'Y-m-d' );
+        } else {
+            $now = $dateService->startOfDay()->format( 'Y-m-d' );
         }
+
+        // retrieve products with stock enabled by chunk of 20 and dispatch the job ProcessProductHistoryCombinedByChunkJob
+        $delay = 10;
+        Product::withStockEnabled()->chunk( 20, function ( $products ) use ( &$delay, $now ) {
+            ProcessProductHistoryCombinedByChunkJob::dispatch( $products, $now )->delay( now()->addSeconds( $delay ) );
+            $delay += 10;
+        } );
     }
 }

@@ -1149,16 +1149,16 @@ class OrdersService
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price = 0;
 
-            if ( $orderProduct->product instanceof Product ) {
+            if ( $product[ 'product' ] instanceof Product ) {
                 $orderProduct->total_purchase_price = $this->currencyService->define(
                     $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getCogs(
                         product: $product[ 'product' ],
                         unit: $unit
                     ) )
-                        ->multipliedBy( $product[ 'quantity' ] )
-                        ->getRaw()
+                    ->multipliedBy( $product[ 'quantity' ] )
+                    ->getRaw()
                 )
-                    ->getRaw();
+                ->getRaw();
             }
 
             $this->computeOrderProduct( $orderProduct );

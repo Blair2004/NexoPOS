@@ -308,8 +308,8 @@ class ReportsController extends DashboardController
         );
     }
 
-    public function computeCombinedReport()
+    public function computeCombinedReport( Request $request )
     {
-        return $this->reportService->computeCombinedReport();
+        return $this->reportService->computeCombinedReport( $request->input( 'date' ) );
     }
 }

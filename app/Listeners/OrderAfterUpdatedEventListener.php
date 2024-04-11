@@ -6,7 +6,7 @@ use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Jobs\ComputeDayReportJob;
 use App\Jobs\IncreaseCashierStatsJob;
-use App\Jobs\ProcessAccountingRecordFromSale;
+use App\Jobs\ProcessAccountingRecordFromSaleJob;
 use App\Jobs\ProcessCashRegisterHistoryJob;
 use App\Jobs\ProcessCustomerOwedAndRewardsJob;
 use App\Jobs\ResolveInstalmentJob;
@@ -38,7 +38,7 @@ class OrderAfterUpdatedEventListener
             new ProcessCustomerOwedAndRewardsJob( $event->newOrder ),
             new TrackOrderCouponsJob( $event->newOrder ),
             new ResolveInstalmentJob( $event->newOrder ),
-            new ProcessAccountingRecordFromSale( $event->newOrder ),
+            new ProcessAccountingRecordFromSaleJob( $event->newOrder ),
             new ComputeDayReportJob,
         ] )->dispatch();
 

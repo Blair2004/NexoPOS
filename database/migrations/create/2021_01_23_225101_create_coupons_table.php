@@ -66,5 +66,7 @@ return new class extends Migration
         Schema::dropIfExists( 'nexopos_coupons' );
         Schema::dropIfExists( 'nexopos_coupons_products' );
         Schema::dropIfExists( 'nexopos_coupons_categories' );
+        Schema::dropIfExists( 'nexopos_coupons_customers' );
+        Schema::dropIfExists( 'nexopos_coupons_customers_groups' );
     }
 };
