@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\CustomerModelBootedEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +50,8 @@ class Customer extends UserScope
                 ->get( [ 'user_id', 'role_id' ] );
 
             $builder->whereIn( 'id', $userRoleRelations->map( fn( $role ) => $role->user_id )->toArray() );
+
+            CustomerModelBootedEvent::dispatch( $builder );
         } );
     }
 

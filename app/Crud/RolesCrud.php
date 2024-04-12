@@ -305,6 +305,8 @@ class RolesCrud extends CrudService
             if ( $model->locked ) {
                 throw new Exception( __( 'Unable to delete a system role.' ) );
             }
+
+            $model->permissions()->detach();
         }
     }
 

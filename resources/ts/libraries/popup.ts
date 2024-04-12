@@ -3,6 +3,7 @@ import { shallowRef } from "vue";
 
 declare const document;
 declare const nsState;
+declare const nsHotPress;
 
 export class Popup {
     private config  =   {
@@ -126,6 +127,12 @@ export class Popup {
             const index         =   popups.indexOf( popup );
             popups.splice( index, 1 );
             nsState.setState({ popups });
+
+            /**
+             * this will destroy the listener to avoid
+             * the event bound to still trigger the callback.
+             */
+            nsHotPress.destroy( `popup-esc-${popup.hash}` );
 
             if ( callback !== null ) {
                 return callback( popup );

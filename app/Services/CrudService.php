@@ -4,12 +4,12 @@ namespace App\Services;
 
 use App\Casts\DateCast;
 use App\Classes\Output;
+use App\Events\CrudHookEvent;
 use App\Exceptions\NotAllowedException;
 use App\Traits\NsForms;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\View\View as ContractView;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -901,6 +901,12 @@ class CrudService
         if ( isset( $config['pick'] ) ) {
             $query->whereIn( $this->hookTableName( $this->table ) . '.id', $config['pick'] );
         }
+
+        /**
+         * This will allow any module to interact with
+         * the way the query is built.
+         */
+        CrudHookEvent::dispatch( $this, $query );
 
         /**
          * if $perPage is not defined

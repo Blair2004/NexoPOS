@@ -6,7 +6,9 @@ use App\Casts\CurrencyCast;
 use App\Casts\DateCast;
 use App\Casts\GenderCast;
 use App\Casts\NotDefinedCast;
+use App\Classes\CrudForm;
 use App\Classes\CrudTable;
+use App\Classes\FormInput;
 use App\Events\CustomerAfterCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerBeforeDeletedEvent;
@@ -79,7 +81,9 @@ class CustomerCrud extends CrudService
      * Adding relation
      */
     public $relations = [
-        [ 'nexopos_customers_groups as group', 'nexopos_users.group_id', '=', 'group.id' ],
+        'leftJoin' => [
+            [ 'nexopos_customers_groups as group', 'nexopos_users.group_id', '=', 'group.id' ]
+        ],
         [ 'nexopos_users as user', 'user.id', '=', 'nexopos_users.author' ],
     ];
 
@@ -190,98 +194,101 @@ class CustomerCrud extends CrudService
      */
     public function getForm( ?Customer $entry = null )
     {
-        return [
-            'main' => [
-                'label' => __( 'Customer Name' ),
-                'name' => 'first_name',
-                'validation' => 'required',
-                'value' => $entry->first_name ?? '',
-                'description' => __( 'Provide a unique name for the customer.' ),
-            ],
-            'tabs' => [
-                'general' => [
-                    'label' => __( 'General' ),
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'label' => __( 'Last Name' ),
-                            'name' => 'last_name',
-                            'value' => $entry->last_name ?? '',
-                            'description' => __( 'Provide the customer last name' ),
-                        ], [
-                            'type' => 'number',
-                            'label' => __( 'Credit Limit' ),
-                            'name' => 'credit_limit_amount',
-                            'value' => $entry->credit_limit_amount ?? '',
-                            'description' => __( 'Set what should be the limit of the purchase on credit.' ),
-                        ], [
-                            'type' => 'search-select',
-                            'label' => __( 'Group' ),
-                            'name' => 'group_id',
-                            'value' => $entry->group_id ?? '',
-                            'component' => 'nsCrudForm',
-                            'props' => CustomerGroupCrud::getFormConfig(),
-                            'options' => Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ] ),
-                            'description' => __( 'Assign the customer to a group' ),
-                        ], [
-                            'type' => 'datetimepicker',
-                            'label' => __( 'Birth Date' ),
-                            'name' => 'birth_date',
-                            'value' => $entry instanceof Customer && $entry->birth_date !== null ? Carbon::parse( $entry->birth_date )->format( 'Y-m-d H:i:s' ) : null,
-                            'description' => __( 'Displays the customer birth date' ),
-                        ], [
-                            'type' => 'email',
-                            'label' => __( 'Email' ),
-                            'name' => 'email',
-                            'value' => $entry->email ?? '',
-                            'validation' => collect( [
+        return CrudForm::form(
+            main: FormInput::text(
+                label: __( 'Customer Name' ),
+                name: 'first_name',
+                validation: 'required',
+                value: $entry->first_name ?? '',
+                description: __( 'Provide a unique name for the customer.' ),
+            ),
+            tabs: CrudForm::tabs(
+                CrudForm::tab(
+                    identifier: 'general',
+                    label: __( 'General' ),
+                    fields: CrudForm::fields(
+                        FormInput::text(
+                            label: __( 'Last Name' ),
+                            name: 'last_name',
+                            value: $entry->last_name ?? '',
+                            description: __( 'Provide the customer last name' ),
+                        ),
+                        FormInput::number(
+                            label: __( 'Credit Limit' ),
+                            name: 'credit_limit_amount',
+                            value: $entry->credit_limit_amount ?? '',
+                            description: __( 'Set what should be the limit of the purchase on credit.' ),
+                        ),
+                        FormInput::searchSelect(
+                            label: __( 'Group' ),
+                            name: 'group_id',
+                            value: $entry->group_id ?? '',
+                            validation: 'required',
+                            component: 'nsCrudForm',
+                            props: CustomerGroupCrud::getFormConfig(),
+                            options: Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ] ),
+                            description: __( 'Assign the customer to a group' ),
+                        ),
+                        FormInput::datetime(
+                            label: __( 'Birth Date' ),
+                            name: 'birth_date',
+                            value: $entry instanceof Customer && $entry->birth_date !== null ? Carbon::parse( $entry->birth_date )->format( 'Y-m-d H:i:s' ) : null,
+                            description: __( 'Displays the customer birth date' ),
+                        ),
+                        FormInput::email(
+                            label: __( 'Email' ),
+                            name: 'email',
+                            value: $entry->email ?? '',
+                            validation: collect( [
                                 ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? 'email' : '',
                                 ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? (
                                     $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_users', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_users', 'email' )
                                 ) : '',
                             ] )->filter()->toArray(),
-                            'description' => __( 'Provide the customer email.' ),
-                        ], [
-                            'type' => 'text',
-                            'label' => __( 'Phone Number' ),
-                            'name' => 'phone',
-                            'value' => $entry->phone ?? '',
-                            'validation' => collect( [
+                            description: __( 'Provide the customer email.' ),
+                        ),
+                        FormInput::text(
+                            label: __( 'Phone Number' ),
+                            name: 'phone',
+                            value: $entry->phone ?? '',
+                            validation: collect( [
                                 ns()->option->get( 'ns_customers_force_unique_phone', 'no' ) === 'yes' ? (
                                     $entry instanceof Customer && ! empty( $entry->phone ) ? Rule::unique( 'nexopos_users', 'phone' )->ignore( $entry->id ) : Rule::unique( 'nexopos_users', 'phone' )
                                 ) : '',
                             ] )->toArray(),
-                            'description' => __( 'Provide the customer phone number' ),
-                        ], [
-                            'type' => 'text',
-                            'label' => __( 'PO Box' ),
-                            'name' => 'pobox',
-                            'value' => $entry->pobox ?? '',
-                            'description' => __( 'Provide the customer PO.Box' ),
-                        ], [
-                            'type' => 'select',
-                            'options' => Helper::kvToJsOptions( [
+                            description: __( 'Provide the customer phone number' ),
+                        ),
+                        FormInput::text(
+                            label: __( 'PO Box' ),
+                            name: 'pobox',
+                            value: $entry->pobox ?? '',
+                            description: __( 'Provide the customer PO.Box' ),
+                        ),
+                        FormInput::select(
+                            options: Helper::kvToJsOptions( [
                                 '' => __( 'Not Defined' ),
                                 'male' => __( 'Male' ),
                                 'female' => __( 'Female' ),
                             ] ),
-                            'label' => __( 'Gender' ),
-                            'name' => 'gender',
-                            'value' => $entry->gender ?? '',
-                            'description' => __( 'Provide the customer gender.' ),
-                        ],
-                    ],
-                ],
-                'billing' => [
-                    'label' => __( 'Billing Address' ),
-                    'fields' => $this->customerService->getAddressFields( $entry->billing ?? null ),
-                ],
-                'shipping' => [
-                    'label' => __( 'Shipping Address' ),
-                    'fields' => $this->customerService->getAddressFields( $entry->shipping ?? null ),
-                ],
-            ],
-        ];
+                            label: __( 'Gender' ),
+                            name: 'gender',
+                            value: $entry->gender ?? '',
+                            description: __( 'Provide the customer gender' )
+                        )
+                    )
+                ),
+                CrudForm::tab(
+                    label: __( 'Billing Address' ),
+                    identifier: 'billing',
+                    fields: $this->customerService->getAddressFields( $entry->billing ?? null )
+                ),
+                CrudForm::tab(
+                    label: __( 'Shipping Address' ),
+                    identifier: 'shipping',
+                    fields: $this->customerService->getAddressFields( $entry->shipping ?? null )
+                ),
+            )
+        );
     }
 
     /**

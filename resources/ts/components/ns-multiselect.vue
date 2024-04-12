@@ -2,7 +2,7 @@
     <div class="flex flex-col ns-multiselect">
         <label :for="field.name" :class="hasError ? 'text-error-secondary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
-            <div @click="togglePanel()" :class="showPanel ? '' : ''" style="max-height: 150px;" class="overflow-y-auto flex select-preview justify-between rounded border-2 border-input-option-hover p-2 items-start">
+            <div @click="togglePanel()" :class="field.disabled ? 'bg-input-disabled' : ''" style="max-height: 150px;" class="overflow-y-auto flex select-preview justify-between rounded border-2 border-input-option-hover p-2 items-start">
                 <div class="flex -mx-1 -my-1 flex-wrap">
                     <div :key="index" class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded bg-info-secondary text-white flex justify-between p-1 items-center">
@@ -24,7 +24,7 @@
                         <input @keypress.enter="selectAvailableOptionIfPossible()" v-model="search" class="p-2 w-full bg-transparent text-primary outline-none" placeholder="Search">
                     </div>
                     <div class="h-40 overflow-y-auto">
-                        <div @click="addOption( option )" :key="index" v-for="(option, index) of _filtredOptions" :class="option.selected ? 'bg-info-secondary text-white' : 'text-primary'" class="option p-2 flex justify-between cursor-pointer hover:bg-info-secondary hover:text-white">
+                        <div @click="addOption( option )" :key="index" v-for="(option, index) of _filtredOptions" :class="option.selected ? 'bg-info-secondary text-white' : 'text-primary'" class="option p-2 flex justify-between cursor-pointer hover:bg-info-tertiary hover:text-white">
                             <span>{{ option.label }}</span>
                             <span>
                                 <i v-if="option.checked" class="las la-check"></i>
@@ -85,7 +85,9 @@ export default {
     methods: {
         __,
         togglePanel() {
-            this.showPanel = !this.showPanel;
+            if ( ! this.field.disabled ) {
+                this.showPanel = !this.showPanel;
+            }
         },
         selectAvailableOptionIfPossible() {
             if ( this._filtredOptions.length > 0 ) {
