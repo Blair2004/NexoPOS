@@ -243,7 +243,7 @@ class TransactionService
      *
      * @return void
      */
-    public function deleteOrderTransactionsHistory( Order $order )
+    public function deleteOrderTransactionsHistory( $order )
     {
         TransactionHistory::where( 'order_id', $order->id )->delete();
     }

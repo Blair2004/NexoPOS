@@ -41,7 +41,7 @@ class DetectScheduledTransactionsJob implements ShouldQueue
          * that needs to be executed at the moment.
          */
         if ( $query->count() > 0 ) {
-            $query->get()->each( function ( Transaction $transaction ) {
+            $query->get()->each( function ( TransactionHistory $transaction ) {
                 ExecuteDelayedTransactionJob::dispatch( $transaction );
             } );
         }

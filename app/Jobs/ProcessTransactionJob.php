@@ -38,7 +38,7 @@ class ProcessTransactionJob implements ShouldQueue
             Transaction::TYPE_ENTITY
         ]) ) {
             $this->handlePrepareScheduledAndEntityTransaction( $transactionService, $dateService );
-        } else {
+        } else if ( $this->transaction->type === Transaction::TYPE_DIRECT ) {
             $this->handleDirectTransaction( $transactionService, $dateService );
         }
     }

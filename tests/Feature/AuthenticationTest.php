@@ -227,6 +227,7 @@ class AuthenticationTest extends TestCase
             );
 
         $response->assertRedirect( ns()->route( 'ns.register' ) );
+
         $response->assertSessionHasErrors( [
             'email' => 'The email field must be a valid email address.',
         ] );
@@ -242,6 +243,8 @@ class AuthenticationTest extends TestCase
             'password_confirm' => $password . 'not-the-same',
             'email' => $this->fakeEmail(),
         ];
+
+        dump( $signUpDetails );
 
         $response = $this
             ->withSession( [] )

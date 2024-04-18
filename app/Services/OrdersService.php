@@ -2206,7 +2206,7 @@ class OrdersService
             'instalments',
         ] )->toArray();
 
-        event( new OrderBeforeDeleteEvent( $cachedOrder ) );
+        OrderBeforeDeleteEvent::dispatch( $cachedOrder );
 
         /**
          * Because when an order is void,
@@ -2256,7 +2256,7 @@ class OrdersService
         $orderArray = $order->toArray();
         $order->delete();
 
-        event( new OrderAfterDeletedEvent( (object) $orderArray ) );
+        OrderAfterDeletedEvent::dispatch( ( object ) $orderArray );
 
         return [
             'status' => 'success',
@@ -2278,7 +2278,7 @@ class OrdersService
 
         $order->products->map( function ( $product ) use ( $product_id, &$hasDeleted, $order ) {
             if ( $product->id === intval( $product_id ) ) {
-                event( new OrderBeforeDeleteProductEvent( $order, $product ) );
+                OrderBeforeDeleteProductEvent::dispatch( $order, $product );
 
                 $product->delete();
                 $hasDeleted = true;
