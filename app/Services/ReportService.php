@@ -716,7 +716,7 @@ class ReportService
             'shipping' => Currency::define( $allSales->sum( 'shipping' ) )->toFloat(),
             'profit' => Currency::define( $allSales->sum( 'profit' ) )->toFloat(),
             'total_purchase_price' => Currency::define( $allSales->sum( 'total_purchase_price' ) )->toFloat(),
-            'total' => Currency::define( $allSales->sum( 'total' ) )->subtractBy( $allSales->sum( 'product_taxes' ) )->toFloat(),
+            'total' => Currency::define( $allSales->sum( 'total' ) )->toFloat(),
         ];
     }
 
