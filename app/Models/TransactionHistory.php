@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int            $customer_account_history_id
  * @property mixed          $name
  * @property mixed          $status
+ * @property string         $type
+ * @property \Carbo\Carbon  $trigger_date
  * @property float          $value
  * @property int            $author
  * @property \Carbon\Carbon $created_at
@@ -33,6 +35,8 @@ class TransactionHistory extends NsModel
     const STATUS_ACTIVE = 'active';
 
     const STATUS_DELETING = 'deleting';
+
+    const STATUS_PENDING = 'pending';
 
     const OPERATION_DEBIT = 'debit';
 
@@ -83,11 +87,54 @@ class TransactionHistory extends NsModel
      */
     const ACCOUNT_LIABILITIES = '009';
 
+    public $fillable    =   [
+        'transaction_id', 
+        'operation', 
+        'transaction_account_id', 
+        'procurement_id', 
+        'order_refund_id', 
+        'order_refund_product_id', 
+        'order_id', 
+        'order_product_id', 
+        'register_history_id', 
+        'customer_account_history_id', 
+        'name', 
+        'type', 
+        'status', 
+        'value', 
+        'trigger_date',
+    ];
+
     protected $dispatchesEvents = [
         'created' => TransactionsHistoryAfterCreatedEvent::class,
         'updated' => TransactionsHistoryAfterUpdatedEvent::class,
         'deleted' => TransactionsHistoryAfterDeletedEvent::class,
     ];
+
+    public function order()
+    {
+        return $this->hasOne( Order::class, 'id', 'order_id' );
+    }
+
+    public function cashRegisterHistory()
+    {
+        return $this->hasOne( RegisterHistory::class, 'id', 'register_history_id' );
+    }
+
+    public function orderRefund()
+    {
+        return $this->hasOne( OrderRefund::class, 'id', 'order_refund_id' );
+    }
+
+    public function customerAccount()
+    {
+        return $this->hasOne( CustomerAccountHistory::class, 'id', 'customer_account_history_id' );
+    }
+
+    public function procurement()
+    {
+        return $this->hasOne( Procurement::class, 'id', 'procurement_id' );
+    }
 
     public function transaction()
     {
@@ -102,6 +149,21 @@ class TransactionHistory extends NsModel
     public function scopeOperation( $query, $operation )
     {
         return $query->where( 'operation', $operation );
+    }
+
+    public function scopeType( $query, $operation )
+    {
+        return $query->where( 'type', $operation );
+    }
+
+    public function scopeScheduled( $query )
+    {
+        return $query->where( 'status', self::STATUS_PENDING );
+    }
+
+    public function scopeTriggerDate( $query, $date )
+    {
+        return $query->where( 'trigger_date', '<=', $date );
     }
 
     public function scopeTo( $query, $date )

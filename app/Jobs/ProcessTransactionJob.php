@@ -33,21 +33,19 @@ class ProcessTransactionJob implements ShouldQueue
      */
     public function handle( TransactionService $transactionService, DateService $dateService )
     {
-        switch ( $this->transaction->type ) {
-            case Transaction::TYPE_SCHEDULED:
-                $this->handleScheduledTransaction( $transactionService, $dateService );
-                break;
-            case Transaction::TYPE_DIRECT:
-                $this->handleDirectTransaction( $transactionService, $dateService );
-                break;
+        if ( in_array( $this->transaction->type, [
+            Transaction::TYPE_SCHEDULED,
+            Transaction::TYPE_ENTITY
+        ]) ) {
+            $this->handlePrepareScheduledAndEntityTransaction( $transactionService, $dateService );
+        } else {
+            $this->handleDirectTransaction( $transactionService, $dateService );
         }
     }
 
-    public function handleScheduledTransaction( TransactionService $transactionService, DateService $dateService )
+    public function handlePrepareScheduledAndEntityTransaction( TransactionService $transactionService, DateService $dateService )
     {
-        if ( Carbon::parse( $this->transaction->scheduled_date )->lessThan( $dateService->toDateTimeString() ) ) {
-            $transactionService->triggerTransaction( $this->transaction );
-        }
+        $transactionService->prepareTransactionHistoryRecord( $this->transaction );
     }
 
     public function handleDirectTransaction( TransactionService $transactionService, DateService $dateService )

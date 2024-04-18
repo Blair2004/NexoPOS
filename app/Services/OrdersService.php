@@ -71,7 +71,7 @@ class OrdersService
         protected Options $optionsService,
         protected TaxService $taxService,
         protected ReportService $reportService,
-        protected MathService $mathService,
+        protected MathService $mathService
     ) {
         // ...
     }
@@ -2253,13 +2253,7 @@ class OrdersService
 
         OrderPayment::where( 'order_id', $order->id )->delete();
 
-        /**
-         * delete cash flow entries
-         */
-        $this->reportService->deleteOrderCashFlow( $order );
-
         $orderArray = $order->toArray();
-
         $order->delete();
 
         event( new OrderAfterDeletedEvent( (object) $orderArray ) );

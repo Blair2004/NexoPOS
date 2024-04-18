@@ -36,11 +36,11 @@
                         <template #title>{{ __( 'Warning' ) }}</template>
                         <template #description>{{ __( 'While selecting entity transaction, the amount defined will be multiplied by the total user assigned to the User group selected.' ) }}</template>
                     </ns-notice>
-                    <ns-field v-for="field of tab.fields" :key="field.name" :field="field"></ns-field>
+                    <ns-field @saved="handleSavedField( $event, field )" v-for="field of tab.fields" :key="field.name" :field="field"></ns-field>
                 </template>
                 <template v-if="tab.identifier === 'recurrence'">
                     <template :key="field.name" v-for="field of recurrence">
-                        <ns-field v-if="executeCondition( field, recurrence )" @change="updateSelectLabel()" :field="field"></ns-field>
+                        <ns-field @saved="handleSavedField( $event, field )"  v-if="executeCondition( field, recurrence )" @change="updateSelectLabel()" :field="field"></ns-field>
                     </template>
                 </template>
             </ns-tabs-item>
@@ -281,6 +281,19 @@ export default {
              */
             this.selectedConfiguration  =   result;
         },
+
+        handleSavedField( event, field ) {
+            try {
+                field.options.push({
+                    label: event.data.entry[ field.props.optionAttributes.label ],
+                    value: event.data.entry[ field.props.optionAttributes.value ]
+                });
+                field.value     =   event.data.entry[ field.props.optionAttributes.value ];
+            } catch ( exception ) {
+                // something went wrong
+            }
+        },
+
         async selectTransactionType() {
             try {
                 const result    =   await new Promise( ( resolve, reject ) => {

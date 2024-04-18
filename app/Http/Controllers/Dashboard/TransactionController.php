@@ -12,6 +12,7 @@ use App\Crud\TransactionCrud;
 use App\Crud\TransactionsHistoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Transaction;
+use App\Models\TransactionAccount;
 use App\Services\DateService;
 use App\Services\Options;
 use App\Services\TransactionService;
@@ -105,7 +106,7 @@ class TransactionController extends DashboardController
         return $this->transactionService->create( $fields );
     }
 
-    public function putTransactionAccount( Request $request, $id )
+    public function putTransactionAccount( Request $request, TransactionAccount $account )
     {
         $fields = $request->only( [
             'name',
@@ -114,7 +115,7 @@ class TransactionController extends DashboardController
             'account',
         ] );
 
-        return $this->transactionService->editTransactionAccount( $id, $fields );
+        return $this->transactionService->editTransactionAccount( $account, $fields );
     }
 
     /**
@@ -145,9 +146,9 @@ class TransactionController extends DashboardController
         return $this->transactionService->edit( $id, $fields );
     }
 
-    public function delete( $id )
+    public function delete( Transaction $transaction )
     {
-        return $this->transactionService->delete( $id );
+        return $this->transactionService->deleteTransaction( $transaction );
     }
 
     /**
@@ -164,9 +165,9 @@ class TransactionController extends DashboardController
     /**
      * delete a specific transaction account
      */
-    public function deleteAccount( int $id )
+    public function deleteAccount( TransactionAccount $account )
     {
-        return $this->transactionService->deleteAccount( $id );
+        return $this->transactionService->deleteTransactionAccount( $account );
     }
 
     /**

@@ -105,7 +105,7 @@
                                 </div>
                                 <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
                                     <div class="px-4 w-full md:w-1/2 lg:w-1/3">
-                                        <ns-field v-for="field in getActiveTab( variation.tabs ).fields.filter( field => field.name !== 'selling_group' )" @change="loadAvailableUnits( getActiveTab( variation.tabs ), field )" :field="field"></ns-field>
+                                        <ns-field @saved="handleSaveEvent( $event, field )" v-for="field in getActiveTab( variation.tabs ).fields.filter( field => field.name !== 'selling_group' )" @change="loadAvailableUnits( getActiveTab( variation.tabs ), field )" :field="field"></ns-field>
                                     </div>
                                     <template v-if="unitLoaded">
                                         <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
@@ -379,6 +379,15 @@ export default {
             } else {
                 nsSnackBar.error( __( 'There shoulnd\'t be more option than there are units.' ) ).subscribe();
             }
+        },
+
+        handleSaveEvent( event, field ) {
+            field.options.push({
+                label: event.data.entry[ field.props.optionAttributes.label ],
+                value: event.data.entry[ field.props.optionAttributes.value ]
+            });
+
+            field.value     =   event.data.entry[ field.props.optionAttributes.value ];
         },
 
         /**

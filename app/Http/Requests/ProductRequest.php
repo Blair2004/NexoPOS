@@ -31,10 +31,11 @@ class ProductRequest extends FormRequest
         return $rules;
     }
 
-    public function messages()
+    public function attributes()
     {
         return [
-            'variations.0.units.selling_group.0.convert_unit_id.different' => __( 'The conversion unit and the unit cannot be the same. Double check your units tab and try again.' ),
+            'variations.*.units.selling_group.*.convert_unit_id' => __( 'Convert Unit' ),
+            'variations.*.units.selling_group.*.unit_id' => __( 'Unit' ),
         ];
     }
 }

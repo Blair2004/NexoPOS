@@ -27,8 +27,10 @@ return new class extends Migration
             $table->integer( 'register_history_id' )->nullable(); // if an transactions has been created from a register transaction
             $table->integer( 'customer_account_history_id' )->nullable(); // if a customer credit is generated
             $table->string( 'name' );
-            $table->string( 'status' )->default( TransactionHistory::STATUS_ACTIVE );
+            $table->string( 'type' )->nullable();
+            $table->string( 'status' )->default( TransactionHistory::STATUS_PENDING ); // active, pending, deleting
             $table->float( 'value', 18, 5 )->default( 0 );
+            $table->datetime( 'trigger_date' )->nullable();
             $table->integer( 'author' );
             $table->timestamps();
         } );

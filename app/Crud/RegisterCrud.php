@@ -300,7 +300,7 @@ class RegisterCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model )
     {
-        if ( $namespace == 'ns.registers' ) {
+        if ( $namespace == self::IDENTIFIER ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -388,7 +388,7 @@ class RegisterCrud extends CrudService
             identifier: 'delete',
             label: __( 'Delete' ),
             type: 'DELETE',
-            url: ns()->url( '/api/crud/ns.registers/' . $entry->id ),
+            url: ns()->url( '/api/crud/' . self::IDENTIFIER . '/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ]
@@ -451,8 +451,8 @@ class RegisterCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'cash-registers' ),
             'create' => ns()->url( 'dashboard/' . 'cash-registers/create' ),
             'edit' => ns()->url( 'dashboard/' . 'cash-registers/edit/' ),
-            'post' => ns()->url( 'api/crud/' . 'ns.registers' ),
-            'put' => ns()->url( 'api/crud/' . 'ns.registers/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . self::IDENTIFIER ),
+            'put' => ns()->url( 'api/crud/' . self::IDENTIFIER . '/{id}' . '' ),
         ];
     }
 

@@ -152,7 +152,6 @@ class TransactionAccountCrud extends CrudService
                             'label' => __( 'Account' ),
                             'description' => __( 'Provide the accounting number for this category.' ),
                             'value' => $entry->account ?? '',
-                            'validation' => 'required',
                         ], [
                             'type' => 'textarea',
                             'name' => 'description',
@@ -173,6 +172,10 @@ class TransactionAccountCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        if ( empty( $inputs[ 'account' ] ) ) {
+            $inputs[ 'account' ] = str_pad( TransactionAccount::count() + 1, 5, '0', STR_PAD_LEFT );
+        }
+
         return $inputs;
     }
 
@@ -184,6 +187,10 @@ class TransactionAccountCrud extends CrudService
      */
     public function filterPutInputs( $inputs, TransactionAccount $entry )
     {
+        if ( empty( $inputs[ 'account' ] ) ) {
+            $inputs[ 'account' ] = str_pad( $entry->id, 5, '0', STR_PAD_LEFT );
+        }
+
         return $inputs;
     }
 

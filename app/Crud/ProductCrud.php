@@ -194,7 +194,7 @@ class ProductCrud extends CrudService
                 'errors' => [],
                 'name' => 'convert_unit_id',
                 'label' => __( 'Convert Unit' ),
-                // 'validation' => 'different:variations.*.units.selling_group.*.unit_id',
+                'validation' => 'different:variations.*.units.selling_group.*.unit_id',
                 'options' => Helper::toJsOptions( $units, [ 'id', 'name' ] ),
                 'value' => '',
                 'description' => __( 'The unit that is selected for convertion by default.' ),
@@ -390,12 +390,14 @@ class ProductCrud extends CrudService
                             'label' => __( 'Units' ),
                             'fields' => [
                                 [
-                                    'type' => 'select',
+                                    'type' => 'search-select',
                                     'options' => Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
                                     'name' => 'unit_group',
                                     'description' => __( 'What unit group applies to the actual item. This group will apply during the procurement.' ),
                                     'label' => __( 'Unit Group' ),
                                     'validation' => 'required',
+                                    'props' =>  UnitGroupCrud::getFormConfig(),
+                                    'component' => 'nsCrudForm',
                                     'value' => $entry->unit_group ?? ( ! $groups->isEmpty() ? $groups->first()->id : '' ),
                                 ], [
                                     'type' => 'switch',

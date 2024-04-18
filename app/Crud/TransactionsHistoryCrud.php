@@ -3,6 +3,7 @@
 namespace App\Crud;
 
 use App\Casts\CurrencyCast;
+use App\Classes\CrudTable;
 use App\Exceptions\NotAllowedException;
 use App\Models\TransactionHistory;
 use App\Models\User;
@@ -58,9 +59,9 @@ class TransactionsHistoryCrud extends CrudService
      */
     protected $permissions = [
         'create' => false,
-        'read' => true,
+        'read' => 'nexopos.read.transactions-history',
         'update' => false,
-        'delete' => false,
+        'delete' => 'nexopos.delete.transactions-history',
     ];
 
     /**
@@ -134,14 +135,6 @@ class TransactionsHistoryCrud extends CrudService
      */
     public $skippable = [];
 
-    /**
-     * Determine if the options column should display
-     * before the crud columns
-     */
-    protected $prependOptions = false;
-
-    protected $showOptions = false;
-
     protected $casts    =   [
         'value' =>  CurrencyCast::class,
     ];
@@ -164,17 +157,17 @@ class TransactionsHistoryCrud extends CrudService
      **/
     public function getLabels()
     {
-        return [
-            'list_title' => __( 'Transactions History List' ),
-            'list_description' => __( 'Display all transaction history.' ),
-            'no_entry' => __( 'No transaction history has been registered' ),
-            'create_new' => __( 'Add a new transaction history' ),
-            'create_title' => __( 'Create a new transaction history' ),
-            'create_description' => __( 'Register a new transaction history and save it.' ),
-            'edit_title' => __( 'Edit transaction history' ),
-            'edit_description' => __( 'Modify  Transactions history.' ),
-            'back_to_list' => __( 'Return to Transactions History' ),
-        ];
+        return CrudTable::labels(
+            list_title: __( 'Transactions History List' ),
+            list_description: __( 'Display all transaction history.' ),
+            no_entry: __( 'No transaction history has been registered' ),
+            create_new: __( 'Add a new transaction history' ),
+            create_title: __( 'Create a new transaction history' ),
+            create_description: __( 'Register a new transaction history and save it.' ),
+            edit_title: __( 'Edit transaction history' ),
+            edit_description: __( 'Modify  Transactions history.' ),
+            back_to_list: __( 'Return to Transactions History' ),
+        );
     }
 
     public function hook( $query ): void
@@ -332,46 +325,35 @@ class TransactionsHistoryCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-            'name' => [
-                'label' => __( 'Name' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'transactions_accounts_name' => [
-                'label' => __( 'Account Name' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'operation' => [
-                'label' => __( 'Operation' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'value' => [
-                'label' => __( 'Value' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'users_username' => [
-                'label' => __( 'Author' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Created_at' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column( __( 'Name' ), 'name' ),
+            CrudTable::column( __( 'Status' ), 'status' ),
+            CrudTable::column( __( 'Account Name' ), 'transactions_accounts_name' ),
+            CrudTable::column( __( 'Operation' ), 'operation' ),
+            CrudTable::column( __( 'Value' ), 'value' ),
+            CrudTable::column( __( 'Author' ), 'users_username' ),
+            CrudTable::column( __( 'Triggered On' ), 'trigger_date' ),
+        );
     }
 
     /**
      * Define actions
      */
-    public function addActions( CrudEntry $entry, $namespace )
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
-        $entry->value = (string) ns()->currency->define( $entry->value );
+        if ( $entry->status === TransactionHistory::STATUS_PENDING ) {
+            $entry->addClass( 'info' );
+        }
+
+        $entry->action(
+            label: '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
+            identifier: 'delete',
+            url: ns()->url( 'api/crud/' . self::IDENTIFIER . '/' . $entry->id ),
+            type: 'DELETE',
+            confirm: [
+                'message'   =>  __( 'Are you sure you want to delete this transaction history?' ),
+            ]
+        );
 
         return $entry;
     }

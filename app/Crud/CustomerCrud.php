@@ -183,6 +183,7 @@ class CustomerCrud extends CrudService
     {
         $query->join( 'nexopos_users_roles_relations', 'nexopos_users.id', '=', 'nexopos_users_roles_relations.user_id' );
         $query->join( 'nexopos_roles', 'nexopos_roles.id', '=', 'nexopos_users_roles_relations.role_id' );
+        $query->where( 'nexopos_roles.namespace', Role::STORECUSTOMER );
         $query->orderBy( 'updated_at', 'desc' );
     }
 
@@ -240,10 +241,8 @@ class CustomerCrud extends CrudService
                             name: 'email',
                             value: $entry->email ?? '',
                             validation: collect( [
-                                ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? 'email' : '',
-                                ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? (
-                                    $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_users', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_users', 'email' )
-                                ) : '',
+                                'sometimes', 'email',
+                                $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_users', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_users', 'email' ),
                             ] )->filter()->toArray(),
                             description: __( 'Provide the customer email.' ),
                         ),

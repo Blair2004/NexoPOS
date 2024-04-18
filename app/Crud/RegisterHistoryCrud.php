@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Classes\Output;
 use App\Exceptions\NotAllowedException;
 use App\Models\RegisterHistory;
 use App\Models\User;
@@ -58,7 +59,7 @@ class RegisterHistoryCrud extends CrudService
      */
     protected $permissions = [
         'create' => false,
-        'read' => true,
+        'read' => 'nexopos.read.registers-history',
         'update' => false,
         'delete' => false,
     ];
@@ -69,7 +70,6 @@ class RegisterHistoryCrud extends CrudService
      * @param  array
      */
     public $relations = [
-        // [ 'nexopos_registers as register', 'register.id', '=', 'nexopos_registers_history.register_id' ],
         [ 'nexopos_users as user', 'user.id', '=', 'nexopos_registers_history.author' ],
     ];
 
@@ -91,7 +91,6 @@ class RegisterHistoryCrud extends CrudService
      * ]
      */
     public $pick = [
-        // 'register'  =>  [ 'name' ],
         'user' => [ 'username' ],
     ];
 
@@ -118,8 +117,6 @@ class RegisterHistoryCrud extends CrudService
      * @param CashRegistersService;
      */
     private $registerService;
-
-    protected $showOptions = false;
 
     /**
      * Define Constructor
@@ -408,6 +405,12 @@ class RegisterHistoryCrud extends CrudService
         ];
     }
 
+    public function getTableFooter(Output $output): Output
+    {
+        $output->addView( 'pages.dashboard.cash-registers.history.footer' );
+        return $output;
+    }
+
     /**
      * Define actions
      */
@@ -437,6 +440,12 @@ class RegisterHistoryCrud extends CrudService
         if ( $entry->action === RegisterHistory::ACTION_CLOSING && (float) $entry->balance_after != 0 ) {
             $entry->{ '$cssClass' } = 'error border';
         }
+
+        $entry->action( 
+            label: __( 'Details' ),
+            identifier: 'view-details',
+            type: 'POPUP'
+        );
 
         $entry->action = $this->registerService->getActionLabel( $entry->action );
         $entry->created_at = ns()->date->getFormatted( $entry->created_at );

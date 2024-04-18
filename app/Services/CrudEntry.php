@@ -22,6 +22,14 @@ class CrudEntry implements JsonSerializable
         $this->{ '$id' } = $params[ 'id' ];
     }
 
+    public function addClass( $class )
+    {
+        $classes    =   explode( ' ', $this->{ '$cssClass' } ?? '' );
+        $classes[]  =   $class;
+
+        $this->{ '$cssClass' } = implode( ' ', $classes );
+    }
+
     public function __get( $index )
     {
         return $this->values[ $index ] ?? null;

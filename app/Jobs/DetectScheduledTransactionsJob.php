@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Transaction;
+use App\Models\TransactionHistory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,17 +33,8 @@ class DetectScheduledTransactionsJob implements ShouldQueue
      */
     public function handle()
     {
-        $startRange = ns()->date->copy();
-        $endRange = ns()->date->copy();
-
-        $startRange->setSeconds( 0 );
-        $endRange->setSeconds( 59 );
-
-        $query = Transaction::scheduled()
-            ->with( 'account' )
-            ->active()
-            ->scheduledAfterDate( $startRange->toDateTimeString() )
-            ->scheduledBeforeDate( $endRange->toDateTimeString() );
+        $query = TransactionHistory::scheduled()
+            ->triggerDate( ns()->date->toDateTimeString() );
 
         /**
          * This means we have some valid transactions

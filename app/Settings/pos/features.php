@@ -48,16 +48,6 @@ return [
             ] ),
             'description' => __( 'Will change the numeric keyboard for allowing decimal for quantities. Only for "default" numpad.' ),
         ], [
-            'name' => 'ns_pos_customers_creation_enabled',
-            'value' => ns()->option->get( 'ns_pos_customers_creation_enabled' ),
-            'label' => __( 'Allow Customer Creation' ),
-            'type' => 'switch',
-            'options' => Helper::kvToJsOptions( [
-                'yes' => __( 'Yes' ),
-                'no' => __( 'No' ),
-            ] ),
-            'description' => __( 'Allow customers to be created on the POS.' ),
-        ], [
             'name' => 'ns_pos_quick_product',
             'value' => ns()->option->get( 'ns_pos_quick_product' ),
             'label' => __( 'Quick Product' ),

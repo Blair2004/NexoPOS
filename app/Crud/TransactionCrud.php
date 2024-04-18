@@ -6,7 +6,9 @@ use App\Casts\CurrencyCast;
 use App\Casts\TransactionOccurrenceCast;
 use App\Casts\TransactionTypeCast;
 use App\Casts\YesNoBoolCast;
+use App\Classes\CrudForm;
 use App\Classes\CrudTable;
+use App\Classes\FormInput;
 use App\Events\TransactionAfterCreatedEvent;
 use App\Events\TransactionAfterUpdatedEvent;
 use App\Events\TransactionBeforeCreatedEvent;
@@ -150,61 +152,64 @@ class TransactionCrud extends CrudService
      */
     public function getForm( $entry = null )
     {
-        return [
-            'main' => [
-                'label' => __( 'Name' ),
-                'name' => 'name',
-                'value' => $entry->name ?? '',
-                'description' => __( 'Provide a name to the resource.' ),
-                'validation' => 'required',
-            ],
-            'tabs' => [
-                'general' => [
-                    'label' => __( 'General' ),
-                    'fields' => [
-                        [
-                            'type' => 'switch',
-                            'options' => Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
-                            'name' => 'active',
-                            'label' => __( 'Active' ),
-                            'description' => __( 'determine if the transaction is effective or not. Work for recurring and not recurring transactions.' ),
-                            'validation' => 'required',
-                            'value' => $entry->active ?? '',
-                        ], [
-                            'type' => 'select',
-                            'name' => 'group_id',
-                            'label' => __( 'Users Group' ),
-                            'value' => $entry->group_id ?? '',
-                            'description' => __( 'Assign transaction to users group. the Transaction will therefore be multiplied by the number of entity.' ),
-                            'options' => [
+        return CrudForm::form(
+            main: FormInput::text(
+                label: __( 'Name' ),
+                name: 'name',
+                value: $entry->name ?? '',
+                description: __( 'Provide a name to the resource.' ),
+                validation: 'required',
+            ),
+            tabs: CrudForm::tabs(
+                CrudForm::tab(
+                    identifier: 'general',
+                    label: __( 'General' ),
+                    fields: CrudForm::fields(
+                        FormInput::switch(
+                            label: __( 'Active' ),
+                            name: 'active',
+                            description: __( 'determine if the transaction is effective or not. Work for recurring and not recurring transactions.' ),
+                            validation: 'required',
+                            value: $entry->active ?? '',
+                            options: Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
+                        ),
+                        FormInput::select(
+                            label: __( 'Users Group' ),
+                            name: 'group_id',
+                            value: $entry->group_id ?? '',
+                            description: __( 'Assign transaction to users group. the Transaction will therefore be multiplied by the number of entity.' ),
+                            options: [
                                 [
                                     'label' => __( 'None' ),
                                     'value' => '0',
                                 ],
                                 ...Helper::toJsOptions( Role::get(), [ 'id', 'name' ] ),
                             ],
-                        ], [
-                            'type' => 'select',
-                            'options' => Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ] ),
-                            'name' => 'account_id',
-                            'label' => __( 'Transaction Account' ),
-                            'description' => __( 'Assign the transaction to an account430' ),
-                            'validation' => 'required',
-                            'value' => $entry->account_id ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'value',
-                            'description' => __( 'Is the value or the cost of the transaction.' ),
-                            'label' => __( 'Value' ),
-                            'value' => $entry->value ?? '',
-                            'validation' => 'required',
-                        ], [
-                            'type' => 'switch',
-                            'name' => 'recurring',
-                            'description' => __( 'If set to Yes, the transaction will trigger on defined occurrence.' ),
-                            'label' => __( 'Recurring' ),
-                            'validation' => 'required',
-                            'options' => [
+                        ),
+                        FormInput::searchSelect(
+                            label: __( 'Transaction Account' ),
+                            name: 'account_id',
+                            description: __( 'Assign the transaction to an account430' ),
+                            validation: 'required',
+                            props: TransactionAccountCrud::getFormConfig(),
+                            component: 'nsCrudForm',
+                            value: $entry->account_id ?? '',
+                            options: Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ] ),
+                        ),
+                        FormInput::text(
+                            label: __( 'Value' ),
+                            name: 'value',
+                            description: __( 'Is the value or the cost of the transaction.' ),
+                            validation: 'required',
+                            value: $entry->value ?? '',
+                        ),
+                        FormInput::switch(
+                            label: __( 'Recurring' ),
+                            name: 'recurring',
+                            description: __( 'If set to Yes, the transaction will trigger on defined occurrence.' ),
+                            validation: 'required',
+                            value: $entry->recurring ?? '',
+                            options: [
                                 [
                                     'label' => __( 'Yes' ),
                                     'value' => true,
@@ -213,10 +218,13 @@ class TransactionCrud extends CrudService
                                     'value' => false,
                                 ],
                             ],
-                            'value' => $entry->recurring ?? '',
-                        ], [
-                            'type' => 'select',
-                            'options' => [
+                        ),
+                        FormInput::select(
+                            label: __( 'Occurrence' ),
+                            name: 'occurrence',
+                            description: __( 'Define how often this transaction occurs' ),
+                            value: $entry->occurrence ?? '',
+                            options: [
                                 [
                                     'label' => __( 'Start of Month' ),
                                     'value' => 'month_starts',
@@ -234,38 +242,35 @@ class TransactionCrud extends CrudService
                                     'value' => 'x_after_month_starts',
                                 ],
                             ],
-                            'name' => 'occurrence',
-                            'label' => __( 'Occurrence' ),
-                            'description' => __( 'Define how often this transaction occurs' ),
-                            'value' => $entry->occurrence ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'occurrence_value',
-                            'label' => __( 'Occurrence Value' ),
-                            'description' => __( 'Must be used in case of X days after month starts and X days before month ends.' ),
-                            'value' => $entry->occurrence_value ?? '',
-                        ], [
-                            'type' => 'datetimepicker',
-                            'name' => 'scheduled_date',
-                            'label' => __( 'Scheduled' ),
-                            'description' => __( 'Set the scheduled date.' ),
-                            'value' => $entry->scheduled_date ?? '',
-                        ], [
-                            'type' => 'select',
-                            'name' => 'type',
-                            'label' => __( 'Type' ),
-                            'description' => __( 'Define what is the type of the transactions.' ),
-                            'value' => $entry->type ?? '',
-                        ], [
-                            'type' => 'textarea',
-                            'name' => 'description',
-                            'label' => __( 'Description' ),
-                            'value' => $entry->description ?? '',
-                        ],
-                    ],
-                ],
-            ],
-        ];
+                        ),
+                        FormInput::text(
+                            label: __( 'Occurrence Value' ),
+                            name: 'occurrence_value',
+                            description: __( 'Must be used in case of X days after month starts and X days before month ends.' ),
+                            value: $entry->occurrence_value ?? '',
+                        ),
+                        FormInput::datetime(
+                            label: __( 'Scheduled' ),
+                            name: 'scheduled_date',
+                            description: __( 'Set the scheduled date.' ),
+                            value: $entry->scheduled_date ?? '',
+                        ),
+                        FormInput::select(
+                            label: __( 'Type' ),
+                            name: 'type',
+                            options: [],
+                            description: __( 'Define what is the type of the transactions.' ),
+                            value: $entry->type ?? '',
+                        ),
+                        FormInput::textarea(
+                            label: __( 'Description' ),
+                            name: 'description',
+                            value: $entry->description ?? '',
+                        ),
+                    )
+                )
+            )
+        );
     }
 
     /**
@@ -374,6 +379,11 @@ class TransactionCrud extends CrudService
         if ( $namespace == 'ns.transactions' ) {
             $this->allowedTo( 'delete' );
 
+            /**
+             * Delete all transaction history
+             */
+            $model->histories()->delete();
+
             TransactionBeforeDeleteEvent::dispatch( $model );
         }
     }
@@ -383,48 +393,16 @@ class TransactionCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-            'name' => [
-                'label' => __( 'Name' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'type' => [
-                'label' => __( 'Type' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'transactions_accounts_name' => [
-                'label' => __( 'Account Name' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'value' => [
-                'label' => __( 'Value' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'recurring' => [
-                'label' => __( 'Recurring' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'occurrence' => [
-                'label' => __( 'Occurrence' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'user_username' => [
-                'label' => __( 'Author' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Created At' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column( __( 'Name' ), 'name' ),
+            CrudTable::column( __( 'Type' ), 'type' ),
+            CrudTable::column( __( 'Account Name' ), 'transactions_accounts_name' ),
+            CrudTable::column( __( 'Value' ), 'value' ),
+            CrudTable::column( __( 'Recurring' ), 'recurring' ),
+            CrudTable::column( __( 'Occurrence' ), 'occurrence' ),
+            CrudTable::column( __( 'Author' ), 'user_username' ),
+            CrudTable::column( __( 'Created At' ), 'created_at' ),
+        );
     }
 
     /**
@@ -474,7 +452,7 @@ class TransactionCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return  false/array
+     * @return  false|bool
      */
     public function bulkAction( Request $request )
     {
@@ -499,6 +477,8 @@ class TransactionCrud extends CrudService
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity = $this->model::find( $id );
                 if ( $entity instanceof Transaction ) {
+                    $entity->histories()->delete();
+                    TransactionBeforeDeleteEvent::dispatch( $entity );
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
