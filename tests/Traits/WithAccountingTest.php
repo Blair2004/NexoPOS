@@ -5,6 +5,7 @@ namespace Tests\Traits;
 use App\Classes\Currency;
 use App\Models\DashboardDay;
 use App\Models\Procurement;
+use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
 use App\Services\ReportService;
@@ -18,43 +19,43 @@ trait WithAccountingTest
         $accounts = [
             [
                 'name' => __( 'Stock Procurement' ),
-                'account' => '000001',
+                'account' => TransactionHistory::ACCOUNT_PROCUREMENTS,
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
                 'name' => __( 'Sales' ),
-                'account' => '000002',
+                'account' => TransactionHistory::ACCOUNT_SALES,
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Customer Credit (cash-in)' ),
-                'account' => '000003',
+                'account' => TransactionHistory::ACCOUNT_CUSTOMER_CREDIT,
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Customer Credit (cash-out)' ),
-                'account' => '000004',
+                'account' => TransactionHistory::ACCOUNT_CUSTOMER_DEBIT,
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
                 'name' => __( 'Sale Refunds' ),
-                'account' => '000005',
+                'account' => TransactionHistory::ACCOUNT_REFUNDS,
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
                 'name' => __( 'Stock Return (spoiled items)' ),
-                'account' => '000006',
+                'account' => TransactionHistory::ACCOUNT_SPOILED,
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
                 'name' => __( 'Stock Return (unspoiled items)' ),
-                'account' => '000007',
+                'account' => TransactionHistory::ACCOUNT_UNSPOILED,
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Cash Register (cash-in)' ),
-                'account' => '000008',
+                'account' => TransactionHistory::ACCOUNT_REGISTER_CASHIN,
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Cash Register (cash-out)' ),
-                'account' => '000009',
+                'account' => TransactionHistory::ACCOUNT_REGISTER_CASHOUT,
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ], [
                 'name' => __( 'Liabilities' ),
-                'account' => '000010',
+                'account' => TransactionHistory::ACCOUNT_LIABILITIES,
                 'operation' => TransactionHistory::OPERATION_DEBIT,
             ],
         ];
@@ -82,14 +83,14 @@ trait WithAccountingTest
             }
         }
 
-        ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::where( 'account', '000001' )->first()->id );
-        ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::where( 'account', '000002' )->first()->id );
-        ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::where( 'account', '000003' )->first()->id );
-        ns()->option->set( 'ns_customer_debitting_cashflow_account', TransactionAccount::where( 'account', '000004' )->first()->id );
-        ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::where( 'account', '000005' )->first()->id );
-        ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::where( 'account', '000006' )->first()->id );
-        ns()->option->set( 'ns_stock_return_unspoiled_account', TransactionAccount::where( 'account', '000007' )->first()->id );
-        ns()->option->set( 'ns_liabilities_account', TransactionAccount::where( 'account', '000010' )->first()->id );
+        ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_PROCUREMENTS )->first()->id );
+        ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_SALES )->first()->id );
+        ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_CUSTOMER_CREDIT )->first()->id );
+        ns()->option->set( 'ns_customer_debitting_cashflow_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_CUSTOMER_DEBIT )->first()->id );
+        ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_REFUNDS )->first()->id );
+        ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_SPOILED )->first()->id );
+        ns()->option->set( 'ns_stock_return_unspoiled_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_UNSPOILED )->first()->id );
+        ns()->option->set( 'ns_liabilities_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_LIABILITIES )->first()->id );
     }
 
     protected function attemptCheckProcurementRecord( $procurement_id )
@@ -156,6 +157,7 @@ trait WithAccountingTest
             ->where( 'created_at', '<=', $dashboardDay->range_ends )
             ->where( 'transaction_account_id', $expenseCategoryID )
             ->where( 'procurement_id', $procurement[ 'id' ] )
+            ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
             ->sum( 'value' );
 
         $this->assertEquals(

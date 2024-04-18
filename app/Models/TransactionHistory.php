@@ -73,6 +73,11 @@ class TransactionHistory extends NsModel
     const ACCOUNT_SPOILED = '006';
 
     /**
+     * Unique identifier for spoiled goods.
+     */
+    const ACCOUNT_UNSPOILED = '010';
+
+    /**
      * Unique identifier for customer credit credit.
      */
     const ACCOUNT_CUSTOMER_CREDIT = '007';
