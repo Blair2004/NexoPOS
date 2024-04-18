@@ -13,14 +13,19 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class ProcurementCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.procurements';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_procurements';
-
-    /**
-     * base route name
-     */
-    const IDENTIFIER = '/procurements';
 
     /**
      * Define namespace
@@ -396,14 +401,14 @@ class ProcurementCrud extends CrudService
             identifier: 'edit',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id ) 
+            url: ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id )
         );
-        
+
         $entry->action(
             identifier: 'invoice', // Assuming you want to replace 'namespace' with 'identifier'
             label: __( 'Invoice' ),
-            type: 'GOTO', 
-            url: ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' ) 
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' )
         );
 
         /**
@@ -411,19 +416,19 @@ class ProcurementCrud extends CrudService
          * is not paid, we can display new option for making a payment
          */
         if ( $entry->payment_status !== Procurement::PAYMENT_PAID ) {
-            $entry->action( 
+            $entry->action(
                 identifier: 'set_paid', // Hypothetical - please verify if this is accurate
                 label: __( 'Set Paid' ),
                 type: 'GET',
                 url: ns()->url( '/api/procurements/' . $entry->id . '/set-as-paid' ),
                 confirm: [
                     'message' => __( 'Would you like to mark this procurement as paid?' ),
-                ] 
+                ]
             );
         }
 
         $entry->action(
-            identifier: 'refresh', 
+            identifier: 'refresh',
             label: __( 'Refresh' ),
             type: 'GET',
             url: ns()->url( '/api/procurements/' . $entry->id . '/refresh' ),
@@ -433,7 +438,7 @@ class ProcurementCrud extends CrudService
         );
 
         $entry->action(
-            identifier: 'delete', 
+            identifier: 'delete',
             label: __( 'Delete' ),
             type: 'DELETE',
             url: ns()->url( '/api/crud/ns.procurements/' . $entry->id ),

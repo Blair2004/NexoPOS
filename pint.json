@@ -4,10 +4,10 @@
         "modules"
     ],
     "rules": {
-        "no_spaces_inside_parenthesis": false,
         "phpdoc_align": {
             "align" : "vertical"
         },
+        "cast_spaces": "single",
         "spaces_inside_parentheses": {
             "space": "single"
         },

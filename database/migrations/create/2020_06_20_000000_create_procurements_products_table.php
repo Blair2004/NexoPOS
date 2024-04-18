@@ -27,7 +27,7 @@ return new class extends Migration
                 $table->float( 'purchase_price', 18, 5 )->default( 0 );
                 $table->float( 'quantity', 18, 5 );
                 $table->float( 'available_quantity', 18, 5 );
-                $table->integer( 'tax_group_id' );
+                $table->integer( 'tax_group_id' )->nullable();
                 $table->string( 'barcode' )->nullable();
                 $table->datetime( 'expiration_date' )->nullable();
                 $table->string( 'tax_type' ); // inclusive or exclusive;

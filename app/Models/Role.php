@@ -19,7 +19,7 @@ class Role extends NsRootModel
 
     protected $table = 'nexopos_roles';
 
-    protected $fillable = [ 'namespace' ];
+    protected $fillable = [ 'namespace', 'name', 'description', 'reward_system_id', 'minimal_credit_payment' ];
 
     /**
      * @var string ADMIN main role with all permissions

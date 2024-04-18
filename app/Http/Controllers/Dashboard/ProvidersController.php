@@ -78,7 +78,7 @@ class ProvidersController extends DashboardController
             ],
             'title' => sprintf(
                 __( 'Procurements by "%s"' ),
-                $provider->name
+                $provider->first_name
             ),
         ] );
     }

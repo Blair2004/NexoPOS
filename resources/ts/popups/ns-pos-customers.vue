@@ -10,7 +10,7 @@
             <ns-tabs :active="activeTab" @active="activeTab = $event">
                 <ns-tabs-item identifier="create-customers" :label="__( 'New Customer' )">
                     <ns-crud-form
-                        v-if="options.ns_pos_customers_creation_enabled === 'yes'"
+                        v-if="userCan( 'nexopos.create.customers' )"
                         @updated="prefillForm( $event )"
                         @save="handleSavedCustomer( $event )"
                         submit-url="/api/crud/ns.customers"
@@ -18,7 +18,7 @@
                         <template v-slot:title>{{ __( 'Customer Name' ) }}</template>
                         <template v-slot:save>{{ __( 'Save Customer' ) }}</template>
                     </ns-crud-form>
-                    <div v-if="options.ns_pos_customers_creation_enabled !== 'yes'" class="h-full flex-col w-full flex items-center justify-center text-primary">
+                    <div v-if="! userCan( 'nexopos.create.customers' )" class="h-full flex-col w-full flex items-center justify-center text-primary">
                         <i class="lar la-hand-paper ns-icon text-6xl"></i>
                         <h3 class="font-medium text-2xl">{{ __( 'Not Authorized' ) }}</h3>
                         <p>{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
@@ -275,7 +275,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 
 import closeWithOverlayClicked from "~/libraries/popup-closer";
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
@@ -290,6 +290,8 @@ import popupCloser from '~/libraries/popup-closer';
 import nsPaginate from '~/components/ns-paginate.vue';
 import nsOrderPreviewPopup from './ns-orders-preview-popup.vue';
 import { nsCurrency } from '~/filters/currency';
+
+declare const POS;
 
 export default {
     name: 'ns-pos-customers',
@@ -308,6 +310,7 @@ export default {
             isLoadingHistory: false,
             isLoadingOrders: false,
             coupons: [],
+            userCan: ( permission ) => POS.userCan( permission ),
             rewardsResponse: [],
             order: null,
             walletHistories: [],

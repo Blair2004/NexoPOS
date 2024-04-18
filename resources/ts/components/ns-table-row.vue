@@ -1,5 +1,5 @@
 <template>
-    <tr class="ns-table-row" :class="row.$cssClass ? row.$cssClass : 'border text-sm'">
+    <tr class="ns-table-row border text-sm" :class="row.$cssClass ? row.$cssClass : ''">
         <td v-if="showCheckboxes" class="font-sans p-2">
             <ns-checkbox @change="handleChanged( $event )" :checked="row.$checked"> </ns-checkbox>
         </td>
@@ -28,8 +28,8 @@
             <template v-if="typeof row[ identifier ] === 'string' || typeof row[ identifier ] === 'number'">
                 <template v-if="column.attributes && column.attributes.length > 0">
                     <h3 class="fond-bold text-lg" v-html="sanitizeHTML( row[ identifier ] )"></h3>
-                    <div class="flex -mx-1 text-xs">
-                        <div class="px-1" v-for="attribute of column.attributes">
+                    <div class="flex md:-mx-1 md:flex-wrap flex-col md:flex-row text-xs">
+                        <div class="md:px-1 w-full md:w-1/2 lg:w-2/4" v-for="attribute of column.attributes">
                             <strong>{{ attribute.label }}</strong>: {{ row[ attribute.column ] }}
                         </div>
                     </div>
@@ -65,6 +65,7 @@
 <script>
 import { nsEvent, nsHttpClient, nsSnackBar } from "~/bootstrap";
 import { __ } from '~/libraries/lang';
+import NsPosConfirmPopup from "~/popups/ns-pos-confirm-popup.vue";
 export default {
     props: [
         'options', 'row', 'columns', 'prependOptions', 'showOptions', 'showCheckboxes'
@@ -75,7 +76,7 @@ export default {
         }
     },
     mounted() {
-        console.log( this );
+        // ...
     },
     methods: {
         __,
@@ -127,17 +128,23 @@ export default {
         },
         triggerAsync( action ) {
             if ( action.confirm !== null ) {
-                if ( confirm( action.confirm.message ) ) {
-                    nsHttpClient[ action.type.toLowerCase() ]( action.url )
-                        .subscribe( response => {
-                            nsSnackBar.success( response.message )
-                                .subscribe();
-                            this.$emit( 'reload', this.row );
-                        }, ( response ) => {
-                            this.toggleMenu();
-                            nsSnackBar.error( response.message ).subscribe();
-                        })
-                }
+                Popup.show( NsPosConfirmPopup, {
+                    title: action.confirm.title || __( 'Confirm Your Action' ),
+                    message: action.confirm.message || __( 'Would you like to delete this entry?' ),
+                    onAction: ( confirm ) => {
+                        if ( confirm ) {
+                            nsHttpClient[ action.type.toLowerCase() ]( action.url )
+                                .subscribe( response => {
+                                    nsSnackBar.success( response.message )
+                                        .subscribe();
+                                    this.$emit( 'reload', this.row );
+                                }, ( response ) => {
+                                    this.toggleMenu();
+                                    nsSnackBar.error( response.message ).subscribe();
+                                })
+                        }
+                    }
+                });
             } else {
                 nsEvent.emit({
                     identifier: 'ns-table-row-action',

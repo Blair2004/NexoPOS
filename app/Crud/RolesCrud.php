@@ -16,6 +16,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class RolesCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.roles';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_roles';
@@ -295,6 +305,8 @@ class RolesCrud extends CrudService
             if ( $model->locked ) {
                 throw new Exception( __( 'Unable to delete a system role.' ) );
             }
+
+            $model->permissions()->detach();
         }
     }
 
@@ -333,10 +345,10 @@ class RolesCrud extends CrudService
         $entry->action(
             identifier: 'edit',
             label: __( 'Edit' ),
-            type: 'GOTO', 
+            type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id )
         );
-        
+
         // Snippet 2
         $entry->action(
             identifier: 'clone',
@@ -344,10 +356,10 @@ class RolesCrud extends CrudService
             type: 'GET',
             confirm: [
                 'message' => __( 'Would you like to clone this role ?' ),
-            ], 
+            ],
             url: ns()->url( '/api/' . 'users/roles/' . $entry->id . '/clone' )
         );
-        
+
         // Snippet 3
         $entry->action(
             identifier: 'delete',
@@ -356,8 +368,8 @@ class RolesCrud extends CrudService
             url: ns()->url( '/api/crud/ns.roles/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

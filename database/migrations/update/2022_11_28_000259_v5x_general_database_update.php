@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Schema;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerAddress;
 use App\Models\CustomerCoupon;
@@ -21,7 +22,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Schema as CoreSchema;
 use Illuminate\Support\Str;
 
 return new class extends Migration
@@ -123,38 +124,38 @@ return new class extends Migration
         /**
          * We're make the users table to be able to receive customers
          */
-        Schema::table( 'nexopos_users', function ( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_users', 'birth_date' ) ) {
+        CoreSchema::table( 'nexopos_users', function ( Blueprint $table ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'birth_date' ) ) {
                 $table->datetime( 'birth_date' )->nullable();
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'purchases_amount' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'purchases_amount' ) ) {
                 $table->float( 'purchases_amount' )->default( 0 );
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'owed_amount' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'owed_amount' ) ) {
                 $table->float( 'owed_amount' )->default( 0 );
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'credit_limit_amount' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'credit_limit_amount' ) ) {
                 $table->float( 'credit_limit_amount' )->default( 0 );
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'account_amount' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'account_amount' ) ) {
                 $table->float( 'account_amount' )->default( 0 );
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'first_name' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'first_name' ) ) {
                 $table->string( 'first_name' )->nullable();
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'last_name' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'last_name' ) ) {
                 $table->string( 'last_name' )->nullable();
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'gender' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'gender' ) ) {
                 $table->string( 'gender' )->nullable();
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'phone' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'phone' ) ) {
                 $table->string( 'phone' )->nullable();
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'pobox' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'pobox' ) ) {
                 $table->string( 'pobox' )->nullable();
             }
-            if ( ! Schema::hasColumn( 'nexopos_users', 'group_id' ) ) {
+            if ( ! CoreSchema::hasColumn( 'nexopos_users', 'group_id' ) ) {
                 $table->integer( 'group_id' )->nullable();
             }
         } );

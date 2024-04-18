@@ -74,6 +74,7 @@ export class POS {
     private _isSubmitting = false;
     private _processingAddQueue = false;
     private _selectedPaymentType: BehaviorSubject<PaymentType>;
+    private _userPermissions: BehaviorSubject<{[key:string]: any}[]>;
     
     public print: Print;
 
@@ -224,6 +225,7 @@ export class POS {
     }
 
     public initialize() {
+        this._userPermissions = new BehaviorSubject<{ [key: string]: any }[]>([]);
         this._products = new BehaviorSubject<OrderProduct[]>([]);
         this._customers = new BehaviorSubject<Customer[]>([]);
         this._types = new BehaviorSubject<OrderType[]>([]);
@@ -250,7 +252,19 @@ export class POS {
                     });
                 })
             }
-        ]
+        ];
+
+        this.initialQueue.push(() => new Promise((resolve, reject) => {
+            nsHttpClient.get(`/api/users/permissions/` ).subscribe({
+                next: (response: any) => {
+                    this._userPermissions.next(response);
+                    resolve( response );
+                },
+                error: error => {
+                    reject( error );
+                }
+            })
+        }));
 
         /**
          * This initial process will try to detect
@@ -1574,6 +1588,12 @@ export class POS {
 
     defineTypes(types) {
         this._types.next(types);
+    }
+
+    userCan( permission ) {
+        const permissions   =   this._userPermissions.getValue();
+        const filtered  =   permissions.filter( (p) => p.namespace === permission );
+        return filtered.length > 0;
     }
 
     async removeProductUsingIndex(index) {

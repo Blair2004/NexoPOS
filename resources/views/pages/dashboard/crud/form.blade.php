@@ -12,6 +12,7 @@ use App\Classes\Output;
         <ns-crud-form 
             return-url="{{ $returnUrl }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
+            :option-attributes='@json( $optionAttributes ?? [] )'
             :query-params='@json( $queryParams ?? [] )'
             submit-url="{{ $submitUrl }}"
             src="{{ $src }}">

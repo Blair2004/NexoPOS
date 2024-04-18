@@ -86,6 +86,14 @@
                                             <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-success-secondary text-white">{{ __( 'Total' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.total ) }}</td>
                                         </tr>
+                                        <tr class="">
+                                            <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-success-secondary text-white">{{ __( 'Cost Of Goods' ) }}</td>
+                                            <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.total_purchase_price ) }}</td>
+                                        </tr>
+                                        <tr class="">
+                                            <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-success-secondary text-white">{{ __( 'Profit' ) }}</td>
+                                            <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.profit ) }}</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -117,7 +125,11 @@
                                 <td class="p-2 border text-right">{{ nsCurrency( product.total_purchase_price ) }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( product.tax_value ) }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( product.total_price ) }}</td>
-                                <td class="p-2 border text-right">{{ nsCurrency( product.total_price - product.total_purchase_price ) }}</td>
+                                <td class="p-2 border text-right">{{ nsCurrency( 
+                                    Math.chain( product.total_price ).subtract( 
+                                        Math.chain( product.total_purchase_price ).add( product.tax_value ).done() 
+                                    ).done()
+                                ) }}</td>
                             </tr>
                         </tbody>
                         <tfoot class="text-primary font-semibold">
@@ -128,7 +140,7 @@
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_purchase_price' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'tax_value' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
-                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) - computeTotal( result, 'total_purchase_price' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) - computeTotal( result, 'total_purchase_price' ) - computeTotal( result, 'tax_value' ) ) }}</td>
                             </tr>
                         </tfoot>
                     </table>

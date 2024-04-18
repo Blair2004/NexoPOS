@@ -138,22 +138,22 @@ class SettingsPage
         /**
          * @var Options
          */
-        $options = app()->make(Options::class);
+        $options = app()->make( Options::class );
         $data = [];
-        $inputs = Hook::filter( SettingsPage::method( 'saveForm' ), $this->getPlainData($request) );
+        $inputs = Hook::filter( SettingsPage::method( 'saveForm' ), $this->getPlainData( $request ) );
 
-        foreach ( $inputs as $key => $value) {
+        foreach ( $inputs as $key => $value ) {
             if ( $value === null ) {
-                $options->delete($key);
+                $options->delete( $key );
             } else {
-                $options->set($key, $value);
+                $options->set( $key, $value );
                 $data[ $key ] = $value;
             }
         }
 
         event( new SettingsSavedEvent(
-            data: $data, 
-            settingsClass: get_class($this) 
+            data: $data,
+            settingsClass: get_class( $this )
         ) );
 
         return [

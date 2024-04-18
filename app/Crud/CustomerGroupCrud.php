@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Classes\CrudTable;
 use App\Models\CustomerGroup;
 use App\Models\RewardSystem;
 use App\Services\CrudEntry;
@@ -13,6 +14,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 
 class CustomerGroupCrud extends CrudService
 {
+    /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.customers-groups';
+
     /**
      * define the base table
      */
@@ -92,17 +103,17 @@ class CustomerGroupCrud extends CrudService
      **/
     public function getLabels()
     {
-        return [
-            'list_title' => __( 'Customer Groups List' ),
-            'list_description' => __( 'Display all Customers Groups.' ),
-            'no_entry' => __( 'No Customers Groups has been registered' ),
-            'create_new' => __( 'Add a new Customers Group' ),
-            'create_title' => __( 'Create a new Customers Group' ),
-            'create_description' => __( 'Register a new Customers Group and save it.' ),
-            'edit_title' => __( 'Edit Customers Group' ),
-            'edit_description' => __( 'Modify Customers group.' ),
-            'back_to_list' => __( 'Return to Customers Groups' ),
-        ];
+        return CrudTable::labels(
+            list_title: __( 'Customer Groups List' ),
+            list_description: __( 'Display all Customers Groups.' ),
+            no_entry: __( 'No Customers Groups has been registered' ),
+            create_new: __( 'Add a new Customers Group' ),
+            create_title: __( 'Create a new Customers Group' ),
+            create_description: __( 'Register a new Customers Group and save it.' ),
+            edit_title: __( 'Edit Customers Group' ),
+            edit_description: __( 'Modify Customers group.' ),
+            back_to_list: __( 'Return to Customers Groups' ),
+        );
     }
 
     /**
@@ -271,28 +282,12 @@ class CustomerGroupCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-            'name' => [
-                'label' => __( 'Name' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'reward_name' => [
-                'label' => __( 'Reward System' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'nexopos_users_username' => [
-                'label' => __( 'Author' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Created On' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column( __( 'Name' ), 'name' ),
+            CrudTable::column( __( 'Reward System' ), 'reward_name' ),
+            CrudTable::column( __( 'Author' ), 'nexopos_users_username' ),
+            CrudTable::column( __( 'Created On' ), 'created_at' )
+        );
     }
 
     /**
@@ -303,12 +298,12 @@ class CustomerGroupCrud extends CrudService
         $entry->reward_system_id = $entry->reward_system_id === 0 ? __( 'N/A' ) : $entry->reward_system_id;
 
         $entry->action(
-            identifier: 'edit_customers_group', 
+            identifier: 'edit_customers_group',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( 'dashboard/customers/groups/edit/' . $entry->id ) 
+            url: ns()->url( 'dashboard/customers/groups/edit/' . $entry->id )
         );
-        
+
         $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
@@ -317,8 +312,8 @@ class CustomerGroupCrud extends CrudService
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
                 'title' => __( 'Delete a licence' ),
-            ] 
-        ); 
+            ]
+        );
 
         $entry->reward_name = $entry->reward_name ?: __( 'N/A' );
 

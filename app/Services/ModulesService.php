@@ -133,8 +133,8 @@ class ModulesService
             $xmlContent = file_get_contents( $xmlConfigPath );
 
             try {
-                $parser     = new XMLParser($xmlConfigPath);
-                $config     = ( array ) $parser->getXMLObject();
+                $parser = new XMLParser( $xmlConfigPath );
+                $config = (array) $parser->getXMLObject();
             } catch ( Exception $exception ) {
                 throw new Exception( sprintf(
                     __( 'Failed to parse the configuration file on the following path "%s"' ),
@@ -198,9 +198,9 @@ class ModulesService
                  * If the system is installed, then we can check if the module is enabled or not
                  * since by default it's not enabled
                  */
-                if (Helper::installed()) {
-                    $modules = $this->options->get('enabled_modules', []);
-                    $config[ 'enabled' ] = in_array($config[ 'namespace' ], (array) $modules) ? true : false;
+                if ( Helper::installed() ) {
+                    $modules = $this->options->get( 'enabled_modules', [] );
+                    $config[ 'enabled' ] = in_array( $config[ 'namespace' ], (array) $modules ) ? true : false;
                 }
 
                 /**
@@ -276,12 +276,12 @@ class ModulesService
 
     public function loadModulesMigrations(): void
     {
-        $this->modules  =   collect( $this->modules )->mapWithKeys( function( $config, $key ) {
-            $config[ 'migrations' ] = $this->__getModuleMigration($config);
-            $config[ 'all-migrations' ] = $this->getAllModuleMigrationFiles($config);
+        $this->modules = collect( $this->modules )->mapWithKeys( function ( $config, $key ) {
+            $config[ 'migrations' ] = $this->__getModuleMigration( $config );
+            $config[ 'all-migrations' ] = $this->getAllModuleMigrationFiles( $config );
 
             return [ $key => $config ];
-        })->toArray();
+        } )->toArray();
     }
 
     /**

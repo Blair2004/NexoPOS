@@ -69,6 +69,11 @@ class Transaction extends NsModel
         return $this->belongsTo( TransactionAccount::class, 'account_id' );
     }
 
+    public function histories()
+    {
+        return $this->hasMany( TransactionHistory::class, 'transaction_id' );
+    }
+
     public function scopeScheduled( $query )
     {
         return $query->where( 'type', self::TYPE_SCHEDULED );

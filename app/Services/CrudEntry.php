@@ -22,6 +22,14 @@ class CrudEntry implements JsonSerializable
         $this->{ '$id' } = $params[ 'id' ];
     }
 
+    public function addClass( $class )
+    {
+        $classes    =   explode( ' ', $this->{ '$cssClass' } ?? '' );
+        $classes[]  =   $class;
+
+        $this->{ '$cssClass' } = implode( ' ', $classes );
+    }
+
     public function __get( $index )
     {
         return $this->values[ $index ] ?? null;
@@ -76,10 +84,10 @@ class CrudEntry implements JsonSerializable
          * to restrict it to allowed users.
          */
         if ( isset( $this->values[ '$actions' ] ) ) {
-            $this->values[ '$actions' ] = collect( $this->values[ '$actions' ] )->filter( function( $action ) {
-                return ( isset( $action[ 'permissions' ] ) && count( $action[ 'permissions' ] ) > 0 ) 
+            $this->values[ '$actions' ] = collect( $this->values[ '$actions' ] )->filter( function ( $action ) {
+                return ( isset( $action[ 'permissions' ] ) && count( $action[ 'permissions' ] ) > 0 )
                     ? ns()->allowedTo( $action[ 'permissions' ] ) : true;
-            })->toArray();
+            } )->toArray();
         }
     }
 

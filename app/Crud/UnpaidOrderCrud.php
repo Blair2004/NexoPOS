@@ -7,6 +7,16 @@ use App\Models\Order;
 class UnpaidOrderCrud extends HoldOrderCrud
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.unpaid-orders';
+
+    /**
      * Define Constructor
      */
     public function __construct()

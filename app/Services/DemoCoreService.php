@@ -284,6 +284,7 @@ class DemoCoreService
                 'automatic_approval' => 1,
             ],
             'products' => Product::withStockEnabled()
+                ->notGrouped()
                 ->with( 'unitGroup' )
                 ->get()
                 ->map( function ( $product ) {

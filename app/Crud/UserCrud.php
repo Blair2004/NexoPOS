@@ -16,7 +16,6 @@ use App\Models\CustomerShippingAddress;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\CrudEntry;
-use App\Services\CrudInput;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\Options;
@@ -31,6 +30,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 
 class UserCrud extends CrudService
 {
+    /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.users';
+
     /**
      * define the base table
      */
@@ -613,7 +622,7 @@ class UserCrud extends CrudService
             CrudTable::column(
                 identifier: 'username',
                 label: __( 'Username' ),
-                attributes: [
+                attributes: CrudTable::attributes(
                     CrudTable::attribute(
                         column: 'active',
                         label: __( 'Active' )
@@ -622,7 +631,7 @@ class UserCrud extends CrudService
                         column: 'email',
                         label: __( 'Email' )
                     )
-                ]
+                )
             ),
             CrudTable::column(
                 label: __( 'Wallet' ),

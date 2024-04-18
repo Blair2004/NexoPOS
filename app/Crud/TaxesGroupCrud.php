@@ -12,6 +12,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class TaxesGroupCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.taxes-groups';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_taxes_groups';
@@ -271,7 +281,7 @@ class TaxesGroupCrud extends CrudService
             type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'taxes/groups' . '/edit/' . $entry->id )
         );
-        
+
         $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
@@ -279,8 +289,8 @@ class TaxesGroupCrud extends CrudService
             url: ns()->url( '/api/crud/ns.taxes-groups/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

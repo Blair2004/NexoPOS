@@ -58,7 +58,7 @@ class ModulesServiceProvider extends ServiceProvider
                  */
                 $this->modules->loadModulesMigrations();
 
-                collect($this->modules->getEnabled())->each(fn($module) => $this->modules->boot($module));
+                collect( $this->modules->getEnabled() )->each( fn( $module ) => $this->modules->boot( $module ) );
 
                 /**
                  * trigger register method only for enabled modules

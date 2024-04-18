@@ -11,6 +11,6 @@ Route::get( 'transactions-accounts/{id}/history', [ TransactionController::class
 Route::post( 'transactions', [ TransactionController::class, 'post' ] );
 Route::post( 'transactions-accounts', [ TransactionController::class, 'postTransactionsAccount' ] );
 Route::put( 'transactions/{id}', [ TransactionController::class, 'put' ] )->where( 'id', '[0-9]+' );
-Route::put( 'transactions-accounts/{id}', [ TransactionController::class, 'putTransactionAccount' ] )->where( 'id', '[0-9]+' );
-Route::delete( 'transactions/{id}', [ TransactionController::class, 'delete' ] )->where( 'id', '[0-9]+' );
-Route::delete( 'transactions-accounts/{id}', [ TransactionController::class, 'deleteAccount' ] )->where( 'id', '[0-9]+' );
+Route::put( 'transactions-accounts/{account}', [ TransactionController::class, 'putTransactionAccount' ] )->where( 'id', '[0-9]+' );
+Route::delete( 'transactions/{transaction}', [ TransactionController::class, 'delete' ] )->where( 'id', '[0-9]+' );
+Route::delete( 'transactions-accounts/{account}', [ TransactionController::class, 'deleteAccount' ] )->where( 'id', '[0-9]+' );

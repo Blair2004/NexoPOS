@@ -13,6 +13,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class CustomerCouponCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.customers-coupons';
+
+    /**
      * define the base table
      *
      * @param  string
@@ -382,7 +392,7 @@ class CustomerCouponCrud extends CrudService
             label: __( 'Usage History' ),
             type: 'GOTO',
             url: ns()->url( '/dashboard/customers/' . $entry->customer_id . '/coupons/' . $entry->id . '/history/' ),
-            identifier: 'usage.history' 
+            identifier: 'usage.history'
         );
 
         // Snippet 2: 'namespace' likely needs replacement

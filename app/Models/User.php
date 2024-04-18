@@ -160,6 +160,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function scopeActive()
+    {
+        return $this->where( 'active', true );
+    }
+
     /**
      * Quick access to user options
      */

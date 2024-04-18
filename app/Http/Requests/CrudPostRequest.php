@@ -52,4 +52,11 @@ class CrudPostRequest extends BaseCrudRequest
 
         return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), $flatRules );
     }
+
+    public function attributes()
+    {
+        return [
+            'general.email' =>  __( 'Email' ),
+        ];
+    }
 }

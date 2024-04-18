@@ -443,7 +443,7 @@ class ProcurementService
             $procurementProduct->purchase_price = $procuredProduct[ 'purchase_price' ];
             $procurementProduct->quantity = $procuredProduct[ 'quantity' ];
             $procurementProduct->available_quantity = $procuredProduct[ 'quantity' ];
-            $procurementProduct->tax_group_id = $procuredProduct[ 'tax_group_id' ];
+            $procurementProduct->tax_group_id = $procuredProduct[ 'tax_group_id' ] ?? 0;
             $procurementProduct->tax_type = $procuredProduct[ 'tax_type' ];
             $procurementProduct->tax_value = $procuredProduct[ 'tax_value' ];
             $procurementProduct->expiration_date = $procuredProduct[ 'expiration_date' ] ?? null;
@@ -1036,7 +1036,7 @@ class ProcurementService
             ->whereIn( 'type', [
                 Product::TYPE_DEMATERIALIZED,
                 Product::TYPE_MATERIALIZED,
-            ])
+            ] )
             ->notGrouped()
             ->where( function ( $query ) use ( $argument ) {
                 $query->orWhere( 'name', 'LIKE', "%{$argument}%" )

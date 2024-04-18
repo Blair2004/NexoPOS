@@ -1,9 +1,9 @@
 <?php
 
+use App\Classes\Schema;
 use App\Models\Transaction;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -18,6 +18,14 @@ return new class extends Migration
             Schema::table( 'nexopos_transactions', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_transactions', 'type' ) ) {
                     $table->string( 'type' )->nullable();
+                }
+
+                if ( ! Schema::hasColumn( 'nexopos_transactions', 'scheduled_date' ) ) {
+                    $table->dateTime( 'scheduled_date' )->nullable();
+                }
+
+                if ( ! Schema::hasColumn( 'nexopos_transactions', 'account_id' ) ) {
+                    $table->integer( 'account_id' )->nullable();
                 }
             } );
 

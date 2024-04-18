@@ -11,7 +11,6 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderAfterInstalmentPaidEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
-use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterProductStockCheckedEvent;
 use App\Events\OrderAfterRefundedEvent;
@@ -72,7 +71,7 @@ class OrdersService
         protected Options $optionsService,
         protected TaxService $taxService,
         protected ReportService $reportService,
-        protected MathService $mathService,
+        protected MathService $mathService
     ) {
         // ...
     }
@@ -98,7 +97,7 @@ class OrdersService
             $order->load( 'products' );
             $order->load( 'coupons' );
 
-            $previousOrder =  clone $order;
+            $previousOrder = clone $order;
         }
 
         $customer = $this->__customerIsDefined( $fields );
@@ -225,9 +224,9 @@ class OrdersService
         $isNew ?
             event( new OrderAfterCreatedEvent( $order, $fields ) ) :
             event( new OrderAfterUpdatedEvent(
-                newOrder: $order, 
+                newOrder: $order,
                 prevOrder: $previousOrder,
-                fields: $fields 
+                fields: $fields
             ) );
 
         return [
@@ -1150,16 +1149,16 @@ class OrdersService
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price = 0;
 
-            if ( $orderProduct->product instanceof Product ) {
+            if ( $product[ 'product' ] instanceof Product ) {
                 $orderProduct->total_purchase_price = $this->currencyService->define(
-                        $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getCogs(
-                            product: $product[ 'product' ],
-                            unit: $unit
-                        ) )
-                        ->multipliedBy( $product[ 'quantity' ] )
-                        ->getRaw()
-                    )
-                    ->getRaw();
+                    $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getCogs(
+                        product: $product[ 'product' ],
+                        unit: $unit
+                    ) )
+                    ->multipliedBy( $product[ 'quantity' ] )
+                    ->getRaw()
+                )
+                ->getRaw();
             }
 
             $this->computeOrderProduct( $orderProduct );
@@ -2104,7 +2103,7 @@ class OrdersService
      */
     public function refreshOrder( Order $order )
     {
-        $prevOrder  =   clone $order;
+        $prevOrder = clone $order;
 
         $products = $this->getOrderProducts( $order->id );
 
@@ -2207,7 +2206,7 @@ class OrdersService
             'instalments',
         ] )->toArray();
 
-        event( new OrderBeforeDeleteEvent( $cachedOrder ) );
+        OrderBeforeDeleteEvent::dispatch( $cachedOrder );
 
         /**
          * Because when an order is void,
@@ -2254,16 +2253,10 @@ class OrdersService
 
         OrderPayment::where( 'order_id', $order->id )->delete();
 
-        /**
-         * delete cash flow entries
-         */
-        $this->reportService->deleteOrderCashFlow( $order );
-
         $orderArray = $order->toArray();
-
         $order->delete();
 
-        event( new OrderAfterDeletedEvent( (object) $orderArray ) );
+        OrderAfterDeletedEvent::dispatch( ( object ) $orderArray );
 
         return [
             'status' => 'success',
@@ -2285,7 +2278,7 @@ class OrdersService
 
         $order->products->map( function ( $product ) use ( $product_id, &$hasDeleted, $order ) {
             if ( $product->id === intval( $product_id ) ) {
-                event( new OrderBeforeDeleteProductEvent( $order, $product ) );
+                OrderBeforeDeleteProductEvent::dispatch( $order, $product );
 
                 $product->delete();
                 $hasDeleted = true;
@@ -2666,14 +2659,25 @@ class OrdersService
      */
     public function getSoldStock( $startDate, $endDate, $categories = [], $units = [] )
     {
+        $selectedColumns    =   [ 'product_id', 'name', 'unit_name', 'unit_price', 'quantity', 'total_purchase_price', 'tax_value', 'total_price' ];
+        $groupColumns    =   [ 'product_id', 'unit_id', 'name', 'unit_name' ];
+        $selectedColumns    =   [ 
+            ...$groupColumns, 
+            DB::raw( 'SUM(quantity) as quantity' ),
+            DB::raw( 'SUM(tax_value) as tax_value' ),
+            DB::raw( 'SUM(total_purchase_price) as total_purchase_price' ),
+            DB::raw( 'SUM(total_price) as total_price' ),
+        ];
         $rangeStarts = Carbon::parse( $startDate )->toDateTimeString();
         $rangeEnds = Carbon::parse( $endDate )->toDateTimeString();
 
         $products = OrderProduct::whereHas( 'order', function ( Builder $query ) {
             $query->where( 'payment_status', Order::PAYMENT_PAID );
         } )
-            ->where( 'created_at', '>=', $rangeStarts )
-            ->where( 'created_at', '<=', $rangeEnds );
+        ->select( $selectedColumns )
+        ->groupByRaw( join( ', ', $groupColumns ) )
+        ->where( 'created_at', '>=', $rangeStarts )
+        ->where( 'created_at', '<=', $rangeEnds );
 
         if ( ! empty( $categories ) ) {
             $products->whereIn( 'product_category_id', $categories );

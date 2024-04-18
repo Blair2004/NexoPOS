@@ -217,7 +217,7 @@ class UsersService
     /**
      * Clone a role assigning same permissions
      */
-    public function cloneRole( Role $role ): array
+    public function cloneRole( Role $role, $name = null ): array
     {
         $newRole = $role->toArray();
 
@@ -229,7 +229,7 @@ class UsersService
          * We would however like
          * to provide a unique name and namespace
          */
-        $name = sprintf(
+        $name = $name ?: sprintf(
             __( 'Clone of "%s"' ),
             $newRole[ 'name' ]
         );
@@ -249,6 +249,9 @@ class UsersService
         return [
             'status' => 'success',
             'message' => __( 'The role has been cloned.' ),
+            'data'  =>  [
+                'role'  =>  $newRole,
+            ],
         ];
     }
 
@@ -368,6 +371,7 @@ class UsersService
     public function checkPermission( $permission, ?User $user = null ): bool
     {
         ns()->restrict( $permission );
+
         return true;
     }
 }

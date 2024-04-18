@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Services\ReportService;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,7 +19,7 @@ class ProcessProductHistoryCombinedByChunkJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct( public $products )
+    public function __construct( public $products, public $date )
     {
         //
     }
@@ -36,14 +37,22 @@ class ProcessProductHistoryCombinedByChunkJob implements ShouldQueue
             $unitQuantities->each( function ( $unitQuantity ) use ( $reportService, $product ) {
                 $lastProductHistory = ProductHistory::where( 'product_id', $product->id )
                     ->where( 'unit_id', $unitQuantity->unit_id )
-                    ->orderBy( 'id', 'desc' )
-                    ->first();
+                    ->orderBy( 'id', 'desc' );
+
+                if ( $this->date !== null ) {
+                    /**
+                     * $this->date is supposed to be the start of the day.
+                     */
+                    $lastProductHistory->whereDate( 'created_at', '>', Carbon::parse( $this->date )->toDateTimeString() );
+                }
+                
+                $lastProductHistory     =   $lastProductHistory->first();
 
                 if ( $lastProductHistory instanceof ProductHistory ) {
-                    $reportService->prepareProductHistoryCombinedHistory( $lastProductHistory )
-                        ->save();
+                    $reportService->prepareProductHistoryCombinedHistory( $lastProductHistory )->save();
+                    $reportService->computeProductHistoryCombinedForWholeDay( $lastProductHistory );
                 }
-            } );
+            });
         } );
     }
 }
