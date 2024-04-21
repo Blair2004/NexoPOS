@@ -24,8 +24,11 @@ class CheckMigrationStatus
         }
 
         if ( Helper::installed() ) {
+            /**
+             * @var ModulesService $module
+             */
             $module = app()->make( ModulesService::class );
-            $modules = collect( $module->getEnabled() );
+            $modules = collect( $module->getEnabledAndAutoloadedModules() );
             $total = $modules->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 );
 
             if ( $total->count() > 0 ) {

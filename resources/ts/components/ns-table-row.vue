@@ -52,7 +52,10 @@
                         <div class="rounded-md shadow-xs">
                             <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <template :key="index" v-for="(action,index) of row.$actions">
-                                    <a :href="action.url" v-if="action.type === 'GOTO'" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
+                                    <a 
+                                        :href="action.url" 
+                                        :target="(action.type === 'TAB' ? '_self' : '_blank')" 
+                                        v-if="[ 'GOTO', 'TAB' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                     <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                 </template>
                             </div>
