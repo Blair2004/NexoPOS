@@ -520,7 +520,7 @@ class ModulesService
         if ( env( 'AUTOLOAD_MODULES' ) ) {
             $autoloadedModulesNamespace =   explode( ',', env( 'AUTOLOAD_MODULES' ) );
             $autoloadedModulesNamespace =   collect( $autoloadedModulesNamespace )->filter( function( $namespace ) {
-                $module = $this->get( $namespace );
+                $module = $this->get( trim( $namespace ) );
 
                 return empty( $module[ 'requires' ] );
             })->toArray();
