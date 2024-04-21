@@ -53,7 +53,7 @@ class SettingsPageProvider extends ServiceProvider
              */
             $modulesService = app()->make( ModulesService::class );
 
-            $classes = collect( $modulesService->getEnabled() )->map( function ( $module ) use ( $identifier ) {
+            $classes = collect( $modulesService->getEnabledAndAutoloadedModules() )->map( function ( $module ) use ( $identifier ) {
                 $classes = Cache::get( 'modules-crud-classes-' . $module[ 'namespace' ], function () use ( $module ) {
                     $files = collect( Storage::disk( 'ns' )->files( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Settings' ) );
 

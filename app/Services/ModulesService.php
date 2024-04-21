@@ -20,6 +20,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +35,7 @@ use SimpleXMLElement;
 class ModulesService
 {
     private $modules = [];
+    private $autoloadedNamespace    =   [];
 
     private Options $options;
 
@@ -46,6 +48,8 @@ class ModulesService
              * We can only enable a module if the database is installed.
              */
             $this->options = app()->make( Options::class );
+
+            $this->autoloadedNamespace = explode( ',', env( 'AUTOLOAD_MODULES' ) );
         }
 
         /**
@@ -193,6 +197,7 @@ class ModulesService
                 $config[ 'routes-file' ] = is_file( $webRoutesPath ) ? $webRoutesPath : false;
                 $config[ 'views-path' ] = $currentModulePath . 'Resources' . DIRECTORY_SEPARATOR . 'Views';
                 $config[ 'views-relativePath' ] = 'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Views';
+                $config[ 'autoloaded' ] = in_array( $config[ 'namespace' ], $this->autoloadedNamespace );
 
                 /**
                  * If the system is installed, then we can check if the module is enabled or not
@@ -437,11 +442,11 @@ class ModulesService
      */
     public function boot( $module = null ): void
     {
-        if ( ! empty( $module ) && $module[ 'enabled' ] ) {
+        if ( ! empty( $module ) && ($module[ 'enabled' ] || $module[ 'autoloaded' ] ) ) {
             $this->__boot( $module );
         } else {
             foreach ( $this->modules as $module ) {
-                if ( ! $module[ 'enabled' ] ) {
+                if ( ! ( $module[ 'enabled' ] || $module[ 'autoloaded' ] ) ) {
                     continue;
                 }
                 $this->__boot( $module );
@@ -493,6 +498,47 @@ class ModulesService
         }
 
         return $module;
+    }
+
+    /**
+     * Get all modules that are enabled and all modules
+     * that are set to autload without repeating them.
+     * @return Collection
+     */
+    public function getEnabledAndAutoloadedModules() 
+    {
+        /**
+         * trigger boot method only for enabled modules
+         * service providers that extends ModulesServiceProvider.
+         */
+        $autoloadedModulesNamespace  =   [];
+
+        /**
+         * We might manually set some module
+         * to always autoload, even if it's disabled.
+         */
+        if ( env( 'AUTOLOAD_MODULES' ) ) {
+            $autoloadedModulesNamespace =   explode( ',', env( 'AUTOLOAD_MODULES' ) );
+            $autoloadedModulesNamespace =   collect( $autoloadedModulesNamespace )->filter( function( $namespace ) {
+                $module = $this->get( $namespace );
+
+                return empty( $module[ 'requires' ] );
+            })->toArray();
+        }
+
+        /**
+         * 1 - Get all enabled modules
+         * 2 - Filter out the modules that are not autoloaded
+         * 3 - Merge the autoloaded modules with the filtered modules
+         */
+        $result = collect( $this->getEnabled() )
+            ->filter( fn( $module ) => ! in_array( $module[ 'namespace' ], $autoloadedModulesNamespace ) )
+            ->merge( 
+                collect( $this->get() )
+                    ->filter( fn( $module ) => in_array( $module[ 'namespace' ], $autoloadedModulesNamespace ) )
+            );
+
+        return $result;
     }
 
     /**
@@ -925,6 +971,10 @@ class ModulesService
          * Check if module exists first
          */
         if ( $module = $this->get( $namespace ) ) {
+            if ( $module[ 'autoloaded' ] ) {
+                throw new NotAllowedException( sprintf( __( 'The module "%s" is autoloaded and can\'t be deleted.' ), $module[ 'name' ] ) );
+            }
+
             /**
              * Disable the module first
              */
@@ -1108,6 +1158,14 @@ class ModulesService
         $this->checkManagementStatus();
 
         if ( $module = $this->get( $namespace ) ) {
+            if ( $module[ 'autoloaded' ] ) {
+                return response()->json([
+                    'status' => 'error',
+                    'code' => 'autoloaded_module',
+                    'message' => sprintf( __( 'The module "%s" is autoloaded and cannot be enabled.' ), $module[ 'name' ] )
+                ], 403 );
+            }
+
             /**
              * get all the modules that are
              * enabled.
@@ -1234,6 +1292,10 @@ class ModulesService
 
         // check if module exists
         if ( $module = $this->get( $namespace ) ) {
+            if ( $module[ 'autoloaded' ] ) {
+                throw new NotAllowedException( sprintf( __( 'The module "%s" is autoloaded and cannot be disabled.' ), $module[ 'name' ] ) );
+            }
+
             ModulesBeforeDisabledEvent::dispatch( $module );
 
             // @todo sandbox to test if the module runs
