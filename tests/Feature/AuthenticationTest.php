@@ -244,8 +244,6 @@ class AuthenticationTest extends TestCase
             'email' => $this->fakeEmail(),
         ];
 
-        dump( $signUpDetails );
-
         $response = $this
             ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
