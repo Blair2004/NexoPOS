@@ -14,7 +14,7 @@
                                 <template :key="index" v-for="(action,index) of row.$actions">
                                     <a 
                                         :href="action.url" 
-                                        :target="(action.type === 'TAB' ? '_self' : '_blank')" 
+                                        :target="(action.type === 'TAB' ? '_blank' : '_self')" 
                                         v-if="[ 'GOTO', 'TAB' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                     <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                 </template>
@@ -56,7 +56,7 @@
                                 <template :key="index" v-for="(action,index) of row.$actions">
                                     <a 
                                         :href="action.url" 
-                                        :target="(action.type === 'TAB' ? '_self' : '_blank')" 
+                                        :target="(action.type === 'TAB' ? '_blank' : '_self')" 
                                         v-if="[ 'GOTO', 'TAB' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                     <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                 </template>
