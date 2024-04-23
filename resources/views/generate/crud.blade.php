@@ -302,7 +302,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function getColumns(): array
     {
-        return CrudTable::column(
+        return CrudTable::columns(
             @foreach( $Schema::getColumnListing( $table_name ) as $column )
             CrudTable::column(
                 identifier: '{{ $column }}',
@@ -315,7 +315,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     /**
      * Define row actions.
      */
-    public function addActions( CrudEntry $entry ): CrudEntry
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         /**
          * Declaring entry actions

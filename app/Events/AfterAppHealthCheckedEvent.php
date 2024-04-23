@@ -2,8 +2,10 @@
 
 namespace App\Events;
 
+use Closure;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Http\Request;
 use Illuminate\Queue\SerializesModels;
 
 class AfterAppHealthCheckedEvent
@@ -15,7 +17,7 @@ class AfterAppHealthCheckedEvent
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( public Closure $next, public Request $request )
     {
         //
     }

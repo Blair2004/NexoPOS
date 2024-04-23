@@ -49,7 +49,7 @@ class CheckApplicationHealthMiddleware
         $modules = app()->make( ModulesService::class );
         $modules->dependenciesCheck();
 
-        AfterAppHealthCheckedEvent::dispatch();
+        AfterAppHealthCheckedEvent::dispatch( $next, $request );
 
         return $next( $request );
     }
