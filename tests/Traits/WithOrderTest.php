@@ -1076,8 +1076,6 @@ trait WithOrderTest
 
             $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ( $currency, $taxService ) {
 
-                $product[ 'discount' ] = 0;
-
                 if ( isset( $product[ 'discount_type' ] ) ) {
                     $discount = match ( $product[ 'discount_type' ] ) {
                         'percentage' => $taxService->getPercentageOf( $product[ 'unit_price' ] * $product[ 'quantity' ], $product[ 'discount_percentage' ] ),
@@ -1515,6 +1513,15 @@ trait WithOrderTest
                 )
             );
         } );
+
+        /**
+         * we need to make sure is only one transaction created for the 
+         * order that was later on marked as a paid order.
+         */
+        $this->assertTrue( 
+            TransactionHistory::where( 'order_id', $order[ 'id' ] )->where( 'operation', 'credit' )->count() == 1, 
+            __( 'More transaction was created for the same order' ) 
+        );
     }
 
     protected function attemptHoldOrderAndCheckoutWithGroupedProducts()

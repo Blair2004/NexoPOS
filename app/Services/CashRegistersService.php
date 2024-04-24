@@ -300,7 +300,7 @@ class CashRegistersService
             $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
             $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
-            $registerHistory->author = Auth::id();
+            $registerHistory->author = $order->author;
             $registerHistory->save();
 
             return $registerHistory;
@@ -329,7 +329,7 @@ class CashRegistersService
             $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
             $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
-            $registerHistory->author = Auth::id();
+            $registerHistory->author = $order->author;
             $registerHistory->save();
         }
     }

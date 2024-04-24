@@ -635,7 +635,7 @@ class TransactionService
      *
      * @return void
      */
-    public function handleCreatedOrder( Order $order )
+    public function handleOrder( Order $order )
     {
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
             $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_SALES );
@@ -682,40 +682,6 @@ class TransactionService
         }
 
         return $accountType;
-    }
-
-    /**
-     * Will compare order payment status
-     * and if the previous and the new payment status are supported
-     * the transaction will be record to the cash flow.
-     */
-    public function handlePaymentStatus( string $previous, string $new, Order $order )
-    {
-        if ( in_array( $previous, [
-            Order::PAYMENT_HOLD,
-            Order::PAYMENT_DUE,
-            Order::PAYMENT_PARTIALLY,
-            Order::PAYMENT_PARTIALLY_DUE,
-            Order::PAYMENT_UNPAID,
-        ] ) && in_array(
-            $new, [
-                Order::PAYMENT_PAID,
-            ]
-        ) ) {
-            $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_SALES );
-
-            $transaction = new Transaction;
-            $transaction->value = $order->total;
-            $transaction->active = true;
-            $transaction->operation = TransactionHistory::OPERATION_CREDIT;
-            $transaction->author = $order->author;
-            $transaction->order_id = $order->id;
-            $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-
-            $this->recordTransactionHistory( $transaction );
-        }
     }
 
     /**

@@ -185,7 +185,7 @@ class DoctorService
         $this->command->info( __( 'Restoring cash flow from paid orders...' ) );
 
         $this->command->withProgressBar( $orders, function ( $order ) use ( $transactionService ) {
-            $transactionService->handleCreatedOrder( $order );
+            $transactionService->handleOrder( $order );
         } );
 
         $this->command->newLine();
