@@ -240,6 +240,10 @@ export default {
             }
         },
         searchProducts( search ) {
+            if ( search.length === 0 ) {
+                return null;
+            }
+            
             nsHttpClient.post( `/api/products/search`, { 
                 search, 
                 arguments: {
