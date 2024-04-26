@@ -21,13 +21,5 @@ class OrdersSettings extends SettingsPage
             description: __( 'configure settings that applies to orders.' ),
             tabs: include ( dirname( __FILE__ ) . '/orders/general.php' )
         );
-
-        // $this->form = [
-        //     'title' => __( 'Orders Settings' ),
-        //     'description' => __( 'configure settings that applies to orders.' ),
-        //     'tabs' => [
-        //         'layout' => include ( dirname( __FILE__ ) . '/orders/general.php' ),
-        //     ],
-        // ];
     }
 }

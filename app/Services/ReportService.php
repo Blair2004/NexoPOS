@@ -224,7 +224,7 @@ class ReportService
             ->sum( 'value' );
 
         $todayReport->day_expenses = $totalExpenses;
-        $todayReport->day_income = $totalIncome - $totalExpenses;
+        $todayReport->day_income = $totalIncome;
         $todayReport->total_income = ( $previousReport->total_income ?? 0 ) + $todayReport->day_income;
         $todayReport->total_expenses = ( $previousReport->total_expenses ?? 0 ) + $todayReport->day_expenses;
     }

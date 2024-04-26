@@ -30,7 +30,7 @@ class TestOtherGetRoutes extends TestCase
                  * We'll test both known API and dashboard to see if
                  * there is any error thrown.
                  */
-                if ( strstr( $uri, 'api/' ) && ! preg_match( '/\{\w+\??\}/', $uri ) ) {
+                if ( preg_match( '/^api\//', $uri ) && ! preg_match( '/\{\w+\??\}/', $uri ) ) {
                     $response = $this->withSession( $this->app[ 'session' ]->all() )
                         ->json( 'GET', $uri );
 
@@ -46,7 +46,6 @@ class TestOtherGetRoutes extends TestCase
                             $response->assertStatus( 200 );
                         }
                     } else {
-                        $response->dump();
                         throw new Exception( 'Not supported status detected.' );
                     }
                 }

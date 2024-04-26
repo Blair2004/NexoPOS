@@ -4,6 +4,16 @@ use App\Classes\FormInput;
 use App\Classes\SettingForm;
 use App\Services\Helper;
 
+$expirationOptions  =   Helper::kvToJsOptions( collect( [ 3, 5, 10, 15, 30 ] )->mapWithKeys( function ( $days ) {
+    return [
+        $days => sprintf( __( '%s Days' ), $days ),
+    ];
+} ) );
+
+array_unshift( $expirationOptions, [
+    'never' => __( 'Never' ),
+] );
+
 return SettingForm::tabs(
     SettingForm::tab(
         label: __( 'General' ),
@@ -45,11 +55,7 @@ return SettingForm::tabs(
                 name: 'ns_orders_quotation_expiration',
                 value: ns()->option->get( 'ns_orders_quotation_expiration' ),
                 description: __( 'Quotations will get deleted after they defined they has reached.' ),
-                options: Helper::kvToJsOptions( collect( [ 3, 5, 10, 15, 30 ] )->mapWithKeys( function ( $days ) {
-                    return [
-                        $days => sprintf( __( '%s Days' ), $days ),
-                    ];
-                } ) ),
+                options: $expirationOptions,
             ),
         )
     )

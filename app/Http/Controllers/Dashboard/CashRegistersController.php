@@ -64,6 +64,9 @@ class CashRegistersController extends DashboardController
         } );
     }
 
+    /**
+     * @todo check repetitive transactions
+     */
     public function performAction( Request $request, $action, Register $register )
     {
         if ( $action === 'open' ) {
