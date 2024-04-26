@@ -30,6 +30,8 @@
 import { nsCurrency } from '~/filters/currency';
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
+import popupCloser from '~/libraries/popup-closer';
+import popupResolver from '~/libraries/popup-resolver';
 
 export default {
     props: [ 'popup' ],
@@ -67,6 +69,8 @@ export default {
             this.loadsUnits     =   true;
             this.loadUnits();
         }
+
+        this.popupCloser();
     },
     computed: {
         productName() {
@@ -76,6 +80,8 @@ export default {
     methods: {
         __,
         nsCurrency,
+        popupCloser,
+        popupResolver,
 
         displayRightPrice( item ){
             return POS.getSalePrice( item, this.popup.params.product.$original() );

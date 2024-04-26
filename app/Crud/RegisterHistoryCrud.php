@@ -423,13 +423,19 @@ class RegisterHistoryCrud extends CrudService
             case RegisterHistory::ACTION_CASHIN:
                 $entry->{ '$cssClass' } = 'success border';
                 break;
+            case RegisterHistory::ACTION_ACCOUNT_PAY:
+                $entry->{ '$cssClass' } = 'success border';
+                break;
             case RegisterHistory::ACTION_OPENING:
                 $entry->{ '$cssClass' } = 'info border';
                 break;
             case RegisterHistory::ACTION_CASHOUT:
                 $entry->{ '$cssClass' } = 'warning border';
                 break;
-            case RegisterHistory::ACTION_CASHOUT:
+            case RegisterHistory::ACTION_ACCOUNT_CHANGE:
+                $entry->{ '$cssClass' } = 'warning border';
+                break;
+            case RegisterHistory::ACTION_CASH_CHANGE:
                 $entry->{ '$cssClass' } = 'warning border';
                 break;
             case RegisterHistory::ACTION_CLOSING:

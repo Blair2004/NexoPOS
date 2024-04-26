@@ -37,10 +37,17 @@ class RegisterHistory extends NsModel
 
     const ACTION_REFUND = 'register-refund';
 
+    const ACTION_CASH_CHANGE = 'register-change';
+
+    const ACTION_ACCOUNT_PAY = 'register-account-pay';
+
+    const ACTION_ACCOUNT_CHANGE = 'register-account-in';
+
     const IN_ACTIONS = [
         self::ACTION_CASHIN,
         self::ACTION_OPENING,
         self::ACTION_SALE,
+        self::ACTION_ACCOUNT_PAY,
     ];
 
     const OUT_ACTIONS = [
@@ -48,6 +55,8 @@ class RegisterHistory extends NsModel
         self::ACTION_CLOSING,
         self::ACTION_CASHOUT,
         self::ACTION_DELETE,
+        self::ACTION_CASH_CHANGE,
+        self::ACTION_ACCOUNT_CHANGE,
     ];
 
     protected $dispatchesEvents = [

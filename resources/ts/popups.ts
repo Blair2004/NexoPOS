@@ -46,11 +46,10 @@ const nsPopups      =   createApp({
                 this.popups     =   shallowRef( state.popups );
                 this.$forceUpdate();
             }
-        })
+        });
     },
     methods: {
         closePopup( popup, event ) {
-            console.log({ popup, event });
             /**
              * This means we've strictly clicked on the container
              */
@@ -58,13 +57,17 @@ const nsPopups      =   createApp({
                 (
                     popup.config !== undefined &&
                     [ undefined, true ].includes( popup.config.closeOnOverlayClick )
+                ) || (
+                    Object.keys( popup.config ).length === 0
                 )
             ) {
-                if ( popup.params && popup.params.reject ) {
+                if ( popup.params && typeof popup.params.reject === 'function' ) {
                     popup.params.reject( false );
+                    if ( typeof popup.close === 'function' ) {
+                        popup.close();
+                    }
                     event.stopPropagation();
                 } else {
-                    console.log( 'here' );
                     popup.close();
                 }
             }

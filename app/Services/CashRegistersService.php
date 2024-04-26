@@ -243,13 +243,27 @@ class CashRegistersService
              * We'll only track on that cash register
              * payment that was recorded on the current register
              */
-            $payments->each( function ( OrderPayment $payment ) use ( $order, $register ) {
+            $registerHistories    =   $payments->map( function ( OrderPayment $payment ) use ( $order, $register ) {
+                if ( in_array( $payment->identifier, [ OrderPayment::PAYMENT_CASH, OrderPayment::PAYMENT_BANK ] ) ) {
+                    $action = RegisterHistory::ACTION_SALE;
+                } elseif ( in_array( $payment->identifier, [ OrderPayment::PAYMENT_ACCOUNT ] ) ) {
+                    $action = RegisterHistory::ACTION_ACCOUNT_PAY;
+                }
+
+                /**
+                 * if a not valid action is provided, we'll skip
+                 * the record.
+                 */
+                if ( $action === null ) {
+                    return;
+                }
+                
                 $isRecorded = RegisterHistory::where( 'order_id', $order->id )
                     ->where( 'payment_id', $payment->id )
                     ->where( 'register_id', $register->id )
                     ->where( 'payment_type_id', $payment->type->id )
                     ->where( 'order_id', $order->id )
-                    ->where( 'action', RegisterHistory::ACTION_SALE )
+                    ->where( 'action', $action )
                     ->first() instanceof RegisterHistory;
 
                 /**
@@ -265,54 +279,55 @@ class CashRegistersService
                     $registerHistory->payment_id = $payment->id;
                     $registerHistory->payment_type_id = $payment->type->id;
                     $registerHistory->order_id = $order->id;
-                    $registerHistory->action = RegisterHistory::ACTION_SALE;
+                    $registerHistory->action = $action;
                     $registerHistory->author = $order->author;
                     $registerHistory->save();
+
+                    return $registerHistory;
                 }
-            } );
+
+                return false;
+            } )->filter();
+
+            /**
+             * if the order has a change, we'll pull a register history stored as change
+             * otherwise we'll create it. 
+             * 
+             * @todo we're forced to write down this snippet as the payments doesn't 
+             * yet support change as a (negative) payment.
+             */
+            if ( $order->change > 0 ) {
+                $lastRegisterHistory    =   $registerHistories->last();
+
+                $registerHistoryChange = RegisterHistory::where( 'order_id', $order->id )
+                    ->where( 'register_id', $register->id )
+                    ->where( 'order_id', $order->id )
+                    ->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )
+                    ->firstOrNew();
+
+                /**
+                 * @todo payment_type_id and payment_id are omitted
+                 * as this doesn't result from the order payment records.
+                 */
+                $registerHistoryChange->balance_before = $lastRegisterHistory->balance_after;
+                $registerHistoryChange->value = ns()->currency->define( $order->change )->getRaw();
+                $registerHistoryChange->balance_after = ns()->currency->define( $lastRegisterHistory->balance_after )->subtractBy( $order->change )->getRaw();
+                $registerHistoryChange->register_id = $register->id;
+                $registerHistoryChange->order_id = $order->id;
+                $registerHistoryChange->action = RegisterHistory::ACTION_CASH_CHANGE;
+                $registerHistoryChange->author = $order->author;
+                $registerHistoryChange->save();
+            }
 
             $register->refresh();
         }
     }
 
     /**
-     * Listen for payment status changes
-     * that only occurs if the order is updated
-     * and will update the register history accordingly.
-     */
-    public function createRegisterHistoryUsingPaymentStatus( Order $order, string $previous, string $new ): ?RegisterHistory
-    {
-        /**
-         * If the payment status changed from
-         * supported payment status to a "Paid" status.
-         */
-        if ( $order->register_id !== null && in_array( $previous, [
-            Order::PAYMENT_DUE,
-            Order::PAYMENT_HOLD,
-            Order::PAYMENT_PARTIALLY,
-            Order::PAYMENT_UNPAID,
-        ] ) && $new === Order::PAYMENT_PAID ) {
-            $register = Register::find( $order->register_id );
-
-            $registerHistory = new RegisterHistory;
-            $registerHistory->balance_before = $register->balance;
-            $registerHistory->value = $order->total;
-            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
-            $registerHistory->register_id = $order->register_id;
-            $registerHistory->action = RegisterHistory::ACTION_SALE;
-            $registerHistory->author = $order->author;
-            $registerHistory->save();
-
-            return $registerHistory;
-        }
-
-        return null;
-    }
-
-    /**
      * Listen to order created and
      * will update the cash register if any order
      * is marked as paid.
+     * @deprecated ?
      */
     public function createRegisterHistoryFromPaidOrder( Order $order ): void
     {
@@ -346,6 +361,12 @@ class CashRegistersService
                 break;
             case RegisterHistory::ACTION_CASHOUT:
                 return __( 'Cash Out' );
+                break;
+            case RegisterHistory::ACTION_CASH_CHANGE:
+                return __( 'Change On Cash' );
+                break;
+            case RegisterHistory::ACTION_ACCOUNT_CHANGE:
+                return __( 'Change On Customer Account' );
                 break;
             case RegisterHistory::ACTION_CLOSING:
                 return __( 'Closing' );

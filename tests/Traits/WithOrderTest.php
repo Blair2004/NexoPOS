@@ -122,8 +122,8 @@ trait WithOrderTest
          * the cash register has the correct amount set
          * after the opening.
          */
-        $newCashRegister = $cashRegister->fresh();
-        $this->assertEquals( $newCashRegister->balance, $cashRegister->balance + 100, __( 'The cash register balance after opening is not correct' ) );
+        $firstCashRegisterState = $cashRegister->fresh();
+        $this->assertEquals( $firstCashRegisterState->balance, $cashRegister->balance + 100, __( 'The cash register balance after opening is not correct' ) );
 
         /**
          * Step 2 : let's prepare the order
@@ -145,12 +145,40 @@ trait WithOrderTest
             ->whereIn( 'action', RegisterHistory::IN_ACTIONS )
             ->sum( 'value' ) )->getRaw();
 
+        $totalChange    =   ns()->currency->define( RegisterHistory::where( 'register_id', $cashRegister->id )
+            ->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )
+            ->sum( 'value' ) )->getRaw();
+
         /**
          * only if the order total is greater than 0
          */
         if ( (float) $response[ 'data' ][ 'order' ][ 'tendered' ] > 0 ) {
             $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
-            $this->assertEquals( (float) $cashRegister->balance, (float) ( ns()->currency->define( $totalValue )->getRaw() ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
+            $this->assertEquals( 
+                (float) $cashRegister->balance, 
+                ns()->currency->define( $totalValue )
+                    ->subtractBy( $totalChange )
+                    ->toFloat(),
+                __( 'The cash register balance hasn\'t been updated correctly.' ) 
+            );
+        }
+
+        /**
+         * We'll check if the register as a history for the change
+         */
+        $changeHistory = RegisterHistory::where( 'register_id', $cashRegister->id )
+            ->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )
+            ->first();
+
+        if ( $response[ 'data' ][ 'order' ][ 'change' ] > 0 ) {
+            $this->assertTrue( $changeHistory instanceof RegisterHistory, __( 'No change history was recorded' ) );
+            $this->assertTrue( 
+                ( float ) $cashRegister->balance === 
+                ns()->currency->define( $firstCashRegisterState->balance )
+                    ->additionateBy( $response[ 'data' ][ 'order' ][ 'tendered' ] )
+                    ->subtractBy( $response[ 'data' ][ 'order' ][ 'change' ] )
+                    ->toFloat()
+            );
         }
 
         /**
@@ -251,6 +279,18 @@ trait WithOrderTest
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_CASHOUT )->sum( 'value' );
 
+        $totalAccountPay = RegisterHistory::withRegister( $cashRegister )
+            ->from( $opening->created_at )
+            ->action( RegisterHistory::ACTION_ACCOUNT_PAY )->sum( 'value' );
+
+        $totalCashChange = RegisterHistory::withRegister( $cashRegister )
+            ->from( $opening->created_at )
+            ->action( RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
+
+        $totalAccountChange = RegisterHistory::withRegister( $cashRegister )
+            ->from( $opening->created_at )
+            ->action( RegisterHistory::ACTION_ACCOUNT_CHANGE )->sum( 'value' );
+
         $totalRefunds = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_REFUND )->sum( 'value' );
@@ -262,9 +302,12 @@ trait WithOrderTest
         $totalTransactions = ns()->currency->define( $openingBalance )
             ->additionateBy( $totalCashing )
             ->additionateBy( $totalSales )
+            ->additionateBy( $totalAccountPay )
             ->subtractBy( $totalClosing )
             ->subtractBy( $totalRefunds )
             ->subtractBy( $totalCashOut )
+            ->subtractBy( $totalCashChange )
+            ->subtractBy( $totalAccountChange )
             ->subtractBy( $totalDelete )
             ->getRaw();
 
@@ -729,6 +772,7 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $orderDetails );
 
+        $response->dump();
         $response->assertStatus( 200 );
 
         return $response = json_decode( $response->getContent(), true );

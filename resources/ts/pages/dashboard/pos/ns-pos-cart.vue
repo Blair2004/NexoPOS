@@ -556,7 +556,7 @@ export default {
             Popup.show( nsPosCustomerPopupVue );
         },
 
-        openDiscountPopup( reference, type ) {
+        async openDiscountPopup( reference, type ) {
             if ( ! this.settings.products_discount && type === 'product' ) {
                 return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) ).subscribe();
             }
@@ -565,23 +565,27 @@ export default {
                 return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
             }
 
-            const promise   =   new Promise( ( resolve, reject ) => {
-                Popup.show( nsPosDiscountPopupVue, { 
-                    reference,
-                    resolve,
-                    reject,
-                    type,
-                    onSubmit( response ) {
-                        if ( type === 'product' ) {
-                            POS.updateProduct( reference, response );
-                        } else if ( type === 'cart' ) {
-                            POS.updateCart( reference, response );
+            try {
+                const promise   =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsPosDiscountPopupVue, { 
+                        reference,
+                        resolve,
+                        reject,
+                        type,
+                        onSubmit( response ) {
+                            if ( type === 'product' ) {
+                                POS.updateProduct( reference, response );
+                            } else if ( type === 'cart' ) {
+                                POS.updateCart( reference, response );
+                            }
                         }
-                    }
-                }, {
-                    popupClass: 'bg-white h:2/3 shadow-lg xl:w-1/4 lg:w-2/5 md:w-2/3 w-full'
+                    }, {
+                        popupClass: 'bg-white h:2/3 shadow-lg xl:w-1/4 lg:w-2/5 md:w-2/3 w-full'
+                    })
                 })
-            })
+            } catch ( exception ) {
+                // the popup might just be closed...
+            }
         },
 
         toggleMode( product, index ) {
