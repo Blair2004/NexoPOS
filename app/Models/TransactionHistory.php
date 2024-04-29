@@ -92,6 +92,11 @@ class TransactionHistory extends NsModel
      */
     const ACCOUNT_LIABILITIES = '009';
 
+    /**
+     * Unique identifier for equity.
+     */
+    const ACCOUNT_EQUITY = '011';
+
     public $fillable    =   [
         'transaction_id', 
         'operation', 

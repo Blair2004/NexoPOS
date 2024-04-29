@@ -43,6 +43,7 @@ class TransactionService
         TransactionHistory::ACCOUNT_CUSTOMER_CREDIT => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_customer_crediting_cashflow_account' ],
         TransactionHistory::ACCOUNT_CUSTOMER_DEBIT => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_customer_debitting_cashflow_account' ],
         TransactionHistory::ACCOUNT_LIABILITIES => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_liabilities_account' ],
+        TransactionHistory::ACCOUNT_EQUITY => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_equity_account' ],
     ];
 
     public function __construct( DateService $dateService )
@@ -686,22 +687,6 @@ class TransactionService
     }
 
     /**
-     * @deprecated ?
-     */
-    public function recomputeTransactionHistory( $rangeStarts = null, $rangeEnds = null )
-    {
-        /**
-         * We'll register cash flow for complete orders
-         */
-        $this->processPaidOrders( $rangeStarts, $rangeEnds );
-        $this->processCustomerAccountHistories( $rangeStarts, $rangeEnds );
-        $this->processTransactions( $rangeStarts, $rangeEnds );
-        $this->processProcurements( $rangeStarts, $rangeEnds );
-        $this->processRecurringTransactions( $rangeStarts, $rangeEnds );
-        $this->processRefundedOrders( $rangeStarts, $rangeEnds );
-    }
-
-    /**
      * Retreive the account configuration
      * using the account type
      *
@@ -723,6 +708,8 @@ class TransactionService
                 case TransactionHistory::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
                     break;
                 case TransactionHistory::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' );
+                    break;
+                case TransactionHistory::ACCOUNT_EQUITY: $label = __( 'Equity Account' );
                     break;
                 case TransactionHistory::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
                     break;
@@ -1057,7 +1044,9 @@ class TransactionService
 
         if ( ! in_array( $registerHistory->action, [
             RegisterHistory::ACTION_CASHOUT,
-            RegisterHistory::ACTION_CASHIN
+            RegisterHistory::ACTION_CASHIN,
+            RegisterHistory::ACTION_OPENING,
+            RegisterHistory::ACTION_CLOSING,
         ]) ) {
             return;
         }
@@ -1065,12 +1054,18 @@ class TransactionService
         if ( in_array( $registerHistory->action, [
             RegisterHistory::ACTION_CASHOUT
         ]) ) {
-            $transactionHistory->name   =   sprintf( __( 'Cash Out : %s' ), $registerHistory->description );
+            $transactionHistory->name   =   sprintf( __( 'Cash Out : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
             $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
         } else if ( in_array( $registerHistory->action, [
             RegisterHistory::ACTION_CASHIN
         ]) ) {
-            $transactionHistory->name   =   sprintf( __( 'Cash In : %s' ), $registerHistory->description );
+            $transactionHistory->name   =   sprintf( __( 'Cash In : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
+            $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;
+        } else if ( $registerHistory->action === RegisterHistory::ACTION_OPENING ) {
+            $transactionHistory->name   =   sprintf( __( 'Opening Float : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
+            $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
+        } else if ( $registerHistory->action === RegisterHistory::ACTION_CLOSING ) {
+            $transactionHistory->name   =   sprintf( __( 'Closing Float : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
             $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;
         }
 

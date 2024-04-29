@@ -30,6 +30,7 @@ class CashRegistersService
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_OPENING;
         $registerHistory->author = Auth::id();
+        $registerHistory->transaction_account_id    =   ns()->option->get( 'ns_accounting_opening_float_account' );
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
         $registerHistory->value = $amount;
@@ -66,6 +67,7 @@ class CashRegistersService
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_CLOSING;
+        $registerHistory->transaction_account_id    =   ns()->option->get( 'ns_accounting_closing_float_account' );
         $registerHistory->transaction_type = $diffType;
         $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
         $registerHistory->value = ns()->currency->define( $amount )->getRaw();
