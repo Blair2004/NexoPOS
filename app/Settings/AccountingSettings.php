@@ -52,6 +52,17 @@ class AccountingSettings extends SettingsPage
                             } ),
                             value: ns()->option->get( 'ns_accounting_cashout_accounts' ),
                         ),
+                        FormInput::select(
+                            label: __( 'Opening Float Source' ),
+                            name: 'ns_accounting_opening_float_source',
+                            description: __( 'Select the account from which the opening float will be taken' ),
+                            options: TransactionAccount::credit()->get()->map( function ( $account ) {
+                                return [
+                                    'label' => $account->name,
+                                    'value' => $account->id,
+                                ];
+                            } ),
+                        )
                     ),
                 )
             ),
