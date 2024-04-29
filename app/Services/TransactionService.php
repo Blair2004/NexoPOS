@@ -17,6 +17,7 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
 use App\Models\Procurement;
+use App\Models\RegisterHistory;
 use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
@@ -1048,5 +1049,44 @@ class TransactionService
         ] );
 
         return compact( 'recurrence', 'configurations', 'warningMessage' );
+    }
+
+    public function createTransactionFromRegisterHistory( RegisterHistory $registerHistory )
+    {
+        $transactionHistory     =   TransactionHistory::where( 'register_history_id', $registerHistory->id )->firstOrNew();
+
+        if ( ! in_array( $registerHistory->action, [
+            RegisterHistory::ACTION_CASHOUT,
+            RegisterHistory::ACTION_CASHIN
+        ]) ) {
+            return;
+        }
+
+        if ( in_array( $registerHistory->action, [
+            RegisterHistory::ACTION_CASHOUT
+        ]) ) {
+            $transactionHistory->name   =   sprintf( __( 'Cash Out : %s' ), $registerHistory->description );
+            $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
+        } else if ( in_array( $registerHistory->action, [
+            RegisterHistory::ACTION_CASHIN
+        ]) ) {
+            $transactionHistory->name   =   sprintf( __( 'Cash In : %s' ), $registerHistory->description );
+            $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;
+        }
+
+        $transactionHistory->value = $registerHistory->value;
+        $transactionHistory->author = $registerHistory->author;
+        $transactionHistory->register_history_id = $registerHistory->id;
+        $transactionHistory->transaction_account_id = $registerHistory->transaction_account_id;
+        $transactionHistory->status = TransactionHistory::STATUS_ACTIVE;
+        $transactionHistory->trigger_date = $registerHistory->created_at;
+        $transactionHistory->type = Transaction::TYPE_DIRECT;
+        $transactionHistory->save();
+        
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The transaction has been created.' ),
+            'data'      =>  compact( 'transactionHistory' )
+        ];
     }
 }

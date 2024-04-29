@@ -15,11 +15,17 @@
         <div class="flex flex-col overflow-y-auto h-120">
             <template v-for="history of cashRegisterReport.history">
                 <div :key="history.id" v-if="[ 'register-sale' ].includes( history.action )"  class="flex border-b elevation-surface success">
-                    <div class="p-2 flex-auto">{{ history.register_history_label }}</div>
+                    <div class="p-2 flex-auto">{{ history.description }}</div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
                 <div :key="history.id" v-if="[ 'register-cash-in' ].includes( history.action )"  class="flex border-b elevation-surface success">
-                    <div class="p-2 flex-auto">{{ history.label }}</div>
+                    <div class="p-2 flex-auto">
+                        <div>{{ history.description || __( 'Not Provided' ) }}</div>
+                        <div class="flex md:-mx-1">
+                            <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Type' ) }}</strong>: {{ history.label }}</div>
+                            <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Account' ) }}</strong>: {{ history.account_name }}</div>
+                        </div>
+                    </div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
                 <div :key="history.id" v-if="[ 'register-opening' ].includes( history.action )"  class="flex border-b elevation-surface">
@@ -31,11 +37,13 @@
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
                 <div :key="history.id" v-if="[ 'register-refund', 'register-cash-out' ].includes( history.action )"  class="flex border-b elevation-surface error">
-                    <div class="p-2 flex-auto">{{ history.label }}</div>
-                    <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
-                </div>
-                <div :key="history.id" v-if="[ 'register-change' ].includes( history.action )"  class="flex border-b elevation-surface error">
-                    <div class="p-2 flex-auto">{{ __( 'Cash Change' ) }}</div>
+                    <div class="p-2 flex-auto">
+                        <div>{{ history.description }}</div>
+                        <div class="flex md:-mx-1">
+                            <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Type' ) }}</strong>: {{ history.label }}</div>
+                            <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Account' ) }}</strong>: {{ history.account_name }}</div>
+                        </div>
+                    </div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
             </template>

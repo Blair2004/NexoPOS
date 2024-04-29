@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer( 'transaction_account_id' )->nullable();
             $table->integer( 'procurement_id' )->nullable(); // when the procurement is deleted the transaction history will be deleted automatically as well.
             $table->integer( 'order_refund_id' )->nullable(); // to link an transaction to an order refund.
+            $table->integer( 'order_payment_id' )->nullable(); // to link to a payment id.
             $table->integer( 'order_refund_product_id' )->nullable(); // link the refund to an order refund product
             $table->integer( 'order_id' )->nullable(); // to link an transaction to an order.
             $table->integer( 'order_product_id' )->nullable(); // link the refund to an order product
