@@ -30,7 +30,6 @@ class CashRegistersService
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_OPENING;
         $registerHistory->author = Auth::id();
-        $registerHistory->transaction_account_id    =   ns()->option->get( 'ns_accounting_opening_float_account' );
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
         $registerHistory->value = $amount;
@@ -67,7 +66,6 @@ class CashRegistersService
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_CLOSING;
-        $registerHistory->transaction_account_id    =   ns()->option->get( 'ns_accounting_closing_float_account' );
         $registerHistory->transaction_type = $diffType;
         $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
         $registerHistory->value = ns()->currency->define( $amount )->getRaw();
@@ -91,7 +89,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashIn( Register $register, float $amount, int $transaction_account_id, ?string $description ): array
+    public function cashIn( Register $register, float $amount, ?string $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
@@ -109,7 +107,6 @@ class CashRegistersService
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_CASHIN;
-        $registerHistory->transaction_account_id = $transaction_account_id;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
@@ -159,7 +156,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashOut( Register $register, float $amount, int $transaction_account_id, ?string $description ): array
+    public function cashOut( Register $register, float $amount, ?string $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
@@ -186,7 +183,6 @@ class CashRegistersService
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_CASHOUT;
-        $registerHistory->transaction_account_id = $transaction_account_id;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = ns()->currency->define( $register->balance )->getRaw();

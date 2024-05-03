@@ -27,6 +27,8 @@ trait WithReportTest
                 ->json( 'GET', $report );
 
             $response->assertStatus( 200 );
+
+            gc_collect_cycles();
         }
     }
 

@@ -101,14 +101,12 @@ class CashRegistersController extends DashboardController
             return $this->registersService->cashIn(
                 register: $register,
                 amount: $request->input( 'amount' ),
-                transaction_account_id: $request->input( 'transaction_account_id' ),
                 description: $request->input( 'description' )
             );
         } elseif ( $action === RegisterHistory::ACTION_CASHOUT ) {
             return $this->registersService->cashOut(
                 register: $register,
                 amount: $request->input( 'amount' ),
-                transaction_account_id: $request->input( 'transaction_account_id' ),
                 description: $request->input( 'description' )
             );
         }
@@ -147,10 +145,8 @@ class CashRegistersController extends DashboardController
                     ->select([
                         '*',
                         'nexopos_registers_history.description as description',
-                        'nexopos_transactions_accounts.name as account_name',
                     ])
                     ->leftJoin( 'nexopos_payments_types', 'nexopos_registers_history.payment_type_id', '=', 'nexopos_payments_types.id' )
-                    ->leftJoin( 'nexopos_transactions_accounts', 'nexopos_registers_history.transaction_account_id', '=', 'nexopos_transactions_accounts.id' )
                     ->where( 'nexopos_registers_history.id', '>=', $lastOpening->id );
 
                 $history =  $historyRequest->get();
@@ -198,9 +194,8 @@ class CashRegistersController extends DashboardController
                         'nexopos_payments_types.label as label',
                         'action',
                         'nexopos_registers_history.description as description',
-                        'nexopos_registers_history.transaction_account_id as transaction_account_id',
                     ])
-                    ->groupBy([ 'action', 'nexopos_payments_types.label', 'description', 'transaction_account_id' ])
+                    ->groupBy([ 'action', 'nexopos_payments_types.label', 'description' ])
                     ->get()
                     ->map( function ( $group ) {
                         $color = 'info';
