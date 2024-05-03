@@ -23,12 +23,12 @@ class CanSeeReportsTest extends TestCase
             Role::namespace( 'admin' )->users()->first()->id
         );
 
-        // $this->attemptSeeReports();
+        $this->attemptSeeReports();
     }
 
     public function test_sale_report()
     {
         $this->attemptAuthenticate();
-        // $this->attemptTestSaleReport();
+        $this->attemptTestSaleReport();
     }
 }
