@@ -19,7 +19,6 @@ Route::post( '/auth/sign-in', [ AuthController::class, 'postSignIn' ] )->name( n
  */
 Route::middleware( [
     RegistrationMiddleware::class,
-    SanitizePostFieldsMiddleware::class,
 ] )->group( function () {
     Route::post( '/auth/sign-up', [ AuthController::class, 'postSignUp' ] )->name( ns()->routeName( 'ns.register.post' ) );
 } );

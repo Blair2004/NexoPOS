@@ -244,12 +244,22 @@ class AuthenticationTest extends TestCase
             'email' => $this->fakeEmail(),
         ];
 
+        $signUpDetails = [
+            'username' => $this->fakeUsername(),
+            'password' => 'k%9*~aJ+,<%(z6',
+            'password_confirm' => 'k%9*~aJ+,<%(z6' . 'not-the-same',
+            'email' => $this->fakeEmail(),
+        ];
+
         $response = $this
             ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
                 '/auth/sign-up', $signUpDetails
             );
+        
+        $response->dump();
+        dump( $signUpDetails );
 
         $response->assertRedirect( ns()->route( 'ns.register' ) );
         $response->assertSessionHasErrors( [
