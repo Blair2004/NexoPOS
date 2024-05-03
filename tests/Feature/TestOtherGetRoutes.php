@@ -82,7 +82,6 @@ class TestOtherGetRoutes extends TestCase
                             $response->assertSee( 'dashboard-body' );
                         }
                     } else {
-                        $response->dump();
                         throw new Exception( 'Not supported status detected.' );
                     }
                 }

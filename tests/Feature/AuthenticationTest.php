@@ -258,9 +258,6 @@ class AuthenticationTest extends TestCase
                 '/auth/sign-up', $signUpDetails
             );
         
-        $response->dump();
-        dump( $signUpDetails );
-
         $response->assertRedirect( ns()->route( 'ns.register' ) );
         $response->assertSessionHasErrors( [
             'password_confirm' => 'The password confirm field must match password.',
