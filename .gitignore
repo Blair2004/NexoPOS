@@ -52,3 +52,4 @@ public/hot
 tests/.coverage
 .phpunit.cache/test-results
 storage/dotenv-editor
+.cloud
