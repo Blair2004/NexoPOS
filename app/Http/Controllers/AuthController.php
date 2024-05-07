@@ -55,7 +55,7 @@ class AuthController extends Controller
     public function activateAccount( User $user, $token )
     {
         /**
-         * trying to active an already activated
+         * trying to activate an already activated
          * account ? Not possible.
          */
         if ( $user->active ) {
