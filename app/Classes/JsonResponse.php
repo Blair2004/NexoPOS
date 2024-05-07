@@ -7,7 +7,7 @@ class JsonResponse
     public static function success( $data = null, $message = null )
     {
         return response()->json( [
-            'success' => true,
+            'status' => 'success',
             'data' => $data,
             'message' => $message,
         ] );
@@ -16,7 +16,7 @@ class JsonResponse
     public static function error( $message = null, $data = null )
     {
         return response()->json( [
-            'success' => false,
+            'status' => 'error',
             'data' => $data,
             'message' => $message,
         ], 403 );
