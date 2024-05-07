@@ -59,9 +59,6 @@ $exceptions->render( function( Exception $exception, Request $request ) {
             'status' => 'error',
             'message' => $message,
             'previous' => $back,
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTrace(),
         ], 500);
     } else {
         return response()->view( 'pages.errors.exception', compact( 'message', 'title', 'back' ), 500 );
