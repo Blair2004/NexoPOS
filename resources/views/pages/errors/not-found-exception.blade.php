@@ -1,9 +1,9 @@
 @extends( 'layout.base' )
 
 @section( 'layout.base.body' )
-    <div class="h-full w-full overflow-y-auto pb-10 bg-gradient-to-bl from-red-500 to-tealv-500 flex items-center justify-center">
+    <div class="h-full w-full overflow-y-auto pb-10 bg-gradient-to-bl from-purple-300 to-purple-700 flex items-center justify-center">
         <div class="w-full md:w-1/2 xl:1/3 flex items-center flex-col justify-center">
-            <span class="rounded-full text-6xl w-24 h-24 flex items-center justify-center bg-white shadow text-red-500 mb-4"><i class="las la-frown"></i></span>
+            <span class="rounded-full text-6xl w-24 h-24 flex items-center justify-center bg-white shadow text-purple-500 mb-4"><i class="las la-frown"></i></span>
             <h1 class="text-white text-3xl lg:text-5xl font-bold text-center">{!! $title ?? __( '404 Error' ) !!}</h1>
             <div class="rounded-lg p-4 bg-white my-4 md:w-1/2 shadow">
                 <div class="p-4 text-primary text-center text-sm">
