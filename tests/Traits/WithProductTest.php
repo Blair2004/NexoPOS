@@ -598,11 +598,6 @@ trait WithProductTest
 
     protected function attemptProductConversion()
     {
-        /**
-         * @var ProductService
-         */
-        $productService = app()->make( ProductService::class );
-
         $product = Product::where( 'type', Product::TYPE_MATERIALIZED )
             ->has( 'unit_quantities', '>=', 2 )
             ->with( 'unit_quantities.unit' )

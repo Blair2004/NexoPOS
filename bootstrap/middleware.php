@@ -22,8 +22,6 @@ $middleware->alias([
     'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     'ns.check-migrations' => \App\Http\Middleware\CheckMigrationStatus::class,
     'ns.check-application-health' => \App\Http\Middleware\CheckApplicationHealthMiddleware::class,
-    'ns.restrict' => \App\Http\Middleware\ProtectRoutePermissionMiddleware::class,
-    'ns.restrict-role' => \App\Http\Middleware\ProtectRouteRoleMiddleware::class,
     'ns.sanitize-inputs' => \App\Http\Middleware\SanitizePostFieldsMiddleware::class,
 ]);
 

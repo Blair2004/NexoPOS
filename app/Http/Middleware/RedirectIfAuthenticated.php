@@ -3,11 +3,14 @@
 namespace App\Http\Middleware;
 
 use App\Providers\RouteServiceProvider;
+use App\Traits\NsMiddlewareArgument;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
 class RedirectIfAuthenticated
 {
+    use NsMiddlewareArgument;
+    
     /**
      * Handle an incoming request.
      *

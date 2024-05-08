@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\CustomersController;
 use App\Http\Controllers\Dashboard\CustomersGroupsController;
+use App\Http\Middleware\NsRestrictMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::delete( 'customers/{id}', [ CustomersController::class, 'delete' ] );
@@ -22,7 +23,7 @@ Route::put( 'customers/{customer}/crud/{accountHistory}/account-history', [ Cust
 Route::put( 'customers/{customer}', [ CustomersController::class, 'put' ] );
 
 Route::post( 'customers/{customer}/account-history', [ CustomersController::class, 'accountTransaction' ] )
-    ->middleware( 'ns.restrict:nexopos.customers.manage-account-history' );
+    ->middleware( NsRestrictMiddleware::arguments( 'nexopos.customers.manage-account-history' ) );
 
 Route::get( 'customers-groups/{id?}', [ CustomersGroupsController::class, 'get' ] );
 Route::get( 'customers-groups/{id?}/customers', [ CustomersGroupsController::class, 'getCustomers' ] );

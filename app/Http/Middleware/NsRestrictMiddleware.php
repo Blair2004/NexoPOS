@@ -3,11 +3,14 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\NotEnoughPermissionException;
+use App\Traits\NsMiddlewareArgument;
 use Closure;
 use Illuminate\Http\Request;
 
-class ProtectRoutePermissionMiddleware
+class NsRestrictMiddleware
 {
+    use NsMiddlewareArgument;
+    
     /**
      * Handle an incoming request.
      *
@@ -19,6 +22,11 @@ class ProtectRoutePermissionMiddleware
             return $next( $request );
         }
 
-        throw new NotEnoughPermissionException( __( 'Your don\'t have enough permission to perform this action.' ) );
+        $message    = sprintf(
+            __( 'Your don\'t have enough permission ("%s") to perform this action.' ),
+            $permission
+        );
+
+        throw new NotEnoughPermissionException( $message );
     }
 }
