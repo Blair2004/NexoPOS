@@ -6,7 +6,7 @@
 
     {{ 
         sprintf(
-            __( 'The account you have created for __%s__, require an activation. In order to proceed, please click on the following link' ),
+            __( 'The account you have created for "%s", require an activation. In order to proceed, please click on the following link' ),
             ns()->option->get( 'ns_store_name' ),
             $user->username
         )

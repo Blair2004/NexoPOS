@@ -1430,7 +1430,13 @@ class OrdersService
             isset( $fields[ 'discount_percentage' ] ) &&
             isset( $fields[ 'discount_type' ] ) &&
             $fields[ 'discount_type' ] === 'percentage' ) {
-            $fields[ 'discount' ] = ( $fields[ 'discount' ] ?? ( ( $sale_price * $fields[ 'discount_percentage' ] ) / 100 ) * $fields[ 'quantity' ] );
+
+            $fields[ 'discount' ] = ( $fields[ 'discount' ] ?? 
+                ns()->currency->define(
+                    ns()->currency->define(
+                        ns()->currency->define( $sale_price )->multiplyBy( $fields[ 'discount_percentage' ] )->toFloat()
+                    )->dividedBy( 100 )->toFloat()
+                )->multiplyBy( $fields[ 'quantity' ] )->toFloat() );
         } else {
             $fields[ 'discount' ] = $fields[ 'discount' ] ?? 0;
         }
@@ -1625,8 +1631,9 @@ class OrdersService
         $fields[ 'discount' ] = $fields[ 'discount' ] ?? $order->discount ?? 0;
 
         if ( ! empty( $fields[ 'discount_type' ] ) && ! empty( $fields[ 'discount_percentage' ] ) && $fields[ 'discount_type' ] === 'percentage' ) {
-            return $this->currencyService->define( ( $fields[ 'subtotal' ] * $fields[ 'discount_percentage' ] ) / 100 )
-                ->getRaw();
+            return $this->currencyService->define( 
+                ns()->currency->define( $fields[ 'subtotal' ] )->multiplyBy( $fields[ 'discount_percentage' ] )->toFloat()
+            )->dividedBy( 100 )->toFloat();
         } else {
             return $this->currencyService->getRaw( $fields[ 'discount' ] );
         }
@@ -1952,7 +1959,9 @@ class OrdersService
     public function computeDiscountValues( $rate, $value )
     {
         if ( $rate > 0 ) {
-            return Currency::fresh( ( $value * $rate ) / 100 )->getRaw();
+            return ns()->currency->define( 
+                ns()->currency->define( $value )->multiplyBy( $rate )->toFloat()
+            )->divideBy( 100 )->toFloat();
         }
 
         return 0;

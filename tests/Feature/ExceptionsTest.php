@@ -25,7 +25,7 @@ class ExceptionsTest extends TestCase
             \App\Exceptions\ValidationException::class,
         ] )->each( function ( $class ) {
             $instance = new $class;
-            $response = $this->get( 'exceptions/' . $class );
+            $response = $this->get( 'exceptions?class=' . $class );
             $response->assertSee( $instance->getMessage() );
         } );
     }

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
+use App\Http\Middleware\InstalledStateMiddleware;
 use App\Services\ModulesService;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -143,15 +145,19 @@ class RouteServiceProvider extends ServiceProvider
 
     public function mapModuleWebRoutes( $module )
     {
-        Route::middleware( [ 'web', 'ns.installed', 'ns.check-application-health', CheckMigrationStatus::class ] )
-            ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
-            ->group( $module[ 'routes-file' ] );
+        Route::middleware( [ 
+            'web', 
+            InstalledStateMiddleware::class, 
+            CheckApplicationHealthMiddleware::class, 
+            CheckMigrationStatus::class ] )
+                ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
+                ->group( $module[ 'routes-file' ] );
     }
 
     public function mapModuleApiRoutes( $module )
     {
         Route::prefix( 'api/' )
-            ->middleware( [ 'ns.installed', 'api' ] )
+            ->middleware( [ InstalledStateMiddleware::class, 'api' ] )
             ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
             ->group( $module[ 'api-file' ] );
     }

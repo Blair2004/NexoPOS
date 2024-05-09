@@ -12,6 +12,7 @@ use App\Classes\Hook;
 use App\Events\AfterSuccessfulLoginEvent;
 use App\Events\PasswordAfterRecoveredEvent;
 use App\Events\UserAfterActivationSuccessfulEvent;
+use App\Exceptions\CoreVersionMismatchException;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\PostNewPasswordRequest;
@@ -89,7 +90,7 @@ class AuthController extends Controller
          */
         UserAfterActivationSuccessfulEvent::dispatch( $user );
 
-        return redirect( ns()->route( 'ns.login' ) )->with( 'message', __( 'Your account is not activated.' ) );
+        return redirect( ns()->route( 'ns.login' ) )->with( 'message', __( 'Your account is now activate.' ) );
     }
 
     public function passwordLost()

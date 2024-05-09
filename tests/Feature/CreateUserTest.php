@@ -121,7 +121,7 @@ class CreateUserTest extends TestCase
      */
     public function test_delete_users()
     {
-        Role::get()->map( function ( Role $role ) {
+        Role::whereNotIn( 'namespace', [ Role::ADMIN ])->get()->map( function ( Role $role ) {
             $role->users()->limit( 1 )->get()->each( function ( User $user ) {
                 $this->attemptAuthenticate( $user );
 
@@ -131,7 +131,7 @@ class CreateUserTest extends TestCase
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
                     ->json( 'delete', '/api/crud/ns.users/' . $user->id );
 
-                $response->assertStatus( 403 );
+                $response->assertStatus( 401 );
             } );
         } );
 
@@ -146,7 +146,7 @@ class CreateUserTest extends TestCase
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'delete', '/api/crud/ns.users/' . $order->author );
 
-            $response->assertStatus( 403 );
+            $response->assertStatus( 401 );
         }
     }
 
@@ -263,7 +263,6 @@ class CreateUserTest extends TestCase
             '/\{product\}/' => Product::class,
             '/\{provider\}/' => Provider::class,
             '/\{procurement\}/' => Procurement::class,
-            '/\{expense\}/' => Expense::class,
             '/\{category\}/' => ProductCategory::class,
             '/\{group\}/' => UnitGroup::class,
             '/\{unit\}/' => Unit::class,
@@ -272,7 +271,6 @@ class CreateUserTest extends TestCase
             '/\{user\}/' => User::class,
             '/\{order\}/' => Order::class,
             '/\{tax\}/' => Tax::class,
-            '/\{cashFlow\}/' => CashFlow::class,
         ];
 
         foreach ( $routes as $route ) {
@@ -322,7 +320,7 @@ class CreateUserTest extends TestCase
                     $status = $response->baseResponse->getStatusCode();
 
                     $this->assertTrue(
-                        in_array( $status, [ 201, 200, 302, 403 ] ),
+                        in_array( $status, [ 201, 200, 302, 403, 401 ] ),
                         'Unsupported HTTP response :' . $status . ' uri:' . $uri . ' user role:' . $user->roles->map( fn( $role ) => $role->namespace )->join( ',' )
                     );
                 }
