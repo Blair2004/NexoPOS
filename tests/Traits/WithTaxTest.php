@@ -188,11 +188,7 @@ trait WithTaxTest
         $expectedTax = $taxService->getComputedTaxGroupValue( $order[ 'tax_type' ], $order[ 'tax_group_id' ], ns()->currency->define( $order[ 'subtotal' ] )->subtractBy( $order[ 'discount' ] )->getRaw() );
 
         if ( $callback === null ) {
-            $this->assertEquals( 
-                ns()->currency->define( $expectedTax )->toFloat(), 
-                ns()->currency->define( $order[ 'tax_value' ] )->toFloat(), 
-                __( 'The computed taxes aren\'t correct.' ) 
-            );
+            $this->assertEquals( (float) $expectedTax, (float) ns()->currency->define( $order[ 'tax_value' ] )->toFloat(), __( 'The computed taxes aren\'t correct.' ) );
         } else {
             $callback( $order );
         }
