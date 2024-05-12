@@ -10,16 +10,13 @@ use App\Models\CustomerAccountHistory;
 use App\Models\DashboardDay;
 use App\Models\DashboardMonth;
 use App\Models\Order;
-use App\Models\OrderRefund;
-use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductHistory;
 use App\Models\ProductHistoryCombined;
 use App\Models\ProductUnitQuantity;
-use App\Models\RegisterHistory;
 use App\Models\Role;
-use App\Models\TransactionHistory;
+use App\Models\ActiveTransactionHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -76,12 +73,6 @@ class ReportService
     {
         $this->dayStarts = $dateStart ?: $this->dateService->copy()->startOfDay()->toDateTimeString();
         $this->dayEnds = $dateEnd ?: $this->dateService->copy()->endOfDay()->toDateTimeString();
-
-        /**
-         * Before proceeding, let's clear everything
-         * that is not assigned during this specific time range.
-         */
-        $this->clearUnassignedCashFlow( $this->dayStarts, $this->dayEnds );
 
         $todayReport = DashboardDay::firstOrCreate( [
             'range_starts' => $this->dayStarts,
@@ -220,114 +211,20 @@ class ReportService
         ];
     }
 
-    /**
-     * Clear all orphan stock flow
-     * to avoid inaccurate computing
-     *
-     * @param  string $startAt
-     * @param  string $endAt
-     * @return void
-     */
-    public function clearUnassignedCashFlow( $startAt, $endsAt )
-    {
-        $cashFlows = TransactionHistory::where( 'created_at', '>=', $startAt )
-            ->where( 'created_at', '<=', $endsAt )
-            ->get();
-
-        $cashFlows->each( function ( $cashFlow ) {
-            /**
-             * let's clear unassigned to orders
-             */
-            if ( $cashFlow->operation === TransactionHistory::OPERATION_CREDIT && ! empty( $cashFlow->order_id ) ) {
-                $order = Order::find( $cashFlow->order_id );
-
-                if ( ! $order instanceof Order ) {
-                    $cashFlow->delete();
-                }
-            }
-
-            /**
-             * let's clear unassigned to procurements
-             */
-            if ( $cashFlow->operation === TransactionHistory::OPERATION_DEBIT && ! empty( $cashFlow->procurement_id ) ) {
-                $order = Procurement::find( $cashFlow->procurement_id );
-
-                if ( ! $order instanceof Procurement ) {
-                    $cashFlow->delete();
-                }
-            }
-
-            /**
-             * let's clear unassigned to order refund
-             */
-            if ( ! empty( $cashFlow->order_refund_id ) ) {
-                $order = OrderRefund::find( $cashFlow->order_refund_id );
-
-                if ( ! $order instanceof OrderRefund ) {
-                    $cashFlow->delete();
-                }
-            }
-
-            /**
-             * let's clear unassigned to register history
-             */
-            if ( ! empty( $cashFlow->register_history_id ) ) {
-                $history = RegisterHistory::find( $cashFlow->register_history_id );
-
-                if ( ! $history instanceof RegisterHistory ) {
-                    $cashFlow->delete();
-                }
-            }
-
-            /**
-             * let's clear unassigned to customer account history
-             */
-            if ( ! empty( $cashFlow->customer_account_history_id ) ) {
-                $history = CustomerAccountHistory::find( $cashFlow->customer_account_history_id );
-
-                if ( ! $history instanceof CustomerAccountHistory ) {
-                    $cashFlow->delete();
-                }
-            }
-        } );
-    }
-
-    /**
-     * Will delete all cash flow
-     * related to the specific order
-     *
-     * @return void
-     */
-    public function deleteOrderCashFlow( Order $order )
-    {
-        TransactionHistory::where( 'order_id', $order->id )->delete();
-    }
-
-    /**
-     * Will delete all procurement
-     * related to a specific cash flow
-     *
-     * @return void
-     */
-    public function deleteProcurementCashFlow( Procurement $procurement )
-    {
-        TransactionHistory::where( 'procurement_id', $procurement->id )->delete();
-    }
-
     public function computeIncome( $previousReport, $todayReport )
     {
-        $totalIncome = TransactionHistory::from( $this->dayStarts )
+        $totalIncome = ActiveTransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( TransactionHistory::OPERATION_CREDIT )
+            ->operation( ActiveTransactionHistory::OPERATION_CREDIT )
             ->sum( 'value' );
 
-        $totalExpenses = TransactionHistory::from( $this->dayStarts )
+        $totalExpenses = ActiveTransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->operation( TransactionHistory::OPERATION_DEBIT )
+            ->operation( ActiveTransactionHistory::OPERATION_DEBIT )
             ->sum( 'value' );
 
         $todayReport->day_expenses = $totalExpenses;
-        $todayReport->day_income = $totalIncome - $totalExpenses;
+        $todayReport->day_income = $totalIncome;
         $todayReport->total_income = ( $previousReport->total_income ?? 0 ) + $todayReport->day_income;
         $todayReport->total_expenses = ( $previousReport->total_expenses ?? 0 ) + $todayReport->day_expenses;
     }
@@ -448,12 +345,12 @@ class ReportService
     /**
      * @deprecated
      */
-    public function increaseDailyExpenses( TransactionHistory $cashFlow, $today = null )
+    public function increaseDailyExpenses( ActiveTransactionHistory $cashFlow, $today = null )
     {
         $today = $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
-            if ( $cashFlow->operation === TransactionHistory::OPERATION_DEBIT ) {
+            if ( $cashFlow->operation === ActiveTransactionHistory::OPERATION_DEBIT ) {
                 $yesterday = DashboardDay::forLastRecentDay( $today );
                 $today->day_expenses += $cashFlow->getRawOriginal( 'value' );
                 $today->total_expenses = ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
@@ -462,35 +359,6 @@ class ReportService
                 $yesterday = DashboardDay::forLastRecentDay( $today );
                 $today->day_income += $cashFlow->getRawOriginal( 'value' );
                 $today->total_income = ( $yesterday->total_income ?? 0 ) + $today->day_income;
-                $today->save();
-            }
-
-            return [
-                'status' => 'success',
-                'message' => __( 'The expense has been correctly saved.' ),
-            ];
-        }
-
-        return $this->notifyIncorrectDashboardReport();
-    }
-
-    /**
-     * @deprecated
-     */
-    public function reduceDailyExpenses( TransactionHistory $cashFlow, $today = null )
-    {
-        $today = $today === null ? DashboardDay::forToday() : $today;
-
-        if ( $today instanceof DashboardDay ) {
-            if ( $cashFlow->operation === TransactionHistory::OPERATION_CREDIT ) {
-                $yesterday = DashboardDay::forLastRecentDay( $today );
-                $today->day_income -= $cashFlow->getRawOriginal( 'value' );
-                $today->total_income = ( $yesterday->total_income ?? 0 ) + $today->day_income;
-                $today->save();
-            } else {
-                $yesterday = DashboardDay::forLastRecentDay( $today );
-                $today->day_expenses -= $cashFlow->getRawOriginal( 'value' );
-                $today->total_expenses = ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
                 $today->save();
             }
 
@@ -523,14 +391,6 @@ class ReportService
             'status' => 'error',
             'message' => $message,
         ];
-    }
-
-    /**
-     * @deprecated
-     */
-    public function initializeDailyReport()
-    {
-        $dashboardDay = $this->computeDayReport();
     }
 
     /**
@@ -830,6 +690,7 @@ class ReportService
     {
         $allSales = $orders->map( function ( $order ) {
             $productTaxes = $order->products()->sum( 'tax_value' );
+            $totalPurchasePrice = $order->products()->sum( 'total_purchase_price' );
 
             return [
                 'subtotal' => $order->subtotal,
@@ -838,6 +699,12 @@ class ReportService
                 'sales_taxes' => $order->tax_value,
                 'shipping' => $order->shipping,
                 'total' => $order->total,
+                'total_purchase_price' => $totalPurchasePrice,
+                'profit' => ns()->currency->define( $order->total )
+                    ->subtractBy( $totalPurchasePrice )
+                    ->subtractBy( $order->tax_value )
+                    ->subtractBy( $productTaxes )
+                    ->toFloat(),
             ];
         } );
 
@@ -847,6 +714,8 @@ class ReportService
             'sales_taxes' => Currency::define( $allSales->sum( 'sales_taxes' ) )->toFloat(),
             'subtotal' => Currency::define( $allSales->sum( 'subtotal' ) )->toFloat(),
             'shipping' => Currency::define( $allSales->sum( 'shipping' ) )->toFloat(),
+            'profit' => Currency::define( $allSales->sum( 'profit' ) )->toFloat(),
+            'total_purchase_price' => Currency::define( $allSales->sum( 'total_purchase_price' ) )->toFloat(),
             'total' => Currency::define( $allSales->sum( 'total' ) )->toFloat(),
         ];
     }
@@ -959,43 +828,48 @@ class ReportService
         /**
          * That will sum all the total prices
          */
-        $categories->each( function ( $category ) use ( $products ) {
-            $rawProducts = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
+        $result    =   $categories->map( function ( $category ) use ( $products ) {
+            $categoryWithProducts   =   [...$category->toArray()];
 
-            $products = [];
+            $rawProducts = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
+            $mergedProducts     =   [];
 
             /**
              * this will merge similar products
              * to summarize them.
              */
-            $rawProducts->each( function ( $product ) use ( &$products ) {
-                if ( isset( $products[ $product->product_id ] ) ) {
-                    $products[ $product->product_id ][ 'quantity' ] += $product->quantity;
-                    $products[ $product->product_id ][ 'tax_value' ] += $product->tax_value;
-                    $products[ $product->product_id ][ 'discount' ] += $product->discount;
-                    $products[ $product->product_id ][ 'total_price' ] += $product->total_price;
+            $rawProducts->each( function ( $product ) use ( &$mergedProducts ) {
+                if ( isset( $mergedProducts[ $product->product_id ] ) ) {
+                    $mergedProducts[ $product->product_id ][ 'quantity' ] += $product->quantity;
+                    $mergedProducts[ $product->product_id ][ 'tax_value' ] += $product->tax_value;
+                    $mergedProducts[ $product->product_id ][ 'discount' ] += $product->discount;
+                    $mergedProducts[ $product->product_id ][ 'total_price' ] += $product->total_price;
+                    $mergedProducts[ $product->product_id ][ 'total_purchase_price' ] += $product->total_purchase_price;
                 } else {
-                    $products[ $product->product_id ] = array_merge( $product->toArray(), [
+                    $mergedProducts[ $product->product_id ] = array_merge( $product->toArray(), [
                         'quantity' => $product->quantity,
                         'tax_value' => $product->tax_value,
                         'discount' => $product->discount,
                         'total_price' => $product->total_price,
+                        'total_purchase_price' => $product->total_purchase_price,
+                        'name'  =>  $product->name,
+                        'product_id' => $product->product_id,
+                        'unit_id' => $product->unit_id,
                     ] );
                 }
             } );
 
-            $category->products = array_values( $products );
-            $category->total_tax_value = collect( $category->products )->sum( 'tax_value' );
-            $category->total_price = collect( $category->products )->sum( 'total_price' );
-            $category->total_discount = collect( $category->products )->sum( 'discount' );
-            $category->total_sold_items = collect( $category->products )->sum( 'quantity' );
-            $category->total_purchase_price = collect( $category->products )->sum( 'total_purchase_price' );
+            $categoryWithProducts[ 'products' ] = array_values( $mergedProducts );
+            $categoryWithProducts[ 'total_tax_value' ] = collect( $mergedProducts )->sum( 'tax_value' );
+            $categoryWithProducts[ 'total_price' ] = collect( $mergedProducts )->sum( 'total_price' );
+            $categoryWithProducts[ 'total_discount' ] = collect( $mergedProducts )->sum( 'discount' );
+            $categoryWithProducts[ 'total_sold_items' ] = collect( $mergedProducts )->sum( 'quantity' );
+            $categoryWithProducts[ 'total_purchase_price' ] = collect( $mergedProducts )->sum( 'total_purchase_price' );
+
+            return $categoryWithProducts;
         });
 
-        return [
-            'result' => $categories->toArray(),
-            'summary' => $summary,
-        ];
+        return compact( 'result', 'summary' );
     }
 
     /**
@@ -1139,13 +1013,15 @@ class ReportService
 
     public function getStockReport( $categories, $units )
     {
-        $query = Product::with( [ 'unit_quantities' => function ( $query ) use ( $units ) {
-            if ( ! empty( $units ) ) {
-                $query->whereIn( 'unit_id', $units );
-            } else {
-                return false;
-            }
-        }, 'unit_quantities.unit' ] );
+        $query = Product::notGrouped()
+            ->withStockEnabled()
+            ->with( [ 'unit_quantities' => function ( $query ) use ( $units ) {
+                if ( ! empty( $units ) ) {
+                    $query->whereIn( 'unit_id', $units );
+                } else {
+                    return false;
+                }
+            }, 'unit_quantities.unit' ] );
 
         if ( ! empty( $categories ) ) {
             $query->whereIn( 'category_id', $categories );
@@ -1191,7 +1067,7 @@ class ReportService
 
     public function recomputeTransactions( $fromDate, $toDate )
     {
-        TransactionHistory::truncate();
+        ActiveTransactionHistory::truncate();
         DashboardDay::truncate();
         DashboardMonth::truncate();
 
@@ -1253,6 +1129,70 @@ class ReportService
         $currentDetailedHistory = $this->prepareProductHistoryCombinedHistory( $productHistory );
         $this->saveProductHistoryCombined( $currentDetailedHistory, $productHistory );
         $currentDetailedHistory->save();
+    }
+
+    /**
+     * Will compute the product history combined for the whole day
+     * @param ProductHistory $productHistory
+     * @return ProductHistoryCombined
+     */
+    public function computeProductHistoryCombinedForWholeDay( ProductHistory $productHistory ): ProductHistoryCombined
+    {
+        $startOfDay    =   Carbon::parse( $productHistory->created_at )->startOfDay();
+        $endOfDay       =   Carbon::parse( $productHistory->created_at )->endOfDay();
+
+        $initialQuantity    =   0;
+
+        $previousProductHistory     =   ProductHistoryCombined::where( 'date', '<', $startOfDay->toDateTimeString() )
+            ->where( 'product_id', $productHistory->product_id )
+            ->where( 'unit_id', $productHistory->unit_id )
+            ->orderBy( 'date', 'desc' )
+            ->first();
+
+        if ( $previousProductHistory ) {
+            $initialQuantity    =   $previousProductHistory->final_quantity;
+        }
+
+        $addedQuantity      =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_ADDED )
+            ->where( 'product_id', $productHistory->product_id )
+            ->where( 'unit_id', $productHistory->unit_id )
+            ->where( 'created_at', '>=', $startOfDay->toDateTimeString() )
+            ->where( 'created_at', '<=', $endOfDay->toDateTimeString() )
+            ->sum( 'quantity' );
+
+        $defectiveQuantity  =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_DEFECTIVE )
+            ->where( 'product_id', $productHistory->product_id )
+            ->where( 'unit_id', $productHistory->unit_id )
+            ->where( 'created_at', '>=', $startOfDay->toDateTimeString() )
+            ->where( 'created_at', '<=', $endOfDay->toDateTimeString() )
+            ->sum( 'quantity' );
+
+        $soldQuantity   =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_SOLD )
+            ->where( 'product_id', $productHistory->product_id )
+            ->where( 'unit_id', $productHistory->unit_id )
+            ->where( 'created_at', '>=', $startOfDay->toDateTimeString() )
+            ->where( 'created_at', '<=', $endOfDay->toDateTimeString() )
+            ->sum( 'quantity' );
+
+        $finalQuantity  =   $initialQuantity + $addedQuantity - $defectiveQuantity - $soldQuantity;
+
+        $productHistoryCombined = ProductHistoryCombined::where( 'date', $startOfDay->format( 'Y-m-d' ) )
+            ->where( 'product_id', $productHistory->product_id )
+            ->where( 'unit_id', $productHistory->unit_id )
+            ->firstOrNew();
+
+        $productHistoryCombined->final_quantity     =   $finalQuantity;
+        $productHistoryCombined->initial_quantity   =   $initialQuantity;
+        $productHistoryCombined->procured_quantity  =   $addedQuantity;
+        $productHistoryCombined->defective_quantity =   $defectiveQuantity;
+        $productHistoryCombined->sold_quantity      =   $soldQuantity;
+        $productHistoryCombined->product_id         =   $productHistory->product_id;
+        $productHistoryCombined->unit_id            =   $productHistory->unit_id;
+        $productHistoryCombined->name               =   $productHistory->product->name;
+        $productHistoryCombined->date               =   $startOfDay->format( 'Y-m-d' );
+        $productHistoryCombined->save();
+
+        return $productHistoryCombined;
     }
 
     /**
@@ -1369,9 +1309,9 @@ class ReportService
     /**
      * Only trigger the job for combined products.
      */
-    public function computeCombinedReport()
+    public function computeCombinedReport( $date )
     {
-        EnsureCombinedProductHistoryExistsJob::dispatch();
+        EnsureCombinedProductHistoryExistsJob::dispatch( $date );
 
         return [
             'status' => 'success',

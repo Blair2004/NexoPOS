@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Events\ProcurementAfterCreateEvent;
 use App\Events\ProcurementAfterDeleteEvent;
 use App\Events\ProcurementAfterUpdateEvent;
-use App\Events\ProcurementBeforeCreateEvent;
 use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

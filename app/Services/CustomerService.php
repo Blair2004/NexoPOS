@@ -306,7 +306,7 @@ class CustomerService
     /**
      * save a customer transaction.
      */
-    public function saveTransaction( Customer $customer, string $operation, float $amount, string $description = '', array $details = [] ): array
+    public function saveTransaction( Customer $customer, string $operation, float $amount, ?string $description = '', array $details = [] ): array
     {
         if ( in_array( $operation, [
             CustomerAccountHistory::OPERATION_DEDUCT,

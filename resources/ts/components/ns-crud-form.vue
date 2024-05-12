@@ -18,7 +18,7 @@ export default {
     mounted() {
         this.loadForm();
     },
-    props: [ 'src', 'createUrl', 'fieldClass', 'returnUrl', 'submitUrl', 'submitMethod', 'disableTabs', 'queryParams', 'popup' ],
+    props: [ 'src', 'createUrl', 'fieldClass', 'returnUrl', 'submitUrl', 'submitMethod', 'disableTabs', 'queryParams', 'popup', 'optionAttributes' ],
     computed: {
         activeTabFields() {
             for( let identifier in this.form.tabs ) {
@@ -47,10 +47,13 @@ export default {
             this.form.tabs[ identifier ].active     =   true;
         },
         async handleSaved( event, activeTabIdentifier, field ) {
-            const raw = await this.loadForm();
-
-            raw.form.tabs[ activeTabIdentifier ].fields.filter( __field => {
+            this.form.tabs[ activeTabIdentifier ].fields.filter( __field => {
                 if ( __field.name === field.name && event.data.entry ) {
+                    __field.options.push({
+                        label: event.data.entry[ this.optionAttributes.label ],
+                        value: event.data.entry[ this.optionAttributes.value ]
+                    });
+
                     __field.value = event.data.entry.id;
                 }
             });

@@ -14,14 +14,19 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class ProductHistoryCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.products-histories';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_products_histories';
-
-    /**
-     * default identifier
-     */
-    const IDENTIFIER = 'products/histories';
 
     /**
      * Define namespace

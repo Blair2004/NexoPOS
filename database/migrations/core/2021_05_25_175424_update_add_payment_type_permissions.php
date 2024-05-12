@@ -1,10 +1,10 @@
 <?php
 
+use App\Classes\Schema;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\RolePermission;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {

@@ -54,12 +54,12 @@
                             <thead>
                                 <tr>
                                     <th class="border p-2 text-left">{{ __( 'Product' ) }}</th>
-                                    <th width="150" class="text-right border p-2">{{ __( 'Unit' ) }}</th>
-                                    <th width="150" class="text-right border p-2">{{ __( 'Quantity' ) }}</th>
-                                    <th width="150" class="text-right border p-2">{{ __( 'Purchase Price' ) }}</th>
-                                    <th width="150" class="text-right border p-2">{{ __( 'Sale Price' ) }}</th>
-                                    <th width="150" class="text-right border p-2">{{ __( 'Taxes' ) }}</th>
-                                    <th width="150" class="text-right border p-2">{{ __( 'Profit' ) }}</th>
+                                    <th width="110" class="text-right border p-2">{{ __( 'Unit' ) }}</th>
+                                    <th width="110" class="text-right border p-2">{{ __( 'Quantity' ) }}</th>
+                                    <th width="110" class="text-right border p-2">{{ __( 'COGS' ) }}</th>
+                                    <th width="110" class="text-right border p-2">{{ __( 'Sale Price' ) }}</th>
+                                    <th width="110" class="text-right border p-2">{{ __( 'Taxes' ) }}</th>
+                                    <th width="110" class="text-right border p-2">{{ __( 'Profit' ) }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -70,7 +70,11 @@
                                     <td class="p-2 border text-right border-box-edge">{{ nsCurrency( product.total_purchase_price ) }}</td>
                                     <td class="p-2 border text-right border-box-edge">{{ nsCurrency( product.total_price ) }}</td>
                                     <td class="p-2 border text-right border-box-edge">{{ nsCurrency( product.tax_value ) }}</td>
-                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( product.total_price - product.total_purchase_price ) }}</td>
+                                    <td class="p-2 border text-right border-box-edge">{{ nsCurrency( math.chain( product.total_price )
+                                        .subtract( 
+                                            math.chain( product.total_purchase_price ).add( product.tax_value ).done()
+                                        ).done()
+                                    ) }}</td>
                                 </tr>
                             </tbody>
                             <tfoot class="font-semibold">
@@ -98,6 +102,7 @@ import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import { nsCurrency } from '~/filters/currency';
 import { selectApiEntities } from "~/libraries/select-api-entities";
+import * as math from "mathjs"
 
 export default {
     name: 'ns-profit-report',
@@ -123,7 +128,8 @@ export default {
                 label: __( 'Filter by Units' )
             },
             products: [],
-            ns: window[ 'ns' ]
+            ns: window[ 'ns' ],
+            math,
         }
     },
     components: {
@@ -158,8 +164,12 @@ export default {
         totalProfit() {
             if ( this.products.length > 0 ) {
                 return this.products
-                    .map( product => product.total_price - product.total_purchase_price )
-                    .reduce( ( b, a ) => b + a );
+                    .map( product => {
+                        return math.chain( product.total_price ).subtract( 
+                            math.chain( product.total_purchase_price ).add( product.tax_value ).done()
+                        )
+                    })
+                    .reduce( ( b, a ) => b + a )
             }
             return 0;
         },

@@ -2,7 +2,10 @@
 
 namespace App\Fields;
 
+use App\Classes\FormInput;
 use App\Classes\Hook;
+use App\Classes\SettingForm;
+use App\Crud\TransactionAccountCrud;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Services\FieldsService;
@@ -14,56 +17,65 @@ class ScheduledTransactionFields extends FieldsService
 
     public function __construct( ?Transaction $transaction = null )
     {
-        $this->fields = Hook::filter( 'ns-scheduled-transactions-fields', [
-            [
-                'label' => __( 'Name' ),
-                'description' => __( 'Describe the direct transaction.' ),
-                'validation' => 'required|min:5',
-                'name' => 'name',
-                'type' => 'text',
-            ], [
-                'label' => __( 'Scheduled On' ),
-                'description' => __( 'Set when the transaction should be executed.' ),
-                'validation' => 'required',
-                'name' => 'scheduled_date',
-                'type' => 'datetimepicker',
-            ], [
-                'label' => __( 'Activated' ),
-                'validation' => 'required',
-                'name' => 'active',
-                'description' => __( 'If set to yes, the transaction will take effect immediately and be saved on the history.' ),
-                'options' => Helper::kvToJsOptions( [ false => __( 'No' ), true => __( 'Yes' )] ),
-                'type' => 'switch',
-            ], [
-                'label' => __( 'Account' ),
-                'description' => __( 'Assign the transaction to an account.' ),
-                'validation' => 'required',
-                'name' => 'account_id',
-                'options' => Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ] ),
-                'type' => 'select',
-            ], [
-                'label' => __( 'Value' ),
-                'description' => __( 'set the value of the transaction.' ),
-                'validation' => 'required',
-                'name' => 'value',
-                'type' => 'number',
-            ], [
-                'label' => __( 'Description' ),
-                'description' => __( 'Further details on the transaction.' ),
-                'name' => 'description',
-                'type' => 'textarea',
-            ], [
-                'label' => __( 'Recurring' ),
-                'validation' => 'required',
-                'name' => 'recurring',
-                'type' => 'hidden',
-            ], [
-                'label' => __( 'type' ),
-                'validation' => 'required',
-                'name' => 'type',
-                'type' => 'hidden',
-            ],
-        ] );
+        $this->fields = Hook::filter( 'ns-scheduled-transactions-fields', SettingForm::fields(
+            FormInput::text(
+                label: __( 'Name' ),
+                description: __( 'Describe the direct transaction.' ),
+                validation: 'required|min:5',
+                name: 'name',
+                value: $transaction ? $transaction->name : null
+            ),
+            FormInput::datetime(
+                label: __( 'Scheduled On' ),
+                description: __( 'Set when the transaction should be executed. This is only date and hour specific, minutes are ignored.' ),
+                validation: 'required',
+                name: 'scheduled_date',
+                value: $transaction ? $transaction->scheduled_date : null
+            ),
+            FormInput::switch(
+                label: __( 'Activated' ),
+                validation: 'required|min:5',
+                name: 'active',
+                description: __( 'If set to yes, the transaction will take effect immediately and be saved on the history.' ),
+                options: Helper::kvToJsOptions( [ false => __( 'No' ), true => __( 'Yes' )] ),
+                value: $transaction ? $transaction->active : true
+            ),
+            FormInput::searchSelect(
+                label: __( 'Account' ),
+                description: __( 'Assign the transaction to an account.' ),
+                validation: 'required',
+                name: 'account_id',
+                props: TransactionAccountCrud::getFormConfig(),
+                component: 'nsCrudForm',
+                options: Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ] ),
+                value: $transaction ? $transaction->account_id : null
+            ),
+            FormInput::number(
+                label: __( 'Value' ),
+                description: __( 'set the value of the transaction.' ),
+                validation: 'required',
+                name: 'value',
+                value: $transaction ? $transaction->value : null
+            ),
+            FormInput::textarea(
+                label: __( 'Description' ),
+                description: __( 'Further details on the transaction.' ),
+                name: 'description',
+                value: $transaction ? $transaction->description : null
+            ),
+            FormInput::hidden(
+                label: __( 'Recurring' ),
+                validation: 'required',
+                name: 'recurring',
+                value: 0
+            ),
+            FormInput::hidden(
+                label: __( 'type' ),
+                validation: 'required',
+                name: 'type',
+                value: Transaction::TYPE_SCHEDULED
+            )
+        ) );
 
         if ( $transaction instanceof Transaction ) {
             foreach ( $this->fields as $key => $field ) {

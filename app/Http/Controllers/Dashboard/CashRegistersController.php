@@ -12,13 +12,17 @@ use App\Crud\RegisterCrud;
 use App\Crud\RegisterHistoryCrud;
 use App\Exceptions\NotAllowedException;
 use App\Http\Controllers\DashboardController;
+use App\Models\OrderPayment;
+use App\Models\PaymentType;
 use App\Models\Register;
 use App\Models\RegisterHistory;
 use App\Services\CashRegistersService;
 use App\Services\DateService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CashRegistersController extends DashboardController
 {
@@ -64,6 +68,9 @@ class CashRegistersController extends DashboardController
         } );
     }
 
+    /**
+     * @todo check repetitive transactions
+     */
     public function performAction( Request $request, $action, Register $register )
     {
         if ( $action === 'open' ) {
@@ -92,15 +99,15 @@ class CashRegistersController extends DashboardController
             );
         } elseif ( $action === RegisterHistory::ACTION_CASHIN ) {
             return $this->registersService->cashIn(
-                $register,
-                $request->input( 'amount' ),
-                $request->input( 'description' )
+                register: $register,
+                amount: $request->input( 'amount' ),
+                description: $request->input( 'description' )
             );
         } elseif ( $action === RegisterHistory::ACTION_CASHOUT ) {
             return $this->registersService->cashOut(
-                $register,
-                $request->input( 'amount' ),
-                $request->input( 'description' )
+                register: $register,
+                amount: $request->input( 'amount' ),
+                description: $request->input( 'description' )
             );
         }
     }
@@ -127,18 +134,23 @@ class CashRegistersController extends DashboardController
         if ( $register->status === Register::STATUS_OPENED ) {
             $lastOpening = $register->history()
                 ->where( 'action', RegisterHistory::ACTION_OPENING )
-                ->orderBy( 'id', 'desc' )
+                ->orderBy( 'nexopos_registers_history.id', 'desc' )
                 ->first();
 
             if ( $lastOpening instanceof RegisterHistory ) {
                 /**
-                 * @var Collection
+                 * @var Builder
                  */
-                $actions = $register->history()
-                    ->where( 'id', '>=', $lastOpening->id )
-                    ->get();
+                $historyRequest = $register->history()
+                    ->select([
+                        '*',
+                        'nexopos_registers_history.description as description',
+                    ])
+                    ->leftJoin( 'nexopos_payments_types', 'nexopos_registers_history.payment_type_id', '=', 'nexopos_payments_types.id' )
+                    ->where( 'nexopos_registers_history.id', '>=', $lastOpening->id );
 
-                $actions->each( function ( $session ) {
+                $history =  $historyRequest->get();
+                $history->each( function ( $session ) {
                     switch ( $session->action ) {
                         case RegisterHistory::ACTION_CASHIN:
                             $session->label = __( 'Cash In' );
@@ -161,7 +173,72 @@ class CashRegistersController extends DashboardController
                     }
                 } );
 
-                return $actions;
+                $totalDisbursement  =   $history->where( 'action', RegisterHistory::ACTION_CASHOUT )->sum( 'value' );
+                $totalCashIn        =   $history->where( 'action', RegisterHistory::ACTION_CASHIN )->sum( 'value' );
+
+                $cashPayment    =   PaymentType::identifier( OrderPayment::PAYMENT_CASH )->first();
+                $totalOpening   =   $lastOpening->value;
+                $totalCashPayment   =   $history->where( 'action', RegisterHistory::ACTION_SALE )
+                    ->where( 'payment_type_id', $cashPayment->id )
+                    ->sum( 'value' );
+                    
+                $totalCashChange    =   $history->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
+
+                $totalPaymentTypeSummary    =   $historyRequest
+                    ->whereIn( 'action', [
+                        RegisterHistory::ACTION_SALE,
+                        RegisterHistory::ACTION_CASH_CHANGE
+                    ])
+                    ->select([
+                        DB::raw( 'SUM(value) as value' ),
+                        'nexopos_payments_types.label as label',
+                        'action',
+                        'nexopos_registers_history.description as description',
+                    ])
+                    ->groupBy([ 'action', 'nexopos_payments_types.label', 'description' ])
+                    ->get()
+                    ->map( function ( $group ) {
+                        $color = 'info';
+
+                        if ( $group->action === RegisterHistory::ACTION_CASH_CHANGE ) {
+                            $label  =   __( 'Cash Change' );
+                            $color  =   'error';
+                        } else if ( $group->action === RegisterHistory::ACTION_SALE ) {
+                            $color  =   'success';
+                        }
+                        
+                        return [
+                            'label'         =>  sprintf( __( 'Total %s' ), $group->label ?: $label ),
+                            'value'         =>  $group->value,
+                            'color'         =>  $color
+                        ];
+                    } );
+
+                $summary    =   [
+                    [
+                        'label'         =>  __( 'Initial Balance' ),
+                        'value'         =>  $totalOpening, 
+                        'color'         =>  'warning',
+                    ], 
+                    ...$totalPaymentTypeSummary,
+                    [
+                        'label'         =>  __( 'On Hand' ),
+                        'value'         =>  ns()->currency->define( $totalOpening )
+                            ->additionateBy( $totalCashPayment )
+                            ->additionateBy( $totalCashIn )
+                            ->subtractBy( 
+                                ns()->currency->define( $totalCashChange )
+                                    ->additionateBy( $totalDisbursement )
+                                    ->toFloat()
+                            )->toFloat(), 
+                        'color'         =>  'info',
+                    ], 
+                ];
+
+                return compact(
+                    'history',
+                    'summary'
+                );
             }
 
             throw new NotAllowedException( __( 'The register doesn\'t have an history.' ) );

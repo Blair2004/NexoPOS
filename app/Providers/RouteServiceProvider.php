@@ -93,27 +93,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapModulesRoutes()
     {
-        // make module class
-        $Modules = app()->make( ModulesService::class );
+        /**
+         * @var ModulesService $Modules
+         */
+        $modulesService = app()->make( ModulesService::class );
 
-        foreach ( $Modules->getEnabled() as $module ) {
-            /**
-             * We might check if the module is active
-             */
-
-            // include module controllers
-            /**
-             * @deprecated this inclusion seems useless now
-             */
-            $controllers = Storage::disk( 'ns-modules' )->files( $module[ 'controllers-relativePath' ] );
-
-            foreach ( $controllers as $controller ) {
-                $fileInfo = pathinfo( $controller );
-                if ( $fileInfo[ 'extension' ] == 'php' ) {
-                    include_once base_path( 'modules' ) . DIRECTORY_SEPARATOR . $controller;
-                }
-            }
-
+        foreach ( $modulesService->getEnabledAndAutoloadedModules() as $module ) {
             $domain = pathinfo( env( 'APP_URL' ) );
 
             /**

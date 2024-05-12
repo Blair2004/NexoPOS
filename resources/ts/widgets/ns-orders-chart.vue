@@ -38,7 +38,6 @@
 <script>
 import { __ } from '~/libraries/lang';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
-// import VueApexCharts from 'vue3-apexcharts';
 export default {
     name: 'ns-orders-chart',
     data() {
@@ -77,9 +76,6 @@ export default {
             reportSubscription: null,
             report: null
         }
-    },
-    components: {
-        // VueApexCharts
     },
     methods: {
         __,

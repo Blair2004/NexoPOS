@@ -14,6 +14,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class RegisterCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.cash-registers';
+
+    /**
      * define the base table
      *
      * @param  string
@@ -32,7 +42,7 @@ class RegisterCrud extends CrudService
      *
      * @param  string
      */
-    protected $namespace = 'ns.registers';
+    protected $namespace = 'ns.cash-registers';
 
     /**
      * Model Used
@@ -290,7 +300,7 @@ class RegisterCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model )
     {
-        if ( $namespace == 'ns.registers' ) {
+        if ( $namespace == self::IDENTIFIER ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -361,28 +371,28 @@ class RegisterCrud extends CrudService
 
         // you can make changes here
         $entry->action(
-            identifier: 'edit', 
+            identifier: 'edit',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id ) 
+            url: ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id )
         );
 
         $entry->action(
-            identifier: 'register-history', // Prioritize 'identifier' 
+            identifier: 'register-history', // Prioritize 'identifier'
             label: __( 'Register History' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id ) 
+            url: ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id )
         );
 
         $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
             type: 'DELETE',
-            url: ns()->url( '/api/crud/ns.registers/' . $entry->id ),
+            url: ns()->url( '/api/crud/' . self::IDENTIFIER . '/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }
@@ -441,8 +451,8 @@ class RegisterCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'cash-registers' ),
             'create' => ns()->url( 'dashboard/' . 'cash-registers/create' ),
             'edit' => ns()->url( 'dashboard/' . 'cash-registers/edit/' ),
-            'post' => ns()->url( 'api/crud/' . 'ns.registers' ),
-            'put' => ns()->url( 'api/crud/' . 'ns.registers/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . self::IDENTIFIER ),
+            'put' => ns()->url( 'api/crud/' . self::IDENTIFIER . '/{id}' . '' ),
         ];
     }
 

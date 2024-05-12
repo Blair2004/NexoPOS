@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div :key="permission.id" v-for="permission of filteredPermissions" :class="toggled ? 'w-24' : 'w-54'" class="p-2 border-b border-gray-700 text-gray-100">
-                    <a href="javascript:void(0)" :title="permission.namespace">
+                    <a @click="copyPermisson( permission.namespace )" href="javascript:void(0)" :title="permission.namespace">
                         <span v-if="! toggled">{{ permission.name }}</span>
                         <span v-if="toggled">{{ permission.name }}</span>
                     </a>
@@ -76,20 +76,31 @@ export default {
         nsHotPress
             .create( 'ns-permissions' )
             .whenPressed( 'shift+/', ( event ) => {
-                this.$refs[ 'search' ].focus();
+                this.searchText     =   '';
                 setTimeout( () => {
-                    this.searchText     =   '';
+                    this.$refs[ 'search' ].focus();
                 }, 5 );
             })
             .whenPressed( '/', ( event ) => {
-                this.$refs[ 'search' ].focus();
+                this.searchText     =   '';
                 setTimeout( () => {
-                    this.searchText     =   '';
+                    this.$refs[ 'search' ].focus();
                 }, 5 );
             });
     },
     methods: {
         __,
+
+        copyPermisson(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                nsSnackBar.success( __( 'Copied to clipboard' ), null, {
+                    duration: 3000
+                }).subscribe();
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        },
+
         /**
          * before performing a bulk edit action for a specific role
          * we should first check if it's a system role and ask for confirmation

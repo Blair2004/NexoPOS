@@ -3,7 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
+use App\Jobs\RecordCashRegisterHistoryOnTransactionsJob;
 use App\Jobs\UpdateCashRegisterBalanceFromHistoryJob;
+use React\Dns\Model\Record;
 
 class CashRegisterHistoryAfterCreatedEventListener
 {
@@ -23,5 +25,6 @@ class CashRegisterHistoryAfterCreatedEventListener
     public function handle( CashRegisterHistoryAfterCreatedEvent $event ): void
     {
         UpdateCashRegisterBalanceFromHistoryJob::dispatch( $event->registerHistory );
+        RecordCashRegisterHistoryOnTransactionsJob::dispatch( $event->registerHistory );
     }
 }

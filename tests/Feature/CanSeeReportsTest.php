@@ -20,7 +20,7 @@ class CanSeeReportsTest extends TestCase
     public function test_canSeeReports()
     {
         Auth::loginUsingId(
-            Role::namespace( 'admin' )->users->first()->id
+            Role::namespace( 'admin' )->users()->first()->id
         );
 
         $this->attemptSeeReports();

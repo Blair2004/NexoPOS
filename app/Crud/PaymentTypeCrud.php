@@ -15,6 +15,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class PaymentTypeCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.payments-types';
+
+    /**
      * define the base table
      *
      * @param  string
@@ -401,9 +411,9 @@ class PaymentTypeCrud extends CrudService
             identifier: 'edit',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ), 
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
         );
-        
+
         $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
@@ -411,7 +421,7 @@ class PaymentTypeCrud extends CrudService
             url: ns()->url( '/api/crud/ns.payments-types/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
+            ]
         );
 
         return $entry;

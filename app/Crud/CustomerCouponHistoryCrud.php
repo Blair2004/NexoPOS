@@ -11,8 +11,14 @@ use TorMorten\Eventy\Facades\Events as Hook;
 
 class CustomerCouponHistoryCrud extends CrudService
 {
+    /**
+     * Define the autoload status
+     */
     const AUTOLOAD = true;
 
+    /**
+     * Define the identifier
+     */
     const IDENTIFIER = 'ns.customers-coupons-history';
 
     /**
@@ -329,8 +335,8 @@ class CustomerCouponHistoryCrud extends CrudService
         $entry->action(
             identifier: 'edit',
             label: __( 'Edit' ),
-            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ) 
-        ); 
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        );
 
         $entry->action(
             identifier: 'delete',

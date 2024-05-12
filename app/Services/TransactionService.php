@@ -17,6 +17,7 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
 use App\Models\Procurement;
+use App\Models\RegisterHistory;
 use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
@@ -37,9 +38,12 @@ class TransactionService
         TransactionHistory::ACCOUNT_SALES => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_sales_cashflow_account' ],
         TransactionHistory::ACCOUNT_REFUNDS => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_sales_refunds_account' ],
         TransactionHistory::ACCOUNT_SPOILED => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_stock_return_spoiled_account' ],
+        TransactionHistory::ACCOUNT_UNSPOILED => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_stock_return_unspoiled_account' ],
         TransactionHistory::ACCOUNT_PROCUREMENTS => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_procurement_cashflow_account' ],
         TransactionHistory::ACCOUNT_CUSTOMER_CREDIT => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_customer_crediting_cashflow_account' ],
         TransactionHistory::ACCOUNT_CUSTOMER_DEBIT => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_customer_debitting_cashflow_account' ],
+        TransactionHistory::ACCOUNT_LIABILITIES => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_liabilities_account' ],
+        TransactionHistory::ACCOUNT_EQUITY => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_equity_account' ],
     ];
 
     public function __construct( DateService $dateService )
@@ -119,9 +123,9 @@ class TransactionService
      * @param int transction id
      * @return array
      */
-    public function delete( $id )
+    public function deleteTransaction( Transaction $transaction )
     {
-        $transaction = $this->get( $id );
+        $transaction->history()->delete();
         $transaction->delete();
 
         return [
@@ -150,14 +154,13 @@ class TransactionService
 
     /**
      * Delete specific account type
-     *
-     * @todo must be implemented
+     * @param TransactionAccount $account
+     * @param bool $force
+     * @return array
      */
-    public function deleteTransactionAccount( $id, $force = true )
+    public function deleteTransactionAccount( TransactionAccount $account, $force = true )
     {
-        $accountType = $this->getTransactionAccountByID( $id );
-
-        if ( $accountType->transactions->count() > 0 && $force === false ) {
+        if ( $account->transactions->count() > 0 && $force === false ) {
             throw new NotAllowedException( __( 'You cannot delete an account type that has transaction bound.' ) );
         }
 
@@ -165,45 +168,15 @@ class TransactionService
          * if there is not transaction, it
          * won't be looped
          */
-        $accountType->transactions->map( function ( $transaction ) {
-            $transaction->delete();
-        } );
+        $account->transactions->map( function ( $transaction ) {
+            $this->deleteTransaction( $transaction );
+        });
 
-        $accountType->delete();
+        $account->delete();
 
         return [
             'status' => 'success',
             'message' => __( 'The account type has been deleted.' ),
-        ];
-    }
-
-    /**
-     * Delete a specific account
-     * using the provided id, along with the transactions
-     *
-     * @throws NotAllowedException
-     */
-    public function deleteAccount( int $id, bool $force = false ): array
-    {
-        $accountType = $this->getTransactionAccountByID( $id );
-
-        if ( $accountType->transactions->count() > 0 && $force === false ) {
-            throw new NotAllowedException( __( 'You cannot delete an account which has transactions bound.' ) );
-        }
-
-        /**
-         * if there is not transaction, it
-         * won't be looped
-         */
-        $accountType->transactions->map( function ( $transaction ) {
-            $transaction->delete();
-        } );
-
-        $accountType->delete();
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The transaction account has been deleted.' ),
         ];
     }
 
@@ -248,11 +221,10 @@ class TransactionService
     /**
      * Update specified expense
      * account using a provided ID
+     * @todo not covered
      */
-    public function editTransactionAccount( int $id, array $fields ): array
+    public function editTransactionAccount( TransactionAccount $account, array $fields ): array
     {
-        $account = $this->getTransaction( $id );
-
         foreach ( $fields as $field => $value ) {
             $account->$field = $value;
         }
@@ -264,6 +236,36 @@ class TransactionService
             'status' => 'success',
             'message' => __( 'The transaction account has been updated.' ),
             'data' => compact( 'account' ),
+        ];
+    }
+
+    /**
+     * Will delete all cash flow
+     * related to the specific order
+     *
+     * @return void
+     */
+    public function deleteOrderTransactionsHistory( $order )
+    {
+        TransactionHistory::where( 'order_id', $order->id )->delete();
+    }
+
+    public function triggerTransactionHistory( TransactionHistory $transactionHistory )
+    {
+        if ( $transactionHistory->status === TransactionHistory::STATUS_PENDING ) {
+            $transactionHistory->status = TransactionHistory::STATUS_ACTIVE;
+            $transactionHistory->save();
+
+            return [
+                'status' => 'success',
+                'message' => __( 'The transaction history has been triggered.' ),
+                'data' => compact( 'transactionHistory' ),
+            ];
+        }
+
+        return [
+            'status' => 'error',
+            'message' => __( 'The transaction history has already been triggered.' ),
         ];
     }
 
@@ -304,6 +306,50 @@ class TransactionService
         return $accountType->transactions;
     }
 
+    /**
+     * Will prepare a transaction history based on a transaction reference
+     * @param Transaction $transaction
+     * @return array
+     */
+    public function prepareTransactionHistoryRecord( Transaction $transaction )
+    {
+        $history    =   $this->iniTransactionHistory( $transaction );
+        $history->status    =   TransactionHistory::STATUS_PENDING;
+        $history->trigger_date  =   $transaction->scheduled_date;
+        $history->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The transaction history is created.' )
+        ];
+    }
+
+    /**
+     * Will prepare a transaction history based on a transaction reference
+     */
+    public function iniTransactionHistory( Transaction $transaction )
+    {
+        $history = new TransactionHistory;
+        $history->value = $transaction->value;
+        $history->transaction_id = $transaction->id;
+        $history->operation = $transaction->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
+        $history->author = $transaction->author;
+        $history->name = $transaction->name;
+        $history->status = TransactionHistory::STATUS_ACTIVE;
+        $history->trigger_date  =   ns()->date->toDateTimeString();
+        $history->type = $transaction->type;
+        $history->procurement_id = $transaction->procurement_id ?? 0; // if the cash flow is created from a procurement
+        $history->order_id = $transaction->order_id ?? 0; // if the cash flow is created from a refund
+        $history->order_refund_id = $transaction->order_refund_id ?? 0; // if the cash flow is created from a refund
+        $history->order_product_id = $transaction->order_product_id ?? 0; // if the cash flow is created from a refund
+        $history->order_refund_product_id = $transaction->order_refund_product_id ?? 0; // if the cash flow is created from a refund
+        $history->register_history_id = $transaction->register_history_id ?? 0; // if the cash flow is created from a register transaction
+        $history->customer_account_history_id = $transaction->customer_account_history_id ?? 0; // if the cash flow is created from a customer payment.
+        $history->transaction_account_id = $transaction->account->id;
+
+        return $history;
+    }
+
     public function recordTransactionHistory( $transaction )
     {
         if ( ! empty( $transaction->group_id ) ) {
@@ -314,6 +360,9 @@ class TransactionService
                     $history->transaction_id = $transaction->id;
                     $history->operation = 'debit';
                     $history->author = $transaction->author;
+                    $history->trigger_date  =   ns()->date->toDateTimeString();
+                    $history->type = $transaction->type;
+                    $history->status = TransactionHistory::STATUS_ACTIVE;
                     $history->name = str_replace( '{user}', ucwords( $user->username ), $transaction->name );
                     $history->transaction_account_id = $transaction->account->id;
                     $history->save();
@@ -325,20 +374,7 @@ class TransactionService
             } )->filter(); // only return valid history created
         } else {
             if ( $transaction->account instanceof TransactionAccount ) {
-                $history = new TransactionHistory;
-                $history->value = $transaction->value;
-                $history->transaction_id = $transaction->id;
-                $history->operation = $transaction->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
-                $history->author = $transaction->author;
-                $history->name = $transaction->name;
-                $history->procurement_id = $transaction->procurement_id ?? 0; // if the cash flow is created from a procurement
-                $history->order_id = $transaction->order_id ?? 0; // if the cash flow is created from a refund
-                $history->order_refund_id = $transaction->order_refund_id ?? 0; // if the cash flow is created from a refund
-                $history->order_product_id = $transaction->order_product_id ?? 0; // if the cash flow is created from a refund
-                $history->order_refund_product_id = $transaction->order_refund_product_id ?? 0; // if the cash flow is created from a refund
-                $history->register_history_id = $transaction->register_history_id ?? 0; // if the cash flow is created from a register transaction
-                $history->customer_account_history_id = $transaction->customer_account_history_id ?? 0; // if the cash flow is created from a customer payment.
-                $history->transaction_account_id = $transaction->account->id;
+                $history    =   $this->iniTransactionHistory( $transaction );
                 $history->save();
 
                 return collect( [ $history ] );
@@ -456,8 +492,8 @@ class TransactionService
             $accountTypeCode = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_PROCUREMENTS );
 
             /**
-             * this behave as a flash transaction
-             * made only for recording an history.
+             * We're pulling any existing transaction made on the TransactionHistory
+             * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
              */
             $transaction = TransactionHistory::where( 'procurement_id', $procurement->id )->firstOrNew();
             $transaction->value = $procurement->cost;
@@ -466,6 +502,9 @@ class TransactionService
             $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
             $transaction->transaction_account_id = $accountTypeCode->id;
             $transaction->operation = 'debit';
+            $transaction->type = Transaction::TYPE_DIRECT;
+            $transaction->trigger_date  = $procurement->created_at;
+            $transaction->status = TransactionHistory::STATUS_ACTIVE;
             $transaction->created_at = $procurement->created_at;
             $transaction->updated_at = $procurement->updated_at;
             $transaction->save();
@@ -515,26 +554,28 @@ class TransactionService
         $status = TransactionHistory::STATUS_ACTIVE,
         $value = 0,
     ) {
-        $tansactionHistory = new TransactionHistory;
+        $transactionHistory = new TransactionHistory;
 
-        $tansactionHistory->transaction_id = $transaction_id;
-        $tansactionHistory->operation = $operation;
-        $tansactionHistory->transaction_account_id = $transaction_account_id;
-        $tansactionHistory->procurement_id = $procurement_id;
-        $tansactionHistory->order_refund_id = $order_refund_id;
-        $tansactionHistory->order_refund_product_id = $order_refund_product_id;
-        $tansactionHistory->order_id = $order_id;
-        $tansactionHistory->order_product_id = $order_product_id;
-        $tansactionHistory->register_history_id = $register_history_id;
-        $tansactionHistory->customer_account_history_id = $customer_account_history_id;
-        $tansactionHistory->name = $name;
-        $tansactionHistory->status = $status;
-        $tansactionHistory->value = $value;
-        $tansactionHistory->author = Auth::id();
+        $transactionHistory->transaction_id = $transaction_id;
+        $transactionHistory->operation = $operation;
+        $transactionHistory->transaction_account_id = $transaction_account_id;
+        $transactionHistory->procurement_id = $procurement_id;
+        $transactionHistory->order_refund_id = $order_refund_id;
+        $transactionHistory->order_refund_product_id = $order_refund_product_id;
+        $transactionHistory->order_id = $order_id;
+        $transactionHistory->order_product_id = $order_product_id;
+        $transactionHistory->register_history_id = $register_history_id;
+        $transactionHistory->customer_account_history_id = $customer_account_history_id;
+        $transactionHistory->name = $name;
+        $transactionHistory->status = $status;
+        $transactionHistory->trigger_date = ns()->date->toDateTimeString();
+        $transactionHistory->type = Transaction::TYPE_DIRECT;
+        $transactionHistory->value = $value;
+        $transactionHistory->author = Auth::id();
 
-        $tansactionHistory->save();
+        $transactionHistory->save();
 
-        return $tansactionHistory;
+        return $transactionHistory;
     }
 
     /**
@@ -596,7 +637,7 @@ class TransactionService
      *
      * @return void
      */
-    public function handleCreatedOrder( Order $order )
+    public function handleOrder( Order $order )
     {
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
             $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_SALES );
@@ -646,56 +687,6 @@ class TransactionService
     }
 
     /**
-     * Will compare order payment status
-     * and if the previous and the new payment status are supported
-     * the transaction will be record to the cash flow.
-     */
-    public function handlePaymentStatus( string $previous, string $new, Order $order )
-    {
-        if ( in_array( $previous, [
-            Order::PAYMENT_HOLD,
-            Order::PAYMENT_DUE,
-            Order::PAYMENT_PARTIALLY,
-            Order::PAYMENT_PARTIALLY_DUE,
-            Order::PAYMENT_UNPAID,
-        ] ) && in_array(
-            $new, [
-                Order::PAYMENT_PAID,
-            ]
-        ) ) {
-            $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_SALES );
-
-            $transaction = new Transaction;
-            $transaction->value = $order->total;
-            $transaction->active = true;
-            $transaction->operation = TransactionHistory::OPERATION_CREDIT;
-            $transaction->author = $order->author;
-            $transaction->order_id = $order->id;
-            $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-
-            $this->recordTransactionHistory( $transaction );
-        }
-    }
-
-    /**
-     * @deprecated ?
-     */
-    public function recomputeTransactionHistory( $rangeStarts = null, $rangeEnds = null )
-    {
-        /**
-         * We'll register cash flow for complete orders
-         */
-        $this->processPaidOrders( $rangeStarts, $rangeEnds );
-        $this->processCustomerAccountHistories( $rangeStarts, $rangeEnds );
-        $this->processTransactions( $rangeStarts, $rangeEnds );
-        $this->processProcurements( $rangeStarts, $rangeEnds );
-        $this->processRecurringTransactions( $rangeStarts, $rangeEnds );
-        $this->processRefundedOrders( $rangeStarts, $rangeEnds );
-    }
-
-    /**
      * Retreive the account configuration
      * using the account type
      *
@@ -718,6 +709,8 @@ class TransactionService
                     break;
                 case TransactionHistory::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' );
                     break;
+                case TransactionHistory::ACCOUNT_EQUITY: $label = __( 'Equity Account' );
+                    break;
                 case TransactionHistory::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
                     break;
                 case TransactionHistory::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' );
@@ -734,7 +727,7 @@ class TransactionService
                 'name' => $label,
                 'operation' => $account[ 'operation' ],
                 'account' => $type,
-            ] );
+            ]);
         }
 
         throw new NotFoundException( sprintf(
@@ -751,6 +744,7 @@ class TransactionService
      * @param  string $rangeStart
      * @param  string $rangeEnds
      * @return void
+     * @deprecated ?
      */
     public function processRefundedOrders( $rangeStarts, $rangeEnds )
     {
@@ -784,6 +778,8 @@ class TransactionService
      * @param  string $rangeStart
      * @param  string $rangeEnds
      * @return void
+     * 
+     * @deprecated ?
      */
     public function processPaidOrders( $rangeStart, $rangeEnds )
     {
@@ -825,6 +821,7 @@ class TransactionService
      * Will process the customer histories
      *
      * @return void
+     * @deprecated ?
      */
     public function processCustomerAccountHistories( $rangeStarts, $rangeEnds )
     {
@@ -841,6 +838,7 @@ class TransactionService
      * Will create an transaction for each created procurement
      *
      * @return void
+     * @deprecated ?
      */
     public function processProcurements( $rangeStarts, $rangeEnds )
     {
@@ -855,6 +853,7 @@ class TransactionService
      * Will trigger not recurring transactions
      *
      * @return void
+     * @deprecated
      */
     public function processTransactions( $rangeStarts, $rangeEnds )
     {
@@ -867,6 +866,9 @@ class TransactionService
             } );
     }
 
+    /**
+     * @deprecated ?
+     */
     public function processRecurringTransactions( $rangeStart, $rangeEnds )
     {
         $startDate = Carbon::parse( $rangeStart );
@@ -1034,5 +1036,52 @@ class TransactionService
         ] );
 
         return compact( 'recurrence', 'configurations', 'warningMessage' );
+    }
+
+    public function createTransactionFromRegisterHistory( RegisterHistory $registerHistory )
+    {
+        $transactionHistory     =   TransactionHistory::where( 'register_history_id', $registerHistory->id )->firstOrNew();
+
+        if ( ! in_array( $registerHistory->action, [
+            RegisterHistory::ACTION_CASHOUT,
+            RegisterHistory::ACTION_CASHIN,
+            RegisterHistory::ACTION_OPENING,
+            RegisterHistory::ACTION_CLOSING,
+        ]) ) {
+            return;
+        }
+
+        if ( in_array( $registerHistory->action, [
+            RegisterHistory::ACTION_CASHOUT
+        ]) ) {
+            $transactionHistory->name   =   sprintf( __( 'Cash Out : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
+            $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
+        } else if ( in_array( $registerHistory->action, [
+            RegisterHistory::ACTION_CASHIN
+        ]) ) {
+            $transactionHistory->name   =   sprintf( __( 'Cash In : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
+            $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;
+        } else if ( $registerHistory->action === RegisterHistory::ACTION_OPENING ) {
+            $transactionHistory->name   =   sprintf( __( 'Opening Float : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
+            $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
+        } else if ( $registerHistory->action === RegisterHistory::ACTION_CLOSING ) {
+            $transactionHistory->name   =   sprintf( __( 'Closing Float : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
+            $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;
+        }
+
+        $transactionHistory->value = $registerHistory->value;
+        $transactionHistory->author = $registerHistory->author;
+        $transactionHistory->register_history_id = $registerHistory->id;
+        $transactionHistory->transaction_account_id = $registerHistory->transaction_account_id;
+        $transactionHistory->status = TransactionHistory::STATUS_ACTIVE;
+        $transactionHistory->trigger_date = $registerHistory->created_at;
+        $transactionHistory->type = Transaction::TYPE_DIRECT;
+        $transactionHistory->save();
+        
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The transaction has been created.' ),
+            'data'      =>  compact( 'transactionHistory' )
+        ];
     }
 }

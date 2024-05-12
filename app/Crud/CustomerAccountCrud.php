@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Classes\CrudTable;
 use App\Events\CrudBeforeExportEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\CustomerAccountHistory;
@@ -16,6 +17,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 
 class CustomerAccountCrud extends CrudService
 {
+    /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.customers-account-history';
+
     /**
      * define the base table
      *
@@ -255,17 +266,17 @@ class CustomerAccountCrud extends CrudService
      **/
     public function getLabels()
     {
-        return [
-            'list_title' => __( 'Customer Accounts List' ),
-            'list_description' => __( 'Display all customer accounts.' ),
-            'no_entry' => __( 'No customer accounts has been registered' ),
-            'create_new' => __( 'Add a new customer account' ),
-            'create_title' => __( 'Create a new customer account' ),
-            'create_description' => __( 'Register a new customer account and save it.' ),
-            'edit_title' => __( 'Edit customer account' ),
-            'edit_description' => __( 'Modify  Customer Account.' ),
-            'back_to_list' => __( 'Return to Customer Accounts' ),
-        ];
+        return CrudTable::labels(
+            list_title: __( 'Customer Accounts List' ),
+            list_description: __( 'Display all customer accounts.' ),
+            no_entry: __( 'No customer accounts has been registered' ),
+            create_new: __( 'Add a new customer account' ),
+            create_title: __( 'Create a new customer account' ),
+            create_description: __( 'Register a new customer account and save it.' ),
+            edit_title: __( 'Edit customer account' ),
+            edit_description: __( 'Modify  Customer Account.' ),
+            back_to_list: __( 'Return to Customer Accounts' ),
+        );
     }
 
     /**
@@ -503,19 +514,19 @@ class CustomerAccountCrud extends CrudService
         // you can make changes here
         $entry->action(
             identifier: 'edit',
-            label: __('Edit'), 
+            label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url('/dashboard/' . $this->slug . '/edit/' . $entry->id) 
-        ); 
+            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        );
 
         $entry->action(
             identifier: 'delete',
-            label: __('Delete'), 
+            label: __( 'Delete' ),
             type: 'DELETE',
-            url: ns()->url('/api/crud/ns.customers-account-history/' . $entry->id),
+            url: ns()->url( '/api/crud/ns.customers-account-history/' . $entry->id ),
             confirm: [
-                'message' => __('Would you like to delete this?'),
-            ] 
+                'message' => __( 'Would you like to delete this?' ),
+            ]
         );
 
         return $entry;

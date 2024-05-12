@@ -141,17 +141,33 @@ class AuthenticationTest extends TestCase
         $response->assertStatus( 200 );
     }
 
-    public function generateUsername($minLength = 10) {
+    public function generateUsername( $minLength = 10 )
+    {
         $username = $this->faker->userName();
-        while(strlen($username) < $minLength) {
+        while ( strlen( $username ) < $minLength ) {
             $username .= $this->faker->randomLetter();
         }
+
         return $username;
+    }
+
+    private function fakeEmail()
+    {
+        $email = $this->faker->email();
+        $exploded = explode( '@', $email );
+        $exploded[0] = $exploded[0] . Str::random( 5 );
+
+        return implode( '@', $exploded );
+    }
+
+    private function fakeUsername()
+    {
+        return $this->faker->userName() . Str::random( 5 );
     }
 
     public function testSubmitRegistrationForm()
     {
-        $password = $this->faker->password(8);
+        $password = $this->faker->password( 8 );
         $registration_validated = ns()->option->get( 'ns_registration_validated', 'yes' );
 
         /**
@@ -160,8 +176,8 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
-        $username = $this->generateUsername(10);
-        $email = $this->faker->email();
+        $username = $this->fakeUsername();
+        $email = $this->fakeEmail();
 
         $response = $this
             ->withSession( [] )
@@ -196,19 +212,22 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
+        $signUpDetails = [
+            'username' => $this->fakeUsername(),
+            'password' => $password,
+            'password_confirm' => $password,
+            'email' => 'not-a-valid-email',
+        ];
+
         $response = $this
             ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
-                '/auth/sign-up', [
-                    'username' => $this->generateUsername(10),
-                    'password' => $password,
-                    'password_confirm' => $password,
-                    'email' => 'not-a-valid-email',
-                ]
+                '/auth/sign-up', $signUpDetails
             );
 
         $response->assertRedirect( ns()->route( 'ns.register' ) );
+
         $response->assertSessionHasErrors( [
             'email' => 'The email field must be a valid email address.',
         ] );
@@ -218,18 +237,27 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
+        $signUpDetails  =   [
+            'username' => $this->fakeUsername(),
+            'password' => $password,
+            'password_confirm' => $password . 'not-the-same',
+            'email' => $this->fakeEmail(),
+        ];
+
+        $signUpDetails = [
+            'username' => $this->fakeUsername(),
+            'password' => 'k%9*~aJ+,<%(z6',
+            'password_confirm' => 'k%9*~aJ+,<%(z6' . 'not-the-same',
+            'email' => $this->fakeEmail(),
+        ];
+
         $response = $this
             ->withSession( [] )
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
-                '/auth/sign-up', [
-                    'username' => $this->generateUsername(10),
-                    'password' => $password,
-                    'password_confirm' => $password . 'not-the-same',
-                    'email' => $this->faker->email(),
-                ]
+                '/auth/sign-up', $signUpDetails
             );
-
+        
         $response->assertRedirect( ns()->route( 'ns.register' ) );
         $response->assertSessionHasErrors( [
             'password_confirm' => 'The password confirm field must match password.',

@@ -1,6 +1,6 @@
 import * as baseComponents  from './components/components';
 
-import { createApp, markRaw, shallowRef } from 'vue';
+import { createApp, shallowRef } from 'vue';
 
 import nsAlertPopup from '~/popups/ns-alert-popup.vue';
 import nsConfirmPopup from '~/popups/ns-pos-confirm-popup.vue';
@@ -46,7 +46,7 @@ const nsPopups      =   createApp({
                 this.popups     =   shallowRef( state.popups );
                 this.$forceUpdate();
             }
-        })
+        });
     },
     methods: {
         closePopup( popup, event ) {
@@ -57,11 +57,18 @@ const nsPopups      =   createApp({
                 (
                     popup.config !== undefined &&
                     [ undefined, true ].includes( popup.config.closeOnOverlayClick )
+                ) || (
+                    Object.keys( popup.config ).length === 0
                 )
             ) {
-                if ( popup.params && popup.params.reject ) {
+                if ( popup.params && typeof popup.params.reject === 'function' ) {
                     popup.params.reject( false );
+                    if ( typeof popup.close === 'function' ) {
+                        popup.close();
+                    }
                     event.stopPropagation();
+                } else {
+                    popup.close();
                 }
             }
         },

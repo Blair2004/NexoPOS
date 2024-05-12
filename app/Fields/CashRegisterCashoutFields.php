@@ -3,6 +3,7 @@
 namespace App\Fields;
 
 use App\Classes\Hook;
+use App\Models\TransactionAccount;
 use App\Services\FieldsService;
 
 class CashRegisterCashoutFields extends FieldsService

@@ -15,6 +15,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class RewardSystemCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.rewards-system';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_rewards_system';
@@ -382,10 +392,10 @@ class RewardSystemCrud extends CrudService
 
         // you can make changes here
         $entry->action(
-            identifier: 'edit.rewards', 
+            identifier: 'edit.rewards',
             label: __( 'Edit' ),
-            type: 'GOTO', 
-            url: ns()->url( '/dashboard/customers/rewards-system/edit/' . $entry->id ) 
+            type: 'GOTO',
+            url: ns()->url( '/dashboard/customers/rewards-system/edit/' . $entry->id )
         );
 
         $entry->action(
@@ -396,8 +406,8 @@ class RewardSystemCrud extends CrudService
             confirm: [
                 'message' => __( 'Would you like to delete this reward system ?' ),
                 'title' => __( 'Delete a licence' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

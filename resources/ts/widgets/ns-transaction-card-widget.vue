@@ -3,7 +3,7 @@
         <div class="flex flex-row md:flex-col flex-auto">
             <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
                 <div class="flex justify-between w-full items-center">
-                    <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Transactions' ) }}</h6>
+                    <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Expenses' ) }}</h6>
                     <div>
                         <ns-close-button class="border-gray-400" @click="$emit( 'onRemove' )"></ns-close-button>
                     </div>
@@ -13,7 +13,7 @@
                 </h3>
             </div>
             <div class="w-1/2 md:w-full flex flex-col px-2 justify-end items-end">
-                <h6 class="font-bold inline-block text-right md:hidden">{{ __( 'Transactions' ) }}</h6>
+                <h6 class="font-bold inline-block text-right md:hidden">{{ __( 'Expenses' ) }}</h6>
                 <h4 class="text-xs text-right">+{{ nsCurrency( report.day_expenses || 0 ) }} {{ __( 'Today' ) }}</h4>
             </div>
         </div>

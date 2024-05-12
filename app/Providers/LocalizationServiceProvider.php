@@ -35,7 +35,7 @@ class LocalizationServiceProvider extends ServiceProvider
     protected function loadModuleLocale()
     {
         $moduleService = app()->make( ModulesService::class );
-        $active = $moduleService->getEnabled();
+        $active = $moduleService->getEnabledAndAutoloadedModules();
 
         foreach ( $active as $module ) {
             if (

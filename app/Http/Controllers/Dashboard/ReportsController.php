@@ -142,11 +142,11 @@ class ReportsController extends DashboardController
         $entries = $this->reportService->getFromTimeRange( $rangeStarts, $rangeEnds );
         $total = $entries->count() > 0 ? $entries->first()->toArray() : [];
         $creditCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_CREDIT )->with( [
-            'histories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
-                $query->where( 'created_at', '>=', $rangeStarts )
-                    ->where( 'created_at', '<=', $rangeEnds );
-            },
-        ] )
+                'histories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
+                    $query->where( 'created_at', '>=', $rangeStarts )
+                        ->where( 'created_at', '<=', $rangeEnds );
+                },
+            ] )
             ->get()
             ->map( function ( $transactionAccount ) {
                 $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
@@ -155,11 +155,11 @@ class ReportsController extends DashboardController
             } );
 
         $debitCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_DEBIT )->with( [
-            'histories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
-                $query->where( 'created_at', '>=', $rangeStarts )
-                    ->where( 'created_at', '<=', $rangeEnds );
-            },
-        ] )
+                'histories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
+                    $query->where( 'created_at', '>=', $rangeStarts )
+                        ->where( 'created_at', '<=', $rangeEnds );
+                },
+            ] )
             ->get()
             ->map( function ( $transactionAccount ) {
                 $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
@@ -308,8 +308,8 @@ class ReportsController extends DashboardController
         );
     }
 
-    public function computeCombinedReport()
+    public function computeCombinedReport( Request $request )
     {
-        return $this->reportService->computeCombinedReport();
+        return $this->reportService->computeCombinedReport( $request->input( 'date' ) );
     }
 }

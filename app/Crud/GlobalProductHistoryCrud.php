@@ -14,6 +14,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class GlobalProductHistoryCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.global-products-history';
+
+    /**
      * define the base table
      *
      * @param  string
@@ -53,9 +63,9 @@ class GlobalProductHistoryCrud extends CrudService
         'delete' => false,
     ];
 
-    protected $showOptions  =   false;
-    
-    protected $showCheckboxes  =   false;
+    protected $showOptions = false;
+
+    protected $showCheckboxes = false;
 
     public $casts = [
         'operation_type' => ProductHistoryActionCast::class,

@@ -25,9 +25,10 @@ class ModulesServiceProvider extends ServiceProvider
          * trigger boot method only for enabled modules
          * service providers that extends ModulesServiceProvider.
          */
-        collect( $modules->getEnabled() )->each( function ( $module ) use ( $modules ) {
-            $modules->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
-        } );
+        collect( $modules->getEnabledAndAutoloadedModules() )
+            ->each( function ( $module ) use ( $modules ) {
+                $modules->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
+            } );
 
         $this->commands( $this->modulesCommands );
 
@@ -58,13 +59,13 @@ class ModulesServiceProvider extends ServiceProvider
                  */
                 $this->modules->loadModulesMigrations();
 
-                collect($this->modules->getEnabled())->each(fn($module) => $this->modules->boot($module));
+                $this->modules->getEnabledAndAutoloadedModules()->each( fn( $module ) => $this->modules->boot( $module ) );
 
                 /**
                  * trigger register method only for enabled modules
                  * service providers that extends ModulesServiceProvider.
                  */
-                collect( $this->modules->getEnabled() )->each( function ( $module ) {
+                $this->modules->getEnabledAndAutoloadedModules()->each( function ( $module ) {
                     /**
                      * register module commands
                      */

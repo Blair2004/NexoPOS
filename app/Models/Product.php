@@ -44,16 +44,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static Builder findUsingSKU( $sku )
  * @method static Builder onlyVariations()
  * @method static Builder excludeVariations()
- * @method static Builder withStockEnabled()
- * @method static Builder withStockDisabled()
- * @method static Builder accurateTracking( $argument = true )
- * @method static Builder searchable( $attribute = true )
- * @method static Builder type( $type )
- * @method static Builder notGrouped()
- * @method static Builder grouped()
- * @method static Builder isGroup()
- * @method static Builder notInGroup()
- * @method static Builder inGroup()
+ * @method static Builder withStockEnabled(): Product
+ * @method static Builder withStockDisabled(): Product
+ * @method static Builder accurateTracking( $argument = true ): Product
+ * @method static Builder searchable( $attribute = true ): Product
+ * @method static Builder type( $type ): Product
+ * @method static Builder notGrouped(): Product
+ * @method static Builder grouped(): Product
+ * @method static Builder isGroup(): Product
+ * @method static Builder notInGroup(): Product
+ * @method static Builder inGroup(): Product
  */
 class Product extends NsModel
 {

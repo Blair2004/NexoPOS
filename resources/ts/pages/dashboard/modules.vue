@@ -54,17 +54,17 @@
                         </p>
                     </div>
                     <div class="ns-box-footer border-t p-2 flex justify-between">
-                        <ns-button v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">{{ __( 'Enable' ) }}</ns-button>
-                        <ns-button v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">{{ __( 'Disable' ) }}</ns-button>
+                        <ns-button :disabled="moduleObject.autoloaded" v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">{{ __( 'Enable' ) }}</ns-button>
+                        <ns-button :disabled="moduleObject.autoloaded" v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">{{ __( 'Disable' ) }}</ns-button>
                         <div class="flex -mx-1">
                             <div class="px-1 flex -mx-1">
                                 <div class="px-1 flex">
-                                    <ns-button @click="download( moduleObject )" type="info">
+                                    <ns-button :disabled="moduleObject.autoloaded" @click="download( moduleObject )" type="info">
                                         <i class="las la-archive"></i>
                                     </ns-button>
                                 </div>
                                 <div class="px-1 flex">
-                                    <ns-button @click="removeModule( moduleObject )" type="error"><i class="las la-trash"></i></ns-button>
+                                    <ns-button :disabled="moduleObject.autoloaded" @click="removeModule( moduleObject )" type="error"><i class="las la-trash"></i></ns-button>
                                 </div>
                             </div>
                         </div>

@@ -40,6 +40,11 @@ class ClearHoldOrdersJob implements ShouldQueue
         DateService $date,
         NotificationService $notification
     ) {
+        // we should prevent unpaid order to be deleted by default.
+        if ( empty( $options->get( 'ns_orders_quotation_expiration', 'never' ) ) ) {
+            return;
+        }
+
         $deleted = Order::paymentStatus( Order::PAYMENT_HOLD )
             ->get()
             ->filter( function ( $order ) use ( $options, $date ) {
@@ -47,7 +52,7 @@ class ClearHoldOrdersJob implements ShouldQueue
                  * @var Carbon
                  */
                 $expectedDate = Carbon::parse( $order->created_at )
-                    ->addDays( $options->get( 'ns_orders_quotation_expiration', 5 ) );
+                    ->addDays( $options->get( 'ns_orders_quotation_expiration' ) );
 
                 if ( $expectedDate->lessThan( $date->now() ) ) {
                     /**

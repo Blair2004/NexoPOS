@@ -169,7 +169,7 @@ export default {
         async generateReport() {
             try {
                 const response:{ status: string, message: string } = await new Promise( ( resolve, reject ) => {
-                    nsHttpClient.get( '/api/reports/compute-combined-report' ).subscribe({
+                    nsHttpClient.post( '/api/reports/compute-combined-report', { date: this.datePicker.value }).subscribe({
                         next: response => {
                             resolve( response );
                         }, 

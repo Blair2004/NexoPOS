@@ -3,6 +3,7 @@
 namespace Tests\Traits;
 
 use App\Models\Role;
+use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
 use Illuminate\Support\Facades\Auth;
@@ -56,6 +57,7 @@ trait WithTransactionTest
                     'active' => true,
                     'value' => 1500,
                     'recurring' => false,
+                    'type' => Transaction::TYPE_DIRECT,
                     'account_id' => $transactionAccount->id,
                 ],
             ] );
@@ -76,6 +78,7 @@ trait WithTransactionTest
                     'active' => true,
                     'value' => 300,
                     'recurring' => false,
+                    'type' => Transaction::TYPE_DIRECT,
                     'account_id' => $transactionAccount->id,
                 ],
             ] );
@@ -96,6 +99,7 @@ trait WithTransactionTest
                 'general' => [
                     'active' => true,
                     'value' => 1500,
+                    'type' => Transaction::TYPE_ENTITY,
                     'recurring' => false,
                     'account_id' => $transactionAccount->id,
                     'occurrence' => 'month_starts',

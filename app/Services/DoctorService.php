@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Classes\Currency;
-use App\Console\Commands\DoctorCommand;
 use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerShippingAddress;
@@ -52,25 +51,25 @@ class DoctorService
 
     public function fixProductsCogs()
     {
-        $products   =   ProductUnitQuantity::get([ 'unit_id', 'product_id', 'cogs' ]);
+        $products = ProductUnitQuantity::get( [ 'unit_id', 'product_id', 'cogs' ] );
 
         /**
          * @var ProductService $productService
          */
-        $productService     =   app()->make( ProductService::class );
+        $productService = app()->make( ProductService::class );
 
-        $this->command->withProgressBar( $products, function( ProductUnitQuantity $productUnitQuantity ) use ( $productService ) {
+        $this->command->withProgressBar( $products, function ( ProductUnitQuantity $productUnitQuantity ) use ( $productService ) {
             $productService->computeCogs( productUnitQuantity: $productUnitQuantity );
 
-            $allProducts    =   OrderProduct::where( 'product_id', $productUnitQuantity->product_id )
+            $allProducts = OrderProduct::where( 'product_id', $productUnitQuantity->product_id )
                 ->where( 'unit_id', $productUnitQuantity->unit_id )
                 ->get();
 
-            $allProducts->each( function( $orderProduct ) use ( $productUnitQuantity ) {
+            $allProducts->each( function ( $orderProduct ) use ( $productUnitQuantity ) {
                 $orderProduct->total_purchase_price = Currency::define( $productUnitQuantity->cogs )->multipliedBy( $orderProduct->quantity )->toFloat();
                 $orderProduct->save();
-            });
-        });
+            } );
+        } );
 
         $this->command->newLine();
         $this->command->line( __( 'All products cogs were computed' ) );
@@ -186,7 +185,7 @@ class DoctorService
         $this->command->info( __( 'Restoring cash flow from paid orders...' ) );
 
         $this->command->withProgressBar( $orders, function ( $order ) use ( $transactionService ) {
-            $transactionService->handleCreatedOrder( $order );
+            $transactionService->handleOrder( $order );
         } );
 
         $this->command->newLine();

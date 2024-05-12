@@ -27,7 +27,7 @@ class UpdateController extends Controller
         return view( 'pages.database.update', [
             'title' => __( 'Database Update' ),
             'redirect' => session( 'after_update', ns()->route( 'ns.dashboard.home' ) ),
-            'modules' => collect( $this->modulesService->getEnabled() )->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 )->toArray(),
+            'modules' => collect( $this->modulesService->getEnabledAndAutoloadedModules() )->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 )->toArray(),
         ] );
     }
 

@@ -13,6 +13,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class TransactionAccountCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.transactions-accounts';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_transactions_accounts';
@@ -142,7 +152,6 @@ class TransactionAccountCrud extends CrudService
                             'label' => __( 'Account' ),
                             'description' => __( 'Provide the accounting number for this category.' ),
                             'value' => $entry->account ?? '',
-                            'validation' => 'required',
                         ], [
                             'type' => 'textarea',
                             'name' => 'description',
@@ -163,6 +172,10 @@ class TransactionAccountCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        if ( empty( $inputs[ 'account' ] ) ) {
+            $inputs[ 'account' ] = str_pad( TransactionAccount::count() + 1, 5, '0', STR_PAD_LEFT );
+        }
+
         return $inputs;
     }
 
@@ -174,6 +187,10 @@ class TransactionAccountCrud extends CrudService
      */
     public function filterPutInputs( $inputs, TransactionAccount $entry )
     {
+        if ( empty( $inputs[ 'account' ] ) ) {
+            $inputs[ 'account' ] = str_pad( $entry->id, 5, '0', STR_PAD_LEFT );
+        }
+
         return $inputs;
     }
 
@@ -299,7 +316,7 @@ class TransactionAccountCrud extends CrudService
             type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id )
         );
-        
+
         $entry->action(
             identifier: 'delete',
             label: __( 'Delete' ),
@@ -307,8 +324,8 @@ class TransactionAccountCrud extends CrudService
             url: ns()->url( '/api/crud/ns.transactions-accounts/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }

@@ -182,7 +182,6 @@ class OrdersController extends DashboardController
                 'ns_pos_printing_document' => ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
                 'ns_orders_allow_partial' => ns()->option->get( 'ns_orders_allow_partial', 'no' ),
                 'ns_orders_allow_unpaid' => ns()->option->get( 'ns_orders_allow_unpaid', 'no' ),
-                'ns_pos_customers_creation_enabled' => ns()->option->get( 'ns_pos_customers_creation_enabled', 'no' ),
                 'ns_pos_order_types' => ns()->option->get( 'ns_pos_order_types', [] ),
                 'ns_pos_order_sms' => ns()->option->get( 'ns_pos_order_sms', 'no' ),
                 'ns_pos_sound_enabled' => ns()->option->get( 'ns_pos_sound_enabled', 'yes' ),
@@ -231,7 +230,6 @@ class OrdersController extends DashboardController
         $order->load( 'taxes' );
 
         $order->products = Hook::filter( 'ns-receipt-products', $order->products );
-
         $order->paymentStatus = $this->ordersService->getPaymentLabel( $order->payment_status );
         $order->deliveryStatus = $this->ordersService->getPaymentLabel( $order->delivery_status );
 

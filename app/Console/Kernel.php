@@ -117,7 +117,7 @@ class Kernel extends ConsoleKernel
          * We want to make sure Modules Kernel get injected
          * on the process so that modules jobs can also be scheduled.
          */
-        collect( $modules->getEnabled() )->each( function ( $module ) use ( $schedule ) {
+        collect( $modules->getEnabledAndAutoloadedModules() )->each( function ( $module ) use ( $schedule ) {
             $filePath = $module[ 'path' ] . 'Console' . DIRECTORY_SEPARATOR . 'Kernel.php';
 
             if ( is_file( $filePath ) ) {

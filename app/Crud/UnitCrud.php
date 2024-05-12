@@ -14,6 +14,16 @@ use TorMorten\Eventy\Facades\Events as Hook;
 class UnitCrud extends CrudService
 {
     /**
+     * Define the autoload status
+     */
+    const AUTOLOAD = true;
+
+    /**
+     * Define the identifier
+     */
+    const IDENTIFIER = 'ns.units';
+
+    /**
      * define the base table
      */
     protected $table = 'nexopos_units';
@@ -329,7 +339,7 @@ class UnitCrud extends CrudService
             type: 'GOTO',
             url: ns()->url( '/dashboard/' . 'units' . '/edit/' . $entry->id )
         );
-        
+
         // Snippet 2
         $entry->action(
             identifier: 'delete',
@@ -338,8 +348,8 @@ class UnitCrud extends CrudService
             url: ns()->url( '/api/crud/ns.units/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
-            ] 
-        ); 
+            ]
+        );
 
         return $entry;
     }
