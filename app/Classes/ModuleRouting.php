@@ -1,99 +1,15 @@
 <?php
-
-namespace App\Providers;
+namespace App\Classes;
 
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Http\Middleware\InstalledStateMiddleware;
 use App\Services\ModulesService;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 
-class RouteServiceProvider extends ServiceProvider
+class ModuleRouting
 {
-    /**
-     * This namespace is applied to your controller routes.
-     *
-     * In addition, it is set as the URL generator's root namespace.
-     *
-     * @var string
-     */
-    protected $namespace = 'App\Http\Controllers';
-
-    /**
-     * The path to the "home" route for your application.
-     *
-     * @var string
-     */
-    public const HOME = '/';
-
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        if ( request()->header( 'x-forwarded-proto' ) === 'https' ) {
-            URL::forceScheme( 'https' );
-        }
-
-        parent::boot();
-    }
-
-    /**
-     * Define the routes for the application.
-     *
-     * @return void
-     */
-    public function map()
-    {
-        $this->mapApiRoutes();
-
-        $this->mapWebRoutes();
-
-        $this->mapModulesRoutes();
-    }
-
-    /**
-     * Define the "web" routes for the application.
-     *
-     * These routes all receive session state, CSRF protection, etc.
-     *
-     * @return void
-     */
-    protected function mapWebRoutes()
-    {
-        Route::middleware( 'web' )
-            ->namespace( $this->namespace )
-            ->group( base_path( 'routes/web.php' ) );
-    }
-
-    /**
-     * Define the "api" routes for the application.
-     *
-     * These routes are typically stateless.
-     *
-     * @return void
-     */
-    protected function mapApiRoutes()
-    {
-        Route::prefix( 'api' )
-            ->middleware( 'api' )
-            ->namespace( $this->namespace )
-            ->group( base_path( 'routes/api.php' ) );
-    }
-
-    /**
-     * Map module web defined route
-     *
-     * follow the same rules applied to self::mapWebRoutes();
-     *
-     * @return void
-     */
-    protected function mapModulesRoutes()
+    public static function register()
     {
         /**
          * @var ModulesService $Modules
@@ -115,10 +31,10 @@ class RouteServiceProvider extends ServiceProvider
                     $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
 
                     Route::domain( $domainString )->group( function () use ( $module ) {
-                        $this->mapModuleWebRoutes( $module );
+                        self::mapModuleWebRoutes( $module );
                     } );
                 } else {
-                    $this->mapModuleWebRoutes( $module );
+                    self::mapModuleWebRoutes( $module );
                 }
             }
 
@@ -134,16 +50,16 @@ class RouteServiceProvider extends ServiceProvider
                     $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
 
                     Route::domain( $domainString )->group( function () use ( $module ) {
-                        $this->mapModuleApiRoutes( $module );
+                        self::mapModuleApiRoutes( $module );
                     } );
                 } else {
-                    $this->mapModuleApiRoutes( $module );
+                    self::mapModuleApiRoutes( $module );
                 }
             }
         }
     }
 
-    public function mapModuleWebRoutes( $module )
+    public static function mapModuleWebRoutes( $module )
     {
         Route::middleware( [ 
             'web', 
@@ -154,7 +70,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->group( $module[ 'routes-file' ] );
     }
 
-    public function mapModuleApiRoutes( $module )
+    public static function mapModuleApiRoutes( $module )
     {
         Route::prefix( 'api/' )
             ->middleware( [ InstalledStateMiddleware::class, 'api' ] )
