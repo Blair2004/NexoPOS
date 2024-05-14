@@ -3,7 +3,6 @@
 namespace App\Settings;
 
 use App\Classes\SettingForm;
-use App\Services\Options;
 use App\Services\SettingsPage;
 
 class OrdersSettings extends SettingsPage
@@ -14,8 +13,6 @@ class OrdersSettings extends SettingsPage
 
     public function __construct()
     {
-        $options = app()->make( Options::class );
-
         $this->form = SettingForm::form(
             title: __( 'Orders Settings' ),
             description: __( 'configure settings that applies to orders.' ),

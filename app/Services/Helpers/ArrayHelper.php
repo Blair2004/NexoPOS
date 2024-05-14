@@ -98,6 +98,7 @@ trait ArrayHelper
                     ];
                 } else {
                     $name = '';
+                    $id = $config[0];
 
                     foreach ( $config[1] as $index => $_name ) {
                         if ( $index + 1 < count( $config[1] ) ) {
