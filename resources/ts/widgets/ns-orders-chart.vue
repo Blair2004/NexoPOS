@@ -6,13 +6,8 @@
                 <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
             </div>
         </div>
-        <div class="head flex-auto flex h-56">
-            <div class="w-full h-full pt-2">
-                <!-- <vue-apex-charts v-if="report" height="100%" type="area" :options="chartOptions" :series="series"></vue-apex-charts> -->
-            </div>
-        </div>
-        <div class="foot p-2 -mx-4 flex flex-wrap">
-            <div class="flex w-full lg:w-full border-b lg:border-t lg:py-1 lg:my-1">
+        <div class="foot -mx-4 flex flex-wrap">
+            <div class="flex w-full lg:w-full border-b">
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Weekly Sales' ) }}</span>
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeeklySales, 'abbreviate' ) }}</h2>
