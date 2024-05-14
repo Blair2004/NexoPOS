@@ -1,8 +1,6 @@
 <?php
 use App\Services\Helper;
 use App\Services\OrdersService;
-
-// @deprecated
 ?>
 @inject( 'ordersService', OrdersService::class )
 @extends( 'layout.dashboard' )

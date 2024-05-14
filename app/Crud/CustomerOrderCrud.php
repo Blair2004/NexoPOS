@@ -34,6 +34,13 @@ class CustomerOrderCrud extends OrderCrud
      */
     protected $model = Order::class;
 
+    protected $permissions = [
+        'create' => false,
+        'read' => 'nexopos.read.orders',
+        'update' => false,
+        'delete' => 'nexopos.delete.orders',
+    ];
+
     /**
      * Define Constructor
      */
