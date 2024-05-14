@@ -1,3 +1,7 @@
+<?php
+
+use App\Classes\Hook;
+?>
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body' )

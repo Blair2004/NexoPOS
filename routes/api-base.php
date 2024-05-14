@@ -47,5 +47,5 @@ Route::prefix( 'setup' )->group( function () {
     Route::get( 'check-database', [ SetupController::class, 'checkExistingCredentials' ] );
     Route::post( 'database', [ SetupController::class, 'checkDatabase' ] );
     Route::get( 'database', [ SetupController::class, 'checkDbConfigDefined' ] );
-    Route::post( 'configuration', 'SetupController@saveConfiguration' );
+    Route::post( 'configuration', [ SetupController::class, 'saveConfiguration' ] );
 } );

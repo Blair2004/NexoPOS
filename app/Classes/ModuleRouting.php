@@ -72,7 +72,7 @@ class ModuleRouting
 
     public static function mapModuleApiRoutes( $module )
     {
-        Route::prefix( 'api/' )
+        Route::prefix( 'api' )
             ->middleware( [ InstalledStateMiddleware::class, 'api' ] )
             ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
             ->group( $module[ 'api-file' ] );
