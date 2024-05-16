@@ -2,9 +2,8 @@
 
 namespace App\Providers;
 
-use App\Classes\Hook as HookClass;
+use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
-use App\Facades\Hook;
 use App\Models\Order;
 use App\Models\OrderProductRefund;
 use App\Services\BarcodeService;
@@ -37,6 +36,7 @@ use App\Services\UserOptions;
 use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -54,9 +54,7 @@ class AppServiceProvider extends ServiceProvider
     {
         include_once base_path() . '/app/Services/HelperFunctions.php';
 
-        $this->app->singleton( Hook::class, function ( $app ) {
-            return HookClass::class;
-        });
+        AliasLoader::getInstance()->alias( 'Hook', Hook::class );
 
         $this->app->singleton( Options::class, function () {
             return new Options;
@@ -298,7 +296,7 @@ class AppServiceProvider extends ServiceProvider
             Order::PAYMENT_PARTIALLY_DUE => __( 'Partially Due' ),
         ]] );
 
-        config( [ 'nexopos.orders.types' => HookClass::filter( 'ns-orders-types', [
+        config( [ 'nexopos.orders.types' => Hook::filter( 'ns-orders-types', [
             'takeaway' => [
                 'identifier' => 'takeaway',
                 'label' => __( 'Take Away' ),
