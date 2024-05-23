@@ -18,7 +18,7 @@ class CheckMathLibraryTest extends TestCase
         $this->assertEquals(
             ns()->currency->define( 0.1 )
                 ->additionateBy( 0.2 )
-                ->getRaw(),
+                ->toFloat(),
             (float) 0.3
         );
 
@@ -26,20 +26,20 @@ class CheckMathLibraryTest extends TestCase
             ns()->currency->define( 0.1 )
                 ->additionateBy( 0.2 )
                 ->multipliedBy( 4 )
-                ->getRaw(),
+                ->toFloat(),
             (float) 1.2
         );
 
         $this->assertEquals(
             ns()->currency->define( 0.25 )
-                ->getRaw(),
+                ->toFloat(),
             (float) 0.25
         );
 
         $this->assertEquals(
             ns()->currency->define( 0.001 )
                 ->subtractBy( 0.00093 )
-                ->getRaw(),
+                ->toFloat(),
             (float) 0.00007
         );
 
@@ -48,14 +48,14 @@ class CheckMathLibraryTest extends TestCase
         $this->assertEquals(
             ns()->currency->define( 0.2 )
                 ->subtractBy( 0.1 )
-                ->getRaw(),
+                ->toFloat(),
             (float) 1
         );
 
         $this->assertEquals(
             ns()->currency->define( 5.25 )
                 ->subtractBy( 3.75 )
-                ->getRaw(),
+                ->toFloat(),
             (float) 2
         );
     }

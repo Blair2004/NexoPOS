@@ -1261,7 +1261,7 @@ class ReportService
             ->additionateBy( $currentDetailedHistory->procured_quantity )
             ->subtractBy( $currentDetailedHistory->sold_quantity )
             ->subtractBy( $currentDetailedHistory->defective_quantity )
-            ->getRaw();
+            ->toFloat();
 
         return $currentDetailedHistory;
     }

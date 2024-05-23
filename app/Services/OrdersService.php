@@ -308,7 +308,7 @@ class OrdersService
                 $minimal = Currency::define( $fields[ 'total' ] )
                     ->multipliedBy( $customer->group->minimal_credit_payment )
                     ->dividedBy( 100 )
-                    ->getRaw();
+                    ->toFloat();
 
                 /**
                  * if the minimal provided
@@ -657,7 +657,7 @@ class OrdersService
      */
     private function __getShippingFee( $fields ): float
     {
-        return $this->currencyService->getRaw( $fields['shipping'] ?? 0 );
+        return $this->currencyService->define( $fields['shipping'] ?? 0 )->toFloat();
     }
 
     /**
@@ -678,7 +678,7 @@ class OrdersService
                 $productsTotal = $fields[ 'products' ]->map( function ( $product ) {
                     return $this->currencyService->define( $product['quantity'] )
                         ->multiplyBy( floatval( $product['unit_price'] ) )
-                        ->getRaw();
+                        ->toFloat();
                 } )->sum();
 
                 if ( $fields['discount'] > $productsTotal ) {
@@ -781,7 +781,7 @@ class OrdersService
             $this->__saveOrderSinglePayment( $payment, $order );
         }
 
-        $order->tendered = $this->currencyService->getRaw( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() );
+        $order->tendered = $this->currencyService->define( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() )->toFloat();
     }
 
     /**
@@ -863,7 +863,7 @@ class OrdersService
 
         $orderPayment->order_id = $order->id;
         $orderPayment->identifier = $payment['identifier'];
-        $orderPayment->value = $this->currencyService->getRaw( $payment['value'] );
+        $orderPayment->value = $this->currencyService->define( $payment['value'] )->toFloat();
         $orderPayment->author = $order->author ?? Auth::id();
         $orderPayment->save();
 
@@ -923,11 +923,11 @@ class OrdersService
         } )->sum() );
 
         $total = $this->currencyService->define(
-            $subtotal + $this->__getShippingFee( $fields )
-        )
+                $subtotal + $this->__getShippingFee( $fields )
+            )
             ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
-            ->getRaw();
+            ->toFloat();
 
         $allowedPaymentsGateways = PaymentType::active()
             ->get()
@@ -1042,9 +1042,9 @@ class OrdersService
             ->subtractBy(
                 Currency::fresh( $order->total_coupons )
                     ->additionateBy( $order->discount )
-                    ->getRaw()
+                    ->toFloat()
             )
-            ->getRaw();
+            ->toFloat();
 
         $order->total_with_tax = $order->total;
 
@@ -1053,7 +1053,7 @@ class OrdersService
          */
         $order->change = Currency::fresh( $order->tendered )
             ->subtractBy( $order->total )
-            ->getRaw();
+            ->toFloat();
 
         /**
          * Compute total with tax.
@@ -1064,7 +1064,7 @@ class OrdersService
             ->subtractBy( $order->discount )
             ->subtractBy( $order->total_coupons )
             ->subtractBy( $order->tax_value )
-            ->getRaw();
+            ->toFloat();
 
         return $order;
     }
@@ -1143,7 +1143,7 @@ class OrdersService
              * @todo we need to solve the issue with the
              * gross price and determine where we should pull it.
              */
-            $orderProduct->unit_price = $this->currencyService->define( $product[ 'unit_price' ] )->getRaw();
+            $orderProduct->unit_price = $this->currencyService->define( $product[ 'unit_price' ] )->toFloat();
             $orderProduct->discount_type = $product[ 'discount_type' ] ?? 'none';
             $orderProduct->discount = $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage = $product[ 'discount_percentage' ] ?? 0;
@@ -1156,9 +1156,9 @@ class OrdersService
                         unit: $unit
                     ) )
                     ->multipliedBy( $product[ 'quantity' ] )
-                    ->getRaw()
+                    ->toFloat()
                 )
-                ->getRaw();
+                ->toFloat();
             }
 
             $this->computeOrderProduct( $orderProduct );
@@ -1533,14 +1533,14 @@ class OrdersService
          * his initial state
          */
         $order->customer_id = $fields['customer_id'];
-        $order->shipping = $this->currencyService->getRaw( $fields[ 'shipping' ] ?? 0 ); // if shipping is not provided, we assume it's free
-        $order->subtotal = $this->currencyService->getRaw( $fields[ 'subtotal' ] ?? 0 ) ?: $this->computeSubTotal( $fields, $order );
+        $order->shipping = $this->currencyService->define( $fields[ 'shipping' ] ?? 0 )->toFloat(); // if shipping is not provided, we assume it's free
+        $order->subtotal = $this->currencyService->define( $fields[ 'subtotal' ] ?? 0 )->toFloat() ?: $this->computeSubTotal( $fields, $order );
         $order->discount_type = $fields['discount_type'] ?? null;
-        $order->discount_percentage = $this->currencyService->getRaw( $fields['discount_percentage'] ?? 0 );
+        $order->discount_percentage = $this->currencyService->define( $fields['discount_percentage'] ?? 0 )->toFloat();
         $order->discount = (
-            $this->currencyService->getRaw( $order->discount_type === 'flat' && isset( $fields['discount'] ) ? $fields['discount'] : 0 )
+            $this->currencyService->define( $order->discount_type === 'flat' && isset( $fields['discount'] ) ? $fields['discount'] : 0 )->toFloat()
         ) ?: ( $order->discount_type === 'percentage' ? $this->computeOrderDiscount( $order, $fields ) : 0 );
-        $order->total = $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
+        $order->total = $this->currencyService->define( $fields[ 'total' ] ?? 0 )->toFloat() ?: $this->computeTotal( $fields, $order );
         $order->type = $fields['type']['identifier'];
         $order->final_payment_date = isset( $fields['final_payment_date' ] ) ? Carbon::parse( $fields['final_payment_date' ] )->format( 'Y-m-d h:m:s' ) : null; // when the order is not saved as laid away
         $order->total_instalments = $fields[ 'total_instalments' ] ?? 0;
@@ -1635,7 +1635,7 @@ class OrdersService
                 ns()->currency->define( $fields[ 'subtotal' ] )->multiplyBy( $fields[ 'discount_percentage' ] )->toFloat()
             )->dividedBy( 100 )->toFloat();
         } else {
-            return $this->currencyService->getRaw( $fields[ 'discount' ] );
+            return $this->currencyService->define( $fields[ 'discount' ] )->toFloat();
         }
     }
 
@@ -1870,7 +1870,8 @@ class OrdersService
 
         $productRefund->unit_id = $orderProduct->unit_id;
         $productRefund->total_price = $this->currencyService
-            ->getRaw( $productRefund->unit_price * floatval( $details[ 'quantity' ] ) );
+            ->define( $productRefund->unit_price )->multipliedBy( $details[ 'quantity' ] )
+            ->toFloat();
         $productRefund->quantity = $details[ 'quantity' ];
         $productRefund->author = Auth::id();
         $productRefund->order_id = $order->id;
@@ -2156,11 +2157,11 @@ class OrdersService
             ->subtractBy(
                 ns()->currency->fresh( $order->discount )
                     ->additionateBy( $order->total_coupons )
-                    ->getRaw()
+                    ->toFloat()
             )
-            ->getRaw();
+            ->toFloat();
 
-        $order->change = Currency::fresh( $order->tendered )->subtractBy( $order->total )->getRaw();
+        $order->change = Currency::fresh( $order->tendered )->subtractBy( $order->total )->toFloat();
 
         $refunds = $order->refunds;
 
@@ -2739,7 +2740,7 @@ class OrdersService
             if ( $orderInstalments->count() > 0 ) {
                 $payableDifference = Currency::define( $order->tendered )
                     ->subtractBy( $paidInstalments )
-                    ->getRaw();
+                    ->toFloat();
 
                 $orderInstalments
                     ->each( function ( $instalment ) use ( &$payableDifference ) {
@@ -2955,10 +2956,10 @@ class OrdersService
 
                 return [
                     'label' => $paymentType->label,
-                    'total' => ns()->currency->getRaw( $total ),
+                    'total' => ns()->currency->define( $total )->toFloat(),
                 ];
             } ),
-            'total' => ns()->currency->getRaw( $total ),
+            'total' => ns()->currency->define( $total )->toFloat(),
             'entries' => $payments,
         ];
     }

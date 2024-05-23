@@ -65,12 +65,12 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
         } );
 
         $shippingFees = $faker->randomElement( [10, 15, 20, 25, 30, 35, 40] );
-        $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ( $currency ) {
+        $subtotal = ns()->currency->define( $products->map( function ( $product ) use ( $currency ) {
             return $currency
                 ->define( $product[ 'unit_price' ] )
                 ->multiplyBy( $product[ 'quantity' ] )
-                ->getRaw();
-        } )->sum() );
+                ->toFloat();
+        } )->sum() )->toFloat();
 
         $orderDetails = [
             'customer_id' => $customer->id,
@@ -130,11 +130,11 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 return $product[ 'quantity' ] > 0;
             } );
 
-            $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ( $currency ) {
+            $subtotal = ns()->currency->toFloat( $products->map( function ( $product ) use ( $currency ) {
                 return $currency
                     ->define( $product[ 'unit_price' ] )
                     ->multiplyBy( $product[ 'quantity' ] )
-                    ->getRaw();
+                    ->toFloat();
             } )->sum() );
 
             $allCoupons = [];
@@ -148,7 +148,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
 
             $discountCoupons = $currency->define( $discount[ 'value' ] )
                 ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
-                ->getRaw();
+                ->toFloat();
 
             $dateString = ns()->date->startOfDay()->addHours(
                 $faker->numberBetween( 0, 23 )
@@ -190,7 +190,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                             ->subtractBy(
                                 $discountCoupons
                             )
-                            ->getRaw(),
+                            ->toFloat(),
                     ],
                 ] : [],
             ], $orderDetails );
