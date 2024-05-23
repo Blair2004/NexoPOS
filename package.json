@@ -26,7 +26,7 @@
     "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@dicebear/avatars": "^4.10.8",
     "@dicebear/avatars-avataaars-sprites": "^4.10.8",
-    "@wordpress/hooks": "^3.55.0",
+    "@wordpress/hooks": "^3.58.0",
     "chart.js": "^4.4.3",
     "currency.js": "^2.0.4",
     "lodash": "^4.17.21",
