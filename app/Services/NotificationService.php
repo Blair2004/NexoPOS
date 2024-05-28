@@ -59,26 +59,17 @@ class NotificationService
      */
     public function dispatchForPermissions( array $permissions ): void
     {
-        $rolesGroups = collect( $permissions )
-            ->map( fn( $permissionName ) => Permission::with( 'roles' )->withNamespace( $permissionName ) )
-            ->filter( fn( $permission ) => $permission instanceof Permission )
-            ->map( fn( $permission ) => $permission->roles );
-
-        $uniqueRoles = [];
-
-        $rolesGroups->each( function ( $group ) use ( &$uniqueRoles ) {
-            foreach ( $group as $role ) {
-                if ( ! isset( $uniqueRoles[ $role->namespace ] ) ) {
-                    $uniqueRoles[ $role->namespace ] = $role;
-                }
-            }
-        } );
-
-        if ( empty( $uniqueRoles ) ) {
-            Log::alert( 'A notification was dispatched for permissions that aren\'t assigned.', $permissions );
+        $roles = Role::whereHas('permissions', function ($query) use ($permissions) {
+            $query->whereIn('namespace', $permissions);
+        })->get();
+    
+        $uniqueRoles = $roles->unique('id');
+    
+        if ($uniqueRoles->isEmpty()) {
+            Log::alert('A notification was dispatched for permissions that aren\'t assigned.', $permissions);
         }
-
-        $this->dispatchForGroup( $uniqueRoles );
+    
+        $this->dispatchForGroup($uniqueRoles);
     }
 
     /**

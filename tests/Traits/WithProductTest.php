@@ -61,7 +61,7 @@ trait WithProductTest
                             'category_id' => $category->id,
                             'description' => __( 'Created via tests' ),
                             'product_type' => 'product',
-                            'type' => $faker->randomElement( [ Product::TYPE_MATERIALIZED, Product::TYPE_DEMATERIALIZED ] ),
+                            'type' => Product::TYPE_MATERIALIZED,
                             'sku' => Str::random( 15 ) . '-sku',
                             'status' => 'available',
                             'stock_management' => 'enabled',
@@ -264,7 +264,7 @@ trait WithProductTest
             ->map( fn( $cat ) => $cat->id )
             ->toArray();
 
-        $products = Product::where( 'type', Product::TYPE_DEMATERIALIZED )
+        $products = Product::withStockEnabled()
             ->notInGroup()
             ->notGrouped()
             ->limit( 2 )
@@ -285,6 +285,8 @@ trait WithProductTest
                 ];
             } )
             ->toArray();
+
+        $this->assertTrue( count( $products ) > 0, __( 'There is no product to create a grouped product' ) );
 
         $response = $this
             ->withSession( $this->app[ 'session' ]->all() )
@@ -598,11 +600,6 @@ trait WithProductTest
 
     protected function attemptProductConversion()
     {
-        /**
-         * @var ProductService
-         */
-        $productService = app()->make( ProductService::class );
-
         $product = Product::where( 'type', Product::TYPE_MATERIALIZED )
             ->has( 'unit_quantities', '>=', 2 )
             ->with( 'unit_quantities.unit' )

@@ -167,13 +167,14 @@ class UsersService
         }
 
         $validation_required = ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
+        $redirectTo = ns()->route( 'ns.login' );
 
         return [
             'status' => 'success',
             'message' => ! $validation_required ?
                 __( 'Your Account has been successfully created.' ) :
                 __( 'Your Account has been created but requires email validation.' ),
-            'data' => compact( 'user' ),
+            'data' => compact( 'user', 'redirectTo' ),
         ];
     }
 

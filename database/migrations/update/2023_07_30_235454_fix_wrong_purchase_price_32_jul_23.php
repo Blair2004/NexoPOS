@@ -33,7 +33,7 @@ return new class extends Migration
                 unit: $orderProduct->unit,
                 before: $orderProduct->created_at
             );
-            $orderProduct->total_purchase_price = Currency::fresh( $lastPurchasePrice )->multipliedBy( $orderProduct->quantity )->getRaw();
+            $orderProduct->total_purchase_price = Currency::fresh( $lastPurchasePrice )->multipliedBy( $orderProduct->quantity )->toFloat();
             $orderProduct->save();
 
             $cached[] = $orderProduct->id;

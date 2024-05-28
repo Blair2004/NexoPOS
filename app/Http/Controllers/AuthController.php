@@ -12,6 +12,7 @@ use App\Classes\Hook;
 use App\Events\AfterSuccessfulLoginEvent;
 use App\Events\PasswordAfterRecoveredEvent;
 use App\Events\UserAfterActivationSuccessfulEvent;
+use App\Exceptions\CoreVersionMismatchException;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\PostNewPasswordRequest;
@@ -25,6 +26,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -34,6 +36,7 @@ class AuthController extends Controller
 {
     public function __construct( private UsersService $userService )
     {
+
     }
 
     public function signIn()
@@ -53,7 +56,7 @@ class AuthController extends Controller
     public function activateAccount( User $user, $token )
     {
         /**
-         * trying to active an already activated
+         * trying to activate an already activated
          * account ? Not possible.
          */
         if ( $user->active ) {
@@ -87,7 +90,7 @@ class AuthController extends Controller
          */
         UserAfterActivationSuccessfulEvent::dispatch( $user );
 
-        return redirect( ns()->route( 'ns.login' ) )->with( 'message', __( 'Your account is not activated.' ) );
+        return redirect( ns()->route( 'ns.login' ) )->with( 'message', __( 'Your account is now activate.' ) );
     }
 
     public function passwordLost()

@@ -36,6 +36,7 @@ use App\Services\UserOptions;
 use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -52,6 +53,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         include_once base_path() . '/app/Services/HelperFunctions.php';
+
+        AliasLoader::getInstance()->alias( 'Hook', Hook::class );
 
         $this->app->singleton( Options::class, function () {
             return new Options;

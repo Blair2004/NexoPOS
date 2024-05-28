@@ -241,8 +241,17 @@ class CustomerCrud extends CrudService
                             name: 'email',
                             value: $entry->email ?? '',
                             validation: collect( [
-                                'sometimes', 'email',
-                                $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_users', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_users', 'email' ),
+                                function( $attribute, $value, $fail ) use ( $entry ) {
+                                    if ( strlen( $value ) > 0 ) {
+                                        /**
+                                         * let's check if $value is a 
+                                         * valid email using preg_match
+                                         */
+                                        if ( preg_match( '/^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$/', $value ) === 0 ) {
+                                            return $fail( __( "The \"$attribute\" provided is not valid." ) );
+                                        }
+                                    }
+                                }
                             ] )->filter()->toArray(),
                             description: __( 'Provide the customer email.' ),
                         ),
