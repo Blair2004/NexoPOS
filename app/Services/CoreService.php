@@ -267,7 +267,7 @@ class CoreService
          * Those will be cached to avoid unecessary db calls when testing
          * wether the user has the permission or not.
          */
-        if ( Helper::installed( forceCheck: true ) ) {
+        if ( Helper::installed() ) {
             Permission::get()->each( function ( $permission ) {
                 if ( ! Gate::has( $permission->namespace ) ) {
                     Gate::define( $permission->namespace, function ( User $user ) use ( $permission ) {
