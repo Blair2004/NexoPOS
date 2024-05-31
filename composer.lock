@@ -1939,16 +1939,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v11.8.0",
+            "version": "v11.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "ceb892a25817c888ef3df4d1a2af9cac53978300"
+                "reference": "2b3e8d75f10b0ed17416282946355dc026bf326c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/ceb892a25817c888ef3df4d1a2af9cac53978300",
-                "reference": "ceb892a25817c888ef3df4d1a2af9cac53978300",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/2b3e8d75f10b0ed17416282946355dc026bf326c",
+                "reference": "2b3e8d75f10b0ed17416282946355dc026bf326c",
                 "shasum": ""
             },
             "require": {
@@ -2140,20 +2140,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-05-21T17:57:45+00:00"
+            "time": "2024-05-30T09:40:11+00:00"
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.1.22",
+            "version": "v0.1.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "37f94de71758dbfbccc9d299b0e5eb76e02a40f5"
+                "reference": "9bc4df7c699b0452c6b815e64a2d84b6d7f99400"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/37f94de71758dbfbccc9d299b0e5eb76e02a40f5",
-                "reference": "37f94de71758dbfbccc9d299b0e5eb76e02a40f5",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/9bc4df7c699b0452c6b815e64a2d84b6d7f99400",
+                "reference": "9bc4df7c699b0452c6b815e64a2d84b6d7f99400",
                 "shasum": ""
             },
             "require": {
@@ -2196,9 +2196,9 @@
             "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.1.22"
+                "source": "https://github.com/laravel/prompts/tree/v0.1.23"
             },
-            "time": "2024-05-10T19:22:18+00:00"
+            "time": "2024-05-27T13:53:20+00:00"
         },
         {
             "name": "laravel/reverb",
@@ -3267,16 +3267,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "3.3.1",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "8ff64b92c1b1ec84fcde9f8bb9ff2ca34cb8a77a"
+                "reference": "8eab8983c83c30e0bacbef8d311e3f3b8172727f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/8ff64b92c1b1ec84fcde9f8bb9ff2ca34cb8a77a",
-                "reference": "8ff64b92c1b1ec84fcde9f8bb9ff2ca34cb8a77a",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/8eab8983c83c30e0bacbef8d311e3f3b8172727f",
+                "reference": "8eab8983c83c30e0bacbef8d311e3f3b8172727f",
                 "shasum": ""
             },
             "require": {
@@ -3369,7 +3369,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-05-01T06:54:22+00:00"
+            "time": "2024-05-24T14:26:34+00:00"
         },
         {
             "name": "nette/schema",
