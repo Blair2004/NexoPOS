@@ -190,7 +190,7 @@ class CurrencyService
      */
     public function get()
     {
-        return $this->getRaw( $this->value );
+        return $this->define( $this->value )->toFloat();
     }
 
     /**

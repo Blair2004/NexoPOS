@@ -78,26 +78,26 @@ trait WithReportTest
             $newReport = $this->getSaleReport();
 
             $this->assertEquals(
-                ns()->currency->getRaw( $report->summary->total ),
-                ns()->currency->getRaw( $newReport->summary->total - $responseData[ 'data' ][ 'order' ][ 'total' ] ),
+                ns()->currency->define( $report->summary->total )->toFloat(),
+                ns()->currency->define( $newReport->summary->total - $responseData[ 'data' ][ 'order' ][ 'total' ] )->toFloat(),
                 'Order total doesn\'t match the report total.'
             );
 
             $this->assertEquals(
-                ns()->currency->getRaw( $report->summary->sales_discounts ),
-                ns()->currency->getRaw( $newReport->summary->sales_discounts - $responseData[ 'data' ][ 'order' ][ 'discount' ] ),
+                ns()->currency->define( $report->summary->sales_discounts )->toFloat(),
+                ns()->currency->define( $newReport->summary->sales_discounts - $responseData[ 'data' ][ 'order' ][ 'discount' ] )->toFloat(),
                 'Discount total doesn\'t match the report discount.'
             );
 
             $this->assertEquals(
-                ns()->currency->getRaw( $report->summary->subtotal ),
-                ns()->currency->getRaw( $newReport->summary->subtotal - $responseData[ 'data' ][ 'order' ][ 'subtotal' ] ),
+                ns()->currency->define( $report->summary->subtotal )->toFloat(),
+                ns()->currency->define( $newReport->summary->subtotal - $responseData[ 'data' ][ 'order' ][ 'subtotal' ] )->toFloat(),
                 'The subtotal doesn\'t match the report subtotal.'
             );
 
             $this->assertEquals(
-                ns()->currency->getRaw( $report->summary->sales_taxes ),
-                ns()->currency->getRaw( $newReport->summary->sales_taxes - $responseData[ 'data' ][ 'order' ][ 'tax_value' ] ),
+                ns()->currency->define( $report->summary->sales_taxes )->toFloat(),
+                ns()->currency->define( $newReport->summary->sales_taxes - $responseData[ 'data' ][ 'order' ][ 'tax_value' ] )->toFloat(),
                 'The taxes doesn\'t match the report taxes.'
             );
         } );

@@ -281,10 +281,10 @@ class UnitService
             ns()->currency
                 ->define( $from->value )
                 ->multipliedBy( $quantity )
-                ->getRaw()
+                ->toFloat()
         )
             ->dividedBy( $to->value )
-            ->getRaw();
+            ->toFloat();
     }
 
     /**
@@ -295,7 +295,7 @@ class UnitService
     {
         return ns()->currency->define(
             ns()->currency->define( $purchasePrice )->dividedBy( $from->value )->toFloat()
-        )->multipliedBy( $to->value )->getRaw();
+        )->multipliedBy( $to->value )->toFloat();
     }
 
     public function deleteUnit( $id )

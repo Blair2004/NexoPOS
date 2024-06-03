@@ -117,12 +117,12 @@ class TestService
          */
         $customer = Customer::get()->random();
 
-        $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ( $currency ) {
+        $subtotal = ns()->currency->define( $products->map( function ( $product ) use ( $currency ) {
             return $currency
                 ->define( $product[ 'unit_price' ] )
                 ->multiplyBy( $product[ 'quantity' ] )
-                ->getRaw();
-        } )->sum() );
+                ->toFloat();
+        } )->sum() )->toFloat();
 
         $discount = [
             'type' => $faker->randomElement( [ 'percentage', 'flat' ] ),
@@ -136,7 +136,7 @@ class TestService
             $discount[ 'value' ] = $currency->define( $discount[ 'rate' ] )
                 ->multiplyBy( $subtotal )
                 ->divideBy( 100 )
-                ->getRaw();
+                ->toFloat();
         } else {
             $discount[ 'value' ] = 2;
             $discount[ 'rate' ] = 0;
@@ -180,7 +180,7 @@ class TestService
                     'identifier' => 'cash-payment',
                     'value' => $currency->define( $subtotal )
                         ->additionateBy( $shippingFees )
-                        ->getRaw(),
+                        ->toFloat(),
                 ],
             ];
         }

@@ -33,7 +33,7 @@ class CashRegistersService
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
         $registerHistory->value = $amount;
-        $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->getRaw();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->toFloat();
         $registerHistory->save();
 
         return [
@@ -67,8 +67,8 @@ class CashRegistersService
         $registerHistory->register_id = $register->id;
         $registerHistory->action = RegisterHistory::ACTION_CLOSING;
         $registerHistory->transaction_type = $diffType;
-        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
-        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->toFloat();
+        $registerHistory->value = ns()->currency->define( $amount )->toFloat();
         $registerHistory->balance_before = $register->balance;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
@@ -110,8 +110,8 @@ class CashRegistersService
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
-        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
-        $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->getRaw();
+        $registerHistory->value = ns()->currency->define( $amount )->toFloat();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->toFloat();
         $registerHistory->save();
 
         return [
@@ -142,8 +142,8 @@ class CashRegistersService
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
-        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
-        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
+        $registerHistory->value = ns()->currency->define( $amount )->toFloat();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->toFloat();
         $registerHistory->save();
 
         return [
@@ -185,9 +185,9 @@ class CashRegistersService
         $registerHistory->action = RegisterHistory::ACTION_CASHOUT;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
-        $registerHistory->balance_before = ns()->currency->define( $register->balance )->getRaw();
-        $registerHistory->value = ns()->currency->define( $amount )->getRaw();
-        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->getRaw();
+        $registerHistory->balance_before = ns()->currency->define( $register->balance )->toFloat();
+        $registerHistory->value = ns()->currency->define( $amount )->toFloat();
+        $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $amount )->toFloat();
         $registerHistory->save();
 
         return [
@@ -273,8 +273,8 @@ class CashRegistersService
                 if ( ! $isRecorded ) {
                     $registerHistory = new RegisterHistory;
                     $registerHistory->balance_before = $register->balance;
-                    $registerHistory->value = ns()->currency->define( $payment->value )->getRaw();
-                    $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $payment->value )->getRaw();
+                    $registerHistory->value = ns()->currency->define( $payment->value )->toFloat();
+                    $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $payment->value )->toFloat();
                     $registerHistory->register_id = $register->id;
                     $registerHistory->payment_id = $payment->id;
                     $registerHistory->payment_type_id = $payment->type->id;
@@ -310,8 +310,8 @@ class CashRegistersService
                  * as this doesn't result from the order payment records.
                  */
                 $registerHistoryChange->balance_before = $lastRegisterHistory->balance_after;
-                $registerHistoryChange->value = ns()->currency->define( $order->change )->getRaw();
-                $registerHistoryChange->balance_after = ns()->currency->define( $lastRegisterHistory->balance_after )->subtractBy( $order->change )->getRaw();
+                $registerHistoryChange->value = ns()->currency->define( $order->change )->toFloat();
+                $registerHistoryChange->balance_after = ns()->currency->define( $lastRegisterHistory->balance_after )->subtractBy( $order->change )->toFloat();
                 $registerHistoryChange->register_id = $register->id;
                 $registerHistoryChange->order_id = $order->id;
                 $registerHistoryChange->action = RegisterHistory::ACTION_CASH_CHANGE;
@@ -341,7 +341,7 @@ class CashRegistersService
             $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
             $registerHistory->value = $order->total;
-            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->getRaw();
+            $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $order->total )->toFloat();
             $registerHistory->register_id = $order->register_id;
             $registerHistory->action = RegisterHistory::ACTION_SALE;
             $registerHistory->author = $order->author;

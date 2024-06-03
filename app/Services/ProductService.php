@@ -731,9 +731,9 @@ class ProductService
                  * available on the group variable, that's why we define
                  * explicitly how everything is saved here.
                  */
-                $unitQuantity->sale_price = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
-                $unitQuantity->sale_price_edit = $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
-                $unitQuantity->wholesale_price_edit = $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();
+                $unitQuantity->sale_price = $this->currency->define( $group[ 'sale_price_edit' ] )->toFloat();
+                $unitQuantity->sale_price_edit = $this->currency->define( $group[ 'sale_price_edit' ] )->toFloat();
+                $unitQuantity->wholesale_price_edit = $this->currency->define( $group[ 'wholesale_price_edit' ] )->toFloat();
                 $unitQuantity->preview_url = $group[ 'preview_url' ] ?? '';
                 $unitQuantity->low_quantity = $group[ 'low_quantity' ] ?? 0;
                 $unitQuantity->stock_alert_enabled = $group[ 'stock_alert_enabled' ] ?? false;
@@ -2073,7 +2073,7 @@ class ProductService
             unit_price: $lastFromPurchasePrice,
             quantity: $quantity,
             procurementProduct: $procurementProduct,
-            total_price: ns()->currency->define( $lastFromPurchasePrice )->multipliedBy( $quantity )->getRaw(),
+            total_price: ns()->currency->define( $lastFromPurchasePrice )->multipliedBy( $quantity )->toFloat(),
         );
 
         $lastToPurchasePrice = $this->getLastPurchasePrice(
@@ -2088,7 +2088,7 @@ class ProductService
             unit_price: $lastToPurchasePrice,
             quantity: $finalDestinationQuantity,
             procurementProduct: $procurementProduct,
-            total_price: ns()->currency->define( $lastFromPurchasePrice )->multipliedBy( $quantity )->getRaw(),
+            total_price: ns()->currency->define( $lastFromPurchasePrice )->multipliedBy( $quantity )->toFloat(),
         );
 
         return [

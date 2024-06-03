@@ -65,12 +65,12 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
         } );
 
         $shippingFees = $faker->randomElement( [10, 15, 20, 25, 30, 35, 40] );
-        $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ( $currency ) {
+        $subtotal = ns()->currency->define( $products->map( function ( $product ) use ( $currency ) {
             return $currency
                 ->define( $product[ 'unit_price' ] )
                 ->multiplyBy( $product[ 'quantity' ] )
-                ->getRaw();
-        } )->sum() );
+                ->toFloat();
+        } )->sum() )->toFloat();
 
         $orderDetails = [
             'customer_id' => $customer->id,
@@ -130,12 +130,12 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 return $product[ 'quantity' ] > 0;
             } );
 
-            $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ( $currency ) {
+            $subtotal = ns()->currency->define( $products->map( function ( $product ) use ( $currency ) {
                 return $currency
                     ->define( $product[ 'unit_price' ] )
                     ->multiplyBy( $product[ 'quantity' ] )
-                    ->getRaw();
-            } )->sum() );
+                    ->toFloat();
+            } )->sum() )->toFloat();
 
             $allCoupons = [];
             $totalCoupons = 0;
