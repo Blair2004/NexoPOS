@@ -148,7 +148,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
 
             $discountCoupons = $currency->define( $discount[ 'value' ] )
                 ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
-                ->getRaw();
+                ->toFloat();
 
             $dateString = ns()->date->startOfDay()->addHours(
                 $faker->numberBetween( 0, 23 )
@@ -190,7 +190,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                             ->subtractBy(
                                 $discountCoupons
                             )
-                            ->getRaw(),
+                            ->toFloat(),
                     ],
                 ] : [],
             ], $orderDetails );
