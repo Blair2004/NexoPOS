@@ -2043,7 +2043,7 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $data );
 
-        $orderData = (object) $response->json()[ 'data' ][ 'order' ];
+        $orderData = (object) $response[ 'data' ][ 'order' ];
         $order = Order::with( [ 'products', 'user' ] )->find( $orderData->id );
 
         /**

@@ -129,7 +129,7 @@ class Options
 
             return false;
         } )
-            ->filter();
+        ->filter();
 
         /**
          * if the option hasn't been found
@@ -169,6 +169,7 @@ class Options
      */
     public function encodeOptionValue( Option $option, mixed $value ): void
     {
+        dump( $value );
         if ( is_array( $value ) ) {
             $option->array = true;
             $option->value = json_encode( $value );
