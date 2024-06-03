@@ -923,8 +923,8 @@ class OrdersService
         } )->sum() );
 
         $total = $this->currencyService->define(
-            $subtotal + $this->__getShippingFee( $fields )
-        )
+                $subtotal + $this->__getShippingFee( $fields )
+            )
             ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->toFloat();
@@ -1870,7 +1870,9 @@ class OrdersService
 
         $productRefund->unit_id = $orderProduct->unit_id;
         $productRefund->total_price = $this->currencyService
-            ->define( $productRefund->unit_price )->multipliedBy( floatval( $details[ 'quantity' ] ) )->toFloat();
+            ->define( $productRefund->unit_price )->multipliedBy( $details[ 'quantity' ] )
+            ->toFloat();
+      
         $productRefund->quantity = $details[ 'quantity' ];
         $productRefund->author = Auth::id();
         $productRefund->order_id = $order->id;

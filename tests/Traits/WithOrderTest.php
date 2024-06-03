@@ -312,7 +312,7 @@ trait WithOrderTest
             ->toFloat();
 
         $this->assertEquals(
-            ns()->currency->getRaw( $cashRegister->balance ),
+            ns()->currency->define( $cashRegister->balance )->toFloat(),
             $totalTransactions,
             __( 'The transaction aren\'t reflected on the register balance' )
         );
@@ -753,7 +753,7 @@ trait WithOrderTest
         $cashRegisterHistory = RegisterHistory::where( 'register_id', $cashRegister->id )->orderBy( 'id', 'desc' )->first();
 
         $this->assertTrue(
-            ns()->currency->getRaw( $cashRegisterHistory->value ) === $order->total,
+            ns()->currency->define( $cashRegisterHistory->value )->toFloat() === $order->total,
             __( 'The payment wasn\'t added to the cash register history' )
         );
     }
@@ -1117,7 +1117,7 @@ trait WithOrderTest
                 $products = collect( $orderDetails[ 'products' ] );
             }
 
-            $subtotal = ns()->currency->getRaw( $products->map( function ( $product ) use ( $currency, $taxService ) {
+            $subtotal = ns()->currency->define( $products->map( function ( $product ) use ( $currency, $taxService ) {
 
                 if ( isset( $product[ 'discount_type' ] ) ) {
                     $discount = match ( $product[ 'discount_type' ] ) {
@@ -1136,7 +1136,7 @@ trait WithOrderTest
                     ->toFloat();
 
                 return $productSubTotal;
-            } )->sum() );
+            } )->sum() )->toFloat();
 
             if ( ! isset( $orderDetails[ 'customer_id' ] ) ) {
                 $customer = $this->attemptCreateCustomer();
@@ -2412,11 +2412,11 @@ trait WithOrderTest
 
         $initialTotalInstallment = 2;
         $discountValue = $orderService->computeDiscountValues( $discountRate, $subtotal );
-        $total = ns()->currency->define( 
+        $total = ns()->currency->define(
             ns()->currency->define( $subtotal )->additionateBy( $shippingFees )->toFloat()
         )->subtractBy( $discountValue )->toFloat();
 
-        $paymentAmount = ns()->currency->define( $total / 2 )->toFloat();
+        $paymentAmount = ns()->currency->define( $total )->dividedBy( 2 )->toFloat();
 
         $instalmentSlice = $total / 2;
         $instalmentPayment = ns()->currency->define( $instalmentSlice )->toFloat();
