@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.4",
+    "@vitejs/plugin-vue": "^5.0.5",
     "laravel-echo": "^1.16.1",
     "laravel-vite-plugin": "^1.0.2",
     "pusher-js": "^8.4.0-rc2",
