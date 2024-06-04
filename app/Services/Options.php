@@ -169,7 +169,6 @@ class Options
      */
     public function encodeOptionValue( Option $option, mixed $value ): void
     {
-        dump( $value );
         if ( is_array( $value ) ) {
             $option->array = true;
             $option->value = json_encode( $value );

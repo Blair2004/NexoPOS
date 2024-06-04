@@ -1618,7 +1618,7 @@ trait WithOrderTest
             'products' => [
                 [
                     'product_id' => $unitQuantity->product->id,
-                    'quantity' => 3,
+                    'quantity' => 1,
                     'unit_price' => 12,
                     'unit_quantity_id' => $unitQuantity->id,
                 ],
@@ -1639,14 +1639,17 @@ trait WithOrderTest
          * and make sure there is a stock deducted. First we'll keep
          * the actual products stock
          */
-        $stock = collect( $order[ 'products' ] )->mapWithKeys( function ( $orderProduct ) use ( $productService ) {
+        $stock = collect( $order[ 'products' ] )->map( function ( $orderProduct ) use ( $productService ) {
             $product = Product::with( [ 'sub_items.product', 'sub_items.unit_quantity' ] )
                 ->where( 'id', $orderProduct[ 'product_id' ] )
                 ->first();
 
             return [
-                $orderProduct[ 'id' ] => $product->sub_items->mapWithKeys( fn( $subItem ) => [
-                    $subItem->id => $productService->getQuantity( $subItem->product->id, $subItem->unit_quantity->unit_id ),
+                'orderProduct' => $orderProduct,
+                'subItems' => $product->sub_items->map( fn( $subItem ) => [
+                    'product_id' => $subItem->product_id,
+                    'unit_id' => $subItem->unit_id,
+                    'quantity' => $productService->getQuantity( $subItem->product->id, $subItem->unit_quantity->unit_id ),
                 ] ),
             ];
         } );
@@ -1679,11 +1682,10 @@ trait WithOrderTest
         $response->assertStatus( 200 );
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_PARTIALLY );
 
-        $stock->each( function ( $products, $parentProductID ) use ( $productService ) {
-            $products->each( function ( $quantity, $subItemID ) use ( $productService ) {
-                $productSubItem = ProductSubItem::with( 'product' )->find( $subItemID );
-                $newQuantity = $productService->getQuantity( $productSubItem->product->id, $productSubItem->unit_id );
-                $this->assertTrue( $newQuantity < $quantity, __( 'The quantity hasn\'t changed after selling a previously hold order.' ) );
+        $stock->each( function ( $stock, $parentProductID ) use ( $productService ) {
+            $stock[ 'subItems' ]->each( function ( $subItem ) use ( $productService ) {
+                $newQuantity = $productService->getQuantity( $subItem[ 'product_id' ], $subItem[ 'unit_id' ] );
+                $this->assertTrue( $newQuantity < $subItem[ 'quantity' ], __( 'The quantity hasn\'t changed after selling a previously hold order.' ) );
             } );
         } );
 

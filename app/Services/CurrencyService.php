@@ -309,7 +309,6 @@ class CurrencyService
      */
     public function toFloat(): float
     {
-        return $this->value->toFloat();
         return $this->value->dividedBy( 1, self::$_decimal_precision, RoundingMode::HALF_UP )->toFloat();
     }
 }

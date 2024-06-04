@@ -82,6 +82,9 @@ class AppServiceProvider extends ServiceProvider
             $options = app()->make( Options::class );
             $timeZone = $options->get( 'ns_datetime_timezone', 'Europe/London' );
 
+            config(['app.timezone' => $timeZone ]);
+            date_default_timezone_set( $timeZone );
+
             return new DateService( 'now', $timeZone );
         } );
 
