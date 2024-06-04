@@ -1437,11 +1437,11 @@ trait WithOrderTest
         $product = Product::withStockEnabled()
             ->notGrouped()
             ->notInGroup()
-            ->whereRelation( 'unit_quantities', 'quantity', '>', 100 )
-            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 100 ) )
+            ->whereRelation( 'unit_quantities', 'quantity', '>', 10 )
+            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 10 ) )
             ->get()
             ->random();
-        $unit = $product->unit_quantities()->where( 'quantity', '>', 100 )->first();
+        $unit = $product->unit_quantities()->where( 'quantity', '>', 10 )->first();
         $subtotal = $unit->sale_price * 5;
         $shippingFees = 150;
 

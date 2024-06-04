@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductHistory;
 use App\Models\Provider;
 use App\Models\TaxGroup;
+use App\Models\Transaction;
 use App\Models\TransactionHistory;
 use App\Models\Unit;
 use App\Models\UnitGroup;
@@ -120,8 +121,8 @@ trait WithProcurementTest
          * Check: at the point, there shouldn't be any expense recorded.
          * The procurement is not paid.
          */
-        $existingExpense = CashFlow::where( 'procurement_id', $procurementId )->first();
-        $this->assertTrue( ! $existingExpense instanceof CashFlow, __( 'A cash flow has been created for an unpaid procurement.' ) );
+        $existingExpense = TransactionHistory::where( 'procurement_id', $procurementId )->first();
+        $this->assertTrue( ! $existingExpense instanceof TransactionHistory, __( 'A transaction has been created for an unpaid procurement.' ) );
 
         /**
          * Query: we store the procurement now with a paid status

@@ -29,8 +29,8 @@ class TestAllDateTimeOptions extends TestCase
     public function test_compare_dates()
     {
         $this->assertSame( 
-            now()->toDateTimeString(),
-            ns()->date->toDateTimeString()
+            now()->toFormattedDateString( 'Y-m-d H:m' ),
+            ns()->date->toFormattedDateString( 'Y-m-d H:m' )
         );
     }
 }
