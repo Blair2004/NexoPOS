@@ -35,7 +35,7 @@
     "numeral": "^2.0.6",
     "qrcode": "^1.5.3",
     "rxjs": "^7.8.1",
-    "vue": "^3.4.26",
+    "vue": "^3.4.27",
     "vue-router": "^4.3.2",
     "vue3-daterange-picker": "^1.0.1",
     "vuedraggable": "^2.24.3"
