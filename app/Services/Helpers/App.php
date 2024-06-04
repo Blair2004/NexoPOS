@@ -15,24 +15,13 @@ trait App
      *
      * @return bool
      */
-    public static function installed( $forceCheck = false )
+    public static function installed()
     {
-        if ( $forceCheck ) {
-            $state = self::checkDatabaseExistence();
-            Cache::set( 'ns-core-installed', $state );
-
-            return $state;
+        if ( ! Cache::has( 'ns-core-installed' ) ) {
+            Cache::set( 'ns-core-installed', ( bool ) self::checkDatabaseExistence(), 60 );
         }
-
-        /**
-         * This cache is requested once per request
-         * and cleared by the end of the request
-         *
-         * @see App\Http\Middleware\ClearRequestCacheMiddleware
-         */
-        return Cache::remember( 'ns-core-installed', 3600, function () {
-            return self::checkDatabaseExistence();
-        } );
+        
+        return ( bool ) Cache::get( 'ns-core-installed' );
     }
 
     private static function checkDatabaseExistence()

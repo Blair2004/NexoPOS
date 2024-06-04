@@ -22,20 +22,6 @@ class ResetController extends DashboardController
     }
 
     /**
-     * perform a hard reset
-     *
-     * @return array $array
-     */
-    public function hardReset( Request $request )
-    {
-        if ( $request->input( 'authorization' ) !== env( 'NS_AUTHORIZATION' ) ) {
-            throw new Exception( __( 'Invalid authorization code provided.' ) );
-        }
-
-        return $this->resetService->hardReset();
-    }
-
-    /**
      * Will truncate the database and seed
      *
      * @return array

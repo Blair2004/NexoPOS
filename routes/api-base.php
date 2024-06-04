@@ -40,12 +40,15 @@ Route::middleware( [
     } );
 } );
 
-include dirname( __FILE__ ) . '/api/hard-reset.php';
 include_once dirname( __FILE__ ) . '/api/update.php';
 
-Route::prefix( 'setup' )->group( function () {
-    Route::get( 'check-database', [ SetupController::class, 'checkExistingCredentials' ] );
-    Route::post( 'database', [ SetupController::class, 'checkDatabase' ] );
-    Route::get( 'database', [ SetupController::class, 'checkDbConfigDefined' ] );
-    Route::post( 'configuration', [ SetupController::class, 'saveConfiguration' ] );
-} );
+Route::prefix( 'setup' )
+    ->middleware([
+        ClearRequestCacheMiddleware::class,
+    ])
+    ->group( function () {
+        Route::get( 'check-database', [ SetupController::class, 'checkExistingCredentials' ] );
+        Route::post( 'database', [ SetupController::class, 'checkDatabase' ] );
+        Route::get( 'database', [ SetupController::class, 'checkDbConfigDefined' ] );
+        Route::post( 'configuration', [ SetupController::class, 'saveConfiguration' ] );
+    } );

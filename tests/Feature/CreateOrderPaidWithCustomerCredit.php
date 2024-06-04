@@ -130,12 +130,12 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 return $product[ 'quantity' ] > 0;
             } );
 
-            $subtotal = ns()->currency->toFloat( $products->map( function ( $product ) use ( $currency ) {
+            $subtotal = ns()->currency->define( $products->map( function ( $product ) use ( $currency ) {
                 return $currency
                     ->define( $product[ 'unit_price' ] )
                     ->multiplyBy( $product[ 'quantity' ] )
                     ->toFloat();
-            } )->sum() );
+            } )->sum() )->toFloat();
 
             $allCoupons = [];
             $totalCoupons = 0;

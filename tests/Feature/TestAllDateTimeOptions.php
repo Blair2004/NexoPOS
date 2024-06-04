@@ -25,4 +25,12 @@ class TestAllDateTimeOptions extends TestCase
             $this->assertTrue( new DateService( 'now', $zone ) instanceof DateService );
         }
     }
+
+    public function test_compare_dates()
+    {
+        $this->assertSame( 
+            now()->toFormattedDateString( 'Y-m-d H:m' ),
+            ns()->date->toFormattedDateString( 'Y-m-d H:m' )
+        );
+    }
 }

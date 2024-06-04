@@ -9,10 +9,10 @@ Route::get( '/intermediate/{route}/{from}', function ( $route, $from ) {
 
     switch ( $from ) {
         case 'ns.password-lost':
-            $message = __( 'The recovery email has been send to your inbox.' );
+            $message = __( 'The recovery email has been send to the mail address associated with your account.' );
             break;
         case 'ns.password-updated':
-            $message = __( 'Your password has been successfully updated. You can login with your new password now.' );
+            $message = __( 'Your password has been successfully updated. Use your new password to login.' );
             break;
     }
 

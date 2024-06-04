@@ -129,7 +129,7 @@ class Options
 
             return false;
         } )
-            ->filter();
+        ->filter();
 
         /**
          * if the option hasn't been found

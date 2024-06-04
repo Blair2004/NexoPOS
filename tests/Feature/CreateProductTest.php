@@ -41,7 +41,7 @@ class CreateProductTest extends TestCase
     {
         $this->attemptAuthenticate();
 
-        for ( $i = 0; $i <= 4; $i++ ) {
+        for ( $i = 0; $i <= 5; $i++ ) {
             $this->attemptSetProduct();
         }
 

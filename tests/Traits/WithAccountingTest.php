@@ -3,6 +3,7 @@
 namespace Tests\Traits;
 
 use App\Classes\Currency;
+use App\Models\ActiveTransactionHistory;
 use App\Models\DashboardDay;
 use App\Models\Procurement;
 use App\Models\Transaction;
@@ -57,6 +58,10 @@ trait WithAccountingTest
                 'name' => __( 'Liabilities' ),
                 'account' => TransactionHistory::ACCOUNT_LIABILITIES,
                 'operation' => TransactionHistory::OPERATION_DEBIT,
+            ], [
+                'name' => __( 'Equity' ),
+                'account' => TransactionHistory::ACCOUNT_EQUITY,
+                'operation' => TransactionHistory::OPERATION_CREDIT,
             ],
         ];
 
@@ -90,7 +95,9 @@ trait WithAccountingTest
         ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_REFUNDS )->first()->id );
         ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_SPOILED )->first()->id );
         ns()->option->set( 'ns_stock_return_unspoiled_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_UNSPOILED )->first()->id );
+        ns()->option->set( 'ns_stock_return_unspoiled_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_UNSPOILED )->first()->id );
         ns()->option->set( 'ns_liabilities_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_LIABILITIES )->first()->id );
+        ns()->option->set( 'ns_equity_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_EQUITY )->first()->id );
     }
 
     protected function attemptCheckProcurementRecord( $procurement_id )
@@ -149,6 +156,8 @@ trait WithAccountingTest
 
         $array = json_decode( $response->getContent(), true );
         $procurement = $array[ 'data' ][ 'procurement' ];
+
+        $this->assertTrue( ActiveTransactionHistory::where( 'procurement_id', $procurement[ 'id' ] )->exists(), __( 'The procurement hasn\'t affected the cash flow.' ) );
 
         $currentDashboardDay = DashboardDay::forToday();
 
