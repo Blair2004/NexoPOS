@@ -11,12 +11,23 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Configuration\Exceptions;
 
 /**
- * @var Exceptions $exceptions
+ * If the App Debug is enabled, we should
+ * let the app handle the exceptions itself.
  */
-
 if ( env( 'APP_DEBUG' ) ) {
     return;
 }
+
+/**
+ * @var Exceptions $exceptions
+ */
+$exceptions->render( function( AuthenticationException $exception, Request $request ) {
+    if ( $request->expectsJson() ) {
+        return response()->json([ 'message' => $exception->getMessage() ], 401);
+    } else {
+        return redirect()->guest( ns()->route( 'ns.login' ) );
+    }
+});
 
 /**
  * A list of the inputs that are never flashed for validation exceptions.
@@ -36,14 +47,6 @@ $exceptions->render( function( NotFoundHttpException $exception, Request $reques
         return response()->json([ 'message' => $message ], 500);
     } else {
         return response()->view( 'pages.errors.not-found-exception', compact( 'message', 'title', 'back' ), 404 );
-    }
-});
-
-$exceptions->render( function( AuthenticationException $exception, Request $request ) {
-    if ( $request->expectsJson() ) {
-        return response()->json([ 'message' => $exception->getMessage() ], 401);
-    } else {
-        return redirect()->guest( ns()->route( 'ns.login' ) );
     }
 });
 
