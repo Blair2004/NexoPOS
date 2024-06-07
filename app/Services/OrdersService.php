@@ -1454,8 +1454,8 @@ class OrdersService
                     price: $sale_price
                 )
             )
-                ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
-                ->toFloat();
+            ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
+            ->toFloat();
         }
 
         /**
