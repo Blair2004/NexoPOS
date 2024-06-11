@@ -460,8 +460,8 @@ class OrdersService
 
             foreach ( $taxes as $index => $tax ) {
                 $orderTax = new OrderTax;
-                $orderTax->tax_name = $tax[ 'tax_name' ];
-                $orderTax->tax_value = $response[ 'percentages' ][ $index ][ 'tax' ];
+                $orderTax->tax_name = $tax[ 'name' ];
+                $orderTax->tax_value = ( $response[ 'percentages' ][ $index ][ 'tax' ] ?? 0 );
                 $orderTax->rate = $tax[ 'rate' ];
                 $orderTax->tax_id = $tax[ 'tax_id' ];
                 $orderTax->order_id = $order->id;
