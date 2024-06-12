@@ -1,10 +1,13 @@
 <template>
-    <div class="flex ns-checkbox items-center justify-center cursor-pointer" @click="toggleIt()">
-        <div class="w-6 h-6 flex bg-input-background border-input-edge border-2 items-center justify-center cursor-pointer">
-            <i v-if="isChecked" class="las la-check"></i>   
+    <div>
+        <div class="flex ns-checkbox cursor-pointer mb-2" @click="toggleIt()">
+            <div class="w-6 h-6 flex bg-input-background border-input-edge border-2 items-center justify-center cursor-pointer">
+                <i v-if="isChecked" class="las la-check"></i>   
+            </div>
+            <label :class="hasError ? 'has-error': 'is-pristine'" v-if="label" class="mx-2">{{ label }}</label>
+            <label :class="hasError ? 'has-error': 'is-pristine'" v-if="field" class="mx-2">{{ field.label }}</label>
         </div>
-        <label :class="hasError ? 'has-error': 'is-pristine'" v-if="label" class="mx-2">{{ label }}</label>
-        <label :class="hasError ? 'has-error': 'is-pristine'" v-if="field" class="mx-2">{{ field.label }}</label>
+        <ns-field-description v-if="field" :field="field"></ns-field-description>
     </div>
 </template>
 <script>

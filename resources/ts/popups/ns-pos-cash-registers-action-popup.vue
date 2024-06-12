@@ -93,13 +93,13 @@ export default {
                     this.fields     =   result;
                 }, ( error ) => {
                     this.loaded     =   true;
-                    return nsSnackBar.error( error.message, 'OKAY', { duration : false }).subscribe();
+                    return nsSnackBar.error( error.message, __( 'OKAY' ), { duration : false }).subscribe();
                 })
         },
         submit( amount ) {
             Popup.show( nsPosConfirmPopupVue, {
-                title: 'Confirm Your Action',
-                message: this.popup.params.confirmMessage || 'Would you like to confirm your action.',
+                title: __( 'Confirm Your Action' ),
+                message: this.popup.params.confirmMessage || __( 'Would you like to confirm your action.' ),
                 onAction: ( action ) => {
                     if ( action ) {
                         this.triggerSubmit();

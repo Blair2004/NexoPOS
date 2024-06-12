@@ -103,8 +103,8 @@ export default {
 
             if ( products.length > 0 ) {
                 return Popup.show( nsPosConfirmPopupVue, {
-                    title: 'Confirm Your Action',
-                    message: 'The cart is not empty. Opening an order will clear your cart would you proceed ?',
+                    title: __( 'Confirm Your Action' ),
+                    message: __( 'The cart is not empty. Opening an order will clear your cart would you proceed ?' ),
                     onAction: ( action ) => {
                         if ( action ) {
                             this.openOrder( order );
