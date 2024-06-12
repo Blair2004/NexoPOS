@@ -1872,6 +1872,7 @@ class OrdersService
         $productRefund->total_price = $this->currencyService
             ->define( $productRefund->unit_price )->multipliedBy( $details[ 'quantity' ] )
             ->toFloat();
+      
         $productRefund->quantity = $details[ 'quantity' ];
         $productRefund->author = Auth::id();
         $productRefund->order_id = $order->id;

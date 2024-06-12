@@ -43,7 +43,7 @@ class ModulesService
 
     public function __construct()
     {
-        if ( Helper::installed( true ) ) {
+        if ( Helper::installed() ) {
             /**
              * We can only enable a module if the database is installed.
              */

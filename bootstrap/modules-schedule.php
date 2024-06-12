@@ -29,7 +29,10 @@ collect( $modules->getEnabledAndAutoloadedModules() )->each( function ( $module 
          */
         if ( class_exists( $kernelClass ) ) {
             $object = new $kernelClass( app(), app( 'events' ) );
-            $object->schedule( $schedule );
+
+            if ( method_exists( $object, 'schedule' ) ) {
+                $object->schedule( $schedule );
+            }
         }
     }
 } );

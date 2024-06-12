@@ -31,7 +31,7 @@ class CurrencyService
 
     private static $_currency_symbol = '$';
 
-    private static $_decimal_precision = 2;
+    private static $_decimal_precision = 9;
 
     private static $_thousand_separator = ',';
 
@@ -43,8 +43,6 @@ class CurrencyService
 
     public function __construct( $value, $config = [] )
     {
-        $this->value = BigDecimal::of( $value );
-
         extract( $config );
 
         $this->currency_iso = $currency_iso ?? self::$_currency_iso;
@@ -54,6 +52,8 @@ class CurrencyService
         $this->decimal_separator = $decimal_separator ?? self::$_decimal_separator;
         $this->prefered_currency = $prefered_currency ?? self::$_prefered_currency;
         $this->thousand_separator = $thousand_separator ?? self::$_thousand_separator;
+
+        $this->value = BigDecimal::of( $value );
     }
 
     /**
@@ -170,7 +170,7 @@ class CurrencyService
     {
         $currency = $this->prefered_currency === 'iso' ? $this->currency_iso : $this->currency_symbol;
         $final = sprintf( '%s ' . number_format(
-            floatval( (string) $this->value ),
+            floatval( (string) ( $this->value ) ),
             $this->decimal_precision,
             $this->decimal_separator,
             $this->thousand_separator
@@ -190,7 +190,7 @@ class CurrencyService
      */
     public function get()
     {
-        return $this->getRaw( $this->value );
+        return $this->define( $this->value )->toFloat();
     }
 
     /**
@@ -246,7 +246,7 @@ class CurrencyService
     {
         $this->value = $this->value->dividedBy(
             that: $number,
-            scale: 9,
+            scale: self::$_decimal_precision,
             roundingMode: RoundingMode::HALF_UP
         );
 
@@ -305,9 +305,10 @@ class CurrencyService
     /**
      * Returns a float value for
      * a defined number.
+     * The scale is hardcoded to be 9 as this is the limit of each FLOAT column.
      */
     public function toFloat(): float
     {
-        return $this->value->toFloat();
+        return $this->value->dividedBy( 1, self::$_decimal_precision, RoundingMode::HALF_UP )->toFloat();
     }
 }

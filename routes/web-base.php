@@ -68,5 +68,3 @@ Route::middleware( [
         Route::get( '', [ SetupController::class, 'welcome' ] )->name( 'ns.do-setup' );
     } );
 } );
-
-include dirname( __FILE__ ) . '/debug.php';
