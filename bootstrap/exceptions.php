@@ -44,7 +44,7 @@ $exceptions->render( function( NotFoundHttpException $exception, Request $reques
     $message = $exception->getMessage() ?: __( 'The page you are looking for could not be found.' );
     
     if ( $request->expectsJson() ) {
-        return response()->json([ 'message' => $message ], 500);
+        return response()->json([ 'message' => $message ], 404 );
     } else {
         return response()->view( 'pages.errors.not-found-exception', compact( 'message', 'title', 'back' ), 404 );
     }

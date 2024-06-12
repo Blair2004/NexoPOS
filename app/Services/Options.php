@@ -8,20 +8,6 @@ class Options
 {
     private $rawOptions = [];
 
-    private $options = [];
-
-    private $isUserOptions = false;
-
-    private $option;
-
-    private $user_id;
-
-    private $value;
-
-    private $hasFound;
-
-    private $removableIndex;
-
     public string $tableName;
 
     /**

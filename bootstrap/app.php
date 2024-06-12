@@ -20,7 +20,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
             ModuleRouting::register();
         },
-        health: '/up',
     )
     ->withSchedule( function( Schedule $schedule ) {
         include_once( __DIR__ . '/modules-schedule.php' );
