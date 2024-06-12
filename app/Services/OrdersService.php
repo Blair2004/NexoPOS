@@ -918,9 +918,9 @@ class OrdersService
 
         $totalPayments = 0;
 
-        $subtotal = Currency::raw( collect( $fields[ 'products' ] )->map( function ( $product ) {
+        $subtotal = ns()->currency->define( collect( $fields[ 'products' ] )->map( function ( $product ) {
             return floatval( $product['total_price'] );
-        } )->sum() );
+        } )->sum() )->toFloat();
 
         $total = $this->currencyService->define(
                 $subtotal + $this->__getShippingFee( $fields )
@@ -1882,7 +1882,7 @@ class OrdersService
 
         $productRefund->tax_value = $this->computeTaxFromOrderTaxes(
             $order,
-            Currency::raw( $details[ 'unit_price' ] * $details[ 'quantity' ] ),
+            Currency::define( $details[ 'unit_price' ] )->multipliedBy( $details[ 'quantity' ] )->toFloat(),
             ns()->option->get( 'ns_pos_tax_type' )
         );
 

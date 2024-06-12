@@ -410,10 +410,10 @@ class ReportService
     /**
      * This return the year report
      *
-     * @param  string $year
+     * @param  int $year
      * @return array  $reports
      */
-    public function getYearReportFor( $year )
+    public function getYearReportFor( int $year )
     {
         $date = $this->dateService->now();
         $date->year = $year >= 2019 && $year <= 2099 ? $year : 2020; // validate the date
@@ -454,10 +454,6 @@ class ReportService
         $startDate = Carbon::parse( $startDate );
         $endDate = Carbon::parse( $endDate );
         $diffInDays = Carbon::parse( $startDate )->diffInDays( $endDate );
-
-        $orderProductTable = Hook::filter( 'ns-model-table', 'nexopos_orders_products' );
-        $productsTable = Hook::filter( 'ns-model-table', 'nexopos_products' );
-        $unitstable = Hook::filter( 'ns-model-table', 'nexopos_units' );
 
         if ( $diffInDays > 0 ) {
             // check if it's the start and end of the month
@@ -553,8 +549,6 @@ class ReportService
     {
         $orderProductTable = Hook::filter( 'ns-model-table', 'nexopos_orders_products' );
         $orderTable = Hook::filter( 'ns-model-table', 'nexopos_orders' );
-        $productsTable = Hook::filter( 'ns-model-table', 'nexopos_products' );
-        $unitstable = Hook::filter( 'ns-model-table', 'nexopos_units' );
 
         switch ( $sort ) {
             case 'using_quantity_asc':

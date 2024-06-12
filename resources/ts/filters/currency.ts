@@ -46,7 +46,7 @@ const nsCurrency    =   ( value, format = 'full', locale = 'en' ) => {
 }
 
 const nsRawCurrency     =   ( value ) => {
-    const numeralFormat = `0.${precision}`;
+    const numeralFormat = `0.000000000`;
     return parseFloat( NumeralJS( value ).format( numeralFormat ) );
 }
 

@@ -1299,6 +1299,8 @@ trait WithOrderTest
                         ->toFloat()
                     );
 
+                    $this->assertTrue( $singleResponse[ 'order-creation' ][ 'data' ][ 'order' ][ 'payment_status' ] === Order::PAYMENT_PAID, 'The order hasn\'t been paid.' );
+
                     $couponValue = ( ! empty( $orderData[ 'coupons' ] ) ? $totalCoupons : 0 );
                     $totalPayments = collect( $orderData[ 'payments' ] )->map( fn( $payment ) => (float) $payment[ 'value' ] )->sum() ?: 0;
                     $sum = ( (float) $orderData[ 'subtotal' ] + (float) $orderData[ 'shipping' ] - ( in_array( $orderData[ 'discount_type' ], [ 'flat', 'percentage' ] ) ? (float) $orderData[ 'discount' ] : 0 ) - $couponValue );
@@ -1428,6 +1430,35 @@ trait WithOrderTest
             }
         }
 
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( 
+            $currency,
+            $faker,
+            $taxService,
+            $customer,
+            $customerFirstPurchases,
+            $customerFirstOwed,
+            $totalCoupons,
+            $discount,
+            $discountCoupons,
+            $dateString,
+            $orderData,
+            $customerSecondPurchases,
+            $customerSecondOwed,
+            $responseData,
+            $products,
+            $subtotal,
+            $shippingFees,
+            $discountRate,
+            $allCoupons,
+            $totalCoupons,
+            $response,
+            $singleResponse
+        );
+
         return $responses;
     }
 
@@ -1493,10 +1524,16 @@ trait WithOrderTest
         $response->assertStatus( 200 );
         $json = json_decode( $response->getContent(), true );
 
-        $order = $json[ 'data' ][ 'order' ];
+        $order = $json[ 'data' ][ 'order' ];        
 
         $this->assertTrue( $order[ 'products' ][0][ 'mode' ] === 'retail', 'Failed to assert the first product price mode is "retail"' );
         $this->assertTrue( $order[ 'products' ][1][ 'mode' ] === 'normal', 'Failed to assert the second product price mode is "normal"' );
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $currency, $product, $unit, $subtotal, $shippingFees, $response, $json, $order );
     }
 
     protected function attemptHoldAndCheckoutOrder()
@@ -1565,6 +1602,12 @@ trait WithOrderTest
             TransactionHistory::where( 'order_id', $order[ 'id' ] )->where( 'operation', 'credit' )->count() == 1, 
             __( 'More transaction was created for the same order' ) 
         );
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $productService, $result, $order, $stock, $response );
     }
 
     protected function attemptHoldOrderAndCheckoutWithGroupedProducts()
@@ -1694,6 +1737,12 @@ trait WithOrderTest
             __( 'There has not been a stock transaction for an order that has partially received a payment.' )
         );
 
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $productService, $result, $order, $stock );
+
         return $response->json();
     }
 
@@ -1753,6 +1802,12 @@ trait WithOrderTest
 
         $response->assertStatus( 200 );
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_HOLD );
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $product, $unitQuantity, $subtotal, $orderDetails );
 
         return $response;
     }
@@ -1868,6 +1923,12 @@ trait WithOrderTest
             ProductHistory::where( 'order_id', $order[ 'id' ] )->count() > 0,
             __( 'There has not been a stock transaction for an order that has partially received a payment.' )
         );
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $product, $unitQuantity, $subtotal, $orderDetails, $productService, $payment, $stock );
 
         return $response->json();
     }
@@ -2006,6 +2067,12 @@ trait WithOrderTest
         } else {
             throw new Exception( __( 'No order where found to perform the test.' ) );
         }
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $productService, $products, $order, $refreshed, $response );
     }
 
     protected function attemptDeleteVoidedOrder()
@@ -2109,6 +2176,12 @@ trait WithOrderTest
                 $this->assertTrue( ! $history instanceof ProductHistory, __( 'A stock return was performed while the order was initially voided.' ) );
             }
         } );
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $testService, $customer, $data, $response, $orderData, $order, $orderService, $totalPayments );
     }
 
     protected function attemptVoidOrder()
@@ -2174,6 +2247,12 @@ trait WithOrderTest
                 $this->assertTrue( $history instanceof ProductHistory, __( 'No return history was created for a void order product.' ) );
             }
         } );
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $testService, $customer, $data, $response, $orderData, $order );
     }
 
     protected function attemptRefundOrder( $productQuantity, $refundQuantity, $paymentStatus, $message )
@@ -2370,6 +2449,12 @@ trait WithOrderTest
         $response->assertJson( [
             'status' => 'success',
         ] );
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $currency, $firstFetchCustomer, $product, $shippingFees, $discountRate, $products, $subtotal, $netTotal, $taxes, $taxGroup, $response, $responseData, $secondFetchCustomer, $purchaseAmount, $refundQuantity, $paymentStatus, $message, $order, $thirdFetchCustomer, $transactionAccount, $transactionValue );
     }
 
     public function attemptCreateOrderWithInstalment()
