@@ -252,7 +252,6 @@ export default {
         },
         async selectProcurement( product ) {
             try {
-                console.log( product );
                 const result = await new Promise( ( resolve, reject ) => {
                     Popup.show( nsSelectPopupVue, {
                         label: __( 'Select Procurement' ),

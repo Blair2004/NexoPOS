@@ -31,4 +31,10 @@ class CanSeeReportsTest extends TestCase
         $this->attemptAuthenticate();
         $this->attemptTestSaleReport();
     }
+
+    public function test_load_reports()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptLoadReports();
+    }
 }

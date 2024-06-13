@@ -24,12 +24,12 @@ class NotEnoughPermissionException extends Exception
                 'title' => __( 'Not Enough Permissions' ),
                 'message' => $this->getMessage(),
                 'back' => Helper::getValidPreviousUrl( $request ),
-            ] );
+            ], 403 );
         }
 
         return response()->json( [
             'status' => 'error',
             'message' => $this->getMessage(),
-        ], 401 );
+        ], 403 );
     }
 }

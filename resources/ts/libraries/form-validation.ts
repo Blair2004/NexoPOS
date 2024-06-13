@@ -289,7 +289,7 @@ export default class FormValidation {
      * @param {Object} data 
      */
     triggerError( form, data ) {
-        if ( data.errors ) {
+        if ( data && data.errors ) {
             for( let index in data.errors ) {
                 let path    =   index.split( '.' ).filter( exp => {
                     return ! /^\d+$/.test( exp );

@@ -170,7 +170,7 @@ trait WithAccountingTest
             ->sum( 'value' );
 
         $this->assertEquals(
-            Currency::raw( $dashboardDay->day_expenses + $procurement[ 'cost' ] ),
+            Currency::define( $dashboardDay->day_expenses )->additionateBy( $procurement[ 'cost' ] )->toFloat(),
             Currency::raw( $currentDashboardDay->day_expenses ),
             __( 'hasn\'t affected the expenses' )
         );

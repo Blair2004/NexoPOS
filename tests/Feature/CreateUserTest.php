@@ -131,7 +131,7 @@ class CreateUserTest extends TestCase
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
                     ->json( 'delete', '/api/crud/ns.users/' . $user->id );
 
-                $response->assertStatus( 401 );
+                $response->assertStatus( 403 );
             } );
         } );
 
@@ -146,7 +146,7 @@ class CreateUserTest extends TestCase
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'delete', '/api/crud/ns.users/' . $order->author );
 
-            $response->assertStatus( 401 );
+            $response->assertStatus( 403 );
         }
     }
 
