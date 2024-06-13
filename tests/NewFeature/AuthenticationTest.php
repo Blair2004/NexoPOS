@@ -1,10 +1,30 @@
 <?php
 namespace Tests\NewFeature;
 
+use App\Models\User;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
+    use WithFaker;
+
+    private function fakeEmail()
+    {
+        $email = $this->faker->email();
+        $exploded = explode( '@', $email );
+        $exploded[0] = $exploded[0] . Str::random( 5 );
+
+        return implode( '@', $exploded );
+    }
+
+    private function fakeUsername()
+    {
+        return $this->faker->userName() . Str::random( 5 );
+    }
+
     public function testCanSeeLoginPage()
     {
         $response = $this->get( '/sign-in' );
@@ -27,7 +47,30 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'no' );
         $response = $this->get( '/sign-up' );
-        $response->assertStatus( 401 );
+        $response->assertStatus( 403 );
+
+        /**
+         * Step 3: we'll force submit post data
+         * to see wether it the registration is 
+         * not disabled
+         */
+        $username = $this->fakeUsername();
+        $email = $this->fakeEmail();
+        $password = $this->faker->password( 8 );
+
+        $response = $this
+            ->withSession( [] )
+            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
+            ->post(
+                '/auth/sign-up', [
+                    'username' => $username,
+                    'password' => $password,
+                    'password_confirm' => $password,
+                    'email' => $email,
+                ]
+            );
+
+        $response->assertStatus( 403 );
     }
 
     public function testCanSeeRecoveryPage()
@@ -36,7 +79,7 @@ class AuthenticationTest extends TestCase
          * Step 1: assert when recovery is enabled, the 
          * password recovery can be seen
          */
-        ns()->option->set( 'ns_recovery_enabled', 'no' );
+        ns()->option->set( 'ns_recovery_enabled', 'yes' );
         $response = $this->get( '/password-lost' );
         $response->assertStatus( 200 );
 
@@ -46,27 +89,12 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_recovery_enabled', 'no' );
         $response = $this->get( '/password-lost' );
-        $response->assertStatus( 200 );
-    }
-
-    public function testCannotSeeRegistrationIfDisabled()
-    {
-        
-    }
-
-    public function testCannotSubmitRegistrationIfDisabled()
-    {
-
-    }
-
-    public function testCanRegister()
-    {
-
+        $response->assertStatus( 403 );
     }
 
     public function testCanVerifyAccount()
     {
-
+        // make sure verification is forced for new users
     }
 
     public function testCanSubmitRecoveryEmail()
@@ -81,6 +109,23 @@ class AuthenticationTest extends TestCase
 
     public function testCannotLoginIfAccountInactive()
     {
+        $password   =   '123456';
+        $user = User::first();
+        $user->active = false;
+        $user->password     =   Hash::make( $password );
+        $user->save();
 
+        $response = $this
+            ->withSession( [] )
+            ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
+            ->post(
+                '/auth/sign-in', [
+                    'username' => $user->username,
+                    'password' => $password
+                ]
+            );
+
+        $response->assertSessionHasErrors( 'username' );
+        $response->assertRedirect( route( 'ns.login' ) );
     }
 }

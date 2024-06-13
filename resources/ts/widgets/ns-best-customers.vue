@@ -26,7 +26,7 @@
                                         </div>
                                     </div>
                                     <div class="px-1 justify-center">
-                                        <h3 class="font-semibold  items-center">{{ customer.first_name }}</h3>
+                                        <h3 class="font-semibold  items-center">{{ customer.first_name }} {{ customer.last_name }}</h3>
                                     </div>
                                 </div>
                             </th>

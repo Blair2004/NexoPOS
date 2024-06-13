@@ -207,6 +207,11 @@ class SetupService
         $this->options->set( 'ns_store_language', $configuredLanguage );
 
         /**
+         * clear all cache
+         */
+        Artisan::call( 'cache:clear' );
+
+        /**
          * From this moment, new permissions has been created.
          * However Laravel gates aren't aware of them. We'll fix this here.
          */

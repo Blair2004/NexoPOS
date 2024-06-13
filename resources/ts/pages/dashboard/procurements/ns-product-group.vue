@@ -213,7 +213,7 @@ export default {
                 });
 
                 const unitQuantity  =   result.unit_quantities
-                    .filter( unitQuantity => parseInt( unitQuantity.id ) === parseInt( selection[0].value ) );
+                    .filter( unitQuantity => parseInt( unitQuantity.id ) === parseInt( selection ) );
 
                 /**
                  * Adding product to the Array

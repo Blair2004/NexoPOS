@@ -6,6 +6,9 @@
                 <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
             </div>
         </div>
+        <div class="p-2">
+            <Bar v-if="report" id="chart" :options="chartOptions" :data="chartData"/>
+        </div>
         <div class="foot -mx-4 flex flex-wrap">
             <div class="flex w-full lg:w-full border-b">
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
@@ -33,14 +36,26 @@
 <script>
 import { __ } from '~/libraries/lang';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+import { Chart, registerables } from 'chart.js';
+import { Bar } from 'vue-chartjs';
+
+Chart.register( ...registerables );
+
 export default {
     name: 'ns-orders-chart',
+    components: {
+        Bar
+    },
     data() {
         return {
             totalWeeklySales: 0,
             totalWeekTaxes: 0,
             totalWeekExpenses: 0,
             totalWeekIncome: 0,
+            chartData: {
+                labels: [ 'January', 'February', 'March' ],
+                datasets: [ { data: [40, 20, 12] } ]
+            },
             chartOptions: {
                 theme: {
                     mode: window.ns.theme
@@ -62,10 +77,10 @@ export default {
                 ],
             },
             series: [{
-                name: __( 'Current Week' ),
+                label: __( 'Current Week' ),
                 data: []
             },{
-                name: __( 'Previous Week' ),
+                label: __( 'Previous Week' ),
                 data: []
             }],
             reportSubscription: null,
@@ -131,6 +146,9 @@ export default {
                 });
 
                 this.totalWeeklySales   =   this.series[0].data.reduce( ( b, a ) => b + a );
+
+                this.chartData.labels   =   this.report.result.map( r => r.label );
+                this.chartData.datasets =   this.series;
             }
         });
     }

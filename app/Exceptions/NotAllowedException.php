@@ -25,7 +25,7 @@ class NotAllowedException extends Exception
                 'title' => __( 'Not Allowed Action' ),
                 'message' => $this->getMessage(),
                 'back' => Helper::getValidPreviousUrl( $request ),
-            ] );
+            ], $this->getStatusCode() );
         }
 
         return JsonResponse::error(

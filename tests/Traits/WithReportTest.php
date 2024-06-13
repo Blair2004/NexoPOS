@@ -2,8 +2,10 @@
 
 namespace Tests\Traits;
 
+use App\Models\ProductCategory;
 use App\Models\TaxGroup;
 use App\Services\ReportService;
+use Illuminate\Support\Facades\Auth;
 
 trait WithReportTest
 {
@@ -29,6 +31,66 @@ trait WithReportTest
             $response->assertStatus( 200 );
 
             gc_collect_cycles();
+        }
+    }
+
+    protected function attemptLoadReports()
+    {
+        $reports    =   [
+            /**
+             * for the annual report
+             */
+            [
+                'url'   =>  'annual-report',
+                'data'  =>  [
+                    'year'  =>  now()->format( 'Y' )
+                ],
+            ],
+
+            /**
+             * This combines all sale-report reports variations.
+             */
+            [
+                'url'   =>  'sale-report',
+                'data'  =>  [
+                    'startDate' => now()->startOfDay()->toDateTimeString(),
+                    'endDate' => now()->endOfDay()->toDateTimeString(),
+                    'type' => 'products_report',
+                    'user_id' => Auth::id(),
+                    'categories_id' => [ ProductCategory::first()->id ]
+                ],
+            ],
+            [
+                'url'   =>  'sale-report',
+                'data'  =>  [
+                    'startDate' => now()->startOfDay()->toDateTimeString(),
+                    'endDate' => now()->endOfDay()->toDateTimeString(),
+                    'type' => 'categories_report',
+                    'user_id' => Auth::id(),
+                    'categories_id' => [ ProductCategory::first()->id ]
+                ],
+            ],
+            [
+                'url'   =>  'sale-report',
+                'data'  =>  [
+                    'startDate' => now()->startOfDay()->toDateTimeString(),
+                    'endDate' => now()->endOfDay()->toDateTimeString(),
+                    'type' => 'categories_summary',
+                    'user_id' => Auth::id(),
+                    'categories_id' => [ ProductCategory::first()->id ]
+                ],
+            ]
+        ];
+
+        foreach( $reports as $report ) {
+            $response = $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', 'api/reports/' . $report[ 'url' ], $report[ 'data' ] );
+
+            if ( $response->status() !== 200 ) {
+                $response->dump();
+            }
+
+            $response->assertOk();
         }
     }
 
@@ -115,7 +177,7 @@ trait WithReportTest
                 ->get()
                 ->map( function ( $tax ) {
                     return [
-                        'tax_name' => $tax->name,
+                        'name' => $tax->name,
                         'tax_id' => $tax->id,
                         'rate' => $tax->rate,
                     ];

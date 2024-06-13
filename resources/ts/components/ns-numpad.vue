@@ -49,7 +49,7 @@ export default {
     },
     mounted() {
         if( this.floating && this.value > 0 ) {
-            this.screenValue    =   parseFloat( this.value / this.number );
+            this.screenValue    =   parseFloat( this.value * this.number );
         } else {
             this.screenValue    =   this.value || 0;
         }

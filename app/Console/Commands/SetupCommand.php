@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Helper;
 use App\Services\SetupService;
 use Illuminate\Console\Command;
 
@@ -76,6 +77,10 @@ class SetupCommand extends Command
             env( 'DB_PREFIX', null ) === null
         ) {
             return $this->error( __( 'Unable to proceed, looks like the database can\'t be used.' ) );
+        }
+
+        if ( Helper::installed() ) {
+            return $this->error( __( 'NexoPOS is already installed.' ) );
         }
 
         $this->setupLanguage();

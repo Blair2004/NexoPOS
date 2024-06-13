@@ -104,6 +104,7 @@ export class POS {
             tax_value: 0,
             products_exclusive_tax_value: 0,
             products_inclusive_tax_value: 0,
+            products_tax_value: 0,
             total_tax_value: 0,
             shipping_rate: 0,
             shipping_type: undefined,
@@ -874,6 +875,12 @@ export class POS {
                 const method = order.id !== undefined ? 'put' : 'post';
 
                 this._isSubmitting = true;
+
+                /**
+                 * We should allow any module to mutate
+                 * the order before it's submitted.
+                 */
+                nsHooks.doAction('ns-order-before-submit', order );
 
                 return nsHttpClient[method](`/api/orders${order.id !== undefined ? '/' + order.id : ''}`, order)
                     .subscribe({
