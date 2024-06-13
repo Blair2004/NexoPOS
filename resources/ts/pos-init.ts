@@ -104,6 +104,7 @@ export class POS {
             tax_value: 0,
             products_exclusive_tax_value: 0,
             products_inclusive_tax_value: 0,
+            products_tax_value: 0,
             total_tax_value: 0,
             shipping_rate: 0,
             shipping_type: undefined,

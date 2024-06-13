@@ -741,6 +741,7 @@ trait WithOrderTest
          * @var array    $response
          * @var Register $cashRegister
          */
+        
         $order = Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
         $orderService->makeOrderSinglePayment( [
             'identifier' => OrderPayment::PAYMENT_CASH,
@@ -1203,7 +1204,7 @@ trait WithOrderTest
                     ->divideBy( 100 )
                     ->toFloat();
             } elseif ( $discount[ 'type' ] === 'flat' ) {
-                $discount[ 'value' ] = Currency::fresh( $subtotal )
+                $discount[ 'value' ] = Currency::define( $subtotal )
                     ->divideBy( 2 )
                     ->toFloat();
 
@@ -2307,7 +2308,7 @@ trait WithOrderTest
         if ( $taxGroup instanceof TaxGroup ) {
             $taxes = $taxGroup->taxes->map( function ( $tax ) {
                 return [
-                    'tax_name' => $tax->name,
+                    'name' => $tax->name,
                     'tax_id' => $tax->id,
                     'rate' => $tax->rate,
                 ];
@@ -2460,11 +2461,6 @@ trait WithOrderTest
     public function attemptCreateOrderWithInstalment()
     {
         /**
-         * @var CurrencyService
-         */
-        $currency = app()->make( CurrencyService::class );
-
-        /**
          * @var OrdersService
          */
         $orderService = app()->make( OrdersService::class );
@@ -2494,7 +2490,7 @@ trait WithOrderTest
         $customer = $this->attemptCreateCustomer();
 
         $subtotal = ns()->currency->define( $products->map( function ( $product ) {
-            return Currency::raw( $product[ 'unit_price' ] ) * Currency::raw( $product[ 'quantity' ] );
+            return Currency::define( $product[ 'unit_price' ] )->multipliedBy( $product[ 'quantity' ] )->toFloat();
         } )->sum() )->toFloat();
 
         $initialTotalInstallment = 2;

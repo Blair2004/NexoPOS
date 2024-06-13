@@ -24,6 +24,6 @@ class Currency
 
     public static function raw( $amount )
     {
-        return ns()->currency->toFloat( $amount );
+        return ns()->currency->define( $amount )->toFloat();
     }
 }

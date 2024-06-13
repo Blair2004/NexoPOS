@@ -177,7 +177,7 @@ trait WithReportTest
                 ->get()
                 ->map( function ( $tax ) {
                     return [
-                        'tax_name' => $tax->name,
+                        'name' => $tax->name,
                         'tax_id' => $tax->id,
                         'rate' => $tax->rate,
                     ];
