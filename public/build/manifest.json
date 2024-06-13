@@ -266,7 +266,7 @@
     "isEntry": true
   },
   "resources/ts/app.ts": {
-    "file": "assets/app-CcGxaLfs.js",
+    "file": "assets/app-C-j7GKy6.js",
     "name": "app",
     "src": "resources/ts/app.ts",
     "isEntry": true,
@@ -699,7 +699,7 @@
     ]
   },
   "resources/ts/pages/dashboard/procurements/manage-products.vue": {
-    "file": "assets/manage-products-BVOT4ByY.js",
+    "file": "assets/manage-products-CljWcVfw.js",
     "name": "manage-products",
     "src": "resources/ts/pages/dashboard/procurements/manage-products.vue",
     "isDynamicEntry": true,
@@ -719,7 +719,7 @@
     "isDynamicEntry": true
   },
   "resources/ts/pages/dashboard/procurements/ns-procurement.vue": {
-    "file": "assets/ns-procurement-0qbt-QVX.js",
+    "file": "assets/ns-procurement-CNLJ0bUG.js",
     "name": "ns-procurement",
     "src": "resources/ts/pages/dashboard/procurements/ns-procurement.vue",
     "isDynamicEntry": true,
@@ -750,7 +750,7 @@
     ]
   },
   "resources/ts/pages/dashboard/products/ns-stock-adjustment.vue": {
-    "file": "assets/ns-stock-adjustment-D45_cx0H.js",
+    "file": "assets/ns-stock-adjustment-CYyp8j9t.js",
     "name": "ns-stock-adjustment",
     "src": "resources/ts/pages/dashboard/products/ns-stock-adjustment.vue",
     "isDynamicEntry": true,
@@ -1093,7 +1093,7 @@
     ]
   },
   "resources/ts/pos-init.ts": {
-    "file": "assets/pos-init-DSepdPVy.js",
+    "file": "assets/pos-init-BG1KsgZr.js",
     "name": "pos-init",
     "src": "resources/ts/pos-init.ts",
     "isEntry": true,
