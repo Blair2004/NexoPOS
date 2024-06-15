@@ -624,6 +624,13 @@ export class POS {
                 nsHttpClient.get(`/api/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
+                            
+                            /**
+                             * to avoid any confusion on the identifer property, which is ambuigous as 
+                             * being the tax id or the order tax id, we'll rename it by default to tax_id
+                             */
+                            tax.taxes.forEach( tax => tax.tax_id = tax.id )
+
                             order   =   this.computeOrderTaxGroup( order, tax );
     
                             return resolve({
@@ -654,7 +661,7 @@ export class POS {
             ).multiply( 100 ).done();
 
             return {
-                id: _tax.id,
+                tax_id: _tax.tax_id,
                 name: _tax.name,
                 rate: parseFloat(_tax.rate),
                 tax_value: math.chain(

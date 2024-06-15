@@ -23,7 +23,11 @@ export default {
         nsHttpClient.get( '/api/fields/ns.pos-order-settings' )
             .subscribe( fields => {
                 fields.forEach( field => {
-                    field.value     =   this.popup.params.order[ field.name ] || '';
+                    if ( this.popup.params.order[ field.name ] !== null  ) {
+                        field.value     =   this.popup.params.order[ field.name ];
+                    } else {
+                        field.value     =   '';
+                    }
                 });
                 
                 this.fields     =   this.validation.createFields( fields );
