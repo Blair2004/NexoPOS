@@ -1088,6 +1088,12 @@ export class POS {
 
                         await this.selectCustomer(order.customer);
 
+                        /**
+                         * Once the order is loaded, we can let
+                         * any one who needs it know it.
+                         */
+                        nsHooks.doAction( 'ns-after-load-order', order );
+
                         resolve(order);
                     }, 
                     error: error => reject(error)
