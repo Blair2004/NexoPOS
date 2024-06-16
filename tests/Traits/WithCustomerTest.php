@@ -207,6 +207,7 @@ trait WithCustomerTest
         $customerService = app()->make( CustomerService::class );
 
         $customer = $this->attemptCreateCustomer();
+        $oldCustomerBalance = $customer->account_amount;
 
         $this->attemptTestCustomerGroup( $customer );
 
@@ -236,7 +237,7 @@ trait WithCustomerTest
 
             $customer->refresh();
 
-            $this->assertSame( (float) $randomAmount, (float) $customer->account_amount, 'The customer account hasn\'t been updated.' );
+            $this->assertSame( (float) $oldCustomerBalance + $randomAmount, (float) $customer->account_amount, 'The customer account hasn\'t been updated.' );
 
             /**
              * Step 2: second control and verification on
