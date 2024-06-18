@@ -42,7 +42,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
@@ -50,12 +50,15 @@ import nsCloseButton from '~/components/ns-close-button.vue';
 import { nsNumberAbbreviate } from '~/filters/currency';
 import { timespan } from '~/libraries/timespan';
 
+declare const Reverb;
+
 export default {
     name: 'ns-notifications',
     data() {
         return {
             notifications: [],
             visible: false,
+            socketEnabled: false,
             interval: null,
         }
     },
@@ -65,9 +68,19 @@ export default {
     mounted() {
         document.addEventListener( 'click', this.checkClickedItem );
 
-        this.interval   =   setInterval( () => {
-            this.loadNotifications();
-        }, 15000 );
+        /**
+         * if Reverb is connected, there is no need to
+         * continusly check for notifications
+         */
+        if ( Reverb.connector.pusher.connection.state !== 'connected' ) {
+            this.interval   =   setInterval( () => {
+                this.loadNotifications();
+            }, 15000 );
+        } else {
+            this.interval   =   setInterval( () => {
+                this.socketEnabled  =   Reverb.connector.pusher.connection.state === 'connected';
+            }, 1000 );
+        }
 
         this.loadNotifications();
     },
@@ -139,7 +152,9 @@ export default {
         closeNotice( event, notification ) {
             nsHttpClient.delete( `/api/notifications/${notification.id}` )
                 .subscribe( result => {
-                    this.loadNotifications();
+                    if ( ! this.socketEnabled ) {
+                        this.loadNotifications();
+                    }
                 });
             event.stopPropagation();
         }

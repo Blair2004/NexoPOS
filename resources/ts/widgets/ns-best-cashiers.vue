@@ -35,7 +35,7 @@
                 </div>
                 <div class="h-56 flex items-center justify-center flex-col" v-if="hasLoaded && cashiers.length === 0">
                     <i class="las la-grin-beam-sweat text-6xl"></i>
-                    <p class="text-sm">{{ __( 'Well.. nothing to show for the meantime.' ) }}</p>
+                    <p class="text-sm text-center">{{ __( 'Well.. nothing to show for the meantime.' ) }}</p>
                 </div>
             </div>
         </div>

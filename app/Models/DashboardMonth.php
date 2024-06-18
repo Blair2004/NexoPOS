@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\DashboardMonthAfterCreatedEvent;
+use App\Events\DashboardMonthAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**

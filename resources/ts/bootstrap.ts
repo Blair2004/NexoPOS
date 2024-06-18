@@ -67,6 +67,7 @@ window.timespan         =   timespan;
 
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
+window.Echo = Echo;
 
 const nsEvent           =   new EventEmitter;
 const nsHttpClient      =   new HttpClient;

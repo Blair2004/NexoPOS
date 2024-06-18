@@ -443,7 +443,7 @@ class ProductCrud extends CrudService
                                             $optionLabel = __( 'Unammed Section' );
 
                                             if ( $field->isNotEmpty() ) {
-                                                $option = collect( $field[0][ 'options' ] )->filter( fn( $option ) => $option[ 'value' ] === $field[0][ 'value' ] );
+                                                $option = collect( $field[0][ 'options' ] )->filter( fn( $option ) => $option[ 'value' ] == $field[0][ 'value' ] );
                                                 $optionLabel = $option->first()[ 'label' ];
                                             }
 

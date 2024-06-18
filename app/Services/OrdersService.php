@@ -1034,13 +1034,13 @@ class OrdersService
          * increase the total with the
          * shipping fees and subtract the discounts
          */
-        $order->total = Currency::define( $order->subtotal )
+        $order->total = Currency::fresh( $order->subtotal )
             ->additionateBy( $order->shipping )
             ->additionateBy(
                 ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )
             )
             ->subtractBy(
-                Currency::define( $order->total_coupons )
+                Currency::fresh( $order->total_coupons )
                     ->additionateBy( $order->discount )
                     ->toFloat()
             )
@@ -1051,7 +1051,7 @@ class OrdersService
         /**
          * compute change
          */
-        $order->change = Currency::define( $order->tendered )
+        $order->change = Currency::fresh( $order->tendered )
             ->subtractBy( $order->total )
             ->toFloat();
 
@@ -1060,7 +1060,7 @@ class OrdersService
          *
          * @todo not accurate
          */
-        $order->total_without_tax = Currency::define( $order->subtotal )
+        $order->total_without_tax = Currency::fresh( $order->subtotal )
             ->subtractBy( $order->discount )
             ->subtractBy( $order->total_coupons )
             ->subtractBy( $order->tax_value )
@@ -1151,7 +1151,7 @@ class OrdersService
 
             if ( $product[ 'product' ] instanceof Product ) {
                 $orderProduct->total_purchase_price = $this->currencyService->define(
-                    $product[ 'total_purchase_price' ] ?? Currency::define( $this->productService->getCogs(
+                    $product[ 'total_purchase_price' ] ?? Currency::fresh( $this->productService->getCogs(
                         product: $product[ 'product' ],
                         unit: $unit
                     ) )
@@ -2146,11 +2146,11 @@ class OrdersService
         /**
          * let's refresh all the order values
          */
-        $order->subtotal = Currency::define( $productTotal )->toFloat();
+        $order->subtotal = Currency::raw( $productTotal );
         $order->total_without_tax = $productPriceWithoutTax;
         $order->total_with_tax = $productPriceWithTax;
         $order->discount = $this->computeOrderDiscount( $order );
-        $order->total = Currency::define( $order->subtotal )
+        $order->total = Currency::fresh( $order->subtotal )
             ->additionateBy( $orderShipping )
             ->additionateBy(
                 ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )
@@ -2162,7 +2162,7 @@ class OrdersService
             )
             ->toFloat();
 
-        $order->change = Currency::define( $order->tendered )->subtractBy( $order->total )->toFloat();
+        $order->change = Currency::fresh( $order->tendered )->subtractBy( $order->total )->toFloat();
 
         $refunds = $order->refunds;
 
@@ -2851,11 +2851,11 @@ class OrdersService
     {
         $totalInstalment = $order->instalments->map( fn( $instalment ) => $instalment->amount )->sum();
 
-        if ( Currency::define( $fields[ 'amount' ] )->toFloat() <= 0 ) {
+        if ( Currency::raw( $fields[ 'amount' ] ) <= 0 ) {
             throw new NotAllowedException( __( 'The defined amount is not valid.' ) );
         }
 
-        if ( Currency::define( $totalInstalment )->toFloat() >= $order->total ) {
+        if ( Currency::raw( $totalInstalment ) >= $order->total ) {
             throw new NotAllowedException( __( 'No further instalments is allowed for this order. The total instalment already covers the order total.' ) );
         }
 

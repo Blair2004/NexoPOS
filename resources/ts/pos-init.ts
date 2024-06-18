@@ -104,7 +104,6 @@ export class POS {
             tax_value: 0,
             products_exclusive_tax_value: 0,
             products_inclusive_tax_value: 0,
-            products_tax_value: 0,
             total_tax_value: 0,
             shipping_rate: 0,
             shipping_type: undefined,
@@ -624,13 +623,6 @@ export class POS {
                 nsHttpClient.get(`/api/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
-                            
-                            /**
-                             * to avoid any confusion on the identifer property, which is ambuigous as 
-                             * being the tax id or the order tax id, we'll rename it by default to tax_id
-                             */
-                            tax.taxes.forEach( tax => tax.tax_id = tax.id )
-
                             order   =   this.computeOrderTaxGroup( order, tax );
     
                             return resolve({
@@ -661,7 +653,7 @@ export class POS {
             ).multiply( 100 ).done();
 
             return {
-                tax_id: _tax.tax_id,
+                id: _tax.id,
                 name: _tax.name,
                 rate: parseFloat(_tax.rate),
                 tax_value: math.chain(
@@ -1087,12 +1079,6 @@ export class POS {
                         this.buildProducts(products);
 
                         await this.selectCustomer(order.customer);
-
-                        /**
-                         * Once the order is loaded, we can let
-                         * any one who needs it know it.
-                         */
-                        nsHooks.doAction( 'ns-after-load-order', order );
 
                         resolve(order);
                     }, 

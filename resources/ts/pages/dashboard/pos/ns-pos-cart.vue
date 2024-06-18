@@ -507,10 +507,8 @@ export default {
                  */
                 POS.order.next({ ...this.order, ...response });
 
-                nsHooks.doAction( 'ns-after-update-order-settings', response );
-
             } catch( exception ) {
-                console.log( exception );
+                // we shouldn't catch any exception here.
             }
         },
 

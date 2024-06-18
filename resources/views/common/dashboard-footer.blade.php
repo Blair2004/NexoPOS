@@ -26,6 +26,22 @@ $json               =   [
 ns.currency         =   <?php echo json_encode( $json );?>;
 ns.authentication   =   <?php echo json_encode( $authentication );?>;
 ns.base_url         =   '{{ url( "/" ) }}';
+
+document.addEventListener( 'DOMContentLoaded', () => {
+    /**
+     * We'll start the Echo configuration
+     * from here as on the bundled file, it stores envronment details.
+     */
+    window.Reverb = new Echo({
+        broadcaster: 'reverb',
+        key: '<?php echo env( 'REVERB_APP_KEY' );?>',
+        wsHost: '<?php echo env( 'REVERB_HOST');?>',
+        wsPort: '<?php echo env( 'REVERB_PORT');?>',
+        wssPort: '<?php echo env( 'REVERB_PORT');?>',
+        forceTLS: <?php echo ( env( 'REVERB_SCHEME' ) ?? 'https') === 'https' ? 'true' : 'false';?>,
+        enabledTransports: ['ws'],
+    });
+});
 </script>
 @vite([ 'resources/ts/bootstrap.ts' ])
 <?php 
