@@ -3,6 +3,7 @@
 namespace App\Broadcasting;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class PrivateChannel
 {
@@ -23,6 +24,6 @@ class PrivateChannel
      */
     public function join( User $user )
     {
-        return true;
+        return ( int ) $user->id === ( int ) Auth::id();
     }
 }

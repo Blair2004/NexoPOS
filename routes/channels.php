@@ -1,5 +1,6 @@
 <?php
 
+use App\Broadcasting\NotificationChannel;
 use App\Broadcasting\PrivateChannel;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -14,4 +15,4 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel( 'ns.private-channel', PrivateChannel::class );
+Broadcast::channel( 'App.User.{id}', PrivateChannel::class );

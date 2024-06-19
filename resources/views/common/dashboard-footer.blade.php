@@ -32,7 +32,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
      * We'll start the Echo configuration
      * from here as on the bundled file, it stores envronment details.
      */
-    window.Reverb = new Echo({
+    window.Echo = new EchoClass({
         broadcaster: 'reverb',
         key: '<?php echo env( 'REVERB_APP_KEY' );?>',
         wsHost: '<?php echo env( 'REVERB_HOST');?>',

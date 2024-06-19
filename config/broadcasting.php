@@ -30,6 +30,22 @@ return [
 
     'connections' => [
 
+        'reverb' => [
+            'driver' => 'reverb',
+            'key' => env('REVERB_APP_KEY'),
+            'secret' => env('REVERB_APP_SECRET'),
+            'app_id' => env('REVERB_APP_ID'),
+            'options' => [
+                'host' => env('REVERB_HOST'),
+                'port' => env('REVERB_PORT', 443),
+                'scheme' => env('REVERB_SCHEME', 'https'),
+                'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
+            ],
+            'client_options' => [
+                'verify'    =>  false
+            ],
+        ],
+
         'pusher' => [
             'driver' => 'pusher',
             'key' => env( 'PUSHER_APP_KEY' ),
@@ -43,8 +59,9 @@ return [
                 'scheme' => env( 'NS_SOCKET_SECURED', false ) ? 'https' : 'http',
                 'encrypted' => env( 'NS_SOCKET_SECURED', false ) ? true : false,
                 'curl_options' => [
-                    CURLOPT_SSL_VERIFYHOST => 0,
-                    CURLOPT_SSL_VERIFYPEER => 0,
+                    CURLOPT_SSL_VERIFYHOST => false,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_CAINFO => env( 'NS_SOCKET_CA', null ),
                 ],
             ],
         ],

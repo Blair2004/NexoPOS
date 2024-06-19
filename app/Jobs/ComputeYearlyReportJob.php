@@ -37,7 +37,7 @@ class ComputeYearlyReportJob implements ShouldQueue
      */
     public function handle( ReportService $reportService, NotificationService $notificationService )
     {
-        $reportService->computeYearReport( $this->year );
+        $reportService->computeYearReport( ( int ) $this->year );
 
         $notificationService->create( [
             'title' => __( 'Report Refreshed' ),

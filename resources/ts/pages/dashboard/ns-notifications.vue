@@ -50,7 +50,8 @@ import nsCloseButton from '~/components/ns-close-button.vue';
 import { nsNumberAbbreviate } from '~/filters/currency';
 import { timespan } from '~/libraries/timespan';
 
-declare const Reverb;
+declare const Echo;
+declare const ns;
 
 export default {
     name: 'ns-notifications',
@@ -72,14 +73,25 @@ export default {
          * if Reverb is connected, there is no need to
          * continusly check for notifications
          */
-        if ( Reverb.connector.pusher.connection.state !== 'connected' ) {
+        if ( ! [ 'connected', 'connecting' ].includes( Echo.connector.pusher.connection.state ) ) {
             this.interval   =   setInterval( () => {
                 this.loadNotifications();
             }, 15000 );
         } else {
             this.interval   =   setInterval( () => {
-                this.socketEnabled  =   Reverb.connector.pusher.connection.state === 'connected';
+                this.socketEnabled  =   Echo.connector.pusher.connection.state === 'connected';
             }, 1000 );
+
+            Echo.private( `App.User.${ns.user.attributes.user_id}` )
+                .listen( 'NotificationUpdatedEvent', ( NotificationUpdatedEvent ) => {
+                    this.pushNotificationIfNew( NotificationUpdatedEvent.notification );
+                })
+                .listen( 'NotificationCreatedEvent', ( NotificationCreatedEvent ) => {
+                    this.pushNotificationIfNew( NotificationCreatedEvent.notification );
+                })
+                .listen( 'NotificationDeletedEvent', ( NotificationDeletedEvent ) => {
+                    this.deleteNotificationIfExists( NotificationDeletedEvent.notification );
+                });
         }
 
         this.loadNotifications();
@@ -95,7 +107,7 @@ export default {
             const exists     =   this.notifications.filter( _notification => _notification.id === notification.id ).length > 0;
 
             if ( ! exists ) {
-                this.notifications.push( notification );
+                this.notifications.unshift( notification );
             }
         },
         deleteNotificationIfExists( notification ) {

@@ -1,5 +1,5 @@
 import * as Lodash from "lodash";
-import Echo from "laravel-echo";
+import EchoClass from "laravel-echo";
 import Pusher from 'pusher-js';
 import axios from "axios";
 import * as ChartJS from "chart.js";
@@ -41,7 +41,7 @@ declare global {
         popupResolver: any,
         popupCloser: any,
         Pusher:any,
-        Echo: any,
+        EchoClass: any,
         timespan: any,
         countdown: any
     }
@@ -67,7 +67,7 @@ window.timespan         =   timespan;
 
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
-window.Echo = Echo;
+window.EchoClass        =   EchoClass;
 
 const nsEvent           =   new EventEmitter;
 const nsHttpClient      =   new HttpClient;

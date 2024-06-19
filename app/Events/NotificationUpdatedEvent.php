@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Notification;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -17,7 +18,7 @@ class NotificationUpdatedEvent implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct( public Notification $notification )
     {
         //
     }
@@ -30,7 +31,7 @@ class NotificationUpdatedEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel( 'ns.private-channel' ),
+            new PrivateChannel( 'App.User.' . $this->notification->user_id ),
         ];
     }
 }
