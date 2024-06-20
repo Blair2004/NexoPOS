@@ -2,6 +2,7 @@
 
 use App\Broadcasting\NotificationChannel;
 use App\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -16,3 +17,4 @@ use Illuminate\Support\Facades\Broadcast;
 */
 
 Broadcast::channel( 'App.User.{id}', PrivateChannel::class );
+Broadcast::channel( 'default-channel', Channel::class );

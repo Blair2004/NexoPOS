@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Order;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -30,6 +31,8 @@ class OrderAfterUpdatedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel( 'ns.private-channel' );
+        return [
+            new Channel( 'default-channel' )
+        ];
     }
 }
