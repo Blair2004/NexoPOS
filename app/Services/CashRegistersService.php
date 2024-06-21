@@ -309,9 +309,9 @@ class CashRegistersService
                  * @todo payment_type_id and payment_id are omitted
                  * as this doesn't result from the order payment records.
                  */
-                $registerHistoryChange->balance_before = $lastRegisterHistory->balance_after;
+                $registerHistoryChange->balance_before = $lastRegisterHistory->balance_after ?? 0;
                 $registerHistoryChange->value = ns()->currency->define( $order->change )->toFloat();
-                $registerHistoryChange->balance_after = ns()->currency->define( $lastRegisterHistory->balance_after )->subtractBy( $order->change )->toFloat();
+                $registerHistoryChange->balance_after = ns()->currency->define( $lastRegisterHistory->balance_after ?? 0 )->subtractBy( $order->change )->toFloat();
                 $registerHistoryChange->register_id = $register->id;
                 $registerHistoryChange->order_id = $order->id;
                 $registerHistoryChange->action = RegisterHistory::ACTION_CASH_CHANGE;
