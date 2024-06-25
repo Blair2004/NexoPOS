@@ -8,7 +8,7 @@ import { BehaviorSubject } from "rxjs";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
 import { Order } from "./interfaces/order";
-import { nsEvent, nsHooks, nsHttpClient, nsNotice, nsSnackBar } from "./bootstrap";
+import { nsHooks, nsHttpClient, nsNotice, nsSnackBar } from "./bootstrap";
 import { PaymentType } from "./interfaces/payment-type";
 import { Payment } from "./interfaces/payment";
 import { Responsive } from "./libraries/responsive";
@@ -51,9 +51,7 @@ const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = defineAsync
 
 declare const systemOptions;
 declare const systemUrls;
-
-declare const systemOptions;
-declare const systemUrls;
+declare const nsEvent;
 
 export class POS {
     private _cartButtons: BehaviorSubject<{ [key: string]: any }>;
@@ -866,56 +864,65 @@ export class POS {
             }
 
             if (!this._isSubmitting) {
-
-                /**
-                 * @todo do we need to set a new value here
-                 * probably the passed value should be send to the server.
-                 */
-                const method = order.id !== undefined ? 'put' : 'post';
-
                 this._isSubmitting = true;
-
-                /**
-                 * We should allow any module to mutate
-                 * the order before it's submitted.
-                 */
-                nsHooks.doAction('ns-order-before-submit', order );
-
-                return nsHttpClient[method](`/api/orders${order.id !== undefined ? '/' + order.id : ''}`, order)
-                    .subscribe({
-                        next: result => {
-                            resolve(result);
-                            this.reset();
-
-                            /**
-                             * will trigger an acction when
-                             * the order has been successfully submitted
-                             */
-                            nsHooks.doAction('ns-order-submit-successful', result);
-
-                            this._isSubmitting = false;
-
-                            /**
-                             * when all this has been executed, we can play
-                             * a sound if it's enabled
-                             */
-                            const url     =   this.options.getValue().ns_pos_complete_sale_audio;
-                            
-                            if ( url.length > 0 ) {
-                                ( new Audio( url ) ).play();
-                            }
-                        },
-                        error: (error: any) => {
-                            this._isSubmitting = false;
-                            reject(error);
-
-                            nsHooks.doAction('ns-order-submit-failed', error);
-                        }
-                    });
+                return this.proceedSubmitting( order, resolve, reject );
             }
 
             return reject({ status: 'error', message: __('An order is currently being processed.') });
         });
+    }
+
+    /**
+     * Will proceed to submit the order directly
+     * @param order Order
+     * @param resolve resolve callback
+     * @param reject reject callback
+     * @returns Subscription
+     */
+    proceedSubmitting( order, resolve, reject ) {
+        /**
+         * @todo do we need to set a new value here
+         * probably the passed value should be send to the server.
+         */
+        const method = order.id !== undefined ? 'put' : 'post';
+
+        /**
+         * We should allow any module to mutate
+         * the order before it's submitted.
+         */
+        nsHooks.doAction('ns-order-before-submit', order );
+
+        return nsHttpClient[method](`/api/orders${order.id !== undefined ? '/' + order.id : ''}`, order)
+            .subscribe({
+                next: result => {
+                    resolve(result);
+                    this.reset();
+
+                    /**
+                     * will trigger an acction when
+                     * the order has been successfully submitted
+                     */
+                    nsHooks.doAction('ns-order-submit-successful', result);
+
+                    this._isSubmitting = false;
+
+                    /**
+                     * when all this has been executed, we can play
+                     * a sound if it's enabled
+                     */
+                    const url     =   this.options.getValue().ns_pos_complete_sale_audio;
+                    
+                    if ( url.length > 0 ) {
+                        ( new Audio( url ) ).play();
+                    }
+                },
+                error: (error: any) => {
+                    this._isSubmitting = false;
+                    reject(error);
+
+                    nsHooks.doAction('ns-order-submit-failed', error);
+                }
+            });
     }
 
     defineQuantities( product, units = [] ) {

@@ -49,6 +49,7 @@ use App\Models\Product;
 use App\Models\ProductHistory;
 use App\Models\ProductSubItem;
 use App\Models\ProductUnitQuantity;
+use App\Models\Register;
 use App\Models\Role;
 use App\Models\Unit;
 use Carbon\Carbon;
@@ -262,17 +263,19 @@ class OrdersService
                         ->whereNotIn( 'id', $tracked )
                         ->first();
 
-                    /**
-                     * We keep a reference to avoid
-                     * having to track that twice.
-                     */
-                    $tracked[] = $payment->id;
-
-                    /**
-                     * let's attach the payment
-                     * id to the instalment.
-                     */
-                    $newInstalment->payment_id = $payment->id ?? null;
+                    if ( $payment instanceof OrderPayment ) {
+                        /**
+                         * We keep a reference to avoid
+                         * having to track that twice.
+                         */
+                        $tracked[] = $payment->id;
+    
+                        /**
+                         * let's attach the payment
+                         * id to the instalment.
+                         */
+                        $newInstalment->payment_id = $payment->id ?? null;
+                    }
                 }
 
                 $newInstalment->amount = $instalment[ 'amount' ];
@@ -314,7 +317,7 @@ class OrdersService
                  * if the minimal provided
                  * amount thoses match the required amount.
                  */
-                if ( $minimal > Currency::raw( $fields[ 'tendered' ] ) ) {
+                if ( $minimal > Currency::raw( $fields[ 'tendered' ] ) && ns()->option->get( 'ns_orders_allow_unpaid' ) === 'no' ) {
                     throw new NotAllowedException(
                         sprintf(
                             __( 'The minimal payment of %s has\'nt been provided.' ),
@@ -799,9 +802,22 @@ class OrdersService
         }
 
         /**
-         * We should check if the order allow instalments.
+         * We want to prevent making payment on register that are closed.
+         * if the cash regsiter feature is enabled.
          */
-        if ( $order->instalments->count() > 0 && $order->support_instalments ) {
+        if ( ns()->option->get( 'ns_pos_registers_enabled', 'no' ) === 'yes' && isset( $payment[ 'register_id' ] ) ) {
+            $register   =   Register::opened()->where( 'id', $payment[ 'register_id' ] )->count();
+
+            if ( $register === 0 ) {
+                throw new NotAllowedException( __( 'Unable to make a payment on a closed cash register.' ) );
+            }
+        }
+
+        /**
+         * We should check if the order allow instalments. This is only done if 
+         * we've enabled strict instalments.
+         */
+        if ( $order->instalments->count() > 0 && $order->support_instalments && ns()->option->get( 'ns_orders_strict_instalments', 'no' ) === true ) {
             $paymentToday = $order->instalments()
                 ->where( 'paid', false )
                 ->where( 'date', '>=', ns()->date->copy()->startOfDay()->toDateTimeString() )
@@ -819,6 +835,8 @@ class OrdersService
          * let's refresh the order to check whether the
          * payment has made the order complete or not.
          */
+        $order->register_id     =   $payment[ 'register_id' ];
+        $order->save();
         $order->refresh();
 
         $this->refreshOrder( $order );

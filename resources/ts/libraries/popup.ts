@@ -17,7 +17,8 @@ export class Popup {
 
     constructor( config: {
         primarySelector?: string,
-        popupClass?: string
+        popupClass?: string,
+        closeOnOverlayClick?: boolean,
     } = {} ) {
         this.config             =   Object.assign( this.config, config );
         
@@ -34,7 +35,7 @@ export class Popup {
 
     static show( component, params = {}, config = {}) {
         const popup     =   new Popup( config );
-        return popup.open( component, params );
+        return popup.open( component, params, config );
     }
 
     private hash() {

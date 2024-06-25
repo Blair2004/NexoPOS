@@ -155,7 +155,7 @@ export default {
         },
     },
     unmounted() {
-        this.subscription.unsubscribe();
+        // ...
     },
     methods: {
         __,

@@ -49,7 +49,9 @@ export default {
                 try {
                     const response  =   await new Promise( ( resolve, reject ) => {
                         if ( this.settings.register === undefined ) {
-                            return Popup.show( nsPosCashRegistersPopupVue, { resolve, reject });
+                            return Popup.show( nsPosCashRegistersPopupVue, { resolve, reject }, {
+                                closeOnOverlayClick: false
+                            });
                         }
 
                         resolve({ data: { register: this.settings.register } });

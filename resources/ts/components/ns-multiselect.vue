@@ -40,10 +40,11 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { __ } from '~/libraries/lang';
-import { remove } from 'lodash';
-import { nsEvent } from './../bootstrap';
+
+declare const nsEvent;
+
 export default {
     data() {
         return {

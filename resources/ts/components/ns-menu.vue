@@ -23,8 +23,9 @@
         </ul>
     </div>
 </template>
-<script>
-import { nsEvent } from './../bootstrap';
+<script lang="ts">
+declare const nsEvent;
+
 export default {
     data: () => {
         return {

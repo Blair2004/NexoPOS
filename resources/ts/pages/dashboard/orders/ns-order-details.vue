@@ -28,7 +28,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start elevation-surface border">
                         <div>
-                            <h4 class="text-semibold text-primary">{{ __( 'Shipping' ) }}</h4>
+                            <span class="text-semibold text-primary">{{ __( 'Shipping' ) }}</span>
                         </div>
                         <div class="font-semibold text-secondary">{{ nsCurrency( order.shipping ) }}</div>
                     </div>
@@ -36,9 +36,9 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start text-primary elevation-surface error border">
                         <div>
-                            <h4 class="text-semibold">
+                            <span class="text-semibold">
                                 {{ __( 'Coupons' ) }}
-                            </h4>
+                            </span>
                         </div>
                         <div class="font-semibold text-primary">{{ nsCurrency( order.total_coupons ) }}</div>
                     </div>
@@ -46,7 +46,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start border ns-notice success">
                         <div>
-                            <h4 class="text-semibold">{{ __( 'Total' ) }}</h4>
+                            <span class="text-semibold">{{ __( 'Total' ) }}</span>
                         </div>
                         <div class="font-semibold text-primary">{{ nsCurrency( order.total ) }}</div>
                     </div>
@@ -54,7 +54,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start text-primary elevation-surface info border">
                         <div>
-                            <h4 class="text-semibold">{{ __( 'Taxes' ) }}</h4>
+                            <span class="text-semibold">{{ __( 'Taxes' ) }}</span>
                         </div>
                         <div class="font-semibold">{{ nsCurrency( order.tax_value ) }}</div>
                     </div>
@@ -62,7 +62,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start text-primary elevation-surface error border">
                         <div>
-                            <h4 class="text-semibold">{{ __( 'Change' ) }}</h4>
+                            <span class="text-semibold">{{ __( 'Change' ) }}</span>
                         </div>
                         <div class="font-semibold">{{ nsCurrency( order.change ) }}</div>
                     </div>
@@ -70,7 +70,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start elevation-surface border">
                         <div>
-                            <h4 class="text-semibold">{{ __( 'Paid' ) }}</h4>
+                            <span class="text-semibold">{{ __( 'Paid' ) }}</span>
                         </div>
                         <div class="font-semibold">{{ nsCurrency( order.tendered ) }}</div>
                     </div>

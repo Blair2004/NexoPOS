@@ -15,7 +15,7 @@
         <div class="flex flex-col overflow-y-auto h-120">
             <template v-for="history of cashRegisterReport.history">
                 <div :key="history.id" v-if="[ 'register-sale' ].includes( history.action )"  class="flex border-b elevation-surface success">
-                    <div class="p-2 flex-auto">{{ history.description }}</div>
+                    <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
                 <div :key="history.id" v-if="[ 'register-cash-in' ].includes( history.action )"  class="flex border-b elevation-surface success">

@@ -746,6 +746,7 @@ trait WithOrderTest
         $orderService->makeOrderSinglePayment( [
             'identifier' => OrderPayment::PAYMENT_CASH,
             'value' => $response[ 'data' ][ 'order' ][ 'total' ],
+            'register_id'   =>  $order->register_id
         ], $order );
 
         /**

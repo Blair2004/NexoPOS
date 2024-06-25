@@ -53,6 +53,16 @@ return SettingForm::tabs(
                     'no' => __( 'No' ),
                 ] ),
             ),
+            FormInput::switch(
+                label: __( 'Strict Instalments' ),
+                name: 'ns_orders_strict_instalments',
+                value: ns()->option->get( 'ns_orders_strict_instalments' ),
+                description: __( 'Will enforce instalment to be paid on specific date.' ),
+                options: Helper::kvToJsOptions( [
+                    'yes' => __( 'Yes' ),
+                    'no' => __( 'No' ),
+                ] ),
+            ),
             FormInput::select(
                 label: __( 'Quotation Expiration' ),
                 name: 'ns_orders_quotation_expiration',

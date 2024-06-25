@@ -345,8 +345,11 @@
             @apply bg-tab-active;
             ul li {
                 @apply bg-tab-active-border text-primary;
-                button {
+                button.error {
                     @apply bg-error-tertiary text-white;
+                }
+                button.default {
+                    @apply bg-gray-700 text-white;
                 }
             }
         }

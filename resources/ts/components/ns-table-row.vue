@@ -68,10 +68,13 @@
         </td>
     </tr>
 </template>
-<script>
-import { nsEvent, nsHttpClient, nsSnackBar } from "~/bootstrap";
+<script lang="ts">
+import { nsHttpClient, nsSnackBar } from "~/bootstrap";
 import { __ } from '~/libraries/lang';
 import NsPosConfirmPopup from "~/popups/ns-pos-confirm-popup.vue";
+
+declare const nsEvent;
+
 export default {
     props: [
         'options', 'row', 'columns', 'prependOptions', 'showOptions', 'showCheckboxes'
@@ -152,6 +155,9 @@ export default {
                     }
                 });
             } else {
+                /**
+                 * why using nsEvent instead of nsHooks ?
+                 */
                 nsEvent.emit({
                     identifier: 'ns-table-row-action',
                     value: { action, row: this.row, component : this }

@@ -334,8 +334,11 @@
             @apply bg-tab-active;
             ul li {
                 @apply bg-input-button text-primary;
-                button {
-                    @apply bg-error-primary text-white;
+                button.error {
+                    @apply bg-error-tertiary text-white;
+                }
+                button.default {
+                    @apply bg-gray-600 text-white;
                 }
             }
         }

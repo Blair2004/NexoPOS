@@ -43,7 +43,6 @@
     </div>
 </template>
 <script lang="ts">
-import { nsEvent, nsHttpClient } from '~/bootstrap';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import nsPosOrderProductsPopupVue from './ns-pos-order-products-popup.vue';
 import nsPosPendingOrders from './ns-pos-pending-orders.vue';
@@ -51,7 +50,7 @@ import { __ } from '~/libraries/lang';
 import popupResolver from '~/libraries/popup-resolver';
 import popupCloser from '~/libraries/popup-closer';
 
-declare const POS, Popup;
+declare const POS, Popup, nsEvent, nsHttpClient;
 
 export default {
     props: [ 'popup' ],

@@ -1,66 +1,64 @@
 <template>
-    <div class="">
-        <div class="flex -mx-4 flex-wrap">
-            <div class="px-2 w-full md:w-1/2">
-                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center elevation-surface info border text-xl font-bold">
-                    <span>{{ __( 'Total' ) }}</span>
-                    <span>{{ nsCurrency( order.total ) }}</span>
-                </div>
-            </div>
-            <div class="px-2 w-full md:w-1/2">
-                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface success border text-xl font-bold">
-                    <span>{{ __( 'Paid' ) }}</span>
-                    <span>{{ nsCurrency( order.tendered ) }}</span>
-                </div>
-            </div>
-            <div class="px-2 w-full md:w-1/2">
-                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface error border text-xl font-bold">
-                    <span>{{ __( 'Unpaid' ) }}</span>
-                    <span v-if="order.total - order.tendered > 0">{{ nsCurrency( order.total - order.tendered ) }}</span>
-                    <span v-if="order.total - order.tendered <= 0">{{ nsCurrency( 0 ) }}</span>
-                </div>
-            </div>
-            <div class="px-2 w-full md:w-1/2">
-                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface warning border text-xl font-bold">
-                    <span>{{ __( 'Customer Account' ) }}</span>
-                    <span>{{ nsCurrency( order.customer.account_amount ) }}</span>
-                </div>
+    <div class="flex -mx-4 flex-wrap">
+        <div class="px-2 w-full md:w-1/2">
+            <div class="my-1 h-12 py-1 px-2 flex justify-between items-center elevation-surface info border text-xl font-bold">
+                <span>{{ __( 'Total' ) }}</span>
+                <span>{{ nsCurrency( order.total ) }}</span>
             </div>
         </div>
-        <div class="flex -mx-4 flex-wrap">
-            <div class="px-2 w-full mb-4 md:w-1/2">
-                <div v-if="order.payment_status !== 'paid'">
-                    <h3 class="font-semibold border-b-2 border-info-primary py-2">
-                        {{ __( 'Payment' ) }}
-                    </h3>
-                    <div class="py-2">
-                        <ns-field v-for="(field, index) of fields" :field="field" :key="index"></ns-field>
-                        <div class="my-2 px-2 h-12 flex justify-end items-center border elevation-surface">
-                            {{ nsCurrency( inputValue ) }}
-                        </div>
-                        <ns-numpad-plus :floating="true" @next="submitPayment( $event )" @changed="updateValue( $event )" :value="inputValue"></ns-numpad-plus>
-                    </div>
-                </div>
-                <div v-if="order.payment_status === 'paid'" class="flex items-center justify-center h-full">
-                    <h3 class="text-primary font-semibold">{{ __( 'No payment possible for paid order.' ) }}</h3>
-                </div>
+        <div class="px-2 w-full md:w-1/2">
+            <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface success border text-xl font-bold">
+                <span>{{ __( 'Paid' ) }}</span>
+                <span>{{ nsCurrency( order.tendered ) }}</span>
             </div>
-            <div class="px-2 w-full mb-4 md:w-1/2">
-                <h3 class="font-semibold border-b-2 border-info-primary py-2 mb-2">
-                    {{ __( 'Payment History' ) }}
+        </div>
+        <div class="px-2 w-full md:w-1/2">
+            <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface error border text-xl font-bold">
+                <span>{{ __( 'Unpaid' ) }}</span>
+                <span v-if="order.total - order.tendered > 0">{{ nsCurrency( order.total - order.tendered ) }}</span>
+                <span v-if="order.total - order.tendered <= 0">{{ nsCurrency( 0 ) }}</span>
+            </div>
+        </div>
+        <div class="px-2 w-full md:w-1/2">
+            <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface warning border text-xl font-bold">
+                <span>{{ __( 'Customer Account' ) }}</span>
+                <span>{{ nsCurrency( order.customer.account_amount ) }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="flex -mx-4 flex-wrap">
+        <div class="px-2 w-full mb-4 md:w-1/2">
+            <div v-if="order.payment_status !== 'paid'">
+                <h3 class="font-semibold border-b-2 border-info-primary py-2">
+                    {{ __( 'Payment' ) }}
                 </h3>
-                <ul>
-                    <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite border elevation-surface mb-2">
-                        <span class="flex items-center">
-                            <a href="javascript:void(0)" @click="printPaymentReceipt( payment )" class="m-1 rounded-full hover:bg-info-tertiary hover:text-white flex items-center justify-center h-8 w-8">
-                                <i class="las la-print"></i>
-                            </a>
-                            {{ paymentsLabels[ payment.identifier ] || __( 'Unknown' ) }}
-                        </span>
-                        <span>{{ nsCurrency( payment.value ) }}</span>
-                    </li>
-                </ul>
+                <div class="py-2">
+                    <ns-field v-for="(field, index) of fields" :field="field" :key="index"></ns-field>
+                    <div class="my-2 px-2 h-12 flex justify-end items-center border elevation-surface">
+                        {{ nsCurrency( inputValue ) }}
+                    </div>
+                    <ns-numpad-plus :floating="true" @next="submitPayment( $event )" @changed="updateValue( $event )" :value="inputValue"></ns-numpad-plus>
+                </div>
             </div>
+            <div v-if="order.payment_status === 'paid'" class="flex items-center justify-center h-full">
+                <h3 class="text-primary font-semibold">{{ __( 'No payment possible for paid order.' ) }}</h3>
+            </div>
+        </div>
+        <div class="px-2 w-full mb-4 md:w-1/2">
+            <h3 class="font-semibold border-b-2 border-info-primary py-2 mb-2">
+                {{ __( 'Payment History' ) }}
+            </h3>
+            <ul>
+                <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite border elevation-surface mb-2">
+                    <span class="flex items-center">
+                        <a href="javascript:void(0)" @click="printPaymentReceipt( payment )" class="m-1 rounded-full hover:bg-info-tertiary hover:text-white flex items-center justify-center h-8 w-8">
+                            <i class="las la-print"></i>
+                        </a>
+                        {{ paymentsLabels[ payment.identifier ] || __( 'Unknown' ) }}
+                    </span>
+                    <span>{{ nsCurrency( payment.value ) }}</span>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -74,7 +72,7 @@ import { nsCurrency } from '~/filters/currency';
 import { nsNumpad } from '~/components/components';
 import Print from '~/libraries/print';
 
-declare const systemUrls, systemOptions, paymentTypes;
+declare const systemUrls, systemOptions, paymentTypes, Popup;
 
 export default {
     props: [ 'order' ],
