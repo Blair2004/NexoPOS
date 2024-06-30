@@ -1399,13 +1399,11 @@ export class POS {
         }
 
         if ( taxType === 'exclusive' ) {
-            order.total     =   +(
-                ( order.subtotal + ( order.shipping ||0) + tax_value ) - order.discount - order.total_coupons
-            ).toFixed( ns.currency.ns_currency_precision );
+            const op1 = math.chain( order.subtotal ).add( order.shipping || 0 ).add( tax_value ).done();
+            order.total     =   math.chain( op1 ).subtract( order.discount ).subtract( order.total_coupons ).done();
         } else {
-            order.total     =   +(
-                ( order.subtotal + ( order.shipping ||0) ) - order.discount - order.total_coupons
-            ).toFixed( ns.currency.ns_currency_precision );
+            const op1 = math.chain( order.subtotal ).add( order.shipping || 0 ).done();
+            order.total     =   math.chain( op1 ).subtract( order.discount ).subtract( order.total_coupons ).done();
         }
 
         this.order.next(order);

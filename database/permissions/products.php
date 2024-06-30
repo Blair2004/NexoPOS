@@ -27,6 +27,12 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $product->description = __( 'Let the user read products' );
     $product->save();
 
+    $product = Permission::firstOrNew( [ 'namespace' => 'nexopos.convert.products-units' ] );
+    $product->name = __( 'Convert Products Units' );
+    $product->namespace = 'nexopos.convert.products-units';
+    $product->description = __( 'Let the user convert products' );
+    $product->save();
+
     $product = Permission::firstOrNew( [ 'namespace' => 'nexopos.read.products-history' ] );
     $product->name = __( 'Read Product History' );
     $product->namespace = 'nexopos.read.products-history';

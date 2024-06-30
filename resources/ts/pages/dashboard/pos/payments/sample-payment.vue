@@ -221,7 +221,7 @@ export default {
                     this.backValue      =   '0';
                     this.allSelected    =   false;
                 } else {
-                    this.backValue      =   this.backValue.substr( 1 );
+                    this.backValue      =   this.backValue.slice(0, -1);
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
                 if ( this.allSelected ) {
