@@ -73,7 +73,7 @@ export default {
          * if Reverb is connected, there is no need to
          * continusly check for notifications
          */
-        if ( ! [ 'connected', 'connecting' ].includes( Echo.connector.pusher.connection.state ) ) {
+        if ( Echo === undefined || ! [ 'connected', 'connecting' ].includes( Echo.connector.pusher.connection.state ) ) {
             this.interval   =   setInterval( () => {
                 this.loadNotifications();
             }, 15000 );

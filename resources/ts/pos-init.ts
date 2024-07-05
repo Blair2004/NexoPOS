@@ -749,7 +749,8 @@ export class POS {
     canProceedAsLaidAway(_order: Order): { status: string, message: string, data: { order: Order } } | any {
         return new Promise(async (resolve, reject) => {
             const minimalPaymentPercent = _order.customer.group.minimal_credit_payment;
-            let expected: any = ((_order.total * minimalPaymentPercent) / 100).toFixed(ns.currency.ns_currency_precision);
+            const firstPart     =   math.chain( _order.total ).multiply( minimalPaymentPercent ).done();
+            let expected: any = math.chain( firstPart ).divide( 100 ).done();
             expected = parseFloat(expected);
 
             /**

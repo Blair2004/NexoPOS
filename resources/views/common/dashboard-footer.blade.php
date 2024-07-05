@@ -26,7 +26,9 @@ $json               =   [
 ns.currency         =   <?php echo json_encode( $json );?>;
 ns.authentication   =   <?php echo json_encode( $authentication );?>;
 ns.base_url         =   '{{ url( "/" ) }}';
-
+</script>
+@if( env( 'BROADCAST_DRIVER' ) === 'reverb' )
+<script>
 document.addEventListener( 'DOMContentLoaded', () => {
     /**
      * We'll start the Echo configuration
@@ -43,6 +45,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
     });
 });
 </script>
+@endif
 @vite([ 'resources/ts/bootstrap.ts' ])
 <?php 
     $output     =   new Output;

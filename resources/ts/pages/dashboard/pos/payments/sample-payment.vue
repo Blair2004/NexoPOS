@@ -165,6 +165,7 @@ export default {
             }
         },
         makeFullPayment() {
+            const order     =   POS.order.getValue();
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Confirm Full Payment' ),
                 message: __( 'A full payment will be made using {paymentType} for {total}' )
