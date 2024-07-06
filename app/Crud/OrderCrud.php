@@ -10,6 +10,7 @@ use App\Casts\OrderPaymentCast;
 use App\Casts\OrderProcessCast;
 use App\Casts\OrderTypeCast;
 use App\Classes\CrudTable;
+use App\Exceptions\NotAllowedException;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Register;
@@ -430,19 +431,14 @@ class OrderCrud extends CrudService
      */
     public function bulkAction( Request $request )
     {
-        /**
-         * Deleting licence is only allowed for admin
-         * and supervisor.
-         */
-        $user = app()->make( UsersService::class );
-        if ( ! $user->is( [ 'admin', 'supervisor' ] ) ) {
-            return response()->json( [
-                'status' => 'error',
-                'message' => __( 'You\'re not allowed to do this operation' ),
-            ], 403 );
-        }
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException( __( 'Deleting has been explicitely disabled on this component.' ) );
+            }
+
             $status = [
                 'success' => 0,
                 'error' => 0,

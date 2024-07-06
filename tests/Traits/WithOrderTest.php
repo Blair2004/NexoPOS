@@ -752,7 +752,9 @@ trait WithOrderTest
         /**
          * Making assertions
          */
-        $cashRegisterHistory = RegisterHistory::where( 'register_id', $cashRegister->id )->orderBy( 'id', 'desc' )->first();
+        $cashRegisterHistory = RegisterHistory::where( 'register_id', $cashRegister->id )
+            ->where( 'action', RegisterHistory::ACTION_SALE )
+            ->orderBy( 'id', 'desc' )->first();
 
         $this->assertTrue(
             ns()->currency->define( $cashRegisterHistory->value )->toFloat() === $order->total,

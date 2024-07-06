@@ -652,6 +652,7 @@ export class POS {
 
             return {
                 id: _tax.id,
+                tax_id : _tax.tax_id,
                 name: _tax.name,
                 rate: parseFloat(_tax.rate),
                 tax_value: math.chain(

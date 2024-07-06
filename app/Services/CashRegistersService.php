@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Exceptions\NotAllowedException;
 use App\Models\Order;
 use App\Models\OrderPayment;
@@ -234,9 +235,13 @@ class CashRegistersService
              * The customer wallet shouldn't be counted as
              * a payment that goes into the cash register.
              */
+            $allowedPaymentIdentifiers = Hook::filter( 'ns-registers-allowed-payments-type', [
+                OrderPayment::PAYMENT_CASH
+            ]);
+
             $payments = $order->payments()
                 ->with( 'type' )
-                ->where( 'identifier', '<>', OrderPayment::PAYMENT_ACCOUNT )
+                ->whereIn( 'identifier', $allowedPaymentIdentifiers )
                 ->get();
 
             /**
