@@ -1050,7 +1050,7 @@ class CrudService
          * In case nothing handle this crud
          */
         if ( ! class_exists( $crudClass ) ) {
-            throw new Exception( __( 'Unhandled crud resource' ) );
+            throw new Exception( sprintf( __( 'Unhandled crud resource "%s"' ), $crudClass ) );
         }
 
         return new $crudClass;

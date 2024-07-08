@@ -5,7 +5,6 @@ namespace App\Crud;
 use App\Exceptions\NotAllowedException;
 use App\Models\Tax;
 use App\Models\TaxGroup;
-use App\Models\User;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;

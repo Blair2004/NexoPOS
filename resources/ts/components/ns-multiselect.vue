@@ -86,6 +86,7 @@ export default {
     methods: {
         __,
         togglePanel() {
+            console.log( this );
             if ( ! this.field.disabled ) {
                 this.showPanel = !this.showPanel;
             }
