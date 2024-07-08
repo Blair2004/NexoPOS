@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\NewFeature;
 
 use App\Models\User;
@@ -42,7 +43,7 @@ class AuthenticationTest extends TestCase
         $response->assertStatus( 200 );
 
         /**
-         * Step 2: we'll disable the registration and 
+         * Step 2: we'll disable the registration and
          * assert it can't be accessed
          */
         ns()->option->set( 'ns_registration_enabled', 'no' );
@@ -51,7 +52,7 @@ class AuthenticationTest extends TestCase
 
         /**
          * Step 3: we'll force submit post data
-         * to see wether it the registration is 
+         * to see wether it the registration is
          * not disabled
          */
         $username = $this->fakeUsername();
@@ -76,7 +77,7 @@ class AuthenticationTest extends TestCase
     public function testCanSeeRecoveryPage()
     {
         /**
-         * Step 1: assert when recovery is enabled, the 
+         * Step 1: assert when recovery is enabled, the
          * password recovery can be seen
          */
         ns()->option->set( 'ns_recovery_enabled', 'yes' );
@@ -109,10 +110,10 @@ class AuthenticationTest extends TestCase
 
     public function testCannotLoginIfAccountInactive()
     {
-        $password   =   '123456';
+        $password = '123456';
         $user = User::first();
         $user->active = false;
-        $user->password     =   Hash::make( $password );
+        $user->password = Hash::make( $password );
         $user->save();
 
         $response = $this
@@ -121,7 +122,7 @@ class AuthenticationTest extends TestCase
             ->post(
                 '/auth/sign-in', [
                     'username' => $user->username,
-                    'password' => $password
+                    'password' => $password,
                 ]
             );
 

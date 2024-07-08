@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\CustomerAccountHistory;
-use App\Models\Expense;
 use App\Models\Order;
 use App\Models\PaymentType;
 use App\Models\Procurement;
@@ -121,7 +120,7 @@ class CreateUserTest extends TestCase
      */
     public function test_delete_users()
     {
-        Role::whereNotIn( 'namespace', [ Role::ADMIN ])->get()->map( function ( Role $role ) {
+        Role::whereNotIn( 'namespace', [ Role::ADMIN ] )->get()->map( function ( Role $role ) {
             $role->users()->limit( 1 )->get()->each( function ( User $user ) {
                 $this->attemptAuthenticate( $user );
 

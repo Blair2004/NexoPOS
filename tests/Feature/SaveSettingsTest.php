@@ -48,7 +48,7 @@ class SaveSettingsTest extends TestCase
                                 if ( $field[ 'type' ] === 'select' && ! empty( $field[ 'options' ] ) ) {
                                     $rawField = collect( $field[ 'options' ] )->random();
                                 }
-                                
+
                                 return [
                                     $field[ 'name' ] => match ( $field[ 'name' ] ) {
                                         'ns_store_language' => 'en',

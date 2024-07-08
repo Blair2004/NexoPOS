@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Jobs\ComputeDayReportJob;
 use App\Jobs\IncreaseCashierStatsJob;

@@ -147,13 +147,14 @@ class TaxesController extends DashboardController
 
         $taxGroup->load( 'taxes' );
 
-        $taxArray   =   $taxGroup->toArray();
+        $taxArray = $taxGroup->toArray();
 
-        $taxArray[ 'taxes' ] = collect( $taxGroup[ 'taxes' ] )->map( function( $tax ) {
+        $taxArray[ 'taxes' ] = collect( $taxGroup[ 'taxes' ] )->map( function ( $tax ) {
             $tax[ 'tax_id' ] = $tax[ 'id' ];
             unset( $tax[ 'id' ] );
+
             return $tax;
-        });
+        } );
 
         return $taxArray;
     }

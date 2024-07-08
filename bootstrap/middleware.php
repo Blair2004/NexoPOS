@@ -6,7 +6,7 @@
 /**
  * We'll list here all aliased middleware.
  */
-$middleware->alias([
+$middleware->alias( [
     'ns.not-installed' => \App\Http\Middleware\NotInstalledStateMiddleware::class,
     'ns.installed' => \App\Http\Middleware\InstalledStateMiddleware::class,
     'ns.clear-cache' => \App\Http\Middleware\ClearRequestCacheMiddleware::class,
@@ -23,12 +23,12 @@ $middleware->alias([
     'ns.check-migrations' => \App\Http\Middleware\CheckMigrationStatus::class,
     'ns.check-application-health' => \App\Http\Middleware\CheckApplicationHealthMiddleware::class,
     'ns.sanitize-inputs' => \App\Http\Middleware\SanitizePostFieldsMiddleware::class,
-]);
+] );
 
 /**
  * We'll now register middlewaregroups
  */
-$middleware->group('web', [
+$middleware->group( 'web', [
     \App\Http\Middleware\EncryptCookies::class,
     \App\Http\Middleware\KillSessionIfNotInstalledMiddleware::class,
     \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
@@ -37,13 +37,13 @@ $middleware->group('web', [
     \Illuminate\View\Middleware\ShareErrorsFromSession::class,
     \App\Http\Middleware\VerifyCsrfToken::class,
     \App\Http\Middleware\LoadLangMiddleware::class,
-]);
+] );
 
 /**
  * We'll now register the api middleware group
  */
-$middleware->group('api', [
+$middleware->group( 'api', [
     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
     \App\Http\Middleware\LoadLangMiddleware::class,
     \App\Http\Middleware\ThrottleMiddelware::class . ':80,1',
-]);
+] );

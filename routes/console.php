@@ -89,7 +89,7 @@ Schedule::job( new TrackLaidAwayOrdersJob )->dailyAt( '13:00' );
  * We'll check if there is a ProductHistoryCombined that was generated
  * during the current day. If it's not the case, we'll create one.
  */
-Schedule::job( new EnsureCombinedProductHistoryExistsJob() )->hourly();
+Schedule::job( new EnsureCombinedProductHistoryExistsJob )->hourly();
 
 /**
  * We'll clear temporary files weekly. This will erase folder that

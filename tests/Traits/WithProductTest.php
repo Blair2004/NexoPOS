@@ -280,7 +280,7 @@ trait WithProductTest
                     'unit_quantity_id' => $unitQuantityID,
                     'product_id' => $product->id,
                     'unit_id' => $unitQuantity->unit->id,
-                    'quantity' => $faker->numberBetween(1,3),
+                    'quantity' => $faker->numberBetween( 1, 3 ),
                     'sale_price' => $unitQuantity->sale_price,
                 ];
             } )

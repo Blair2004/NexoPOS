@@ -56,7 +56,7 @@ class CrudPostRequest extends BaseCrudRequest
     public function attributes()
     {
         return [
-            'general.email' =>  __( 'Email' ),
+            'general.email' => __( 'Email' ),
         ];
     }
 }

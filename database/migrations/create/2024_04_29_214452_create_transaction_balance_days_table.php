@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::createIfMissing('nexopos_transactions_balance_days', function (Blueprint $table) {
+        Schema::createIfMissing( 'nexopos_transactions_balance_days', function ( Blueprint $table ) {
             $table->id();
-            $table->float( 'opening_balance' )->default(0);
-            $table->float( 'income' )->default(0);
-            $table->float( 'expense' )->default(0);
-            $table->float( 'closing_balance' )->default(0);
+            $table->float( 'opening_balance' )->default( 0 );
+            $table->float( 'income' )->default( 0 );
+            $table->float( 'expense' )->default( 0 );
+            $table->float( 'closing_balance' )->default( 0 );
             $table->date( 'date' )->nullable();
             $table->timestamps();
-        });
+        } );
     }
 
     /**
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nexopos_transactions_balance_days');
+        Schema::dropIfExists( 'nexopos_transactions_balance_days' );
     }
 };

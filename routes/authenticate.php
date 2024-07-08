@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\PasswordRecoveryMiddleware;
 use App\Http\Middleware\RegistrationMiddleware;
-use App\Http\Middleware\SanitizePostFieldsMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '/sign-in', [ AuthController::class, 'signIn' ] )->name( ns()->routeName( 'ns.login' ) );

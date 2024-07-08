@@ -282,7 +282,7 @@ class UnitService
                 ->define( $from->value )
                 ->multipliedBy( $quantity )
                 ->toFloat()
-            )
+        )
             ->dividedBy( $to->value )
             ->toFloat();
     }

@@ -8,7 +8,6 @@ use App\Services\DemoService;
 use App\Services\ResetService;
 use Database\Seeders\DefaultSeeder;
 use Database\Seeders\FirstDemoSeeder;
-use Exception;
 use Illuminate\Http\Request;
 
 class ResetController extends DashboardController

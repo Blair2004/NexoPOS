@@ -22,9 +22,9 @@ class Notification extends NsModel
 
     protected $table = 'nexopos_notifications';
 
-    protected $dispatchesEvents    =   [
-        'created'   =>  NotificationCreatedEvent::class,
-        'updated'   =>  NotificationUpdatedEvent::class
+    protected $dispatchesEvents = [
+        'created' => NotificationCreatedEvent::class,
+        'updated' => NotificationUpdatedEvent::class,
     ];
 
     protected $casts = [

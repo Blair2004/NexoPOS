@@ -3,7 +3,7 @@
 use App\Classes\Hook;
 use App\Services\Helper;
 
-$tags   =   [
+$tags = [
     __( 'Available tags : ' ) . '<br>' .
     __( '{store_name}: displays the store name.' ),
     __( '{store_email}: displays the store email.' ),
@@ -87,13 +87,13 @@ return [
             'type' => 'textarea',
             'name' => 'ns_invoice_receipt_column_a',
             'value' => ns()->option->get( 'ns_invoice_receipt_column_a' ),
-            'description' => join( '<br/>', Hook::filter( 'ns-receipts-settings-tags', $tags ) ),
+            'description' => implode( '<br/>', Hook::filter( 'ns-receipts-settings-tags', $tags ) ),
         ], [
             'label' => __( 'Column B' ),
             'type' => 'textarea',
             'name' => 'ns_invoice_receipt_column_b',
             'value' => ns()->option->get( 'ns_invoice_receipt_column_b' ),
-            'description' => join( '<br/>', Hook::filter( 'ns-receipts-settings-tags', $tags ) ),
+            'description' => implode( '<br/>', Hook::filter( 'ns-receipts-settings-tags', $tags ) ),
         ],
     ],
 ];

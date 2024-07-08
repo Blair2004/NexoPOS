@@ -1,6 +1,5 @@
 <?php
 
-use App\Broadcasting\NotificationChannel;
 use App\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Support\Facades\Broadcast;

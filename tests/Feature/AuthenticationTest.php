@@ -242,7 +242,7 @@ class AuthenticationTest extends TestCase
          */
         ns()->option->set( 'ns_registration_enabled', 'yes' );
 
-        $signUpDetails  =   [
+        $signUpDetails = [
             'username' => $this->fakeUsername(),
             'password' => $password,
             'password_confirm' => $password . 'not-the-same',
@@ -262,7 +262,7 @@ class AuthenticationTest extends TestCase
             ->post(
                 '/auth/sign-up', $signUpDetails
             );
-        
+
         $response->assertRedirect( ns()->route( 'ns.register' ) );
         $response->assertSessionHasErrors( [
             'password_confirm' => 'The password confirm field must match password.',

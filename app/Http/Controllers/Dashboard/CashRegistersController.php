@@ -19,7 +19,6 @@ use App\Models\RegisterHistory;
 use App\Services\CashRegistersService;
 use App\Services\DateService;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -142,14 +141,14 @@ class CashRegistersController extends DashboardController
                  * @var Builder
                  */
                 $historyRequest = $register->history()
-                    ->select([
+                    ->select( [
                         '*',
                         'nexopos_registers_history.description as description',
-                    ])
+                    ] )
                     ->leftJoin( 'nexopos_payments_types', 'nexopos_registers_history.payment_type_id', '=', 'nexopos_payments_types.id' )
                     ->where( 'nexopos_registers_history.id', '>=', $lastOpening->id );
 
-                $history =  $historyRequest->get();
+                $history = $historyRequest->get();
                 $history->each( function ( $session ) {
                     switch ( $session->action ) {
                         case RegisterHistory::ACTION_CASHIN:
@@ -173,66 +172,66 @@ class CashRegistersController extends DashboardController
                     }
                 } );
 
-                $totalDisbursement  =   $history->where( 'action', RegisterHistory::ACTION_CASHOUT )->sum( 'value' );
-                $totalCashIn        =   $history->where( 'action', RegisterHistory::ACTION_CASHIN )->sum( 'value' );
+                $totalDisbursement = $history->where( 'action', RegisterHistory::ACTION_CASHOUT )->sum( 'value' );
+                $totalCashIn = $history->where( 'action', RegisterHistory::ACTION_CASHIN )->sum( 'value' );
 
-                $cashPayment    =   PaymentType::identifier( OrderPayment::PAYMENT_CASH )->first();
-                $totalOpening   =   $lastOpening->value;
-                $totalCashPayment   =   $history->where( 'action', RegisterHistory::ACTION_SALE )
+                $cashPayment = PaymentType::identifier( OrderPayment::PAYMENT_CASH )->first();
+                $totalOpening = $lastOpening->value;
+                $totalCashPayment = $history->where( 'action', RegisterHistory::ACTION_SALE )
                     ->where( 'payment_type_id', $cashPayment->id )
                     ->sum( 'value' );
-                    
-                $totalCashChange    =   $history->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
 
-                $totalPaymentTypeSummary    =   $historyRequest
+                $totalCashChange = $history->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
+
+                $totalPaymentTypeSummary = $historyRequest
                     ->whereIn( 'action', [
                         RegisterHistory::ACTION_SALE,
-                        RegisterHistory::ACTION_CASH_CHANGE
-                    ])
-                    ->select([
+                        RegisterHistory::ACTION_CASH_CHANGE,
+                    ] )
+                    ->select( [
                         DB::raw( 'SUM(value) as value' ),
                         'nexopos_payments_types.label as label',
                         'action',
                         'nexopos_registers_history.description as description',
-                    ])
-                    ->groupBy([ 'action', 'nexopos_payments_types.label', 'description' ])
+                    ] )
+                    ->groupBy( [ 'action', 'nexopos_payments_types.label', 'description' ] )
                     ->get()
                     ->map( function ( $group ) {
                         $color = 'info';
 
                         if ( $group->action === RegisterHistory::ACTION_CASH_CHANGE ) {
-                            $label  =   __( 'Cash Change' );
-                            $color  =   'error';
-                        } else if ( $group->action === RegisterHistory::ACTION_SALE ) {
-                            $color  =   'success';
+                            $label = __( 'Cash Change' );
+                            $color = 'error';
+                        } elseif ( $group->action === RegisterHistory::ACTION_SALE ) {
+                            $color = 'success';
                         }
-                        
+
                         return [
-                            'label'         =>  sprintf( __( 'Total %s' ), $group->label ?: $label ),
-                            'value'         =>  $group->value,
-                            'color'         =>  $color
+                            'label' => sprintf( __( 'Total %s' ), $group->label ?: $label ),
+                            'value' => $group->value,
+                            'color' => $color,
                         ];
                     } );
 
-                $summary    =   [
+                $summary = [
                     [
-                        'label'         =>  __( 'Initial Balance' ),
-                        'value'         =>  $totalOpening, 
-                        'color'         =>  'warning',
-                    ], 
+                        'label' => __( 'Initial Balance' ),
+                        'value' => $totalOpening,
+                        'color' => 'warning',
+                    ],
                     ...$totalPaymentTypeSummary,
                     [
-                        'label'         =>  __( 'On Hand' ),
-                        'value'         =>  ns()->currency->define( $totalOpening )
+                        'label' => __( 'On Hand' ),
+                        'value' => ns()->currency->define( $totalOpening )
                             ->additionateBy( $totalCashPayment )
                             ->additionateBy( $totalCashIn )
-                            ->subtractBy( 
+                            ->subtractBy(
                                 ns()->currency->define( $totalCashChange )
                                     ->additionateBy( $totalDisbursement )
                                     ->toFloat()
-                            )->toFloat(), 
-                        'color'         =>  'info',
-                    ], 
+                            )->toFloat(),
+                        'color' => 'info',
+                    ],
                 ];
 
                 return compact(

@@ -28,7 +28,7 @@ class CheckMathLibraryTest extends TestCase
                 ->toFloat(),
             (float) 3.066666667
         );
-        
+
         $this->assertEquals(
             ns()->currency->define( 0.1 )
                 ->additionateBy( 0.2 )
@@ -53,13 +53,13 @@ class CheckMathLibraryTest extends TestCase
         ns()->option->set( 'ns_currency_precision', 0 );
 
         $this->assertEquals(
-            ( string ) ns()->currency->define( 0.2 )
+            (string) ns()->currency->define( 0.2 )
                 ->subtractBy( 0.1 ),
             ns()->currency->define( '0' )->format()
         );
 
         $this->assertEquals(
-            ( string ) ns()->currency->define( 0.6 )
+            (string) ns()->currency->define( 0.6 )
                 ->subtractBy( 0.1 ),
             ns()->currency->define( '1' )->format()
         );
@@ -67,7 +67,7 @@ class CheckMathLibraryTest extends TestCase
         ns()->option->set( 'ns_currency_precision', 0 );
 
         $this->assertEquals(
-            ( string ) ns()->currency->define( 5.25 )
+            (string) ns()->currency->define( 5.25 )
                 ->subtractBy( 3.75 ),
             ns()->currency->define( '2' )->format()
         );
@@ -75,9 +75,9 @@ class CheckMathLibraryTest extends TestCase
         ns()->option->set( 'ns_currency_precision', 1 );
 
         $this->assertEquals(
-            ( string ) ns()->currency->define( 5.25 )
+            (string) ns()->currency->define( 5.25 )
                 ->subtractBy( 3.75 ),
-            ns()->currency->define('1.5')->format()
+            ns()->currency->define( '1.5' )->format()
         );
     }
 }

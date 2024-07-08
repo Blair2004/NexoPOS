@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class RedirectIfAuthenticated
 {
     use NsMiddlewareArgument;
-    
+
     /**
      * Handle an incoming request.
      *

@@ -19,16 +19,16 @@ class CreateOrderOnRegister extends TestCase
     public function test_create_order_on_register()
     {
         $this->attemptAuthenticate();
-        $this->attemptCreateOrderOnRegister([
-            'payments'  =>  function( $details ) {
+        $this->attemptCreateOrderOnRegister( [
+            'payments' => function ( $details ) {
                 return [
                     [
-                        'value'         =>  $details[ 'subtotal' ] * 2,
-                        'identifier'    =>  OrderPayment::PAYMENT_CASH,
-                    ]
+                        'value' => $details[ 'subtotal' ] * 2,
+                        'identifier' => OrderPayment::PAYMENT_CASH,
+                    ],
                 ];
-            }
-        ]);
+            },
+        ] );
     }
 
     public function test_update_order_on_register()

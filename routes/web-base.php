@@ -22,11 +22,11 @@ Route::middleware( [ 'web' ] )->group( function () {
 
 require dirname( __FILE__ ) . '/intermediate.php';
 
-Route::middleware([
+Route::middleware( [
     InstalledStateMiddleware::class,
     CheckMigrationStatus::class,
     SubstituteBindings::class,
-])->group( function () {
+] )->group( function () {
     /**
      * We would like to isolate certain routes as it's registered
      * for authentication and are likely to be applicable to sub stores

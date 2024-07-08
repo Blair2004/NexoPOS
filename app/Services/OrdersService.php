@@ -269,7 +269,7 @@ class OrdersService
                          * having to track that twice.
                          */
                         $tracked[] = $payment->id;
-    
+
                         /**
                          * let's attach the payment
                          * id to the instalment.
@@ -806,7 +806,7 @@ class OrdersService
          * if the cash regsiter feature is enabled.
          */
         if ( ns()->option->get( 'ns_pos_registers_enabled', 'no' ) === 'yes' && isset( $payment[ 'register_id' ] ) ) {
-            $register   =   Register::opened()->where( 'id', $payment[ 'register_id' ] )->count();
+            $register = Register::opened()->where( 'id', $payment[ 'register_id' ] )->count();
 
             if ( $register === 0 ) {
                 throw new NotAllowedException( __( 'Unable to make a payment on a closed cash register.' ) );
@@ -814,7 +814,7 @@ class OrdersService
         }
 
         /**
-         * We should check if the order allow instalments. This is only done if 
+         * We should check if the order allow instalments. This is only done if
          * we've enabled strict instalments.
          */
         if ( $order->instalments->count() > 0 && $order->support_instalments && ns()->option->get( 'ns_orders_strict_instalments', 'no' ) === true ) {
@@ -835,7 +835,7 @@ class OrdersService
          * let's refresh the order to check whether the
          * payment has made the order complete or not.
          */
-        $order->register_id     =   $payment[ 'register_id' ];
+        $order->register_id = $payment[ 'register_id' ];
         $order->save();
         $order->refresh();
 
@@ -941,8 +941,8 @@ class OrdersService
         } )->sum() )->toFloat();
 
         $total = $this->currencyService->define(
-                $subtotal + $this->__getShippingFee( $fields )
-            )
+            $subtotal + $this->__getShippingFee( $fields )
+        )
             ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->toFloat();
@@ -1173,10 +1173,10 @@ class OrdersService
                         product: $product[ 'product' ],
                         unit: $unit
                     ) )
-                    ->multipliedBy( $product[ 'quantity' ] )
-                    ->toFloat()
+                        ->multipliedBy( $product[ 'quantity' ] )
+                        ->toFloat()
                 )
-                ->toFloat();
+                    ->toFloat();
             }
 
             $this->computeOrderProduct( $orderProduct );
@@ -1449,7 +1449,7 @@ class OrdersService
             isset( $fields[ 'discount_type' ] ) &&
             $fields[ 'discount_type' ] === 'percentage' ) {
 
-            $fields[ 'discount' ] = ( $fields[ 'discount' ] ?? 
+            $fields[ 'discount' ] = ( $fields[ 'discount' ] ??
                 ns()->currency->define(
                     ns()->currency->define(
                         ns()->currency->define( $sale_price )->multiplyBy( $fields[ 'discount_percentage' ] )->toFloat()
@@ -1472,8 +1472,8 @@ class OrdersService
                     price: $sale_price
                 )
             )
-            ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
-            ->toFloat();
+                ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
+                ->toFloat();
         }
 
         /**
@@ -1649,7 +1649,7 @@ class OrdersService
         $fields[ 'discount' ] = $fields[ 'discount' ] ?? $order->discount ?? 0;
 
         if ( ! empty( $fields[ 'discount_type' ] ) && ! empty( $fields[ 'discount_percentage' ] ) && $fields[ 'discount_type' ] === 'percentage' ) {
-            return $this->currencyService->define( 
+            return $this->currencyService->define(
                 ns()->currency->define( $fields[ 'subtotal' ] )->multiplyBy( $fields[ 'discount_percentage' ] )->toFloat()
             )->dividedBy( 100 )->toFloat();
         } else {
@@ -1890,7 +1890,7 @@ class OrdersService
         $productRefund->total_price = $this->currencyService
             ->define( $productRefund->unit_price )->multipliedBy( $details[ 'quantity' ] )
             ->toFloat();
-      
+
         $productRefund->quantity = $details[ 'quantity' ];
         $productRefund->author = Auth::id();
         $productRefund->order_id = $order->id;
@@ -1979,7 +1979,7 @@ class OrdersService
     public function computeDiscountValues( $rate, $value )
     {
         if ( $rate > 0 ) {
-            return ns()->currency->define( 
+            return ns()->currency->define(
                 ns()->currency->define( $value )->multiplyBy( $rate )->toFloat()
             )->divideBy( 100 )->toFloat();
         }
@@ -2285,7 +2285,7 @@ class OrdersService
         $orderArray = $order->toArray();
         $order->delete();
 
-        OrderAfterDeletedEvent::dispatch( ( object ) $orderArray );
+        OrderAfterDeletedEvent::dispatch( (object) $orderArray );
 
         return [
             'status' => 'success',
@@ -2688,10 +2688,10 @@ class OrdersService
      */
     public function getSoldStock( $startDate, $endDate, $categories = [], $units = [] )
     {
-        $selectedColumns    =   [ 'product_id', 'name', 'unit_name', 'unit_price', 'quantity', 'total_purchase_price', 'tax_value', 'total_price' ];
-        $groupColumns    =   [ 'product_id', 'unit_id', 'name', 'unit_name' ];
-        $selectedColumns    =   [ 
-            ...$groupColumns, 
+        $selectedColumns = [ 'product_id', 'name', 'unit_name', 'unit_price', 'quantity', 'total_purchase_price', 'tax_value', 'total_price' ];
+        $groupColumns = [ 'product_id', 'unit_id', 'name', 'unit_name' ];
+        $selectedColumns = [
+            ...$groupColumns,
             DB::raw( 'SUM(quantity) as quantity' ),
             DB::raw( 'SUM(tax_value) as tax_value' ),
             DB::raw( 'SUM(total_purchase_price) as total_purchase_price' ),
@@ -2703,10 +2703,10 @@ class OrdersService
         $products = OrderProduct::whereHas( 'order', function ( Builder $query ) {
             $query->where( 'payment_status', Order::PAYMENT_PAID );
         } )
-        ->select( $selectedColumns )
-        ->groupByRaw( join( ', ', $groupColumns ) )
-        ->where( 'created_at', '>=', $rangeStarts )
-        ->where( 'created_at', '<=', $rangeEnds );
+            ->select( $selectedColumns )
+            ->groupByRaw( implode( ', ', $groupColumns ) )
+            ->where( 'created_at', '>=', $rangeStarts )
+            ->where( 'created_at', '<=', $rangeEnds );
 
         if ( ! empty( $categories ) ) {
             $products->whereIn( 'product_category_id', $categories );

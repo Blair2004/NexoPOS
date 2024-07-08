@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use Illuminate\Console\Events\CommandFinished;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Cache;
 
 class CommandFinishedListener
@@ -20,7 +18,7 @@ class CommandFinishedListener
     /**
      * Handle the event.
      */
-    public function handle( CommandFinished $event): void
+    public function handle( CommandFinished $event ): void
     {
         /**
          * because if we're running the reset from the command line

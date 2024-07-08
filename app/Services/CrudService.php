@@ -178,7 +178,7 @@ class CrudService
      * Store relations that should be joined to every
      * request made to the database using the model provided
      */
-    protected $relations    =   [];
+    protected $relations = [];
 
     /**
      * Keeps the table name for the provided model

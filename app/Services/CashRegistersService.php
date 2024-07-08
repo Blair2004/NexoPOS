@@ -236,8 +236,8 @@ class CashRegistersService
              * a payment that goes into the cash register.
              */
             $allowedPaymentIdentifiers = Hook::filter( 'ns-registers-allowed-payments-type', [
-                OrderPayment::PAYMENT_CASH
-            ]);
+                OrderPayment::PAYMENT_CASH,
+            ] );
 
             $payments = $order->payments()
                 ->with( 'type' )
@@ -248,7 +248,7 @@ class CashRegistersService
              * We'll only track on that cash register
              * payment that was recorded on the current register
              */
-            $registerHistories    =   $payments->map( function ( OrderPayment $payment ) use ( $order, $register ) {
+            $registerHistories = $payments->map( function ( OrderPayment $payment ) use ( $order, $register ) {
                 if ( in_array( $payment->identifier, [ OrderPayment::PAYMENT_CASH, OrderPayment::PAYMENT_BANK ] ) ) {
                     $action = RegisterHistory::ACTION_SALE;
                 } elseif ( in_array( $payment->identifier, [ OrderPayment::PAYMENT_ACCOUNT ] ) ) {
@@ -262,7 +262,7 @@ class CashRegistersService
                 if ( $action === null ) {
                     return;
                 }
-                
+
                 $isRecorded = RegisterHistory::where( 'order_id', $order->id )
                     ->where( 'payment_id', $payment->id )
                     ->where( 'register_id', $register->id )
@@ -296,13 +296,13 @@ class CashRegistersService
 
             /**
              * if the order has a change, we'll pull a register history stored as change
-             * otherwise we'll create it. 
-             * 
-             * @todo we're forced to write down this snippet as the payments doesn't 
+             * otherwise we'll create it.
+             *
+             * @todo we're forced to write down this snippet as the payments doesn't
              * yet support change as a (negative) payment.
              */
             if ( $order->change > 0 ) {
-                $lastRegisterHistory    =   $registerHistories->last();
+                $lastRegisterHistory = $registerHistories->last();
 
                 $registerHistoryChange = RegisterHistory::where( 'order_id', $order->id )
                     ->where( 'register_id', $register->id )
@@ -332,6 +332,7 @@ class CashRegistersService
      * Listen to order created and
      * will update the cash register if any order
      * is marked as paid.
+     *
      * @deprecated ?
      */
     public function createRegisterHistoryFromPaidOrder( Order $order ): void

@@ -36,14 +36,14 @@ trait WithReportTest
 
     protected function attemptLoadReports()
     {
-        $reports    =   [
+        $reports = [
             /**
              * for the annual report
              */
             [
-                'url'   =>  'annual-report',
-                'data'  =>  [
-                    'year'  =>  now()->format( 'Y' )
+                'url' => 'annual-report',
+                'data' => [
+                    'year' => now()->format( 'Y' ),
                 ],
             ],
 
@@ -51,38 +51,38 @@ trait WithReportTest
              * This combines all sale-report reports variations.
              */
             [
-                'url'   =>  'sale-report',
-                'data'  =>  [
+                'url' => 'sale-report',
+                'data' => [
                     'startDate' => now()->startOfDay()->toDateTimeString(),
                     'endDate' => now()->endOfDay()->toDateTimeString(),
                     'type' => 'products_report',
                     'user_id' => Auth::id(),
-                    'categories_id' => [ ProductCategory::first()->id ]
+                    'categories_id' => [ ProductCategory::first()->id ],
                 ],
             ],
             [
-                'url'   =>  'sale-report',
-                'data'  =>  [
+                'url' => 'sale-report',
+                'data' => [
                     'startDate' => now()->startOfDay()->toDateTimeString(),
                     'endDate' => now()->endOfDay()->toDateTimeString(),
                     'type' => 'categories_report',
                     'user_id' => Auth::id(),
-                    'categories_id' => [ ProductCategory::first()->id ]
+                    'categories_id' => [ ProductCategory::first()->id ],
                 ],
             ],
             [
-                'url'   =>  'sale-report',
-                'data'  =>  [
+                'url' => 'sale-report',
+                'data' => [
                     'startDate' => now()->startOfDay()->toDateTimeString(),
                     'endDate' => now()->endOfDay()->toDateTimeString(),
                     'type' => 'categories_summary',
                     'user_id' => Auth::id(),
-                    'categories_id' => [ ProductCategory::first()->id ]
+                    'categories_id' => [ ProductCategory::first()->id ],
                 ],
-            ]
+            ],
         ];
 
-        foreach( $reports as $report ) {
+        foreach ( $reports as $report ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/reports/' . $report[ 'url' ], $report[ 'data' ] );
 

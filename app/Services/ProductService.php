@@ -2107,14 +2107,13 @@ class ProductService
      * Get the product using the provided SKU
      * or throw an exception if the product
      * doesn't exist.
-     * 
-     * @param string $sku
-     * @param int $limit
-     * @param array $arguments
+     *
+     * @param  string  $sku
      * @return Product
+     *
      * @throws NotFoundException
      */
-    public function searchProduct( null | string $search, int $limit = 5, array $arguments = [] )
+    public function searchProduct( ?string $search, int $limit = 5, array $arguments = [] )
     {
         /**
          * @var Builder $query

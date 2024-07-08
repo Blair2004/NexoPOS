@@ -16,14 +16,14 @@ class AccountingSettings extends SettingsPage
 
     public function __construct()
     {
-        $debitAccounts  =   TransactionAccount::debit()->get()->map( function ( $account ) {
+        $debitAccounts = TransactionAccount::debit()->get()->map( function ( $account ) {
             return [
                 'label' => $account->name,
                 'value' => $account->id,
             ];
         } );
 
-        $creditAccount  =   TransactionAccount::credit()->get()->map( function ( $account ) {
+        $creditAccount = TransactionAccount::credit()->get()->map( function ( $account ) {
             return [
                 'label' => $account->name,
                 'value' => $account->id,
@@ -43,14 +43,14 @@ class AccountingSettings extends SettingsPage
                     identifier: 'cash-registers',
                     label: __( 'Cash Register' ),
                     fields: SettingForm::fields(
-                        FormInput::multiselect( 
+                        FormInput::multiselect(
                             label: __( 'Allowed Cash In Account' ),
                             name: 'ns_accounting_cashin_accounts',
                             description: __( 'Define on which accounts cashin transactions are allowed' ),
                             options: $creditAccount,
                             value: ns()->option->get( 'ns_accounting_cashin_accounts' ),
                         ),
-                        FormInput::multiselect( 
+                        FormInput::multiselect(
                             label: __( 'Allowed Cash Out Account' ),
                             name: 'ns_accounting_cashout_accounts',
                             description: __( 'Define on which accounts cashout transactions are allowed' ),

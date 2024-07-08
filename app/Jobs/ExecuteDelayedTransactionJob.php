@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\Role;
-use App\Models\Transaction;
 use App\Models\TransactionHistory;
 use App\Services\DateService;
 use App\Services\NotificationService;

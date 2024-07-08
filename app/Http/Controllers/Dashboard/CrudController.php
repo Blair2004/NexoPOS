@@ -295,7 +295,8 @@ class CrudController extends DashboardController
 
             /**
              * @since 4.4.3
-             * @todo it's no use providing compact( 'model' ) as a second parameter, if it's 
+             *
+             * @todo it's no use providing compact( 'model' ) as a second parameter, if it's
              * for providing only one parameter. We should directly pass the model.
              */
             $form = Hook::filter( get_class( $resource )::method( 'getForm' ), $form, compact( 'model' ) );

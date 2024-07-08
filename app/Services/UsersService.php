@@ -250,8 +250,8 @@ class UsersService
         return [
             'status' => 'success',
             'message' => __( 'The role has been cloned.' ),
-            'data'  =>  [
-                'role'  =>  $newRole,
+            'data' => [
+                'role' => $newRole,
             ],
         ];
     }

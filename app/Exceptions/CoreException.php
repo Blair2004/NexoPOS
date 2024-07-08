@@ -2,9 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Services\Helper;
 use Exception;
-use Illuminate\Http\Request;
 
 class CoreException extends Exception
 {

@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         if ( Schema::hasTable( 'nexopos_transactions_histories' ) ) {
-            Schema::table( 'nexopos_transactions_histories', function( Blueprint $table ) {
+            Schema::table( 'nexopos_transactions_histories', function ( Blueprint $table ) {
                 if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'type' ) ) {
                     $table->string( 'type' )->nullable();
                 }
@@ -24,13 +24,13 @@ return new class extends Migration
                 if ( Schema::hasColumn( 'nexopos_transactions_histories', 'status' ) ) {
                     $table->string( 'status' )->default( TransactionHistory::STATUS_PENDING )->change();
                 }
-            });
+            } );
 
-            TransactionHistory::query()->update([
-                'trigger_date'  =>  ns()->date->toDateTimeString(),
-                'status'        =>  TransactionHistory::STATUS_ACTIVE,
-                'type'          =>  Transaction::TYPE_DIRECT
-            ]);
+            TransactionHistory::query()->update( [
+                'trigger_date' => ns()->date->toDateTimeString(),
+                'status' => TransactionHistory::STATUS_ACTIVE,
+                'type' => Transaction::TYPE_DIRECT,
+            ] );
         }
     }
 

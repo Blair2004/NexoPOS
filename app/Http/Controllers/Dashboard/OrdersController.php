@@ -303,7 +303,7 @@ class OrdersController extends DashboardController
         return $this->ordersService->makeOrderSinglePayment( [
             'identifier' => $request->input( 'identifier' ),
             'value' => $request->input( 'value' ),
-            'register_id' => $request->input( 'register_id' )
+            'register_id' => $request->input( 'register_id' ),
         ], $order );
     }
 

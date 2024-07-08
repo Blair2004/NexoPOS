@@ -4,13 +4,13 @@ use App\Classes\FormInput;
 use App\Classes\SettingForm;
 use App\Services\Helper;
 
-$options     =   collect( [ 3, 5, 10, 15, 30 ] )->mapWithKeys( function ( $days ) {
+$options = collect( [ 3, 5, 10, 15, 30 ] )->mapWithKeys( function ( $days ) {
     return [
         $days => sprintf( __( '%s Days' ), $days ),
     ];
 } )->toArray();
 
-$expirationOptions  =   Helper::kvToJsOptions( $options );
+$expirationOptions = Helper::kvToJsOptions( $options );
 
 array_unshift( $expirationOptions, [
     'value' => 'never',

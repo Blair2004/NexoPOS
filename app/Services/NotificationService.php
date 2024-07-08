@@ -2,11 +2,7 @@
 
 namespace App\Services;
 
-use App\Events\NotificationCreatedEvent;
-use App\Events\NotificationDeletedEvent;
-use App\Events\NotificationDispatchedEvent;
 use App\Models\Notification;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Exception;
@@ -59,17 +55,17 @@ class NotificationService
      */
     public function dispatchForPermissions( array $permissions ): void
     {
-        $roles = Role::whereHas('permissions', function ($query) use ($permissions) {
-            $query->whereIn('namespace', $permissions);
-        })->get();
-    
-        $uniqueRoles = $roles->unique('id');
-    
-        if ($uniqueRoles->isEmpty()) {
-            Log::alert('A notification was dispatched for permissions that aren\'t assigned.', $permissions);
+        $roles = Role::whereHas( 'permissions', function ( $query ) use ( $permissions ) {
+            $query->whereIn( 'namespace', $permissions );
+        } )->get();
+
+        $uniqueRoles = $roles->unique( 'id' );
+
+        if ( $uniqueRoles->isEmpty() ) {
+            Log::alert( 'A notification was dispatched for permissions that aren\'t assigned.', $permissions );
         }
-    
-        $this->dispatchForGroup($uniqueRoles);
+
+        $this->dispatchForGroup( $uniqueRoles );
     }
 
     /**

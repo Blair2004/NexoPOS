@@ -6,7 +6,6 @@ use App\Models\Transaction;
 use App\Services\DateService;
 use App\Services\TransactionService;
 use App\Traits\NsSerialize;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -35,10 +34,10 @@ class ProcessTransactionJob implements ShouldQueue
     {
         if ( in_array( $this->transaction->type, [
             Transaction::TYPE_SCHEDULED,
-            Transaction::TYPE_ENTITY
-        ]) ) {
+            Transaction::TYPE_ENTITY,
+        ] ) ) {
             $this->handlePrepareScheduledAndEntityTransaction( $transactionService, $dateService );
-        } else if ( $this->transaction->type === Transaction::TYPE_DIRECT ) {
+        } elseif ( $this->transaction->type === Transaction::TYPE_DIRECT ) {
             $this->handleDirectTransaction( $transactionService, $dateService );
         }
     }

@@ -45,14 +45,14 @@ class ProcessProductHistoryCombinedByChunkJob implements ShouldQueue
                      */
                     $lastProductHistory->whereDate( 'created_at', '>', Carbon::parse( $this->date )->toDateTimeString() );
                 }
-                
-                $lastProductHistory     =   $lastProductHistory->first();
+
+                $lastProductHistory = $lastProductHistory->first();
 
                 if ( $lastProductHistory instanceof ProductHistory ) {
                     $reportService->prepareProductHistoryCombinedHistory( $lastProductHistory )->save();
                     $reportService->computeProductHistoryCombinedForWholeDay( $lastProductHistory );
                 }
-            });
+            } );
         } );
     }
 }

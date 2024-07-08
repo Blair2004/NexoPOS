@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Classes;
 
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
@@ -61,13 +62,13 @@ class ModuleRouting
 
     public static function mapModuleWebRoutes( $module )
     {
-        Route::middleware( [ 
-            'web', 
-            InstalledStateMiddleware::class, 
-            CheckApplicationHealthMiddleware::class, 
+        Route::middleware( [
+            'web',
+            InstalledStateMiddleware::class,
+            CheckApplicationHealthMiddleware::class,
             CheckMigrationStatus::class ] )
-                ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
-                ->group( $module[ 'routes-file' ] );
+            ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
+            ->group( $module[ 'routes-file' ] );
     }
 
     public static function mapModuleApiRoutes( $module )

@@ -18,10 +18,10 @@ trait App
     public static function installed()
     {
         if ( ! Cache::has( 'ns-core-installed' ) ) {
-            Cache::set( 'ns-core-installed', ( bool ) self::checkDatabaseExistence(), 60 );
+            Cache::set( 'ns-core-installed', (bool) self::checkDatabaseExistence(), 60 );
         }
-        
-        return ( bool ) Cache::get( 'ns-core-installed' );
+
+        return (bool) Cache::get( 'ns-core-installed' );
     }
 
     private static function checkDatabaseExistence()

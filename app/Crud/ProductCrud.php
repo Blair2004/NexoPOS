@@ -396,7 +396,7 @@ class ProductCrud extends CrudService
                                     'description' => __( 'What unit group applies to the actual item. This group will apply during the procurement.' ),
                                     'label' => __( 'Unit Group' ),
                                     'validation' => 'required',
-                                    'props' =>  UnitGroupCrud::getFormConfig(),
+                                    'props' => UnitGroupCrud::getFormConfig(),
                                     'component' => 'nsCrudForm',
                                     'value' => $entry->unit_group ?? ( ! $groups->isEmpty() ? $groups->first()->id : '' ),
                                 ], [

@@ -452,7 +452,7 @@ class TransactionCrud extends CrudService
      * Bulk Delete Action
      *
      * @param    object Request with object
-     * @return  false|bool
+     * @return false|bool
      */
     public function bulkAction( Request $request )
     {

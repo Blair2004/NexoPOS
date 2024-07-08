@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Classes\Currency;
 use App\Classes\Hook;
 use App\Jobs\EnsureCombinedProductHistoryExistsJob;
+use App\Models\ActiveTransactionHistory;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\DashboardDay;
@@ -16,7 +17,6 @@ use App\Models\ProductHistory;
 use App\Models\ProductHistoryCombined;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
-use App\Models\ActiveTransactionHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -410,8 +410,7 @@ class ReportService
     /**
      * This return the year report
      *
-     * @param  int $year
-     * @return array  $reports
+     * @return array $reports
      */
     public function getYearReportFor( int $year )
     {
@@ -822,11 +821,11 @@ class ReportService
         /**
          * That will sum all the total prices
          */
-        $result    =   $categories->map( function ( $category ) use ( $products ) {
-            $categoryWithProducts   =   [...$category->toArray()];
+        $result = $categories->map( function ( $category ) use ( $products ) {
+            $categoryWithProducts = [...$category->toArray()];
 
             $rawProducts = collect( $products->where( 'product_category_id', $category->id )->all() )->values();
-            $mergedProducts     =   [];
+            $mergedProducts = [];
 
             /**
              * this will merge similar products
@@ -846,7 +845,7 @@ class ReportService
                         'discount' => $product->discount,
                         'total_price' => $product->total_price,
                         'total_purchase_price' => $product->total_purchase_price,
-                        'name'  =>  $product->name,
+                        'name' => $product->name,
                         'product_id' => $product->product_id,
                         'unit_id' => $product->unit_id,
                     ] );
@@ -861,7 +860,7 @@ class ReportService
             $categoryWithProducts[ 'total_purchase_price' ] = collect( $mergedProducts )->sum( 'total_purchase_price' );
 
             return $categoryWithProducts;
-        });
+        } );
 
         return compact( 'result', 'summary' );
     }
@@ -1127,63 +1126,61 @@ class ReportService
 
     /**
      * Will compute the product history combined for the whole day
-     * @param ProductHistory $productHistory
-     * @return ProductHistoryCombined
      */
     public function computeProductHistoryCombinedForWholeDay( ProductHistory $productHistory ): ProductHistoryCombined
     {
-        $startOfDay    =   Carbon::parse( $productHistory->created_at )->startOfDay();
-        $endOfDay       =   Carbon::parse( $productHistory->created_at )->endOfDay();
+        $startOfDay = Carbon::parse( $productHistory->created_at )->startOfDay();
+        $endOfDay = Carbon::parse( $productHistory->created_at )->endOfDay();
 
-        $initialQuantity    =   0;
+        $initialQuantity = 0;
 
-        $previousProductHistory     =   ProductHistoryCombined::where( 'date', '<', $startOfDay->toDateTimeString() )
+        $previousProductHistory = ProductHistoryCombined::where( 'date', '<', $startOfDay->toDateTimeString() )
             ->where( 'product_id', $productHistory->product_id )
             ->where( 'unit_id', $productHistory->unit_id )
             ->orderBy( 'date', 'desc' )
             ->first();
 
         if ( $previousProductHistory ) {
-            $initialQuantity    =   $previousProductHistory->final_quantity;
+            $initialQuantity = $previousProductHistory->final_quantity;
         }
 
-        $addedQuantity      =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_ADDED )
+        $addedQuantity = ProductHistory::where( 'operation_type', ProductHistory::ACTION_ADDED )
             ->where( 'product_id', $productHistory->product_id )
             ->where( 'unit_id', $productHistory->unit_id )
             ->where( 'created_at', '>=', $startOfDay->toDateTimeString() )
             ->where( 'created_at', '<=', $endOfDay->toDateTimeString() )
             ->sum( 'quantity' );
 
-        $defectiveQuantity  =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_DEFECTIVE )
+        $defectiveQuantity = ProductHistory::where( 'operation_type', ProductHistory::ACTION_DEFECTIVE )
             ->where( 'product_id', $productHistory->product_id )
             ->where( 'unit_id', $productHistory->unit_id )
             ->where( 'created_at', '>=', $startOfDay->toDateTimeString() )
             ->where( 'created_at', '<=', $endOfDay->toDateTimeString() )
             ->sum( 'quantity' );
 
-        $soldQuantity   =   ProductHistory::where( 'operation_type', ProductHistory::ACTION_SOLD )
+        $soldQuantity = ProductHistory::where( 'operation_type', ProductHistory::ACTION_SOLD )
             ->where( 'product_id', $productHistory->product_id )
             ->where( 'unit_id', $productHistory->unit_id )
             ->where( 'created_at', '>=', $startOfDay->toDateTimeString() )
             ->where( 'created_at', '<=', $endOfDay->toDateTimeString() )
             ->sum( 'quantity' );
 
-        $finalQuantity  =   $initialQuantity + $addedQuantity - $defectiveQuantity - $soldQuantity;
+        $finalQuantity = $initialQuantity + $addedQuantity - $defectiveQuantity - $soldQuantity;
 
         $productHistoryCombined = ProductHistoryCombined::where( 'date', $startOfDay->format( 'Y-m-d' ) )
             ->where( 'product_id', $productHistory->product_id )
             ->where( 'unit_id', $productHistory->unit_id )
             ->firstOrNew();
 
-        $productHistoryCombined->final_quantity     =   $finalQuantity;
-        $productHistoryCombined->initial_quantity   =   $initialQuantity;
-        $productHistoryCombined->procured_quantity  =   $addedQuantity;
-        $productHistoryCombined->defective_quantity =   $defectiveQuantity;
-        $productHistoryCombined->sold_quantity      =   $soldQuantity;
-        $productHistoryCombined->product_id         =   $productHistory->product_id;
-        $productHistoryCombined->unit_id            =   $productHistory->unit_id;
-        $productHistoryCombined->name               =   $productHistory->product->name;
-        $productHistoryCombined->date               =   $startOfDay->format( 'Y-m-d' );
+        $productHistoryCombined->final_quantity = $finalQuantity;
+        $productHistoryCombined->initial_quantity = $initialQuantity;
+        $productHistoryCombined->procured_quantity = $addedQuantity;
+        $productHistoryCombined->defective_quantity = $defectiveQuantity;
+        $productHistoryCombined->sold_quantity = $soldQuantity;
+        $productHistoryCombined->product_id = $productHistory->product_id;
+        $productHistoryCombined->unit_id = $productHistory->unit_id;
+        $productHistoryCombined->name = $productHistory->product->name;
+        $productHistoryCombined->date = $startOfDay->format( 'Y-m-d' );
         $productHistoryCombined->save();
 
         return $productHistoryCombined;

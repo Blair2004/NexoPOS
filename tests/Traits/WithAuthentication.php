@@ -2,7 +2,6 @@
 
 namespace Tests\Traits;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Laravel\Sanctum\Sanctum;
@@ -21,8 +20,8 @@ trait WithAuthentication
 
     protected function attemptGetAnyUserFromRole( $name = 'admin' )
     {
-        return User::whereHas( 'roles', function( Builder $query ) use ( $name ) {
+        return User::whereHas( 'roles', function ( Builder $query ) use ( $name ) {
             $query->where( 'namespace', $name );
-        })->get()->random();
+        } )->get()->random();
     }
 }

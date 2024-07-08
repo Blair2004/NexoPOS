@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class NsRestrictMiddleware
 {
     use NsMiddlewareArgument;
-    
+
     /**
      * Handle an incoming request.
      *
@@ -22,7 +22,7 @@ class NsRestrictMiddleware
             return $next( $request );
         }
 
-        $message    = sprintf(
+        $message = sprintf(
             __( 'Your don\'t have enough permission ("%s") to perform this action.' ),
             $permission
         );

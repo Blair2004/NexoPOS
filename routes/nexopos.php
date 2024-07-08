@@ -5,7 +5,7 @@ use App\Http\Middleware\NsRestrictMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '', [ DashboardController::class, 'home' ] )->name( ns()->routeName( 'ns.dashboard.home' ) )
-    ->middleware([ NsRestrictMiddleware::arguments( 'read.dashboard' )]);
+    ->middleware( [ NsRestrictMiddleware::arguments( 'read.dashboard' )] );
 
 include dirname( __FILE__ ) . '/web/orders.php';
 include dirname( __FILE__ ) . '/web/medias.php';

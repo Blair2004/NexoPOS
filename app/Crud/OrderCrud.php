@@ -19,7 +19,6 @@ use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\OrdersService;
-use App\Services\UsersService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use TorMorten\Eventy\Facades\Events as Hook;

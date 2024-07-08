@@ -72,7 +72,7 @@ class TransactionsHistoryCrud extends CrudService
      */
     public $relations = [
         'leftJoin' => [
-            [ 'nexopos_transactions as transaction', 'transaction.id', '=', 'nexopos_transactions_histories.transaction_id' ]
+            [ 'nexopos_transactions as transaction', 'transaction.id', '=', 'nexopos_transactions_histories.transaction_id' ],
         ],
         [ 'nexopos_users as users', 'users.id', '=', 'nexopos_transactions_histories.author' ],
         [ 'nexopos_transactions_accounts as transactions_accounts', 'transactions_accounts.id', '=', 'nexopos_transactions_histories.transaction_account_id' ],
@@ -135,8 +135,8 @@ class TransactionsHistoryCrud extends CrudService
      */
     public $skippable = [];
 
-    protected $casts    =   [
-        'value' =>  CurrencyCast::class,
+    protected $casts = [
+        'value' => CurrencyCast::class,
     ];
 
     /**
@@ -351,7 +351,7 @@ class TransactionsHistoryCrud extends CrudService
             url: ns()->url( 'api/crud/' . self::IDENTIFIER . '/' . $entry->id ),
             type: 'DELETE',
             confirm: [
-                'message'   =>  __( 'Are you sure you want to delete this transaction history?' ),
+                'message' => __( 'Are you sure you want to delete this transaction history?' ),
             ]
         );
 

@@ -7,7 +7,9 @@
         "phpdoc_align": {
             "align" : "vertical"
         },
-        "cast_spaces": "single",
+        "cast_spaces": {
+            "space": "single"
+        },
         "spaces_inside_parentheses": {
             "space": "single"
         },

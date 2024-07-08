@@ -5,8 +5,8 @@ namespace App\Models;
 use App\Casts\FloatConvertCasting;
 use App\Events\ProductUnitQuantityAfterCreatedEvent;
 use App\Events\ProductUnitQuantityAfterUpdatedEvent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -39,7 +39,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class ProductUnitQuantity extends NsModel
 {
-    use HasFactory, BroadcastsEvents;
+    use BroadcastsEvents, HasFactory;
 
     protected $table = 'nexopos_' . 'products_unit_quantities';
 

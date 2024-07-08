@@ -17,7 +17,7 @@ class CustomersSettings extends SettingsPage
             title: __( 'Customers Settings' ),
             description: __( 'Configure the customers settings of the application.' ),
             tabs: SettingForm::tabs(
-                include dirname( __FILE__ ) . '/customers/general.php')
+                include dirname( __FILE__ ) . '/customers/general.php' )
         );
     }
 }

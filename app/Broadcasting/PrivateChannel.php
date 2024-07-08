@@ -24,6 +24,6 @@ class PrivateChannel
      */
     public function join( User $user )
     {
-        return ( int ) $user->id === ( int ) Auth::id();
+        return (int) $user->id === (int) Auth::id();
     }
 }

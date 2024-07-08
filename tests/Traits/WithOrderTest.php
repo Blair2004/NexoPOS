@@ -145,7 +145,7 @@ trait WithOrderTest
             ->whereIn( 'action', RegisterHistory::IN_ACTIONS )
             ->sum( 'value' ) )->toFloat();
 
-        $totalChange    =   ns()->currency->define( RegisterHistory::where( 'register_id', $cashRegister->id )
+        $totalChange = ns()->currency->define( RegisterHistory::where( 'register_id', $cashRegister->id )
             ->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )
             ->sum( 'value' ) )->toFloat();
 
@@ -154,12 +154,12 @@ trait WithOrderTest
          */
         if ( (float) $response[ 'data' ][ 'order' ][ 'tendered' ] > 0 ) {
             $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
-            $this->assertEquals( 
-                (float) $cashRegister->balance, 
+            $this->assertEquals(
+                (float) $cashRegister->balance,
                 ns()->currency->define( $totalValue )
                     ->subtractBy( $totalChange )
                     ->toFloat(),
-                __( 'The cash register balance hasn\'t been updated correctly.' ) 
+                __( 'The cash register balance hasn\'t been updated correctly.' )
             );
         }
 
@@ -172,8 +172,8 @@ trait WithOrderTest
 
         if ( $response[ 'data' ][ 'order' ][ 'change' ] > 0 ) {
             $this->assertTrue( $changeHistory instanceof RegisterHistory, __( 'No change history was recorded' ) );
-            $this->assertTrue( 
-                ( float ) $cashRegister->balance === 
+            $this->assertTrue(
+                (float) $cashRegister->balance ===
                 ns()->currency->define( $firstCashRegisterState->balance )
                     ->additionateBy( $response[ 'data' ][ 'order' ][ 'tendered' ] )
                     ->subtractBy( $response[ 'data' ][ 'order' ][ 'change' ] )
@@ -741,12 +741,11 @@ trait WithOrderTest
          * @var array    $response
          * @var Register $cashRegister
          */
-        
         $order = Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
         $orderService->makeOrderSinglePayment( [
             'identifier' => OrderPayment::PAYMENT_CASH,
             'value' => $response[ 'data' ][ 'order' ][ 'total' ],
-            'register_id'   =>  $order->register_id
+            'register_id' => $order->register_id,
         ], $order );
 
         /**
@@ -1438,7 +1437,7 @@ trait WithOrderTest
          * dispose of all variables defined
          * on this method
          */
-        unset( 
+        unset(
             $currency,
             $faker,
             $taxService,
@@ -1528,7 +1527,7 @@ trait WithOrderTest
         $response->assertStatus( 200 );
         $json = json_decode( $response->getContent(), true );
 
-        $order = $json[ 'data' ][ 'order' ];        
+        $order = $json[ 'data' ][ 'order' ];
 
         $this->assertTrue( $order[ 'products' ][0][ 'mode' ] === 'retail', 'Failed to assert the first product price mode is "retail"' );
         $this->assertTrue( $order[ 'products' ][1][ 'mode' ] === 'normal', 'Failed to assert the second product price mode is "normal"' );
@@ -1599,12 +1598,12 @@ trait WithOrderTest
         } );
 
         /**
-         * we need to make sure is only one transaction created for the 
+         * we need to make sure is only one transaction created for the
          * order that was later on marked as a paid order.
          */
-        $this->assertTrue( 
-            TransactionHistory::where( 'order_id', $order[ 'id' ] )->where( 'operation', 'credit' )->count() == 1, 
-            __( 'More transaction was created for the same order' ) 
+        $this->assertTrue(
+            TransactionHistory::where( 'order_id', $order[ 'id' ] )->where( 'operation', 'credit' )->count() == 1,
+            __( 'More transaction was created for the same order' )
         );
 
         /**

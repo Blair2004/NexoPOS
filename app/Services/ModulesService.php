@@ -35,7 +35,8 @@ use SimpleXMLElement;
 class ModulesService
 {
     private $modules = [];
-    private $autoloadedNamespace    =   [];
+
+    private $autoloadedNamespace = [];
 
     private Options $options;
 
@@ -442,7 +443,7 @@ class ModulesService
      */
     public function boot( $module = null ): void
     {
-        if ( ! empty( $module ) && ($module[ 'enabled' ] || $module[ 'autoloaded' ] ) ) {
+        if ( ! empty( $module ) && ( $module[ 'enabled' ] || $module[ 'autoloaded' ] ) ) {
             $this->__boot( $module );
         } else {
             foreach ( $this->modules as $module ) {
@@ -503,27 +504,28 @@ class ModulesService
     /**
      * Get all modules that are enabled and all modules
      * that are set to autload without repeating them.
+     *
      * @return Collection
      */
-    public function getEnabledAndAutoloadedModules() 
+    public function getEnabledAndAutoloadedModules()
     {
         /**
          * trigger boot method only for enabled modules
          * service providers that extends ModulesServiceProvider.
          */
-        $autoloadedModulesNamespace  =   [];
+        $autoloadedModulesNamespace = [];
 
         /**
          * We might manually set some module
          * to always autoload, even if it's disabled.
          */
         if ( env( 'AUTOLOAD_MODULES' ) ) {
-            $autoloadedModulesNamespace =   explode( ',', env( 'AUTOLOAD_MODULES' ) );
-            $autoloadedModulesNamespace =   collect( $autoloadedModulesNamespace )->filter( function( $namespace ) {
+            $autoloadedModulesNamespace = explode( ',', env( 'AUTOLOAD_MODULES' ) );
+            $autoloadedModulesNamespace = collect( $autoloadedModulesNamespace )->filter( function ( $namespace ) {
                 $module = $this->get( trim( $namespace ) );
 
                 return empty( $module[ 'requires' ] );
-            })->toArray();
+            } )->toArray();
         }
 
         /**
@@ -533,7 +535,7 @@ class ModulesService
          */
         $result = collect( $this->getEnabled() )
             ->filter( fn( $module ) => ! in_array( $module[ 'namespace' ], $autoloadedModulesNamespace ) )
-            ->merge( 
+            ->merge(
                 collect( $this->get() )
                     ->filter( fn( $module ) => in_array( $module[ 'namespace' ], $autoloadedModulesNamespace ) )
             );
@@ -1159,10 +1161,10 @@ class ModulesService
 
         if ( $module = $this->get( $namespace ) ) {
             if ( $module[ 'autoloaded' ] ) {
-                return response()->json([
+                return response()->json( [
                     'status' => 'error',
                     'code' => 'autoloaded_module',
-                    'message' => sprintf( __( 'The module "%s" is autoloaded and cannot be enabled.' ), $module[ 'name' ] )
+                    'message' => sprintf( __( 'The module "%s" is autoloaded and cannot be enabled.' ), $module[ 'name' ] ),
                 ], 403 );
             }
 

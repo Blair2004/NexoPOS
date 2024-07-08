@@ -3,18 +3,16 @@
 namespace App\Jobs;
 
 use App\Models\Product;
-use App\Models\ProductHistoryCombined;
 use App\Services\DateService;
 use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class EnsureCombinedProductHistoryExistsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
+    use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
     /**
      * Create a new job instance.

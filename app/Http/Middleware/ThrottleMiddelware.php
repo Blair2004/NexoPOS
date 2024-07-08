@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ThrottleMiddelware extends ThrottleRequests
 {
     use NsMiddlewareArgument;
-    
+
     /**
      * Handle an incoming request.
      *

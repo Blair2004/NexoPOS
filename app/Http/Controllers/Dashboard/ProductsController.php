@@ -86,7 +86,7 @@ class ProductsController extends DashboardController
     public function convertUnits( Request $request, Product $product )
     {
         ns()->restrict( [ 'nexopos.convert.products-units' ] );
-        
+
         return $this->productService->convertUnitQuantities(
             product: $product,
             from: Unit::findOrFail( $request->input( 'from' ) ),

@@ -10,7 +10,6 @@ use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Services\FieldsService;
 use App\Services\Helper;
-use App\Services\SettingsPage;
 
 class DirectTransactionFields extends FieldsService
 {
@@ -18,7 +17,7 @@ class DirectTransactionFields extends FieldsService
 
     public function __construct( ?Transaction $transaction = null )
     {
-        $this->fields     =   Hook::filter( 'ns-direct-transactions-fields', SettingForm::fields(
+        $this->fields = Hook::filter( 'ns-direct-transactions-fields', SettingForm::fields(
             FormInput::text(
                 label: __( 'Name' ),
                 description: __( 'Describe the direct transaction.' ),
@@ -69,7 +68,7 @@ class DirectTransactionFields extends FieldsService
                 name: 'type',
                 value: $transaction ? $transaction->type : null
             ),
-        ));
+        ) );
 
         if ( $transaction instanceof Transaction ) {
             foreach ( $this->fields as $key => $field ) {

@@ -1,9 +1,9 @@
 <?php
 
 use dekor\ArrayToTextTable;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 
 if ( env( 'APP_DEBUG' ) ) {
     Route::get( '/routes', function () {
@@ -20,7 +20,7 @@ if ( env( 'APP_DEBUG' ) ) {
     } );
 
     Route::get( '/exceptions', function ( Request $request ) {
-        $class =    $request->input( 'class' );
+        $class = $request->input( 'class' );
         $exceptions = [
             \App\Exceptions\CoreException::class,
             \App\Exceptions\CoreVersionMismatchException::class,

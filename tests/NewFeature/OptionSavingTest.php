@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\NewFeature;
 
 use App\Models\Option;
@@ -8,7 +9,7 @@ use Tests\Traits\WithAuthentication;
 class OptionSavingTest extends TestCase
 {
     use WithAuthentication;
-    
+
     public function testOptionSaving()
     {
         $this->attemptAuthenticate();

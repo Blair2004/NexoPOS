@@ -85,7 +85,7 @@ trait ArrayHelper
 
         if ( $collections ) {
             foreach ( $collections as $collection ) {
-                
+
                 if ( is_callable( $config ) ) {
                     $result[] = $config( $collection );
                 } elseif ( ! is_array( $config[1] ) ) {

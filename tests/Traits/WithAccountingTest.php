@@ -6,7 +6,6 @@ use App\Classes\Currency;
 use App\Models\ActiveTransactionHistory;
 use App\Models\DashboardDay;
 use App\Models\Procurement;
-use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
 use App\Services\ReportService;
