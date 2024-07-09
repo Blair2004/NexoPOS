@@ -61,6 +61,12 @@ export class Popup {
                  * In that situation, we don't need to resolve the default.
                  */
             }
+        } else if ( typeof component.__asyncLoader === 'function' ) {
+            /**
+             * With this, we'll resolve the component
+             * to ensure props can be added to it on runtime.
+             */
+            component = (async () => await component.__asyncLoader())();
         }
 
         const body                          =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];

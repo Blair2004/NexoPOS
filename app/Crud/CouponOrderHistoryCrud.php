@@ -156,8 +156,6 @@ class CouponOrderHistoryCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
-
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'addActions' ], 10, 2 );
     }
 
     public function hook( $query ): void
@@ -326,7 +324,7 @@ class CouponOrderHistoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function addActions( CrudEntry $entry ): CrudEntry
+    public function setActions( CrudEntry $entry ): CrudEntry
     {
         /**
          * Declaring entry actions

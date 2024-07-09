@@ -41,7 +41,7 @@ class CustomerRewardCrud extends CrudService
      *
      * @param  string
      */
-    protected $namespace = 'ns.customers-rewards';
+    protected $namespace = self::IDENTIFIER;
 
     /**
      * Model Used

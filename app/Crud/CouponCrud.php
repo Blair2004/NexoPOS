@@ -746,8 +746,8 @@ class CouponCrud extends CrudService
             'list' => ns()->url( 'dashboard/' . 'customers/coupons' ),
             'create' => ns()->url( 'dashboard/' . 'customers/coupons/create' ),
             'edit' => ns()->url( 'dashboard/' . 'customers/coupons/edit/' ),
-            'post' => ns()->url( 'api/crud/' . 'ns.customers-coupons' ),
-            'put' => ns()->url( 'api/crud/' . 'ns.customers-coupons/{id}' . '' ),
+            'post' => ns()->url( 'api/crud/' . 'ns.coupons' ),
+            'put' => ns()->url( 'api/crud/' . 'ns.coupons/{id}' . '' ),
         ];
     }
 

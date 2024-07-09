@@ -351,7 +351,7 @@ class CustomerCrud extends CrudService
                 $group = CustomerGroup::find( $value );
 
                 if ( ! $group instanceof CustomerGroup ) {
-                    throw new NotAllowedException( __( 'The assigned default customer group doesn\'t exist or is not defined.' ) );
+                    throw new NotAllowedException( __( 'The assigned default customer group doesn\'t exist or has been deleted.' ) );
                 }
             }
 

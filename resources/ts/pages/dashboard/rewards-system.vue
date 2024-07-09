@@ -98,6 +98,17 @@ export default {
 
             return form;
         },
+        handleSaveEvent( serverResponse, field )  {
+            try {
+                field.options.push({
+                    label: serverResponse.data.entry[ field.props.optionAttributes.label ],
+                    value: serverResponse.data.entry[ field.props.optionAttributes.value ]
+                });
+                field.value     =   serverResponse.data.entry[ field.props.optionAttributes.value ];
+            } catch ( exception ) {
+                // something went wrong
+            }
+        },
         getRuleForm() {
             return JSON.parse( JSON.stringify( this.form.ruleForm ) );
         },
@@ -142,7 +153,7 @@ export default {
                     <div class="ns-box rounded shadow">
                         <div class="header ns-box-header border-b p-2">{{ __( 'General' ) }}</div>
                         <div class="body p-2">
-                            <ns-field class="mb-2" v-bind:key="index" :field="field" v-for="(field,index) of form.tabs.general.fields"></ns-field>
+                            <ns-field class="mb-2" @saved="handleSaveEvent( $event, field )" v-bind:key="index" :field="field" v-for="(field,index) of form.tabs.general.fields"></ns-field>
                         </div>
                     </div>
                     <div class="ns-box rounded">

@@ -183,8 +183,10 @@ class RewardSystemCrud extends CrudService
                     'label' => __( 'General' ),
                     'fields' => [
                         [
-                            'type' => 'select',
+                            'type' => 'search-select',
                             'name' => 'coupon_id',
+                            'component' => 'nsCreateCoupons',
+                            'props'     =>  CouponCrud::getFormConfig(),
                             'value' => $entry->coupon_id ?? '',
                             'label' => __( 'Coupon' ),
                             'options' => Helper::toJsOptions( Coupon::get(), [ 'id', 'name' ] ),
@@ -463,9 +465,9 @@ class RewardSystemCrud extends CrudService
     public function getLinks(): array
     {
         return [
-            'list' => ns()->url( '/dashboard/rewards-system' ),
-            'create' => ns()->url( '/dashboard/rewards-system/create' ),
-            'edit' => ns()->url( '/dashboard/rewards-system/edit/{id}' ),
+            'list' => ns()->url( '/dashboard/customers/rewards-system' ),
+            'create' => ns()->url( '/dashboard/customers/rewards-system/create' ),
+            'edit' => ns()->url( '/dashboard/customers/rewards-system/edit/{id}' ),
             'post' => ns()->url( '/api/crud/' . $this->getMainRoute() ),
             'put' => ns()->url( '/api/crud/' . $this->getMainRoute() . '/{id}' ),
         ];
