@@ -856,7 +856,7 @@ class OrdersService
      */
     private function __saveOrderSinglePayment( $payment, Order $order ): OrderPayment
     {
-        event( new OrderBeforePaymentCreatedEvent( $payment, $order->customer ) );
+        OrderBeforePaymentCreatedEvent::dispatch( $payment, $order->customer );
 
         $orderPayment = isset( $payment[ 'id' ] ) ? OrderPayment::find( $payment[ 'id' ] ) : false;
 

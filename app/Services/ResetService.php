@@ -61,6 +61,8 @@ class ResetService
             'nexopos_products_metas',
             'nexopos_products_taxes',
             'nexopos_products_unit_quantities',
+            
+            'nexopos_payments_types',
 
             'nexopos_providers',
 

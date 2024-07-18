@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string action
  * @property int author
  * @property float value
+ * @property int transaction_account_id
  * @property int payment_id
  * @property int payment_type_id
  * @property int order_id
@@ -27,7 +28,7 @@ class RegisterHistory extends NsModel
 
     const ACTION_CLOSING = 'register-closing';
 
-    const ACTION_CASHIN = 'register-cash-in';
+    const ACTION_CASHING = 'register-cash-in';
 
     const ACTION_CASHOUT = 'register-cash-out';
 
@@ -44,7 +45,7 @@ class RegisterHistory extends NsModel
     const ACTION_ACCOUNT_CHANGE = 'register-account-in';
 
     const IN_ACTIONS = [
-        self::ACTION_CASHIN,
+        self::ACTION_CASHING,
         self::ACTION_OPENING,
         self::ACTION_SALE,
         self::ACTION_ACCOUNT_PAY,
@@ -62,6 +63,15 @@ class RegisterHistory extends NsModel
     protected $dispatchesEvents = [
         'created' => CashRegisterHistoryAfterCreatedEvent::class,
     ];
+
+    public function order()
+    {
+        return $this->hasOne(
+            related: Order::class,
+            foreignKey: 'id',
+            localKey: 'order_id'
+        );  
+    }
 
     public function register()
     {

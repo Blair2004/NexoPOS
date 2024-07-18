@@ -10,6 +10,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 
+/**
+ * @deprecated
+ */
 class ProcessCashRegisterHistoryJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;

@@ -35,7 +35,8 @@
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
                         <div class="flex flex-col">
                             <span>{{ customer.first_name }} {{ customer.last_name }}</span>
-                            <small class="text-xs text-secondary">{{ customer.group.name }}</small>
+                            <small class="text-xs text-secondary" v-if="customer.group">{{ customer.group.name }}</small>
+                            <small class="text-xs text-secondary" v-else>{{ __( 'No Group Assigned' ) }}</small>
                         </div>
                         <p class="flex items-center">
                             <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owe_amount ) }}</span>

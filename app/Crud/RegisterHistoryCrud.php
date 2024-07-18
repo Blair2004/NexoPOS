@@ -421,7 +421,7 @@ class RegisterHistoryCrud extends CrudService
             case RegisterHistory::ACTION_SALE:
                 $entry->{ '$cssClass' } = 'success border';
                 break;
-            case RegisterHistory::ACTION_CASHIN:
+            case RegisterHistory::ACTION_CASHING:
                 $entry->{ '$cssClass' } = 'success border';
                 break;
             case RegisterHistory::ACTION_ACCOUNT_PAY:

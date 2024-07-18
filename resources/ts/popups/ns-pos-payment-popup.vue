@@ -23,6 +23,7 @@ export default {
         return { 
             paymentTypesSubscription: null,
             paymentsType: [],
+            activePayment: null,
             order: null,
             showPayment: false,
             orderSubscription: null,
@@ -224,11 +225,11 @@ export default {
     <div id="ns-payment-popup" class="w-screen h-screen p-8 flex overflow-hidden" v-if="order">
         <div class="flex flex-col flex-auto lg:flex-row shadow-xl">
             <div class="w-full lg:w-56 lg:h-full flex justify-between px-2 lg:px-0 lg:block items-center lg:items-start">
-                <h3 class="lg:hidden text-xl text-center my-4 font-bold lg:my-8">{{ __( 'Gateway' ) }} <span>: {{ activePayment.label }}</span></h3>
+                <h3 class="lg:hidden text-xl text-center my-4 font-bold lg:my-8">{{ __( 'Gateway' ) }} <span v-if="activePayment">: {{ activePayment.label }}</span></h3>
                 <div class="h-16 hidden lg:block"></div>
                 <ul class="hidden lg:block">
                     <li @click="select( payment )" v-for="payment of paymentsType" :class="payment.selected && ! showPayment ? 'ns-visible' : ''" :key="payment.identifier" class="cursor-pointer ns-payment-gateway py-2 px-3">{{ payment.label }}</li>
-                    <li @click="showPayment = true" :class="showPayment ? 'ns-visible' : ''" class="cursor-pointer py-2 px-3 ns-payment-list border-t mt-4 flex items-center justify-between">
+                    <li v-if="paymentsType.length > 0" @click="showPayment = true" :class="showPayment ? 'ns-visible' : ''" class="cursor-pointer py-2 px-3 ns-payment-list border-t mt-4 flex items-center justify-between">
                         <span>{{ __( 'Payment List' ) }}</span>
                         <span class="px-2 rounded-full h-8 w-8 flex items-center justify-center ns-label">{{ order.payments.length }}</span>
                     </li> 
@@ -239,18 +240,24 @@ export default {
                 <div class="flex flex-col flex-auto overflow-hidden">
                     <div class="h-12 hidden items-center justify-between lg:flex">
                         <div>
-                            <h3 class="text-xl hidden lg:block text-center my-4 font-bold lg:my-8">{{ __( 'Gateway' ) }} <span class="hidden-md">: {{ activePayment.label }}</span></h3>
+                            <h3 class="text-xl hidden lg:block text-center my-4 font-bold lg:my-8">{{ __( 'Gateway' ) }} <span class="hidden-md" v-if="activePayment">: {{ activePayment.label }}</span></h3>
                         </div>
                         <div class="px-2">
                             <ns-close-button @click="closePopup()"></ns-close-button>
                         </div>
                     </div>
-                    <div class="flex flex-auto ns-payment-wrapper overflow-y-auto" v-if="! showPayment">
+                    <div class="flex flex-auto ns-payment-wrapper overflow-y-auto" v-if="! showPayment && activePayment">
                         <component 
                             @submit="submitOrder()" 
                             :label="activePayment.label" 
                             :identifier="activePayment.identifier" 
                             v-bind:is="currentPaymentComponent"></component>
+                    </div>
+                    <div class="flex flex-auto items-center justify-center bg-white" v-if="! activePayment">
+                        <div>
+                            <h3 class="font-bold text-center text-3xl">{{ __( 'Unable to Proceed') }}</h3>
+                            <p class="text-center">{{  __( 'Your system doesn\'t have any valid Payment Type. Consider creating one and try again.' ) }}</p>
+                        </div>
                     </div>
                     <div class="flex flex-auto ns-payment-wrapper overflow-y-auto p-2 flex-col" v-if="showPayment">
                         <h3 class="text-center font-bold py-2">{{ __( 'List Of Payments' ) }}</h3>
@@ -273,7 +280,7 @@ export default {
                         </ul>
                     </div>
                 </div>
-                <div class="flex lg:hidden ns-payment-buttons">
+                <div v-if="activePayment" class="flex lg:hidden ns-payment-buttons">
                     <button @click="selectPayment()" class="flex items-center justify-center w-1/3 text-2xl flex-auto h-12 font-bold ns-payment-type-button">
                         <span class="text-sm">{{ __( 'Payment Type' ) }}</span>
                     </button>
@@ -288,7 +295,7 @@ export default {
                         <span class="px-2 rounded-full h-6 w-6 text-xs flex items-center justify-center ns-label">{{ order.payments.length }}</span>
                     </button>
                 </div>
-                <div class="flex-col sm:flex-row w-full ns-payment-footer justify-end p-2 hidden lg:flex">
+                <div v-if="activePayment" class="flex-col sm:flex-row w-full ns-payment-footer justify-end p-2 hidden lg:flex">
                     <div class="flex justify-end">
                         <ns-button v-if="order.tendered >= order.total" @click="submitOrder()" :type="order.tendered >= order.total ? 'success' : 'info'">
                             <span ><i class="las la-cash-register"></i> {{ __( 'Submit Payment' ) }}</span>

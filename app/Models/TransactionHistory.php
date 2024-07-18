@@ -60,7 +60,7 @@ class TransactionHistory extends NsModel
     /**
      * Unique account identifier for cash register cash in.
      */
-    const ACCOUNT_REGISTER_CASHIN = '004';
+    const ACCOUNT_REGISTER_CASHING = '004';
 
     /**
      * Unique account identifier for cash register cash out.

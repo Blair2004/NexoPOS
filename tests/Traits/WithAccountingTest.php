@@ -47,7 +47,7 @@ trait WithAccountingTest
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Cash Register (cash-in)' ),
-                'account' => TransactionHistory::ACCOUNT_REGISTER_CASHIN,
+                'account' => TransactionHistory::ACCOUNT_REGISTER_CASHING,
                 'operation' => TransactionHistory::OPERATION_CREDIT,
             ], [
                 'name' => __( 'Cash Register (cash-out)' ),

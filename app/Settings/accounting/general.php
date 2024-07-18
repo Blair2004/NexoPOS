@@ -80,4 +80,13 @@ return [
         props: TransactionAccountCrud::getFormConfig(),
         options: Helper::toJsOptions( $transactions, [ 'id', 'name' ] ),
     ),
+    FormInput::searchSelect(
+        label: __( 'Equity' ),
+        name: 'ns_accouting_payable_accounts',
+        value: ns()->option->get( 'ns_accouting_payable_accounts' ),
+        description: __( 'Transaction account for Payable.' ),
+        component: 'nsCrudForm',
+        props: TransactionAccountCrud::getFormConfig(),
+        options: Helper::toJsOptions( $transactions, [ 'id', 'name' ] ),
+    ),
 ];

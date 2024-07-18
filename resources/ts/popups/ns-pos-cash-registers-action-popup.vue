@@ -94,7 +94,7 @@ export default {
                 }, ( error ) => {
                     this.loaded     =   true;
                     return nsSnackBar.error( error.message, __( 'OKAY' ), { duration : false }).subscribe();
-                })
+                });            
         },
         submit( amount ) {
             Popup.show( nsPosConfirmPopupVue, {
@@ -112,10 +112,16 @@ export default {
                 return;
             }
 
+            if ( this.validation.validateFields( this.fields ) === false ) {
+                return nsSnackBar.error( __( 'Please fill all required fields' )).subscribe();
+            }
+
             this.isSubmitting    =   true;
 
             const fields    =   this.validation.extractFields( this.fields );
             fields.amount   =   this.amount === '' ? 0 : this.amount;
+
+            console.log({ fields })
 
             nsHttpClient.post( `/api/cash-registers/${this.action}/${this.register_id || this.settings.register.id}`, fields )
                 .subscribe({

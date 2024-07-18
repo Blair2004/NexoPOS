@@ -90,7 +90,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashIn( Register $register, float $amount, ?string $description ): array
+    public function cashIng( Register $register, float $amount, int $transaction_account_id, ?string $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
@@ -107,10 +107,11 @@ class CashRegistersService
 
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
-        $registerHistory->action = RegisterHistory::ACTION_CASHIN;
+        $registerHistory->action = RegisterHistory::ACTION_CASHING;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
         $registerHistory->balance_before = $register->balance;
+        $registerHistory->transaction_account_id = $transaction_account_id;
         $registerHistory->value = ns()->currency->define( $amount )->toFloat();
         $registerHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $amount )->toFloat();
         $registerHistory->save();
@@ -125,6 +126,52 @@ class CashRegistersService
         ];
     }
 
+    public function recordOrderPayment( OrderPayment $orderPayment )
+    {
+        $register =     Register::find( $orderPayment->order->register_id );
+
+        $cashRegisterHistory = RegisterHistory::where( 'payment_id', $orderPayment->id )->first();
+
+        /**
+         * if the cash register history doesn't exists
+         * then we'll create it for the payment.
+         */
+        if ( ! $cashRegisterHistory instanceof RegisterHistory ) {
+            $cashRegisterHistory = new RegisterHistory;
+            $cashRegisterHistory->register_id = $orderPayment->order->register_id;
+            $cashRegisterHistory->payment_id = $orderPayment->id;
+            $cashRegisterHistory->payment_type_id = $orderPayment->type->id;
+            $cashRegisterHistory->order_id = $orderPayment->order_id;
+            $cashRegisterHistory->action = RegisterHistory::ACTION_SALE;
+            $cashRegisterHistory->author = $orderPayment->order->author;
+            $cashRegisterHistory->balance_before = $register->balance;
+            $cashRegisterHistory->value = ns()->currency->define( $orderPayment->value )->toFloat();
+            $cashRegisterHistory->balance_after = ns()->currency->define( $register->balance )->additionateBy( $orderPayment->value )->toFloat();
+            $cashRegisterHistory->save();
+
+            return [
+                'status' => 'success',
+                'message' => __( 'The cash register history has been successfully updated' ),
+                'data' => [
+                    'register' => $register,
+                    'history' => $cashRegisterHistory,
+                ],
+            ];
+        }
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The cash register history has already been recorded' ),
+            'data' => [
+                'register' => $register,
+                'history' => $cashRegisterHistory,
+            ],
+        ];
+    }
+
+    /**
+     * @deprecated
+     */
     public function saleDelete( Register $register, float $amount, string $description ): array
     {
         if ( $register->balance - $amount < 0 ) {
@@ -157,7 +204,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashOut( Register $register, float $amount, ?string $description ): array
+    public function cashOut( Register $register, float $amount, int $transaction_account_id, ?string $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
@@ -183,6 +230,7 @@ class CashRegistersService
 
         $registerHistory = new RegisterHistory;
         $registerHistory->register_id = $register->id;
+        $registerHistory->transaction_account_id = $transaction_account_id;
         $registerHistory->action = RegisterHistory::ACTION_CASHOUT;
         $registerHistory->author = Auth::id();
         $registerHistory->description = $description;
@@ -225,6 +273,7 @@ class CashRegistersService
      * to the right store
      *
      * @return void
+     * @deprecated
      */
     public function recordCashRegisterHistorySale( Order $order )
     {
@@ -362,7 +411,7 @@ class CashRegistersService
     public function getActionLabel( string $label ): string
     {
         switch ( $label ) {
-            case RegisterHistory::ACTION_CASHIN:
+            case RegisterHistory::ACTION_CASHING:
                 return __( 'Cash In' );
                 break;
             case RegisterHistory::ACTION_CASHOUT:

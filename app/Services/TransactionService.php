@@ -44,6 +44,8 @@ class TransactionService
         TransactionHistory::ACCOUNT_CUSTOMER_DEBIT => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_customer_debitting_cashflow_account' ],
         TransactionHistory::ACCOUNT_LIABILITIES => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_liabilities_account' ],
         TransactionHistory::ACCOUNT_EQUITY => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_equity_account' ],
+        TransactionHistory::ACCOUNT_REGISTER_CASHING => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_register_cashing_account' ],
+        TransactionHistory::ACCOUNT_REGISTER_CASHOUT => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_register_cashout_account' ],
     ];
 
     public function __construct( DateService $dateService )
@@ -688,6 +690,23 @@ class TransactionService
     }
 
     /**
+     * Retreive the transaction type
+     */
+    public function getTransactionTypeByAccountName( $accountName )
+    {
+        $transactionType = $this->accountTypes[ $accountName ] ?? false;
+
+        if ( $transactionType ) {
+            return $transactionType[ 'operation' ];
+        }
+
+        throw new NotFoundException( sprintf(
+            __( 'Not found account type: %s' ),
+            $accountName
+        ) );
+    }
+
+    /**
      * Retreive the account configuration
      * using the account type
      *
@@ -714,7 +733,7 @@ class TransactionService
                     break;
                 case TransactionHistory::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
                     break;
-                case TransactionHistory::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' );
+                case TransactionHistory::ACCOUNT_REGISTER_CASHING: $label = __( 'Register Cash-In Account' );
                     break;
                 case TransactionHistory::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' );
                     break;
@@ -1049,7 +1068,7 @@ class TransactionService
 
         if ( ! in_array( $registerHistory->action, [
             RegisterHistory::ACTION_CASHOUT,
-            RegisterHistory::ACTION_CASHIN,
+            RegisterHistory::ACTION_CASHING,
             RegisterHistory::ACTION_OPENING,
             RegisterHistory::ACTION_CLOSING,
         ] ) ) {
@@ -1062,7 +1081,7 @@ class TransactionService
             $transactionHistory->name = sprintf( __( 'Cash Out : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
             $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
         } elseif ( in_array( $registerHistory->action, [
-            RegisterHistory::ACTION_CASHIN,
+            RegisterHistory::ACTION_CASHING,
         ] ) ) {
             $transactionHistory->name = sprintf( __( 'Cash In : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
             $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;

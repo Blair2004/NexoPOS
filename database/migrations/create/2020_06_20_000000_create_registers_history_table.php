@@ -21,6 +21,7 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'register_id' );
                 $table->integer( 'payment_id' )->nullable();
+                $table->integer( 'transaction_account_id' )->nullable();
                 $table->integer( 'payment_type_id' )->default( 0 );
                 $table->integer( 'order_id' )->nullable();
                 $table->string( 'action' );

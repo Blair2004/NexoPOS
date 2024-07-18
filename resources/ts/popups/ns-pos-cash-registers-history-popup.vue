@@ -38,7 +38,7 @@
                 </div>
                 <div :key="history.id" v-if="[ 'register-refund', 'register-cash-out' ].includes( history.action )"  class="flex border-b elevation-surface error">
                     <div class="p-2 flex-auto">
-                        <div>{{ history.description }}</div>
+                        <div>{{ history.description || __( 'Not Provided' ) }}</div>
                         <div class="flex md:-mx-1">
                             <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Type' ) }}</strong>: {{ history.label }}</div>
                             <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Account' ) }}</strong>: {{ history.account_name }}</div>

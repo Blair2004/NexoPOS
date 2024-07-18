@@ -2,7 +2,7 @@
     <div class="flex flex-col ns-multiselect">
         <label :for="field.name" :class="hasError ? 'text-error-secondary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
-            <div @click="togglePanel()" :class="field.disabled ? 'bg-input-disabled' : ''" style="max-height: 150px;" class="overflow-y-auto flex select-preview justify-between rounded border-2 border-input-option-hover p-2 items-start">
+            <div @click="togglePanel()" :class="field.disabled ? 'bg-input-disabled' : 'bg-input-background'" style="max-height: 150px;" class="overflow-y-auto flex select-preview justify-between rounded border-2 border-input-edge p-2 items-start">
                 <div class="flex -mx-1 -my-1 flex-wrap">
                     <div :key="index" class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded bg-info-secondary text-white flex justify-between p-1 items-center">
@@ -18,8 +18,8 @@
                     <i class="las la-angle-up" :class=" !showPanel ? 'hidden' : ''"></i>
                 </div>
             </div>
-            <div class="h-0 z-10" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
-                <div class="ns-dropdown shadow">
+            <div class="h-0 z-10" style="margin-top: -5px;" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
+                <div class="ns-dropdown shadow border-2 rounded-b-md border-input-edge bg-input-background">
                     <div class="search border-b border-input-option-hover">
                         <input @keypress.enter="selectAvailableOptionIfPossible()" v-model="search" class="p-2 w-full bg-transparent text-primary outline-none" placeholder="Search">
                     </div>
@@ -86,7 +86,6 @@ export default {
     methods: {
         __,
         togglePanel() {
-            console.log( this );
             if ( ! this.field.disabled ) {
                 this.showPanel = !this.showPanel;
             }

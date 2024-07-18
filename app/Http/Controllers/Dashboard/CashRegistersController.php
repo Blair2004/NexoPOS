@@ -96,16 +96,18 @@ class CashRegistersController extends DashboardController
                 $request->input( 'amount' ),
                 $request->input( 'description' )
             );
-        } elseif ( $action === RegisterHistory::ACTION_CASHIN ) {
-            return $this->registersService->cashIn(
+        } elseif ( $action === RegisterHistory::ACTION_CASHING ) {
+            return $this->registersService->cashIng(
                 register: $register,
                 amount: $request->input( 'amount' ),
+                transaction_account_id: $request->input( 'transaction_account_id' ),
                 description: $request->input( 'description' )
             );
         } elseif ( $action === RegisterHistory::ACTION_CASHOUT ) {
             return $this->registersService->cashOut(
                 register: $register,
                 amount: $request->input( 'amount' ),
+                transaction_account_id: $request->input( 'transaction_account_id' ),
                 description: $request->input( 'description' )
             );
         }
@@ -142,16 +144,19 @@ class CashRegistersController extends DashboardController
                  */
                 $historyRequest = $register->history()
                     ->select( [
-                        '*',
+                        'nexopos_registers_history.*',
                         'nexopos_registers_history.description as description',
+                        'nexopos_transactions_accounts.name as account_name'
                     ] )
+                    ->with( 'order' )
                     ->leftJoin( 'nexopos_payments_types', 'nexopos_registers_history.payment_type_id', '=', 'nexopos_payments_types.id' )
+                    ->leftJoin( 'nexopos_transactions_accounts', 'nexopos_registers_history.transaction_account_id', '=', 'nexopos_transactions_accounts.id' )
                     ->where( 'nexopos_registers_history.id', '>=', $lastOpening->id );
 
                 $history = $historyRequest->get();
                 $history->each( function ( $session ) {
                     switch ( $session->action ) {
-                        case RegisterHistory::ACTION_CASHIN:
+                        case RegisterHistory::ACTION_CASHING:
                             $session->label = __( 'Cash In' );
                             break;
                         case RegisterHistory::ACTION_CASHOUT:
@@ -164,7 +169,7 @@ class CashRegistersController extends DashboardController
                             $session->label = __( 'Opening' );
                             break;
                         case RegisterHistory::ACTION_SALE:
-                            $session->label = __( 'Sale' );
+                            $session->label = sprintf( __( '%s on %s' ), $session->label, $session->order->code );
                             break;
                         case RegisterHistory::ACTION_REFUND:
                             $session->label = __( 'Refund' );
@@ -173,12 +178,12 @@ class CashRegistersController extends DashboardController
                 } );
 
                 $totalDisbursement = $history->where( 'action', RegisterHistory::ACTION_CASHOUT )->sum( 'value' );
-                $totalCashIn = $history->where( 'action', RegisterHistory::ACTION_CASHIN )->sum( 'value' );
+                $totalCashIn = $history->where( 'action', RegisterHistory::ACTION_CASHING )->sum( 'value' );
 
                 $cashPayment = PaymentType::identifier( OrderPayment::PAYMENT_CASH )->first();
                 $totalOpening = $lastOpening->value;
                 $totalCashPayment = $history->where( 'action', RegisterHistory::ACTION_SALE )
-                    ->where( 'payment_type_id', $cashPayment->id )
+                    ->where( 'payment_type_id', $cashPayment->id ?? 0 )
                     ->sum( 'value' );
 
                 $totalCashChange = $history->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
