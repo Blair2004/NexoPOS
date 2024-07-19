@@ -2,6 +2,8 @@
 
 namespace App\Crud;
 
+use App\Classes\CrudForm;
+use App\Classes\FormInput;
 use App\Models\TransactionAccount;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
@@ -123,45 +125,52 @@ class TransactionAccountCrud extends CrudService
      */
     public function getForm( $entry = null )
     {
-        return [
-            'main' => [
-                'label' => __( 'Name' ),
-                'name' => 'name',
-                'value' => $entry->name ?? '',
-                'description' => __( 'Provide a name to the resource.' ),
-                'validation' => 'required',
-            ],
-            'tabs' => [
-                'general' => [
-                    'label' => __( 'General' ),
-                    'fields' => [
-                        [
-                            'type' => 'select',
-                            'name' => 'operation',
-                            'label' => __( 'Operation' ),
-                            'description' => __( 'All entities attached to this category will either produce a "credit" or "debit" to the cash flow history.' ),
-                            'validation' => 'required',
-                            'options' => Helper::kvToJsOptions( [
+        return CrudForm::form(
+            main: FormInput::text(
+                label: __( 'Name' ),
+                name: 'name',
+                value: $entry->name ?? '',
+                description: __( 'Provide a name to the resource.' ),
+                validation: 'required',
+            ),
+            tabs: CrudForm::tabs(
+                CrudForm::tab(
+                    identifier: 'general',
+                    label: __( 'General' ),
+                    fields: CrudForm::fields(
+                        FormInput::select(
+                            label: __( 'Operation' ),
+                            name: 'operation',
+                            description: __( 'All entities attached to this category will either produce a "credit" or "debit" to the cash flow history.' ),
+                            validation: 'required',
+                            options: Helper::kvToJsOptions( [
                                 'credit' => __( 'Credit' ),
                                 'debit' => __( 'Debit' ),
                             ] ),
-                            'value' => $entry->operation ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'account',
-                            'label' => __( 'Account' ),
-                            'description' => __( 'Provide the accounting number for this category.' ),
-                            'value' => $entry->account ?? '',
-                        ], [
-                            'type' => 'textarea',
-                            'name' => 'description',
-                            'label' => __( 'Description' ),
-                            'value' => $entry->description ?? '',
-                        ],
-                    ],
-                ],
-            ],
-        ];
+                            value: $entry->operation ?? '',
+                        ),
+                        FormInput::searchSelect(
+                            label: __( 'Counter Account' ),
+                            name: 'counter_account_id',
+                            options: [],
+                            description: __( 'For double bookeeping purpose, which account is affected by all transactions on this account?' ),
+                            value: $entry->counter_account_id ?? '',
+                        ),
+                        FormInput::text(
+                            label: __( 'Account' ),
+                            name: 'account',
+                            description: __( 'Provide the accounting number for this category.' ),
+                            value: $entry->account ?? '',
+                        ),
+                        FormInput::textarea(
+                            label: __( 'Description' ),
+                            name: 'description',
+                            value: $entry->description ?? '',
+                        )
+                    )
+                )
+            )
+        );
     }
 
     /**
