@@ -1080,23 +1080,26 @@ class TransactionService
         ] ) ) {
             $transactionHistory->name = sprintf( __( 'Cash Out : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
             $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
+            $transactionHistory->transaction_account_id = $registerHistory->transaction_account_id;
         } elseif ( in_array( $registerHistory->action, [
             RegisterHistory::ACTION_CASHING,
         ] ) ) {
             $transactionHistory->name = sprintf( __( 'Cash In : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
             $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;
+            $transactionHistory->transaction_account_id = $registerHistory->transaction_account_id;
         } elseif ( $registerHistory->action === RegisterHistory::ACTION_OPENING ) {
             $transactionHistory->name = sprintf( __( 'Opening Float : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
             $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
+            $transactionHistory->transaction_account_id = ns()->option->get( 'ns_accounting_opening_float_account' );
         } elseif ( $registerHistory->action === RegisterHistory::ACTION_CLOSING ) {
             $transactionHistory->name = sprintf( __( 'Closing Float : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
             $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;
+            $transactionHistory->transaction_account_id = ns()->option->get( 'ns_accounting_closing_float_account' );
         }
 
         $transactionHistory->value = $registerHistory->value;
         $transactionHistory->author = $registerHistory->author;
         $transactionHistory->register_history_id = $registerHistory->id;
-        $transactionHistory->transaction_account_id = $registerHistory->transaction_account_id;
         $transactionHistory->status = TransactionHistory::STATUS_ACTIVE;
         $transactionHistory->trigger_date = $registerHistory->created_at;
         $transactionHistory->type = Transaction::TYPE_DIRECT;
