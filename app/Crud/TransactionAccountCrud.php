@@ -2,7 +2,9 @@
 
 namespace App\Crud;
 
+use App\Casts\AccountingCategoryCast;
 use App\Classes\CrudForm;
+use App\Classes\CrudTable;
 use App\Classes\FormInput;
 use App\Models\TransactionAccount;
 use App\Services\CrudEntry;
@@ -79,6 +81,10 @@ class TransactionAccountCrud extends CrudService
         'delete' => 'nexopos.delete.transactions-account',
     ];
 
+    public $casts = [
+        'category_identifier' => AccountingCategoryCast::class,
+    ];
+
     /**
      * Define Constructor
      */
@@ -125,6 +131,11 @@ class TransactionAccountCrud extends CrudService
      */
     public function getForm( $entry = null )
     {
+        $options = collect( config( 'accounting.accounts' ) )->map( fn( $account, $key ) => [
+            'label' => $account[ 'label' ](),
+            'value' => $key,
+        ])->values();
+
         return CrudForm::form(
             main: FormInput::text(
                 label: __( 'Name' ),
@@ -138,23 +149,20 @@ class TransactionAccountCrud extends CrudService
                     identifier: 'general',
                     label: __( 'General' ),
                     fields: CrudForm::fields(
-                        FormInput::select(
-                            label: __( 'Operation' ),
-                            name: 'operation',
-                            description: __( 'All entities attached to this category will either produce a "credit" or "debit" to the cash flow history.' ),
+                        FormInput::searchSelect(
+                            label: __( 'Main Account' ),
+                            name: 'category_identifier',
+                            description: __( 'Select the category of this account.' ),
+                            options: $options,
+                            value: $entry->category_identifier ?? '',
                             validation: 'required',
-                            options: Helper::kvToJsOptions( [
-                                'credit' => __( 'Credit' ),
-                                'debit' => __( 'Debit' ),
-                            ] ),
-                            value: $entry->operation ?? '',
                         ),
                         FormInput::searchSelect(
                             label: __( 'Counter Account' ),
                             name: 'counter_account_id',
-                            options: [],
+                            options: Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ] ),
                             description: __( 'For double bookeeping purpose, which account is affected by all transactions on this account?' ),
-                            value: $entry->counter_account_id ?? '',
+                            value: $entry->counter_account_id ?? 0,
                         ),
                         FormInput::text(
                             label: __( 'Account' ),
@@ -284,33 +292,28 @@ class TransactionAccountCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-            'name' => [
-                'label' => __( 'Name' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'account' => [
-                'label' => __( 'Account' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'operation' => [
-                'label' => __( 'Operation' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'nexopos_users_username' => [
-                'label' => __( 'Author' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Created At' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column(
+                label: __( 'Name' ),
+                identifier: 'name',
+            ),
+            CrudTable::column(
+                label: __( 'Category' ),
+                identifier: 'category_identifier',
+            ),
+            CrudTable::column(
+                label: __( 'Account' ),
+                identifier: 'account',
+            ),
+            CrudTable::column(
+                label: __( 'Author' ),
+                identifier: 'nexopos_users_username',
+            ),
+            CrudTable::column(
+                label: __( 'Created At' ),
+                identifier: 'created_at',
+            )
+        );
     }
 
     /**

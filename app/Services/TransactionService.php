@@ -48,6 +48,49 @@ class TransactionService
         TransactionHistory::ACCOUNT_REGISTER_CASHOUT => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_register_cashout_account' ],
     ];
 
+    public function reflectTransaction( TransactionHistory $transactionHistory )
+    {
+        if ( $transactionHistory->is_reflection ) {
+            throw new NotAllowedException( __( 'This transaction history is already a reflection.' ) );
+        }
+
+        $subAccount = TransactionAccount::find( $transactionHistory->transaction_account_id );
+
+        if ( $subAccount instanceof TransactionAccount ) {
+            $counterAccount = TransactionAccount::find( $subAccount->counter_account_id );
+
+            if ( $counterAccount ) {
+                $mainAccount = config( 'accounting.accounts' )[ $subAccount->category_identifier ];
+                $mainCounterAccount = config( 'accounting.accounts' )[ $counterAccount->category_identifier ];
+                $swapingKeysValues = array_flip( $mainCounterAccount );
+                $counterOperation = $swapingKeysValues[ $transactionHistory->operation ] === 'increase' ? 'decrease' : 'increase';
+
+                if ( $mainCounterAccount ) {
+                    $counterTransaction = new TransactionHistory;
+                    $counterTransaction->value = $transactionHistory->value;
+                    $counterTransaction->transaction_id = $transactionHistory->transaction_id;
+                    $counterTransaction->operation = $mainCounterAccount[ $counterOperation ];
+                    $counterTransaction->author = $transactionHistory->author;
+                    $counterTransaction->name = $transactionHistory->name;
+                    $counterTransaction->status = TransactionHistory::STATUS_ACTIVE;
+                    $counterTransaction->trigger_date = ns()->date->toDateTimeString();
+                    $counterTransaction->type = $transactionHistory->type;
+                    $counterTransaction->procurement_id = $transactionHistory->procurement_id;
+                    $counterTransaction->order_id = $transactionHistory->order_id;
+                    $counterTransaction->order_refund_id = $transactionHistory->order_refund_id;
+                    $counterTransaction->order_product_id = $transactionHistory->order_product_id;
+                    $counterTransaction->order_refund_product_id = $transactionHistory->order_refund_product_id;
+                    $counterTransaction->register_history_id = $transactionHistory->register_history_id;
+                    $counterTransaction->customer_account_history_id = $transactionHistory->customer_account_history_id;
+                    $counterTransaction->transaction_account_id = $counterAccount->id;
+                    $counterTransaction->is_reflection = true;
+
+                    $counterTransaction->save();
+                }
+            }
+        }
+    }
+
     public function __construct( DateService $dateService )
     {
         $this->dateService = $dateService;
@@ -332,10 +375,17 @@ class TransactionService
      */
     public function iniTransactionHistory( Transaction $transaction )
     {
+        $mainIdentifier  = $transaction->account->category_identifier;
+        $mainAccount    =   config( 'accounting.accounts' )[ $mainIdentifier ];
+
+        if ( ! $mainAccount ) {
+            throw new NotFoundException( sprintf( __(  'The account type %s is not found.' ), $mainIdentifier ) );
+        }
+
         $history = new TransactionHistory;
         $history->value = $transaction->value;
         $history->transaction_id = $transaction->id;
-        $history->operation = $transaction->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
+        $history->operation = $mainAccount[ 'increase' ]; // if the operation is not defined, by default is a "debit"
         $history->author = $transaction->author;
         $history->name = $transaction->name;
         $history->status = TransactionHistory::STATUS_ACTIVE;

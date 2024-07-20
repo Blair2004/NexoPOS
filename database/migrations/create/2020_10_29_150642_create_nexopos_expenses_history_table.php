@@ -33,6 +33,7 @@ return new class extends Migration
             $table->float( 'value', 18, 5 )->default( 0 );
             $table->datetime( 'trigger_date' )->nullable();
             $table->integer( 'author' );
+            $table->bool( 'is_reflection' )->default( false );
             $table->timestamps();
         } );
     }

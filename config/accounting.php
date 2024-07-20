@@ -2,28 +2,28 @@
 return [
     'accounts'  =>  [
         'assets'    =>  [
-            'credit'    =>  'decrease',
-            'debit'     =>  'increase',
+            'increase' => 'debit',
+            'decrease' => 'credit',
             'label'     =>  fn() => __( 'Assets' )
         ],
         'liabilities'   =>  [
-            'credit'    =>  'increase',
-            'debit'     =>  'decrease',
+            'increase' => 'credit',
+            'decrease' => 'debit',
             'label'     =>  fn() => __( 'Liabilities' )
         ],
         'equity'    =>  [
-            'credit'    =>  'increase',
-            'debit'     =>  'decrease',
+            'increase' => 'credit',
+            'decrease' => 'debit',
             'label'     =>  fn() => __( 'Equity' )
         ],
         'revenues'  =>  [
-            'credit'    =>  'increase',
-            'debit'     =>  'decrease',
+            'increase' => 'credit',
+            'decrease' => 'debit',
             'label'     =>  fn() => __( 'Revenues' )
         ],
         'expenses'  =>  [
-            'credit'    =>  'increase',
-            'debit'     =>  'decrease',
+            'increase' => 'debit',
+            'decrease' => 'credit',
             'label'     =>  fn() => __( 'Expenses' )
         ]
     ]

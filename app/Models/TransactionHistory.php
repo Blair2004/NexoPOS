@@ -115,6 +115,10 @@ class TransactionHistory extends NsModel
         'trigger_date',
     ];
 
+    protected $casts = [
+        'is_reflection' => 'boolean',
+    ];
+
     protected $dispatchesEvents = [
         'created' => TransactionsHistoryAfterCreatedEvent::class,
         'updated' => TransactionsHistoryAfterUpdatedEvent::class,

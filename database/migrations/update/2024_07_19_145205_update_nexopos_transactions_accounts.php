@@ -13,10 +13,19 @@ return new class extends Migration
     {
         Schema::table( 'nexopos_transactions_accounts', function( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'counter_account_id' ) ) {
-                $table->integer( 'counter_account_id' )->default( 0 );
+                $table->integer( 'counter_account_id' )->default(0);
             }
             if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'category_identifier' ) ) {
                 $table->string( 'category_identifier' )->nullable();
+            }
+            if ( Schema::hasColumn( 'nexopos_transactions_accounts', 'operation' ) ) {
+                $table->dropColumn( 'operation' );
+            }
+        });
+
+        Schema::table( 'nexopos_transactions_histories', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'is_reflection' ) ) {
+                $table->boolean( 'is_reflection' )->default( false );
             }
         });
     }
@@ -33,6 +42,16 @@ return new class extends Migration
 
             if ( Schema::hasColumn( 'nexopos_transactions_accounts', 'category_identifier' ) ) {
                 $table->dropColumn( 'category_identifier' );
+            }
+
+            if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'operation' ) ) {
+                $table->string( 'operation' )->default( 'debit' );
+            }
+        });
+
+        Schema::table( 'nexopos_transactions_histories', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_transactions_histories', 'is_reflection' ) ) {
+                $table->dropColumn( 'is_reflection' );
             }
         });
     }
