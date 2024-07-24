@@ -10381,16 +10381,16 @@
         },
         {
             "name": "laravel/pint",
-            "version": "v1.15.3",
+            "version": "v1.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
-                "reference": "3600b5d17aff52f6100ea4921849deacbbeb8656"
+                "reference": "4dba80c1de4b81dc4c4fb10ea6f4781495eb29f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pint/zipball/3600b5d17aff52f6100ea4921849deacbbeb8656",
-                "reference": "3600b5d17aff52f6100ea4921849deacbbeb8656",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/4dba80c1de4b81dc4c4fb10ea6f4781495eb29f5",
+                "reference": "4dba80c1de4b81dc4c4fb10ea6f4781495eb29f5",
                 "shasum": ""
             },
             "require": {
@@ -10401,13 +10401,13 @@
                 "php": "^8.1.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.54.0",
-                "illuminate/view": "^10.48.8",
-                "larastan/larastan": "^2.9.5",
-                "laravel-zero/framework": "^10.3.0",
-                "mockery/mockery": "^1.6.11",
+                "friendsofphp/php-cs-fixer": "^3.59.3",
+                "illuminate/view": "^10.48.12",
+                "larastan/larastan": "^2.9.7",
+                "laravel-zero/framework": "^10.4.0",
+                "mockery/mockery": "^1.6.12",
                 "nunomaduro/termwind": "^1.15.1",
-                "pestphp/pest": "^2.34.7"
+                "pestphp/pest": "^2.34.8"
             },
             "bin": [
                 "builds/pint"
@@ -10443,7 +10443,7 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
-            "time": "2024-04-30T15:02:26+00:00"
+            "time": "2024-07-23T16:40:20+00:00"
         },
         {
             "name": "mockery/mockery",
