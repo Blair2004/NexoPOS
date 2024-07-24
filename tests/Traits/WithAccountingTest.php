@@ -87,6 +87,9 @@ trait WithAccountingTest
             }
         }
 
+        /**
+         * @deprecated
+         */
         ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_PROCUREMENTS )->first()->id );
         ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_SALES )->first()->id );
         ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::where( 'account', TransactionHistory::ACCOUNT_CUSTOMER_CREDIT )->first()->id );
@@ -111,6 +114,9 @@ trait WithAccountingTest
          */
         $transactionHistory = TransactionHistory::where( 'procurement', $procurement_id )->first();
 
+        /**
+         * @deprecated
+         */
         $assignedCategoryID = ns()->option->get( 'ns_procurement_cashflow_account' );
 
         $this->assertTrue( $procurement instanceof Procurement, __( 'Unable to retreive the procurement using the id provided.' ) );
@@ -160,6 +166,9 @@ trait WithAccountingTest
 
         $currentDashboardDay = DashboardDay::forToday();
 
+        /**
+         * @deprecated
+         */
         $expenseCategoryID = ns()->option->get( 'ns_procurement_cashflow_account' );
         $totalExpenses = TransactionHistory::where( 'created_at', '>=', $dashboardDay->range_starts )
             ->where( 'created_at', '<=', $dashboardDay->range_ends )

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Events\TransactionsHistoryAfterCreatedEvent;
 use App\Events\TransactionsHistoryAfterDeletedEvent;
 use App\Events\TransactionsHistoryAfterUpdatedEvent;
+use App\Events\TransactionsHistoryBeforeDeleteEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -115,19 +116,22 @@ class TransactionHistory extends NsModel
         'trigger_date',
     ];
 
-    protected $casts = [
-        'is_reflection' => 'boolean',
-    ];
-
     protected $dispatchesEvents = [
-        'created' => TransactionsHistoryAfterCreatedEvent::class,
-        'updated' => TransactionsHistoryAfterUpdatedEvent::class,
-        'deleted' => TransactionsHistoryAfterDeletedEvent::class,
+        'created'   => TransactionsHistoryAfterCreatedEvent::class,
+        'updated'   => TransactionsHistoryAfterUpdatedEvent::class,
+        'deleting'  => TransactionsHistoryBeforeDeleteEvent::class,
+        'deleted'   => TransactionsHistoryAfterDeletedEvent::class,
     ];
 
     public function order()
     {
         return $this->hasOne( Order::class, 'id', 'order_id' );
+    }
+
+    protected function casts() {
+        return [
+            'is_reflection' => 'boolean',
+        ];
     }
 
     public function cashRegisterHistory()

@@ -5,19 +5,9 @@ use App\Crud\TransactionAccountCrud;
 use App\Models\TransactionAccount;
 use App\Services\Helper;
 
-$debitTransactionsAccount = TransactionAccount::debit()->get();
-$creditTransactionsAccount = TransactionAccount::credit()->get();
+$accounts = TransactionAccount::get();
 
 return [
-    FormInput::searchSelect(
-        label: __( 'Procurement Account' ),
-        name: 'ns_procurement_cashflow_account',
-        value: ns()->option->get( 'ns_procurement_cashflow_account' ),
-        description: __( 'Every procurement will be added to the selected transaction account' ),
-        component: 'nsCrudForm',
-        props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
-    ),
     FormInput::searchSelect(
         label: __( 'Sale Cash Flow Account' ),
         name: 'ns_sales_cashflow_account',
@@ -25,7 +15,7 @@ return [
         description: __( 'Every sales will be added to the selected transaction account' ),
         component: 'nsCrudForm',
         props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
+        options: Helper::toJsOptions( $accounts, [ 'id', 'name' ] ),
     ),
     FormInput::searchSelect(
         label: __( 'Customer Credit Account (crediting)' ),
@@ -34,7 +24,7 @@ return [
         description: __( 'Every customer credit will be added to the selected transaction account' ),
         component: 'nsCrudForm',
         props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
+        options: Helper::toJsOptions( $accounts, [ 'id', 'name' ] ),
     ),
     FormInput::searchSelect(
         label: __( 'Customer Credit Account (debitting)' ),
@@ -43,7 +33,7 @@ return [
         description: __( 'Every customer credit removed will be added to the selected transaction account' ),
         component: 'nsCrudForm',
         props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
+        options: Helper::toJsOptions( $accounts, [ 'id', 'name' ] ),
     ),
     FormInput::searchSelect(
         label: __( 'Sales Refunds Account' ),
@@ -52,7 +42,7 @@ return [
         description: __( 'Sales refunds will be attached to this transaction account' ),
         component: 'nsCrudForm',
         props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
+        options: Helper::toJsOptions( $accounts, [ 'id', 'name' ] ),
     ),
     FormInput::searchSelect(
         label: __( 'Stock Return Account (Spoiled Items)' ),
@@ -61,7 +51,7 @@ return [
         description: __( 'Stock return for spoiled items will be attached to this account' ),
         component: 'nsCrudForm',
         props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
+        options: Helper::toJsOptions( $accounts, [ 'id', 'name' ] ),
     ),
     FormInput::searchSelect(
         label: __( 'Liabilities Account' ),
@@ -70,7 +60,7 @@ return [
         description: __( 'Transaction account for all liabilities.' ),
         component: 'nsCrudForm',
         props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
+        options: Helper::toJsOptions( $accounts, [ 'id', 'name' ] ),
     ),
     FormInput::searchSelect(
         label: __( 'Equity Account' ),
@@ -79,7 +69,7 @@ return [
         description: __( 'Transaction account for equity.' ),
         component: 'nsCrudForm',
         props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
+        options: Helper::toJsOptions( $accounts, [ 'id', 'name' ] ),
     ),
     FormInput::searchSelect(
         label: __( 'Payable Account' ),
@@ -88,7 +78,7 @@ return [
         description: __( 'Transaction account for Payable.' ),
         component: 'nsCrudForm',
         props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
+        options: Helper::toJsOptions( $accounts, [ 'id', 'name' ] ),
     ),
     FormInput::searchSelect(
         label: __( 'Bank Account' ),
@@ -97,6 +87,6 @@ return [
         description: __( 'Transaction account for Bank Account.' ),
         component: 'nsCrudForm',
         props: TransactionAccountCrud::getFormConfig(),
-        options: Helper::toJsOptions( $debitTransactionsAccount, [ 'id', 'name' ] ),
+        options: Helper::toJsOptions( $accounts, [ 'id', 'name' ] ),
     ),
 ];

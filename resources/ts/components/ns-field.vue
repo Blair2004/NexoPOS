@@ -89,7 +89,7 @@ export default {
             this.$emit( 'change', { action: 'addOption', option })
         },
         changeTouchedState( field, $event ){
-            if ( $event.stopPropagation ) {
+            if ( $event && $event.stopPropagation ) {
                 $event.stopPropagation();
             }
             field.touched    =    true;

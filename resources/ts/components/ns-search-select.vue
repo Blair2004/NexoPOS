@@ -1,9 +1,14 @@
 <template>
     <div class="flex flex-col flex-auto ns-select">
         <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="( hasError ? 'has-error' : 'is-pristine' ) + ' ' + ( field.disabled ? 'cursor-not-allowed' : 'cursor-default' )" class="border-2 mt-1 relative rounded-md shadow-sm mb-1 flex overflow-hidden">
-            <div @click="! field.disabled && (showResults = ! showResults)" :class="( field.disabled ? 'bg-input-disabled' : 'bg-input-background' )" class="flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
+        <div :class="( hasError ? 'has-error' : 'is-pristine' ) + ' ' + ( field.disabled ? 'cursor-not-allowed' : 'cursor-default' )" 
+            class="border-2 mt-1 relative rounded-md shadow-sm mb-1 flex overflow-hidden">
+            <div @click="! field.disabled && (showResults = ! showResults)" :class="( field.disabled ? 'bg-input-disabled' : 'bg-input-background' )" 
+                class="flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
                 <span class="text-primary text-sm">{{ selectedOptionLabel }}</span>
+            </div>
+            <div v-if="hasSelectedValues( field )" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-error-secondary hover:text-white border-l-2 border-input-edge">
+                <i class="las la-times"></i>
             </div>
             <div v-if="field.component && ! field.disabled" @click="triggerDynamicComponent( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-input-button-hover border-l-2 border-input-edge">
                 <i class="las la-plus"></i>
@@ -107,6 +112,17 @@ export default {
     },
     methods: { 
         __,
+        hasSelectedValues( field ) {
+            const values    =   field.options.map( option => option.value );
+
+            return values.includes( field.value );
+        },
+        resetSelectedInput( field ) {
+            field.value = null;
+            this.$emit( 'change', null );
+            this.showResults    =   false;
+            this.searchField    =   '';
+        },
         selectFirstOption() {
             if ( this.filtredOptions.length > 0 ) {
                 this.selectOption( this.filtredOptions[0] );

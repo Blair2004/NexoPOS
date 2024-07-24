@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderAfterDeletedEvent;
+use App\Events\ShouldRefreshReportEvent;
 use App\Jobs\RefreshReportJob;
 use App\Jobs\UncountDeletedOrderForCashierJob;
 use App\Jobs\UncountDeletedOrderForCustomerJob;
@@ -45,6 +46,10 @@ class OrderAfterDeletedEventListener
             }
         }
 
-        RefreshReportJob::dispatch( $event->order->updated_at );
+        /**
+         * We'll instruct NexoPOS to perform
+         * a backend jobs to update the report.
+         */
+        ShouldRefreshReportEvent::dispatch( now()->parse( $event->order->updated_at ) );
     }
 }

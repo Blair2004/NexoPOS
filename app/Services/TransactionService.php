@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Classes\Hook;
+use App\Events\ShouldRefreshReportEvent;
 use App\Events\TransactionAfterCreatedEvent;
 use App\Events\TransactionAfterUpdatedEvent;
 use App\Exceptions\NotAllowedException;
@@ -30,15 +31,16 @@ use Illuminate\Support\Facades\Auth;
 class TransactionService
 {
     /**
-     * @var DateService
+     * @deprecated
      */
-    protected $dateService;
-
     protected $accountTypes = [
         TransactionHistory::ACCOUNT_SALES => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_sales_cashflow_account' ],
         TransactionHistory::ACCOUNT_REFUNDS => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_sales_refunds_account' ],
         TransactionHistory::ACCOUNT_SPOILED => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_stock_return_spoiled_account' ],
         TransactionHistory::ACCOUNT_UNSPOILED => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_stock_return_unspoiled_account' ],
+        /**
+         * @deprecated
+         */
         TransactionHistory::ACCOUNT_PROCUREMENTS => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_procurement_cashflow_account' ],
         TransactionHistory::ACCOUNT_CUSTOMER_CREDIT => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_customer_crediting_cashflow_account' ],
         TransactionHistory::ACCOUNT_CUSTOMER_DEBIT => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_customer_debitting_cashflow_account' ],
@@ -47,6 +49,25 @@ class TransactionService
         TransactionHistory::ACCOUNT_REGISTER_CASHING => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_register_cashing_account' ],
         TransactionHistory::ACCOUNT_REGISTER_CASHOUT => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_register_cashout_account' ],
     ];
+
+    public function __construct( public DateService $dateService )
+    {
+        // ...
+    }
+
+    public function triggerRecurringTransaction( Transaction $transaction ) {
+        if ( ! $transaction->recurring ) {
+            throw new NotAllowedException( __( 'This transaction is not recurring.' ) );
+        }
+
+        $transactionHistory = $this->recordTransactionHistory( $transaction );
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The recurring transaction has been triggered.' ),
+            'data' => compact( 'transaction', 'transactionHistory' ),
+        ];
+    }
 
     public function reflectTransaction( TransactionHistory $transactionHistory )
     {
@@ -60,8 +81,11 @@ class TransactionService
             $counterAccount = TransactionAccount::find( $subAccount->counter_account_id );
 
             if ( $counterAccount ) {
-                $mainAccount = config( 'accounting.accounts' )[ $subAccount->category_identifier ];
-                $mainCounterAccount = config( 'accounting.accounts' )[ $counterAccount->category_identifier ];
+                $mainCounterAccount = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+                    'increase' => $account[ 'increase' ],
+                    'decrease' => $account[ 'decrease' ],
+                ]))->toArray()[ $counterAccount->category_identifier ];
+
                 $swapingKeysValues = array_flip( $mainCounterAccount );
                 $counterOperation = $swapingKeysValues[ $transactionHistory->operation ] === 'increase' ? 'decrease' : 'increase';
 
@@ -84,6 +108,7 @@ class TransactionService
                     $counterTransaction->customer_account_history_id = $transactionHistory->customer_account_history_id;
                     $counterTransaction->transaction_account_id = $counterAccount->id;
                     $counterTransaction->is_reflection = true;
+                    $counterTransaction->reflection_source_id = $transactionHistory->id;
 
                     $counterTransaction->save();
                 }
@@ -91,9 +116,76 @@ class TransactionService
         }
     }
 
-    public function __construct( DateService $dateService )
+    public function reflectTransactionOnAccounts( TransactionHistory $transactionHistory, array $accounts )
     {
-        $this->dateService = $dateService;
+        $reflections = collect( $accounts )->map( function ( $counterAccountId ) use ( $transactionHistory ) {
+            $counterAccount = TransactionAccount::find( $counterAccountId );
+
+            if ( $counterAccount instanceof TransactionAccount ) {
+                $counterOperation = $transactionHistory->operation === 'credit' ? 'debit' : 'credit';
+
+                $counterTransaction = TransactionHistory::where( 'reflection_source_id', $transactionHistory->id )
+                    ->where( 'transaction_account_id', $counterAccount->id )
+                    ->firstOrNew();
+                    
+                $counterTransaction->value = $transactionHistory->value;
+                $counterTransaction->transaction_id = $transactionHistory->transaction_id;
+                $counterTransaction->operation = $counterOperation;
+                $counterTransaction->author = $transactionHistory->author;
+                $counterTransaction->name = $transactionHistory->name;
+                $counterTransaction->status = TransactionHistory::STATUS_ACTIVE;
+                $counterTransaction->trigger_date = ns()->date->toDateTimeString();
+                $counterTransaction->type = $transactionHistory->type;
+                $counterTransaction->procurement_id = $transactionHistory->procurement_id;
+                $counterTransaction->order_id = $transactionHistory->order_id;
+                $counterTransaction->order_refund_id = $transactionHistory->order_refund_id;
+                $counterTransaction->order_product_id = $transactionHistory->order_product_id;
+                $counterTransaction->order_refund_product_id = $transactionHistory->order_refund_product_id;
+                $counterTransaction->register_history_id = $transactionHistory->register_history_id;
+                $counterTransaction->customer_account_history_id = $transactionHistory->customer_account_history_id;
+                $counterTransaction->transaction_account_id = $counterAccount->id;
+                $counterTransaction->is_reflection = true;
+                $counterTransaction->reflection_source_id = $transactionHistory->id;
+                $counterTransaction->save();
+
+                return $counterTransaction;
+            }
+        });
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The reflections has been created.' ),
+            'data' => $reflections->filter(),
+        ];
+    }
+
+    /**
+     * Get the transaction account by code
+     * @param TransactionHistory $transactionHistory
+     */
+    public function deleteTransactionReflection( TransactionHistory $transactionHistory )
+    {
+        $reflection = TransactionHistory::where( 'reflection_source_id', $transactionHistory->id )->first();
+
+        if ( $reflection instanceof TransactionHistory ) {
+            $reflection->delete();
+
+            /**
+             * We'll instruct NexoPOS to perform
+             * a backend jobs to update the report.
+             */
+            ShouldRefreshReportEvent::dispatch( $transactionHistory->created_at );
+
+            return [
+                'status' => 'success',
+                'message' => __( 'The reflection has been deleted.' ),
+            ];
+        }
+
+        return [
+            'status' => 'info',
+            'message'   =>  __( 'No reflection found.' ),
+        ];
     }
 
     public function create( $fields )
@@ -474,6 +566,18 @@ class TransactionService
                         $transactionScheduledDate = $date->copy();
                         $transactionScheduledDate->day = $transaction->occurrence_value;
                         break;
+                    case 'every_x_minutes':
+                        $transactionScheduledDate = $date->copy();
+                        $transactionScheduledDate->day = $transaction->occurrence_value;
+                        break;
+                    case 'every_x_hours':
+                        $transactionScheduledDate = $date->copy();
+                        $transactionScheduledDate->hour = now()->hour;
+                        break;
+                    case 'every_x_days':
+                        $transactionScheduledDate = $date->copy();
+                        $transactionScheduledDate->minute = now()->minute;
+                        break;
                 }
 
                 if ( isset( $transactionScheduledDate ) && $transactionScheduledDate instanceof Carbon ) {
@@ -538,54 +642,57 @@ class TransactionService
      */
     public function handleProcurementTransaction( Procurement $procurement )
     {
+        $inventoryAccountId = ns()->option->get( 'ns_accounting_procurement_account' );
+        $unpaidAccountId = ns()->option->get( 'ns_accounting_procurement_unpaid_account' );
+        $paidAccountId = ns()->option->get( 'ns_accounting_procurement_paid_account' );
+
+        $inventoryAccount    =   TransactionAccount::findOrFail( $inventoryAccountId );
+
+        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+            'increase' => $account[ 'increase' ],
+            'decrease' => $account[ 'decrease' ],
+        ]))->toArray()[ $inventoryAccount->category_identifier ];
+
+        /**
+         * We're pulling any existing transaction made on the TransactionHistory
+         * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+         */
+        $transaction = TransactionHistory::where( 'procurement_id', $procurement->id )->firstOrNew();
+        $transaction->value = $procurement->cost;
+        $transaction->author = $procurement->author;
+        $transaction->procurement_id = $procurement->id;
+        $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
+        $transaction->transaction_account_id = $inventoryAccountId;
+        $transaction->operation = $accountConfiguration[ 'increase' ];
+        $transaction->type = Transaction::TYPE_DIRECT;
+        $transaction->trigger_date = $procurement->created_at;
+        $transaction->status = TransactionHistory::STATUS_ACTIVE;
+        $transaction->created_at = $procurement->created_at;
+        $transaction->updated_at = $procurement->updated_at;
+        $transaction->save();
+
         if (
             $procurement->payment_status === Procurement::PAYMENT_PAID &&
             $procurement->delivery_status === Procurement::STOCKED
         ) {
-            $accountTypeCode = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_PROCUREMENTS );
-
             /**
-             * We're pulling any existing transaction made on the TransactionHistory
-             * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+             * we might delete any counter transaction 
+             * that already exists
              */
-            $transaction = TransactionHistory::where( 'procurement_id', $procurement->id )->firstOrNew();
-            $transaction->value = $procurement->cost;
-            $transaction->author = $procurement->author;
-            $transaction->procurement_id = $procurement->id;
-            $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
-            $transaction->transaction_account_id = $accountTypeCode->id;
-            $transaction->operation = 'debit';
-            $transaction->type = Transaction::TYPE_DIRECT;
-            $transaction->trigger_date = $procurement->created_at;
-            $transaction->status = TransactionHistory::STATUS_ACTIVE;
-            $transaction->created_at = $procurement->created_at;
-            $transaction->updated_at = $procurement->updated_at;
-            $transaction->save();
+            TransactionHistory::where( 'reflection_source_id', $transaction->id )->delete();
 
+            $this->reflectTransactionOnAccounts( $transaction, [ $paidAccountId ] );
         } elseif (
             $procurement->payment_status === Procurement::PAYMENT_UNPAID &&
             $procurement->delivery_status === Procurement::STOCKED
         ) {
             /**
-             * If the procurement is not paid, we'll
-             * record a liability for the procurement.
+             * we might delete any counter transaction 
+             * that already exists
              */
-            $accountTypeCode = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_LIABILITIES );
+            TransactionHistory::where( 'reflection_source_id', $transaction->id )->delete();
 
-            /**
-             * this behave as a flash transaction
-             * made only for recording an history.
-             */
-            $transaction = TransactionHistory::where( 'procurement_id', $procurement->id )->firstOrNew();
-            $transaction->value = $procurement->cost;
-            $transaction->author = $procurement->author;
-            $transaction->procurement_id = $procurement->id;
-            $transaction->name = sprintf( __( 'Procurement Liability : %s' ), $procurement->name );
-            $transaction->transaction_account_id = $accountTypeCode->id;
-            $transaction->operation = 'debit';
-            $transaction->created_at = $procurement->created_at;
-            $transaction->updated_at = $procurement->updated_at;
-            $transaction->save();
+            $this->reflectTransactionOnAccounts( $transaction, [ $unpaidAccountId ] );
         }
     }
 
@@ -633,6 +740,8 @@ class TransactionService
 
     /**
      * Will record a transaction for every refund performed
+     * 
+     * @deprecated
      *
      * @return void
      */
@@ -687,6 +796,8 @@ class TransactionService
      * If the order has just been
      * created and the payment status is PAID
      * we'll store the total as a cash flow transaction.
+     * 
+     * @deprecated
      *
      * @return void
      */
@@ -741,6 +852,7 @@ class TransactionService
 
     /**
      * Retreive the transaction type
+     * @deprecated
      */
     public function getTransactionTypeByAccountName( $accountName )
     {
@@ -759,7 +871,8 @@ class TransactionService
     /**
      * Retreive the account configuration
      * using the account type
-     *
+     * 
+     * @deprecated
      * @param string $type
      */
     public function getTransactionAccountByCode( $type ): TransactionAccount
@@ -1092,6 +1205,9 @@ class TransactionService
                     Transaction::OCCURRENCE_X_AFTER_MONTH_STARTS => __( '{day} after month starts' ),
                     Transaction::OCCURRENCE_X_BEFORE_MONTH_ENDS => __( '{day} before month ends' ),
                     Transaction::OCCURRENCE_SPECIFIC_DAY => __( 'Every {day} of the month' ),
+                    Transaction::OCCURRENCE_EVERY_X_MINUTES => __( 'Every {minutes}' ),
+                    Transaction::OCCURRENCE_EVERY_X_HOURS => __( 'Every {hours}' ),
+                    Transaction::OCCURRENCE_EVERY_X_DAYS => __( 'Every {days}' ),
                 ] ),
             ], [
                 'type' => 'number',
@@ -1103,6 +1219,9 @@ class TransactionService
                         Transaction::OCCURRENCE_X_AFTER_MONTH_STARTS,
                         Transaction::OCCURRENCE_X_BEFORE_MONTH_ENDS,
                         Transaction::OCCURRENCE_SPECIFIC_DAY,
+                        Transaction::OCCURRENCE_EVERY_X_MINUTES,
+                        Transaction::OCCURRENCE_EVERY_X_HOURS,
+                        Transaction::OCCURRENCE_EVERY_X_DAYS,
                     ],
                 ],
                 'description' => __( 'Make sure set a day that is likely to be executed' ),
@@ -1159,6 +1278,20 @@ class TransactionService
             'status' => 'success',
             'message' => __( 'The transaction has been created.' ),
             'data' => compact( 'transactionHistory' ),
+        ];
+    }
+
+    public function deleteProcurementTransactions( Procurement $procurement )
+    {
+        $transactions = TransactionHistory::where( 'procurement_id', $procurement->id )->get();
+
+        $transactions->each( function ( $transaction ) {
+            $transaction->delete();
+        } );
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The procurement transactions has been deleted.' ),
         ];
     }
 }

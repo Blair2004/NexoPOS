@@ -160,7 +160,7 @@ class TransactionAccountCrud extends CrudService
                         FormInput::searchSelect(
                             label: __( 'Counter Account' ),
                             name: 'counter_account_id',
-                            options: Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ] ),
+                            options: Helper::toJsOptions( TransactionAccount::whereNotIn( 'id', [ $entry->id ?? 0 ])->get(), [ 'id', 'name' ] ),
                             description: __( 'For double bookeeping purpose, which account is affected by all transactions on this account?' ),
                             value: $entry->counter_account_id ?? 0,
                         ),

@@ -91,7 +91,7 @@ class ProcurementService
             $number = str_pad( 1, 5, '0', STR_PAD_LEFT );
         }
 
-        return sprintf( __( 'Procurement %s' ), $number );
+        return sprintf( __( '%s' ), $number );
     }
 
     /**

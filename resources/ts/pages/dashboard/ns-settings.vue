@@ -87,9 +87,9 @@ export default {
          * @param field 
          */
         async handleSaved( event, field ) {
-            const form = await this.loadSettingsForm( this.activeTab );
+            // const form = await this.loadSettingsForm( this.activeTab );
 
-            form.tabs[ this.activeTabIdentifier ].fields.filter( __field => {
+            this.form.tabs[ this.activeTabIdentifier ].fields.filter( __field => {
                     if ( __field.name === field.name && event.data.entry ) {
                         __field.value = event.data.entry.id;
                     }

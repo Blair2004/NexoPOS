@@ -360,6 +360,8 @@ export default {
          * this check if there is not enough options as there is groups
          */
         addUnitGroup( field ) {
+            console.log({ field });
+
             if ( field.options.length === 0 ) {
                 return nsSnackBar.error( __( 'Please select at least one unit group before you proceed.' ) ).subscribe();
             }

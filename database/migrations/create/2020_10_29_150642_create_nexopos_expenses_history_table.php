@@ -18,6 +18,8 @@ return new class extends Migration
             $table->id();
             $table->integer( 'transaction_id' )->nullable();
             $table->string( 'operation' ); // credit or debit
+            $table->bool( 'is_reflection' )->default( false );
+            $table->bool( 'reflection_source_id' )->nullable();
             $table->integer( 'transaction_account_id' )->nullable();
             $table->integer( 'procurement_id' )->nullable(); // when the procurement is deleted the transaction history will be deleted automatically as well.
             $table->integer( 'order_refund_id' )->nullable(); // to link an transaction to an order refund.
@@ -33,7 +35,6 @@ return new class extends Migration
             $table->float( 'value', 18, 5 )->default( 0 );
             $table->datetime( 'trigger_date' )->nullable();
             $table->integer( 'author' );
-            $table->bool( 'is_reflection' )->default( false );
             $table->timestamps();
         } );
     }

@@ -47,6 +47,12 @@ class Transaction extends NsModel
 
     const OCCURRENCE_X_BEFORE_MONTH_ENDS = 'x_before_month_ends';
 
+    const OCCURRENCE_EVERY_X_DAYS = 'every_x_days';
+
+    const OCCURRENCE_EVERY_X_HOURS = 'every_x_hours';
+
+    const OCCURRENCE_EVERY_X_MINUTES = 'every_x_minutes';
+
     const TYPE_SCHEDULED = 'ns.scheduled-transaction';
 
     const TYPE_RECURRING = 'ns.recurring-transaction';

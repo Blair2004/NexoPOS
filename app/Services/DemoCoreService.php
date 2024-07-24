@@ -166,6 +166,9 @@ class DemoCoreService
             'account' => '002',
         ] );
 
+        /**
+         * @deprecated
+         */
         ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::account( '002' )->first()->id );
 
         $transactionService->createAccount( [

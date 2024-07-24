@@ -28,6 +28,9 @@ trait WithProcurementTest
         $testService = app()->make( TestService::class );
 
         $provider = Provider::get()->random();
+        /**
+         * @deprecated
+         */
         $currentExpenseValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => 'unpaid',
@@ -41,6 +44,9 @@ trait WithProcurementTest
 
         $decode = json_decode( $response->getContent(), true );
 
+        /**
+         * @deprecated
+         */
         $newExpensevalue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $procurement = $decode[ 'data' ][ 'procurement' ];
 
@@ -53,6 +59,9 @@ trait WithProcurementTest
         /**
          * Step 2: update the procurement to paid
          */
+        /**
+         * @deprecated
+         */
         $currentTransactionValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
@@ -61,6 +70,9 @@ trait WithProcurementTest
         $response->assertOk();
         $decode = json_decode( $response->getContent(), true );
 
+        /**
+         * @deprecated
+         */
         $newTransaction = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $existingTransaction = TransactionHistory::where( 'procurement_id', $procurement[ 'id' ] )->first();
 
@@ -77,6 +89,9 @@ trait WithProcurementTest
          */
         $testService = app()->make( TestService::class );
 
+        /**
+         * @deprecated
+         */
         $currentExpenseValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => Procurement::PAYMENT_UNPAID,
@@ -140,6 +155,9 @@ trait WithProcurementTest
          * and check if the accounts are valid.
          */
         $responseData = $response->json();
+        /**
+         * @deprecated
+         */
         $newExpensevalue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $existingExpense = TransactionHistory::where( 'procurement_id', $responseData[ 'data' ][ 'procurement' ][ 'id' ] )->first();
 
@@ -495,6 +513,9 @@ trait WithProcurementTest
          */
         $testService = app()->make( TestService::class );
 
+        /**
+         * @deprecated
+         */
         $currentExpenseValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => Procurement::PAYMENT_PAID,

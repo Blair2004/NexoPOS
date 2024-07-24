@@ -27,6 +27,9 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'is_reflection' ) ) {
                 $table->boolean( 'is_reflection' )->default( false );
             }
+            if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'reflection_source_id' ) ) {
+                $table->boolean( 'reflection_source_id' )->nullable();
+            }
         });
     }
 
@@ -52,6 +55,9 @@ return new class extends Migration
         Schema::table( 'nexopos_transactions_histories', function( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_transactions_histories', 'is_reflection' ) ) {
                 $table->dropColumn( 'is_reflection' );
+            }
+            if ( Schema::hasColumn( 'nexopos_transactions_histories', 'reflection_source_id' ) ) {
+                $table->dropColumn( 'reflection_source_id' );
             }
         });
     }
