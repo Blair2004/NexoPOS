@@ -10,7 +10,6 @@ use App\Classes\Output;
     <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
         @include( 'common.dashboard.title' )
         <ns-crud-form 
-            return-url="{{ $returnUrl }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
             :option-attributes='@json( $optionAttributes ?? [] )'
             :query-params='@json( $queryParams ?? [] )'

@@ -118,6 +118,10 @@ export default {
             return values.includes( field.value );
         },
         resetSelectedInput( field ) {
+            if ( field.disabled ) {
+                return;
+            }
+            
             field.value = null;
             this.$emit( 'change', null );
             this.showResults    =   false;

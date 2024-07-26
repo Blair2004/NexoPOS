@@ -100,7 +100,6 @@
                                 <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'groups'">
                                     <ns-product-group
                                         @update="setProducts( $event, variation.tabs )"
-                                        @updateSalePrice="triggerRecompute( $event, variation.tabs )" 
                                         :fields="getActiveTab( variation.tabs ).fields"></ns-product-group>
                                 </div>
                                 <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
@@ -115,7 +114,7 @@
                                                     <p class="py-1 text-sm text-primary">{{ field.description }}</p>
                                                 </div>
                                                 <div class="mb-2">
-                                                    <div @click="addUnitGroup( field )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-primary cursor-pointer rounded-lg">
+                                                    <div @click="addUnitGroup( field, variation.tabs )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-primary cursor-pointer rounded-lg">
                                                         <span class="rounded-full border-2 ns-inset-button info h-8 w-8 flex items-center justify-center">
                                                             <i class="las la-plus-circle"></i>
                                                         </span>
@@ -174,7 +173,7 @@ import nsProductGroup from './ns-product-group.vue';
 import { nsCurrency } from '~/filters/currency';
 import { reactive } from "vue";
 
-declare const Popup, nsSnackbar;
+declare const Popup, nsSnackbar, nsComponents;
 
 export default {
     components: {
@@ -271,14 +270,14 @@ export default {
         },
         async handleSaved( event, activeTabKey, variationIndex, field ) {
             if ( event.data.entry ) {
-                
-                const rawComponent = await this.loadForm();
 
-                rawComponent.form.variations[ variationIndex ].tabs[ activeTabKey ].fields.forEach( __field => {
-                    if ( __field.name === field.name ) {
-                        __field.value   =   event.data.entry.id;
-                    }
+                field.options.push({
+                    label: event.data.entry[ field.props.optionAttributes.label ],
+                    value: event.data.entry[ field.props.optionAttributes.value ]
                 });
+                field.value = event.data.entry[ field.props.optionAttributes.value ];
+
+                this.loadAvailableUnits( this.form.variations[ variationIndex ].tabs, field );
             }
         },
         getGroupProducts( tabs ) {
@@ -298,9 +297,6 @@ export default {
                     field.value     =   products;
                 }
             });
-        },
-        triggerRecompute( value ) {
-            // @todo check if it's still useful
         },
         getUnitQuantity( fields ) {
             const quantity  =   fields.filter( f => f.name === 'quantity' ).map( f => f.value );
@@ -359,12 +355,10 @@ export default {
          * When the user click on "New Group",
          * this check if there is not enough options as there is groups
          */
-        addUnitGroup( field ) {
-            console.log({ field });
-
+        addUnitGroup( field, tabs ) {
             if ( field.options.length === 0 ) {
                 return nsSnackBar.error( __( 'Please select at least one unit group before you proceed.' ) ).subscribe();
-            }
+                }                
 
             if( field.options.length > field.groups.length ) {
                 const oldGroups     =   field.groups;
@@ -392,22 +386,9 @@ export default {
             field.value     =   event.data.entry[ field.props.optionAttributes.value ];
         },
 
-        /**
-         * When a change is made on unit group
-         * we need to pull units attached to and make them available
-         * for every groups. Validation should prevent duplicated units.
-         */
-        loadAvailableUnits( unit_section, field ) {
-            
-            if( field.name !== 'unit_group' ) {
-                return;
-            }
-
-            this.unitLoaded     =   false;
-            this.unitLoadError  =   false;
-            const unitGroup     =   unit_section.fields.filter( f => f.name === 'unit_group' )[0].value;
-            
-            nsHttpClient.get( this.unitsUrl.replace( '{id}', unitGroup ) )
+        loadUnits( unit_section, unit_group_id ) {
+            return new Promise( ( resolve, reject ) => {
+                nsHttpClient.get( this.unitsUrl.replace( '{id}', unit_group_id ) )
                 .subscribe({
                     next: (result: any[]) => {
                         /**
@@ -432,11 +413,32 @@ export default {
                         });
 
                         this.unitLoaded = true;
+                        resolve( true );
                     },
                     error: error => {
+                        reject( false );
                         this.unitLoadError  =   true;
                     }
                 })
+            })
+        },
+
+        /**
+         * When a change is made on unit group
+         * we need to pull units attached to and make them available
+         * for every groups. Validation should prevent duplicated units.
+         */
+        async loadAvailableUnits( unit_section, field ) {
+            
+            if( field.name !== 'unit_group' ) {
+                return;
+            }
+
+            this.unitLoaded         =   false;
+            this.unitLoadError      =   false;
+            const unit_group_id     =   unit_section.fields.filter( f => f.name === 'unit_group' )[0].value;
+
+            await this.loadUnits( unit_section, unit_group_id );    
         },
         submit() {
             let formValidGlobally   =   true;

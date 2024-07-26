@@ -3,7 +3,6 @@ import { nsHooks, nsHttpClient, nsSnackBar } from '../bootstrap';
 import FormValidation from '../libraries/form-validation';
 import { __  } from '~/libraries/lang';
 import popupResolver from '~/libraries/popup-resolver';
-import popupCloser from '~/libraries/popup-closer';
 
 export default {
     data: () => {
@@ -11,6 +10,7 @@ export default {
             form: {},
             globallyChecked: false,
             formValidation: new FormValidation,
+            links: {},
             rows: []
         }
     }, 
@@ -18,7 +18,7 @@ export default {
     mounted() {
         this.loadForm();
     },
-    props: [ 'src', 'createUrl', 'fieldClass', 'returnUrl', 'submitUrl', 'submitMethod', 'disableTabs', 'queryParams', 'popup', 'optionAttributes' ],
+    props: [ 'src', 'createUrl', 'fieldClass', 'submitUrl', 'submitMethod', 'disableTabs', 'queryParams', 'popup', 'optionAttributes' ],
     computed: {
         activeTabFields() {
             for( let identifier in this.form.tabs ) {
@@ -85,8 +85,8 @@ export default {
                         if ( this.popup ) {
                             this.popupResolver( result );
                         } else {
-                            if ( this.submitMethod && this.submitMethod.toLowerCase() === 'post' && this.returnUrl !== false ) {
-                                return document.location   =   result.data.editUrl || this.returnUrl;
+                            if ( this.submitMethod && this.submitMethod.toLowerCase() === 'post' && this.links.list !== false ) {
+                                return document.location   =   result.data.editUrl || this.links.list;
                             } else {
                                 nsSnackBar.info( result.message, __( 'Okay' ), { duration: 3000 }).subscribe();
                             }
@@ -118,6 +118,7 @@ export default {
                         next: (f) => {
                             resolve( f );
                             this.form    =   this.parseForm( f.form );
+                            this.links = f.links;
                             nsHooks.doAction( 'ns-crud-form-loaded', this );
                             this.$emit( 'updated', this.form );
                         },
@@ -168,21 +169,21 @@ export default {
     <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center h-full">
         <ns-spinner />
     </div>
-    <div class="form flex-auto" v-if="Object.values( form ).length > 0" :class="popup ? 'bg-box-background w-95vw md:w-2/3-screen' : ''" id="crud-form" >
+    <div class="form flex-auto" v-if="Object.values( form ).length > 0" :class="popup ? 'bg-box-background w-95vw md:w-2/3-screen max-h-6/7-screen overflow-hidden flex flex-col' : ''" id="crud-form" >
         <div class="box-header border-b border-box-edge box-border p-2 flex justify-between items-center" v-if="popup">
             <h2 class="text-primary font-bold text-lg">{{ popup.params.title }}</h2>
             <div>
                 <ns-close-button @click="handleClose()"></ns-close-button>
             </div>
         </div>
-        <div v-if="Object.values( form ).length > 0" :class="popup ? 'p-2' : ''">
+        <div v-if="Object.values( form ).length > 0" :class="popup ? 'p-2 overflow-y-auto' : ''">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center" v-if="form.main">
                     <label for="title" class="font-bold my-2 text-primary">
                         <span v-if="form.main.name">{{ form.main.label }}</span>
                     </label>
                     <div for="title" class="text-sm my-2">
-                        <a v-if="returnUrl && ! popup" :href="returnUrl" class="rounded-full border px-2 py-1 ns-inset-button error">{{ __( 'Go Back' ) }}</a>
+                        <a v-if="links.list && ! popup" :href="links.list" class="rounded-full border px-2 py-1 ns-inset-button error">{{ __( 'Go Back' ) }}</a>
                     </div>
                 </div>
                 <template v-if="form.main.name">

@@ -18,14 +18,16 @@ class TransactionOccurrenceCast implements CastsAttributes
     public function get( $model, string $key, $value, array $attributes )
     {
         if ( $model instanceof CrudEntry ) {
-            $computedValue = $model->getRawValue( 'occurrence_value' );
-
             if ( $model->getRawValue( 'type' ) === Transaction::TYPE_SCHEDULED ) {
                 return sprintf(
                     __( 'Scheduled for %s' ),
                     ns()->date->getFormatted( $model->getRawValue( 'scheduled_date' ) )
                 );
             }
+        }
+
+        if ( $value === null ) {
+            return __( 'No Occurrence' );
         }
 
         if ( $value == 1 ) {

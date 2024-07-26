@@ -102,7 +102,8 @@ class CrudInput
             value: $value,
             type: 'search-select',
             component: $component,
-            props: $props
+            props: $props,
+            disabled: $disabled
         );
     }
 

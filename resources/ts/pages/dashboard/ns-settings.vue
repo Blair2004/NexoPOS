@@ -87,13 +87,12 @@ export default {
          * @param field 
          */
         async handleSaved( event, field ) {
-            // const form = await this.loadSettingsForm( this.activeTab );
+            field.options.push({
+                value: event.data.entry[ field.props.optionAttributes.value ],
+                label: event.data.entry[ field.props.optionAttributes.label ]
+            })
 
-            this.form.tabs[ this.activeTabIdentifier ].fields.filter( __field => {
-                    if ( __field.name === field.name && event.data.entry ) {
-                        __field.value = event.data.entry.id;
-                    }
-                })
+            field.value = event.data.entry[ field.props.optionAttributes.value ];
         },
         loadComponent( componentName ) {
             return shallowRef( nsExtraComponents[ componentName ] );
