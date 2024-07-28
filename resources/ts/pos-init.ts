@@ -617,7 +617,7 @@ export class POS {
                 });
             }
             
-            if (order.tax_group_id !== undefined && order.tax_group_id.toString().length > 0 ) {
+            if ( ! [ undefined, null ].includes( order.tax_group_id ) && order.tax_group_id.toString().length > 0 ) {
                 nsHttpClient.get(`/api/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {

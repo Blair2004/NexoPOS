@@ -1076,6 +1076,7 @@ class TransactionService
      * Will add customer credit operation
      * to the cash flow history
      *
+     * @deprecated
      * @return void
      */
     public function handleCustomerCredit( CustomerAccountHistory $customerHistory )
@@ -1229,6 +1230,45 @@ class TransactionService
         ] );
 
         return compact( 'recurrence', 'configurations', 'warningMessage' );
+    }
+
+    public function recordTransactionFromSale( Order $order ) 
+    {
+        $revenueAccountId = ns()->option->get( 'accounting_orders_revenues_account' );
+        $cashAccountId = ns()->option->get( 'accounting_orders_cash_account' );
+        $unpaidAccounId = ns()->option->get( 'accounting_orders_receivable_account' );
+
+        if ( $order->payment_status === Order::PAYMENT_PAID ) {
+            $cashAccount = TransactionAccount::findOrFail( $cashAccountId );
+            $revenueAcconut = TransactionAccount::findOrFail( $revenueAccountId );
+
+            $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+                'increase' => $account[ 'increase' ],
+                'decrease' => $account[ 'decrease' ],
+            ]))->toArray()[ $cashAccount->category_identifier ];
+
+            /*
+            * We're pulling any existing transaction made on the TransactionHistory
+            * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+            */
+            $transaction = TransactionHistory::where( 'order_id', $order->id )
+                ->where( 'operation', $accountConfiguration[ 'increase' ] )
+                ->firstOrNew();
+                
+            $transaction->value = $order->total;
+            $transaction->author = $order->author;
+            $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
+            $transaction->transaction_account_id = $cashAccount;
+            $transaction->operation = $accountConfiguration[ 'increase' ];
+            $transaction->type = Transaction::TYPE_DIRECT;
+            $transaction->trigger_date = $order->created_at;
+            $transaction->status = TransactionHistory::STATUS_ACTIVE;
+            $transaction->created_at = $order->created_at;
+            $transaction->updated_at = $order->updated_at;
+            $transaction->save();
+
+            $this->reflectTransactionOnAccounts( $transaction, [ $revenueAcconut ] );
+        }
     }
 
     public function createTransactionFromRegisterHistory( RegisterHistory $registerHistory )
