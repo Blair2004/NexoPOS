@@ -11,14 +11,15 @@ export default {
             globallyChecked: false,
             formValidation: new FormValidation,
             links: {},
-            rows: []
+            rows: [],
+            optionAttributes: {}
         }
     }, 
     emits: [ 'updated', 'saved' ],
     mounted() {
         this.loadForm();
     },
-    props: [ 'src', 'createUrl', 'fieldClass', 'submitUrl', 'submitMethod', 'disableTabs', 'queryParams', 'popup', 'optionAttributes' ],
+    props: [ 'src', 'createUrl', 'fieldClass', 'submitUrl', 'submitMethod', 'disableTabs', 'queryParams', 'popup' ],
     computed: {
         activeTabFields() {
             for( let identifier in this.form.tabs ) {
@@ -47,6 +48,7 @@ export default {
             this.form.tabs[ identifier ].active     =   true;
         },
         async handleSaved( event, activeTabIdentifier, field ) {
+            console.log({ event, activeTabIdentifier, field, __this : this });
             this.form.tabs[ activeTabIdentifier ].fields.filter( __field => {
                 if ( __field.name === field.name && event.data.entry ) {
                     __field.options.push({
@@ -119,7 +121,19 @@ export default {
                             resolve( f );
                             this.form    =   this.parseForm( f.form );
                             this.links = f.links;
+                            this.optionAttributes = f.optionAttributes;
                             nsHooks.doAction( 'ns-crud-form-loaded', this );
+
+                            /**
+                             * We'll automatically add the mouse
+                             * focus on the first field.
+                             */
+                            if ( this.form.main ) {
+                                setTimeout(() => {
+                                    document.querySelector( '#crud-form input' ).focus();
+                                }, 100 );
+                            }
+
                             this.$emit( 'updated', this.form );
                         },
                         error: ( error ) => {
@@ -166,10 +180,10 @@ export default {
 }
 </script>
 <template>
-    <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center h-full">
-        <ns-spinner />
-    </div>
     <div class="form flex-auto" v-if="Object.values( form ).length > 0" :class="popup ? 'bg-box-background w-95vw md:w-2/3-screen max-h-6/7-screen overflow-hidden flex flex-col' : ''" id="crud-form" >
+        <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center h-full">
+            <ns-spinner />
+        </div>
         <div class="box-header border-b border-box-edge box-border p-2 flex justify-between items-center" v-if="popup">
             <h2 class="text-primary font-bold text-lg">{{ popup.params.title }}</h2>
             <div>

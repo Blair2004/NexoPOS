@@ -200,6 +200,7 @@ class OrdersService
          * @var Order $order
          * @var float $taxes
          * @var float $subTotal
+         * @var array $orderProducts
          */
         extract( $this->__saveOrderProducts( $order, $fields[ 'products' ] ) );
 
@@ -211,7 +212,7 @@ class OrdersService
         /**
          * compute order total
          */
-        $this->__computeOrderTotal( compact( 'order', 'subTotal', 'paymentStatus', 'totalPayments' ) );
+        $this->__computeOrderTotal( compact( 'order', 'subTotal', 'paymentStatus', 'totalPayments', 'orderProducts' ) );
 
         $order->save();
         $order->load( 'payments' );
@@ -1041,10 +1042,11 @@ class OrdersService
     protected function __computeOrderTotal( $data )
     {
         /**
-         * @param float  $order
-         * @param float  $subTotal
-         * @param float  $totalPayments
-         * @param string $paymentStatus
+         * @var Order  $order
+         * @var float  $subTotal
+         * @var float  $totalPayments
+         * @var string $paymentStatus
+         * @var array $orderProducts
          */
         extract( $data );
 
@@ -1065,6 +1067,7 @@ class OrdersService
             ->toFloat();
 
         $order->total_with_tax = $order->total;
+        $order->total_cogs  =   collect( $orderProducts )->sum( 'total_purchase_price' );
 
         /**
          * compute change
@@ -1173,10 +1176,10 @@ class OrdersService
                         product: $product[ 'product' ],
                         unit: $unit
                     ) )
-                        ->multipliedBy( $product[ 'quantity' ] )
-                        ->toFloat()
+                    ->multipliedBy( $product[ 'quantity' ] )
+                    ->toFloat()
                 )
-                    ->toFloat();
+                ->toFloat();
             }
 
             $this->computeOrderProduct( $orderProduct );
@@ -2137,21 +2140,26 @@ class OrdersService
         $products = $this->getOrderProducts( $order->id );
 
         $productTotal = $products
-            ->map( function ( $product ) {
+            ->map( function ( OrderProduct $product ) {
                 return floatval( $product->total_price );
             } )->sum();
 
-        $productsQuantity = $products->map( function ( $product ) {
+        $productsQuantity = $products->map( function ( OrderProduct $product ) {
             return floatval( $product->quantity );
         } )->sum();
 
+        $productTotalCogs   =   $products
+            ->map( function ( OrderProduct $product ) {
+                return floatval( $product->total_purchase_price );
+            } )->sum();
+
         $productPriceWithoutTax = $products
-            ->map( function ( $product ) {
+            ->map( function ( OrderProduct $product ) {
                 return floatval( $product->total_price_without_tax );
             } )->sum();
 
         $productPriceWithTax = $products
-            ->map( function ( $product ) {
+            ->map( function ( OrderProduct $product ) {
                 return floatval( $product->total_price_with_tax );
             } )->sum();
 
@@ -2168,6 +2176,7 @@ class OrdersService
         $order->total_without_tax = $productPriceWithoutTax;
         $order->total_with_tax = $productPriceWithTax;
         $order->discount = $this->computeOrderDiscount( $order );
+        $order->total_cogs = $productTotalCogs;
         $order->total = Currency::fresh( $order->subtotal )
             ->additionateBy( $orderShipping )
             ->additionateBy(

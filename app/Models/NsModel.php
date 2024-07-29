@@ -25,4 +25,19 @@ abstract class NsModel extends NsRootModel
 
         $this->table = Hook::filter( 'ns-model-table', $this->table );
     }
+
+    public static function findOrFailWith( $identifier, $exception = null )
+    {
+        $model = static::find( $identifier );
+
+        if ( ! $model ) {
+            if ( $exception ) {
+                throw $exception;
+            }
+
+            return abort( 404 );
+        }
+
+        return $model;
+    }
 }

@@ -133,6 +133,7 @@ class UnitCrud extends CrudService
                 name: 'name',
                 description: __( 'Provide a name tot he resource.' ),
                 validation: 'required',
+                value: $entry->name ?? '',
             ),
             tabs: CrudForm::tabs(
                 CrudForm::tab(

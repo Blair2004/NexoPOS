@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::post( 'reports/sale-report', [ ReportsController::class, 'getSaleReport' ] );
 Route::post( 'reports/sold-stock-report', [ ReportsController::class, 'getSoldStockReport' ] );
 Route::post( 'reports/profit-report', [ ReportsController::class, 'getProfit' ] );
-Route::post( 'reports/transactions', [ ReportsController::class, 'getTransactions' ] );
+Route::post( 'reports/transactions', [ ReportsController::class, 'getAccountSummaryReport' ] );
 Route::post( 'reports/annual-report', [ ReportsController::class, 'getAnnualReport' ] );
 Route::post( 'reports/payment-types', [ ReportsController::class, 'getPaymentTypes' ] );
 Route::post( 'reports/products-report', [ ReportsController::class, 'getProductsReport' ] );

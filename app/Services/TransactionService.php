@@ -119,11 +119,19 @@ class TransactionService
     public function reflectTransactionOnAccounts( TransactionHistory $transactionHistory, array $accounts )
     {
         $reflections = collect( $accounts )->map( function ( $counterAccountId ) use ( $transactionHistory ) {
-            $counterAccount = TransactionAccount::find( $counterAccountId );
+            if ( ! $counterAccountId instanceof TransactionAccount ) {
+                $counterAccount = TransactionAccount::find( $counterAccountId );
+            } else {
+                $counterAccount = $counterAccountId;
+            }
 
             if ( $counterAccount instanceof TransactionAccount ) {
                 $counterOperation = $transactionHistory->operation === 'credit' ? 'debit' : 'credit';
 
+                /**
+                 * a transaction that already exists, might have a reflection
+                 * we'll then try to pull it or create a new instance if it's not the case.
+                 */
                 $counterTransaction = TransactionHistory::where( 'reflection_source_id', $transactionHistory->id )
                     ->where( 'transaction_account_id', $counterAccount->id )
                     ->firstOrNew();
@@ -646,7 +654,9 @@ class TransactionService
         $unpaidAccountId = ns()->option->get( 'ns_accounting_procurement_unpaid_account' );
         $paidAccountId = ns()->option->get( 'ns_accounting_procurement_paid_account' );
 
-        $inventoryAccount    =   TransactionAccount::findOrFail( $inventoryAccountId );
+        $inventoryAccount    =   TransactionAccount::findOrFailWith( $inventoryAccountId, new NotFoundException( 
+            sprintf( 'The transaction account attached to inventory in accounting settings cannot be found. Looking for reference "%s".', $inventoryAccountId ) 
+        ) );
 
         $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
             'increase' => $account[ 'increase' ],
@@ -957,51 +967,6 @@ class TransactionService
     }
 
     /**
-     * Will process paid orders
-     *
-     * @param  string $rangeStart
-     * @param  string $rangeEnds
-     * @return void
-     *
-     * @deprecated ?
-     */
-    public function processPaidOrders( $rangeStart, $rangeEnds )
-    {
-        $orders = Order::where( 'created_at', '>=', $rangeStart )
-            ->with( 'customer' )
-            ->where( 'created_at', '<=', $rangeEnds )
-            ->paymentStatus( Order::PAYMENT_PAID )
-            ->get();
-
-        $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_SALES );
-
-        Customer::where( 'id', '>', 0 )->update( [ 'purchases_amount' => 0 ] );
-
-        $orders->each( function ( $order ) use ( $transactionAccount ) {
-            $transaction = new Transaction;
-            $transaction->value = $order->total;
-            $transaction->active = true;
-            $transaction->operation = TransactionHistory::OPERATION_CREDIT;
-            $transaction->author = $order->author;
-            $transaction->customer_account_history_id = $order->id;
-            $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-            $transaction->created_at = $order->created_at;
-            $transaction->updated_at = $order->updated_at;
-
-            $customer = Customer::find( $order->customer_id );
-
-            if ( $customer instanceof Customer ) {
-                $customer->purchases_amount += $order->total;
-                $customer->save();
-            }
-
-            $this->recordTransactionHistory( $transaction );
-        } );
-    }
-
-    /**
      * Will process the customer histories
      *
      * @return void
@@ -1232,43 +1197,140 @@ class TransactionService
         return compact( 'recurrence', 'configurations', 'warningMessage' );
     }
 
+    public function handlePaidOrderTransactionRecording( $cashAccountId, $revenueAccountId, Order $order )
+    {
+        $cashAccount = TransactionAccount::findOrFailWith( $cashAccountId, new NotFoundException( 
+            sprintf( 'The transaction account attached to cash in accounting settings cannot be found. Looking for reference "%s".', $cashAccountId ) 
+        ) );
+        $revenueAccount = TransactionAccount::findOrFailWith( $revenueAccountId, new NotFoundException( 
+            sprintf( 'The transaction account attached to revenue in accounting settings cannot be found. Looking for reference "%s".', $revenueAccountId ) 
+        ) );
+
+        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+            'increase' => $account[ 'increase' ],
+            'decrease' => $account[ 'decrease' ],
+        ]))->toArray()[ $revenueAccount->category_identifier ];
+
+        /*
+        * We're pulling any existing transaction made on the TransactionHistory
+        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+        */
+        $transaction = TransactionHistory::where( 'order_id', $order->id )
+            ->where( 'operation', $accountConfiguration[ 'increase' ] )
+            ->firstOrNew();
+            
+        $transaction->value = $order->total;
+        $transaction->author = $order->author;
+        $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
+        $transaction->transaction_account_id = $revenueAccount->id;
+        $transaction->operation = $accountConfiguration[ 'increase' ];
+        $transaction->type = Transaction::TYPE_DIRECT;
+        $transaction->trigger_date = $order->created_at;
+        $transaction->status = TransactionHistory::STATUS_ACTIVE;
+        $transaction->order_id = $order->id;
+        $transaction->created_at = $order->created_at;
+        $transaction->updated_at = $order->updated_at;
+        $transaction->save();
+
+        $this->reflectTransactionOnAccounts( $transaction, [ $cashAccount ] );
+    }
+
+    public function handleUnpaidOrderTransactionRecording( $unpaidAccountId, $revenueAccountId, $order )
+    {
+        $unpaidAccount = TransactionAccount::findOrFailWith( $unpaidAccountId, new NotFoundException( 
+            sprintf( 'Unable to get the transaction account attached to the Unpaid order transactions. Looking for reference "%s".', $unpaidAccountId ) 
+        ) );
+        $revenueAccount = TransactionAccount::findOrFailWith( $revenueAccountId, new NotFoundException( 
+            sprintf( 'Unable to get the transaction account attached to the Revenu account. Looking for reference "%s".', $unpaidAccountId ) 
+        ) );
+
+        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+            'increase' => $account[ 'increase' ],
+            'decrease' => $account[ 'decrease' ],
+        ]))->toArray()[ $revenueAccount->category_identifier ];
+
+        /*
+        * We're pulling any existing transaction made on the TransactionHistory
+        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+        */
+        $transaction = TransactionHistory::where( 'order_id', $order->id )
+            ->where( 'operation', $accountConfiguration[ 'increase' ] )
+            ->firstOrNew();
+            
+        $transaction->value = $order->total;
+        $transaction->author = $order->author;
+        $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
+        $transaction->transaction_account_id = $revenueAccount->id;
+        $transaction->operation = $accountConfiguration[ 'increase' ];
+        $transaction->type = Transaction::TYPE_DIRECT;
+        $transaction->trigger_date = $order->created_at;
+        $transaction->status = TransactionHistory::STATUS_ACTIVE;
+        $transaction->order_id = $order->id;
+        $transaction->created_at = $order->created_at;
+        $transaction->updated_at = $order->updated_at;
+        $transaction->save();
+
+        $this->reflectTransactionOnAccounts( $transaction, [ $unpaidAccount ] );
+    }
+
     public function recordTransactionFromSale( Order $order ) 
     {
-        $revenueAccountId = ns()->option->get( 'accounting_orders_revenues_account' );
-        $cashAccountId = ns()->option->get( 'accounting_orders_cash_account' );
-        $unpaidAccounId = ns()->option->get( 'accounting_orders_receivable_account' );
+        $revenueAccountId = ns()->option->get( 'ns_accounting_orders_revenues_account' );
+        $cashAccountId = ns()->option->get( 'ns_accounting_orders_cash_account' );
+        $unpaidAccountId = ns()->option->get( 'ns_accounting_orders_receivable_account' );
 
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
-            $cashAccount = TransactionAccount::findOrFail( $cashAccountId );
-            $revenueAcconut = TransactionAccount::findOrFail( $revenueAccountId );
+            $this->handlePaidOrderTransactionRecording(
+                cashAccountId: $cashAccountId,
+                revenueAccountId: $revenueAccountId,
+                order: $order
+            );
 
-            $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-                'increase' => $account[ 'increase' ],
-                'decrease' => $account[ 'decrease' ],
-            ]))->toArray()[ $cashAccount->category_identifier ];
-
-            /*
-            * We're pulling any existing transaction made on the TransactionHistory
-            * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
-            */
-            $transaction = TransactionHistory::where( 'order_id', $order->id )
-                ->where( 'operation', $accountConfiguration[ 'increase' ] )
-                ->firstOrNew();
-                
-            $transaction->value = $order->total;
-            $transaction->author = $order->author;
-            $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
-            $transaction->transaction_account_id = $cashAccount;
-            $transaction->operation = $accountConfiguration[ 'increase' ];
-            $transaction->type = Transaction::TYPE_DIRECT;
-            $transaction->trigger_date = $order->created_at;
-            $transaction->status = TransactionHistory::STATUS_ACTIVE;
-            $transaction->created_at = $order->created_at;
-            $transaction->updated_at = $order->updated_at;
-            $transaction->save();
-
-            $this->reflectTransactionOnAccounts( $transaction, [ $revenueAcconut ] );
+            $this->handleCOGSTransactionRecording(
+                order: $order
+            );
+        } else if ( $order->payment_status === Order::PAYMENT_UNPAID ) {
+            $this->handleUnpaidOrderTransactionRecording(
+                unpaidAccountId: $unpaidAccountId,
+                revenueAccountId: $revenueAccountId,
+                order: $order
+            );
         }
+    }
+
+    public function handleCOGSTransactionRecording( $order )
+    {
+        $cogsAccountId = ns()->option->get( 'ns_accounting_orders_cogs_account' );
+        
+        $costOfGoodsSoldAccount = TransactionAccount::findOrFailWith( $cogsAccountId, new NotFoundException( 
+            sprintf( 'Unable to get the transaction account attached to the Cost Of Goods Sold. Looking for reference "%s".', $cogsAccountId ) 
+        ) );
+
+        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+            'increase' => $account[ 'increase' ],
+            'decrease' => $account[ 'decrease' ],
+        ]))->toArray()[ $costOfGoodsSoldAccount->category_identifier ];
+
+        /*
+        * We're pulling any existing transaction made on the TransactionHistory
+        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+        */
+        $transaction = TransactionHistory::where( 'order_id', $order->id )
+            ->where( 'operation', $accountConfiguration[ 'increase' ] )
+            ->firstOrNew();
+            
+        $transaction->value = $order->total_cogs;
+        $transaction->author = $order->author;
+        $transaction->name = sprintf( __( 'COGS : %s' ), $order->code );
+        $transaction->transaction_account_id = $costOfGoodsSoldAccount->id;
+        $transaction->operation = $accountConfiguration[ 'increase' ];
+        $transaction->type = Transaction::TYPE_DIRECT;
+        $transaction->trigger_date = $order->created_at;
+        $transaction->status = TransactionHistory::STATUS_ACTIVE;
+        $transaction->order_id = $order->id;
+        $transaction->created_at = $order->created_at;
+        $transaction->updated_at = $order->updated_at;
+        $transaction->save();
     }
 
     public function createTransactionFromRegisterHistory( RegisterHistory $registerHistory )

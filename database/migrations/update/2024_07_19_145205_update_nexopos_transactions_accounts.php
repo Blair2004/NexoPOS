@@ -28,7 +28,13 @@ return new class extends Migration
                 $table->boolean( 'is_reflection' )->default( false );
             }
             if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'reflection_source_id' ) ) {
-                $table->boolean( 'reflection_source_id' )->nullable();
+                $table->integer( 'reflection_source_id' )->nullable();
+            }
+        });
+
+        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_orders', 'total_cogs' ) ) {
+                $table->float( 'total_cogs', 18, 5 )->nullable();
             }
         });
     }
@@ -58,6 +64,12 @@ return new class extends Migration
             }
             if ( Schema::hasColumn( 'nexopos_transactions_histories', 'reflection_source_id' ) ) {
                 $table->dropColumn( 'reflection_source_id' );
+            }
+        });
+
+        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_orders', 'total_cogs' ) ) {
+                $table->dropColumn( 'total_cogs' );
             }
         });
     }

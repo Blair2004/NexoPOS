@@ -37,6 +37,7 @@ return new class extends Migration
                 $table->float( 'subtotal', 18, 5 )->default( 0 );
                 $table->float( 'total_with_tax', 18, 5 )->default( 0 );
                 $table->float( 'total_coupons', 18, 5 )->default( 0 );
+                $table->float( 'total_cogs', 18, 5 )->default(0);
                 $table->float( 'total', 18, 5 )->default( 0 );
                 $table->float( 'tax_value', 18, 5 )->default( 0 );
                 $table->float( 'products_tax_value' )->default( 0 );

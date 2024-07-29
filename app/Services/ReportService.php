@@ -17,6 +17,7 @@ use App\Models\ProductHistory;
 use App\Models\ProductHistoryCombined;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
+use App\Models\TransactionAccount;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -1307,6 +1308,39 @@ class ReportService
         return [
             'status' => 'success',
             'message' => __( 'The report will be generated. Try loading the report within few minutes.' ),
+        ];
+    }
+
+    public function getAccountSummaryReport( $startDate = null, $endDate = null )
+    {
+        $startDate = $startDate === null ? ns()->date->getNow()->startOfMonth()->toDateTimeString() : $startDate;
+        $endDate = $endDate === null ? ns()->date->getNow()->endOfMonth()->toDateTimeString() : $endDate;
+        $accounts   =   collect( config( 'accounting.accounts' ) )->map( function( $account, $name ) use ( $startDate, $endDate ) {
+            $transactionAccount     =   TransactionAccount::where( 'category_identifier', $name )->with([ 'histories' => function( $query ) use ( $startDate, $endDate ) {
+                $query->where( 'created_at', '>=', $startDate )->where( 'created_at', '<=', $endDate );
+            }])->get();
+
+            $transactions   =   $transactionAccount->map( function( $account ) {
+                return [
+                    'name'  =>  $account->name,
+                    'debits'    =>  $account->histories->where( 'operation', 'debit' )->sum( 'value' ),
+                    'credits'   =>  $account->histories->where( 'operation', 'credit' )->sum( 'value' ),
+                ];
+            } );
+
+            return [
+                'transactions'  =>  $transactions,
+                'name'          =>  $account[ 'label' ](),
+                'debits'        =>  $transactions->sum( 'debits' ),
+                'credits'       =>  $transactions->sum( 'credits' ),
+            ];
+        });
+
+        return [
+            'accounts'  => $accounts,
+            'debits'    => $accounts->sum( 'debits' ),
+            'credits'   => $accounts->sum( 'credits' ),
+            'profit'    => ns()->currency->define( $accounts->sum( 'credits' ) )->subtractBy( $accounts->sum( 'debits' ) )->toFloat(),
         ];
     }
 }

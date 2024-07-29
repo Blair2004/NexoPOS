@@ -131,6 +131,17 @@ class ReportsController extends DashboardController
         } )->values();
     }
 
+    public function getAccountSummaryReport( Request $request )
+    {
+        return $this->reportService->getAccountSummaryReport(
+            $request->input( 'startDate' ),
+            $request->input( 'endDate' ),
+        );
+    }
+
+    /**
+     * @deprecated
+     */
     public function getTransactions( Request $request )
     {
         $rangeStarts = Carbon::parse( $request->input( 'startDate' ) )

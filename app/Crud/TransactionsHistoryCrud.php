@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Casts\AccountingCategoryCast;
 use App\Casts\CurrencyCast;
 use App\Classes\CrudTable;
 use App\Exceptions\NotAllowedException;
@@ -102,7 +103,7 @@ class TransactionsHistoryCrud extends CrudService
      * ]
      */
     public $pick = [
-        'transactions_accounts' => [ 'name' ],
+        'transactions_accounts' => [ 'name', 'category_identifier' ],
     ];
 
     /**
@@ -137,6 +138,7 @@ class TransactionsHistoryCrud extends CrudService
 
     protected $casts = [
         'value' => CurrencyCast::class,
+        'transactions_accounts_category_identifier' =>  AccountingCategoryCast::class,
     ];
 
     /**
@@ -325,8 +327,8 @@ class TransactionsHistoryCrud extends CrudService
     {
         return CrudTable::columns(
             CrudTable::column( __( 'Name' ), 'name' ),
-            CrudTable::column( __( 'Status' ), 'status' ),
-            CrudTable::column( __( 'Account Name' ), 'transactions_accounts_name' ),
+            CrudTable::column( __( 'Main Account' ), 'transactions_accounts_category_identifier' ),
+            CrudTable::column( __( 'Sub Account' ), 'transactions_accounts_name' ),
             CrudTable::column( __( 'Operation' ), 'operation' ),
             CrudTable::column( __( 'Value' ), 'value' ),
             CrudTable::column( __( 'Author' ), 'users_username' ),
