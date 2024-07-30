@@ -130,7 +130,7 @@ export default {
                              */
                             if ( this.form.main ) {
                                 setTimeout(() => {
-                                    document.querySelector( '#crud-form input' ).focus();
+                                    this.$el.querySelector( '#crud-form input' ).focus();
                                 }, 100 );
                             }
 

@@ -37,15 +37,6 @@ return SettingForm::fields(
         options: $accounts[ 'assets' ],
     ),
     FormInput::searchSelect(
-        label: __( 'Unpaid Order Account' ),
-        name: 'ns_accounting_orders_receivable_account',
-        value: ns()->option->get( 'ns_accounting_orders_receivable_account' ),
-        description: __( 'Every unpaid orders will be recorded on this account.' ),
-        component: 'nsCrudForm',
-        props: $props,
-        options: $accounts[ 'assets' ],
-    ),
-    FormInput::searchSelect(
         label: __( 'COGS Account' ),
         name: 'ns_accounting_orders_cogs_account',
         value: ns()->option->get( 'ns_accounting_orders_cogs_account' ),
@@ -53,5 +44,14 @@ return SettingForm::fields(
         component: 'nsCrudForm',
         props: $props,
         options: $accounts[ 'expenses' ],
+    ),
+    FormInput::searchSelect(
+        label: __( 'Inventory Account' ),
+        name: 'ns_accounting_orders_inventory_account',
+        value: ns()->option->get( 'ns_accounting_orders_inventory_account', ),
+        description: __( 'The account affected by the COGS Account.' ),
+        component: 'nsCrudForm',
+        props: $props,
+        options: $accounts[ 'assets' ],
     ),
 );

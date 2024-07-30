@@ -654,9 +654,25 @@ class TransactionService
         $unpaidAccountId = ns()->option->get( 'ns_accounting_procurement_unpaid_account' );
         $paidAccountId = ns()->option->get( 'ns_accounting_procurement_paid_account' );
 
-        $inventoryAccount    =   TransactionAccount::findOrFailWith( $inventoryAccountId, new NotFoundException( 
-            sprintf( 'The transaction account attached to inventory in accounting settings cannot be found. Looking for reference "%s".', $inventoryAccountId ) 
-        ) );
+        $inventoryAccount    =   TransactionAccount::find( $inventoryAccountId );
+
+        /**
+         * if the inventory account is not found, we'll stop the process
+         * there is no need to trigger an exception as the user might not need
+         * to use the accounting features.
+         */
+        if ( ! $inventoryAccount instanceof TransactionAccount ) {
+            ns()->notification->create(
+                title: __( 'Accounting Misconfiguration' ),
+                identifier: 'accounting-misconfiguration',
+                url: ns()->route( 'ns.dashboard.settings', [
+                    'settings' => 'accounting?tab=procurements'
+                ]),
+                description: __( 'No account was set for the recording accounting transaction for procurements. Until the account are set, accounting is ignored.' )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+
+            return;
+        }
 
         $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
             'increase' => $account[ 'increase' ],
@@ -1199,12 +1215,26 @@ class TransactionService
 
     public function handlePaidOrderTransactionRecording( $cashAccountId, $revenueAccountId, Order $order )
     {
-        $cashAccount = TransactionAccount::findOrFailWith( $cashAccountId, new NotFoundException( 
-            sprintf( 'The transaction account attached to cash in accounting settings cannot be found. Looking for reference "%s".', $cashAccountId ) 
-        ) );
-        $revenueAccount = TransactionAccount::findOrFailWith( $revenueAccountId, new NotFoundException( 
-            sprintf( 'The transaction account attached to revenue in accounting settings cannot be found. Looking for reference "%s".', $revenueAccountId ) 
-        ) );
+        $cashAccount = TransactionAccount::find( $cashAccountId );
+        $revenueAccount = TransactionAccount::find( $revenueAccountId );
+        
+        /**
+         * if the inventory account is not found, we'll stop the process
+         * there is no need to trigger an exception as the user might not need
+         * to use the accounting features.
+         */
+        if ( ! $cashAccount instanceof TransactionAccount || ! $revenueAccount instanceof TransactionAccount ) {
+            ns()->notification->create(
+                title: __( 'Accounting Misconfiguration' ),
+                identifier: 'accounting-orders-misconfiguration',
+                url: ns()->route( 'ns.dashboard.settings', [
+                    'settings' => 'accounting?tab=orders'
+                ]),
+                description: __( 'No account was set for the recording accounting transaction for sales. Until the accounts are set, accounting is ignored.' )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+
+            return;
+        }
 
         $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
             'increase' => $account[ 'increase' ],
@@ -1237,12 +1267,26 @@ class TransactionService
 
     public function handleUnpaidOrderTransactionRecording( $unpaidAccountId, $revenueAccountId, $order )
     {
-        $unpaidAccount = TransactionAccount::findOrFailWith( $unpaidAccountId, new NotFoundException( 
-            sprintf( 'Unable to get the transaction account attached to the Unpaid order transactions. Looking for reference "%s".', $unpaidAccountId ) 
-        ) );
-        $revenueAccount = TransactionAccount::findOrFailWith( $revenueAccountId, new NotFoundException( 
-            sprintf( 'Unable to get the transaction account attached to the Revenu account. Looking for reference "%s".', $unpaidAccountId ) 
-        ) );
+        $unpaidAccount = TransactionAccount::findOrFailWith( $unpaidAccountId );
+        $revenueAccount = TransactionAccount::findOrFailWith( $revenueAccountId );
+
+        /**
+         * if the inventory account is not found, we'll stop the process
+         * there is no need to trigger an exception as the user might not need
+         * to use the accounting features.
+         */
+        if ( ! $unpaidAccount instanceof TransactionAccount || ! $revenueAccount instanceof TransactionAccount ) {
+            ns()->notification->create(
+                title: __( 'Accounting Misconfiguration' ),
+                identifier: 'accounting-orders-misconfiguration',
+                url: ns()->route( 'ns.dashboard.settings', [
+                    'settings' => 'accounting?tab=orders'
+                ]),
+                description: __( 'No account was set for the recording accounting transaction for sales. Until the accounts are set, accounting is ignored.' )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+
+            return;
+        }
 
         $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
             'increase' => $account[ 'increase' ],
@@ -1302,9 +1346,25 @@ class TransactionService
     {
         $cogsAccountId = ns()->option->get( 'ns_accounting_orders_cogs_account' );
         
-        $costOfGoodsSoldAccount = TransactionAccount::findOrFailWith( $cogsAccountId, new NotFoundException( 
-            sprintf( 'Unable to get the transaction account attached to the Cost Of Goods Sold. Looking for reference "%s".', $cogsAccountId ) 
-        ) );
+        $costOfGoodsSoldAccount = TransactionAccount::find( $cogsAccountId );
+
+        /**
+         * if the inventory account is not found, we'll stop the process
+         * there is no need to trigger an exception as the user might not need
+         * to use the accounting features.
+         */
+        if ( ! $costOfGoodsSoldAccount instanceof TransactionAccount ) {
+            ns()->notification->create(
+                title: __( 'Accounting Misconfiguration' ),
+                identifier: 'accounting-misconfiguration',
+                url: ns()->route( 'ns.dashboard.settings', [
+                    'settings' => 'accounting?tab=orders'
+                ]),
+                description: __( 'No account was set for the recording accounting transaction for sales. Until the accounts are set, accounting is ignored.' )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+
+            return;
+        }
 
         $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
             'increase' => $account[ 'increase' ],

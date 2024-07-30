@@ -39,6 +39,11 @@ class AccountingSettings extends SettingsPage
                     fields: include ( dirname( __FILE__ ) . '/accounting/general.php' ),
                 ),
                 SettingForm::tab(
+                    label: __( 'Expenses' ),
+                    identifier: 'expenses',
+                    fields: include ( dirname( __FILE__ ) . '/accounting/expenses.php' ),
+                ),
+                SettingForm::tab(
                     identifier: 'orders',
                     label: __( 'Orders' ),
                     fields: include ( dirname( __FILE__ ) . '/accounting/orders.php' ),

@@ -289,7 +289,7 @@ class UnitGroupCrud extends CrudService
             identifier: 'delete',
             label: __( 'Delete' ),
             type: 'DELETE',
-            url: ns()->url( '/api/crud/ns.units/' . $entry->id ),
+            url: ns()->url( '/api/crud/ns.units-groups/' . $entry->id ),
             confirm: [
                 'message' => __( 'Would you like to delete this ?' ),
             ]

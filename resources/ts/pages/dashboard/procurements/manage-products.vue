@@ -104,7 +104,7 @@
                                 </div>
                                 <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
                                     <div class="px-4 w-full md:w-1/2 lg:w-1/3">
-                                        <ns-field @saved="handleSaveEvent( $event, field )" v-for="field in getActiveTab( variation.tabs ).fields.filter( field => field.name !== 'selling_group' )" @change="loadAvailableUnits( getActiveTab( variation.tabs ), field )" :field="field"></ns-field>
+                                        <ns-field @saved="handleSaveEvent( $event, field, { variation_index } )" v-for="field in getActiveTab( variation.tabs ).fields.filter( field => field.name !== 'selling_group' )" @change="loadAvailableUnits( getActiveTab( variation.tabs ), field )" :field="field"></ns-field>
                                     </div>
                                     <template v-if="unitLoaded">
                                         <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
@@ -276,8 +276,6 @@ export default {
                     value: event.data.entry[ field.props.optionAttributes.value ]
                 });
                 field.value = event.data.entry[ field.props.optionAttributes.value ];
-
-                this.loadAvailableUnits( this.form.variations[ variationIndex ].tabs, field );
             }
         },
         getGroupProducts( tabs ) {
@@ -377,13 +375,21 @@ export default {
             }
         },
 
-        handleSaveEvent( event, field ) {
+        handleSaveEvent( event, field, data ) {
+            const { variation_index }   =   data;
+
             field.options.push({
                 label: event.data.entry[ field.props.optionAttributes.label ],
                 value: event.data.entry[ field.props.optionAttributes.value ]
             });
 
             field.value     =   event.data.entry[ field.props.optionAttributes.value ];
+
+            try {
+                this.loadUnits( this.getActiveTab( this.form.variations[ variation_index ].tabs ), field.value );
+            } catch( exception ) {
+                console.log({ exception })
+            }
         },
 
         loadUnits( unit_section, unit_group_id ) {
@@ -438,7 +444,11 @@ export default {
             this.unitLoadError      =   false;
             const unit_group_id     =   unit_section.fields.filter( f => f.name === 'unit_group' )[0].value;
 
-            await this.loadUnits( unit_section, unit_group_id );    
+            try {
+                await this.loadUnits( unit_section, unit_group_id );    
+            } catch( exception ) {
+                console.log({ exception });
+            }
         },
         submit() {
             let formValidGlobally   =   true;
