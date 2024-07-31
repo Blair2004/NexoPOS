@@ -189,7 +189,7 @@ class TransactionCrud extends CrudService
                         FormInput::searchSelect(
                             label: __( 'Transaction Account' ),
                             name: 'account_id',
-                            description: __( 'Assign the transaction to an account430' ),
+                            description: __( 'Assign the transaction to an account' ),
                             validation: 'required',
                             props: TransactionAccountCrud::getFormConfig(),
                             component: 'nsCrudForm',

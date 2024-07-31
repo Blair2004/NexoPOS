@@ -49,7 +49,7 @@ class EntityTransactionFields extends FieldsService
                 name: 'account_id',
                 props: TransactionAccountCrud::getFormConfig(),
                 component: 'nsCrudForm',
-                options: Helper::toJsOptions( TransactionAccount::get(), [ 'id', 'name' ] ),
+                options: Helper::toJsOptions( TransactionAccount::categoryIdentifier( 'expenses' )->get(), [ 'id', 'name' ] ),
                 value: $transaction ? $transaction->account_id : null
             ),
             FormInput::number(

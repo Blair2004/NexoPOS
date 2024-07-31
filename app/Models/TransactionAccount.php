@@ -27,6 +27,11 @@ class TransactionAccount extends NsModel
         return $query->where( 'account', $account );
     }
 
+    public function scopeCategoryIdentifier( $query, $category )
+    {
+        return $query->where( 'category_identifier', $category );
+    }
+
     public function histories()
     {
         return $this->hasMany( TransactionHistory::class, 'transaction_account_id' );
