@@ -10,15 +10,6 @@ $props = TransactionAccountCrud::getFormConfig();
 
 return SettingForm::fields(
     FormInput::searchSelect(
-        label: __( 'Revenues Account' ),
-        name: 'ns_accounting_orders_revenues_account',
-        value: ns()->option->get( 'ns_accounting_orders_revenues_account' ),
-        description: __( 'Every order revenue will be added to the selected transaction account' ),
-        component: 'nsCrudForm',
-        props: $props,
-        options: $accounts[ 'revenues' ],
-    ),
-    FormInput::searchSelect(
         label: __( 'Order Cash Account' ),
         name: 'ns_accounting_orders_cash_account',
         value: ns()->option->get( 'ns_accounting_orders_cash_account' ),
@@ -28,7 +19,7 @@ return SettingForm::fields(
         options: $accounts[ 'assets' ],
     ),
     FormInput::searchSelect(
-        label: __( 'Unpaid Order Account' ),
+        label: __( 'Receivable Account' ),
         name: 'ns_accounting_orders_receivable_account',
         value: ns()->option->get( 'ns_accounting_orders_receivable_account' ),
         description: __( 'Every unpaid orders will be recorded on this account.' ),
@@ -44,14 +35,5 @@ return SettingForm::fields(
         component: 'nsCrudForm',
         props: $props,
         options: $accounts[ 'expenses' ],
-    ),
-    FormInput::searchSelect(
-        label: __( 'Inventory Account' ),
-        name: 'ns_accounting_orders_inventory_account',
-        value: ns()->option->get( 'ns_accounting_orders_inventory_account', ),
-        description: __( 'The account affected by the COGS Account.' ),
-        component: 'nsCrudForm',
-        props: $props,
-        options: $accounts[ 'assets' ],
     ),
 );

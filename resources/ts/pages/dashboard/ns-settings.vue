@@ -12,6 +12,14 @@
         </div>
         <div class="card-body ns-tab-item">
             <div class="shadow rounded">
+                <div class="px-2 pt-1" v-if="activeTab.notices">
+                    <div v-for="notice of activeTab.notices" class="my-2">
+                        <ns-notice :color="notice.color || 'info'">
+                            <template v-slot:title>{{ notice.title }}</template>
+                            <template v-slot:description>{{ notice.description }}</template>
+                        </ns-notice>
+                    </div>
+                </div>
                 <div class="-mx-4 flex flex-wrap p-2">
                     <template v-if="activeTab.fields">
                         <div class="w-full px-4 md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of activeTab.fields">

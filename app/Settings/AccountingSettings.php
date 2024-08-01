@@ -3,6 +3,7 @@
 namespace App\Settings;
 
 use App\Classes\FormInput;
+use App\Classes\Notice;
 use App\Classes\SettingForm;
 use App\Crud\TransactionAccountCrud;
 use App\Models\TransactionAccount;
@@ -39,18 +40,25 @@ class AccountingSettings extends SettingsPage
                     fields: include ( dirname( __FILE__ ) . '/accounting/general.php' ),
                 ),
                 SettingForm::tab(
-                    label: __( 'Expenses' ),
-                    identifier: 'expenses',
-                    fields: include ( dirname( __FILE__ ) . '/accounting/expenses.php' ),
-                ),
-                SettingForm::tab(
                     identifier: 'orders',
                     label: __( 'Orders' ),
+                    notices: [
+                        Notice::info(
+                            title: __( 'Double Bookkepping Entry' ),
+                            description: __( 'For sales, you should have assign unique accounts that has as counter account (or offset account) a Revenue account. The COGS Account has a counter account the inventory account.' ),
+                        ),
+                    ],
                     fields: include ( dirname( __FILE__ ) . '/accounting/orders.php' ),
                 ),
                 SettingForm::tab(
                     identifier: 'procurements',
                     label: __( 'Procurements' ),
+                    notices: [
+                        Notice::info(
+                            title: __( 'Double Bookkepping Entry' ),
+                            description: __( 'Each selected account must have a counter account for double bookkeepping to work. The counter account for each should be the Inventory Account.' ),
+                        ),
+                    ],
                     fields: include ( dirname( __FILE__ ) . '/accounting/procurements.php' ),
                 ),
                 SettingForm::tab(

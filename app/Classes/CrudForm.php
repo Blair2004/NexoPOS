@@ -16,9 +16,9 @@ class CrudForm
         } )->toArray();
     }
 
-    public static function tab( $identifier, $label, $fields )
+    public static function tab( $identifier, $label, $fields, $notices = [] )
     {
-        return compact( 'label', 'fields', 'identifier' );
+        return compact( 'label', 'fields', 'identifier', 'notices' );
     }
 
     public static function fields( ...$args )

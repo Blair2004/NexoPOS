@@ -53,6 +53,15 @@ class TransactionAccountCrud extends CrudService
      */
     public $relations = [
         [ 'nexopos_users', 'nexopos_transactions_accounts.author', '=', 'nexopos_users.id' ],
+        'leftJoin' => [
+            [ 'nexopos_transactions_accounts as nsta', 'nsta.id', '=', 'nexopos_transactions_accounts.counter_account_id' ]
+        ],
+    ];
+
+    public $pick = [
+        'nsta' => [
+            'name'
+        ]
     ];
 
     /**
@@ -121,6 +130,11 @@ class TransactionAccountCrud extends CrudService
     public function isEnabled( $feature ): bool
     {
         return false; // by default
+    }
+
+    public function hook( $query ): void
+    {
+        // ...
     }
 
     /**
@@ -304,6 +318,10 @@ class TransactionAccountCrud extends CrudService
             CrudTable::column(
                 label: __( 'Account' ),
                 identifier: 'account',
+            ),
+            CrudTable::column(
+                label: __( 'Counter' ),
+                identifier: 'nsta_name',
             ),
             CrudTable::column(
                 label: __( 'Author' ),

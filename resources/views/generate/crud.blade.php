@@ -74,6 +74,15 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     /**
      * Adding relation
      * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     * Other possible combinatsion includes "leftJoin", "rightJoin", "innerJoin"
+     *
+     * Left Join Example
+     * public $relations = [
+     *  'leftJoin' => [
+     *      [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     *  ]
+     * ];
+     *
      * @param array
      */
     public $relations   =  [

@@ -650,18 +650,18 @@ class TransactionService
      */
     public function handleProcurementTransaction( Procurement $procurement )
     {
-        $inventoryAccountId = ns()->option->get( 'ns_accounting_procurement_account' );
         $unpaidAccountId = ns()->option->get( 'ns_accounting_procurement_unpaid_account' );
         $paidAccountId = ns()->option->get( 'ns_accounting_procurement_paid_account' );
 
-        $inventoryAccount    =   TransactionAccount::find( $inventoryAccountId );
+        $paidAccount = TransactionAccount::find( $paidAccountId );
+        $unpaidAccount = TransactionAccount::find( $unpaidAccountId );
 
         /**
          * if the inventory account is not found, we'll stop the process
          * there is no need to trigger an exception as the user might not need
          * to use the accounting features.
          */
-        if ( ! $inventoryAccount instanceof TransactionAccount ) {
+        if ( ! $unpaidAccount instanceof TransactionAccount || ! $paidAccount instanceof TransactionAccount ) {
             ns()->notification->create(
                 title: __( 'Accounting Misconfiguration' ),
                 identifier: 'accounting-misconfiguration',
@@ -674,51 +674,66 @@ class TransactionService
             return;
         }
 
-        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-            'increase' => $account[ 'increase' ],
-            'decrease' => $account[ 'decrease' ],
-        ]))->toArray()[ $inventoryAccount->category_identifier ];
-
-        /**
-         * We're pulling any existing transaction made on the TransactionHistory
-         * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
-         */
-        $transaction = TransactionHistory::where( 'procurement_id', $procurement->id )->firstOrNew();
-        $transaction->value = $procurement->cost;
-        $transaction->author = $procurement->author;
-        $transaction->procurement_id = $procurement->id;
-        $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
-        $transaction->transaction_account_id = $inventoryAccountId;
-        $transaction->operation = $accountConfiguration[ 'increase' ];
-        $transaction->type = Transaction::TYPE_DIRECT;
-        $transaction->trigger_date = $procurement->created_at;
-        $transaction->status = TransactionHistory::STATUS_ACTIVE;
-        $transaction->created_at = $procurement->created_at;
-        $transaction->updated_at = $procurement->updated_at;
-        $transaction->save();
-
         if (
             $procurement->payment_status === Procurement::PAYMENT_PAID &&
             $procurement->delivery_status === Procurement::STOCKED
         ) {
-            /**
-             * we might delete any counter transaction 
-             * that already exists
-             */
-            TransactionHistory::where( 'reflection_source_id', $transaction->id )->delete();
+            $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+                'increase' => $account[ 'increase' ],
+                'decrease' => $account[ 'decrease' ],
+            ]))->toArray()[ $paidAccount->category_identifier ];
 
-            $this->reflectTransactionOnAccounts( $transaction, [ $paidAccountId ] );
+            /**
+             * We're pulling any existing transaction made on the TransactionHistory
+             * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+             */
+            $transaction = TransactionHistory::where( 'procurement_id', $procurement->id )
+                ->where( 'transaction_account_id', $paidAccountId )
+                ->where( 'operation', $accountConfiguration[ 'increase' ] ) 
+                ->firstOrNew();
+
+            $transaction->value = $procurement->cost;
+            $transaction->author = $procurement->author;
+            $transaction->procurement_id = $procurement->id;
+            $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
+            $transaction->transaction_account_id = $paidAccountId;
+            $transaction->operation = $accountConfiguration[ 'increase' ];
+            $transaction->type = Transaction::TYPE_DIRECT;
+            $transaction->trigger_date = $procurement->created_at;
+            $transaction->status = TransactionHistory::STATUS_ACTIVE;
+            $transaction->created_at = $procurement->created_at;
+            $transaction->updated_at = $procurement->updated_at;
+            $transaction->save();
         } elseif (
             $procurement->payment_status === Procurement::PAYMENT_UNPAID &&
             $procurement->delivery_status === Procurement::STOCKED
         ) {
-            /**
-             * we might delete any counter transaction 
-             * that already exists
-             */
-            TransactionHistory::where( 'reflection_source_id', $transaction->id )->delete();
+            $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+                'increase' => $account[ 'increase' ],
+                'decrease' => $account[ 'decrease' ],
+            ]))->toArray()[ $unpaidAccount->category_identifier ];
 
-            $this->reflectTransactionOnAccounts( $transaction, [ $unpaidAccountId ] );
+            /**
+             * We're pulling any existing transaction made on the TransactionHistory
+             * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+             */
+            $transaction = TransactionHistory::where( 'procurement_id', $procurement->id )
+                ->where( 'transaction_account_id', $unpaidAccountId )
+                ->where( 'operation', $accountConfiguration[ 'increase' ] )
+                ->firstOrNew();
+
+            $transaction->value = $procurement->cost;
+            $transaction->author = $procurement->author;
+            $transaction->procurement_id = $procurement->id;
+            $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
+            $transaction->transaction_account_id = $unpaidAccountId;
+            $transaction->operation = $accountConfiguration[ 'increase' ];
+            $transaction->type = Transaction::TYPE_DIRECT;
+            $transaction->trigger_date = $procurement->created_at;
+            $transaction->status = TransactionHistory::STATUS_ACTIVE;
+            $transaction->created_at = $procurement->created_at;
+            $transaction->updated_at = $procurement->updated_at;
+            $transaction->save();
         }
     }
 
@@ -1213,17 +1228,16 @@ class TransactionService
         return compact( 'recurrence', 'configurations', 'warningMessage' );
     }
 
-    public function handlePaidOrderTransactionRecording( $cashAccountId, $revenueAccountId, Order $order )
+    public function handlePaidOrderTransactionRecording( $cashAccountId, Order $order )
     {
         $cashAccount = TransactionAccount::find( $cashAccountId );
-        $revenueAccount = TransactionAccount::find( $revenueAccountId );
         
         /**
          * if the inventory account is not found, we'll stop the process
          * there is no need to trigger an exception as the user might not need
          * to use the accounting features.
          */
-        if ( ! $cashAccount instanceof TransactionAccount || ! $revenueAccount instanceof TransactionAccount ) {
+        if ( ! $cashAccount instanceof TransactionAccount ) {
             ns()->notification->create(
                 title: __( 'Accounting Misconfiguration' ),
                 identifier: 'accounting-orders-misconfiguration',
@@ -1239,7 +1253,7 @@ class TransactionService
         $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
             'increase' => $account[ 'increase' ],
             'decrease' => $account[ 'decrease' ],
-        ]))->toArray()[ $revenueAccount->category_identifier ];
+        ]))->toArray()[ $cashAccount->category_identifier ];
 
         /*
         * We're pulling any existing transaction made on the TransactionHistory
@@ -1247,12 +1261,13 @@ class TransactionService
         */
         $transaction = TransactionHistory::where( 'order_id', $order->id )
             ->where( 'operation', $accountConfiguration[ 'increase' ] )
+            ->where( 'transaction_account_id', $cashAccount->id )
             ->firstOrNew();
             
         $transaction->value = $order->total;
         $transaction->author = $order->author;
         $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
-        $transaction->transaction_account_id = $revenueAccount->id;
+        $transaction->transaction_account_id = $cashAccount->id;
         $transaction->operation = $accountConfiguration[ 'increase' ];
         $transaction->type = Transaction::TYPE_DIRECT;
         $transaction->trigger_date = $order->created_at;
@@ -1261,21 +1276,18 @@ class TransactionService
         $transaction->created_at = $order->created_at;
         $transaction->updated_at = $order->updated_at;
         $transaction->save();
-
-        $this->reflectTransactionOnAccounts( $transaction, [ $cashAccount ] );
     }
 
-    public function handleUnpaidOrderTransactionRecording( $unpaidAccountId, $revenueAccountId, $order )
+    public function handleUnpaidOrderTransactionRecording( $receivableAccountId, $order )
     {
-        $unpaidAccount = TransactionAccount::findOrFailWith( $unpaidAccountId );
-        $revenueAccount = TransactionAccount::findOrFailWith( $revenueAccountId );
+        $receivableAccount = TransactionAccount::findOrFailWith( $receivableAccountId );
 
         /**
          * if the inventory account is not found, we'll stop the process
          * there is no need to trigger an exception as the user might not need
          * to use the accounting features.
          */
-        if ( ! $unpaidAccount instanceof TransactionAccount || ! $revenueAccount instanceof TransactionAccount ) {
+        if ( ! $receivableAccount instanceof TransactionAccount ) {
             ns()->notification->create(
                 title: __( 'Accounting Misconfiguration' ),
                 identifier: 'accounting-orders-misconfiguration',
@@ -1291,7 +1303,7 @@ class TransactionService
         $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
             'increase' => $account[ 'increase' ],
             'decrease' => $account[ 'decrease' ],
-        ]))->toArray()[ $revenueAccount->category_identifier ];
+        ]))->toArray()[ $receivableAccount->category_identifier ];
 
         /*
         * We're pulling any existing transaction made on the TransactionHistory
@@ -1299,12 +1311,13 @@ class TransactionService
         */
         $transaction = TransactionHistory::where( 'order_id', $order->id )
             ->where( 'operation', $accountConfiguration[ 'increase' ] )
+            ->where( 'transaction_account_id', $receivableAccount->id )
             ->firstOrNew();
             
         $transaction->value = $order->total;
         $transaction->author = $order->author;
         $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
-        $transaction->transaction_account_id = $revenueAccount->id;
+        $transaction->transaction_account_id = $receivableAccount->id;
         $transaction->operation = $accountConfiguration[ 'increase' ];
         $transaction->type = Transaction::TYPE_DIRECT;
         $transaction->trigger_date = $order->created_at;
@@ -1313,20 +1326,16 @@ class TransactionService
         $transaction->created_at = $order->created_at;
         $transaction->updated_at = $order->updated_at;
         $transaction->save();
-
-        $this->reflectTransactionOnAccounts( $transaction, [ $unpaidAccount ] );
     }
 
     public function recordTransactionFromSale( Order $order ) 
     {
-        $revenueAccountId = ns()->option->get( 'ns_accounting_orders_revenues_account' );
         $cashAccountId = ns()->option->get( 'ns_accounting_orders_cash_account' );
-        $unpaidAccountId = ns()->option->get( 'ns_accounting_orders_receivable_account' );
+        $receivableAccountId = ns()->option->get( 'ns_accounting_orders_receivable_account' );
 
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
             $this->handlePaidOrderTransactionRecording(
                 cashAccountId: $cashAccountId,
-                revenueAccountId: $revenueAccountId,
                 order: $order
             );
 
@@ -1335,8 +1344,7 @@ class TransactionService
             );
         } else if ( $order->payment_status === Order::PAYMENT_UNPAID ) {
             $this->handleUnpaidOrderTransactionRecording(
-                unpaidAccountId: $unpaidAccountId,
-                revenueAccountId: $revenueAccountId,
+                receivableAccountId: $receivableAccountId,
                 order: $order
             );
         }
@@ -1377,6 +1385,7 @@ class TransactionService
         */
         $transaction = TransactionHistory::where( 'order_id', $order->id )
             ->where( 'operation', $accountConfiguration[ 'increase' ] )
+            ->where( 'transaction_account_id', $costOfGoodsSoldAccount->id )
             ->firstOrNew();
             
         $transaction->value = $order->total_cogs;
