@@ -42,6 +42,7 @@ export default {
         return {
             searchField: '',
             showResults: false,
+            subscription: null,
         }
     },
     name: 'ns-search-select',
@@ -104,11 +105,40 @@ export default {
             this.selectOption( options[0] );
         }
 
+        /**
+         * if the field provide a "subject" object, this means
+         * it's likely to automatically refresh in case other field value change
+         * only if the "refresh" property is provided to the watching field 
+         */
+        if ( this.field.subject ) {
+            this.subscription = this.field.subject.subscribe( ({ field, fields }) => {
+                if ( field && fields && this.field.refresh && field.name === this.field.refresh.watch ) {
+                    const url =  this.field.refresh.url;
+                    const data = this.field.refresh.data;
+                    const form = { identifier: field.value, ...data };
+
+                    nsHttpClient.post( url, form ).subscribe({
+                        next: options => {
+                            this.field.options    =   options;
+                        },
+                        error: error => {
+                            console.error( error );
+                        }
+                    });
+                }
+            });
+        }
+
         document.addEventListener( 'click', ( event ) => {
             if ( this.$el.contains( event.target ) === false ) {
                 this.showResults    =   false;
             }
         });
+    },
+    destroyed() {
+        if ( this.subscription ) {
+            this.subscription.unsubscribe();
+        }
     },
     methods: { 
         __,

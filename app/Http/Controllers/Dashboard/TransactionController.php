@@ -206,4 +206,14 @@ class TransactionController extends DashboardController
     {
         return $this->transactionService->triggerTransaction( $transaction );
     }
+
+    public function getTransactionAccountFromCategory( Request $request )
+    {
+        return $this->transactionService->getTransactionAccountFromCategory( $request->input( 'identifier' ), $request->input( 'exclude' ) );
+    }
+
+    public function getCounterAccount( Request $request )
+    {
+        return $this->transactionService->getCounterAccount( $request->input( 'identifier' ) );
+    }
 }

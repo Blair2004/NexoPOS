@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->integer( 'transaction_id' )->nullable();
             $table->string( 'operation' ); // credit or debit
-            $table->bool( 'is_reflection' )->default( false );
+            $table->boolean( 'is_reflection' )->default( false );
             $table->integer( 'reflection_source_id' )->nullable();
             $table->integer( 'transaction_account_id' )->nullable();
             $table->integer( 'procurement_id' )->nullable(); // when the procurement is deleted the transaction history will be deleted automatically as well.

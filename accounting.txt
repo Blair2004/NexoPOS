@@ -1,0 +1,40 @@
+orders
+    hold: no records
+    paid: 
+        debit: 
+            account receivable - 1
+                debtors
+            current asset - 2
+                cash in hand
+        credit:
+            current assets - 1
+                sales
+            account receivable - 2
+                debtors
+    refunded
+        debit: 
+
+    unpaid: 
+        debit:
+            current assets
+                account receivable
+        credit: 
+            income
+                direct income
+
+purchase furnitures
+    unpaid
+        debit
+            cost of good sold
+        credit
+            creditors (providers)
+    paid
+        debit 
+            creditor (providers)
+        credit
+            cash (asset)
+
+
+// 
+depending on the payment, there is a transfer made to either cash, bank etc.
+

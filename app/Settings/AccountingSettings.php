@@ -35,11 +35,6 @@ class AccountingSettings extends SettingsPage
             'description' => __( 'Configure the accounting feature' ),
             'tabs' => SettingForm::tabs(
                 SettingForm::tab(
-                    identifier: 'general',
-                    label: __( 'General' ),
-                    fields: include ( dirname( __FILE__ ) . '/accounting/general.php' ),
-                ),
-                SettingForm::tab(
                     identifier: 'orders',
                     label: __( 'Orders' ),
                     notices: [
@@ -61,11 +56,6 @@ class AccountingSettings extends SettingsPage
                     ],
                     fields: include ( dirname( __FILE__ ) . '/accounting/procurements.php' ),
                 ),
-                SettingForm::tab(
-                    identifier: 'cash-registers',
-                    label: __( 'Cash Register' ),
-                    fields: include ( dirname( __FILE__ ) . '/accounting/cash-registers.php' ),
-                )
             ),
         ];
     }

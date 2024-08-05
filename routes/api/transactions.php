@@ -14,3 +14,5 @@ Route::put( 'transactions/{id}', [ TransactionController::class, 'put' ] )->wher
 Route::put( 'transactions-accounts/{account}', [ TransactionController::class, 'putTransactionAccount' ] )->where( 'id', '[0-9]+' );
 Route::delete( 'transactions/{transaction}', [ TransactionController::class, 'delete' ] )->where( 'id', '[0-9]+' );
 Route::delete( 'transactions-accounts/{account}', [ TransactionController::class, 'deleteAccount' ] )->where( 'id', '[0-9]+' );
+Route::post( 'transactions-accounts/category-identifier', [ TransactionController::class, 'getTransactionAccountFromCategory' ] )->name( ns()->routeName( 'ns.transactions-account.category-identifier' ) );
+Route::post( 'transactions-accounts/counter-accounts', [ TransactionController::class, 'getCounterAccount' ] )->name( ns()->routeName( 'ns.transactions-account.counter-accounts' ) );

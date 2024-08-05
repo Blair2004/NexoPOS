@@ -238,11 +238,21 @@ class SetupService
         UserAfterActivationSuccessfulEvent::dispatch( $user );
 
         $this->createDefaultPayment( $user );
+        $this->createDefaultAccounting();
 
         return [
             'status' => 'success',
             'message' => __( 'NexoPOS has been successfully installed.' ),
         ];
+    }
+
+    public function createDefaultAccounting()
+    {
+        /**
+         * @var TransactionService $service
+         */
+        $service    =   app()->make( TransactionService::class );
+        $service->createDefaultAccounts();
     }
 
     public function createDefaultPayment( $user )
@@ -251,7 +261,7 @@ class SetupService
          * let's create default payment
          * for the system
          */
-        $paymentType = new PaymentType;
+        $paymentType = new PaymentType();
         $paymentType->label = __( 'Cash' );
         $paymentType->identifier = 'cash-payment';
         $paymentType->readonly = true;

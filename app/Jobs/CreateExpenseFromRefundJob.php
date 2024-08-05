@@ -33,10 +33,8 @@ class CreateExpenseFromRefundJob implements ShouldQueue
      */
     public function handle( TransactionService $transactionService )
     {
-        $transactionService->createTransactionFromRefund(
-            order: $this->order,
-            orderProductRefund: $this->orderProductRefund,
-            orderProduct: $this->orderProduct
-        );
+        /**
+         * @todo Implement this job
+         */
     }
 }

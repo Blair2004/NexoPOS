@@ -12,13 +12,8 @@ use App\Fields\DirectTransactionFields;
 use App\Fields\EntityTransactionFields;
 use App\Fields\ReccurringTransactionFields;
 use App\Fields\ScheduledTransactionFields;
-use App\Models\Customer;
-use App\Models\CustomerAccountHistory;
 use App\Models\Order;
-use App\Models\OrderProduct;
-use App\Models\OrderProductRefund;
 use App\Models\Procurement;
-use App\Models\RegisterHistory;
 use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
@@ -27,29 +22,10 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use PHPUnit\TextUI\Help;
 
 class TransactionService
 {
-    /**
-     * @deprecated
-     */
-    protected $accountTypes = [
-        TransactionHistory::ACCOUNT_SALES => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_sales_cashflow_account' ],
-        TransactionHistory::ACCOUNT_REFUNDS => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_sales_refunds_account' ],
-        TransactionHistory::ACCOUNT_SPOILED => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_stock_return_spoiled_account' ],
-        TransactionHistory::ACCOUNT_UNSPOILED => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_stock_return_unspoiled_account' ],
-        /**
-         * @deprecated
-         */
-        TransactionHistory::ACCOUNT_PROCUREMENTS => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_procurement_cashflow_account' ],
-        TransactionHistory::ACCOUNT_CUSTOMER_CREDIT => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_customer_crediting_cashflow_account' ],
-        TransactionHistory::ACCOUNT_CUSTOMER_DEBIT => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_customer_debitting_cashflow_account' ],
-        TransactionHistory::ACCOUNT_LIABILITIES => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_liabilities_account' ],
-        TransactionHistory::ACCOUNT_EQUITY => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_equity_account' ],
-        TransactionHistory::ACCOUNT_REGISTER_CASHING => [ 'operation' => TransactionHistory::OPERATION_DEBIT, 'option' => 'ns_register_cashing_account' ],
-        TransactionHistory::ACCOUNT_REGISTER_CASHOUT => [ 'operation' => TransactionHistory::OPERATION_CREDIT, 'option' => 'ns_register_cashout_account' ],
-    ];
-
     public function __construct( public DateService $dateService )
     {
         // ...
@@ -668,7 +644,7 @@ class TransactionService
                 url: ns()->route( 'ns.dashboard.settings', [
                     'settings' => 'accounting?tab=procurements'
                 ]),
-                description: __( 'No account was set for the recording accounting transaction for procurements. Until the account are set, accounting is ignored.' )
+                description: __( 'Unable to records accountings transactions for purchase order (procurement). Until the account are set, accounting is ignored.' )
             )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
 
             return;
@@ -734,409 +710,6 @@ class TransactionService
             $transaction->created_at = $procurement->created_at;
             $transaction->updated_at = $procurement->updated_at;
             $transaction->save();
-        }
-    }
-
-    /**
-     * Create a direct transaction history
-     */
-    public function createTransactionHistory(
-        string $operation,
-        $transaction_id = null,
-        $transaction_account_id = null,
-        $procurement_id = null,
-        $order_refund_id = null,
-        $order_refund_product_id = null,
-        $order_id = null,
-        $order_product_id = null,
-        $register_history_id = null,
-        $customer_account_history_id = null,
-        $name = null,
-        $status = TransactionHistory::STATUS_ACTIVE,
-        $value = 0,
-    ) {
-        $transactionHistory = new TransactionHistory;
-
-        $transactionHistory->transaction_id = $transaction_id;
-        $transactionHistory->operation = $operation;
-        $transactionHistory->transaction_account_id = $transaction_account_id;
-        $transactionHistory->procurement_id = $procurement_id;
-        $transactionHistory->order_refund_id = $order_refund_id;
-        $transactionHistory->order_refund_product_id = $order_refund_product_id;
-        $transactionHistory->order_id = $order_id;
-        $transactionHistory->order_product_id = $order_product_id;
-        $transactionHistory->register_history_id = $register_history_id;
-        $transactionHistory->customer_account_history_id = $customer_account_history_id;
-        $transactionHistory->name = $name;
-        $transactionHistory->status = $status;
-        $transactionHistory->trigger_date = ns()->date->toDateTimeString();
-        $transactionHistory->type = Transaction::TYPE_DIRECT;
-        $transactionHistory->value = $value;
-        $transactionHistory->author = Auth::id();
-
-        $transactionHistory->save();
-
-        return $transactionHistory;
-    }
-
-    /**
-     * Will record a transaction for every refund performed
-     * 
-     * @deprecated
-     *
-     * @return void
-     */
-    public function createTransactionFromRefund( Order $order, OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
-    {
-        $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_REFUNDS );
-
-        /**
-         * Every product refund produce a debit
-         * operation on the system.
-         */
-        $transaction = new Transaction;
-        $transaction->value = $orderProductRefund->total_price;
-        $transaction->active = true;
-        $transaction->operation = TransactionHistory::OPERATION_DEBIT;
-        $transaction->author = $orderProductRefund->author;
-        $transaction->order_id = $order->id;
-        $transaction->order_product_id = $orderProduct->id;
-        $transaction->order_refund_id = $orderProductRefund->order_refund_id;
-        $transaction->order_refund_product_id = $orderProductRefund->id;
-        $transaction->name = sprintf( __( 'Refunding : %s' ), $orderProduct->name );
-        $transaction->id = 0; // this is not assigned to an existing transaction
-        $transaction->account = $transactionAccount;
-
-        $this->recordTransactionHistory( $transaction );
-
-        if ( $orderProductRefund->condition === OrderProductRefund::CONDITION_DAMAGED ) {
-            /**
-             * Only if the product is damaged we should
-             * consider saving that as a waste.
-             */
-            $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_SPOILED );
-
-            $transaction = new Transaction;
-            $transaction->value = $orderProductRefund->total_price;
-            $transaction->active = true;
-            $transaction->operation = TransactionHistory::OPERATION_DEBIT;
-            $transaction->author = $orderProductRefund->author;
-            $transaction->order_id = $order->id;
-            $transaction->order_product_id = $orderProduct->id;
-            $transaction->order_refund_id = $orderProductRefund->order_refund_id;
-            $transaction->order_refund_product_id = $orderProductRefund->id;
-            $transaction->name = sprintf( __( 'Spoiled Good : %s' ), $orderProduct->name );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-
-            $this->recordTransactionHistory( $transaction );
-        }
-    }
-
-    /**
-     * If the order has just been
-     * created and the payment status is PAID
-     * we'll store the total as a cash flow transaction.
-     * 
-     * @deprecated
-     *
-     * @return void
-     */
-    public function handleOrder( Order $order )
-    {
-        if ( $order->payment_status === Order::PAYMENT_PAID ) {
-            $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_SALES );
-
-            $transaction = new Transaction;
-            $transaction->value = $order->total;
-            $transaction->active = true;
-            $transaction->operation = TransactionHistory::OPERATION_CREDIT;
-            $transaction->author = $order->author;
-            $transaction->order_id = $order->id;
-            $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-            $transaction->created_at = $order->created_at;
-            $transaction->updated_at = $order->updated_at;
-
-            $this->recordTransactionHistory( $transaction );
-        }
-    }
-
-    /**
-     * Will pul the defined account
-     * or will create a new one according to the settings
-     *
-     * @param string $accountSettingsName
-     * @param array  $defaults
-     */
-    public function getDefinedTransactionAccount( $accountSettingsName, $defaults ): TransactionAccount
-    {
-        $accountType = TransactionAccount::find( ns()->option->get( $accountSettingsName ) );
-
-        if ( ! $accountType instanceof TransactionAccount ) {
-            $result = $this->createAccount( $defaults );
-
-            $accountType = (object) $result[ 'data' ][ 'account' ];
-
-            /**
-             * Will set the transaction as the default account transaction
-             * account for subsequent transactions.
-             */
-            ns()->option->set( $accountSettingsName, $accountType->id );
-
-            $accountType = TransactionAccount::find( ns()->option->get( $accountSettingsName ) );
-        }
-
-        return $accountType;
-    }
-
-    /**
-     * Retreive the transaction type
-     * @deprecated
-     */
-    public function getTransactionTypeByAccountName( $accountName )
-    {
-        $transactionType = $this->accountTypes[ $accountName ] ?? false;
-
-        if ( $transactionType ) {
-            return $transactionType[ 'operation' ];
-        }
-
-        throw new NotFoundException( sprintf(
-            __( 'Not found account type: %s' ),
-            $accountName
-        ) );
-    }
-
-    /**
-     * Retreive the account configuration
-     * using the account type
-     * 
-     * @deprecated
-     * @param string $type
-     */
-    public function getTransactionAccountByCode( $type ): TransactionAccount
-    {
-        $account = $this->accountTypes[ $type ] ?? false;
-
-        if ( ! empty( $account ) ) {
-            /**
-             * This will define the label
-             */
-            switch ( $type ) {
-                case TransactionHistory::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' );
-                    break;
-                case TransactionHistory::ACCOUNT_LIABILITIES: $label = __( 'Liabilities Account' );
-                    break;
-                case TransactionHistory::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' );
-                    break;
-                case TransactionHistory::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' );
-                    break;
-                case TransactionHistory::ACCOUNT_EQUITY: $label = __( 'Equity Account' );
-                    break;
-                case TransactionHistory::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' );
-                    break;
-                case TransactionHistory::ACCOUNT_REGISTER_CASHING: $label = __( 'Register Cash-In Account' );
-                    break;
-                case TransactionHistory::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' );
-                    break;
-                case TransactionHistory::ACCOUNT_SALES: $label = __( 'Sales Account' );
-                    break;
-                case TransactionHistory::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' );
-                    break;
-            }
-
-            return $this->getDefinedTransactionAccount( $account[ 'option' ], [
-                'name' => $label,
-                'operation' => $account[ 'operation' ],
-                'account' => $type,
-            ] );
-        }
-
-        throw new NotFoundException( sprintf(
-            __( 'Not found account type: %s' ),
-            $type
-        ) );
-    }
-
-    /**
-     * Will process refunded orders
-     *
-     * @todo the method might no longer be in use.
-     *
-     * @param  string $rangeStart
-     * @param  string $rangeEnds
-     * @return void
-     *
-     * @deprecated ?
-     */
-    public function processRefundedOrders( $rangeStarts, $rangeEnds )
-    {
-        $orders = Order::where( 'created_at', '>=', $rangeStarts )
-            ->where( 'created_at', '<=', $rangeEnds )
-            ->paymentStatus( Order::PAYMENT_REFUNDED )
-            ->get();
-
-        $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_REFUNDS );
-
-        $orders->each( function ( $order ) use ( $transactionAccount ) {
-            $transaction = new Transaction;
-            $transaction->value = $order->total;
-            $transaction->active = true;
-            $transaction->operation = TransactionHistory::OPERATION_DEBIT;
-            $transaction->author = $order->author;
-            $transaction->customer_account_history_id = $order->id;
-            $transaction->name = sprintf( __( 'Refund : %s' ), $order->code );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-            $transaction->created_at = $order->created_at;
-            $transaction->updated_at = $order->updated_at;
-
-            $this->recordTransactionHistory( $transaction );
-        } );
-    }
-
-    /**
-     * Will process the customer histories
-     *
-     * @return void
-     *
-     * @deprecated ?
-     */
-    public function processCustomerAccountHistories( $rangeStarts, $rangeEnds )
-    {
-        $histories = CustomerAccountHistory::where( 'created_at', '>=', $rangeStarts )
-            ->where( 'created_at', '<=', $rangeEnds )
-            ->get();
-
-        $histories->each( function ( $history ) {
-            $this->handleCustomerCredit( $history );
-        } );
-    }
-
-    /**
-     * Will create an transaction for each created procurement
-     *
-     * @return void
-     *
-     * @deprecated ?
-     */
-    public function processProcurements( $rangeStarts, $rangeEnds )
-    {
-        Procurement::where( 'created_at', '>=', $rangeStarts )
-            ->where( 'created_at', '<=', $rangeEnds )
-            ->get()->each( function ( $procurement ) {
-                $this->handleProcurementTransaction( $procurement );
-            } );
-    }
-
-    /**
-     * Will trigger not recurring transactions
-     *
-     * @return void
-     *
-     * @deprecated
-     */
-    public function processTransactions( $rangeStarts, $rangeEnds )
-    {
-        Transaction::where( 'created_at', '>=', $rangeStarts )
-            ->where( 'created_at', '<=', $rangeEnds )
-            ->notRecurring()
-            ->get()
-            ->each( function ( $transaction ) {
-                $this->triggerTransaction( $transaction );
-            } );
-    }
-
-    /**
-     * @deprecated ?
-     */
-    public function processRecurringTransactions( $rangeStart, $rangeEnds )
-    {
-        $startDate = Carbon::parse( $rangeStart );
-        $endDate = Carbon::parse( $rangeEnds );
-
-        if ( $startDate->lessThan( $endDate ) && $startDate->diffInDays( $endDate ) >= 1 ) {
-            while ( $startDate->isSameDay() ) {
-                ns()->date = $startDate;
-
-                $this->handleRecurringTransactions( $startDate );
-
-                $startDate->addDay();
-            }
-        }
-    }
-
-    /**
-     * Will add customer credit operation
-     * to the cash flow history
-     *
-     * @deprecated
-     * @return void
-     */
-    public function handleCustomerCredit( CustomerAccountHistory $customerHistory )
-    {
-        if ( in_array( $customerHistory->operation, [
-            CustomerAccountHistory::OPERATION_ADD,
-            CustomerAccountHistory::OPERATION_REFUND,
-        ] ) ) {
-            $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_CUSTOMER_CREDIT );
-
-            $transaction = new Transaction;
-            $transaction->value = $customerHistory->amount;
-            $transaction->active = true;
-            $transaction->operation = TransactionHistory::OPERATION_CREDIT;
-            $transaction->author = $customerHistory->author;
-            $transaction->customer_account_history_id = $customerHistory->id;
-            $transaction->name = sprintf( __( 'Customer Account Crediting : %s' ), $customerHistory->customer->name );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-            $transaction->created_at = $customerHistory->created_at;
-            $transaction->updated_at = $customerHistory->updated_at;
-
-            $this->recordTransactionHistory( $transaction );
-        } elseif ( in_array(
-            $customerHistory->operation, [
-                CustomerAccountHistory::OPERATION_PAYMENT,
-            ]
-        ) ) {
-            $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_CUSTOMER_DEBIT );
-
-            $transaction = new Transaction;
-            $transaction->value = $customerHistory->amount;
-            $transaction->active = true;
-            $transaction->operation = TransactionHistory::OPERATION_DEBIT;
-            $transaction->author = $customerHistory->author;
-            $transaction->customer_account_history_id = $customerHistory->id;
-            $transaction->order_id = $customerHistory->order_id;
-            $transaction->name = sprintf( __( 'Customer Account Purchase : %s' ), $customerHistory->customer->name );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-            $transaction->created_at = $customerHistory->created_at;
-            $transaction->updated_at = $customerHistory->updated_at;
-
-            $this->recordTransactionHistory( $transaction );
-        } elseif ( in_array(
-            $customerHistory->operation, [
-                CustomerAccountHistory::OPERATION_DEDUCT,
-            ]
-        ) ) {
-            $transactionAccount = $this->getTransactionAccountByCode( TransactionHistory::ACCOUNT_CUSTOMER_DEBIT );
-
-            $transaction = new Transaction;
-            $transaction->value = $customerHistory->amount;
-            $transaction->active = true;
-            $transaction->operation = TransactionHistory::OPERATION_DEBIT;
-            $transaction->author = $customerHistory->author;
-            $transaction->customer_account_history_id = $customerHistory->id;
-            $transaction->name = sprintf( __( 'Customer Account Deducting : %s' ), $customerHistory->customer->name );
-            $transaction->id = 0; // this is not assigned to an existing transaction
-            $transaction->account = $transactionAccount;
-            $transaction->created_at = $customerHistory->created_at;
-            $transaction->updated_at = $customerHistory->updated_at;
-
-            $this->recordTransactionHistory( $transaction );
         }
     }
 
@@ -1244,7 +817,7 @@ class TransactionService
                 url: ns()->route( 'ns.dashboard.settings', [
                     'settings' => 'accounting?tab=orders'
                 ]),
-                description: __( 'No account was set for the recording accounting transaction for sales. Until the accounts are set, accounting is ignored.' )
+                description: __( 'Unable to record accounting transactions for paid orders. Until the accounts are set, records are skipped.' )
             )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
 
             return;
@@ -1294,7 +867,7 @@ class TransactionService
                 url: ns()->route( 'ns.dashboard.settings', [
                     'settings' => 'accounting?tab=orders'
                 ]),
-                description: __( 'No account was set for the recording accounting transaction for sales. Until the accounts are set, accounting is ignored.' )
+                description: __( 'Unable to record accounting transactions for unpaid orders. Until the accounts are set, records are skipped.' )
             )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
 
             return;
@@ -1332,6 +905,7 @@ class TransactionService
     {
         $cashAccountId = ns()->option->get( 'ns_accounting_orders_cash_account' );
         $receivableAccountId = ns()->option->get( 'ns_accounting_orders_receivable_account' );
+        $orderRevenuesAccountId = ns()->option->get( 'ns_accounting_orders_revenues_account' );
 
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
             $this->handlePaidOrderTransactionRecording(
@@ -1347,7 +921,113 @@ class TransactionService
                 receivableAccountId: $receivableAccountId,
                 order: $order
             );
+        } else if ( $order->payment_status === Order::PAYMENT_PARTIALLY ) {
+            $this->handlePartiallyPaidTransactionRecording(
+                receivableAccountId: $receivableAccountId,
+                order: $order
+            );
+        } else if ( $order->payment_status === Order::PAYMENT_REFUNDED ) {
+            $this->handleRefundedOrderTransactionRecording(
+                orderRevenuesAccountId: $orderRevenuesAccountId,
+                order: $order
+            );
         }
+    }
+
+    public function handleRefundedOrderTransactionRecording( $orderRevenuesAccountId, $order )
+    {
+        $revenueAccount = TransactionAccount::find( $orderRevenuesAccountId );
+
+        /**
+         * if the inventory account is not found, we'll stop the process
+         * there is no need to trigger an exception as the user might not need
+         * to use the accounting features.
+         */
+        if ( ! $revenueAccount instanceof TransactionAccount ) {
+            ns()->notification->create(
+                title: __( 'Accounting Misconfiguration' ),
+                identifier: 'accounting-orders-misconfiguration',
+                url: ns()->route( 'ns.dashboard.settings', [
+                    'settings' => 'accounting?tab=orders'
+                ]),
+                description: __( 'Unable to record an accounting transaction for a refund. Until the accounts are set, records are skipped.' )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+
+            return;
+        }
+
+        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+            'increase' => $account[ 'increase' ],
+            'decrease' => $account[ 'decrease' ],
+        ]))->toArray()[ $revenueAccount->category_identifier ];
+
+        /*
+        * We're pulling any existing transaction made on the TransactionHistory
+        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+        */
+        $transaction = new TransactionHistory;
+        $transaction->value = $order->total;
+        $transaction->author = $order->author;
+        $transaction->name = sprintf( __( 'Refund Sales : %s' ), $order->code );
+        $transaction->transaction_account_id = $revenueAccount->id;
+        $transaction->operation = $accountConfiguration[ 'decrease' ];
+        $transaction->type = Transaction::TYPE_DIRECT;
+        $transaction->trigger_date = $order->created_at;
+        $transaction->status = TransactionHistory::STATUS_ACTIVE;
+        $transaction->order_id = $order->id;
+        $transaction->created_at = $order->created_at;
+        $transaction->updated_at = $order->updated_at;
+        $transaction->save();
+    }
+
+    public function handlePartiallyPaidTransactionRecording( $receivableAccountId, $order )
+    {
+        $receivableAccount = TransactionAccount::find( $receivableAccountId );
+
+        /**
+         * if the inventory account is not found, we'll stop the process
+         * there is no need to trigger an exception as the user might not need
+         * to use the accounting features.
+         */
+        if ( ! $receivableAccount instanceof TransactionAccount ) {
+            ns()->notification->create(
+                title: __( 'Accounting Misconfiguration' ),
+                identifier: 'accounting-orders-misconfiguration',
+                url: ns()->route( 'ns.dashboard.settings', [
+                    'settings' => 'accounting?tab=orders'
+                ]),
+                description: __( 'Unable to record accounting records for a partial order payment. Until the accounts are set, records are skipped.' )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+
+            return;
+        }
+
+        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
+            'increase' => $account[ 'increase' ],
+            'decrease' => $account[ 'decrease' ],
+        ]))->toArray()[ $receivableAccount->category_identifier ];
+
+        /*
+        * We're pulling any existing transaction made on the TransactionHistory
+        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
+        */
+        $transaction = TransactionHistory::where( 'order_id', $order->id )
+            ->where( 'operation', $accountConfiguration[ 'increase' ] )
+            ->where( 'transaction_account_id', $receivableAccount->id )
+            ->firstOrNew();
+            
+        $transaction->value = $order->tendered;
+        $transaction->author = $order->author;
+        $transaction->name = sprintf( __( 'Partial Payment : %s' ), $order->code );
+        $transaction->transaction_account_id = $receivableAccount->id;
+        $transaction->operation = $accountConfiguration[ 'increase' ];
+        $transaction->type = Transaction::TYPE_DIRECT;
+        $transaction->trigger_date = $order->created_at;
+        $transaction->status = TransactionHistory::STATUS_ACTIVE;
+        $transaction->order_id = $order->id;
+        $transaction->created_at = $order->created_at;
+        $transaction->updated_at = $order->updated_at;
+        $transaction->save();
     }
 
     public function handleCOGSTransactionRecording( $order )
@@ -1368,7 +1048,7 @@ class TransactionService
                 url: ns()->route( 'ns.dashboard.settings', [
                     'settings' => 'accounting?tab=orders'
                 ]),
-                description: __( 'No account was set for the recording accounting transaction for sales. Until the accounts are set, accounting is ignored.' )
+                description: __( 'Unable to records accounting transactions for COGS. Until the accounts are set, records are skipped.' )
             )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
 
             return;
@@ -1383,11 +1063,7 @@ class TransactionService
         * We're pulling any existing transaction made on the TransactionHistory
         * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
         */
-        $transaction = TransactionHistory::where( 'order_id', $order->id )
-            ->where( 'operation', $accountConfiguration[ 'increase' ] )
-            ->where( 'transaction_account_id', $costOfGoodsSoldAccount->id )
-            ->firstOrNew();
-            
+        $transaction = new TransactionHistory;            
         $transaction->value = $order->total_cogs;
         $transaction->author = $order->author;
         $transaction->name = sprintf( __( 'COGS : %s' ), $order->code );
@@ -1402,67 +1078,187 @@ class TransactionService
         $transaction->save();
     }
 
-    public function createTransactionFromRegisterHistory( RegisterHistory $registerHistory )
-    {
-        $transactionHistory = TransactionHistory::where( 'register_history_id', $registerHistory->id )->firstOrNew();
-
-        if ( ! in_array( $registerHistory->action, [
-            RegisterHistory::ACTION_CASHOUT,
-            RegisterHistory::ACTION_CASHING,
-            RegisterHistory::ACTION_OPENING,
-            RegisterHistory::ACTION_CLOSING,
-        ] ) ) {
-            return;
-        }
-
-        if ( in_array( $registerHistory->action, [
-            RegisterHistory::ACTION_CASHOUT,
-        ] ) ) {
-            $transactionHistory->name = sprintf( __( 'Cash Out : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
-            $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
-            $transactionHistory->transaction_account_id = $registerHistory->transaction_account_id;
-        } elseif ( in_array( $registerHistory->action, [
-            RegisterHistory::ACTION_CASHING,
-        ] ) ) {
-            $transactionHistory->name = sprintf( __( 'Cash In : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
-            $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;
-            $transactionHistory->transaction_account_id = $registerHistory->transaction_account_id;
-        } elseif ( $registerHistory->action === RegisterHistory::ACTION_OPENING ) {
-            $transactionHistory->name = sprintf( __( 'Opening Float : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
-            $transactionHistory->operation = TransactionHistory::OPERATION_DEBIT;
-            $transactionHistory->transaction_account_id = ns()->option->get( 'ns_accounting_opening_float_account' );
-        } elseif ( $registerHistory->action === RegisterHistory::ACTION_CLOSING ) {
-            $transactionHistory->name = sprintf( __( 'Closing Float : %s' ), ( $registerHistory->description ?: __( 'No description provided.' ) ) );
-            $transactionHistory->operation = TransactionHistory::OPERATION_CREDIT;
-            $transactionHistory->transaction_account_id = ns()->option->get( 'ns_accounting_closing_float_account' );
-        }
-
-        $transactionHistory->value = $registerHistory->value;
-        $transactionHistory->author = $registerHistory->author;
-        $transactionHistory->register_history_id = $registerHistory->id;
-        $transactionHistory->status = TransactionHistory::STATUS_ACTIVE;
-        $transactionHistory->trigger_date = $registerHistory->created_at;
-        $transactionHistory->type = Transaction::TYPE_DIRECT;
-        $transactionHistory->save();
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The transaction has been created.' ),
-            'data' => compact( 'transactionHistory' ),
-        ];
-    }
-
     public function deleteProcurementTransactions( Procurement $procurement )
     {
-        $transactions = TransactionHistory::where( 'procurement_id', $procurement->id )->get();
+        $transactionHistories = TransactionHistory::where('procurement_id', $procurement->id)
+            ->where('is_reflection', false)
+            ->get();
 
-        $transactions->each( function ( $transaction ) {
-            $transaction->delete();
-        } );
+        foreach ($transactionHistories as $transactionHistory) {
+            $transactionHistory->delete();
+        }
 
         return [
             'status' => 'success',
             'message' => __( 'The procurement transactions has been deleted.' ),
         ];
+    }
+
+    public function createDefaultAccounts()
+    {
+        $this->createAllSubAccounts();
+        $this->createProcurementAccounts();
+        $this->createSalesAccounts();
+        $this->createExpensesAccounts();
+    }
+
+    public function createAllSubAccounts()
+    {
+        $cashAccountResponse = $this->createAccount([
+            'name' => __( 'Fixed Assets' ),
+            'category_identifier' => 'assets',
+            'account'   =>  100
+        ]);
+
+        $cashAccount = $cashAccountResponse[ 'data' ][ 'account' ];
+
+        $cashAccountResponse = $this->createAccount([
+            'name' => __( 'Current Assets' ),
+            'category_identifier' => 'assets',
+            'account'   =>  101
+        ]);
+
+        $cashAccount = $cashAccountResponse[ 'data' ][ 'account' ];
+
+        $response = $this->createAccount([
+            'name' => __( 'Inventory Account' ),
+            'category_identifier' => 'assets',
+            'account'   =>  119,
+        ]);
+
+        $inventoryAccount = $response[ 'data' ][ 'account' ];
+
+        $liabilitiesAccountResponse = $this->createAccount([
+            'name'  =>  __( 'Current Liabilities' ),
+            'category_identifier'   =>  'liabilities',
+            'account'   =>  201
+        ]);
+
+        $liabilitiesAccount = $liabilitiesAccountResponse[ 'data' ][ 'account' ];
+
+        $response = $this->createAccount([
+            'name' => __( 'Sales Revenues' ),
+            'category_identifier' => 'revenues',
+            'account'   =>  401,
+        ]);
+
+        $salesRevenuesAccount = $response[ 'data' ][ 'account' ];
+    }
+
+    public function createExpensesAccounts()
+    {
+        
+    }
+
+    public function createProcurementAccounts()
+    {
+        $currentAsset = TransactionAccount::where( 'account', 101 )->first();
+        $liabilityAccount = TransactionAccount::where( 'account', 201 )->first();
+        $inventoryAccount = TransactionAccount::where( 'account', 119 )->first();
+
+        // -----------------------------------------------------------
+        // Defining Accounts
+        // -----------------------------------------------------------
+
+        $procurementAccountResponse = $this->createAccount([
+            'name' => __( 'Procurement Payable Account' ),
+            'category_identifier' => 'liabilities',
+            'sub_category_id'   =>  $liabilityAccount->id,
+            'counter_account_id' => $inventoryAccount->id
+        ]);
+
+        $procurementCashAccount = $this->createAccount([
+            'name' => __( 'Procurement Cash Account' ),
+            'category_identifier' => 'assets',
+            'sub_category_id'   =>  $currentAsset->id,
+            'counter_account_id' => $inventoryAccount->id
+        ]);
+
+        /**
+         * We'll setup the options now
+         */
+        ns()->option->set( 'ns_accounting_procurement_paid_account', $procurementCashAccount[ 'data' ][ 'account' ][ 'id' ] );
+        ns()->option->set( 'ns_accounting_procurement_unpaid_account', $procurementAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
+    }
+
+    public function createSalesAccounts()
+    {
+        $currentAsset = TransactionAccount::where( 'account', 101 )->first();
+        $revenue = TransactionAccount::where( 'account', 401 )->first();
+
+        $receivableAccountResponse = $this->createAccount([
+            'name' => __( 'Receivables' ),
+            'category_identifier' => 'assets',
+            'sub_category_id' => $currentAsset->id,
+            'counter_account_id' => $revenue->id
+        ]);
+
+        $salesAccountResponse = $this->createAccount([
+            'name'  =>  __( 'Sales' ),
+            'category_identifier'   =>  'assets',
+            'sub_category_id'   =>  $currentAsset->id,
+            'counter_account_id'    =>  $revenue->id
+        ]);
+
+        $refundAccountResponse = $this->createAccount([
+            'name'  =>  __( 'Refunds' ),
+            'category_identifier'   =>  'revenues',
+            'sub_category_id'   =>  $revenue->id,
+            'counter_account_id'    =>  $receivableAccountResponse[ 'data' ][ 'account' ][ 'id' ]
+        ]);
+
+        $revenuesAccountResponse = $this->createAccount([
+            'name'  =>  __( 'Sales Revenues' ),
+            'category_identifier'   =>  'revenues',
+            'sub_category_id'   =>  $revenue->id,
+            'counter_account_id'    =>  $receivableAccountResponse[ 'data' ][ 'account' ][ 'id' ]
+        ]);
+
+        /**
+         * Let's setup the options
+         */
+        ns()->option->set( 'ns_accounting_orders_unpaid_account', $receivableAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
+        ns()->option->set( 'ns_accounting_orders_cash_account', $salesAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
+        ns()->option->set( 'ns_accounting_orders_refund_account', $refundAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
+        ns()->option->set( 'ns_accounting_orders_revenues_account', $revenuesAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
+
+
+        /**
+         * We'll pulling out here the inventory account
+         */
+        $account = TransactionAccount::where( 'account', 119 )->first();
+
+        /**
+         * This is for configuring the COGS that is used during sales.
+         */
+        if ( $account instanceof TransactionAccount ) {
+            $cogsAccount = $this->createAccount([
+                'name' => __( 'Sales COGS Account' ),
+                'category_identifier' => 'expenses',
+                'counter_account_id' => $account->id
+            ]);
+
+            ns()->option->set( 'ns_accounting_orders_cogs_account', $cogsAccount[ 'data' ][ 'account' ][ 'id' ] );
+        }        
+    }
+
+    public function getTransactionAccountFromCategory( $category_identifier, $exclude_id = null )
+    {
+        $query = TransactionAccount::where( 'category_identifier', $category_identifier );
+
+        if ( ! empty( $exclude_id ) ) {
+            $query->where( 'id', '!=', $exclude_id );
+        }
+
+        $accounts   =   $query->get();
+
+        return Helper::toJsOptions( $accounts, [ 'id', 'name' ]);
+    }
+
+    public function getCounterAccount( $account_id )
+    {
+        $accounts = TransactionAccount::whereNotIn( 'id', [ $account_id ] )->get();
+        
+        return Helper::toJsOptions( $accounts, [ 'id', 'name' ]);
     }
 }

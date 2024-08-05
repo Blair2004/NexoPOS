@@ -21,6 +21,10 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_transactions_accounts', 'operation' ) ) {
                 $table->dropColumn( 'operation' );
             }
+
+            if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'sub_category_id' ) ) {
+                $table->integer( 'sub_category_id' )->nullable();
+            }
         });
 
         Schema::table( 'nexopos_transactions_histories', function( Blueprint $table ) {
@@ -55,6 +59,10 @@ return new class extends Migration
 
             if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'operation' ) ) {
                 $table->string( 'operation' )->default( 'debit' );
+            }
+
+            if ( Schema::hasColumn( 'nexopos_transactions_accounts', 'sub_category_id' ) ) {
+                $table->dropColumn( 'sub_category_id' );
             }
         });
 

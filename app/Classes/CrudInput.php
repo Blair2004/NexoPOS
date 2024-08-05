@@ -86,12 +86,12 @@ class CrudInput
         );
     }
 
-    public static function select( $label, $name, $options, $value = '', $validation = '', $description = '', $disabled = false, $type = 'select', $component = '', $props = [] )
+    public static function select( $label, $name, $options, $value = '', $validation = '', $description = '', $disabled = false, $type = 'select', $component = '', $props = [], $refresh = false )
     {
-        return compact( 'label', 'name', 'validation', 'options', 'value', 'description', 'disabled', 'type', 'component', 'props' );
+        return compact( 'label', 'name', 'validation', 'options', 'value', 'description', 'disabled', 'type', 'component', 'props', 'refresh' );
     }
 
-    public static function searchSelect( $label, $name, $value = '', $options = [], $validation = '', $description = '', $disabled = false, $component = '', $props = [] )
+    public static function searchSelect( $label, $name, $value = '', $options = [], $validation = '', $description = '', $disabled = false, $component = '', $props = [], $refresh = false )
     {
         return self::select(
             label: $label,
@@ -103,8 +103,14 @@ class CrudInput
             type: 'search-select',
             component: $component,
             props: $props,
-            disabled: $disabled
+            disabled: $disabled,
+            refresh: $refresh
         );
+    }
+
+    public static function refreshConfig( string $url, string $watch, array $data = [] )
+    {
+        return compact( 'url', 'watch', 'data' );
     }
 
     public static function textarea( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
@@ -241,17 +247,11 @@ class CrudInput
         );
     }
 
-    public static function custom( $label, $name, $type, $value = '', $validation = '', $description = '', $disabled = false, $options = [] )
+    public static function custom( $label, $component )
     {
-        return self::select(
-            label: $label,
-            name: $name,
-            validation: $validation,
-            description: $description,
-            disabled: $disabled,
-            options: $options,
-            type: $type,
-            value: $value
-        );
+        return [
+            'label' => $label,
+            'component' => $component
+        ];
     }
 }

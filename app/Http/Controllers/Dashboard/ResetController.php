@@ -31,17 +31,11 @@ class ResetController extends DashboardController
     public function truncateWithDemo( Request $request )
     {
         $this->resetService->softReset( $request );
-        $this->setupService->createDefaultPayment( Auth::user() );
 
         switch ( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
+            case 'wipe_all':
                 $this->demoService->run( $request->all() );
-                break;
-            case 'wipe_plus_simple':
-                ( new FirstDemoSeeder )->run();
-                break;
-            case 'default':
-                ( new DefaultSeeder )->run();
                 break;
             default:
                 $this->resetService->handleCustom(

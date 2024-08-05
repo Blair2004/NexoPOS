@@ -185,7 +185,9 @@ class DoctorService
         $this->command->info( __( 'Restoring cash flow from paid orders...' ) );
 
         $this->command->withProgressBar( $orders, function ( $order ) use ( $transactionService ) {
-            $transactionService->handleOrder( $order );
+            /**
+             * @todo create transaction from order
+             */
         } );
 
         $this->command->newLine();
@@ -202,11 +204,7 @@ class DoctorService
 
         $this->command->withProgressBar( $orders, function ( $order ) use ( $transactionService ) {
             $order->refundedProducts()->with( 'orderProduct' )->get()->each( function ( $orderRefundedProduct ) use ( $order, $transactionService ) {
-                $transactionService->createTransactionFromRefund(
-                    order: $order,
-                    orderProductRefund: $orderRefundedProduct,
-                    orderProduct: $orderRefundedProduct->orderProduct
-                );
+                // @todo create transaction from refund
             } );
         } );
 

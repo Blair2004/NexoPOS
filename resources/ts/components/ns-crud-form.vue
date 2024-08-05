@@ -1,4 +1,5 @@
 <script lang="ts">
+import { BehaviorSubject } from 'rxjs';
 import { nsHooks, nsHttpClient, nsSnackBar } from '../bootstrap';
 import FormValidation from '../libraries/form-validation';
 import { __  } from '~/libraries/lang';
@@ -171,10 +172,24 @@ export default {
                 form.tabs[ key ].active     =   form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active;
                 form.tabs[ key ].fields     =   this.formValidation.createFields( form.tabs[ key ].fields );
 
+                /**
+                 * Each tabs has a subject object defined, which will be transmitted to the fields
+                 * so each field can listen to the changes of the other fields
+                 */
+                form.tabs[ key ].subject    =   new BehaviorSubject({});
+                form.tabs[ key ].fields.forEach( field => {
+                    field.subject   =   form.tabs[ key ].subject;
+                });
+
                 index++;
             }
 
             return form;
+        },
+        handleFieldChange( field, fields ) {
+            if ( field.errors.length === 0 ) {
+                field.subject.next({ field, fields });
+            }
         }
     },
 }
@@ -230,7 +245,7 @@ export default {
                     <div class="border p-4 rounded">
                         <div class="-mx-4 flex flex-wrap">
                             <div :key="`${activeTabIdentifier}-${key}`" :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,key) of activeTabFields">
-                                <ns-field @saved="handleSaved( $event, activeTabIdentifier, field )" @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>
+                                <ns-field @saved="handleSaved( $event, activeTabIdentifier, field )" @blur="formValidation.checkField( field )" @change="formValidation.checkField( field ) && handleFieldChange( field, activeTabFields )" :field="field"/>
                             </div>
                         </div>
                         <div class="flex justify-end" v-if="! form.main.name">

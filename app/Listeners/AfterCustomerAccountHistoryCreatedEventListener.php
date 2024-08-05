@@ -27,7 +27,9 @@ class AfterCustomerAccountHistoryCreatedEventListener
      */
     public function handle( AfterCustomerAccountHistoryCreatedEvent $event )
     {
-        $this->transactionService->handleCustomerCredit( $event->customerAccount );
+        /**
+         * @todo implement customer account history in accounting part
+         */
         $this->customerService->updateCustomerAccount( $event->customerAccount );
     }
 }
