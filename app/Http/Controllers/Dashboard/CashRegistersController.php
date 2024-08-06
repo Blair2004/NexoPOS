@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 
 class CashRegistersController extends DashboardController
 {
@@ -264,5 +265,27 @@ class CashRegistersController extends DashboardController
                 'register_id' => $register->id,
             ],
         ] );
+    }
+
+    public function getRegisterZReport( Register $register )
+    {
+        $data   =   $this->registersService->getZReport( $register );
+
+        /**
+        * @var mixed register
+        * @var mixed opening
+        * @var mixed closing
+        * @var mixed histories
+        * @var mixed orders
+        * @var mixed openingBalance
+        * @var mixed closingBalance
+        * @var mixed difference
+        * @var mixed totalGrossSales
+        * @var mixed totalDiscount
+        * @var mixed total
+        * @var mixed unitProductCategories
+        */
+
+        return View::make( 'pages.dashboard.orders.templates.z-report', $data );
     }
 }

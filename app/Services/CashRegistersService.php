@@ -489,4 +489,57 @@ class CashRegistersService
 
         return $register;
     }
+
+    public function getZReport( Register $register )
+    {
+        $opening    =   RegisterHistory::where( 'register_id', $register->id )
+            ->where( 'action', RegisterHistory::ACTION_OPENING )
+            ->orderBy( 'id', 'desc' )
+            ->first();
+
+        $closing    =   RegisterHistory::where( 'register_id', $register->id )
+            ->where( 'action', RegisterHistory::ACTION_CLOSING )
+            ->orderBy( 'id', 'desc' )
+            ->first();
+
+        $histories  =   RegisterHistory::where( 'register_id', $register->id )
+            ->where( 'created_at', '>=', $opening->created_at )
+            ->orderBy( 'id', 'desc' )
+            ->get();
+
+        $orders     =   Order::paid()
+            ->with( 'product' )
+            ->where( 'register_id', $register->id )
+            ->where( 'created_at', '>=', $opening->created_at )
+            ->get();
+
+        $openingBalance     =   $opening->value;
+        $closingBalance     =   $closing->value ?? 0;
+        $difference         =   $closingBalance - $openingBalance;
+        $totalGrossSales    =   $orders->sum( 'total' );
+        $totalDiscount      =   $orders->sum( 'discount' );
+        $total              =   $totalGrossSales - $totalDiscount;
+
+        
+        $unitProductCategories  =   $orders->map( function ( $order ) {
+            return $order->items->map( function ( $item ) {
+                return $item->product->category->name;
+            } );
+        } )->flatten()->unique();
+
+        return compact( 
+            'register', 
+            'opening', 
+            'closing', 
+            'histories', 
+            'orders', 
+            'openingBalance', 
+            'closingBalance', 
+            'difference', 
+            'totalGrossSales', 
+            'totalDiscount', 
+            'total', 
+            'unitProductCategories' 
+        );
+    }
 }
