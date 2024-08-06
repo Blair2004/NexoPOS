@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Casts\DateCast;
 use App\Classes\Output;
 use App\Events\CrudHookEvent;
+use App\Services\CrudEntry;
 use App\Exceptions\NotAllowedException;
 use App\Traits\NsForms;
 use Carbon\Carbon;
