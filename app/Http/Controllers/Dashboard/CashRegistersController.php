@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Crud\RegisterCrud;
 use App\Crud\RegisterHistoryCrud;
 use App\Exceptions\NotAllowedException;
+use App\Facades\Hook;
 use App\Http\Controllers\DashboardController;
 use App\Models\OrderPayment;
 use App\Models\PaymentType;
@@ -136,7 +137,7 @@ class CashRegistersController extends DashboardController
         if ( $register->status === Register::STATUS_OPENED ) {
             $lastOpening = $register->history()
                 ->where( 'action', RegisterHistory::ACTION_OPENING )
-                ->orderBy( 'nexopos_registers_history.id', 'desc' )
+                ->orderBy( Hook::filter( 'ns-table-name', 'nexopos_registers_history' ) . '.id' , 'desc' )
                 ->first();
 
             if ( $lastOpening instanceof RegisterHistory ) {

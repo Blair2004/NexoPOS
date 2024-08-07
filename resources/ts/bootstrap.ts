@@ -24,6 +24,7 @@ import { nsCurrency, nsRawCurrency } from "./filters/currency";
 import { nsAbbreviate } from "./filters/abbreviate";
 import { nsTruncate } from "./filters/truncate";
 import Tax from "./libraries/tax";
+import Print from "./libraries/print";
 
 
 declare global {
@@ -144,6 +145,7 @@ nsHttpClient.defineClient( axios );
 ( window as any ).nsAbbreviate          =   nsAbbreviate;
 ( window as any ).nsRawCurrency         =   nsRawCurrency;
 ( window as any ).nsTruncate            =   nsTruncate;
-( window as any ).nsTax              =   Tax;
+( window as any ).nsTax                 =   Tax;
+( window as any ).PrintService          =   Print;
 
 export { nsSnackBar, nsNotice, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

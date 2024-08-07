@@ -17,6 +17,10 @@ export default class Print {
         this.options    =   options;
     }
 
+    setCustomPrintingUrl( documentType, url ) {
+        this.printingURL[ documentType ] = url;
+    }
+
     processRegularPrinting( reference_id, documentType ) {
         const item  =   document.querySelector( '#printing-section' );
 
