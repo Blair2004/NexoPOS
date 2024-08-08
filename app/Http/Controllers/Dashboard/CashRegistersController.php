@@ -8,10 +8,10 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Classes\Hook;
 use App\Crud\RegisterCrud;
 use App\Crud\RegisterHistoryCrud;
 use App\Exceptions\NotAllowedException;
-use App\Facades\Hook;
 use App\Http\Controllers\DashboardController;
 use App\Models\OrderPayment;
 use App\Models\PaymentType;
@@ -171,7 +171,7 @@ class CashRegistersController extends DashboardController
                             $session->label = __( 'Opening' );
                             break;
                         case RegisterHistory::ACTION_SALE:
-                            $session->label = sprintf( __( '%s on %s' ), $session->label, $session->order->code );
+                            $session->label = sprintf( __( '%s on %s' ), __( 'Sale' ), $session->order->code );
                             break;
                         case RegisterHistory::ACTION_REFUND:
                             $session->label = __( 'Refund' );
@@ -285,6 +285,7 @@ class CashRegistersController extends DashboardController
         * @var mixed totalDiscount
         * @var mixed total
         * @var mixed unitProductCategories
+        * @var mixed user
         */
 
         return View::make( 'pages.dashboard.orders.templates.z-report', $data );
