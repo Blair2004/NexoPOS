@@ -181,11 +181,13 @@ trait WithCustomerTest
                     'email' => $email,
                 ],
                 'shipping' => [
+                    'type'  =>  'shipping',
                     'first_name' => $firstName,
                     'last_name' => $lastName,
                     'email' => $email,
                 ],
                 'billing' => [
+                    'type'  =>  'billing',
                     'first_name' => $firstName,
                     'last_name' => $lastName,
                     'email' => $email,

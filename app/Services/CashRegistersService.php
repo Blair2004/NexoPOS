@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
 use App\Models\Order;
 use App\Models\OrderPayment;
 use App\Models\Register;
@@ -132,6 +133,17 @@ class CashRegistersService
     public function recordOrderPayment( OrderPayment $orderPayment )
     {
         $register =     Register::find( $orderPayment->order->register_id );
+
+        /**
+         * we can only register the payment on the cash register history
+         * if the cash register feature is enabled. If it's not the case, this is ignored.
+         */
+        throw new NotFoundException(
+            sprintf(
+                __( 'The register with ID "%s" doesn\'t exists.' ),
+                $orderPayment->order->register_id
+            )
+        );
 
         $cashRegisterHistory = RegisterHistory::where( 'payment_id', $orderPayment->id )->first();
 

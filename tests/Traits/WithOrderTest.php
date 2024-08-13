@@ -1759,9 +1759,9 @@ trait WithOrderTest
         return $response->json();
     }
 
-    protected function attemptCreateHoldOrder()
+    protected function attemptCreateHoldOrder( $product = null )
     {
-        $product = Product::withStockEnabled()
+        $product = $product !== null ? $product : Product::withStockEnabled()
             ->notGrouped()
             ->with( 'unit_quantities' )
             ->first();

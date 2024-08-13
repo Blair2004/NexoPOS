@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Jobs\TrackCashRegisterJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderAfterPaymentCreatedEventListener
 {
@@ -22,6 +20,9 @@ class OrderAfterPaymentCreatedEventListener
      */
     public function handle( OrderAfterPaymentCreatedEvent $event): void
     {
-        TrackCashRegisterJob::dispatch( $event->orderPayment );
+        TrackCashRegisterJob::dispatchIf( 
+            ns()->option->get( 'ns_pos_registers_enabled', 'no' ) === 'yes', 
+            $event->orderPayment 
+        );
     }
 }

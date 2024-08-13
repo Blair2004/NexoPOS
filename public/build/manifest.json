@@ -5,16 +5,15 @@
   "_chart-2ccf8ff7.js": {
     "file": "assets/chart-2ccf8ff7.js"
   },
-  "_components-090a1955.js": {
-    "file": "assets/components-090a1955.js",
+  "_components-07a97223.js": {
+    "file": "assets/components-07a97223.js",
     "imports": [
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "_ns-avatar-image-1a727bdf.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "resources/ts/bootstrap.ts",
-      "_ns-prompt-popup-778e42ba.js",
       "_index.es-25aa42ee.js"
     ],
     "isDynamicEntry": true
@@ -42,26 +41,26 @@
   "_ns-hotpress-fbaed768.js": {
     "file": "assets/ns-hotpress-fbaed768.js"
   },
-  "_ns-orders-preview-popup-82f7fb35.js": {
-    "file": "assets/ns-orders-preview-popup-82f7fb35.js",
+  "_ns-orders-preview-popup-3c654295.js": {
+    "file": "assets/ns-orders-preview-popup-3c654295.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_index.es-25aa42ee.js"
     ]
   },
-  "_ns-pos-order-type-popup-5275c01a.js": {
-    "file": "assets/ns-pos-order-type-popup-5275c01a.js",
+  "_ns-pos-order-type-popup-14f46b3a.js": {
+    "file": "assets/ns-pos-order-type-popup-14f46b3a.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "_ns-orders-preview-popup-82f7fb35.js"
+      "_ns-orders-preview-popup-3c654295.js"
     ],
     "isDynamicEntry": true
   },
@@ -74,18 +73,17 @@
       "_runtime-core.esm-bundler-414a078a.js"
     ]
   },
-  "_ns-prompt-popup-778e42ba.js": {
+  "_ns-prompt-popup-24cc8d6f.js": {
     "css": [
       "assets/ns-prompt-popup-6013118d.css"
     ],
-    "file": "assets/ns-prompt-popup-778e42ba.js",
+    "file": "assets/ns-prompt-popup-24cc8d6f.js",
     "imports": [
       "_currency-feccde3d.js",
-      "resources/ts/bootstrap.ts",
+      "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "__plugin-vue_export-helper-c27b6911.js"
-    ],
-    "isDynamicEntry": true
+      "resources/ts/bootstrap.ts"
+    ]
   },
   "_pos-section-switch-0869c4e1.js": {
     "file": "assets/pos-section-switch-0869c4e1.js"
@@ -96,10 +94,10 @@
   "_runtime-core.esm-bundler-414a078a.js": {
     "file": "assets/runtime-core.esm-bundler-414a078a.js"
   },
-  "_select-api-entities-830f1674.js": {
-    "file": "assets/select-api-entities-830f1674.js",
+  "_select-api-entities-3523a486.js": {
+    "file": "assets/select-api-entities-3523a486.js",
     "imports": [
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "resources/ts/bootstrap.ts",
       "_join-array-28744963.js"
     ]
@@ -256,7 +254,7 @@
       "resources/ts/pages/dashboard/procurements/manage-products.vue",
       "resources/ts/pages/dashboard/procurements/ns-procurement-invoice.vue",
       "resources/ts/pages/dashboard/ns-notifications.vue",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "resources/ts/pages/dashboard/transactions/ns-transaction.vue",
       "resources/ts/pages/dashboard/home/ns-dashboard.vue",
       "resources/ts/pages/dashboard/reports/ns-low-stock-report.vue",
@@ -274,20 +272,19 @@
       "resources/ts/pages/dashboard/products/ns-print-label.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ],
-    "file": "assets/app-86477298.js",
+    "file": "assets/app-d6800ea6.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_time-01d30542.js",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "resources/ts/bootstrap.ts",
       "_ns-hotpress-fbaed768.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js",
       "_chart-2ccf8ff7.js"
     ],
     "isEntry": true,
@@ -300,19 +297,18 @@
       "resources/ts/pages/auth/ns-password-lost.vue",
       "resources/ts/pages/auth/ns-new-password.vue"
     ],
-    "file": "assets/auth-7b6f08a4.js",
+    "file": "assets/auth-91f2a12d.js",
     "imports": [
       "_preload-helper-41c905a7.js",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_ns-hotpress-fbaed768.js",
       "resources/ts/bootstrap.ts",
       "_runtime-core.esm-bundler-414a078a.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js",
       "_chart-2ccf8ff7.js"
     ],
     "isEntry": true,
@@ -351,16 +347,15 @@
     "src": "resources/ts/dashboard.ts"
   },
   "resources/ts/dev.ts": {
-    "file": "assets/dev-1a0c6ab3.js",
+    "file": "assets/dev-30482369.js",
     "imports": [
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "resources/ts/bootstrap.ts",
       "_vue-router-9c0e9a68.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "resources/ts/popups/ns-alert-popup.vue",
       "_currency-feccde3d.js",
       "_ns-avatar-image-1a727bdf.js",
       "_chart-2ccf8ff7.js"
@@ -446,14 +441,13 @@
     "src": "resources/ts/pages/dashboard/home/ns-dashboard.vue"
   },
   "resources/ts/pages/dashboard/modules.vue": {
-    "file": "assets/modules-1434d2f7.js",
+    "file": "assets/modules-de0ac09b.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_index.es-25aa42ee.js",
       "__plugin-vue_export-helper-c27b6911.js",
-      "_ns-prompt-popup-778e42ba.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js"
     ],
@@ -461,16 +455,15 @@
     "src": "resources/ts/pages/dashboard/modules.vue"
   },
   "resources/ts/pages/dashboard/ns-notifications.vue": {
-    "file": "assets/ns-notifications-3da41c54.js",
+    "file": "assets/ns-notifications-40bad0ea.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
-      "_ns-prompt-popup-778e42ba.js",
-      "_components-090a1955.js",
+      "_ns-prompt-popup-24cc8d6f.js",
+      "_components-07a97223.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js"
     ],
@@ -490,18 +483,17 @@
     "src": "resources/ts/pages/dashboard/ns-permissions.vue"
   },
   "resources/ts/pages/dashboard/ns-settings.vue": {
-    "file": "assets/ns-settings-baf33382.js",
+    "file": "assets/ns-settings-7a7c049e.js",
     "imports": [
       "_currency-feccde3d.js",
       "resources/ts/bootstrap.ts",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_ns-avatar-image-1a727bdf.js",
-      "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js"
+      "_index.es-25aa42ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/ns-settings.vue"
@@ -518,9 +510,9 @@
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-customers-button.vue": {
     "dynamicImports": [
-      "_ns-pos-order-type-popup-5275c01a.js"
+      "_ns-pos-order-type-popup-14f46b3a.js"
     ],
-    "file": "assets/ns-pos-customers-button-700eeab1.js",
+    "file": "assets/ns-pos-customers-button-4d5fee4f.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "resources/ts/bootstrap.ts",
@@ -543,26 +535,26 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-dashboard-button.vue"
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-order-type-button.vue": {
-    "file": "assets/ns-pos-order-type-button-bc711159.js",
+    "file": "assets/ns-pos-order-type-button-9db68cc6.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_ns-pos-order-type-popup-5275c01a.js",
+      "_ns-pos-order-type-popup-14f46b3a.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "_ns-prompt-popup-778e42ba.js",
-      "_ns-orders-preview-popup-82f7fb35.js",
+      "_ns-prompt-popup-24cc8d6f.js",
+      "_ns-orders-preview-popup-3c654295.js",
       "_index.es-25aa42ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-order-type-button.vue"
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-pending-orders-button.vue": {
-    "file": "assets/ns-pos-pending-orders-button-712392cb.js",
+    "file": "assets/ns-pos-pending-orders-button-4960c118.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
@@ -572,10 +564,10 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-pending-orders-button.vue"
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue": {
-    "file": "assets/ns-pos-registers-button-38ca6454.js",
+    "file": "assets/ns-pos-registers-button-0ba2bc51.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
@@ -585,13 +577,12 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue"
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-reset-button.vue": {
-    "file": "assets/ns-pos-reset-button-42599367.js",
+    "file": "assets/ns-pos-reset-button-32b971e5.js",
     "imports": [
       "resources/ts/bootstrap.ts",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
-      "_ns-prompt-popup-778e42ba.js",
-      "_index.es-25aa42ee.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js"
     ],
@@ -599,30 +590,30 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-reset-button.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos-cart.vue": {
-    "file": "assets/ns-pos-cart-0b6e96d0.js",
+    "file": "assets/ns-pos-cart-32f5a2e0.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
       "_pos-section-switch-0869c4e1.js",
-      "_ns-pos-order-type-popup-5275c01a.js",
+      "_ns-pos-order-type-popup-14f46b3a.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "resources/ts/popups/ns-pos-shipping-popup.vue",
       "_index.es-25aa42ee.js",
       "_chart-2ccf8ff7.js",
-      "_ns-orders-preview-popup-82f7fb35.js"
+      "_ns-orders-preview-popup-3c654295.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/pos/ns-pos-cart.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos-grid.vue": {
-    "file": "assets/ns-pos-grid-82acc10a.js",
+    "file": "assets/ns-pos-grid-32143241.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_pos-section-switch-0869c4e1.js",
       "_currency-feccde3d.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js"
@@ -631,7 +622,7 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos.vue": {
-    "file": "assets/ns-pos-1b329335.js",
+    "file": "assets/ns-pos-a91ba1d6.js",
     "imports": [
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue",
@@ -641,9 +632,9 @@
       "_currency-feccde3d.js",
       "_chart-2ccf8ff7.js",
       "_pos-section-switch-0869c4e1.js",
-      "_ns-pos-order-type-popup-5275c01a.js",
-      "_ns-prompt-popup-778e42ba.js",
-      "_ns-orders-preview-popup-82f7fb35.js",
+      "_ns-pos-order-type-popup-14f46b3a.js",
+      "_ns-prompt-popup-24cc8d6f.js",
+      "_ns-orders-preview-popup-3c654295.js",
       "_index.es-25aa42ee.js",
       "resources/ts/popups/ns-pos-shipping-popup.vue"
     ],
@@ -651,10 +642,10 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos.vue"
   },
   "resources/ts/pages/dashboard/procurements/manage-products.vue": {
-    "file": "assets/manage-products-2ab2fbc5.js",
+    "file": "assets/manage-products-cca5b591.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
@@ -669,15 +660,15 @@
     "src": "resources/ts/pages/dashboard/procurements/ns-procurement-invoice.vue"
   },
   "resources/ts/pages/dashboard/procurements/ns-procurement.vue": {
-    "file": "assets/ns-procurement-5a36c00a.js",
+    "file": "assets/ns-procurement-88be6afa.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "resources/ts/pages/dashboard/procurements/manage-products.vue",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "_ns-prompt-popup-778e42ba.js",
-      "_select-api-entities-830f1674.js",
+      "_ns-prompt-popup-24cc8d6f.js",
+      "_select-api-entities-3523a486.js",
       "_index.es-25aa42ee.js",
       "_chart-2ccf8ff7.js",
       "_join-array-28744963.js"
@@ -698,11 +689,11 @@
     "src": "resources/ts/pages/dashboard/products/ns-print-label.vue"
   },
   "resources/ts/pages/dashboard/products/ns-stock-adjustment.vue": {
-    "file": "assets/ns-stock-adjustment-9fcace7e.js",
+    "file": "assets/ns-stock-adjustment-68e4d55c.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_ns-procurement-quantity-3c887b71.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
@@ -712,13 +703,13 @@
     "src": "resources/ts/pages/dashboard/products/ns-stock-adjustment.vue"
   },
   "resources/ts/pages/dashboard/profile/ns-token.vue": {
-    "file": "assets/ns-token-85e8ba57.js",
+    "file": "assets/ns-token-0a02eefb.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js"
     ],
@@ -726,35 +717,33 @@
     "src": "resources/ts/pages/dashboard/profile/ns-token.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-best-products-report.vue": {
-    "file": "assets/ns-best-products-report-fe21a74c.js",
+    "file": "assets/ns-best-products-report-4c3e0699.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_ns-avatar-image-1a727bdf.js",
-      "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js"
+      "_index.es-25aa42ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/reports/ns-best-products-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-cash-flow-report.vue": {
-    "file": "assets/ns-cash-flow-report-efd2d460.js",
+    "file": "assets/ns-cash-flow-report-4f713261.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_ns-avatar-image-1a727bdf.js",
-      "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js"
+      "_index.es-25aa42ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/reports/ns-cash-flow-report.vue"
@@ -770,17 +759,16 @@
     "src": "resources/ts/pages/dashboard/reports/ns-customers-statement-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-low-stock-report.vue": {
-    "file": "assets/ns-low-stock-report-8733f146.js",
+    "file": "assets/ns-low-stock-report-07721e09.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_currency-feccde3d.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_join-array-28744963.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js"
     ],
@@ -788,53 +776,50 @@
     "src": "resources/ts/pages/dashboard/reports/ns-low-stock-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-payment-types-report.vue": {
-    "file": "assets/ns-payment-types-report-c7253365.js",
+    "file": "assets/ns-payment-types-report-7c74b45d.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_ns-avatar-image-1a727bdf.js",
-      "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js"
+      "_index.es-25aa42ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/reports/ns-payment-types-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-profit-report.vue": {
-    "file": "assets/ns-profit-report-4e3e4142.js",
+    "file": "assets/ns-profit-report-28339c2e.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_currency-feccde3d.js",
-      "_select-api-entities-830f1674.js",
+      "_select-api-entities-3523a486.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js",
       "_join-array-28744963.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/reports/ns-profit-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-sale-report.vue": {
-    "file": "assets/ns-sale-report-64ea3f29.js",
+    "file": "assets/ns-sale-report-b5bd41c2.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_currency-feccde3d.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_join-array-28744963.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js"
     ],
@@ -842,50 +827,48 @@
     "src": "resources/ts/pages/dashboard/reports/ns-sale-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-sold-stock-report.vue": {
-    "file": "assets/ns-sold-stock-report-3fbbc412.js",
+    "file": "assets/ns-sold-stock-report-a4333726.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_currency-feccde3d.js",
-      "_select-api-entities-830f1674.js",
+      "_select-api-entities-3523a486.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js",
       "_join-array-28744963.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/reports/ns-sold-stock-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-stock-combined-report.vue": {
-    "file": "assets/ns-stock-combined-report-0e41d99a.js",
+    "file": "assets/ns-stock-combined-report-336851aa.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
-      "_select-api-entities-830f1674.js",
+      "_select-api-entities-3523a486.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_join-array-28744963.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/reports/ns-stock-combined-report.vue"
   },
   "resources/ts/pages/dashboard/reports/ns-yearly-report.vue": {
-    "file": "assets/ns-yearly-report-260c257e.js",
+    "file": "assets/ns-yearly-report-fd1ef191.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "_components-090a1955.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_components-07a97223.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js",
-      "resources/ts/popups/ns-alert-popup.vue",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js"
     ],
@@ -917,14 +900,13 @@
     "src": "resources/ts/pages/dashboard/rewards-system.vue"
   },
   "resources/ts/pages/dashboard/transactions/ns-transaction.vue": {
-    "file": "assets/ns-transaction-5da92cf7.js",
+    "file": "assets/ns-transaction-75ac3b3e.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "_index.es-25aa42ee.js",
       "__plugin-vue_export-helper-c27b6911.js",
-      "_ns-prompt-popup-778e42ba.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_chart-2ccf8ff7.js"
     ],
@@ -966,13 +948,12 @@
     "src": "resources/ts/pages/setup/welcome.vue"
   },
   "resources/ts/popups.ts": {
-    "file": "assets/popups-32d58595.js",
+    "file": "assets/popups-4088db3c.js",
     "imports": [
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "resources/ts/bootstrap.ts",
-      "resources/ts/popups/ns-alert-popup.vue",
-      "_ns-prompt-popup-778e42ba.js",
-      "_ns-orders-preview-popup-82f7fb35.js",
+      "_ns-prompt-popup-24cc8d6f.js",
+      "_ns-orders-preview-popup-3c654295.js",
       "_ns-procurement-quantity-3c887b71.js",
       "_currency-feccde3d.js",
       "_index.es-25aa42ee.js",
@@ -983,16 +964,6 @@
     ],
     "isEntry": true,
     "src": "resources/ts/popups.ts"
-  },
-  "resources/ts/popups/ns-alert-popup.vue": {
-    "file": "assets/ns-alert-popup-00f5c4a7.js",
-    "imports": [
-      "_currency-feccde3d.js",
-      "__plugin-vue_export-helper-c27b6911.js",
-      "_runtime-core.esm-bundler-414a078a.js"
-    ],
-    "isDynamicEntry": true,
-    "src": "resources/ts/popups/ns-alert-popup.vue"
   },
   "resources/ts/popups/ns-pos-layaway-popup.vue": {
     "file": "assets/ns-pos-layaway-popup-0b54a3bc.js",
@@ -1026,24 +997,20 @@
       "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-customers-button.vue",
       "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-reset-button.vue",
       "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue",
-      "resources/ts/popups/ns-alert-popup.vue",
-      "_ns-prompt-popup-778e42ba.js",
-      "_ns-prompt-popup-778e42ba.js",
-      "_ns-prompt-popup-778e42ba.js",
       "resources/ts/popups/ns-pos-layaway-popup.vue",
       "resources/ts/popups/ns-pos-shipping-popup.vue"
     ],
-    "file": "assets/pos-init-93b1d227.js",
+    "file": "assets/pos-init-6f22442c.js",
     "imports": [
       "_preload-helper-41c905a7.js",
-      "_ns-pos-order-type-popup-5275c01a.js",
+      "_ns-pos-order-type-popup-14f46b3a.js",
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "_ns-prompt-popup-778e42ba.js",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_index.es-25aa42ee.js",
-      "_ns-orders-preview-popup-82f7fb35.js",
+      "_ns-orders-preview-popup-3c654295.js",
       "_chart-2ccf8ff7.js"
     ],
     "isEntry": true,
@@ -1055,20 +1022,19 @@
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
     ],
-    "file": "assets/pos-c6179e7c.js",
+    "file": "assets/pos-5aaef736.js",
     "imports": [
       "_preload-helper-41c905a7.js",
       "_time-01d30542.js",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "resources/ts/bootstrap.ts",
       "_ns-hotpress-fbaed768.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js",
       "_chart-2ccf8ff7.js"
     ],
     "isEntry": true,
@@ -1080,36 +1046,34 @@
       "resources/ts/pages/setup/database.vue",
       "resources/ts/pages/setup/setup-configuration.vue"
     ],
-    "file": "assets/setup-f9eba1e3.js",
+    "file": "assets/setup-1e95dfe6.js",
     "imports": [
       "_preload-helper-41c905a7.js",
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "_vue-router-9c0e9a68.js",
       "resources/ts/bootstrap.ts",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js",
       "_chart-2ccf8ff7.js"
     ],
     "isEntry": true,
     "src": "resources/ts/setup.ts"
   },
   "resources/ts/update.ts": {
-    "file": "assets/update-838574d7.js",
+    "file": "assets/update-a23cb3c1.js",
     "imports": [
-      "_components-090a1955.js",
+      "_components-07a97223.js",
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
-      "resources/ts/popups/ns-alert-popup.vue",
+      "_ns-prompt-popup-24cc8d6f.js",
       "_ns-avatar-image-1a727bdf.js",
       "_index.es-25aa42ee.js",
-      "_ns-prompt-popup-778e42ba.js",
       "_chart-2ccf8ff7.js"
     ],
     "isEntry": true,

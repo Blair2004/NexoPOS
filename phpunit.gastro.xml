@@ -6,15 +6,19 @@
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
       <directory suffix="GastroEnableModule.php">./modules/NsGastro/Tests/Feature</directory>
       <directory suffix="GastroTruncateTablesTest.php">./modules/NsGastro/Tests/Feature</directory>
-      <directory suffix="GastroResetUserStatTest.php">./modules/NsGastro/Tests/Feature</directory>
-      <directory suffix="GastroCreateUnitGroup.php">./modules/NsGastro/Tests/Feature</directory>
-      <directory suffix="GastroCreateUnit.php">./modules/NsGastro/Tests/Feature</directory>
-      <directory suffix="GastroCreateTaxGroupTest.php">./modules/NsGastro/Tests/Feature</directory>
-      <directory suffix="GastroCreateCategories.php">./modules/NsGastro/Tests/Feature</directory>
-      <directory suffix="GastroCreateCustomerGroupTest.php">./modules/NsGastro/Tests/Feature</directory>
-      <directory suffix="GastroCreateCustomerTest.php">./modules/NsGastro/Tests/Feature</directory>
-      <directory suffix="GastroCreateProviderTest.php">./modules/NsGastro/Tests/Feature</directory>
-      <directory suffix="GastroRefreshReportForPastDaysTest.php">./modules/NsGastro/Tests/Feature</directory>
+      <directory suffix="ResetUserStatTest.php">./tests/Feature</directory>
+      <directory suffix="CreateUnitGroupTest.php">./tests/Feature</directory>
+      <directory suffix="CreateUnitTest.php">./tests/Feature</directory>
+      <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
+      <directory suffix="GastroCreateDemoData.php">./modules/NsGastro/Tests/Feature</directory>
+      <directory suffix="CreateCategoryTest.php">./tests/Feature</directory>
+      <directory suffix="CreateCustomerGroupTest.php">./tests/Feature</directory>
+      <!-- <directory suffix="CreateProductTest.php">./tests/Feature</directory> -->
+
+      <directory suffix="CreateCustomerTest.php">./tests/Feature</directory>
+      <directory suffix="CreateProviderTest.php">./tests/Feature</directory>
+      <directory suffix="RefreshReportForPastDaysTest.php">./tests/Feature</directory>
+
       <!-- Gastro Tests -->
       <directory suffix="GastroCreateTableAndAreas.php">./modules/NsGastro/Tests/Feature</directory>
       <directory suffix="GastroCreateKitchens.php">./modules/NsGastro/Tests/Feature</directory>
