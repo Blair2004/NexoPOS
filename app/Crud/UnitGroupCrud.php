@@ -29,7 +29,7 @@ class UnitGroupCrud extends CrudService
     /**
      * base route name
      */
-    protected $mainRoute = 'units/groups';
+    protected $mainRoute = 'ns.units-groups';
 
     /**
      * Define namespace

@@ -18,4 +18,3 @@ Route::put( 'units-groups/{id}', [ UnitsController::class, 'putGroup' ] );
 Route::put( 'units/{id}', [ UnitsController::class, 'putUnit' ] );
 
 Route::get( 'units-groups/{id}/units', [ UnitsController::class, 'getGroupUnits' ] );
-Route::get( 'units/groups/edit/{group}', [ UnitsController::class, 'editUnitGroup' ] ); // P8956
