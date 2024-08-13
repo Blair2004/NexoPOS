@@ -73,7 +73,7 @@ Do you plan to contribute? That's awesome. We don't have that much developer on 
 
 **To install Node.js dependencies**
 ```
-npm  install
+npm install
 ```
 
 **To watch the Vue compoment changes (Vue.js)**
