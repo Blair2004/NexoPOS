@@ -1062,6 +1062,9 @@ class TransactionService
         return compact( 'recurrence', 'configurations', 'warningMessage' );
     }
 
+    /**
+     * @deprecated
+     */
     public function createTransactionFromRegisterHistory( RegisterHistory $registerHistory )
     {
         $transactionHistory = TransactionHistory::where( 'register_history_id', $registerHistory->id )->firstOrNew();

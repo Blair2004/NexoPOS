@@ -33,7 +33,7 @@ class OrderAfterCreatedEventListener
     public function handle( OrderAfterCreatedEvent $event )
     {
         Bus::chain( [
-            // new ProcessCashRegisterHistoryJob( $event->order ),
+            new ProcessCashRegisterHistoryJob( $event->order ),
             new IncreaseCashierStatsJob( $event->order ),
             new ProcessCustomerOwedAndRewardsJob( $event->order ),
             new TrackOrderCouponsJob( $event->order ),

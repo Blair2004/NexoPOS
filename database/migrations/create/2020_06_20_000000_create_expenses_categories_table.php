@@ -22,7 +22,7 @@ return new class extends Migration
                 $table->string( 'name' );
                 $table->string( 'operation' )->default( 'debit' ); // "credit" or "debit".
                 $table->string( 'account' )->default( 0 );
-                $table->integer( 'counter_account_id' )->default( 0 );
+                $table->integer( 'counter_account_id' )->default( 0 )->nullable();
                 $table->string( 'category_identifier' )->nullable();
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );

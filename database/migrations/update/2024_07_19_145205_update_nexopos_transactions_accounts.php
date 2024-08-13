@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table( 'nexopos_transactions_accounts', function( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'counter_account_id' ) ) {
-                $table->integer( 'counter_account_id' )->default( 0 );
+                $table->integer( 'counter_account_id' )->default( 0 )->nullable();
             }
             if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'category_identifier' ) ) {
                 $table->string( 'category_identifier' )->nullable();

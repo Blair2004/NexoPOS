@@ -265,7 +265,7 @@ trait WithOrderTest
 
         $totalCashing = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
-            ->action( RegisterHistory::ACTION_CASHIN )->sum( 'value' );
+            ->action( RegisterHistory::ACTION_CASHING )->sum( 'value' );
 
         $totalSales = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
@@ -839,7 +839,7 @@ trait WithOrderTest
         return $cashRegistersService->cashOut( 
             register: $cashRegister, 
             amount: $cashRegister->balance / 1.5, 
-            transaction_account_id: ns()->option->get( 'ns_accounting_default_cashout_account' ),
+            transaction_account_id: ns()->option->get( 'ns_accounting_default_cashout_account', 0 ),
             description: __( 'Test disbursing the cash register' ) 
         );
     }

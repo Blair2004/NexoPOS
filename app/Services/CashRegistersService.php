@@ -21,7 +21,7 @@ class CashRegistersService
         if ( $register->status !== Register::STATUS_CLOSED ) {
             throw new NotAllowedException(
                 sprintf(
-                    __( 'Unable to open "%s" *, as it\'s not closed.' ),
+                    __( 'Unable to open "%s", as it\'s not closed.' ),
                     $register->name
                 )
             );
@@ -94,7 +94,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashIng( Register $register, float $amount, int $transaction_account_id, ?string $description ): array
+    public function cashIng( Register $register, float $amount, mixed $transaction_account_id, ?string $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
@@ -134,16 +134,12 @@ class CashRegistersService
     {
         $register =     Register::find( $orderPayment->order->register_id );
 
-        /**
-         * we can only register the payment on the cash register history
-         * if the cash register feature is enabled. If it's not the case, this is ignored.
-         */
-        throw new NotFoundException(
-            sprintf(
-                __( 'The register with ID "%s" doesn\'t exists.' ),
-                $orderPayment->order->register_id
-            )
-        );
+        if ( ! $register instanceof Register ) {
+            return [
+                'status' => 'info',
+                'message' => __( 'We can\'t attach a payment to a register as it\'s reference is not provided.' ),
+            ];
+        }
 
         $cashRegisterHistory = RegisterHistory::where( 'payment_id', $orderPayment->id )->first();
 
@@ -219,7 +215,7 @@ class CashRegistersService
         ];
     }
 
-    public function cashOut( Register $register, float $amount, int $transaction_account_id, ?string $description ): array
+    public function cashOut( Register $register, float $amount, mixed $transaction_account_id, ?string $description ): array
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(

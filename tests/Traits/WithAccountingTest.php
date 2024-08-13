@@ -79,6 +79,7 @@ trait WithAccountingTest
                         'general' => [
                             'operation' => $account[ 'operation' ],
                             'author' => Auth::id(),
+                            'counter_account_id' => 0,
                             'account' => $account[ 'account' ],
                         ],
                     ] );

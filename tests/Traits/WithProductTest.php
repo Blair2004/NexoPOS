@@ -625,7 +625,7 @@ trait WithProductTest
             'quantity' => 1,
         ] );
 
-        $response->assertStatus( 401 );
+        $response->assertStatus( 403 );
 
         /**
          * We'll create a conversion that should pass
