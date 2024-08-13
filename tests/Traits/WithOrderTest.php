@@ -836,11 +836,11 @@ trait WithOrderTest
      */
     private function disburseCashFromRegister( Register $cashRegister, CashRegistersService $cashRegistersService )
     {
-        return $cashRegistersService->cashOut( 
-            register: $cashRegister, 
-            amount: $cashRegister->balance / 1.5, 
+        return $cashRegistersService->cashOut(
+            register: $cashRegister,
+            amount: $cashRegister->balance / 1.5,
             transaction_account_id: ns()->option->get( 'ns_accounting_default_cashout_account', 0 ),
-            description: __( 'Test disbursing the cash register' ) 
+            description: __( 'Test disbursing the cash register' )
         );
     }
 
@@ -852,11 +852,11 @@ trait WithOrderTest
      */
     private function cashInOnRegister( Register $cashRegister, CashRegistersService $cashRegistersService )
     {
-        return $cashRegistersService->cashIng( 
-            register: $cashRegister, 
-            amount: ( $cashRegister->balance / 2 ), 
+        return $cashRegistersService->cashIng(
+            register: $cashRegister,
+            amount: ( $cashRegister->balance / 2 ),
             transaction_account_id: ns()->option->get( 'ns_accounting_default_cashing_account' ),
-            description: __( 'Test disbursing the cash register' ) 
+            description: __( 'Test disbursing the cash register' )
         );
     }
 

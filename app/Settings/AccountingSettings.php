@@ -49,7 +49,7 @@ class AccountingSettings extends SettingsPage
                             description: __( 'Define on which accounts cashing transactions are allowed' ),
                             options: $debitAccounts,
                             value: ns()->option->get( 'ns_accounting_cashing_accounts' ),
-                        ),                        
+                        ),
                         FormInput::searchSelect(
                             label: __( 'Default Cash In Account' ),
                             name: 'ns_accounting_default_cashing_account',

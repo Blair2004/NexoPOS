@@ -18,11 +18,11 @@ class OrderAfterPaymentCreatedEventListener
     /**
      * Handle the event.
      */
-    public function handle( OrderAfterPaymentCreatedEvent $event): void
+    public function handle( OrderAfterPaymentCreatedEvent $event ): void
     {
-        TrackCashRegisterJob::dispatchIf( 
-            ns()->option->get( 'ns_pos_registers_enabled', 'no' ) === 'yes', 
-            $event->orderPayment 
+        TrackCashRegisterJob::dispatchIf(
+            ns()->option->get( 'ns_pos_registers_enabled', 'no' ) === 'yes',
+            $event->orderPayment
         );
     }
 }

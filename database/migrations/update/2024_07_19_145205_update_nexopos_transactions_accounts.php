@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table( 'nexopos_transactions_accounts', function( Blueprint $table ) {
+        Schema::table( 'nexopos_transactions_accounts', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'counter_account_id' ) ) {
                 $table->integer( 'counter_account_id' )->default( 0 )->nullable();
             }
             if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'category_identifier' ) ) {
                 $table->string( 'category_identifier' )->nullable();
             }
-        });
+        } );
     }
 
     /**
@@ -26,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table( 'nexopos_transactions_accounts', function( Blueprint $table ) {
+        Schema::table( 'nexopos_transactions_accounts', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_transactions_accounts', 'counter_account_id' ) ) {
                 $table->dropColumn( 'counter_account_id' );
             }
@@ -34,6 +34,6 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_transactions_accounts', 'category_identifier' ) ) {
                 $table->dropColumn( 'category_identifier' );
             }
-        });
+        } );
     }
 };

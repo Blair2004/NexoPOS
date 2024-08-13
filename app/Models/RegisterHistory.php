@@ -70,7 +70,7 @@ class RegisterHistory extends NsModel
             related: Order::class,
             foreignKey: 'id',
             localKey: 'order_id'
-        );  
+        );
     }
 
     public function register()

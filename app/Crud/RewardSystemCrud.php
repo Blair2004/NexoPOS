@@ -186,7 +186,7 @@ class RewardSystemCrud extends CrudService
                             'type' => 'search-select',
                             'name' => 'coupon_id',
                             'component' => 'nsCreateCoupons',
-                            'props'     =>  CouponCrud::getFormConfig(),
+                            'props' => CouponCrud::getFormConfig(),
                             'value' => $entry->coupon_id ?? '',
                             'label' => __( 'Coupon' ),
                             'options' => Helper::toJsOptions( Coupon::get(), [ 'id', 'name' ] ),

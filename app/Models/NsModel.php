@@ -26,7 +26,7 @@ abstract class NsModel extends NsRootModel
         $this->table = Hook::filter( 'ns-model-table', $this->table );
     }
 
-    protected $dispatchableFieldsEvents     =   [];
+    protected $dispatchableFieldsEvents = [];
 
     /**
      * We would like to be able to monitor
@@ -38,35 +38,35 @@ abstract class NsModel extends NsRootModel
     {
         parent::boot();
 
-        static::creating(function ($model) {
+        static::creating( function ( $model ) {
             $model->oldAttributes = $model->getOriginal();
-        });
+        } );
 
-        static::updating(function ($model) {
+        static::updating( function ( $model ) {
             $model->oldAttributes = $model->getOriginal();
-        });
+        } );
 
-        static::created(function ($model) {
+        static::created( function ( $model ) {
             $model->detectChanges();
-        });
+        } );
 
-        static::updated(function ($model) {
+        static::updated( function ( $model ) {
             $model->detectChanges();
-        });
+        } );
     }
 
     protected function detectChanges()
     {
-        $changedAttributes = array_diff_assoc($this->getAttributes(), $this->oldAttributes);
+        $changedAttributes = array_diff_assoc( $this->getAttributes(), $this->oldAttributes );
 
-        if (!empty($changedAttributes)) {
+        if ( ! empty( $changedAttributes ) ) {
             // Dispatch the "changed" event for the entire model
-            $this->fireModelEvent('changed', false);
+            $this->fireModelEvent( 'changed', false );
 
             // Check for specific field changes and dispatch events accordingly
-            foreach ($this->dispatchableFieldsEvents as $field => $class) {
-                if (array_key_exists($field, $changedAttributes)) {
-                    event( new $class($this, $this->oldAttributes[$field] ?? null, $this->getAttribute($field)));
+            foreach ( $this->dispatchableFieldsEvents as $field => $class ) {
+                if ( array_key_exists( $field, $changedAttributes ) ) {
+                    event( new $class( $this, $this->oldAttributes[$field] ?? null, $this->getAttribute( $field ) ) );
                 }
             }
         }
@@ -82,7 +82,7 @@ abstract class NsModel extends NsRootModel
         return [
             'old' => $this->oldAttributes,
             'new' => $this->getAttributes(),
-            'changed' => array_keys(array_diff_assoc($this->getAttributes(), $this->oldAttributes)),
+            'changed' => array_keys( array_diff_assoc( $this->getAttributes(), $this->oldAttributes ) ),
         ];
     }
 }

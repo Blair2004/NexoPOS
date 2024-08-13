@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+        Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_registers_history', 'transaction_account_id' ) ) {
                 $table->integer( 'transaction_account_id' )->nullable()->after( 'payment_id' );
             }
-        });
+        } );
     }
 
     /**
@@ -23,10 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
+        Schema::table( 'nexopos_registers_history', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_registers_history', 'transaction_account_id' ) ) {
                 $table->dropColumn( 'transaction_account_id' );
             }
-        });
+        } );
     }
 };
