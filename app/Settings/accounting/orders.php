@@ -29,8 +29,8 @@ return SettingForm::fields(
     ),
     FormInput::searchSelect(
         label: __( 'Receivable Account' ),
-        name: 'ns_accounting_orders_receivable_account',
-        value: ns()->option->get( 'ns_accounting_orders_receivable_account' ),
+        name: 'ns_accounting_orders_unpaid_account',
+        value: ns()->option->get( 'ns_accounting_orders_unpaid_account' ),
         description: __( 'Every unpaid orders will be recorded on this account.' ),
         component: 'nsCrudForm',
         props: $props,

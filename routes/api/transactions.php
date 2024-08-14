@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::get( 'transactions/{id?}', [ TransactionController::class, 'get' ] )->where( 'id', '[0-9]+' );
 Route::get( 'transactions/trigger/{transaction?}', [ TransactionController::class, 'triggerTransaction' ] )->where( 'id', '[0-9]+' );
 Route::get( 'transactions/configurations/{transaction?}', [ TransactionController::class, 'getConfigurations' ] );
+Route::get( 'transactions-accounts/reset-defaults', [ TransactionController::class, 'resetDefaultAccounts' ] )->name( ns()->routeName( 'ns.transactions-account.reset-defaults' ) );
 Route::get( 'transactions-accounts/{id?}', [ TransactionController::class, 'getExpensesCategories' ] )->where( 'id', '[0-9]+' );
 Route::get( 'transactions-accounts/{id}/history', [ TransactionController::class, 'getTransactionAccountsHistory' ] );
 Route::post( 'transactions', [ TransactionController::class, 'post' ] );

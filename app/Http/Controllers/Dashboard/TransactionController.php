@@ -216,4 +216,11 @@ class TransactionController extends DashboardController
     {
         return $this->transactionService->getCounterAccount( $request->input( 'identifier' ) );
     }
+
+    public function resetDefaultAccounts( Request $request )
+    {
+        ns()->restrict([ 'nexopos.create.transactions-account' ] );
+        
+        return $this->transactionService->createDefaultAccounts();
+    }
 }

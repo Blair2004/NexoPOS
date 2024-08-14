@@ -32,8 +32,17 @@
                         <component v-bind:is="loadComponent( activeTab.component ).value"></component>
                     </div>
                 </div>
-                <div v-if="activeTab.fields && activeTab.fields.length > 0" class="ns-tab-item-footer border-t p-2 flex justify-end">
-                    <ns-button :disabled="isSubmitting" @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
+                <div v-if="activeTab.fields && activeTab.fields.length > 0" class="ns-tab-item-footer border-t p-2 flex justify-between">
+                    <div>
+                        <template v-if="activeTab.footer && activeTab.footer.extraComponents">
+                            <template v-for="( component, index ) of activeTab.footer.extraComponents" v-bind:key="index">
+                                <component :parent="this" v-bind:is="loadComponent( component ).value"></component>
+                            </template>
+                        </template>
+                    </div>
+                    <div>
+                        <ns-button :disabled="isSubmitting" @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,7 +54,7 @@ import FormValidation from '~/libraries/form-validation';
 import nsField from '~/components/ns-field.vue';
 import { shallowRef } from '@vue/reactivity';
 
-declare const nsExtraComponents, nsHooks, nsHttpClient, nsSnackBar;
+declare const nsExtraComponents, nsHooks, nsHttpClient, nsSnackBar, nsComponents;
 
 export default {
     name: 'ns-settings',
@@ -103,7 +112,13 @@ export default {
             field.value = event.data.entry[ field.props.optionAttributes.value ];
         },
         loadComponent( componentName ) {
-            return shallowRef( nsExtraComponents[ componentName ] );
+            if ( nsExtraComponents[ componentName ] ) {
+                return shallowRef( nsExtraComponents[ componentName ] );
+            } else if ( nsComponents[ componentName ] ) {
+                return shallowRef( nsComponents[ componentName ] );
+            } else {
+                console.error( `Component ${ componentName } not found.` );
+            }
         },
         async submitForm() {
             if ( this.validation.validateForm( this.form ).length > 0 ) {

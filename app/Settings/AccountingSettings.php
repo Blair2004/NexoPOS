@@ -18,16 +18,9 @@ class AccountingSettings extends SettingsPage
 
     public function __construct()
     {
-        $accounts = TransactionAccount::get()->map( function ( $account ) {
-            return [
-                'label' => $account->name,
-                'value' => $account->id,
-            ];
-        } );
-
         $accounting     =   config( 'accounting' );
         $accounts   =   collect( $accounting[ 'accounts' ] )->mapWithKeys( function( $account, $key ) {
-            return [ $key => Helper::toJsOptions( TransactionAccount::where( 'category_identifier', $key )->get(), [ 'id', 'name' ] ) ];
+            return [ $key => Helper::toJsOptions( TransactionAccount::where( 'category_identifier', $key )->where( 'sub_category_id', '!=', null )->get(), [ 'id', 'name' ] ) ];
         });
 
         $this->form = [
@@ -40,10 +33,13 @@ class AccountingSettings extends SettingsPage
                     notices: [
                         Notice::info(
                             title: __( 'Double Bookkepping Entry' ),
-                            description: __( 'For sales, you should have assign unique accounts that has as counter account (or offset account) a Revenue account. The COGS Account has a counter account the inventory account.' ),
+                            description: __( 'For sales, you should have assigned unique accounts that has as counter account (or offset account) a Revenue account. The COGS Account has as counter account the inventory account.' ),
                         ),
                     ],
                     fields: include ( dirname( __FILE__ ) . '/accounting/orders.php' ),
+                    footer: SettingForm::tabFooter(
+                        extraComponents : [ 'nsDefaultAccounting' ] // components defined on "resources/ts/components"
+                    )
                 ),
                 SettingForm::tab(
                     identifier: 'procurements',

@@ -13,6 +13,7 @@ import nsDateRangePicker    from  './ns-date-range-picker.vue';
 import nsDateTimePicker     from  './ns-date-time-picker.vue';
 import nsDatepicker         from  './ns-datepicker.vue';
 import nsDaterangePicker    from  './ns-daterange-picker.vue';
+import nsDefaultAccounting  from  './ns-default-accounting.vue';
 import nsDragzone           from  './ns-dragzone.vue';
 import nsField              from  './ns-field.vue';
 import nsFieldDescription   from  './ns-field-description.vue';
@@ -85,5 +86,6 @@ export {
     nsConfirmPopup,
     nsPOSLoadingPopup,
     nsPageTitle,
-    nsFieldDescription
+    nsFieldDescription,
+    nsDefaultAccounting,
 };

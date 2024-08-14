@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use PHPUnit\TextUI\Help;
 
 class TransactionService
@@ -323,6 +324,19 @@ class TransactionService
      */
     public function createAccount( array $fields ): array
     {
+        $accounting     =   config( 'accounting' );
+
+        if ( ! isset( $accounting[ 'accounts' ][ $fields[ 'category_identifier' ] ] ) ) {
+            throw new NotAllowedException( __( 'The account type is not found.' ) );
+        }
+
+        /**
+         * if the account is not provided, we'll try to create
+         * a custom numbering using the main account number including it's
+         * name and the sub account name.
+         */
+        $fields[ 'account' ]  =  ! isset( $fields[ 'account' ] ) ? $this->getAccountNumber( $fields[ 'category_identifier' ], $fields[ 'name' ] ) : $fields[ 'account' ];
+
         $account = new TransactionAccount;
 
         foreach ( $fields as $field => $value ) {
@@ -904,7 +918,7 @@ class TransactionService
     public function recordTransactionFromSale( Order $order ) 
     {
         $cashAccountId = ns()->option->get( 'ns_accounting_orders_cash_account' );
-        $receivableAccountId = ns()->option->get( 'ns_accounting_orders_receivable_account' );
+        $receivableAccountId = ns()->option->get( 'ns_accounting_orders_unpaid_account' );
         $orderRevenuesAccountId = ns()->option->get( 'ns_accounting_orders_revenues_account' );
 
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
@@ -1096,53 +1110,88 @@ class TransactionService
 
     public function createDefaultAccounts()
     {
+        $this->clearAllAccounts();
         $this->createAllSubAccounts();
         $this->createProcurementAccounts();
         $this->createSalesAccounts();
         $this->createExpensesAccounts();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The default accounts has been created.' ),
+        ];
+    }
+
+    public function clearAllAccounts()
+    {
+        TransactionAccount::truncate();
+        Transaction::truncate();
+        TransactionHistory::truncate();
+
+        $accounting = config( 'accounting' );
+        $accounts = collect( $accounting[ 'accounts' ] )->mapWithKeys( function( $account, $key ) {
+            return [ $key => Helper::toJsOptions( TransactionAccount::where( 'category_identifier', $key )->get(), [ 'id', 'name' ] ) ];
+        });
+
+        $orders = include( base_path( 'app/Settings/accounting/orders.php' ) );
+        $procurements = include( base_path( 'app/Settings/accounting/procurements.php' ) );
+
+        /**
+         * we'll clear all settings
+         */
+        collect([ ...$orders, ...$procurements ])->each( fn( $field ) => ns()->option->delete( $field[ 'name' ] ) );        
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The accounts configuration was cleared' ),
+        ];
+    }
+
+    public function getAccountNumber( $accountName, $currentName ) 
+    {
+        $accounts   =   config( 'accounting' )[ 'accounts' ];
+        $account    =   $accounts[ $accountName ];
+
+        if ( $account ) {
+            $count  =   TransactionAccount::where( 'category_identifier', $accountName )->count();
+
+            return $account[ 'account' ] + ( $count + 1 ) . '-' . Str::slug( $accountName ) . '-' . Str::slug( $currentName );
+        }
+
+        throw new NotAllowedException( __( 'Invalid account name' ) );
     }
 
     public function createAllSubAccounts()
     {
-        $cashAccountResponse = $this->createAccount([
+        $this->createAccount([
             'name' => __( 'Fixed Assets' ),
-            'category_identifier' => 'assets',
-            'account'   =>  100
+            'category_identifier' => 'assets'
         ]);
 
-        $cashAccount = $cashAccountResponse[ 'data' ][ 'account' ];
-
-        $cashAccountResponse = $this->createAccount([
+        $this->createAccount([
             'name' => __( 'Current Assets' ),
-            'category_identifier' => 'assets',
-            'account'   =>  101
+            'category_identifier' => 'assets'
         ]);
 
-        $cashAccount = $cashAccountResponse[ 'data' ][ 'account' ];
-
-        $response = $this->createAccount([
+        $this->createAccount([
             'name' => __( 'Inventory Account' ),
-            'category_identifier' => 'assets',
-            'account'   =>  119,
+            'category_identifier' => 'assets'
         ]);
 
-        $inventoryAccount = $response[ 'data' ][ 'account' ];
-
-        $liabilitiesAccountResponse = $this->createAccount([
+        $this->createAccount([
             'name'  =>  __( 'Current Liabilities' ),
-            'category_identifier'   =>  'liabilities',
-            'account'   =>  201
+            'category_identifier'   =>  'liabilities'
         ]);
 
-        $liabilitiesAccount = $liabilitiesAccountResponse[ 'data' ][ 'account' ];
-
-        $response = $this->createAccount([
+        $this->createAccount([
             'name' => __( 'Sales Revenues' ),
-            'category_identifier' => 'revenues',
-            'account'   =>  401,
+            'category_identifier' => 'revenues'
         ]);
 
-        $salesRevenuesAccount = $response[ 'data' ][ 'account' ];
+        $this->createAccount([
+            'name' => __( 'Direct Expenses' ),
+            'category_identifier' => 'expenses'
+        ]);
     }
 
     public function createExpensesAccounts()
@@ -1152,23 +1201,23 @@ class TransactionService
 
     public function createProcurementAccounts()
     {
-        $currentAsset = TransactionAccount::where( 'account', 101 )->first();
-        $liabilityAccount = TransactionAccount::where( 'account', 201 )->first();
-        $inventoryAccount = TransactionAccount::where( 'account', 119 )->first();
+        $currentAsset = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Current Assets' ) . '%' ) )->first();
+        $liabilityAccount = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Current Liabilities' ) . '%' ) )->first();
+        $inventoryAccount = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Inventory Account' ) . '%' ) )->first();
 
         // -----------------------------------------------------------
         // Defining Accounts
         // -----------------------------------------------------------
 
         $procurementAccountResponse = $this->createAccount([
-            'name' => __( 'Procurement Payable Account' ),
+            'name' => __( 'Procurement Payable' ),
             'category_identifier' => 'liabilities',
             'sub_category_id'   =>  $liabilityAccount->id,
             'counter_account_id' => $inventoryAccount->id
         ]);
 
         $procurementCashAccount = $this->createAccount([
-            'name' => __( 'Procurement Cash Account' ),
+            'name' => __( 'Procurement Cash' ),
             'category_identifier' => 'assets',
             'sub_category_id'   =>  $currentAsset->id,
             'counter_account_id' => $inventoryAccount->id
@@ -1183,8 +1232,10 @@ class TransactionService
 
     public function createSalesAccounts()
     {
-        $currentAsset = TransactionAccount::where( 'account', 101 )->first();
-        $revenue = TransactionAccount::where( 'account', 401 )->first();
+        $currentAsset = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Current Assets' ) . '%' ) )->first();
+        $revenue = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Sales Revenues' ) . '%' ) )->first();
+        $directExpense = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Direct Expenses' ) . '%' ) )->first();
+        $inventoryAccount = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Inventory Account' ) . '%' ) )->first();
 
         $receivableAccountResponse = $this->createAccount([
             'name' => __( 'Receivables' ),
@@ -1208,7 +1259,7 @@ class TransactionService
         ]);
 
         $revenuesAccountResponse = $this->createAccount([
-            'name'  =>  __( 'Sales Revenues' ),
+            'name'  =>  __( 'Sales' ),
             'category_identifier'   =>  'revenues',
             'sub_category_id'   =>  $revenue->id,
             'counter_account_id'    =>  $receivableAccountResponse[ 'data' ][ 'account' ][ 'id' ]
@@ -1222,20 +1273,15 @@ class TransactionService
         ns()->option->set( 'ns_accounting_orders_refund_account', $refundAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
         ns()->option->set( 'ns_accounting_orders_revenues_account', $revenuesAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
 
-
-        /**
-         * We'll pulling out here the inventory account
-         */
-        $account = TransactionAccount::where( 'account', 119 )->first();
-
         /**
          * This is for configuring the COGS that is used during sales.
          */
-        if ( $account instanceof TransactionAccount ) {
+        if ( $inventoryAccount instanceof TransactionAccount ) {
             $cogsAccount = $this->createAccount([
-                'name' => __( 'Sales COGS Account' ),
+                'name' => __( 'Sales COGS' ),
                 'category_identifier' => 'expenses',
-                'counter_account_id' => $account->id
+                'counter_account_id' => $inventoryAccount->id,
+                'sub_category_id' => $directExpense->id
             ]);
 
             ns()->option->set( 'ns_accounting_orders_cogs_account', $cogsAccount[ 'data' ][ 'account' ][ 'id' ] );
