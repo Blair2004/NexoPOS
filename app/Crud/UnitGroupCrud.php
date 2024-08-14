@@ -281,7 +281,7 @@ class UnitGroupCrud extends CrudService
             identifier: 'edit',
             label: __( 'Edit' ),
             type: 'GOTO',
-            url: ns()->url( '/dashboard/' . 'units' . '/edit/' . $entry->id )
+            url: ns()->url( '/dashboard/units/groups/edit/' . $entry->id )
         );
 
         // Snippet 2

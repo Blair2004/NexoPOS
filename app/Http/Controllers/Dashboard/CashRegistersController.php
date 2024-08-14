@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Classes\Hook;
 use App\Crud\RegisterCrud;
 use App\Crud\RegisterHistoryCrud;
 use App\Exceptions\NotAllowedException;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 
 class CashRegistersController extends DashboardController
 {
@@ -135,7 +137,7 @@ class CashRegistersController extends DashboardController
         if ( $register->status === Register::STATUS_OPENED ) {
             $lastOpening = $register->history()
                 ->where( 'action', RegisterHistory::ACTION_OPENING )
-                ->orderBy( 'nexopos_registers_history.id', 'desc' )
+                ->orderBy( Hook::filter( 'ns-table-name', 'nexopos_registers_history' ) . '.id', 'desc' )
                 ->first();
 
             if ( $lastOpening instanceof RegisterHistory ) {
@@ -146,7 +148,7 @@ class CashRegistersController extends DashboardController
                     ->select( [
                         'nexopos_registers_history.*',
                         'nexopos_registers_history.description as description',
-                        'nexopos_transactions_accounts.name as account_name'
+                        'nexopos_transactions_accounts.name as account_name',
                     ] )
                     ->with( 'order' )
                     ->leftJoin( 'nexopos_payments_types', 'nexopos_registers_history.payment_type_id', '=', 'nexopos_payments_types.id' )
@@ -169,7 +171,7 @@ class CashRegistersController extends DashboardController
                             $session->label = __( 'Opening' );
                             break;
                         case RegisterHistory::ACTION_SALE:
-                            $session->label = sprintf( __( '%s on %s' ), $session->label, $session->order->code );
+                            $session->label = sprintf( __( '%s on %s' ), __( 'Sale' ), $session->order->code );
                             break;
                         case RegisterHistory::ACTION_REFUND:
                             $session->label = __( 'Refund' );
@@ -264,5 +266,28 @@ class CashRegistersController extends DashboardController
                 'register_id' => $register->id,
             ],
         ] );
+    }
+
+    public function getRegisterZReport( Register $register )
+    {
+        $data = $this->registersService->getZReport( $register );
+
+        /**
+         * @var mixed register
+         * @var mixed opening
+         * @var mixed closing
+         * @var mixed histories
+         * @var mixed orders
+         * @var mixed openingBalance
+         * @var mixed closingBalance
+         * @var mixed difference
+         * @var mixed totalGrossSales
+         * @var mixed totalDiscount
+         * @var mixed total
+         * @var mixed unitProductCategories
+         * @var mixed user
+         */
+
+        return View::make( 'pages.dashboard.orders.templates.z-report', $data );
     }
 }

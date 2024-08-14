@@ -853,7 +853,7 @@ class TransactionService
 
     public function handleUnpaidOrderTransactionRecording( $receivableAccountId, $order )
     {
-        $receivableAccount = TransactionAccount::findOrFailWith( $receivableAccountId );
+        $receivableAccount = TransactionAccount::find( $receivableAccountId );
 
         /**
          * if the inventory account is not found, we'll stop the process

@@ -11,7 +11,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lqng="ts">
 import { __ } from '~/libraries/lang';
 import popupResolver from '~/libraries/popup-resolver';
 import popupCloser from '~/libraries/popup-closer';

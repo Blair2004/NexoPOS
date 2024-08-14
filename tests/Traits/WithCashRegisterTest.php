@@ -37,8 +37,9 @@ trait WithCashRegisterTest
          * cashing on the cash register
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHIN . '/' . $register->id, [
+            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHING . '/' . $register->id, [
                 'amount' => 100,
+                'transaction_account_id' => ns()->option->get( 'ns_accounting_default_cashing_account', 0 ),
             ] );
 
         $response->assertStatus( 200 );
@@ -49,6 +50,7 @@ trait WithCashRegisterTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHOUT . '/' . $register->id, [
                 'amount' => 100,
+                'transaction_account_id' => ns()->option->get( 'ns_accounting_default_cashout_account', 0 ),
             ] );
 
         $response->assertStatus( 200 );
@@ -80,10 +82,11 @@ trait WithCashRegisterTest
 
         $register = Register::orderBy( 'id', 'desc' )->first();
 
-        /**
-         * @var CashRegistersService
-         */
         $cashOpeningBalance = 100;
+
+        /**
+         * @var CashRegistersService $cashRegisterService
+         */
         $cashRegisterService = app()->make( CashRegistersService::class );
         $cashRegisterService->openRegister( $register, $cashOpeningBalance, 'test opening amount' );
 
@@ -104,14 +107,14 @@ trait WithCashRegisterTest
          * should not be able to cash-out
          */
         try {
-            $cashRegisterService->cashOut( $register, 100, 'test cash out' );
+            $cashRegisterService->cashOut( $register, 100, ns()->option->get( 'ns_accounting_default_cashout_account', 0 ), 'test cash out' );
         } catch ( NotAllowedException $exception ) {
             $this->assertContains( $exception->getMessage(), [ 'Not enough fund to cash out.' ] );
         }
 
         $register->refresh();
         $cashInAmount = 200;
-        $cashRegisterService->cashIn( $register, $cashInAmount, 'test' );
+        $cashRegisterService->cashIng( $register, $cashInAmount, ns()->option->get( 'ns_accounting_default_cashout_account', 0 ), 'test' );
 
         $registerHistory = RegisterHistory::where( 'register_id', $register->id )
             ->orderBy( 'id', 'desc' )
@@ -125,7 +128,7 @@ trait WithCashRegisterTest
          */
         $register->refresh();
         $cashOutAmount = 100;
-        $cashRegisterService->cashOut( $register, $cashOutAmount, 'test cash-out' );
+        $cashRegisterService->cashOut( $register, $cashOutAmount, ns()->option->get( 'ns_accounting_default_cashout_account', 0 ), 'test cash-out' );
 
         $registerHistory = RegisterHistory::where( 'register_id', $register->id )
             ->orderBy( 'id', 'desc' )
@@ -156,8 +159,9 @@ trait WithCashRegisterTest
         $initialBalance = $register->balance;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHIN . '/' . $register->id, [
+            ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHING . '/' . $register->id, [
                 'amount' => 100,
+                'transaction_account_id' => ns()->option->get( 'ns_accounting_default_cashing_account', 0 ),
             ] );
 
         $response->assertStatus( 200 );
@@ -179,6 +183,7 @@ trait WithCashRegisterTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/cash-registers/' . RegisterHistory::ACTION_CASHOUT . '/' . $register->id, [
                 'amount' => 100,
+                'transaction_account_id' => ns()->option->get( 'ns_accounting_default_cashout_account', 0 ),
             ] );
 
         $response->assertStatus( 200 );

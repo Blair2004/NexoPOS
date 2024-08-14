@@ -138,7 +138,7 @@ class ModuleMigrations extends Command
                 ->get();
 
             if ( $migration->count() > 0 ) {
-                $migration->delete();
+                $migration->each( fn( $migration ) => $migration->delete() );
 
                 $this->info( sprintf( 'The migration "%s" for the module %s has been forgotten.', $path, $this->module[ 'name' ] ) );
 
@@ -148,7 +148,7 @@ class ModuleMigrations extends Command
                  */
                 Artisan::call( 'cache:clear' );
 
-                return true;
+                return false;
             } else {
                 $this->info( sprintf( 'No migration found using the provided file path "%s" for the module "%s".', $path, $this->module[ 'name' ] ) );
 

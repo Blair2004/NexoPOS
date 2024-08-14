@@ -54,6 +54,12 @@
                 <div class="flex-auto text-right p-2">{{ nsCurrency( summary.value ) }}</div>
             </div>
         </div>
+        <div class="flex justify-between p-2">
+            <div></div>
+            <div>
+                <ns-button @click="printZReport( )" type="info">{{ __( 'Print Z-Report' ) }}</ns-button>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -92,6 +98,10 @@ export default {
             this.popupResolver({
                 status: 'success'
             });
+        },
+
+        printZReport() {
+            POS.print.process( this.settings.register.id, 'z-report' );
         },
 
         getHistory() {

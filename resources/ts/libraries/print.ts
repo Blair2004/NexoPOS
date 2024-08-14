@@ -9,11 +9,16 @@ export default class Print {
         'refund'    :   'refund_printing_url',
         'sale'      :   'sale_printing_url',
         'payment'   :   'payment_printing_url',
+        'z-report'  :   'z_report_printing_url',
     }
 
     constructor({ urls, options }) {
         this.urls       =   urls;
         this.options    =   options;
+    }
+
+    setCustomPrintingUrl( documentType, url ) {
+        this.printingURL[ documentType ] = url;
     }
 
     processRegularPrinting( reference_id, documentType ) {
@@ -22,6 +27,8 @@ export default class Print {
         if ( item ) {
             item.remove();
         }
+
+        console.log({ documentType })
 
         const url               =   this.urls[ this.printingURL[ documentType ] ].replace( '{reference_id}', reference_id );
         const printSection      =   document.createElement( 'iframe' );

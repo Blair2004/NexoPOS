@@ -24,9 +24,11 @@ class RecordCashRegisterHistoryOnTransactionsJob implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @deprecated until next minor release
      */
     public function handle( TransactionService $transactionService ): void
     {
-        $transactionService->createTransactionFromRegisterHistory( $this->registerHistory );
+        // $transactionService->createTransactionFromRegisterHistory( $this->registerHistory );
     }
 }

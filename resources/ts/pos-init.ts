@@ -25,6 +25,7 @@ import Print from "./libraries/print";
 import Tax from "./libraries/tax";
 import * as math from "mathjs"
 import nsPosLoadingPopupVue from "./popups/ns-pos-loading-popup.vue";
+import { nsAlertPopup, nsConfirmPopup, nsPromptPopup } from "./components/components";
 
 
 /**
@@ -37,10 +38,6 @@ const nsPosOrderTypeButton      = (<any>window).nsPosOrderTypeButton = defineAsy
 const nsPosCustomersButton      = (<any>window).nsPosCustomersButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button.vue' ) );
 const nsPosResetButton          = (<any>window).nsPosResetButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button.vue' ) );
 const nsPosCashRegister         = (<any>window).nsPosCashRegister = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button.vue' ) );
-const nsAlertPopup              = (<any>window).nsAlertPopup = defineAsyncComponent( () => import('./popups/ns-' + 'alert' + '-popup.vue' ) );
-const nsConfirmPopup            = (<any>window).nsConfirmPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'confirm' + '-popup.vue' ) );
-const nsPOSLoadingPopup         = (<any>window).nsPOSLoadingPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'loading' + '-popup.vue' ) );
-const nsPromptPopup             = (<any>window).nsPromptPopup = defineAsyncComponent( () => import('./popups/ns-' + 'prompt' + '-popup.vue' ) );
 const nsLayawayPopup            = (<any>window).nsLayawayPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'layaway' + '-popup.vue' ) );
 const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'shipping' + '-popup.vue' ) );
 
@@ -608,7 +605,7 @@ export class POS {
                  * order we should then get the real VAT value.
                  */
                 if ( groups[order.tax_group_id] !== undefined ) {
-                    order   =   this.computeOrderTaxGroup( order, groups[order.tax_group_id] );
+                    order   =   <Order>this.computeOrderTaxGroup( order, groups[order.tax_group_id] );
                 }
 
                 return resolve({
@@ -621,7 +618,7 @@ export class POS {
                 nsHttpClient.get(`/api/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
-                            order   =   this.computeOrderTaxGroup( order, tax );
+                            order   =   <Order>this.computeOrderTaxGroup( order, tax );
     
                             return resolve({
                                 status: 'success',
@@ -662,8 +659,10 @@ export class POS {
         });
 
         if ( tax.taxes.length === 0 ) {
-            return nsSnackBar.error( __( 'The selected tax group doesn\'t have any assigned sub taxes. This might cause wrong figures.' ), __( 'Proceed' ), { duration: false })
+            nsSnackBar.error( __( 'The selected tax group doesn\'t have any assigned sub taxes. This might cause wrong figures.' ), __( 'Proceed' ), { duration: false })
                 .subscribe();
+
+            return;
         }
 
         order.tax_groups = order.tax_groups || [];
@@ -765,7 +764,7 @@ export class POS {
 
                 if (result.order.instalments.length === 0 && result.order.tendered < expected) {
                     const message = __(`Before saving this order, a minimum payment of {amount} is required`).replace('{amount}', nsCurrency(expected));
-                    Popup.show(nsAlertPopup, { title: __('Unable to proceed'), message });
+                    Popup.show( nsAlertPopup, { title: __('Unable to proceed'), message });
                     return reject({ status: 'error', message });
                 } else {
                     const paymentType = this.selectedPaymentType.getValue();
@@ -783,7 +782,7 @@ export class POS {
                          * the waiter and invite him to add the first slice as 
                          * the payment.
                          */
-                        Popup.show(nsConfirmPopup, {
+                        Popup.show( nsConfirmPopup, {
                             title: __(`Initial Payment`),
                             message: __(`In order to proceed, an initial payment of {amount} is required for the selected payment type "{paymentType}". Would you like to proceed ?`)
                                 .replace('{amount}', nsCurrency(firstSlice))
@@ -1898,7 +1897,7 @@ export class POS {
                     }
                 });
             } else {
-                Popup.show(nsPromptPopup, {
+                Popup.show( nsPromptPopup, {
                     title: __( 'Void The Order' ),
                     message: __( 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.' ),
                     onAction: (reason) => {

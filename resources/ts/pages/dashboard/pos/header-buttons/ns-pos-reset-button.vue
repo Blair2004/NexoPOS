@@ -1,6 +1,5 @@
 <script>
 import { Popup } from '~/libraries/popup';
-import nsPosCustomers from '~/popups/ns-pos-customers.vue';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import popupCloser from "~/libraries/popup-closer";
 import { __ } from '~/libraries/lang';

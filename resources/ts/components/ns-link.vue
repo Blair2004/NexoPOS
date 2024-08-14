@@ -18,16 +18,16 @@ export default {
         buttonclass() {
             switch( this.type ) {
                 case 'info':
-                    return 'shadow bg-blue-400 text-white'
+                    return 'shadow bg-info-secondary text-white'
                 break;
                 case 'success':
-                    return 'shadow bg-green-400 text-white'
+                    return 'shadow bg-success-secondary text-white'
                 break;
                 case 'error':
-                    return 'shadow bg-red-400 text-white'
+                    return 'shadow bg-error-secondary text-white'
                 break;
                 case 'warning':
-                    return 'shadow bg-orange-400 text-white'
+                    return 'shadow bg-warning-secondary text-white'
                 break;
                 default:
                     return 'shadow bg-white text-gray-800'
