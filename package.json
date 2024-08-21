@@ -27,7 +27,7 @@
     "@dicebear/avatars": "^4.10.8",
     "@dicebear/avatars-avataaars-sprites": "^4.10.8",
     "@wordpress/hooks": "^4.5.0",
-    "chart.js": "^4.4.3",
+    "chart.js": "^4.4.4",
     "currency.js": "^2.0.4",
     "lodash": "^4.17.21",
     "mathjs": "^13.0.3",
