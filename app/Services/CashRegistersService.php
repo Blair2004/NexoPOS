@@ -568,7 +568,7 @@ class CashRegistersService
         $rawTotalSales = $orders->sum( 'total' );
         $rawTotalShippings = $orders->sum( 'shipping' );
         $rawTotalDiscounts = $orders->sum( 'discount' );
-        $rawTotalGrossSales = $orders->sum( 'net_total' );
+        $rawTotalGrossSales = $orders->sum( 'subtotal' );
         $rawTotalTaxes = $orders->sum( 'tax_value' );
 
         $totalDiscounts = ns()->currency->define( $rawTotalDiscounts );
@@ -591,7 +591,7 @@ class CashRegistersService
                     ->subtractBy( $rawTotalDiscounts )
                     ->toFloat()
             )
-            ->format();
+            ->toFloat();
 
         $categories = [];
         $products = [];
@@ -650,7 +650,8 @@ class CashRegistersService
             'sessionDuration',
             'payments',
             'cashOnHand',
-            'products'
+            'products',
+            'user'
         );
     }
 }

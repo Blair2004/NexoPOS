@@ -288,6 +288,6 @@ class CashRegistersController extends DashboardController
          * @var mixed user
          */
 
-        return View::make( 'pages.dashboard.orders.templates.z-report', $data );
+        return View::make( 'pages.dashboard.orders.templates.z-report', ( array ) $data );
     }
 }

@@ -1,5 +1,6 @@
 import nsAlertPopup         from  '~/popups/ns-alert-popup.vue';
 import nsAvatar             from  './ns-avatar.vue';
+import nsAvatarImage        from  './ns-avatar-image.vue';
 import nsButton             from  './ns-button.vue';
 import nsCalendar           from  './ns-calendar.vue';
 import nsCheckbox           from  './ns-checkbox.vue';
@@ -88,4 +89,5 @@ export {
     nsPageTitle,
     nsFieldDescription,
     nsDefaultAccounting,
+    nsAvatarImage,
 };
