@@ -16,7 +16,7 @@
                         </button>
                     </div>
                 </div>
-                <div :key="permission.id" v-for="permission of filteredPermissions" :class="toggled ? 'w-24' : 'w-54'" class="p-2 border-b border-gray-700 text-gray-100">
+                <div :key="permission.id" v-for="permission of filteredPermissions" :class="toggled ? 'w-24' : 'w-54'" class="p-3 border-b border-gray-700 text-gray-100">
                     <a @click="copyPermisson( permission.namespace )" href="javascript:void(0)" :title="permission.namespace">
                         <span v-if="! toggled">{{ permission.name }}</span>
                         <span v-if="toggled">{{ permission.name }}</span>
