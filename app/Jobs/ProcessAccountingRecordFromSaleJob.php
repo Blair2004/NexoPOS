@@ -31,6 +31,6 @@ class ProcessAccountingRecordFromSaleJob implements ShouldQueue
      */
     public function handle( TransactionService $transactionService )
     {
-        $transactionService->recordTransactionFromSale( $this->order );
+        // $transactionService->recordTransactionFromSale( $this->order );
     }
 }

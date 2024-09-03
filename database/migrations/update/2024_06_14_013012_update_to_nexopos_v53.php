@@ -42,15 +42,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table( 'nexopos_transactions_accounts', function ( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'operation' ) ) {
-                $table->string( 'operation' )->default( 'debit' );
-            }
-
-            if ( Schema::hasColumn( 'nexopos_transactions_accounts', 'sub_category_id' ) ) {
-                $table->dropColumn( 'sub_category_id' );
-            }
-        });
+        if ( Schema::hasTable( 'nexopos_transactions_accounts' ) ) {
+            Schema::table( 'nexopos_transactions_accounts', function ( Blueprint $table ) {
+                if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'operation' ) ) {
+                    $table->string( 'operation' )->default( 'debit' );
+                }
+    
+                if ( Schema::hasColumn( 'nexopos_transactions_accounts', 'sub_category_id' ) ) {
+                    $table->dropColumn( 'sub_category_id' );
+                }
+            });
+        }
 
         Schema::table( 'nexopos_transactions_histories', function( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_transactions_histories', 'is_reflection' ) ) {

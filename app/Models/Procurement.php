@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\ProcurementAfterDeleteEvent;
+use App\Events\ProcurementAfterPaymentStatusChangedEvent;
 use App\Events\ProcurementAfterUpdateEvent;
 use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
@@ -82,6 +83,10 @@ class Procurement extends NsModel
         'updating' => ProcurementBeforeUpdateEvent::class,
         'updated' => ProcurementAfterUpdateEvent::class,
         'deleted' => ProcurementAfterDeleteEvent::class,
+    ];
+
+    protected $dispatchableFieldsEvents     =   [
+        'payment_status'    =>  ProcurementAfterPaymentStatusChangedEvent::class,
     ];
 
     public function products()

@@ -13,3 +13,4 @@ Route::get( '/accounting/transactions/history', [ TransactionController::class, 
 Route::get( '/accounting/accounts', [ TransactionsAccountController::class, 'listTransactionsAccounts' ] )->name( ns()->routeName( 'ns.dashboard.transactions-account' ) );
 Route::get( '/accounting/accounts/create', [ TransactionsAccountController::class, 'createTransactionsAccounts' ] )->name( ns()->routeName( 'ns.dashboard.transactions-account.create' ) );
 Route::get( '/accounting/accounts/edit/{account}', [ TransactionsAccountController::class, 'editTransactionsAccounts' ] )->name( ns()->routeName( 'ns.dashboard.transactions-account.edit' ) );
+Route::get( '/accounting/rules', [ TransactionsAccountController::class, 'listTransactionsRules' ] )->name( ns()->routeName( 'ns.dashboard.transactions-rules' ) );

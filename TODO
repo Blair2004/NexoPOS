@@ -1,0 +1,3 @@
+- added: accounting action that helps to configure how accounting will trigger accounting records
+- we should remove the old implementation of accounting triggers gradually
+- we need a UI to create accoutning actions

@@ -892,7 +892,7 @@ class ProcurementService
         Procurement::withoutEvents( function () use ( $procurement, $status ) {
             $procurement->delivery_status = $status;
             $procurement->save();
-        } );
+        });
     }
 
     /**
@@ -1096,5 +1096,12 @@ class ProcurementService
         }
 
         return $procurementProduct;
+    }
+
+    public function handlePaymentStatusChanging( Procurement $procurement, string $previous, string $new )
+    {
+        // if ( $previous === Procurement::PAYMENT_UNPAID && $new === Procurement::PAYMENT_PAID ) {
+        //     $this->transn
+        // }
     }
 }

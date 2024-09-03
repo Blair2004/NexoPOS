@@ -21,7 +21,6 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'account' )->default( 0 );
-                $table->integer( 'counter_account_id' )->default( 0 );
                 $table->integer( 'sub_category_id' )->nullable();
                 $table->string( 'category_identifier' )->nullable();
                 $table->text( 'description' )->nullable();

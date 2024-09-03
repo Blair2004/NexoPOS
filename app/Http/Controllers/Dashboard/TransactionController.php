@@ -45,6 +45,11 @@ class TransactionController extends DashboardController
         ] );
     }
 
+    public function saveRule( Request $request )
+    {
+        return $this->transactionService->saveTransactionRule( $request->input( 'rule' ) );
+    }
+
     public function listTransactions()
     {
         return TransactionCrud::table();
@@ -163,6 +168,30 @@ class TransactionController extends DashboardController
     }
 
     /**
+     * get all sub accounts
+     * @return Collection
+     */
+    public function getSubAccounts()
+    {
+        return $this->transactionService->getSubAccounts();
+    }
+
+
+    /**
+     * get all actions
+     * @return Collection
+     */
+    public function getActions()
+    {
+        return $this->transactionService->getActions();
+    }
+
+    public function getRules()
+    {
+        return $this->transactionService->getRules();
+    }
+
+    /**
      * delete a specific transaction account
      */
     public function deleteAccount( TransactionAccount $account )
@@ -210,11 +239,6 @@ class TransactionController extends DashboardController
     public function getTransactionAccountFromCategory( Request $request )
     {
         return $this->transactionService->getTransactionAccountFromCategory( $request->input( 'identifier' ), $request->input( 'exclude' ) );
-    }
-
-    public function getCounterAccount( Request $request )
-    {
-        return $this->transactionService->getCounterAccount( $request->input( 'identifier' ) );
     }
 
     public function resetDefaultAccounts( Request $request )

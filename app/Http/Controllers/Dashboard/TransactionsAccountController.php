@@ -16,18 +16,6 @@ use Illuminate\Support\Facades\View;
 class TransactionsAccountController extends DashboardController
 {
     /**
-     * Index Controller Page
-     *
-     * @return view
-     *
-     * @since  1.0
-     **/
-    public function index()
-    {
-        return View::make( 'NexoPOS::index' );
-    }
-
-    /**
      * List transactions accounts
      *
      * @return view
@@ -50,5 +38,13 @@ class TransactionsAccountController extends DashboardController
     public function editTransactionsAccounts( TransactionAccount $account )
     {
         return TransactionAccountCrud::form( $account );
+    }
+
+    public function listTransactionsRules()
+    {
+        return View::make( 'pages.dashboard.transactions.rules', [
+            'title' =>  __( 'Rules' ),
+            'description' => __( 'Manage transactions rules' )
+        ]);
     }
 }

@@ -57,16 +57,22 @@ abstract class NsModel extends NsRootModel
 
     protected function detectChanges()
     {
-        $changedAttributes = array_diff_assoc( $this->getAttributes(), $this->oldAttributes );
-
-        if ( ! empty( $changedAttributes ) ) {
-            // Dispatch the "changed" event for the entire model
-            $this->fireModelEvent( 'changed', false );
-
-            // Check for specific field changes and dispatch events accordingly
-            foreach ( $this->dispatchableFieldsEvents as $field => $class ) {
-                if ( array_key_exists( $field, $changedAttributes ) ) {
-                    event( new $class( $this, $this->oldAttributes[$field] ?? null, $this->getAttribute( $field ) ) );
+        /**
+         * It must only trigger the events if the model
+         * has the $dispatchableFieldsEvents property defined
+         */
+        if ( $this->dispatchableFieldsEvents ) {
+            $changedAttributes = array_diff_assoc( $this->getAttributes(), $this->oldAttributes );
+    
+            if ( ! empty( $changedAttributes ) ) {
+                // Dispatch the "changed" event for the entire model
+                $this->fireModelEvent( 'changed', false );
+    
+                // Check for specific field changes and dispatch events accordingly
+                foreach ( $this->dispatchableFieldsEvents as $field => $class ) {
+                    if ( array_key_exists( $field, $changedAttributes ) ) {
+                        event( new $class( $this, $this->oldAttributes[$field] ?? null, $this->getAttribute( $field ) ) );
+                    }
                 }
             }
         }

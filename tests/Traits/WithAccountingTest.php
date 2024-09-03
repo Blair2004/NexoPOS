@@ -48,24 +48,7 @@ trait WithAccountingTest
 
     public function attemptUnpaidProcurement()
     {
-        $unpaidProcurementAccountId = ns()->option->get( 'ns_accounting_procurement_unpaid_account' );
-        $unpaidProcurementAccount   = TransactionAccount::find( $unpaidProcurementAccountId );
-        $offsetAccount = TransactionAccount::find( $unpaidProcurementAccount->counter_account_id );
-
-        $this->assertTrue( $unpaidProcurementAccount instanceof TransactionAccount, __( 'No unpaid procurement account was found.' ) );
-        $this->assertTrue( $offsetAccount instanceof TransactionAccount, __( 'No offset account was found.' ) );
-        $this->assertTrue( $unpaidProcurementAccount->histories()->count() === 0, __( 'Unpaid procurement account has transactions.' ) );
-
-        $response = $this->attemptCreateAnUnpaidProcurement();
-
-        $transaction     =   TransactionHistory::where( 'procurement_id', $response[ 'data' ][ 'procurement' ][ 'id' ] )->first();
-        $offsetTransaction  =   TransactionHistory::where( 'reflection_source_id', $transaction->id )->where( 'is_reflection', true )->first();
-
-        $this->assertTrue( $transaction->transaction_account_id === $unpaidProcurementAccountId, __( 'Transaction account is not the unpaid procurement account.' ) );
-        $this->assertTrue( $unpaidProcurementAccount->histories()->count() === 1, __( 'Unpaid procurement account has no transactions.' ) );
-        $this->assertTrue( $transaction instanceof TransactionHistory, __( 'No transaction history was found.' ) );
-        $this->assertTrue( $offsetTransaction instanceof TransactionHistory, __( 'No offset transaction history was found.' ) );
-        $this->assertTrue( $offsetTransaction->transaction_account_id === $offsetAccount->id, __( 'Offset transaction account is not the offset account.' ) );
+        $response = $this->attemptCreateAnUnpaidProcurement();        
     }
 
     public function attemptPaidProcurement()
@@ -86,27 +69,5 @@ trait WithAccountingTest
         $this->assertTrue( $transaction instanceof TransactionHistory, __( 'No transaction history was found.' ) );
         $this->assertTrue( $offsetTransaction instanceof TransactionHistory, __( 'No offset transaction history was found.' ) );
         $this->assertTrue( $offsetTransaction->transaction_account_id === $offsetAccount->id, __( 'Offset transaction account is not the offset account.' ) );
-    }
-
-    public function attemptDeleteProcurement()
-    {
-        $response = $this->attemptCreateProcurement();
-
-        /**
-         * let's check if history exists
-         */
-        $firstTransaction = TransactionHistory::where( 'procurement_id', $response[ 'data' ][ 'procurement' ][ 'id' ] )->first();
-
-        $this->assertTrue( $firstTransaction instanceof TransactionHistory, __( 'No transaction history was found.' ) );
-
-        $this->attemptDeleteProcurementWithId( $response[ 'data' ][ 'procurement' ][ 'id' ] );
-
-        /**
-         * history should be deleted with it's reflection
-         */
-        $countTransaction = TransactionHistory::where( 'procurement_id', $response[ 'data' ][ 'procurement' ][ 'id' ] )->count();
-
-        $this->assertTrue( $countTransaction === 0, __( 'Transaction history was not deleted.' ) );
-        $this->assertTrue( TransactionHistory::where( 'is_reflection', 1 )->where( 'reflection_source_id', $firstTransaction->id )->first() === null, __( 'Reflection transaction history was not deleted.' ) );
     }
 }

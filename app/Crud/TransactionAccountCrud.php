@@ -56,7 +56,6 @@ class TransactionAccountCrud extends CrudService
     public $relations = [
         [ 'nexopos_users', 'nexopos_transactions_accounts.author', '=', 'nexopos_users.id' ],
         'leftJoin' => [
-            [ 'nexopos_transactions_accounts as nsta', 'nsta.id', '=', 'nexopos_transactions_accounts.counter_account_id' ],
             [ 'nexopos_transactions_accounts as subaccount', 'subaccount.id', '=', 'nexopos_transactions_accounts.sub_category_id' ],
         ],
     ];
@@ -194,21 +193,10 @@ class TransactionAccountCrud extends CrudService
                                 ]
                             )
                         ),
-                        FormInput::searchSelect(
-                            label: __( 'Counter Account' ),
-                            name: 'counter_account_id',
-                            options: Helper::toJsOptions( TransactionAccount::whereNotIn( 'id', [ $entry->id ?? 0 ])->get(), [ 'id', 'name' ] ),
-                            description: __( 'For double bookeeping purpose, which account is affected by all transactions on this account?' ),
-                            value: $entry->counter_account_id ?? 0,
-                            refresh: FormInput::refreshConfig(
-                                url: ns()->route( 'ns.transactions-account.counter-accounts' ),
-                                watch: 'sub_category_id'
-                            )
-                        ),
                         FormInput::text(
                             label: __( 'Account' ),
                             name: 'account',
-                            description: __( 'Provide the accounting number for this category.' ),
+                            description: __( 'Provide the accounting number for this category. If left empty, it will be generated automatically.' ),
                             value: $entry->account ?? '',
                         ),
                         FormInput::textarea(
@@ -362,10 +350,6 @@ class TransactionAccountCrud extends CrudService
             CrudTable::column(
                 label: __( 'Account' ),
                 identifier: 'account',
-            ),
-            CrudTable::column(
-                label: __( 'Counter' ),
-                identifier: 'nsta_name',
             ),
             CrudTable::column(
                 label: __( 'Author' ),
