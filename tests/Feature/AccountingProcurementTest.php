@@ -10,10 +10,11 @@ class AccountingProcurementTest extends TestCase
 {
     use WithAuthentication, WithAccountingTest, WithProcurementTest;
 
-    public function testCreateBankingAccounts()
+    public function testCreateAccounts()
     {
         $this->attemptAuthenticate();
         $this->createDefaultAccounts();
+        $this->createProcurementsAccounts();
     }
 
     public function testCreateProcurement()

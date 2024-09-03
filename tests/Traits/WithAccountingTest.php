@@ -26,9 +26,9 @@ trait WithAccountingTest
         $service    =   app()->make( TransactionService::class );
         $service->createDefaultAccounts();
 
-        $this->assertTrue( ( $orderCashAccount = ns()->option->get( 'ns_accounting_orders_cash_account', false ) ) !== false, sprintf( __( 'No settings for "%s" was set.' ), 'ns_accounting_orders_cash_account' ) );
-        $this->assertTrue( ( $orderCashAccount = ns()->option->get( 'ns_accounting_orders_refund_account', false ) ) !== false, sprintf( __( 'No settings for "%s" was set.' ), 'ns_accounting_orders_cash_account' ) );
-        $this->assertTrue( ( $ordersCogsAccount = ns()->option->get( 'ns_accounting_orders_cogs_account', false ) ) !== false, sprintf( __( 'No settings for "%s" was set.' ), 'ns_accounting_orders_cogs_account' ) );
+        $this->assertTrue( ( ns()->option->get( 'ns_accounting_orders_cash_account', false ) ) !== false, sprintf( __( 'No settings for "%s" was set.' ), 'ns_accounting_orders_cash_account' ) );
+        $this->assertTrue( ( ns()->option->get( 'ns_accounting_orders_refund_account', false ) ) !== false, sprintf( __( 'No settings for "%s" was set.' ), 'ns_accounting_orders_cash_account' ) );
+        $this->assertTrue( ( ns()->option->get( 'ns_accounting_orders_cogs_account', false ) ) !== false, sprintf( __( 'No settings for "%s" was set.' ), 'ns_accounting_orders_cogs_account' ) );
     }
 
     public function createProcurementsAccounts()
