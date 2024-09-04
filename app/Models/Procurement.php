@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ProcurementAfterCreateEvent;
 use App\Events\ProcurementAfterDeleteEvent;
 use App\Events\ProcurementAfterPaymentStatusChangedEvent;
 use App\Events\ProcurementAfterUpdateEvent;
@@ -79,6 +80,8 @@ class Procurement extends NsModel
     const PAYMENT_PAID = 'paid';
 
     protected $dispatchesEvents = [
+        'creating' => ProcurementAfterCreateEvent::class,
+        'created' => ProcurementAfterCreateEvent::class,
         'deleting' => ProcurementBeforeDeleteEvent::class,
         'updating' => ProcurementBeforeUpdateEvent::class,
         'updated' => ProcurementAfterUpdateEvent::class,

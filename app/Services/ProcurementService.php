@@ -161,7 +161,8 @@ class ProcurementService
          * We can now safely trigger the event here
          * that will ensure correct computing
          */
-        event( new ProcurementAfterCreateEvent( $procurement ) );
+        $procurement->fireModelEvent( 'created' );
+        // event( new ProcurementAfterCreateEvent( $procurement ) );
 
         return [
             'status' => 'success',

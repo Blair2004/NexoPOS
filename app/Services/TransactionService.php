@@ -377,10 +377,12 @@ class TransactionService
          * if the account code is similar. This is mostly
          * done for testing purposes.
          */
-        $accountCode    =   explode( $fields[ 'account' ], '-' );
+        $accountCode    =   explode( '-', $fields[ 'account' ] );
         unset( $accountCode[0] );
         $accountCode    =   implode( '-', $accountCode );
         $account = TransactionAccount::where( 'account', 'like', '%' . $accountCode . '%' )->firstOrNew();
+
+        dump( $accountCode );
 
         foreach ( $fields as $field => $value ) {
             $account->$field = $value;
@@ -690,91 +692,7 @@ class TransactionService
      */
     public function handleProcurementTransaction( Procurement $procurement )
     {
-        $unpaidAccountId = ns()->option->get( 'ns_accounting_procurement_unpaid_account' );
-        $paidAccountId = ns()->option->get( 'ns_accounting_procurement_paid_account' );
-
-        $paidAccount = TransactionAccount::find( $paidAccountId );
-        $unpaidAccount = TransactionAccount::find( $unpaidAccountId );
-
-        /**
-         * if the inventory account is not found, we'll stop the process
-         * there is no need to trigger an exception as the user might not need
-         * to use the accounting features.
-         */
-        if ( ! $unpaidAccount instanceof TransactionAccount || ! $paidAccount instanceof TransactionAccount ) {
-            ns()->notification->create(
-                title: __( 'Accounting Misconfiguration' ),
-                identifier: 'accounting-misconfiguration',
-                url: ns()->route( 'ns.dashboard.settings', [
-                    'settings' => 'accounting?tab=procurements'
-                ]),
-                description: __( 'Unable to records accountings transactions for purchase order (procurement). Until the account are set, accounting is ignored.' )
-            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
-
-            return;
-        }
-
-        if (
-            $procurement->payment_status === Procurement::PAYMENT_PAID &&
-            $procurement->delivery_status === Procurement::STOCKED
-        ) {
-            $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-                'increase' => $account[ 'increase' ],
-                'decrease' => $account[ 'decrease' ],
-            ]))->toArray()[ $paidAccount->category_identifier ];
-
-            /**
-             * We're pulling any existing transaction made on the TransactionHistory
-             * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
-             */
-            $transaction = TransactionHistory::where( 'procurement_id', $procurement->id )
-                ->where( 'transaction_account_id', $paidAccountId )
-                ->where( 'operation', $accountConfiguration[ 'increase' ] ) 
-                ->firstOrNew();
-
-            $transaction->value = $procurement->cost;
-            $transaction->author = $procurement->author;
-            $transaction->procurement_id = $procurement->id;
-            $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
-            $transaction->transaction_account_id = $paidAccountId;
-            $transaction->operation = $accountConfiguration[ 'increase' ];
-            $transaction->type = Transaction::TYPE_DIRECT;
-            $transaction->trigger_date = $procurement->created_at;
-            $transaction->status = TransactionHistory::STATUS_ACTIVE;
-            $transaction->created_at = $procurement->created_at;
-            $transaction->updated_at = $procurement->updated_at;
-            $transaction->save();
-        } elseif (
-            $procurement->payment_status === Procurement::PAYMENT_UNPAID &&
-            $procurement->delivery_status === Procurement::STOCKED
-        ) {
-            $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-                'increase' => $account[ 'increase' ],
-                'decrease' => $account[ 'decrease' ],
-            ]))->toArray()[ $unpaidAccount->category_identifier ];
-
-            /**
-             * We're pulling any existing transaction made on the TransactionHistory
-             * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
-             */
-            $transaction = TransactionHistory::where( 'procurement_id', $procurement->id )
-                ->where( 'transaction_account_id', $unpaidAccountId )
-                ->where( 'operation', $accountConfiguration[ 'increase' ] )
-                ->firstOrNew();
-
-            $transaction->value = $procurement->cost;
-            $transaction->author = $procurement->author;
-            $transaction->procurement_id = $procurement->id;
-            $transaction->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
-            $transaction->transaction_account_id = $unpaidAccountId;
-            $transaction->operation = $accountConfiguration[ 'increase' ];
-            $transaction->type = Transaction::TYPE_DIRECT;
-            $transaction->trigger_date = $procurement->created_at;
-            $transaction->status = TransactionHistory::STATUS_ACTIVE;
-            $transaction->created_at = $procurement->created_at;
-            $transaction->updated_at = $procurement->updated_at;
-            $transaction->save();
-        }
+        // ...
     }
 
     public function getConfigurations( Transaction $transaction )
