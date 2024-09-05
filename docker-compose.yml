@@ -1,0 +1,74 @@
+services:
+  app:
+    image: nexo-pos:latest
+    container_name: nexo_app
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=nexopos
+      - DB_USERNAME=nexopos_user
+      - DB_PASSWORD=laravel
+      - APP_KEY=base64:z4AlJfYIEZAzsOXAlTDvTDVKENc6hS3dqcMhFJpkfl0=
+      - QUEUE_CONNECTION=redis
+    ports:
+      - "9000:9000"
+    volumes:
+      - nexo_data:/var/www/html:Z
+    networks:
+      - laravel
+
+  webserver:
+    image: nginx:latest
+    container_name: nexopos_webserver
+    depends_on:
+      - app
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - nexo_data:/var/www/html:Z
+    ports:
+      - "8080:80"
+    networks:
+      - laravel
+
+  db:
+    image: mariadb:latest
+    container_name: laravel_db
+    environment:
+      - MARIADB_USER=nexopos_user
+      - MARIADB_PASSWORD=laravel
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=nexopos
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - laravel
+
+  redis:
+    image: redis:alpine
+    container_name: nexopos_redis
+    networks:
+      - laravel
+
+  queue:
+    image: nexo-pos:latest
+    container_name: nexopos_queue
+    command: php artisan queue:work
+    volumes:
+      - nexo_data:/var/www/html:Z
+    depends_on:
+      - redis
+#      - db
+    networks:
+      - laravel
+
+volumes:
+  db_data:
+  nexo_data:
+
+
+networks:
+  laravel:
