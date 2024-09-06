@@ -28,6 +28,9 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'reflection_source_id' ) ) {
                 $table->integer( 'reflection_source_id' )->nullable();
             }
+            if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'rule_id' ) ) {
+                $table->integer( 'rule_id' )->nullable();
+            }
         });
 
         Schema::table( 'nexopos_orders', function( Blueprint $table ) {
@@ -60,6 +63,9 @@ return new class extends Migration
             }
             if ( Schema::hasColumn( 'nexopos_transactions_histories', 'reflection_source_id' ) ) {
                 $table->dropColumn( 'reflection_source_id' );
+            }
+            if ( Schema::hasColumn( 'nexopos_transactions_histories', 'rule_id' ) ) {
+                $table->dropColumn( 'rule_id' );
             }
         });
 

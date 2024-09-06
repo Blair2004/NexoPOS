@@ -8,6 +8,7 @@ use App\Events\ProcurementAfterPaymentStatusChangedEvent;
 use App\Events\ProcurementAfterUpdateEvent;
 use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
+use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -88,9 +89,9 @@ class Procurement extends NsModel
         'deleted' => ProcurementAfterDeleteEvent::class,
     ];
 
-    protected $dispatchableFieldsEvents     =   [
-        'payment_status'    =>  ProcurementAfterPaymentStatusChangedEvent::class,
-    ];
+    // protected $dispatchableFieldsEvents     =   [
+    //     'payment_status'    =>  ProcurementAfterPaymentStatusChangedEvent::class,
+    // ];
 
     public function products()
     {

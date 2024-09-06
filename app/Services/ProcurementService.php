@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use App\Events\ProcurementAfterCreateEvent;
@@ -161,8 +160,7 @@ class ProcurementService
          * We can now safely trigger the event here
          * that will ensure correct computing
          */
-        $procurement->fireModelEvent( 'created' );
-        // event( new ProcurementAfterCreateEvent( $procurement ) );
+        event( new ProcurementAfterCreateEvent( $procurement ) );
 
         return [
             'status' => 'success',

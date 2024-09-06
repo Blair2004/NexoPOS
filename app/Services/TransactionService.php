@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use PHPUnit\TextUI\Help;
+use stdClass;
 
 class TransactionService
 {
@@ -48,10 +49,7 @@ class TransactionService
         ];
     }
 
-    /**
-     * @deprecated
-     */
-    public function reflectTransaction( TransactionHistory $transactionHistory )
+    public function reflectTransactionFromRule( TransactionHistory $transactionHistory, TransactionActionRule $rule )
     {
         if ( $transactionHistory->is_reflection ) {
             throw new NotAllowedException( __( 'This transaction history is already a reflection.' ) );
@@ -60,70 +58,13 @@ class TransactionService
         $subAccount = TransactionAccount::find( $transactionHistory->transaction_account_id );
 
         if ( $subAccount instanceof TransactionAccount ) {
-            $counterAccount = TransactionAccount::find( $subAccount->counter_account_id );
-
-            if ( $counterAccount ) {
-                $mainCounterAccount = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-                    'increase' => $account[ 'increase' ],
-                    'decrease' => $account[ 'decrease' ],
-                ]))->toArray()[ $counterAccount->category_identifier ];
-
-                $swapingKeysValues = array_flip( $mainCounterAccount );
-                $counterOperation = $swapingKeysValues[ $transactionHistory->operation ] === 'increase' ? 'decrease' : 'increase';
-
-                if ( $mainCounterAccount ) {
-                    $counterTransaction = new TransactionHistory;
-                    $counterTransaction->value = $transactionHistory->value;
-                    $counterTransaction->transaction_id = $transactionHistory->transaction_id;
-                    $counterTransaction->operation = $mainCounterAccount[ $counterOperation ];
-                    $counterTransaction->author = $transactionHistory->author;
-                    $counterTransaction->name = $transactionHistory->name;
-                    $counterTransaction->status = TransactionHistory::STATUS_ACTIVE;
-                    $counterTransaction->trigger_date = ns()->date->toDateTimeString();
-                    $counterTransaction->type = $transactionHistory->type;
-                    $counterTransaction->procurement_id = $transactionHistory->procurement_id;
-                    $counterTransaction->order_id = $transactionHistory->order_id;
-                    $counterTransaction->order_refund_id = $transactionHistory->order_refund_id;
-                    $counterTransaction->order_product_id = $transactionHistory->order_product_id;
-                    $counterTransaction->order_refund_product_id = $transactionHistory->order_refund_product_id;
-                    $counterTransaction->register_history_id = $transactionHistory->register_history_id;
-                    $counterTransaction->customer_account_history_id = $transactionHistory->customer_account_history_id;
-                    $counterTransaction->transaction_account_id = $counterAccount->id;
-                    $counterTransaction->is_reflection = true;
-                    $counterTransaction->reflection_source_id = $transactionHistory->id;
-
-                    $counterTransaction->save();
-                }
-            }
-        }
-    }
-
-    /**
-     * @deprecated
-     */
-    public function reflectTransactionOnAccounts( TransactionHistory $transactionHistory, array $accounts )
-    {
-        $reflections = collect( $accounts )->map( function ( $counterAccountId ) use ( $transactionHistory ) {
-            if ( ! $counterAccountId instanceof TransactionAccount ) {
-                $counterAccount = TransactionAccount::find( $counterAccountId );
-            } else {
-                $counterAccount = $counterAccountId;
-            }
+            $counterAccount = TransactionAccount::find( $rule->offset_account_id );
 
             if ( $counterAccount instanceof TransactionAccount ) {
-                $counterOperation = $transactionHistory->operation === 'credit' ? 'debit' : 'credit';
-
-                /**
-                 * a transaction that already exists, might have a reflection
-                 * we'll then try to pull it or create a new instance if it's not the case.
-                 */
-                $counterTransaction = TransactionHistory::where( 'reflection_source_id', $transactionHistory->id )
-                    ->where( 'transaction_account_id', $counterAccount->id )
-                    ->firstOrNew();
-                    
+                $counterTransaction = new TransactionHistory;
                 $counterTransaction->value = $transactionHistory->value;
                 $counterTransaction->transaction_id = $transactionHistory->transaction_id;
-                $counterTransaction->operation = $counterOperation;
+                $counterTransaction->operation = $rule->do;
                 $counterTransaction->author = $transactionHistory->author;
                 $counterTransaction->name = $transactionHistory->name;
                 $counterTransaction->status = TransactionHistory::STATUS_ACTIVE;
@@ -139,17 +80,10 @@ class TransactionService
                 $counterTransaction->transaction_account_id = $counterAccount->id;
                 $counterTransaction->is_reflection = true;
                 $counterTransaction->reflection_source_id = $transactionHistory->id;
+
                 $counterTransaction->save();
-
-                return $counterTransaction;
             }
-        });
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The reflections has been created.' ),
-            'data' => $reflections->filter(),
-        ];
+        }
     }
 
     /**
@@ -381,8 +315,6 @@ class TransactionService
         unset( $accountCode[0] );
         $accountCode    =   implode( '-', $accountCode );
         $account = TransactionAccount::where( 'account', 'like', '%' . $accountCode . '%' )->firstOrNew();
-
-        dump( $accountCode );
 
         foreach ( $fields as $field => $value ) {
             $account->$field = $value;
@@ -678,6 +610,9 @@ class TransactionService
         return $history instanceof TransactionHistory;
     }
 
+    /**
+     * @todo
+     */
     public function handleProcurementPaymentStatusChanged( Procurement $procurement, string $previous, string $new )
     {
         if ( $previous === Procurement::PAYMENT_UNPAID && $new === Procurement::PAYMENT_PAID ) {
@@ -692,7 +627,41 @@ class TransactionService
      */
     public function handleProcurementTransaction( Procurement $procurement )
     {
-        // ...
+        if ( $procurement->payment_status === Procurement::PAYMENT_UNPAID ) {
+            $rule   =   TransactionActionRule::where( 'on', TransactionActionRule::RULE_PROCUREMENT_UNPAID )->first();
+
+            if ( $rule instanceof TransactionActionRule ) {
+                $account    =   TransactionAccount::find( $rule->account_id );
+                $offset     =   TransactionAccount::find( $rule->offset_account_id );
+
+                if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {
+                    throw new NotFoundException( sprintf(
+                        __( 'The account or the offset from the rule #%s is not found.' ),
+                        $rule->id
+                    ) );
+                }
+
+                $transactionHistory    =   new TransactionHistory;
+                $transactionHistory->name   =   sprintf(
+                    __( 'Unpaid Procurement: %s' ),
+                    $procurement->name
+                );
+                $transactionHistory->value     =   $procurement->cost;
+                $transactionHistory->author     =   $procurement->author;
+                $transactionHistory->transaction_account_id    =   $account->id;
+                $transactionHistory->operation   =   $rule->action;
+                $transactionHistory->type   =   Transaction::TYPE_DIRECT;
+                $transactionHistory->trigger_date  =   $procurement->created_at;
+                $transactionHistory->status    =   TransactionHistory::STATUS_ACTIVE;
+                $transactionHistory->procurement_id   =   $procurement->id;
+                $transactionHistory->rule_id = $rule->id;
+                $transactionHistory->save();
+
+                dump( $transactionHistory->toArray() );
+            }
+        } else if ( $procurement->payment_status === Procurement::PAYMENT_PAID ) {
+
+        }
     }
 
     public function getConfigurations( Transaction $transaction )
@@ -783,6 +752,9 @@ class TransactionService
         return compact( 'recurrence', 'configurations', 'warningMessage' );
     }
 
+    /**
+     * @deprecated
+     */
     public function handlePaidOrderTransactionRecording( $cashAccountId, Order $order )
     {
         $cashAccount = TransactionAccount::find( $cashAccountId );
@@ -833,6 +805,9 @@ class TransactionService
         $transaction->save();
     }
 
+    /**
+     * @deprecated
+     */
     public function handleUnpaidOrderTransactionRecording( $receivableAccountId, $order )
     {
         $receivableAccount = TransactionAccount::find( $receivableAccountId );
@@ -1092,9 +1067,6 @@ class TransactionService
     {
         $this->clearAllAccounts();
         $this->createAllSubAccounts();
-        $this->createProcurementAccounts();
-        $this->createSalesAccounts();
-        $this->createExpensesAccounts();
 
         return [
             'status' => 'success',
@@ -1107,22 +1079,7 @@ class TransactionService
         TransactionAccount::truncate();
         Transaction::truncate();
         TransactionHistory::truncate();
-
-        /**
-         * @deprecated ?
-         */
-        // $accounting = config( 'accounting' );
-        // $accounts = collect( $accounting[ 'accounts' ] )->mapWithKeys( function( $account, $key ) {
-        //     return [ $key => Helper::toJsOptions( TransactionAccount::where( 'category_identifier', $key )->get(), [ 'id', 'name' ] ) ];
-        // });
-
-        // $orders = include( base_path( 'app/Settings/accounting/orders.php' ) );
-        // $procurements = include( base_path( 'app/Settings/accounting/procurements.php' ) );
-
-        // /**
-        //  * we'll clear all settings
-        //  */
-        // collect([ ...$orders, ...$procurements ])->each( fn( $field ) => ns()->option->delete( $field[ 'name' ] ) );        
+        TransactionActionRule::truncate();   
 
         return [
             'status'    =>  'success',
@@ -1146,125 +1103,105 @@ class TransactionService
 
     public function createAllSubAccounts()
     {
-        $response = $this->createAccount([
+        $fixedAssetResposne = $this->createAccount([
             'name' => __( 'Fixed Assets' ),
             'category_identifier' => 'assets'
         ]);
 
-        $response = $this->createAccount([
+        $currentAssetResponse = $this->createAccount([
             'name' => __( 'Current Assets' ),
             'category_identifier' => 'assets'
         ]);
 
-        $response = $this->createAccount([
+        $inventoryResponse = $this->createAccount([
             'name' => __( 'Inventory Account' ),
             'category_identifier' => 'assets'
         ]);
 
-        $response = $this->createAccount([
+        $currentLiabilitiesResponse = $this->createAccount([
             'name'  =>  __( 'Current Liabilities' ),
             'category_identifier'   =>  'liabilities'
         ]);
 
-        $response = $this->createAccount([
+        $salesRevenuesResponse = $this->createAccount([
             'name' => __( 'Sales Revenues' ),
             'category_identifier' => 'revenues'
         ]);
 
-        $response = $this->createAccount([
+        $directExpenseResponse = $this->createAccount([
             'name' => __( 'Direct Expenses' ),
             'category_identifier' => 'expenses'
         ]);
-    }
-
-    public function createExpensesAccounts()
-    {
-        
-    }
-
-    public function createProcurementAccounts()
-    {
-        $currentAsset = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Current Assets' ) . '%' ) )->first();
-        $liabilityAccount = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Current Liabilities' ) . '%' ) )->first();
-        $inventoryAccount = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Inventory Account' ) . '%' ) )->first();
 
         // -----------------------------------------------------------
-        // Defining Accounts
+        // Procurement Accounts
         // -----------------------------------------------------------
 
-        $procurementCashAccount = $this->createAccount([
+
+        $procurementCashResponse = $this->createAccount([
             'name' => __( 'Procurement Cash' ),
             'category_identifier' => 'assets',
-            'sub_category_id'   =>  $currentAsset->id,
+            'sub_category_id'   =>  $currentAssetResponse[ 'data' ][ 'account' ]->id,
         ]);
 
-        $procurementAccountResponse = $this->createAccount([
+        $procurementResponse = $this->createAccount([
             'name' => __( 'Procurement Payable' ),
             'category_identifier' => 'liabilities',
-            'sub_category_id'   =>  $liabilityAccount->id,
+            'sub_category_id'   =>  $currentLiabilitiesResponse[ 'data' ][ 'account' ]->id,
         ]);
 
-        /**
-         * We'll setup the options now
-         * @deprecated
-         */
-        // ns()->option->set( 'ns_accounting_procurement_paid_account', $procurementCashAccount[ 'data' ][ 'account' ][ 'id' ] );
-        // ns()->option->set( 'ns_accounting_procurement_unpaid_account', $procurementAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
-    }
+        // -----------------------------------------------------------
+        // Sales Accounts
+        // -----------------------------------------------------------
 
-    public function createSalesAccounts()
-    {
-        $currentAsset = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Current Assets' ) . '%' ) )->first();
-        $revenue = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Sales Revenues' ) . '%' ) )->first();
-        $directExpense = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Direct Expenses' ) . '%' ) )->first();
-        $inventoryAccount = TransactionAccount::where( 'account', 'like', '%' . Str::slug( __( 'Inventory Account' ) . '%' ) )->first();
-
-        $receivableAccountResponse = $this->createAccount([
+        $receivableResponse = $this->createAccount([
             'name' => __( 'Receivables' ),
             'category_identifier' => 'assets',
-            'sub_category_id' => $currentAsset->id
+            'sub_category_id' => $currentAssetResponse[ 'data' ][ 'account' ]->id
         ]);
 
-        $salesAccountResponse = $this->createAccount([
+        $salesResponse = $this->createAccount([
             'name'  =>  __( 'Sales' ),
             'category_identifier'   =>  'assets',
-            'sub_category_id'   =>  $currentAsset->id
+            'sub_category_id'   =>  $currentAssetResponse[ 'data' ][ 'account' ]->id
         ]);
 
-        $refundAccountResponse = $this->createAccount([
+        $refundsResponse = $this->createAccount([
             'name'  =>  __( 'Refunds' ),
             'category_identifier'   =>  'revenues',
-            'sub_category_id'   =>  $revenue->id
+            'sub_category_id'   =>  $salesRevenuesResponse[ 'data' ][ 'account' ]->id
         ]);
-
-        $revenuesAccountResponse = $this->createAccount([
-            'name'  =>  __( 'Sales' ),
-            'category_identifier'   =>  'revenues',
-            'sub_category_id'   =>  $revenue->id
-        ]);
-
-        /**
-         * Let's setup the options
-         * @deprecated
-         */
-        // ns()->option->set( 'ns_accounting_orders_unpaid_account', $receivableAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
-        // ns()->option->set( 'ns_accounting_orders_cash_account', $salesAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
-        // ns()->option->set( 'ns_accounting_orders_refund_account', $refundAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
-        // ns()->option->set( 'ns_accounting_orders_revenues_account', $revenuesAccountResponse[ 'data' ][ 'account' ][ 'id' ] );
 
         /**
          * This is for configuring the COGS that is used during sales.
          */
-        if ( $inventoryAccount instanceof TransactionAccount ) {
-            $cogsAccount = $this->createAccount([
-                'name' => __( 'Sales COGS' ),
-                'category_identifier' => 'expenses',
-                'sub_category_id' => $directExpense->id
-            ]);
+        $cogsResponse = $this->createAccount([
+            'name' => __( 'Sales COGS' ),
+            'category_identifier' => 'expenses',
+            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id
+        ]);
 
-            // @deprecated
-            // ns()->option->set( 'ns_accounting_orders_cogs_account', $cogsAccount[ 'data' ][ 'account' ][ 'id' ] );
-        }        
+        /**
+         * ---------------------------------------------
+         * Creating Rules
+         * ---------------------------------------------
+         */
+        
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_PROCUREMENT_UNPAID,
+            action: 'increase',
+            account_id: $inventoryResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $currentLiabilitiesResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_PROCUREMENT_PAID,
+            action: 'increase',
+            account_id: $inventoryResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $procurementCashResponse[ 'data' ][ 'account' ]->id
+        );
     }
 
     public function setTransactionActionRule( string $on, string $action, int $account_id, string $do, int $offset_account_id, TransactionActionRule $transactionActionRule = null )

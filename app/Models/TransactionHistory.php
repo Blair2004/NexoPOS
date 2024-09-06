@@ -128,6 +128,11 @@ class TransactionHistory extends NsModel
         return $this->hasOne( Order::class, 'id', 'order_id' );
     }
 
+    public function rule()
+    {
+        return $this->hasOne( TransactionActionRule::class, 'id', 'rule_id' );
+    }
+
     protected function casts() {
         return [
             'is_reflection' => 'boolean',

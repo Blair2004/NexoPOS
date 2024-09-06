@@ -31,21 +31,6 @@ trait WithAccountingTest
          */
     }
 
-    public function createProcurementsAccounts()
-    {
-        /**
-         * @var TransactionService $service
-         */
-        $service    =   app()->make( TransactionService::class );
-        $service->createProcurementAccounts();
-
-        /**
-         * We'll now check if all options are set
-         */
-        // $this->assertTrue( ( $procurementPaid = ns()->option->get( 'ns_accounting_procurement_unpaid_account', false ) ) !== false, sprintf( __( 'No settings for "%s" was set.' ), 'ns_accounting_procurement_unpaid_account' ) );
-        // $this->assertTrue( ( $procurementPaidAccount = ns()->option->get( 'ns_accounting_procurement_paid_account', false ) ) !== false, sprintf( __( 'No settings for "%s" was set.' ), 'ns_accounting_procurement_paid_account' ) );
-    }
-
     public function attemptUnpaidProcurement()
     {
         $response = $this->attemptCreateAnUnpaidProcurement();        

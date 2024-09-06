@@ -11,5 +11,17 @@ class TransactionActionRule extends Model
 
     protected $fillable     =   [ 'on', 'action', 'account_id', 'do', 'offset_account_id', 'locked' ];
 
+    const RULE_PROCUREMENT_PAID = 'procurement_paid';
+    const RULE_PROCUREMENT_PARTIALLY_PAID = 'procurement_partially_paid';
+    const RULE_PROCUREMENT_UNPAID = 'procurement_unpaid';
+    const RULE_ORDER_PAID = 'order_paid';
+    const RULE_ORDER_PARTIALLY_PAID = 'order_partially_paid';
+    const RULE_ORDER_UNPAID = 'order_unpaid';
+    const RULE_ORDER_REFUNDED = 'order_refunded';
+    const RULE_ORDER_PARTIALLY_REFUNDED = 'order_partially_refunded';
+    const RULE_PRODUCT_DAMAGED = 'product_damaged';
+    const RULE_PRODUCT_RETURNED = 'product_returned';
+    const RULE_EXPENSE_CREATED = 'expense_created';
+
     protected $table = 'nexopos_transactions_actions_rules';
 }

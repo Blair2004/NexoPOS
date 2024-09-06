@@ -19,7 +19,6 @@ class AccountingProcurementTest extends TestCase
     {
         $this->attemptAuthenticate();
         $this->createDefaultAccounts();
-        $this->createProcurementsAccounts();
     }
 
     public function testCreateTaxes()

@@ -27,6 +27,9 @@ class AccountingReflectionJob implements ShouldQueue
      */
     public function handle( TransactionService $transactionService ): void
     {
-        $transactionService->reflectTransaction( $this->transactionHistory );
+        $transactionService->reflectTransactionFromRule(
+            transactionHistory: $this->transactionHistory,
+            rule: $this->transactionHistory->rule
+        );
     }
 }
