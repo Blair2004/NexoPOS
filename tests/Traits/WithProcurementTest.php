@@ -51,6 +51,7 @@ trait WithProcurementTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'GET', 'api/procurements/' . $procurement_id . '/set-as-paid' );
 
+        $response->dump();
         $response->assertOk();
 
         return $response->json();
@@ -452,10 +453,6 @@ trait WithProcurementTest
          */
         $testService = app()->make( TestService::class );
 
-        /**
-         * @deprecated
-         */
-        $currentExpenseValue = TransactionHistory::where( 'transaction_account_id', ns()->option->get( 'ns_procurement_cashflow_account' ) )->sum( 'value' );
         $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
             'general.payment_status' => Procurement::PAYMENT_PAID,
             'general.delivery_status' => Procurement::DELIVERED,

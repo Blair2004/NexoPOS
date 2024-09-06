@@ -14,6 +14,7 @@ class TransactionActionRule extends Model
     const RULE_PROCUREMENT_PAID = 'procurement_paid';
     const RULE_PROCUREMENT_PARTIALLY_PAID = 'procurement_partially_paid';
     const RULE_PROCUREMENT_UNPAID = 'procurement_unpaid';
+    const RULE_PROCUREMENT_FROM_UNPAID_TO_PAID = 'procurement_from_unpaid_to_paid';
     const RULE_ORDER_PAID = 'order_paid';
     const RULE_ORDER_PARTIALLY_PAID = 'order_partially_paid';
     const RULE_ORDER_UNPAID = 'order_unpaid';

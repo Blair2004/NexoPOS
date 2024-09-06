@@ -89,9 +89,10 @@ class Procurement extends NsModel
         'deleted' => ProcurementAfterDeleteEvent::class,
     ];
 
-    // protected $dispatchableFieldsEvents     =   [
-    //     'payment_status'    =>  ProcurementAfterPaymentStatusChangedEvent::class,
-    // ];
+    public function transactionHistories()
+    {
+        return $this->hasMany( TransactionHistory::class, 'procurement_id' );
+    }
 
     public function products()
     {

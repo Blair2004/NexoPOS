@@ -32,6 +32,6 @@ class ProcurementAfterUpdateEventListener
         $this->procurementService->refresh( $event->procurement );
         $this->providerService->computeSummary( $event->procurement->provider );
         $this->procurementService->handleProcurement( $event->procurement );
-        // $this->transactionService->handleProcurementTransaction( $event->procurement );
+        $this->transactionService->handleProcurementTransaction( $event->procurement );
     }
 }

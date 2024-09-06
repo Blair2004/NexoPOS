@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Feature;
 
+use App\Models\Procurement;
 use Modules\NsGastro\Tests\TestCase;
 use Tests\Traits\WithAccountingTest;
 use Tests\Traits\WithAuthentication;
@@ -10,6 +11,7 @@ use Tests\Traits\WithProductTest;
 use Tests\Traits\WithProviderTest;
 use Tests\Traits\WithTaxTest;
 use Tests\Traits\WithUnitTest;
+
 
 class AccountingProcurementTest extends TestCase
 {
@@ -51,12 +53,28 @@ class AccountingProcurementTest extends TestCase
     {
         $this->attemptAuthenticate();
         $this->attemptCreateProvider();
-        $this->attemptCreateAnUnpaidProcurement();
+        $response = $this->attemptCreateAnUnpaidProcurement();
+        $procurement    =   Procurement::findOrFail( $response[ 'data' ][ 'procurement' ][ 'id' ] );
+        $this->attemptTestAccountingForProcurement( $procurement );
+
+        return $procurement;
     }
 
-    public function testCreateProcurementAndPay()
+    public function testCreatePaidProcurement()
     {
-        // $this->attemptAuthenticate();
-        // $this->attemptUnpaidProcurement();
+        $this->attemptAuthenticate();
+        $response = $this->attemptPaidProcurement();
+
+        $this->attemptTestAccountingForProcurement( Procurement::findOrFail( $response[ 'data' ][ 'procurement' ][ 'id' ] ) );
+    }
+
+    /**
+     * @depends testCreateProcurement
+     */
+    public function testCreateProcurementAndPay( $procurement )
+    {
+        $this->attemptAuthenticate();
+        $this->attemptPayUnpaidProcurement( $procurement->id );
+        $this->attemptTestAccountingForPreviouslyUnpaidProcurement( $procurement );
     }
 }

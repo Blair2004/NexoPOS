@@ -8,10 +8,12 @@ use App\Models\DashboardDay;
 use App\Models\Procurement;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
+use App\Models\TransactionActionRule;
 use App\Models\TransactionHistory;
 use App\Services\ReportService;
 use App\Services\TestService;
 use App\Services\TransactionService;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
 trait WithAccountingTest
@@ -29,30 +31,78 @@ trait WithAccountingTest
         /**
          * @todo test to perform here
          */
+        $this->assertTrue( TransactionAccount::count() > 0 );
+        $this->assertTrue( TransactionActionRule::count() > 0 );
     }
 
-    public function attemptUnpaidProcurement()
+    public function attemptTestAccountingForProcurement( Procurement $procurement )
+    {        
+        $history    =   $procurement->transactionHistories()->first();
+        $rule       =   TransactionActionRule::findOrFail( $history->rule_id );
+
+        $procurementTransactionHistory     =   TransactionHistory::where( 'transaction_account_id', $rule->account_id )
+            ->where( 'procurement_id', $procurement->id )
+            ->first();
+
+        $procurementTransactionHistoryOffset    =   TransactionHistory::where( 'reflection_source_id', $procurementTransactionHistory->id )
+            ->where( 'is_reflection', true )
+            ->where( 'transaction_account_id', $rule->offset_account_id )
+            ->first();
+
+        if ( $procurement->payment_status === Procurement::PAYMENT_UNPAID ) {
+            $this->assertTrue( $rule->on === TransactionActionRule::RULE_PROCUREMENT_UNPAID, __( 'Rule is not for unpaid procurement.' ) );
+        } else {
+            $this->assertTrue( $rule->on === TransactionActionRule::RULE_PROCUREMENT_PAID, __( 'Rule is not for paid procurement.' ) );
+        }
+
+        $this->assertTrue( $procurementTransactionHistory instanceof TransactionHistory, __( 'No transaction history was found.' ) );
+        $this->assertTrue( $procurementTransactionHistoryOffset instanceof TransactionHistory, __( 'No offset transaction history was found.' ) );
+        $this->assertTrue( TransactionActionRule::findOrFail( $history->rule_id ) instanceof TransactionActionRule, __( 'No transaction action rule was found.' ) );
+    }
+
+    public function attemptTestAccountingForPreviouslyUnpaidProcurement( Procurement $procurement )
     {
-        $response = $this->attemptCreateAnUnpaidProcurement();        
+        $rule = TransactionActionRule::where( 'on', TransactionActionRule::RULE_PROCUREMENT_FROM_UNPAID_TO_PAID )->first();
+
+        if ( ! $rule ) {
+            throw new Exception( __( 'No rule found for this action.' ) );
+        }
+
+        $procurementTransactionHistory = TransactionHistory::where( 'transaction_account_id', $rule->account_id )
+            ->where( 'procurement_id', $procurement->id )
+            ->firstOrFail();
+
+        $procurementTransactionHistoryOffset = TransactionHistory::where( 'reflection_source_id', $procurementTransactionHistory->id )
+            ->where( 'is_reflection', true )
+            ->where( 'transaction_account_id', $rule->offset_account_id )
+            ->firstOrFail();
+
+        $this->assertTrue( $procurementTransactionHistory instanceof TransactionHistory, __( 'No transaction history was found.' ) );
+        $this->assertTrue( $procurementTransactionHistoryOffset instanceof TransactionHistory, __( 'No offset transaction history was found.' ) );
+        $this->assertTrue( TransactionActionRule::findOrFail( $procurementTransactionHistory->rule_id ) instanceof TransactionActionRule, __( 'No transaction action rule was found.' ) );
     }
 
     public function attemptPaidProcurement()
     {
-        $paidProcurementAccountId   =   ns()->option->get( 'ns_accounting_procurement_paid_account' );
-        $paidProcurementAccount     =   TransactionAccount::find( $paidProcurementAccountId );
-        $offsetAccount              =   TransactionAccount::find( $paidProcurementAccount->counter_account_id );
+        /**
+         * @var TestService
+         */
+        $testService = app()->make( TestService::class );
 
-        $this->assertTrue( $paidProcurementAccount instanceof TransactionAccount, __( 'No paid procurement account was found.' ) );
-        $this->assertTrue( $paidProcurementAccount->histories()->count() === 0, __( 'Paid procurement account has transactions.' ) );
+        $procurementsDetails = $testService->prepareProcurement( ns()->date->now(), [
+            'general.payment_status' => Procurement::PAYMENT_PAID,
+            'general.delivery_status' => Procurement::PENDING,
+            'total_products' => 10,
+        ] );
 
-        $response = $this->attemptCreateProcurement();
+        /**
+         * Query: We store the procurement with an unpaid status.
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/procurements', $procurementsDetails );
 
-        $transaction     =   TransactionHistory::where( 'procurement_id', $response[ 'data' ][ 'procurement' ][ 'id' ] )->first();
-        $offsetTransaction  =   TransactionHistory::where( 'reflection_source_id', $transaction->id )->where( 'is_reflection', true )->first();
+        $response->assertOk();
 
-        $this->assertTrue( $paidProcurementAccount->histories()->count() === 1, __( 'Paid procurement account has no transactions.' ) );
-        $this->assertTrue( $transaction instanceof TransactionHistory, __( 'No transaction history was found.' ) );
-        $this->assertTrue( $offsetTransaction instanceof TransactionHistory, __( 'No offset transaction history was found.' ) );
-        $this->assertTrue( $offsetTransaction->transaction_account_id === $offsetAccount->id, __( 'Offset transaction account is not the offset account.' ) );
+        return $response->json();
     }
 }

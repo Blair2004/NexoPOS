@@ -55,16 +55,20 @@ class TransactionService
             throw new NotAllowedException( __( 'This transaction history is already a reflection.' ) );
         }
 
+        $accounts   =   config( 'accounting' )[ 'accounts' ];
+
         $subAccount = TransactionAccount::find( $transactionHistory->transaction_account_id );
 
         if ( $subAccount instanceof TransactionAccount ) {
             $counterAccount = TransactionAccount::find( $rule->offset_account_id );
 
+            $operation  =   $accounts[ $counterAccount->category_identifier ][ $rule->do ];
+
             if ( $counterAccount instanceof TransactionAccount ) {
                 $counterTransaction = new TransactionHistory;
                 $counterTransaction->value = $transactionHistory->value;
                 $counterTransaction->transaction_id = $transactionHistory->transaction_id;
-                $counterTransaction->operation = $rule->do;
+                $counterTransaction->operation = $operation;
                 $counterTransaction->author = $transactionHistory->author;
                 $counterTransaction->name = $transactionHistory->name;
                 $counterTransaction->status = TransactionHistory::STATUS_ACTIVE;
@@ -89,7 +93,6 @@ class TransactionService
     /**
      * Get the transaction account by code
      * @param TransactionHistory $transactionHistory
-     * @deprecated
      */
     public function deleteTransactionReflection( TransactionHistory $transactionHistory )
     {
@@ -229,12 +232,17 @@ class TransactionService
     public function getActions()
     {
         return [
-            'procurement_paid' => __( 'Procurement Paid' ),
-            'procurement_unpaid'    =>  __( 'Procurement Unpaid' ),
-            'order_paid'    =>  __( 'Order Paid' ),
-            'order_unpaid'  =>  __( 'Order Unpaid' ),
-            'order_refund'  =>  __( 'Order Refunded' ),
-            'expense_created'   =>  __( 'Expense Created' ),
+            TransactionActionRule::RULE_PROCUREMENT_PAID => __( 'Procurement Paid' ),
+            TransactionActionRule::RULE_PROCUREMENT_UNPAID => __( 'Procurement Unpaid' ),
+            TransactionActionRule::RULE_PROCUREMENT_FROM_UNPAID_TO_PAID => __( 'Paid Procurement From Unpaid' ),
+            TransactionActionRule::RULE_ORDER_PAID => __( 'Order Paid' ),
+            TransactionActionRule::RULE_ORDER_UNPAID => __( 'Order Unpaid' ),
+            TransactionActionRule::RULE_ORDER_REFUNDED => __( 'Order Refund' ),
+            TransactionActionRule::RULE_ORDER_PARTIALLY_PAID => __( 'Order Partially Paid' ),
+            TransactionActionRule::RULE_ORDER_PARTIALLY_REFUNDED => __( 'Order Partially Refunded' ),
+            TransactionActionRule::RULE_EXPENSE_CREATED => __( 'Expense Created' ),
+            TransactionActionRule::RULE_PRODUCT_DAMAGED => __( 'Product Damaged' ),
+            TransactionActionRule::RULE_PRODUCT_RETURNED => __( 'Product Returned' ),
         ];
     }
 
@@ -611,57 +619,93 @@ class TransactionService
     }
 
     /**
-     * @todo
-     */
-    public function handleProcurementPaymentStatusChanged( Procurement $procurement, string $previous, string $new )
-    {
-        if ( $previous === Procurement::PAYMENT_UNPAID && $new === Procurement::PAYMENT_PAID ) {
-            
-        }
-    }
-
-    /**
      * Will record a transaction resulting from a paid procurement
      *
      * @return void
      */
     public function handleProcurementTransaction( Procurement $procurement )
     {
+        $transactionHistory = new TransactionHistory;
+        $accounts   =   config( 'accounting' )[ 'accounts' ];
+        
         if ( $procurement->payment_status === Procurement::PAYMENT_UNPAID ) {
             $rule   =   TransactionActionRule::where( 'on', TransactionActionRule::RULE_PROCUREMENT_UNPAID )->first();
+            $transactionHistory->name   =   sprintf(
+                __( 'Unpaid Procurement: %s' ),
+                $procurement->name
+            );
+        } else if ( $procurement->payment_status === Procurement::PAYMENT_PAID ) {
+            /**
+             * if the transaction has some previous records
+             * this probably means the procurement was initially stored as unpaid.
+             * therefore we should use the from unpaid to paid rule.
+             */
+            $previousRecordsCount    =   TransactionHistory::where( 'procurement_id', $procurement->id )->count();
 
-            if ( $rule instanceof TransactionActionRule ) {
-                $account    =   TransactionAccount::find( $rule->account_id );
-                $offset     =   TransactionAccount::find( $rule->offset_account_id );
-
-                if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {
-                    throw new NotFoundException( sprintf(
-                        __( 'The account or the offset from the rule #%s is not found.' ),
-                        $rule->id
-                    ) );
-                }
-
-                $transactionHistory    =   new TransactionHistory;
-                $transactionHistory->name   =   sprintf(
-                    __( 'Unpaid Procurement: %s' ),
+            if ( $previousRecordsCount > 0 ) {
+                $rule = TransactionActionRule::where( 'on', TransactionActionRule::RULE_PROCUREMENT_FROM_UNPAID_TO_PAID )->first();
+                $transactionHistory->name = sprintf(
+                    __( 'Paid Procurement: %s' ),
                     $procurement->name
                 );
-                $transactionHistory->value     =   $procurement->cost;
-                $transactionHistory->author     =   $procurement->author;
-                $transactionHistory->transaction_account_id    =   $account->id;
-                $transactionHistory->operation   =   $rule->action;
-                $transactionHistory->type   =   Transaction::TYPE_DIRECT;
-                $transactionHistory->trigger_date  =   $procurement->created_at;
-                $transactionHistory->status    =   TransactionHistory::STATUS_ACTIVE;
-                $transactionHistory->procurement_id   =   $procurement->id;
-                $transactionHistory->rule_id = $rule->id;
-                $transactionHistory->save();
-
-                dump( $transactionHistory->toArray() );
+            } else {
+                $rule   =   TransactionActionRule::where( 'on', TransactionActionRule::RULE_PROCUREMENT_PAID )->first();
+                $transactionHistory->name = sprintf(
+                    __( 'Paid Procurement: %s' ),
+                    $procurement->name
+                );
             }
-        } else if ( $procurement->payment_status === Procurement::PAYMENT_PAID ) {
-
+        } else {
+            throw new NotAllowedException( __( 'The procurement payment status is not supported.' ) );
         }
+
+        /**
+         * We'll check if the account and the offset account
+         * are found before proceeding.
+         */
+        if ( ! $rule instanceof TransactionActionRule ) {
+            if ( $procurement->payment_status === Procurement::PAYMENT_PAID ) {
+                ns()->notification->create(
+                    title: __( 'Accounting Misconfiguration' ),
+                    identifier: 'accounting-procurement-misconfiguration',
+                    url: ns()->route( 'ns.dashboard.settings', [
+                        'settings' => 'accounting?tab=procurements'
+                    ]),
+                    description: __( 'Unable to record accounting transactions for paid procurement. Until the accounts rules are set, records are skipped.' )
+                )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+            } else {
+                ns()->notification->create(
+                    title: __( 'Accounting Misconfiguration' ),
+                    identifier: 'accounting-procurement-misconfiguration',
+                    url: ns()->route( 'ns.dashboard.settings', [
+                        'settings' => 'accounting?tab=procurements'
+                    ]),
+                    description: __( 'Unable to record accounting transactions for unpaid procurement. Until the accounts rules are set, records are skipped.' )
+                )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+            }
+        }
+
+        $account    =   TransactionAccount::find( $rule->account_id );
+        $offset     =   TransactionAccount::find( $rule->offset_account_id );
+        $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
+
+        if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {
+            throw new NotFoundException( sprintf(
+                __( 'The account or the offset from the rule #%s is not found.' ),
+                $rule->id
+            ) );
+        }
+
+        $transactionHistory->value     =   $procurement->cost;
+        $transactionHistory->author     =   $procurement->author;
+        $transactionHistory->transaction_account_id    =   $account->id;
+        $transactionHistory->operation   =   $operation;
+        $transactionHistory->type   =   Transaction::TYPE_DIRECT;
+        $transactionHistory->trigger_date  =   $procurement->created_at;
+        $transactionHistory->status    =   TransactionHistory::STATUS_ACTIVE;
+        $transactionHistory->procurement_id   =   $procurement->id;
+        $transactionHistory->rule_id = $rule->id;
+        $transactionHistory->save();
     }
 
     public function getConfigurations( Transaction $transaction )
@@ -750,301 +794,6 @@ class TransactionService
         ] );
 
         return compact( 'recurrence', 'configurations', 'warningMessage' );
-    }
-
-    /**
-     * @deprecated
-     */
-    public function handlePaidOrderTransactionRecording( $cashAccountId, Order $order )
-    {
-        $cashAccount = TransactionAccount::find( $cashAccountId );
-        
-        /**
-         * if the inventory account is not found, we'll stop the process
-         * there is no need to trigger an exception as the user might not need
-         * to use the accounting features.
-         */
-        if ( ! $cashAccount instanceof TransactionAccount ) {
-            ns()->notification->create(
-                title: __( 'Accounting Misconfiguration' ),
-                identifier: 'accounting-orders-misconfiguration',
-                url: ns()->route( 'ns.dashboard.settings', [
-                    'settings' => 'accounting?tab=orders'
-                ]),
-                description: __( 'Unable to record accounting transactions for paid orders. Until the accounts are set, records are skipped.' )
-            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
-
-            return;
-        }
-
-        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-            'increase' => $account[ 'increase' ],
-            'decrease' => $account[ 'decrease' ],
-        ]))->toArray()[ $cashAccount->category_identifier ];
-
-        /*
-        * We're pulling any existing transaction made on the TransactionHistory
-        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
-        */
-        $transaction = TransactionHistory::where( 'order_id', $order->id )
-            ->where( 'operation', $accountConfiguration[ 'increase' ] )
-            ->where( 'transaction_account_id', $cashAccount->id )
-            ->firstOrNew();
-            
-        $transaction->value = $order->total;
-        $transaction->author = $order->author;
-        $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
-        $transaction->transaction_account_id = $cashAccount->id;
-        $transaction->operation = $accountConfiguration[ 'increase' ];
-        $transaction->type = Transaction::TYPE_DIRECT;
-        $transaction->trigger_date = $order->created_at;
-        $transaction->status = TransactionHistory::STATUS_ACTIVE;
-        $transaction->order_id = $order->id;
-        $transaction->created_at = $order->created_at;
-        $transaction->updated_at = $order->updated_at;
-        $transaction->save();
-    }
-
-    /**
-     * @deprecated
-     */
-    public function handleUnpaidOrderTransactionRecording( $receivableAccountId, $order )
-    {
-        $receivableAccount = TransactionAccount::find( $receivableAccountId );
-
-        /**
-         * if the inventory account is not found, we'll stop the process
-         * there is no need to trigger an exception as the user might not need
-         * to use the accounting features.
-         */
-        if ( ! $receivableAccount instanceof TransactionAccount ) {
-            ns()->notification->create(
-                title: __( 'Accounting Misconfiguration' ),
-                identifier: 'accounting-orders-misconfiguration',
-                url: ns()->route( 'ns.dashboard.settings', [
-                    'settings' => 'accounting?tab=orders'
-                ]),
-                description: __( 'Unable to record accounting transactions for unpaid orders. Until the accounts are set, records are skipped.' )
-            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
-
-            return;
-        }
-
-        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-            'increase' => $account[ 'increase' ],
-            'decrease' => $account[ 'decrease' ],
-        ]))->toArray()[ $receivableAccount->category_identifier ];
-
-        /*
-        * We're pulling any existing transaction made on the TransactionHistory
-        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
-        */
-        $transaction = TransactionHistory::where( 'order_id', $order->id )
-            ->where( 'operation', $accountConfiguration[ 'increase' ] )
-            ->where( 'transaction_account_id', $receivableAccount->id )
-            ->firstOrNew();
-            
-        $transaction->value = $order->total;
-        $transaction->author = $order->author;
-        $transaction->name = sprintf( __( 'Sale : %s' ), $order->code );
-        $transaction->transaction_account_id = $receivableAccount->id;
-        $transaction->operation = $accountConfiguration[ 'increase' ];
-        $transaction->type = Transaction::TYPE_DIRECT;
-        $transaction->trigger_date = $order->created_at;
-        $transaction->status = TransactionHistory::STATUS_ACTIVE;
-        $transaction->order_id = $order->id;
-        $transaction->created_at = $order->created_at;
-        $transaction->updated_at = $order->updated_at;
-        $transaction->save();
-    }
-
-    /**
-     * @deprecated
-     */
-    public function recordTransactionFromSale( Order $order ) 
-    {
-        $cashAccountId = ns()->option->get( 'ns_accounting_orders_cash_account' );
-        $receivableAccountId = ns()->option->get( 'ns_accounting_orders_unpaid_account' );
-        $orderRevenuesAccountId = ns()->option->get( 'ns_accounting_orders_revenues_account' );
-
-        if ( $order->payment_status === Order::PAYMENT_PAID ) {
-            $this->handlePaidOrderTransactionRecording(
-                cashAccountId: $cashAccountId,
-                order: $order
-            );
-
-            $this->handleCOGSTransactionRecording(
-                order: $order
-            );
-        } else if ( $order->payment_status === Order::PAYMENT_UNPAID ) {
-            $this->handleUnpaidOrderTransactionRecording(
-                receivableAccountId: $receivableAccountId,
-                order: $order
-            );
-        } else if ( $order->payment_status === Order::PAYMENT_PARTIALLY ) {
-            $this->handlePartiallyPaidTransactionRecording(
-                receivableAccountId: $receivableAccountId,
-                order: $order
-            );
-        } else if ( $order->payment_status === Order::PAYMENT_REFUNDED ) {
-            $this->handleRefundedOrderTransactionRecording(
-                orderRevenuesAccountId: $orderRevenuesAccountId,
-                order: $order
-            );
-        }
-    }
-
-    /**
-     * @deprecated
-     */
-    public function handleRefundedOrderTransactionRecording( $orderRevenuesAccountId, $order )
-    {
-        $revenueAccount = TransactionAccount::find( $orderRevenuesAccountId );
-
-        /**
-         * if the inventory account is not found, we'll stop the process
-         * there is no need to trigger an exception as the user might not need
-         * to use the accounting features.
-         */
-        if ( ! $revenueAccount instanceof TransactionAccount ) {
-            ns()->notification->create(
-                title: __( 'Accounting Misconfiguration' ),
-                identifier: 'accounting-orders-misconfiguration',
-                url: ns()->route( 'ns.dashboard.settings', [
-                    'settings' => 'accounting?tab=orders'
-                ]),
-                description: __( 'Unable to record an accounting transaction for a refund. Until the accounts are set, records are skipped.' )
-            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
-
-            return;
-        }
-
-        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-            'increase' => $account[ 'increase' ],
-            'decrease' => $account[ 'decrease' ],
-        ]))->toArray()[ $revenueAccount->category_identifier ];
-
-        /*
-        * We're pulling any existing transaction made on the TransactionHistory
-        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
-        */
-        $transaction = new TransactionHistory;
-        $transaction->value = $order->total;
-        $transaction->author = $order->author;
-        $transaction->name = sprintf( __( 'Refund Sales : %s' ), $order->code );
-        $transaction->transaction_account_id = $revenueAccount->id;
-        $transaction->operation = $accountConfiguration[ 'decrease' ];
-        $transaction->type = Transaction::TYPE_DIRECT;
-        $transaction->trigger_date = $order->created_at;
-        $transaction->status = TransactionHistory::STATUS_ACTIVE;
-        $transaction->order_id = $order->id;
-        $transaction->created_at = $order->created_at;
-        $transaction->updated_at = $order->updated_at;
-        $transaction->save();
-    }
-
-    /**
-     * @deprecated
-     */
-    public function handlePartiallyPaidTransactionRecording( $receivableAccountId, $order )
-    {
-        $receivableAccount = TransactionAccount::find( $receivableAccountId );
-
-        /**
-         * if the inventory account is not found, we'll stop the process
-         * there is no need to trigger an exception as the user might not need
-         * to use the accounting features.
-         */
-        if ( ! $receivableAccount instanceof TransactionAccount ) {
-            ns()->notification->create(
-                title: __( 'Accounting Misconfiguration' ),
-                identifier: 'accounting-orders-misconfiguration',
-                url: ns()->route( 'ns.dashboard.settings', [
-                    'settings' => 'accounting?tab=orders'
-                ]),
-                description: __( 'Unable to record accounting records for a partial order payment. Until the accounts are set, records are skipped.' )
-            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
-
-            return;
-        }
-
-        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-            'increase' => $account[ 'increase' ],
-            'decrease' => $account[ 'decrease' ],
-        ]))->toArray()[ $receivableAccount->category_identifier ];
-
-        /*
-        * We're pulling any existing transaction made on the TransactionHistory
-        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
-        */
-        $transaction = TransactionHistory::where( 'order_id', $order->id )
-            ->where( 'operation', $accountConfiguration[ 'increase' ] )
-            ->where( 'transaction_account_id', $receivableAccount->id )
-            ->firstOrNew();
-            
-        $transaction->value = $order->tendered;
-        $transaction->author = $order->author;
-        $transaction->name = sprintf( __( 'Partial Payment : %s' ), $order->code );
-        $transaction->transaction_account_id = $receivableAccount->id;
-        $transaction->operation = $accountConfiguration[ 'increase' ];
-        $transaction->type = Transaction::TYPE_DIRECT;
-        $transaction->trigger_date = $order->created_at;
-        $transaction->status = TransactionHistory::STATUS_ACTIVE;
-        $transaction->order_id = $order->id;
-        $transaction->created_at = $order->created_at;
-        $transaction->updated_at = $order->updated_at;
-        $transaction->save();
-    }
-
-    /**
-     * @deprecated
-     */
-    public function handleCOGSTransactionRecording( $order )
-    {
-        $cogsAccountId = ns()->option->get( 'ns_accounting_orders_cogs_account' );
-        
-        $costOfGoodsSoldAccount = TransactionAccount::find( $cogsAccountId );
-
-        /**
-         * if the inventory account is not found, we'll stop the process
-         * there is no need to trigger an exception as the user might not need
-         * to use the accounting features.
-         */
-        if ( ! $costOfGoodsSoldAccount instanceof TransactionAccount ) {
-            ns()->notification->create(
-                title: __( 'Accounting Misconfiguration' ),
-                identifier: 'accounting-misconfiguration',
-                url: ns()->route( 'ns.dashboard.settings', [
-                    'settings' => 'accounting?tab=orders'
-                ]),
-                description: __( 'Unable to records accounting transactions for COGS. Until the accounts are set, records are skipped.' )
-            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
-
-            return;
-        }
-
-        $accountConfiguration = collect( config( 'accounting.accounts' ) )->map( fn( $account ) => ([
-            'increase' => $account[ 'increase' ],
-            'decrease' => $account[ 'decrease' ],
-        ]))->toArray()[ $costOfGoodsSoldAccount->category_identifier ];
-
-        /*
-        * We're pulling any existing transaction made on the TransactionHistory
-        * then we'll update it accordingly. If that doensn't exist, we'll create a new one.
-        */
-        $transaction = new TransactionHistory;            
-        $transaction->value = $order->total_cogs;
-        $transaction->author = $order->author;
-        $transaction->name = sprintf( __( 'COGS : %s' ), $order->code );
-        $transaction->transaction_account_id = $costOfGoodsSoldAccount->id;
-        $transaction->operation = $accountConfiguration[ 'increase' ];
-        $transaction->type = Transaction::TYPE_DIRECT;
-        $transaction->trigger_date = $order->created_at;
-        $transaction->status = TransactionHistory::STATUS_ACTIVE;
-        $transaction->order_id = $order->id;
-        $transaction->created_at = $order->created_at;
-        $transaction->updated_at = $order->updated_at;
-        $transaction->save();
     }
 
     public function deleteProcurementTransactions( Procurement $procurement )
@@ -1144,7 +893,7 @@ class TransactionService
             'sub_category_id'   =>  $currentAssetResponse[ 'data' ][ 'account' ]->id,
         ]);
 
-        $procurementResponse = $this->createAccount([
+        $procurementPayableResponse = $this->createAccount([
             'name' => __( 'Procurement Payable' ),
             'category_identifier' => 'liabilities',
             'sub_category_id'   =>  $currentLiabilitiesResponse[ 'data' ][ 'account' ]->id,
@@ -1191,8 +940,8 @@ class TransactionService
             on: TransactionActionRule::RULE_PROCUREMENT_UNPAID,
             action: 'increase',
             account_id: $inventoryResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $currentLiabilitiesResponse[ 'data' ][ 'account' ]->id
+            do: 'increase',
+            offset_account_id: $procurementPayableResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
@@ -1201,6 +950,38 @@ class TransactionService
             account_id: $inventoryResponse[ 'data' ][ 'account' ]->id,
             do: 'decrease',
             offset_account_id: $procurementCashResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_PROCUREMENT_FROM_UNPAID_TO_PAID,
+            action: 'decrease',
+            account_id: $procurementPayableResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $procurementCashResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_PAID,
+            action: 'increase',
+            account_id: $salesResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_UNPAID,
+            action: 'increase',
+            account_id: $receivableResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $salesResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_REFUNDED,
+            action: 'increase',
+            account_id: $refundsResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
         );
     }
 
