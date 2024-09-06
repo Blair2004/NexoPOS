@@ -5,20 +5,20 @@ services:
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
-      - DB_HOST=db
-      - DB_PORT=3306
+      - DB_HOST=mariadb
+      - DB_PORT=3307
       - DB_DATABASE=nexopos
-      - DB_USERNAME=nexopos_user
-      - DB_PASSWORD=laravel
-      - APP_KEY=base64:z4AlJfYIEZAzsOXAlTDvTDVKENc6hS3dqcMhFJpkfl0=
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - DB_CONNECTION=mariadb
+#      - APP_KEY=base64:z4AlJfYIEZAzsOXAlTDvTDVKENc6hS3dqcMhFJpkfl0=
       - QUEUE_CONNECTION=redis
     ports:
       - "9000:9000"
     volumes:
       - nexo_data:/var/www/html:Z
     networks:
-      - laravel
-
+      - nexo
   webserver:
     image: nginx:latest
     container_name: nexopos_webserver
@@ -30,28 +30,26 @@ services:
     ports:
       - "8080:80"
     networks:
-      - laravel
+      - nexo
 
-  db:
+  mariadb:
     image: mariadb:latest
     container_name: laravel_db
     environment:
-      - MARIADB_USER=nexopos_user
-      - MARIADB_PASSWORD=laravel
-      - MARIADB_ROOT_PASSWORD=root
-      - MARIADB_DATABASE=nexopos
+      - MYSQL_USER=nexopos_user
+      - MYSQL_PASSWORD=laravel
+      - MYSQL_DATABASE=nexopos
+      - MYSQL_ROOT_PASSWORD=root
     volumes:
       - db_data:/var/lib/mysql
     ports:
       - "3307:3306"
     networks:
-      - laravel
+      - nexo
 
   redis:
     image: redis:alpine
     container_name: nexopos_redis
-    networks:
-      - laravel
 
   queue:
     image: nexo-pos:latest
@@ -61,14 +59,14 @@ services:
       - nexo_data:/var/www/html:Z
     depends_on:
       - redis
-#      - db
+      - mariadb
     networks:
-      - laravel
+      - nexo
 
 volumes:
   db_data:
   nexo_data:
-
-
 networks:
-  laravel:
+  nexo:
+    driver: bridge
+
