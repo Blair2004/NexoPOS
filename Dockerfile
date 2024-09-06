@@ -37,10 +37,14 @@ RUN composer install --optimize-autoloader --no-dev \
     && npm install \
     && npm run build
 
-# Generate APP_KEY and cache configurations
-RUN php artisan key:generate \
-    && php artisan optimize:clear
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
-# Expose port 8000 and start php-fpm server
+# Make the shell script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Expose port 9000 and start php-fpm server
 EXPOSE 9000
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 CMD ["php-fpm"]
