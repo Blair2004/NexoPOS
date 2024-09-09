@@ -56,10 +56,25 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 # Cache configurations and optimize the application
 php artisan config:cache
 php artisan optimize:clear
-php artisan storage:link
+php artisan storage:link || echo "Storage link already exists"
+
 
 # Run supervisor to manage the Laravel Queue
-supervisord -c /etc/supervisor/supervisord.conf
+supervisord -c -n /etc/supervisor/supervisord.conf
+
+# Wait for db to run
+# Read DB_HOST AND PORT FROM .env file
+DB_HOST=$(grep DB_HOST .env | cut -d '=' -f2)
+DB_PORT=$(grep DB_PORT .env | cut -d '=' -f2)
+while ! nc -z "$DB_HOST" "$DB_PORT"; do
+  echo "Waiting for the database to be available..."
+  sleep 1
+done
+echo "Database is up and running!"
+# If already installed, skip the installation
+php artisan queue:table || echo "Queue table already exists"
+php artisan migrate || echo "Migration failed"
+
 
 # Execute the original CMD
 exec "$@"

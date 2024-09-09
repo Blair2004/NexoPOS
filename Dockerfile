@@ -59,4 +59,4 @@ EXPOSE 9000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD ["sh", "-c", "cron && php-fpm"]
+CMD ["sh", "-c", "chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && cron && php-fpm"]
