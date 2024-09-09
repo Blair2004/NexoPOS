@@ -48,10 +48,18 @@ if [ "$DB_CONNECTION" = "sqlite" ]; then
   touch /var/www/html/database/database.sqlite
 fi
 
+# Testing if it will solve cache permission error
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Cache configurations and optimize the application
 php artisan config:cache
 php artisan optimize:clear
+php artisan storage:link
+
+# Run supervisor to manage the Laravel Queue
+supervisord -c /etc/supervisor/supervisord.conf
 
 # Execute the original CMD
 exec "$@"
