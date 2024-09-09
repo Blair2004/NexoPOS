@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
+    netcat-openbsd \
+    cron \
     supervisor \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
@@ -44,6 +46,11 @@ COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 # Configure Supervisor for Laravel Queues
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# COPY CRONTAB AND CONFIGURE CRON TAB
+COPY docker/crontab /etc/cron.d/crontab
+RUN chmod 0644 /etc/cron.d/crontab
+RUN crontab /etc/cron.d/crontab
+
 # Make the shell script executable
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
@@ -52,4 +59,4 @@ EXPOSE 9000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD ["php-fpm"]
+CMD ["sh", "-c", "cron && php-fpm"]
