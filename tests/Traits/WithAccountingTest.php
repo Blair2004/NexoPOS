@@ -120,7 +120,7 @@ trait WithAccountingTest
         $history = TransactionHistory::where( 'order_id', $order->id )->first();
         $rule = TransactionActionRule::where( 'id', $history->rule_id )->where( 'on', $ruleOn )->first();
 
-        $this->testOrdeRule( $order, $rule );
+        $this->testOrderRule( $order, $rule );
         $this->assertTrue( TransactionActionRule::findOrFail( $history->rule_id ) instanceof TransactionActionRule, __( 'No transaction action rule was found.' ) );
     }
 
@@ -130,7 +130,7 @@ trait WithAccountingTest
 
         $history = TransactionHistory::where( 'order_id', $order->id )->first();
 
-        $this->testOrdeRule( $order, $rule );
+        $this->testOrderRule( $order, $rule );
         $this->assertTrue( TransactionActionRule::findOrFail( $history->rule_id ) instanceof TransactionActionRule, __( 'No transaction action rule was found.' ) );
     }
 
@@ -143,18 +143,20 @@ trait WithAccountingTest
     {
         $rule = TransactionActionRule::where( 'on', TransactionActionRule::RULE_ORDER_COGS )->first();
 
-        [ $orderTransactionHistory, $orderTransactionHistoryOffset ] = $this->testOrdeRule( $order, $rule );
+        [ $orderTransactionHistory, $orderTransactionHistoryOffset ] = $this->testOrderRule( $order, $rule );
 
         $this->assertTrue( $orderTransactionHistory->value === $order->total_cogs, __( 'The total cogs doesnt match the transaction value' ) );
         $this->assertTrue( $orderTransactionHistoryOffset->value === $order->total_cogs, __( 'The total cogs doesnt match the transaction value' ) );
     }
 
-    private function testOrdeRule( $order, $rule )
+    private function testOrderRule( $order, $rule )
     {
         $orderTransactionHistory = TransactionHistory::where( 'transaction_account_id', $rule->account_id )
             ->where( 'order_id', $order->id )
             ->where( 'rule_id', $rule->id )
             ->first();
+
+        $this->assertTrue( $orderTransactionHistory instanceof TransactionHistory, __( 'No transaction history was found.' ) );
 
         $orderTransactionHistoryOffset = TransactionHistory::where( 'reflection_source_id', $orderTransactionHistory->id )
             ->where( 'is_reflection', true )
@@ -162,7 +164,6 @@ trait WithAccountingTest
             ->first();
 
         $this->assertTrue( $rule instanceof TransactionActionRule, __( 'No rule was found for this action.' ) );
-        $this->assertTrue( $orderTransactionHistory instanceof TransactionHistory, __( 'No transaction history was found.' ) );
         $this->assertTrue( $orderTransactionHistoryOffset instanceof TransactionHistory, __( 'No offset transaction history was found.' ) );
 
         return [ $orderTransactionHistory, $orderTransactionHistoryOffset ];
@@ -177,7 +178,7 @@ trait WithAccountingTest
             ->where( 'rule_id', $rule->id )
             ->first();
 
-        $this->testOrdeRule( $order, $rule );
+        $this->testOrderRule( $order, $rule );
         $this->assertTrue( TransactionActionRule::findOrFail( $history->rule_id ) instanceof TransactionActionRule, __( 'No transaction action rule was found.' ) );
     }
 }

@@ -1971,7 +1971,9 @@ trait WithOrderTest
     protected function attemptVoidOrder( Order $order )
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'GET', 'api/orders/' . $order->id . '/void' );
+            ->json( 'POST', 'api/orders/' . $order->id . '/void', [
+                'reason'    =>  __( 'For testing purposes' ),
+            ]);
 
         $response->assertStatus( 200 );
 

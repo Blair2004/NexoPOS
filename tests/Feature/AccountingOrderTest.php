@@ -30,6 +30,7 @@ class AccountingOrderTest extends TestCase
             ]
         ) );
 
+        $response->dump();
         $response->assertOk();
         $order  =   $response->json()[ 'data' ][ 'order' ];
         
@@ -48,7 +49,7 @@ class AccountingOrderTest extends TestCase
 
         $response = $this->attemptCreateOrder( $testService->prepareOrder() );
 
-        $response->dump();
+        $response->assertOk();
         $order  =   $response->json()[ 'data' ][ 'order' ];
         
         $this->attemptTestAccountingForOrder( Order::findOrFail( $order[ 'id' ] ) );

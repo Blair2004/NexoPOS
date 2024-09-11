@@ -805,7 +805,7 @@ class TransactionService
         $account    =   TransactionAccount::find( $rule->account_id );
         $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
-        $this->createOrderTransactionHistory(
+        $transactionHistory = $this->createOrderTransactionHistory(
             order: $order,
             operation: $operation,
             value: 'total',
@@ -816,6 +816,12 @@ class TransactionService
             ),
             rule: $rule
         );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The transaction has been recorded.' ),
+            'data'      =>  compact( 'transactionHistory' )
+        ];
     }
 
     /**
@@ -948,7 +954,7 @@ class TransactionService
                 ) );
             }
 
-            $this->createOrderTransactionHistory(
+            $transactionHistory = $this->createOrderTransactionHistory(
                 order: $order,
                 operation: $operation,
                 value: 'total_cogs',

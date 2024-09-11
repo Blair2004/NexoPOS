@@ -172,7 +172,7 @@ class OrdersService
          */
         $this->__deleteUntrackedProducts( $order, $fields[ 'products' ] );
 
-        $this->__saveAddressInformations( $order, $fields );
+        $addresses  =   $this->__saveAddressInformations( $order, $fields );
 
         /**
          * if the order has a valid payment
@@ -209,12 +209,10 @@ class OrdersService
          */
         $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
 
-        /**
-         * compute order total
-         */
-        $this->__computeOrderTotal( compact( 'order', 'subTotal', 'paymentStatus', 'totalPayments', 'orderProducts' ) );
-
         $order->save();
+
+        $order->order_addresses()->saveMany( $addresses );
+
         $order->load( 'payments' );
         $order->load( 'products' );
         $order->load( 'coupons' );
@@ -744,7 +742,7 @@ class OrdersService
      */
     private function __saveAddressInformations( $order, $fields )
     {
-        foreach ( ['shipping', 'billing'] as $type ) {
+        $addresses  =   collect( ['shipping', 'billing'])->map( function( $type ) use ( $order, $fields ) {
             /**
              * if the id attribute is already provided
              * we should attempt to find the related addresses
@@ -768,9 +766,13 @@ class OrdersService
             }
 
             $orderShipping->author = $order->author ?? Auth::id();
-            $orderShipping->order_id = $order->id;
-            $orderShipping->save();
-        }
+            // $orderShipping->order_id = $order->id;
+            // $orderShipping->save();
+
+            return $orderShipping;
+        });
+
+        return $addresses;
     }
 
     private function __saveOrderPayments( $order, $payments, $customer )
@@ -1038,17 +1040,8 @@ class OrdersService
      *
      * @param  array $data
      */
-    protected function __computeOrderTotal( $data )
+    protected function __computeOrderTotal( $order, $products )
     {
-        /**
-         * @var Order  $order
-         * @var float  $subTotal
-         * @var float  $totalPayments
-         * @var string $paymentStatus
-         * @var array $orderProducts
-         */
-        extract( $data );
-
         /**
          * increase the total with the
          * shipping fees and subtract the discounts
@@ -1066,7 +1059,7 @@ class OrdersService
             ->toFloat();
 
         $order->total_with_tax = $order->total;
-        $order->total_cogs  =   collect( $orderProducts )->sum( 'total_purchase_price' );
+        $order->total_cogs  =   collect( $products )->sum( 'cogs' );
 
         /**
          * compute change
@@ -1360,6 +1353,7 @@ class OrdersService
         $orderProduct[ 'product_type' ] = $orderProduct[ 'product_type' ] ?? 'product';
         $orderProduct[ 'rate' ] = $orderProduct[ 'rate' ] ?? 0;
         $orderProduct[ 'unitQuantity' ] = $productUnitQuantity;
+        $orderProduct[ 'cogs' ] = $productUnitQuantity->cogs ?? 0;
 
         return $orderProduct;
     }
@@ -1587,12 +1581,22 @@ class OrdersService
         }
 
         /**
+         * compute order total
+         */
+        $this->__computeOrderTotal(
+            order: $order,
+            products: $fields[ 'products' ]
+        );
+
+        /**
          * Some order needs to have their
          * delivery and process status updated
          * according to the order type
          */
         $this->updateDeliveryStatus( $order );
         $this->updateProcessStatus( $order );
+
+        $order->save();
 
         return $order;
     }

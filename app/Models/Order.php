@@ -192,6 +192,11 @@ class Order extends NsModel
         return $this->hasOne( OrderBillingAddress::class );
     }
 
+    public function order_addresses()
+    {
+        return $this->hasMany( OrderAddress::class );
+    }
+
     public function scopeFrom( $query, $range_starts )
     {
         return $query->where( 'created_at', '>=', $range_starts );
