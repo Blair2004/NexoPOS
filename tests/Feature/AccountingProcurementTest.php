@@ -15,44 +15,11 @@ use Tests\Traits\WithUnitTest;
 
 class AccountingProcurementTest extends TestCase
 {
-    use WithAuthentication, WithAccountingTest, WithProcurementTest, WithProviderTest, WithProductTest, WithCategoryTest, WithUnitTest, WithTaxTest;
-
-    public function testCreateAccounts()
-    {
-        $this->attemptAuthenticate();
-        $this->createDefaultAccounts();
-    }
-
-    public function testCreateTaxes()
-    {
-        $this->attemptAuthenticate();
-        $this->attemptCreateTaxGroup();
-        $this->attemptCreateTax();
-    }
-
-    public function testCreateUnits()
-    {
-        $this->attemptAuthenticate();
-        $this->attemptCreateUnitGroup();
-        $this->attemptCreateUnit();
-    }
-
-    public function testCreateCategory()
-    {
-        $this->attemptAuthenticate();
-        $this->attemptCreateCategory();
-    }
-
-    public function testCreateProduct()
-    {
-        $this->attemptAuthenticate();
-        $this->attemptSetProduct();
-    }
+    use WithAuthentication, WithAccountingTest, WithProcurementTest, WithProviderTest;
 
     public function testCreateProcurement()
     {
         $this->attemptAuthenticate();
-        $this->attemptCreateProvider();
         $response = $this->attemptCreateAnUnpaidProcurement();
         $procurement    =   Procurement::findOrFail( $response[ 'data' ][ 'procurement' ][ 'id' ] );
         $this->attemptTestAccountingForProcurement( $procurement );

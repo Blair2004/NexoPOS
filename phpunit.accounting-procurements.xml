@@ -7,7 +7,9 @@
     <testsuite name="Sequential-1">
       <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
+      <directory suffix="AccountingPreTest.php">./tests/Feature</directory>
       <directory suffix="AccountingProcurementTest.php">./tests/Feature</directory>
+      <directory suffix="AccountingOrderTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <coverage>

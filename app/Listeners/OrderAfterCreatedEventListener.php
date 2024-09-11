@@ -38,7 +38,6 @@ class OrderAfterCreatedEventListener
             new ProcessCustomerOwedAndRewardsJob( $event->order ),
             new TrackOrderCouponsJob( $event->order ),
             new ResolveInstalmentJob( $event->order ),
-            new ProcessAccountingRecordFromSaleJob( $event->order ),
             new ComputeDayReportJob,
         ] )->dispatch();
     }

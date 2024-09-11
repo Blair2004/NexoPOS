@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\DateCast;
 use App\Casts\FloatConvertCasting;
 use App\Classes\Hook;
+use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Services\DateService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -118,11 +119,16 @@ class Order extends NsModel
         'total_with_tax' => FloatConvertCasting::class,
         'total_coupons' => FloatConvertCasting::class,
         'total' => FloatConvertCasting::class,
+        'total_cogs' => FloatConvertCasting::class,
         'tax_value' => FloatConvertCasting::class,
         'products_tax_value' => FloatConvertCasting::class,
         'total_tax_value' => FloatConvertCasting::class,
         'tendered' => FloatConvertCasting::class,
         'change' => FloatConvertCasting::class,
+    ];
+
+    protected $dispatchableFieldsEvents  =  [
+        'payment_status'    =>  OrderAfterPaymentStatusChangedEvent::class
     ];
 
     public function products()

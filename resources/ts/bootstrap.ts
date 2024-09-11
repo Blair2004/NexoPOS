@@ -8,6 +8,7 @@ import * as RxJS from 'rxjs';
 import { default as moment } from 'moment';
 import { createApp } from "vue/dist/vue.esm-bundler";
 import { Popup } from "~/libraries/popup";
+import { ContextualPopup } from "./libraries/window";
 import { EventEmitter, HttpClient, SnackBar, State, FloatingNotice } from "./libraries/libraries";
 import FormValidation from "./libraries/form-validation";
 import Url from "./libraries/url";

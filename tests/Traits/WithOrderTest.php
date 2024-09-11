@@ -82,6 +82,28 @@ trait WithOrderTest
         return $responses;
     }
 
+    protected function attemptCompleteOrderPayment( Order $order )
+    {
+        $this->assertTrue( $order->payment_status === Order::PAYMENT_UNPAID );
+
+        $remainingPayment   =   [
+            'identifier'    =>  OrderPayment::PAYMENT_CASH,
+            'value'         =>  $order->total - $order->payments->sum( 'value' ),
+        ];
+
+        $response   =   $this->json( 'POST', 'api/orders/' . $order->id . '/payments', [
+            'payment'   =>  $remainingPayment,
+        ] );
+
+        $response->assertOk();
+
+        $order->refresh();
+
+        $this->assertTrue( $order->payment_status === Order::PAYMENT_PAID );
+
+        return $response;
+    }
+
     protected function attemptCreateOrderOnRegister( $data = [] )
     {
         RegisterHistory::truncate();
@@ -1946,7 +1968,21 @@ trait WithOrderTest
         return $response->json();
     }
 
-    protected function attemptDeleteOrder()
+    protected function attemptVoidOrder( Order $order )
+    {
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/orders/' . $order->id . '/void' );
+
+        $response->assertStatus( 200 );
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $response, $order );
+    }
+
+    protected function attemptTestDeleteOrder()
     {
         /**
          * @var TestService
@@ -2197,7 +2233,7 @@ trait WithOrderTest
         unset( $testService, $customer, $data, $response, $orderData, $order, $orderService, $totalPayments );
     }
 
-    protected function attemptVoidOrder()
+    protected function attemptTestVoidOrder()
     {
         /**
          * @var TestService
@@ -3089,6 +3125,16 @@ trait WithOrderTest
         } )->filter( function ( $product ) {
             return $product[ 'quantity' ] > 0;
         } );
+    }
+
+    public function attemptDeleteOrder( Order $order )
+    {
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', 'api/orders/' . $order->id );
+
+        $response->assertStatus( 200 );
+
+        $this->assertTrue( Order::find( $order->id ) === null, __( 'The order hasn\'t been deleted.' ) );
     }
 
     public function attemptDeleteOrderAndCheckProductHistory()

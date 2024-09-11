@@ -5,6 +5,7 @@ namespace Tests\Traits;
 use App\Classes\Currency;
 use App\Models\ActiveTransactionHistory;
 use App\Models\DashboardDay;
+use App\Models\Order;
 use App\Models\Procurement;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
@@ -70,12 +71,13 @@ trait WithAccountingTest
 
         $procurementTransactionHistory = TransactionHistory::where( 'transaction_account_id', $rule->account_id )
             ->where( 'procurement_id', $procurement->id )
+            ->where( 'rule_id', $rule->id )
             ->firstOrFail();
 
         $procurementTransactionHistoryOffset = TransactionHistory::where( 'reflection_source_id', $procurementTransactionHistory->id )
             ->where( 'is_reflection', true )
             ->where( 'transaction_account_id', $rule->offset_account_id )
-            ->firstOrFail();
+            ->first();
 
         $this->assertTrue( $procurementTransactionHistory instanceof TransactionHistory, __( 'No transaction history was found.' ) );
         $this->assertTrue( $procurementTransactionHistoryOffset instanceof TransactionHistory, __( 'No offset transaction history was found.' ) );
@@ -104,5 +106,78 @@ trait WithAccountingTest
         $response->assertOk();
 
         return $response->json();
+    }
+
+    public function attemptTestAccountingForOrder( $order )
+    {
+        $order = $order instanceof Order ? $order : Order::findOrFail( $order );
+        $ruleOn = match( $order->payment_status ) {
+            Order::PAYMENT_UNPAID => TransactionActionRule::RULE_ORDER_UNPAID,
+            Order::PAYMENT_PAID => TransactionActionRule::RULE_ORDER_PAID,
+            default => null,
+        };
+
+        $history = TransactionHistory::where( 'order_id', $order->id )->first();
+        $rule = TransactionActionRule::where( 'id', $history->rule_id )->where( 'on', $ruleOn )->first();
+
+        $this->testOrdeRule( $order, $rule );
+        $this->assertTrue( TransactionActionRule::findOrFail( $history->rule_id ) instanceof TransactionActionRule, __( 'No transaction action rule was found.' ) );
+    }
+
+    public function attemptTestAccountingForVoidedOrder( $order, $rule )
+    {
+        $rule = TransactionActionRule::where( 'on', $rule )->first();
+
+        $history = TransactionHistory::where( 'order_id', $order->id )->first();
+
+        $this->testOrdeRule( $order, $rule );
+        $this->assertTrue( TransactionActionRule::findOrFail( $history->rule_id ) instanceof TransactionActionRule, __( 'No transaction action rule was found.' ) );
+    }
+
+    public function attemptTestAccountingForDeletedOrder( $order )
+    {
+        $this->assertTrue( TransactionHistory::where( 'order_id', $order->id )->count() === 0, __( 'Transaction history was found after the order was deleted.' ) );
+    }
+
+    public function attemptTestAccountingForOrderCogs( $order )
+    {
+        $rule = TransactionActionRule::where( 'on', TransactionActionRule::RULE_ORDER_COGS )->first();
+
+        [ $orderTransactionHistory, $orderTransactionHistoryOffset ] = $this->testOrdeRule( $order, $rule );
+
+        $this->assertTrue( $orderTransactionHistory->value === $order->total_cogs, __( 'The total cogs doesnt match the transaction value' ) );
+        $this->assertTrue( $orderTransactionHistoryOffset->value === $order->total_cogs, __( 'The total cogs doesnt match the transaction value' ) );
+    }
+
+    private function testOrdeRule( $order, $rule )
+    {
+        $orderTransactionHistory = TransactionHistory::where( 'transaction_account_id', $rule->account_id )
+            ->where( 'order_id', $order->id )
+            ->where( 'rule_id', $rule->id )
+            ->first();
+
+        $orderTransactionHistoryOffset = TransactionHistory::where( 'reflection_source_id', $orderTransactionHistory->id )
+            ->where( 'is_reflection', true )
+            ->where( 'transaction_account_id', $rule->offset_account_id )
+            ->first();
+
+        $this->assertTrue( $rule instanceof TransactionActionRule, __( 'No rule was found for this action.' ) );
+        $this->assertTrue( $orderTransactionHistory instanceof TransactionHistory, __( 'No transaction history was found.' ) );
+        $this->assertTrue( $orderTransactionHistoryOffset instanceof TransactionHistory, __( 'No offset transaction history was found.' ) );
+
+        return [ $orderTransactionHistory, $orderTransactionHistoryOffset ];
+    }
+
+    public function attemptTestAccountingForUnpaidToPaidOrder( $order )
+    {
+        $rule   =   TransactionActionRule::where( 'on', TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID )
+            ->first();
+
+        $history    =   TransactionHistory::where( 'order_id', $order->id )
+            ->where( 'rule_id', $rule->id )
+            ->first();
+
+        $this->testOrdeRule( $order, $rule );
+        $this->assertTrue( TransactionActionRule::findOrFail( $history->rule_id ) instanceof TransactionActionRule, __( 'No transaction action rule was found.' ) );
     }
 }

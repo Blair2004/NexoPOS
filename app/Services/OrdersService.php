@@ -1037,7 +1037,6 @@ class OrdersService
      * on provided data
      *
      * @param  array $data
-     * @return array $order
      */
     protected function __computeOrderTotal( $data )
     {
@@ -1582,7 +1581,6 @@ class OrdersService
         $order->products_tax_value = $this->currencyService->define( $fields[ 'products_tax_value' ] ?? 0 )->toFloat();
         $order->total_tax_value = $this->currencyService->define( $fields[ 'total_tax_value' ] ?? 0 )->toFloat();
         $order->code = $order->code ?: ''; // to avoid generating a new code
-        $order->save();
 
         if ( $order->code === '' ) {
             $order->code = $this->generateOrderCode( $order ); // to avoid generating a new code
@@ -1595,8 +1593,6 @@ class OrdersService
          */
         $this->updateDeliveryStatus( $order );
         $this->updateProcessStatus( $order );
-
-        $order->save();
 
         return $order;
     }

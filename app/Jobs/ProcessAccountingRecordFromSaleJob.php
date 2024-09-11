@@ -10,7 +10,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 
-class ProcessAccountingRecordFromSaleJob implements ShouldQueue
+/**
+ * @deprecated ? 
+*/
+ class ProcessAccountingRecordFromSaleJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, NsSerialize, Queueable;
 
@@ -31,6 +34,7 @@ class ProcessAccountingRecordFromSaleJob implements ShouldQueue
      */
     public function handle( TransactionService $transactionService )
     {
-        // $transactionService->recordTransactionFromSale( $this->order );
+        $transactionService->handleSaleTransaction( $this->order );
+        $transactionService->handleCogsFromSale( $this->order );
     }
 }

@@ -51,7 +51,6 @@ trait WithProcurementTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'GET', 'api/procurements/' . $procurement_id . '/set-as-paid' );
 
-        $response->dump();
         $response->assertOk();
 
         return $response->json();

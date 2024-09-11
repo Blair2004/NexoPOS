@@ -26,6 +26,8 @@ import Tax from "./libraries/tax";
 import * as math from "mathjs"
 import nsPosLoadingPopupVue from "./popups/ns-pos-loading-popup.vue";
 import { nsAlertPopup, nsConfirmPopup, nsPromptPopup } from "./components/components";
+import nsPosShippingPopup from "./popups/ns-pos-shipping-popup.vue";
+import nsLayawayPopup from "./popups/ns-pos-layaway-popup.vue";
 
 
 /**
@@ -38,8 +40,9 @@ const nsPosOrderTypeButton      = (<any>window).nsPosOrderTypeButton = defineAsy
 const nsPosCustomersButton      = (<any>window).nsPosCustomersButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button.vue' ) );
 const nsPosResetButton          = (<any>window).nsPosResetButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button.vue' ) );
 const nsPosCashRegister         = (<any>window).nsPosCashRegister = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button.vue' ) );
-const nsLayawayPopup            = (<any>window).nsLayawayPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'layaway' + '-popup.vue' ) );
-const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'shipping' + '-popup.vue' ) );
+
+(<any>window).nsLayawayPopup = nsLayawayPopup;
+(<any>window).nsPosShippingPopup = nsPosShippingPopup;
 
 ( window as any ).CustomerQueue     =   CustomerQueue;
 ( window as any ).PaymentQueue      =   PaymentQueue;

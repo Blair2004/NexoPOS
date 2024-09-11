@@ -22,12 +22,12 @@ class DeleteOrderTest extends TestCase
     public function test_delete_order()
     {
         $this->attemptAuthenticate();
-        $this->attemptDeleteOrder();
+        $this->attemptTestDeleteOrder();
     }
 
     public function test_void_order()
     {
         $this->attemptAuthenticate();
-        $this->attemptVoidOrder();
+        $this->attemptTestVoidOrder();
     }
 }

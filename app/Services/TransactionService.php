@@ -240,9 +240,13 @@ class TransactionService
             TransactionActionRule::RULE_ORDER_REFUNDED => __( 'Order Refund' ),
             TransactionActionRule::RULE_ORDER_PARTIALLY_PAID => __( 'Order Partially Paid' ),
             TransactionActionRule::RULE_ORDER_PARTIALLY_REFUNDED => __( 'Order Partially Refunded' ),
+            TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID => __( 'Order From Unpaid To Paid' ),
+            TransactionActionRule::RULE_ORDER_PAID_VOIDED => __( 'Paid Order Voided' ),
+            TransactionActionRule::RULE_ORDER_UNPAID_VOIDED => __( 'Unpaid Order Voided' ),
             TransactionActionRule::RULE_EXPENSE_CREATED => __( 'Expense Created' ),
             TransactionActionRule::RULE_PRODUCT_DAMAGED => __( 'Product Damaged' ),
             TransactionActionRule::RULE_PRODUCT_RETURNED => __( 'Product Returned' ),
+            TransactionActionRule::RULE_ORDER_COGS => __( 'Order COGS' ),
         ];
     }
 
@@ -371,6 +375,11 @@ class TransactionService
         TransactionHistory::where( 'order_id', $order->id )->delete();
     }
 
+    /**
+     * Will trigger all transactions history
+     * @param TransactionHistory $transactionHistory
+     * @return array
+     */
     public function triggerTransactionHistory( TransactionHistory $transactionHistory )
     {
         if ( $transactionHistory->status === TransactionHistory::STATUS_PENDING ) {
@@ -392,6 +401,9 @@ class TransactionService
 
     /**
      * Will trigger for not recurring transaction
+     * @param Transaction $transaction
+     * @return array
+     * @throws NotAllowedException
      */
     public function triggerTransaction( Transaction $transaction ): array
     {
@@ -420,6 +432,11 @@ class TransactionService
         ];
     }
 
+    /**
+     * Will provide all transactions linked to a specific account
+     * @param int $id the account id
+     * @return Collection
+     */
     public function getAccountTransactions( $id )
     {
         $accountType = $this->getTransaction( $id );
@@ -429,7 +446,7 @@ class TransactionService
 
     /**
      * Will prepare a transaction history based on a transaction reference
-     *
+     * @param Transaction $transaction
      * @return array
      */
     public function prepareTransactionHistoryRecord( Transaction $transaction )
@@ -447,6 +464,9 @@ class TransactionService
 
     /**
      * Will prepare a transaction history based on a transaction reference
+     * @param Transaction $transaction
+     * @return TransactionHistory
+     * @throws NotFoundException
      */
     public function iniTransactionHistory( Transaction $transaction )
     {
@@ -478,6 +498,12 @@ class TransactionService
         return $history;
     }
 
+    /**
+     * Will record a transaction history based on a transaction reference
+     * @param Transaction $transaction
+     * @return Collection | bool
+     * @throws ModelNotFoundException
+     */
     public function recordTransactionHistory( $transaction )
     {
         if ( ! empty( $transaction->group_id ) ) {
@@ -708,6 +734,245 @@ class TransactionService
         $transactionHistory->save();
     }
 
+    /**
+     * Will record a transaction resulting from a paid procurement
+     * @param Order $order
+     * @return void
+     */
+    public function handleUnpaidToPaidSaleTransaction( Order $order )
+    {
+        $rule   =   TransactionActionRule::where( 'on', TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID )->first();
+
+        if ( ! $rule instanceof TransactionActionRule ) {
+            ns()->notification->create(
+                title: __( 'Accounting Rule Misconfiguration' ),
+                identifier: 'accounting-unpaid-to-paid-order-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf(
+                    __( 'Unable to record accounting transactions for the order %s which was initially unpaid and then paid. No rule was set for this.' ),
+                    $order->code
+                )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+        }
+
+        $accounts   =   config( 'accounting' )[ 'accounts' ];
+        $account    =   TransactionAccount::find( $rule->account_id );
+        $offset     =   TransactionAccount::find( $rule->offset_account_id );
+        $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
+
+        if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {
+            throw new NotFoundException( sprintf(
+                __( 'The account or the offset from the rule #%s is not found.' ),
+                $rule->id
+            ) );
+        }
+
+        $this->createOrderTransactionHistory(
+            order: $order,
+            operation: $operation,
+            value: 'total',
+            name: sprintf(
+                __( 'Order: %s' ),
+                $order->code
+            ),
+            account: $account,
+            rule: $rule
+        );
+    }
+
+    /**
+     * Will record a transaction resulting from a paid procurement
+     * @param Order $order
+     * @return void
+     */
+    public function handlePaidToVoidSaleTransaction( Order $order )
+    {
+        $rule   =   TransactionActionRule::where( 'on', TransactionActionRule::RULE_ORDER_PAID_VOIDED )->first();
+
+        if ( ! $rule instanceof TransactionActionRule ) {
+            ns()->notification->create(
+                title: __( 'Accounting Rule Misconfiguration' ),
+                identifier: 'accounting-paid-to-void-order-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf( 
+                    __( 'Unable to record accounting transactions for the order %s which was initially paid and then voided. No rule was set for this.' ),
+                    $order->code
+                )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+        }
+
+        $accounts   =   config( 'accounting' )[ 'accounts' ];
+        $account    =   TransactionAccount::find( $rule->account_id );
+        $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
+
+        $this->createOrderTransactionHistory(
+            order: $order,
+            operation: $operation,
+            value: 'total',
+            account: $account,
+            name: sprintf(
+                __( 'Void Order: %s' ),
+                $order->code
+            ),
+            rule: $rule
+        );
+    }
+
+    /**
+     * Will record a transaction using an order, rule and other informations
+     * @param Order $order
+     * @param string $operation
+     * @param string $name
+     * @param TransactionAccount $account
+     * @param TransactionActionRule $rule
+     * @param string $value
+     * @return TransactionHistory
+     */
+    private function createOrderTransactionHistory( Order $order, $operation, $name, $account, $rule, $value )
+    {
+        $transactionHistory = new TransactionHistory;
+        $transactionHistory->name  =   $name;
+        $transactionHistory->value     =   $order->$value;
+        $transactionHistory->author     =   $order->author;
+        $transactionHistory->transaction_account_id    =   $account->id;
+        $transactionHistory->operation   =   $operation;
+        $transactionHistory->type   =   Transaction::TYPE_DIRECT;
+        $transactionHistory->trigger_date  =   $order->created_at;
+        $transactionHistory->status    =   TransactionHistory::STATUS_ACTIVE;
+        $transactionHistory->order_id   =   $order->id;
+        $transactionHistory->rule_id = $rule->id;
+        $transactionHistory->save();
+
+        return $transactionHistory;
+    }
+
+    /**
+     * Will record a transaction for any created order
+     * @param Order $order
+     * @return array
+     */
+    public function handleSaleTransaction( Order $order )
+    {
+        $ruleOn   =   match( $order->payment_status ) {
+            Order::PAYMENT_PAID => TransactionActionRule::RULE_ORDER_PAID,
+            Order::PAYMENT_UNPAID => TransactionActionRule::RULE_ORDER_UNPAID,
+            Order::PAYMENT_REFUNDED => TransactionActionRule::RULE_ORDER_REFUNDED,
+            Order::PAYMENT_PARTIALLY => TransactionActionRule::RULE_ORDER_PARTIALLY_PAID,
+        };
+
+        $accounts   =   config( 'accounting' )[ 'accounts' ];
+        $rule   =   TransactionActionRule::where( 'on', $ruleOn )->first();
+
+        if ( ! $rule instanceof TransactionActionRule ) {
+            ns()->notification->create(
+                title: __( 'Accounting Rule Misconfiguration' ),
+                identifier: 'accounting-sale-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf(
+                    __( 'Unable to record accounting transactions for the order %s. No rule was set for this.' ),
+                    $order->code
+                )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+
+            return [
+                'status'    =>  'error',
+                'message'   =>  __( 'The transaction has been skipped.' ),
+            ];
+        }
+
+        $account    =   TransactionAccount::find( $rule->account_id );
+        $offset     =   TransactionAccount::find( $rule->offset_account_id );
+        $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
+
+        if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {
+            throw new NotFoundException( sprintf(
+                __( 'The account or the offset from the rule #%s is not found.' ),
+                $rule->id
+            ) );
+        }
+
+        $transactionHistory = $this->createOrderTransactionHistory(
+            order: $order,
+            operation: $operation,
+            value: 'total',
+            name: sprintf(
+                __( 'Order: %s' ),
+                $order->code
+            ),
+            account: $account,
+            rule: $rule
+        );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The transaction has been recorded.' ),
+            'data'      =>  compact( 'transactionHistory' )
+        ];
+    }
+
+    /**
+     * Will record COGS transaction for paid order
+     * @param Order $order
+     * @return array
+     */
+    public function handleCogsFromSale( Order $order )
+    {
+        $rule = TransactionActionRule::where( 'on', TransactionActionRule::RULE_ORDER_COGS )->first();
+        $accounts   =   config( 'accounting' )[ 'accounts' ];
+
+        if ( ! $rule instanceof TransactionActionRule ) {
+            return ns()->notification->create(
+                title: __( 'Accounting Rule Misconfiguration' ),
+                identifier: 'accounting-sale-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf(
+                    __( 'Unable to record COGS transactions for order %s. Until the accounts rules are set, records are skipped.' ),
+                    $order->code
+                )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+        }
+
+        /**
+         * We'll only take this into account
+         * if the order is paid.
+         */
+        if ( $order->payment_status === Order::PAYMENT_PAID ) {
+            $account    =   TransactionAccount::find( $rule->account_id );
+            $offset     =   TransactionAccount::find( $rule->offset_account_id );
+            $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
+
+            if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {
+                throw new NotFoundException( sprintf(
+                    __( 'The account or the offset from the rule #%s is not found.' ),
+                    $rule->id
+                ) );
+            }
+
+            $this->createOrderTransactionHistory(
+                order: $order,
+                operation: $operation,
+                value: 'total_cogs',
+                name: sprintf(
+                    __( 'COGS: %s' ),
+                    $order->code
+                ),
+                account: $account,
+                rule: $rule
+            );
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The COGS transaction has been recorded.' ),
+                'data'      =>  compact( 'transactionHistory' )
+            ];
+        }
+    }
+
+    /**
+     * Provides the configuration for the transaction
+     * @param Transaction $transaction
+     * @return array
+     */
     public function getConfigurations( Transaction $transaction )
     {
         $recurringFields = new ReccurringTransactionFields( $transaction );
@@ -796,6 +1061,11 @@ class TransactionService
         return compact( 'recurrence', 'configurations', 'warningMessage' );
     }
 
+    /**
+     * Deletes procurement transactions
+     * @param Procurement $procurement
+     * @return array
+     */
     public function deleteProcurementTransactions( Procurement $procurement )
     {
         $transactionHistories = TransactionHistory::where('procurement_id', $procurement->id)
@@ -812,6 +1082,10 @@ class TransactionService
         ];
     }
 
+    /**
+     * Clear and create default accounts.
+     * @return array
+     */
     public function createDefaultAccounts()
     {
         $this->clearAllAccounts();
@@ -823,6 +1097,10 @@ class TransactionService
         ];
     }
 
+    /**
+     * Will clear all accounts
+     * @return array
+     */
     public function clearAllAccounts()
     {
         TransactionAccount::truncate();
@@ -836,7 +1114,13 @@ class TransactionService
         ];
     }
 
-    public function getAccountNumber( $accountName, $currentName ) 
+    /**
+     * Returns the account number using an account name and a current name
+     * @param string $accountName
+     * @param string $currentName
+     * @return string
+     */
+    public function getAccountNumber( string $accountName, string $currentName ) 
     {
         $accounts   =   config( 'accounting' )[ 'accounts' ];
         $account    =   $accounts[ $accountName ];
@@ -850,6 +1134,11 @@ class TransactionService
         throw new NotAllowedException( __( 'Invalid account name' ) );
     }
 
+    /**
+     * Creates all sub accounts 
+     * and creates accounting rules.
+     * @return void
+     */
     public function createAllSubAccounts()
     {
         $fixedAssetResposne = $this->createAccount([
@@ -961,6 +1250,25 @@ class TransactionService
         );
 
         $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_UNPAID,
+            action: 'increase',
+            account_id: $receivableResponse[ 'data' ][ 'account' ]->id,
+            do: 'increase',
+            offset_account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id
+        );
+
+        /**
+         * @todo: test missing
+         */
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID,
+            action: 'decrease',
+            account_id: $receivableResponse[ 'data' ][ 'account' ]->id,
+            do: 'increase',
+            offset_account_id: $salesResponse[ 'data' ][ 'account' ]->id
+        );
+        
+        $this->setTransactionActionRule(
             on: TransactionActionRule::RULE_ORDER_PAID,
             action: 'increase',
             account_id: $salesResponse[ 'data' ][ 'account' ]->id,
@@ -969,22 +1277,48 @@ class TransactionService
         );
 
         $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_UNPAID,
-            action: 'increase',
-            account_id: $receivableResponse[ 'data' ][ 'account' ]->id,
+            on: TransactionActionRule::RULE_ORDER_REFUNDED,
+            action: 'decrease',
+            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
             do: 'decrease',
             offset_account_id: $salesResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
-            on: TransactionActionRule::RULE_ORDER_REFUNDED,
+            on: TransactionActionRule::RULE_ORDER_COGS,
             action: 'increase',
-            account_id: $refundsResponse[ 'data' ][ 'account' ]->id,
+            account_id: $cogsResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $inventoryResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_PAID_VOIDED,
+            action: 'decrease',
+            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $salesResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_UNPAID_VOIDED,
+            action: 'decrease',
+            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
             do: 'decrease',
             offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
         );
     }
 
+    /**
+     * Sets transaction rule
+     * @param string $on
+     * @param string $action
+     * @param int $account_id
+     * @param string $do
+     * @param int $offset_account_id
+     * @param TransactionActionRule $transactionActionRule
+     * @return array
+     */
     public function setTransactionActionRule( string $on, string $action, int $account_id, string $do, int $offset_account_id, TransactionActionRule $transactionActionRule = null )
     {
         $transactionActionRule      =    $transactionActionRule instanceof TransactionActionRule ? $transactionActionRule : new TransactionActionRule;
@@ -1001,6 +1335,11 @@ class TransactionService
         ];
     }
 
+    /**
+     * Saves transactions rule.
+     * @param array $rule
+     * @return array
+     */
     public function saveTransactionRule( $rule )
     {
         $transactionRule = TransactionActionRule::find( $rule[ 'id' ] ?? 0 );
@@ -1020,6 +1359,12 @@ class TransactionService
         ];
     }
 
+    /**
+     * Provides transaction account using category identifiery
+     * @param string $category_identifier
+     * @param int $exclude_id
+     * @return array
+     */
     public function getTransactionAccountFromCategory( $category_identifier, $exclude_id = null )
     {
         $query = TransactionAccount::where( 'category_identifier', $category_identifier );

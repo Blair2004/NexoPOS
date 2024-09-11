@@ -117,6 +117,7 @@ export default {
             POS.setPaymentActive( payment );
         },
         closePopup() {
+            console.log( this.popup );
             this.popup.close();
             POS.selectedPaymentType.next( null );
         },
