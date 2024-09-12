@@ -10,6 +10,7 @@
       <directory suffix="AccountingPreTest.php">./tests/Feature</directory>
       <directory suffix="AccountingProcurementTest.php">./tests/Feature</directory>
       <directory suffix="AccountingOrderTest.php">./tests/Feature</directory>
+      <directory suffix="AccountingExpenseTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <coverage>

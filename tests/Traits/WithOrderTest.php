@@ -91,9 +91,7 @@ trait WithOrderTest
             'value'         =>  $order->total - $order->payments->sum( 'value' ),
         ];
 
-        $response   =   $this->json( 'POST', 'api/orders/' . $order->id . '/payments', [
-            'payment'   =>  $remainingPayment,
-        ] );
+        $response   =   $this->json( 'POST', 'api/orders/' . $order->id . '/payments', $remainingPayment );
 
         $response->assertOk();
 

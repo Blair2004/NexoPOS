@@ -243,10 +243,11 @@ class TransactionService
             TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID => __( 'Order From Unpaid To Paid' ),
             TransactionActionRule::RULE_ORDER_PAID_VOIDED => __( 'Paid Order Voided' ),
             TransactionActionRule::RULE_ORDER_UNPAID_VOIDED => __( 'Unpaid Order Voided' ),
-            TransactionActionRule::RULE_EXPENSE_CREATED => __( 'Expense Created' ),
+            TransactionActionRule::RULE_ORDER_COGS => __( 'Order COGS' ),
+            TransactionActionRule::RULE_EXPENSE_PAID => __( 'Paid Expense Is Created' ),
+            TransactionActionRule::RULE_EXPENSE_UNPAID => __( 'Unpaid Expense Is Created' ),
             TransactionActionRule::RULE_PRODUCT_DAMAGED => __( 'Product Damaged' ),
             TransactionActionRule::RULE_PRODUCT_RETURNED => __( 'Product Returned' ),
-            TransactionActionRule::RULE_ORDER_COGS => __( 'Order COGS' ),
         ];
     }
 
@@ -780,6 +781,45 @@ class TransactionService
         );
     }
 
+    public function handleUnpaidToVoidSaleTransaction( Order $order )
+    {
+        $rule   =   TransactionActionRule::where( 'on', TransactionActionRule::RULE_ORDER_UNPAID_VOIDED )->first();
+
+        if ( ! $rule instanceof TransactionActionRule ) {
+            ns()->notification->create(
+                title: __( 'Accounting Rule Misconfiguration' ),
+                identifier: 'accounting-unpaid-to-void-order-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf( 
+                    __( 'Unable to record accounting transactions for the order %s which was initially unpaid and then voided. No rule was set for this.' ),
+                    $order->code
+                )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+        }
+
+        $accounts   =   config( 'accounting' )[ 'accounts' ];
+        $account    =   TransactionAccount::find( $rule->account_id );
+        $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
+
+        $transactionHistory = $this->createOrderTransactionHistory(
+            order: $order,
+            operation: $operation,
+            value: 'total',
+            account: $account,
+            name: sprintf(
+                __( 'Void Order: %s' ),
+                $order->code
+            ),
+            rule: $rule
+        );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The transaction has been recorded.' ),
+            'data'      =>  compact( 'transactionHistory' )
+        ];
+    }
+
     /**
      * Will record a transaction resulting from a paid procurement
      * @param Order $order
@@ -1221,6 +1261,30 @@ class TransactionService
          */
         $cogsResponse = $this->createAccount([
             'name' => __( 'Sales COGS' ),
+            'category_identifier' => 'expenses',
+            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id
+        ]);
+
+        $cogsResponse = $this->createAccount([
+            'name' => __( 'Operating Expenses' ),
+            'category_identifier' => 'expenses',
+            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id
+        ]);
+
+        $cogsResponse = $this->createAccount([
+            'name' => __( 'Rent Expenses' ),
+            'category_identifier' => 'expenses',
+            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id
+        ]);
+
+        $cogsResponse = $this->createAccount([
+            'name' => __( 'Other Expenses' ),
+            'category_identifier' => 'expenses',
+            'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id
+        ]);
+
+        $cogsResponse = $this->createAccount([
+            'name' => __( 'Salaries And Wages' ),
             'category_identifier' => 'expenses',
             'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id
         ]);

@@ -30,7 +30,6 @@ class AccountingOrderTest extends TestCase
             ]
         ) );
 
-        $response->dump();
         $response->assertOk();
         $order  =   $response->json()[ 'data' ][ 'order' ];
         
@@ -73,7 +72,7 @@ class AccountingOrderTest extends TestCase
         $this->attemptTestAccountingForVoidedOrder( $order, TransactionActionRule::RULE_ORDER_PAID_VOIDED );
     }
 
-    public function testDeleteUnpaidOrder()
+    public function testVoidUnpaidOrder()
     {
         $this->attemptAuthenticate();
 
@@ -82,7 +81,11 @@ class AccountingOrderTest extends TestCase
          */
         $testService = app()->make( TestService::class );
 
-        $response = $this->attemptCreateOrder( $testService->prepareOrder() );
+        $response = $this->attemptCreateOrder( $testService->prepareOrder(
+            config: [
+                'payments'  =>  fn() => []
+            ]
+        ) );
 
         $order  =   $response->json()[ 'data' ][ 'order' ];
         $order  =   Order::findOrFail( $order[ 'id' ] );
@@ -100,7 +103,11 @@ class AccountingOrderTest extends TestCase
          */
         $testService = app()->make( TestService::class );
 
-        $response = $this->attemptCreateOrder( $testService->prepareOrder() );
+        $response = $this->attemptCreateOrder( $testService->prepareOrder(
+            config: [
+                'payments'  =>  fn() => []
+            ]
+        ) );
 
         $order  =   $response->json()[ 'data' ][ 'order' ];
         $order  =   Order::findOrFail( $order[ 'id' ] );
@@ -141,8 +148,6 @@ class AccountingOrderTest extends TestCase
 
         $order  =   $response->json()[ 'data' ][ 'order' ];
         $order  =   Order::findOrFail( $order[ 'id' ] );
-
-        $this->attemptCompleteOrderPayment( $order, OrderPayment::PAYMENT_CASH );
 
         $this->attemptTestAccountingForOrderCogs( $order );
     }

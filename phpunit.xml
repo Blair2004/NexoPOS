@@ -46,7 +46,6 @@
       <directory suffix="CreateRewardSystemTest.php">./tests/Feature</directory>
       <directory suffix="TestRewardSystem.php">./tests/Feature</directory>
       <directory suffix="ConfigureAccoutingTest.php">./tests/Feature</directory>
-      <directory suffix="ProcessExpensesTest.php">./tests/Feature</directory>
       <directory suffix="PerformStockAdjustmentTest.php">./tests/Feature</directory>
       <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory>
       <directory suffix="CreateRegisterTest.php">./tests/Feature</directory>

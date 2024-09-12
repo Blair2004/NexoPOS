@@ -72,5 +72,18 @@ class OrderAfterPaymentStatusChangedEventListener
         ) {
             $this->transactionService->handlePaidToVoidSaleTransaction( $event->order );
         }
+
+        /**
+         * Step: Order from Unpaid to Void
+         */
+        if (
+            in_array( $event->previous, [
+                Order::PAYMENT_UNPAID,
+                Order::PAYMENT_PARTIALLY
+            ] ) &&
+            $event->new === Order::PAYMENT_VOID
+        ) {
+            $this->transactionService->handleUnpaidToVoidSaleTransaction( $event->order );
+        }
     }
 }

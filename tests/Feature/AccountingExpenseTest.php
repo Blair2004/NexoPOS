@@ -15,7 +15,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 
-class ProcessExpensesTest extends TestCase
+class AccountingExpenseTest extends TestCase
 {
     use WithAuthentication, WithFaker;
 
