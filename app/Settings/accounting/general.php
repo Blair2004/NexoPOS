@@ -11,4 +11,13 @@ return [
         description: __( 'Assign accounts that are likely to be used for creating direct, scheduled or recurring expenses.' ),
         options: $accounts[ 'expenses' ],
     ),
+    FormInput::searchSelect(
+        label: __( 'Default Offset Account' ),
+        name: 'ns_accounting_default_paid_expense_offset_account',
+        value: ns()->option->get( 'ns_accounting_default_paid_expense_offset_account' ),
+        description: __( 'Assign the default account to be used as an offset account for paid expenses transactions.' ),
+        props: TransactionAccountCrud::getFormConfig(),
+        component: 'nsCrudForm',
+        options: $accounts[ 'assets' ],
+    )
 ];

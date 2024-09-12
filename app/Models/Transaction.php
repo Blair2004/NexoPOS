@@ -61,6 +61,8 @@ class Transaction extends NsModel
 
     const TYPE_DIRECT = 'ns.direct-transaction';
 
+    const TYPE_INDIRECT = 'ns.indirect-transaction';
+
     protected static function boot()
     {
         parent::boot();

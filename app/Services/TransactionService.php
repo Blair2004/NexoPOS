@@ -60,7 +60,20 @@ class TransactionService
         $subAccount = TransactionAccount::find( $transactionHistory->transaction_account_id );
 
         if ( $subAccount instanceof TransactionAccount ) {
-            $counterAccount = TransactionAccount::find( $rule->offset_account_id );
+            /**
+             * We'll try to retreive the offset account. THis might depends on wether the 
+             * transaction history results from a direct transaction or an indirect transaction.
+             */
+            if ( $transactionHistory->transaction->type === Transaction::TYPE_INDIRECT ) {
+                $counterAccount = TransactionAccount::find( $rule->offset_account_id );
+            } else {
+                $counterAccount = TransactionAccount::find( ns()->option->get( 'ns_accounting_default_paid_expense_offset_account' ) );
+            }
+
+            // This will display an error if the offset account is not set.
+            if ( ! $counterAccount instanceof TransactionAccount ) {
+                throw new NotFoundException( __( 'The offset account is not found.' ) );
+            }
 
             $operation  =   $accounts[ $counterAccount->category_identifier ][ $rule->do ];
 
@@ -244,8 +257,6 @@ class TransactionService
             TransactionActionRule::RULE_ORDER_PAID_VOIDED => __( 'Paid Order Voided' ),
             TransactionActionRule::RULE_ORDER_UNPAID_VOIDED => __( 'Unpaid Order Voided' ),
             TransactionActionRule::RULE_ORDER_COGS => __( 'Order COGS' ),
-            TransactionActionRule::RULE_EXPENSE_PAID => __( 'Paid Expense Is Created' ),
-            TransactionActionRule::RULE_EXPENSE_UNPAID => __( 'Unpaid Expense Is Created' ),
             TransactionActionRule::RULE_PRODUCT_DAMAGED => __( 'Product Damaged' ),
             TransactionActionRule::RULE_PRODUCT_RETURNED => __( 'Product Returned' ),
         ];
@@ -412,6 +423,7 @@ class TransactionService
             Transaction::TYPE_DIRECT,
             Transaction::TYPE_ENTITY,
             Transaction::TYPE_SCHEDULED,
+            Transaction::TYPE_INDIRECT,
         ] ) ) {
             throw new NotAllowedException( __( 'This transaction type can\'t be triggered.' ) );
         }
@@ -882,7 +894,7 @@ class TransactionService
         $transactionHistory->author     =   $order->author;
         $transactionHistory->transaction_account_id    =   $account->id;
         $transactionHistory->operation   =   $operation;
-        $transactionHistory->type   =   Transaction::TYPE_DIRECT;
+        $transactionHistory->type   =   Transaction::TYPE_INDIRECT;
         $transactionHistory->trigger_date  =   $order->created_at;
         $transactionHistory->status    =   TransactionHistory::STATUS_ACTIVE;
         $transactionHistory->order_id   =   $order->id;

@@ -98,7 +98,7 @@
         p {
             @apply text-primary;
             & > a {
-                @apply text-info-primary;
+                @apply text-info-secondary;
                 &:hover {
                     @apply underline;
                 }

@@ -26,8 +26,6 @@ class TransactionActionRule extends Model
     const RULE_ORDER_FROM_UNPAID_TO_PAID = 'order_from_unpaid_to_paid';
     const RULE_ORDER_PAID_VOIDED = 'order_paid_voided';
     const RULE_ORDER_UNPAID_VOIDED = 'order_unpaid_voided';
-    const RULE_EXPENSE_UNPAID = 'expense_created';
-    const RULE_EXPENSE_PAID = 'expense_paid';
 
     protected $table = 'nexopos_transactions_actions_rules';
 }
