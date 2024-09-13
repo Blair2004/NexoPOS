@@ -1210,7 +1210,7 @@ class CrudService
     {
         $className = get_called_class();
         $instance = new $className;
-        $permissionType = $entry === null ? 'create' : 'update';
+        $permissionType = $entry === null ? 'read' : 'update';
 
         /**
          * if a permission for creating or updating is

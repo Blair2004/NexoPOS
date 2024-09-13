@@ -31,31 +31,50 @@ class CrudTest extends TestCase
                 [
                     'slug' => 'crud/{namespace}',
                     'verb' => 'get',
+                    'permissions' => [ 'read' ],
                 ], [
                     'slug' => 'crud/{namespace}/columns',
                     'verb' => 'get',
+                    'permissions' => [ 'read' ],
                 ], [
                     'slug' => 'crud/{namespace}/config/{id?}',
                     'verb' => 'get',
+                    'permissions' => [ 'read' ],
                 ], [
                     'slug' => 'crud/{namespace}/form-config/{id?}',
                     'verb' => 'get',
+                    'permissions' => [ 'create', 'update' ],
                 ], [
                     'slug' => 'crud/{namespace}/export',
                     'verb' => 'post',
+                    'permissions' => [ 'read' ],
                 ], [
                     'slug' => 'crud/{namespace}/bulk-actions',
                     'verb' => 'post',
+                    'permissions' => [ 'update' ],
                 ], [
                     'slug' => 'crud/{namespace}/can-access',
                     'verb' => 'post',
+                    'permissions' => [ 'read' ],
                 ], [
                     'slug' => 'crud/{namespace}/{id}',
                     'verb' => 'delete',
+                    'permissions' => [ 'delete' ],
                 ],
             ];
 
             foreach ( $apiRoutes as $config ) {
+
+                /**
+                 * Check if the user has the necessary permissions
+                 * to proceed with the test.
+                 */
+                foreach ( $config[ 'permissions' ] as $permission ) {
+                    if ( ! ns()->allowedTo( $object->getPermission( $permission ) ) ) {
+                        continue;
+                    }
+                }
+
                 if ( isset( $config[ 'slug' ] ) ) {
                     $slug = str_replace( '{namespace}', $object->getNamespace(), $config[ 'slug' ] );
 
