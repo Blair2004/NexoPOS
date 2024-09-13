@@ -9,9 +9,6 @@ use App\Models\TransactionAccount;
 use App\Services\Helper;
 use App\Services\SettingsPage;
 
-/**
- * @deprecated ?
- */
 class AccountingSettings extends SettingsPage
 {
     const IDENTIFIER = 'accounting';

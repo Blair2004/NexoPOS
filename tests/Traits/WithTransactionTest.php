@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 trait WithTransactionTest
 {
+    /**
+     * @deprecated
+     */
     protected function attemptCreateTransactionAccount()
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
@@ -43,6 +46,9 @@ trait WithTransactionTest
         $response->assertStatus( 200 );
     }
 
+    /**
+     * @deprecated
+     */
     protected function attemptCreateTransaction()
     {
         /**

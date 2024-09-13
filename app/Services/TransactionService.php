@@ -49,33 +49,44 @@ class TransactionService
         ];
     }
 
-    public function reflectTransactionFromRule( TransactionHistory $transactionHistory, TransactionActionRule $rule )
+    public function reflectTransactionFromRule( TransactionHistory $transactionHistory, TransactionActionRule | null $rule )
     {
         if ( $transactionHistory->is_reflection ) {
             throw new NotAllowedException( __( 'This transaction history is already a reflection.' ) );
         }
 
-        $accounts   =   config( 'accounting' )[ 'accounts' ];
+        if ( $transactionHistory->type === Transaction::TYPE_INDIRECT && ! $rule instanceof TransactionActionRule ) {
+            throw new NotAllowedException( __( 'To reflect an indirect transaction, a transaction action rule must be provided.' ) );
+        }
 
+        $accounts   =   config( 'accounting' )[ 'accounts' ];
         $subAccount = TransactionAccount::find( $transactionHistory->transaction_account_id );
 
         if ( $subAccount instanceof TransactionAccount ) {
             /**
-             * We'll try to retreive the offset account. THis might depends on wether the 
-             * transaction history results from a direct transaction or an indirect transaction.
+             * If the transaction history is not attached
+             * to not transaction created manually, it's an indirect transcation
+             * and should therefore rely on the rule to determine the account
              */
-            if ( $transactionHistory->transaction->type === Transaction::TYPE_INDIRECT ) {
+            if ( $transactionHistory->transaction === null ) {
                 $counterAccount = TransactionAccount::find( $rule->offset_account_id );
-            } else {
+                $operation  =   $accounts[ $counterAccount->category_identifier ][ $rule->do ];
+            } else if ( $transactionHistory->transaction instanceof Transaction && in_array( $transactionHistory->transaction->type, [ 
+                Transaction::TYPE_DIRECT, 
+                Transaction::TYPE_ENTITY, 
+                Transaction::TYPE_RECURRING, 
+                Transaction::TYPE_SCHEDULED 
+            ] ) ) {
+                $operation  =   $transactionHistory->operation === 'debit' ? 'credit' : 'debit';
                 $counterAccount = TransactionAccount::find( ns()->option->get( 'ns_accounting_default_paid_expense_offset_account' ) );
+            } else {
+                throw new NotAllowedException( __( 'Invalid transaction history provided for reflection.' ) );
             }
 
             // This will display an error if the offset account is not set.
             if ( ! $counterAccount instanceof TransactionAccount ) {
                 throw new NotFoundException( __( 'The offset account is not found.' ) );
             }
-
-            $operation  =   $accounts[ $counterAccount->category_identifier ][ $rule->do ];
 
             if ( $counterAccount instanceof TransactionAccount ) {
                 $counterTransaction = new TransactionHistory;
@@ -1229,6 +1240,18 @@ class TransactionService
             'category_identifier' => 'expenses'
         ]);
 
+        /**
+         * -----------------------------------
+         * Assets Sub Accounts
+         * -----------------------------------
+         */
+        $expensesCash = $this->createAccount([
+            'name' => __( 'Expenses Cash' ),
+            'category_identifier' => 'assets',
+            'sub_category_id' => $currentAssetResponse[ 'data' ][ 'account' ]->id
+        ]);
+
+
         // -----------------------------------------------------------
         // Procurement Accounts
         // -----------------------------------------------------------
@@ -1389,6 +1412,11 @@ class TransactionService
             do: 'decrease',
             offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
         );
+
+        /**
+         * We'll now assign the default offset account for paid expenses
+         */
+        ns()->option->set( 'ns_accounting_default_paid_expense_offset_account', $expensesCash[ 'data' ][ 'account' ]->id );
     }
 
     /**
