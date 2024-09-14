@@ -249,11 +249,11 @@ class OrdersService
             /**
              * delete previous instalments
              */
-            $order->instalments->each( fn( $instalment ) => $instalment->delete() );
+            $order->instalments()->delete();
 
             $tracked = [];
 
-            foreach ( $instalments as $instalment ) {
+            return collect( $instalments )->map( function( $instament ) {
                 $newInstalment = new OrderInstalment;
 
                 if ( isset( $instalment[ 'paid' ] ) && $instalment[ 'paid' ] ) {
@@ -282,7 +282,7 @@ class OrdersService
                 $newInstalment->paid = $instalment[ 'paid' ] ?? false;
                 $newInstalment->date = Carbon::parse( $instalment[ 'date' ] )->toDateTimeString();
                 $newInstalment->save();
-            }
+            });
         }
     }
 
@@ -766,8 +766,6 @@ class OrdersService
             }
 
             $orderShipping->author = $order->author ?? Auth::id();
-            // $orderShipping->order_id = $order->id;
-            // $orderShipping->save();
 
             return $orderShipping;
         });
