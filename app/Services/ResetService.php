@@ -99,17 +99,21 @@ class ResetService
          * as this is a reserved key for the system, we can safely delete it
          * but excluding some options provided in an array
          */
-        Option::where( 'key', 'LIKE', 'ns_%' )->whereNotIn( 'key', [
-            'ns_store_name',
-            'ns_store_email',
-            'ns_date_format',
-            'ns_datetime_format',
-            'ns_currency_precision',
-            'ns_currency_iso',
-            'ns_currency_symbol',
-            'enabled_modules',
-            'ns_pos_order_types',
-        ] )->delete();
+        Option::where( 'key', 'LIKE', 'ns_%' )
+            ->where( 'key', 'NOT LIKE', 'ns_pa_%' )
+            ->where( 'key', 'NOT LIKE', 'ns_gastro_%' )
+            ->where( 'key', 'NOT LIKE', 'ns-stocktransfers%' )
+            ->whereNotIn( 'key', [
+                'ns_store_name',
+                'ns_store_email',
+                'ns_date_format',
+                'ns_datetime_format',
+                'ns_currency_precision',
+                'ns_currency_iso',
+                'ns_currency_symbol',
+                'enabled_modules',
+                'ns_pos_order_types',
+            ] )->delete();
 
         return [
             'status' => 'success',
