@@ -102,6 +102,11 @@ class OrdersService
         }
 
         $customer = $this->__customerIsDefined( $fields );
+
+        /**
+         * Building the products. This ensure to links the orinal
+         * products alongs with cogs and other details.
+         */
         $fields[ 'products' ] = $this->__buildOrderProducts( $fields['products'] );
 
         /**
@@ -163,7 +168,7 @@ class OrdersService
          * modification. All verifications on current order
          * should be made prior this section
          */
-        $order = $this->__initOrder( $fields, $paymentStatus, $order );
+        $order = $this->__initOrder( $fields, $paymentStatus, $order, $payments );
 
         /**
          * if we're editing an order. We need to loop the products in order
@@ -784,8 +789,6 @@ class OrdersService
         foreach ( $payments as $payment ) {
             $this->__saveOrderSinglePayment( $payment, $order );
         }
-
-        $order->tendered = $this->currencyService->define( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() )->toFloat();
     }
 
     /**
@@ -1511,7 +1514,7 @@ class OrdersService
         return $now->format( 'y' ) . $now->format( 'm' ) . $now->format( 'd' ) . '-' . str_pad( $count, 3, 0, STR_PAD_LEFT );
     }
 
-    protected function __initOrder( $fields, $paymentStatus, $order )
+    protected function __initOrder( $fields, $paymentStatus, $order, $payments )
     {
         /**
          * if the order is not provided as a parameter
@@ -1573,6 +1576,7 @@ class OrdersService
         $order->products_tax_value = $this->currencyService->define( $fields[ 'products_tax_value' ] ?? 0 )->toFloat();
         $order->total_tax_value = $this->currencyService->define( $fields[ 'total_tax_value' ] ?? 0 )->toFloat();
         $order->code = $order->code ?: ''; // to avoid generating a new code
+        $order->tendered = $this->currencyService->define( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() )->toFloat();
 
         if ( $order->code === '' ) {
             $order->code = $this->generateOrderCode( $order ); // to avoid generating a new code
