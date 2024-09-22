@@ -263,7 +263,7 @@
     "isEntry": true
   },
   "resources/ts/app.ts": {
-    "file": "assets/app-DBI8rlO-.js",
+    "file": "assets/app-CfKYwaoJ.js",
     "name": "app",
     "src": "resources/ts/app.ts",
     "isEntry": true,
@@ -475,7 +475,7 @@
     ]
   },
   "resources/ts/pages/dashboard/modules.vue": {
-    "file": "assets/modules-DG9vPG6t.js",
+    "file": "assets/modules-DeCcvIXY.js",
     "name": "modules",
     "src": "resources/ts/pages/dashboard/modules.vue",
     "isDynamicEntry": true,
@@ -607,7 +607,7 @@
     ]
   },
   "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue": {
-    "file": "assets/ns-pos-registers-button-BbKJ-ZQH.js",
+    "file": "assets/ns-pos-registers-button-DGJGdqar.js",
     "name": "ns-pos-registers-button",
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-registers-button.vue",
     "isDynamicEntry": true,
@@ -1052,7 +1052,7 @@
     ]
   },
   "resources/ts/pos-init.ts": {
-    "file": "assets/pos-init-CbvE-Nb7.js",
+    "file": "assets/pos-init-BE8QQAQG.js",
     "name": "pos-init",
     "src": "resources/ts/pos-init.ts",
     "isEntry": true,

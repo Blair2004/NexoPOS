@@ -23,7 +23,6 @@
                         <div>{{ history.description || __( 'Not Provided' ) }}</div>
                         <div class="flex md:-mx-1">
                             <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Type' ) }}</strong>: {{ history.label }}</div>
-                            <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Account' ) }}</strong>: {{ history.account_name }}</div>
                         </div>
                     </div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>

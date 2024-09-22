@@ -64,8 +64,6 @@
       <directory suffix="ComputeTaxesFromSales.php">./tests/Feature</directory>
       <directory suffix="CanSeeReportsTest.php">./tests/Feature</directory>
       <directory suffix="CustomerRouteTest.php">./tests/Feature</directory>
-    </testsuite>
-    <testsuite name="Sequantial-3">
       <directory suffix="CreateUserTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>

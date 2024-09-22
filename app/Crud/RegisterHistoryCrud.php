@@ -418,7 +418,7 @@ class RegisterHistoryCrud extends CrudService
     public function setActions( CrudEntry $entry ): CrudEntry
     {
         switch ( $entry->action ) {
-            case RegisterHistory::ACTION_SALE:
+            case RegisterHistory::ACTION_ORDER_PAYMENT:
                 $entry->{ '$cssClass' } = 'success border';
                 break;
             case RegisterHistory::ACTION_CASHING:

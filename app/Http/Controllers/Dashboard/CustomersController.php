@@ -211,7 +211,7 @@ class CustomersController extends DashboardController
 
     public function createCoupon()
     {
-        return $this->view( 'pages.dashboard.coupons.create', [
+        return View::make( 'pages.dashboard.coupons.create', [
             'title' => __( 'Create Coupon' ),
             'description' => __( 'helps you creating a coupon.' ),
             'src' => ns()->url( '/api/crud/ns.coupons/form-config' ),
@@ -223,7 +223,7 @@ class CustomersController extends DashboardController
 
     public function editCoupon( Coupon $coupon )
     {
-        return $this->view( 'pages.dashboard.coupons.create', [
+        return View::make( 'pages.dashboard.coupons.create', [
             'title' => __( 'Edit Coupon' ),
             'description' => __( 'Editing an existing coupon.' ),
             'src' => ns()->url( '/api/crud/ns.coupons/form-config/' . $coupon->id ),

@@ -25,6 +25,12 @@ class OrderPayment extends NsModel
 
     const PAYMENT_BANK = 'bank-payment';
 
+    const CASH_CHANGE = 'cash-change';
+
+    const ACCOUNT_CHANGE = 'account-change';
+
+    const VOUCHER_CHANGE = 'voucher-change';
+
     public function order()
     {
         return $this->belongsTo( Order::class, 'order_id', 'id' );

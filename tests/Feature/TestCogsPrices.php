@@ -212,7 +212,6 @@ class TestCogsPrices extends TestCase
             ->where( 'product_id', $product[ 'id' ] )
             ->first();
 
-        $response->dump();
         $procuredProduct = $response[ 'data' ][ 'products' ][0];
         $cogs = ns()->currency->define( $procuredProduct[ 'total_purchase_price' ] )->dividedBy( $procuredProduct[ 'quantity' ] )->toFloat();
 

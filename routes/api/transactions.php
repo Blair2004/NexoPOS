@@ -12,6 +12,7 @@ Route::get( 'transactions-accounts/sub-accounts', [ TransactionController::class
 Route::get( 'transactions-accounts/actions', [ TransactionController::class, 'getActions' ] )->where( 'id', '[0-9]+' );
 Route::get( 'transactions-accounts/{id}/history', [ TransactionController::class, 'getTransactionAccountsHistory' ] );
 Route::post( 'transactions', [ TransactionController::class, 'post' ] );
+Route::get( 'transactions/history/{history}/create-reflection', [ TransactionController::class, 'createReflection' ] )->where( 'id', '[0-9]+' );
 Route::post( 'transactions/rules', [ TransactionController::class, 'saveRule' ]);
 Route::get( 'transactions/rules', [ TransactionController::class, 'getRules' ]);
 Route::post( 'transactions-accounts', [ TransactionController::class, 'postTransactionsAccount' ] );

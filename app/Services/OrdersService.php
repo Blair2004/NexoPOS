@@ -123,7 +123,7 @@ class OrdersService
 
         /**
          * We'll now check the attached coupon
-         * and determin whether they can be processed.
+         * and determine whether they can be processed.
          */
         $this->__checkAttachedCoupons( $fields );
 
@@ -258,7 +258,7 @@ class OrdersService
 
             $tracked = [];
 
-            return collect( $instalments )->map( function( $instament ) {
+            return collect( $instalments )->map( function( $instalment ) use ( $order, &$tracked ) {
                 $newInstalment = new OrderInstalment;
 
                 if ( isset( $instalment[ 'paid' ] ) && $instalment[ 'paid' ] ) {
@@ -945,8 +945,8 @@ class OrdersService
         } )->sum() )->toFloat();
 
         $total = $this->currencyService->define(
-            $subtotal + $this->__getShippingFee( $fields )
-        )
+                $subtotal + $this->__getShippingFee( $fields )
+            )
             ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->toFloat();
@@ -2123,6 +2123,27 @@ class OrdersService
                 $order->code
             ),
         ];
+    }
+
+    /**
+     * @todo For now we'll change the order change as cash
+     * we'll late add support for two more change methods
+     * 
+     * @param Order $order
+     * @return void
+     */
+    public function saveOrderChange( Order $order )
+    {
+        // If we might assume only paid orders are passed here,
+        // we'll still need make sure to check the payment status
+        if ( $order->payment_status == Order::PAYMENT_PAID ) {
+            $orderPayment  =  new OrderPayment();
+            $orderPayment->order_id = $order->id;
+            $orderPayment->identifier = OrderPayment::CASH_CHANGE;
+            $orderPayment->value = $order->change;
+            $orderPayment->author = $order->author;
+            $orderPayment->save();
+        }
     }
 
     /**

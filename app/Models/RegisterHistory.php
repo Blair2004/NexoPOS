@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
+use App\Events\CashRegisterHistoryAfterDeletedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -32,7 +33,11 @@ class RegisterHistory extends NsModel
 
     const ACTION_CASHOUT = 'register-cash-out';
 
-    const ACTION_SALE = 'register-sale';
+    const ACTION_CASH_PAY = 'register-cash-pay';
+
+    const ACTION_BANK_PAY = 'register-bank-pay';
+
+    const ACTION_ORDER_PAYMENT = 'register-order-payment';
 
     const ACTION_DELETE = 'register-cash-delete';
 
@@ -47,7 +52,7 @@ class RegisterHistory extends NsModel
     const IN_ACTIONS = [
         self::ACTION_CASHING,
         self::ACTION_OPENING,
-        self::ACTION_SALE,
+        self::ACTION_CASH_PAY,
         self::ACTION_ACCOUNT_PAY,
     ];
 
@@ -62,6 +67,7 @@ class RegisterHistory extends NsModel
 
     protected $dispatchesEvents = [
         'created' => CashRegisterHistoryAfterCreatedEvent::class,
+        'deleted' => CashRegisterHistoryAfterDeletedEvent::class,
     ];
 
     public function order()

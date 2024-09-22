@@ -157,45 +157,6 @@ export default {
         download( module ) {
             document.location   =   '/dashboard/modules/download/' + module.namespace;
         },
-        /**
-         * @deprecated
-         */
-        performMigration: async ( module, migrations ) => {
-            const syncRunMigration  =   async ( file, version ) => {
-                return new Promise( ( resolve, reject ) => {
-                    nsHttpClient.post( `/api/modules/${module.namespace}/migrate`, { file, version })
-                        .subscribe({
-                            next: result => {
-                                resolve( true );
-                            },
-                            error: error => {
-                                return nsSnackBar.error( error.message, null, { duration: 4000 })
-                                    .subscribe();
-                            }
-                        })
-                })
-            }
-
-            /**
-             * if a migration is not provded
-             * let's check from the module definition
-             */
-            migrations      =   migrations || module.migrations;
-
-            if ( migrations ) {
-                module.migrating    =   true;
-
-                for( let version in migrations ) {
-                    for( let index = 0; index < migrations[ version ].length ; index++ ) {
-                        const file  =   migrations[ version ][ index ];
-                        await syncRunMigration( file, version );
-                    }
-                }
-
-                module.migrating     =   false;
-                module.migrated      =   true;
-            }
-        },
         truncateText(text, maxLength, replacement = '...' ) {
             let words = text.split(' ');
 

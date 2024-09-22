@@ -744,6 +744,12 @@ trait WithOrderTest
     public function attemptUpdateOrderOnRegister()
     {
         /**
+         * We should enable cash register
+         * feature in case it's disabled
+         */
+        ns()->option->set( 'ns_pos_registers_enabled', 'yes' );
+
+        /**
          * @var OrdersService $orderService
          */
         $orderService = app()->make( OrdersService::class );
@@ -826,22 +832,24 @@ trait WithOrderTest
 
         $response->assertStatus( 200 );
 
-        $response = json_decode( $response->getContent(), true );
+        $response = $response->json();
 
         $cashRegister->refresh();
         $previousValue = $cashRegister->balance;
 
         /**
-         * Step 2: We'll attempt to delete the product
+         * Step 2: We'll attempt to delete the order
          * We should check if the register balance has changed.
          */
-        $ordersService->deleteOrder( Order::find( $response[ 'data' ][ 'order' ][ 'id' ] ) );
+        $order  =   Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
+        $ordersService->deleteOrder( $order );
 
         $cashRegister->refresh();
 
-        $newAmount = ns()->currency->define( $previousValue )->subtractBy( $response[ 'data' ][ 'order' ][ 'total' ] )->toFloat();
+        $newAmount = ns()->currency->define( $previousValue )->subtractBy( $order->total )->toFloat();
 
         $this->assertEquals( (float) $cashRegister->balance, (float) $newAmount, 'The balance wasn\'t updated after deleting the order.' );
+        $this->assertTrue( RegisterHistory::where( 'order_id', $order->id ), 'The register history for the deleted order was not deleted along with the order.' );
 
         return $response;
     }
@@ -1440,13 +1448,18 @@ trait WithOrderTest
     protected function attemptOrderWithProductPriceMode()
     {
         $currency = app()->make( CurrencyService::class );
+
         $product = Product::withStockEnabled()
             ->notGrouped()
             ->notInGroup()
-            ->whereRelation( 'unit_quantities', 'quantity', '>', 10 )
-            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 10 ) )
             ->get()
             ->random();
+
+        /**
+         * We'll update the units quantity to be 100
+         */
+        $product->unit_quantities()->update( [ 'quantity' => 100 ] );
+
         $unit = $product->unit_quantities()->where( 'quantity', '>', 10 )->first();
         $subtotal = $unit->sale_price * 5;
         $shippingFees = 150;
@@ -1732,7 +1745,8 @@ trait WithOrderTest
             throw new Exception( 'No valid unit is available.' );
         }
 
-        $subtotal = $unitQuantity->sale_price * 5;
+        $productQuantity = 3;
+        $subtotal = $unitQuantity->sale_price * $productQuantity;
         $orderDetails = [
             'customer_id' => $this->attemptCreateCustomer()->id,
             'type' => [ 'identifier' => 'takeaway' ],
@@ -1756,8 +1770,8 @@ trait WithOrderTest
             'products' => [
                 [
                     'product_id' => $unitQuantity->product->id,
-                    'quantity' => 3,
-                    'unit_price' => 12,
+                    'quantity' => $productQuantity,
+                    'unit_price' => $unitQuantity->sale_price,
                     'unit_quantity_id' => $unitQuantity->id,
                 ],
             ],
@@ -1949,8 +1963,6 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $data );
-
-        $response->assertStatus( 200 );
 
         $response->assertStatus( 200 );
 
@@ -2203,6 +2215,8 @@ trait WithOrderTest
             ] );
 
         $order->load( [ 'products.product' ] );
+
+        $this->assertTrue( $order->products()->count() > 0, 'The order has no products.' ); 
 
         /**
          * We'll check if for each product on the order

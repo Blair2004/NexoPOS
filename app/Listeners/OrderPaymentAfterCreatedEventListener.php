@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderAfterPaymentCreatedEvent;
+use App\Jobs\TrackCashRegisterJob;
 
 class OrderPaymentAfterCreatedEventListener
 {
@@ -21,6 +22,9 @@ class OrderPaymentAfterCreatedEventListener
      */
     public function handle( OrderAfterPaymentCreatedEvent $event )
     {
-        // ...
+        TrackCashRegisterJob::dispatchIf(
+            ns()->option->get( 'ns_pos_registers_enabled', 'no' ) === 'yes',
+            $event->orderPayment
+        );
     }
 }

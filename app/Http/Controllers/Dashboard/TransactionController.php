@@ -13,6 +13,7 @@ use App\Crud\TransactionsHistoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
 use App\Services\DateService;
 use App\Services\Options;
 use App\Services\TransactionService;
@@ -59,6 +60,11 @@ class TransactionController extends DashboardController
     {
         if ( ! ns()->canPerformAsynchronousOperations() ) {
             session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Entity Transactions as Queues aren\'t configured correctly.' ) );
+        }
+
+        if  ( ns()->option->get( 'ns_accounting_expenses_accounts' ) === null ) {
+            session()->flash( 'infoMessage', __( 'You need to configure the expense accounts before creating a transaction.' ) );
+            return redirect()->route( 'ns.dashboard.settings', [ 'settings' => 'accounting' ] );
         }
 
         return View::make( 'pages.dashboard.transactions.create', [
@@ -246,5 +252,10 @@ class TransactionController extends DashboardController
         ns()->restrict([ 'nexopos.create.transactions-account' ] );
         
         return $this->transactionService->createDefaultAccounts();
+    }
+
+    public function createReflection( TransactionHistory $history )
+    {
+        return $this->transactionService->reflectTransactionFromRule( $history, null );
     }
 }

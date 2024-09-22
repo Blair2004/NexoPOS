@@ -102,14 +102,12 @@ class CashRegistersController extends DashboardController
             return $this->registersService->cashIng(
                 register: $register,
                 amount: $request->input( 'amount' ),
-                transaction_account_id: $request->input( 'transaction_account_id' ),
                 description: $request->input( 'description' )
             );
         } elseif ( $action === RegisterHistory::ACTION_CASHOUT ) {
             return $this->registersService->cashOut(
                 register: $register,
                 amount: $request->input( 'amount' ),
-                transaction_account_id: $request->input( 'transaction_account_id' ),
                 description: $request->input( 'description' )
             );
         }
@@ -148,14 +146,14 @@ class CashRegistersController extends DashboardController
                     ->select( [
                         'nexopos_registers_history.*',
                         'nexopos_registers_history.description as description',
-                        'nexopos_transactions_accounts.name as account_name',
+                        'nexopos_payments_types.label as payment_label',
                     ] )
                     ->with( 'order' )
                     ->leftJoin( 'nexopos_payments_types', 'nexopos_registers_history.payment_type_id', '=', 'nexopos_payments_types.id' )
-                    ->leftJoin( 'nexopos_transactions_accounts', 'nexopos_registers_history.transaction_account_id', '=', 'nexopos_transactions_accounts.id' )
                     ->where( 'nexopos_registers_history.id', '>=', $lastOpening->id );
 
                 $history = $historyRequest->get();
+
                 $history->each( function ( $session ) {
                     switch ( $session->action ) {
                         case RegisterHistory::ACTION_CASHING:
@@ -170,8 +168,9 @@ class CashRegistersController extends DashboardController
                         case RegisterHistory::ACTION_OPENING:
                             $session->label = __( 'Opening' );
                             break;
-                        case RegisterHistory::ACTION_SALE:
-                            $session->label = sprintf( __( '%s on %s' ), __( 'Sale' ), $session->order->code );
+                        case RegisterHistory::ACTION_ORDER_PAYMENT:
+                            // @todo it might be a custom label based on the payment
+                            $session->label = sprintf( __( '%s on %s' ), __( 'Sale' ), $session->order?->code ?: __( 'Unknown Order' ) );
                             break;
                         case RegisterHistory::ACTION_REFUND:
                             $session->label = __( 'Refund' );
@@ -184,15 +183,20 @@ class CashRegistersController extends DashboardController
 
                 $cashPayment = PaymentType::identifier( OrderPayment::PAYMENT_CASH )->first();
                 $totalOpening = $lastOpening->value;
-                $totalCashPayment = $history->where( 'action', RegisterHistory::ACTION_SALE )
-                    ->where( 'payment_type_id', $cashPayment->id ?? 0 )
-                    ->sum( 'value' );
 
-                $totalCashChange = $history->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
+                // we might need to pull based on payment type
+                // @todo this is no longer correct
+                // $totalCashPayment = $history->where( 'action', RegisterHistory::ACTION_CASH_PAY )
+                //     ->where( 'payment_type_id', $cashPayment->id ?? 0 )
+                //     ->sum( 'value' );
+                $totalCashPayment = 0;
+
+                // $totalCashChange = $history->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
+                $totalCashChange = 0;
 
                 $totalPaymentTypeSummary = $historyRequest
                     ->whereIn( 'action', [
-                        RegisterHistory::ACTION_SALE,
+                        RegisterHistory::ACTION_CASH_PAY,
                         RegisterHistory::ACTION_CASH_CHANGE,
                     ] )
                     ->select( [
@@ -209,7 +213,7 @@ class CashRegistersController extends DashboardController
                         if ( $group->action === RegisterHistory::ACTION_CASH_CHANGE ) {
                             $label = __( 'Cash Change' );
                             $color = 'error';
-                        } elseif ( $group->action === RegisterHistory::ACTION_SALE ) {
+                        } elseif ( $group->action === RegisterHistory::ACTION_CASH_PAY ) {
                             $color = 'success';
                         }
 

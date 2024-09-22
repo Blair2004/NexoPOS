@@ -75,14 +75,20 @@ class TestOtherGetRoutes extends TestCase
                     $response = $this->actingAs( $user )
                         ->json( 'GET', $uri );
 
-                    if ( $response->status() == 200 ) {
-                        if ( $uri === 'dashboard/pos' ) {
-                            $response->assertSee( 'ns-pos' ); // pos component
-                        } else {
-                            $response->assertSee( 'dashboard-body' );
-                        }
+                    if ( $response->status() === 302 ) {
+                        $this->assertTrue( in_array( $uri, [
+                            'dashboard/accounting/transactions/create'
+                        ] ) );
                     } else {
-                        throw new Exception( 'Not supported status detected.' );
+                        if ( $response->status() == 200 ) {
+                            if ( $uri === 'dashboard/pos' ) {
+                                $response->assertSee( 'ns-pos' ); // pos component
+                            } else {
+                                $response->assertSee( 'dashboard-body' );
+                            }
+                        } else {
+                            throw new Exception( 'Not supported status detected.' );
+                        }
                     }
                 }
             }

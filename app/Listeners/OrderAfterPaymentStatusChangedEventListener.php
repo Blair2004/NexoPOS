@@ -5,6 +5,8 @@ namespace App\Listeners;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Models\Order;
 use App\Models\Transaction;
+use App\Services\CashRegistersService;
+use App\Services\OrdersService;
 use App\Services\TransactionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -14,7 +16,7 @@ class OrderAfterPaymentStatusChangedEventListener
     /**
      * Create the event listener.
      */
-    public function __construct( public TransactionService $transactionService)
+    public function __construct( public TransactionService $transactionService, public OrdersService $ordersService )
     {
         //
     }
@@ -46,6 +48,7 @@ class OrderAfterPaymentStatusChangedEventListener
              */
             if ( $event->new === Order::PAYMENT_PAID ) {
                 $this->transactionService->handleCogsFromSale( $event->order );
+                $this->ordersService->saveOrderChange( $event->order );
             }
         }
 
@@ -61,6 +64,7 @@ class OrderAfterPaymentStatusChangedEventListener
             $event->new === Order::PAYMENT_PAID
         ) {
             $this->transactionService->handleUnpaidToPaidSaleTransaction( $event->order );
+            $this->ordersService->saveOrderChange( $event->order );
         }
 
         /**
