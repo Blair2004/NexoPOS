@@ -32,18 +32,16 @@ class RegisterHistory extends NsModel
     const ACTION_CASHING = 'register-cash-in';
 
     const ACTION_CASHOUT = 'register-cash-out';
-
-    const ACTION_CASH_PAY = 'register-cash-pay';
-
-    const ACTION_BANK_PAY = 'register-bank-pay';
-
-    const ACTION_ORDER_PAYMENT = 'register-order-payment';
-
+    
     const ACTION_DELETE = 'register-cash-delete';
 
-    const ACTION_REFUND = 'register-refund';
+    const ACTION_ORDER_PAYMENT = 'register-order-payment';
+    
+    const ACTION_ORDER_CHANGE = 'register-order-change';
 
-    const ACTION_CASH_CHANGE = 'register-change';
+    const ACTION_ORDER_VOUCHER = 'register-order-voucher';
+
+    const ACTION_REFUND = 'register-refund';
 
     const ACTION_ACCOUNT_PAY = 'register-account-pay';
 
@@ -52,7 +50,7 @@ class RegisterHistory extends NsModel
     const IN_ACTIONS = [
         self::ACTION_CASHING,
         self::ACTION_OPENING,
-        self::ACTION_CASH_PAY,
+        self::ACTION_ORDER_PAYMENT,
         self::ACTION_ACCOUNT_PAY,
     ];
 
@@ -61,7 +59,8 @@ class RegisterHistory extends NsModel
         self::ACTION_CLOSING,
         self::ACTION_CASHOUT,
         self::ACTION_DELETE,
-        self::ACTION_CASH_CHANGE,
+        self::ACTION_ORDER_CHANGE,
+        self::ACTION_ORDER_VOUCHER,
         self::ACTION_ACCOUNT_CHANGE,
     ];
 

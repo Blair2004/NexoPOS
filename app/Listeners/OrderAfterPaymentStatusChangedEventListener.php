@@ -16,8 +16,11 @@ class OrderAfterPaymentStatusChangedEventListener
     /**
      * Create the event listener.
      */
-    public function __construct( public TransactionService $transactionService, public OrdersService $ordersService )
-    {
+    public function __construct( 
+        public TransactionService $transactionService, 
+        public OrdersService $ordersService,
+        public CashRegistersService $cashRegistersService
+    ) {
         //
     }
 
@@ -48,7 +51,7 @@ class OrderAfterPaymentStatusChangedEventListener
              */
             if ( $event->new === Order::PAYMENT_PAID ) {
                 $this->transactionService->handleCogsFromSale( $event->order );
-                $this->ordersService->saveOrderChange( $event->order );
+                $this->cashRegistersService->saveOrderChange( $event->order );
             }
         }
 
@@ -64,7 +67,7 @@ class OrderAfterPaymentStatusChangedEventListener
             $event->new === Order::PAYMENT_PAID
         ) {
             $this->transactionService->handleUnpaidToPaidSaleTransaction( $event->order );
-            $this->ordersService->saveOrderChange( $event->order );
+            $this->cashRegistersService->saveOrderChange( $event->order );
         }
 
         /**

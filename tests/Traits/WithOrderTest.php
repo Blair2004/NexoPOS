@@ -170,7 +170,7 @@ trait WithOrderTest
             ->sum( 'value' ) )->toFloat();
 
         $totalChange = ns()->currency->define( RegisterHistory::where( 'register_id', $cashRegister->id )
-            ->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )
+            ->where( 'action', RegisterHistory::ACTION_ORDER_CHANGE )
             ->sum( 'value' ) )->toFloat();
 
         /**
@@ -191,7 +191,7 @@ trait WithOrderTest
          * We'll check if the register as a history for the change
          */
         $changeHistory = RegisterHistory::where( 'register_id', $cashRegister->id )
-            ->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )
+            ->where( 'action', RegisterHistory::ACTION_ORDER_CHANGE )
             ->first();
 
         if ( $response[ 'data' ][ 'order' ][ 'change' ] > 0 ) {
@@ -216,7 +216,7 @@ trait WithOrderTest
          * for the selected cash register.
          */
         $historyCount = RegisterHistory::where( 'register_id', $cashRegister->id )
-            ->where( 'action', RegisterHistory::ACTION_SALE )
+            ->where( 'action', RegisterHistory::ACTION_ORDER_PAYMENT )
             ->count();
 
         $this->assertTrue( $historyCount == count( $response[ 'data' ][ 'order' ][ 'payments' ] ), 'The cash register history is not accurate' );
@@ -293,7 +293,7 @@ trait WithOrderTest
 
         $totalSales = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
-            ->action( RegisterHistory::ACTION_SALE )->sum( 'value' );
+            ->action( RegisterHistory::ACTION_ORDER_PAYMENT )->sum( 'value' );
 
         $totalClosing = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
@@ -309,7 +309,7 @@ trait WithOrderTest
 
         $totalCashChange = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
-            ->action( RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
+            ->action( RegisterHistory::ACTION_ORDER_CHANGE )->sum( 'value' );
 
         $totalAccountChange = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
@@ -782,7 +782,7 @@ trait WithOrderTest
          * Making assertions
          */
         $cashRegisterHistory = RegisterHistory::where( 'register_id', $cashRegister->id )
-            ->where( 'action', RegisterHistory::ACTION_SALE )
+            ->where( 'action', RegisterHistory::ACTION_ORDER_PAYMENT )
             ->orderBy( 'id', 'desc' )->first();
 
         $this->assertTrue(

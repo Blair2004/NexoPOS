@@ -312,6 +312,37 @@ class CashRegistersService
         ];
     }
 
+    
+
+    /**
+     * @todo For now we'll change the order change as cash
+     * we'll late add support for two more change methods
+     * 
+     * @param Order $order
+     * @return void
+     */
+    public function saveOrderChange( Order $order )
+    {
+        // If we might assume only paid orders are passed here,
+        // we'll still need make sure to check the payment status
+        if ( $order->payment_status == Order::PAYMENT_PAID && $order->change > 0 ) {
+            $register = Register::find( $order->register_id );
+
+            if ( $register instanceof Register ) {
+                $registerHistory = new RegisterHistory;
+                $registerHistory->register_id = $register->id;
+                $registerHistory->order_id = $order->id;
+                $registerHistory->action = RegisterHistory::ACTION_ORDER_CHANGE;
+                $registerHistory->author = Auth::id();
+                $registerHistory->description = __( 'Change on cash' );
+                $registerHistory->balance_before = $register->balance;
+                $registerHistory->value = ns()->currency->define( $order->change )->toFloat();
+                $registerHistory->balance_after = ns()->currency->define( $register->balance )->subtractBy( $order->change )->toFloat();
+                $registerHistory->save();
+            }
+        }
+    }
+
     /**
      * returns human readable labels
      * for all register actions.
@@ -328,7 +359,7 @@ class CashRegistersService
             case RegisterHistory::ACTION_CASHOUT:
                 return __( 'Cash Out' );
                 break;
-            case RegisterHistory::ACTION_CASH_CHANGE:
+            case RegisterHistory::ACTION_ORDER_CHANGE:
                 return __( 'Change On Cash' );
                 break;
             case RegisterHistory::ACTION_ACCOUNT_CHANGE:

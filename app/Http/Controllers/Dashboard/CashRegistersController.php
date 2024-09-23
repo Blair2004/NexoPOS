@@ -212,8 +212,7 @@ class CashRegistersController extends DashboardController
 
                 $totalPaymentTypeSummary = $historyRequest
                     ->whereIn( 'action', [
-                        RegisterHistory::ACTION_CASH_PAY,
-                        RegisterHistory::ACTION_CASH_CHANGE,
+                        RegisterHistory::ACTION_ORDER_PAYMENT
                     ] )
                     ->select( [
                         DB::raw( 'SUM(value) as value' ),
@@ -226,15 +225,12 @@ class CashRegistersController extends DashboardController
                     ->map( function ( $group ) {
                         $color = 'info';
 
-                        if ( $group->action === RegisterHistory::ACTION_CASH_CHANGE ) {
-                            $label = __( 'Cash Change' );
-                            $color = 'error';
-                        } elseif ( $group->action === RegisterHistory::ACTION_CASH_PAY ) {
+                        if ( $group->action === RegisterHistory::ACTION_ORDER_PAYMENT ) {
                             $color = 'success';
                         }
 
                         return [
-                            'label' => sprintf( __( 'Total %s' ), $group->label ?: $label ),
+                            'label' => sprintf( __( 'Total %s' ), $group->label ),
                             'value' => $group->value,
                             'color' => $color,
                         ];

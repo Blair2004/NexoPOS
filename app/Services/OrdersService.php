@@ -26,6 +26,7 @@ use App\Models\CustomerCoupon;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderAddress;
+use App\Models\OrderChange;
 use App\Models\OrderCoupon;
 use App\Models\OrderInstalment;
 use App\Models\OrderPayment;
@@ -2108,28 +2109,6 @@ class OrdersService
                 $order->code
             ),
         ];
-    }
-
-    /**
-     * @todo For now we'll change the order change as cash
-     * we'll late add support for two more change methods
-     * 
-     * @param Order $order
-     * @return void
-     */
-    public function saveOrderChange( Order $order )
-    {
-        // If we might assume only paid orders are passed here,
-        // we'll still need make sure to check the payment status
-        if ( $order->payment_status == Order::PAYMENT_PAID ) {
-            // $orderPayment  =  new OrderPayment();
-            // $orderPayment->order_id = $order->id;
-            // $orderPayment->identifier = OrderPayment::PAYMENT_CASH;
-            // $orderPayment->type = OrderPayment::TYPE_CHANGE;
-            // $orderPayment->value = $order->change;
-            // $orderPayment->author = $order->author;
-            // $orderPayment->save();
-        }
     }
 
     /**
