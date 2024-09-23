@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Events\OrderCouponAfterCreatedEvent;
+use App\Events\OrderCouponAfterUpdatedEvent;
+use App\Events\OrderCouponBeforeCreatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -16,6 +19,16 @@ class OrderCoupon extends NsModel
     use HasFactory;
 
     protected $table = 'nexopos_' . 'orders_coupons';
+
+    public $dispatchesEvents = [
+        'created' => OrderCouponAfterCreatedEvent::class,
+        'updated' => OrderCouponAfterUpdatedEvent::class,
+    ];
+
+    public function order()
+    {
+        return $this->belongsTo( Order::class, 'order_id' );
+    }
 
     public function customerCoupon()
     {

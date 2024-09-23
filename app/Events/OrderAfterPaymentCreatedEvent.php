@@ -9,6 +9,9 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @deprecated
+ */
 class OrderAfterPaymentCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;

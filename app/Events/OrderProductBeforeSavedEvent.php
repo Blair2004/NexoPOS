@@ -7,6 +7,9 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @deprecated
+ */
 class OrderProductBeforeSavedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
@@ -16,7 +19,7 @@ class OrderProductBeforeSavedEvent
      *
      * @return void
      */
-    public function __construct( public OrderProduct $orderProduct, public $data )
+    public function __construct( public OrderProduct $orderProduct )
     {
         // ...
     }

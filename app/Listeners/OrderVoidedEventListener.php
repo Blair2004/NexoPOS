@@ -6,6 +6,9 @@ use App\Events\OrderVoidedEvent;
 use App\Jobs\UncountDeletedOrderForCashierJob;
 use App\Jobs\UncountDeletedOrderForCustomerJob;
 
+/**
+ * @deprecated
+ */
 class OrderVoidedEventListener
 {
     /**

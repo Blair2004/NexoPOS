@@ -3,10 +3,8 @@
 namespace App\Services;
 
 use App\Classes\Currency;
-use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerBeforeDeletedEvent;
-use App\Events\CustomerRewardAfterCouponIssuedEvent;
 use App\Events\CustomerRewardAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
@@ -377,8 +375,6 @@ class CustomerService
 
         $customerAccountHistory->save();
 
-        event( new AfterCustomerAccountHistoryCreatedEvent( $customerAccountHistory ) );
-
         return [
             'status' => 'success',
             'message' => __( 'The customer account has been updated.' ),
@@ -505,8 +501,6 @@ class CustomerService
 
                 $customerReward->points = abs( $customerReward->points - $customerReward->target );
                 $customerReward->save();
-
-                CustomerRewardAfterCouponIssuedEvent::dispatch( $customerCoupon );
             } else {
                 /**
                  * @var NotificationService

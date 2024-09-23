@@ -33,7 +33,6 @@ class OrderAfterCreatedEventListener
         Bus::chain( [
             new IncreaseCashierStatsJob( $event->order ),
             new ProcessCustomerOwedAndRewardsJob( $event->order ),
-            new TrackOrderCouponsJob( $event->order ),
             new ResolveInstalmentJob( $event->order ),
             new ComputeDayReportJob,
         ] )->dispatch();

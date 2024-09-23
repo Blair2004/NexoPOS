@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderCouponAfterCreatedEvent;
+use App\Jobs\TrackOrderCouponsJob;
 
 class OrderCouponAfterCreatedEventListener
 {
@@ -21,6 +22,6 @@ class OrderCouponAfterCreatedEventListener
      */
     public function handle( OrderCouponAfterCreatedEvent $event )
     {
-        // ...
+        TrackOrderCouponsJob::dispatch( $event->orderCoupon->order );
     }
 }

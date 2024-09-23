@@ -22,9 +22,6 @@ class OrderCouponBeforeCreatedEventListener
      */
     public function handle( OrderCouponBeforeCreatedEvent $event )
     {
-        $this->customerService->assignCouponUsage(
-            coupon: $event->coupon,
-            customer_id: $event->order->customer_id
-        );
+        // ...
     }
 }

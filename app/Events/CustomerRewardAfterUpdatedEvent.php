@@ -2,20 +2,23 @@
 
 namespace App\Events;
 
-use App\Models\RegisterHistory;
+use App\Models\CustomerReward;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CashRegisterHistoryBeforeDeletedEvent
+class CustomerRewardAfterUpdatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct( public RegisterHistory $registerHistory)
+    public function __construct( public CustomerReward $customerReward )
     {
         //
     }
@@ -28,7 +31,7 @@ class CashRegisterHistoryBeforeDeletedEvent
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel( 'channel-name' ),
+            new PrivateChannel('channel-name'),
         ];
     }
 }

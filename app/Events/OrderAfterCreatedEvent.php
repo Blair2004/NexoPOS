@@ -13,7 +13,7 @@ class OrderAfterCreatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct( public Order $order, public $fields )
+    public function __construct( public Order $order )
     {
         // ...
     }

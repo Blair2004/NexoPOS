@@ -17,8 +17,8 @@ class OrderCouponAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct( public OrderCoupon $orderCoupon, public Order $order )
+    public function __construct( public OrderCoupon $orderCoupon )
     {
-        // ...
+        $this->orderCoupon->load( 'order' );
     }
 }

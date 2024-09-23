@@ -4,29 +4,19 @@ namespace App\Services;
 
 use App\Classes\Currency;
 use App\Classes\Hook;
-use App\Events\BeforeSaveOrderTaxEvent;
 use App\Events\DueOrdersEvent;
 use App\Events\OrderAfterCheckPerformedEvent;
-use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderAfterInstalmentPaidEvent;
-use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterProductStockCheckedEvent;
 use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderAfterUpdatedDeliveryStatus;
-use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderAfterUpdatedProcessStatus;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforeDeleteProductEvent;
-use App\Events\OrderBeforePaymentCreatedEvent;
-use App\Events\OrderCouponAfterCreatedEvent;
-use App\Events\OrderCouponBeforeCreatedEvent;
 use App\Events\OrderProductAfterComputedEvent;
-use App\Events\OrderProductAfterSavedEvent;
-use App\Events\OrderProductBeforeSavedEvent;
 use App\Events\OrderRefundPaymentAfterCreatedEvent;
-use App\Events\OrderVoidedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Models\Coupon;
@@ -183,23 +173,25 @@ class OrdersService
          * if the order has a valid payment
          * method, then we can save that and attach it the ongoing order.
          */
+        $payments   =   [];
+
         if ( in_array( $paymentStatus, [
             Order::PAYMENT_PAID,
             Order::PAYMENT_PARTIALLY,
             Order::PAYMENT_UNPAID,
         ] ) ) {
-            $this->__saveOrderPayments( $order, $payments, $customer );
+            $payments   =   $this->__saveOrderPayments( $order, $payments, $customer );
         }
 
         /**
          * save order instalments
          */
-        $this->__saveOrderInstalments( $order, $fields[ 'instalments' ] ?? [] );
+        $instalments    =   $this->__saveOrderInstalments( $order, $fields[ 'instalments' ] ?? [] );
 
         /**
          * save order coupons
          */
-        $this->__saveOrderCoupons( $order, $fields[ 'coupons' ] ?? [] );
+        $coupons    =   $this->__saveOrderCoupons( $order, $fields[ 'coupons' ] ?? [] );
 
         /**
          * @var Order $order
@@ -212,27 +204,20 @@ class OrdersService
         /**
          * register taxes for the order
          */
-        $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
+        $taxes  =   $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
 
         $order->save();
 
         $order->order_addresses()->saveMany( $addresses );
+        $order->instalments()->saveMany( $instalments );
+        $order->coupons()->saveMany( $coupons );
+        $order->payments()->saveMany( $payments );
+        $order->products()->saveMany( $orderProducts );
+        $order->taxes()->saveMany( $taxes );
 
         $order->load( 'payments' );
         $order->load( 'products' );
         $order->load( 'coupons' );
-
-        /**
-         * let's notify when an
-         * new order has been placed
-         */
-        $isNew ?
-            event( new OrderAfterCreatedEvent( $order, $fields ) ) :
-            event( new OrderAfterUpdatedEvent(
-                newOrder: $order,
-                prevOrder: $previousOrder,
-                fields: $fields
-            ) );
 
         return [
             'status' => 'success',
@@ -283,12 +268,13 @@ class OrdersService
                 }
 
                 $newInstalment->amount = $instalment[ 'amount' ];
-                $newInstalment->order_id = $order->id;
                 $newInstalment->paid = $instalment[ 'paid' ] ?? false;
                 $newInstalment->date = Carbon::parse( $instalment[ 'date' ] )->toDateTimeString();
-                $newInstalment->save();
+                return $newInstalment;
             });
         }
+
+        return collect([]);
     }
 
     /**
@@ -391,19 +377,17 @@ class OrdersService
         foreach ( $coupons as $arrayCoupon ) {
             $coupon = Coupon::find( $arrayCoupon[ 'coupon_id' ] );
 
-            OrderCouponBeforeCreatedEvent::dispatch( $coupon, $order );
+            $customerCoupon = $this->customerService->assignCouponUsage(
+                customer_id: $order->customer_id,
+                coupon: $coupon
+            );
 
             $existingCoupon = OrderCoupon::where( 'order_id', $order->id )
                 ->where( 'coupon_id', $coupon->id )
                 ->first();
 
-            $customerCoupon = CustomerCoupon::where( 'coupon_id', $coupon->id )
-                ->where( 'customer_id', $order->customer_id )
-                ->firstOrFail();
-
             if ( ! $existingCoupon instanceof OrderCoupon ) {
                 $existingCoupon = new OrderCoupon;
-                $existingCoupon->order_id = $order->id;
                 $existingCoupon->coupon_id = $coupon[ 'id' ];
                 $existingCoupon->customer_coupon_id = $customerCoupon->id;
                 $existingCoupon->minimum_cart_value = $coupon[ 'minimum_cart_value' ] ?: 0;
@@ -428,34 +412,36 @@ class OrdersService
              */
             $order->total_coupons += $existingCoupon->value;
 
-            $existingCoupon->save();
-
-            OrderCouponAfterCreatedEvent::dispatch( $existingCoupon, $order );
-
-            $savedCoupons[] = $existingCoupon->id;
+            $savedCoupons[] = $existingCoupon;
         }
 
         /**
          * Every coupon that is not processed
          * should be deleted.
          */
-        OrderCoupon::where( 'order_id', $order->id )
-            ->whereNotIn( 'id', $savedCoupons )
-            ->delete();
+        if ( ! $order->wasRecentlyCreated ) {
+            OrderCoupon::where( 'order_id', $order->id )
+                ->whereNotIn( 'id', $savedCoupons )
+                ->delete();
+        }
+
+        return $savedCoupons;
     }
 
     /**
      * Will compute the taxes assigned to an order
      */
-    public function __saveOrderTaxes( Order $order, $taxes ): float
+    public function __saveOrderTaxes( Order $order, $taxes ): array
     {
-        /**
-         * if previous taxes had been registered,
-         * we need to clear them
-         */
-        OrderTax::where( 'order_id', $order->id )->delete();
+        if ( ! $order->wasRecentlyCreated ) {
+            /**
+             * if previous taxes had been registered,
+             * we need to clear them
+             */
+            OrderTax::where( 'order_id', $order->id )->delete();
+        }
 
-        $taxCollection = collect( [] );
+        $taxCollection = [];
 
         if ( count( $taxes ) > 0 ) {
             $percentages = collect( $taxes )->map( fn( $tax ) => $tax[ 'rate' ] );
@@ -473,19 +459,11 @@ class OrdersService
                 $orderTax->tax_id = $tax[ 'tax_id' ];
                 $orderTax->order_id = $order->id;
 
-                BeforeSaveOrderTaxEvent::dispatch( $orderTax, $tax );
-
-                $orderTax->save();
-
-                $taxCollection->push( $orderTax );
+                $taxCollection[]    =   $orderTax;
             }
         }
 
-        /**
-         * we'll increase the tax value and
-         * update the value on the order tax object
-         */
-        return $taxCollection->map( fn( $tax ) => $tax->tax_value )->sum();
+        return $taxCollection;
     }
 
     /**
@@ -496,23 +474,27 @@ class OrdersService
      */
     public function __registerTaxes( Order $order, $taxes )
     {
+        $orderTaxes  =   $this->__saveOrderTaxes( $order, $taxes );
+
         switch ( ns()->option->get( 'ns_pos_vat' ) ) {
             case 'products_vat':
                 $order->products_tax_value = $this->getOrderProductsTaxes( $order );
                 break;
             case 'flat_vat':
             case 'variable_vat':
-                $order->tax_value = Currency::define( $this->__saveOrderTaxes( $order, $taxes ) )->toFloat();
+                $order->tax_value = Currency::define( collect( $orderTaxes )->sum( 'tax_value' ) )->toFloat();
                 $order->products_tax_value = 0;
                 break;
             case 'products_variable_vat':
             case 'products_flat_vat':
-                $order->tax_value = Currency::define( $this->__saveOrderTaxes( $order, $taxes ) )->toFloat();
+                $order->tax_value = Currency::define( collect( $orderTaxes )->sum( 'tax_value' ) )->toFloat();
                 $order->products_tax_value = $this->getOrderProductsTaxes( $order );
                 break;
         }
 
         $order->total_tax_value = $order->tax_value + $order->products_tax_value;
+
+        return $orderTaxes;
     }
 
     /**
@@ -525,7 +507,7 @@ class OrdersService
      */
     public function __deleteUntrackedProducts( $order, $products )
     {
-        if ( $order instanceof Order ) {
+        if ( $order instanceof Order && ! $order->wasRecentlyCreated ) {
             $ids = collect( $products )
                 ->filter( fn( $product ) => isset( $product[ 'id' ] ) && isset( $product[ 'unit_id' ] ) )
                 ->map( fn( $product ) => $product[ 'id' ] . '-' . $product[ 'unit_id' ] )
@@ -780,6 +762,8 @@ class OrdersService
 
     private function __saveOrderPayments( $order, $payments, $customer )
     {
+        $payments   =   [];
+
         /**
          * As we're about to record new payments,
          * we first need to delete previous payments that
@@ -787,8 +771,10 @@ class OrdersService
          * order and only update them.
          */
         foreach ( $payments as $payment ) {
-            $this->__saveOrderSinglePayment( $payment, $order );
+            $payments[] = $this->__saveOrderSinglePayment( $payment, $order );
         }
+
+        return $payments;
     }
 
     /**
@@ -797,6 +783,7 @@ class OrdersService
      *
      * @param  array $payment
      * @return array
+     * @todo must be updated to records payment as __saveOrderSinglePayment no longer perform database operation
      */
     public function makeOrderSinglePayment( $payment, Order $order )
     {
@@ -843,6 +830,9 @@ class OrdersService
         $order->save();
         $order->refresh();
 
+        /**
+         * @todo we should trigger it after an event
+         */
         $this->refreshOrder( $order );
 
         return [
@@ -860,7 +850,7 @@ class OrdersService
      */
     private function __saveOrderSinglePayment( $payment, Order $order ): OrderPayment
     {
-        OrderBeforePaymentCreatedEvent::dispatch( $payment, $order->customer );
+        // OrderBeforePaymentCreatedEvent::dispatch( $payment, $order->customer );
 
         $orderPayment = isset( $payment[ 'id' ] ) ? OrderPayment::find( $payment[ 'id' ] ) : false;
 
@@ -883,13 +873,13 @@ class OrdersService
             );
         }
 
-        $orderPayment->order_id = $order->id;
+        // $orderPayment->order_id = $order->id;
         $orderPayment->identifier = $payment['identifier'];
         $orderPayment->value = $this->currencyService->define( $payment['value'] )->toFloat();
         $orderPayment->author = $order->author ?? Auth::id();
-        $orderPayment->save();
+        // $orderPayment->save();
 
-        OrderAfterPaymentCreatedEvent::dispatch( $orderPayment, $order );
+        // OrderAfterPaymentCreatedEvent::dispatch( $orderPayment, $order );
 
         return $orderPayment;
     }
@@ -1086,7 +1076,7 @@ class OrdersService
     /**
      * @param Order order instance
      * @param array<OrderProduct> array of products
-     * @return array [$total, $taxes, $order]
+     * @return array [$subTotal, $orderProducts, $order]
      */
     private function __saveOrderProducts( $order, $products )
     {
@@ -1111,7 +1101,7 @@ class OrdersService
              * this can be useful to allow injecting
              * data that can later on be compted.
              */
-            OrderProductBeforeSavedEvent::dispatch( $orderProduct, $product );
+            // OrderProductBeforeSavedEvent::dispatch( $orderProduct, $product );
 
             /**
              * We'll retreive the unit used for
@@ -1121,7 +1111,7 @@ class OrdersService
              */
             $unit = Unit::find( $product[ 'unit_id' ] );
 
-            $orderProduct->order_id = $order->id;
+            // $orderProduct->order_id = $order->id;
             $orderProduct->unit_quantity_id = $product[ 'unit_quantity_id' ];
             $orderProduct->unit_name = $product[ 'unit_name' ] ?? $unit->name;
             $orderProduct->unit_id = $product[ 'unit_id' ];
@@ -1177,7 +1167,7 @@ class OrdersService
 
             $this->computeOrderProduct( $orderProduct );
 
-            $orderProduct->save();
+            // $orderProduct->save();
 
             $subTotal = $this->currencyService->define( $subTotal )
                 ->additionateBy( $orderProduct->total_price )
@@ -1211,11 +1201,11 @@ class OrdersService
                     ->count() === 1;
 
                 if ( ! $stockHistoryExists ) {
-                    $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
+                    // $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
                 }
             }
 
-            event( new OrderProductAfterSavedEvent( $orderProduct, $order, $product ) );
+            // event( new OrderProductAfterSavedEvent( $orderProduct, $order, $product ) );
 
             return $orderProduct;
         } );
@@ -1598,8 +1588,6 @@ class OrdersService
         $this->updateDeliveryStatus( $order );
         $this->updateProcessStatus( $order );
 
-        $order->save();
-
         return $order;
     }
 
@@ -1617,8 +1605,6 @@ class OrdersService
                 $order->process_status = 'not-available';
             }
         }
-
-        OrderAfterUpdatedProcessStatus::dispatch( $order );
     }
 
     /**
@@ -1635,8 +1621,6 @@ class OrdersService
                 $order->delivery_status = 'not-available';
             }
         }
-
-        OrderAfterUpdatedDeliveryStatus::dispatch( $order );
     }
 
     /**
@@ -2104,14 +2088,15 @@ class OrdersService
          *
          * @param array $orderProducts
          * @param Order $order
-         * @param float $taxes
          * @param float $subTotal
+         * @todo make sure order are saved after this.
          */
         extract( $this->__saveOrderProducts( $order, $products ) );
 
         /**
          * Now we should refresh the order
          * to have the total computed
+         * @todo should be triggered after an event
          */
         $this->refreshOrder( $order );
 
@@ -2137,12 +2122,13 @@ class OrdersService
         // If we might assume only paid orders are passed here,
         // we'll still need make sure to check the payment status
         if ( $order->payment_status == Order::PAYMENT_PAID ) {
-            $orderPayment  =  new OrderPayment();
-            $orderPayment->order_id = $order->id;
-            $orderPayment->identifier = OrderPayment::CASH_CHANGE;
-            $orderPayment->value = $order->change;
-            $orderPayment->author = $order->author;
-            $orderPayment->save();
+            // $orderPayment  =  new OrderPayment();
+            // $orderPayment->order_id = $order->id;
+            // $orderPayment->identifier = OrderPayment::PAYMENT_CASH;
+            // $orderPayment->type = OrderPayment::TYPE_CHANGE;
+            // $orderPayment->value = $order->change;
+            // $orderPayment->author = $order->author;
+            // $orderPayment->save();
         }
     }
 
@@ -2235,11 +2221,6 @@ class OrdersService
         }
 
         $order->save();
-
-        event( new OrderAfterUpdatedEvent(
-            newOrder: $order,
-            prevOrder: $prevOrder
-        ) );
 
         return [
             'status' => 'success',
@@ -2347,6 +2328,9 @@ class OrdersService
         } );
 
         if ( $hasDeleted ) {
+            /**
+             * @todo should be triggered after an event
+             */
             $this->refreshOrder( $order );
 
             return [
@@ -2688,7 +2672,20 @@ class OrdersService
         $order->voidance_reason = $reason;
         $order->save();
 
-        event( new OrderVoidedEvent( $order ) );
+        return [
+            'status' => 'success',
+            'message' => __( 'The order has been correctly voided.' ),
+        ];
+    }
+
+    public function handleVoidOrder( Order $order )
+    {
+        if ( $order->payment_status === Order::PAYMENT_VOID ) {
+            throw new NotAllowedException( __( 'Handle an order void operation if an order is not on void status.' ) );
+        }
+
+        $order->payment_status = Order::PAYMENT_VOID;
+        $order->save();
 
         return [
             'status' => 'success',
@@ -2785,8 +2782,6 @@ class OrdersService
                 ->get();
 
             $paidInstalments = $order->instalments()->where( 'paid', true )->sum( 'amount' );
-            // $otherInstalments = $order->instalments()->whereNotIn( 'id', $orderInstalments->only( 'id' )->toArray() )->sum( 'amount' );
-            // $dueInstalments = Currency::raw( $orderInstalments->sum( 'amount' ) );
 
             if ( $orderInstalments->count() > 0 ) {
                 $payableDifference = Currency::define( $order->tendered )

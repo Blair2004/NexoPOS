@@ -30,10 +30,9 @@ class OrderAfterUpdatedEventListener
     public function handle( OrderAfterUpdatedEvent $event )
     {
         Bus::chain( [
-            new IncreaseCashierStatsJob( $event->newOrder ),
-            new ProcessCustomerOwedAndRewardsJob( $event->newOrder ),
-            new TrackOrderCouponsJob( $event->newOrder ),
-            new ResolveInstalmentJob( $event->newOrder ),
+            new IncreaseCashierStatsJob( $event->order ),
+            new ProcessCustomerOwedAndRewardsJob( $event->order ),
+            new ResolveInstalmentJob( $event->order ),
             new ComputeDayReportJob,
         ] )->dispatch();
     }

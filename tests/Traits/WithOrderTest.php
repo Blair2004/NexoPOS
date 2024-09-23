@@ -102,6 +102,12 @@ trait WithOrderTest
 
     protected function attemptCreateOrderOnRegister( $data = [] )
     {
+        /**
+         * We should enable cash register
+         * feature in case it's disabled
+         */
+        ns()->option->set( 'ns_pos_registers_enabled', 'yes' );
+
         RegisterHistory::truncate();
 
         Register::where( 'id', '>', 0 )->update( [
@@ -799,6 +805,7 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $orderDetails );
 
+        $response->dump();
         $response->assertStatus( 200 );
 
         return $response = json_decode( $response->getContent(), true );

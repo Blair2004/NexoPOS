@@ -2,11 +2,11 @@
 
 namespace App\Listeners;
 
-use App\Events\AfterCustomerAccountHistoryCreatedEvent;
+use App\Events\CustomerAccountHistoryAfterCreatedEvent;
 use App\Services\CustomerService;
 use App\Services\TransactionService;
 
-class AfterCustomerAccountHistoryCreatedEventListener
+class CustomerAccountHistoryAfterCreatedEventListener
 {
     /**
      * Create the event listener.
@@ -25,11 +25,11 @@ class AfterCustomerAccountHistoryCreatedEventListener
      *
      * @return void
      */
-    public function handle( AfterCustomerAccountHistoryCreatedEvent $event )
+    public function handle( CustomerAccountHistoryAfterCreatedEvent $event )
     {
         /**
          * @todo implement customer account history in accounting part
          */
-        $this->customerService->updateCustomerAccount( $event->customerAccount );
+        $this->customerService->updateCustomerAccount( $event->customerAccountHistory );
     }
 }

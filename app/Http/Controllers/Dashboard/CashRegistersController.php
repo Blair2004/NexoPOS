@@ -130,6 +130,22 @@ class CashRegistersController extends DashboardController
         ];
     }
 
+    private function getRightOrderPaymentLabel( RegisterHistory $history )
+    {
+        if ( $history->action === RegisterHistory::ACTION_ORDER_PAYMENT ) {
+            return sprintf(
+                __( '%s on %s' ),
+                $history->payment_label,
+                $history->order->code
+            );
+        }
+
+        return sprintf(
+            __( 'Unknown action %s' ),
+            $history->action
+        );
+    }
+
     public function getSessionHistory( Register $register )
     {
         if ( $register->status === Register::STATUS_OPENED ) {
@@ -154,7 +170,7 @@ class CashRegistersController extends DashboardController
 
                 $history = $historyRequest->get();
 
-                $history->each( function ( $session ) {
+                $history->each( function ( RegisterHistory $session ) {
                     switch ( $session->action ) {
                         case RegisterHistory::ACTION_CASHING:
                             $session->label = __( 'Cash In' );
@@ -170,7 +186,7 @@ class CashRegistersController extends DashboardController
                             break;
                         case RegisterHistory::ACTION_ORDER_PAYMENT:
                             // @todo it might be a custom label based on the payment
-                            $session->label = sprintf( __( '%s on %s' ), __( 'Sale' ), $session->order?->code ?: __( 'Unknown Order' ) );
+                            $session->label = $this->getRightOrderPaymentLabel( $session );
                             break;
                         case RegisterHistory::ACTION_REFUND:
                             $session->label = __( 'Refund' );

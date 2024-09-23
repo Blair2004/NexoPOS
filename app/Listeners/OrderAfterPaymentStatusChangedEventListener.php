@@ -75,6 +75,7 @@ class OrderAfterPaymentStatusChangedEventListener
             $event->new === Order::PAYMENT_VOID
         ) {
             $this->transactionService->handlePaidToVoidSaleTransaction( $event->order );
+            $this->ordersService->handleVoidOrder( $event->order );
         }
 
         /**
@@ -88,6 +89,7 @@ class OrderAfterPaymentStatusChangedEventListener
             $event->new === Order::PAYMENT_VOID
         ) {
             $this->transactionService->handleUnpaidToVoidSaleTransaction( $event->order );
+            $this->ordersService->handleVoidOrder( $event->order );
         }
     }
 }
