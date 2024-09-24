@@ -1166,10 +1166,19 @@ class ProductService
          * @param string             $sku
          * @param string             $unit_identifier
          */
-        $product = isset( $product_id ) ? Product::findOrFail( $product_id ) : Product::usingSKU( $sku )->first();
+        $product = isset( $product_id ) ? Product::find( $product_id ) : Product::usingSKU( $sku )->first();
+
+        if ( ! $product instanceof Product ) {
+            throw new NotFoundException( __( 'The product doesn\'t exists.' ) );
+        }
+
         $product_id = $product->id;
         $unit_id = isset( $unit_id ) ? $unit_id : $unit->id;
-        $unit = Unit::findOrFail( $unit_id );
+        $unit = Unit::find( $unit_id );
+
+        if ( ! $unit instanceof Unit ) {
+            throw new NotFoundException( __( 'The unit doesn\'t exists.' ) );
+        }
 
         /**
          * let's check the different

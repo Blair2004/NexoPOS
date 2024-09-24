@@ -1164,35 +1164,38 @@ class OrdersService
         if (
             in_array( $order->payment_status, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ] )
         ) {
-            $order->products->each( function ( OrderProduct $orderProduct ) use ( $order ) {
-                /**
-                 * storing the product
-                 * history as a sale
-                 */
-                $history = [
-                    'order_id' => $order->id,
-                    'unit_id' => $orderProduct->unit_id,
-                    'product_id' => $orderProduct->product_id,
-                    'quantity' => $orderProduct->quantity,
-                    'unit_price' => $orderProduct->unit_price,
-                    'orderProduct' => $orderProduct,
-                    'total_price' => $orderProduct->total_price,
-                ];
+            $order->products()
+                ->whereHas( 'product' )
+                ->get()
+                ->each( function ( OrderProduct $orderProduct ) use ( $order ) {
+                    /**
+                     * storing the product
+                     * history as a sale
+                     */
+                    $history = [
+                        'order_id' => $order->id,
+                        'unit_id' => $orderProduct->unit_id,
+                        'product_id' => $orderProduct->product_id,
+                        'quantity' => $orderProduct->quantity,
+                        'unit_price' => $orderProduct->unit_price,
+                        'orderProduct' => $orderProduct,
+                        'total_price' => $orderProduct->total_price,
+                    ];
 
-                /**
-                 * __deleteUntrackedProducts will delete all products that
-                 * already exists and which are edited. We'll here only records
-                 * products that doesn't exists yet.
-                 */
-                $stockHistoryExists = ProductHistory::where( 'order_product_id', $orderProduct->id )
-                    ->where( 'order_id', $order->id )
-                    ->where( 'operation_type', ProductHistory::ACTION_SOLD )
-                    ->count() === 1;
+                    /**
+                     * __deleteUntrackedProducts will delete all products that
+                     * already exists and which are edited. We'll here only records
+                     * products that doesn't exists yet.
+                     */
+                    $stockHistoryExists = ProductHistory::where( 'order_product_id', $orderProduct->id )
+                        ->where( 'order_id', $order->id )
+                        ->where( 'operation_type', ProductHistory::ACTION_SOLD )
+                        ->count() === 1;
 
-                if ( ! $stockHistoryExists ) {
-                    $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
-                }
-            } );
+                    if ( ! $stockHistoryExists ) {
+                        $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
+                    }
+                } );
         }
     }
 

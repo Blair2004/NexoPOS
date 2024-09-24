@@ -63,6 +63,7 @@ class OrderAfterPaymentStatusChangedEventListener
         if (
             in_array( $event->previous, [
                 Order::PAYMENT_UNPAID,
+                Order::PAYMENT_HOLD,
                 Order::PAYMENT_PARTIALLY
             ] ) &&
             $event->new === Order::PAYMENT_PAID
