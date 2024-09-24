@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\OrderPayment;
+use App\Models\Register;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,16 +11,16 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class OrderPaymentAfterCreatedEvent
+class CashRegisterHistoryAfterAllDeletedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct( public OrderPayment $orderPayment)
+    public function __construct( public Register $register )
     {
-        $orderPayment->load( 'order.customer' );
+        //
     }
 
     /**

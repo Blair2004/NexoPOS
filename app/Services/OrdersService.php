@@ -170,12 +170,6 @@ class OrdersService
 
         $addresses  =   $this->__saveAddressInformations( $order, $fields );
 
-        /**
-         * if the order has a valid payment
-         * method, then we can save that and attach it the ongoing order.
-         */
-        $payments   =   [];
-
         if ( in_array( $paymentStatus, [
             Order::PAYMENT_PAID,
             Order::PAYMENT_PARTIALLY,
@@ -206,6 +200,15 @@ class OrdersService
          * register taxes for the order
          */
         $taxes  =   $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
+
+        $order->setRelations([
+            'products' => $orderProducts,
+            'payments' => $payments,
+            'coupons' => $coupons,
+            'instalments' => $instalments,
+            'taxes' => $taxes,
+            'addresses' => $addresses,
+        ]);
 
         $order->save();
 
@@ -763,19 +766,15 @@ class OrdersService
 
     private function __saveOrderPayments( $order, $payments, $customer )
     {
-        $payments   =   [];
-
         /**
          * As we're about to record new payments,
          * we first need to delete previous payments that
          * might have been made. Probably we'll need to keep these
          * order and only update them.
          */
-        foreach ( $payments as $payment ) {
-            $payments[] = $this->__saveOrderSinglePayment( $payment, $order );
-        }
-
-        return $payments;
+        return collect( $payments )->map( function( $payment ) use ( $order ) {
+            return $this->__saveOrderSinglePayment( $payment, $order );
+        });
     }
 
     /**
@@ -821,7 +820,9 @@ class OrdersService
             }
         }
 
-        $payment = $this->__saveOrderSinglePayment( $payment, $order );
+        $orderPayment = $this->__saveOrderSinglePayment( $payment, $order );
+        $orderPayment->order_id = $order->id;
+        $orderPayment->save();
 
         /**
          * let's refresh the order to check whether the
@@ -851,36 +852,15 @@ class OrdersService
      */
     private function __saveOrderSinglePayment( $payment, Order $order ): OrderPayment
     {
-        // OrderBeforePaymentCreatedEvent::dispatch( $payment, $order->customer );
-
         $orderPayment = isset( $payment[ 'id' ] ) ? OrderPayment::find( $payment[ 'id' ] ) : false;
 
         if ( ! $orderPayment instanceof OrderPayment ) {
             $orderPayment = new OrderPayment;
         }
 
-        /**
-         * When the customer is making some payment
-         * we store it on his history.
-         */
-        if ( $payment[ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
-            $this->customerService->saveTransaction(
-                $order->customer,
-                CustomerAccountHistory::OPERATION_PAYMENT,
-                $payment[ 'value' ],
-                __( 'Order Payment' ), [
-                    'order_id' => $order->id,
-                ]
-            );
-        }
-
-        // $orderPayment->order_id = $order->id;
         $orderPayment->identifier = $payment['identifier'];
         $orderPayment->value = $this->currencyService->define( $payment['value'] )->toFloat();
-        $orderPayment->author = $order->author ?? Auth::id();
-        // $orderPayment->save();
-
-        // OrderAfterPaymentCreatedEvent::dispatch( $orderPayment, $order );
+        $orderPayment->author = $order->author;
 
         return $orderPayment;
     }
@@ -1112,7 +1092,6 @@ class OrdersService
              */
             $unit = Unit::find( $product[ 'unit_id' ] );
 
-            // $orderProduct->order_id = $order->id;
             $orderProduct->unit_quantity_id = $product[ 'unit_quantity_id' ];
             $orderProduct->unit_name = $product[ 'unit_name' ] ?? $unit->name;
             $orderProduct->unit_id = $product[ 'unit_id' ];
@@ -1168,25 +1147,33 @@ class OrdersService
 
             $this->computeOrderProduct( $orderProduct );
 
-            // $orderProduct->save();
-
             $subTotal = $this->currencyService->define( $subTotal )
                 ->additionateBy( $orderProduct->total_price )
                 ->get();
 
-            if (
-                in_array( $order[ 'payment_status' ], [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ] ) &&
-                $product[ 'product' ] instanceof Product
-            ) {
+            return $orderProduct;
+        } );
+
+        $order->subtotal = $subTotal;
+
+        return compact( 'subTotal', 'order', 'orderProducts' );
+    }
+
+    public function saveOrderProductHistory( Order $order )
+    {
+        if (
+            in_array( $order->payment_status, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ] )
+        ) {
+            $order->products->each( function ( OrderProduct $orderProduct ) use ( $order ) {
                 /**
                  * storing the product
                  * history as a sale
                  */
                 $history = [
                     'order_id' => $order->id,
-                    'unit_id' => $product[ 'unit_id' ],
-                    'product_id' => $product[ 'product' ]->id,
-                    'quantity' => $product[ 'quantity' ],
+                    'unit_id' => $orderProduct->unit_id,
+                    'product_id' => $orderProduct->product_id,
+                    'quantity' => $orderProduct->quantity,
                     'unit_price' => $orderProduct->unit_price,
                     'orderProduct' => $orderProduct,
                     'total_price' => $orderProduct->total_price,
@@ -1198,22 +1185,15 @@ class OrdersService
                  * products that doesn't exists yet.
                  */
                 $stockHistoryExists = ProductHistory::where( 'order_product_id', $orderProduct->id )
+                    ->where( 'order_id', $order->id )
                     ->where( 'operation_type', ProductHistory::ACTION_SOLD )
                     ->count() === 1;
 
                 if ( ! $stockHistoryExists ) {
-                    // $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
+                    $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
                 }
-            }
-
-            // event( new OrderProductAfterSavedEvent( $orderProduct, $order, $product ) );
-
-            return $orderProduct;
-        } );
-
-        $order->subtotal = $subTotal;
-
-        return compact( 'subTotal', 'order', 'orderProducts' );
+            } );
+        }
     }
 
     private function __buildOrderProducts( $products )
@@ -2627,12 +2607,27 @@ class OrdersService
      */
     public function void( Order $order, $reason )
     {
+        $order->payment_status = Order::PAYMENT_VOID;
+        $order->voidance_reason = $reason;
+        $order->save();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The order has been correctly voided.' ),
+        ];
+    }
+
+    public function returnVoidProducts( Order $order )
+    {
         $order->products()
             ->get()
             ->each( function ( OrderProduct $orderProduct ) {
-                $orderProduct->load( 'product' );
 
-                if ( $orderProduct->product instanceof Product ) {
+                /**
+                 * we do proceed by doing an initial return
+                 * only if the product is not a quick product/service
+                 */
+                if ( $orderProduct->product_id > 0 ) {
                     /**
                      * we do proceed by doing an initial return
                      */
@@ -2647,28 +2642,9 @@ class OrdersService
                 }
             } );
 
-        $order->payment_status = Order::PAYMENT_VOID;
-        $order->voidance_reason = $reason;
-        $order->save();
-
         return [
             'status' => 'success',
-            'message' => __( 'The order has been correctly voided.' ),
-        ];
-    }
-
-    public function handleVoidOrder( Order $order )
-    {
-        if ( $order->payment_status === Order::PAYMENT_VOID ) {
-            throw new NotAllowedException( __( 'Handle an order void operation if an order is not on void status.' ) );
-        }
-
-        $order->payment_status = Order::PAYMENT_VOID;
-        $order->save();
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The order has been correctly voided.' ),
+            'message' => __( 'The products has been returned to the stock.' ),
         ];
     }
 

@@ -29,12 +29,6 @@ class OrderPayment extends NsModel
 
     const PAYMENT_BANK = 'bank-payment';
 
-    // const CASH_CHANGE = 'cash-change';
-
-    const TYPE_PAYMENT = 'payment';
-
-    const TYPE_CHANGE = 'change';
-
     public $dispatchesEvents = [
         'created' => OrderPaymentAfterCreatedEvent::class,
         'updated' => OrderPaymentAfterUpdatedEvent::class,

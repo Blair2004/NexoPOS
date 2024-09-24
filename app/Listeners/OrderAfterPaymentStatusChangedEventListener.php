@@ -52,6 +52,7 @@ class OrderAfterPaymentStatusChangedEventListener
             if ( $event->new === Order::PAYMENT_PAID ) {
                 $this->transactionService->handleCogsFromSale( $event->order );
                 $this->cashRegistersService->saveOrderChange( $event->order );
+                $this->ordersService->saveOrderProductHistory( $event->order );
             }
         }
 
@@ -68,6 +69,7 @@ class OrderAfterPaymentStatusChangedEventListener
         ) {
             $this->transactionService->handleUnpaidToPaidSaleTransaction( $event->order );
             $this->cashRegistersService->saveOrderChange( $event->order );
+            $this->ordersService->saveOrderProductHistory( $event->order );
         }
 
         /**
@@ -78,7 +80,7 @@ class OrderAfterPaymentStatusChangedEventListener
             $event->new === Order::PAYMENT_VOID
         ) {
             $this->transactionService->handlePaidToVoidSaleTransaction( $event->order );
-            $this->ordersService->handleVoidOrder( $event->order );
+            $this->ordersService->returnVoidProducts( $event->order );
         }
 
         /**
@@ -92,7 +94,7 @@ class OrderAfterPaymentStatusChangedEventListener
             $event->new === Order::PAYMENT_VOID
         ) {
             $this->transactionService->handleUnpaidToVoidSaleTransaction( $event->order );
-            $this->ordersService->handleVoidOrder( $event->order );
+            $this->ordersService->returnVoidProducts( $event->order );
         }
     }
 }

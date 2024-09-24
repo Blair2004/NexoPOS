@@ -805,7 +805,6 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders', $orderDetails );
 
-        $response->dump();
         $response->assertStatus( 200 );
 
         return $response = json_decode( $response->getContent(), true );
@@ -856,7 +855,7 @@ trait WithOrderTest
         $newAmount = ns()->currency->define( $previousValue )->subtractBy( $order->total )->toFloat();
 
         $this->assertEquals( (float) $cashRegister->balance, (float) $newAmount, 'The balance wasn\'t updated after deleting the order.' );
-        $this->assertTrue( RegisterHistory::where( 'order_id', $order->id ), 'The register history for the deleted order was not deleted along with the order.' );
+        $this->assertTrue( RegisterHistory::where( 'order_id', $order->id )->count() === 0, 'The register history for the deleted order was not deleted along with the order.' );
 
         return $response;
     }
@@ -1114,16 +1113,18 @@ trait WithOrderTest
             if ( ! isset( $orderDetails[ 'products' ] ) ) {
                 $products = isset( $orderDetails[ 'productsRequest' ] ) ? $orderDetails[ 'productsRequest' ]() : Product::notGrouped()
                     ->notInGroup()
-                    ->whereHas( 'unit_quantities', function ( $query ) {
-                        $query->where( 'quantity', '>', 500 );
-                    } )
-                    ->with( ['unit_quantities' => function ( $query ) {
-                        $query->where( 'quantity', '>', 500 );
-                    }] )
+                    ->with( 'unit_quantities' )
                     ->limit( 3 )
                     ->get();
 
+                
+
                 $products = $products->map( function ( $product ) use ( $faker, $taxService ) {
+                    $product->unit_quantities->each( function( $unitQuantity ) use ( $faker ) {
+                        $unitQuantity->quantity = $faker->numberBetween( 100, 1000 );
+                        $unitQuantity->save();
+                    } );
+                    
                     $unitElement = $faker->randomElement( $product->unit_quantities );
                     $discountRate = 10;
                     $quantity = $faker->numberBetween( 1, 10 );

@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Classes\Hook;
+use App\Events\CashRegisterHistoryAfterAllDeletedEvent;
+use App\Events\CashRegisterHistoryAfterDeletedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\Order;
 use App\Models\OrderPayment;
@@ -180,23 +182,16 @@ class CashRegistersService
     
     public function deleteRegisterHistoryUsingOrder( $order ) 
     {
-        $registerHistory = RegisterHistory::where( 'order_id', $order->id )->first();
+        RegisterHistory::where( 'order_id', $order->id )->delete();
 
-        if ( $registerHistory instanceof RegisterHistory ) {
-            $registerHistory->delete();
-
-            return [
-                'status' => 'success',
-                'message' => __( 'The register history has been successfully deleted' ),
-                'data' => [
-                    'history' => $registerHistory,
-                ],
-            ];
-        }
+        CashRegisterHistoryAfterAllDeletedEvent::dispatch( Register::find( $order->register_id ) );
 
         return [
-            'status' => 'info',
-            'message' => __( 'The register history has already been deleted' ),
+            'status' => 'success',
+            'message' => __( 'The register history has been successfully deleted' ),
+            'data' => [
+                'order' => $order,
+            ],
         ];
     }
 
@@ -302,7 +297,7 @@ class CashRegistersService
             ->where( 'created_at', '>=', $lastOpeningAction->created_at )
             ->where( 'register_id', $cashRegister->id )->sum( 'value' );
 
-        $cashRegister->balance = ns()->currency->define( $totalInActions )->additionateBy( $totalOutActions )->toFloat();
+        $cashRegister->balance = ns()->currency->define( $totalInActions )->subtractBy( $totalOutActions )->toFloat();
 
         $cashRegister->save();
 
