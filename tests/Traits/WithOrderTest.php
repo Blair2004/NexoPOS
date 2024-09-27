@@ -2638,6 +2638,9 @@ trait WithOrderTest
 
     protected function attemptCreatePartiallyPaidOrderWithAdjustment()
     {
+        /**
+         * @var CurrencyService
+         */
         $currency = app()->make( CurrencyService::class );
 
         $customer = $this->attemptCreateCustomer();
@@ -2684,8 +2687,14 @@ trait WithOrderTest
                 'subtotal' => $subtotal,
                 'shipping' => $shippingFees,
                 'products' => $products,
-                'payments' => [],
-                'payment_status' => Order::PAYMENT_UNPAID,
+                'payments' => [
+                    [
+                        'identifier' => OrderPayment::PAYMENT_CASH,
+                        'value' => $currency->define( $subtotal + $shippingFees )
+                            ->dividedBy(2)
+                            ->toFloat(),
+                    ],
+                ],
             ] );
 
         $response->assertJson( [
@@ -2741,7 +2750,7 @@ trait WithOrderTest
                 'subtotal' => $subtotal,
                 'shipping' => $shippingFees,
                 'products' => $newProducts,
-                'payments' => [],
+                'payments' => Order::find( $responseData[ 'data' ][ 'order' ][ 'id' ] )->payments()->get()->toArray(),
             ] );
 
         $response->assertJson( [
@@ -2802,7 +2811,7 @@ trait WithOrderTest
                 'subtotal' => $subtotal,
                 'shipping' => $shippingFees,
                 'products' => $newProducts,
-                'payments' => [],
+                'payments' => Order::find( $responseData[ 'data' ][ 'order' ][ 'id' ] )->payments()->get()->toArray(),
             ] );
 
         $response->assertJson( [

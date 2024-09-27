@@ -52,8 +52,18 @@ class OrderAfterPaymentStatusChangedEventListener
             if ( $event->new === Order::PAYMENT_PAID ) {
                 $this->transactionService->handleCogsFromSale( $event->order );
                 $this->cashRegistersService->saveOrderChange( $event->order );
-                $this->ordersService->saveOrderProductHistory( $event->order );
             }
+        }
+
+        /**
+         * We want to decide from when the inventory
+         * is moved out to the customer destination. And order that is partially paid start holding the 
+         * inventory for the customer. In case there is no sale in due time, the inventory might be returned.
+         */
+        if (
+            in_array( $event->previous, [ null, Order::PAYMENT_HOLD, Order::PAYMENT_UNPAID ])
+            && in_array( $event->new, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY ]) ) {
+                $this->ordersService->saveOrderProductHistory( $event->order );
         }
 
         /**

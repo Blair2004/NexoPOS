@@ -182,9 +182,16 @@ class CashRegistersService
     
     public function deleteRegisterHistoryUsingOrder( $order ) 
     {
-        RegisterHistory::where( 'order_id', $order->id )->delete();
+        $deletedRecord = RegisterHistory::where( 'order_id', $order->id )->delete();
 
-        CashRegisterHistoryAfterAllDeletedEvent::dispatch( Register::find( $order->register_id ) );
+        /**
+         * The order that is being deleted might have not been created
+         * within a cash register. Therefore, there is no need to dispatch CashRegisterHistoryAfterAllDeletedEvent as
+         * the delete transaction failed above.
+         */
+        if ( $deletedRecord ) {
+            CashRegisterHistoryAfterAllDeletedEvent::dispatch( Register::find( $order->register_id ) );
+        }
 
         return [
             'status' => 'success',

@@ -459,19 +459,20 @@ class TaxService
          */
         if ( $taxGroup instanceof TaxGroup ) {
             if ( $type === 'exclusive' ) {
-                $orderProduct->price_with_tax = $orderProduct->unit_price;
-                $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
-                    type: 'inclusive',
-                    price: $orderProduct->price_with_tax - $discount,
-                    group: $taxGroup
-                );
-            } else {
-                $orderProduct->price_without_tax = $orderProduct->unit_price;
                 $orderProduct->price_with_tax = $this->getPriceWithTaxUsingGroup(
                     type: 'exclusive',
-                    price: $orderProduct->price_without_tax - $discount,
+                    price: $orderProduct->unit_price - $discount,
                     group: $taxGroup
                 );
+                $orderProduct->price_without_tax = $orderProduct->unit_price;
+            } else {
+                $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
+                    type: 'inclusive',
+                    price: $orderProduct->unit_price - $discount,
+                    group: $taxGroup
+                );
+
+                $orderProduct->price_with_tax = $orderProduct->unit_price;
             }
 
             $orderProduct->tax_value = ( $orderProduct->price_with_tax - $orderProduct->price_without_tax ) * $orderProduct->quantity;

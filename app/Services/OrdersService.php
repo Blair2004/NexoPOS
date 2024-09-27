@@ -199,25 +199,24 @@ class OrdersService
         /**
          * register taxes for the order
          */
-        $taxes  =   $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
-
         $order->setRelations([
             'products' => $orderProducts,
             'payments' => $payments,
             'coupons' => $coupons,
             'instalments' => $instalments,
-            'taxes' => $taxes,
             'addresses' => $addresses,
         ]);
 
-        $order->save();
+        $taxes  =   $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
 
-        $order->order_addresses()->saveMany( $addresses );
-        $order->instalments()->saveMany( $instalments );
-        $order->coupons()->saveMany( $coupons );
-        $order->payments()->saveMany( $payments );
-        $order->products()->saveMany( $orderProducts );
-        $order->taxes()->saveMany( $taxes );
+        $order->saveWithRelationships( [
+            'products' => $orderProducts,
+            'payments' => $payments,
+            'coupons' => $coupons,
+            'instalments' => $instalments,
+            'taxes' => $taxes,
+            'order_addresses' => $addresses,
+        ]);
 
         $order->load( 'payments' );
         $order->load( 'products' );
@@ -828,7 +827,7 @@ class OrdersService
          * let's refresh the order to check whether the
          * payment has made the order complete or not.
          */
-        $order->register_id = $payment[ 'register_id' ];
+        $order->register_id = $payment[ 'register_id' ] ?? 0;
         $order->save();
         $order->refresh();
 
@@ -840,7 +839,7 @@ class OrdersService
         return [
             'status' => 'success',
             'message' => __( 'The payment has been saved.' ),
-            'data' => compact( 'payment' ),
+            'data' => compact( 'payment', 'orderPayment' ),
         ];
     }
 
@@ -1164,10 +1163,10 @@ class OrdersService
         if (
             in_array( $order->payment_status, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ] )
         ) {
-            $order->products()
-                ->whereHas( 'product' )
-                ->get()
-                ->each( function ( OrderProduct $orderProduct ) use ( $order ) {
+            $order->products()->get()->each( function ( OrderProduct $orderProduct ) use ( $order ) {
+                $productCount = Product::where( 'id', $orderProduct->product_id )->count();
+
+                if ( $productCount > 0 ) {
                     /**
                      * storing the product
                      * history as a sale
@@ -1195,7 +1194,8 @@ class OrdersService
                     if ( ! $stockHistoryExists ) {
                         $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
                     }
-                } );
+                } 
+            });
         }
     }
 
@@ -1437,12 +1437,12 @@ class OrdersService
          */
         if ( empty( $fields[ 'tax_value' ] ) ) {
             $fields[ 'tax_value' ] = $this->currencyService->define(
-                $this->taxService->getComputedTaxGroupValue(
-                    tax_type: $fields[ 'tax_type' ] ?? $product->tax_type ?? null,
-                    tax_group_id: $fields[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
-                    price: $sale_price
+                    $this->taxService->getComputedTaxGroupValue(
+                        tax_type: $fields[ 'tax_type' ] ?? $product->tax_type ?? null,
+                        tax_group_id: $fields[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
+                        price: $sale_price
+                    )
                 )
-            )
                 ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
                 ->toFloat();
         }
@@ -1705,8 +1705,7 @@ class OrdersService
     public function getOrderProductsTaxes( $order )
     {
         return $this->currencyService->define( $order
-            ->products()
-            ->get()
+            ->products
             ->map( fn( $product ) => $product->tax_value )->sum()
         )->toFloat();
     }
@@ -2805,7 +2804,7 @@ class OrdersService
         ];
 
         $result = $this->makeOrderSinglePayment( $payment, $order );
-        $payment = $result[ 'data' ][ 'payment' ];
+        $payment = $result[ 'data' ][ 'orderPayment' ];
 
         $instalment->paid = true;
         $instalment->payment_id = $payment->id;
