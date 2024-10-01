@@ -6,6 +6,7 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Jobs\ComputeDayReportJob;
 use App\Jobs\IncreaseCashierStatsJob;
 use App\Jobs\ProcessCustomerOwedAndRewardsJob;
+use App\Jobs\RecordOrderChangeJob;
 use App\Jobs\ResolveInstalmentJob;
 use App\Jobs\TrackOrderCouponsJob;
 use Illuminate\Support\Facades\Bus;
@@ -35,6 +36,7 @@ class OrderAfterCreatedEventListener
             new ProcessCustomerOwedAndRewardsJob( $event->order ),
             new ResolveInstalmentJob( $event->order ),
             new ComputeDayReportJob,
+            new RecordOrderChangeJob( $event->order ),
         ] )->dispatch();
     }
 }

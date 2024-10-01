@@ -51,7 +51,6 @@ class OrderAfterPaymentStatusChangedEventListener
              */
             if ( $event->new === Order::PAYMENT_PAID ) {
                 $this->transactionService->handleCogsFromSale( $event->order );
-                $this->cashRegistersService->saveOrderChange( $event->order );
             }
         }
 
@@ -79,7 +78,6 @@ class OrderAfterPaymentStatusChangedEventListener
             $event->new === Order::PAYMENT_PAID
         ) {
             $this->transactionService->handleUnpaidToPaidSaleTransaction( $event->order );
-            $this->cashRegistersService->saveOrderChange( $event->order );
             $this->ordersService->saveOrderProductHistory( $event->order );
         }
 

@@ -134,7 +134,13 @@ class CashRegistersController extends DashboardController
     {
         if ( $history->action === RegisterHistory::ACTION_ORDER_PAYMENT ) {
             return sprintf(
-                __( '%s on %s' ),
+                __( 'Payment %s on %s' ),
+                $history->payment_label,
+                $history->order->code
+            );
+        } else if ( $history->action === RegisterHistory::ACTION_ORDER_CHANGE ) {
+            return sprintf(
+                __( 'Change %s on %s' ),
                 $history->payment_label,
                 $history->order->code
             );
@@ -185,6 +191,7 @@ class CashRegistersController extends DashboardController
                             $session->label = __( 'Opening' );
                             break;
                         case RegisterHistory::ACTION_ORDER_PAYMENT:
+                        case RegisterHistory::ACTION_ORDER_CHANGE:
                             // @todo it might be a custom label based on the payment
                             $session->label = $this->getRightOrderPaymentLabel( $session );
                             break;
@@ -202,13 +209,11 @@ class CashRegistersController extends DashboardController
 
                 // we might need to pull based on payment type
                 // @todo this is no longer correct
-                // $totalCashPayment = $history->where( 'action', RegisterHistory::ACTION_CASH_PAY )
-                //     ->where( 'payment_type_id', $cashPayment->id ?? 0 )
-                //     ->sum( 'value' );
-                $totalCashPayment = 0;
+                $totalCashPayment = $history->where( 'action', RegisterHistory::ACTION_ORDER_PAYMENT )
+                    ->where( 'payment_type_id', $cashPayment->id ?? 0 )
+                    ->sum( 'value' );
 
-                // $totalCashChange = $history->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
-                $totalCashChange = 0;
+                $totalCashChange = $history->where( 'action', RegisterHistory::ACTION_ORDER_CHANGE )->sum( 'value' );
 
                 $totalPaymentTypeSummary = $historyRequest
                     ->whereIn( 'action', [
@@ -240,9 +245,14 @@ class CashRegistersController extends DashboardController
                     [
                         'label' => __( 'Initial Balance' ),
                         'value' => $totalOpening,
-                        'color' => 'warning',
+                        'color' => 'info',
                     ],
                     ...$totalPaymentTypeSummary,
+                    [
+                        'label' => __( 'Total Change' ),
+                        'value' => - $totalCashChange,
+                        'color' => 'warning',
+                    ],
                     [
                         'label' => __( 'On Hand' ),
                         'value' => ns()->currency->define( $totalOpening )

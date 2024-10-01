@@ -261,26 +261,28 @@ class SetupService
          * let's create default payment
          * for the system
          */
-        $paymentType = new PaymentType();
-        $paymentType->label = __( 'Cash' );
-        $paymentType->identifier = 'cash-payment';
-        $paymentType->readonly = true;
-        $paymentType->author = $user->id;
-        $paymentType->save();
+        $cashPaymentType = new PaymentType();
+        $cashPaymentType->label = __( 'Cash' );
+        $cashPaymentType->identifier = 'cash-payment';
+        $cashPaymentType->readonly = true;
+        $cashPaymentType->author = $user->id;
+        $cashPaymentType->save();
 
-        $paymentType = new PaymentType;
-        $paymentType->label = __( 'Bank Payment' );
-        $paymentType->identifier = 'bank-payment';
-        $paymentType->readonly = true;
-        $paymentType->author = $user->id;
-        $paymentType->save();
+        $bankPaymentType = new PaymentType;
+        $bankPaymentType->label = __( 'Bank Payment' );
+        $bankPaymentType->identifier = 'bank-payment';
+        $bankPaymentType->readonly = true;
+        $bankPaymentType->author = $user->id;
+        $bankPaymentType->save();
 
-        $paymentType = new PaymentType;
-        $paymentType->label = __( 'Customer Account' );
-        $paymentType->identifier = 'account-payment';
-        $paymentType->readonly = true;
-        $paymentType->author = $user->id;
-        $paymentType->save();
+        $customerAccountType = new PaymentType;
+        $customerAccountType->label = __( 'Customer Account' );
+        $customerAccountType->identifier = 'account-payment';
+        $customerAccountType->readonly = true;
+        $customerAccountType->author = $user->id;
+        $customerAccountType->save();
+
+        ns()->option->set( 'ns_pos_registers_default_change_payment_type', $cashPaymentType->id );
     }
 
     public function testDBConnexion()

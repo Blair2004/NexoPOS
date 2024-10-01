@@ -22,6 +22,6 @@ class CashRegisterHistoryAfterCreatedEventListener
      */
     public function handle( CashRegisterHistoryAfterCreatedEvent $event ): void
     {
-        UpdateCashRegisterBalanceFromHistoryJob::dispatch( $event->registerHistory );
+        UpdateCashRegisterBalanceFromHistoryJob::dispatchSync( $event->registerHistory );
     }
 }

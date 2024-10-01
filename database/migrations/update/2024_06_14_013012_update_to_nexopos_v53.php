@@ -1,6 +1,8 @@
 <?php
 
 use App\Classes\Schema;
+use App\Models\OrderPayment;
+use App\Models\PaymentType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -38,6 +40,9 @@ return new class extends Migration
                 $table->float( 'total_cogs', 18, 5 )->nullable();
             }
         });
+
+        $cashPaymentType    =   PaymentType::where( 'identifier', OrderPayment::PAYMENT_CASH )->first();
+        ns()->option->set( 'ns_pos_registers_default_change_payment_type', $cashPaymentType->id );
     }
 
     /**

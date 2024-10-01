@@ -130,7 +130,7 @@ class CashRegistersService
         ];
     }
 
-    public function recordOrderPayment( OrderPayment $orderPayment )
+    public function saveOrderPayment( OrderPayment $orderPayment )
     {
         $register = Register::find( $orderPayment->order->register_id );
 
@@ -331,11 +331,15 @@ class CashRegistersService
             $register = Register::find( $order->register_id );
 
             if ( $register instanceof Register ) {
-                $registerHistory = new RegisterHistory;
+                $registerHistory = RegisterHistory::where( 'order_id', $order->id )
+                    ->where( 'action', RegisterHistory::ACTION_ORDER_CHANGE )
+                    ->firstOrNew();
+                
+                $registerHistory->payment_type_id = ns()->option->get( 'ns_pos_registers_default_change_payment_type' );
                 $registerHistory->register_id = $register->id;
                 $registerHistory->order_id = $order->id;
                 $registerHistory->action = RegisterHistory::ACTION_ORDER_CHANGE;
-                $registerHistory->author = Auth::id();
+                $registerHistory->author = $order->author;
                 $registerHistory->description = __( 'Change on cash' );
                 $registerHistory->balance_before = $register->balance;
                 $registerHistory->value = ns()->currency->define( $order->change )->toFloat();

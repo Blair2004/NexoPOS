@@ -12,9 +12,13 @@
                 <div class="w-full md:w-1/2 text-right bg-error-secondary text-white font-bold text-3xl p-3">{{ nsCurrency( totalOut ) }}</div>
             </div>
         </div>
-        <div class="flex flex-col overflow-y-auto h-120">
+        <div class="flex flex-col overflow-y-auto h-72">
             <template v-for="history of cashRegisterReport.history">
                 <div :key="history.id" v-if="[ 'register-order-payment' ].includes( history.action )"  class="flex border-b elevation-surface success">
+                    <div class="p-2 flex-auto">{{ history.label }}</div>
+                    <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
+                </div>
+                <div :key="history.id" v-if="[ 'register-order-change' ].includes( history.action )"  class="flex border-b elevation-surface success">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
