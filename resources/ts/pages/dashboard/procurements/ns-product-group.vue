@@ -198,7 +198,7 @@ export default {
             }
 
             try {
-                const selection    =   await new Promise( ( resolve, reject ) => {
+                const unitQuantityId    =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsSelectPopupVue, {
                         label: __( 'Choose The Unit' ),
                         options: result.unit_quantities.map( unitQuantity => {
@@ -213,14 +213,14 @@ export default {
                 });
 
                 const unitQuantity  =   result.unit_quantities
-                    .filter( unitQuantity => parseInt( unitQuantity.id ) === parseInt( selection[0].value ) );
+                    .filter( unitQuantity => parseInt( unitQuantity.id ) === parseInt( unitQuantityId ) );
 
                 /**
                  * Adding product to the Array
                  */
                 this.products.push({
                     name: result.name,
-                    unit_quantity_id: selection[0].value,
+                    unit_quantity_id: unitQuantityId,
                     unit_quantity: unitQuantity[0],
                     unit_id: unitQuantity[0].unit.id,
                     unit: unitQuantity[0].unit,
