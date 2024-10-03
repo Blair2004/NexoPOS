@@ -18,7 +18,7 @@
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
-                <div :key="history.id" v-if="[ 'register-order-change' ].includes( history.action )"  class="flex border-b elevation-surface success">
+                <div :key="history.id" v-if="[ 'register-order-change' ].includes( history.action )"  class="flex border-b elevation-surface warning">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
@@ -116,7 +116,7 @@ export default {
                         .map( history => parseFloat( history.value ) )
                         .reduce( ( before, after ) => before + after, 0 );
                     this.totalOut        =   this.cashRegisterReport.history
-                        .filter( history => [ 'register-change', 'register-closing', 'register-refund', 'register-cash-out' ].includes( history.action ) )
+                        .filter( history => [ 'register-order-change', 'register-closing', 'register-refund', 'register-cash-out' ].includes( history.action ) )
                         .map( history => parseFloat( history.value ) )
                         .reduce( ( before, after ) => before + after, 0 );
                 });

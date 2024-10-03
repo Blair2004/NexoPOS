@@ -637,32 +637,6 @@ class ProcurementService
     }
 
     /**
-     * delete all items recorded for a procurement
-     * and reset all value including the computed owned money
-     *
-     * @deprecated
-     */
-    public function resetProcurement( $id )
-    {
-        $procurement = Procurement::find( $id );
-
-        $procurement->products->each( function ( $product ) {
-            $product->delete();
-        } );
-
-        /**
-         * trigger a specific event
-         * to let other perform some action
-         */
-        event( new ProcurementCancelationEvent( $procurement ) );
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The procurement has been reset.' ),
-        ];
-    }
-
-    /**
      * delete procurement
      * products
      *

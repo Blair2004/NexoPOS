@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get( 'procurements/{id?}', [ ProcurementController::class, 'list' ] )->where( 'id', '[0-9]+' );
 Route::get( 'procurements/{id}/products', [ ProcurementController::class, 'procurementProducts' ] );
-Route::get( 'procurements/{id}/reset', [ ProcurementController::class, 'resetProcurement' ] );
 Route::get( 'procurements/{id}/refresh', [ ProcurementController::class, 'refreshProcurement' ] );
 Route::get( 'procurements/{procurement}/set-as-paid', [ ProcurementController::class, 'setAsPaid' ] );
 

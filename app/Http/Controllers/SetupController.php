@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\JsonResponse;
 use App\Http\Requests\ApplicationConfigRequest;
 use App\Services\SetupService;
 use Illuminate\Http\Request;
@@ -54,14 +55,14 @@ class SetupController extends Controller
                  */
                 $this->setup->updateAppURL();
 
-                return [
-                    'status' => 'success',
-                ];
+                return JsonResponse::success( [
+                    'message' => __( 'The database connection has been successfully established.' ),
+                ] );
             }
         } catch ( \Exception $e ) {
-            return response()->json( [
-                'status' => 'error',
-            ], 403 );
+            return JsonResponse::error( [
+                'message' => $e->getMessage(),
+            ] );
         }
     }
 }

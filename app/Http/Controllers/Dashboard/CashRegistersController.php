@@ -250,7 +250,7 @@ class CashRegistersController extends DashboardController
                     ...$totalPaymentTypeSummary,
                     [
                         'label' => __( 'Total Change' ),
-                        'value' => - $totalCashChange,
+                        'value' => $totalCashChange,
                         'color' => 'warning',
                     ],
                     [

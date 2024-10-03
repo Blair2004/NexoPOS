@@ -63,10 +63,10 @@ class CashRegistersService
             );
         }
 
-        if ( (float) $register->balance === (float) $amount ) {
+        if ( ns()->currency->getRaw( $register->balance ) === ns()->currency->getRaw( $amount ) ) {
             $diffType = 'unchanged';
         } else {
-            $diffType = $register->balance < (float) $amount ? 'positive' : 'negative';
+            $diffType = ns()->currency->getRaw( $register->balance ) < ns()->currency->getRaw( $amount ) ? 'positive' : 'negative';
         }
 
         $registerHistory = new RegisterHistory;

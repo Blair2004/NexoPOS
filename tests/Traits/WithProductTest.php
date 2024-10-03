@@ -400,6 +400,8 @@ trait WithProductTest
     protected function attemptTestSearchable()
     {
         $searchable = Product::searchable()->first();
+        $oldStatus  =   ns()->option->get( 'ns_pos_hide_empty_categories' );
+        ns()->option->set( 'ns_pos_hide_empty_categories', 'no' );
 
         if ( $searchable instanceof Product ) {
             $response = $this
@@ -410,6 +412,8 @@ trait WithProductTest
             $exists = collect( $response[ 'products' ] )
                 ->filter( fn( $product ) => (int) $product[ 'id' ] === (int) $searchable->id )
                 ->count() > 0;
+
+            ns()->option->set( 'ns_pos_hide_empty_categories', $oldStatus );
 
             return $this->assertTrue( $exists, __( 'Searchable product cannot be found on category.' ) );
         }

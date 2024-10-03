@@ -140,66 +140,6 @@ class ReportsController extends DashboardController
     }
 
     /**
-     * @deprecated
-     */
-    public function getTransactions( Request $request )
-    {
-        $rangeStarts = Carbon::parse( $request->input( 'startDate' ) )
-            ->toDateTimeString();
-
-        $rangeEnds = Carbon::parse( $request->input( 'endDate' ) )
-            ->toDateTimeString();
-
-        $entries = $this->reportService->getFromTimeRange( $rangeStarts, $rangeEnds );
-        $total = $entries->count() > 0 ? $entries->first()->toArray() : [];
-        $creditCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_CREDIT )->with( [
-            'histories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
-                $query->where( 'created_at', '>=', $rangeStarts )
-                    ->where( 'created_at', '<=', $rangeEnds );
-            },
-        ] )
-            ->get()
-            ->map( function ( $transactionAccount ) {
-                $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
-
-                return $transactionAccount;
-            } );
-
-        $debitCashFlow = TransactionAccount::where( 'operation', TransactionHistory::OPERATION_DEBIT )->with( [
-            'histories' => function ( $query ) use ( $rangeStarts, $rangeEnds ) {
-                $query->where( 'created_at', '>=', $rangeStarts )
-                    ->where( 'created_at', '<=', $rangeEnds );
-            },
-        ] )
-            ->get()
-            ->map( function ( $transactionAccount ) {
-                $transactionAccount->total = $transactionAccount->histories->count() > 0 ? $transactionAccount->histories->sum( 'value' ) : 0;
-
-                return $transactionAccount;
-            } );
-
-        return [
-            'summary' => collect( $total )->mapWithKeys( function ( $value, $key ) use ( $entries ) {
-                if ( ! in_array( $key, [ 'range_starts', 'range_ends', 'day_of_year' ] ) ) {
-                    return [ $key => $entries->sum( $key ) ];
-                }
-
-                return [ $key => $value ];
-            } ),
-
-            'total_debit' => collect( [
-                $debitCashFlow->sum( 'total' ),
-            ] )->sum(),
-            'total_credit' => collect( [
-                $creditCashFlow->sum( 'total' ),
-            ] )->sum(),
-
-            'creditCashFlow' => $creditCashFlow,
-            'debitCashFlow' => $debitCashFlow,
-        ];
-    }
-
-    /**
      * get sold stock on a specific time range
      *
      *

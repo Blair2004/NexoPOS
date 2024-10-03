@@ -2025,11 +2025,6 @@ class OrdersService
 
             $order->products;
 
-            /**
-             * @deprecated
-             */
-            Hook::action( 'ns-load-order', $order );
-
             return $order;
         }
 

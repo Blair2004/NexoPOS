@@ -202,10 +202,6 @@ class SetupService
                 ns()->update->assumeExecuted( $file );
             } );
 
-        $this->options = app()->make( Options::class );
-        $this->options->setDefault();
-        $this->options->set( 'ns_store_language', $configuredLanguage );
-
         /**
          * clear all cache
          */
@@ -239,6 +235,10 @@ class SetupService
 
         $this->createDefaultPayment( $user );
         $this->createDefaultAccounting();
+
+        $this->options = app()->make( Options::class );
+        $this->options->setDefault();
+        $this->options->set( 'ns_store_language', $configuredLanguage );
 
         return [
             'status' => 'success',
@@ -281,8 +281,6 @@ class SetupService
         $customerAccountType->readonly = true;
         $customerAccountType->author = $user->id;
         $customerAccountType->save();
-
-        ns()->option->set( 'ns_pos_registers_default_change_payment_type', $cashPaymentType->id );
     }
 
     public function testDBConnexion()

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Classes\Hook;
+use App\Classes\JsonResponse;
 use App\Events\ProcurementAfterPaymentStatusChangedEvent;
 use App\Events\ShouldRefreshReportEvent;
 use App\Events\TransactionAfterCreatedEvent;
@@ -836,11 +837,10 @@ class TransactionService
             rule: $rule
         );
 
-        return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The transaction has been recorded.' ),
-            'data'      =>  compact( 'transactionHistory' )
-        ];
+        return JsonResponse::success(
+            message: __( 'The transaction has been recorded.' ),
+            data: compact( 'transactionHistory' )
+        );
     }
 
     /**
