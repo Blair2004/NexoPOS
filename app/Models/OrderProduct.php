@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\FloatConvertCasting;
 use App\Events\OrderProductAfterCreatedEvent;
 use App\Events\OrderProductAfterUpdatedEvent;
+use App\Events\OrderProductBeforeCreatedEvent;
 use App\Events\OrderProductBeforeUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -77,6 +78,7 @@ class OrderProduct extends NsModel
     ];
 
     public $dispatchesEvents = [
+        'creating' => OrderProductBeforeCreatedEvent::class,
         'created' => OrderProductAfterCreatedEvent::class,
         'updated' => OrderProductAfterUpdatedEvent::class,
         'updating'   =>  OrderProductBeforeUpdatedEvent::class,

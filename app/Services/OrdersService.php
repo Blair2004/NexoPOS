@@ -8,6 +8,7 @@ use App\Events\DueOrdersEvent;
 use App\Events\OrderAfterCheckPerformedEvent;
 use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderAfterInstalmentPaidEvent;
+use App\Events\OrderAfterLoadedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterProductStockCheckedEvent;
 use App\Events\OrderAfterRefundedEvent;
@@ -2024,6 +2025,8 @@ class OrdersService
             }
 
             $order->products;
+
+            OrderAfterLoadedEvent::dispatch( $order );
 
             return $order;
         }
