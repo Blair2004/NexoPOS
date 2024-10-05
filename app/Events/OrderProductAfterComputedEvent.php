@@ -16,7 +16,7 @@ class OrderProductAfterComputedEvent
      *
      * @return void
      */
-    public function __construct( public OrderProduct $orderProduct )
+    public function __construct( public OrderProduct $orderProduct, public array $product )
     {
         // ...
     }

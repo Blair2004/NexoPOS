@@ -1145,7 +1145,7 @@ class OrdersService
                 ->toFloat();
             }
 
-            $this->computeOrderProduct( $orderProduct );
+            $this->computeOrderProduct( $orderProduct, $product );
 
             $subTotal = $this->currencyService->define( $subTotal )
                 ->additionateBy( $orderProduct->total_price )
@@ -1932,12 +1932,13 @@ class OrdersService
      *
      * @return void
      */
-    public function computeOrderProduct( OrderProduct $orderProduct )
+    public function computeOrderProduct( OrderProduct $orderProduct, array $product )
     {
         $orderProduct = $this->taxService->computeOrderProductTaxes( $orderProduct );
 
         OrderProductAfterComputedEvent::dispatch(
             $orderProduct,
+            $product
         );
     }
 
