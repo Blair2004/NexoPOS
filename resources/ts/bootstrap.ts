@@ -8,7 +8,6 @@ import * as RxJS from 'rxjs';
 import { default as moment } from 'moment';
 import { createApp } from "vue/dist/vue.esm-bundler";
 import { Popup } from "~/libraries/popup";
-import { ContextualPopup } from "./libraries/window";
 import { EventEmitter, HttpClient, SnackBar, State, FloatingNotice } from "./libraries/libraries";
 import FormValidation from "./libraries/form-validation";
 import Url from "./libraries/url";
@@ -26,6 +25,7 @@ import { nsAbbreviate } from "./filters/abbreviate";
 import { nsTruncate } from "./filters/truncate";
 import Tax from "./libraries/tax";
 import Print from "./libraries/print";
+import * as math from 'mathjs';
 
 
 declare global {
@@ -45,7 +45,8 @@ declare global {
         Pusher:any,
         EchoClass: any,
         timespan: any,
-        countdown: any
+        countdown: any,
+        nsMath: any
     }
 };
 
@@ -66,6 +67,7 @@ window.popupResolver    =   popupResolver,
 window.popupCloser      =   popupCloser,
 window.countdown        =   countdown;
 window.timespan         =   timespan;
+window.nsMath           =   math
 
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;

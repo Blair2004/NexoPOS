@@ -1821,10 +1821,32 @@ export class POS {
          * based on a percentage. @todo While we believe discount
          * shouldn't be calculated after taxes
          */
-        let discount_without_tax:number   =   0;
-        let discount_with_tax:number      =   0;
         let price_with_tax:number         =   this.getPrice( product.$quantities(), product.mode, 'with_tax' );
         let price_without_tax:number      =   this.getPrice( product.$quantities(), product.mode, 'without_tax' );
+
+        const { discount_with_tax, discount_without_tax } = this.computeDiscount( product, price_with_tax, price_without_tax );
+
+        product.price_with_tax              =   price_with_tax;
+        product.price_without_tax           =   price_without_tax;
+
+        product.total_price                 =   math.chain(
+            math.chain( product.unit_price ).multiply( product.quantity ).done()
+        ).subtract( product.discount ).done();
+
+        product.total_price_with_tax        =   math.chain(
+            math.chain( price_with_tax ).multiply( product.quantity ).done()
+        ).subtract( discount_with_tax ).done();
+
+        product.total_price_without_tax     =   math.chain(
+            math.chain( price_without_tax ).multiply( product.quantity ).done()
+        ).subtract( discount_without_tax ).done();
+
+        nsHooks.doAction('ns-after-product-computed', product);
+    }
+
+    computeDiscount( product, price_with_tax, price_without_tax ) {
+        let discount_with_tax:any = 0;
+        let discount_without_tax:any = 0;
 
         if (['flat', 'percentage'].includes(product.discount_type)) {
             if (product.discount_type === 'percentage') {
@@ -1852,22 +1874,7 @@ export class POS {
             }
         }
 
-        product.price_with_tax              =   price_with_tax;
-        product.price_without_tax           =   price_without_tax;
-
-        product.total_price                 =   math.chain(
-            math.chain( product.unit_price ).multiply( product.quantity ).done()
-        ).subtract( product.discount ).done();
-
-        product.total_price_with_tax        =   math.chain(
-            math.chain( price_with_tax ).multiply( product.quantity ).done()
-        ).subtract( discount_with_tax ).done();
-
-        product.total_price_without_tax     =   math.chain(
-            math.chain( price_without_tax ).multiply( product.quantity ).done()
-        ).subtract( discount_without_tax ).done();
-
-        nsHooks.doAction('ns-after-product-computed', product);
+        return { discount_with_tax, discount_without_tax };
     }
 
     loadCustomer(id) {
