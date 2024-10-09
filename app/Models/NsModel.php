@@ -120,7 +120,15 @@ abstract class NsModel extends NsRootModel
          * has the $dispatchableFieldsEvents property defined
          */
         if ( $this->dispatchableFieldsEvents ) {
-            $changedAttributes = array_diff_assoc( $this->getAttributes(), $this->oldAttributes );
+            $currentAttributes = array_filter($this->getAttributes(), function($value) {
+                return is_string($value) || is_numeric($value);
+            });
+            
+            $oldAttributes = array_filter($this->oldAttributes, function($value) {
+                return is_string($value) || is_numeric($value);
+            });
+
+            $changedAttributes = array_diff_assoc( $currentAttributes, $oldAttributes );
     
             if ( ! empty( $changedAttributes ) ) {
                 // Dispatch the "changed" event for the entire model
