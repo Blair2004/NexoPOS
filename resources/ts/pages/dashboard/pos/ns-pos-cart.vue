@@ -577,6 +577,15 @@ export default {
                         reject,
                         type,
                         onSubmit( response ) {
+                            /**
+                             * we should check here, if the discount is flat, we'll make sure
+                             * the amount doesn't exceed the total_price of the product.
+                             */
+                            if ( response.discount_type === 'flat' && response.discount > reference.total_price ) {
+                                return nsSnackBar.error( __( 'The discount amount can\'t exceed the total price of the product.' ) ).subscribe();
+                            }
+                            
+                            
                             if ( type === 'product' ) {
                                 POS.updateProduct( reference, response, index );
                             } else if ( type === 'cart' ) {

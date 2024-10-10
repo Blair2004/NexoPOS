@@ -1803,6 +1803,7 @@ export class POS {
          * determining what is the 
          * real sale price
          */
+        console.log({ product })
         if ( product.product_type === 'product' ) {
             if (product.mode === 'normal') {
                 product.unit_price = this.getSalePrice(product.$quantities(), product.$original());

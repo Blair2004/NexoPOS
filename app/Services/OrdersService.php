@@ -1079,12 +1079,6 @@ class OrdersService
             $orderProduct->load( 'product' );
 
             /**
-             * this can be useful to allow injecting
-             * data that can later on be compted.
-             */
-            // OrderProductBeforeSavedEvent::dispatch( $orderProduct, $product );
-
-            /**
              * We'll retreive the unit used for
              * the order product.
              *
@@ -1934,7 +1928,7 @@ class OrdersService
      */
     public function computeOrderProduct( OrderProduct $orderProduct, array $product )
     {
-        $orderProduct = $this->taxService->computeOrderProductTaxes( $orderProduct );
+        $orderProduct = $this->taxService->computeOrderProductTaxes( $orderProduct, $product );
 
         OrderProductAfterComputedEvent::dispatch(
             $orderProduct,

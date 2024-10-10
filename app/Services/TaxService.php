@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\OrderProductAfterComputeTaxEvent;
 use App\Exceptions\NotFoundException;
 use App\Models\OrderProduct;
 use App\Models\Product;
@@ -419,7 +420,7 @@ class TaxService
      * We might not need to perform this if
      * the product already comes with defined tax.
      */
-    public function computeOrderProductTaxes( OrderProduct $orderProduct ): OrderProduct
+    public function computeOrderProductTaxes( OrderProduct $orderProduct, array $productArray ): OrderProduct
     {
         /**
          * let's load the original product with the tax group
@@ -435,7 +436,7 @@ class TaxService
 
         if ( $orderProduct->discount_type === 'percentage' ) {
             $discount = $this->getPercentageOf(
-                value: $orderProduct->unit_price * $orderProduct->quantity,
+                value: $orderProduct->unit_price,
                 rate: $orderProduct->discount_percentage,
             );
         } elseif ( $orderProduct->discount_type === 'flat' ) {
@@ -464,7 +465,7 @@ class TaxService
                     price: $orderProduct->unit_price - $discount,
                     group: $taxGroup
                 );
-                $orderProduct->price_without_tax = $orderProduct->unit_price;
+                $orderProduct->price_without_tax = $orderProduct->unit_price - $discount;
             } else {
                 $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
                     type: 'inclusive',
@@ -472,7 +473,7 @@ class TaxService
                     group: $taxGroup
                 );
 
-                $orderProduct->price_with_tax = $orderProduct->unit_price;
+                $orderProduct->price_with_tax = $orderProduct->unit_price - $discount;
             }
 
             $orderProduct->tax_value = ( $orderProduct->price_with_tax - $orderProduct->price_without_tax ) * $orderProduct->quantity;
@@ -480,18 +481,18 @@ class TaxService
 
         $orderProduct->discount = $discount;
 
-        $orderProduct->total_price_without_tax = ns()->currency
+        $orderProduct->total_price_without_tax = $orderProduct->total_price_without_tax ?: ns()->currency
             ->fresh( $orderProduct->price_without_tax )
             ->multiplyBy( $orderProduct->quantity )
             ->get();
 
-        $orderProduct->total_price = ns()->currency
+        $orderProduct->total_price = $orderProduct->total_price ?: ns()->currency
             ->fresh( $orderProduct->unit_price )
-            ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $discount )
+            ->multiplyBy( $orderProduct->quantity )
             ->toFloat();
 
-        $orderProduct->total_price_with_tax = ns()->currency
+        $orderProduct->total_price_with_tax = $orderProduct->total_price_with_tax ?: ns()->currency
             ->fresh( $orderProduct->price_with_tax )
             ->multiplyBy( $orderProduct->quantity )
             ->get();
