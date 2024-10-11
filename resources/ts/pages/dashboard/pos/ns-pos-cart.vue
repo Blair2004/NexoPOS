@@ -458,7 +458,9 @@ export default {
                     const quantities  =   {
                         ...product.$quantities(), 
                         ...{
-                            custom_price_edit : newPrice
+                            custom_price_edit : newPrice,
+                            custom_price_with_tax: newPrice,
+                            custom_price_without_tax: newPrice
                         }
                     }
 
@@ -469,7 +471,6 @@ export default {
                      * to avoid restoring the original prices.
                      */
                     product.mode    =   'custom';
-                    product.unit_price  =   newPrice;
                                         
                     POS.recomputeProducts( POS.products.getValue() );
                     POS.refreshCart();

@@ -84,6 +84,11 @@ class OrderProduct extends NsModel
         'updating'   =>  OrderProductBeforeUpdatedEvent::class,
     ];
 
+    public function tax_group()
+    {
+        return $this->hasOne( TaxGroup::class, 'id', 'tax_group_id' );
+    }
+
     public function unit()
     {
         return $this->hasOne( Unit::class, 'id', 'unit_id' );

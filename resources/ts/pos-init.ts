@@ -1275,11 +1275,9 @@ export class POS {
 
         const products  = this.products.getValue();
         let order       = this.order.getValue();
-        // let usePriceWithTax  =   this.options.getValue().ns_pos_price_with_tax;
 
         const productTotal = products
             .filter( product => product.product_type !== 'dynamic' )
-            // .map(product => usePriceWithTax === 'yes' ? product.total_price_with_tax : product.total_price_without_tax );
             .map(product => product.total_price );
 
         if (productTotal.length > 0) {
@@ -1365,9 +1363,8 @@ export class POS {
 
         const inclusiveTaxes    =   products.map( (product: OrderProduct) => {
             if ( product.tax_type === 'inclusive' ) {
-                return product.tax_value;
+                return product.total_tax_value;
             }
-
             return 0;
         });
 
@@ -1390,6 +1387,14 @@ export class POS {
         } else {
             const op1 = math.chain( order.subtotal ).add( order.shipping || 0 ).done();
             order.total     =   math.chain( op1 ).subtract( order.discount ).subtract( order.total_coupons ).done();
+        }
+
+        /**
+         * if the price with tax is disabled, we should
+         * add the products tax by the end so on total
+         */
+        if ( this.options.getValue().ns_pos_price_with_tax === 'no' ) {
+            order.total += inclusiveTaxCount;
         }
 
         this.order.next(order);
@@ -1786,20 +1791,13 @@ export class POS {
          */
         if ( product.product_type === 'product' ) {
             if (product.mode === 'normal') {
-                product.unit_price = this.getSalePrice( product.$quantities() ); // this.getSalePrice(product.$quantities());
+                product.unit_price = this.getSalePrice( product.$quantities() );
             } else if (product.mode === 'wholesale') {
-                product.unit_price = this.getWholesalePrice( product.$quantities() ); // this.getWholesalePrice(product.$quantities());
+                product.unit_price = this.getWholesalePrice( product.$quantities() );
             } if (product.mode === 'custom') {
-                product.unit_price = this.getCustomPrice( product.$quantities() ); // this.getCustomPrice(product.$quantities());
+                product.unit_price = this.getCustomPrice( product.$quantities() );
             }
         }
-
-        /**
-         * These are original price with and without tax
-         */
-        // product.price_without_tax   =   this.getPrice( product.$quantities(), product.mode, 'without_tax' );
-        // product.price_with_tax      =   this.getPrice( product.$quantities(), product.mode, 'with_tax' );
-        // product.tax_value           =   this.getPrice( product.$quantities(), product.mode, 'tax' );
         
         /**
          * We'll now compute the discount
@@ -1812,15 +1810,9 @@ export class POS {
          * after the discount.
          */
         this.computeProductTaxValue( product );
-
-        console.log({ product });
-
-        // // const sale_price    = this.options.getValue().ns_pos_price_with_tax === 'yes' ? product.price_with_tax : product.price_without_tax;
         
         product.total_price =   math.chain( product.unit_price ).multiply( product.quantity ).subtract( product.discount ).done();
         product.total_tax_value = math.chain( product.tax_value ).multiply( product.quantity ).done();
-        // // product.total_price_with_tax = math.chain( product.price_with_tax ).multiply( product.quantity ).done();
-        // // product.total_price_without_tax = math.chain( product.price_without_tax ).multiply( product.quantity ).done();
 
         nsHooks.doAction('ns-after-product-computed', product);
     }
@@ -1834,11 +1826,9 @@ export class POS {
             this.options.getValue().ns_pos_price_with_tax === 'yes' ? 'inclusive' : 'exclusive'
         );
 
-        product.tax_value       =   result.tax_value;
-        product.price_with_tax  =   result.price_with_tax;
+        product.tax_value           =   result.tax_value;
+        product.price_with_tax      =   result.price_with_tax;
         product.price_without_tax   =   result.price_without_tax;
-        // product.price_with_tax  =   result.price_with_tax;
-        // product.price_without_tax = result.price_without_tax;
     }
 
     computeTaxForGroup( price, tax_group, tax_type ) {
@@ -1856,12 +1846,9 @@ export class POS {
         if ( taxes.length > 0 ) {
             const rate          =   taxes.map( tax => tax.rate ).reduce( ( b, a ) => b + a );
             tax_value           =   this.getVatValue( price, rate, tax_type );            
-            console.log({ tax_value });
             price_without_tax   =   this.getPriceWithoutTax( price, rate, tax_type );
             price_with_tax      =   this.getPriceWithTax( price, rate, tax_type );
         }
-
-        console.log( 'foo' );
 
         return {
             ...tax_group,
@@ -1880,18 +1867,6 @@ export class POS {
                         math.chain( product.unit_price ).multiply( product.discount_percentage ).done()
                     ).divide( 100 ).done()
                 ).multiply( product.quantity ).done();
-
-                // product.discount_price_with_tax        =   math.chain(
-                //     math.chain(
-                //         math.chain( product.price_with_tax ).multiply( product.discount_percentage ).done()
-                //     ).divide( 100 ).done()
-                // ).multiply( product.quantity ).done();
-
-                // product.discount_price_without_tax        =   math.chain(
-                //     math.chain(
-                //         math.chain( product.price_without_tax ).multiply( product.discount_percentage ).done()
-                //     ).divide( 100 ).done()
-                // ).multiply( product.quantity ).done();
             } 
         }
     }

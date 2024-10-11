@@ -2006,6 +2006,7 @@ class OrdersService
                 ->with( 'taxes' )
                 ->with( 'instalments' )
                 ->with( 'coupons' )
+                ->with( 'products.product.tax_group.taxes' )
                 ->with( 'products.unit' )
                 ->with( 'products.product.unit_quantities' )
                 ->with( 'customer.billing', 'customer.shipping' )
