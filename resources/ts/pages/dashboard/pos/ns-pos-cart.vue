@@ -162,7 +162,7 @@
                                         <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.total_tax_value ) }}</a>
                                     </template>
                                     <template v-else-if="order && options.ns_pos_tax_type === 'inclusive'">
-                                        <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.total_tax_value + ( order.products_exclusive_tax_value + order.products_inclusive_tax_value ) ) }}</a>
+                                        <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.total_tax_value + ( order.products_tax_value ) ) }}</a>
                                         <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.total_tax_value ) }}</a>
                                     </template>
                                 </template>
@@ -469,7 +469,7 @@ export default {
                      * to avoid restoring the original prices.
                      */
                     product.mode    =   'custom';
-                    product         =   POS.computeProductTax( product );
+                    product.unit_price  =   newPrice;
                                         
                     POS.recomputeProducts( POS.products.getValue() );
                     POS.refreshCart();
@@ -567,6 +567,10 @@ export default {
 
             if ( ! this.settings.cart_discount && type === 'cart' ) {
                 return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
+            }
+
+            if ( type === 'product' ) {
+                reference.disable_flat = true;
             }
 
             try {

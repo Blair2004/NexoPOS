@@ -13,6 +13,7 @@ export interface OrderProduct extends Product {
     total_price: number;
     total_price_with_tax: number;
     total_price_without_tax: number;
+    total_tax_value?: number;
     product_type: 'product' | 'dynamic';
     rate?: number;
     quantity: number;
