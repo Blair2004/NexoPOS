@@ -375,27 +375,36 @@ export class POS {
     }
 
     public getSalePrice(item) {
+        let price = 0;
         if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
-            return nsRawCurrency( item.sale_price_with_tax );
+            price = nsRawCurrency( item.sale_price_with_tax );
         } else {
-            return nsRawCurrency( item.sale_price_without_tax );
+            price = nsRawCurrency( item.sale_price_without_tax );
         }
+
+        return nsHooks.applyFilters( 'ns-pos-product-sale-price', price, item );
     }
 
     public getCustomPrice(item) {
+        let customPrice = 0;
         if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
-            return nsRawCurrency( item.custom_price_with_tax );
+            customPrice = nsRawCurrency( item.custom_price_with_tax );
         } else {
-            return nsRawCurrency( item.custom_price_without_tax );
+            customPrice = nsRawCurrency( item.custom_price_without_tax );
         }
+
+        return nsHooks.applyFilters( 'ns-pos-product-custom-price', customPrice, item );
     }
 
     public getWholesalePrice(item) {
+        let wholeSalePrice = 0;
         if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
-            return nsRawCurrency( item.wholesale_price_with_tax );
+            wholeSalePrice = nsRawCurrency( item.wholesale_price_with_tax );
         } else {
-            return nsRawCurrency( item.wholesale_price_without_tax );
+            wholeSalePrice = nsRawCurrency( item.wholesale_price_without_tax );
         }
+
+        return nsHooks.applyFilters( 'ns-pos-product-wholesale-price', wholeSalePrice, item );
     }
 
     public setHoldPopupEnabled(status = true) {
@@ -1389,14 +1398,6 @@ export class POS {
             order.total     =   math.chain( op1 ).subtract( order.discount ).subtract( order.total_coupons ).done();
         }
 
-        /**
-         * if the price with tax is disabled, we should
-         * add the products tax by the end so on total
-         */
-        if ( this.options.getValue().ns_pos_price_with_tax === 'no' ) {
-            order.total += inclusiveTaxCount;
-        }
-
         this.order.next(order);
 
         nsHooks.doAction('ns-cart-after-refreshed', order);
@@ -1807,11 +1808,13 @@ export class POS {
         /**
          * The price with and without tax
          * needs to be updated as tax is by default computed
-         * after the discount.
+         * after the discount. Therefore we need to make sure.
          */
         this.computeProductTaxValue( product );
+
+        let unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
         
-        product.total_price =   math.chain( product.unit_price ).multiply( product.quantity ).subtract( product.discount ).done();
+        product.total_price =   math.chain( unitPrice ).multiply( product.quantity ).subtract( product.discount ).done();
         product.total_tax_value = math.chain( product.tax_value ).multiply( product.quantity ).done();
 
         nsHooks.doAction('ns-after-product-computed', product);
@@ -1819,9 +1822,10 @@ export class POS {
 
     computeProductTaxValue( product ) {  
         const tax_group = product.$original().tax_group;
+        const unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
 
         let result    =   this.computeTaxForGroup( 
-            math.chain( product.unit_price ).multiply( product.quantity ).subtract( product.discount ).done(), 
+            math.chain( unitPrice ).multiply( product.quantity ).subtract( product.discount ).done(), 
             tax_group, 
             this.options.getValue().ns_pos_price_with_tax === 'yes' ? 'inclusive' : 'exclusive'
         );
@@ -1862,9 +1866,10 @@ export class POS {
     computeDiscount( product ) {
         if (['flat', 'percentage'].includes(product.discount_type)) {
             if (product.discount_type === 'percentage') {
+                let unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
                 product.discount        =   math.chain(
                     math.chain(
-                        math.chain( product.unit_price ).multiply( product.discount_percentage ).done()
+                        math.chain( unitPrice ).multiply( product.discount_percentage ).done()
                     ).divide( 100 ).done()
                 ).multiply( product.quantity ).done();
             } 
