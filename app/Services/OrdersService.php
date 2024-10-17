@@ -1071,6 +1071,9 @@ class OrdersService
              * then we can use that id as a reference.
              */
             if ( isset( $product[ 'id' ] ) ) {
+                /**
+                 * @var OrderProduct $orderProduct
+                 */
                 $orderProduct = OrderProduct::find( $product[ 'id' ] );
             } else {
                 $orderProduct = new OrderProduct;
@@ -1138,6 +1141,12 @@ class OrdersService
                 )
                 ->toFloat();
             }
+
+            /**
+             * store the product that as it can be used while
+             * listening to create and update events.
+             */
+            $orderProduct->setData( $product );
 
             $this->computeOrderProduct( $orderProduct, $product );
 

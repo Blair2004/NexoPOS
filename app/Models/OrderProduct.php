@@ -7,6 +7,8 @@ use App\Events\OrderProductAfterCreatedEvent;
 use App\Events\OrderProductAfterUpdatedEvent;
 use App\Events\OrderProductBeforeCreatedEvent;
 use App\Events\OrderProductBeforeUpdatedEvent;
+use App\Traits\NsFiltredAttributes;
+use App\Traits\NsFlashData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -46,7 +48,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class OrderProduct extends NsModel
 {
-    use HasFactory;
+    use HasFactory, NsFiltredAttributes, NsFlashData;
 
     const CONDITION_DAMAGED = 'damaged';
 

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Events\OrderProductAfterComputeTaxEvent;
 use App\Exceptions\NotFoundException;
 use App\Models\OrderProduct;
@@ -420,7 +421,7 @@ class TaxService
      * We might not need to perform this if
      * the product already comes with defined tax.
      */
-    public function computeOrderProductTaxes( OrderProduct $orderProduct, array $productArray ): OrderProduct
+    public function  computeOrderProductTaxes( OrderProduct $orderProduct, array $productArray ): OrderProduct
     {
         /**
          * let's load the original product with the tax group
@@ -436,7 +437,7 @@ class TaxService
 
         if ( $orderProduct->discount_type === 'percentage' ) {
             $discount = $this->getPercentageOf(
-                value: $orderProduct->unit_price,
+                value: $orderProduct->filterAttribute( 'unit_price', $productArray ),
                 rate: $orderProduct->discount_percentage,
             );
         } elseif ( $orderProduct->discount_type === 'flat' ) {
@@ -462,18 +463,18 @@ class TaxService
             if ( $type === 'exclusive' ) {
                 $orderProduct->price_with_tax = $this->getPriceWithTaxUsingGroup(
                     type: 'exclusive',
-                    price: $orderProduct->unit_price - $discount,
+                    price: $orderProduct->filterAttribute( 'unit_price', $productArray ) - $discount,
                     group: $taxGroup
                 );
-                $orderProduct->price_without_tax = $orderProduct->unit_price - $discount;
+                $orderProduct->price_without_tax = $orderProduct->filterAttribute( 'unit_price', $productArray ) - $discount;
             } else {
                 $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
                     type: 'inclusive',
-                    price: $orderProduct->unit_price - $discount,
+                    price: $orderProduct->filterAttribute( 'unit_price', $productArray ) - $discount,
                     group: $taxGroup
                 );
 
-                $orderProduct->price_with_tax = $orderProduct->unit_price - $discount;
+                $orderProduct->price_with_tax = $orderProduct->filterAttribute( 'unit_price', $productArray ) - $discount;
             }
 
             $orderProduct->tax_value = ( $orderProduct->price_with_tax - $orderProduct->price_without_tax ) * $orderProduct->quantity;
@@ -487,7 +488,7 @@ class TaxService
             ->get();
 
         $orderProduct->total_price = $orderProduct->total_price ?: ns()->currency
-            ->fresh( $orderProduct->unit_price )
+            ->fresh( $orderProduct->filterAttribute( 'unit_price', $productArray ) )
             ->subtractBy( $discount )
             ->multiplyBy( $orderProduct->quantity )
             ->toFloat();

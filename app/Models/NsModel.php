@@ -39,20 +39,33 @@ abstract class NsModel extends NsRootModel
         parent::boot();
 
         static::creating( function ( $model ) {
-            $model->oldAttributes = $model->getOriginal();
-        } );
+            if ( $model->hasDispatchableFields() ) {
+                $model->oldAttributes = $model->getOriginal();
+            }
+        });
 
         static::updating( function ( $model ) {
-            $model->oldAttributes = $model->getOriginal();
-        } );
+            if ( $model->hasDispatchableFields() ) {
+                $model->oldAttributes = $model->getOriginal();
+            }
+        });
 
         static::created( function ( $model ) {
-            $model->detectChanges();
-        } );
+            if ( $model->hasDispatchableFields() ) {
+                $model->detectChanges();
+            }
+        });
 
         static::updated( function ( $model ) {
-            $model->detectChanges();
-        } );
+            if ( $model->hasDispatchableFields() ) {
+                $model->detectChanges();
+            }
+        });
+    }
+
+    public function hasDispatchableFields()
+    {
+        return ! empty( $this->dispatchableFieldsEvents );
     }
 
     public function saveWithRelationships( array $relationships, $options = [] )
@@ -121,11 +134,11 @@ abstract class NsModel extends NsRootModel
          */
         if ( $this->dispatchableFieldsEvents ) {
             $currentAttributes = array_filter($this->getAttributes(), function($value) {
-                return is_string($value) || is_numeric($value);
+                return is_string($value) || is_numeric($value) || is_bool( $value );
             });
             
             $oldAttributes = array_filter($this->oldAttributes, function($value) {
-                return is_string($value) || is_numeric($value);
+                return is_string($value) || is_numeric($value) || is_bool( $value );
             });
 
             $changedAttributes = array_diff_assoc( $currentAttributes, $oldAttributes );
