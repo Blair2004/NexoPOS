@@ -9,6 +9,7 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Services\DateService;
+use App\Traits\NsFlashData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -62,7 +63,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Order extends NsModel
 {
-    use HasFactory;
+    use HasFactory, NsFlashData;
 
     public $timestamps = false;
 

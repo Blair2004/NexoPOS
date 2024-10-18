@@ -1863,6 +1863,29 @@ export class POS {
         }
     }
 
+    async runPaymentQueue() {
+        const queues    =   nsHooks.applyFilters( 'ns-pay-queue', [
+            ProductsQueue,
+            CustomerQueue,
+            TypeQueue,
+            PaymentQueue
+        ]);
+
+        for( let index in queues ) {
+            try {
+                const promise   =   new queues[ index ]( this.order );
+                const response  =   await promise.run();
+            } catch( exception ) {
+                /**
+                 * in case there is something broken
+                 * on the promise, we just stop the queue.
+                 */
+                console.log( exception );
+                return false;
+            }
+        }
+    }
+
     computeDiscount( product ) {
         if (['flat', 'percentage'].includes(product.discount_type)) {
             if (product.discount_type === 'percentage') {

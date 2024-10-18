@@ -210,6 +210,12 @@ class OrdersService
 
         $taxes  =   $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
 
+        /**
+         * Those fields might be used while running a listener on
+         * either the create or update event of the order.
+         */
+        $order->setData( $fields );
+
         $order->saveWithRelationships( [
             'products' => $orderProducts,
             'payments' => $payments,
@@ -2078,6 +2084,14 @@ class OrdersService
          * @todo make sure order are saved after this.
          */
         extract( $this->__saveOrderProducts( $order, $products ) );
+
+        /**
+         * Since __saveOrdeProducts no longer
+         * saves products, we'll do that manually here
+         */
+        $order->saveWithRelationships([
+            'products'  =>  $orderProducts,
+        ]);
 
         /**
          * Now we should refresh the order
