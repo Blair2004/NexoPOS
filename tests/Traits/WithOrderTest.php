@@ -2393,6 +2393,7 @@ trait WithOrderTest
                 'products' => $responseData[ 'data' ][ 'order' ][ 'products' ],
             ] );
 
+        $response->dump();
         $response->assertStatus( 200 );
         $responseData = $response->json();
 

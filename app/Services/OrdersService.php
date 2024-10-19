@@ -1827,6 +1827,7 @@ class OrdersService
                 description: __( 'The current credit has been issued from a refund.' ), 
                 details: [
                     'order_id' => $order->id,
+                    'author'    =>  Auth::id(),
                 ]
             );
         }
