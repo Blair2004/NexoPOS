@@ -66,19 +66,7 @@ class Role extends NsRootModel
             'user_id',
         );
     }
-
-    /**
-     * Relation with users
-     *
-     * @return void
-     *
-     * @deprecated
-     **/
-    public function user()
-    {
-        return $this->hasMany( User::class );
-    }
-
+    
     /**
      * Relation with Permissions
      **/

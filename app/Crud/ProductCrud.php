@@ -676,13 +676,13 @@ class ProductCrud extends CrudService
     public function getColumns(): array
     {
         return [
-            'type' => [
-                'label' => __( 'Type' ),
+            'name' => [
+                'label' => __( 'Name' ),
                 '$direction' => '',
                 '$sort' => false,
             ],
-            'name' => [
-                'label' => __( 'Name' ),
+            'type' => [
+                'label' => __( 'Type' ),
                 '$direction' => '',
                 'width' => '150px',
                 '$sort' => false,

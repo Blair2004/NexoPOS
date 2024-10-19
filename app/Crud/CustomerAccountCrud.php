@@ -5,6 +5,7 @@ namespace App\Crud;
 use App\Classes\CrudTable;
 use App\Events\CrudBeforeExportEvent;
 use App\Exceptions\NotAllowedException;
+use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\User;
 use App\Services\CrudEntry;
@@ -582,10 +583,18 @@ class CustomerAccountCrud extends CrudService
      */
     public function getLinks(): array
     {
+        $customer = request()->route( 'customer' );
+
+        if ( $customer instanceof Customer ) {
+            $customerId = $customer->id;
+        } else {
+            $customerId = request()->query( 'customer_id' );
+        }
+
         return [
-            'list' => ns()->url( 'dashboard/' . 'customers/' . '/account-history' ),
-            'create' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/create' ),
-            'edit' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/edit/' ),
+            'list' => ns()->url( 'dashboard/' . 'customers/' . $customerId . '/account-history' ),
+            'create' => ns()->url( 'dashboard/' . 'customers/' . $customerId . '/account-history/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'customers/' . $customerId . '/account-history/edit/' ),
             'post' => ns()->url( 'api/crud/' . 'ns.customers-account-history' ),
             'put' => ns()->url( 'api/crud/' . 'ns.customers-account-history/{id}' ),
         ];

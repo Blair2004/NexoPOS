@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\ProcurementBeforeDeleteEvent;
 use App\Services\ProcurementService;
 use App\Services\ProviderService;
+use App\Services\TransactionService;
 
 class ProcurementBeforeDeleteEventListener
 {
@@ -15,7 +16,8 @@ class ProcurementBeforeDeleteEventListener
      */
     public function __construct(
         public ProcurementService $procurementService,
-        public ProviderService $providerService
+        public ProviderService $providerService,
+        public TransactionService $transactionService
     ) {
         //
     }
@@ -29,5 +31,6 @@ class ProcurementBeforeDeleteEventListener
     {
         $this->procurementService->attemptProductsStockRemoval( $event->procurement );
         $this->procurementService->deleteProcurementProducts( $event->procurement );
+        $this->transactionService->deleteProcurementTransactions( $event->procurement );
     }
 }

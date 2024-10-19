@@ -32,13 +32,12 @@
         </div>
     </div>
 </template>
-<script lang="ts">
-import { nsHttpClient } from '~/bootstrap';
+<script>
 import resolveIfQueued from "~/libraries/popup-resolver";
 import FormValidation from '~/libraries/form-validation';
 import popupCloser from "~/libraries/popup-closer";
 
-declare const __, POS;
+// declare const __, POS, nsHttpClient;
 
 export default {
     name: 'ns-pos-shipping-popup',

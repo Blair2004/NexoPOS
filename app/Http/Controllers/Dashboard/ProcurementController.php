@@ -92,11 +92,6 @@ class ProcurementController extends DashboardController
         );
     }
 
-    public function resetProcurement( $procurement_id )
-    {
-        return $this->procurementService->resetProcurement( $procurement_id );
-    }
-
     /**
      * returns a procurement's products list
      *

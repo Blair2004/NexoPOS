@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterUpdatedEvent;
+use App\Events\OrderPaymentAfterCreatedEvent;
+use App\Events\OrderPaymentAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Cache;
 
@@ -24,6 +28,11 @@ class OrderPayment extends NsModel
     const PAYMENT_ACCOUNT = 'account-payment';
 
     const PAYMENT_BANK = 'bank-payment';
+
+    public $dispatchesEvents = [
+        'created' => OrderPaymentAfterCreatedEvent::class,
+        'updated' => OrderPaymentAfterUpdatedEvent::class,
+    ];
 
     public function order()
     {

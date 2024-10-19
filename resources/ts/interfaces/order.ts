@@ -66,8 +66,7 @@ export interface Order {
         billing: Address,
     };
     tax_value: number;
-    products_exclusive_tax_value: number;
-    products_inclusive_tax_value: number;
+    products_tax_value: number;
     total_tax_value: number;
     tax_groups: any[],
     shipping: number;

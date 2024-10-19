@@ -41,7 +41,7 @@
             </div>
             <div class="shadow rounded my-4">
                 <div class="ns-box">
-                    <div class="border-b ns-box-body">
+                    <div class="ns-box-body">
                         <table class="ns-table table w-full">
                             <thead class="">
                                 <tr>
@@ -51,30 +51,32 @@
                                 </tr>
                             </thead>
                             <tbody class="">
-                                <tr :key="index" v-for="(expenseGroup, index) of report.creditCashFlow">
-                                    <td class="p-2 border"><i class="las la-arrow-right"></i> <strong>{{ expenseGroup.account }}</strong> : {{ expenseGroup.name }}</td>
-                                    <td class="p-2 border border-error-secondary bg-error-primary text-right">{{ nsCurrency( 0 ) }}</td>
-                                    <td class="p-2 border text-right border-success-secondary bg-success-primary">{{ nsCurrency( expenseGroup.total ) }}</td>
-                                </tr>
-                                <tr :key="index" v-for="(expenseGroup, index) of report.debitCashFlow">
-                                    <td class="p-2 border"><i class="las la-arrow-right"></i> <strong>{{ expenseGroup.account }}</strong> : {{ expenseGroup.name }}</td>
-                                    <td class="p-2 border border-error-secondary bg-error-primary text-right">{{ nsCurrency( expenseGroup.total ) }}</td>
-                                    <td class="p-2 border text-right border-success-secondary bg-success-primary">{{ nsCurrency( 0 ) }}</td>
-                                </tr>
+                                <template v-for="( account, name ) in report.accounts" :key="name">
+                                    <tr>
+                                        <td class="p-2 bg-box-elevation-background border"><i class="las la-arrow-right"></i> <strong>{{ account.name }}</strong></td>
+                                        <td class="p-2 border border-error-secondary bg-error-primary text-right">{{ nsCurrency( account.debits ) }}</td>
+                                        <td class="p-2 border text-right border-success-secondary bg-success-primary">{{ nsCurrency( account.credits ) }}</td>
+                                    </tr>
+                                    <tr v-for="(transaction, key) of account.transactions" :key="key">
+                                        <td class="p-2 border"><span class="ml-4">{{ transaction.name }}</span></td>
+                                        <td class="p-2 border border-error-secondary bg-error-primary text-right">{{ nsCurrency( transaction.debits ) }}</td>
+                                        <td class="p-2 border text-right border-success-secondary bg-success-primary">{{ nsCurrency( transaction.credits ) }}</td>
+                                    </tr>
+                                </template>
                             </tbody>
-                            <tfoot class=" font-semibold">
+                            <tbody>
                                 <tr>
-                                    <td class="p-2 border">{{ __( 'Sub Total' ) }}</td>
-                                    <td class="p-2 border border-error-secondary bg-error-primary text-right ">{{ nsCurrency( report.total_debit ? report.total_debit : 0 ) }}</td>
-                                    <td class="p-2 border text-right border-success-secondary bg-success-primary">{{ nsCurrency( report.total_credit ? report.total_credit : 0 ) }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border">{{ __( 'Balance' ) }}</td>
-                                    <td colspan="2" class="p-2 border text-right border-info-secondary bg-info-primary">
-                                        {{ nsCurrency( balance ) }}
+                                    <td class="p-2 border bg-box-elevation-background">
+                                        <strong>{{ __( 'Total' ) }}</strong>
+                                    </td>
+                                    <td class="p-2 border text-right border-error-secondary bg-error-primary">
+                                        <strong>{{ nsCurrency( report.debits ) }}</strong>
+                                    </td>
+                                    <td class="p-2 border text-right border-success-secondary bg-success-primary">
+                                        <strong>{{ nsCurrency( report.credits ) }}</strong>
                                     </td>
                                 </tr>
-                            </tfoot>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -94,6 +96,7 @@ export default {
     name : 'ns-cash-flow',
     props: [ 'storeLogo', 'storeName' ],
     mounted() {
+        this.loadReport();
     },
     components: {
         nsDatepicker,
@@ -114,15 +117,7 @@ export default {
         }
     },
     computed: {
-        balance() {
-            return Object.values( this.report ).length === 0 ? 0 : this.report.total_credit - this.report.total_debit;
-        },
-        totalDebit() {
-            return 0;
-        },
-        totalCredit() {
-            return 0;
-        }
+        
     },
     methods: {
         __,

@@ -286,28 +286,11 @@ class CrudController extends DashboardController
     {
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
         $resource = new $crudClass( compact( 'namespace', 'id' ) );
-        $resource->allowedTo( 'read' );
-
-        if ( method_exists( $resource, 'getEntries' ) ) {
-            $model = $resource->get( 'model' );
-            $model = $model::find( $id );
-            $form = $resource->getForm( $model );
-
-            /**
-             * @since 4.4.3
-             *
-             * @todo it's no use providing compact( 'model' ) as a second parameter, if it's
-             * for providing only one parameter. We should directly pass the model.
-             */
-            $form = Hook::filter( get_class( $resource )::method( 'getForm' ), $form, compact( 'model' ) );
-            $config = [
-                'form' => $form,
-                'labels' => Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
-                'links' => Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ),
-                'namespace' => $namespace,
-            ];
-
-            return $config;
+        
+        if ( $resource instanceof CrudService ) {
+            return $resource->getFormConfig(
+                entry: $resource->getModel()::find( $id )
+            );
         }
 
         return response()->json( [

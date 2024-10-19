@@ -7,6 +7,5 @@ use Illuminate\Support\Facades\Route;
 Route::get( 'modules/{argument?}', [ ModulesController::class, 'getModules' ] );
 Route::put( 'modules/{argument}/disable', [ ModulesController::class, 'disableModule' ] );
 Route::put( 'modules/{argument}/enable', [ ModulesController::class, 'enableModule' ] );
-Route::post( 'modules/{identifier}/migrate', [ ModulesController::class, 'migrate' ] );
 Route::delete( 'modules/{argument}/delete', [ ModulesController::class, 'deleteModule' ] );
 Route::post( 'modules', [ ModulesController::class, 'uploadModule' ] )->name( Hook::filter( 'ns-route-name', 'ns.dashboard.modules-upload-post' ) );

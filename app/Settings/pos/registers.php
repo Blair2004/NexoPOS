@@ -1,5 +1,8 @@
 <?php
 
+use App\Classes\FormInput;
+use App\Crud\PaymentTypeCrud;
+use App\Models\PaymentType;
 use App\Services\Helper;
 
 $cashRegisters = [
@@ -44,6 +47,17 @@ if ( ns()->option->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
             'no' => __( 'No' ),
         ] ),
     ];
+
+    $cashRegisters[] = FormInput::searchSelect(
+        label: __( 'Default Change Payment Type' ),
+        name: 'ns_pos_registers_default_change_payment_type',
+        description: __( 'Define the payment type that will be used for all change from the registers.' ),
+        props: PaymentTypeCrud::getFormConfig(),
+        component: 'nsCrudForm',
+        validation: 'required',
+        value: ns()->option->get( 'ns_pos_registers_default_change_payment_type' ),
+        options: Helper::toJsOptions( PaymentType::get([ 'id', 'label' ]), [ 'id', 'label' ] )
+    );
 }
 
 return [

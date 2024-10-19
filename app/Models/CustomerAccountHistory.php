@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\CustomerAccountHistoryAfterCreatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -26,6 +27,11 @@ class CustomerAccountHistory extends NsModel
     const OPERATION_PAYMENT = 'payment';
 
     protected $table = 'nexopos_' . 'customers_account_history';
+
+    public $dispatchesEvents = [
+        'created' => CustomerAccountHistoryAfterCreatedEvent::class,
+        'updated' => CustomerAccountHistoryAfterCreatedEvent::class,
+    ];
 
     public function customer()
     {

@@ -16,20 +16,11 @@
             </h1>
         </div>
         <div id="switch-mode" class="flex">
-            <button @click="setPercentageType('flat')" :class="mode === 'flat' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Flat' ) }}</button>
-            <hr class="border-r border-box-edge">
-            <button @click="setPercentageType('percentage')" :class="mode === 'percentage' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Percentage' ) }}</button>
+            <button v-if="! popup.params.reference.disable_flat" @click="setPercentageType('flat')" :class="mode === 'flat' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Flat' ) }}</button>
+            <hr v-if="! popup.params.reference.disable_flat" class="border-r border-box-edge">
+            <button v-if="! popup.params.reference.disable_percentage" @click="setPercentageType('percentage')" :class="( mode === 'percentage' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary' ) + ' ' + ( ! popup.params.reference.disable_flat ? 'w-1/2' : 'w-full' )" class="outline-none py-2 flex items-center justify-center">{{ __( 'Percentage' ) }}</button>
         </div>
-        <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
-            <div 
-                @click="inputValue( key )"
-                :key="index" 
-                v-for="(key,index) of keys" 
-                class="text-primary ns-numpad-key info text-xl font-bold border h-24 flex items-center justify-center cursor-pointer">
-                <span v-if="key.value !== undefined">{{ key.value }}</span>
-                <i v-if="key.icon" class="las" :class="key.icon"></i>
-            </div>
-        </div>
+        <ns-numpad :floating="true" @next="submitValue()" @changed="inputValue( $event )" :value="finalValue" limit="1000"></ns-numpad>
     </div>
 </template>
 <script lang="ts">
@@ -75,6 +66,16 @@ export default {
         nsCurrency,
         popupResolver,
         popupCloser,
+
+        submitValue() {
+            this.popup.params.onSubmit({
+                discount_type           :   this.mode,
+                discount_percentage     :   this.mode === 'percentage' ? this.finalValue : undefined,
+                discount                :   this.mode === 'flat' ? this.finalValue : undefined
+            });
+
+            this.popup.close();
+        },
         
         setPercentageType( mode ) {
             this.mode       =   mode;
@@ -84,35 +85,7 @@ export default {
         },
 
         inputValue( key ) {
-            if ( key.identifier === 'next' ) {
-                this.popup.params.onSubmit({
-                    discount_type           :   this.mode,
-                    discount_percentage     :   this.mode === 'percentage' ? this.finalValue : undefined,
-                    discount                :   this.mode === 'flat' ? this.finalValue : undefined
-                });
-                this.popup.close();
-            } else if ( key.identifier === 'backspace' ) {
-                if ( this.allSelected ) {
-                    this.finalValue     =   0;
-                    this.allSelected    =   false;
-                } else {
-                    this.finalValue     =   this.finalValue.toString();
-                    this.finalValue     =   this.finalValue.substr(0, this.finalValue.length - 1 ) || 0;
-                }
-            } else {
-                if ( this.allSelected ) {
-                    this.finalValue     =   key.value;
-                    this.finalValue     =   parseFloat( this.finalValue );
-                    this.allSelected    =   false;
-                } else {
-                    this.finalValue     +=  '' + key.value;
-                    this.finalValue     =   parseFloat( this.finalValue );
-
-                    if ( this.mode === 'percentage' ) {
-                        this.finalValue = this.finalValue > 100 ? 100 : this.finalValue;
-                    }
-                }
-            } 
+            this.finalValue = key;
         }
     }
 }

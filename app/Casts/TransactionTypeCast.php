@@ -18,6 +18,7 @@ class TransactionTypeCast implements CastsAttributes
     {
         return match ( $value ) {
             Transaction::TYPE_DIRECT => __( 'Direct Transaction' ),
+            Transaction::TYPE_INDIRECT => __( 'Indirect Transaction' ),
             Transaction::TYPE_RECURRING => __( 'Recurring Transaction' ),
             Transaction::TYPE_ENTITY => __( 'Entity Transaction' ),
             Transaction::TYPE_SCHEDULED => __( 'Scheduled Transaction' ),

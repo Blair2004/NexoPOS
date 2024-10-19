@@ -21,8 +21,6 @@ use App\Models\Register;
 use App\Models\RegisterHistory;
 use App\Models\RewardSystem;
 use App\Models\TaxGroup;
-use App\Models\TransactionAccount;
-use App\Models\TransactionHistory;
 use App\Models\Unit;
 use App\Models\User;
 use App\Services\CashRegistersService;
@@ -38,6 +36,7 @@ use Exception;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 trait WithOrderTest
 {
@@ -82,8 +81,34 @@ trait WithOrderTest
         return $responses;
     }
 
+    protected function attemptCompleteOrderPayment( Order $order )
+    {
+        $this->assertTrue( $order->payment_status === Order::PAYMENT_UNPAID );
+
+        $remainingPayment   =   [
+            'identifier'    =>  OrderPayment::PAYMENT_CASH,
+            'value'         =>  $order->total - $order->payments->sum( 'value' ),
+        ];
+
+        $response   =   $this->json( 'POST', 'api/orders/' . $order->id . '/payments', $remainingPayment );
+
+        $response->assertOk();
+
+        $order->refresh();
+
+        $this->assertTrue( $order->payment_status === Order::PAYMENT_PAID );
+
+        return $response;
+    }
+
     protected function attemptCreateOrderOnRegister( $data = [] )
     {
+        /**
+         * We should enable cash register
+         * feature in case it's disabled
+         */
+        ns()->option->set( 'ns_pos_registers_enabled', 'yes' );
+
         RegisterHistory::truncate();
 
         Register::where( 'id', '>', 0 )->update( [
@@ -146,7 +171,7 @@ trait WithOrderTest
             ->sum( 'value' ) )->toFloat();
 
         $totalChange = ns()->currency->define( RegisterHistory::where( 'register_id', $cashRegister->id )
-            ->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )
+            ->where( 'action', RegisterHistory::ACTION_ORDER_CHANGE )
             ->sum( 'value' ) )->toFloat();
 
         /**
@@ -167,7 +192,7 @@ trait WithOrderTest
          * We'll check if the register as a history for the change
          */
         $changeHistory = RegisterHistory::where( 'register_id', $cashRegister->id )
-            ->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )
+            ->where( 'action', RegisterHistory::ACTION_ORDER_CHANGE )
             ->first();
 
         if ( $response[ 'data' ][ 'order' ][ 'change' ] > 0 ) {
@@ -192,7 +217,7 @@ trait WithOrderTest
          * for the selected cash register.
          */
         $historyCount = RegisterHistory::where( 'register_id', $cashRegister->id )
-            ->where( 'action', RegisterHistory::ACTION_SALE )
+            ->where( 'action', RegisterHistory::ACTION_ORDER_PAYMENT )
             ->count();
 
         $this->assertTrue( $historyCount == count( $response[ 'data' ][ 'order' ][ 'payments' ] ), 'The cash register history is not accurate' );
@@ -269,7 +294,7 @@ trait WithOrderTest
 
         $totalSales = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
-            ->action( RegisterHistory::ACTION_SALE )->sum( 'value' );
+            ->action( RegisterHistory::ACTION_ORDER_PAYMENT )->sum( 'value' );
 
         $totalClosing = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
@@ -285,7 +310,7 @@ trait WithOrderTest
 
         $totalCashChange = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
-            ->action( RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
+            ->action( RegisterHistory::ACTION_ORDER_CHANGE )->sum( 'value' );
 
         $totalAccountChange = RegisterHistory::withRegister( $cashRegister )
             ->from( $opening->created_at )
@@ -726,6 +751,12 @@ trait WithOrderTest
     public function attemptUpdateOrderOnRegister()
     {
         /**
+         * We should enable cash register
+         * feature in case it's disabled
+         */
+        ns()->option->set( 'ns_pos_registers_enabled', 'yes' );
+
+        /**
          * @var OrdersService $orderService
          */
         $orderService = app()->make( OrdersService::class );
@@ -752,7 +783,7 @@ trait WithOrderTest
          * Making assertions
          */
         $cashRegisterHistory = RegisterHistory::where( 'register_id', $cashRegister->id )
-            ->where( 'action', RegisterHistory::ACTION_SALE )
+            ->where( 'action', RegisterHistory::ACTION_ORDER_PAYMENT )
             ->orderBy( 'id', 'desc' )->first();
 
         $this->assertTrue(
@@ -808,22 +839,24 @@ trait WithOrderTest
 
         $response->assertStatus( 200 );
 
-        $response = json_decode( $response->getContent(), true );
+        $response = $response->json();
 
         $cashRegister->refresh();
         $previousValue = $cashRegister->balance;
 
         /**
-         * Step 2: We'll attempt to delete the product
+         * Step 2: We'll attempt to delete the order
          * We should check if the register balance has changed.
          */
-        $ordersService->deleteOrder( Order::find( $response[ 'data' ][ 'order' ][ 'id' ] ) );
+        $order  =   Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
+        $ordersService->deleteOrder( $order );
 
         $cashRegister->refresh();
 
-        $newAmount = ns()->currency->define( $previousValue )->subtractBy( $response[ 'data' ][ 'order' ][ 'total' ] )->toFloat();
+        $newAmount = ns()->currency->define( $previousValue )->subtractBy( $order->total )->toFloat();
 
         $this->assertEquals( (float) $cashRegister->balance, (float) $newAmount, 'The balance wasn\'t updated after deleting the order.' );
+        $this->assertTrue( RegisterHistory::where( 'order_id', $order->id )->count() === 0, 'The register history for the deleted order was not deleted along with the order.' );
 
         return $response;
     }
@@ -839,7 +872,6 @@ trait WithOrderTest
         return $cashRegistersService->cashOut(
             register: $cashRegister,
             amount: $cashRegister->balance / 1.5,
-            transaction_account_id: ns()->option->get( 'ns_accounting_default_cashout_account', 0 ),
             description: __( 'Test disbursing the cash register' )
         );
     }
@@ -855,7 +887,6 @@ trait WithOrderTest
         return $cashRegistersService->cashIng(
             register: $cashRegister,
             amount: ( $cashRegister->balance / 2 ),
-            transaction_account_id: ns()->option->get( 'ns_accounting_default_cashing_account' ),
             description: __( 'Test disbursing the cash register' )
         );
     }
@@ -949,7 +980,15 @@ trait WithOrderTest
          * we'll try crediting customer account
          */
         $oldBalance = $customer->account_amount;
-        $customerService->saveTransaction( $customer, CustomerAccountHistory::OPERATION_ADD, $subtotal + $shippingFees, 'For testing purpose...' );
+        $customerService->saveTransaction( 
+            customer: $customer, 
+            operation: CustomerAccountHistory::OPERATION_ADD, 
+            amount: $subtotal + $shippingFees, 
+            description: 'For testing purpose...',
+            details: [
+                'author'    =>  Auth::id()
+            ]
+        );
         $customer->refresh();
 
         /**
@@ -1018,12 +1057,6 @@ trait WithOrderTest
             ->first();
 
         $this->assertTrue( (float) $history->amount === (float) $subtotal + $shippingFees, 'The customer account history transaction is not valid.' );
-
-        $transactionHistory = TransactionHistory::where( 'customer_account_history_id', $history->id )
-            ->operation( TransactionHistory::OPERATION_DEBIT )
-            ->first();
-
-        $this->assertTrue( $transactionHistory instanceof TransactionHistory, 'No cash flow were found after the customer account payment.' );
     }
 
     protected function attemptCreateCustomPaymentType()
@@ -1089,16 +1122,18 @@ trait WithOrderTest
             if ( ! isset( $orderDetails[ 'products' ] ) ) {
                 $products = isset( $orderDetails[ 'productsRequest' ] ) ? $orderDetails[ 'productsRequest' ]() : Product::notGrouped()
                     ->notInGroup()
-                    ->whereHas( 'unit_quantities', function ( $query ) {
-                        $query->where( 'quantity', '>', 500 );
-                    } )
-                    ->with( ['unit_quantities' => function ( $query ) {
-                        $query->where( 'quantity', '>', 500 );
-                    }] )
+                    ->with( 'unit_quantities' )
                     ->limit( 3 )
                     ->get();
 
+                
+
                 $products = $products->map( function ( $product ) use ( $faker, $taxService ) {
+                    $product->unit_quantities->each( function( $unitQuantity ) use ( $faker ) {
+                        $unitQuantity->quantity = $faker->numberBetween( 100, 1000 );
+                        $unitQuantity->save();
+                    } );
+                    
                     $unitElement = $faker->randomElement( $product->unit_quantities );
                     $discountRate = 10;
                     $quantity = $faker->numberBetween( 1, 10 );
@@ -1106,7 +1141,7 @@ trait WithOrderTest
                         'name' => $product->name,
                         'discount' => $taxService->getPercentageOf( $unitElement->sale_price * $quantity, $discountRate ),
                         'discount_percentage' => $discountRate,
-                        'discount_type' => $faker->randomElement( [ 'flat', 'percentage' ] ),
+                        'discount_type' => $faker->randomElement( [ 'percentage' ] ),
                         'quantity' => $quantity,
                         'unit_price' => $unitElement->sale_price,
                         'tax_type' => 'inclusive',
@@ -1345,18 +1380,6 @@ trait WithOrderTest
 
                 $responseData = json_decode( $response->getContent(), true );
 
-                /**
-                 * Let's test wether the cash
-                 * flow has been created for this sale
-                 */
-                if ( $responseData[ 'data' ][ 'order' ][ 'payment_status' ] !== 'unpaid' ) {
-                    $this->assertTrue(
-                        TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )->first()
-                        instanceof TransactionHistory,
-                        __( 'No cash flow were created for this order.' )
-                    );
-                }
-
                 if ( $faker->randomElement( [ true ] ) === true && $this->shouldRefund ) {
                     /**
                      * We'll keep original products amounts and quantity
@@ -1400,42 +1423,6 @@ trait WithOrderTest
                         'status' => 'success',
                     ] );
 
-                    /**
-                     * A single cash flow should be
-                     * created for that order for the sale account
-                     */
-                    $totalCashFlow = TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-                        ->where( 'operation', TransactionHistory::OPERATION_CREDIT )
-                        ->where( 'transaction_account_id', ns()->option->get( 'ns_sales_cashflow_account' ) )
-                        ->count();
-
-                    $this->assertTrue( $totalCashFlow === 1, 'More than 1 cash flow was created for the sale account.' );
-
-                    /**
-                     * all refund transaction give a stock flow record.
-                     * We need to check if it has been created.
-                     */
-                    $totalRefundedCashFlow = TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-                        ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
-                        ->where( 'transaction_account_id', ns()->option->get( 'ns_sales_refunds_account' ) )
-                        ->count();
-
-                    $this->assertTrue( $totalRefundedCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
-
-                    /**
-                     * in case the order is refunded with
-                     * some defective products, we need to check if
-                     * the waste expense has been created.
-                     */
-                    if ( $productCondition === OrderProductRefund::CONDITION_DAMAGED ) {
-                        $totalSpoiledCashFlow = TransactionHistory::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-                            ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
-                            ->where( 'transaction_account_id', ns()->option->get( 'ns_stock_return_spoiled_account' ) )
-                            ->count();
-
-                        $this->assertTrue( $totalSpoiledCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
-                    }
-
                     $singleResponse[ 'order-refund' ] = json_decode( $response->getContent() );
                 }
 
@@ -1478,13 +1465,18 @@ trait WithOrderTest
     protected function attemptOrderWithProductPriceMode()
     {
         $currency = app()->make( CurrencyService::class );
+
         $product = Product::withStockEnabled()
             ->notGrouped()
             ->notInGroup()
-            ->whereRelation( 'unit_quantities', 'quantity', '>', 10 )
-            ->with( 'unit_quantities', fn( $query ) => $query->where( 'quantity', '>', 10 ) )
             ->get()
             ->random();
+
+        /**
+         * We'll update the units quantity to be 100
+         */
+        $product->unit_quantities()->update( [ 'quantity' => 100 ] );
+
         $unit = $product->unit_quantities()->where( 'quantity', '>', 10 )->first();
         $subtotal = $unit->sale_price * 5;
         $shippingFees = 150;
@@ -1606,15 +1598,6 @@ trait WithOrderTest
                 )
             );
         } );
-
-        /**
-         * we need to make sure is only one transaction created for the
-         * order that was later on marked as a paid order.
-         */
-        $this->assertTrue(
-            TransactionHistory::where( 'order_id', $order[ 'id' ] )->where( 'operation', 'credit' )->count() == 1,
-            __( 'More transaction was created for the same order' )
-        );
 
         /**
          * dispose of all variables defined
@@ -1779,7 +1762,8 @@ trait WithOrderTest
             throw new Exception( 'No valid unit is available.' );
         }
 
-        $subtotal = $unitQuantity->sale_price * 5;
+        $productQuantity = 3;
+        $subtotal = $unitQuantity->sale_price * $productQuantity;
         $orderDetails = [
             'customer_id' => $this->attemptCreateCustomer()->id,
             'type' => [ 'identifier' => 'takeaway' ],
@@ -1803,8 +1787,8 @@ trait WithOrderTest
             'products' => [
                 [
                     'product_id' => $unitQuantity->product->id,
-                    'quantity' => 3,
-                    'unit_price' => 12,
+                    'quantity' => $productQuantity,
+                    'unit_price' => $unitQuantity->sale_price,
                     'unit_quantity_id' => $unitQuantity->id,
                 ],
             ],
@@ -1946,7 +1930,23 @@ trait WithOrderTest
         return $response->json();
     }
 
-    protected function attemptDeleteOrder()
+    protected function attemptVoidOrder( Order $order )
+    {
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/orders/' . $order->id . '/void', [
+                'reason'    =>  __( 'For testing purposes' ),
+            ]);
+
+        $response->assertStatus( 200 );
+
+        /**
+         * dispose of all variables defined
+         * on this method
+         */
+        unset( $response, $order );
+    }
+
+    protected function attemptTestDeleteOrder()
     {
         /**
          * @var TestService
@@ -1983,8 +1983,6 @@ trait WithOrderTest
 
         $response->assertStatus( 200 );
 
-        $response->assertStatus( 200 );
-
         $order = (object) json_decode( $response->getContent(), true )[ 'data' ][ 'order' ];
         $order = Order::with( [ 'products', 'user' ] )->find( $order->id );
         $refreshed = $customer->fresh();
@@ -2003,11 +2001,6 @@ trait WithOrderTest
 
                 return $product;
             } );
-
-        /**
-         * let's check if the order has a cash flow entry
-         */
-        $this->assertTrue( TransactionHistory::where( 'order_id', $order->id )->first() instanceof TransactionHistory, 'No cash flow created for the order.' );
 
         if ( $order instanceof Order ) {
             $order_id = $order->id;
@@ -2034,11 +2027,6 @@ trait WithOrderTest
             $newCustomer = $customer->fresh();
 
             $this->assertEquals( $newCustomer->purchases_amount, $customer->purchases_amount, 'The customer total purchase hasn\'t changed after deleting the order.' );
-
-            /**
-             * let's check if flow entry has been removed
-             */
-            $this->assertTrue( ! TransactionHistory::where( 'order_id', $order->id )->first() instanceof TransactionHistory, 'The cash flow hasn\'t been deleted.' );
 
             $products->each( function ( OrderProduct $orderProduct ) use ( $productService ) {
                 $originalProduct = $orderProduct->product;
@@ -2197,7 +2185,7 @@ trait WithOrderTest
         unset( $testService, $customer, $data, $response, $orderData, $order, $orderService, $totalPayments );
     }
 
-    protected function attemptVoidOrder()
+    protected function attemptTestVoidOrder()
     {
         /**
          * @var TestService
@@ -2244,6 +2232,8 @@ trait WithOrderTest
             ] );
 
         $order->load( [ 'products.product' ] );
+
+        $this->assertTrue( $order->products()->count() > 0, 'The order has no products.' ); 
 
         /**
          * We'll check if for each product on the order
@@ -2407,19 +2397,6 @@ trait WithOrderTest
         $responseData = $response->json();
 
         /**
-         * Assert: We'll check if a refund record was created as a cash flow
-         * for the products linked to the order.
-         */
-        collect( $responseData[ 'data' ][ 'orderRefund' ][ 'refunded_products' ] )->each( function ( $product ) {
-            $cashFlow = TransactionHistory::where( 'order_id', $product[ 'order_id' ] )
-                ->where( 'order_product_id', $product[ 'order_product_id' ] )
-                ->where( 'operation', TransactionHistory::OPERATION_DEBIT )
-                ->first();
-
-            $this->assertTrue( $cashFlow instanceof TransactionHistory, 'A refund transaction hasn\'t been created after a refund' );
-        } );
-
-        /**
          * We need to check if the order
          * is correctly updated after a refund.
          */
@@ -2442,23 +2419,6 @@ trait WithOrderTest
             );
         }
 
-        /**
-         * let's check if a transaction has been created accordingly
-         */
-        $transactionAccount = TransactionAccount::find( ns()->option->get( 'ns_sales_refunds_account' ) );
-
-        if ( ! $transactionAccount instanceof TransactionAccount ) {
-            throw new Exception( __( 'An transaction hasn\'t been created after the refund.' ) );
-        }
-
-        $transactionValue = $transactionAccount->histories()
-            ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-            ->sum( 'value' );
-
-        if ( (float) $transactionValue != (float) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
-            throw new Exception( __( 'The transaction created after the refund doesn\'t match the order refund total.' ) );
-        }
-
         $response->assertJson( [
             'status' => 'success',
         ] );
@@ -2467,7 +2427,7 @@ trait WithOrderTest
          * dispose of all variables defined
          * on this method
          */
-        unset( $currency, $firstFetchCustomer, $product, $shippingFees, $discountRate, $products, $subtotal, $netTotal, $taxes, $taxGroup, $response, $responseData, $secondFetchCustomer, $purchaseAmount, $refundQuantity, $paymentStatus, $message, $order, $thirdFetchCustomer, $transactionAccount, $transactionValue );
+        unset( $currency, $firstFetchCustomer, $product, $shippingFees, $discountRate, $products, $subtotal, $netTotal, $taxes, $taxGroup, $response, $responseData, $secondFetchCustomer, $purchaseAmount, $refundQuantity, $paymentStatus, $message, $order, $thirdFetchCustomer );
     }
 
     public function attemptCreateOrderWithInstalment()
@@ -2687,6 +2647,9 @@ trait WithOrderTest
 
     protected function attemptCreatePartiallyPaidOrderWithAdjustment()
     {
+        /**
+         * @var CurrencyService
+         */
         $currency = app()->make( CurrencyService::class );
 
         $customer = $this->attemptCreateCustomer();
@@ -2733,8 +2696,14 @@ trait WithOrderTest
                 'subtotal' => $subtotal,
                 'shipping' => $shippingFees,
                 'products' => $products,
-                'payments' => [],
-                'payment_status' => Order::PAYMENT_UNPAID,
+                'payments' => [
+                    [
+                        'identifier' => OrderPayment::PAYMENT_CASH,
+                        'value' => $currency->define( $subtotal + $shippingFees )
+                            ->dividedBy(2)
+                            ->toFloat(),
+                    ],
+                ],
             ] );
 
         $response->assertJson( [
@@ -2790,7 +2759,7 @@ trait WithOrderTest
                 'subtotal' => $subtotal,
                 'shipping' => $shippingFees,
                 'products' => $newProducts,
-                'payments' => [],
+                'payments' => Order::find( $responseData[ 'data' ][ 'order' ][ 'id' ] )->payments()->get()->toArray(),
             ] );
 
         $response->assertJson( [
@@ -2851,7 +2820,7 @@ trait WithOrderTest
                 'subtotal' => $subtotal,
                 'shipping' => $shippingFees,
                 'products' => $newProducts,
-                'payments' => [],
+                'payments' => Order::find( $responseData[ 'data' ][ 'order' ][ 'id' ] )->payments()->get()->toArray(),
             ] );
 
         $response->assertJson( [
@@ -3089,6 +3058,16 @@ trait WithOrderTest
         } )->filter( function ( $product ) {
             return $product[ 'quantity' ] > 0;
         } );
+    }
+
+    public function attemptDeleteOrder( Order $order )
+    {
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'DELETE', 'api/orders/' . $order->id );
+
+        $response->assertStatus( 200 );
+
+        $this->assertTrue( Order::find( $order->id ) === null, __( 'The order hasn\'t been deleted.' ) );
     }
 
     public function attemptDeleteOrderAndCheckProductHistory()

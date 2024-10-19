@@ -2,6 +2,8 @@
 
 namespace App\Crud;
 
+use App\Classes\CrudForm;
+use App\Classes\FormInput;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use App\Services\CrudEntry;
@@ -125,67 +127,67 @@ class UnitCrud extends CrudService
      */
     public function getForm( $entry = null )
     {
-        return [
-            'main' => [
-                'label' => __( 'Name' ),
-                'name' => 'name',
-                'value' => $entry->name ?? '',
-                'description' => __( 'Provide a name to the resource.' ),
-                'validation' => 'required',
-            ],
-            'tabs' => [
-                'general' => [
-                    'label' => __( 'General' ),
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'name' => 'identifier',
-                            'label' => __( 'Identifier' ),
-                            'description' => __( 'Provide a unique value for this unit. Might be composed from a name but shouldn\'t include space or special characters.' ),
-                            'validation' => 'required|unique:' . Hook::filter( 'ns-table-name', 'nexopos_units' ) . ',identifier' . ( $entry !== null ? ',' . $entry->id : '' ),
-                            'value' => $entry->identifier ?? '',
-                        ], [
-                            'type' => 'media',
-                            'name' => 'preview_url',
-                            'label' => __( 'Preview URL' ),
-                            'description' => __( 'Preview of the unit.' ),
-                            'value' => $entry->preview_url ?? '',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'value',
-                            'label' => __( 'Value' ),
-                            'description' => __( 'Define the value of the unit.' ),
-                            'validation' => 'required',
-                            'value' => $entry->value ?? '',
-                        ],  [
-                            'type' => 'search-select',
-                            'component' => 'nsCrudForm',
-                            'props' => UnitGroupCrud::getFormConfig(),
-                            'name' => 'group_id',
-                            'validation' => 'required',
-                            'options' => Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
-                            'label' => __( 'Group' ),
-                            'description' => __( 'Define to which group the unit should be assigned.' ),
-                            'value' => $entry->group_id ?? '',
-                        ], [
-                            'type' => 'switch',
-                            'name' => 'base_unit',
-                            'validation' => 'required',
-                            'options' => Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
-                            'label' => __( 'Base Unit' ),
-                            'description' => __( 'Determine if the unit is the base unit from the group.' ),
-                            'value' => $entry ? ( $entry->base_unit ? 1 : 0 ) : 0,
-                        ], [
-                            'type' => 'textarea',
-                            'name' => 'description',
-                            'label' => __( 'Description' ),
-                            'description' => __( 'Provide a short description about the unit.' ),
-                            'value' => $entry->description ?? '',
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        return CrudForm::form(
+            main: FormInput::text(
+                label: __( 'Name' ),
+                name: 'name',
+                description: __( 'Provide a name tot he resource.' ),
+                validation: 'required',
+                value: $entry->name ?? '',
+            ),
+            tabs: CrudForm::tabs(
+                CrudForm::tab(
+                    label: __( 'General' ),
+                    identifier: 'general',
+                    fields: CrudForm::fields(
+                        FormInput::text( 
+                            label: __( 'Identifier' ),
+                            name: 'identifier',
+                            description: __( 'Provide a unique value for this unit. Might be composed from a name but shouldn\'t include space or special characters.' ),
+                            validation: 'required|unique:' . Hook::filter( 'ns-table-name', 'nexopos_units' ) . ',identifier' . ( $entry !== null ? ',' . $entry->id : '' ),
+                            value: $entry->identifier ?? '',
+                        ),
+                        FormInput::media(
+                            label: __( 'Preview URL' ),
+                            name: 'preview_url',
+                            description: __( 'Preview of the unit.' ),
+                            value: $entry->preview_url ?? '',
+                        ),
+                        FormInput::text(
+                            label: __( 'Value' ),
+                            name: 'value',
+                            description: __( 'Define the value of the unit.' ),
+                            validation: 'required',
+                            value: $entry->value ?? '',
+                        ),
+                        FormInput::searchSelect(
+                            component: 'nsCrudForm',
+                            props: UnitGroupCrud::getFormConfig(),
+                            name: 'group_id',
+                            validation: 'required',
+                            options: Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
+                            label: __( 'Group' ),
+                            description: __( 'Define to which group the unit should be assigned.' ),
+                            value: $entry->group_id ?? '',
+                        ),
+                        FormInput::switch(
+                            name: 'base_unit',
+                            validation: 'required',
+                            options: Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
+                            label: __( 'Base Unit' ),
+                            description: __( 'Determine if the unit is the base unit from the group.' ),
+                            value: $entry ? ( $entry->base_unit ? 1 : 0 ) : 0,
+                        ),
+                        FormInput::textarea(
+                            name: 'description',
+                            label: __( 'Description' ),
+                            description: __( 'Provide a short description about the unit.' ),
+                            value: $entry->description ?? '',
+                        )
+                    )
+                )
+            )
+        );
     }
 
     /**

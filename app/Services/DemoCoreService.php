@@ -148,97 +148,10 @@ class DemoCoreService
     public function createAccountingAccounts()
     {
         /**
-         * @var TransactionService $transactionService
+         * @var TransactionService $service
          */
-        $transactionService = app()->make( TransactionService::class );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Sales Account' ),
-            'operation' => 'credit',
-            'account' => '001',
-        ] );
-
-        ns()->option->set( 'ns_sales_cashflow_account', TransactionAccount::account( '001' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Procurements Account' ),
-            'operation' => 'debit',
-            'account' => '002',
-        ] );
-
-        ns()->option->set( 'ns_procurement_cashflow_account', TransactionAccount::account( '002' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Sale Refunds Account' ),
-            'operation' => 'debit',
-            'account' => '003',
-        ] );
-
-        ns()->option->set( 'ns_sales_refunds_account', TransactionAccount::account( '003' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Spoiled Goods Account' ),
-            'operation' => 'debit',
-            'account' => '006',
-        ] );
-
-        ns()->option->set( 'ns_stock_return_spoiled_account', TransactionAccount::account( '006' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Customer Crediting Account' ),
-            'operation' => 'credit',
-            'account' => '007',
-        ] );
-
-        ns()->option->set( 'ns_customer_crediting_cashflow_account', TransactionAccount::account( '007' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Customer Debiting Account' ),
-            'operation' => 'credit',
-            'account' => '008',
-        ] );
-
-        ns()->option->set( 'ns_customer_debitting_cashflow_account', TransactionAccount::account( '008' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Cashing Account' ),
-            'operation' => 'debit',
-            'account' => '009',
-        ] );
-
-        ns()->option->set( 'ns_accounting_default_cashing_account', TransactionAccount::account( '009' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Cashout Account' ),
-            'operation' => 'credit',
-            'account' => '010',
-        ] );
-
-        ns()->option->set( 'ns_accounting_default_cashout_account', TransactionAccount::account( '010' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Liability Account' ),
-            'operation' => 'debit',
-            'account' => '011',
-        ] );
-
-        ns()->option->set( 'ns_liabilities_account', TransactionAccount::account( '011' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Equity Account' ),
-            'operation' => 'credit',
-            'account' => '012',
-        ] );
-
-        ns()->option->set( 'ns_equity_account', TransactionAccount::account( '012' )->first()->id );
-
-        $transactionService->createAccount( [
-            'name' => __( 'Payable Accounts' ),
-            'operation' => 'credit',
-            'account' => '013',
-        ] );
-
-        ns()->option->set( 'ns_equity_account', TransactionAccount::account( '013' )->first()->id );
+        $service = app()->make( TransactionService::class );
+        $service->createDefaultAccounts();
     }
 
     public function createCustomers()

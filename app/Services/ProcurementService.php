@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use App\Events\ProcurementAfterCreateEvent;
@@ -91,7 +90,7 @@ class ProcurementService
             $number = str_pad( 1, 5, '0', STR_PAD_LEFT );
         }
 
-        return sprintf( __( 'Procurement %s' ), $number );
+        return sprintf( __( '%s' ), $number );
     }
 
     /**
@@ -638,32 +637,6 @@ class ProcurementService
     }
 
     /**
-     * delete all items recorded for a procurement
-     * and reset all value including the computed owned money
-     *
-     * @deprecated
-     */
-    public function resetProcurement( $id )
-    {
-        $procurement = Procurement::find( $id );
-
-        $procurement->products->each( function ( $product ) {
-            $product->delete();
-        } );
-
-        /**
-         * trigger a specific event
-         * to let other perform some action
-         */
-        event( new ProcurementCancelationEvent( $procurement ) );
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The procurement has been reset.' ),
-        ];
-    }
-
-    /**
      * delete procurement
      * products
      *
@@ -892,7 +865,7 @@ class ProcurementService
         Procurement::withoutEvents( function () use ( $procurement, $status ) {
             $procurement->delivery_status = $status;
             $procurement->save();
-        } );
+        });
     }
 
     /**
@@ -1096,5 +1069,12 @@ class ProcurementService
         }
 
         return $procurementProduct;
+    }
+
+    public function handlePaymentStatusChanging( Procurement $procurement, string $previous, string $new )
+    {
+        // if ( $previous === Procurement::PAYMENT_UNPAID && $new === Procurement::PAYMENT_PAID ) {
+        //     $this->transn
+        // }
     }
 }

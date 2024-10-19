@@ -79,27 +79,6 @@ class ModulesController extends DashboardController
     }
 
     /**
-     * Performs a single migration file for a specific module
-     *
-     * @param string module namespace
-     * @return Request $request
-     * @return array   response
-     *
-     * @deprecated
-     */
-    public function migrate( $namespace, Request $request )
-    {
-        $module = $this->modules->get( $namespace );
-        $result = $this->modules->runMigration( $module[ 'namespace' ], $request->input( 'version' ), $request->input( 'file' ) );
-
-        if ( $result[ 'status' ] === 'error' ) {
-            throw new Exception( $result[ 'message' ] );
-        }
-
-        return $result;
-    }
-
-    /**
      * @param string module identifier
      * @return array operation response
      */

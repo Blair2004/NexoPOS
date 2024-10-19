@@ -157,23 +157,4 @@ class BarcodeService
             );
         }
     }
-
-    /**
-     * @deprecated
-     */
-    public function generateBarcodeValue( $type )
-    {
-        $faker = ( new Factory )->create();
-
-        switch ( $type ) {
-            case self::TYPE_CODE39: return strtoupper( Str::random( 10 ) );
-            case self::TYPE_CODE128: return strtoupper( Str::random( 10 ) );
-            case self::TYPE_EAN8: return $faker->randomNumber( 8, true );
-            case self::TYPE_EAN13: return $faker->randomNumber( 6, true ) . $faker->randomNumber( 6, true );
-            case self::TYPE_UPCA: return $faker->randomNumber( 5, true ) . $faker->randomNumber( 6, true );
-            case self::TYPE_UPCE: return $faker->randomNumber( 6, true );
-            case self::TYPE_CODABAR: return $faker->randomNumber( 8, true ) . $faker->randomNumber( 8, true );
-            case self::TYPE_CODE11: return $faker->randomNumber( 5, true ) . '-' . $faker->randomNumber( 4, true );
-        }
-    }
 }

@@ -9,14 +9,12 @@
         @apply text-primary;
     }
 
-    &.danger, &.warning, &.success, &.info, &.error {
-        h1, h2, h3, h4, h5 {
-            @apply text-white;
-        }
-    }
-
     &.danger {
         @apply border-danger-tertiary bg-danger-primary;
+
+        h1, h2, h3, h4, h5 {
+            @apply text-danger-tertiary;
+        }
 
         p > a {
             @apply text-danger-tertiary;
@@ -33,6 +31,10 @@
     &.warning {
         @apply border-warning-tertiary bg-warning-primary;
 
+        h1, h2, h3, h4, h5 {
+            @apply text-warning-tertiary;
+        }
+
         p > a {
             @apply text-warning-tertiary;
             &:hover {
@@ -48,6 +50,10 @@
     &.success {
         @apply border-success-tertiary bg-success-primary;
 
+        h1, h2, h3, h4, h5 {
+            @apply text-success-tertiary;
+        }
+
         p > a {
             @apply text-success-tertiary;
             &:hover {
@@ -61,10 +67,14 @@
     }
     
     &.error {
-        @apply border-error-secondary bg-error-tertiary text-white;
+        @apply border-error-secondary bg-error-primary text-white;
+
+        h1, h2, h3, h4, h5 {
+            @apply text-error-tertiary;
+        }
 
         p {
-            @apply text-white;
+            @apply text-primary;
             a {
                 @apply text-error-tertiary;
                 &:hover {
@@ -79,12 +89,16 @@
     }
     
     &.info {
-        @apply border-info-tertiary bg-info-tertiary;
+        @apply border-info-tertiary bg-info-primary;
+
+        h1, h2, h3, h4, h5 {
+            @apply text-info-tertiary;
+        }
 
         p {
-            @apply text-white;
+            @apply text-primary;
             & > a {
-                @apply text-info-primary;
+                @apply text-info-secondary;
                 &:hover {
                     @apply underline;
                 }

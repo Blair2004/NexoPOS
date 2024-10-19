@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\TransactionsHistoryAfterCreatedEvent;
-use App\Jobs\RefreshReportJob;
+use App\Jobs\AccountingReflectionJob;
 
 class TransactionsHistoryAfterCreatedEventListener
 {
@@ -22,6 +22,8 @@ class TransactionsHistoryAfterCreatedEventListener
      */
     public function handle( TransactionsHistoryAfterCreatedEvent $event )
     {
-        RefreshReportJob::dispatch( $event->transactionHistory->created_at );
+        if ( ! $event->transactionHistory->is_reflection ) {
+            AccountingReflectionJob::dispatch( $event->transactionHistory );
+        }
     }
 }

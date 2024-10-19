@@ -27,6 +27,6 @@ class TrackCashRegisterJob implements ShouldQueue
      */
     public function handle( CashRegistersService $cashRegistersService ): void
     {
-        $cashRegistersService->recordOrderPayment( $this->orderPayment );
+        $cashRegistersService->saveOrderPayment( $this->orderPayment );
     }
 }

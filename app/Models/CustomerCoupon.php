@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\CustomerCouponAfterCreatedEvent;
+use App\Events\CustomerCouponAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -24,6 +26,11 @@ class CustomerCoupon extends NsModel
 
     public $casts = [
         'active' => 'boolean',
+    ];
+
+    public $dispatchesEvents = [
+        'created' => CustomerCouponAfterCreatedEvent::class,
+        'updated' => CustomerCouponAfterUpdatedEvent::class,
     ];
 
     public function scopeActive( $query )

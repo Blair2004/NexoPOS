@@ -84,14 +84,21 @@ class DemoService extends DemoCoreService
         extract( $data );
 
         $this->setupService->createDefaultPayment( Auth::user() );
+        $this->createAccountingAccounts();
         $this->createBaseSettings();
         $this->prepareDefaultUnitSystem();
-        $this->createRegisters();
-        $this->createCustomers();
-        $this->createAccountingAccounts();
-        $this->createProviders();
-        $this->createTaxes();
-        $this->createProducts();
+
+        /**
+         * this applies only when
+         * we're using wipe_plus_grocery demo.
+         */
+        if ( $mode === 'wipe_plus_grocery' ) {
+            $this->createRegisters();
+            $this->createCustomers();
+            $this->createProviders();
+            $this->createTaxes();
+            $this->createProducts();
+        } 
 
         if ( $create_procurements ) {
             $this->performProcurement();

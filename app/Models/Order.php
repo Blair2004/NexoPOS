@@ -5,7 +5,11 @@ namespace App\Models;
 use App\Casts\DateCast;
 use App\Casts\FloatConvertCasting;
 use App\Classes\Hook;
+use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterPaymentStatusChangedEvent;
+use App\Events\OrderAfterUpdatedEvent;
 use App\Services\DateService;
+use App\Traits\NsFlashData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -29,6 +33,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float subtotal
  * @property float total_with_tax
  * @property float total_coupons
+ * @property float total_cogs
  * @property float total
  * @property float tax_value
  * @property float products_tax_value
@@ -58,7 +63,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Order extends NsModel
 {
-    use HasFactory;
+    use HasFactory, NsFlashData;
 
     public $timestamps = false;
 
@@ -117,11 +122,21 @@ class Order extends NsModel
         'total_with_tax' => FloatConvertCasting::class,
         'total_coupons' => FloatConvertCasting::class,
         'total' => FloatConvertCasting::class,
+        'total_cogs' => FloatConvertCasting::class,
         'tax_value' => FloatConvertCasting::class,
         'products_tax_value' => FloatConvertCasting::class,
         'total_tax_value' => FloatConvertCasting::class,
         'tendered' => FloatConvertCasting::class,
         'change' => FloatConvertCasting::class,
+    ];
+
+    public $dispatchesEvents = [
+        'created' => OrderAfterCreatedEvent::class,
+        'updated' => OrderAfterUpdatedEvent::class,
+    ];
+
+    protected $dispatchableFieldsEvents  =  [
+        'payment_status'    =>  OrderAfterPaymentStatusChangedEvent::class
     ];
 
     public function products()
@@ -183,6 +198,11 @@ class Order extends NsModel
     public function billing_address()
     {
         return $this->hasOne( OrderBillingAddress::class );
+    }
+
+    public function order_addresses()
+    {
+        return $this->hasMany( OrderAddress::class );
     }
 
     public function scopeFrom( $query, $range_starts )

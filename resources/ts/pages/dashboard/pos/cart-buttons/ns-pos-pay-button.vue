@@ -4,32 +4,18 @@
         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Pay' ) }}</span>
     </div>
 </template>
-<script>
+<script lang="ts">
+declare const POS;
+declare const nsShortcuts;
+declare const nsHotPress;
+declare const __;
+
 export default {
     props: [ 'order' ],
     methods: {
         __,
         async payOrder() {
-            const queues    =   nsHooks.applyFilters( 'ns-pay-queue', [
-                ProductsQueue,
-                CustomerQueue,
-                TypeQueue,
-                PaymentQueue
-            ]);
-
-            for( let index in queues ) {
-                try {
-                    const promise   =   new queues[ index ]( this.order );
-                    const response  =   await promise.run();
-                } catch( exception ) {
-                    /**
-                     * in case there is something broken
-                     * on the promise, we just stop the queue.
-                     */
-                    console.log( exception );
-                    return false;
-                }
-            }
+            POS.runPaymentQueue();
         },
     },
     mounted() {

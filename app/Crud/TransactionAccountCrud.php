@@ -2,8 +2,12 @@
 
 namespace App\Crud;
 
+use App\Casts\AccountingCategoryCast;
 use App\Classes\CrudForm;
+use App\Classes\CrudTable;
 use App\Classes\FormInput;
+use App\Exceptions\NotAllowedException;
+use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Services\CrudEntry;
 use App\Services\CrudService;
@@ -51,6 +55,21 @@ class TransactionAccountCrud extends CrudService
      */
     public $relations = [
         [ 'nexopos_users', 'nexopos_transactions_accounts.author', '=', 'nexopos_users.id' ],
+        'leftJoin' => [
+            [ 'nexopos_transactions_accounts as subaccount', 'subaccount.id', '=', 'nexopos_transactions_accounts.sub_category_id' ],
+        ],
+    ];
+
+    public $pick = [
+        'nsta' => [
+            'name',
+        ],
+        'subaccount'    =>  [
+            'name',
+        ],
+        'nexopos_users' => [
+            'username',
+        ],
     ];
 
     /**
@@ -77,6 +96,10 @@ class TransactionAccountCrud extends CrudService
         'read' => 'nexopos.read.transactions-account',
         'update' => 'nexopos.update.transactions-account',
         'delete' => 'nexopos.delete.transactions-account',
+    ];
+
+    public $casts = [
+        'category_identifier' => AccountingCategoryCast::class,
     ];
 
     /**
@@ -117,6 +140,11 @@ class TransactionAccountCrud extends CrudService
         return false; // by default
     }
 
+    public function hook( $query ): void
+    {
+        // ...
+    }
+
     /**
      * Fields
      *
@@ -125,6 +153,11 @@ class TransactionAccountCrud extends CrudService
      */
     public function getForm( $entry = null )
     {
+        $options = collect( config( 'accounting.accounts' ) )->map( fn( $account, $key ) => [
+            'label' => $account[ 'label' ](),
+            'value' => $key,
+        ])->values();
+
         return CrudForm::form(
             main: FormInput::text(
                 label: __( 'Name' ),
@@ -138,28 +171,32 @@ class TransactionAccountCrud extends CrudService
                     identifier: 'general',
                     label: __( 'General' ),
                     fields: CrudForm::fields(
-                        FormInput::select(
-                            label: __( 'Operation' ),
-                            name: 'operation',
-                            description: __( 'All entities attached to this category will either produce a "credit" or "debit" to the cash flow history.' ),
-                            validation: 'required',
-                            options: Helper::kvToJsOptions( [
-                                'credit' => __( 'Credit' ),
-                                'debit' => __( 'Debit' ),
-                            ] ),
-                            value: $entry->operation ?? '',
+                        FormInput::searchSelect(
+                            label: __( 'Main Account' ),
+                            name: 'category_identifier',
+                            description: __( 'Select the category of this account.' ),
+                            options: $options,
+                            value: $entry->category_identifier ?? '',
+                            validation: 'required'
                         ),
                         FormInput::searchSelect(
-                            label: __( 'Counter Account' ),
-                            name: 'counter_account_id',
+                            label: __( 'Sub Account' ),
+                            name: 'sub_category_id',
+                            description: __( 'Assign to a sub category.' ),
                             options: [],
-                            description: __( 'For double bookeeping purpose, which account is affected by all transactions on this account?' ),
-                            value: $entry->counter_account_id ?? '',
+                            value: $entry->sub_category_id ?? '',
+                            refresh: FormInput::refreshConfig(
+                                url: ns()->route( 'ns.transactions-account.category-identifier' ),
+                                watch: 'category_identifier',
+                                data: [
+                                    'exclude' => $entry->id ?? 0
+                                ]
+                            )
                         ),
                         FormInput::text(
                             label: __( 'Account' ),
                             name: 'account',
-                            description: __( 'Provide the accounting number for this category.' ),
+                            description: __( 'Provide the accounting number for this category. If left empty, it will be generated automatically.' ),
                             value: $entry->account ?? '',
                         ),
                         FormInput::textarea(
@@ -181,11 +218,22 @@ class TransactionAccountCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        $this->checkThreeLevel( $inputs );
+
         if ( empty( $inputs[ 'account' ] ) ) {
             $inputs[ 'account' ] = str_pad( TransactionAccount::count() + 1, 5, '0', STR_PAD_LEFT );
         }
 
         return $inputs;
+    }
+
+    public function checkThreeLevel( $inputs )
+    {
+        $subAccount     =   TransactionAccount::find( $inputs[ 'sub_category_id' ] );
+
+        if ( $subAccount instanceof TransactionAccount && ( int ) $subAccount->sub_category_id !== 0 ) {
+            throw new NotAllowedException( __( 'Three level of accounts is not allowed.' ) );
+        }
     }
 
     /**
@@ -196,6 +244,8 @@ class TransactionAccountCrud extends CrudService
      */
     public function filterPutInputs( $inputs, TransactionAccount $entry )
     {
+        $this->checkThreeLevel( $inputs );
+
         if ( empty( $inputs[ 'account' ] ) ) {
             $inputs[ 'account' ] = str_pad( $entry->id, 5, '0', STR_PAD_LEFT );
         }
@@ -284,33 +334,32 @@ class TransactionAccountCrud extends CrudService
      */
     public function getColumns(): array
     {
-        return [
-            'name' => [
-                'label' => __( 'Name' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'account' => [
-                'label' => __( 'Account' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'operation' => [
-                'label' => __( 'Operation' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'nexopos_users_username' => [
-                'label' => __( 'Author' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-            'created_at' => [
-                'label' => __( 'Created At' ),
-                '$direction' => '',
-                '$sort' => false,
-            ],
-        ];
+        return CrudTable::columns(
+            CrudTable::column(
+                label: __( 'Category' ),
+                identifier: 'category_identifier',
+            ),
+            CrudTable::column(
+                label: __( 'Sub Account' ),
+                identifier: 'subaccount_name',
+            ),
+            CrudTable::column(
+                label: __( 'Name' ),
+                identifier: 'name',
+            ),
+            CrudTable::column(
+                label: __( 'Account' ),
+                identifier: 'account',
+            ),
+            CrudTable::column(
+                label: __( 'Author' ),
+                identifier: 'nexopos_users_username',
+            ),
+            CrudTable::column(
+                label: __( 'Created At' ),
+                identifier: 'created_at',
+            )
+        );
     }
 
     /**

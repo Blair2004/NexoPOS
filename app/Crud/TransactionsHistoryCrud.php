@@ -2,9 +2,12 @@
 
 namespace App\Crud;
 
+use App\Casts\AccountingCategoryCast;
 use App\Casts\CurrencyCast;
 use App\Classes\CrudTable;
 use App\Exceptions\NotAllowedException;
+use App\Models\Transaction;
+use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
 use App\Models\User;
 use App\Services\CrudEntry;
@@ -102,7 +105,7 @@ class TransactionsHistoryCrud extends CrudService
      * ]
      */
     public $pick = [
-        'transactions_accounts' => [ 'name' ],
+        'transactions_accounts' => [ 'name', 'category_identifier' ],
     ];
 
     /**
@@ -137,6 +140,7 @@ class TransactionsHistoryCrud extends CrudService
 
     protected $casts = [
         'value' => CurrencyCast::class,
+        'transactions_accounts_category_identifier' =>  AccountingCategoryCast::class,
     ];
 
     /**
@@ -325,8 +329,8 @@ class TransactionsHistoryCrud extends CrudService
     {
         return CrudTable::columns(
             CrudTable::column( __( 'Name' ), 'name' ),
-            CrudTable::column( __( 'Status' ), 'status' ),
-            CrudTable::column( __( 'Account Name' ), 'transactions_accounts_name' ),
+            CrudTable::column( __( 'Main Account' ), 'transactions_accounts_category_identifier' ),
+            CrudTable::column( __( 'Sub Account' ), 'transactions_accounts_name' ),
             CrudTable::column( __( 'Operation' ), 'operation' ),
             CrudTable::column( __( 'Value' ), 'value' ),
             CrudTable::column( __( 'Author' ), 'users_username' ),
@@ -341,6 +345,26 @@ class TransactionsHistoryCrud extends CrudService
     {
         if ( $entry->status === TransactionHistory::STATUS_PENDING ) {
             $entry->addClass( 'info' );
+        }
+
+        $hasReflection  = TransactionHistory::where( 'reflection_source_id', $entry->id )->count() > 0; 
+        $hasTransaction = Transaction::where( 'id', $entry->transaction_id )->count() > 0;
+
+        /**
+         * If the transaction history has not been reflected yet
+         * and result from a transaction, we can create a reflection
+         * as this is an indirect transaction history.
+         */
+        if ( ! $hasReflection && $hasTransaction && ( bool ) $entry->is_reflection === false ) {
+            $entry->action(
+                label: '<i class="mr-2 las la-eye"></i> ' . __( 'Create Reflection' ),
+                url: ns()->url( 'api/transactions/history/' . $entry->id . '/create-reflection' ),
+                type: 'GET',
+                identifier: 'create_reflection',
+                confirm: [
+                    'message' => __( 'Are you sure you want to create a reflection for this transaction history?' ),
+                ]
+            );
         }
 
         $entry->action(

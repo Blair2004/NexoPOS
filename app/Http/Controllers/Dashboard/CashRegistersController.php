@@ -102,14 +102,12 @@ class CashRegistersController extends DashboardController
             return $this->registersService->cashIng(
                 register: $register,
                 amount: $request->input( 'amount' ),
-                transaction_account_id: $request->input( 'transaction_account_id' ),
                 description: $request->input( 'description' )
             );
         } elseif ( $action === RegisterHistory::ACTION_CASHOUT ) {
             return $this->registersService->cashOut(
                 register: $register,
                 amount: $request->input( 'amount' ),
-                transaction_account_id: $request->input( 'transaction_account_id' ),
                 description: $request->input( 'description' )
             );
         }
@@ -132,6 +130,28 @@ class CashRegistersController extends DashboardController
         ];
     }
 
+    private function getRightOrderPaymentLabel( RegisterHistory $history )
+    {
+        if ( $history->action === RegisterHistory::ACTION_ORDER_PAYMENT ) {
+            return sprintf(
+                __( 'Payment %s on %s' ),
+                $history->payment_label,
+                $history->order->code
+            );
+        } else if ( $history->action === RegisterHistory::ACTION_ORDER_CHANGE ) {
+            return sprintf(
+                __( 'Change %s on %s' ),
+                $history->payment_label,
+                $history->order->code
+            );
+        }
+
+        return sprintf(
+            __( 'Unknown action %s' ),
+            $history->action
+        );
+    }
+
     public function getSessionHistory( Register $register )
     {
         if ( $register->status === Register::STATUS_OPENED ) {
@@ -148,15 +168,15 @@ class CashRegistersController extends DashboardController
                     ->select( [
                         'nexopos_registers_history.*',
                         'nexopos_registers_history.description as description',
-                        'nexopos_transactions_accounts.name as account_name',
+                        'nexopos_payments_types.label as payment_label',
                     ] )
                     ->with( 'order' )
                     ->leftJoin( 'nexopos_payments_types', 'nexopos_registers_history.payment_type_id', '=', 'nexopos_payments_types.id' )
-                    ->leftJoin( 'nexopos_transactions_accounts', 'nexopos_registers_history.transaction_account_id', '=', 'nexopos_transactions_accounts.id' )
                     ->where( 'nexopos_registers_history.id', '>=', $lastOpening->id );
 
                 $history = $historyRequest->get();
-                $history->each( function ( $session ) {
+
+                $history->each( function ( RegisterHistory $session ) {
                     switch ( $session->action ) {
                         case RegisterHistory::ACTION_CASHING:
                             $session->label = __( 'Cash In' );
@@ -170,8 +190,10 @@ class CashRegistersController extends DashboardController
                         case RegisterHistory::ACTION_OPENING:
                             $session->label = __( 'Opening' );
                             break;
-                        case RegisterHistory::ACTION_SALE:
-                            $session->label = sprintf( __( '%s on %s' ), __( 'Sale' ), $session->order->code );
+                        case RegisterHistory::ACTION_ORDER_PAYMENT:
+                        case RegisterHistory::ACTION_ORDER_CHANGE:
+                            // @todo it might be a custom label based on the payment
+                            $session->label = $this->getRightOrderPaymentLabel( $session );
                             break;
                         case RegisterHistory::ACTION_REFUND:
                             $session->label = __( 'Refund' );
@@ -184,16 +206,18 @@ class CashRegistersController extends DashboardController
 
                 $cashPayment = PaymentType::identifier( OrderPayment::PAYMENT_CASH )->first();
                 $totalOpening = $lastOpening->value;
-                $totalCashPayment = $history->where( 'action', RegisterHistory::ACTION_SALE )
+
+                // we might need to pull based on payment type
+                // @todo this is no longer correct
+                $totalCashPayment = $history->where( 'action', RegisterHistory::ACTION_ORDER_PAYMENT )
                     ->where( 'payment_type_id', $cashPayment->id ?? 0 )
                     ->sum( 'value' );
 
-                $totalCashChange = $history->where( 'action', RegisterHistory::ACTION_CASH_CHANGE )->sum( 'value' );
+                $totalCashChange = $history->where( 'action', RegisterHistory::ACTION_ORDER_CHANGE )->sum( 'value' );
 
                 $totalPaymentTypeSummary = $historyRequest
                     ->whereIn( 'action', [
-                        RegisterHistory::ACTION_SALE,
-                        RegisterHistory::ACTION_CASH_CHANGE,
+                        RegisterHistory::ACTION_ORDER_PAYMENT
                     ] )
                     ->select( [
                         DB::raw( 'SUM(value) as value' ),
@@ -206,15 +230,12 @@ class CashRegistersController extends DashboardController
                     ->map( function ( $group ) {
                         $color = 'info';
 
-                        if ( $group->action === RegisterHistory::ACTION_CASH_CHANGE ) {
-                            $label = __( 'Cash Change' );
-                            $color = 'error';
-                        } elseif ( $group->action === RegisterHistory::ACTION_SALE ) {
+                        if ( $group->action === RegisterHistory::ACTION_ORDER_PAYMENT ) {
                             $color = 'success';
                         }
 
                         return [
-                            'label' => sprintf( __( 'Total %s' ), $group->label ?: $label ),
+                            'label' => sprintf( __( 'Total %s' ), $group->label ),
                             'value' => $group->value,
                             'color' => $color,
                         ];
@@ -224,9 +245,14 @@ class CashRegistersController extends DashboardController
                     [
                         'label' => __( 'Initial Balance' ),
                         'value' => $totalOpening,
-                        'color' => 'warning',
+                        'color' => 'info',
                     ],
                     ...$totalPaymentTypeSummary,
+                    [
+                        'label' => __( 'Total Change' ),
+                        'value' => $totalCashChange,
+                        'color' => 'warning',
+                    ],
                     [
                         'label' => __( 'On Hand' ),
                         'value' => ns()->currency->define( $totalOpening )
@@ -288,6 +314,6 @@ class CashRegistersController extends DashboardController
          * @var mixed user
          */
 
-        return View::make( 'pages.dashboard.orders.templates.z-report', $data );
+        return View::make( 'pages.dashboard.orders.templates.z-report', ( array ) $data );
     }
 }

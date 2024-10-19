@@ -6,16 +6,19 @@ use App\Http\Controllers\DashboardController;
 use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\ResetService;
+use App\Services\SetupService;
 use Database\Seeders\DefaultSeeder;
 use Database\Seeders\FirstDemoSeeder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ResetController extends DashboardController
 {
     public function __construct(
         protected ResetService $resetService,
         protected DemoService $demoService,
-        protected DateService $dateService
+        protected DateService $dateService,
+        protected SetupService $setupService
     ) {
         // ...
     }
@@ -31,13 +34,8 @@ class ResetController extends DashboardController
 
         switch ( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
+            case 'wipe_all':
                 $this->demoService->run( $request->all() );
-                break;
-            case 'wipe_plus_simple':
-                ( new FirstDemoSeeder )->run();
-                break;
-            case 'default':
-                ( new DefaultSeeder )->run();
                 break;
             default:
                 $this->resetService->handleCustom(

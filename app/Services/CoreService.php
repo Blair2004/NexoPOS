@@ -383,17 +383,23 @@ class CoreService
         ] )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
     }
 
+    /**
+     * Get a valid user for assigning resources
+     * create by the system on behalf of the user.
+     */
     public function getValidAuthor()
     {
-        if ( Auth::check() ) {
-            return Auth::id();
-        }
+        $firstAdministrator = User::where( 'active', true )->
+            whereRelation( 'roles', 'namespace', Role::ADMIN )->first();
 
         if ( App::runningInConsole() ) {
-            $firstAdministrator = User::where( 'active', true )->
-                whereRelation( 'roles', 'namespace', Role::ADMIN )->first();
-
             return $firstAdministrator->id;
+        } else {
+            if ( Auth::check() ) {
+                return Auth::id();
+            } else {
+                return $firstAdministrator->id;
+            }
         }
     }
 

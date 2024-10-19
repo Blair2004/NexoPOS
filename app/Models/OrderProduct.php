@@ -3,6 +3,12 @@
 namespace App\Models;
 
 use App\Casts\FloatConvertCasting;
+use App\Events\OrderProductAfterCreatedEvent;
+use App\Events\OrderProductAfterUpdatedEvent;
+use App\Events\OrderProductBeforeCreatedEvent;
+use App\Events\OrderProductBeforeUpdatedEvent;
+use App\Traits\NsFiltredAttributes;
+use App\Traits\NsFlashData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -42,7 +48,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class OrderProduct extends NsModel
 {
-    use HasFactory;
+    use HasFactory, NsFiltredAttributes, NsFlashData;
 
     const CONDITION_DAMAGED = 'damaged';
 
@@ -72,6 +78,18 @@ class OrderProduct extends NsModel
         'total_price_with_tax' => FloatConvertCasting::class,
         'total_purchase_price' => FloatConvertCasting::class,
     ];
+
+    public $dispatchesEvents = [
+        'creating' => OrderProductBeforeCreatedEvent::class,
+        'created' => OrderProductAfterCreatedEvent::class,
+        'updated' => OrderProductAfterUpdatedEvent::class,
+        'updating'   =>  OrderProductBeforeUpdatedEvent::class,
+    ];
+
+    public function tax_group()
+    {
+        return $this->hasOne( TaxGroup::class, 'id', 'tax_group_id' );
+    }
 
     public function unit()
     {

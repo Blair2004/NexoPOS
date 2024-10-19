@@ -25,21 +25,13 @@ class Notification extends NsModel
     protected $dispatchesEvents = [
         'created' => NotificationCreatedEvent::class,
         'updated' => NotificationUpdatedEvent::class,
+        'deleted' => NotificationDeletedEvent::class,
     ];
 
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
-
-    public static function boot()
-    {
-        parent::boot();
-
-        static::deleting( function ( $notification ) {
-            NotificationDeletedEvent::dispatch( $notification->toArray() );
-        } );
-    }
 
     public function user()
     {
