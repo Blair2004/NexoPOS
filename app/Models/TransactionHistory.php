@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Events\TransactionsHistoryAfterCreatedEvent;
 use App\Events\TransactionsHistoryAfterDeletedEvent;
 use App\Events\TransactionsHistoryAfterUpdatedEvent;
+use App\Events\TransactionsHistoryBeforeDeleteEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -42,61 +43,6 @@ class TransactionHistory extends NsModel
 
     const OPERATION_CREDIT = 'credit';
 
-    /**
-     * Unique account identifier for sales.
-     */
-    const ACCOUNT_SALES = '001';
-
-    /**
-     * Unique account identifier for every stocked procurement.
-     */
-    const ACCOUNT_PROCUREMENTS = '002';
-
-    /**
-     * Unique account identifier for refunded sales.
-     */
-    const ACCOUNT_REFUNDS = '003';
-
-    /**
-     * Unique account identifier for cash register cash in.
-     */
-    const ACCOUNT_REGISTER_CASHING = '004';
-
-    /**
-     * Unique account identifier for cash register cash out.
-     */
-    const ACCOUNT_REGISTER_CASHOUT = '005';
-
-    /**
-     * Unique identifier for spoiled goods.
-     */
-    const ACCOUNT_SPOILED = '006';
-
-    /**
-     * Unique identifier for spoiled goods.
-     */
-    const ACCOUNT_UNSPOILED = '010';
-
-    /**
-     * Unique identifier for customer credit credit.
-     */
-    const ACCOUNT_CUSTOMER_CREDIT = '007';
-
-    /**
-     * Unique identifier for customer credit debit.
-     */
-    const ACCOUNT_CUSTOMER_DEBIT = '008';
-
-    /**
-     * Unique identifier for liabilities.
-     */
-    const ACCOUNT_LIABILITIES = '009';
-
-    /**
-     * Unique identifier for equity.
-     */
-    const ACCOUNT_EQUITY = '011';
-
     public $fillable = [
         'transaction_id',
         'operation',
@@ -116,14 +62,26 @@ class TransactionHistory extends NsModel
     ];
 
     protected $dispatchesEvents = [
-        'created' => TransactionsHistoryAfterCreatedEvent::class,
-        'updated' => TransactionsHistoryAfterUpdatedEvent::class,
-        'deleted' => TransactionsHistoryAfterDeletedEvent::class,
+        'created'   => TransactionsHistoryAfterCreatedEvent::class,
+        'updated'   => TransactionsHistoryAfterUpdatedEvent::class,
+        'deleting'  => TransactionsHistoryBeforeDeleteEvent::class,
+        'deleted'   => TransactionsHistoryAfterDeletedEvent::class,
     ];
 
     public function order()
     {
         return $this->hasOne( Order::class, 'id', 'order_id' );
+    }
+
+    public function rule()
+    {
+        return $this->hasOne( TransactionActionRule::class, 'id', 'rule_id' );
+    }
+
+    protected function casts() {
+        return [
+            'is_reflection' => 'boolean',
+        ];
     }
 
     public function cashRegisterHistory()

@@ -450,7 +450,7 @@ class RegisterCrud extends CrudService
         return [
             'list' => ns()->url( 'dashboard/' . 'cash-registers' ),
             'create' => ns()->url( 'dashboard/' . 'cash-registers/create' ),
-            'edit' => ns()->url( 'dashboard/' . 'cash-registers/edit/' ),
+            'edit' => ns()->url( 'dashboard/' . 'cash-registers/edit/{id}' ),
             'post' => ns()->url( 'api/crud/' . self::IDENTIFIER ),
             'put' => ns()->url( 'api/crud/' . self::IDENTIFIER . '/{id}' . '' ),
         ];

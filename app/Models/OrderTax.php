@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Casts\FloatConvertCasting;
+use App\Events\OrderTaxAfterCreatedEvent;
+use App\Events\OrderTaxBeforeCreatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -22,6 +24,11 @@ class OrderTax extends NsModel
     public $casts = [
         'tax_value' => FloatConvertCasting::class,
         'rate' => FloatConvertCasting::class,
+    ];
+
+    public $dispatchesEvents = [
+        'creating' => OrderTaxBeforeCreatedEvent::class,
+        'created' =>  OrderTaxAfterCreatedEvent::class,
     ];
 
     public function order()

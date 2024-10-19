@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Services\UsersService;
 use Exception;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -41,104 +42,146 @@ class CreateUserTest extends TestCase
 
         $this->users = app()->make( UsersService::class );
 
-        return Role::get()->map( function ( $role ) {
-            $password = Hash::make( Str::random( 20 ) );
+        $role = Role::where( 'namespace', Role::ADMIN )->first();
+        $password = Hash::make( Str::random( 20 ) );
 
-            $configuration = [
-                'username' => $this->faker->username(),
-                'general' => [
-                    'email' => $this->faker->email(),
-                    'password' => $password,
-                    'password_confirm' => $password,
-                    'roles' => [ $role->id ],
-                    'active' => 1, // true
-                ],
-            ];
+        $configuration = [
+            'username' => $this->faker->username(),
+            'general' => [
+                'email' => $this->faker->email(),
+                'password' => $password,
+                'password_confirm' => $password,
+                'roles' => [ $role->id ],
+                'active' => 1, // true
+            ],
+        ];
 
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'post', '/api/crud/ns.users', $configuration );
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'post', '/api/crud/ns.users', $configuration );
 
-            $response->assertJsonPath( 'status', 'success' );
-            $result = json_decode( $response->getContent() );
+        $response->assertJsonPath( 'status', 'success' );
+        $response = $response->json();
 
-            /**
-             * Step 1: create user with same username
-             * but a different email
-             */
-            try {
-                $this->users->setUser( [
-                    'username' => $configuration[ 'username' ],
-                    'email' => $this->faker->email(),
-                    'roles' => $configuration[ 'general' ][ 'roles' ],
-                    'active' => true,
-                ] );
-            } catch ( Exception $exception ) {
-                $this->assertTrue( strstr( $exception->getMessage(), 'username' ) !== false );
-            }
-
-            /**
-             * Step 2: create user with same email
-             * but a different username
-             */
-            try {
-                $this->users->setUser( [
-                    'username' => $this->faker->userName(),
-                    'email' => $configuration[ 'general' ][ 'email' ],
-                    'roles' => $configuration[ 'general' ][ 'roles' ],
-                    'active' => true,
-                ] );
-            } catch ( Exception $exception ) {
-                $this->assertTrue( strstr( $exception->getMessage(), 'email' ) !== false );
-            }
-
-            /**
-             * Step 3: Update user from Crud component
-             */
-            $configuration = [
-                'username' => $this->faker->username(),
-                'general' => [
-                    'email' => $this->faker->email(),
-                    'password' => $password,
-                    'password_confirm' => $password,
-                    'roles' => [ $role->id ],
-                    'active' => 1, // true
-                ],
-            ];
-
-            $response = $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'put', '/api/crud/ns.users/' . $result->data->entry->id, $configuration );
-
-            $response->assertJsonPath( 'status', 'success' );
-            $result = json_decode( $response->getContent() );
-
-            return $result->data->entry;
-        } );
+        return compact( 'configuration', 'response' );
     }
 
     /**
      * @depends test_create_users
      */
-    public function test_delete_users()
+    public function test_create_user_with_same_username_and_different_email( $data )
     {
-        Role::whereNotIn( 'namespace', [ Role::ADMIN ] )->get()->map( function ( Role $role ) {
-            $role->users()->limit( 1 )->get()->each( function ( User $user ) {
-                $this->attemptAuthenticate( $user );
+        $this->attemptAuthenticate();
+        
+        extract( $data );
+        /**
+         * @var $configuration array
+         * @var $response object
+         */
 
-                /**
-                 * Step 1: attempt to delete himself
-                 */
-                $response = $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'delete', '/api/crud/ns.users/' . $user->id );
+        /**
+         * @var UsersService
+         */
+        $this->users = app()->make( UsersService::class );
 
-                $response->assertStatus( 403 );
-            } );
-        } );
+        /**
+         * Step 1: create user with same username
+         * but a different email
+         */
+        try {
+            $this->users->setUser( [
+                'username' => $configuration[ 'username' ],
+                'email' => $this->faker->email(),
+                'roles' => $configuration[ 'general' ][ 'roles' ],
+                'active' => true,
+            ] );
+        } catch ( Exception $exception ) {
+            $this->assertTrue( strstr( $exception->getMessage(), 'username' ) !== false );
+        }
+
+        return compact( 'configuration', 'response' );
+    }
+
+    /**
+     * @depends test_create_user_with_same_username_and_different_email
+     */
+    public function test_create_user_with_same_email_and_different_username( $data )
+    {
+        $this->attemptAuthenticate();
+
+        extract( $data );
+        /**
+         * @var $configuration array
+         * @var $response object
+         */
+
+        /**
+         * @var UsersService
+         */
+        $this->users = app()->make( UsersService::class );
+
+        /**
+         * Step 2: create user with same email
+         * but a different username
+         */
+        try {
+            $this->users->setUser( [
+                'username' => $this->faker->userName(),
+                'email' => $configuration[ 'general' ][ 'email' ],
+                'roles' => $configuration[ 'general' ][ 'roles' ],
+                'active' => true,
+            ] );
+        } catch ( Exception $exception ) {
+            $this->assertTrue( strstr( $exception->getMessage(), 'email' ) !== false );
+        }
+
+        return compact( 'configuration', 'response' );
+    }
+
+    /**
+     * @depends test_create_user_with_same_email_and_different_username
+     */
+    public function test_update_user_from_crud( $data )
+    {
+        $this->attemptAuthenticate();
+
+        extract( $data );
+        /**
+         * @var $configuration array
+         * @var $response object
+         */
+
+        $password = Hash::make( Str::random( 20 ) );
+        $role = Role::where( 'namespace', Role::ADMIN )->first();
+
+        /**
+         * Step 3: Update user from Crud component
+         */
+        $configuration = [
+            'username' => $this->faker->username(),
+            'general' => [
+                'email' => $this->faker->email(),
+                'password' => $password,
+                'password_confirm' => $password,
+                'roles' => [ $role->id ],
+                'active' => 1, // true
+            ],
+        ];
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'put', '/api/crud/ns.users/' . $response[ 'data' ][ 'entry' ][ 'id' ], $configuration );
+
+        $response->assertJsonPath( 'status', 'success' );
+        $result = json_decode( $response->getContent() );
+
+        return $result->data->entry;
+    }
+
+    public function test_delete_user_having_orders()
+    {
+        $this->attemptAuthenticate();
 
         $user = Role::namespace( Role::ADMIN )->users()->first();
 
-        /**
-         * Step 2: try to delete a user who has some sales
-         */
         $order = Order::where( 'author', '<>', $user->id )->first();
 
         if ( $order instanceof Order ) {
@@ -149,7 +192,26 @@ class CreateUserTest extends TestCase
         }
     }
 
-    private function getValidRoutes()
+    public function test_delete_users()
+    {
+        $this->test_create_users();
+
+        $firstRole = Role::where( 'namespace', Role::ADMIN )->first();
+
+        $firstRole->users()->where( 'nexopos_users.id', '<>', Auth::id() )->limit( 1 )->get()->each( function ( User $user ) {
+            $this->attemptAuthenticate( $user );
+
+            /**
+             * Step 1: attempt to delete himself
+             */
+            $response = $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'delete', '/api/crud/ns.users/' . $user->id );
+
+            $response->assertStatus( 403 );
+        } );
+    }
+
+    public function getValidRoutes()
     {
         return collect( Route::getRoutes() )->filter( function ( $route ) {
             $uri = $route->uri();
@@ -250,7 +312,7 @@ class CreateUserTest extends TestCase
         $this->attemptAllRoutes( $user, $routes[4] );
     }
 
-    private function attemptAllRoutes( $user, $routes )
+    public function attemptAllRoutes( $user, $routes )
     {
         $paramsModelBinding = [
             '/\{customer\}|\{customerAccountHistory\}/' => function () {

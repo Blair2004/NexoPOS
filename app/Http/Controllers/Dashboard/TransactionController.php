@@ -13,6 +13,7 @@ use App\Crud\TransactionsHistoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Transaction;
 use App\Models\TransactionAccount;
+use App\Models\TransactionHistory;
 use App\Services\DateService;
 use App\Services\Options;
 use App\Services\TransactionService;
@@ -45,6 +46,11 @@ class TransactionController extends DashboardController
         ] );
     }
 
+    public function saveRule( Request $request )
+    {
+        return $this->transactionService->saveTransactionRule( $request->input( 'rule' ) );
+    }
+
     public function listTransactions()
     {
         return TransactionCrud::table();
@@ -54,6 +60,11 @@ class TransactionController extends DashboardController
     {
         if ( ! ns()->canPerformAsynchronousOperations() ) {
             session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Entity Transactions as Queues aren\'t configured correctly.' ) );
+        }
+
+        if  ( ns()->option->get( 'ns_accounting_expenses_accounts' ) === null ) {
+            session()->flash( 'infoMessage', __( 'You need to configure the expense accounts before creating a transaction.' ) );
+            return redirect()->route( 'ns.dashboard.settings', [ 'settings' => 'accounting' ] );
         }
 
         return View::make( 'pages.dashboard.transactions.create', [
@@ -163,6 +174,30 @@ class TransactionController extends DashboardController
     }
 
     /**
+     * get all sub accounts
+     * @return Collection
+     */
+    public function getSubAccounts()
+    {
+        return $this->transactionService->getSubAccounts();
+    }
+
+
+    /**
+     * get all actions
+     * @return Collection
+     */
+    public function getActions()
+    {
+        return $this->transactionService->getActions();
+    }
+
+    public function getRules()
+    {
+        return $this->transactionService->getRules();
+    }
+
+    /**
      * delete a specific transaction account
      */
     public function deleteAccount( TransactionAccount $account )
@@ -205,5 +240,22 @@ class TransactionController extends DashboardController
     public function triggerTransaction( Transaction $transaction )
     {
         return $this->transactionService->triggerTransaction( $transaction );
+    }
+
+    public function getTransactionAccountFromCategory( Request $request )
+    {
+        return $this->transactionService->getTransactionAccountFromCategory( $request->input( 'identifier' ), $request->input( 'exclude' ) );
+    }
+
+    public function resetDefaultAccounts( Request $request )
+    {
+        ns()->restrict([ 'nexopos.create.transactions-account' ] );
+        
+        return $this->transactionService->createDefaultAccounts();
+    }
+
+    public function createReflection( TransactionHistory $history )
+    {
+        return $this->transactionService->reflectTransactionFromRule( $history, null );
     }
 }

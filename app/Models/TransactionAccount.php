@@ -17,16 +17,6 @@ class TransactionAccount extends NsModel
 
     protected $table = 'nexopos_' . 'transactions_accounts';
 
-    public function scopeCredit( $query )
-    {
-        return $query->where( 'operation', 'credit' );
-    }
-
-    public function scopeDebit( $query )
-    {
-        return $query->where( 'operation', 'debit' );
-    }
-
     public function transactions()
     {
         return $this->hasMany( Transaction::class, 'account_id' );
@@ -35,6 +25,11 @@ class TransactionAccount extends NsModel
     public function scopeAccount( $query, $account )
     {
         return $query->where( 'account', $account );
+    }
+
+    public function scopeCategoryIdentifier( $query, $category )
+    {
+        return $query->where( 'category_identifier', $category );
     }
 
     public function histories()

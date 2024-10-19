@@ -1210,7 +1210,7 @@ class CrudService
     {
         $className = get_called_class();
         $instance = new $className;
-        $permissionType = $entry === null ? 'create' : 'update';
+        $permissionType = $entry === null ? 'read' : 'update';
 
         /**
          * if a permission for creating or updating is
@@ -1218,7 +1218,59 @@ class CrudService
          */
         $instance->allowedTo( $permissionType );
 
+        /**
+         * We'll provide the submit URL
+         */
+        if ( $entry !== null ) {
+            $replacementSubmitUrl = isset( $instance->getLinks()['put'] ) ? str_replace( '{id}', $entry->id, $instance->getLinks()['put'] ) : null;
+        } else {
+            $replacementSubmitUrl = isset( $instance->getLinks()['post'] ) ? $instance->getLinks()['post'] : null;
+        }
+
         return array_merge( [
+            /**
+             * We'll provide the form configuration
+             */
+            'form'  =>  $instance->getForm( $entry ),
+
+            /**
+             * We'll now provide the labels
+             */
+            'labels' => $instance->getLabels(),
+
+            /**
+             * this list all the usable lnks on the resource
+             */
+            'links' => $instance->getLinks(),
+            
+            /**
+             * By default the method used is "post" but might change to "put" according to
+             * whether the entry is provided (Model). Can be changed from the $config.
+             */
+            'submitMethod' => $config['submitMethod'] ?? ( $entry === null ? 'post' : 'put' ),
+
+            /**
+             * provide the current crud namespace
+             */
+            'namespace' => $instance->getNamespace(),
+
+            /**
+             * We'll return here the select attribute that will
+             * be used to automatically popuplate "options" entry of select and search-select field
+             */
+            'optionAttributes' => $instance->getOptionAttributes(),
+
+            /**
+             * to provide custom query params
+             * to every outgoing request on the table
+             */
+            'queryParams' => [],
+
+            /**
+             * the following entries are @deprecated and will 
+             * likely be removed on upcoming releases.
+             */
+
             /**
              * this pull the title either
              * the form is made to create or edit a resource.
@@ -1247,30 +1299,7 @@ class CrudService
              * This will pull the submitURL that might be different whether the $entry is
              * provided or not. can be overwritten on the configuration ($config).
              */
-            'submitUrl' => $config['submitUrl'] ?? ( $entry === null ? $instance->getLinks()['post'] : str_replace( '{id}', $entry->id, $instance->getLinks()['put'] ) ),
-
-            /**
-             * By default the method used is "post" but might change to "put" according to
-             * whether the entry is provided (Model). Can be changed from the $config.
-             */
-            'submitMethod' => $config['submitMethod'] ?? ( $entry === null ? 'post' : 'put' ),
-
-            /**
-             * provide the current crud namespace
-             */
-            'namespace' => $instance->getNamespace(),
-
-            /**
-             * We'll return here the select attribute that will
-             * be used to automatically popuplate "options" entry of select and search-select field
-             */
-            'optionAttributes' => $instance->getOptionAttributes(),
-
-            /**
-             * to provide custom query params
-             * to every outgoing request on the table
-             */
-            'queryParams' => [],
+            'submitUrl' => $config['submitUrl'] ?? $replacementSubmitUrl,
         ], $config );
     }
 

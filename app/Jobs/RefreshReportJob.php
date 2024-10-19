@@ -19,7 +19,7 @@ class RefreshReportJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct( public $date )
+    public function __construct( public Carbon $date )
     {
         $this->prepareSerialization();
     }

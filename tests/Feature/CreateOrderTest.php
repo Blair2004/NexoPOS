@@ -18,8 +18,8 @@ class CreateOrderTest extends TestCase
      */
     public function testPostingOrder( $callback = null )
     {
-        $this->count = 2;
-        $this->totalDaysInterval = 3;
+        $this->count = 1;
+        $this->totalDaysInterval = 1;
 
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();

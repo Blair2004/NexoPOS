@@ -23,46 +23,63 @@
                         <td colspan="2" class="p-1">{{ __( 'Sales Person' ) }}</td>
                         <td class="p-1 text-right">{{ $user->first_name . ' ' . $user->last_name }} ({{ $user->username }})</td>
                     </tr>
-                    <tr>
+                </tbody>
+            </table>
+            <br>
+            <h2 class="text-center font-bold border-b border-dashed py-2     text-black">{{ __( 'General Details' ) }}</h2>
+            <br>
+            <table class="w-full">
+                <tbody>
+                    <tr class="font-semibold">
                         <td colspan="2" class="p-1">{{ __( 'Terminal' ) }}</td>
                         <td class="p-1 text-right">{{ $register->name }}</td>
                     </tr>
                     <tr>
                         <td colspan="2" class="p-1">{{ __( 'Opened On' ) }}</td>
-                        <td class="p-1 text-right">{{ ns()->date->getFormatted( $opening->created_at ) }}</td>
+                        <td class="p-1 text-right">{{ $openedOn }}</td>
                     </tr>
                     <tr>
                         <td colspan="2" class="p-1">{{ __( 'Closed On' ) }}</td>
-                        <td class="p-1 text-right">{{ $closing !== null ? ns()->date->getFormatted( $closing->created_at ) : __( 'Still Opened' ) }}</td>
+                        <td class="p-1 text-right">{{ $closedOn }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="p-1">{{ __( 'Session Duration' ) }}</td>
+                        <td class="p-1 text-right">{{ $sessionDuration }}</td>
                     </tr>
                 </tbody>
             </table>
+            <br>
+            <h2 class="text-center font-bold border-b border-dashed py-2     text-black">{{ __( 'Sales Overview' ) }}</h2>
             <br>
             <table class="w-full">
                 <tbody>
                     <tr>
                         <td colspan="2" class="p-1">{{ __( 'Opening Balance' ) }}</td>
-                        <td class="p-1 text-right">{{ ns()->currency->define( $opening->value ) }}</td>
+                        <td class="p-1 text-right">{{ $openingBalance }}</td>
                     </tr>
                     <tr>
                         <td colspan="2" class="p-1">{{ __( 'Closing Balance' ) }}</td>
-                        <td class="p-1 text-right">{{ $closing !== null ? ns()->currency->define( $opening->value ) : __( 'N/A' ) }}</td>
+                        <td class="p-1 text-right">{{ $closingBalance }}</td>
                     </tr>
                     <tr>
-                        <td colspan="2" class="p-1">{{ __( 'Difference' ) }}</td>
-                        <td class="p-1 text-right">{{ ns()->currency->define( $difference ) }}</td>
+                        <td colspan="2" class="p-1">{{ __( 'Total Gross Sales' ) }}</td>
+                        <td class="p-1 text-right">{{ $totalGrossSales }}</td>
                     </tr>
                     <tr>
-                        <td colspan="2" class="p-1">{{ __( 'Gross Sales' ) }}</td>
-                        <td class="p-1 text-right">{{ ns()->currency->define( $totalGrossSales ) }}</td>
+                        <td colspan="2" class="p-1">{{ __( 'Total Discounts' ) }}</td>
+                        <td class="p-1 text-right">{{ $totalDiscounts }}</td>
                     </tr>
                     <tr>
-                        <td colspan="2" class="p-1">{{ __( 'Discount Amount' ) }}</td>
-                        <td class="p-1 text-right">{{ ns()->currency->define( $totalDiscount ) }}</td>
+                        <td colspan="2" class="p-1">{{ __( 'Total Shipping' ) }}</td>
+                        <td class="p-1 text-right">{{ $totalShippings }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="p-1">{{ __( 'Total Taxes' ) }}</td>
+                        <td class="p-1 text-right">{{ $totalTaxes }}</td>
                     </tr>
                     <tr>
                         <td colspan="2" class="p-1">{{ __( 'Total' ) }}</td>
-                        <td class="p-1 text-right">{{ ns()->currency->define( $total ) }}</td>
+                        <td class="p-1 text-right">{{ $totalSales }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -92,27 +109,28 @@
             <table class="w-full">
                 <thead>
                     <tr class="font-semibold">
-                        <td colspan="3" class="p-2 border-b border-gray-800 text-center">{{ __( 'Price List Details' ) }}</td>
+                        <td colspan="3" class="p-2 border-b border-gray-800 text-center">{{ __( 'Products Overview' ) }}</td>
                     </tr>
                 </thead>
                 <tbody class="text-sm">
-                    @foreach( $categories as $category )
+                    @foreach( $products as $product )
                     <tr>
                         <td colspan="2" class="p-2">
-                            {{ $category[ 'name' ] }}
+                            {{ $product[ 'name' ] }} ({{ $product[ 'quantity' ] }})
                         </td>
-                        <td class="p-2 text-right">{{ $category[ 'quantity' ] }}</td>
+                        <td class="p-2 text-right">{{ $product[ 'total_price' ] }}</td>
                     </tr>
                     @endforeach
                     <tr>
                         <td colspan="2" class="p-2">
                             {{ __( 'Total' ) }}
                         </td>
-                        <td class="p-2 text-right">{{ collect( $categories )->sum( 'quantity' ) }}</td>
+                        <td class="p-2 text-right">{{ collect( $categories )->sum( 'total_price' ) }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+@includeWhen( request()->query( 'autoprint' ) === 'true', '/pages/dashboard/orders/templates/_autoprint' )
 @endsection

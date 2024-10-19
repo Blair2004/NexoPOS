@@ -439,6 +439,10 @@ export default {
             this.searchValue            =   '';
 
             this.form.products.push( product );
+
+            const indexOfProduct = this.form.products.length - 1;
+            
+            this.fetchLastPurchasePrice( indexOfProduct );
         },
         submit() {
 

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Option;
+use App\Models\PaymentType;
 
 class Options
 {
@@ -39,6 +40,7 @@ class Options
             'ns_pos_hide_empty_categories' => 'yes',
             'ns_pos_unit_price_ediable' => 'yes',
             'ns_pos_order_types' => [ 'takeaway', 'delivery' ],
+            'ns_pos_registers_default_change_payment_type' => PaymentType::where( 'identifier', 'cash-payment' )->first()?->id ?? 1,
         ];
 
         $options = array_merge( $defaultOptions, $options );
@@ -66,8 +68,6 @@ class Options
      **/
     public function build()
     {
-        $this->options = [];
-
         if ( Helper::installed() && empty( $this->rawOptions ) ) {
             $this->rawOptions = $this->option()
                 ->get()
@@ -96,8 +96,6 @@ class Options
          */
         $foundOption = collect( $this->rawOptions )->map( function ( $option, $index ) use ( $value, $key, $expiration ) {
             if ( $key === $index ) {
-                $this->hasFound = true;
-
                 $this->encodeOptionValue( $option, $value );
 
                 $option->expire_on = $expiration;

@@ -1,9 +1,14 @@
 <template>
     <div class="flex flex-col flex-auto ns-select">
         <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="( hasError ? 'has-error' : 'is-pristine' ) + ' ' + ( field.disabled ? 'cursor-not-allowed' : 'cursor-default' )" class="border-2 mt-1 relative rounded-md shadow-sm mb-1 flex overflow-hidden">
-            <div @click="! field.disabled && (showResults = ! showResults)" :class="( field.disabled ? 'bg-input-disabled' : 'bg-input-background' )" class="flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
+        <div :class="( hasError ? 'has-error' : 'is-pristine' ) + ' ' + ( field.disabled ? 'cursor-not-allowed' : 'cursor-default' )" 
+            class="border-2 mt-1 relative rounded-md shadow-sm mb-1 flex overflow-hidden">
+            <div @click="! field.disabled && (showResults = ! showResults)" :class="( field.disabled ? 'bg-input-disabled' : 'bg-input-background' )" 
+                class="flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
                 <span class="text-primary text-sm">{{ selectedOptionLabel }}</span>
+            </div>
+            <div v-if="hasSelectedValues( field )" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-error-secondary hover:text-white border-l-2 border-input-edge">
+                <i class="las la-times"></i>
             </div>
             <div v-if="field.component && ! field.disabled" @click="triggerDynamicComponent( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-input-button-hover border-l-2 border-input-edge">
                 <i class="las la-plus"></i>
@@ -37,6 +42,7 @@ export default {
         return {
             searchField: '',
             showResults: false,
+            subscription: null,
         }
     },
     name: 'ns-search-select',
@@ -99,14 +105,58 @@ export default {
             this.selectOption( options[0] );
         }
 
+        /**
+         * if the field provide a "subject" object, this means
+         * it's likely to automatically refresh in case other field value change
+         * only if the "refresh" property is provided to the watching field 
+         */
+        if ( this.field.subject ) {
+            this.subscription = this.field.subject.subscribe( ({ field, fields }) => {
+                if ( field && fields && this.field.refresh && field.name === this.field.refresh.watch ) {
+                    const url =  this.field.refresh.url;
+                    const data = this.field.refresh.data;
+                    const form = { identifier: field.value, ...data };
+
+                    nsHttpClient.post( url, form ).subscribe({
+                        next: options => {
+                            this.field.options    =   options;
+                        },
+                        error: error => {
+                            console.error( error );
+                        }
+                    });
+                }
+            });
+        }
+
         document.addEventListener( 'click', ( event ) => {
             if ( this.$el.contains( event.target ) === false ) {
                 this.showResults    =   false;
             }
         });
     },
+    destroyed() {
+        if ( this.subscription ) {
+            this.subscription.unsubscribe();
+        }
+    },
     methods: { 
         __,
+        hasSelectedValues( field ) {
+            const values    =   field.options.map( option => option.value );
+
+            return values.includes( field.value );
+        },
+        resetSelectedInput( field ) {
+            if ( field.disabled ) {
+                return;
+            }
+            
+            field.value = null;
+            this.$emit( 'change', null );
+            this.showResults    =   false;
+            this.searchField    =   '';
+        },
         selectFirstOption() {
             if ( this.filtredOptions.length > 0 ) {
                 this.selectOption( this.filtredOptions[0] );

@@ -33,14 +33,6 @@ class DashboardController extends Controller
         ] );
     }
 
-    /**
-     * @deprecated
-     */
-    protected function view( $path, $data = [] )
-    {
-        return view( $path, $data );
-    }
-
     public function getCards()
     {
         $todayStarts = $this->dateService->copy()->startOfDay()->toDateTimeString();

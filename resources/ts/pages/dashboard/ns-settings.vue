@@ -12,6 +12,14 @@
         </div>
         <div class="card-body ns-tab-item">
             <div class="shadow rounded">
+                <div class="px-2 pt-1" v-if="activeTab.notices">
+                    <div v-for="notice of activeTab.notices" class="my-2">
+                        <ns-notice :color="notice.color || 'info'">
+                            <template v-slot:title>{{ notice.title }}</template>
+                            <template v-slot:description>{{ notice.description }}</template>
+                        </ns-notice>
+                    </div>
+                </div>
                 <div class="-mx-4 flex flex-wrap p-2">
                     <template v-if="activeTab.fields">
                         <div class="w-full px-4 md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of activeTab.fields">
@@ -24,8 +32,17 @@
                         <component v-bind:is="loadComponent( activeTab.component ).value"></component>
                     </div>
                 </div>
-                <div v-if="activeTab.fields && activeTab.fields.length > 0" class="ns-tab-item-footer border-t p-2 flex justify-end">
-                    <ns-button :disabled="isSubmitting" @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
+                <div v-if="activeTab.fields && activeTab.fields.length > 0" class="ns-tab-item-footer border-t p-2 flex justify-between">
+                    <div>
+                        <template v-if="activeTab.footer && activeTab.footer.extraComponents">
+                            <template v-for="( component, index ) of activeTab.footer.extraComponents" v-bind:key="index">
+                                <component :parent="this" v-bind:is="loadComponent( component ).value"></component>
+                            </template>
+                        </template>
+                    </div>
+                    <div>
+                        <ns-button :disabled="isSubmitting" @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -37,7 +54,7 @@ import FormValidation from '~/libraries/form-validation';
 import nsField from '~/components/ns-field.vue';
 import { shallowRef } from '@vue/reactivity';
 
-declare const nsExtraComponents, nsHooks, nsHttpClient, nsSnackBar;
+declare const nsExtraComponents, nsHooks, nsHttpClient, nsSnackBar, nsComponents;
 
 export default {
     name: 'ns-settings',
@@ -87,16 +104,21 @@ export default {
          * @param field 
          */
         async handleSaved( event, field ) {
-            const form = await this.loadSettingsForm( this.activeTab );
+            field.options.push({
+                value: event.data.entry[ field.props.optionAttributes.value ],
+                label: event.data.entry[ field.props.optionAttributes.label ]
+            })
 
-            form.tabs[ this.activeTabIdentifier ].fields.filter( __field => {
-                    if ( __field.name === field.name && event.data.entry ) {
-                        __field.value = event.data.entry.id;
-                    }
-                })
+            field.value = event.data.entry[ field.props.optionAttributes.value ];
         },
         loadComponent( componentName ) {
-            return shallowRef( nsExtraComponents[ componentName ] );
+            if ( nsExtraComponents[ componentName ] ) {
+                return shallowRef( nsExtraComponents[ componentName ] );
+            } else if ( nsComponents[ componentName ] ) {
+                return shallowRef( nsComponents[ componentName ] );
+            } else {
+                console.error( `Component ${ componentName } not found.` );
+            }
         },
         async submitForm() {
             if ( this.validation.validateForm( this.form ).length > 0 ) {

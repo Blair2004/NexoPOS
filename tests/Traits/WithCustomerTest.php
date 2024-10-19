@@ -11,6 +11,7 @@ use App\Services\CustomerService;
 use Exception;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 
 trait WithCustomerTest
 {
@@ -225,10 +226,13 @@ trait WithCustomerTest
              * and verify how it goes.
              */
             $result = $customerService->saveTransaction(
-                $customer,
-                CustomerAccountHistory::OPERATION_ADD,
-                $randomAmount,
-                'Created from tests',
+                customer: $customer,
+                operation: CustomerAccountHistory::OPERATION_ADD,
+                amount: $randomAmount,
+                description: 'Created from tests',
+                details: [
+                    'author'    =>  Auth::id()
+                ]
             );
 
             $history = $result[ 'data' ][ 'customerAccountHistory' ];
@@ -246,10 +250,13 @@ trait WithCustomerTest
              * how it goes.
              */
             $result = $customerService->saveTransaction(
-                $customer,
-                CustomerAccountHistory::OPERATION_DEDUCT,
-                $randomAmount,
-                'Created from tests',
+                customer: $customer,
+                operation: CustomerAccountHistory::OPERATION_DEDUCT,
+                amount: $randomAmount,
+                description: 'Created from tests',
+                details: [
+                    'author'    =>  Auth::id()
+                ]
             );
 
             $customer->refresh();

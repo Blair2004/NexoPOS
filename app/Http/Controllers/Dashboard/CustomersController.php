@@ -29,6 +29,7 @@ use App\Services\OrdersService;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 
@@ -211,7 +212,7 @@ class CustomersController extends DashboardController
 
     public function createCoupon()
     {
-        return $this->view( 'pages.dashboard.coupons.create', [
+        return View::make( 'pages.dashboard.coupons.create', [
             'title' => __( 'Create Coupon' ),
             'description' => __( 'helps you creating a coupon.' ),
             'src' => ns()->url( '/api/crud/ns.coupons/form-config' ),
@@ -223,7 +224,7 @@ class CustomersController extends DashboardController
 
     public function editCoupon( Coupon $coupon )
     {
-        return $this->view( 'pages.dashboard.coupons.create', [
+        return View::make( 'pages.dashboard.coupons.create', [
             'title' => __( 'Edit Coupon' ),
             'description' => __( 'Editing an existing coupon.' ),
             'src' => ns()->url( '/api/crud/ns.coupons/form-config/' . $coupon->id ),
@@ -252,10 +253,13 @@ class CustomersController extends DashboardController
         }
 
         return $this->customerService->saveTransaction(
-            $customer,
-            $request->input( 'operation' ),
-            $request->input( 'amount' ),
-            $request->input( 'description' )
+            customer: $customer,
+            operation: $request->input( 'operation' ),
+            amount: $request->input( 'amount' ),
+            description: $request->input( 'description' ),
+            details: [
+                'author'    =>  Auth::id()
+            ]
         );
     }
 
@@ -392,10 +396,13 @@ class CustomersController extends DashboardController
     public function recordAccountHistory( Customer $customer, Request $request )
     {
         return $this->customerService->saveTransaction(
-            $customer,
-            $request->input( 'general.operation' ),
-            $request->input( 'general.amount' ),
-            $request->input( 'general.description' )
+            customer: $customer,
+            operation: $request->input( 'general.operation' ),
+            amount: $request->input( 'general.amount' ),
+            description: $request->input( 'general.description' ),
+            details: [
+                'author'    =>  Auth::id()
+            ]
         );
     }
 

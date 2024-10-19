@@ -99,9 +99,8 @@ export class POS {
             total_products: 0,
             shipping: 0,
             tax_value: 0,
-            products_exclusive_tax_value: 0,
-            products_inclusive_tax_value: 0,
             total_tax_value: 0,
+            products_tax_value: 0,
             shipping_rate: 0,
             shipping_type: undefined,
             customer: undefined,
@@ -374,28 +373,37 @@ export class POS {
         }
     }
 
-    public getSalePrice(item, original) {
+    public getSalePrice(item) {
+        let price = 0;
         if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
-            return nsRawCurrency( item.sale_price_with_tax );
+            price = nsRawCurrency( item.sale_price_with_tax );
         } else {
-            return nsRawCurrency( item.sale_price_without_tax );
+            price = nsRawCurrency( item.sale_price_without_tax );
         }
+
+        return nsHooks.applyFilters( 'ns-pos-product-sale-price', price, item );
     }
 
-    public getCustomPrice(item, original) {
+    public getCustomPrice(item) {
+        let customPrice = 0;
         if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
-            return nsRawCurrency( item.custom_price_with_tax );
+            customPrice = nsRawCurrency( item.custom_price_with_tax );
         } else {
-            return nsRawCurrency( item.custom_price_without_tax );
+            customPrice = nsRawCurrency( item.custom_price_without_tax );
         }
+
+        return nsHooks.applyFilters( 'ns-pos-product-custom-price', customPrice, item );
     }
 
-    public getWholesalePrice(item, original) {
+    public getWholesalePrice(item) {
+        let wholeSalePrice = 0;
         if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
-            return nsRawCurrency( item.wholesale_price_with_tax );
+            wholeSalePrice = nsRawCurrency( item.wholesale_price_with_tax );
         } else {
-            return nsRawCurrency( item.wholesale_price_without_tax );
+            wholeSalePrice = nsRawCurrency( item.wholesale_price_without_tax );
         }
+
+        return nsHooks.applyFilters( 'ns-pos-product-wholesale-price', wholeSalePrice, item );
     }
 
     public setHoldPopupEnabled(status = true) {
@@ -583,7 +591,7 @@ export class POS {
     computeTaxes() {
         return new Promise((resolve, reject) => {
             let order   =   this.order.getValue();
-            order       =   this.computeProductsTaxes( order );
+            order       =   this.sumProductsTaxes( order );
 
             if (order.tax_group_id === undefined || order.tax_group_id === null) {
                 this.computeOrderTaxes( order );
@@ -616,7 +624,7 @@ export class POS {
                 });
             }
             
-            if (order.tax_group_id !== undefined && order.tax_group_id.toString().length > 0 ) {
+            if ( ! [ undefined, null ].includes( order.tax_group_id ) && order.tax_group_id.toString().length > 0 ) {
                 nsHttpClient.get(`/api/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
@@ -699,42 +707,24 @@ export class POS {
         order.total_tax_value     =  order.tax_value;
 
         if ([ 'products_variable_vat', 'products_flat_vat', 'products_vat' ].includes(posVat) && ! priceWithTax ) {
-            order.total_tax_value     =  order.products_exclusive_tax_value + order.tax_value;
+            order.total_tax_value     =  order.products_tax_value + order.tax_value;
         }
 
         return order;
     }
 
-    computeProductsTaxes( order: Order ) {
-        const products      =   this.products.getValue();
-
-        /**
-         * retrieve all products taxes
-         * and sum the total.
-         */
-        const totalInclusiveTax = products.filter( product => product.tax_type === 'inclusive' ).map((product: OrderProduct) => {
-            return product.tax_value;
-        });
-
-        const totalExclusiveTax = products.filter( product => product.tax_type === 'exclusive' ).map((product: OrderProduct) => {
-            return product.tax_value;
-        });
-
-        /**
-         * tax might be computed above the tax that currently
-         * applie to the items.
-         */
-        order.products_exclusive_tax_value    =   0;
-        order.products_inclusive_tax_value    =   0;
-
+    sumProductsTaxes( order: Order ) {
+        const products  =   this.products.getValue();
         const posVat    =   this.options.getValue().ns_pos_vat;
 
-        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) && totalExclusiveTax.length > 0) {
-            order.products_exclusive_tax_value    +=  totalExclusiveTax.reduce((b, a) => b + a);
-        }
+        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) ) {
+            const totalTaxValue =  products.map((product: OrderProduct) => {
+                return product.total_tax_value;
+            });
 
-        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) && totalInclusiveTax.length > 0) {
-            order.products_inclusive_tax_value    +=  totalInclusiveTax.reduce((b, a) => b + a);
+            if ( totalTaxValue.length > 0 ) {
+                order.products_tax_value = totalTaxValue.reduce((before, after) => before + after);
+            }
         }
 
         order.products = products;
@@ -1293,11 +1283,10 @@ export class POS {
 
         const products  = this.products.getValue();
         let order       = this.order.getValue();
-        let usePriceWithTax  =   this.options.getValue().ns_pos_price_with_tax;
 
         const productTotal = products
             .filter( product => product.product_type !== 'dynamic' )
-            .map(product => usePriceWithTax === 'yes' ? product.total_price_with_tax : product.total_price_without_tax );
+            .map(product => product.total_price );
 
         if (productTotal.length > 0) {
             let productTotalValue       =   productTotal.reduce((b, a) => b + a);
@@ -1382,9 +1371,8 @@ export class POS {
 
         const inclusiveTaxes    =   products.map( (product: OrderProduct) => {
             if ( product.tax_type === 'inclusive' ) {
-                return product.tax_value;
+                return product.total_tax_value;
             }
-
             return 0;
         });
 
@@ -1730,21 +1718,20 @@ export class POS {
                 case 'inclusive':
                     price_without_tax   =   this.getPriceWithoutTax( price, summarizedRates, originalProduct.tax_type );
                     price_with_tax      =   price;
+                    tax_value           =   this.getVatValue( math.chain( price_with_tax ).multiply( product.quantity ).subtract( product.discount ).done(), summarizedRates, originalProduct.tax_type );
                 break;
                 case 'exclusive':
                     price_without_tax   =   price;
                     price_with_tax      =   this.getPriceWithTax( price, summarizedRates, originalProduct.tax_type );
+                    tax_value           =   this.getVatValue( math.chain( price_without_tax ).multiply( product.quantity ).subtract( product.discount ).done(), summarizedRates, originalProduct.tax_type );
                 break;
             }
-
-            tax_value     =   this.getVatValue( price, summarizedRates, originalProduct.tax_type );
         }
         
         return { price_without_tax, tax_value, price_with_tax };
     }
 
     computeCustomProductTax( product: OrderProduct ) {
-        const originalProduct   =   product.$original();
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
         
@@ -1804,69 +1791,111 @@ export class POS {
          */
         if ( product.product_type === 'product' ) {
             if (product.mode === 'normal') {
-                product.unit_price = this.getSalePrice(product.$quantities(), product.$original());
-                product.tax_value = math.chain( product.$quantities().sale_price_tax ).multiply( product.quantity ).done();
+                product.unit_price = this.getSalePrice( product.$quantities() );
             } else if (product.mode === 'wholesale') {
-                product.unit_price = this.getWholesalePrice(product.$quantities(), product.$original());
-                product.tax_value = math.chain( product.$quantities().wholesale_price_tax ).multiply( product.quantity ).done();
+                product.unit_price = this.getWholesalePrice( product.$quantities() );
             } if (product.mode === 'custom') {
-                product.unit_price = this.getCustomPrice(product.$quantities(), product.$original());
-                product.tax_value = math.chain( product.$quantities().custom_price_tax ).multiply( product.quantity ).done();
+                product.unit_price = this.getCustomPrice( product.$quantities() );
             }
         }
+        
+        /**
+         * We'll now compute the discount
+         */
+        this.computeDiscount( product );
 
         /**
-         * computing the discount when it's 
-         * based on a percentage. @todo While we believe discount
-         * shouldn't be calculated after taxes
+         * The price with and without tax
+         * needs to be updated as tax is by default computed
+         * after the discount. Therefore we need to make sure.
          */
-        let discount_without_tax:number   =   0;
-        let discount_with_tax:number      =   0;
-        let price_with_tax:number         =   this.getPrice( product.$quantities(), product.mode, 'with_tax' );
-        let price_without_tax:number      =   this.getPrice( product.$quantities(), product.mode, 'without_tax' );
+        this.computeProductTaxValue( product );
 
-        if (['flat', 'percentage'].includes(product.discount_type)) {
-            if (product.discount_type === 'percentage') {
-                product.discount        =   math.chain(
-                    math.chain(
-                        math.chain( product.unit_price ).multiply( product.discount_percentage ).done()
-                    ).divide( 100 ).done()
-                ).multiply( product.quantity ).done();
-
-                discount_without_tax    =   math.chain(
-                    math.chain(
-                        math.chain( price_without_tax ).multiply( product.discount_percentage ).done()
-                    ).divide( 100 ).done()
-                ).multiply( product.quantity ).done();
-
-                discount_with_tax       =   math.chain(
-                    math.chain(
-                        math.chain( price_with_tax ).multiply( product.discount_percentage ).done()
-                    ).divide( 100 ).done()
-                ).multiply( product.quantity ).done();
-
-            } else {
-                discount_without_tax        =   product.discount;
-                discount_with_tax           =   product.discount;
-            }
-        }
-
-        product.price_with_tax              =   price_with_tax;
-        product.price_without_tax           =   price_without_tax;
-
-        product.total_price                 =   math.chain(
-            math.chain( product.unit_price ).multiply( product.quantity ).done()
-        ).subtract( product.discount ).done();
-
-        product.total_price_with_tax        =   math.chain(
-            math.chain( price_with_tax ).multiply( product.quantity ).done()
-        ).subtract( discount_with_tax ).done();
-
-        product.total_price_without_tax     =   math.chain(
-            math.chain( price_without_tax ).multiply( product.quantity ).done()
-        ).subtract( discount_without_tax ).done();
+        let unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
+        
+        product.total_price =   math.chain( unitPrice ).multiply( product.quantity ).subtract( product.discount ).done();
+        product.total_tax_value = math.chain( product.tax_value ).multiply( product.quantity ).done();
 
         nsHooks.doAction('ns-after-product-computed', product);
+    }
+
+    computeProductTaxValue( product ) {  
+        const tax_group = product.$original().tax_group;
+        const unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
+
+        let result    =   this.computeTaxForGroup( 
+            math.chain( unitPrice ).multiply( product.quantity ).subtract( product.discount ).done(), 
+            tax_group, 
+            this.options.getValue().ns_pos_price_with_tax === 'yes' ? 'inclusive' : 'exclusive'
+        );
+
+        product.tax_value           =   result.tax_value;
+        product.price_with_tax      =   result.price_with_tax;
+        product.price_without_tax   =   result.price_without_tax;
+    }
+
+    computeTaxForGroup( price, tax_group, tax_type ) {
+        let tax_value           =   0;     
+        let price_with_tax      =   0;
+        let price_without_tax   =   0;
+        
+        const taxes     =   tax_group.taxes.map( tax => {
+            return {
+                ...tax,
+                tax_value: this.getVatValue( price, tax.rate, tax_type )
+            };
+        });
+
+        if ( taxes.length > 0 ) {
+            const rate          =   taxes.map( tax => tax.rate ).reduce( ( b, a ) => b + a );
+            tax_value           =   this.getVatValue( price, rate, tax_type );            
+            price_without_tax   =   this.getPriceWithoutTax( price, rate, tax_type );
+            price_with_tax      =   this.getPriceWithTax( price, rate, tax_type );
+        }
+
+        return {
+            ...tax_group,
+            taxes,
+            tax_value,
+            price_with_tax,
+            price_without_tax
+        }
+    }
+
+    async runPaymentQueue() {
+        const queues    =   nsHooks.applyFilters( 'ns-pay-queue', [
+            ProductsQueue,
+            CustomerQueue,
+            TypeQueue,
+            PaymentQueue
+        ]);
+
+        for( let index in queues ) {
+            try {
+                const promise   =   new queues[ index ]( this.order.getValue() );
+                const response  =   await promise.run();
+            } catch( exception ) {
+                /**
+                 * in case there is something broken
+                 * on the promise, we just stop the queue.
+                 */
+                console.log( exception );
+                return false;
+            }
+        }
+    }
+
+    computeDiscount( product ) {
+        if (['flat', 'percentage'].includes(product.discount_type)) {
+            if (product.discount_type === 'percentage') {
+                let unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
+                product.discount        =   math.chain(
+                    math.chain(
+                        math.chain( unitPrice ).multiply( product.discount_percentage ).done()
+                    ).divide( 100 ).done()
+                ).multiply( product.quantity ).done();
+            } 
+        }
     }
 
     loadCustomer(id) {

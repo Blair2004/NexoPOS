@@ -205,7 +205,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind( TransactionService::class, function ( $app ) {
             return new TransactionService(
-                app()->make( DateService::class )
+                app()->make( DateService::class ),
             );
         } );
 

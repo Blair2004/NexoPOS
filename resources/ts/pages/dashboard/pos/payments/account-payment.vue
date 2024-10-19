@@ -105,8 +105,8 @@ export default {
 
             if ( value > this.order.customer.account_amount ) {
                 return nsSnackBar.error( __( 'Not enough funds to add {amount} as a payment. Available balance {balance}.' )
-                    .replace( '{amount}', this.$options.filters.currency( value ) ) 
-                    .replace( '{balance}', this.$options.filters.currency( this.order.customer.account_amount ) ) 
+                    .replace( '{amount}', nsCurrency( value ) ) 
+                    .replace( '{balance}', nsCurrency( this.order.customer.account_amount ) ) 
                 ).subscribe();
             }
 
@@ -119,17 +119,25 @@ export default {
             });
 
             this.order.customer.account_amount  -=  value;
+            
             POS.selectCustomer( this.order.customer );
-
-            this.$emit( 'submit' );
         },
         proceedFullPayment() {
+            const payments  =   this.order.payments;
+
+            if ( payments.filter( p => p.identifier === 'account-payment' ).length > 0 ) {
+                return nsSnackBar.error( __( 'The customer account can only be used once per order. Consider deleting the previously used payment.' ) )
+                    .subscribe();
+            }
+
             this.proceedAddingPayment( this.order.total );
+
+            this.$emit( 'submit' );
         },
         makeFullPayment() {
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Confirm Full Payment' ),
-                message: __( 'You\'re about to use {amount} from the customer account to make a payment. Would you like to proceed ?' ).replace( '{amount}', this.$options.filters.currency( this.order.total ) ),
+                message: __( 'You\'re about to use {amount} from the customer account to make a payment. Would you like to proceed ?' ).replace( '{amount}', nsCurrency( this.order.total ) ),
                 onAction: ( action ) => {
                     if ( action ) {
                         this.proceedFullPayment();

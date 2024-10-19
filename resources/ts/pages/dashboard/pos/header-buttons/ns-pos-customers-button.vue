@@ -1,16 +1,14 @@
 <script>
 import { Popup } from '~/libraries/popup';
 import { __ } from '~/libraries/lang';
-import { defineAsyncComponent } from 'vue';
+import NsPosCustomers from '~/popups/ns-pos-customers.vue';
 
 export default {
     name: 'ns-pos-customers-button',
     methods: {
         __,
         openCustomerPopup() {
-            Popup.show( defineAsyncComponent({
-                loader: () => import( '~/popups/ns-pos-customers.vue' )
-            }) );
+            Popup.show( NsPosCustomers );
         }
     },
     beforeDestroy() {

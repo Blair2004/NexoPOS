@@ -17,18 +17,21 @@ class HardResetTest extends TestCase
     {
         Artisan::call( 'ns:reset --mode=hard' );
 
-        Artisan::call( 'ns:setup', [
-            '--admin_username' => env( 'NS_RESET_USERNAME', 'admin' ),
-            '--admin_email' => env( 'NS_RESET_MAIL', 'contact@nexopos.com' ),
-            '--admin_password' => env( 'NS_RESET_PASSWORD', 123456 ),
-            '--store_name' => env( 'NS_RESET_APPNAME', 'NexoPOS' ),
-        ] );
+        
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/setup/configuration', [
+                'ns_store_name' => env( 'NS_RESET_APPNAME', 'NexoPOS' ),
+                'admin_email' => env( 'NS_RESET_MAIL', 'contact@nexopos.com' ),
+                'admin_username' => env( 'NS_RESET_USERNAME', 'admin' ),
+                'password' => env( 'NS_RESET_PASSWORD', 123456 ),
+                'confirm_password' => env( 'NS_RESET_PASSWORD', 123456 ),
+            ]);
+
+        $response->assertStatus( 200 );
 
         // Check if 3 order payments have been created
         $paymentTypeCount = PaymentType::count();
         $this->assertEquals( 3, $paymentTypeCount );
-
-        ns()->option->setDefault();
 
         return $this->assertTrue( true );
     }

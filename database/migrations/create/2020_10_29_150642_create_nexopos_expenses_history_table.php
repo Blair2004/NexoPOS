@@ -18,6 +18,8 @@ return new class extends Migration
             $table->id();
             $table->integer( 'transaction_id' )->nullable();
             $table->string( 'operation' ); // credit or debit
+            $table->boolean( 'is_reflection' )->default( false );
+            $table->integer( 'reflection_source_id' )->nullable();
             $table->integer( 'transaction_account_id' )->nullable();
             $table->integer( 'procurement_id' )->nullable(); // when the procurement is deleted the transaction history will be deleted automatically as well.
             $table->integer( 'order_refund_id' )->nullable(); // to link an transaction to an order refund.
@@ -32,6 +34,7 @@ return new class extends Migration
             $table->string( 'status' )->default( TransactionHistory::STATUS_PENDING ); // active, pending, deleting
             $table->float( 'value', 18, 5 )->default( 0 );
             $table->datetime( 'trigger_date' )->nullable();
+            $table->integer( 'rule_id' )->nullable();
             $table->integer( 'author' );
             $table->timestamps();
         } );

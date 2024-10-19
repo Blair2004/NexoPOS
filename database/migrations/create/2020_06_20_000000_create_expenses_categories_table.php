@@ -20,9 +20,8 @@ return new class extends Migration
             Schema::createIfMissing( 'nexopos_transactions_accounts', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
-                $table->string( 'operation' )->default( 'debit' ); // "credit" or "debit".
                 $table->string( 'account' )->default( 0 );
-                $table->integer( 'counter_account_id' )->default( 0 )->nullable();
+                $table->integer( 'sub_category_id' )->nullable();
                 $table->string( 'category_identifier' )->nullable();
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );
