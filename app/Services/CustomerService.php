@@ -350,7 +350,7 @@ class CustomerService
         $customerAccountHistory->amount = $amount;
         $customerAccountHistory->next_amount = $next_amount;
         $customerAccountHistory->description = $description;
-        $customerAccountHistory->author = Auth::id();
+        $customerAccountHistory->author = $details[ 'author' ];
 
         /**
          * We can now optionally provide

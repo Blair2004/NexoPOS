@@ -1873,7 +1873,7 @@ export class POS {
 
         for( let index in queues ) {
             try {
-                const promise   =   new queues[ index ]( this.order );
+                const promise   =   new queues[ index ]( this.order.getValue() );
                 const response  =   await promise.run();
             } catch( exception ) {
                 /**

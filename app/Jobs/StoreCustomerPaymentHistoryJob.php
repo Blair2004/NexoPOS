@@ -34,11 +34,13 @@ class StoreCustomerPaymentHistoryJob implements ShouldQueue
          */
         if ( $this->payment->identifier === OrderPayment::PAYMENT_ACCOUNT ) {
             $customerService->saveTransaction(
-                $this->payment->order->customer,
-                CustomerAccountHistory::OPERATION_PAYMENT,
-                $this->payment->value,
-                __( 'Order Payment' ), [
+                customer: $this->payment->order->customer,
+                operation: CustomerAccountHistory::OPERATION_PAYMENT,
+                amount: $this->payment->value,
+                description: __( 'Order Payment' ), 
+                details: [
                     'order_id' => $this->payment->order->id,
+                    'author'    =>  $this->payment->author
                 ]
             );
         }

@@ -440,13 +440,7 @@ class TaxService
                 value: $orderProduct->filterAttribute( 'unit_price', $productArray ),
                 rate: $orderProduct->discount_percentage,
             );
-        } elseif ( $orderProduct->discount_type === 'flat' ) {
-            /**
-             * @todo not exactly correct.  The discount should be defined per
-             * price type on the frontend.
-             */
-            $discount = $orderProduct->discount;
-        }
+        } 
 
         /**
          * Let's now compute the taxes

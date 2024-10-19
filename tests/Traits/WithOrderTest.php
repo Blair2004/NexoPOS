@@ -36,6 +36,7 @@ use Exception;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 trait WithOrderTest
 {
@@ -979,7 +980,15 @@ trait WithOrderTest
          * we'll try crediting customer account
          */
         $oldBalance = $customer->account_amount;
-        $customerService->saveTransaction( $customer, CustomerAccountHistory::OPERATION_ADD, $subtotal + $shippingFees, 'For testing purpose...' );
+        $customerService->saveTransaction( 
+            customer: $customer, 
+            operation: CustomerAccountHistory::OPERATION_ADD, 
+            amount: $subtotal + $shippingFees, 
+            description: 'For testing purpose...',
+            details: [
+                'author'    =>  Auth::id()
+            ]
+        );
         $customer->refresh();
 
         /**
@@ -1132,7 +1141,7 @@ trait WithOrderTest
                         'name' => $product->name,
                         'discount' => $taxService->getPercentageOf( $unitElement->sale_price * $quantity, $discountRate ),
                         'discount_percentage' => $discountRate,
-                        'discount_type' => $faker->randomElement( [ 'flat', 'percentage' ] ),
+                        'discount_type' => $faker->randomElement( [ 'percentage' ] ),
                         'quantity' => $quantity,
                         'unit_price' => $unitElement->sale_price,
                         'tax_type' => 'inclusive',

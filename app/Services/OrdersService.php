@@ -685,6 +685,18 @@ class OrdersService
                 }
             }
         }
+
+        /**
+         * We should also check product discount and make 
+         * sure the discount is only set as percentage and no longer as flat.
+         */
+        if ( isset( $fields[ 'products' ] ) ) {
+            foreach ( $fields[ 'products' ] as $product ) {
+                if ( isset( $product[ 'discount_type' ] ) && $product[ 'discount_type' ] === 'flat' ) {
+                    throw new NotAllowedException( __( 'Product discount should be set as percentage.' ) );
+                }
+            }
+        }
     }
 
     /**
@@ -1809,10 +1821,11 @@ class OrdersService
          */
         if ( $fields[ 'payment' ][ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
             $this->customerService->saveTransaction(
-                $order->customer,
-                CustomerAccountHistory::OPERATION_REFUND,
-                $fields[ 'total' ],
-                __( 'The current credit has been issued from a refund.' ), [
+                customer: $order->customer,
+                operation: CustomerAccountHistory::OPERATION_REFUND,
+                amount: $fields[ 'total' ],
+                description: __( 'The current credit has been issued from a refund.' ), 
+                details: [
                     'order_id' => $order->id,
                 ]
             );
@@ -1855,7 +1868,7 @@ class OrdersService
         $orderProduct->status = 'returned';
         $orderProduct->quantity -= floatval( $details[ 'quantity' ] );
 
-        $this->computeOrderProduct( $orderProduct );
+        $this->computeOrderProduct( $orderProduct, $details );
 
         $orderProduct->save();
 
