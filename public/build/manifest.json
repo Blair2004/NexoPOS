@@ -272,7 +272,9 @@
       "resources/ts/pages/dashboard/transactions/ns-transactions-rules.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ],
+
     "file": "assets/app-0cd299dc.js",
+
     "imports": [
       "_preload-helper-41c905a7.js",
       "_time-b9ad8f69.js",
@@ -590,15 +592,19 @@
     "src": "resources/ts/pages/dashboard/pos/header-buttons/ns-pos-reset-button.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos-cart.vue": {
+
     "file": "assets/ns-pos-cart-8f7ad8eb.js",
+
     "imports": [
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
       "_pos-section-switch-0869c4e1.js",
+
       "_ns-pos-shipping-popup-a7271dd7.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-414a078a.js",
       "_ns-prompt-popup-1d037733.js",
+
       "_index.es-25aa42ee.js",
       "_chart-2ccf8ff7.js",
       "_ns-orders-preview-popup-f1f0bc70.js"
@@ -621,7 +627,9 @@
     "src": "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
   },
   "resources/ts/pages/dashboard/pos/ns-pos.vue": {
+
     "file": "assets/ns-pos-4d98fa5c.js",
+
     "imports": [
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue",
@@ -631,16 +639,20 @@
       "_currency-feccde3d.js",
       "_chart-2ccf8ff7.js",
       "_pos-section-switch-0869c4e1.js",
+
       "_ns-pos-shipping-popup-a7271dd7.js",
       "_ns-prompt-popup-1d037733.js",
       "_ns-orders-preview-popup-f1f0bc70.js",
+
       "_index.es-25aa42ee.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/ts/pages/dashboard/pos/ns-pos.vue"
   },
   "resources/ts/pages/dashboard/procurements/manage-products.vue": {
+
     "file": "assets/manage-products-fb7ffa1a.js",
+
     "imports": [
       "resources/ts/bootstrap.ts",
       "_ns-prompt-popup-1d037733.js",
@@ -658,6 +670,7 @@
     "src": "resources/ts/pages/dashboard/procurements/ns-procurement-invoice.vue"
   },
   "resources/ts/pages/dashboard/procurements/ns-procurement.vue": {
+
     "file": "assets/ns-procurement-44df778a.js",
     "imports": [
       "resources/ts/bootstrap.ts",
@@ -992,6 +1005,7 @@
     "imports": [
       "_preload-helper-41c905a7.js",
       "_ns-pos-shipping-popup-a7271dd7.js",
+
       "resources/ts/bootstrap.ts",
       "_currency-feccde3d.js",
       "__plugin-vue_export-helper-c27b6911.js",
@@ -1010,7 +1024,9 @@
       "resources/ts/pages/dashboard/pos/ns-pos-cart.vue",
       "resources/ts/pages/dashboard/pos/ns-pos-grid.vue"
     ],
+
     "file": "assets/pos-390786d2.js",
+
     "imports": [
       "_preload-helper-41c905a7.js",
       "_time-b9ad8f69.js",

@@ -29,7 +29,6 @@ import { nsAlertPopup, nsConfirmPopup, nsPromptPopup } from "./components/compon
 import nsPosShippingPopup from "./popups/ns-pos-shipping-popup.vue";
 import nsLayawayPopup from "./popups/ns-pos-layaway-popup.vue";
 
-
 /**
  * these are dynamic component
  * that are loaded conditionally
@@ -41,8 +40,8 @@ const nsPosCustomersButton      = (<any>window).nsPosCustomersButton = defineAsy
 const nsPosResetButton          = (<any>window).nsPosResetButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button.vue' ) );
 const nsPosCashRegister         = (<any>window).nsPosCashRegister = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button.vue' ) );
 
-(<any>window).nsLayawayPopup = nsLayawayPopup;
-(<any>window).nsPosShippingPopup = nsPosShippingPopup;
+(<any>window).nsLayawayPopup        = nsLayawayPopup;
+(<any>window).nsPosShippingPopup    = nsPosShippingPopup;
 
 ( window as any ).CustomerQueue     =   CustomerQueue;
 ( window as any ).PaymentQueue      =   PaymentQueue;

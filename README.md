@@ -73,12 +73,12 @@ Do you plan to contribute? That's awesome. We don't have that much developer on 
 
 **To install Node.js dependencies**
 ```
-npm run install
+npm install
 ```
 
 **To watch the Vue compoment changes (Vue.js)**
 ```
-npm run watch
+npm run dev
 ```
 
 **To watch the project changes (TailwindCSS)**
