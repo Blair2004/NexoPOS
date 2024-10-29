@@ -25,7 +25,7 @@ class SettingsPage
             if ( $key === 'tabs' ) {
                 return [
                     $key => collect( $tab )->filter( function( $tab ) {
-                        if ( is_callable( $tab[ 'show' ] ) ) {
+                        if ( isset( $tab[ 'show' ] ) && is_callable( $tab[ 'show' ] ) ) {
                             return $tab[ 'show' ]();
                         }
 

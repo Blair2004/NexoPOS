@@ -31,11 +31,11 @@ class DirectTransactionFields extends FieldsService
             ),
             FormInput::switch(
                 label: __( 'Activated' ),
-                validation: 'required|min:5',
+                validation: 'required',
                 name: 'active',
                 description: __( 'If set to yes, the transaction will take effect immediately and be saved on the history.' ),
-                options: Helper::kvToJsOptions( [ false => __( 'No' ), true => __( 'Yes' )] ),
-                value: $transaction ? $transaction->active : true
+                options: Helper::kvToJsOptions( [ '0' => __( 'No' ), '1' => __( 'Yes' )] ),
+                value: $transaction ? $transaction->getOriginal( 'active' ) : '1'
             ),
             FormInput::searchSelect(
                 label: __( 'Account' ),
