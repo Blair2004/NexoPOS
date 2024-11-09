@@ -230,9 +230,15 @@ class ModulesService
                     ->toArray();
 
                 /**
+                 * We'll share if the $config[ 'namespace' ] and $dir are identical to ensure
+                 * the compliance with the PSR-4 autoloading standard.
+                 */
+                $config[ 'psr-4-compliance' ] = $config[ 'namespace' ] === $dir;
+
+                /**
                  * Service providers are registered when the module is enabled
                  */
-                if ( $config[ 'enabled' ] ) {
+                if ( $config[ 'enabled' ] && $config[ 'psr-4-compliance' ] ) {
                     /**
                      * Load Module Config
                      */
@@ -461,13 +467,25 @@ class ModulesService
     private function __boot( $module ): void
     {
         /**
-         * Autoload Vendors
+         * We should only boot a module if
+         * the PSR-4 compliance is respected.
+         */
+        if ( ! $module[ 'psr-4-compliance' ] ) {
+            return;
+        }
+
+        /**
+         * After the complicance check, we'll autoload
+         * the composer vendor if the module has an autoload file.
          */
         if ( is_file( $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) ) {
             include_once $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
         }
 
-        // run module entry class
+        /**
+         * With the PSR-4 compliance respected, we can now
+         * load the service providers and boot the module entry class.
+         */
         new $module[ 'entry-class' ];
 
         // add view namespace
@@ -550,6 +568,15 @@ class ModulesService
     {
         return array_filter( $this->modules, function ( $module ) {
             if ( $module[ 'enabled' ] === true ) {
+                return $module;
+            }
+        } );
+    }
+
+    public function getInvalid(): array
+    {
+        return array_filter( $this->modules, function ( $module ) {
+            if ( $module[ 'psr-4-compliance' ] === false ) {
                 return $module;
             }
         } );
@@ -1160,6 +1187,20 @@ class ModulesService
         $this->checkManagementStatus();
 
         if ( $module = $this->get( $namespace ) ) {
+
+            /**
+             * We'll check if the module is PSR-4 compliant
+             * before enabling it.
+             */
+            if ( ! $module[ 'psr-4-compliance' ] ) {
+                return response()->json( [
+                    'status' => 'error',
+                    'code' => 'psr-4-compliance',
+                    'message' => sprintf( __( 'The module "%s" is not PSR-4 compliant and cannot be enabled.' ), $module[ 'name' ] ),
+                ], 403 );
+            }
+
+
             if ( $module[ 'autoloaded' ] ) {
                 return response()->json( [
                     'status' => 'error',
@@ -1572,7 +1613,7 @@ class ModulesService
             /**
              * Geneate Internal Directories
              */
-            foreach ( [ 'Config', 'Crud', 'Events', 'Mails', 'Fields', 'Facades', 'Http', 'Migrations', 'Resources', 'Routes', 'Models', 'Providers', 'Services', 'Public' ] as $folder ) {
+            foreach ( [ 'Config', 'Crud', 'Events', 'Mail', 'Fields', 'Facades', 'Http', 'Migrations', 'Resources', 'Routes', 'Models', 'Providers', 'Services', 'Public' ] as $folder ) {
                 Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder, 0755, true );
             }
 
