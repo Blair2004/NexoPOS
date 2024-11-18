@@ -3557,6 +3557,7 @@
         {
             "name": "nikic/php-parser",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "version": "v5.3.1",
             "source": {
                 "type": "git",
@@ -3569,16 +3570,24 @@
                 "reference": "8eea230464783aa9671db8eea6f8c6ac5285794b",
 =======
             "version": "v5.3.0",
+=======
+            "version": "v5.3.1",
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "3abf7425cd284141dc5d8d14a9ee444de3345d1a"
+                "reference": "8eea230464783aa9671db8eea6f8c6ac5285794b"
             },
             "dist": {
                 "type": "zip",
+<<<<<<< HEAD
                 "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/3abf7425cd284141dc5d8d14a9ee444de3345d1a",
                 "reference": "3abf7425cd284141dc5d8d14a9ee444de3345d1a",
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/8eea230464783aa9671db8eea6f8c6ac5285794b",
+                "reference": "8eea230464783aa9671db8eea6f8c6ac5285794b",
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
                 "shasum": ""
             },
             "require": {
@@ -3622,6 +3631,7 @@
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "source": "https://github.com/nikic/PHP-Parser/tree/v5.3.1"
             },
             "time": "2024-10-08T18:51:32+00:00"
@@ -3630,6 +3640,11 @@
             },
             "time": "2024-09-29T13:56:26+00:00"
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.3.1"
+            },
+            "time": "2024-10-08T18:51:32+00:00"
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
         },
         {
             "name": "nunomaduro/termwind",
@@ -3995,6 +4010,7 @@
         {
             "name": "phpoffice/phpspreadsheet",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "version": "3.4.0",
             "source": {
                 "type": "git",
@@ -4007,16 +4023,24 @@
                 "reference": "eec07c20b51cc785295a6feef81ada7feda755e7",
 =======
             "version": "3.3.0",
+=======
+            "version": "3.4.0",
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "87ddd21eb0b6b7ad20a11d314348ef307475f547"
+                "reference": "eec07c20b51cc785295a6feef81ada7feda755e7"
             },
             "dist": {
                 "type": "zip",
+<<<<<<< HEAD
                 "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/87ddd21eb0b6b7ad20a11d314348ef307475f547",
                 "reference": "87ddd21eb0b6b7ad20a11d314348ef307475f547",
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/eec07c20b51cc785295a6feef81ada7feda755e7",
+                "reference": "eec07c20b51cc785295a6feef81ada7feda755e7",
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
                 "shasum": ""
             },
             "require": {
@@ -4106,6 +4130,7 @@
             "support": {
                 "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/3.4.0"
             },
             "time": "2024-11-10T10:10:41+00:00"
@@ -4114,6 +4139,11 @@
             },
             "time": "2024-09-29T07:04:07+00:00"
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/3.4.0"
+            },
+            "time": "2024-11-10T10:10:41+00:00"
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
         },
         {
             "name": "phpoption/phpoption",
@@ -7424,6 +7454,7 @@
         {
             "name": "symfony/console",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "version": "v7.1.8",
             "source": {
                 "type": "git",
@@ -7436,16 +7467,24 @@
                 "reference": "ff04e5b5ba043d2badfb308197b9e6b42883fcd5",
 =======
             "version": "v7.1.5",
+=======
+            "version": "v7.1.8",
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "0fa539d12b3ccf068a722bbbffa07ca7079af9ee"
+                "reference": "ff04e5b5ba043d2badfb308197b9e6b42883fcd5"
             },
             "dist": {
                 "type": "zip",
+<<<<<<< HEAD
                 "url": "https://api.github.com/repos/symfony/console/zipball/0fa539d12b3ccf068a722bbbffa07ca7079af9ee",
                 "reference": "0fa539d12b3ccf068a722bbbffa07ca7079af9ee",
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+                "url": "https://api.github.com/repos/symfony/console/zipball/ff04e5b5ba043d2badfb308197b9e6b42883fcd5",
+                "reference": "ff04e5b5ba043d2badfb308197b9e6b42883fcd5",
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
                 "shasum": ""
             },
             "require": {
@@ -7510,10 +7549,14 @@
             ],
             "support": {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/console/tree/v7.1.8"
 =======
                 "source": "https://github.com/symfony/console/tree/v7.1.5"
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+                "source": "https://github.com/symfony/console/tree/v7.1.8"
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
             },
             "funding": [
                 {
@@ -7530,10 +7573,14 @@
                 }
             ],
 <<<<<<< HEAD
+<<<<<<< HEAD
             "time": "2024-11-06T14:23:19+00:00"
 =======
             "time": "2024-09-20T08:28:38+00:00"
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+            "time": "2024-11-06T14:23:19+00:00"
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
         },
         {
             "name": "symfony/css-selector",
@@ -9498,6 +9545,7 @@
         {
             "name": "symfony/string",
 <<<<<<< HEAD
+<<<<<<< HEAD
             "version": "v7.1.8",
             "source": {
                 "type": "git",
@@ -9510,16 +9558,24 @@
                 "reference": "591ebd41565f356fcd8b090fe64dbb5878f50281",
 =======
             "version": "v7.1.5",
+=======
+            "version": "v7.1.8",
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "d66f9c343fa894ec2037cc928381df90a7ad4306"
+                "reference": "591ebd41565f356fcd8b090fe64dbb5878f50281"
             },
             "dist": {
                 "type": "zip",
+<<<<<<< HEAD
                 "url": "https://api.github.com/repos/symfony/string/zipball/d66f9c343fa894ec2037cc928381df90a7ad4306",
                 "reference": "d66f9c343fa894ec2037cc928381df90a7ad4306",
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+                "url": "https://api.github.com/repos/symfony/string/zipball/591ebd41565f356fcd8b090fe64dbb5878f50281",
+                "reference": "591ebd41565f356fcd8b090fe64dbb5878f50281",
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
                 "shasum": ""
             },
             "require": {
@@ -9578,10 +9634,14 @@
             ],
             "support": {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/string/tree/v7.1.8"
 =======
                 "source": "https://github.com/symfony/string/tree/v7.1.5"
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+                "source": "https://github.com/symfony/string/tree/v7.1.8"
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
             },
             "funding": [
                 {
@@ -9598,10 +9658,14 @@
                 }
             ],
 <<<<<<< HEAD
+<<<<<<< HEAD
             "time": "2024-11-13T13:31:21+00:00"
 =======
             "time": "2024-09-20T08:28:38+00:00"
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+            "time": "2024-11-13T13:31:21+00:00"
+>>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
         },
         {
             "name": "symfony/translation",
