@@ -9,35 +9,32 @@ use Illuminate\Support\Str;
 namespace Modules\{{ $module[ 'namespace' ] }}\Settings;
 
 use App\Services\SettingsPage;
-use App\Services\ModulesService;
+use App\Classes\SettingForm;
+use App\Classes\FormInput;
 use App\Services\Helper;
 
 class {{ ucwords( $name ) }} extends SettingsPage
 {
-    protected $form;
-    const identifier      =   '{{ Str::slug( $name ) }}';
+    const AUTOLOAD = true;
+    const IDENTIFIER = '{{ Str::slug( $module[ 'namespace' ] . '-' . $name ) }}';
 
     public function __construct()
     {
         /**
-         * @var ModulesService
-         */
-        $module     =   app()->make( ModulesService::class );
-
-        /**
          * Settings Form definition.
          */
-        $this->form     =   [
-            'title'         =>  __m( 'Settings', '{{ $module[ 'namespace' ] }}'' ),
-            'description'   =>  __m( 'No description has been provided.', '{{ $module[ 'namespace' ] }}'' )
-            'tabs'      =>  [
-                'general'   =>  [
-                    'label'     =>  __m( 'General Settings', '{{ $module[ 'namespace' ] }}' ),
-                    'fields'    =>  [
-                        // ...
-                    ]
-                ]
-            ]
-        ];
+        $this->form     =   SettingForm::form(
+            title: __m( 'Settings', '{{ $module[ 'namespace' ] }}' ),
+            description: __m( 'No description has been provided.', '{{ $module[ 'namespace' ] }}' ),
+            tabs: SettingForm::tabs(
+                SettingForm::tab(
+                    label: __m( 'General Settings', '{{ $module[ 'namespace' ] }}' ),
+                    identifier: 'general',
+                    fields: SettingForm::fields(
+                        // your fields here
+                    )
+                )
+            )
+        );
     }
 }

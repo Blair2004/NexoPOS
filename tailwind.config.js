@@ -160,7 +160,7 @@ module.exports = {
         'error-tertiary': withOpacityValue('--error-tertiary'),  
         
         'error-light-primary': withOpacityValue('--error-light-primary'),  
-        'error-light-success': withOpacityValue('--error-light-success'),  
+        'error-light-secondary': withOpacityValue('--error-light-secondary'),  
         'error-light-tertiary': withOpacityValue('--error-light-tertiary'),  
         
         'warning-primary': withOpacityValue('--warning-primary'),
@@ -168,7 +168,7 @@ module.exports = {
         'warning-tertiary': withOpacityValue('--warning-tertiary'),  
         
         'warning-light-primary': withOpacityValue('--warning-light-primary'),  
-        'warning-light-success': withOpacityValue('--warning-light-success'),  
+        'warning-light-secondary': withOpacityValue('--warning-light-secondary'),  
         'warning-light-tertiary': withOpacityValue('--warning-light-tertiary'),  
 
         'default-primary': withOpacityValue('--default-primary'),
@@ -176,7 +176,7 @@ module.exports = {
         'default-tertiary': withOpacityValue('--default-tertiary'),  
         
         'default-light-primary': withOpacityValue('--default-light-primary'),  
-        'default-light-success': withOpacityValue('--default-light-success'),  
+        'default-light-secondary': withOpacityValue('--default-light-secondary'),  
         'default-light-tertiary': withOpacityValue('--default-light-tertiary'),  
 
         'danger-primary': withOpacityValue('--danger-primary'),
@@ -184,7 +184,7 @@ module.exports = {
         'danger-tertiary': withOpacityValue('--danger-tertiary'),  
         
         'danger-light-primary': withOpacityValue('--danger-light-primary'),  
-        'danger-light-success': withOpacityValue('--danger-light-success'),  
+        'danger-light-secondary': withOpacityValue('--danger-light-secondary'),  
         'danger-light-tertiary': withOpacityValue('--danger-light-tertiary'),  
       },
       fontWeight: [ 'hover', 'focus' ],

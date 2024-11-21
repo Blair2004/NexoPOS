@@ -46,6 +46,17 @@ trait App
         );
     }
 
+    public static function tableHasIndex( $table, $indexName )
+    {
+        $databaseName = DB::getDatabaseName();
+
+        return DB::table( 'information_schema.statistics' )
+            ->where( 'table_schema', $databaseName )
+            ->where( 'table_name', $table )
+            ->where( 'index_name', $indexName )
+            ->exists();
+    }
+
     /**
      * Checks if the "back" query parameter
      * has a valid URL otherwise uses the

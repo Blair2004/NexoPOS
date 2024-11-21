@@ -22,9 +22,15 @@ class SettingsPage
     public function getForm(): array
     {
         return collect( $this->form )->mapWithKeys( function ( $tab, $key ) {
-            if ( $tab === 'tabs' ) {
+            if ( $key === 'tabs' ) {
                 return [
-                    $key => collect( $tab )->mapWithKeys( function ( $tab, $key ) {
+                    $key => collect( $tab )->filter( function( $tab ) {
+                        if ( isset( $tab[ 'show' ] ) && is_callable( $tab[ 'show' ] ) ) {
+                            return $tab[ 'show' ]();
+                        }
+
+                        return true;
+                    })->mapWithKeys( function ( $tab, $key ) {
                         /**
                          * in case not fields is provided
                          * let's save the tab with no fields.

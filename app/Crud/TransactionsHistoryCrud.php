@@ -334,7 +334,7 @@ class TransactionsHistoryCrud extends CrudService
             CrudTable::column( __( 'Operation' ), 'operation' ),
             CrudTable::column( __( 'Value' ), 'value' ),
             CrudTable::column( __( 'Author' ), 'users_username' ),
-            CrudTable::column( __( 'Triggered On' ), 'trigger_date' ),
+            CrudTable::column( __( 'Triggered On' ), 'created_at' ),
         );
     }
 

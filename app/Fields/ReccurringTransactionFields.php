@@ -17,6 +17,10 @@ class ReccurringTransactionFields extends FieldsService
 
     public function __construct( ?Transaction $transaction = null )
     {
+        $allowedExpenseCategories = ns()->option->get( 'ns_accounting_expenses_accounts', [] );
+        
+        $accountOptions     =   TransactionAccount::categoryIdentifier( 'expenses' )->whereIn( 'id', $allowedExpenseCategories )->get();
+
         $this->fields = Hook::filter( 'ns-direct-transactions-fields', SettingForm::fields(
             FormInput::text(
                 label: __( 'Name' ),
@@ -27,11 +31,11 @@ class ReccurringTransactionFields extends FieldsService
             ),
             FormInput::switch(
                 label: __( 'Activated' ),
-                validation: 'required|min:5',
+                validation: 'required',
                 name: 'active',
                 description: __( 'If set to yes, the transaction will take effect immediately and be saved on the history.' ),
-                options: Helper::kvToJsOptions( [ false => __( 'No' ), true => __( 'Yes' )] ),
-                value: $transaction ? $transaction->active : true
+                options: Helper::kvToJsOptions( [ '0' => __( 'No' ), '1' => __( 'Yes' )] ),
+                value: $transaction ? $transaction->getOriginal( 'active' ) : '1'
             ),
             FormInput::searchSelect(
                 label: __( 'Account' ),
@@ -40,7 +44,7 @@ class ReccurringTransactionFields extends FieldsService
                 name: 'account_id',
                 props: TransactionAccountCrud::getFormConfig(),
                 component: 'nsCrudForm',
-                options: Helper::toJsOptions( TransactionAccount::categoryIdentifier( 'expenses' )->get(), [ 'id', 'name' ] ),
+                options: Helper::toJsOptions( $accountOptions, [ 'id', 'name' ] ),
                 value: $transaction ? $transaction->account_id : null
             ),
             FormInput::number(

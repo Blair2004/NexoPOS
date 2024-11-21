@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Classes\Hook;
 use App\Models\CustomerShippingAddress;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,7 +23,7 @@ class CustomerShippingAddressFactory extends Factory
     {
         $email = $this->faker->email();
 
-        return [
+        return Hook::filter( 'ns-customer-shipping-factory', [
             'type' => 'shipping',
             'email' => $email,
             'first_name' => $this->faker->firstName(),
@@ -34,6 +35,6 @@ class CustomerShippingAddressFactory extends Factory
             'city' => $this->faker->city(),
             'pobox' => $this->faker->postcode(),
             'author' => User::get()->random()->id,
-        ];
+        ]);
     }
 }

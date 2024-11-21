@@ -307,7 +307,9 @@ export default {
 
         submitSearch( value ) {
             if ( value.length > 0 ) {
-                nsHttpClient.get( `/api/products/search/using-barcode/${value}` )
+                const url   =   nsHooks.applyFilters( 'ns-pos-submit-search-url', `/api/products/pos/search/${ value }`, value );
+
+                nsHttpClient.get( url )
                     .subscribe({
                         next: result => {
                             this.barcode     =   '';

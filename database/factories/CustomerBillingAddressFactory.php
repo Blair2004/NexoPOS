@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Classes\Hook;
 use App\Models\CustomerBillingAddress;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,7 +23,7 @@ class CustomerBillingAddressFactory extends Factory
     {
         $email = $this->faker->email();
 
-        return [
+        return Hook::filter( 'ns-customer-billing-factory', [
             'type' => 'billing',
             'email' => $email,
             'first_name' => $this->faker->firstName(),
@@ -34,6 +35,6 @@ class CustomerBillingAddressFactory extends Factory
             'city' => $this->faker->city(),
             'pobox' => $this->faker->postcode(),
             'author' => User::get()->random()->id,
-        ];
+        ]);
     }
 }
