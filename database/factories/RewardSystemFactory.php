@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use App\Classes\Hook;
 use App\Models\Coupon;
 use App\Models\RewardSystem;
 use App\Models\User;
@@ -15,11 +16,11 @@ class RewardSystemFactory extends Factory
 
     public function definition()
     {
-        return [
+        return Hook::filter( 'ns-reward-system-factory', [
             'name' => $this->faker->company,
             'target' => $this->faker->numberBetween( 500, 10000 ),
             'coupon_id' => $this->faker->randomElement( Coupon::get()->map( fn( $user ) => $user->id ) ),
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
-        ];
+        ]);
     }
 }

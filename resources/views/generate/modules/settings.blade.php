@@ -16,7 +16,7 @@ use App\Services\Helper;
 class {{ ucwords( $name ) }} extends SettingsPage
 {
     const AUTOLOAD = true;
-    const IDENTIFIER = '{{ Str::slug( $name ) }}';
+    const IDENTIFIER = '{{ Str::slug( $module[ 'namespace' ] . '-' . $name ) }}';
 
     public function __construct()
     {
@@ -26,7 +26,7 @@ class {{ ucwords( $name ) }} extends SettingsPage
         $this->form     =   SettingForm::form(
             title: __m( 'Settings', '{{ $module[ 'namespace' ] }}' ),
             description: __m( 'No description has been provided.', '{{ $module[ 'namespace' ] }}' ),
-            tabs: SettingForm:tabs(
+            tabs: SettingForm::tabs(
                 SettingForm::tab(
                     label: __m( 'General Settings', '{{ $module[ 'namespace' ] }}' ),
                     identifier: 'general',
