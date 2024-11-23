@@ -5,8 +5,8 @@
     </div>
 </template>
 <script>
-import { createAvatar } from '@dicebear/avatars';
-import * as style from '@dicebear/avatars-avataaars-sprites';
+import { createAvatar } from '@dicebear/core';
+import * as style from '@dicebear/avataaars';
 export default {
     name: 'ns-avatar-image',
     props: [ 'url', 'name', 'size' ],
