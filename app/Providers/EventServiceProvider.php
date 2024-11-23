@@ -11,23 +11,7 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 
 class EventServiceProvider extends ServiceProvider
 {
-    /**
-     * The event listener mappings for the application.
-     *
-     * @var array
-     */
-    protected $listen = [
-        Registered::class => [
-            SendEmailVerificationNotification::class,
-        ],
-    ];
-
     protected $subscribe = [];
-
-    public function register()
-    {
-        parent::register();
-    }
 
     /**
      * Get the listener directories that should be used to discover events.
@@ -42,8 +26,8 @@ class EventServiceProvider extends ServiceProvider
         $modulesServices = app()->make( ModulesService::class );
 
         $paths = $modulesServices->getEnabledAndAutoloadedModules()->map( function ( $module ) {
-            return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
-        } )
+                return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
+            } )
             ->values()
             ->push( $this->app->path( 'Listeners' ) )
             ->toArray();
@@ -59,10 +43,5 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         Hook::addFilter( 'ns-dashboard-menus', [ MenusFilter::class, 'injectRegisterMenus' ] );
-    }
-
-    public function shouldDiscoverEvents()
-    {
-        return true;
     }
 }
