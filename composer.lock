@@ -5,14 +5,23 @@
         "This file is @generated automatically"
     ],
 <<<<<<< HEAD
+<<<<<<< HEAD
     "content-hash": "da07bc479dd07d6e7597126808b9c266",
 =======
+=======
+>>>>>>> 5f3d7671 (WIP)
 <<<<<<< HEAD
     "content-hash": "f0636a3f2f18b81836ed81049670fa83",
 =======
     "content-hash": "da07bc479dd07d6e7597126808b9c266",
 >>>>>>> 5393e57a (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+<<<<<<< HEAD
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
+=======
+=======
+    "content-hash": "da07bc479dd07d6e7597126808b9c266",
+>>>>>>> 73bbc606 (WIP)
+>>>>>>> 5f3d7671 (WIP)
     "packages": [
         {
             "name": "brianium/paratest",
@@ -9009,6 +9018,7 @@
 =======
         },
         {
+<<<<<<< HEAD
             "name": "symfony/polyfill-php72",
             "version": "v1.30.0",
             "source": {
@@ -9083,6 +9093,8 @@
 >>>>>>> 276b5700 (Bump phpoffice/phpspreadsheet from 2.1.0 to 3.3.0)
         },
         {
+=======
+>>>>>>> 5f3d7671 (WIP)
             "name": "symfony/polyfill-php80",
             "version": "v1.31.0",
             "source": {
