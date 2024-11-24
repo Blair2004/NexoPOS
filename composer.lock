@@ -7,6 +7,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "content-hash": "da07bc479dd07d6e7597126808b9c266",
 =======
 =======
@@ -26,6 +27,9 @@
 =======
     "content-hash": "da07bc479dd07d6e7597126808b9c266",
 >>>>>>> 44d83f08 (WIP)
+=======
+    "content-hash": "4ea3d84210d8ca4bb97b640f3b180a96",
+>>>>>>> a1fe25ea (Final Commit For v5.3.2)
     "packages": [
         {
             "name": "brianium/paratest",
@@ -3568,6 +3572,7 @@
             "time": "2024-08-07T15:39:19+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "nikic/php-parser",
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -3660,6 +3665,8 @@
 >>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
         },
         {
+=======
+>>>>>>> a1fe25ea (Final Commit For v5.3.2)
             "name": "nunomaduro/termwind",
             "version": "v2.3.0",
             "source": {
