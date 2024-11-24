@@ -8,6 +8,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "content-hash": "da07bc479dd07d6e7597126808b9c266",
 =======
 =======
@@ -30,6 +31,9 @@
 =======
     "content-hash": "4ea3d84210d8ca4bb97b640f3b180a96",
 >>>>>>> a1fe25ea (Final Commit For v5.3.2)
+=======
+    "content-hash": "da07bc479dd07d6e7597126808b9c266",
+>>>>>>> 16953b8a (FIx Conflict)
     "packages": [
         {
             "name": "brianium/paratest",
@@ -3653,6 +3657,7 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v5.3.1"
             },
             "time": "2024-10-08T18:51:32+00:00"
+<<<<<<< HEAD
 =======
                 "source": "https://github.com/nikic/PHP-Parser/tree/v5.3.0"
             },
@@ -3663,6 +3668,8 @@
             },
             "time": "2024-10-08T18:51:32+00:00"
 >>>>>>> 8f544e14 (Bump phpoffice/phpspreadsheet from 3.3.0 to 3.4.0)
+=======
+>>>>>>> 16953b8a (FIx Conflict)
         },
         {
 =======
@@ -4032,8 +4039,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             "version": "3.4.0",
 =======
+=======
+>>>>>>> 16953b8a (FIx Conflict)
             "version": "3.5.0",
 >>>>>>> 44d83f08 (WIP)
             "source": {
@@ -4069,7 +4079,10 @@
 =======
                 "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/fb74dcdfa5b538763ab980e977529bc783039aec",
                 "reference": "fb74dcdfa5b538763ab980e977529bc783039aec",
+<<<<<<< HEAD
 >>>>>>> 44d83f08 (WIP)
+=======
+>>>>>>> 16953b8a (FIx Conflict)
                 "shasum": ""
             },
             "require": {
@@ -4161,6 +4174,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/3.4.0"
             },
             "time": "2024-11-10T10:10:41+00:00"
@@ -4179,6 +4193,11 @@
             },
             "time": "2024-11-22T06:41:00+00:00"
 >>>>>>> 44d83f08 (WIP)
+=======
+                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/3.5.0"
+            },
+            "time": "2024-11-22T06:41:00+00:00"
+>>>>>>> 16953b8a (FIx Conflict)
         },
         {
             "name": "phpoption/phpoption",
