@@ -1,6 +1,6 @@
 .is-popup {
     .ns-box {
-        @apply bg-box-background text-primary;
+        @apply bg-box-background text-primary rounded-lg overflow-hidden;
 
         .ns-box-header {
             @apply border-box-edge text-primary

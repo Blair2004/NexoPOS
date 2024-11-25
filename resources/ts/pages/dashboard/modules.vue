@@ -1,6 +1,6 @@
 <template>
     <div id="module-wrapper" class="flex-auto flex flex-col pb-4">
-        <div class="flex flex-col md:flex-row md:justify-between md:items-center">
+        <div class="flex flex-col lg:flex-row md:justify-between md:items-center">
             <div class="flex flex-col md:flex-row md:justify-between md:items-center -mx-2">
                 <span class="px-2">
                     <div class="ns-button mb-2">
@@ -32,8 +32,8 @@
         </div>
         <div class="module-section flex-auto flex flex-wrap -mx-4">
             <div v-if="noModules && searchText.length === 0" class="p-4 flex-auto flex">
-                <div class="flex h-full flex-auto border-dashed border-2 border-box-edge bg-surface justify-center items-center">
-                    <h2 class="font-bold text-xl text-primary text-center">{{ noModuleMessage }}</h2>
+                <div class="flex border-dashed border w-full border-primary h-32 flex-auto justify-center items-center">
+                    <div class="text-primary">{{ noModuleMessage }}</div>
                 </div>
             </div>
             <div v-if="noModules && searchText.length > 0" class="p-4 flex-auto flex">
@@ -45,7 +45,7 @@
                 <div class="ns-modules rounded shadow overflow-hidden ns-box">
                     <div class="module-head h-32 p-2">
                         <h3 class="font-semibold text-lg">{{ moduleObject[ 'name' ] }}</h3>
-                        <p class="text-xs flex justify-between">
+                        <div class="text-xs flex justify-between">
                             <div class="flex justify-between">
                                 <span>{{ moduleObject[ 'author' ] }}</span>
                                 <span class="text-error-tertiary mx-2" v-if="moduleObject[ 'psr-4-compliance' ] === false">
@@ -53,7 +53,7 @@
                                 </span>
                             </div>
                             <strong>v{{ moduleObject[ 'version' ] }}</strong>
-                        </p>
+                        </div>
                         <p class="py-2 text-sm">
                             {{ truncateText( moduleObject.description, 20, '...' ) }}
                             <a class="text-xs text-info-tertiary hover:underline" @click="openPopupDetails( moduleObject )" v-if="countWords( moduleObject.description ) > 20" href="javascript:void(0)">[{{  __( 'Read More' ) }}]</a>
@@ -148,7 +148,7 @@ export default {
             return this.rawModules;
         },
         noModuleMessage() {
-            return __( `No module has been uploaded yet.` );
+            return __( `There is nothing to display here.` );
         }
     },
     methods: {

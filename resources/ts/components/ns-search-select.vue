@@ -7,7 +7,7 @@
                 class="flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
                 <span class="text-primary text-sm">{{ selectedOptionLabel }}</span>
             </div>
-            <div v-if="hasSelectedValues( field )" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-error-secondary hover:text-white border-l-2 border-input-edge">
+            <div v-if="hasSelectedValues( field )" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-error-tertiary hover:text-white border-l-2 border-input-edge">
                 <i class="las la-times"></i>
             </div>
             <div v-if="field.component && ! field.disabled" @click="triggerDynamicComponent( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-input-button-hover border-l-2 border-input-edge">
