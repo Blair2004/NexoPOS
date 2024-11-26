@@ -17,10 +17,6 @@ class ScheduledTransactionFields extends FieldsService
 
     public function __construct( ?Transaction $transaction = null )
     {
-        $allowedExpenseCategories = ns()->option->get( 'ns_accounting_expenses_accounts', [] );
-        
-        $accountOptions     =   TransactionAccount::categoryIdentifier( 'expenses' )->whereIn( 'id', $allowedExpenseCategories )->get();
-
         $this->fields = Hook::filter( 'ns-scheduled-transactions-fields', SettingForm::fields(
             FormInput::text(
                 label: __( 'Name' ),
@@ -41,8 +37,8 @@ class ScheduledTransactionFields extends FieldsService
                 validation: 'required|min:5',
                 name: 'active',
                 description: __( 'If set to yes, the transaction will take effect immediately and be saved on the history.' ),
-                options: Helper::kvToJsOptions( [ '0' => __( 'No' ), '1' => __( 'Yes' )] ),
-                value: $transaction ? $transaction->getOriginal( 'active' ) : '1'
+                options: Helper::kvToJsOptions( [ false => __( 'No' ), true => __( 'Yes' )] ),
+                value: $transaction ? $transaction->active : true
             ),
             FormInput::searchSelect(
                 label: __( 'Account' ),
@@ -51,7 +47,7 @@ class ScheduledTransactionFields extends FieldsService
                 name: 'account_id',
                 props: TransactionAccountCrud::getFormConfig(),
                 component: 'nsCrudForm',
-                options: Helper::toJsOptions( $accountOptions, [ 'id', 'name' ] ),
+                options: Helper::toJsOptions( TransactionAccount::categoryIdentifier( 'expenses' )->get(), [ 'id', 'name' ] ),
                 value: $transaction ? $transaction->account_id : null
             ),
             FormInput::number(

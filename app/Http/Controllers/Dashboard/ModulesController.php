@@ -69,16 +69,12 @@ class ModulesController extends DashboardController
             case 'disabled':
                 $list = $this->modules->getDisabled();
                 break;
-            case 'invalid':
-                $list = $this->modules->getInvalid();
-                break;
         }
 
         return [
             'modules' => $list,
             'total_enabled' => count( $this->modules->getEnabled() ),
             'total_disabled' => count( $this->modules->getDisabled() ),
-            'total_invalid' =>  count( $this->modules->getInvalid() ),
         ];
     }
 

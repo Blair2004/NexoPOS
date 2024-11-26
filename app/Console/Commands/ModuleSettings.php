@@ -60,17 +60,12 @@ class ModuleSettings extends Command
             );
 
             if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
-                Storage::disk( 'ns-modules' )->put(
+                $path = Storage::disk( 'ns-modules' )->put(
                     $fileName . '.php', view( 'generate.modules.settings', compact(
                         'modules', 'module', 'name', 'namespace'
                     ) ) );
 
-                $relativePath   =   str_replace( base_path(), '', storage_path( 'modules' ) );
-
-                return $this->info( sprintf(
-                    __( 'The settings has been created on path %s' ),
-                    '/modules/' . $fileName . '.php'
-                ) );
+                return $this->info( 'The settings has been created !' );
             }
 
             return $this->error( 'The settings already exists !' );

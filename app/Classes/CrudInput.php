@@ -9,7 +9,7 @@ class CrudInput
         return compact( 'label', 'name', 'value', 'validation', 'description', 'disabled', 'type' );
     }
 
-    public static function password( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
+    public static function password( $label, $name, $validation = '', $description = '', $disabled = false )
     {
         return self::text(
             label: $label,
@@ -17,8 +17,7 @@ class CrudInput
             validation: $validation,
             description: $description,
             disabled: $disabled,
-            type: 'password',
-            value: $value
+            type: 'password'
         );
     }
 

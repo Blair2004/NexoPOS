@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Notification;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -18,7 +17,7 @@ class NotificationDeletedEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct( public Notification $notification )
+    public function __construct( public array $notification )
     {
         // ...
     }
@@ -31,7 +30,7 @@ class NotificationDeletedEvent implements ShouldBroadcast
     public function broadcastOn()
     {
         return [
-            new PrivateChannel( 'App.User.' . $this->notification->user_id ),
+            new PrivateChannel( 'App.User.' . $this->notification[ 'user_id' ] ),
         ];
     }
 }

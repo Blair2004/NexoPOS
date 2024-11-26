@@ -127,7 +127,8 @@ class CustomerService
             $customer = Customer::byEmail( $fields[ 'email' ] )->first();
         } else {
             /**
-             * Let's find if a similar customer exist using the provided email.
+             * Let's find if a similar customer exist with
+             * the provided  and which is not the actula customer.
              */
             $customer = Customer::byEmail( $fields[ 'email' ] )
                 ->where( 'nexopos_users.id', '<>', $id )

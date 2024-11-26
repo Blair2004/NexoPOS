@@ -140,17 +140,17 @@ class MenuService
                 ],
                 'childrens' => [
                     'transactions' => [
-                        'label' => __( 'Expenses' ),
+                        'label' => __( 'Transactions' ),
                         'permissions' => [ 'nexopos.read.transactions' ],
                         'href' => ns()->url( '/dashboard/accounting/transactions' ),
                     ],
                     'create-transaction' => [
-                        'label' => __( 'Create Expense' ),
+                        'label' => __( 'Create Transaction' ),
                         'permissions' => [ 'nexopos.create.transactions' ],
                         'href' => ns()->url( '/dashboard/accounting/transactions/create' ),
                     ],
                     'transactions-history' => [
-                        'label' => __( 'Transaction History' ),
+                        'label' => __( 'History' ),
                         'permissions' => [ 'nexopos.read.transactions-history' ],
                         'href' => ns()->url( '/dashboard/accounting/transactions/history' ),
                     ],

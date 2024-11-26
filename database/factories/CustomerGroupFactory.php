@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Classes\Hook;
 use App\Models\CustomerGroup;
 use App\Models\RewardSystem;
 use App\Models\User;
@@ -16,11 +15,11 @@ class CustomerGroupFactory extends Factory
 
     public function definition()
     {
-        return Hook::filter( 'ns-customer-group-factory', [
+        return [
             'name' => $this->faker->catchPhrase(),
             'minimal_credit_payment' => $this->faker->numberBetween( 0, 50 ),
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
             'reward_system_id' => $this->faker->randomElement( RewardSystem::get()->map( fn( $reward ) => $reward->id ) ),
-        ]);
+        ];
     }
 }

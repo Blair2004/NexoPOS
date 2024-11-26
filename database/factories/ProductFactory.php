@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Classes\Hook;
 use App\Models\Product;
 use App\Models\TaxGroup;
 use App\Models\UnitGroup;
@@ -26,7 +25,7 @@ class ProductFactory extends Factory
         $taxType = $this->faker->randomElement( [ 'inclusive', 'exclusive' ] );
         $taxGroup = TaxGroup::get()->first();
 
-        return Hook::filter( 'ns-product', [
+        return [
             'name' => $this->faker->word,
             'product_type' => 'product',
             'barcode' => $this->faker->word,
@@ -38,6 +37,6 @@ class ProductFactory extends Factory
             'type' => $this->faker->randomElement( [ 'materialized', 'dematerialized'] ),
             'unit_group' => $unitGroup->id,
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
-        ]);
+        ];
     }
 }

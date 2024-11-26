@@ -1,13 +1,12 @@
 <template>
-    <div id="prompt-popup" :class="size" class="rounded-lg overflow-hidden w-5/7-screen md:w-3/7-screen flex flex-col shadow-lg">
+    <div id="prompt-popup" :class="size" class="w-5/7-screen md:w-3/7-screen flex flex-col shadow-lg">
         <div class="flex items-center justify-center flex-col flex-auto p-2">
-            <h2 class="text-xl md:text-2xl font-body text-center">{{ title }}</h2>
-            <p class="py-4 text-sm md:text-base text-center">{{ message }}</p>
+            <h2 class="text-3xl font-body">{{ title }}</h2>
+            <p class="w-full md:mx-auto md:w-2/3 py-4 text-center">{{ message }}</p>
         </div>
         <div class="p-2">
             <div class="ns-input">
-                <textarea v-if="type === 'textarea'" v-model="input" name="" id="" cols="30" rows="10" class="w-full border-2 p-2"></textarea>
-                <input ref="input" @keypress.enter="emitAction( true )" v-if="type === 'input'" v-model="input" class="w-full border-2 p-2"/>
+                <textarea v-model="input" name="" id="" cols="30" rows="10" class="w-full border-2 p-2"></textarea>
             </div>
         </div>
         <div class="flex border-t action-buttons">
@@ -26,7 +25,6 @@ export default {
             title: '',
             message: '',
             input: '',
-            type: 'textarea'
         }
     },
     computed: {
@@ -35,10 +33,9 @@ export default {
         }
     },
     mounted() {
-        this.input    =   this.popup.params.input || '';
-        this.title    =   this.popup.params.title;
-        this.message  =   this.popup.params.message;
-        this.type     =   this.popup.params.type;
+        this.input          =   this.popup.params.input || '';
+        this.title          =   this.popup.params.title;
+        this.message        =   this.popup.params.message;
     },
     methods: {
         __,

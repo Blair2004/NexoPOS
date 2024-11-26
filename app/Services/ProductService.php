@@ -1765,7 +1765,7 @@ class ProductService
             return 0;
         }
 
-        return $productUnitQuantity->cogs ?: 0;
+        return $productUnitQuantity->cogs;
     }
 
     /**

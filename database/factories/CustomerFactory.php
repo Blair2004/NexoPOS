@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Classes\Hook;
 use App\Models\Customer;
 use App\Models\CustomerGroup;
 use App\Models\Role;
@@ -18,7 +17,7 @@ class CustomerFactory extends Factory
 
     public function definition()
     {
-        return Hook::filter( 'ns-customer-factory', [
+        return [
             'username' => $this->faker->userName(),
             'password' => $this->faker->password(),
             'first_name' => $this->faker->firstName(),
@@ -32,7 +31,7 @@ class CustomerFactory extends Factory
             'pobox' => $this->faker->postcode(),
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
             'group_id' => $this->faker->randomElement( CustomerGroup::get()->map( fn( $group ) => $group->id ) ),
-        ]);
+        ];
     }
 
     public function configure(): static

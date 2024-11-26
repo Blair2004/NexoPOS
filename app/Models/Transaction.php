@@ -32,7 +32,7 @@ class Transaction extends NsModel
     protected $casts = [
         'recurring' => 'boolean',
         'occurrence_value' => 'integer',
-        // 'active' => 'boolean',
+        'active' => 'boolean',
     ];
 
     const OCCURRENCE_START_OF_MONTH = 'month_starts';

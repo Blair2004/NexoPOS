@@ -41,13 +41,6 @@ class TransactionService
             throw new NotAllowedException( __( 'This transaction is not recurring.' ) );
         }
 
-        if ( ( bool ) $transaction->active === false ) {
-            return [
-                'status' => 'info',
-                'message' => __( 'An unactive transaction cannot be triggered.' ),
-            ];
-        }
-
         $transactionHistory = $this->recordTransactionHistory( $transaction );
 
         return [
@@ -1067,24 +1060,24 @@ class TransactionService
             $asyncTransactions = [
                 [
                     'identifier' => ReccurringTransactionFields::getIdentifier(),
-                    'label' => __( 'Recurring Expense' ),
+                    'label' => __( 'Recurring Transaction' ),
                     'icon' => asset( 'images/recurring.png' ),
                     'fields' => $recurringFields->get(),
                 ], [
                     'identifier' => EntityTransactionFields::getIdentifier(),
-                    'label' => __( 'Entity Expense' ),
+                    'label' => __( 'Entity Transaction' ),
                     'icon' => asset( 'images/salary.png' ),
                     'fields' => $entityFields->get(),
                 ], [
                     'identifier' => ScheduledTransactionFields::getIdentifier(),
-                    'label' => __( 'Scheduled Expense' ),
+                    'label' => __( 'Scheduled Transaction' ),
                     'icon' => asset( 'images/schedule.png' ),
                     'fields' => $scheduledFields->get(),
                 ],
             ];
         } else {
             $warningMessage = sprintf(
-                __( 'Some expense type are disabled as NexoPOS is not able to <a target="_blank" href="%s">perform asynchronous requests</a>.' ),
+                __( 'Some transactions are disabled as NexoPOS is not able to <a target="_blank" href="%s">perform asynchronous requests</a>.' ),
                 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled'
             );
         }
@@ -1092,7 +1085,7 @@ class TransactionService
         $configurations = Hook::filter( 'ns-transactions-configurations', [
             [
                 'identifier' => DirectTransactionFields::getIdentifier(),
-                'label' => __( 'Direct Expense' ),
+                'label' => __( 'Direct Transaction' ),
                 'icon' => asset( 'images/budget.png' ),
                 'fields' => $directFields->get(),
             ], ...$asyncTransactions,
@@ -1104,7 +1097,7 @@ class TransactionService
                 'label' => __( 'Condition' ),
                 'name' => 'occurrence',
                 'value' => $transaction->occurrence ?? '',
-                'options' => Hook::filter( 'ns-transactions-recurrence-options', Helper::kvToJsOptions( [
+                'options' => Helper::kvToJsOptions( [
                     Transaction::OCCURRENCE_START_OF_MONTH => __( 'First Day Of Month' ),
                     Transaction::OCCURRENCE_END_OF_MONTH => __( 'Last Day Of Month' ),
                     Transaction::OCCURRENCE_MIDDLE_OF_MONTH => __( 'Month middle Of Month' ),
@@ -1114,7 +1107,7 @@ class TransactionService
                     Transaction::OCCURRENCE_EVERY_X_MINUTES => __( 'Every {minutes}' ),
                     Transaction::OCCURRENCE_EVERY_X_HOURS => __( 'Every {hours}' ),
                     Transaction::OCCURRENCE_EVERY_X_DAYS => __( 'Every {days}' ),
-                ] ) ),
+                ] ),
             ], [
                 'type' => 'number',
                 'label' => __( 'Days' ),

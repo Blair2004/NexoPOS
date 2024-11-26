@@ -11,7 +11,6 @@ export default {
     computed: {
         _options() {
             return this.field.options.map( option => {
-                console.log({ option })
                 option.selected     =   option.value    === this.field.value;
                 return option;
             })

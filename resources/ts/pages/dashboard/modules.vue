@@ -25,9 +25,8 @@
                 </div>
             </div>
             <div class="header-tabs flex -mx-4 flex-wrap">
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="javascript:void(0)" @click="reloadModules( 'enabled' )">{{ __( 'Enabled' ) }}({{ total_enabled }})</a></div>
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="javascript:void(0)" @click="reloadModules( 'disabled' )">{{ __( 'Disabled' ) }} ({{ total_disabled }})</a></div>
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="javascript:void(0)" @click="reloadModules( 'invalid' )">{{ __( 'Invalid' ) }} ({{ total_invalid }})</a></div>
+                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ __( 'Enabled' ) }}({{ total_enabled }})</a></div>
+                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ __( 'Disabled' ) }} ({{ total_disabled }})</a></div>
             </div>
         </div>
         <div class="module-section flex-auto flex flex-wrap -mx-4">
@@ -46,12 +45,7 @@
                     <div class="module-head h-32 p-2">
                         <h3 class="font-semibold text-lg">{{ moduleObject[ 'name' ] }}</h3>
                         <p class="text-xs flex justify-between">
-                            <div class="flex justify-between">
-                                <span>{{ moduleObject[ 'author' ] }}</span>
-                                <span class="text-error-tertiary mx-2" v-if="moduleObject[ 'psr-4-compliance' ] === false">
-                                    &mdash; {{ __( 'not PSR-4 Compliant' ) }}
-                                </span>
-                            </div>
+                            <span>{{ moduleObject[ 'author' ] }}</span>
                             <strong>v{{ moduleObject[ 'version' ] }}</strong>
                         </p>
                         <p class="py-2 text-sm">
@@ -60,8 +54,8 @@
                         </p>
                     </div>
                     <div class="ns-box-footer border-t p-2 flex justify-between">
-                        <ns-button :disabled="moduleObject.autoloaded || moduleObject[ 'psr-4-compliance' ] === false" v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">{{ __( 'Enable' ) }}</ns-button>
-                        <ns-button :disabled="moduleObject.autoloaded || moduleObject[ 'psr-4-compliance' ] === false" v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">{{ __( 'Disable' ) }}</ns-button>
+                        <ns-button :disabled="moduleObject.autoloaded" v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">{{ __( 'Enable' ) }}</ns-button>
+                        <ns-button :disabled="moduleObject.autoloaded" v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">{{ __( 'Disable' ) }}</ns-button>
                         <div class="flex -mx-1">
                             <div class="px-1 flex -mx-1">
                                 <div class="px-1 flex">
@@ -97,7 +91,6 @@ export default {
             searchPlaceholder: __( 'Press "/" to search modules' ),
             total_enabled : 0,
             total_disabled : 0,
-            total_invalid: 0,
             searchText: '',
             searchTimeOut: null
         }
@@ -178,10 +171,6 @@ export default {
             return text.split( ' ' ).length;
         },
 
-        reloadModules( segment ) {
-            return this.loadModules( this.url + '/' + segment ).subscribe();
-        },
-
         refreshModules() {
             this.loadModules().subscribe();
         },
@@ -226,14 +215,13 @@ export default {
                     }
                 });
         },
-        loadModules( url ) {
-            return nsHttpClient.get( url || this.url )
+        loadModules() {
+            return nsHttpClient.get( this.url )
                 .pipe(
                     map( result => {                        
-                        this.rawModules         =   result.modules;
+                        this.rawModules            =   result.modules;
                         this.total_enabled      =   result.total_enabled;
                         this.total_disabled     =   result.total_disabled;
-                        this.total_invalid      =   result.total_invalid;
                         return result;
                     })
                 );

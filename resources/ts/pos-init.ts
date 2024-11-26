@@ -1838,16 +1838,13 @@ export class POS {
         let tax_value           =   0;     
         let price_with_tax      =   0;
         let price_without_tax   =   0;
-        let taxes               =   [];
         
-        if ( tax_group ) {
-            taxes     =   tax_group.taxes.map( tax => {
-                return {
-                    ...tax,
-                    tax_value: this.getVatValue( price, tax.rate, tax_type )
-                };
-            });
-        }
+        const taxes     =   tax_group.taxes.map( tax => {
+            return {
+                ...tax,
+                tax_value: this.getVatValue( price, tax.rate, tax_type )
+            };
+        });
 
         if ( taxes.length > 0 ) {
             const rate          =   taxes.map( tax => tax.rate ).reduce( ( b, a ) => b + a );
