@@ -44,4 +44,9 @@ class EventServiceProvider extends ServiceProvider
     {
         Hook::addFilter( 'ns-dashboard-menus', [ MenusFilter::class, 'injectRegisterMenus' ] );
     }
+
+    public function shouldDiscoverEvents()
+    {
+        return true;
+    }
 }
