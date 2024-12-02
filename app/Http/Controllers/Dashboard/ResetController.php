@@ -34,7 +34,6 @@ class ResetController extends DashboardController
 
         switch ( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
-            case 'wipe_all':
                 $this->demoService->run( $request->all() );
                 break;
             default:

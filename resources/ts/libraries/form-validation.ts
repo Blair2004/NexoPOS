@@ -49,7 +49,7 @@ export default class FormValidation {
 
             const instance     =   form.tabs[ key ].instance;
 
-            if ( instance.errors.length > 0 ) {
+            if ( instance && instance.errors.length > 0 ) {
                 globalErrors.push( ...instance.errors );
             }
         }

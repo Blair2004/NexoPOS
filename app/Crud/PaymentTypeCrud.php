@@ -2,6 +2,10 @@
 
 namespace App\Crud;
 
+use App\Classes\CrudForm;
+use App\Classes\FormInput;
+use App\Classes\Mirroring;
+use App\Classes\SettingForm;
 use App\Exceptions\NotAllowedException;
 use App\Models\PaymentType;
 use App\Models\User;
@@ -160,48 +164,48 @@ class PaymentTypeCrud extends CrudService
      */
     public function getForm( $entry = null )
     {
-        return [
-            'main' => [
-                'label' => __( 'Label' ),
-                'name' => 'label',
-                'value' => $entry->label ?? '',
-                'validation' => 'required',
-                'description' => __( 'Provide a label to the resource.' ),
-            ],
-            'tabs' => [
-                'general' => [
-                    'label' => __( 'General' ),
-                    'fields' => [
-                        [
-                            'type' => 'switch',
-                            'options' => Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
-                            'name' => 'active',
-                            'label' => __( 'Active' ),
-                            'validation' => 'required',
-                            'value' => $entry->active ?? '',
-                        ], [
-                            'type' => 'number',
-                            'name' => 'priority',
-                            'label' => __( 'Priority' ),
-                            'value' => $entry->priority ?? '',
-                            'description' => __( 'Define the order for the payment. The lower the number is, the first it will display on the payment popup. Must start from "0".' ),
-                            'validation' => 'required',
-                        ], [
-                            'type' => 'text',
-                            'name' => 'identifier',
-                            'label' => __( 'Identifier' ),
-                            'validation' => 'required',
-                            'value' => $entry->identifier ?? '',
-                        ], [
-                            'type' => 'textarea',
-                            'name' => 'description',
-                            'label' => __( 'Description' ),
-                            'value' => $entry->description ?? '',
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        return CrudForm::form(
+            main: FormInput::text(
+                label: __( 'Label' ),
+                name: 'label',
+                value: $entry->label ?? '',
+                validation: 'required',
+                description: __( 'Provide a label to the resource.' ),
+            ),
+            tabs: CrudForm::tabs(
+                CrudForm::tab(
+                    identifier: 'general',
+                    label: __( 'General' ),
+                    fields: CrudForm::fields(
+                        FormInput::switch(
+                            options: Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
+                            name: 'active',
+                            label: __( 'Active' ),
+                            validation: 'required',
+                            value: $entry->active ?? '',
+                        ),
+                        FormInput::number(
+                            name: 'priority',
+                            label: __( 'Priority' ),
+                            value: $entry->priority ?? '',
+                            description: __( 'Define the order for the payment. The lower the number is, the first it will display on the payment popup. Must start from "0".' ),
+                            validation: 'required',
+                        ),
+                        FormInput::text(
+                            name: 'identifier',
+                            label: __( 'Identifier' ),
+                            validation: 'required',
+                            value: $entry->identifier ?? '',
+                        ),
+                        FormInput::textarea(
+                            name: 'description',
+                            label: __( 'Description' ),
+                            value: $entry->description ?? '',
+                        ),
+                    )
+                )
+            )
+        );
     }
 
     /**

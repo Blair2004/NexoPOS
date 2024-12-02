@@ -237,7 +237,6 @@ export default {
         },
 
         handleTabChange( fields ) {
-            console.log({ fields })
             this.form.tabs[ this.activeTabIdentifier ].fields = fields;
         }
     },

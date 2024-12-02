@@ -3021,4 +3021,18 @@ class OrdersService
 
         return $order;
     }
+
+    public function handlePOSRoute( $bool, $request, $next )
+    {
+        if ( $request->routeIs( ns()->routeName( 'ns.dashboard.pos' ) ) ) {
+            if ( PaymentType::count() === 0 ) {
+                return redirect()->route( ns()->routeName( 'ns.dashboard.orders-create-types' ) )->with( 
+                    'errorMessage', 
+                    __( 'You need to define at least one payment type before proceeding.' )
+                );
+            }
+        }
+
+        return $bool;
+    }
 }

@@ -281,6 +281,13 @@ class TransactionService
         ];
     }
 
+    public function getActionLabel( $action )
+    {
+        $actions = $this->getActions();
+
+        return $actions[ $action ] ?? __( 'Unknown' );
+    }
+
     public function getRules()
     {
         return TransactionActionRule::get();
@@ -723,21 +730,17 @@ class TransactionService
          */
         if ( ! $rule instanceof TransactionActionRule ) {
             if ( $procurement->payment_status === Procurement::PAYMENT_PAID ) {
-                ns()->notification->create(
+                return ns()->notification->create(
                     title: __( 'Accounting Misconfiguration' ),
                     identifier: 'accounting-procurement-misconfiguration',
-                    url: ns()->route( 'ns.dashboard.settings', [
-                        'settings' => 'accounting?tab=procurements'
-                    ]),
+                    url: ns()->route( 'ns.dashboard.transactions-rules' ),
                     description: __( 'Unable to record accounting transactions for paid procurement. Until the accounts rules are set, records are skipped.' )
                 )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
             } else {
-                ns()->notification->create(
+                return ns()->notification->create(
                     title: __( 'Accounting Misconfiguration' ),
                     identifier: 'accounting-procurement-misconfiguration',
-                    url: ns()->route( 'ns.dashboard.settings', [
-                        'settings' => 'accounting?tab=procurements'
-                    ]),
+                    url: ns()->route( 'ns.dashboard.transactions-rules' ),
                     description: __( 'Unable to record accounting transactions for unpaid procurement. Until the accounts rules are set, records are skipped.' )
                 )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
             }
@@ -745,6 +748,25 @@ class TransactionService
 
         $account    =   TransactionAccount::find( $rule->account_id );
         $offset     =   TransactionAccount::find( $rule->offset_account_id );
+
+        if ( ! $account instanceof TransactionAccount ) {
+            return ns()->notification->create(
+                title: __( 'Accounting Misconfiguration' ),
+                identifier: 'accounting-procurement-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf( __( 'Unable to record accounting transactions as the account set to the rule assigned to the action "%s" can\'t be found.' ), $this->getActionLabel( $rule->on ) )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+        }
+
+        if ( ! $offset instanceof TransactionAccount ) {
+            return ns()->notification->create(
+                title: __( 'Accounting Misconfiguration' ),
+                identifier: 'accounting-procurement-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf( __( 'Unable to record accounting transactions as the offset account set to the rule assigned to the action "%s" can\'t be found.' ), $this->getActionLabel( $rule->on ) )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+        }
+        
         $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
         if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {

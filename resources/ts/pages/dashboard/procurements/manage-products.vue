@@ -144,15 +144,24 @@
                                             </div>
                                         </template>
                                     </template>
-                                    <template v-if="! unitLoaded && ! unitLoadError">
-                                        <div class="px-4 w-full lg:w-2/3 flex justify-center items-center">
-                                            <ns-spinner></ns-spinner>
-                                        </div>
+                                    <template v-if="getActiveTab( variation.tabs ).unit_group_id">
+                                        <template v-if="! unitLoaded && ! unitLoadError">
+                                            <div class="px-4 w-full lg:w-2/3 flex justify-center items-center">
+                                                <ns-spinner></ns-spinner>
+                                            </div>
+                                        </template>
+                                        <template v-if="unitLoadError && ! unitLoaded">
+                                            <div class="px-4 w-full md:w-1/2 lg:w-2/3 flex flex-col justify-center items-center">
+                                                <i class="las la-frown text-7xl"></i>
+                                                <p class="w-full md:w-1/3 py-3 text-center text-sm text-primary">{{ __( 'We were not able to load the units. Make sure there are units attached on the unit group selected.' ) }}</p>
+                                                <p><span @click="createUnit( getActiveTab( variation.tabs ) )" class="cursor-pointer text-info-tertiary border-b border-dashed p-1">{{ __( 'Create Unit' ) }}</span></p>
+                                            </div>
+                                        </template>
                                     </template>
-                                    <template v-if="unitLoadError && ! unitLoaded">
+                                    <template v-else>
                                         <div class="px-4 w-full md:w-1/2 lg:w-2/3 flex flex-col justify-center items-center">
                                             <i class="las la-frown text-7xl"></i>
-                                            <p class="w-full md:w-1/3 py-3 text-center text-sm text-primary">{{ __( 'We were not able to load the units. Make sure there are units attached on the unit group selected.' ) }}</p>
+                                            <p class="w-full md:w-1/3 py-3 text-center text-sm text-primary">{{ __( 'Make sure to select a unit group before you proceed.' ) }}</p>
                                         </div>
                                     </template>
                                 </div>
@@ -172,6 +181,8 @@ import { __ } from '~/libraries/lang';
 import nsProductGroup from './ns-product-group.vue';
 import { nsCurrency } from '~/filters/currency';
 import { reactive } from "vue";
+import NsCrudForm from '~/components/ns-crud-form.vue';
+import { StatusResponse } from '~/status-response';
 
 declare const Popup, nsSnackbar, nsComponents;
 
@@ -356,7 +367,7 @@ export default {
         addUnitGroup( field, tabs ) {
             if ( field.options.length === 0 ) {
                 return nsSnackBar.error( __( 'Please select at least one unit group before you proceed.' ) ).subscribe();
-                }                
+            }                
 
             if( field.options.length > field.groups.length ) {
                 const oldGroups     =   field.groups;
@@ -385,6 +396,10 @@ export default {
 
             field.value     =   event.data.entry[ field.props.optionAttributes.value ];
 
+            if ( field.name === 'unit_group' ) {
+                this.getActiveTab( this.form.variations[ variation_index ].tabs ).unit_group_id  =   field.value;
+            }
+
             try {
                 this.loadUnits( this.getActiveTab( this.form.variations[ variation_index ].tabs ), field.value );
             } catch( exception ) {
@@ -397,6 +412,14 @@ export default {
                 nsHttpClient.get( this.unitsUrl.replace( '{id}', unit_group_id ) )
                 .subscribe({
                     next: (result: any[]) => {
+                        /**
+                         * If there is no result, we can't display the unit fields.
+                         */
+                        if ( result.length === 0 ) {
+                            this.unitLoadError  =   true;
+                            return reject( false );
+                        }
+
                         /**
                          * For each group, we'll loop to find
                          * the field that allow to choose the unit
@@ -444,8 +467,12 @@ export default {
             this.unitLoadError      =   false;
             const unit_group_id     =   unit_section.fields.filter( f => f.name === 'unit_group' )[0].value;
 
+            unit_section.unit_group_id  =   unit_group_id;
+
             try {
-                await this.loadUnits( unit_section, unit_group_id );    
+                if ( unit_group_id !== undefined ) {
+                    await this.loadUnits( unit_section, unit_group_id );    
+                }
             } catch( exception ) {
                 console.log({ exception });
             }
@@ -707,6 +734,27 @@ export default {
             }
 
             return __( 'No Unit Selected' );
+        },
+        async createUnit( activeTab ) {
+            try {
+                const result: StatusResponse    =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( NsCrudForm, {
+                        title: __( 'Create Unit' ),
+                        src: '/api/crud/ns.units/form-config',
+                        submitUrl: '/api/crud/ns.units',
+                        submitMethod: 'POST',
+                        returnUrl: false,
+                        resolve,
+                        reject
+                    });
+                })
+
+                nsSnackBar.success( result.message ).subscribe();
+
+                this.loadAvailableUnits( activeTab, { name: 'unit_group', value: this.getActiveTab( this.form.variations[0].tabs).unit_group_id } );
+            } catch( exception ) {
+                // ...
+            }
         }
     },
     async mounted() {
