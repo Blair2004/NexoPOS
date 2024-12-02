@@ -119,6 +119,13 @@ class TransactionService
 
                 $counterTransaction->save();
             }
+        } else {
+            ns()->notification->create(
+                title: __( 'Accounting Misconfiguration' ),
+                identifier: 'accounting-reflection-transaction-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: __( 'Unable to reflect the transaction as the account type is not found.' )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
         }
     }
 
@@ -242,6 +249,7 @@ class TransactionService
     {
         if ( $id !== null ) {
             $account = TransactionAccount::find( $id );
+
             if ( ! $account instanceof TransactionAccount ) {
                 throw new NotFoundException( __( 'Unable to find the requested account type using the provided id.' ) );
             }
@@ -811,15 +819,21 @@ class TransactionService
 
         $accounts   =   config( 'accounting' )[ 'accounts' ];
         $account    =   TransactionAccount::find( $rule->account_id );
-        $offset     =   TransactionAccount::find( $rule->offset_account_id );
-        $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
-        if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {
-            throw new NotFoundException( sprintf(
-                __( 'The account or the offset from the rule #%s is not found.' ),
-                $rule->id
-            ) );
+        if ( ! $account instanceof TransactionAccount ) {
+            ns()->notification->create(
+                title: __( 'Accounting Rule Misconfiguration' ),
+                identifier: 'accounting-unpaid-to-paid-order-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf(
+                    __( 'Unable to record accounting transactions for the order %s which was initially unpaid and then paid. The account set to the rule assigned to the action "%s" can\'t be found.' ),
+                    $order->code,
+                    $this->getActionLabel( $rule->on )
+                )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
         }
+
+        $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
         $this->createOrderTransactionHistory(
             order: $order,
@@ -852,6 +866,20 @@ class TransactionService
 
         $accounts   =   config( 'accounting' )[ 'accounts' ];
         $account    =   TransactionAccount::find( $rule->account_id );
+
+        if ( ! $account instanceof TransactionAccount ) {
+            ns()->notification->create(
+                title: __( 'Accounting Rule Misconfiguration' ),
+                identifier: 'accounting-unpaid-to-void-order-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf(
+                    __( 'Unable to record accounting transactions for the order %s which was initially unpaid and then voided. The account set to the rule assigned to the action "%s" can\'t be found.' ),
+                    $order->code,
+                    $this->getActionLabel( $rule->on )
+                )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+        }
+
         $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
         $transactionHistory = $this->createOrderTransactionHistory(
@@ -895,6 +923,20 @@ class TransactionService
 
         $accounts   =   config( 'accounting' )[ 'accounts' ];
         $account    =   TransactionAccount::find( $rule->account_id );
+
+        if ( ! $account instanceof TransactionAccount ) {
+            ns()->notification->create(
+                title: __( 'Accounting Rule Misconfiguration' ),
+                identifier: 'accounting-paid-to-void-order-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf(
+                    __( 'Unable to record accounting transactions for the order %s which was initially paid and then voided. The account set to the rule assigned to the action "%s" can\'t be found.' ),
+                    $order->code,
+                    $this->getActionLabel( $rule->on )
+                )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+        }
+
         $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
         $transactionHistory = $this->createOrderTransactionHistory(
@@ -980,14 +1022,26 @@ class TransactionService
 
         $account    =   TransactionAccount::find( $rule->account_id );
         $offset     =   TransactionAccount::find( $rule->offset_account_id );
-        $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
-        if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {
-            throw new NotFoundException( sprintf(
-                __( 'The account or the offset from the rule #%s is not found.' ),
-                $rule->id
-            ) );
+        if ( ! $account instanceof TransactionAccount ) {
+            return ns()->notification->create(
+                title: __( 'Accounting Rule Misconfiguration' ),
+                identifier: 'accounting-sale-misconfiguration',
+                url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                description: sprintf(
+                    __( 'Unable to record accounting transactions for the order %s. The accounts set to the rule assigned to the action "%s" can\'t be found.' ),
+                    $order->code,
+                    $this->getActionLabel( $rule->on )
+                )
+            )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
+
+            return [
+                'status'    =>  'error',
+                'message'   =>  __( 'The transaction has been skipped.' ),
+            ];
         }
+        
+        $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
         $transactionHistory = $this->createOrderTransactionHistory(
             order: $order,
@@ -1037,14 +1091,21 @@ class TransactionService
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
             $account    =   TransactionAccount::find( $rule->account_id );
             $offset     =   TransactionAccount::find( $rule->offset_account_id );
-            $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
             if ( ! $account instanceof TransactionAccount || ! $offset instanceof TransactionAccount ) {
-                throw new NotFoundException( sprintf(
-                    __( 'The account or the offset from the rule #%s is not found.' ),
-                    $rule->id
-                ) );
+                return ns()->notification->create(
+                    title: __( 'Accounting Rule Misconfiguration' ),
+                    identifier: 'accounting-sale-misconfiguration',
+                    url: ns()->route( 'ns.dashboard.transactions-rules' ),
+                    description: sprintf(
+                        __( 'Unable to record COGS transactions for order %s. Make sure either the account or the offset account are set and assigned to the rule %s.' ),
+                        $order->code,
+                        $this->getActionLabel( $rule->on )
+                    )
+                )->dispatchForPermissions([ 'nexopos.create.transactions-account' ]);
             }
+
+            $operation  =   $accounts[ $account->category_identifier ][ $rule->action ];
 
             $transactionHistory = $this->createOrderTransactionHistory(
                 order: $order,

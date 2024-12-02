@@ -15,6 +15,7 @@ use App\Services\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use TorMorten\Eventy\Facades\Events as Hook;
+use Illuminate\Support\Str;
 
 class PaymentTypeCrud extends CrudService
 {
@@ -189,12 +190,10 @@ class PaymentTypeCrud extends CrudService
                             label: __( 'Priority' ),
                             value: $entry->priority ?? '',
                             description: __( 'Define the order for the payment. The lower the number is, the first it will display on the payment popup. Must start from "0".' ),
-                            validation: 'required',
                         ),
                         FormInput::text(
                             name: 'identifier',
                             label: __( 'Identifier' ),
-                            validation: 'required',
                             value: $entry->identifier ?? '',
                         ),
                         FormInput::textarea(
@@ -218,7 +217,13 @@ class PaymentTypeCrud extends CrudService
     {
         $payment = PaymentType::where( 'identifier', $inputs[ 'identifier' ] )->first();
 
+
+        $inputs[ 'priority' ] = empty( $inputs[ 'priority' ] ) ? 0 : $inputs[ 'priority' ];
         $inputs[ 'priority' ] = (int) $inputs[ 'priority' ] < 0 ? 0 : $inputs[ 'priority' ];
+
+        if ( empty( $inputs[ 'identifier' ] ) ) {
+            $inputs[ 'identifier' ] = Str::slug( $inputs[ 'label' ] );
+        }
 
         if ( $payment instanceof PaymentType ) {
             throw new NotAllowedException( __( 'A payment type having the same identifier already exists.' ) );
@@ -235,7 +240,12 @@ class PaymentTypeCrud extends CrudService
      */
     public function filterPutInputs( $inputs, PaymentType $entry )
     {
+        $inputs[ 'priority' ] = empty( $inputs[ 'priority' ] ) ? 0 : $inputs[ 'priority' ];
         $inputs[ 'priority' ] = (int) $inputs[ 'priority' ] < 0 ? 0 : $inputs[ 'priority' ];
+
+        if ( empty( $inputs[ 'identifier' ] ) ) {
+            $inputs[ 'identifier' ] = Str::slug( $inputs[ 'label' ] );
+        }
 
         /**
          * the identifier should not
