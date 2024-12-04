@@ -13,7 +13,7 @@ class CrudTable
         } )->toArray();
     }
 
-    public static function column( $label, $identifier, $sort = false, $attributes = [], $width = 'auto', $minWidth = 'auto', $maxWidth = 'auto', $direction = '' )
+    public static function column( $label, $identifier, $sort = true, $attributes = [], $width = 'auto', $minWidth = 'auto', $maxWidth = 'auto', $direction = '' )
     {
         return compact( 'identifier', 'label', 'sort', 'attributes', 'width', 'direction', 'maxWidth', 'minWidth' );
     }
