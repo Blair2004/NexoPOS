@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:public/build/assets/ns-print-label-B4c8uRQN.js
-import{_ as x}from"./currency-Dtag6qPd.js";import{m as P,r as y,o as n,c as l,a as t,C as h,n as k,F as u,b as p,t as o,e as a,B as S,f as v,w as g,i as C,g as w}from"./runtime-core.esm-bundler-VrNrzzXC.js";import{v as $}from"./bootstrap-DrcjF3bc.js";import{_ as U}from"./_plugin-vue_export-helper-DlAUqK2U.js";import"./chart-CAYz1qzV.js";const F=defineComponent({name:"ns-print-label-settings",props:["popup"],template:`
-========
 import{_ as x}from"./currency-Dtag6qPd.js";import{m as P,r as y,o as n,c as l,a as t,C as h,n as k,F as u,b as p,t as o,e as a,B as S,f as v,w as g,i as C,g as w}from"./runtime-core.esm-bundler-VrNrzzXC.js";import{v as $}from"./bootstrap-BsWQM_6D.js";import{_ as U}from"./_plugin-vue_export-helper-DlAUqK2U.js";import"./chart-CAYz1qzV.js";const F=defineComponent({name:"ns-print-label-settings",props:["popup"],template:`
->>>>>>>> v5.0.x:public/build/assets/ns-print-label-D-UdGW3F.js
     <div>
         <div class="shadow-lg ns-box w-95vw md:w-2/5-screen">
             <div class="border-b ns-box-body p-2 flex justify-between items-center">
