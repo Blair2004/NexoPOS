@@ -17,7 +17,7 @@ class RefreshReportForPassDaysTest extends TestCase
      *
      * @return void
      */
-    public function testRefreshReportForPastDays()
+    public function test_refresh_report_for_past_days()
     {
         $this->totalDaysInterval = 40;
         $this->attemptAuthenticate();

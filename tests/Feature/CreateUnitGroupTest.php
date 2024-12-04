@@ -15,7 +15,7 @@ class CreateUnitGroupTest extends TestCase
      *
      * @return void
      */
-    public function testCreateUnitGroup()
+    public function test_create_unit_group()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateUnitGroup();

@@ -15,7 +15,7 @@ class SetupAppTest extends TestCase
 {
     use WithAuthentication;
 
-    public function testInstallationState()
+    public function test_installation_state()
     {
         $this->assertFalse( Helper::installed() );
 
@@ -41,7 +41,7 @@ class SetupAppTest extends TestCase
         $response->assertRedirectToRoute( 'ns.do-setup' );
     }
 
-    public function testConfigureApp()
+    public function test_configure_app()
     {
         $this->assertFalse( Helper::installed() );
 

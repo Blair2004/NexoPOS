@@ -18,8 +18,8 @@ class CashRegisterHistoryAfterAllDeletedEventListener
     /**
      * Handle the event.
      */
-    public function handle( CashRegisterHistoryAfterAllDeletedEvent $event): void
-    {        
+    public function handle( CashRegisterHistoryAfterAllDeletedEvent $event ): void
+    {
         $this->cashRegistersService->refreshCashRegister( $event->register );
     }
 }

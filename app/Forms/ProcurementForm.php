@@ -27,7 +27,7 @@ class ProcurementForm extends SettingsPage
                 'type' => 'text',
                 'value' => $procurement->name ?? '',
                 'label' => __( 'Procurement Name' ),
-                'description' => __( 'Provide a name that will help to identify the procurement.' )
+                'description' => __( 'Provide a name that will help to identify the procurement.' ),
             ],
             'columns' => Hook::filter( 'ns-procurement-columns', [
                 'name' => [

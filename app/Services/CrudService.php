@@ -1231,7 +1231,7 @@ class CrudService
             /**
              * We'll provide the form configuration
              */
-            'form'  =>  $instance->getForm( $entry ),
+            'form' => $instance->getForm( $entry ),
 
             /**
              * We'll now provide the labels
@@ -1242,7 +1242,7 @@ class CrudService
              * this list all the usable lnks on the resource
              */
             'links' => $instance->getLinks(),
-            
+
             /**
              * By default the method used is "post" but might change to "put" according to
              * whether the entry is provided (Model). Can be changed from the $config.
@@ -1267,7 +1267,7 @@ class CrudService
             'queryParams' => [],
 
             /**
-             * the following entries are @deprecated and will 
+             * the following entries are @deprecated and will
              * likely be removed on upcoming releases.
              */
 

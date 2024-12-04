@@ -16,7 +16,7 @@ class OrderRefundTest extends TestCase
      *
      * @return void
      */
-    public function testRefund()
+    public function test_refund()
     {
         $this->attemptAuthenticate();
 

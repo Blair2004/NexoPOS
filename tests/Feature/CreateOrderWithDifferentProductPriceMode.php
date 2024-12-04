@@ -15,7 +15,7 @@ class CreateOrderWithDifferentProductPriceMode extends TestCase
      *
      * @return void
      */
-    public function testCreateProductWithCustomPriceMode()
+    public function test_create_product_with_custom_price_mode()
     {
         $this->attemptAuthenticate();
         $this->attemptOrderWithProductPriceMode();

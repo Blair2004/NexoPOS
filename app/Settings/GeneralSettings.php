@@ -12,11 +12,12 @@ use App\Services\SettingsPage;
 class GeneralSettings extends SettingsPage
 {
     const IDENTIFIER = 'general';
+
     const AUTOLOAD = true;
 
     public function __construct()
     {
-        $this->form     =   SettingForm::form(
+        $this->form = SettingForm::form(
             title: __( 'General Settings' ),
             description: __( 'Configure the general settings of the application.' ),
             tabs: SettingForm::tabs(

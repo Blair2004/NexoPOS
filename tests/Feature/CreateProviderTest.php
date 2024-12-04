@@ -15,7 +15,7 @@ class CreateProviderTest extends TestCase
      *
      * @return void
      */
-    public function testCreateProvider()
+    public function test_create_provider()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateProvider();

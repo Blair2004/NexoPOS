@@ -11,7 +11,7 @@ class ExceptionsTest extends TestCase
      *
      * @return void
      */
-    public function testExceptionsOutput()
+    public function test_exceptions_output()
     {
         collect( [
             \App\Exceptions\CoreException::class,

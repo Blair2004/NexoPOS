@@ -62,8 +62,9 @@ class TransactionController extends DashboardController
             session()->flash( 'infoMessage', __( 'Unable to use Scheduled, Recurring and Entity Transactions as Queues aren\'t configured correctly.' ) );
         }
 
-        if  ( ns()->option->get( 'ns_accounting_expenses_accounts' ) === null ) {
+        if ( ns()->option->get( 'ns_accounting_expenses_accounts' ) === null ) {
             session()->flash( 'infoMessage', __( 'You need to configure the expense accounts before creating a transaction.' ) );
+
             return redirect()->route( 'ns.dashboard.settings', [ 'settings' => 'accounting' ] );
         }
 
@@ -175,6 +176,7 @@ class TransactionController extends DashboardController
 
     /**
      * get all sub accounts
+     *
      * @return Collection
      */
     public function getSubAccounts()
@@ -182,9 +184,9 @@ class TransactionController extends DashboardController
         return $this->transactionService->getSubAccounts();
     }
 
-
     /**
      * get all actions
+     *
      * @return Collection
      */
     public function getActions()
@@ -249,8 +251,8 @@ class TransactionController extends DashboardController
 
     public function resetDefaultAccounts( Request $request )
     {
-        ns()->restrict([ 'nexopos.create.transactions-account' ] );
-        
+        ns()->restrict( [ 'nexopos.create.transactions-account' ] );
+
         return $this->transactionService->createDefaultAccounts();
     }
 

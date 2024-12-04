@@ -28,7 +28,7 @@ class OrderTax extends NsModel
 
     public $dispatchesEvents = [
         'creating' => OrderTaxBeforeCreatedEvent::class,
-        'created' =>  OrderTaxAfterCreatedEvent::class,
+        'created' => OrderTaxAfterCreatedEvent::class,
     ];
 
     public function order()

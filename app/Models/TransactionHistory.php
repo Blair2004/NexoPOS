@@ -62,10 +62,10 @@ class TransactionHistory extends NsModel
     ];
 
     protected $dispatchesEvents = [
-        'created'   => TransactionsHistoryAfterCreatedEvent::class,
-        'updated'   => TransactionsHistoryAfterUpdatedEvent::class,
-        'deleting'  => TransactionsHistoryBeforeDeleteEvent::class,
-        'deleted'   => TransactionsHistoryAfterDeletedEvent::class,
+        'created' => TransactionsHistoryAfterCreatedEvent::class,
+        'updated' => TransactionsHistoryAfterUpdatedEvent::class,
+        'deleting' => TransactionsHistoryBeforeDeleteEvent::class,
+        'deleted' => TransactionsHistoryAfterDeletedEvent::class,
     ];
 
     public function order()
@@ -78,7 +78,8 @@ class TransactionHistory extends NsModel
         return $this->hasOne( TransactionActionRule::class, 'id', 'rule_id' );
     }
 
-    protected function casts() {
+    protected function casts()
+    {
         return [
             'is_reflection' => 'boolean',
         ];

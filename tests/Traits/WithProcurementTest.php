@@ -2,9 +2,7 @@
 
 namespace Tests\Traits;
 
-use App\Classes\Currency;
 use App\Models\Procurement;
-use App\Models\ProcurementProduct;
 use App\Models\Product;
 use App\Models\ProductHistory;
 use App\Models\Provider;
@@ -41,7 +39,7 @@ trait WithProcurementTest
         /**
          * Step 1: there shouldn't be a change on the expenses
          */
-        $this->assertTrue( (float) $provider->amount_due !== (float) $provider->fresh()->amount_due, 'The due amount for the provider hasn\'t changed, while it should.' );        
+        $this->assertTrue( (float) $provider->amount_due !== (float) $provider->fresh()->amount_due, 'The due amount for the provider hasn\'t changed, while it should.' );
 
         return $response->json();
     }

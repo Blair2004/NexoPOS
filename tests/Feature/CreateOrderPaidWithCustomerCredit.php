@@ -87,7 +87,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
         $this->defaultProcessing = true;
 
         $response = $this->processOrders( $orderDetails, function ( $response, $data ) {
-            $order_id   =   $data[ 'data' ][ 'order' ][ 'id' ];
+            $order_id = $data[ 'data' ][ 'order' ][ 'id' ];
 
             /**
              * We need to ensure only a single entry has been

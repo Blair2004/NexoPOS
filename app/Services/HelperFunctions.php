@@ -1,7 +1,6 @@
 <?php
 
 use App\Services\CoreService;
-use illuminate\Support\Facades\Route;
 
 if ( ! function_exists( 'array_insert' ) ) {
     /**

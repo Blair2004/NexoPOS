@@ -7,10 +7,7 @@ use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\ResetService;
 use App\Services\SetupService;
-use Database\Seeders\DefaultSeeder;
-use Database\Seeders\FirstDemoSeeder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ResetController extends DashboardController
 {

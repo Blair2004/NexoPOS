@@ -2,9 +2,7 @@
 
 namespace App\Settings;
 
-use App\Classes\FormInput;
 use App\Classes\SettingForm;
-use App\Crud\TransactionAccountCrud;
 use App\Models\TransactionAccount;
 use App\Services\Helper;
 use App\Services\SettingsPage;
@@ -17,10 +15,10 @@ class AccountingSettings extends SettingsPage
 
     public function __construct()
     {
-        $accounting     =   config( 'accounting' );
-        $accounts   =   collect( $accounting[ 'accounts' ] )->mapWithKeys( function( $account, $key ) {
+        $accounting = config( 'accounting' );
+        $accounts = collect( $accounting[ 'accounts' ] )->mapWithKeys( function ( $account, $key ) {
             return [ $key => Helper::toJsOptions( TransactionAccount::where( 'category_identifier', $key )->where( 'sub_category_id', '!=', null )->get(), [ 'id', 'name' ] ) ];
-        });
+        } );
 
         $this->form = [
             'title' => __( 'Accounting' ),

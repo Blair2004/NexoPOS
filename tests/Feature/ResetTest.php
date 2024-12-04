@@ -14,7 +14,7 @@ class ResetTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function test_example()
     {
         if ( Helper::installed() ) {
             Sanctum::actingAs(

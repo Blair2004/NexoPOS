@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
 use App\Models\Customer;
-use App\Models\TransactionAccount;
-use App\Models\TransactionHistory;
 use App\Services\DateService;
 use App\Services\OrdersService;
 use App\Services\ReportService;

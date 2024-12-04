@@ -15,7 +15,7 @@ class CashRegisterHistoryBeforeDeletedEvent
     /**
      * Create a new event instance.
      */
-    public function __construct( public RegisterHistory $registerHistory)
+    public function __construct( public RegisterHistory $registerHistory )
     {
         //
     }

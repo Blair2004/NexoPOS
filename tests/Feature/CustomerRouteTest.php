@@ -15,7 +15,7 @@ class CustomerRouteTest extends TestCase
      *
      * @return void
      */
-    public function testCustomerRoutes()
+    public function test_customer_routes()
     {
         $this->attemptAuthenticate();
         $this->attemptGetCustomerHistory();

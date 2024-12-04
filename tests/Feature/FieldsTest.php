@@ -17,7 +17,7 @@ class FieldsTest extends TestCase
      *
      * @return void
      */
-    public function testFieldsAndForms()
+    public function test_fields_and_forms()
     {
         $this->attemptAuthenticate();
 

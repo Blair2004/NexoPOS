@@ -83,7 +83,7 @@ class OrderProduct extends NsModel
         'creating' => OrderProductBeforeCreatedEvent::class,
         'created' => OrderProductAfterCreatedEvent::class,
         'updated' => OrderProductAfterUpdatedEvent::class,
-        'updating'   =>  OrderProductBeforeUpdatedEvent::class,
+        'updating' => OrderProductBeforeUpdatedEvent::class,
     ];
 
     public function tax_group()

@@ -231,7 +231,7 @@ trait WithCustomerTest
                 amount: $randomAmount,
                 description: 'Created from tests',
                 details: [
-                    'author'    =>  Auth::id()
+                    'author' => Auth::id(),
                 ]
             );
 
@@ -255,7 +255,7 @@ trait WithCustomerTest
                 amount: $randomAmount,
                 description: 'Created from tests',
                 details: [
-                    'author'    =>  Auth::id()
+                    'author' => Auth::id(),
                 ]
             );
 

@@ -11,8 +11,8 @@ use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\UsersService;
 use Illuminate\Http\Request;
-use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\Str;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class UnitCrud extends CrudService
 {
@@ -141,7 +141,7 @@ class UnitCrud extends CrudService
                     label: __( 'General' ),
                     identifier: 'general',
                     fields: CrudForm::fields(
-                        FormInput::text( 
+                        FormInput::text(
                             label: __( 'Identifier' ),
                             name: 'identifier',
                             description: __( 'Provide a unique value for this unit. Might be composed from a name but shouldn\'t include space or special characters.' ),
@@ -217,7 +217,7 @@ class UnitCrud extends CrudService
         if ( empty( $inputs[ 'identifier' ] ) ) {
             $inputs[ 'identifier' ] = Str::slug( $inputs[ 'name' ] );
         }
-        
+
         return $inputs;
     }
 

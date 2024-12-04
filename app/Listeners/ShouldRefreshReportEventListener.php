@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\ShouldRefreshReportEvent;
 use App\Jobs\RefreshReportJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ShouldRefreshReportEventListener
 {
@@ -20,7 +18,7 @@ class ShouldRefreshReportEventListener
     /**
      * Handle the event.
      */
-    public function handle( ShouldRefreshReportEvent $event): void
+    public function handle( ShouldRefreshReportEvent $event ): void
     {
         RefreshReportJob::dispatch( $event->date );
     }

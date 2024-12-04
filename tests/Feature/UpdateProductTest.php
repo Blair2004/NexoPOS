@@ -15,7 +15,7 @@ class UpdateProductTest extends TestCase
      *
      * @return void
      */
-    public function testCreateProduct()
+    public function test_create_product()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),

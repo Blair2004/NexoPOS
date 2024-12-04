@@ -251,7 +251,7 @@ class SetupService
         /**
          * @var TransactionService $service
          */
-        $service    =   app()->make( TransactionService::class );
+        $service = app()->make( TransactionService::class );
         $service->createDefaultAccounts();
     }
 
@@ -261,7 +261,7 @@ class SetupService
          * let's create default payment
          * for the system
          */
-        $cashPaymentType = new PaymentType();
+        $cashPaymentType = new PaymentType;
         $cashPaymentType->label = __( 'Cash' );
         $cashPaymentType->identifier = 'cash-payment';
         $cashPaymentType->readonly = true;

@@ -56,7 +56,7 @@ if ( ns()->option->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
         component: 'nsCrudForm',
         validation: 'required',
         value: ns()->option->get( 'ns_pos_registers_default_change_payment_type' ),
-        options: Helper::toJsOptions( PaymentType::get([ 'id', 'label' ]), [ 'id', 'label' ] )
+        options: Helper::toJsOptions( PaymentType::get( [ 'id', 'label' ] ), [ 'id', 'label' ] )
     );
 }
 

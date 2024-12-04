@@ -286,7 +286,7 @@ class CrudController extends DashboardController
     {
         $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
         $resource = new $crudClass( compact( 'namespace', 'id' ) );
-        
+
         if ( $resource instanceof CrudService ) {
             return $resource->getFormConfig(
                 entry: $resource->getModel()::find( $id )

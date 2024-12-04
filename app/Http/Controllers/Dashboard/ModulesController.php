@@ -12,8 +12,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Requests\ModuleUploadRequest;
 use App\Services\DateService;
 use App\Services\ModulesService;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -78,7 +76,7 @@ class ModulesController extends DashboardController
             'modules' => $list,
             'total_enabled' => count( $this->modules->getEnabled() ),
             'total_disabled' => count( $this->modules->getDisabled() ),
-            'total_invalid' =>  count( $this->modules->getInvalid() ),
+            'total_invalid' => count( $this->modules->getInvalid() ),
         ];
     }
 

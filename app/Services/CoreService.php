@@ -425,7 +425,7 @@ class CoreService
             );
         }
 
-        $viteConfigFile     =   $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vite.config.js';
+        $viteConfigFile = $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vite.config.js';
 
         if ( ! file_exists( $viteConfigFile ) ) {
             throw new NotFoundException(
@@ -443,10 +443,10 @@ class CoreService
          */
         $viteConfig = file_get_contents( $viteConfigFile );
 
-        if (preg_match('/outDir:\s*[\'"](.+?)[\'"]/', $viteConfig, $matches)) {
-            $buildDirectory     =   $matches[1]; // Return the matched outDir value
+        if ( preg_match( '/outDir:\s*[\'"](.+?)[\'"]/', $viteConfig, $matches ) ) {
+            $buildDirectory = $matches[1]; // Return the matched outDir value
         } else {
-            $buildDirectory     =   'Public' . $ds . 'build'; // Default build directory
+            $buildDirectory = 'Public' . $ds . 'build'; // Default build directory
         }
 
         $possiblePaths = [
@@ -457,7 +457,7 @@ class CoreService
         $assets = collect( [] );
         $errors = [];
 
-        $buildFolderName    =   last( explode( $ds, $buildDirectory ) );
+        $buildFolderName = last( explode( $ds, $buildDirectory ) );
 
         foreach ( $possiblePaths as $manifestPath ) {
             if ( ! file_exists( $manifestPath ) ) {

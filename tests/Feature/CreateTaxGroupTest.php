@@ -15,7 +15,7 @@ class CreateTaxGroupTest extends TestCase
      *
      * @return void
      */
-    public function testCreateTaxGroup()
+    public function test_create_tax_group()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateTaxGroup();

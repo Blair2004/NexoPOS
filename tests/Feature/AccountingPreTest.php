@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature;
 
 use Tests\TestCase;
@@ -13,48 +14,48 @@ use Tests\Traits\WithUnitTest;
 
 class AccountingPreTest extends TestCase
 {
-    use WithAuthentication, WithUnitTest, WithCategoryTest, WithProductTest, WithTaxTest, WithAccountingTest, WithProviderTest, WithCustomerTest;
+    use WithAccountingTest, WithAuthentication, WithCategoryTest, WithCustomerTest, WithProductTest, WithProviderTest, WithTaxTest, WithUnitTest;
 
-    public function testCreateAccounts()
+    public function test_create_accounts()
     {
         $this->attemptAuthenticate();
         $this->createDefaultAccounts();
     }
 
-    public function testCreateCustomers()
+    public function test_create_customers()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateCustomerGroup();
         $this->attemptCreateCustomer();
     }
 
-    public function testCreateTaxes()
+    public function test_create_taxes()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateTaxGroup();
         $this->attemptCreateTax();
     }
 
-    public function testCreateUnits()
+    public function test_create_units()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateUnitGroup();
         $this->attemptCreateUnit();
     }
 
-    public function testCreateCategory()
+    public function test_create_category()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateCategory();
     }
 
-    public function testCreateProduct()
+    public function test_create_product()
     {
         $this->attemptAuthenticate();
         $this->attemptSetProduct();
     }
 
-    public function testCreateProviders()
+    public function test_create_providers()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateProvider();

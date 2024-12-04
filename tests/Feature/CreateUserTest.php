@@ -71,7 +71,7 @@ class CreateUserTest extends TestCase
     public function test_create_user_with_same_username_and_different_email( $data )
     {
         $this->attemptAuthenticate();
-        
+
         extract( $data );
         /**
          * @var $configuration array
@@ -149,7 +149,6 @@ class CreateUserTest extends TestCase
          * @var $configuration array
          * @var $response object
          */
-
         $password = Hash::make( Str::random( 20 ) );
         $role = Role::where( 'namespace', Role::ADMIN )->first();
 

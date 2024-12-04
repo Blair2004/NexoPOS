@@ -15,7 +15,7 @@ class CrudTest extends TestCase
      *
      * @return void
      */
-    public function testCrudComponents()
+    public function test_crud_components()
     {
         $this->attemptAuthenticate();
 

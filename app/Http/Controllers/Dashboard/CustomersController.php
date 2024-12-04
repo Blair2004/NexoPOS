@@ -258,7 +258,7 @@ class CustomersController extends DashboardController
             amount: $request->input( 'amount' ),
             description: $request->input( 'description' ),
             details: [
-                'author'    =>  Auth::id()
+                'author' => Auth::id(),
             ]
         );
     }
@@ -401,7 +401,7 @@ class CustomersController extends DashboardController
             amount: $request->input( 'general.amount' ),
             description: $request->input( 'general.description' ),
             details: [
-                'author'    =>  Auth::id()
+                'author' => Auth::id(),
             ]
         );
     }

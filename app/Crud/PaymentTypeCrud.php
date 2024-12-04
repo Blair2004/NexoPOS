@@ -4,8 +4,6 @@ namespace App\Crud;
 
 use App\Classes\CrudForm;
 use App\Classes\FormInput;
-use App\Classes\Mirroring;
-use App\Classes\SettingForm;
 use App\Exceptions\NotAllowedException;
 use App\Models\PaymentType;
 use App\Models\User;
@@ -14,8 +12,8 @@ use App\Services\CrudService;
 use App\Services\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\Str;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class PaymentTypeCrud extends CrudService
 {
@@ -216,7 +214,6 @@ class PaymentTypeCrud extends CrudService
     public function filterPostInputs( $inputs )
     {
         $payment = PaymentType::where( 'identifier', $inputs[ 'identifier' ] )->first();
-
 
         $inputs[ 'priority' ] = empty( $inputs[ 'priority' ] ) ? 0 : $inputs[ 'priority' ];
         $inputs[ 'priority' ] = (int) $inputs[ 'priority' ] < 0 ? 0 : $inputs[ 'priority' ];

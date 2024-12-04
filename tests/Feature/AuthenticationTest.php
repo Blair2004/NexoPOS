@@ -17,7 +17,7 @@ class AuthenticationTest extends TestCase
      *
      * @return void
      */
-    public function testCanSeeLoginPage()
+    public function test_can_see_login_page()
     {
         $response = $this->get( '/sign-in' );
         $response->assertStatus( 200 );
@@ -28,7 +28,7 @@ class AuthenticationTest extends TestCase
      *
      * @return void
      */
-    public function testCanSeeRegistrationPage()
+    public function test_can_see_registration_page()
     {
         ns()->option->set( 'ns_registration_enabled', 'yes' );
         $response = $this->get( '/sign-up' );
@@ -42,7 +42,7 @@ class AuthenticationTest extends TestCase
      *
      * @todo
      */
-    public function testCanSeeRecovery()
+    public function test_can_see_recovery()
     {
         ns()->option->set( 'ns_recovery_enabled', 'yes' );
         $response = $this->get( '/sign-up' );
@@ -57,7 +57,7 @@ class AuthenticationTest extends TestCase
      *
      * @todo
      */
-    public function testCanSeeActivateUser()
+    public function test_can_see_activate_user()
     {
         /**
          * Step 1: Check for valid token
@@ -115,7 +115,7 @@ class AuthenticationTest extends TestCase
      *
      * @todo
      */
-    public function testCanSeePasswordLostForm()
+    public function test_can_see_password_lost_form()
     {
         ns()->option->set( 'ns_recovery_enabled', 'yes' );
         $response = $this->get( '/password-lost' );
@@ -129,7 +129,7 @@ class AuthenticationTest extends TestCase
      *
      * @todo
      */
-    public function testCanSeeNewPasswordForm()
+    public function test_can_see_new_password_form()
     {
         ns()->option->set( 'ns_recovery_enabled', 'yes' );
 
@@ -170,7 +170,7 @@ class AuthenticationTest extends TestCase
         return $this->faker->userName() . Str::random( 5 );
     }
 
-    public function testSubmitRegistrationForm()
+    public function test_submit_registration_form()
     {
         $password = $this->faker->password( 8 );
         $registration_validated = ns()->option->get( 'ns_registration_validated', 'yes' );
@@ -269,7 +269,7 @@ class AuthenticationTest extends TestCase
         ] );
     }
 
-    public function testSubmitPasswordRecoveryForm()
+    public function test_submit_password_recovery_form()
     {
         /**
          * Step 1: with recovery enabled
@@ -309,7 +309,7 @@ class AuthenticationTest extends TestCase
         $response->assertSee( 'The recovery has been explicitly disabled' );
     }
 
-    public function testSubmitLoginForm()
+    public function test_submit_login_form()
     {
         /**
          * Step 1: With exact password
@@ -348,7 +348,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect( ns()->route( 'ns.login' ) );
     }
 
-    public function testSubmitNewPasswordForm()
+    public function test_submit_new_password_form()
     {
         /**
          * Step 1: Attempt for account in normal condition

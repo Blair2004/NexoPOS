@@ -18,8 +18,8 @@ class ReccurringTransactionFields extends FieldsService
     public function __construct( ?Transaction $transaction = null )
     {
         $allowedExpenseCategories = ns()->option->get( 'ns_accounting_expenses_accounts', [] );
-        
-        $accountOptions     =   TransactionAccount::categoryIdentifier( 'expenses' )->whereIn( 'id', $allowedExpenseCategories )->get();
+
+        $accountOptions = TransactionAccount::categoryIdentifier( 'expenses' )->whereIn( 'id', $allowedExpenseCategories )->get();
 
         $this->fields = Hook::filter( 'ns-direct-transactions-fields', SettingForm::fields(
             FormInput::text(

@@ -17,7 +17,7 @@ class SaveSettingsTest extends TestCase
      *
      * @return void
      */
-    public function testSaveSettings()
+    public function test_save_settings()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),

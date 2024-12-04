@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::createIfMissing('nexopos_transactions_actions_rules', function (Blueprint $table) {
+        Schema::createIfMissing( 'nexopos_transactions_actions_rules', function ( Blueprint $table ) {
             $table->id();
             $table->string( 'on' );
-            $table->enum( 'action', [ 'increase', 'decrease' ]);
+            $table->enum( 'action', [ 'increase', 'decrease' ] );
             $table->integer( 'account_id' );
-            $table->enum( 'do', [ 'increase', 'decrease']);
+            $table->enum( 'do', [ 'increase', 'decrease'] );
             $table->integer( 'offset_account_id' );
             $table->boolean( 'locked' )->default( false );
             $table->timestamps();
-        });
+        } );
     }
 
     /**
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nexopos_transactions_actions_rules');
+        Schema::dropIfExists( 'nexopos_transactions_actions_rules' );
     }
 };

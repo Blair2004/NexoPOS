@@ -138,7 +138,7 @@ class CashRegistersController extends DashboardController
                 $history->payment_label,
                 $history->order->code
             );
-        } else if ( $history->action === RegisterHistory::ACTION_ORDER_CHANGE ) {
+        } elseif ( $history->action === RegisterHistory::ACTION_ORDER_CHANGE ) {
             return sprintf(
                 __( 'Change %s on %s' ),
                 $history->payment_label,
@@ -217,7 +217,7 @@ class CashRegistersController extends DashboardController
 
                 $totalPaymentTypeSummary = $historyRequest
                     ->whereIn( 'action', [
-                        RegisterHistory::ACTION_ORDER_PAYMENT
+                        RegisterHistory::ACTION_ORDER_PAYMENT,
                     ] )
                     ->select( [
                         DB::raw( 'SUM(value) as value' ),
@@ -314,6 +314,6 @@ class CashRegistersController extends DashboardController
          * @var mixed user
          */
 
-        return View::make( 'pages.dashboard.orders.templates.z-report', ( array ) $data );
+        return View::make( 'pages.dashboard.orders.templates.z-report', (array) $data );
     }
 }

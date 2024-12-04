@@ -135,8 +135,8 @@ class Order extends NsModel
         'updated' => OrderAfterUpdatedEvent::class,
     ];
 
-    protected $dispatchableFieldsEvents  =  [
-        'payment_status'    =>  OrderAfterPaymentStatusChangedEvent::class
+    protected $dispatchableFieldsEvents = [
+        'payment_status' => OrderAfterPaymentStatusChangedEvent::class,
     ];
 
     public function products()

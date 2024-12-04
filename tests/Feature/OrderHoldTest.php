@@ -16,7 +16,7 @@ class OrderHoldTest extends TestCase
      *
      * @return void
      */
-    public function testPostingOrder()
+    public function test_posting_order()
     {
         $this->attemptAuthenticate();
         $response = $this->attemptCreateHoldOrder();

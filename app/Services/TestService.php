@@ -68,10 +68,10 @@ class TestService
         ], $data );
     }
 
-    public function prepareOrder( Carbon $date = null, array $orderDetails = [], array $productDetails = [], array $config = [] )
+    public function prepareOrder( ?Carbon $date = null, array $orderDetails = [], array $productDetails = [], array $config = [] )
     {
-        $date   =   $date ?? now();
-        
+        $date = $date ?? now();
+
         /**
          * @var CurrencyService
          */

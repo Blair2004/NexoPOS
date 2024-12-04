@@ -4,20 +4,17 @@ namespace App\Listeners;
 
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Models\Order;
-use App\Models\Transaction;
 use App\Services\CashRegistersService;
 use App\Services\OrdersService;
 use App\Services\TransactionService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderAfterPaymentStatusChangedEventListener
 {
     /**
      * Create the event listener.
      */
-    public function __construct( 
-        public TransactionService $transactionService, 
+    public function __construct(
+        public TransactionService $transactionService,
         public OrdersService $ordersService,
         public CashRegistersService $cashRegistersService
     ) {
@@ -27,7 +24,7 @@ class OrderAfterPaymentStatusChangedEventListener
     /**
      * Handle the event.
      */
-    public function handle( OrderAfterPaymentStatusChangedEvent $event): void
+    public function handle( OrderAfterPaymentStatusChangedEvent $event ): void
     {
         /**
          * Step: Order Directly Paid
@@ -56,13 +53,13 @@ class OrderAfterPaymentStatusChangedEventListener
 
         /**
          * We want to decide from when the inventory
-         * is moved out to the customer destination. And order that is partially paid start holding the 
+         * is moved out to the customer destination. And order that is partially paid start holding the
          * inventory for the customer. In case there is no sale in due time, the inventory might be returned.
          */
         if (
-            in_array( $event->previous, [ null, Order::PAYMENT_HOLD, Order::PAYMENT_UNPAID ])
-            && in_array( $event->new, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY ]) ) {
-                $this->ordersService->saveOrderProductHistory( $event->order );
+            in_array( $event->previous, [ null, Order::PAYMENT_HOLD, Order::PAYMENT_UNPAID ] )
+            && in_array( $event->new, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY ] ) ) {
+            $this->ordersService->saveOrderProductHistory( $event->order );
         }
 
         /**
@@ -73,7 +70,7 @@ class OrderAfterPaymentStatusChangedEventListener
             in_array( $event->previous, [
                 Order::PAYMENT_UNPAID,
                 Order::PAYMENT_HOLD,
-                Order::PAYMENT_PARTIALLY
+                Order::PAYMENT_PARTIALLY,
             ] ) &&
             $event->new === Order::PAYMENT_PAID
         ) {
@@ -98,7 +95,7 @@ class OrderAfterPaymentStatusChangedEventListener
         if (
             in_array( $event->previous, [
                 Order::PAYMENT_UNPAID,
-                Order::PAYMENT_PARTIALLY
+                Order::PAYMENT_PARTIALLY,
             ] ) &&
             $event->new === Order::PAYMENT_VOID
         ) {

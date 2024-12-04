@@ -252,7 +252,7 @@ class CrudInput
     {
         return [
             'label' => $label,
-            'component' => $component
+            'component' => $component,
         ];
     }
 }

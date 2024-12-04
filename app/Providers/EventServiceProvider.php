@@ -6,8 +6,6 @@ use App\Classes\Hook;
 use App\Filters\MenusFilter;
 use App\Services\ModulesService;
 use App\Services\OrdersService;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -27,8 +25,8 @@ class EventServiceProvider extends ServiceProvider
         $modulesServices = app()->make( ModulesService::class );
 
         $paths = $modulesServices->getEnabledAndAutoloadedModules()->map( function ( $module ) {
-                return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
-            } )
+            return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
+        } )
             ->values()
             ->toArray();
 

@@ -37,7 +37,7 @@ class ProductAfterUpdatedEventListener
         $oldCategoryId = session()->pull( 'product_category_id' );
 
         if ( $oldCategoryId !== $event->product->category->id && $oldCategoryId !== null ) {
-            $oldCategory    =   ProductCategory::find( $oldCategoryId );
+            $oldCategory = ProductCategory::find( $oldCategoryId );
 
             /**
              * Only if the old category is an instance of ProductCategory,

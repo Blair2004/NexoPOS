@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Traits;
 
 trait NsFlashData
 {
-    protected $flashData    =   [];
+    protected $flashData = [];
 
     public function setData( $data )
     {
-        $this->flashData    =   $data;
+        $this->flashData = $data;
     }
 
     public function getData()

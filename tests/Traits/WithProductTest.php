@@ -400,7 +400,7 @@ trait WithProductTest
     protected function attemptTestSearchable()
     {
         $searchable = Product::searchable()->first();
-        $oldStatus  =   ns()->option->get( 'ns_pos_hide_empty_categories' );
+        $oldStatus = ns()->option->get( 'ns_pos_hide_empty_categories' );
         ns()->option->set( 'ns_pos_hide_empty_categories', 'no' );
 
         if ( $searchable instanceof Product ) {

@@ -1315,32 +1315,32 @@ class ReportService
     {
         $startDate = $startDate === null ? ns()->date->getNow()->startOfMonth()->toDateTimeString() : $startDate;
         $endDate = $endDate === null ? ns()->date->getNow()->endOfMonth()->toDateTimeString() : $endDate;
-        $accounts   =   collect( config( 'accounting.accounts' ) )->map( function( $account, $name ) use ( $startDate, $endDate ) {
-            $transactionAccount     =   TransactionAccount::where( 'category_identifier', $name )->with([ 'histories' => function( $query ) use ( $startDate, $endDate ) {
+        $accounts = collect( config( 'accounting.accounts' ) )->map( function ( $account, $name ) use ( $startDate, $endDate ) {
+            $transactionAccount = TransactionAccount::where( 'category_identifier', $name )->with( [ 'histories' => function ( $query ) use ( $startDate, $endDate ) {
                 $query->where( 'created_at', '>=', $startDate )->where( 'created_at', '<=', $endDate );
-            }])->get();
+            }] )->get();
 
-            $transactions   =   $transactionAccount->map( function( $account ) {
+            $transactions = $transactionAccount->map( function ( $account ) {
                 return [
-                    'name'  =>  $account->name,
-                    'debits'    =>  $account->histories->where( 'operation', 'debit' )->sum( 'value' ),
-                    'credits'   =>  $account->histories->where( 'operation', 'credit' )->sum( 'value' ),
+                    'name' => $account->name,
+                    'debits' => $account->histories->where( 'operation', 'debit' )->sum( 'value' ),
+                    'credits' => $account->histories->where( 'operation', 'credit' )->sum( 'value' ),
                 ];
             } );
 
             return [
-                'transactions'  =>  $transactions,
-                'name'          =>  $account[ 'label' ](),
-                'debits'        =>  $transactions->sum( 'debits' ),
-                'credits'       =>  $transactions->sum( 'credits' ),
+                'transactions' => $transactions,
+                'name' => $account[ 'label' ](),
+                'debits' => $transactions->sum( 'debits' ),
+                'credits' => $transactions->sum( 'credits' ),
             ];
-        });
+        } );
 
         return [
-            'accounts'  => $accounts,
-            'debits'    => $accounts->sum( 'debits' ),
-            'credits'   => $accounts->sum( 'credits' ),
-            'profit'    => ns()->currency->define( $accounts->sum( 'credits' ) )->subtractBy( $accounts->sum( 'debits' ) )->toFloat(),
+            'accounts' => $accounts,
+            'debits' => $accounts->sum( 'debits' ),
+            'credits' => $accounts->sum( 'credits' ),
+            'profit' => ns()->currency->define( $accounts->sum( 'credits' ) )->subtractBy( $accounts->sum( 'debits' ) )->toFloat(),
         ];
     }
 }

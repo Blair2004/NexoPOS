@@ -32,11 +32,11 @@ class RegisterHistory extends NsModel
     const ACTION_CASHING = 'register-cash-in';
 
     const ACTION_CASHOUT = 'register-cash-out';
-    
+
     const ACTION_DELETE = 'register-cash-delete';
 
     const ACTION_ORDER_PAYMENT = 'register-order-payment';
-    
+
     const ACTION_ORDER_CHANGE = 'register-order-change';
 
     const ACTION_ORDER_VOUCHER = 'register-order-voucher';

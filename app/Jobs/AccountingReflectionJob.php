@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\Transaction;
 use App\Models\TransactionHistory;
 use App\Services\TransactionService;
 use Illuminate\Bus\Queueable;
@@ -27,7 +26,7 @@ class AccountingReflectionJob implements ShouldQueue
      * Execute the job.
      */
     public function handle( TransactionService $transactionService ): void
-    {        
+    {
         $transactionService->reflectTransactionFromRule(
             transactionHistory: $this->transactionHistory,
             rule: $this->transactionHistory->rule

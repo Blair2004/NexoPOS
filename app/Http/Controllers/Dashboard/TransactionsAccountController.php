@@ -43,8 +43,8 @@ class TransactionsAccountController extends DashboardController
     public function listTransactionsRules()
     {
         return View::make( 'pages.dashboard.transactions.rules', [
-            'title' =>  __( 'Rules' ),
-            'description' => __( 'Manage transactions rules' )
-        ]);
+            'title' => __( 'Rules' ),
+            'description' => __( 'Manage transactions rules' ),
+        ] );
     }
 }

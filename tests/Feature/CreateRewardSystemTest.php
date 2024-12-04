@@ -15,7 +15,7 @@ class CreateRewardSystemTest extends TestCase
      *
      * @return void
      */
-    public function testCreateRewardSystem()
+    public function test_create_reward_system()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateReward();

@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Traits;
 
 use App\Classes\Hook;
 
 trait NsFiltredAttributes
 {
-    public function filterAttribute( string $attribute, array $data ): string | float | int
+    public function filterAttribute( string $attribute, array $data ): string|float|int
     {
         return Hook::filter( get_called_class() . '::' . $attribute, $this->{$attribute}, $data );
     }

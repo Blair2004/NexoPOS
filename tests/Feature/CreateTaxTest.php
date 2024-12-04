@@ -15,7 +15,7 @@ class CreateTaxTest extends TestCase
      *
      * @return void
      */
-    public function testCreateTaxes()
+    public function test_create_taxes()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateTax();

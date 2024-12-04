@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Events\ProcurementAfterCreateEvent;
@@ -10,7 +11,6 @@ use App\Events\ProcurementBeforeCreateEvent;
 use App\Events\ProcurementBeforeDeleteProductEvent;
 use App\Events\ProcurementBeforeHandledEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
-use App\Events\ProcurementCancelationEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\Procurement;
 use App\Models\ProcurementProduct;
@@ -865,7 +865,7 @@ class ProcurementService
         Procurement::withoutEvents( function () use ( $procurement, $status ) {
             $procurement->delivery_status = $status;
             $procurement->save();
-        });
+        } );
     }
 
     /**

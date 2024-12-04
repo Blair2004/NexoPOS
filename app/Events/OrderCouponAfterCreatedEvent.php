@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Order;
 use App\Models\OrderCoupon;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;

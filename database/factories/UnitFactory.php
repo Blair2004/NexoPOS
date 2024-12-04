@@ -21,6 +21,6 @@ class UnitFactory extends Factory
             'base_unit' => $this->faker->randomElement( [ 0, 1 ] ),
             'value' => $this->faker->numberBetween( 5, 20 ),
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
-        ]);
+        ] );
     }
 }

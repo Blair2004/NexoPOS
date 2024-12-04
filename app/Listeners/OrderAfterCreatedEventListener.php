@@ -8,7 +8,6 @@ use App\Jobs\IncreaseCashierStatsJob;
 use App\Jobs\ProcessCustomerOwedAndRewardsJob;
 use App\Jobs\RecordOrderChangeJob;
 use App\Jobs\ResolveInstalmentJob;
-use App\Jobs\TrackOrderCouponsJob;
 use Illuminate\Support\Facades\Bus;
 
 class OrderAfterCreatedEventListener
