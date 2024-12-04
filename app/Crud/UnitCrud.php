@@ -11,6 +11,7 @@ use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\UsersService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class UnitCrud extends CrudService
@@ -140,11 +141,11 @@ class UnitCrud extends CrudService
                     label: __( 'General' ),
                     identifier: 'general',
                     fields: CrudForm::fields(
-                        FormInput::text( 
+                        FormInput::text(
                             label: __( 'Identifier' ),
                             name: 'identifier',
                             description: __( 'Provide a unique value for this unit. Might be composed from a name but shouldn\'t include space or special characters.' ),
-                            validation: 'required|unique:' . Hook::filter( 'ns-table-name', 'nexopos_units' ) . ',identifier' . ( $entry !== null ? ',' . $entry->id : '' ),
+                            validation: 'unique:' . Hook::filter( 'ns-table-name', 'nexopos_units' ) . ',identifier' . ( $entry !== null ? ',' . $entry->id : '' ),
                             value: $entry->identifier ?? '',
                         ),
                         FormInput::media(
@@ -198,6 +199,10 @@ class UnitCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        if ( empty( $inputs[ 'identifier' ] ) ) {
+            $inputs[ 'identifier' ] = Str::slug( $inputs[ 'name' ] );
+        }
+
         return $inputs;
     }
 
@@ -209,6 +214,10 @@ class UnitCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Unit $entry )
     {
+        if ( empty( $inputs[ 'identifier' ] ) ) {
+            $inputs[ 'identifier' ] = Str::slug( $inputs[ 'name' ] );
+        }
+
         return $inputs;
     }
 

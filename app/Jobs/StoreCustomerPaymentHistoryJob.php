@@ -37,10 +37,10 @@ class StoreCustomerPaymentHistoryJob implements ShouldQueue
                 customer: $this->payment->order->customer,
                 operation: CustomerAccountHistory::OPERATION_PAYMENT,
                 amount: $this->payment->value,
-                description: __( 'Order Payment' ), 
+                description: __( 'Order Payment' ),
                 details: [
                     'order_id' => $this->payment->order->id,
-                    'author'    =>  $this->payment->author
+                    'author' => $this->payment->author,
                 ]
             );
         }

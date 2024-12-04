@@ -2,9 +2,7 @@
 
 namespace App\Services;
 
-use App\Classes\Hook;
 use App\Events\CashRegisterHistoryAfterAllDeletedEvent;
-use App\Events\CashRegisterHistoryAfterDeletedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\Order;
 use App\Models\OrderPayment;
@@ -179,8 +177,8 @@ class CashRegistersService
             ],
         ];
     }
-    
-    public function deleteRegisterHistoryUsingOrder( $order ) 
+
+    public function deleteRegisterHistoryUsingOrder( $order )
     {
         $deletedRecord = RegisterHistory::where( 'order_id', $order->id )->delete();
 
@@ -273,13 +271,13 @@ class CashRegistersService
     public function refreshCashRegister( Register $cashRegister )
     {
         /**
-         * if the cash register is closed then we'll 
+         * if the cash register is closed then we'll
          * skip the process.
          */
         if ( $cashRegister->status === Register::STATUS_CLOSED ) {
             return [
                 'status' => 'failed',
-                'message' => __( 'Unable to refresh a cash register if it\'s not opened.' )
+                'message' => __( 'Unable to refresh a cash register if it\'s not opened.' ),
             ];
         }
 
@@ -293,14 +291,14 @@ class CashRegistersService
             ->first();
 
         $totalInActions = RegisterHistory::whereIn(
-                'action', RegisterHistory::IN_ACTIONS
-            )
+            'action', RegisterHistory::IN_ACTIONS
+        )
             ->where( 'created_at', '>=', $lastOpeningAction->created_at )
             ->where( 'register_id', $cashRegister->id )->sum( 'value' );
 
         $totalOutActions = RegisterHistory::whereIn(
-                'action', RegisterHistory::OUT_ACTIONS
-            )
+            'action', RegisterHistory::OUT_ACTIONS
+        )
             ->where( 'created_at', '>=', $lastOpeningAction->created_at )
             ->where( 'register_id', $cashRegister->id )->sum( 'value' );
 
@@ -310,17 +308,14 @@ class CashRegistersService
 
         return [
             'status' => 'success',
-            'message' => _( 'The register has been successfully refreshed.' )
+            'message' => _( 'The register has been successfully refreshed.' ),
         ];
     }
-
-    
 
     /**
      * @todo For now we'll change the order change as cash
      * we'll late add support for two more change methods
-     * 
-     * @param Order $order
+     *
      * @return void
      */
     public function saveOrderChange( Order $order )
@@ -334,7 +329,7 @@ class CashRegistersService
                 $registerHistory = RegisterHistory::where( 'order_id', $order->id )
                     ->where( 'action', RegisterHistory::ACTION_ORDER_CHANGE )
                     ->firstOrNew();
-                
+
                 $registerHistory->payment_type_id = ns()->option->get( 'ns_pos_registers_default_change_payment_type' );
                 $registerHistory->register_id = $register->id;
                 $registerHistory->order_id = $order->id;
@@ -352,7 +347,7 @@ class CashRegistersService
     /**
      * returns human readable labels
      * for all register actions.
-     * 
+     *
      * @todo we should add a custom action label besed
      * on the order payment type.
      */

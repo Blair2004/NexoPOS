@@ -10,7 +10,7 @@ class OptionSavingTest extends TestCase
 {
     use WithAuthentication;
 
-    public function testOptionSaving()
+    public function test_option_saving()
     {
         $this->attemptAuthenticate();
 

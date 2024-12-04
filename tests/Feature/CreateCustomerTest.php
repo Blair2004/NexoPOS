@@ -15,7 +15,7 @@ class CreateCustomerTest extends TestCase
      *
      * @return void
      */
-    public function testCreateCustomers()
+    public function test_create_customers()
     {
         $this->attemptAuthenticate();
 
@@ -24,19 +24,19 @@ class CreateCustomerTest extends TestCase
         }
     }
 
-    public function testCreateCustomerWithNoEmail()
+    public function test_create_customer_with_no_email()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateCustomerWithNoEmail();
     }
 
-    public function testCreateCustomersWithSimilarEmail()
+    public function test_create_customers_with_similar_email()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateCustomersWithSimilarEmail();
     }
 
-    public function testAttemptSearchCustomer()
+    public function test_attempt_search_customer()
     {
         $this->attemptAuthenticate();
         $this->attemptSearchCustomers();

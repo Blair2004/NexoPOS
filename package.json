@@ -12,17 +12,17 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.0",
-    "laravel-echo": "^1.17.0",
+    "laravel-echo": "^1.16.1",
     "laravel-vite-plugin": "^1.0.6",
     "pusher-js": "^8.4.0-rc2",
     "sass": "^1.77.8",
-    "tailwindcss": "^3.4.15",
+    "tailwindcss": "^3.4.13",
     "vite": "^5.4.0",
     "vite-plugin-mkcert": "^1.17.5"
   },
   "name": "nexopos",
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^43.1.1",
+    "@ckeditor/ckeditor5-build-classic": "^43.0.0",
     "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@dicebear/avataaars": "^9.2.2",
     "@dicebear/core": "^9.2.2",

@@ -15,7 +15,7 @@ class CreateCategoryTest extends TestCase
      *
      * @return void
      */
-    public function testCreateCategory()
+    public function test_create_category()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateCategory();

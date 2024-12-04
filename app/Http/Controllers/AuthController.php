@@ -33,10 +33,7 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    public function __construct( private UsersService $userService )
-    {
-
-    }
+    public function __construct( private UsersService $userService ) {}
 
     public function signIn()
     {

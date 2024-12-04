@@ -1,5 +1,5 @@
 <template>
-    <div id="ns-order-type" class="h-full w-4/5-screen md:w-2/5-screen lg:w-2/5-screen xl:w-2/6-screen shadow-lg">
+    <div id="ns-order-type" class="h-full w-4/5-screen md:w-2/5-screen lg:w-2/5-screen xl:w-2/6-screen ns-box">
         <div id="header" class="h-16 flex justify-center items-center">
             <h3 class="font-bold">{{ __( 'Define The Order Type' ) }}</h3>
         </div>

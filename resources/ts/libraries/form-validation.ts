@@ -18,18 +18,24 @@ export default class FormValidation {
     }
 
     validateForm( form ) {
+
+        const globalErrors          =   [];
+
         if ( form.main ) {
             this.validateField( form.main );
         }
-
-        const globalErrors          =   [];
         
         for( let key in form.tabs ) {
             /**
              * Only tabs having fields can be verified.
              */
+            const tabsInvalidity    =   [];
+
+            /**
+             * if the tabs has some fields
+             * we'll make a check on theses
+             */
             if ( form.tabs[ key ].fields ) {
-                const tabsInvalidity    =   [];
                 const validErrors       =   this.validateFieldsErrors( form.tabs[ key ].fields );
                 
                 if ( validErrors.length > 0 ) {
@@ -37,9 +43,14 @@ export default class FormValidation {
                         validErrors
                     );
                 }
-    
-                form.tabs[ key ].errors     =   tabsInvalidity.flat();
+
                 globalErrors.push( tabsInvalidity.flat() );
+            }
+
+            const instance     =   form.tabs[ key ].instance;
+
+            if ( instance && instance.errors.length > 0 ) {
+                globalErrors.push( ...instance.errors );
             }
         }
 

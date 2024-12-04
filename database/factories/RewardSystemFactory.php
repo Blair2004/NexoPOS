@@ -21,6 +21,6 @@ class RewardSystemFactory extends Factory
             'target' => $this->faker->numberBetween( 500, 10000 ),
             'coupon_id' => $this->faker->randomElement( Coupon::get()->map( fn( $user ) => $user->id ) ),
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
-        ]);
+        ] );
     }
 }

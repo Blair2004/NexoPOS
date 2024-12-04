@@ -7,7 +7,6 @@ use App\Casts\CurrencyCast;
 use App\Classes\CrudTable;
 use App\Exceptions\NotAllowedException;
 use App\Models\Transaction;
-use App\Models\TransactionAccount;
 use App\Models\TransactionHistory;
 use App\Models\User;
 use App\Services\CrudEntry;
@@ -140,7 +139,7 @@ class TransactionsHistoryCrud extends CrudService
 
     protected $casts = [
         'value' => CurrencyCast::class,
-        'transactions_accounts_category_identifier' =>  AccountingCategoryCast::class,
+        'transactions_accounts_category_identifier' => AccountingCategoryCast::class,
     ];
 
     /**
@@ -347,7 +346,7 @@ class TransactionsHistoryCrud extends CrudService
             $entry->addClass( 'info' );
         }
 
-        $hasReflection  = TransactionHistory::where( 'reflection_source_id', $entry->id )->count() > 0; 
+        $hasReflection = TransactionHistory::where( 'reflection_source_id', $entry->id )->count() > 0;
         $hasTransaction = Transaction::where( 'id', $entry->transaction_id )->count() > 0;
 
         /**
@@ -355,7 +354,7 @@ class TransactionsHistoryCrud extends CrudService
          * and result from a transaction, we can create a reflection
          * as this is an indirect transaction history.
          */
-        if ( ! $hasReflection && $hasTransaction && ( bool ) $entry->is_reflection === false ) {
+        if ( ! $hasReflection && $hasTransaction && (bool) $entry->is_reflection === false ) {
             $entry->action(
                 label: '<i class="mr-2 las la-eye"></i> ' . __( 'Create Reflection' ),
                 url: ns()->url( 'api/transactions/history/' . $entry->id . '/create-reflection' ),

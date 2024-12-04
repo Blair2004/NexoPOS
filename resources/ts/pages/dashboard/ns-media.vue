@@ -446,7 +446,7 @@ export default {
                 </div>
             </div>
             <div class="flex flex-auto overflow-hidden">
-                <div class="shadow ns-grid flex flex-auto flex-col overflow-y-auto ns-scrollbar">
+                <div class="shadow ns-grid flex flex-auto flex-col">
                     <div class="p-2 border-b border-box-background">
                         <div class="ns-input border-2 rounded border-input-edge bg-input-background flex">
                             <input id="search" type="text" v-model="searchField" :placeholder="__( 'Search Medias' )" class="px-4 block w-full sm:text-sm sm:leading-5 h-10">
@@ -455,12 +455,12 @@ export default {
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-auto">
-                        <div class="p-2 overflow-x-auto">
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                    <div class="flex flex-auto overflow-hidden">
+                        <div class="p-2 overflow-y-auto ns-scrollbar">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-1 lg:grid-cols-4">
                                 <div v-for="(resource, index) of response.data" :key="index" class="">
-                                    <div class="p-2">
-                                        <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected ring-4' : ''" class="rounded-lg aspect-square bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
+                                    <div>
+                                        <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected ring-4' : ''" class="aspect-square bg-gray-500 overflow-hidden flex items-center justify-center">
                                             <img v-if="isImage( resource )" class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name"/>
                                             <template v-if="! isImage( resource )" class="object-cover h-full" :alt="resource.name">
                                                 <div class="object-cover h-full flex items-center justify-center">

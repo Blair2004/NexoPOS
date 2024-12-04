@@ -28,6 +28,7 @@ import nsMultiselect        from  './ns-multiselect.vue';
 import nsNotice             from  './ns-notice.vue';
 import nsNumpad             from  './ns-numpad.vue';
 import nsNumpadPlus         from  './ns-numpad-plus.vue';
+import nsNumpadPopup        from '~/popups/ns-numpad-popup.vue';
 import nsPOSLoadingPopup    from  '~/popups/ns-pos-loading-popup.vue';
 import nsPageTitle           from  './ns-page-title.vue';
 import nsPaginate           from  './ns-paginate.vue';
@@ -90,4 +91,5 @@ export {
     nsFieldDescription,
     nsDefaultAccounting,
     nsAvatarImage,
+    nsNumpadPopup,
 };

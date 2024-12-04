@@ -26,13 +26,13 @@ class AuthenticationTest extends TestCase
         return $this->faker->userName() . Str::random( 5 );
     }
 
-    public function testCanSeeLoginPage()
+    public function test_can_see_login_page()
     {
         $response = $this->get( '/sign-in' );
         $response->assertStatus( 200 );
     }
 
-    public function testCanSeeRegistrationPage()
+    public function test_can_see_registration_page()
     {
         /**
          * Step 1: we'll enable registration and test
@@ -74,7 +74,7 @@ class AuthenticationTest extends TestCase
         $response->assertStatus( 403 );
     }
 
-    public function testCanSeeRecoveryPage()
+    public function test_can_see_recovery_page()
     {
         /**
          * Step 1: assert when recovery is enabled, the
@@ -93,22 +93,16 @@ class AuthenticationTest extends TestCase
         $response->assertStatus( 403 );
     }
 
-    public function testCanVerifyAccount()
+    public function test_can_verify_account()
     {
         // make sure verification is forced for new users
     }
 
-    public function testCanSubmitRecoveryEmail()
-    {
+    public function test_can_submit_recovery_email() {}
 
-    }
+    public function test_can_change_password() {}
 
-    public function testCanChangePassword()
-    {
-
-    }
-
-    public function testCannotLoginIfAccountInactive()
+    public function test_cannot_login_if_account_inactive()
     {
         $password = '123456';
         $user = User::first();

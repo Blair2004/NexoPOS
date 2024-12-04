@@ -17,7 +17,7 @@ class CanSeeReportsTest extends TestCase
      *
      * @return void
      */
-    public function test_canSeeReports()
+    public function test_can_see_reports()
     {
         Auth::loginUsingId(
             Role::namespace( 'admin' )->users()->first()->id

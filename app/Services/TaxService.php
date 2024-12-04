@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Classes\Hook;
-use App\Events\OrderProductAfterComputeTaxEvent;
 use App\Exceptions\NotFoundException;
 use App\Models\OrderProduct;
 use App\Models\Product;
@@ -421,7 +419,7 @@ class TaxService
      * We might not need to perform this if
      * the product already comes with defined tax.
      */
-    public function  computeOrderProductTaxes( OrderProduct $orderProduct, array $productArray ): OrderProduct
+    public function computeOrderProductTaxes( OrderProduct $orderProduct, array $productArray ): OrderProduct
     {
         /**
          * let's load the original product with the tax group
@@ -440,7 +438,7 @@ class TaxService
                 value: $orderProduct->filterAttribute( 'unit_price', $productArray ),
                 rate: $orderProduct->discount_percentage,
             );
-        } 
+        }
 
         /**
          * Let's now compute the taxes

@@ -37,6 +37,6 @@ class ProductUnitQuantityFactory extends Factory
             'incl_tax_wholesale_price' => $wholesale_price,
             'excl_tax_wholesale_price' => $wholesale_price,
             'wholesale_price_tax' => 0,
-        ]);
+        ] );
     }
 }

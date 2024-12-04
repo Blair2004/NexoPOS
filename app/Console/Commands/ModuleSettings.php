@@ -65,7 +65,7 @@ class ModuleSettings extends Command
                         'modules', 'module', 'name', 'namespace'
                     ) ) );
 
-                $relativePath   =   str_replace( base_path(), '', storage_path( 'modules' ) );
+                $relativePath = str_replace( base_path(), '', storage_path( 'modules' ) );
 
                 return $this->info( sprintf(
                     __( 'The settings has been created on path %s' ),

@@ -15,7 +15,7 @@ class CreateCustomerGroupTest extends TestCase
      *
      * @return void
      */
-    public function testCreateCustomerGroup()
+    public function test_create_customer_group()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateCustomerGroup();

@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Events\OrderAfterCreatedEvent;
-use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderPaymentAfterCreatedEvent;
 use App\Events\OrderPaymentAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

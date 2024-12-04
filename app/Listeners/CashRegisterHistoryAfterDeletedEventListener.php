@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\CashRegisterHistoryAfterDeletedEvent;
 use App\Services\CashRegistersService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class CashRegisterHistoryAfterDeletedEventListener
 {
@@ -20,7 +18,7 @@ class CashRegisterHistoryAfterDeletedEventListener
     /**
      * Handle the event.
      */
-    public function handle( CashRegisterHistoryAfterDeletedEvent $event): void
+    public function handle( CashRegisterHistoryAfterDeletedEvent $event ): void
     {
         // ...
     }

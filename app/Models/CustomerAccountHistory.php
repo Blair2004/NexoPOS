@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\CustomerAccountHistoryAfterCreatedEvent;
+use App\Events\CustomerAccountHistoryAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -30,7 +31,7 @@ class CustomerAccountHistory extends NsModel
 
     public $dispatchesEvents = [
         'created' => CustomerAccountHistoryAfterCreatedEvent::class,
-        'updated' => CustomerAccountHistoryAfterCreatedEvent::class,
+        'updated' => CustomerAccountHistoryAfterUpdatedEvent::class,
     ];
 
     public function customer()

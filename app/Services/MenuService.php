@@ -154,10 +154,10 @@ class MenuService
                         'permissions' => [ 'nexopos.read.transactions-history' ],
                         'href' => ns()->url( '/dashboard/accounting/transactions/history' ),
                     ],
-                    'transacations-rules'   =>  [
-                        'label' =>  __( 'Rules' ),
+                    'transacations-rules' => [
+                        'label' => __( 'Rules' ),
                         'permissions' => [ 'nexopos.create.transactions' ],
-                        'href'  =>  ns()->url( '/dashboard/accounting/rules' )
+                        'href' => ns()->url( '/dashboard/accounting/rules' ),
                     ],
                     'transactions-account' => [
                         'label' => __( 'Accounts' ),

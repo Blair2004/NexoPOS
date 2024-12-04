@@ -15,7 +15,7 @@ class PartiallyPaidOrderWithAdjustmentTest extends TestCase
      *
      * @return void
      */
-    public function testCreateOrderWithPartialPayment()
+    public function test_create_order_with_partial_payment()
     {
         $this->attemptAuthenticate();
         $this->attemptCreatePartiallyPaidOrderWithAdjustment();

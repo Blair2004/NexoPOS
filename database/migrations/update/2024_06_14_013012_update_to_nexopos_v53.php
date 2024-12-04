@@ -21,9 +21,9 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'sub_category_id' ) ) {
                 $table->integer( 'sub_category_id' )->nullable();
             }
-        });
+        } );
 
-        Schema::table( 'nexopos_transactions_histories', function( Blueprint $table ) {
+        Schema::table( 'nexopos_transactions_histories', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'is_reflection' ) ) {
                 $table->boolean( 'is_reflection' )->default( false );
             }
@@ -33,16 +33,22 @@ return new class extends Migration
             if ( ! Schema::hasColumn( 'nexopos_transactions_histories', 'rule_id' ) ) {
                 $table->integer( 'rule_id' )->nullable();
             }
-        });
+        } );
 
-        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_orders', 'total_cogs' ) ) {
                 $table->float( 'total_cogs', 18, 5 )->nullable();
             }
-        });
+        } );
 
-        $cashPaymentType    =   PaymentType::where( 'identifier', OrderPayment::PAYMENT_CASH )->first();
+        $cashPaymentType = PaymentType::where( 'identifier', OrderPayment::PAYMENT_CASH )->first();
         ns()->option->set( 'ns_pos_registers_default_change_payment_type', $cashPaymentType->id );
+
+        if ( ! defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
+            define( 'NEXO_CREATE_PERMISSIONS', true );
+        }
+
+        include dirname( __FILE__ ) . '/../../permissions/transactions-accounts.php';
     }
 
     /**
@@ -55,14 +61,14 @@ return new class extends Migration
                 if ( ! Schema::hasColumn( 'nexopos_transactions_accounts', 'operation' ) ) {
                     $table->string( 'operation' )->default( 'debit' );
                 }
-    
+
                 if ( Schema::hasColumn( 'nexopos_transactions_accounts', 'sub_category_id' ) ) {
                     $table->dropColumn( 'sub_category_id' );
                 }
-            });
+            } );
         }
 
-        Schema::table( 'nexopos_transactions_histories', function( Blueprint $table ) {
+        Schema::table( 'nexopos_transactions_histories', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_transactions_histories', 'is_reflection' ) ) {
                 $table->dropColumn( 'is_reflection' );
             }
@@ -72,12 +78,12 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_transactions_histories', 'rule_id' ) ) {
                 $table->dropColumn( 'rule_id' );
             }
-        });
+        } );
 
-        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders', 'total_cogs' ) ) {
                 $table->dropColumn( 'total_cogs' );
             }
-        });
+        } );
     }
 };

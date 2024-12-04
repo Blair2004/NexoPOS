@@ -16,7 +16,7 @@ class CreateRegisterTest extends TestCase
      *
      * @return void
      */
-    public function testCreateRegister()
+    public function test_create_register()
     {
         $this->attemptAuthenticate();
 
@@ -24,9 +24,9 @@ class CreateRegisterTest extends TestCase
     }
 
     /**
-     * @depends testCreateRegister
+     * @depends test_create_register
      */
-    public function testUpdateRegister( Register $register )
+    public function test_update_register( Register $register )
     {
         $this->attemptAuthenticate();
         $this->attemptUpdateRegister( $register );
@@ -35,9 +35,9 @@ class CreateRegisterTest extends TestCase
     }
 
     /**
-     * @depends testUpdateRegister
+     * @depends test_update_register
      */
-    public function testDeleteRegister( Register $register )
+    public function test_delete_register( Register $register )
     {
         $this->attemptAuthenticate();
         $this->attemptDeleteRegister( $register );
@@ -45,7 +45,7 @@ class CreateRegisterTest extends TestCase
         return $register;
     }
 
-    public function testOpenRegister()
+    public function test_open_register()
     {
         $this->attemptAuthenticate();
         $register = $this->attemptCreateRegister();
@@ -55,9 +55,9 @@ class CreateRegisterTest extends TestCase
     }
 
     /**
-     * @depends testOpenRegister
+     * @depends test_open_register
      */
-    public function testCashInRegister( Register $register )
+    public function test_cash_in_register( Register $register )
     {
         $this->attemptAuthenticate();
         $this->attemptCashInRegister( $register );
@@ -66,9 +66,9 @@ class CreateRegisterTest extends TestCase
     }
 
     /**
-     * @depends testCashInRegister
+     * @depends test_cash_in_register
      */
-    public function testCashOutRegister( $register )
+    public function test_cash_out_register( $register )
     {
         $this->attemptAuthenticate();
         $this->attemptCashOutRegister( $register );
@@ -77,9 +77,9 @@ class CreateRegisterTest extends TestCase
     }
 
     /**
-     * @depends testCashOutRegister
+     * @depends test_cash_out_register
      */
-    public function testCloseRegister( $register )
+    public function test_close_register( $register )
     {
         $this->attemptAuthenticate();
         $this->attemptCloseRegister( $register );

@@ -1,13 +1,13 @@
 <template>
     <div class="flex flex-col flex-auto ns-select">
         <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="( hasError ? 'has-error' : 'is-pristine' ) + ' ' + ( field.disabled ? 'cursor-not-allowed' : 'cursor-default' )" 
-            class="border-2 mt-1 relative rounded-md shadow-sm mb-1 flex overflow-hidden">
+        <div :class="( hasError ? 'has-error' : 'is-pristine' ) + ' ' + ( field.disabled ? 'cursor-not-allowed' : 'cursor-default' ) + ' ' + ( showResults ? 'rounded-t-md' : 'rounded-md')" 
+            class="border-2 mt-1 relative shadow-sm mb-1 flex overflow-hidden">
             <div @click="! field.disabled && (showResults = ! showResults)" :class="( field.disabled ? 'bg-input-disabled' : 'bg-input-background' )" 
                 class="flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
                 <span class="text-primary text-sm">{{ selectedOptionLabel }}</span>
             </div>
-            <div v-if="hasSelectedValues( field )" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-error-secondary hover:text-white border-l-2 border-input-edge">
+            <div v-if="hasSelectedValues( field )" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-error-tertiary hover:text-white border-l-2 border-input-edge">
                 <i class="las la-times"></i>
             </div>
             <div v-if="field.component && ! field.disabled" @click="triggerDynamicComponent( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-input-button-hover border-l-2 border-input-edge">
@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="relative" v-if="showResults">
-            <div class="w-full overflow-hidden -top-[8px] border-r-2 border-l-2 border-t rounded-b-md border-b-2 border-input-edge bg-input-background shadow z-10 absolute">
+            <div class="w-full overflow-hidden -top-[5px] border-r-2 border-l-2 border-t rounded-b-md border-b-2 border-input-edge bg-input-background shadow z-10 absolute">
                 <div class="border-b border-input-edge border-dashed p-2">
                     <input @keypress.enter="selectFirstOption()" ref="searchInputField" v-model="searchField" type="text" :placeholder="__( 'Search result' )">
                 </div>
@@ -109,6 +109,8 @@ export default {
          * if the field provide a "subject" object, this means
          * it's likely to automatically refresh in case other field value change
          * only if the "refresh" property is provided to the watching field 
+         * 
+         * @todo with the new mirroring feature, we might see how to merge both.
          */
         if ( this.field.subject ) {
             this.subscription = this.field.subject.subscribe( ({ field, fields }) => {

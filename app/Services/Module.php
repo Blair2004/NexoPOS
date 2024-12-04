@@ -2,9 +2,6 @@
 
 namespace App\Services;
 
-use Exception;
-use Illuminate\Support\Str;
-
 class Module
 {
     protected $module;

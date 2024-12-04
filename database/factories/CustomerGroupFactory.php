@@ -21,6 +21,6 @@ class CustomerGroupFactory extends Factory
             'minimal_credit_payment' => $this->faker->numberBetween( 0, 50 ),
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
             'reward_system_id' => $this->faker->randomElement( RewardSystem::get()->map( fn( $reward ) => $reward->id ) ),
-        ]);
+        ] );
     }
 }

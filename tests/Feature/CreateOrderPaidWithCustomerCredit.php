@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Customer;
+use App\Models\CustomerAccountHistory;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Role;
@@ -86,7 +87,13 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
         $this->defaultProcessing = true;
 
         $response = $this->processOrders( $orderDetails, function ( $response, $data ) {
-            $order = Order::find( $data[ 'data' ][ 'order' ][ 'id' ] );
+            $order_id = $data[ 'data' ][ 'order' ][ 'id' ];
+
+            /**
+             * We need to ensure only a single entry has been
+             * created after the order is placed.
+             */
+            $this->assertEquals( 1, CustomerAccountHistory::where( 'order_id', $order_id )->count() );
         } );
 
         $this->defaultProcessing = false;

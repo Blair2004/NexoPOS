@@ -15,31 +15,31 @@ class MakeProcurementTest extends TestCase
      *
      * @return void
      */
-    private function testCreateProcurement()
+    private function test_create_procurement()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateProcurement();
     }
 
-    private function testCreateUnpaidProcurement()
+    private function test_create_unpaid_procurement()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateAnUnpaidProcurement();
     }
 
-    private function testCreateProcurementWithConversion()
+    private function test_create_procurement_with_conversion()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateProcurementWithConversion();
     }
 
-    public function testDeleteProcurement()
+    public function test_delete_procurement()
     {
         $this->attemptAuthenticate();
         $this->attemptDeleteProcurement();
     }
 
-    private function testDeleteProcurementWithConvertedProducts()
+    private function test_delete_procurement_with_converted_products()
     {
         $this->attemptAuthenticate();
         $this->attemptDeleteProcurementWithConvertedProducts();

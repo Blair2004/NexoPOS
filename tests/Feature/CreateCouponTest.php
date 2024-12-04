@@ -15,7 +15,7 @@ class CreateCouponTest extends TestCase
      *
      * @return void
      */
-    public function testCreateCoupon()
+    public function test_create_coupon()
     {
         $this->attemptAuthenticate();
         $this->attemptCreatecoupon();
@@ -26,7 +26,7 @@ class CreateCouponTest extends TestCase
      *
      * @return void
      */
-    public function testUpdateCoupon()
+    public function test_update_coupon()
     {
         $this->attemptAuthenticate();
         $this->attemptUpdateCoupon();
@@ -35,7 +35,7 @@ class CreateCouponTest extends TestCase
     /**
      * We'll try to use coupon and track usage
      */
-    public function testTrackCouponUsage()
+    public function test_track_coupon_usage()
     {
         $this->attemptAuthenticate();
         $this->attemptAssignCouponToOrder();
@@ -45,7 +45,7 @@ class CreateCouponTest extends TestCase
      * This test will assign a coupon that doesn't exist
      * to an order. This will cause the order to throw an error.
      */
-    public function testAssignNotExistingCoupon()
+    public function test_assign_not_existing_coupon()
     {
         $this->attemptAuthenticate();
         $this->attemptAssigningANonExistingCoupon();
@@ -55,7 +55,7 @@ class CreateCouponTest extends TestCase
      * This test will try to assign a coupon
      * that is exhausted. It should cause a failure of the order creation
      */
-    public function testUseExhaustedCoupon()
+    public function test_use_exhausted_coupon()
     {
         $this->attemptAuthenticate();
         $this->attemptUseExaustedCoupon();
@@ -65,7 +65,7 @@ class CreateCouponTest extends TestCase
      * This test will use coupon this it get exhausted.
      * By the end, the order creation should fail.
      */
-    public function testUseCouponTillUsageGetExhausted()
+    public function test_use_coupon_till_usage_get_exhausted()
     {
         $this->attemptAuthenticate();
         $this->attemptUseCouponTillUsageIsExhausted();

@@ -15,7 +15,7 @@ class ProductAdjustmentTest extends TestCase
      *
      * @return void
      */
-    public function testAdjustProduct()
+    public function test_adjust_product()
     {
         $this->attemptAuthenticate();
         $this->attemptAdjustmentByDeletion();

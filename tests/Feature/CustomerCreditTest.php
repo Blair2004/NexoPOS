@@ -15,13 +15,13 @@ class CustomerCreditTest extends TestCase
      *
      * @return void
      */
-    public function testAddCredit()
+    public function test_add_credit()
     {
         $this->attemptAuthenticate();
         $this->attemptCreditCustomerAccount();
     }
 
-    public function testRemoveCredit()
+    public function test_remove_credit()
     {
         $this->attemptAuthenticate();
         $this->attemptRemoveCreditCustomerAccount();

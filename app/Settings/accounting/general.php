@@ -19,5 +19,5 @@ return [
         props: TransactionAccountCrud::getFormConfig(),
         component: 'nsCrudForm',
         options: $accounts[ 'assets' ],
-    )
+    ),
 ];

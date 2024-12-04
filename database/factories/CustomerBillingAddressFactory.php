@@ -35,6 +35,6 @@ class CustomerBillingAddressFactory extends Factory
             'city' => $this->faker->city(),
             'pobox' => $this->faker->postcode(),
             'author' => User::get()->random()->id,
-        ]);
+        ] );
     }
 }

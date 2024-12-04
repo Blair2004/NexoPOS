@@ -16,7 +16,7 @@ class CashRegisterActionsTest extends TestCase
      *
      * @return void
      */
-    public function testCreateCashRegisterWithActions()
+    public function test_create_cash_register_with_actions()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),

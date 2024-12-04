@@ -11,9 +11,9 @@ class AccountingCategoryCast implements CastsAttributes
     /**
      * Cast the given value.
      *
-     * @param  array<string, mixed>  $attributes
+     * @param array<string, mixed> $attributes
      */
-    public function get( Model | CrudEntry $model, string $key, mixed $value, array $attributes): mixed
+    public function get( Model|CrudEntry $model, string $key, mixed $value, array $attributes ): mixed
     {
         $accounting = config( 'accounting.accounts' );
 
@@ -29,9 +29,9 @@ class AccountingCategoryCast implements CastsAttributes
     /**
      * Prepare the given value for storage.
      *
-     * @param  array<string, mixed>  $attributes
+     * @param array<string, mixed> $attributes
      */
-    public function set(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function set( Model $model, string $key, mixed $value, array $attributes ): mixed
     {
         return $value;
     }

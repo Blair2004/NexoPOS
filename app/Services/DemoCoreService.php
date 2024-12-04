@@ -11,7 +11,6 @@ use App\Models\Register;
 use App\Models\Role;
 use App\Models\Tax;
 use App\Models\TaxGroup;
-use App\Models\TransactionAccount;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use Database\Seeders\CustomerGroupSeeder;

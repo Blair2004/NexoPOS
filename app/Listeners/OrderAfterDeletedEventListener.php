@@ -4,11 +4,8 @@ namespace App\Listeners;
 
 use App\Events\OrderAfterDeletedEvent;
 use App\Events\ShouldRefreshReportEvent;
-use App\Jobs\RefreshReportJob;
 use App\Jobs\UncountDeletedOrderForCashierJob;
 use App\Jobs\UncountDeletedOrderForCustomerJob;
-use App\Models\Order;
-use App\Models\Register;
 use App\Services\CashRegistersService;
 
 class OrderAfterDeletedEventListener

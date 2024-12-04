@@ -17,7 +17,7 @@ class CreateUnitTest extends TestCase
      *
      * @return void
      */
-    public function testCreateUnits()
+    public function test_create_units()
     {
         /**
          * We'll skip the execution from here.

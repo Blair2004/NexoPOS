@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Order::get()->each( function( $order ) {
+        Order::get()->each( function ( $order ) {
             RefreshOrderJob::dispatch( $order );
-        });
+        } );
     }
 
     /**

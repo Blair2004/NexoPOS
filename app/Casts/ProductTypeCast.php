@@ -2,6 +2,7 @@
 
 namespace App\Casts;
 
+use App\Classes\Hook;
 use App\Services\CrudEntry;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,7 @@ class ProductTypeCast implements CastsAttributes
             'materialized' => __( 'Materialized' ),
             'dematerialized' => __( 'Dematerialized' ),
             'grouped' => __( 'Grouped' ),
-            default => sprintf( __( 'Unknown Type: %s' ), $value ),
+            default => Hook::filter( 'ns-product-type-label', sprintf( __( 'Unknown Type: %s' ), $value ), $value ),
         };
 
         return '<strong class="' . $class . ' ">' . $value . '</strong>';

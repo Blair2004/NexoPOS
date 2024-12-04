@@ -447,9 +447,9 @@ class RegisterHistoryCrud extends CrudService
 
         if ( $entry->action === RegisterHistory::ACTION_CLOSING && $entry->transaction_type === 'unchanged' ) {
             $entry->{ '$cssClass' } = 'success border';
-        } else if ( $entry->action === RegisterHistory::ACTION_CLOSING && $entry->transaction_type === 'positive' ) {
+        } elseif ( $entry->action === RegisterHistory::ACTION_CLOSING && $entry->transaction_type === 'positive' ) {
             $entry->{ '$cssClass' } = 'warning border';
-        } else if ( $entry->action === RegisterHistory::ACTION_CLOSING && $entry->transaction_type === 'negative' ) {
+        } elseif ( $entry->action === RegisterHistory::ACTION_CLOSING && $entry->transaction_type === 'negative' ) {
             $entry->{ '$cssClass' } = 'warning border';
         }
 

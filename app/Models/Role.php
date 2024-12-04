@@ -66,7 +66,7 @@ class Role extends NsRootModel
             'user_id',
         );
     }
-    
+
     /**
      * Relation with Permissions
      **/

@@ -2,20 +2,14 @@
 
 namespace Tests\Traits;
 
-use App\Classes\Currency;
-use App\Models\ActiveTransactionHistory;
-use App\Models\DashboardDay;
 use App\Models\Order;
 use App\Models\Procurement;
-use App\Models\Transaction;
 use App\Models\TransactionAccount;
 use App\Models\TransactionActionRule;
 use App\Models\TransactionHistory;
-use App\Services\ReportService;
 use App\Services\TestService;
 use App\Services\TransactionService;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 trait WithAccountingTest
 {
@@ -26,7 +20,7 @@ trait WithAccountingTest
         /**
          * @var TransactionService $service
          */
-        $service    =   app()->make( TransactionService::class );
+        $service = app()->make( TransactionService::class );
         $service->createDefaultAccounts();
 
         /**
@@ -37,15 +31,15 @@ trait WithAccountingTest
     }
 
     public function attemptTestAccountingForProcurement( Procurement $procurement )
-    {        
-        $history    =   $procurement->transactionHistories()->first();
-        $rule       =   TransactionActionRule::findOrFail( $history->rule_id );
+    {
+        $history = $procurement->transactionHistories()->first();
+        $rule = TransactionActionRule::findOrFail( $history->rule_id );
 
-        $procurementTransactionHistory     =   TransactionHistory::where( 'transaction_account_id', $rule->account_id )
+        $procurementTransactionHistory = TransactionHistory::where( 'transaction_account_id', $rule->account_id )
             ->where( 'procurement_id', $procurement->id )
             ->first();
 
-        $procurementTransactionHistoryOffset    =   TransactionHistory::where( 'reflection_source_id', $procurementTransactionHistory->id )
+        $procurementTransactionHistoryOffset = TransactionHistory::where( 'reflection_source_id', $procurementTransactionHistory->id )
             ->where( 'is_reflection', true )
             ->where( 'transaction_account_id', $rule->offset_account_id )
             ->first();
@@ -111,7 +105,7 @@ trait WithAccountingTest
     public function attemptTestAccountingForOrder( $order )
     {
         $order = $order instanceof Order ? $order : Order::findOrFail( $order );
-        $ruleOn = match( $order->payment_status ) {
+        $ruleOn = match ( $order->payment_status ) {
             Order::PAYMENT_UNPAID => TransactionActionRule::RULE_ORDER_UNPAID,
             Order::PAYMENT_PAID => TransactionActionRule::RULE_ORDER_PAID,
             default => null,
@@ -171,10 +165,10 @@ trait WithAccountingTest
 
     public function attemptTestAccountingForUnpaidToPaidOrder( $order )
     {
-        $rule   =   TransactionActionRule::where( 'on', TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID )
+        $rule = TransactionActionRule::where( 'on', TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID )
             ->first();
 
-        $history    =   TransactionHistory::where( 'order_id', $order->id )
+        $history = TransactionHistory::where( 'order_id', $order->id )
             ->where( 'rule_id', $rule->id )
             ->first();
 

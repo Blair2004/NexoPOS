@@ -40,38 +40,38 @@ class ModuleMailCommand extends Command
      */
     public function handle()
     {
-        $modules = app()->make(ModulesService::class);
+        $modules = app()->make( ModulesService::class );
 
         /**
          * Check if module is defined
          */
-        if ($module = $modules->get($this->argument('namespace'))) {
+        if ( $module = $modules->get( $this->argument( 'namespace' ) ) ) {
             /**
              * Define Variables
              */
             $mailsPath = $module['namespace'] . DIRECTORY_SEPARATOR . 'Mail' . DIRECTORY_SEPARATOR;
-            $name = ucwords(Str::camel($this->argument('name')));
+            $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
             $fileName = $mailsPath . $name;
             $fullRelativePath = 'modules' . DIRECTORY_SEPARATOR . $fileName;
-            $namespace = $this->argument('namespace');
-            $fileExists = Storage::disk('ns-modules')->exists(
+            $namespace = $this->argument( 'namespace' );
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
                 $fileName . '.php'
             );
 
-            if (!$fileExists || ($fileExists && $this->option('force'))) {
-                Storage::disk('ns-modules')->put($fileName . '.php', view('generate.modules.mail', compact(
+            if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
+                Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'generate.modules.mail', compact(
                     'modules', 'module', 'name', 'namespace'
-                )));
+                ) ) );
 
-                return $this->info(sprintf(
-                    __('The mail class has been created at the following path "%s"!'),
+                return $this->info( sprintf(
+                    __( 'The mail class has been created at the following path "%s"!' ),
                     $fullRelativePath . '.php'
-                ));
+                ) );
             }
 
-            return $this->error('The mail class already exists!');
+            return $this->error( 'The mail class already exists!' );
         }
 
-        return $this->error('Unable to locate the module!');
+        return $this->error( 'Unable to locate the module!' );
     }
 }

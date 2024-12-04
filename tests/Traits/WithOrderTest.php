@@ -85,12 +85,12 @@ trait WithOrderTest
     {
         $this->assertTrue( $order->payment_status === Order::PAYMENT_UNPAID );
 
-        $remainingPayment   =   [
-            'identifier'    =>  OrderPayment::PAYMENT_CASH,
-            'value'         =>  $order->total - $order->payments->sum( 'value' ),
+        $remainingPayment = [
+            'identifier' => OrderPayment::PAYMENT_CASH,
+            'value' => $order->total - $order->payments->sum( 'value' ),
         ];
 
-        $response   =   $this->json( 'POST', 'api/orders/' . $order->id . '/payments', $remainingPayment );
+        $response = $this->json( 'POST', 'api/orders/' . $order->id . '/payments', $remainingPayment );
 
         $response->assertOk();
 
@@ -848,7 +848,7 @@ trait WithOrderTest
          * Step 2: We'll attempt to delete the order
          * We should check if the register balance has changed.
          */
-        $order  =   Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
+        $order = Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
         $ordersService->deleteOrder( $order );
 
         $cashRegister->refresh();
@@ -980,13 +980,13 @@ trait WithOrderTest
          * we'll try crediting customer account
          */
         $oldBalance = $customer->account_amount;
-        $customerService->saveTransaction( 
-            customer: $customer, 
-            operation: CustomerAccountHistory::OPERATION_ADD, 
-            amount: $subtotal + $shippingFees, 
+        $customerService->saveTransaction(
+            customer: $customer,
+            operation: CustomerAccountHistory::OPERATION_ADD,
+            amount: $subtotal + $shippingFees,
             description: 'For testing purpose...',
             details: [
-                'author'    =>  Auth::id()
+                'author' => Auth::id(),
             ]
         );
         $customer->refresh();
@@ -1126,14 +1126,12 @@ trait WithOrderTest
                     ->limit( 3 )
                     ->get();
 
-                
-
                 $products = $products->map( function ( $product ) use ( $faker, $taxService ) {
-                    $product->unit_quantities->each( function( $unitQuantity ) use ( $faker ) {
+                    $product->unit_quantities->each( function ( $unitQuantity ) use ( $faker ) {
                         $unitQuantity->quantity = $faker->numberBetween( 100, 1000 );
                         $unitQuantity->save();
                     } );
-                    
+
                     $unitElement = $faker->randomElement( $product->unit_quantities );
                     $discountRate = 10;
                     $quantity = $faker->numberBetween( 1, 10 );
@@ -1934,8 +1932,8 @@ trait WithOrderTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/orders/' . $order->id . '/void', [
-                'reason'    =>  __( 'For testing purposes' ),
-            ]);
+                'reason' => __( 'For testing purposes' ),
+            ] );
 
         $response->assertStatus( 200 );
 
@@ -2233,7 +2231,7 @@ trait WithOrderTest
 
         $order->load( [ 'products.product' ] );
 
-        $this->assertTrue( $order->products()->count() > 0, 'The order has no products.' ); 
+        $this->assertTrue( $order->products()->count() > 0, 'The order has no products.' );
 
         /**
          * We'll check if for each product on the order
@@ -2700,7 +2698,7 @@ trait WithOrderTest
                     [
                         'identifier' => OrderPayment::PAYMENT_CASH,
                         'value' => $currency->define( $subtotal + $shippingFees )
-                            ->dividedBy(2)
+                            ->dividedBy( 2 )
                             ->toFloat(),
                     ],
                 ],

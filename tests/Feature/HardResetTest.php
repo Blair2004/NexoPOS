@@ -13,11 +13,10 @@ class HardResetTest extends TestCase
      *
      * @return void
      */
-    public function testHardResetSystem()
+    public function test_hard_reset_system()
     {
         Artisan::call( 'ns:reset --mode=hard' );
 
-        
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/setup/configuration', [
                 'ns_store_name' => env( 'NS_RESET_APPNAME', 'NexoPOS' ),
@@ -25,7 +24,7 @@ class HardResetTest extends TestCase
                 'admin_username' => env( 'NS_RESET_USERNAME', 'admin' ),
                 'password' => env( 'NS_RESET_PASSWORD', 123456 ),
                 'confirm_password' => env( 'NS_RESET_PASSWORD', 123456 ),
-            ]);
+            ] );
 
         $response->assertStatus( 200 );
 

@@ -32,7 +32,7 @@ class CustomerFactory extends Factory
             'pobox' => $this->faker->postcode(),
             'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
             'group_id' => $this->faker->randomElement( CustomerGroup::get()->map( fn( $group ) => $group->id ) ),
-        ]);
+        ] );
     }
 
     public function configure(): static

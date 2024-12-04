@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\TransactionsHistoryAfterDeletedEvent;
+
 class TransactionsHistoryAfterDeletedEventListener
 {
     /**

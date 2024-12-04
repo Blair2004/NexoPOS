@@ -98,7 +98,7 @@ class DemoService extends DemoCoreService
             $this->createProviders();
             $this->createTaxes();
             $this->createProducts();
-        } 
+        }
 
         if ( $create_procurements ) {
             $this->performProcurement();

@@ -29,7 +29,7 @@ class TestNsRacksManagerTransferToInventory extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function test_example()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),

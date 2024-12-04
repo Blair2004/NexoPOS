@@ -13,8 +13,8 @@ Route::get( 'transactions-accounts/actions', [ TransactionController::class, 'ge
 Route::get( 'transactions-accounts/{id}/history', [ TransactionController::class, 'getTransactionAccountsHistory' ] );
 Route::post( 'transactions', [ TransactionController::class, 'post' ] );
 Route::get( 'transactions/history/{history}/create-reflection', [ TransactionController::class, 'createReflection' ] )->where( 'id', '[0-9]+' );
-Route::post( 'transactions/rules', [ TransactionController::class, 'saveRule' ]);
-Route::get( 'transactions/rules', [ TransactionController::class, 'getRules' ]);
+Route::post( 'transactions/rules', [ TransactionController::class, 'saveRule' ] );
+Route::get( 'transactions/rules', [ TransactionController::class, 'getRules' ] );
 Route::post( 'transactions-accounts', [ TransactionController::class, 'postTransactionsAccount' ] );
 Route::put( 'transactions/{id}', [ TransactionController::class, 'put' ] )->where( 'id', '[0-9]+' );
 Route::put( 'transactions-accounts/{account}', [ TransactionController::class, 'putTransactionAccount' ] )->where( 'id', '[0-9]+' );

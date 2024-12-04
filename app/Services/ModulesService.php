@@ -1200,7 +1200,6 @@ class ModulesService
                 ], 403 );
             }
 
-
             if ( $module[ 'autoloaded' ] ) {
                 return response()->json( [
                     'status' => 'error',

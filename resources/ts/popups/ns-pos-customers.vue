@@ -1,5 +1,5 @@
 <template>
-    <div id="ns-pos-customers" class="shadow-lg rounded w-95vw h-95vh lg:w-3/5-screen flex flex-col overflow-hidden">
+    <div id="ns-pos-customers" class="shadow-lg rounded-lg w-95vw h-95vh lg:w-3/5-screen flex flex-col overflow-hidden">
         <div class="ns-header p-2 flex justify-between items-center border-b">
             <h3 class="font-semibold">{{ __( 'Customers' ) }}</h3>
             <div>

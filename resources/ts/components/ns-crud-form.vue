@@ -4,6 +4,11 @@ import { nsHooks, nsHttpClient, nsSnackBar } from '../bootstrap';
 import FormValidation from '../libraries/form-validation';
 import { __  } from '~/libraries/lang';
 import popupResolver from '~/libraries/popup-resolver';
+import { shallowRef } from 'vue';
+
+declare const nsExtraComponents;
+declare const nsComponents;
+declare const nsNotice;
 
 export default {
     data: () => {
@@ -13,7 +18,9 @@ export default {
             formValidation: new FormValidation,
             links: {},
             rows: [],
-            optionAttributes: {}
+            optionAttributes: {},
+            extraComponents: () => nsExtraComponents,
+            nsComponents: () => nsComponents
         }
     }, 
     emits: [ 'updated', 'saved' ],
@@ -29,6 +36,14 @@ export default {
                 }
             }
             return [];
+        },
+        activeTab() {
+            for( let identifier in this.form.tabs ) {
+                if ( this.form.tabs[ identifier ].active ) {
+                    return this.form.tabs[ identifier ];
+                }
+            }
+            return false;
         },
         activeTabIdentifier() {
             for( let identifier in this.form.tabs ) {
@@ -49,7 +64,6 @@ export default {
             this.form.tabs[ identifier ].active     =   true;
         },
         async handleSaved( event, activeTabIdentifier, field ) {
-            console.log({ event, activeTabIdentifier, field, __this : this });
             this.form.tabs[ activeTabIdentifier ].fields.filter( __field => {
                 if ( __field.name === field.name && event.data.entry ) {
                     __field.options.push({
@@ -67,8 +81,10 @@ export default {
             }
         },
         submit() {
-            if ( this.formValidation.validateForm( this.form ).length > 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed the form is not valid' ), __( 'Close' ) )
+            const validation  = this.formValidation.validateForm( this.form );
+
+            if ( validation.length > 0 ) {
+                return nsSnackBar.error( __( 'The form is not valid. Double check it or refer to the error dislayed above.' ), __( 'Close' ) )
                     .subscribe();
             }
 
@@ -181,6 +197,18 @@ export default {
                     field.subject   =   form.tabs[ key ].subject;
                 });
 
+                /**
+                 * We'll resolve the component here and keep it
+                 * to the object so we can easily access it. We should make 
+                 * sure the instance doesnt' yet exists.
+                 */
+                if ( form.tabs[ key ].component && form.tabs[ key ].instance === undefined ) {
+                    form.tabs[ key ].instance  =   {
+                        object: shallowRef( this.extraComponents()[ form.tabs[ key ].component ] ),
+                        errors: []
+                    };
+                }
+
                 index++;
             }
 
@@ -190,12 +218,32 @@ export default {
             if ( field.errors.length === 0 ) {
                 field.subject.next({ field, fields });
             }
+        },
+
+        /**
+         * This should ensure the component is able
+         * to update the tab state and therefore control
+         * it's validation.
+         * @param {object} object
+         */
+        handleTabError( error ) {
+            this.form.tabs[ this.activeTabIdentifier ].instance.errors  =   [];
+
+            if ( error !== false ) {
+                this.form.tabs[ this.activeTabIdentifier ].instance.errors.push( ...error );
+            } else {
+                this.form.tabs[ this.activeTabIdentifier ].instance.errors = [];
+            }
+        },
+
+        handleTabChange( fields ) {
+            this.form.tabs[ this.activeTabIdentifier ].fields = fields;
         }
     },
 }
 </script>
 <template>
-    <div class="form flex-auto" v-if="Object.values( form ).length > 0" :class="popup ? 'bg-box-background w-95vw md:w-2/3-screen max-h-6/7-screen overflow-hidden flex flex-col' : ''" id="crud-form" >
+    <div class="form flex-auto" v-if="Object.values( form ).length > 0" :class="popup ? 'ns-box w-95vw md:w-2/3-screen max-h-6/7-screen overflow-hidden flex flex-col' : ''" id="crud-form" >
         <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center h-full">
             <ns-spinner />
         </div>
@@ -243,9 +291,20 @@ export default {
                 </div>
                 <div class="ns-tab-item">
                     <div class="border p-4 rounded">
-                        <div class="-mx-4 flex flex-wrap">
+                        <!-- We can't display both fields and component at the same time. The component has the priority over fields -->
+                        <div class="-mx-4 flex flex-wrap" v-if="activeTabFields.length > 0 && ! activeTab.component">
                             <div :key="`${activeTabIdentifier}-${key}`" :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,key) of activeTabFields">
                                 <ns-field @saved="handleSaved( $event, activeTabIdentifier, field )" @blur="formValidation.checkField( field )" @change="formValidation.checkField( field ) && handleFieldChange( field, activeTabFields )" :field="field"/>
+                            </div>
+                        </div>
+                        <div class="-mx-4 flex flex-wrap" v-if="activeTab && activeTab.component">
+                            <div :key="`${activeTabIdentifier}`" v-if="activeTab.instance.object" :class="fieldClass || 'px-4 w-full'">
+                                <component @changed="handleTabChange( $event )" @invalid="handleTabError( $event )":is="activeTab.instance.object" :tab="activeTab"/>
+                            </div>
+                            <div v-else class="px-4 text-center">
+                                <div class="text-error-tertiary border-dashed border-error-tertiary border p-4">
+                                    {{ __( 'Failed to load the component: {component}'.replace( '{component}', activeTab.component ) ) }}
+                                </div>
                             </div>
                         </div>
                         <div class="flex justify-end" v-if="! form.main.name">

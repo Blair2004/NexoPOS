@@ -15,7 +15,7 @@ class OrderWithInstalment extends TestCase
      *
      * @return void
      */
-    public function testCreateOrderWithInstalment()
+    public function test_create_order_with_instalment()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderWithInstalment();

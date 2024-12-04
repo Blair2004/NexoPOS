@@ -16,7 +16,7 @@ class CreateOrderTest extends TestCase
      *
      * @return void
      */
-    public function testPostingOrder( $callback = null )
+    public function test_posting_order( $callback = null )
     {
         $this->count = 1;
         $this->totalDaysInterval = 1;
@@ -30,31 +30,31 @@ class CreateOrderTest extends TestCase
         }
     }
 
-    public function testCreateAndEditOrderWithLowStock()
+    public function test_create_and_edit_order_with_low_stock()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateAndEditOrderWithLowStock();
     }
 
-    public function testCreateAndEditOrderByDeductedGreaterQuantity()
+    public function test_create_and_edit_order_by_deducted_greater_quantity()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateAndEditOrderWithGreaterQuantity();
     }
 
-    public function testHoldAndCheckoutOrder()
+    public function test_hold_and_checkout_order()
     {
         $this->attemptAuthenticate();
         $this->attemptHoldAndCheckoutOrder();
     }
 
-    public function testHoldAndCheckoutOrderWithGroupedProducts()
+    public function test_hold_and_checkout_order_with_grouped_products()
     {
         $this->attemptAuthenticate();
         $this->attemptHoldOrderAndCheckoutWithGroupedProducts();
     }
 
-    public function testDeletedVoidedOrder()
+    public function test_deleted_voided_order()
     {
         $this->attemptAuthenticate();
         $this->attemptDeleteVoidedOrder();
@@ -64,13 +64,13 @@ class CreateOrderTest extends TestCase
      * Will only make order using
      * the customer balance
      */
-    public function testOrderCreatedForCustomer()
+    public function test_order_created_for_customer()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderPaidWithCustomerBalance();
     }
 
-    public function testCreateOrderWithNoPayment( $callback = null )
+    public function test_create_order_with_no_payment( $callback = null )
     {
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
@@ -93,22 +93,22 @@ class CreateOrderTest extends TestCase
         }
     }
 
-    public function testCreateOrderWithGroupedProducts()
+    public function test_create_order_with_grouped_products()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderWithGroupedProducts();
     }
 
     /**
-     * @depends testCreateOrderWithGroupedProducts
+     * @depends test_create_order_with_grouped_products
      */
-    public function testRefundOrderWithGroupedProducts()
+    public function test_refund_order_with_grouped_products()
     {
         $this->attemptAuthenticate();
         $this->attemptRefundOrderWithGroupedProducts();
     }
 
-    public function testDeleteOrderAndCheckProductHistory()
+    public function test_delete_order_and_check_product_history()
     {
         $this->attemptAuthenticate();
         $this->attemptDeleteOrderAndCheckProductHistory();

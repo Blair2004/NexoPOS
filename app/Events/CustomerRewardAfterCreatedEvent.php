@@ -2,9 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Customer;
 use App\Models\CustomerReward;
-use App\Models\RewardSystem;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;

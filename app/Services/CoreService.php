@@ -425,15 +425,39 @@ class CoreService
             );
         }
 
+        $viteConfigFile = $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vite.config.js';
+
+        if ( ! file_exists( $viteConfigFile ) ) {
+            throw new NotFoundException(
+                sprintf(
+                    __( 'The vite.config.js file for the module %s cannot be found.' ),
+                    $module[ 'name' ]
+                )
+            );
+        }
+
         $ds = DIRECTORY_SEPARATOR;
 
+        /**
+         * let's read the outDir value from the vite.config.js file
+         */
+        $viteConfig = file_get_contents( $viteConfigFile );
+
+        if ( preg_match( '/outDir:\s*[\'"](.+?)[\'"]/', $viteConfig, $matches ) ) {
+            $buildDirectory = $matches[1]; // Return the matched outDir value
+        } else {
+            $buildDirectory = 'Public' . $ds . 'build'; // Default build directory
+        }
+
         $possiblePaths = [
-            rtrim( $module['path'], $ds ) . $ds . 'Public' . $ds . 'build' . $ds . '.vite' . $ds . 'manifest.json',
-            rtrim( $module['path'], $ds ) . $ds . 'Public' . $ds . 'build' . $ds . 'manifest.json',
+            rtrim( $module['path'], $ds ) . $ds . $buildDirectory . $ds . '.vite' . $ds . 'manifest.json',
+            rtrim( $module['path'], $ds ) . $ds . $buildDirectory . $ds . 'manifest.json',
         ];
 
         $assets = collect( [] );
         $errors = [];
+
+        $buildFolderName = last( explode( $ds, $buildDirectory ) );
 
         foreach ( $possiblePaths as $manifestPath ) {
             if ( ! file_exists( $manifestPath ) ) {
@@ -457,11 +481,11 @@ class CoreService
             /**
              * checks if a css file is declared as well
              */
-            $jsUrl = asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
+            $jsUrl = asset( 'modules/' . strtolower( $moduleId ) . '/' . $buildFolderName . '/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
 
             if ( ! empty( $manifestArray[ $fileName ][ 'css' ] ) ) {
-                $assets = collect( $manifestArray[ $fileName ][ 'css' ] )->map( function ( $url ) use ( $moduleId ) {
-                    return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/build/' . $url ) . '"/>';
+                $assets = collect( $manifestArray[ $fileName ][ 'css' ] )->map( function ( $url ) use ( $moduleId, $buildFolderName ) {
+                    return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/' . $buildFolderName . '/' . $url ) . '"/>';
                 } );
             }
 

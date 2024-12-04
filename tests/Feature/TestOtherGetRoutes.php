@@ -16,7 +16,7 @@ class TestOtherGetRoutes extends TestCase
      *
      * @return void
      */
-    public function testAllApiRoutes()
+    public function test_all_api_routes()
     {
         $this->attemptAuthenticate();
 
@@ -58,7 +58,7 @@ class TestOtherGetRoutes extends TestCase
      *
      * @return void
      */
-    public function testDashboardGetRoutes()
+    public function test_dashboard_get_routes()
     {
         $routes = Route::getRoutes();
         $user = $this->attemptGetAnyUserFromRole();
@@ -77,7 +77,7 @@ class TestOtherGetRoutes extends TestCase
 
                     if ( $response->status() === 302 ) {
                         $this->assertTrue( in_array( $uri, [
-                            'dashboard/accounting/transactions/create'
+                            'dashboard/accounting/transactions/create',
                         ] ) );
                     } else {
                         if ( $response->status() == 200 ) {

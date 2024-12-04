@@ -3,11 +3,8 @@
 namespace App\Events;
 
 use App\Models\OrderPayment;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -18,7 +15,7 @@ class OrderPaymentAfterCreatedEvent
     /**
      * Create a new event instance.
      */
-    public function __construct( public OrderPayment $orderPayment)
+    public function __construct( public OrderPayment $orderPayment )
     {
         $orderPayment->load( 'order.customer' );
     }
@@ -31,7 +28,7 @@ class OrderPaymentAfterCreatedEvent
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel( 'channel-name' ),
         ];
     }
 }
