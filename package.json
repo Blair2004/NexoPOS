@@ -1,44 +1,52 @@
 {
-  "private": true,
-  "engines": {
-    "node": "18.x"
-  },
-  "type": "module",
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite",
-    "watch": "vite build --watch",
-    "test": "jest"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.0",
-    "laravel-echo": "^1.17.0",
-    "laravel-vite-plugin": "^1.0.6",
-    "pusher-js": "^8.4.0-rc2",
-    "sass": "^1.77.8",
-    "tailwindcss": "^3.4.15",
-    "vite": "^5.4.0",
-    "vite-plugin-mkcert": "^1.17.5"
-  },
-  "name": "nexopos",
-  "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^43.1.1",
-    "@ckeditor/ckeditor5-vue": "^5.1.0",
-    "@dicebear/avataaars": "^9.2.2",
-    "@dicebear/core": "^9.2.2",
-    "@wordpress/hooks": "^4.12.0",
-    "chart.js": "^4.4.4",
-    "currency.js": "^2.0.4",
-    "lodash": "^4.17.21",
-    "mathjs": "^13.0.3",
-    "moment": "^2.30.1",
-    "numeral": "^2.0.6",
-    "qrcode": "^1.5.4",
-    "rxjs": "^7.8.1",
-    "vue": "^3.5.10",
-    "vue-chartjs": "^5.3.1",
-    "vue-router": "^4.4.3",
-    "vue3-daterange-picker": "^1.0.1",
-    "vuedraggable": "^2.24.3"
-  }
+    "private": true,
+    "engines": {
+        "node": "18.x"
+    },
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "watch": "vite build --watch",
+        "dev:Admin": "vite --config themes/Admin/vite.config.js",
+        "build:Admin": "vite build --config themes/Admin/vite.config.js",
+        "test": "jest"
+    },
+    "devDependencies": {
+        "@tailwindcss/forms": "^0.5.7",
+        "@vitejs/plugin-vue": "^5.0.4",
+        "autoprefixer": "^10.4.19",
+        "laravel-echo": "^1.17.0",
+        "laravel-vite-plugin": "^1.0.6",
+        "postcss": "^8.4.38",
+        "postcss-import": "^16.1.0",
+        "pusher-js": "^8.4.0-rc2",
+        "sass": "^1.77.8",
+        "tailwindcss": "^3.4.3",
+        "vite": "^5.4.0",
+        "vite-plugin-mkcert": "^1.17.5",
+        "vue": "^3.4.27"
+    },
+    "name": "nexopos",
+    "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^43.1.1",
+        "@ckeditor/ckeditor5-vue": "^5.1.0",
+        "@dicebear/avataaars": "^9.2.2",
+        "@dicebear/core": "^9.2.2",
+        "@wordpress/hooks": "^4.12.0",
+        "chart.js": "^4.4.4",
+        "currency.js": "^2.0.4",
+        "lodash": "^4.17.21",
+        "mathjs": "^13.0.3",
+        "moment": "^2.30.1",
+        "numeral": "^2.0.6",
+        "qrcode": "^1.5.4",
+        "rxjs": "^7.8.1",
+        "tailgrids": "^2.2.7",
+        "vue": "^3.5.10",
+        "vue-chartjs": "^5.3.1",
+        "vue-router": "^4.4.3",
+        "vue3-daterange-picker": "^1.0.1",
+        "vuedraggable": "^2.24.3"
+    }
 }

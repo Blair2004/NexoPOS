@@ -16,7 +16,7 @@ use App\Http\Middleware\NotInstalledStateMiddleware;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware( [ 'web' ] )->group( function () {
+Route::middleware( [ 'theme:admin', 'web' ] )->group( function () {
     Route::get( '/', [ HomeController::class, 'welcome' ] )->name( 'ns.welcome' );
 } );
 

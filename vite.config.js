@@ -9,7 +9,7 @@ import { resolve } from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
 
 export default ({ mode }) => {
-    process.env = {...process.env, ...loadEnv(mode, process.cwd())};
+    process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
     return defineConfig({
         base: './',
@@ -26,10 +26,10 @@ export default ({ mode }) => {
             alias: [
                 {
                     find: '&',
-                    replacement: resolve( __dirname, 'resources' ),
+                    replacement: resolve(__dirname, 'resources'),
                 }, {
                     find: '~',
-                    replacement: resolve( __dirname, 'resources/ts' ),
+                    replacement: resolve(__dirname, 'resources/ts'),
                 },
             ]
         },
@@ -49,7 +49,7 @@ export default ({ mode }) => {
                     'resources/ts/dev.ts',
                     'resources/ts/popups.ts',
                     'resources/ts/widgets.ts',
-    
+
                     'resources/scss/app.scss',
                     'resources/scss/light.scss',
                     'resources/scss/dark.scss',
@@ -59,13 +59,14 @@ export default ({ mode }) => {
                     'resources/scss/fonts.scss',
                     'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
                 ],
-                refresh: [ 
-                    'resources/views/**', 
-                    'resources/sass/**' 
+                refresh: [
+                    'resources/views/**',
+                    'themes/*/views/**',
+                    'resources/sass/**'
                 ],
             }),
             mkcert(),
-        //     esmifyPlugin(),
+            //     esmifyPlugin(),
             vuePlugin({
                 template: {
                     transformAssetUrls: {

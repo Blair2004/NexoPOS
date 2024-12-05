@@ -1,4 +1,4 @@
-const colors  = require( 'tailwindcss/colors' );
+const colors = require('tailwindcss/colors');
 
 function withOpacityValue(variable) {
   return ({ opacityValue }) => {
@@ -63,11 +63,15 @@ module.exports = {
   content: [
     './app/Crud/**/*.php',
     './resources/**/*.{vue,ts,php}',
+    './themes/**/views/*.php',
   ],
   darkMode: 'class',
   corePlugins: {
     float: false
   },
+  plugins: [
+    require("tailgrids/plugin")
+  ],
   important: true,
   theme: {
     fontFamily: {
@@ -79,9 +83,9 @@ module.exports = {
         teal: colors.teal,
         orange: colors.orange,
         cyan: colors.cyan,
-        
+
         typography: withOpacityValue('--typography'),
-        
+
         surface: withOpacityValue('--surface'),
         'surface-soft': withOpacityValue('--surface-soft'),
         'surface-hard': withOpacityValue('--surface-hard'),
@@ -119,7 +123,7 @@ module.exports = {
         'scroll-thumb': withOpacityValue('--scroll-thumb'),
         'scroll-track': withOpacityValue('--scroll-track'),
         'scroll-popup-thumb': withOpacityValue('--scroll-popup-thumb'),
-        
+
         'pre': withOpacityValue('--pre'),
 
         'tab-active': withOpacityValue('--tab-active'),
@@ -132,62 +136,62 @@ module.exports = {
         'floating-menu-edge': withOpacityValue('--floating-menu-edge'),
 
         primary: withOpacityValue('--primary'),
-        secondary: withOpacityValue('--secondary'),  
-        tertiary: withOpacityValue('--tertiary'),  
+        secondary: withOpacityValue('--secondary'),
+        tertiary: withOpacityValue('--tertiary'),
 
         'soft-primary': withOpacityValue('--soft-primary'),
         'soft-secondary': withOpacityValue('--soft-secondary'),
         'soft-tertiary': withOpacityValue('--soft-tertiary'),
 
         'info-primary': withOpacityValue('--info-primary'),
-        'info-secondary': withOpacityValue('--info-secondary'),  
-        'info-tertiary': withOpacityValue('--info-tertiary'),  
-        
-        'info-light-primary': withOpacityValue('--info-light-primary'),  
-        'info-light-secondary': withOpacityValue('--info-light-secondary'),  
-        'info-light-tertiary': withOpacityValue('--info-light-tertiary'),  
-        
+        'info-secondary': withOpacityValue('--info-secondary'),
+        'info-tertiary': withOpacityValue('--info-tertiary'),
+
+        'info-light-primary': withOpacityValue('--info-light-primary'),
+        'info-light-secondary': withOpacityValue('--info-light-secondary'),
+        'info-light-tertiary': withOpacityValue('--info-light-tertiary'),
+
         'success-primary': withOpacityValue('--success-primary'),
-        'success-secondary': withOpacityValue('--success-secondary'),  
-        'success-tertiary': withOpacityValue('--success-tertiary'),  
-        
-        'success-light-primary': withOpacityValue('--success-light-primary'),  
-        'success-light-secondary': withOpacityValue('--success-light-secondary'),  
-        'success-light-tertiary': withOpacityValue('--success-light-tertiary'),  
-        
+        'success-secondary': withOpacityValue('--success-secondary'),
+        'success-tertiary': withOpacityValue('--success-tertiary'),
+
+        'success-light-primary': withOpacityValue('--success-light-primary'),
+        'success-light-secondary': withOpacityValue('--success-light-secondary'),
+        'success-light-tertiary': withOpacityValue('--success-light-tertiary'),
+
         'error-primary': withOpacityValue('--error-primary'),
-        'error-secondary': withOpacityValue('--error-secondary'),  
-        'error-tertiary': withOpacityValue('--error-tertiary'),  
-        
-        'error-light-primary': withOpacityValue('--error-light-primary'),  
-        'error-light-secondary': withOpacityValue('--error-light-secondary'),  
-        'error-light-tertiary': withOpacityValue('--error-light-tertiary'),  
-        
+        'error-secondary': withOpacityValue('--error-secondary'),
+        'error-tertiary': withOpacityValue('--error-tertiary'),
+
+        'error-light-primary': withOpacityValue('--error-light-primary'),
+        'error-light-secondary': withOpacityValue('--error-light-secondary'),
+        'error-light-tertiary': withOpacityValue('--error-light-tertiary'),
+
         'warning-primary': withOpacityValue('--warning-primary'),
-        'warning-secondary': withOpacityValue('--warning-secondary'),  
-        'warning-tertiary': withOpacityValue('--warning-tertiary'),  
-        
-        'warning-light-primary': withOpacityValue('--warning-light-primary'),  
-        'warning-light-secondary': withOpacityValue('--warning-light-secondary'),  
-        'warning-light-tertiary': withOpacityValue('--warning-light-tertiary'),  
+        'warning-secondary': withOpacityValue('--warning-secondary'),
+        'warning-tertiary': withOpacityValue('--warning-tertiary'),
+
+        'warning-light-primary': withOpacityValue('--warning-light-primary'),
+        'warning-light-secondary': withOpacityValue('--warning-light-secondary'),
+        'warning-light-tertiary': withOpacityValue('--warning-light-tertiary'),
 
         'default-primary': withOpacityValue('--default-primary'),
-        'default-secondary': withOpacityValue('--default-secondary'),  
-        'default-tertiary': withOpacityValue('--default-tertiary'),  
-        
-        'default-light-primary': withOpacityValue('--default-light-primary'),  
-        'default-light-secondary': withOpacityValue('--default-light-secondary'),  
-        'default-light-tertiary': withOpacityValue('--default-light-tertiary'),  
+        'default-secondary': withOpacityValue('--default-secondary'),
+        'default-tertiary': withOpacityValue('--default-tertiary'),
+
+        'default-light-primary': withOpacityValue('--default-light-primary'),
+        'default-light-secondary': withOpacityValue('--default-light-secondary'),
+        'default-light-tertiary': withOpacityValue('--default-light-tertiary'),
 
         'danger-primary': withOpacityValue('--danger-primary'),
-        'danger-secondary': withOpacityValue('--danger-secondary'),  
-        'danger-tertiary': withOpacityValue('--danger-tertiary'),  
-        
-        'danger-light-primary': withOpacityValue('--danger-light-primary'),  
-        'danger-light-secondary': withOpacityValue('--danger-light-secondary'),  
-        'danger-light-tertiary': withOpacityValue('--danger-light-tertiary'),  
+        'danger-secondary': withOpacityValue('--danger-secondary'),
+        'danger-tertiary': withOpacityValue('--danger-tertiary'),
+
+        'danger-light-primary': withOpacityValue('--danger-light-primary'),
+        'danger-light-secondary': withOpacityValue('--danger-light-secondary'),
+        'danger-light-tertiary': withOpacityValue('--danger-light-tertiary'),
       },
-      fontWeight: [ 'hover', 'focus' ],
+      fontWeight: ['hover', 'focus'],
       height: heightDims,
       minHeight: heightDims,
       maxHeight: heightDims,
@@ -195,36 +199,36 @@ module.exports = {
         ...widthDims
       },
       spacing: {
-          '72': '18rem',
-          '84': '21rem',
-          '96': '24rem',
-          '108': '27rem',
-          '120': '30rem',
+        '72': '18rem',
+        '84': '21rem',
+        '96': '24rem',
+        '108': '27rem',
+        '120': '30rem',
       },
       screens: {
-        'print': { 'raw': 'print'},
+        'print': { 'raw': 'print' },
       },
       inset: {
-          '-5': '-2.5em',
-          '-10': '-5em',
-          '-20': '-10em',
-          '-25': '-12.5em',
-          '-30': '-15em',
-          '-40': '-20em',
-          '-50': '-25em',
-          '-60': '-30em',
-          '-70': '-35em',
-          '0': '0em',
-          '5': '2.5em',
-          '10': '5em',
-          '20': '10em',
-          '25': '12.5em',
-          '30': '15em',
-          '40': '20em',
-          '50': '25em',
-          '60': '30em',
-          '70': '35em',
-          ...widthDims
+        '-5': '-2.5em',
+        '-10': '-5em',
+        '-20': '-10em',
+        '-25': '-12.5em',
+        '-30': '-15em',
+        '-40': '-20em',
+        '-50': '-25em',
+        '-60': '-30em',
+        '-70': '-35em',
+        '0': '0em',
+        '5': '2.5em',
+        '10': '5em',
+        '20': '10em',
+        '25': '12.5em',
+        '30': '15em',
+        '40': '20em',
+        '50': '25em',
+        '60': '30em',
+        '70': '35em',
+        ...widthDims
       },
       margin: {
         '-5': '-2.5em',
