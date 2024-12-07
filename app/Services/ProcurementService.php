@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Events\ProcurementAfterCreateEvent;
 use App\Events\ProcurementAfterDeleteProductEvent;
 use App\Events\ProcurementAfterHandledEvent;
@@ -1006,10 +1007,10 @@ class ProcurementService
     public function searchProduct( $argument, $limit = 10 )
     {
         return Product::query()
-            ->whereIn( 'type', [
+            ->whereIn( 'type', Hook::filter( 'ns-procurement-searchable-product-type', [
                 Product::TYPE_DEMATERIALIZED,
                 Product::TYPE_MATERIALIZED,
-            ] )
+            ]) )
             ->notGrouped()
             ->where( function ( $query ) use ( $argument ) {
                 $query->orWhere( 'name', 'LIKE', "%{$argument}%" )
