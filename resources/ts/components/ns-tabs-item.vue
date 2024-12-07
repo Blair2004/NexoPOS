@@ -1,5 +1,5 @@
 <template>
-    <div :class="selectedTab.identifier !== identifier ? 'hidden' : ''" :label="label" :identifier="identifier" class="ns-tab-item flex flex-auto overflow-hidden">
+    <div :class="selectedTab.identifier !== identifier ? 'hidden' : ''" :closable="closable" :label="label" :identifier="identifier" class="ns-tab-item flex flex-auto overflow-hidden">
         <div v-if="selectedTab.identifier === identifier" class="border rounded flex-auto overflow-y-auto" :class="( padding || 'p-4' )">
             <slot></slot>
         </div>
@@ -24,6 +24,6 @@ export default {
     unmounted() {
         this.tabStateSubscriber.unsubscribe();
     },
-    props: [ 'label', 'identifier', 'padding' ],
+    props: [ 'label', 'closable', 'identifier', 'padding' ],
 }
 </script>

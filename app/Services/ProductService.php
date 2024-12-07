@@ -1995,7 +1995,7 @@ class ProductService
 
         /**
          * if the unitQuantityTo is missing, we might then
-         * create a new unit with price set to 0.
+         * create a new unit with quantity set to 0.
          */
         if ( ! $unitQuantityTo instanceof ProductUnitQuantity ) {
             $unitQuantityTo = new ProductUnitQuantity;
@@ -2085,10 +2085,14 @@ class ProductService
             total_price: ns()->currency->define( $lastFromPurchasePrice )->multipliedBy( $quantity )->toFloat(),
         );
 
-        $lastToPurchasePrice = $this->getLastPurchasePrice(
-            product: $product,
-            unit: $to
-        );
+        /**
+         * The last purchase price of the destination unit
+         * should be based on the last purchase price of the source unit
+         * divided by the finalDestionaQuantity
+         */
+        $lastToPurchasePrice = ns()->currency->define( $lastFromPurchasePrice )
+            ->divideBy( $finalDestinationQuantity )
+            ->toFloat();
 
         $this->handleStockAdjustmentRegularProducts(
             action: ProductHistory::ACTION_CONVERT_IN,

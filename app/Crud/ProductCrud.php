@@ -202,6 +202,7 @@ class ProductCrud extends CrudService
                 'type' => 'number',
                 'errors' => [],
                 'name' => 'sale_price_edit',
+                'value' =>  0,
                 'label' => __( 'Sale Price' ),
                 'description' => __( 'Define the regular selling price.' ),
                 'validation' => 'required',
@@ -209,6 +210,7 @@ class ProductCrud extends CrudService
                 'type' => 'number',
                 'errors' => [],
                 'name' => 'wholesale_price_edit',
+                'value' =>  0,
                 'label' => __( 'Wholesale Price' ),
                 'description' => __( 'Define the wholesale price.' ),
                 'validation' => 'required',
@@ -463,6 +465,7 @@ class ProductCrud extends CrudService
 
                                                     return $field;
                                                 } ),
+                                                'closable'  =>  true,
                                                 'label' => $optionLabel,
                                             ];
                                         } ) : [] ),

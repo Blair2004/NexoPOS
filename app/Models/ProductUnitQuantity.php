@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float   $custom_price
  * @property float   $custom_price_edit
  * @property float   $custom_price_with_tax
+ * @property float   $cogs
  * @property float   $custom_price_without_tax
  * @property Product $product
  * @property Unit    $unit
