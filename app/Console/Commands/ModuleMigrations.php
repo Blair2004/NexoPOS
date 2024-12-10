@@ -16,7 +16,7 @@ class ModuleMigrations extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:migration {namespace} {--forget} {--forgetPath=}';
+    protected $signature = 'modules:migration {namespace} {--forget}';
 
     /**
      * The console command description.
@@ -92,6 +92,7 @@ class ModuleMigrations extends Command
     public function passDeleteMigration()
     {
         if ( $this->option( 'forget' ) ) {
+
             /**
              * This will revert the migration
              * for a specific module.
@@ -99,14 +100,56 @@ class ModuleMigrations extends Command
              * @var ModulesService
              */
             $moduleService = app()->make( ModulesService::class );
-            $moduleService->revertMigrations( $this->module );
+
+            $moduleMigrations   =   $moduleService->getAllModuleMigrationFiles( $this->module );
+
+            if ( count( $moduleMigrations ) == 0 ) {
+                $this->info( sprintf( 'No migration found for the module %s.', $this->module[ 'name' ] ) );
+
+                return false;
+            }
 
             /**
-             * We'll make sure to clear the migration as
-             * being executed on the system.
+             * The user might want to forget all migration.
+             * We'll then prepend an option for it.
              */
-            ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )->delete();
-            $this->info( sprintf( 'The migration for the module %s has been forgotten.', $this->module[ 'name' ] ) );
+            array_unshift( $moduleMigrations, __( 'All' ) );            
+
+            $deleteChoice   =   $this->choice( __( 'Which file would you like to forget' ), $moduleMigrations, 0 );
+
+            if ( $deleteChoice === __( 'All' ) ) {
+                return $this->revertAllModuleMigrations( $this->module );
+            } else {
+                return $this->deleteSpecificMigrationPath( $deleteChoice );
+            }
+        }
+    }
+
+    public function deleteSpecificMigrationPath( string $path )
+    {
+        $path = str_replace( 'modules/', '', $path );
+
+        /**
+         * This will revert the migration
+         * for a specific module.
+         *
+         * @var ModulesService
+         */
+        $moduleService = app()->make( ModulesService::class );
+        $moduleService->revertMigrations( $this->module, [ $path ] );
+
+        /**
+         * We'll make sure to clear the migration as
+         * being executed on the system.
+         */
+        $migration = ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )
+            ->where( 'file', $path )
+            ->get();
+
+        if ( $migration->count() > 0 ) {
+            $migration->each( fn( $migration ) => $migration->delete() );
+
+            $this->info( sprintf( 'The migration "%s" for the module %s has been forgotten.', $path, $this->module[ 'name' ] ) );
 
             /**
              * because we use the cache to prevent the system for overusing the
@@ -115,51 +158,48 @@ class ModuleMigrations extends Command
             Artisan::call( 'cache:clear' );
 
             return false;
+        } else {
+            $this->info( sprintf( 'No migration found using the provided file path "%s" for the module "%s". Maybe the migration was never initially executed ?', $path, $this->module[ 'name' ] ) );
+
+            return false;
         }
+    }
 
-        if ( $this->option( 'forgetPath' ) ) {
-            $path = str_replace( 'modules/', '', $this->option( 'forgetPath' ) );
-
-            /**
-             * This will revert the migration
-             * for a specific module.
-             *
-             * @var ModulesService
-             */
-            $moduleService = app()->make( ModulesService::class );
-            $moduleService->revertMigrations( $this->module, [ $path ] );
-
-            /**
-             * We'll make sure to clear the migration as
-             * being executed on the system.
-             */
-            $migration = ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )
-                ->where( 'file', $path )
-                ->get();
-
-            if ( $migration->count() > 0 ) {
-                $migration->each( fn( $migration ) => $migration->delete() );
-
-                $this->info( sprintf( 'The migration "%s" for the module %s has been forgotten.', $path, $this->module[ 'name' ] ) );
-
-                /**
-                 * because we use the cache to prevent the system for overusing the
-                 * database with too many requests.
-                 */
-                Artisan::call( 'cache:clear' );
-
-                return false;
-            } else {
-                $this->info( sprintf( 'No migration found using the provided file path "%s" for the module "%s".', $path, $this->module[ 'name' ] ) );
-
-                return false;
-            }
-        }
+    public function revertAllModuleMigrations( $module )
+    {
+        /**
+         * This will revert the migration
+         * for a specific module.
+         *
+         * @var ModulesService
+         */
+        $moduleService = app()->make( ModulesService::class );
+        $moduleService->revertMigrations( $module );
 
         /**
-         * If we'ven't deleted the migration then we can proceed from here
+         * We'll make sure to clear the migration as
+         * being executed on the system.
          */
-        return true;
+        $migration = ModuleMigration::where( 'namespace', $module[ 'namespace' ] )
+            ->get();
+
+        if ( $migration->count() > 0 ) {
+            $migration->each( fn( $migration ) => $migration->delete() );
+
+            $this->info( sprintf( 'All migrations for the module %s has been forgotten.', $module[ 'name' ] ) );
+
+            /**
+             * because we use the cache to prevent the system for overusing the
+             * database with too many requests.
+             */
+            Artisan::call( 'cache:clear' );
+
+            return false;
+        } else {
+            $this->info( sprintf( 'No migration found for the module %s.', $module[ 'name' ] ) );
+
+            return false;
+        }
     }
 
     /**
