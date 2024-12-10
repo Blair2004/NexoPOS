@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Events\ProductAfterCreatedEvent;
 use App\Events\ProductAfterStockAdjustmentEvent;
 use App\Events\ProductAfterUpdatedEvent;
@@ -752,6 +753,14 @@ class ProductService
                 );
 
                 /**
+                 * if some other fields should be retreived from the $group variable 
+                 * we can defined that on the array below
+                 */
+                foreach( Hook::filter( 'ns-products-units-quantities-fields-names', [] ) as $field ) {
+                    $unitQuantity->$field = $group[ $field ] ?? null;
+                }
+
+                /**
                  * save custom barcode for the created unit quantity
                  */
                 $unitQuantity->barcode = $product->barcode . '-' . $unitQuantity->id;
@@ -1096,7 +1105,7 @@ class ProductService
             } );
     }
 
-    public function getUnitQuantity( $product_id, $unit_id )
+    public function getUnitQuantity( $product_id, $unit_id ): ProductUnitQuantity | null
     {
         return ProductUnitQuantity::withProduct( $product_id )
             ->withUnit( $unit_id )
@@ -1775,18 +1784,18 @@ class ProductService
     public function getLastPurchasePrice( ?Product $product, Unit $unit, ?string $before = null ): float|int
     {
         if ( $product instanceof Product ) {
-            $request = ProcurementProduct::where( 'product_id', $product->id )
+            $productHistory     =   ProductHistory::where( 'product_id', $product->id )
                 ->where( 'unit_id', $unit->id )
-                ->orderBy( 'id', 'desc' );
+                ->whereIn( 'operation_type', [
+                    ProductHistory::ACTION_STOCKED,
+                    ProductHistory::ACTION_CONVERT_IN,
+                ])
+                ->when( $before, fn( $query ) => $query->where( 'created_at', '<', $before ) )
+                ->latest()
+                ->first();
 
-            if ( $before ) {
-                $request->where( 'created_at', '<=', $before );
-            }
-
-            $procurementProduct = $request->first();
-
-            if ( $procurementProduct instanceof ProcurementProduct ) {
-                return $procurementProduct->purchase_price;
+            if ( $productHistory instanceof ProductHistory ) {
+                return $productHistory->unit_price;
             }
         }
 
@@ -1995,7 +2004,7 @@ class ProductService
 
         /**
          * if the unitQuantityTo is missing, we might then
-         * create a new unit with price set to 0.
+         * create a new unit with quantity set to 0.
          */
         if ( ! $unitQuantityTo instanceof ProductUnitQuantity ) {
             $unitQuantityTo = new ProductUnitQuantity;
@@ -2085,10 +2094,14 @@ class ProductService
             total_price: ns()->currency->define( $lastFromPurchasePrice )->multipliedBy( $quantity )->toFloat(),
         );
 
-        $lastToPurchasePrice = $this->getLastPurchasePrice(
-            product: $product,
-            unit: $to
-        );
+        /**
+         * The last purchase price of the destination unit
+         * should be based on the last purchase price of the source unit
+         * divided by the finalDestionaQuantity
+         */
+        $lastToPurchasePrice = ns()->currency->define( $lastFromPurchasePrice )
+            ->divideBy( $finalDestinationQuantity )
+            ->toFloat();
 
         $this->handleStockAdjustmentRegularProducts(
             action: ProductHistory::ACTION_CONVERT_IN,

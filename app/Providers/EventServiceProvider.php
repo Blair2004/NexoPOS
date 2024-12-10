@@ -25,12 +25,17 @@ class EventServiceProvider extends ServiceProvider
         $modulesServices = app()->make( ModulesService::class );
 
         $paths = $modulesServices->getEnabledAndAutoloadedModules()->map( function ( $module ) {
-            return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
-        } )
+                return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
+            } )
             ->values()
             ->toArray();
 
         return $paths;
+    }
+
+    public function shouldDiscoverEvents()
+    {
+        return true;
     }
 
     /**
@@ -42,10 +47,5 @@ class EventServiceProvider extends ServiceProvider
     {
         Hook::addFilter( 'ns-dashboard-menus', [ MenusFilter::class, 'injectRegisterMenus' ] );
         Hook::addFilter( 'ns-common-routes', [ app()->make( OrdersService::class ), 'handlePOSRoute' ], 10, 3 );
-    }
-
-    public function shouldDiscoverEvents()
-    {
-        return true;
     }
 }

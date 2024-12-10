@@ -7,8 +7,11 @@
                     v-for="( tab , identifier ) of childrens" 
                     @click="toggle( tab )" 
                     :class="active === tab.identifier ? 'border-b-0 active z-10' : 'border inactive'" 
-                    class="tab rounded-tl rounded-tr border  px-3 py-2 cursor-pointer" 
-                    style="margin-right: -1px">{{ tab.label }}</div>
+                    class="tab rounded-tl rounded-tr border px-2 py-1 cursor-pointer flex items-center" 
+                    style="margin-right: -1px">
+                        <span>{{ tab.label }}</span>
+                        <div v-if="tab.closable" @click="$emit( 'close', tab )" class="ns-inset-button border border-box-edge text-xs hover:border-error-tertiary error rounded-full h-5 w-5 flex items-center justify-center ml-1"><i class="las la-times"></i></div>
+                </div>
             </div>
             <div>
                 <slot name="extra"></slot>
@@ -75,6 +78,7 @@ export default {
                     el: element,
                     active: active && active === identifier ? true : false,
                     identifier,
+                    closable: element.getAttribute( 'closable' ) === 'true' ? true : false,
                     initialized: false,
                     visible,
                     label: element.getAttribute( 'label' ) || __( 'Unamed Tab' )
