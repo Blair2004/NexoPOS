@@ -350,21 +350,24 @@ export default {
          * we might need confirmation before proceeding.
          */
         removeUnitPriceGroup( group, groups ) {
-            const hasIdField    =   group.fields.filter( field => field.name === 'id' && field.value !== undefined );
-                Popup.show( nsPosConfirmPopupVue, {
-                    title: __( 'Confirm Your Action' ),
-                    message: __( 'Would you like to delete this group ?' ),
-                    onAction: ( action ) => {
-                        if ( action ) {
-                            if ( hasIdField.length > 0 ) {
-                                this.confirmUnitQuantityDeletion({ group, groups });
-                            } else {
-                                const index     =   groups.indexOf( group );
-                                groups.splice( index, 1 );
-                            }
+            const hasIdField    =   group.fields.filter( field => {
+                return field.name === 'id' && ! [ '', undefined, null ].includes( field.value )
+            });
+
+            Popup.show( nsPosConfirmPopupVue, {
+                title: __( 'Confirm Your Action' ),
+                message: __( 'Would you like to delete this group ?' ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        if ( hasIdField.length > 0 ) {
+                            this.confirmUnitQuantityDeletion({ group, groups });
+                        } else {
+                            const index     =   groups.indexOf( group );
+                            groups.splice( index, 1 );
                         }
                     }
-                });
+                }
+            });
         },
 
         confirmUnitQuantityDeletion({ group, groups }) {

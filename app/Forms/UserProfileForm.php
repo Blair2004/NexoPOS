@@ -10,6 +10,7 @@ use App\Models\UserAttribute;
 use App\Services\CustomerService;
 use App\Services\SettingsPage;
 use App\Services\UserOptions;
+use Illuminate\Http\JsonResponse as HttpJsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -45,7 +46,12 @@ class UserProfileForm extends SettingsPage
         $results[] = $this->processOptions( $request );
         $results[] = $this->processAddresses( $request );
         $results[] = $this->processAttribute( $request );
-        $results = collect( $results )->filter( fn( $result ) => ! empty( $result ) )->values();
+        $results = collect( $results )->filter( fn( $result ) => ! empty( $result ) )->values()->map( function( $result ) {
+            if ( $result instanceof HttpJsonResponse ) {
+                return $result->getData();
+            }
+            return $result;
+        });
 
         return JsonResponse::success(
             data: compact( 'results', 'validator' ),
