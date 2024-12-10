@@ -1227,21 +1227,23 @@ class CrudService
             $replacementSubmitUrl = isset( $instance->getLinks()['post'] ) ? $instance->getLinks()['post'] : null;
         }
 
+        $labels     =   Hook::filter( get_class( $instance ) . '@getLabels', $instance->getLabels() );
+
         return array_merge( [
             /**
              * We'll provide the form configuration
              */
-            'form' => $instance->getForm( $entry ),
+            'form' => Hook::filter( get_class( $instance ) . '@getForm', $instance->getForm( $entry ) ),
 
             /**
              * We'll now provide the labels
              */
-            'labels' => $instance->getLabels(),
+            'labels' => Hook::filter( get_class( $instance ) . '@getLabels', $instance->getLabels() ),
 
             /**
              * this list all the usable lnks on the resource
              */
-            'links' => $instance->getLinks(),
+            'links' => Hook::filter( get_class( $instance ) . '@getLinks', $instance->getLinks() ),
 
             /**
              * By default the method used is "post" but might change to "put" according to
@@ -1258,7 +1260,7 @@ class CrudService
              * We'll return here the select attribute that will
              * be used to automatically popuplate "options" entry of select and search-select field
              */
-            'optionAttributes' => $instance->getOptionAttributes(),
+            'optionAttributes' => Hook::filter( get_class( $instance ) . '@getOptionAttributes', $instance->getOptionAttributes() ),
 
             /**
              * to provide custom query params
@@ -1275,13 +1277,13 @@ class CrudService
              * this pull the title either
              * the form is made to create or edit a resource.
              */
-            'title' => $config['title'] ?? ( $entry === null ? $instance->getLabels()['create_title'] : $instance->getLabels()['edit_title'] ),
+            'title' => $config['title'] ?? ( $entry === null ? $labels['create_title'] : $labels['edit_title'] ),
 
             /**
              * this pull the description either the form is made to
              * create or edit a resource.
              */
-            'description' => $config['description'] ?? ( $entry === null ? $instance->getLabels()['create_description'] : $instance->getLabels()['edit_description'] ),
+            'description' => $config['description'] ?? ( $entry === null ? $labels['create_description'] : $labels['edit_description'] ),
 
             /**
              * this automatically build a source URL based on the identifier

@@ -1035,21 +1035,17 @@ class ProcurementService
                  * We'll pull the last purchase
                  * price for the item retreived
                  */
-                $product->unit_quantities->each( function ( $unitQuantity ) {
-                    $lastPurchase = ProcurementProduct::where( 'product_id', $unitQuantity->product_id )
-                        ->where( 'unit_id', $unitQuantity->unit_id )
-                        ->orderBy( 'updated_at', 'desc' )
-                        ->first();
+                $product->unit_quantities->each( function ( $unitQuantity ) use ( $product ) {
+                    $unitQuantity->load( 'unit' );
 
                     /**
                      * just in case it's not a valid instance
                      * we'll provide a default value "0"
                      */
-                    $unitQuantity->last_purchase_price = 0;
-
-                    if ( $lastPurchase instanceof ProcurementProduct ) {
-                        $unitQuantity->last_purchase_price = $lastPurchase->purchase_price;
-                    }
+                    $unitQuantity->last_purchase_price = $this->productService->getLastPurchasePrice( 
+                        product: $product,
+                        unit: $unitQuantity->unit
+                    );
                 } );
 
                 return $product;

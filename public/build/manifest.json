@@ -253,7 +253,7 @@
     "isEntry": true
   },
   "resources/ts/app.ts": {
-    "file": "assets/app-DYMNAfX_.js",
+    "file": "assets/app-C-2qcGje.js",
     "name": "app",
     "src": "resources/ts/app.ts",
     "isEntry": true,
@@ -668,7 +668,7 @@
     ]
   },
   "resources/ts/pages/dashboard/procurements/manage-products.vue": {
-    "file": "assets/manage-products-DyyDnj-W.js",
+    "file": "assets/manage-products-MKDgFu0c.js",
     "name": "manage-products",
     "src": "resources/ts/pages/dashboard/procurements/manage-products.vue",
     "isDynamicEntry": true,
@@ -690,7 +690,7 @@
     "isDynamicEntry": true
   },
   "resources/ts/pages/dashboard/procurements/ns-procurement.vue": {
-    "file": "assets/ns-procurement-BJrnkt2W.js",
+    "file": "assets/ns-procurement-Chiw87JW.js",
     "name": "ns-procurement",
     "src": "resources/ts/pages/dashboard/procurements/ns-procurement.vue",
     "isDynamicEntry": true,
