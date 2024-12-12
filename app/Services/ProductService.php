@@ -1287,7 +1287,7 @@ class ProductService
              */
             $oldQuantity = $this->getQuantity( $subItem->product_id, $subItem->unit_id );
 
-            if ( in_array( $action, ProductHistory::STOCK_REDUCE ) ) {
+            if ( in_array( $action, $this->getReduceActions() ) ) {
                 $this->preventNegativity(
                     oldQuantity: $oldQuantity,
                     quantity: $finalQuantity
@@ -1304,7 +1304,7 @@ class ProductService
                     quantity: $finalQuantity,
                     oldQuantity: $oldQuantity
                 );
-            } elseif ( in_array( $action, ProductHistory::STOCK_INCREASE ) ) {
+            } elseif ( in_array( $action, $this->getIncreaseActions() ) ) {
                 /**
                  * @var string status
                  * @var string message
@@ -1402,8 +1402,8 @@ class ProductService
          */
         $oldQuantity = $this->getQuantity( $product_id, $unit_id );
 
-        if ( in_array( $action, ProductHistory::STOCK_REDUCE ) || in_array( $action, ProductHistory::STOCK_INCREASE ) ) {
-            if ( in_array( $action, ProductHistory::STOCK_REDUCE ) ) {
+        if ( in_array( $action, $this->getReduceActions() ) || in_array( $action, $this->getIncreaseActions() ) ) {
+            if ( in_array( $action, $this->getReduceActions() ) ) {
                 $this->preventNegativity(
                     oldQuantity: $oldQuantity,
                     quantity: $quantity
@@ -1424,7 +1424,7 @@ class ProductService
                 if ( $procurementProduct instanceof ProcurementProduct ) {
                     $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
                 }
-            } elseif ( in_array( $action, ProductHistory::STOCK_INCREASE ) ) {
+            } elseif ( in_array( $action, $this->getIncreaseActions() ) ) {
                 /**
                  * @var string status
                  * @var string message
@@ -2207,5 +2207,15 @@ class ProductService
             'status' => 'success',
             'message' => __( 'The product has been deleted.' ),
         ];
+    }
+
+    public function getReduceActions()
+    {
+        return Hook::filter( 'ns-products-decrease-actions', ProductHistory::STOCK_REDUCE );
+    }
+
+    public function getIncreaseActions()
+    {
+        return Hook::filter( 'ns-products-increase-actions', ProductHistory::STOCK_INCREASE );
     }
 }
