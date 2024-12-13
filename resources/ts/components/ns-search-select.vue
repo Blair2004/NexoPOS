@@ -103,7 +103,6 @@ export default {
         }
     },
     mounted() {
-        console.log( this );
         const options   =   this.field.options.filter( op => op.value === this.field.value );
 
         if ( options.length > 0 && [ null, undefined ].includes( this.field.value ) ) {

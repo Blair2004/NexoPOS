@@ -1194,26 +1194,10 @@ class ProductService
          * actions which are allowed on the current request
          */
         if ( ! in_array( $action, [
-            ProductHistory::ACTION_DEFECTIVE,
-            ProductHistory::ACTION_DELETED,
-            ProductHistory::ACTION_STOCKED,
-            ProductHistory::ACTION_REMOVED,
-            ProductHistory::ACTION_ADDED,
-            ProductHistory::ACTION_RETURNED,
-            ProductHistory::ACTION_SOLD,
-            ProductHistory::ACTION_TRANSFER_IN,
-            ProductHistory::ACTION_TRANSFER_REJECTED,
-            ProductHistory::ACTION_TRANSFER_CANCELED,
-            ProductHistory::ACTION_TRANSFER_OUT,
-            ProductHistory::ACTION_LOST,
-            ProductHistory::ACTION_VOID_RETURN,
-            ProductHistory::ACTION_ADJUSTMENT_RETURN,
-            ProductHistory::ACTION_ADJUSTMENT_SALE,
-            ProductHistory::ACTION_CONVERT_IN,
-            ProductHistory::ACTION_CONVERT_OUT,
-            ProductHistory::ACTION_SET,
+            ...$this->getIncreaseActions(),
+            ...$this->getReduceActions(),
         ] ) ) {
-            throw new NotAllowedException( __( 'The action is not an allowed operation.' ) );
+            throw new NotAllowedException( sprintf( __( 'The "%s" action is not an allowed operation.' ), $action ) );
         }
 
         /**

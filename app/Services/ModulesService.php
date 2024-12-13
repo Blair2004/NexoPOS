@@ -835,12 +835,6 @@ class ModulesService
             Cache::forget( self::CACHE_MIGRATION_LABEL . $moduleNamespace );
 
             /**
-             * create a symlink directory
-             * only if the module has that folder
-             */
-            $this->createSymLink( $moduleNamespace );
-
-            /**
              * We needs to load all modules, to ensure
              * the new uploaded module is recognized
              */
@@ -851,6 +845,13 @@ class ModulesService
              * check if the module has a migration
              */
             $this->runAllMigration( $moduleNamespace );
+
+            /**
+             * @step 4: set right file permissions
+             * to the uploaded module and set symlink
+             */
+            $this->setFilePermissions( $module );
+            $this->createSymLink( $moduleNamespace );
 
             $module = $this->get( $moduleNamespace );
 
@@ -871,6 +872,17 @@ class ModulesService
                 'message' => __( 'The uploaded file is not a valid module.' ),
             ];
         }
+    }
+
+    public function setFilePermissions( array $module )
+    {
+        $modulePath = base_path('modules') . DIRECTORY_SEPARATOR . $module['namespace'];
+
+        // Apply 755 permissions to directories
+        exec("find $modulePath -type d -exec chmod 755 {} +");
+
+        // Apply 644 permissions to files
+        exec("find $modulePath -type f -exec chmod 644 {} +");
     }
 
     /**
