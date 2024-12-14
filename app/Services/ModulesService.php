@@ -718,7 +718,6 @@ class ModulesService
 
         $path = $file->store( '', [ 'disk' => 'ns-modules-temp' ] );
 
-        $fileInfo = pathinfo( $file->getClientOriginalName() );
         $fullPath = Storage::disk( 'ns-modules-temp' )->path( $path );
         $extractionFolderName = Str::uuid();
         $dir = dirname( $fullPath );
