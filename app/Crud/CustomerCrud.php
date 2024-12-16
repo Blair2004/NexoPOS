@@ -579,12 +579,6 @@ class CustomerCrud extends CrudService
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity = $this->model::find( $id );
                 if ( $entity instanceof Customer ) {
-                    /**
-                     * We want to check if we're allowed to delete
-                     * the selected customer by checking his dependencies.
-                     */
-                    $this->handleDependencyForDeletion( $entity );
-
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
