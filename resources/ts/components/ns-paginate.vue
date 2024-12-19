@@ -26,6 +26,7 @@ export default {
     },
     mounted(){
         this.path   =   this.pagination.path;
+        this.page   =   this.pagination.current_page;
     },
     computed: {
         getPagination() {
