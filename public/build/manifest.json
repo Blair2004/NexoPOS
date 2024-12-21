@@ -634,7 +634,7 @@
     ]
   },
   "resources/ts/pages/dashboard/pos/ns-pos-grid.vue": {
-    "file": "assets/ns-pos-grid-BNXFla5p.js",
+    "file": "assets/ns-pos-grid-IcXsB3n5.js",
     "name": "ns-pos-grid",
     "src": "resources/ts/pages/dashboard/pos/ns-pos-grid.vue",
     "isDynamicEntry": true,
@@ -649,7 +649,7 @@
     ]
   },
   "resources/ts/pages/dashboard/pos/ns-pos.vue": {
-    "file": "assets/ns-pos-CwWhmx6-.js",
+    "file": "assets/ns-pos-cVewg152.js",
     "name": "ns-pos",
     "src": "resources/ts/pages/dashboard/pos/ns-pos.vue",
     "isDynamicEntry": true,
@@ -1048,7 +1048,7 @@
     ]
   },
   "resources/ts/pos.ts": {
-    "file": "assets/pos-Cpct0pNm.js",
+    "file": "assets/pos-BbZ5DC-n.js",
     "name": "pos",
     "src": "resources/ts/pos.ts",
     "isEntry": true,
