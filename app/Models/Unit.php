@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Classes\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -23,14 +24,21 @@ class Unit extends NsModel
         'base_unit' => 'boolean',
     ];
 
-    protected $isDependencyFor = [
-        ProductUnitQuantity::class => [
-            'local_name' => 'name',
-            'local_index' => 'id',
-            'foreign_name' => [ Product::class, 'product_id', 'id', 'name' ],
-            'foreign_index' => 'unit_id',
-        ],
-    ];
+    public function setDepedencies()
+    {
+        return [
+            ProductUnitQuantity::class  =>  Model::dependant(
+                local_name: 'name',
+                local_index: 'id',
+                foreign_index: 'unit_id',
+                related: Model::related(
+                    model: Product::class,
+                    foreign_index: 'product_id',
+                    local_name: 'name',
+                )
+            )
+        ];
+    }
 
     protected $guarded = [];
 

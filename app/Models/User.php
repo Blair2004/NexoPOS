@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Classes\Model;
 use App\Services\UserOptions;
 use App\Traits\NsDependable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,20 +47,23 @@ class User extends Authenticatable
 
     public $user_id;
 
-    protected $isDependencyFor = [
-        Product::class => [
-            'local_name' => 'username',
-            'local_index' => 'id',
-            'foreign_name' => 'name',
-            'foreign_index' => 'author',
-        ],
-        Order::class => [
-            'local_name' => 'username',
-            'local_index' => 'id',
-            'foreign_name' => 'code',
-            'foreign_index' => 'author',
-        ],
-    ];
+    public function setDependencies()
+    {
+        return [
+            Product::class => Model::dependant(
+                local_name: 'username',
+                local_index: 'id',
+                foreign_name: 'name',
+                foreign_index: 'author',
+            ),
+            Order::class => Model::dependant(
+                local_name: 'username',
+                local_index: 'id',
+                foreign_name: 'code',
+                foreign_index: 'author',
+            ),
+        ];
+    }
 
     /**
      * The attributes that are mass assignable.

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Classes\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int            $id
@@ -21,20 +21,22 @@ class ProductCategory extends NsModel
 
     protected $table = 'nexopos_' . 'products_categories';
 
-    protected $isDependencyFor = [
-        Product::class => [
-            'local_index' => 'id',
-            'local_name' => 'name',
-            'foreign_index' => 'category_id',
-            'foreign_name' => 'name',
-        ],
-        self::class => [
-            'local_index' => 'id',
-            'local_name' => 'name',
-            'foreign_index' => 'parent_id',
-            'foreign_name' => 'name',
-        ],
-    ];
+    public function setDependencies() {
+        return [
+            Product::class => Model::dependant(
+                local_name: 'name',
+                local_index: 'id',
+                foreign_name: 'name',
+                foreign_index: 'category_id',
+            ),
+            self::class => Model::dependant(
+                local_name: 'name',
+                local_index: 'id',
+                foreign_name: 'name',
+                foreign_index: 'parent_id',
+            ),
+        ];
+    }
 
     public function scopeDisplayOnPOS( $query, $attribute = true )
     {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Classes\Model;
 use App\Traits\NsDependable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -21,14 +22,17 @@ class Provider extends NsModel
 
     protected $guarded = [];
 
-    protected $isDependencyFor = [
-        Procurement::class => [
-            'local_name' => 'name',
-            'local_index' => 'id',
-            'foreign_name' => 'code',
-            'foreign_index' => 'provider_id',
-        ],
-    ];
+    public function setDependencies()
+    {
+        return [
+            Procurement::class => Model::dependant(
+                local_name: 'name',
+                local_index: 'id',
+                foreign_name: 'code',
+                foreign_index: 'provider_id',
+            ),
+        ];
+    }
 
     public function procurements()
     {

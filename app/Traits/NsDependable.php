@@ -7,11 +7,6 @@ use App\Exceptions\NotAllowedException;
 
 trait NsDependable
 {
-    public function getDeclaredDependencies()
-    {
-        return $this->isDependencyFor;
-    }
-
     /**
      * We'll provide a custom method to ensure
      * we can safely check for dependencies.
@@ -22,7 +17,11 @@ trait NsDependable
          * Let's verify if the current model
          * is a dependency for other models.
          */
-        $declaredDependencies = Hook::filter( self::class . '@' . 'getDeclaredDependencies', $this->getDeclaredDependencies() );
+        if ( method_exists( $this, 'setDependencies' ) ) {
+            $declaredDependencies = Hook::filter( self::class . '@' . 'setDependencies', $this->setDependencies() );
+        } else {
+            $declaredDependencies = [];
+        }
 
         foreach ( $declaredDependencies as $class => $indexes ) {
             $localIndex = $indexes['local_index'] ?? 'id';
@@ -31,23 +30,33 @@ trait NsDependable
             $countDependency = $request->count() - 1;
 
             if ( $dependencyFound instanceof $class ) {
-                if ( isset( $model->{$indexes['local_name']} ) && ! empty( $indexes['foreign_name'] ) ) {
-                    /**
-                     * if the foreign name is an array
-                     * we'll pull the first model set as linked
-                     * to the item being deleted.
-                     */
-                    if ( is_array( $indexes['foreign_name'] ) ) {
-                        $relatedSubModel = $indexes['foreign_name'][0]; // model name
-                        $localIndex = $indexes['foreign_name'][1]; // local index on the dependency table $dependencyFound
-                        $foreignIndex = $indexes['foreign_name'][2] ?? 'id'; // foreign index on the related table $model
-                        $labelColumn = $indexes['foreign_name'][3] ?? 'name'; // foreign index on the related table $model
+                if ( isset( $this->{$indexes['local_name']} ) ) {
+                    if ( ! empty( $indexes['foreign_name'] ) ) {
+                        $foreignName = $dependencyFound->{$indexes['foreign_name']} ?? __( 'Undefined Item' );
+
+                        /**
+                         * The local name will always pull from
+                         * the related model table.
+                         */
+                        $localName = $this->{$indexes['local_name']};
+                    } else if ( ! empty( $indexes[ 'related' ] ) && is_array( $indexes[ 'related' ] ) ) {
+                        /**
+                         * if the foreign name is an array
+                         * we'll pull the first model set as linked
+                         * to the item being deleted.
+                         */
+                        $relatedSubModel = $indexes['related'][ 'model' ]; // model name
+                        $localIndex = $indexes['related'][ 'local_index' ]; // local index on the dependency table $dependencyFound
+                        $foreignIndex = $indexes['related'][ 'foreign_index' ] ?? 'id'; // foreign index on the related table $model
+                        $labelColumn = $indexes['related'][ 'foreign_name' ] ?? 'name'; // foreign index on the related table $model
+                        $prefix     =   $indexes['related'][ 'prefix' ] ?? null;
+                        $localName  =   $this->{$indexes['local_name']};
 
                         /**
                          * we'll find if we find the model
                          * for the provided details.
                          */
-                        $result = $relatedSubModel::where( $foreignIndex, $dependencyFound->$localIndex )->first();
+                        $result = $relatedSubModel::where( $localIndex, $dependencyFound->$foreignIndex )->first();
 
                         /**
                          * the model might exists. If that doesn't exists
@@ -55,19 +64,15 @@ trait NsDependable
                          * on the relation.
                          */
                         if ( $result instanceof $relatedSubModel ) {
-                            $foreignName = $result->$labelColumn ?? __( 'Unidentified Item' );
+                            if ( is_callable( $prefix ) ) {
+                                $foreignName = $prefix( $result->$labelColumn );
+                            } else {
+                                $foreignName = $result->$labelColumn ?? __( 'Undefined Item' );
+                            }
                         } else {
                             $foreignName = $result->$labelColumn ?? __( 'Non-existent Item' );
                         }
-                    } else {
-                        $foreignName = $dependencyFound->{$indexes['foreign_name']} ?? __( 'Unidentified Item' );
                     }
-
-                    /**
-                     * The local name will always pull from
-                     * the related model table.
-                     */
-                    $localName = $model->{$indexes['local_name']};
 
                     throw new NotAllowedException( sprintf(
                         __( 'Unable to delete "%s" as it\'s a dependency for "%s"%s' ),
@@ -75,16 +80,22 @@ trait NsDependable
                         $foreignName,
                         $countDependency >= 1 ? ' ' . trans_choice( '{1} and :count more item.|[2,*] and :count more items.', $countDependency, ['count' => $countDependency] ) : '.'
                     ) );
+
                 } else {
                     throw new NotAllowedException( sprintf(
-                        $countDependency === 1 ?
+                        (
+                            $countDependency === 1 ?
                             __( 'Unable to delete this resource as it has %s dependency with %s item.' ) :
-                            __( 'Unable to delete this resource as it has %s dependency with %s items.' ),
-                        $class
+                            __( 'Unable to delete this resource as it has %s dependencies with %s items.' )
+                        ),
+                        $class,
+                        $countDependency
                     ) );
                 }
             }
         }
+
+        exit;
 
         /**
          * If everything went go from here, we can

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Classes\Model as ClassesModel;
 use App\Events\CustomerModelBootedEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,14 +32,16 @@ class Customer extends UserScope
 
     protected $table = 'nexopos_' . 'users';
 
-    protected $isDependencyFor = [
-        Order::class => [
-            'local_name' => 'name',
-            'local_index' => 'id',
-            'foreign_name' => 'code',
-            'foreign_index' => 'customer_id',
-        ],
-    ];
+    public function setDependencies() {
+        return [
+            Order::class => ClassesModel::dependant(
+                local_name: 'name',
+                local_index: 'id',
+                foreign_name: 'code',
+                foreign_index: 'customer_id',
+            )
+        ];
+    } 
 
     protected static function booted()
     {
