@@ -21,7 +21,7 @@ class SettingsPage
      */
     public function getForm(): array
     {
-        return collect( $this->form )->mapWithKeys( function ( $tab, $key ) {
+        $form   =   collect( $this->form )->mapWithKeys( function ( $tab, $key ) {
             if ( $key === 'tabs' ) {
                 return [
                     $key => collect( $tab )->filter( function ( $tab ) {
@@ -46,6 +46,8 @@ class SettingsPage
 
             return [ $key => $tab ];
         } )->toArray();
+
+        return Hook::filter( self::method( 'getForm' ), $form );
     }
 
     public function getIdentifier()

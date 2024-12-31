@@ -95,8 +95,6 @@ trait NsDependable
             }
         }
 
-        exit;
-
         /**
          * If everything went go from here, we can
          * safely delete the model

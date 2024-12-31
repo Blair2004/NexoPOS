@@ -89,10 +89,15 @@ class ResetService
         }
 
         /**
+         * @var CustomerService $customerService
+         */
+        $customerService    =   app()->make( CustomerService::class );
+
+        /**
          * Customers stills needs to be cleared
          * so we'll remove them manually.
          */
-        Customer::get()->each( fn( $customer ) => app()->make( CustomerService::class )->delete( $customer ) );
+        Customer::get()->each( fn( $customer ) => $customerService->delete( $customer ) );
 
         /**
          * We'll delete all options where key starts with "ns_"
