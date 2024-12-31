@@ -416,7 +416,7 @@ class ProcurementService
                 throw new Exception( sprintf( __( 'Unable to procure the product "%s" as the stock management is disabled.' ), $product->name ) );
             }
 
-            if ( $product->product_type === 'grouped' ) {
+            if ( $product->type === 'grouped' ) {
                 throw new Exception( sprintf( __( 'Unable to procure the product "%s" as it is a grouped product.' ), $product->name ) );
             }
 

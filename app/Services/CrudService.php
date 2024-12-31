@@ -312,23 +312,20 @@ class CrudService
 
             foreach ( $inputs as $name => $value ) {
                 /**
-                 * If the fields where explicitly added
-                 * on field that must be ignored we should skip that.
+                 * If the field where explicitly added
+                 * on fields that must be ignored we should skip that.
                  */
                 if ( ! in_array( $name, $resource->skippable ) ) {
                     /**
                      * If submitted field are part of fillable fields
                      */
                     if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
+
                         /**
-                         * We might give the capacity to filter fields
-                         * before storing. This can be used to apply specific formating to the field.
+                         * We might need to purify value
+                         * before storing it.
                          */
-                        if ( method_exists( $resource, 'filterPostInput' ) || method_exists( $resource, 'filterPutInput' ) ) {
-                            $entry->$name = $isEditing ? $resource->filterPutInput( $value, $name ) : $resource->filterPostInput( $value, $name );
-                        } else {
-                            $entry->$name = $value;
-                        }
+                        $entry->$name = $value;
 
                         /**
                          * sanitizing input to remove
@@ -345,8 +342,6 @@ class CrudService
              * If fillable is empty or if "author" it's explicitly
              * mentionned on the fillable array.
              */
-            $columns = array_keys( $this->getColumns() );
-
             if ( empty( $fillable ) || (
                 in_array( 'author', $fillable )
             ) ) {

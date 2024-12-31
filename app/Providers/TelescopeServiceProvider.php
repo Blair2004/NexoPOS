@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Role;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
@@ -57,7 +58,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     {
         Gate::define( 'viewTelescope', function ( $user ) {
             return in_array( $user->email, [
-                //
+                Role::namespace( Role::ADMIN )
+                    ->users()
+                    ->get( 'email' )
+                    ->toArray()
             ] );
         } );
     }

@@ -259,8 +259,21 @@ class ProductService
             ) );
         }
 
+        if ( empty( $data[ 'barcode_type' ] ) ) {
+            $data[ 'barcode_type' ] = 'ean8';
+        }
+
         if ( empty( $data[ 'barcode' ] ) ) {
             $data[ 'barcode' ] = $this->barcodeService->generateRandomBarcode( $data[ 'barcode_type' ] );
+        }
+
+        /**
+         * We'll generate an SKU automatically
+         * if it's not provided by the form.
+         */
+        if ( empty( $data[ 'sku' ] ) ) {
+            $category = ProductCategory::find( $data[ 'category_id' ] );
+            $data[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $data[ 'name' ] ) . '--' . Str::random( 5 );
         }
 
         /**
@@ -272,15 +285,6 @@ class ProductService
                 __( 'The provided SKU "%s" is already in use.' ),
                 $data[ 'sku' ]
             ) );
-        }
-
-        /**
-         * We'll generate an SKU automatically
-         * if it's not provided by the form.
-         */
-        if ( empty( $data[ 'sku' ] ) ) {
-            $category = ProductCategory::find( $data[ 'category_id' ] );
-            $data[ 'sku' ] = Str::slug( $category->name ) . '--' . Str::slug( $data[ 'name' ] ) . '--' . Str::random( 5 );
         }
 
         $product = new Product;

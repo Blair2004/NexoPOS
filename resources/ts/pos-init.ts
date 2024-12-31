@@ -368,7 +368,7 @@ export class POS {
          */
         window.onbeforeunload   =   () => {
             if ( this.products.getValue().length > 0 ) {
-                return __( 'Some products has been added to the cart. Would youl ike to discard this order ?' );
+                return __( 'Some products has been added to the cart. Would you like to discard this order ?' );
             }
         }
     }
