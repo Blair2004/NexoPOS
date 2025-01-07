@@ -28,7 +28,31 @@ export default {
                     window.removeEventListener( 'beforeunload', this.addAccidentalCloseListener );
                 }
             }
-        })
+        });
+
+
+        /**
+         * We'll check if the URL has a preload query string
+         * that indicate the interface to load specific products
+         */
+        const urlParams = new URLSearchParams(window.location.search);
+        const preload   = urlParams.get('preload');
+
+        if ( preload ) {
+            nsHttpClient.get( `/api/procurements/preload/${preload}` )
+                .subscribe({
+                    next: (result: any) => {
+                        if ( result.items !== undefined ) {
+                            result.items.forEach( product => {
+                                this.addProductList( product );
+                            });
+                        }
+                    },
+                    error: error => {
+                        nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) ).subscribe();
+                    }
+                })
+        }
     },
     computed: {
         activeTab() {
@@ -417,23 +441,34 @@ export default {
                     .subscribe();
             }
 
-            product.procurement                             =   new Object;
-            product.procurement.gross_purchase_price        =   0;
-            product.procurement.purchase_price_edit         =   0;
-            product.procurement.tax_value                   =   0;
-            product.procurement.net_purchase_price          =   0;
-            product.procurement.purchase_price              =   0;
-            product.procurement.total_price                 =   0;
-            product.procurement.total_purchase_price        =   0;
-            product.procurement.quantity                    =   1;
-            product.procurement.expiration_date             =   null;
-            product.procurement.tax_group_id                =   product.tax_group_id;
-            product.procurement.tax_type                    =   product.tax_type || 'inclusive';
-            product.procurement.unit_id                     =   product.unit_quantities[0].unit_id;
-            product.procurement.product_id                  =   product.id;
-            product.procurement.convert_unit_id             =   product.unit_quantities[0].convert_unit_id;
-            product.procurement.procurement_id              =   null;
-            product.procurement.$invalid                    =   false;
+            /**
+             * if the procurement object is not created we'll create it.
+             * when it's already provided, probably we have some default values provided.
+             */
+            if ( product.procurement === undefined ) {
+                product.procurement = {};
+            }
+
+            const defaultValues     =   {
+                gross_purchase_price: 0,
+                purchase_price_edit: 0,
+                tax_value: 0,
+                net_purchase_price: 0,
+                purchase_price: 0,
+                total_price: 0,
+                total_purchase_price: 0,
+                quantity: 1,
+                expiration_date: null,
+                tax_group_id: product.tax_group_id,
+                tax_type: product.tax_type || 'inclusive',
+                unit_id: product.unit_quantities[0].unit_id,
+                product_id: product.id,
+                convert_unit_id: product.unit_quantities[0].convert_unit_id,
+                procurement_id: null,
+                $invalid: false,
+            }
+            
+            product.procurement     =   Object.assign( defaultValues, product.procurement );
 
             this.searchResult           =   [];
             this.searchValue            =   '';
@@ -744,8 +779,13 @@ export default {
                 <div class="px-4 w-full">
                     <div id="tabbed-card" class="ns-tab">
                         <div id="card-header" class="flex flex-wrap">
-                            <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg text-primary">
+                            <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg flex rounded-tr-lg text-primary">
                                 {{ tab.label }}
+                                <template v-if="tab.identifier === 'products'">
+                                    <div class="ml-2 rounded-full bg-info-tertiary text-primary h-6 min-w-6 flex items-center justify-center">
+                                        {{ form.products.length }}
+                                    </div>
+                                </template>
                             </div>
                         </div>
                         <div class="ns-tab-item" v-if="activeTab.identifier === 'details'">

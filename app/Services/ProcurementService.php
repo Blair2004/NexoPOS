@@ -13,6 +13,7 @@ use App\Events\ProcurementBeforeDeleteProductEvent;
 use App\Events\ProcurementBeforeHandledEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
 use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
 use App\Models\Procurement;
 use App\Models\ProcurementProduct;
 use App\Models\Product;
@@ -25,6 +26,8 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use stdClass;
 
 class ProcurementService
 {
@@ -1004,7 +1007,7 @@ class ProcurementService
         }
     }
 
-    public function searchProduct( $argument, $limit = 10 )
+    public function searchQuery()
     {
         return Product::query()
             ->whereIn( 'type', Hook::filter( 'ns-procurement-searchable-product-type', [
@@ -1012,44 +1015,54 @@ class ProcurementService
                 Product::TYPE_MATERIALIZED,
             ]) )
             ->notGrouped()
+            ->withStockEnabled()
+            ->with( 'unit_quantities.unit' );
+    }
+
+    public function searchProduct( $argument, $limit = 10 )
+    {
+        return $this->searchQuery()
+            ->limit( $limit )
             ->where( function ( $query ) use ( $argument ) {
                 $query->orWhere( 'name', 'LIKE', "%{$argument}%" )
                     ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
                     ->orWhere( 'barcode', 'LIKE', "%{$argument}%" );
             } )
-            ->withStockEnabled()
-            ->with( 'unit_quantities.unit' )
-            ->limit( $limit )
             ->get()
             ->map( function ( $product ) {
-                $units = json_decode( $product->purchase_unit_ids );
-
-                if ( $units ) {
-                    $product->purchase_units = collect();
-                    collect( $units )->each( function ( $unitID ) use ( &$product ) {
-                        $product->purchase_units->push( Unit::find( $unitID ) );
-                    } );
-                }
-
-                /**
-                 * We'll pull the last purchase
-                 * price for the item retreived
-                 */
-                $product->unit_quantities->each( function ( $unitQuantity ) use ( $product ) {
-                    $unitQuantity->load( 'unit' );
-
-                    /**
-                     * just in case it's not a valid instance
-                     * we'll provide a default value "0"
-                     */
-                    $unitQuantity->last_purchase_price = $this->productService->getLastPurchasePrice( 
-                        product: $product,
-                        unit: $unitQuantity->unit
-                    );
-                } );
-
-                return $product;
+                return $this->populateLoadedProduct( $product );
             } );
+    }
+
+    public function populateLoadedProduct( $product )
+    {
+        $units = json_decode( $product->purchase_unit_ids );
+
+        if ( $units ) {
+            $product->purchase_units = collect();
+            collect( $units )->each( function ( $unitID ) use ( &$product ) {
+                $product->purchase_units->push( Unit::find( $unitID ) );
+            } );
+        }
+
+        /**
+         * We'll pull the last purchase
+         * price for the item retreived
+         */
+        $product->unit_quantities->each( function ( $unitQuantity ) use ( $product ) {
+            $unitQuantity->load( 'unit' );
+
+            /**
+             * just in case it's not a valid instance
+             * we'll provide a default value "0"
+             */
+            $unitQuantity->last_purchase_price = $this->productService->getLastPurchasePrice( 
+                product: $product,
+                unit: $unitQuantity->unit
+            );
+        } );
+
+        return $product;
     }
 
     public function searchProcurementProduct( $argument )
@@ -1068,10 +1081,59 @@ class ProcurementService
         return $procurementProduct;
     }
 
-    public function handlePaymentStatusChanging( Procurement $procurement, string $previous, string $new )
+    public function preload( string $hash )
     {
-        // if ( $previous === Procurement::PAYMENT_UNPAID && $new === Procurement::PAYMENT_PAID ) {
-        //     $this->transn
-        // }
+        if ( Cache::has( 'procurements-' . $hash ) ) {
+            $data  =   Cache::get( 'procurements-' . $hash );
+            
+            return [
+                'items' =>  collect( $data[ 'items' ] )->map( function( $item ) use ( $data ) {
+                    $query    =   $this->searchQuery()
+                        ->where( 'id', $item[ 'product_id' ] )
+                        ->whereHas( 'unit_quantities', function( $query ) use( $item ) {
+                            $query->where( 'unit_id', $item[ 'unit_id' ] );
+                        } );
+
+                    $product   =   $query->first();
+
+                    if ( $product instanceof Product ) {
+
+                        /**
+                         * This will be helpful to set the desired unit
+                         * and quantity provided on the preload configuration.
+                         */
+                        $product->procurement   =   new stdClass;
+                        $product->procurement->unit_id  =   $item[ 'unit_id' ];
+                        $product->procurement->quantity =   ns()->currency
+                            ->define( $item[ 'quantity' ] )
+                            ->multipliedBy( $data[ 'multiplier' ] )->toFloat();
+
+                        return $this->populateLoadedProduct( $product );
+                    }
+
+                    return false;
+                })->filter()
+            ];
+        }
+        
+        throw new NotFoundException( __( 'Unable to preload products. The hash might have expired or is invalid.' ) );
+    }
+
+    public function storePreload( string $hash, Collection | array $items, $expiration = 86400, $multiplier = 1 )
+    {
+        if ( ! empty( $items ) ) {
+            $data       =   [];
+            $data[ 'multiplier' ]   =   $multiplier;
+            $data[ 'items' ]        =   $items;
+
+            Cache::put( 'procurements-' . $hash, $data, $expiration );
+            
+            return [
+                'status' => 'success',
+                'message' => __( 'The procurement has been saved for later use.' ),
+            ];
+        }
+
+        throw new Exception( __( 'Unable to save the procurement for later use.' ) );
     }
 }

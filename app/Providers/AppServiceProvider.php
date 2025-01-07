@@ -328,5 +328,44 @@ class AppServiceProvider extends ServiceProvider
                 OrderProductRefund::CONDITION_UNSPOILED => __( 'Good Condition' ),
             ],
         ] );
+
+        /**
+         * We cannot set callback function on the configuration file
+         * as using optimize will throw an exception.
+         */
+        config([
+            'accounting.accounts' =>  [
+                'assets' => [
+                    'increase' => 'debit',
+                    'decrease' => 'credit',
+                    'label' => __( 'Assets' ),
+                    'account' => 1000,
+                ],
+                'liabilities' => [
+                    'increase' => 'credit',
+                    'decrease' => 'debit',
+                    'label' => __( 'Liabilities' ),
+                    'account' => 2000,
+                ],
+                'equity' => [
+                    'increase' => 'credit',
+                    'decrease' => 'debit',
+                    'label' => __( 'Equity' ),
+                    'account' => 3000,
+                ],
+                'revenues' => [
+                    'increase' => 'credit',
+                    'decrease' => 'debit',
+                    'label' => __( 'Revenues' ),
+                    'account' => 4000,
+                ],
+                'expenses' => [
+                    'increase' => 'debit',
+                    'decrease' => 'credit',
+                    'label' => __( 'Expenses' ),
+                    'account' => 5000,
+                ],
+            ]
+        ]); 
     }
 }
