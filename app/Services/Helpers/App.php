@@ -3,6 +3,7 @@
 namespace App\Services\Helpers;
 
 use App\Classes\Hook;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -46,15 +47,64 @@ trait App
         );
     }
 
-    public static function tableHasIndex( $table, $indexName )
+    public static function tableHasIndex($tableName, $indexName)
     {
-        $databaseName = DB::getDatabaseName();
+        $driver = DB::getDriverName();
+        $tableName  =   self::getPrefixedTableName($tableName);
 
-        return DB::table( 'information_schema.statistics' )
-            ->where( 'table_schema', $databaseName )
-            ->where( 'table_name', $table )
-            ->where( 'index_name', $indexName )
-            ->exists();
+        switch ($driver) {
+            case 'mysql':
+                return self::hasIndexMySQL($tableName, $indexName);
+
+            case 'sqlite':
+                return self::hasIndexSQLite($tableName, $indexName);
+
+            case 'pgsql':
+                return self::hasIndexPostgres($tableName, $indexName);
+
+            default:
+                throw new Exception("Unsupported database driver: {$driver}");
+        }
+    }
+
+    public static  function hasIndexMySQL( string $tableName, string $indexName)
+    {
+        $result = DB::select("
+            SHOW INDEX FROM {$tableName} WHERE Key_name = ?
+        ", [$indexName]);
+
+        return !empty($result);
+    }
+
+    public static  function hasIndexSQLite( string $tableName, string $indexName)
+    {
+        $result = DB::select("
+            SELECT name
+            FROM sqlite_master
+            WHERE type = 'index'
+            AND tbl_name = ?
+            AND name = ?
+        ", [$tableName, $indexName]);
+
+        return !empty($result);
+    }
+
+    public static  function hasIndexPostgres( string $tableName, string $indexName)
+    {
+        $result = DB::select("
+            SELECT COUNT(*)
+            FROM pg_indexes
+            WHERE tablename = ?
+            AND indexname = ?
+        ", [$tableName, $indexName]);
+
+        return $result[0]->count > 0;
+    }
+
+    public static function getPrefixedTableName( string $tableName )
+    {
+        $prefix = DB::getTablePrefix();
+        return $prefix . $tableName;
     }
 
     /**
