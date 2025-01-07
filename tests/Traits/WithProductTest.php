@@ -588,7 +588,6 @@ trait WithProductTest
 
         $oldQuantity = $productQuantity->quantity;
         $productQuantity->refresh();
-
         $response->assertStatus( 200 );
 
         $this->assertTrue(

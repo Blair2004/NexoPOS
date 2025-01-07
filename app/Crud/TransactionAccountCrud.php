@@ -152,7 +152,7 @@ class TransactionAccountCrud extends CrudService
     public function getForm( $entry = null )
     {
         $options = collect( config( 'accounting.accounts' ) )->map( fn( $account, $key ) => [
-            'label' => $account[ 'label' ](),
+            'label' => $account[ 'label' ],
             'value' => $key,
         ] )->values();
 

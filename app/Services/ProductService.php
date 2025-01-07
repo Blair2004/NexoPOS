@@ -1200,6 +1200,7 @@ class ProductService
         if ( ! in_array( $action, [
             ...$this->getIncreaseActions(),
             ...$this->getReduceActions(),
+            ProductHistory::ACTION_SET
         ] ) ) {
             throw new NotAllowedException( sprintf( __( 'The "%s" action is not an allowed operation.' ), $action ) );
         }

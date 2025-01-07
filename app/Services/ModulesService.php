@@ -781,7 +781,7 @@ class ModulesService
              * Check if a similar module already exists
              * and if the new module is outdated
              */
-            if ( $module = $this->get( $moduleNamespace ) ) {
+            if ( $existingModule = $this->get( $moduleNamespace ) ) {
                 if ( version_compare( $module[ 'version' ], $moduleVersion, '>=' ) ) {
                     /**
                      * We're dealing with old module
@@ -791,7 +791,7 @@ class ModulesService
                     return [
                         'status' => 'danger',
                         'message' => __( 'Unable to upload this module as it\'s older than the version installed' ),
-                        'module' => $module,
+                        'module' => $existingModule,
                     ];
                 }
 
@@ -845,14 +845,15 @@ class ModulesService
              */
             $this->runAllMigration( $moduleNamespace );
 
+            $this->createSymLink( $moduleNamespace );
+
+            $module = $this->get( $moduleNamespace );
+      
             /**
              * @step 4: set right file permissions
              * to the uploaded module and set symlink
              */
             $this->setFilePermissions( $module );
-            $this->createSymLink( $moduleNamespace );
-
-            $module = $this->get( $moduleNamespace );
 
             $this->clearTemporaryFiles();
 
