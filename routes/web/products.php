@@ -8,7 +8,7 @@ Route::get( '/products', [ ProductsController::class, 'listProducts' ] )->name( 
 Route::get( '/products/create', [ ProductsController::class, 'createProduct' ] )->name( ns()->routeName( 'ns.dashboard.products.create' ) );
 Route::get( '/products/stock-adjustment', [ ProductsController::class, 'showStockAdjustment' ] )->name( ns()->routeName( 'ns.dashboard.products.stock-adjustment' ) );
 Route::get( '/products/print-labels', [ ProductsController::class, 'printLabels' ] )->name( ns()->routeName( 'ns.dashboard.products.print-labels' ) );
-Route::get( '/products/edit/{product}', [ ProductsController::class, 'editProduct' ] )->name( ns()->routeName( 'ns.products-edit' ) ); // @todo update
+Route::get( '/products/edit/{product}', [ ProductsController::class, 'editProduct' ] )->name( ns()->routeName( 'ns.dashboard.products.edit' ) ); // @todo update
 Route::get( '/products/{product}/units', [ ProductsController::class, 'productUnits' ] )->name( ns()->routeName( 'ns.dashboard.products.units' ) );
 Route::get( '/products/{product}/history', [ ProductsController::class, 'productHistory' ] )->name( ns()->routeName( 'ns.dashboard.products.history' ) );
 Route::get( '/products/categories', [ CategoryController::class, 'listCategories' ] )->name( ns()->routeName( 'ns.dashboard.products.categories' ) );

@@ -172,7 +172,7 @@
 </template>
 <script lang="ts">
 import FormValidation from '~/libraries/form-validation'
-import { nsSnackBar, nsHttpClient } from '~/bootstrap';
+import { nsSnackBar, nsHttpClient, nsHooks } from '~/bootstrap';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';
 import nsProductGroup from './ns-product-group.vue';
@@ -198,12 +198,25 @@ export default {
             form: reactive({}),
             hasLoaded: false,
             hasError: false,
+            isWatching: false,
         }
     },
     watch: {
         form: {
             deep: true,
             handler( value ) {
+                /**
+                 * We would like to avoid this watcher
+                 * to be triggered if any change on that
+                 * occures here. To avoid an infinite loop.
+                 */
+                if ( this.isWatching ) {
+                    return;
+                }
+
+                // We should start watching the form now.
+                this.isWatching = true;
+
                 this.form.variations.forEach( variation => {
                     const identification    =   this.formValidation.extractFields( variation.tabs.identification.fields );
 
@@ -260,6 +273,13 @@ export default {
                         }
                     })
                 });
+
+                nsHooks.doAction( 'ns-products-form-updated', value );
+
+                // we need a 100ms delay before we can watch again.
+                setTimeout( () => {
+                    this.isWatching = false;
+                }, 100);
             }
         }
     },

@@ -326,7 +326,7 @@ class ProductService
             $this->saveSubItems( $product, $fields[ 'groups' ] ?? [] );
         }
 
-        $editUrl = ns()->route( 'ns.products-edit', [ 'product' => $product->id ] );
+        $editUrl = ns()->route( 'ns.dashboard.products.edit', [ 'product' => $product->id ] );
 
         event( new ProductAfterCreatedEvent( $product ) );
 
@@ -497,7 +497,7 @@ class ProductService
             $this->saveSubItems( $product, $fields[ 'groups' ] ?? [] );
         }
 
-        $editUrl = ns()->route( 'ns.products-edit', [ 'product' => $product->id ] );
+        $editUrl = ns()->route( 'ns.dashboard.products.edit', [ 'product' => $product->id ] );
 
         event( new ProductAfterUpdatedEvent( $product ) );
 
