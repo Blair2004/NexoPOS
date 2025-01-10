@@ -1,4 +1,8 @@
 {
+    "git.confirmSync": false,
+    "git.enableCommitSigning": true,
+    "git.path": "/usr/bin/git", // Ensure this points to the correct Git binary
+    "gpg.program": "/usr/bin/gpg", // Ensure this points to the correct GPG binary
     "files.watcherExclude": {
         "**/.git/objects/**": true,
         "**/.git/subtree-cache/**": true,
