@@ -32,16 +32,17 @@ class Customer extends UserScope
 
     protected $table = 'nexopos_' . 'users';
 
-    public function setDependencies() {
+    public function setDependencies()
+    {
         return [
             Order::class => ClassesModel::dependant(
                 local_name: 'name',
                 local_index: 'id',
                 foreign_name: 'code',
                 foreign_index: 'customer_id',
-            )
+            ),
         ];
-    } 
+    }
 
     protected static function booted()
     {

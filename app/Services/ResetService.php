@@ -91,7 +91,7 @@ class ResetService
         /**
          * @var CustomerService $customerService
          */
-        $customerService    =   app()->make( CustomerService::class );
+        $customerService = app()->make( CustomerService::class );
 
         /**
          * Customers stills needs to be cleared

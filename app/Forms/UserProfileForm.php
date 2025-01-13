@@ -46,12 +46,13 @@ class UserProfileForm extends SettingsPage
         $results[] = $this->processOptions( $request );
         $results[] = $this->processAddresses( $request );
         $results[] = $this->processAttribute( $request );
-        $results = collect( $results )->filter( fn( $result ) => ! empty( $result ) )->values()->map( function( $result ) {
+        $results = collect( $results )->filter( fn( $result ) => ! empty( $result ) )->values()->map( function ( $result ) {
             if ( $result instanceof HttpJsonResponse ) {
                 return $result->getData();
             }
+
             return $result;
-        });
+        } );
 
         return JsonResponse::success(
             data: compact( 'results', 'validator' ),

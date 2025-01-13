@@ -46,7 +46,7 @@ class ProcurementProduct extends NsModel
     const STOCK_REDUCE = 'reduce';
 
     protected $fillable = [ 'is_conversion', 'author' ];
- 
+
     protected $dispatchesEvents = [
         'creating' => ProcurementProductBeforeCreateEvent::class,
         'created' => ProcurementProductAfterCreateEvent::class,

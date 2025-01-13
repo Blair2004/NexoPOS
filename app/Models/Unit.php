@@ -27,7 +27,7 @@ class Unit extends NsModel
     public function setDepedencies()
     {
         return [
-            ProductUnitQuantity::class  =>  Model::dependant(
+            ProductUnitQuantity::class => Model::dependant(
                 local_name: 'name',
                 local_index: 'id',
                 foreign_index: 'unit_id',
@@ -36,7 +36,7 @@ class Unit extends NsModel
                     foreign_index: 'product_id',
                     local_name: 'name',
                 )
-            )
+            ),
         ];
     }
 

@@ -757,10 +757,10 @@ class ProductService
                 );
 
                 /**
-                 * if some other fields should be retreived from the $group variable 
+                 * if some other fields should be retreived from the $group variable
                  * we can defined that on the array below
                  */
-                foreach( Hook::filter( 'ns-products-units-quantities-fields-names', [] ) as $field ) {
+                foreach ( Hook::filter( 'ns-products-units-quantities-fields-names', [] ) as $field ) {
                     $unitQuantity->$field = $group[ $field ] ?? null;
                 }
 
@@ -1109,7 +1109,7 @@ class ProductService
             } );
     }
 
-    public function getUnitQuantity( $product_id, $unit_id ): ProductUnitQuantity | null
+    public function getUnitQuantity( $product_id, $unit_id ): ?ProductUnitQuantity
     {
         return ProductUnitQuantity::withProduct( $product_id )
             ->withUnit( $unit_id )
@@ -1200,7 +1200,7 @@ class ProductService
         if ( ! in_array( $action, [
             ...$this->getIncreaseActions(),
             ...$this->getReduceActions(),
-            ProductHistory::ACTION_SET
+            ProductHistory::ACTION_SET,
         ] ) ) {
             throw new NotAllowedException( sprintf( __( 'The "%s" action is not an allowed operation.' ), $action ) );
         }
@@ -1773,12 +1773,12 @@ class ProductService
     public function getLastPurchasePrice( ?Product $product, Unit $unit, ?string $before = null ): float|int
     {
         if ( $product instanceof Product ) {
-            $productHistory     =   ProductHistory::where( 'product_id', $product->id )
+            $productHistory = ProductHistory::where( 'product_id', $product->id )
                 ->where( 'unit_id', $unit->id )
                 ->whereIn( 'operation_type', [
                     ProductHistory::ACTION_STOCKED,
                     ProductHistory::ACTION_CONVERT_IN,
-                ])
+                ] )
                 ->when( $before, fn( $query ) => $query->where( 'created_at', '<', $before ) )
                 ->latest()
                 ->first();

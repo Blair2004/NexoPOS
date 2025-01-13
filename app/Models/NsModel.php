@@ -26,7 +26,7 @@ abstract class NsModel extends NsRootModel
     protected $oldAttributes = [];
 
     /**
-     * Used to create a custom filter name for mutating 
+     * Used to create a custom filter name for mutating
      * certain model methods values.
      */
     protected static function method( string $name )

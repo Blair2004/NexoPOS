@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \Illuminate\Foundation\Configuration\Middleware $middleware
  */

@@ -21,7 +21,8 @@ class ProductCategory extends NsModel
 
     protected $table = 'nexopos_' . 'products_categories';
 
-    public function setDependencies() {
+    public function setDependencies()
+    {
         return [
             Product::class => Model::dependant(
                 local_name: 'name',

@@ -39,7 +39,7 @@ trait NsDependable
                          * the related model table.
                          */
                         $localName = $this->{$indexes['local_name']};
-                    } else if ( ! empty( $indexes[ 'related' ] ) && is_array( $indexes[ 'related' ] ) ) {
+                    } elseif ( ! empty( $indexes[ 'related' ] ) && is_array( $indexes[ 'related' ] ) ) {
                         /**
                          * if the foreign name is an array
                          * we'll pull the first model set as linked
@@ -49,8 +49,8 @@ trait NsDependable
                         $localIndex = $indexes['related'][ 'local_index' ]; // local index on the dependency table $dependencyFound
                         $foreignIndex = $indexes['related'][ 'foreign_index' ] ?? 'id'; // foreign index on the related table $model
                         $labelColumn = $indexes['related'][ 'foreign_name' ] ?? 'name'; // foreign index on the related table $model
-                        $prefix     =   $indexes['related'][ 'prefix' ] ?? null;
-                        $localName  =   $this->{$indexes['local_name']};
+                        $prefix = $indexes['related'][ 'prefix' ] ?? null;
+                        $localName = $this->{$indexes['local_name']};
 
                         /**
                          * we'll find if we find the model

@@ -204,7 +204,7 @@ class ProductCrud extends CrudService
                 errors: [],
                 label: __( 'Sale Price' ),
                 name: 'sale_price_edit',
-                value:  0,
+                value: 0,
                 description: __( 'Define the regular selling price.' ),
                 validation: 'required',
             ),
@@ -212,7 +212,7 @@ class ProductCrud extends CrudService
                 errors: [],
                 label: __( 'Wholesale Price' ),
                 name: 'wholesale_price_edit',
-                value:  0,
+                value: 0,
                 description: __( 'Define the wholesale price.' ),
                 validation: 'required',
             ),
@@ -468,7 +468,7 @@ class ProductCrud extends CrudService
 
                                                     return $field;
                                                 } ),
-                                                'closable'  =>  true,
+                                                'closable' => true,
                                                 'label' => $optionLabel,
                                             ];
                                         } ) : [] ),

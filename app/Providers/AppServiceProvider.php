@@ -333,8 +333,8 @@ class AppServiceProvider extends ServiceProvider
          * We cannot set callback function on the configuration file
          * as using optimize will throw an exception.
          */
-        config([
-            'accounting.accounts' =>  [
+        config( [
+            'accounting.accounts' => [
                 'assets' => [
                     'increase' => 'debit',
                     'decrease' => 'credit',
@@ -365,7 +365,7 @@ class AppServiceProvider extends ServiceProvider
                     'label' => __( 'Expenses' ),
                     'account' => 5000,
                 ],
-            ]
-        ]); 
+            ],
+        ] );
     }
 }

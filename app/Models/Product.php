@@ -93,7 +93,7 @@ class Product extends NsModel
     public function setDependencies()
     {
         return [
-            OrderProduct::class     =>  Model::dependant(
+            OrderProduct::class => Model::dependant(
                 local_name: 'name',
                 local_index: 'id',
                 foreign_index: 'product_id',
@@ -102,7 +102,7 @@ class Product extends NsModel
                     foreign_index: 'product_id',
                     local_name: 'code'
                 )
-            )
+            ),
         ];
     }
 

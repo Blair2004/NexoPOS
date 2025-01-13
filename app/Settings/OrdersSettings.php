@@ -8,6 +8,7 @@ use App\Services\SettingsPage;
 class OrdersSettings extends SettingsPage
 {
     const IDENTIFIER = 'orders';
+
     const AUTOLOAD = true;
 
     public function __construct()
