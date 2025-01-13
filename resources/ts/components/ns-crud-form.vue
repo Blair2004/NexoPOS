@@ -299,7 +299,9 @@ export default {
                         </div>
                         <div class="-mx-4 flex flex-wrap" v-if="activeTab && activeTab.component">
                             <div :key="`${activeTabIdentifier}`" v-if="activeTab.instance.object" :class="fieldClass || 'px-4 w-full'">
-                                <component @changed="handleTabChange( $event )" @invalid="handleTabError( $event )":is="activeTab.instance.object" :tab="activeTab"/>
+                                <keep-alive>
+                                    <component @changed="handleTabChange( $event )" @invalid="handleTabError( $event )":is="activeTab.instance.object" :tab="activeTab"/>
+                                </keep-alive>
                             </div>
                             <div v-else class="px-4 text-center">
                                 <div class="text-error-tertiary border-dashed border-error-tertiary border p-4">

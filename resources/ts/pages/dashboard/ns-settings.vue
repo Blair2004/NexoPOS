@@ -36,7 +36,7 @@
                     <div>
                         <template v-if="activeTab.footer && activeTab.footer.extraComponents">
                             <template v-for="( component, index ) of activeTab.footer.extraComponents" v-bind:key="index">
-                                <component :parent="this" v-bind:is="loadComponent( component ).value"></component>
+                                <component :parent="component" :is="loadComponent( component ).value"></component>
                             </template>
                         </template>
                     </div>
@@ -69,6 +69,9 @@ export default {
         }
     },
     computed: {
+        component() {
+            return this;
+        },
         formDefined() {
             return Object.values( this.form ).length > 0;
         },
@@ -117,7 +120,7 @@ export default {
             } else if ( nsComponents[ componentName ] ) {
                 return shallowRef( nsComponents[ componentName ] );
             } else {
-                console.error( `Component ${ componentName } not found.` );
+                throw `Component ${ componentName } not found.`;
             }
         },
         async submitForm() {

@@ -86,10 +86,12 @@ export class Popup {
             component.props     =   {};
         }
 
-        props     =   Object.keys( params ).filter( param => component.props.includes( param ) ).reduce( ( props, param ) => {
-            props[ param ]  =   params[ param ];
-            return props;
-        }, {});
+        if ( component.props !== undefined ) {
+            props     =   Object.keys( params ).filter( param => component.props.includes( param ) ).reduce( ( props, param ) => {
+                props[ param ]  =   params[ param ];
+                return props;
+            }, {});
+        }
         
         const popup     =   {
             hash: `popup-${this.hash()}-${this.hash()}`,

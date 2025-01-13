@@ -64,8 +64,6 @@ class CrudController extends DashboardController
             }
         }
 
-        $resource->handleDependencyForDeletion( $model );
-
         $model->delete();
 
         /**

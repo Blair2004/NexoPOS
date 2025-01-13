@@ -10,15 +10,6 @@ abstract class NsModel extends NsRootModel
 {
     use Notifiable, NsDependable;
 
-    /**
-     * if defined, the Crud component
-     * will perform a verification to check
-     * if the actual model is a dependency before deleting that.
-     */
-    protected $isDependencyFor = [
-        // ...
-    ];
-
     public function __construct( $attributes = [] )
     {
         parent::__construct( $attributes );
@@ -33,6 +24,15 @@ abstract class NsModel extends NsRootModel
      * accurately all changes that occurs on a model
      */
     protected $oldAttributes = [];
+
+    /**
+     * Used to create a custom filter name for mutating 
+     * certain model methods values.
+     */
+    protected static function method( string $name )
+    {
+        return self::class . '@' . $name;
+    }
 
     protected static function boot()
     {

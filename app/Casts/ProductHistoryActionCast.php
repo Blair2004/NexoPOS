@@ -2,6 +2,7 @@
 
 namespace App\Casts;
 
+use App\Classes\Hook;
 use App\Models\ProductHistory;
 use App\Services\CrudEntry;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
@@ -50,7 +51,7 @@ class ProductHistoryActionCast implements CastsAttributes
             ProductHistory::ACTION_ADJUSTMENT_SALE => __( 'Adjustment Sale' ),
             ProductHistory::ACTION_CONVERT_IN => __( 'Incoming Conversion' ),
             ProductHistory::ACTION_CONVERT_OUT => __( 'Outgoing Conversion' ),
-            default => __( 'Unknown Action' ),
+            default => Hook::filter( 'ns-products-history-label', __( 'Unknown Action' ), $value ),
         };
     }
 

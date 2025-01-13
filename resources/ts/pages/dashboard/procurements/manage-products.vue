@@ -121,8 +121,8 @@
                                                         <span>{{ __( 'New Group' ) }}</span>
                                                     </div>
                                                 </div>
-                                                <ns-tabs v-if="field.groups.length > 0" @changeTab="variation.activeUnitTab = $event" :active="variation.activeUnitTab || 'tab-0'">
-                                                    <ns-tabs-item padding="p-2" v-for="(group,index) of field.groups" :identifier="'tab-' + ( index )" :label="group.label">
+                                                <ns-tabs @close="handleClosingTab( $event, field.groups )" v-if="field.groups.length > 0" @changeTab="variation.activeUnitTab = $event" :active="variation.activeUnitTab || 'tab-0'">
+                                                    <ns-tabs-item :closable="group.closable" padding="p-2" v-for="(group,index) of field.groups" :identifier="'tab-' + ( index )" :label="group.label">
                                                         <div class="shadow rounded overflow-hidden bg-box-elevation-background text-primary">
                                                             <div class="border-b text-sm p-2 flex justify-between text-primary border-box-elevation-edge">
                                                                 <span>{{ __( 'Available Quantity' ) }}</span>
@@ -134,9 +134,6 @@
                                                                         <ns-field @change="handleUnitGroupFieldChanged($event, group)" @saved="handleSavedUnitGroupFields( $event, field )" :field="field"></ns-field>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <div @click="removeUnitPriceGroup( group, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
-                                                                {{ __( 'Delete' ) }}
                                                             </div>
                                                         </div>
                                                     </ns-tabs-item>
@@ -175,7 +172,7 @@
 </template>
 <script lang="ts">
 import FormValidation from '~/libraries/form-validation'
-import { nsSnackBar, nsHttpClient } from '~/bootstrap';
+import { nsSnackBar, nsHttpClient, nsHooks } from '~/bootstrap';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';
 import nsProductGroup from './ns-product-group.vue';
@@ -201,12 +198,25 @@ export default {
             form: reactive({}),
             hasLoaded: false,
             hasError: false,
+            isWatching: false,
         }
     },
     watch: {
         form: {
             deep: true,
             handler( value ) {
+                /**
+                 * We would like to avoid this watcher
+                 * to be triggered if any change on that
+                 * occures here. To avoid an infinite loop.
+                 */
+                if ( this.isWatching ) {
+                    return;
+                }
+
+                // We should start watching the form now.
+                this.isWatching = true;
+
                 this.form.variations.forEach( variation => {
                     const identification    =   this.formValidation.extractFields( variation.tabs.identification.fields );
 
@@ -237,7 +247,39 @@ export default {
                             variation.tabs[ 'groups' ].visible = false;
                         }
                     }
+
+                    /**
+                     * this will control how the unit group edition state
+                     * If the product unit quantity are persistent, we shouldn't be able
+                     * to edit change the unit group unless all product unit quantities are deleted
+                     */
+                    let hasPersistenUnitQuantities    =   false;
+
+                    variation.tabs.units.fields.forEach( field => {
+                        if ( field.name === 'selling_group' ) {
+                            field.groups.forEach( group => {
+                                hasPersistenUnitQuantities  =   group.fields.filter( field => field.name === 'id' ).length > 0;
+                            })
+                        }
+                    });
+
+                    variation.tabs.units.fields.forEach( field => {
+                        if ( field.name === 'unit_group' && hasPersistenUnitQuantities ) {
+                            field.disabled  =   true;
+                            field.about     =   __( 'You can\'t change the unit group as there are already unit quantities attached to the product. You might need to delete the Selling Unit.' );
+                        } else {
+                            field.disabled  =   false;
+                            field.about     =   false;
+                        }
+                    })
                 });
+
+                nsHooks.doAction( 'ns-products-form-updated', value );
+
+                // we need a 100ms delay before we can watch again.
+                setTimeout( () => {
+                    this.isWatching = false;
+                }, 100);
             }
         }
     },
@@ -312,26 +354,40 @@ export default {
             return quantity.length > 0 ? quantity[0] : 0;
         },
 
+        handleClosingTab( tab, groups ) {
+            const realIndex = tab.identifier.substr(4);
+            const group     =   groups[ realIndex ];
+
+            if ( group === undefined ) {
+                return nsSnackBar.error( __( 'Unable to proceed, the group you\'re trying to delete doesn\'t exist. This might be a serious issue, please contact the support.' ) ).subscribe();
+            }
+
+            this.removeUnitPriceGroup( group, groups );
+        },
+
         /**
          * The user want to remove a group
          * we might need confirmation before proceeding.
          */
         removeUnitPriceGroup( group, groups ) {
-            const hasIdField    =   group.fields.filter( field => field.name === 'id' && field.value !== undefined );
-                Popup.show( nsPosConfirmPopupVue, {
-                    title: __( 'Confirm Your Action' ),
-                    message: __( 'Would you like to delete this group ?' ),
-                    onAction: ( action ) => {
-                        if ( action ) {
-                            if ( hasIdField.length > 0 ) {
-                                this.confirmUnitQuantityDeletion({ group, groups });
-                            } else {
-                                const index     =   groups.indexOf( group );
-                                groups.splice( index, 1 );
-                            }
+            const hasIdField    =   group.fields.filter( field => {
+                return field.name === 'id' && ! [ '', undefined, null ].includes( field.value )
+            });
+
+            Popup.show( nsPosConfirmPopupVue, {
+                title: __( 'Confirm Your Action' ),
+                message: __( 'Would you like to delete this group ?' ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        if ( hasIdField.length > 0 ) {
+                            this.confirmUnitQuantityDeletion({ group, groups });
+                        } else {
+                            const index     =   groups.indexOf( group );
+                            groups.splice( index, 1 );
                         }
                     }
-                });
+                }
+            });
         },
 
         confirmUnitQuantityDeletion({ group, groups }) {
@@ -377,6 +433,7 @@ export default {
                 setTimeout( () => {
                     field.groups    =   [...oldGroups, {
                         label: this.getFirstSelectedUnit( field.fields ),
+                        closable: true,
                         fields: JSON.parse( JSON.stringify( field.fields ) )
                     }];
                 }, 1);

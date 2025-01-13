@@ -292,7 +292,6 @@ export default {
          * @param row actual row
          */
         refreshRow( row ) {
-            console.log({ row });
             if ( row.$checked === true ) {
                 const result    =   this.selectedEntries.filter( e => e.$id === row.$id );
 

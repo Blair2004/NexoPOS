@@ -21,14 +21,17 @@ class ProductTypeCast implements CastsAttributes
             default => 'text-info-tertiary'
         };
 
-        $value = match ( $value ) {
-            'materialized' => __( 'Materialized' ),
-            'dematerialized' => __( 'Dematerialized' ),
-            'grouped' => __( 'Grouped' ),
-            default => Hook::filter( 'ns-product-type-label', sprintf( __( 'Unknown Type: %s' ), $value ), $value ),
-        };
+        $productTypes   =   Hook::filter( 'ns-products-type', [
+            'materialized' => __( 'Materialized Product' ),
+            'dematerialized' => __( 'Dematerialized Product' ),
+            'grouped' => __( 'Grouped Product' ),
+        ]);
 
-        return '<strong class="' . $class . ' ">' . $value . '</strong>';
+        if ( isset( $productTypes[ $value ] ) ) {
+            return '<strong class="' . $class . ' ">' . $productTypes[ $value ] . '</strong>';
+        } else {
+            return '<strong class="' . $class . ' ">' . sprintf( __( 'Unknown Type: %s' ), $value ) . '</strong>';
+        }
     }
 
     /**

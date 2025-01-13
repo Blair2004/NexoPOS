@@ -1363,7 +1363,7 @@ class OrdersService
              * What we're doing here
              * 1 - Get the unit assigned to the product being sold
              * 2 - check if the units assigned is what has been stored on the product
-             * 3 - If the a group is assigned to a product, the we check if that unit belongs to the unit group
+             * 3 - If a group is assigned to a product, the we check if that unit belongs to the unit group
              */
             try {
                 $storageQuantity = OrderStorage::withIdentifier( $session_identifier )

@@ -3,6 +3,8 @@
 namespace App\Crud;
 
 use App\Casts\ProductTypeCast;
+use App\Classes\CrudForm;
+use App\Classes\FormInput;
 use App\Exceptions\NotAllowedException;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -177,85 +179,88 @@ class ProductCrud extends CrudService
             }
         }
 
-        $fields = [
-            [
-                'type' => 'search-select',
-                'errors' => [],
-                'name' => 'unit_id',
-                'component' => 'nsCrudForm',
-                'props' => UnitCrud::getFormConfig(),
-                'options' => Helper::toJsOptions( $units, [ 'id', 'name' ] ),
-                'label' => __( 'Assigned Unit' ),
-                'description' => __( 'The assigned unit for sale' ),
-                'validation' => 'required',
-                'value' => ! $units->isEmpty() ? $units->first()->id : '',
-            ], [
-                'type' => 'select',
-                'errors' => [],
-                'name' => 'convert_unit_id',
-                'label' => __( 'Convert Unit' ),
-                'validation' => 'different:variations.*.units.selling_group.*.unit_id',
-                'options' => Helper::toJsOptions( $units, [ 'id', 'name' ] ),
-                'value' => '',
-                'description' => __( 'The unit that is selected for convertion by default.' ),
-            ], [
-                'type' => 'number',
-                'errors' => [],
-                'name' => 'sale_price_edit',
-                'label' => __( 'Sale Price' ),
-                'description' => __( 'Define the regular selling price.' ),
-                'validation' => 'required',
-            ], [
-                'type' => 'number',
-                'errors' => [],
-                'name' => 'wholesale_price_edit',
-                'label' => __( 'Wholesale Price' ),
-                'description' => __( 'Define the wholesale price.' ),
-                'validation' => 'required',
-            ], [
-                'type' => 'number',
-                'errors' => [],
-                'name' => 'cogs',
-                'label' => __( 'COGS' ),
-                'value' => '',
-                'description' => __( 'Used to define the Cost of Goods Sold.' ),
-            ], [
-                'type' => 'switch',
-                'errors' => [],
-                'name' => 'stock_alert_enabled',
-                'label' => __( 'Stock Alert' ),
-                'options' => Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
-                'description' => __( 'Define whether the stock alert should be enabled for this unit.' ),
-            ], [
-                'type' => 'number',
-                'errors' => [],
-                'name' => 'low_quantity',
-                'label' => __( 'Low Quantity' ),
-                'description' => __( 'Which quantity should be assumed low.' ),
-            ], [
-                'type' => 'switch',
-                'errors' => [],
-                'name' => 'visible',
-                'label' => __( 'Visible' ),
-                'value' => 1, // by default
-                'options' => Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
-                'description' => __( 'Define whether the unit is available for sale.' ),
-            ], [
-                'type' => 'media',
-                'errors' => [],
-                'name' => 'preview_url',
-                'label' => __( 'Preview Url' ),
-                'description' => __( 'Provide the preview of the current unit.' ),
-            ], [
-                'type' => 'hidden',
-                'errors' => [],
-                'name' => 'id',
-            ], [
-                'type' => 'hidden',
-                'errors' => [],
-                'name' => 'quantity',
-            ],
-        ];
+        $fields = Hook::filter( 'ns-products-units-quantities-fields', CrudForm::fields(
+            FormInput::searchSelect(
+                errors: [],
+                label: __( 'Assigned Unit' ),
+                name: 'unit_id',
+                component: 'nsCrudForm',
+                props: UnitCrud::getFormConfig(),
+                options: Helper::toJsOptions( $units, [ 'id', 'name' ] ),
+                description: __( 'The assigned unit for sale' ),
+                validation: 'required',
+                value: ! $units->isEmpty() ? $units->first()->id : '',
+            ),
+            FormInput::searchSelect(
+                errors: [],
+                label: __( 'Convert Unit' ),
+                name: 'convert_unit_id',
+                validation: 'different:variations.*.units.selling_group.*.unit_id',
+                options: Helper::toJsOptions( $units, [ 'id', 'name' ] ),
+                value: '',
+                description: __( 'The unit that is selected for convertion by default.' ),
+            ),
+            FormInput::number(
+                errors: [],
+                label: __( 'Sale Price' ),
+                name: 'sale_price_edit',
+                value:  0,
+                description: __( 'Define the regular selling price.' ),
+                validation: 'required',
+            ),
+            FormInput::number(
+                errors: [],
+                label: __( 'Wholesale Price' ),
+                name: 'wholesale_price_edit',
+                value:  0,
+                description: __( 'Define the wholesale price.' ),
+                validation: 'required',
+            ),
+            FormInput::number(
+                errors: [],
+                label: __( 'COGS' ),
+                name: 'cogs',
+                value: '',
+                description: __( 'Used to define the Cost of Goods Sold.' ),
+            ),
+            FormInput::switch(
+                errors: [],
+                label: __( 'Stock Alert' ),
+                name: 'stock_alert_enabled',
+                options: Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
+                description: __( 'Define whether the stock alert should be enabled for this unit.' ),
+            ),
+            FormInput::number(
+                errors: [],
+                label: __( 'Low Quantity' ),
+                name: 'low_quantity',
+                description: __( 'Which quantity should be assumed low.' ),
+            ),
+            FormInput::switch(
+                errors: [],
+                label: __( 'Visible' ),
+                name: 'visible',
+                value: 1, // by default
+                options: Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
+                description: __( 'Define whether the unit is available for sale.' ),
+            ),
+            FormInput::media(
+                errors: [],
+                label: __( 'Preview Url' ),
+                name: 'preview_url',
+                description: __( 'Provide the preview of the current unit.' ),
+            ),
+            FormInput::hidden(
+                errors: [],
+                label: '',
+                name: 'id',
+            ),
+            FormInput::hidden(
+                errors: [],
+                label: '',
+                name: 'quantity',
+            ),
+        ) );
 
         return Hook::filter( 'ns-products-crud-form', [
             'main' => [
@@ -463,6 +468,7 @@ class ProductCrud extends CrudService
 
                                                     return $field;
                                                 } ),
+                                                'closable'  =>  true,
                                                 'label' => $optionLabel,
                                             ];
                                         } ) : [] ),

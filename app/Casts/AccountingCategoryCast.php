@@ -20,7 +20,7 @@ class AccountingCategoryCast implements CastsAttributes
         $accountReference = $accounting[ $value ] ?? null;
 
         if ( $accountReference ) {
-            return $accountReference[ 'label' ]();
+            return $accountReference[ 'label' ];
         }
 
         return $value;

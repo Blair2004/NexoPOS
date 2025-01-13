@@ -1330,7 +1330,7 @@ class ReportService
 
             return [
                 'transactions' => $transactions,
-                'name' => $account[ 'label' ](),
+                'name' => $account[ 'label' ],
                 'debits' => $transactions->sum( 'debits' ),
                 'credits' => $transactions->sum( 'credits' ),
             ];

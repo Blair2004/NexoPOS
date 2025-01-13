@@ -33,6 +33,11 @@ class EventServiceProvider extends ServiceProvider
         return $paths;
     }
 
+    public function shouldDiscoverEvents()
+    {
+        return true;
+    }
+
     /**
      * Register any events for your application.
      *

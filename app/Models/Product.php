@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Classes\Model;
 use App\Events\ProductAfterDeleteEvent;
 use App\Events\ProductBeforeDeleteEvent;
 use Illuminate\Database\Eloquent\Builder;
@@ -89,18 +90,21 @@ class Product extends NsModel
         'deleted' => ProductAfterDeleteEvent::class,
     ];
 
-    /**
-     * Lock the resource from deletion if
-     * it's a dependency for specified models.
-     */
-    protected $isDependencyFor = [
-        OrderProduct::class => [
-            'local_index' => 'id',
-            'local_name' => 'name',
-            'foreign_index' => 'product_id',
-            'foreign_name' => [ Order::class, 'order_id', 'id', 'code' ],
-        ],
-    ];
+    public function setDependencies()
+    {
+        return [
+            OrderProduct::class     =>  Model::dependant(
+                local_name: 'name',
+                local_index: 'id',
+                foreign_index: 'product_id',
+                related: Model::related(
+                    model: Order::class,
+                    foreign_index: 'product_id',
+                    local_name: 'code'
+                )
+            )
+        ];
+    }
 
     public function category()
     {
