@@ -1040,7 +1040,7 @@ class OrdersService
         $order->total = Currency::fresh( $order->subtotal )
             ->additionateBy( $order->shipping )
             ->additionateBy(
-                ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )
+                ( $order->tax_type === 'exclusive' ? $order->total_tax_value : 0 )
             )
             ->subtractBy(
                 Currency::fresh( $order->total_coupons )

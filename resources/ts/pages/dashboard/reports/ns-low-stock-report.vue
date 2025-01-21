@@ -140,7 +140,6 @@
     </div>
 </template>
 <script>
-import moment from "moment";
 import nsDatepicker from "~/components/ns-datepicker.vue";
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { default as nsDateTimePicker } from '~/components/ns-date-time-picker.vue';

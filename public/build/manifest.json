@@ -253,7 +253,7 @@
     "isEntry": true
   },
   "resources/ts/app.ts": {
-    "file": "assets/app-BM6b2bVx.js",
+    "file": "assets/app-QfSY2xoa.js",
     "name": "app",
     "src": "resources/ts/app.ts",
     "isEntry": true,
@@ -794,20 +794,20 @@
     ]
   },
   "resources/ts/pages/dashboard/reports/ns-low-stock-report.vue": {
-    "file": "assets/ns-low-stock-report-CRpeowx5.js",
+    "file": "assets/ns-low-stock-report-B6pAmJhK.js",
     "name": "ns-low-stock-report",
     "src": "resources/ts/pages/dashboard/reports/ns-low-stock-report.vue",
     "isDynamicEntry": true,
     "imports": [
-      "resources/ts/bootstrap.ts",
       "_components-B4vu6hCP.js",
+      "resources/ts/bootstrap.ts",
       "_currency-Dtag6qPd.js",
       "_ns-prompt-popup-eyyhcwMl.js",
       "_join-array-NDqpMoMN.js",
       "__plugin-vue_export-helper-DlAUqK2U.js",
       "_runtime-core.esm-bundler-VrNrzzXC.js",
-      "_chart-XFVd3zf7.js",
-      "_ns-avatar-image-Pigdi04i.js"
+      "_ns-avatar-image-Pigdi04i.js",
+      "_chart-XFVd3zf7.js"
     ]
   },
   "resources/ts/pages/dashboard/reports/ns-payment-types-report.vue": {

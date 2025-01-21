@@ -452,21 +452,24 @@ class TaxService
          * then probably it's not assigned to the product.
          */
         if ( $taxGroup instanceof TaxGroup ) {
-            if ( $type === 'exclusive' ) {
-                $orderProduct->price_with_tax = $this->getPriceWithTaxUsingGroup(
-                    type: 'exclusive',
-                    price: $orderProduct->filterAttribute( 'unit_price', $productArray ) - $discount,
+            if ( ! isset( $productArray[ 'price_with_tax' ] ) ) {
+                $orderProduct->price_with_tax   =   $this->getPriceWithTaxUsingGroup(
+                    type: $type,
+                    price: $orderProduct->filterAttribute( 'price_without_tax', $productArray ),
                     group: $taxGroup
                 );
-                $orderProduct->price_without_tax = $orderProduct->filterAttribute( 'unit_price', $productArray ) - $discount;
             } else {
-                $orderProduct->price_without_tax = $this->getPriceWithoutTaxUsingGroup(
-                    type: 'inclusive',
-                    price: $orderProduct->filterAttribute( 'unit_price', $productArray ) - $discount,
+                $orderProduct->price_with_tax   =   $productArray[ 'price_with_tax' ];
+            }
+
+            if ( ! isset( $productArray[ 'price_without_tax' ] ) ) {
+                $orderProduct->price_without_tax    =   $this->getPriceWithoutTaxUsingGroup(
+                    type: $type,
+                    price: $orderProduct->filterAttribute( 'price_with_tax', $productArray ),
                     group: $taxGroup
                 );
-
-                $orderProduct->price_with_tax = $orderProduct->filterAttribute( 'unit_price', $productArray ) - $discount;
+            } else {
+                $orderProduct->price_without_tax    =   $productArray[ 'price_without_tax' ];
             }
 
             $orderProduct->tax_value = ( $orderProduct->price_with_tax - $orderProduct->price_without_tax ) * $orderProduct->quantity;

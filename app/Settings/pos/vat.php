@@ -32,7 +32,7 @@ if ( in_array( ns()->option->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_flat_v
     ];
 }
 
-if ( in_array( ns()->option->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_vat', 'products_flat_vat', 'variable_vat', 'products_variable_vat' ] ) ) {
+if ( in_array( ns()->option->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_flat_vat' ] ) ) {
     $fields[] = [
         'type' => 'select',
         'name' => 'ns_pos_tax_type',

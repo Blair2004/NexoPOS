@@ -47,6 +47,14 @@ use Illuminate\Support\Facades\View;
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Sub Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->subtotal ) }}</td>
                     </tr>
+                    @if( $order->products_tax_value > 0 )
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
+                            <span>{{ $order->tax_type === 'inclusive' ? __( 'Inclusive Product Taxes' ) : __( 'Exclusive Product Taxes' ) }}</span>
+                            </td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->products_tax_value ) }}</td>
+                        </tr>
+                    @endif
                     @if ( $order->discount > 0 )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
