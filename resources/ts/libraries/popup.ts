@@ -83,7 +83,7 @@ export class Popup {
         let props   =   {};
         
         if ( ! component.props ) {
-            component.props     =   {};
+            component.props     =   [];
         }
 
         if ( component.props !== undefined ) {

@@ -42,7 +42,6 @@ return new class extends Migration
                 $table->float( 'total', 18, 5 )->default( 0 );
                 $table->float( 'tax_value', 18, 5 )->default( 0 );
                 $table->float( 'products_tax_value' )->default( 0 );
-                $table->float( 'total_tax_value' )->default( 0 );
                 $table->integer( 'tax_group_id' )->nullable();
                 $table->string( 'tax_type' )->nullable();
                 $table->float( 'tendered', 18, 5 )->default( 0 );
@@ -76,6 +75,16 @@ return new class extends Migration
                 $table->float( 'rate' );
                 $table->string( 'tax_name' )->nullable();
                 $table->float( 'tax_value' )->default( 0 );
+            } );
+        }
+
+        if ( ! Schema::hasTable( 'nexopos_orders_settings' ) ) {
+            Schema::createIfMissing( 'nexopos_orders_settings', function ( Blueprint $table ) {
+                $table->bigIncrements( 'id' );
+                $table->integer( 'order_id' );
+                $table->string( 'key' );
+                $table->text( 'value' )->nullable();
+                $table->timestamps();
             } );
         }
     }

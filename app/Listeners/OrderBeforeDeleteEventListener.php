@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderBeforeDeleteEvent;
+use App\Services\OrdersService;
 use App\Services\TransactionService;
 
 class OrderBeforeDeleteEventListener
@@ -12,7 +13,7 @@ class OrderBeforeDeleteEventListener
      *
      * @return void
      */
-    public function __construct( public TransactionService $transactionService )
+    public function __construct( public TransactionService $transactionService, public OrdersService $ordersService )
     {
         //
     }
@@ -28,5 +29,6 @@ class OrderBeforeDeleteEventListener
          * delete cash flow entries
          */
         $this->transactionService->deleteOrderTransactionsHistory( $event->order );
+        $this->ordersService->deleteOrderSettings( $event->order );
     }
 }

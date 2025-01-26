@@ -486,23 +486,16 @@ class OrdersService
     {
         $orderTaxes = $this->__saveOrderTaxes( $order, $taxes );
 
+        $order->products_tax_value = $this->getOrderProductsTaxes( $order );
+
         switch ( ns()->option->get( 'ns_pos_vat' ) ) {
-            case 'products_vat':
-                $order->products_tax_value = $this->getOrderProductsTaxes( $order );
-                break;
             case 'flat_vat':
             case 'variable_vat':
-                $order->tax_value = Currency::define( collect( $orderTaxes )->sum( 'tax_value' ) )->toFloat();
-                $order->products_tax_value = 0;
-                break;
             case 'products_variable_vat':
             case 'products_flat_vat':
                 $order->tax_value = Currency::define( collect( $orderTaxes )->sum( 'tax_value' ) )->toFloat();
-                $order->products_tax_value = $this->getOrderProductsTaxes( $order );
                 break;
         }
-
-        $order->total_tax_value = $order->tax_value + $order->products_tax_value;
 
         return $orderTaxes;
     }
@@ -1040,7 +1033,7 @@ class OrdersService
         $order->total = Currency::fresh( $order->subtotal )
             ->additionateBy( $order->shipping )
             ->additionateBy(
-                ( $order->tax_type === 'exclusive' ? $order->total_tax_value : 0 )
+                ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )
             )
             ->subtractBy(
                 Currency::fresh( $order->total_coupons )
@@ -1169,9 +1162,15 @@ class OrdersService
 
             $this->computeOrderProduct( $orderProduct, $product );
 
-            $subTotal = $this->currencyService->define( $subTotal )
-                ->additionateBy( $orderProduct->total_price )
-                ->get();
+            if ( ns()->option->get( 'ns_pos_price_with_tax' ) === 'no' ) {
+                $subTotal = $this->currencyService->define( $subTotal )
+                    ->additionateBy( $orderProduct->total_price_with_tax )
+                    ->get();
+            } else {
+                $subTotal = $this->currencyService->define( $subTotal )
+                    ->additionateBy( $orderProduct->total_price )
+                    ->get();
+            }
 
             return $orderProduct;
         } );
@@ -1571,7 +1570,6 @@ class OrdersService
         $order->title = $fields[ 'title' ] ?? null;
         $order->tax_value = $this->currencyService->define( $fields[ 'tax_value' ] ?? 0 )->toFloat();
         $order->products_tax_value = $this->currencyService->define( $fields[ 'products_tax_value' ] ?? 0 )->toFloat();
-        $order->total_tax_value = $this->currencyService->define( $fields[ 'total_tax_value' ] ?? 0 )->toFloat();
         $order->code = $order->code ?: ''; // to avoid generating a new code
         $order->tendered = $this->currencyService->define( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() )->toFloat();
 
@@ -3037,5 +3035,42 @@ class OrdersService
         }
 
         return $bool;
+    }
+
+    /**
+     * This will delete the order settings attached to the order
+     * @param Order $order
+     * @return array
+     */
+    public function deleteOrderSettings( Order $order )
+    {
+        $order->settings()->delete();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The order settings has been deleted.' ),
+        ];
+    }
+
+    public function saveOrderSettings( Order $order )
+    {
+        $order->settings()->delete();
+
+        $settings    =   $order->settings();
+
+        $settings->create([
+            'key' => 'ns_pos_price_with_tax',
+            'value' => ns()->option->get( 'ns_pos_price_with_tax' )
+        ]);
+
+        $settings->create([
+            'key' => 'ns_pos_vat',
+            'value' => ns()->option->get( 'ns_pos_vat' )
+        ]);
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The order settings has been saved.' ),
+        ];
     }
 }

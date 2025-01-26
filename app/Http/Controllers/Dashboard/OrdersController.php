@@ -265,6 +265,8 @@ class OrdersController extends DashboardController
         $order->load( 'shipping_address' );
         $order->load( 'billing_address' );
         $order->load( 'user' );
+        $order->load( 'settings' );
+        $order->load( 'tax_group' );
 
         return View::make( 'pages.dashboard.orders.templates.receipt', [
             'order' => $order,

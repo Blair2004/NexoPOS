@@ -99,7 +99,6 @@ export class POS {
             total_products: 0,
             shipping: 0,
             tax_value: 0,
-            total_tax_value: 0,
             products_tax_value: 0,
             shipping_rate: 0,
             shipping_type: undefined,
@@ -702,18 +701,6 @@ export class POS {
                 .reduce((before, after) => before + after);
         }
 
-        /**
-         * By default, we'll use box computed tax and products tax value 
-         * when priceWithTax is enabled.
-         * However to avoid duplicate taxes, we'll only consider computed tax
-         * when priceWithTax is disabled
-         */
-        order.total_tax_value     =  order.tax_value;
-
-        if ([ 'products_vat' ].includes(posVat) && ! priceWithTax ) {
-            order.total_tax_value     =  order.tax_value + order.products_tax_value;
-        }
-
         return order;
     }
 
@@ -739,7 +726,7 @@ export class POS {
          * We need to add the product taxes to the subtotal when
          * the price with tax is disabled and the VAT is not set to either: products_flat_vat, products_variable_vat, products_vat
          */
-        if ( options.ns_pos_price_with_tax === 'no' && ![ 'products_vat' ].includes(posVat) ) {
+        if ( options.ns_pos_price_with_tax === 'no' ) {
             /**
              * If the price with tax is enabled, we'll add the tax value
              * to the subtotal.
@@ -1372,7 +1359,6 @@ export class POS {
          * all listener are up to date.
          */
         order.tax_value             =   0;
-        order.total_tax_value       =   0;
         
         this.order.next(order);
 
@@ -1390,13 +1376,13 @@ export class POS {
         }
 
         const taxType   =   order.tax_type;
-        const posVat    =   this.options.getValue().ns_pos_vat;
+        // const posVat    =   this.options.getValue().ns_pos_vat;
 
-        let tax_value   =   0;
+        let tax_value   =   order.tax_value;
 
-        if (['flat_vat', 'variable_vat', 'products_vat', 'products_flat_vat', 'products_variable_vat'].includes(posVat) ) {
-            tax_value   =   order.total_tax_value ;
-        }
+        // if (['flat_vat', 'variable_vat', 'products_vat', 'products_flat_vat', 'products_variable_vat'].includes(posVat) ) {
+        //     tax_value   =   order.tax_value ;
+        // }
 
         if ( taxType === 'exclusive' ) {
             const op1 = math.chain( order.subtotal ).add( order.shipping || 0 ).add( tax_value ).done();

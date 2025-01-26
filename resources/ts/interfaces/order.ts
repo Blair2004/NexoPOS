@@ -67,7 +67,6 @@ export interface Order {
     };
     tax_value: number;
     products_tax_value: number;
-    total_tax_value: number;
     tax_group: {
         taxes?: any[],
         name?: string,
