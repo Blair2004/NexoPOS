@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property integer $id
+ * @property int    $id
  * @property string $on
- * @property mixed $action
- * @property mixed $account_id
- * @property mixed $do
- * @property mixed $offset_account_id
- * @property mixed $locked
- * @property mixed $created_at
- * @property mixed $updated_at
-*/
+ * @property mixed  $action
+ * @property mixed  $account_id
+ * @property mixed  $do
+ * @property mixed  $offset_account_id
+ * @property mixed  $locked
+ * @property mixed  $created_at
+ * @property mixed  $updated_at
+ */
 class TransactionActionRule extends Model
 {
     use HasFactory;

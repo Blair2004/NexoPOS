@@ -33,6 +33,7 @@ use App\Models\OrderPayment;
 use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
 use App\Models\OrderRefund;
+use App\Models\OrderSetting;
 use App\Models\OrderStorage;
 use App\Models\OrderTax;
 use App\Models\PaymentType;
@@ -51,6 +52,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use stdClass;
 
 class OrdersService
 {
@@ -491,8 +493,6 @@ class OrdersService
         switch ( ns()->option->get( 'ns_pos_vat' ) ) {
             case 'flat_vat':
             case 'variable_vat':
-            case 'products_variable_vat':
-            case 'products_flat_vat':
                 $order->tax_value = Currency::define( collect( $orderTaxes )->sum( 'tax_value' ) )->toFloat();
                 break;
         }
@@ -1681,8 +1681,6 @@ class OrdersService
 
         if ( in_array( $posVat, [
             'products_vat',
-            'products_flat_vat',
-            'products_variable_vat',
         ] ) ) {
             $taxValue = $order
                 ->products()
@@ -2239,6 +2237,7 @@ class OrdersService
             'taxes',
             'coupons',
             'instalments',
+            'settings',
         ] )->toArray();
 
         OrderBeforeDeleteEvent::dispatch( $cachedOrder );
@@ -3039,12 +3038,13 @@ class OrdersService
 
     /**
      * This will delete the order settings attached to the order
-     * @param Order $order
+     *
+     * @param  Order $order
      * @return array
      */
-    public function deleteOrderSettings( Order $order )
+    public function deleteOrderSettings( stdClass $order )
     {
-        $order->settings()->delete();
+        OrderSetting::where( 'order_id', $order->id )->delete();
 
         return [
             'status' => 'success',
@@ -3056,17 +3056,17 @@ class OrdersService
     {
         $order->settings()->delete();
 
-        $settings    =   $order->settings();
+        $settings = $order->settings();
 
-        $settings->create([
+        $settings->create( [
             'key' => 'ns_pos_price_with_tax',
-            'value' => ns()->option->get( 'ns_pos_price_with_tax' )
-        ]);
+            'value' => ns()->option->get( 'ns_pos_price_with_tax' ),
+        ] );
 
-        $settings->create([
+        $settings->create( [
             'key' => 'ns_pos_vat',
-            'value' => ns()->option->get( 'ns_pos_vat' )
-        ]);
+            'value' => ns()->option->get( 'ns_pos_vat' ),
+        ] );
 
         return [
             'status' => 'success',

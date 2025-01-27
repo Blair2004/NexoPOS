@@ -31,7 +31,7 @@ class OrderAfterCreatedEventListener
      */
     public function handle( OrderAfterCreatedEvent $event )
     {
-        // The order settings should be immediately 
+        // The order settings should be immediately
         // be created whent he order is created
         SaveOrderSettingJob::dispatchSync( $event->order );
 

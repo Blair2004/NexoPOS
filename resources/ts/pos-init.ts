@@ -695,7 +695,7 @@ export class POS {
         const posVat        =   options.ns_pos_vat;
         const priceWithTax    =   options.ns_pos_price_with_tax === 'yes';
 
-        if ([ 'flat_vat', 'variable_vat', 'products_variable_vat', 'products_flat_vat' ].includes(posVat) && order.taxes && order.taxes.length > 0) {
+        if ([ 'flat_vat', 'variable_vat' ].includes(posVat) && order.taxes && order.taxes.length > 0) {
             order.tax_value += order.taxes
                 .map(tax => tax.tax_value)
                 .reduce((before, after) => before + after);
@@ -712,7 +712,7 @@ export class POS {
         order.products = products;
         order.total_products = products.length;
 
-        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) || options.ns_pos_price_with_tax === 'no' ) {
+        if ([ 'products_vat' ].includes(posVat) || options.ns_pos_price_with_tax === 'no' ) {
             const totalTaxValue =  products.map((product: OrderProduct) => {
                 return product.total_tax_value;
             });
@@ -724,7 +724,7 @@ export class POS {
 
         /**
          * We need to add the product taxes to the subtotal when
-         * the price with tax is disabled and the VAT is not set to either: products_flat_vat, products_variable_vat, products_vat
+         * the price with tax is disabled and the VAT is not set to either: products_vat
          */
         if ( options.ns_pos_price_with_tax === 'no' ) {
             /**
@@ -1376,13 +1376,7 @@ export class POS {
         }
 
         const taxType   =   order.tax_type;
-        // const posVat    =   this.options.getValue().ns_pos_vat;
-
         let tax_value   =   order.tax_value;
-
-        // if (['flat_vat', 'variable_vat', 'products_vat', 'products_flat_vat', 'products_variable_vat'].includes(posVat) ) {
-        //     tax_value   =   order.tax_value ;
-        // }
 
         if ( taxType === 'exclusive' ) {
             const op1 = math.chain( order.subtotal ).add( order.shipping || 0 ).add( tax_value ).done();

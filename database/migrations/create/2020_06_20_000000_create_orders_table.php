@@ -2,7 +2,7 @@
 
 /**
  * Table Migration
-**/
+ **/
 
 use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
@@ -75,16 +75,6 @@ return new class extends Migration
                 $table->float( 'rate' );
                 $table->string( 'tax_name' )->nullable();
                 $table->float( 'tax_value' )->default( 0 );
-            } );
-        }
-
-        if ( ! Schema::hasTable( 'nexopos_orders_settings' ) ) {
-            Schema::createIfMissing( 'nexopos_orders_settings', function ( Blueprint $table ) {
-                $table->bigIncrements( 'id' );
-                $table->integer( 'order_id' );
-                $table->string( 'key' );
-                $table->text( 'value' )->nullable();
-                $table->timestamps();
             } );
         }
     }

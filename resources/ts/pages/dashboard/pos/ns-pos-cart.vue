@@ -188,7 +188,7 @@
                                 <td width="200" class="border p-2 text-right">{{ nsCurrency( order.shipping ) }}</td>
                             </tr>
                             <tr class="success">
-                                <template v-if="[ 'flat_vat', 'variable_vat', 'products_flat_vat', 'products_variable_vat' ].includes( options.ns_pos_vat )">
+                                <template v-if="[ 'flat_vat', 'variable_vat' ].includes( options.ns_pos_vat )">
                                     <td width="200" class="border p-2">
                                         <a @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ order.tax_group.name ? order.tax_group.name : __( 'Tax' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
                                     </td>

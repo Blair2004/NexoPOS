@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nexopos_orders_settings', function (Blueprint $table) {
-            $table->id();
-            $table->integer( 'order_id' );
-            $table->string( 'key' );
-            $table->text( 'value' )->nullable();
-            $table->timestamps();
-        });
+        if ( ! Schema::hasTable( 'nexopos_orders_settings' ) ) {
+            Schema::create( 'nexopos_orders_settings', function ( Blueprint $table ) {
+                $table->id();
+                $table->integer( 'order_id' );
+                $table->string( 'key' );
+                $table->text( 'value' )->nullable();
+                $table->timestamps();
+            } );
+        }
     }
 
     /**
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nexopos_orders_settings');
+        Schema::dropIfExists( 'nexopos_orders_settings' );
     }
 };
