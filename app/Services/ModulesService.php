@@ -1058,7 +1058,7 @@ class ModulesService
          * This module can't be found. then return an error
          */
         return [
-            'status' => 'danger',
+            'status' => 'error',
             'message' => sprintf( __( 'Unable to locate a module having as identifier "%s".' ), $namespace ),
             'code' => 'unknow_module',
         ];

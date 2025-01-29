@@ -124,16 +124,21 @@ class ModulesController extends DashboardController
     {
         $result = $this->modules->upload( $request->file( 'module' ) );
 
-        /**
-         * if the module upload was successful
-         */
-        if ( $result[ 'status' ] === 'success' ) {
-            return redirect( ns()->route( 'ns.dashboard.modules-list' ) )->with( $result );
+        if ( $request->acceptsJson() ) {
+            return response()->json( $result );
         } else {
-            $validator = Validator::make( $request->all(), [] );
-            $validator->errors()->add( 'module', $result[ 'message' ] );
-
-            return redirect( ns()->route( 'ns.dashboard.modules-upload' ) )->withErrors( $validator );
+            /**
+             * if the module upload was successful
+             */
+            if ( $result[ 'status' ] === 'success' ) {
+                return redirect( ns()->route( 'ns.dashboard.modules-list' ) )->with( $result );
+            } else {
+                $validator = Validator::make( $request->all(), [] );
+                $validator->errors()->add( 'module', $result[ 'message' ] );
+    
+                return redirect( ns()->route( 'ns.dashboard.modules-upload' ) )->withErrors( $validator );
+            }
         }
+
     }
 }
