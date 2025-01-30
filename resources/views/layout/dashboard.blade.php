@@ -118,17 +118,13 @@ if ( Auth::check() ) {
                         </div>
                         <ul>
                             @foreach( $menus->getMenus() as $identifier => $menu )
-                                @if ( isset( $menu[ 'permissions' ] ) && Gate::allows( $menu[ 'permissions' ], 'some' ) || ! isset( $menu[ 'permissions' ] ) )
                                 <ns-menu identifier="{{ $identifier }}" toggled="{{ $menu[ 'toggled' ] ?? '' }}" label="{{ @$menu[ 'label' ] }}" icon="{{ @$menu[ 'icon' ] }}" href="{{ @$menu[ 'href' ] }}" notification="{{ isset( $menu[ 'notification' ] ) ? $menu[ 'notification' ] : 0 }}" id="menu-{{ $identifier }}">
                                     @if ( isset( $menu[ 'childrens' ] ) )
                                         @foreach( $menu[ 'childrens' ] as $identifier => $menu )
-                                            @if ( isset( $menu[ 'permissions' ] ) && Gate::allows( $menu[ 'permissions' ], 'some' ) || ! isset( $menu[ 'permissions' ] ) )
                                         <ns-submenu :active="{{ ( isset( $menu[ 'active' ] ) ? ( $menu[ 'active' ] ? 'true' : 'false' ) : 'false' ) }}" href="{{ $menu[ 'href' ] }}" id="submenu-{{ $identifier }}">{{ $menu[ 'label' ] }}</ns-submenu>
-                                            @endif
                                         @endforeach        
                                     @endif
                                 </ns-menu>
-                                @endif
                             @endforeach
                         </ul>
                     </div>

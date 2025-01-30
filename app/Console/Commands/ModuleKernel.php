@@ -27,19 +27,19 @@ class ModuleKernel extends Command
      */
     public function handle()
     {
-        $moduleService  =   app()->make( ModulesService::class );
-        $moduleIdentifier = $this->argument('module');
+        $moduleService = app()->make( ModulesService::class );
+        $moduleIdentifier = $this->argument( 'module' );
 
-        $modulePath = base_path('modules/' . $moduleIdentifier);
+        $modulePath = base_path( 'modules/' . $moduleIdentifier );
 
         if ( ! $module = $moduleService->get( $moduleIdentifier ) ) {
-            $this->error('Module not found.');
+            $this->error( 'Module not found.' );
         }
 
-        $filePath   = $modulePath . '/Console/Kernel.php';
+        $filePath = $modulePath . '/Console/Kernel.php';
 
         if ( file_exists( $filePath ) && ! $this->option( 'force' ) ) {
-            return $this->error('Kernel file not found for the module.');
+            return $this->error( 'Kernel file not found for the module.' );
         }
 
         $content = View::make( 'generate.modules.kernel', compact( 'module' ) )->render();

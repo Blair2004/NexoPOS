@@ -76,7 +76,9 @@ class ModuleMigrations extends Command
         $this->module = $modules->get( $this->argument( 'namespace' ) );
 
         if ( $this->module ) {
-            if ( $this->passDeleteMigration() ) {
+            if ( $this->option( 'forget' ) ) {
+                $this->forgetMigration();
+            } else {
                 $this->createMigration();
             }
         } else {
@@ -89,39 +91,36 @@ class ModuleMigrations extends Command
      *
      * @return bool
      */
-    public function passDeleteMigration()
+    public function forgetMigration()
     {
-        if ( $this->option( 'forget' ) ) {
+        /**
+         * This will revert the migration
+         * for a specific module.
+         *
+         * @var ModulesService
+         */
+        $moduleService = app()->make( ModulesService::class );
 
-            /**
-             * This will revert the migration
-             * for a specific module.
-             *
-             * @var ModulesService
-             */
-            $moduleService = app()->make( ModulesService::class );
+        $moduleMigrations = $moduleService->getAllModuleMigrationFiles( $this->module );
 
-            $moduleMigrations   =   $moduleService->getAllModuleMigrationFiles( $this->module );
+        if ( count( $moduleMigrations ) == 0 ) {
+            $this->info( sprintf( 'No migration found for the module %s.', $this->module[ 'name' ] ) );
 
-            if ( count( $moduleMigrations ) == 0 ) {
-                $this->info( sprintf( 'No migration found for the module %s.', $this->module[ 'name' ] ) );
+            return false;
+        }
 
-                return false;
-            }
+        /**
+         * The user might want to forget all migration.
+         * We'll then prepend an option for it.
+         */
+        array_unshift( $moduleMigrations, __( 'All' ) );
 
-            /**
-             * The user might want to forget all migration.
-             * We'll then prepend an option for it.
-             */
-            array_unshift( $moduleMigrations, __( 'All' ) );            
+        $deleteChoice = $this->choice( __( 'Which file would you like to forget' ), $moduleMigrations, 0 );
 
-            $deleteChoice   =   $this->choice( __( 'Which file would you like to forget' ), $moduleMigrations, 0 );
-
-            if ( $deleteChoice === __( 'All' ) ) {
-                return $this->revertAllModuleMigrations( $this->module );
-            } else {
-                return $this->deleteSpecificMigrationPath( $deleteChoice );
-            }
+        if ( $deleteChoice === __( 'All' ) ) {
+            return $this->revertAllModuleMigrations( $this->module );
+        } else {
+            return $this->deleteSpecificMigrationPath( $deleteChoice );
         }
     }
 

@@ -61,7 +61,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
                 Role::namespace( Role::ADMIN )
                     ->users()
                     ->get( 'email' )
-                    ->toArray()
+                    ->toArray(),
             ] );
         } );
     }

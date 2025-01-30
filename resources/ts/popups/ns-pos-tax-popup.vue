@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="p-2 ns-box-body">
-            <ns-tabs :active="activeTab" @changeTab="changeActive( $event )">
+            <ns-tabs v-if="Object.keys( options ).length > 0" :active="activeTab" @changeTab="changeActive( $event )">
                 <ns-tabs-item padding="0" :label="__( 'Settings' )" identifier="settings" :active="true">
                     <div class="p-2 border-b ns-box-body">
                         <ns-field v-for="(field,index) of group_fields" :field="field" :key="index"></ns-field>
@@ -25,7 +25,7 @@
                         <div class="p-2 text-center text-primary" v-if="order.taxes.length === 0">{{ __( 'No tax is active' ) }}</div>
                     </div>
                 </ns-tabs-item>
-                <ns-tabs-item padding="0" :label="__( 'Product Taxes' )" identifier="product_taxes" :active="false">
+                <ns-tabs-item v-if="[ 'products_vat' ].includes( options.ns_pos_vat )" padding="0" :label="__( 'Product Taxes' )" identifier="product_taxes" :active="false">
                     <div class="p-2" v-if="order">
                         <div class="border shadow p-2 w-full flex justify-between items-center elevation-surface">
                             <span>{{ __( 'Product Taxes' ) }}</span>
@@ -56,7 +56,7 @@ export default {
             orderSubscriber: null,
             optionsSubscriber: null,
             options: {},
-            tax_groups: [],
+            tax_group: [],
             activeTab: '',
             group_fields: [
                 {
@@ -141,9 +141,9 @@ export default {
             /**
              * When we save tax, we should instruct NexoPOS to 
              * ignore previously cached tax and fetch new taxes. 
-             * This will be done by overwriting the tax_groups.
+             * This will be done by overwriting the tax_group.
              */
-            fields.tax_groups   =   [];
+            fields.tax_group   =   {};
             
             this.popupResolver( fields );
         },  

@@ -51,7 +51,8 @@ const nsScreen              =   window[ 'nsScreen' ];
 
 nsExtraComponents.nsToken       =   defineAsyncComponent( () => import( './pages/dashboard/profile/ns-token.vue' ) );
 
-window.nsHotPress            =   new NsHotPress;
+window.VueHtmlToPaper   =   VueHtmlToPaper;
+window.nsHotPress   =   new NsHotPress;
 
 const allComponents    =   Object.assign({
     nsModules,

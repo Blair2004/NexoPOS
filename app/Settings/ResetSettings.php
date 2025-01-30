@@ -12,13 +12,14 @@ use App\Services\SettingsPage;
 class ResetSettings extends SettingsPage
 {
     const IDENTIFIER = 'reset';
+
     const AUTOLOAD = true;
 
     protected $form;
 
     public function __construct()
     {
-        $this->form     =   SettingForm::form(
+        $this->form = SettingForm::form(
             title: __( 'Reset' ),
             description: __( 'Wipes and Reset the database.' ),
             tabs: SettingForm::tabs(

@@ -28,7 +28,7 @@ class UnitGroup extends NsModel
                 local_index: 'id',
                 foreign_name: 'name',
                 foreign_index: 'group_id',
-            )
+            ),
         ];
     }
 

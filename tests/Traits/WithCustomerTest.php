@@ -355,7 +355,7 @@ trait WithCustomerTest
             'status' => 'success',
         ] );
 
-        $lastCustomer = Customer::where( 'first_name', '!=', null )->orderBy( 'id', 'desc' )->first();
+        $lastCustomer = Customer::orderBy( 'id', 'desc' )->first();
 
         /**
          * let's now search

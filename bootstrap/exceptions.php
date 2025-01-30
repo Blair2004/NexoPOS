@@ -1,4 +1,5 @@
 <?php
+
 /**
  * if the debugging is truthy, we'll
  * then use the default behavior.

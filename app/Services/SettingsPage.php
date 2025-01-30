@@ -21,7 +21,7 @@ class SettingsPage
      */
     public function getForm(): array
     {
-        $form   =   collect( $this->form )->mapWithKeys( function ( $tab, $key ) {
+        $form = collect( $this->form )->mapWithKeys( function ( $tab, $key ) {
             if ( $key === 'tabs' ) {
                 return [
                     $key => collect( $tab )->filter( function ( $tab ) {

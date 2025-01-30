@@ -164,7 +164,7 @@ export default {
         return {
             units: [],
             options: POS.options.getValue(),
-            tax_groups: [],
+            tax_group: {},
             loaded: false,
             validation: new FormValidation,
             fields: [

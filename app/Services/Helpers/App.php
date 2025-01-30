@@ -47,56 +47,56 @@ trait App
         );
     }
 
-    public static function tableHasIndex($tableName, $indexName)
+    public static function tableHasIndex( $tableName, $indexName )
     {
         $driver = DB::getDriverName();
-        $tableName  =   self::getPrefixedTableName($tableName);
+        $tableName = self::getPrefixedTableName( $tableName );
 
-        switch ($driver) {
+        switch ( $driver ) {
             case 'mysql':
-                return self::hasIndexMySQL($tableName, $indexName);
+                return self::hasIndexMySQL( $tableName, $indexName );
 
             case 'sqlite':
-                return self::hasIndexSQLite($tableName, $indexName);
+                return self::hasIndexSQLite( $tableName, $indexName );
 
             case 'pgsql':
-                return self::hasIndexPostgres($tableName, $indexName);
+                return self::hasIndexPostgres( $tableName, $indexName );
 
             default:
-                throw new Exception("Unsupported database driver: {$driver}");
+                throw new Exception( "Unsupported database driver: {$driver}" );
         }
     }
 
-    public static  function hasIndexMySQL( string $tableName, string $indexName)
+    public static function hasIndexMySQL( string $tableName, string $indexName )
     {
-        $result = DB::select("
+        $result = DB::select( "
             SHOW INDEX FROM {$tableName} WHERE Key_name = ?
-        ", [$indexName]);
+        ", [$indexName] );
 
-        return !empty($result);
+        return ! empty( $result );
     }
 
-    public static  function hasIndexSQLite( string $tableName, string $indexName)
+    public static function hasIndexSQLite( string $tableName, string $indexName )
     {
-        $result = DB::select("
+        $result = DB::select( "
             SELECT name
             FROM sqlite_master
             WHERE type = 'index'
             AND tbl_name = ?
             AND name = ?
-        ", [$tableName, $indexName]);
+        ", [$tableName, $indexName] );
 
-        return !empty($result);
+        return ! empty( $result );
     }
 
-    public static  function hasIndexPostgres( string $tableName, string $indexName)
+    public static function hasIndexPostgres( string $tableName, string $indexName )
     {
-        $result = DB::select("
+        $result = DB::select( '
             SELECT COUNT(*)
             FROM pg_indexes
             WHERE tablename = ?
             AND indexname = ?
-        ", [$tableName, $indexName]);
+        ', [$tableName, $indexName] );
 
         return $result[0]->count > 0;
     }
@@ -104,6 +104,7 @@ trait App
     public static function getPrefixedTableName( string $tableName )
     {
         $prefix = DB::getTablePrefix();
+
         return $prefix . $tableName;
     }
 

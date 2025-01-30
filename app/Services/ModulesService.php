@@ -848,7 +848,7 @@ class ModulesService
             $this->createSymLink( $moduleNamespace );
 
             $module = $this->get( $moduleNamespace );
-      
+
             /**
              * @step 4: set right file permissions
              * to the uploaded module and set symlink
@@ -876,13 +876,13 @@ class ModulesService
 
     public function setFilePermissions( array $module )
     {
-        $modulePath = base_path('modules') . DIRECTORY_SEPARATOR . $module['namespace'];
+        $modulePath = base_path( 'modules' ) . DIRECTORY_SEPARATOR . $module['namespace'];
 
         // Apply 755 permissions to directories
-        exec("find $modulePath -type d -exec chmod 755 {} +");
+        exec( "find $modulePath -type d -exec chmod 755 {} +" );
 
         // Apply 644 permissions to files
-        exec("find $modulePath -type f -exec chmod 644 {} +");
+        exec( "find $modulePath -type f -exec chmod 644 {} +" );
     }
 
     /**
@@ -1058,7 +1058,7 @@ class ModulesService
          * This module can't be found. then return an error
          */
         return [
-            'status' => 'danger',
+            'status' => 'error',
             'message' => sprintf( __( 'Unable to locate a module having as identifier "%s".' ), $namespace ),
             'code' => 'unknow_module',
         ];

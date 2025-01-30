@@ -1222,7 +1222,7 @@ class CrudService
             $replacementSubmitUrl = isset( $instance->getLinks()['post'] ) ? $instance->getLinks()['post'] : null;
         }
 
-        $labels     =   Hook::filter( get_class( $instance ) . '@getLabels', $instance->getLabels() );
+        $labels = Hook::filter( get_class( $instance ) . '@getLabels', $instance->getLabels() );
 
         return array_merge( [
             /**

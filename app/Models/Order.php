@@ -180,6 +180,11 @@ class Order extends NsModel
         return $this->hasMany( OrderTax::class, 'order_id', 'id' );
     }
 
+    public function tax_group()
+    {
+        return $this->hasOne( TaxGroup::class, 'id', 'tax_group_id' );
+    }
+
     public function coupons()
     {
         return $this->hasMany( OrderCoupon::class, 'order_id', 'id' );
@@ -203,6 +208,11 @@ class Order extends NsModel
     public function order_addresses()
     {
         return $this->hasMany( OrderAddress::class );
+    }
+
+    public function settings()
+    {
+        return $this->hasMany( OrderSetting::class, 'order_id' );
     }
 
     public function scopeFrom( $query, $range_starts )

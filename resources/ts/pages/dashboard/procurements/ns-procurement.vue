@@ -14,6 +14,7 @@ import { selectApiEntities } from '~/libraries/select-api-entities';
 import { Unit } from '~/interfaces/unit';
 import { nsPOSLoadingPopup } from '~/components/components';
 
+declare const nsHooks;
 
 export default {
     name: 'ns-procurement',
@@ -30,29 +31,40 @@ export default {
             }
         });
 
-
         /**
-         * We'll check if the URL has a preload query string
-         * that indicate the interface to load specific products
+         * We wouldlike the preload to be triggered only once.
+         * We'll therefore listen to the entities-reload hook and ensure
+         * the preload has not yet been triggered.
          */
-        const urlParams = new URLSearchParams(window.location.search);
-        const preload   = urlParams.get('preload');
+        nsHooks.addAction( 'entities-reloaded', 'internal', () => {
 
-        if ( preload ) {
-            nsHttpClient.get( `/api/procurements/preload/${preload}` )
-                .subscribe({
-                    next: (result: any) => {
-                        if ( result.items !== undefined ) {
-                            result.items.forEach( product => {
-                                this.addProductList( product );
-                            });
-                        }
-                    },
-                    error: error => {
-                        nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) ).subscribe();
-                    }
-                })
-        }
+            if ( ! this.hasPreloaded ) {
+                /**
+                 * We'll check if the URL has a preload query string
+                 * that indicate the interface to load specific products
+                 */
+                const urlParams = new URLSearchParams(window.location.search);
+                const preload   = urlParams.get('preload');
+    
+                if ( preload ) {
+                    nsHttpClient.get( `/api/procurements/preload/${preload}` )
+                        .subscribe({
+                            next: (result: any) => {
+                                if ( result.items !== undefined ) {
+                                    result.items.forEach( product => {
+                                        this.addProductList( product );
+                                    });
+                                }
+                            },
+                            error: error => {
+                                nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) ).subscribe();
+                            }
+                        })
+                }
+
+                this.hasPreloaded = true;
+            }
+        })
     },
     computed: {
         activeTab() {
@@ -61,6 +73,11 @@ export default {
     },
     data() {
         return {
+            /**
+             * Will determine if preload has been performed or not.
+             */
+            hasPreloaded: false,
+
             /**
              * Is the total taxes
              * computed on all the supplied products
@@ -423,8 +440,8 @@ export default {
                         }
                     });
                 }
-                
-                this.$forceUpdate();
+
+                nsHooks.doAction( 'entities-reloaded' );
             })
         },
         setTabActive( tab ) {

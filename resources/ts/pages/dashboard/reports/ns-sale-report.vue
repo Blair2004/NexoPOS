@@ -205,7 +205,7 @@
                                 <td colspan="2" class="p-2 border text-primary"></td>
                                 <td class="p-2 border text-right text-primary">{{ computeTotal( result, 'total_sold_items' ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_discount' ) ) }}</td>
-                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_tax_value' ) ) }}</td>
+                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'tax_value' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_purchase_price' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( 
@@ -213,7 +213,7 @@
                                     (
                                         computeTotal( result, 'total_purchase_price' )  +
                                         computeTotal( result, 'total_discount' ) +
-                                        computeTotal( result, 'total_tax_value' )
+                                        computeTotal( result, 'tax_value' )
                                     )
                                 ) }}</td>
                             </tr>
@@ -252,7 +252,6 @@
                                 <td class="p-2 border text-right text-primary">{{ computeTotal( result, 'total_sold_items' ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_discount' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_purchase_price' ) ) }}</td>
-                                <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_tax_value' ) ) }}</td>
                                 <td class="p-2 border text-right text-primary">{{ nsCurrency( computeTotal( result, 'total_price' ) ) }}</td>
                             </tr>
                         </tfoot>

@@ -1013,7 +1013,7 @@ class ProcurementService
             ->whereIn( 'type', Hook::filter( 'ns-procurement-searchable-product-type', [
                 Product::TYPE_DEMATERIALIZED,
                 Product::TYPE_MATERIALIZED,
-            ]) )
+            ] ) )
             ->notGrouped()
             ->withStockEnabled()
             ->with( 'unit_quantities.unit' );
@@ -1056,7 +1056,7 @@ class ProcurementService
              * just in case it's not a valid instance
              * we'll provide a default value "0"
              */
-            $unitQuantity->last_purchase_price = $this->productService->getLastPurchasePrice( 
+            $unitQuantity->last_purchase_price = $this->productService->getLastPurchasePrice(
                 product: $product,
                 unit: $unitQuantity->unit
             );
@@ -1084,17 +1084,17 @@ class ProcurementService
     public function preload( string $hash )
     {
         if ( Cache::has( 'procurements-' . $hash ) ) {
-            $data  =   Cache::get( 'procurements-' . $hash );
-            
+            $data = Cache::get( 'procurements-' . $hash );
+
             return [
-                'items' =>  collect( $data[ 'items' ] )->map( function( $item ) use ( $data ) {
-                    $query    =   $this->searchQuery()
+                'items' => collect( $data[ 'items' ] )->map( function ( $item ) use ( $data ) {
+                    $query = $this->searchQuery()
                         ->where( 'id', $item[ 'product_id' ] )
-                        ->whereHas( 'unit_quantities', function( $query ) use( $item ) {
+                        ->whereHas( 'unit_quantities', function ( $query ) use ( $item ) {
                             $query->where( 'unit_id', $item[ 'unit_id' ] );
                         } );
 
-                    $product   =   $query->first();
+                    $product = $query->first();
 
                     if ( $product instanceof Product ) {
 
@@ -1102,9 +1102,9 @@ class ProcurementService
                          * This will be helpful to set the desired unit
                          * and quantity provided on the preload configuration.
                          */
-                        $product->procurement   =   new stdClass;
-                        $product->procurement->unit_id  =   $item[ 'unit_id' ];
-                        $product->procurement->quantity =   ns()->currency
+                        $product->procurement = new stdClass;
+                        $product->procurement->unit_id = $item[ 'unit_id' ];
+                        $product->procurement->quantity = ns()->currency
                             ->define( $item[ 'quantity' ] )
                             ->multipliedBy( $data[ 'multiplier' ] )->toFloat();
 
@@ -1112,22 +1112,22 @@ class ProcurementService
                     }
 
                     return false;
-                })->filter()
+                } )->filter(),
             ];
         }
-        
+
         throw new NotFoundException( __( 'Unable to preload products. The hash might have expired or is invalid.' ) );
     }
 
-    public function storePreload( string $hash, Collection | array $items, $expiration = 86400, $multiplier = 1 )
+    public function storePreload( string $hash, Collection|array $items, $expiration = 86400, $multiplier = 1 )
     {
         if ( ! empty( $items ) ) {
-            $data       =   [];
-            $data[ 'multiplier' ]   =   $multiplier;
-            $data[ 'items' ]        =   $items;
+            $data = [];
+            $data[ 'multiplier' ] = $multiplier;
+            $data[ 'items' ] = $items;
 
             Cache::put( 'procurements-' . $hash, $data, $expiration );
-            
+
             return [
                 'status' => 'success',
                 'message' => __( 'The procurement has been saved for later use.' ),

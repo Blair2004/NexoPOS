@@ -92,14 +92,13 @@ export class POS {
             tax_group_id: undefined,
             tax_type: undefined,
             taxes: [],
-            tax_groups: [],
+            tax_group: {},
             payment_status: undefined,
             customer_id: undefined,
             change: 0,
             total_products: 0,
             shipping: 0,
             tax_value: 0,
-            total_tax_value: 0,
             products_tax_value: 0,
             shipping_rate: 0,
             shipping_type: undefined,
@@ -591,8 +590,11 @@ export class POS {
     computeTaxes() {
         return new Promise((resolve, reject) => {
             let order   =   this.order.getValue();
-            order       =   this.sumProductsTaxes( order );
 
+            /**
+             * @todo Urgent refactoring needed.
+             * We can't determine if that block is necessary.
+             */
             if (order.tax_group_id === undefined || order.tax_group_id === null) {
                 this.computeOrderTaxes( order );
 
@@ -602,25 +604,25 @@ export class POS {
                 });
             }
 
-            const groups = order.tax_groups;
+            const group = order.tax_group;
 
             /**
              * if the tax group is already cached
              * we'll pull that rather than doing a new request.
              */
-            if (Object.values(groups).length > 0) {
+            if ( group.id !== undefined ) {
 
                 /**
                  * Only if a tax group is assigned to the 
                  * order we should then get the real VAT value.
                  */
-                if ( groups[order.tax_group_id] !== undefined ) {
-                    order   =   <Order>this.computeOrderTaxGroup( order, groups[order.tax_group_id] );
+                if ( group.id === order.tax_group_id ) {
+                    order   =   <Order>this.computeOrderTaxGroup( order, group );
                 }
 
                 return resolve({
                     status: 'success',
-                    data: { tax: groups[order.tax_group_id], order }
+                    data: { tax: group, order }
                 });
             }
             
@@ -648,11 +650,11 @@ export class POS {
         })
     }
 
-    computeOrderTaxGroup( order, tax ) {
-        const summarizedRates   =   <number>tax.taxes.map( tax => parseFloat( tax.rate ) ).reduce( ( b, a ) => b + a );
+    computeOrderTaxGroup( order, taxGroup ) {
+        const summarizedRates   =   <number>taxGroup.taxes.map( tax => parseFloat( tax.rate ) ).reduce( ( b, a ) => b + a );
         const currentVatValue   =   this.getVatValue( order.subtotal - order.discount, summarizedRates, order.tax_type );
 
-        tax.taxes   =   tax.taxes.map( _tax => {
+        taxGroup.taxes   =   taxGroup.taxes.map( _tax => {
             const currentPercentage     =   math.chain( 
                 math.chain( _tax.rate ).divide( summarizedRates ).done()
             ).multiply( 100 ).done();
@@ -668,46 +670,35 @@ export class POS {
             };
         });
 
-        if ( tax.taxes.length === 0 ) {
+        if ( taxGroup.taxes.length === 0 ) {
             nsSnackBar.error( __( 'The selected tax group doesn\'t have any assigned sub taxes. This might cause wrong figures.' ), __( 'Proceed' ), { duration: false })
                 .subscribe();
 
             return;
         }
 
-        order.tax_groups = order.tax_groups || [];
-        order.taxes = tax.taxes;
+        order.tax_group = order.tax_group || {};
+        order.taxes = taxGroup.taxes;
 
         /**
          * this is set to cache the 
          * tax group to avoid subsequent request
          * to the server.
          */
-        order.tax_groups[tax.id] = tax;
+        order.tax_group = taxGroup;
 
         return this.computeOrderTaxes( order );
     }
 
     computeOrderTaxes( order: Order ) {
-        const posVat        =   this.options.getValue().ns_pos_vat;
-        const priceWithTax    =   this.options.getValue().ns_pos_price_with_tax === 'yes';
+        const options   =   this.options.getValue();
+        const posVat        =   options.ns_pos_vat;
+        const priceWithTax    =   options.ns_pos_price_with_tax === 'yes';
 
-        if ([ 'flat_vat', 'variable_vat', 'products_variable_vat', 'products_flat_vat' ].includes(posVat) && order.taxes && order.taxes.length > 0) {
+        if ([ 'flat_vat', 'variable_vat' ].includes(posVat) && order.taxes && order.taxes.length > 0) {
             order.tax_value += order.taxes
                 .map(tax => tax.tax_value)
                 .reduce((before, after) => before + after);
-        }
-
-        /**
-         * By default, we'll use box computed tax and products tax value 
-         * when priceWithTax is enabled.
-         * However to avoid duplicate taxes, we'll only consider computed tax
-         * when priceWithTax is disabled
-         */
-        order.total_tax_value     =  order.tax_value;
-
-        if ([ 'products_variable_vat', 'products_flat_vat', 'products_vat' ].includes(posVat) && ! priceWithTax ) {
-            order.total_tax_value     =  order.products_tax_value + order.tax_value;
         }
 
         return order;
@@ -715,9 +706,13 @@ export class POS {
 
     sumProductsTaxes( order: Order ) {
         const products  =   this.products.getValue();
-        const posVat    =   this.options.getValue().ns_pos_vat;
+        const options   =   this.options.getValue();
+        const posVat    =   options.ns_pos_vat;
+        
+        order.products = products;
+        order.total_products = products.length;
 
-        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) ) {
+        if ([ 'products_vat' ].includes(posVat) || options.ns_pos_price_with_tax === 'no' ) {
             const totalTaxValue =  products.map((product: OrderProduct) => {
                 return product.total_tax_value;
             });
@@ -727,8 +722,17 @@ export class POS {
             }
         }
 
-        order.products = products;
-        order.total_products = products.length;
+        /**
+         * We need to add the product taxes to the subtotal when
+         * the price with tax is disabled and the VAT is not set to either: products_vat
+         */
+        if ( options.ns_pos_price_with_tax === 'no' ) {
+            /**
+             * If the price with tax is enabled, we'll add the tax value
+             * to the subtotal.
+             */
+            order.subtotal      =   math.chain( order.subtotal ).add( order.products_tax_value ).done();
+        }
 
         return order;
     }
@@ -1273,25 +1277,16 @@ export class POS {
         });
     }
 
-    async refreshCart() {
-        /**
-         * check if according to the product
-         * available on the cart the coupons must 
-         * remains the same.
-         */
-        this.checkCart();
+    sumProductsTotals( order ) {
+        const products  = this.products.getValue();        
 
-        const products  = this.products.getValue();
-        let order       = this.order.getValue();
-
-        const productTotal = products
+        const total = products
             .filter( product => product.product_type !== 'dynamic' )
             .map(product => product.total_price );
 
-        if (productTotal.length > 0) {
-            let productTotalValue       =   productTotal.reduce((b, a) => b + a);
+        if (total.length > 0) {
+            let productTotalValue       =   total.reduce((b, a) => b + a);
             let dynamicProductValue     =   0;
-
             let dynamicProducts     =   products
                 .filter( product => product.product_type === 'dynamic' )
                 .map( product => {
@@ -1304,12 +1299,26 @@ export class POS {
             if ( dynamicProducts.length > 0 ) {
                 dynamicProductValue     =   dynamicProducts.reduce( (b,a) => b + a );
             }
-            
             order.subtotal = productTotalValue + dynamicProductValue;
         } else {
             order.subtotal = 0;
         }
 
+        order       =   this.sumProductsTaxes( order );
+
+        return order;
+    }
+
+    async refreshCart() {
+        /**
+         * check if according to the product
+         * available on the cart the coupons must 
+         * remains the same.
+         */
+        this.checkCart();
+
+        let order   =   this.sumProductsTotals( this.order.getValue() );
+        
         /**
          * we'll compute here the value
          * of the coupons
@@ -1349,8 +1358,7 @@ export class POS {
          * save actual change to ensure
          * all listener are up to date.
          */
-        order.tax_value         =   0;
-        order.total_tax_value   =   0;
+        order.tax_value             =   0;
         
         this.order.next(order);
 
@@ -1367,27 +1375,8 @@ export class POS {
             }
         }
 
-        let inclusiveTaxCount   =   0;
-
-        const inclusiveTaxes    =   products.map( (product: OrderProduct) => {
-            if ( product.tax_type === 'inclusive' ) {
-                return product.total_tax_value;
-            }
-            return 0;
-        });
-
-        if ( inclusiveTaxes.length > 0 ) {
-            inclusiveTaxCount   =   inclusiveTaxes.reduce( ( b, a ) => b + a );
-        }
-
         const taxType   =   order.tax_type;
-        const posVat    =   this.options.getValue().ns_pos_vat;
-
-        let tax_value   =   0;
-
-        if (['flat_vat', 'variable_vat', 'products_vat', 'products_flat_vat', 'products_variable_vat'].includes(posVat) ) {
-            tax_value   =   order.total_tax_value ;
-        }
+        let tax_value   =   order.tax_value;
 
         if ( taxType === 'exclusive' ) {
             const op1 = math.chain( order.subtotal ).add( order.shipping || 0 ).add( tax_value ).done();
@@ -1824,14 +1813,17 @@ export class POS {
         const unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
 
         let result    =   this.computeTaxForGroup( 
-            math.chain( unitPrice ).multiply( product.quantity ).subtract( product.discount ).done(), 
+            math.chain( unitPrice ).done(), 
             tax_group, 
             this.options.getValue().ns_pos_price_with_tax === 'yes' ? 'inclusive' : 'exclusive'
         );
 
         product.tax_value           =   result.tax_value;
+        product.total_tax_value     =   product.tax_value * product.quantity;
         product.price_with_tax      =   result.price_with_tax;
         product.price_without_tax   =   result.price_without_tax;
+        product.total_price_with_tax    =   math.chain( result.price_with_tax ).multiply( product.quantity ).subtract( product.discount ).done();
+        product.total_price_without_tax =   math.chain( result.price_without_tax ).multiply( product.quantity ).subtract( product.discount ).done();
     }
 
     computeTaxForGroup( price, tax_group, tax_type ) {

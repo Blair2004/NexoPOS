@@ -333,6 +333,6 @@ class ProcurementController extends DashboardController
 
     public function storePreload( Request $request )
     {
-        return $this->procurementService->storePreload( Str::uuid(), $request->only([ 'products' ]) );
+        return $this->procurementService->storePreload( Str::uuid(), $request->only( [ 'products' ] ) );
     }
 }

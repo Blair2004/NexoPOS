@@ -47,7 +47,6 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '~/bootstrap';
 import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
 export default {

@@ -82,7 +82,8 @@ class UploadModuleTest extends TestCase
          * Step 6: We'll reupload the module
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', '/api/modules', [
+            ->withHeader( 'Accept', 'text/html' )
+            ->post( '/api/modules', [
                 'module' => UploadedFile::fake()->createWithContent( 'module.zip', file_get_contents( $result[ 'path' ] ) ),
             ] );
 

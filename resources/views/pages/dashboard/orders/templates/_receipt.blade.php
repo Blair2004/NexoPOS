@@ -43,6 +43,12 @@ use Illuminate\Support\Facades\View;
                     @endforeach
                 </tbody>
                 <tbody>
+                    @if( $order->settings?->where( 'key', 'ns_pos_price_with_tax' )->first()?->value === 'no' )
+                    <tr>
+                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Product Taxes' ) }}</td>
+                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->products_tax_value ) }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Sub Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->subtotal ) }}</td>
@@ -87,16 +93,9 @@ use Illuminate\Support\Facades\View;
                         @if ( $order->tax_value > 0 )
                         <tr>
                             <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
-                                <span>{{ __( 'Taxes' ) }}</span>
+                                <span>{{ $order->tax_group?->name ?? __( 'Unassigned Tax Group' ) }} ({{ $order->tax_type === 'inclusive' ? __( 'Inclusive' ) : '' }})</span>
                             </td>
                             <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tax_value ) }}</td>
-                        </tr>
-                        @elseif ( $order->products_tax_value > 0 )
-                        <tr>
-                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
-                            <span>{{ $order->tax_type === 'inclusive' ? __( 'Inclusive Product Taxes' ) : __( 'Exclusive Product Taxes' ) }}</span>
-                            </td>
-                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->products_tax_value ) }}</td>
                         </tr>
                         @endif
                     @endif
