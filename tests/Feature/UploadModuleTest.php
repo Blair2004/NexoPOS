@@ -29,7 +29,7 @@ class UploadModuleTest extends TestCase
          */
         $moduleService = app()->make( ModulesService::class );
 
-        $name = str_replace( '.', '', $this->faker->text( 10 ) );
+        $name = str_replace( '.', '', $this->faker->text( 10 ) . Str::random(5) );
         $config = [
             'namespace' => ucwords( Str::camel( $name ) ),
             'name' => $name,
@@ -90,12 +90,72 @@ class UploadModuleTest extends TestCase
         $response->assertRedirect( ns()->route( 'ns.dashboard.modules-list' ) );
 
         /**
-         * Step 7 : We'll re-delete the uploaded module
+         * Step 7: We'll upload an old version of the same module
+         * and make sure it fails.
+         * 
+         * We'll first create a copy of the zip file and edit the config.xml file that is witin
+         */
+        $zipFilePath    =   $result[ 'path' ];
+        $content    =   file_get_contents( $zipFilePath );
+        $newZipFilePath =   storage_path( 'temporary-files/' . Str::random( 20 ) . '.zip' );
+        file_put_contents( $newZipFilePath, $content );
+
+        /**
+         * let's now edit the config.xml file within that zip file
+         */
+        $zip = new \ZipArchive();
+        $zip->open( $newZipFilePath );
+        $configXml = $zip->getFromName( $config[ 'namespace' ] . '/config.xml' );
+        $configXml = str_replace( '<version>1.0</version>', '<version>0.1</version>', $configXml );
+        $zip->addFromString( $config[ 'namespace' ] . '/config.xml', $configXml );
+        $zip->close();
+
+        /**
+         * We'll now attempt to upload that zip file 
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->withHeader( 'Accept', 'text/html' )
+            ->post( '/api/modules', [
+                'module' => UploadedFile::fake()->createWithContent( 'module.zip', file_get_contents( $newZipFilePath ) ),
+            ] );
+
+        $response->assertRedirect( '/dashboard/modules/upload' );
+        $response->assertSessionHasErrors( 'module' );
+
+        /**
+         * Step 9: We'll edit the config.xml and change the version to a greater version
+         */
+        $zip = new \ZipArchive();
+        $zip->open( $newZipFilePath );
+        $configXml = $zip->getFromName( $config[ 'namespace' ] . '/config.xml' );
+        $configXml = str_replace( '<version>0.1</version>', '<version>2.0</version>', $configXml );
+        $zip->addFromString( $config[ 'namespace' ] . '/config.xml', $configXml );
+        $zip->close();
+
+        /**
+         * We'll now attempt to upload that zip file 
+         */
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->withHeader( 'Accept', 'text/html' )
+            ->post( '/api/modules', [
+                'module' => UploadedFile::fake()->createWithContent( 'module.zip', file_get_contents( $newZipFilePath ) ),
+            ] );
+            
+        $response->assertRedirect( ns()->route( 'ns.dashboard.modules-list' ) );
+
+        /**
+         * Step 8 : We'll re-delete the uploaded module
          */
         $moduleService->delete( $config[ 'namespace' ] );
         $moduleService->load();
         $module = $moduleService->get( $config[ 'namespace' ] );
 
         $this->assertTrue( $module === false, 'The uploaded module wasn\'t deleted' );
+
+        /**
+         * We'll clean up the created zip files
+         */
+        unlink( $zipFilePath );
+        unlink( $newZipFilePath );
     }
 }

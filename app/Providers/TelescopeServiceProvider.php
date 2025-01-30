@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Role;
+use App\Services\Helper;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
@@ -56,13 +57,19 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define( 'viewTelescope', function ( $user ) {
-            return in_array( $user->email, [
-                Role::namespace( Role::ADMIN )
-                    ->users()
-                    ->get( 'email' )
-                    ->toArray(),
-            ] );
-        } );
+        if ( Helper::installed() ) {
+            $adminRole = Role::namespace( Role::ADMIN );
+            $users  =   collect([]);
+            
+            if ( $adminRole instanceof Role ) {
+                $users  =   $adminRole->users;
+            }
+            
+            Gate::define( 'viewTelescope', function ( $user ) use ( $users ) {
+                return in_array( $user->email, [
+                    $users->map( fn( $__user ) => $__user->email )
+                ] );
+            } );
+        }
     }
 }
