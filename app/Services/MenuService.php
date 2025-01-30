@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Gate;
 use TorMorten\Eventy\Facades\Eventy as Hook;
 
 class MenuService
@@ -479,7 +480,15 @@ class MenuService
         $this->menus = Hook::filter( 'ns-dashboard-menus', $this->menus );
         $this->toggleActive();
 
-        return $this->menus;
+        return collect( $this->menus )->filter( function( $menu ) {
+            return ! isset( $menu[ 'permissions' ] ) || Gate::any( $menu[ 'permissions' ] );
+        })->map( function( $menu ) {
+            $menu[ 'childrens' ]    =   collect( $menu[ 'childrens' ] ?? [] )->filter( function( $submenu ) {
+                return ! isset( $submenu[ 'permissions' ] ) || Gate::any( $submenu[ 'permissions' ] );
+            })->toArray();
+
+            return $menu;
+        });
     }
 
     /**
