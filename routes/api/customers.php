@@ -23,7 +23,6 @@ Route::post( 'customers', [ CustomersController::class, 'post' ] )->middleware( 
 Route::post( 'customers/search', [ CustomersController::class, 'searchCustomer' ] )->name( ns()->routeName( 'ns-api.customers.search' ) )->middleware( NsRestrictMiddleware::arguments( 'nexopos.read.customers' ) );
 Route::post( 'customers/coupons/{coupon}', [ CustomersController::class, 'loadCoupons' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.read.customers' ) );
 Route::post( 'customers/{customer}/crud/account-history', [ CustomersController::class, 'recordAccountHistory' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.customers.manage-account-history' ) );
-Route::put( 'customers/{customer}/crud/{accountHistory}/account-history', [ CustomersController::class, 'updateAccountHistory' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.customers.manage-account-history' ) );
 Route::put( 'customers/{customer}', [ CustomersController::class, 'put' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.update.customers' ) );
 
 Route::post( 'customers/{customer}/account-history', [ CustomersController::class, 'accountTransaction' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.customers.manage-account-history' ) );
