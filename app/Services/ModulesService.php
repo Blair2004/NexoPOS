@@ -740,7 +740,6 @@ class ModulesService
 
         $directoryName = pathinfo( $directory[0] )[ 'basename' ];
         $rawFiles = Storage::disk( 'ns-modules-temp' )->allFiles( $extractionFolderName );
-        $module = [];
 
         /**
          * Just retrieve the files name
@@ -782,15 +781,19 @@ class ModulesService
              * and if the new module is outdated
              */
             if ( $existingModule = $this->get( $moduleNamespace ) ) {
-                if ( version_compare( $module[ 'version' ], $moduleVersion, '>=' ) ) {
+                if ( version_compare( $existingModule[ 'version' ], $moduleVersion, '>=' ) ) {
                     /**
                      * We're dealing with old module
                      */
                     $this->clearTemporaryFiles();
 
                     return [
-                        'status' => 'danger',
-                        'message' => __( 'Unable to upload this module as it\'s older than the version installed' ),
+                        'status' => 'error',
+                        'message' => sprintf(
+                            __( 'Unable to upload this module as it\'s older (%s) than the version installed (%s)' ),
+                            $xml->version,
+                            $existingModule[ 'version' ],
+                        ),
                         'module' => $existingModule,
                     ];
                 }
