@@ -23,7 +23,7 @@
   "name": "nexopos",
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^43.0.0",
-    "@ckeditor/ckeditor5-vue": "^5.1.0",
+    "@ckeditor/ckeditor5-vue": "^7.3.0",
     "@dicebear/avataaars": "^9.2.2",
     "@dicebear/core": "^9.2.2",
     "@wordpress/hooks": "^4.15.0",
