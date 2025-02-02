@@ -238,7 +238,7 @@ export default {
         },
         resultInfo() {
             return __( 'displaying {perPage} of {items} items' )
-                .replace( '{perPage}', this.result.per_page || 0 )
+                .replace( '{perPage}', this.result.data.length || 0 )
                 .replace( '{items}', this.result.total || 0 )
         },
         headerButtonsComponents() {
