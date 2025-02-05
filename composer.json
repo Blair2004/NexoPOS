@@ -77,7 +77,8 @@
         "post-install-cmd": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate --ansi",
-            "@php -r \"file_exists('public/storage');\" || artisan storage:link --ansi"
+            "@php -r \"file_exists('public/storage');\" || artisan storage:link --ansi",
+            "@php artisan ns:translate --symlink"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

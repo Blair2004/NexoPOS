@@ -528,7 +528,7 @@ class ProductService
                 $subitem->sale_price = $item[ 'sale_price' ];
                 $subitem->quantity = $item[ 'quantity' ];
                 $subitem->total_price = $item[ 'total_price' ] ?? (float) $item[ 'sale_price' ] * (float) $item[ 'quantity' ];
-                $subitem->author = Auth::id();
+                $subitem->author = $product->author;
                 $subitem->save();
             } else {
                 $subitem = ProductSubItem::find( $item[ 'id' ] );
@@ -544,7 +544,7 @@ class ProductService
                 $subitem->sale_price = $item[ 'sale_price' ];
                 $subitem->quantity = $item[ 'quantity' ];
                 $subitem->total_price = $item[ 'total_price' ] ?? (float) $item[ 'sale_price' ] * (float) $item[ 'quantity' ];
-                $subitem->author = Auth::id();
+                $subitem->author = $product->author;
                 $subitem->save();
             }
 
@@ -1839,7 +1839,7 @@ class ProductService
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
-        $product->author = Auth::id();
+        $product->author = $parent->author;
         $product->parent_id = $parent->id;
         $product->type = $parent->type;
         $product->category_id = $parent->category_id;
@@ -1847,11 +1847,6 @@ class ProductService
         $product->save();
 
         event( new ProductAfterCreatedEvent( $product ) );
-
-        /**
-         * compute product tax
-         */
-        // $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
             'status' => 'success',
@@ -1884,7 +1879,7 @@ class ProductService
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
-        $product->author = Auth::id();
+        $product->author = $parent->author;
         $product->parent_id = $parent->id;
         $product->type = $parent->type;
         $product->product_type = 'variation';
