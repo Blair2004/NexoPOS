@@ -1239,7 +1239,7 @@ class ProductService
                     unit_price: $unit_price,
                     orderProduct: isset( $orderProduct ) ? $orderProduct : null,
                     procurementProduct: isset( $procurementProduct ) ? $procurementProduct : null,
-                    author: $author ?: 0,
+                    author: $author ?? 0,
                 );
             }
         }
