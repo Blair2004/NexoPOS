@@ -16,6 +16,7 @@
                 {{ label }}
                 </span>
                 <span v-if="notification > 0" class="rounded-full notification-label font-bold w-6 h-6 text-xs justify-center items-center flex">{{ notification }}</span>
+                <span v-if="hasChildren" class="flex items-center"><i v-if="! defaultToggledState" class="las la-angle-down"></i><i v-if="defaultToggledState" class="las la-angle-up"></i></span>
             </a>
         </template>
         <ul :class="defaultToggledState ? '' : 'hidden'" class="submenu-wrapper">
