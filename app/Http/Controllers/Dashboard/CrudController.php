@@ -237,9 +237,9 @@ class CrudController extends DashboardController
      *
      * @return array
      */
-    public function getConfig( string $namespace )
+    public function getConfig( string $identifier )
     {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
 
         if ( ! class_exists( $crudClass ) ) {
             throw new Exception( sprintf(
@@ -251,8 +251,8 @@ class CrudController extends DashboardController
         $resource = new $crudClass;
         $resource->allowedTo( 'read' );
 
-        if ( method_exists( $resource, 'getEntries' ) ) {
-            $resource->getCrudConfig();
+        if ( method_exists( $resource, 'getCrudConfig' ) ) {
+            return $resource->getCrudConfig();
         }
 
         return response()->json( [

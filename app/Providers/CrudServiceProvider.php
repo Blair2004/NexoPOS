@@ -21,7 +21,7 @@ class CrudServiceProvider extends ServiceProvider
          * every crud class on the system should be
          * added here in order to be available and supported.
          */
-        Hook::addFilter( 'ns-crud-resource', function ( $namespace ) {
+        Hook::addFilter( 'ns-crud-resource', function ( $identifier ) {
             /**
              * We'll attempt autoloading crud that explicitely
              * defined they want to be autoloaded. We expect classes to have 2
@@ -38,7 +38,7 @@ class CrudServiceProvider extends ServiceProvider
              * We pull the cached classes and checks if the
              * class has autoload and identifier defined.
              */
-            $class = collect( $classes )->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace );
+            $class = collect( $classes )->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $identifier );
 
             if ( $class->count() === 1 ) {
                 return $class->first();
@@ -52,7 +52,7 @@ class CrudServiceProvider extends ServiceProvider
              */
             $modulesService = app()->make( ModulesService::class );
 
-            $classes = collect( $modulesService->getEnabledAndAutoloadedModules() )->map( function ( $module ) use ( $namespace ) {
+            $classes = collect( $modulesService->getEnabledAndAutoloadedModules() )->map( function ( $module ) use ( $identifier ) {
                 $classes = Cache::get( 'modules-crud-classes-' . $module[ 'namespace' ], function () use ( $module ) {
                     $files = collect( Storage::disk( 'ns' )->files( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Crud' ) );
 
@@ -64,7 +64,7 @@ class CrudServiceProvider extends ServiceProvider
                  * We pull the cached classes and checks if the
                  * class has autoload and identifier defined.
                  */
-                $class = collect( $classes )->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $namespace );
+                $class = collect( $classes )->filter( fn( $class ) => $class::AUTOLOAD && $class::IDENTIFIER === $identifier );
 
                 if ( $class->count() === 1 ) {
                     return $class->first();
@@ -85,8 +85,8 @@ class CrudServiceProvider extends ServiceProvider
              * We'll still allow users to define crud
              * manually from this section.
              */
-            return match ( $namespace ) {
-                default => $namespace,
+            return match ( $identifier ) {
+                default => $identifier,
             };
         } );
     }

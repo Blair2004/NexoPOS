@@ -221,7 +221,6 @@ class CrudService
     /**
      * Shorthand for preparing and submitting crud request
      *
-     * @param  string $namespace
      * @param  array  $inputs
      * @param  mixed  $id
      * @return array  as a crud response
@@ -1057,12 +1056,10 @@ class CrudService
     /**
      * Get crud instance
      *
-     * @param string namespace
-     * @return CrudService
      */
-    public function getCrudInstance( $namespace )
+    public function getCrudInstance( string $identifier ): CrudService
     {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
 
         /**
          * In case nothing handle this crud
@@ -1287,11 +1284,6 @@ class CrudService
             'queryParams' => [],
 
             /**
-             * the following entries are @deprecated and will
-             * likely be removed on upcoming releases.
-             */
-
-            /**
              * this pull the title either
              * the form is made to create or edit a resource.
              */
@@ -1307,7 +1299,7 @@ class CrudService
              * this automatically build a source URL based on the identifier
              * provided. But can be overwritten with the config.
              */
-            'src' => $config['src'] ?? ( ns()->url( '/api/crud/' . $instance->namespace . '/' . ( ! empty( $entry ) ? 'form-config/' . $entry->id : 'form-config' ) ) ),
+            'src' => $config['src'] ?? ( ns()->url( '/api/crud/' . $instance->getIdentifier() . '/' . ( ! empty( $entry ) ? 'form-config/' . $entry->id : 'form-config' ) ) ),
 
             /**
              * this use the built in links to create a return URL.

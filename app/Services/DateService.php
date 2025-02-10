@@ -129,7 +129,6 @@ class DateService extends Carbon
             'i' => 'mm',
             's' => 'ss',
             'u' => 'SSS',
-            'e' => 'zz', // deprecated since version 1.6.0 of moment.js
             'I' => '', // no equivalent
             'O' => '', // no equivalent
             'P' => '', // no equivalent
