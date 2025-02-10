@@ -1227,7 +1227,7 @@ class ProductService
                     product: $product,
                     orderProduct: isset( $orderProduct ) ? $orderProduct : null,
                     parentUnit: $unit,
-                    author: $author ?: 0,
+                    author: $author ?? 0,
                 );
             } else {
                 return $this->handleStockAdjustmentRegularProducts(
