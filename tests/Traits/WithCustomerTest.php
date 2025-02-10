@@ -12,6 +12,7 @@ use Exception;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 trait WithCustomerTest
 {
@@ -336,17 +337,17 @@ trait WithCustomerTest
                 'first_name' => $firstName,
                 'general' => [
                     'group_id' => $group->id,
-                    'last_name' => $faker->lastName,
+                    'last_name' => $faker->lastName . Str::random( 5 ),
                     'email' => $email,
                 ],
                 'shipping' => [
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
+                    'first_name' => $firstName . Str::random( 5 ),
+                    'last_name' => $lastName . Str::random( 5 ),
                     'email' => $email,
                 ],
                 'billing' => [
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
+                    'first_name' => $firstName . Str::random( 5 ),
+                    'last_name' => $lastName . Str::random( 5 ),
                     'email' => $email,
                 ],
             ] );

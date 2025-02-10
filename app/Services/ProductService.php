@@ -528,7 +528,7 @@ class ProductService
                 $subitem->sale_price = $item[ 'sale_price' ];
                 $subitem->quantity = $item[ 'quantity' ];
                 $subitem->total_price = $item[ 'total_price' ] ?? (float) $item[ 'sale_price' ] * (float) $item[ 'quantity' ];
-                $subitem->author = Auth::id();
+                $subitem->author = $product->author;
                 $subitem->save();
             } else {
                 $subitem = ProductSubItem::find( $item[ 'id' ] );
@@ -544,7 +544,7 @@ class ProductService
                 $subitem->sale_price = $item[ 'sale_price' ];
                 $subitem->quantity = $item[ 'quantity' ];
                 $subitem->total_price = $item[ 'total_price' ] ?? (float) $item[ 'sale_price' ] * (float) $item[ 'quantity' ];
-                $subitem->author = Auth::id();
+                $subitem->author = $product->author;
                 $subitem->save();
             }
 
@@ -1178,6 +1178,7 @@ class ProductService
          * @param float              $quantity
          * @param string             $sku
          * @param string             $unit_identifier
+         * @param int                $author
          */
         $product = isset( $product_id ) ? Product::find( $product_id ) : Product::usingSKU( $sku )->first();
 
@@ -1225,7 +1226,8 @@ class ProductService
                     orderProductQuantity: $quantity,
                     product: $product,
                     orderProduct: isset( $orderProduct ) ? $orderProduct : null,
-                    parentUnit: $unit
+                    parentUnit: $unit,
+                    author: $author ?? 0,
                 );
             } else {
                 return $this->handleStockAdjustmentRegularProducts(
@@ -1236,7 +1238,8 @@ class ProductService
                     total_price: $total_price,
                     unit_price: $unit_price,
                     orderProduct: isset( $orderProduct ) ? $orderProduct : null,
-                    procurementProduct: isset( $procurementProduct ) ? $procurementProduct : null
+                    procurementProduct: isset( $procurementProduct ) ? $procurementProduct : null,
+                    author: $author ?? 0,
                 );
             }
         }
@@ -1256,6 +1259,7 @@ class ProductService
         $orderProductQuantity,
         Product $product,
         Unit $parentUnit,
+        int $author = 0,
         ?OrderProduct $orderProduct = null ): EloquentCollection
     {
         $product->load( 'sub_items' );
@@ -1264,7 +1268,7 @@ class ProductService
             throw new Exception( __( 'Adjusting grouped product inventory must result of a create, update, delete sale operation.' ) );
         }
 
-        $products = $product->sub_items->map( function ( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $parentUnit, $orderProduct ) {
+        $products = $product->sub_items->map( function ( ProductSubItem $subItem ) use ( $author, $action, $orderProductQuantity, $parentUnit, $orderProduct ) {
             $finalQuantity = $this->computeSubItemQuantity(
                 subItemQuantity: $subItem->quantity,
                 parentUnit: $parentUnit,
@@ -1314,6 +1318,7 @@ class ProductService
             return $this->recordStockHistory(
                 product_id: $subItem->product_id,
                 action: $action,
+                author: $author,
                 unit_id: $subItem->unit_id,
                 unit_price: $subItem->sale_price,
                 quantity: $finalQuantity,
@@ -1332,6 +1337,7 @@ class ProductService
         $this->recordStockHistory(
             product_id: $product->id,
             action: $action,
+            author: $author,
             unit_id: $orderProduct->unit_id,
             unit_price: $orderProduct->unit_price,
             quantity: $orderProductQuantity,
@@ -1382,7 +1388,7 @@ class ProductService
      * @param  ProcurementProduct $procurementProduct
      * @return ProductHistory
      */
-    private function handleStockAdjustmentRegularProducts( $action, $quantity, $product_id, $unit_id, $orderProduct = null, $unit_price = 0, $total_price = 0, $procurementProduct = null )
+    private function handleStockAdjustmentRegularProducts( $action, $quantity, $product_id, $unit_id, $author = 0, $orderProduct = null, $unit_price = 0, $total_price = 0, $procurementProduct = null )
     {
         /**
          * we would like to verify if
@@ -1433,6 +1439,7 @@ class ProductService
 
             return $this->recordStockHistory(
                 product_id: $product_id,
+                author: $author,
                 action: $action,
                 unit_id: $unit_id,
                 unit_price: $unit_price,
@@ -1478,6 +1485,7 @@ class ProductService
             return $this->recordStockHistory(
                 product_id: $product_id,
                 action: $action,
+                author: $author,
                 unit_id: $unit_id,
                 unit_price: $unit_price,
                 quantity: $adjustQuantity,
@@ -1518,6 +1526,7 @@ class ProductService
         $unit_price,
         $quantity,
         $total_price,
+        $author = 0,
         $order_id = null,
         $order_product_id = null,
         $procurement_product_id = null,
@@ -1539,7 +1548,7 @@ class ProductService
         $history->before_quantity = $old_quantity; // if the stock management is 0, it shouldn't change
         $history->quantity = abs( $quantity );
         $history->after_quantity = $new_quantity; // if the stock management is 0, it shouldn't change
-        $history->author = Auth::id();
+        $history->author = $author ?: Auth::id();
         $history->save();
 
         event( new ProductAfterStockAdjustmentEvent( $history ) );
@@ -1839,7 +1848,7 @@ class ProductService
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
-        $product->author = Auth::id();
+        $product->author = $parent->author;
         $product->parent_id = $parent->id;
         $product->type = $parent->type;
         $product->category_id = $parent->category_id;
@@ -1847,11 +1856,6 @@ class ProductService
         $product->save();
 
         event( new ProductAfterCreatedEvent( $product ) );
-
-        /**
-         * compute product tax
-         */
-        // $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
             'status' => 'success',
@@ -1884,7 +1888,7 @@ class ProductService
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
-        $product->author = Auth::id();
+        $product->author = $parent->author;
         $product->parent_id = $parent->id;
         $product->type = $parent->type;
         $product->product_type = 'variation';

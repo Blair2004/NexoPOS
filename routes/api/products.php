@@ -23,15 +23,15 @@ Route::get( 'products/{product}/units/quantities', [ ProductsController::class, 
 Route::get( 'products/{product}/procurements', [ ProductsController::class, 'getProcuredProducts' ] );
 Route::get( 'products/search/using-barcode/{product}', [ ProductsController::class, 'searchUsingArgument' ] );
 
-Route::middleware([
+Route::middleware( [
     NsRestrictMiddleware::arguments( 'nexopos.delete.products' ),
-])->group( function() {
+] )->group( function () {
     Route::delete( 'products/{identifier}', [ ProductsController::class, 'deleteProduct' ] );
     Route::delete( 'products/units/quantity/{unitQuantity}', [ ProductsController::class, 'deleteUnitQuantity' ] );
     Route::delete( 'products/all/variations', [ ProductsController::class, 'deleteAllVariations' ] );
     Route::delete( 'products/{identifier}/variations/{variation_id}', [ ProductsController::class, 'deleteSingleVariation' ] );
     Route::delete( 'products', [ ProductsController::class, 'deleteAllProducts' ] );
-});
+} );
 
 Route::post( 'products', [ ProductsController::class, 'saveProduct' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.create.products' ) );
 Route::post( 'products/search', [ ProductsController::class, 'searchProduct' ] )->middleware( NsRestrictMiddleware::arguments( 'nexopos.read.products' ) );

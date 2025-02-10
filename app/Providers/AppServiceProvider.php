@@ -38,6 +38,7 @@ use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -279,6 +280,14 @@ class AppServiceProvider extends ServiceProvider
             $module = trim( $params[1], " '" );
 
             return "<?php echo ns()->moduleViteAssets( \"{$fileName}\", \"{$module}\" ); ?>";
+        } );
+
+        /**
+         * To ensure options are always refreshed
+         * when a job is about to be processed.
+         */
+        Event::listen( JobProcessing::class, function () {
+            ns()->option->rebuild();
         } );
     }
 
