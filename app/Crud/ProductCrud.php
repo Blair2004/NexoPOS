@@ -125,6 +125,16 @@ class ProductCrud extends CrudService
         parent::__construct();
 
         $this->taxService = app()->make( TaxService::class );
+
+        $this->bulkEdit(
+            class: Product::class,
+            fields: CrudForm::fields(
+                FormInput::select(
+                    label: __m( 'Type' ),
+                    options: [],
+                )
+            )
+        );
     }
 
     /**

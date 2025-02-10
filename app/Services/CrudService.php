@@ -231,7 +231,7 @@ class CrudService
         $model = $id !== null ? $this->getModel()::find( $id ) : null;
         $data = $this->getFlatForm( $inputs, $model );
 
-        return $this->submitRequest( $this->getNamespace(), $data, $id );
+        return $this->submitRequest( $this->getIdentifier(), $data, $id );
     }
 
     /**
@@ -245,7 +245,7 @@ class CrudService
     public function submit( $inputs, $id = null )
     {
         return $this->submitRequest(
-            namespace: $this->getNamespace(),
+            identifier: $this->getIdentifier(),
             inputs: $inputs,
             id: $id
         );
@@ -254,14 +254,14 @@ class CrudService
     /**
      * Submit a prepared request to a crud instance
      *
-     * @param  string   $namespace
+     * @param  string   $identifier
      * @param  array    $inputs
      * @param  int|null $id
      * @return array    $response
      */
-    public function submitRequest( $namespace, $inputs, $id = null ): array
+    public function submitRequest( $identifier, $inputs, $id = null ): array
     {
-        $resource = $this->getCrudInstance( $namespace );
+        $resource = $this->getCrudInstance( $identifier );
         $model = $resource->getModel();
         $isEditing = $id !== null;
         $entry = ! $isEditing ? new $model : $model::find( $id );
@@ -421,6 +421,34 @@ class CrudService
     }
 
     /**
+     * This methods returns the Crud table configuration.
+     * @return array
+     */
+    public function getCrudConfig(): array
+    {
+        return Hook::filter( get_class( $this ) . '@getCrudConfig', [
+            'columns' => Hook::filter(
+                get_class( $this ) . '@getColumns',
+                $this->getColumns()
+            ),
+            'queryFilters' => Hook::filter( get_class( $this ) . '@getQueryFilters', $this->getQueryFilters() ),
+            'labels' => Hook::filter( get_class( $this ) . '@getLabels', $this->getLabels() ),
+            'links' => Hook::filter( get_class( $this ) . '@getFilteredLinks', $this->getFilteredLinks() ?? [] ),
+            'bulkActions' => Hook::filter( get_class( $this ) . '@getBulkActions', $this->getBulkActions() ),
+            'prependOptions' => Hook::filter( get_class( $this ) . '@getPrependOptions', $this->getPrependOptions() ),
+            'showOptions' => Hook::filter( get_class( $this ) . '@getShowOptions', $this->getShowOptions() ),
+            'showCheckboxes' => Hook::filter( get_class( $this ) . '@getShowCheckboxes', $this->getShowCheckboxes() ),
+            'headerButtons' => Hook::filter( get_class( $this ) . '@getHeaderButtons', $this->getHeaderButtons() ),
+            'identifier' => $this->getIdentifier(),
+        ], $this );
+    }
+
+    public function getLabels()
+    {
+        return [];
+    }
+
+    /**
      * Is enabled
      * Return whether a feature is enabled (true) or not (false)
      *
@@ -432,14 +460,9 @@ class CrudService
         return $this->features[$feature] ?? false;
     }
 
-    /**
-     * Get namespace
-     *
-     * @return string current namespace
-     */
-    public function getNamespace(): string
+    public function getIdentifier()
     {
-        return $this->namespace;
+        return get_class( $this )::IDENTIFIER;
     }
 
     /**
@@ -1249,7 +1272,7 @@ class CrudService
             /**
              * provide the current crud namespace
              */
-            'namespace' => $instance->getNamespace(),
+            'namespace' => $instance::IDENTIFIER,
 
             /**
              * We'll return here the select attribute that will

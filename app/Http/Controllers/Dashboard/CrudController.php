@@ -252,21 +252,7 @@ class CrudController extends DashboardController
         $resource->allowedTo( 'read' );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
-            return [
-                'columns' => Hook::filter(
-                    get_class( $resource ) . '@getColumns',
-                    $resource->getColumns()
-                ),
-                'queryFilters' => Hook::filter( get_class( $resource ) . '@getQueryFilters', $resource->getQueryFilters() ),
-                'labels' => Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
-                'links' => Hook::filter( get_class( $resource ) . '@getFilteredLinks', $resource->getFilteredLinks() ?? [] ),
-                'bulkActions' => Hook::filter( get_class( $resource ) . '@getBulkActions', $resource->getBulkActions() ),
-                'prependOptions' => Hook::filter( get_class( $resource ) . '@getPrependOptions', $resource->getPrependOptions() ),
-                'showOptions' => Hook::filter( get_class( $resource ) . '@getShowOptions', $resource->getShowOptions() ),
-                'showCheckboxes' => Hook::filter( get_class( $resource ) . '@getShowCheckboxes', $resource->getShowCheckboxes() ),
-                'headerButtons' => Hook::filter( get_class( $resource ) . '@getHeaderButtons', $resource->getHeaderButtons() ),
-                'namespace' => $namespace,
-            ];
+            $resource->getCrudConfig();
         }
 
         return response()->json( [

@@ -31,7 +31,7 @@
                     </button>
                 </div>
                 <div id="custom-buttons" v-if="headerButtonsComponents.length > 0">
-                    <component @refresh="refresh()" :result="result" :is="component" :key="index" v-for="(component, index) of headerButtonsComponents"/>
+                    <component @refresh="refresh()" :selected="selectedEntries" :result="result" :is="component" :key="index" v-for="(component, index) of headerButtonsComponents"/>
                 </div>
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">
