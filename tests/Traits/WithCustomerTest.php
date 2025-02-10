@@ -337,17 +337,17 @@ trait WithCustomerTest
                 'first_name' => $firstName,
                 'general' => [
                     'group_id' => $group->id,
-                    'last_name' => $faker->lastName . Str::random(5),
+                    'last_name' => $faker->lastName . Str::random( 5 ),
                     'email' => $email,
                 ],
                 'shipping' => [
-                    'first_name' => $firstName . Str::random(5),
-                    'last_name' => $lastName . Str::random(5),
+                    'first_name' => $firstName . Str::random( 5 ),
+                    'last_name' => $lastName . Str::random( 5 ),
                     'email' => $email,
                 ],
                 'billing' => [
-                    'first_name' => $firstName . Str::random(5),
-                    'last_name' => $lastName . Str::random(5),
+                    'first_name' => $firstName . Str::random( 5 ),
+                    'last_name' => $lastName . Str::random( 5 ),
                     'email' => $email,
                 ],
             ] );

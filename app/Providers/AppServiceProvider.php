@@ -283,12 +283,12 @@ class AppServiceProvider extends ServiceProvider
         } );
 
         /**
-         * To ensure options are always refreshed 
+         * To ensure options are always refreshed
          * when a job is about to be processed.
          */
-        Event::listen( JobProcessing::class, function() {
+        Event::listen( JobProcessing::class, function () {
             ns()->option->rebuild();
-        });
+        } );
     }
 
     /**
