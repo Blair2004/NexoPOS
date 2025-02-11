@@ -1,6 +1,8 @@
 <?php
 use App\Classes\Hook;
 use App\Classes\Output;
+use App\Events\FooterRenderEvent;
+
 ?>
 @extends( 'layout.dashboard' )
 
@@ -27,8 +29,16 @@ $identifier    =   collect( explode( '/', $src ) )
     ->last();
 
 $output     =   new Output;
+/**
+ * @deprecated: Hook::action is deprecated
+ */
 Hook::action( 'ns-crud-footer', $output, $identifier );
 Hook::action( $instance::method( 'getTableFooter' ), $instance->getTableFooter( $output ), $instance );
+
+FooterRenderEvent::dispatch( 
+    $instance->getTableFooter( $output ),
+    $instance::class
+);
 ?>
 {!! ( string ) $output !!}
 @endsection

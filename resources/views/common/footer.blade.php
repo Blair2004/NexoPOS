@@ -3,6 +3,7 @@
 use App\Services\Options;
 use App\Classes\Output;
 use App\Classes\Hook;
+use App\Events\FooterRenderEvent;
 use Illuminate\Support\Facades\Cookie;
 
 $options            =   app()->make( Options::class );
@@ -30,7 +31,9 @@ ns.base_url         =   '{{ url( "/" ) }}';
 @vite([ 'resources/ts/bootstrap.ts' ])
 <?php 
     $output     =   new Output;
+    // @deprecated
     Hook::action( 'ns-footer', $output );
+    FooterRenderEvent::dispatch( $output );
     echo ( string ) $output;
 ?>
 @yield( 'layout.dashboard.footer.inject' )
