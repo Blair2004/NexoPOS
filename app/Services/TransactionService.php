@@ -1467,8 +1467,8 @@ class TransactionService
             on: TransactionActionRule::RULE_ORDER_PAID,
             action: 'increase',
             account_id: $salesResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
+            do: 'increase',
+            offset_account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
