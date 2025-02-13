@@ -31,7 +31,7 @@
                     </button>
                 </div>
                 <div id="custom-buttons" v-if="headerButtonsComponents.length > 0">
-                    <component @refresh="refresh()" :selected="selectedEntries" :result="result" :is="component" :key="index" v-for="(component, index) of headerButtonsComponents"/>
+                    <component @refresh="refresh()" :selectedSubject="selectedEntriesSubject" :result="result" :is="component" :key="index" v-for="(component, index) of headerButtonsComponents"/>
                 </div>
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">
@@ -149,6 +149,7 @@ export default {
             queryFilters:[],
             headerButtons: [],
             withFilters: false,
+            selectedEntriesSubject: new RxJS.BehaviorSubject([]),
             columns: [],
             selectedEntries:[],
             globallyChecked: false,
@@ -175,6 +176,14 @@ export default {
         }
 
         this.loadConfig();
+    },
+    watch: {
+        selectedEntries: {
+            deep: true, 
+            handler( entries ) {
+                this.selectedEntriesSubject.next( entries );
+            }
+        }
     },
     props: [ 'src', 'createUrl', 'mode', 'identifier', 'queryParams', 'popup' ],
     computed: {
