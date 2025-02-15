@@ -439,6 +439,7 @@ class CrudService
             'showCheckboxes' => Hook::filter( get_class( $this ) . '@getShowCheckboxes', $this->getShowCheckboxes() ),
             'headerButtons' => Hook::filter( get_class( $this ) . '@getHeaderButtons', $this->getHeaderButtons() ),
             'identifier' => $this->getIdentifier(),
+            'showSelectedEntries' => true,
         ], $this );
     }
 

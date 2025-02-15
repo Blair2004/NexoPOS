@@ -31,11 +31,11 @@
                     </button>
                 </div>
                 <div id="custom-buttons" v-if="headerButtonsComponents.length > 0">
-                    <component @refresh="refresh()" :selectedSubject="selectedEntriesSubject" :result="result" :is="component" :key="index" v-for="(component, index) of headerButtonsComponents"/>
+                    <component @update="handleHeaderButtonUpdate( $event )" :config="crudConfig" @refresh="refresh()" :selectedSubject="selectedEntriesSubject" :result="result" :is="component" :key="index" v-for="(component, index) of headerButtonsComponents"/>
                 </div>
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">
-                <div class="px-1 flex items-center" v-if="selectedEntries.length > 0">
+                <div class="px-1 flex items-center" v-if="selectedEntries.length > 0  && showSelectedEntries">
                     <button @click="clearSelectedEntries()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 outline-none ns-crud-button border">
                         <i class="lar la-check-square"></i> {{ __( '{entries} entries selected' ).replace( '{entries}', selectedEntries.length ) }}
                     </button>
@@ -153,6 +153,8 @@ export default {
             columns: [],
             selectedEntries:[],
             globallyChecked: false,
+            showSelectedEntries: true,
+            crudConfig: {},
             result: {
                 current_page: null,
                 data: [],
@@ -182,6 +184,20 @@ export default {
             deep: true, 
             handler( entries ) {
                 this.selectedEntriesSubject.next( entries );
+
+                // the selectedEntries can now be updated by external components.
+                // when it's the case, entries that are visually selected remain selected event if the 
+                // selectedEntrie is an empty array. We need to make sure that the entries are
+                // aligned with the selectedEntries.
+                this.result.data.forEach( row => {
+                    const selected  =   entries.filter( e => e.$id === row.$id ).length > 0;
+
+                    if( selected ) {
+                        row.$checked  =   true;
+                    } else {
+                        row.$checked  =   false;
+                    }
+                });
             }
         }
     },
@@ -233,7 +249,7 @@ export default {
                     })
                 })
             });
-        }
+        },
     },
     methods: {
         __,
@@ -265,6 +281,27 @@ export default {
             }
 
             return result.filter( f => f > 0 || typeof f === 'string' );
+        },
+
+        // We'll allow external components to change this component state. We'll circumscribe the state that can be changed.
+        // the $event consist of a object where the key is the property and the value is the new value.
+        handleHeaderButtonUpdate( $event ) {
+            for ( let key in $event ) {
+                if ([
+                    'selectedEntries',
+                    'page',
+                    'bulkAction',
+                    'searchInput',
+                    'globallyChecked',
+                    'sortColumn',
+                    'searchQuery',
+                    'queryFiltersString',
+                    'withFilters',
+                    'bulkActions',
+                ].includes( key )) {
+                    this[ key ]  =   $event[ key ];
+                }
+            }
         },
 
         downloadContent() {
@@ -334,13 +371,15 @@ export default {
         loadConfig() {
             const request   =   nsHttpClient.get( `${this.src}/config?${this.getQueryParams()}` );
             request.subscribe( (f:any) => {
-                this.columns        =   f.columns;
-                this.bulkActions    =   f.bulkActions;
-                this.queryFilters   =   f.queryFilters;
-                this.prependOptions =   f.prependOptions;
-                this.showOptions    =   f.showOptions;
-                this.showCheckboxes =   f.showCheckboxes;
-                this.headerButtons  =   f.headerButtons || [];
+                this.crudConfig             =   f;
+                this.columns                =   f.columns;
+                this.bulkActions            =   f.bulkActions;
+                this.queryFilters           =   f.queryFilters;
+                this.prependOptions         =   f.prependOptions;
+                this.showOptions            =   f.showOptions;
+                this.showCheckboxes         =   f.showCheckboxes;
+                this.headerButtons          =   f.headerButtons || [];
+                this.showSelectedEntries    =   f.showSelectedEntries;
                 this.refresh();
             }, ( error ) => {
                 nsSnackBar.error( error.message, 'OK', { duration: false }).subscribe();
