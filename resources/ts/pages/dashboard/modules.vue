@@ -54,10 +54,16 @@
                             </div>
                             <strong>v{{ moduleObject[ 'version' ] }}</strong>
                         </div>
-                        <p class="py-2 text-sm">
+                        <p class="py-2 text-sm" v-if="typeof moduleObject.description === 'string'">
                             {{ truncateText( moduleObject.description, 20, '...' ) }}
                             <a class="text-xs text-info-tertiary hover:underline" @click="openPopupDetails( moduleObject )" v-if="countWords( moduleObject.description ) > 20" href="javascript:void(0)">[{{  __( 'Read More' ) }}]</a>
                         </p>
+                        <template v-if="typeof moduleObject.description === 'object'">
+                            <p class="py-2 text-sm">
+                                {{ truncateText( moduleObject.description[ currentLocale ], 20, '...' ) }}
+                                <a class="text-xs text-info-tertiary hover:underline" @click="openPopupDetails( moduleObject )" v-if="countWords( moduleObject.description[ currentLocale ] ) > 20" href="javascript:void(0)">[{{  __( 'Read More' ) }}]</a>
+                            </p>
+                        </template>
                     </div>
                     <div class="ns-box-footer border-t p-2 flex justify-between">
                         <ns-button :disabled="moduleObject.autoloaded || moduleObject[ 'psr-4-compliance' ] === false" v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">{{ __( 'Enable' ) }}</ns-button>
@@ -99,7 +105,8 @@ export default {
             total_disabled : 0,
             total_invalid: 0,
             searchText: '',
-            searchTimeOut: null
+            searchTimeOut: null,
+            currentLocale: ns.language,
         }
     },
     mounted() {
@@ -157,7 +164,7 @@ export default {
         openPopupDetails( moduleDetails ) {
             Popup.show( nsAlertPopup, {
                 title: __( '{module}' ).replace( '{module}', moduleDetails.name ),
-                message: moduleDetails.description
+                message: typeof moduleDetails.description === 'object' ? moduleDetails.description[ this.currentLocale ] : moduleDetails.description,
             })
         },
 

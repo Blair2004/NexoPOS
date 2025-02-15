@@ -21,6 +21,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -158,6 +159,19 @@ class ModulesService
                     'min-version' => ( (string) $attributes->$minVersion ) ?? null,
                     'max-version' => ( (string) $attributes->$maxVersion ) ?? null,
                 ];
+            }
+
+            // We'll check if the the product description has localization tags. If it's the case
+            // based on the current locale we'll load the right description otherwise fallback on "english" or says the description 
+            // has an invalid format
+
+            $locales    =   $xmlElement->children()->description->xpath( 'locale' );
+
+            if ( count( $locales ) > 0 ) {
+                $config[ 'description' ]  =  collect( $locales )->mapWithKeys( function( $locale ) {
+                    $locale = (array) $locale;
+                    return [ $locale[ '@attributes' ][ 'lang' ] => $locale[ 0 ] ];
+                });
             }
 
             $config[ 'requires' ] = collect( $xmlElement->children()->requires->xpath( '//dependency' ) )->mapWithKeys( function ( $module ) {

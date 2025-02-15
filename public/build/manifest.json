@@ -253,7 +253,7 @@
     "isEntry": true
   },
   "resources/ts/app.ts": {
-    "file": "assets/app--HPwXGLK.js",
+    "file": "assets/app-CCMvaN1Z.js",
     "name": "app",
     "src": "resources/ts/app.ts",
     "isEntry": true,
@@ -462,7 +462,7 @@
     ]
   },
   "resources/ts/pages/dashboard/modules.vue": {
-    "file": "assets/modules-DqfcKcsP.js",
+    "file": "assets/modules-DAe5m4Bg.js",
     "name": "modules",
     "src": "resources/ts/pages/dashboard/modules.vue",
     "isDynamicEntry": true,
