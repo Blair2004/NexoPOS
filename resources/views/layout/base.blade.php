@@ -36,40 +36,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
         'resources/scss/' . $theme . '.scss'
     ])
     @yield( 'layout.base.header' )
-    <script>
-        /**
-         * constant where is registered
-         * global custom components
-         * @param {Object}
-         */
-        window.nsExtraComponents     =   new Object;
-
-        /**
-         * describe a global NexoPOS object
-         * @param {object} ns
-         */
-        window.ns =   { nsExtraComponents };
-
-        /**
-         * store the server date
-         * @param {string}
-         */
-        window.ns.date                     =   {
-            current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
-            serverDate : '{{ app()->make( DateService::class )->toDateTimeString() }}',
-            timeZone: '{{ ns()->option->get( "ns_datetime_timezone", "Europe/London" ) }}',
-            format: `{{ $dateService->convertFormatToMomment( ns()->option->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) ) }}`
-        }
-
-        /**
-         * define the current language selected by the user or
-         * the language that applies to the system by default.
-         */
-        window.ns.language      =   '{{ app()->getLocale() }}';
-        window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
-            'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
-        ]));?>
-    </script>
+    @include( 'layout._header-script' )
     @vite([ 'resources/ts/lang-loader.ts' ])
 </head>
 <body>

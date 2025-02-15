@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv } from 'vite';
 
-import esmifyPlugin from './esmify';
 // import fs from 'fs';
 import laravel from 'laravel-vite-plugin';
 import mkcert from 'vite-plugin-mkcert';
@@ -49,6 +48,7 @@ export default ({ mode }) => {
                     'resources/ts/dev.ts',
                     'resources/ts/popups.ts',
                     'resources/ts/widgets.ts',
+                    'resources/ts/wizard.ts',
     
                     'resources/scss/app.scss',
                     'resources/scss/light.scss',

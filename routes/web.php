@@ -1,7 +1,10 @@
 <?php
 
+use App\Classes\FormInput;
+use App\Classes\Wizard;
 use App\Events\BeforeStartWebRouteEvent;
 use App\Http\Controllers\DevController;
+use App\Services\WizardService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -65,3 +68,26 @@ if ( env( 'APP_DEBUG' ) ) {
 
     include dirname( __FILE__ ) . '/debug.php';
 }
+
+Route::get( 'wizard', function() {
+    $wizard = new WizardService(
+        title: 'Example',
+        description: 'This is an example of how to use the wizard service',
+        steps: Wizard::steps(
+            Wizard::step(
+                completed: false,
+                title: 'Configuration',
+                description: 'Configure your application',
+                fields: Wizard::fields(
+                    FormInput::text(
+                        label: 'Name',
+                        name: 'name',
+                        value: 'NexoPOS 4'
+                    )
+                )
+            )
+        )
+    );
+
+    return $wizard->render();
+});
