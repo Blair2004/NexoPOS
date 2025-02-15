@@ -6,7 +6,6 @@ use App\Events\ModulesBootedEvent;
 use App\Events\ModulesLoadedEvent;
 use App\Services\Helper;
 use App\Services\ModulesService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class ModulesServiceProvider extends ServiceProvider
