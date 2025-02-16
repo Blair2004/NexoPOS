@@ -1,0 +1,1 @@
+const s=function(n,g="NexoPOS"){return nsLanguage.getEntries(g)&&nsLanguage.getEntries(g)[n]||n},r=function(n,g){return nsLanguage.getEntries(g)&&nsLanguage.getEntries(g)[n]||n};export{s as _,r as a};

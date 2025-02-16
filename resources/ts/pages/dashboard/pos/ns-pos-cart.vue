@@ -325,7 +325,7 @@ declare const POS, nsShortcuts, nsHotPress;
 
 import { ref, markRaw } from '@vue/reactivity';
 import { Order } from '~/interfaces/order';
-import { Ref } from 'vue';
+import { defineAsyncComponent, Ref } from 'vue';
 
 export default {
     name: 'ns-pos-cart',

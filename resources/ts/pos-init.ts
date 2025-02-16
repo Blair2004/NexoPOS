@@ -327,7 +327,7 @@ export class POS {
 
             return resolve({
                 status: 'success',
-                message: 'no default customer is selected.'
+                message: __( 'No default customer is selected.' )
             });
         }));
 
