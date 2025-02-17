@@ -12,11 +12,6 @@ use App\Classes\Output;
 @endsection
 
 @section( 'layout.dashboard.footer.inject' )
-    <?php 
-        $output     =   new Output;
-        Hook::action( 'ns-dashboard-home-footer', $output );
-        echo ( string ) $output;
-    ?>
     @vite([ 'resources/ts/widgets.ts' ])
     @vite([ 'resources/ts/dashboard.ts' ])
 @endsection

@@ -2,12 +2,17 @@
 
 use App\Classes\Hook;
 use App\Classes\Output;
+use App\Events\AfterLoginFieldsEvent;
+use App\Events\BeforeLoginFieldsEvent;
+use App\Events\RenderLoginFooterEvent;
 
-$beforeForm     =   new Output;
-$afterForm      =   new Output;
+$beforeForm             =   new Output;
+$afterForm              =   new Output;
+$renderLoginFooterEvent =   new Output;
 
-Hook::action( 'ns.before-login-fields', $beforeForm );
-Hook::action( 'ns.after-login-fields', $afterForm );
+BeforeLoginFieldsEvent::dispatch( $beforeForm );
+AfterLoginFieldsEvent::dispatch( $afterForm );
+RenderLoginFooterEvent::dispatch( $renderLoginFooterEvent );
 ?>
 @extends( 'layout.base' )
 
@@ -33,6 +38,6 @@ Hook::action( 'ns.after-login-fields', $afterForm );
 
 @section( 'layout.base.footer' )
     @parent
-    {!! Hook::filter( 'ns-login-footer', new Output ) !!}
+    {!! $renderLoginFooterEvent !!}
     @vite([ 'resources/ts/auth.ts' ])
 @endsection

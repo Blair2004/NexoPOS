@@ -9,7 +9,6 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Http\Middleware\ClearRequestCacheMiddleware;
-use App\Http\Middleware\OutputMiddleware;
 use App\Http\Middleware\HandleCommonRoutesMiddleware;
 use App\Http\Middleware\InstalledStateMiddleware;
 use App\Http\Middleware\NotInstalledStateMiddleware;
@@ -41,7 +40,6 @@ Route::middleware( [
         Authenticate::class,
         CheckApplicationHealthMiddleware::class,
         ClearRequestCacheMiddleware::class,
-        OutputMiddleware::class,
     ] )->group( function () {
         Route::prefix( 'dashboard' )->group( function () {
             event( new WebRoutesLoadedEvent( 'dashboard' ) );

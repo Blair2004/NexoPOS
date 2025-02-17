@@ -41,7 +41,7 @@ trait App
         $storeName = ns()->option->get( 'ns_store_name' ) ?: 'NexoPOS';
 
         return sprintf(
-            Hook::filter( 'ns-page-title', __( '%s &mdash; %s' ) ),
+            Hook::filter( 'ns-page-title', __( '%s — %s' ) ),
             $string,
             $storeName
         );

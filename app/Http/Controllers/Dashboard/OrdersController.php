@@ -93,18 +93,12 @@ class OrdersController extends DashboardController
             'ordersService' => app()->make( OrdersService::class ),
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
-            'title' => sprintf( __( 'Payment Receipt &mdash; %s' ), $order->code ),
+            'title' => sprintf( __( 'Payment Receipt — %s' ), $order->code ),
         ] );
     }
 
     public function listOrders()
     {
-        Hook::addAction(
-            'ns-crud-footer',
-            fn( Output $output ) => $output
-                ->addView( 'pages.dashboard.orders.footer' )
-        );
-
         return OrderCrud::table();
     }
 
@@ -238,7 +232,7 @@ class OrdersController extends DashboardController
             'options' => $optionsService->get(),
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
-            'title' => sprintf( __( 'Order Invoice &mdash; %s' ), $order->code ),
+            'title' => sprintf( __( 'Order Invoice — %s' ), $order->code ),
         ] );
     }
 
@@ -254,7 +248,7 @@ class OrdersController extends DashboardController
             'ordersService' => app()->make( OrdersService::class ),
             'billing' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping' => ( new CustomerCrud )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
-            'title' => sprintf( __( 'Order Refund Receipt &mdash; %s' ), $refund->order->code ),
+            'title' => sprintf( __( 'Order Refund Receipt — %s' ), $refund->order->code ),
         ] );
     }
 
@@ -270,7 +264,7 @@ class OrdersController extends DashboardController
 
         return View::make( 'pages.dashboard.orders.templates.receipt', [
             'order' => $order,
-            'title' => sprintf( __( 'Order Receipt &mdash; %s' ), $order->code ),
+            'title' => sprintf( __( 'Order Receipt — %s' ), $order->code ),
             'optionsService' => $this->optionsService,
             'ordersService' => $this->ordersService,
             'paymentTypes' => collect( $this->paymentTypes )->mapWithKeys( function ( $payment ) {

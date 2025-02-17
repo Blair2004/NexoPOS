@@ -2,11 +2,14 @@
 
 use App\Classes\Hook;
 use App\Classes\Output;
+use App\Events\AfterDashboardTitleEvent;
+use App\Events\BeforeDashboardTitleEvent;
+
 ?>
 <?php
     $output     =   new Output;
-    Hook::action( 'ns-dashboard-before-title', $output, $identifier ?? null );
-    echo ( string ) $output;
+    BeforeDashboardTitleEvent::dispatch( $output );
+    echo $output;
 ?>
 
 <div class="page-inner-header mb-4">
@@ -17,6 +20,6 @@ use App\Classes\Output;
 
 <?php
     $output     =   new Output;
-    Hook::action( 'ns-dashboard-after-title', $output, $identifier ?? null );
-    echo ( string ) $output;
+    AfterDashboardTitleEvent::dispatch( $output );
+    echo $output;
 ?>

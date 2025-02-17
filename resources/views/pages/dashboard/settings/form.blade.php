@@ -1,7 +1,8 @@
 <?php
 
-use App\Classes\Hook;
 use App\Classes\Output;
+use App\Events\RenderSettingsFooterEvent;
+
 ?>
 @extends( 'layout.dashboard' )
 
@@ -25,7 +26,7 @@ use App\Classes\Output;
     @parent
     <?php
     $output     =   new Output;
-    Hook::action( 'ns-dashboard-settings-footer', $output, $identifier )
+    RenderSettingsFooterEvent::dispatch( $output, $instance );
+    echo $output;
     ?>
-    {!! ( string ) $output !!}
 @endsection

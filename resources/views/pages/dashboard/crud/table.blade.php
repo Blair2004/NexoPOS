@@ -1,8 +1,6 @@
 <?php
-use App\Classes\Hook;
 use App\Classes\Output;
-use App\Events\FooterRenderEvent;
-
+use App\Events\RenderCrudTableFooterEvent;
 ?>
 @extends( 'layout.dashboard' )
 
@@ -24,21 +22,8 @@ use App\Events\FooterRenderEvent;
 @section( 'layout.dashboard.footer' )
     @parent
 <?php
-$identifier    =   collect( explode( '/', $src ) )
-    ->filter( fn( $segment ) => ! empty( $segment ) )
-    ->last();
-
 $output     =   new Output;
-/**
- * @deprecated: Hook::action is deprecated
- */
-Hook::action( 'ns-crud-footer', $output, $identifier );
-Hook::action( $instance::method( 'getTableFooter' ), $instance->getTableFooter( $output ), $instance );
-
-FooterRenderEvent::dispatch( 
-    $instance->getTableFooter( $output ),
-    $instance::class
-);
+RenderCrudTableFooterEvent::dispatch( $output, $instance );
+echo $output;
 ?>
-{!! ( string ) $output !!}
 @endsection

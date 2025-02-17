@@ -1,11 +1,6 @@
 <?php
-
-use App\Classes\Hook;
-use App\Classes\Output;
 use App\Services\DateService;
-use App\Services\Helper;
 use App\Services\MenuService;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -29,12 +24,8 @@ if ( Auth::check() ) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{!! Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) !!}</title>
-    <?php 
-        $output     =   new Output;
-        Hook::action( "ns-dashboard-header", $output );
-        echo ( string ) $output;
-    ?>
+    <title>{{ App\Services\Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) }}</title>
+    @include( 'layout._header-injection')
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
         'resources/scss/grid.scss',

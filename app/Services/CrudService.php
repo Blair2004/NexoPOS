@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Casts\DateCast;
 use App\Classes\Output;
+use App\Events\CrudActionEvent;
 use App\Events\CrudHookEvent;
 use App\Exceptions\NotAllowedException;
 use App\Traits\NsForms;
@@ -338,7 +339,7 @@ class CrudService
             }
 
             /**
-             * If fillable is empty or if "author" it's explicitly
+             * If fillable is empty or if "author" is explicitly
              * mentionned on the fillable array.
              */
             if ( empty( $fillable ) || (
@@ -977,7 +978,7 @@ class CrudService
              * entries but make sure to keep the originals.
              */
             if ( method_exists( $this, 'setActions' ) ) {
-                Hook::action( get_class( $this )::method( 'setActions' ), $this->setActions( $entry ) );
+                CrudActionEvent::dispatch( $this, $this->setActions( $entry ) );
             }
 
             return $entry;
@@ -1266,6 +1267,11 @@ class CrudService
              * whether the entry is provided (Model). Can be changed from the $config.
              */
             'submitMethod' => $config['submitMethod'] ?? ( $entry === null ? 'post' : 'put' ),
+
+            /**
+             * We might additionnaly pass the instance itself
+             */
+            'instance' =>  $instance,
 
             /**
              * provide the current crud namespace

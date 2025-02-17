@@ -316,14 +316,6 @@ class ProductsController extends DashboardController
 
     public function listProducts()
     {
-        ns()->restrict( [ 'nexopos.read.products' ] );
-
-        Hook::addAction( 'ns-crud-footer', function ( Output $output ) {
-            $output->addView( 'pages.dashboard.products.quantity-popup' );
-
-            return $output;
-        } );
-
         return ProductCrud::table();
     }
 
@@ -381,12 +373,6 @@ class ProductsController extends DashboardController
      */
     public function productHistory( $identifier )
     {
-        Hook::addAction( 'ns-crud-footer', function ( Output $output, $identifier ) {
-            $output->addView( 'pages.dashboard.products.history' );
-
-            return $output;
-        }, 10, 2 );
-
         $product = Product::find( $identifier );
 
         return ProductHistoryCrud::table( [

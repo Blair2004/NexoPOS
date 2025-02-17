@@ -47,9 +47,5 @@ document.addEventListener( 'DOMContentLoaded', () => {
 </script>
 @endif
 @vite([ 'resources/ts/bootstrap.ts' ])
-<?php 
-    $output     =   new Output;
-    Hook::action( 'ns-dashboard-footer', $output );
-    echo ( string ) $output;
-?>
+@include( 'layout._footer-injection' )
 @yield( 'layout.dashboard.footer.inject' )

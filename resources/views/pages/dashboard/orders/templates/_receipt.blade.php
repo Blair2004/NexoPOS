@@ -76,7 +76,7 @@ use Illuminate\Support\Facades\View;
                         @foreach( $order->taxes as $tax )
                         <tr>
                             <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
-                                <span>{{ $tax->tax_name }} &mdash; {{ $order->tax_type === 'inclusive' ? __( 'Inclusive' ) : __( 'Exclusive' ) }}</span>
+                                <span>{{ $tax->tax_name }} — {{ $order->tax_type === 'inclusive' ? __( 'Inclusive' ) : __( 'Exclusive' ) }}</span>
                             </td>
                             <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $tax->tax_value ) }}</td>
                         </tr>

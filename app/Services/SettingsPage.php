@@ -106,6 +106,12 @@ class SettingsPage
              * this is used to load the settings asynchronously.
              */
             'identifier' => $settings->getIdentifier(),
+
+            /**
+             * We now pass the instance so it can be captured by modules on the footer. 
+             * This is usefull to add settings specific behavior.
+             */
+            'instance' => $settings,
         ] );
     }
 
