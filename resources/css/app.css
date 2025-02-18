@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@source "../../resources/";
+
 html,
 body {
     height: 100%;

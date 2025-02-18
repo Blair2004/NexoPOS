@@ -187,13 +187,13 @@
     "isEntry": true
   },
   "resources/scss/app.scss": {
-    "file": "assets/app-g0F6F6ty.css",
+    "file": "assets/app-Dx62GDPP.css",
     "src": "resources/scss/app.scss",
     "isEntry": true
   },
   "resources/scss/dark.scss": {
-    "file": "assets/dark-D527pk3c.css",
-    "src": "resources/scss/phosphor.scss",
+    "file": "assets/dark-Db_iTfmR.css",
+    "src": "resources/scss/dark.scss",
     "isEntry": true
   },
   "resources/scss/fonts.scss": {
@@ -277,7 +277,7 @@
     "isEntry": true
   },
   "resources/scss/phosphor.scss": {
-    "file": "assets/dark-D527pk3c.css",
+    "file": "assets/phosphor-D527pk3c.css",
     "src": "resources/scss/phosphor.scss",
     "isEntry": true
   },

@@ -76,10 +76,6 @@ module.exports = {
     },
     extend: {
       colors: {
-        teal: colors.teal,
-        orange: colors.orange,
-        cyan: colors.cyan,
-        
         typography: withOpacityValue('--typography'),
         
         surface: withOpacityValue('--surface'),

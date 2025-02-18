@@ -53,7 +53,7 @@ export default ({ mode }) => {
                     'resources/ts/widgets.ts',
                     'resources/ts/wizard.ts',
     
-                    'resources/scss/app.scss',
+                    'resources/css/app.css',
                     'resources/scss/grid.scss',
                     'resources/scss/animations.scss',
                     'resources/scss/typography.scss',
@@ -61,7 +61,7 @@ export default ({ mode }) => {
                     'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
 
                     // themes
-                    'resources/scss/light.scss',
+                    'resources/css/light.css',
                     'resources/scss/dark.scss',
                     'resources/scss/phosphor.scss',
                 ],

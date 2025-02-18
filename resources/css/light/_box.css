@@ -1,0 +1,47 @@
+.is-popup {
+    .ns-box {
+        color: var(--primary);
+        @apply rounded-lg overflow-hidden;
+
+        .ns-box-header {
+            border: var(--border-box-edge);
+            color: var(--primary);
+        }
+
+        .ns-box-body {
+            color: var(--primary);
+        }
+
+        .ns-box-footer {
+            border: var(--box-edge);
+            background: @apply bg-slate-400;
+        }
+
+        div > h3 {
+            color: var(--primary);
+        }
+    }
+}
+.ns-box {
+    background: var(--box-background);
+    color: var(--primary);
+
+    .ns-box-header {
+        border: var(--box-edge);
+        color: var(--primary);
+    }
+
+    .ns-box-body {
+        color: var(--primary);
+        border: var(--box-edge);
+    }
+
+    .ns-box-footer {
+        border: var(--box-edge);
+        background: var(--box-background);
+    }
+
+    div > h3 {
+        color: var(--primary);
+    }
+}
