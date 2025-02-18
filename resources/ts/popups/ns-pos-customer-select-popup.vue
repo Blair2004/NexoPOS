@@ -21,7 +21,7 @@
                         v-model="searchCustomerValue"
                         placeholder="Search Customer" 
                         type="text" 
-                        class="outline-none w-full p-2">
+                        class="outline-hidden w-full p-2">
                 </div>
             </div>
             <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto ns-scrollbar">

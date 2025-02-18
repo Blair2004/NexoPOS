@@ -43,7 +43,7 @@ export default {
                     <i class="las la-play text-2xl"></i>
                 </button>
             </div>
-            <select :disabled="field.disabled ? field.disabled : false" @change="$emit( 'change', $event )" :name="field.name" v-model="field.value" :class="inputClass" class="text-primary block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10 outline-none">
+            <select :disabled="field.disabled ? field.disabled : false" @change="$emit( 'change', $event )" :name="field.name" v-model="field.value" :class="inputClass" class="text-primary block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10 outline-hidden">
                 <option :key="index" :value="option.value" v-for="(option,index) of field.options" class="py-2">{{ option.label }}</option>
             </select>
         </div>

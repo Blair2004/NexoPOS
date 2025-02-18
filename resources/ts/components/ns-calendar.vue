@@ -3,14 +3,14 @@
         <div class="flex-auto" v-if="currentView === 'years'">
             <div class="p-2 flex items-center">
                 <div>
-                    <button @click="subMonth()" class="w-8 h-8 ns-inset-button border outline-none text-numpad-text rounded"><i class="las la-angle-left"></i></button>
+                    <button @click="subMonth()" class="w-8 h-8 ns-inset-button border outline-hidden text-numpad-text rounded"><i class="las la-angle-left"></i></button>
                 </div>
                 <div class="flex flex-auto font-semibold text-primary justify-center">
                     <span class="mr-2 cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
                     <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                 </div>
                 <div>
-                    <button @click="addMonth()" class="w-8 h-8 ns-inset-button border outline-none text-numpad-text rounded"><i class="las la-angle-right"></i></button>
+                    <button @click="addMonth()" class="w-8 h-8 ns-inset-button border outline-hidden text-numpad-text rounded"><i class="las la-angle-right"></i></button>
                 </div>
             </div>
             <div class="h-32 flex grow-0 items-center justify-center text-primary p-4">
@@ -19,7 +19,7 @@
                         <i class="las la-minus"></i>
                     </button>
                     <div class="w-24 flex grow-0">
-                        <input type="text" ref="year" class="p-2 flex-auto w-full text-center outline-none" @change="setYear( $event )" :value="currentDay.format( 'YYYY' )">
+                        <input type="text" ref="year" class="p-2 flex-auto w-full text-center outline-hidden" @change="setYear( $event )" :value="currentDay.format( 'YYYY' )">
                     </div>
                     <button @click="addYear()" class="px-2 py-2">
                         <i class="las la-plus"></i>
@@ -35,14 +35,14 @@
         <div class="flex-auto border-b border-box-background" v-if="currentView === 'months'">
             <div class="p-2 flex items-center">
                 <div>
-                    <button @click="subYear()" class="w-8 h-8 ns-inset-button outline-none border rounded"><i class="las la-angle-left"></i></button>
+                    <button @click="subYear()" class="w-8 h-8 ns-inset-button outline-hidden border rounded"><i class="las la-angle-left"></i></button>
                 </div>
                 <div class="flex flex-auto font-semibold text-primary justify-center">
                     <span class="mr-2 border-b border-info-secondary border-dashed">{{ currentDay.format( 'MMM' ) }}</span>
                     <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                 </div>
                 <div>
-                    <button @click="addYear()" class="w-8 h-8 ns-inset-button outline-none border rounded"><i class="las la-angle-right"></i></button>
+                    <button @click="addYear()" class="w-8 h-8 ns-inset-button outline-hidden border rounded"><i class="las la-angle-right"></i></button>
                 </div>
             </div>
             <div class="grid grid-flow-row grid-cols-3 grid-rows-1 gap-0 text-primary divide-x divide-y border-b border-box-background">
@@ -109,9 +109,9 @@
                         <span class="pr-2 pl-1 text-primary">
                             <i class="las la-clock"></i>
                         </span>
-                        <input placeholder="HH" ref="hours" @change="detectHoursChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input-background outline-none text-sm active:border-numpad-edge" v-model="hours" type="number">
+                        <input placeholder="HH" ref="hours" @change="detectHoursChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input-background outline-hidden text-sm active:border-numpad-edge" v-model="hours" type="number">
                         <span class="mx-1">:</span>
-                        <input placeholder="mm" ref="minutes" @change="detectMinuteChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input-background outline-none text-sm active:border-numpad-edge" v-model="minutes" type="number">
+                        <input placeholder="mm" ref="minutes" @change="detectMinuteChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input-background outline-hidden text-sm active:border-numpad-edge" v-model="minutes" type="number">
                     </div>
                 </div>
             </div>

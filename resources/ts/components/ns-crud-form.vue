@@ -272,8 +272,8 @@ export default {
                             @change="formValidation.checkField( form.main )" 
                             :disabled="form.main.disabled"
                             type="text" 
-                            class="flex-auto outline-none h-10 px-2">
-                        <button :disabled="form.main.disabled" :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : ''" @click="submit()" class="outline-none px-4 h-10 text-white">{{ __( 'Save' ) }}</button>
+                            class="flex-auto outline-hidden h-10 px-2">
+                        <button :disabled="form.main.disabled" :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : ''" @click="submit()" class="outline-hidden px-4 h-10 text-white">{{ __( 'Save' ) }}</button>
                     </div>
                     <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                     <p :key="index" class="text-xs py-1 text-error-tertiary" v-for="(error,index) of form.main.errors">
@@ -311,7 +311,7 @@ export default {
                         </div>
                         <div class="flex justify-end" v-if="! form.main.name">
                             <div class="ns-button" :class="form.main.disabled ? 'default' : ( form.main.errors.length > 0 ? 'error' : 'info' )">
-                                <button :disabled="form.main.disabled" @click="submit()" class="outline-none px-4 h-10 border-l">{{ __( 'Save' ) }}</button>
+                                <button :disabled="form.main.disabled" @click="submit()" class="outline-hidden px-4 h-10 border-l">{{ __( 'Save' ) }}</button>
                             </div>
                         </div>
                     </div>

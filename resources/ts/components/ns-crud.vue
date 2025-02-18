@@ -3,13 +3,13 @@
         <div id="crud-table-header" class="p-2 border-b flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
                 <div v-if="createUrl" class="px-2 flex items-center justify-center">
-                    <a :href="createUrl || '#'" class="rounded-full ns-crud-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border"><i class="las la-plus"></i></a>
+                    <a :href="createUrl || '#'" class="rounded-full ns-crud-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-hidden border"><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
                     <div class="rounded-full p-1 ns-crud-input flex">
-                        <input @keypress.enter="search()" v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-none px-2">
-                        <button @click="search()" class="rounded-full w-8 h-8 outline-none ns-crud-input-button"><i class="las la-search"></i></button>
-                        <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-secondary outline-none hover:bg-error-tertiary"><i class="las la-times text-white"></i></button>
+                        <input @keypress.enter="search()" v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-hidden px-2">
+                        <button @click="search()" class="rounded-full w-8 h-8 outline-hidden ns-crud-input-button"><i class="las la-search"></i></button>
+                        <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-secondary outline-hidden hover:bg-error-tertiary"><i class="las la-times text-white"></i></button>
                     </div>
                 </div>
                 <div class="px-2 flex items-center justify-center">
@@ -17,13 +17,13 @@
                     text-sm
                     h-10
                     px-3
-                    outline-none
+                    outline-hidden
                     border
                     ns-crud-button
                     "><i :class="isRefreshing ? 'animate-spin' : ''" class="las la-sync"></i> </button>
                 </div>
                 <div class="px-2 flex items-center" v-if="showQueryFilters">
-                    <button @click="openQueryFilter()" :class="withFilters ? 'table-filters-enabled' : 'table-filters-disabled'" class="ns-crud-button border rounded-full text-sm h-10 px-3 outline-none ">
+                    <button @click="openQueryFilter()" :class="withFilters ? 'table-filters-enabled' : 'table-filters-disabled'" class="ns-crud-button border rounded-full text-sm h-10 px-3 outline-hidden ">
                         <i v-if="! withFilters" class="las la-filter"></i>
                         <i v-if="withFilters" class="las la-check"></i>
                         <span class="ml-1" v-if="! withFilters">{{ __( 'Filters' ) }}</span>
@@ -36,12 +36,12 @@
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">
                 <div class="px-1 flex items-center" v-if="selectedEntries.length > 0  && showSelectedEntries">
-                    <button @click="clearSelectedEntries()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 outline-none ns-crud-button border">
+                    <button @click="clearSelectedEntries()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 outline-hidden ns-crud-button border">
                         <i class="lar la-check-square"></i> {{ __( '{entries} entries selected' ).replace( '{entries}', selectedEntries.length ) }}
                     </button>
                 </div>
                 <div class="px-1 flex items-center">
-                    <button @click="downloadContent()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 ns-crud-button border outline-none"><i class="las la-download"></i> {{ __( 'Download' ) }}</button>
+                    <button @click="downloadContent()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 ns-crud-button border outline-hidden"><i class="las la-download"></i> {{ __( 'Download' ) }}</button>
                 </div>
             </div>
         </div>
@@ -93,11 +93,11 @@
         </div>
         <div class="p-2 flex border-t flex-col md:flex-row justify-between footer">
             <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full ns-crud-input p-1">
-                <select class="outline-none bg-transparent" v-model="bulkAction" id="grouped-actions">
+                <select class="outline-hidden bg-transparent" v-model="bulkAction" id="grouped-actions">
                     <option class="bg-input-disabled" selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
                     <option class="bg-input-disabled" :key="index" v-for="(action, index) of bulkActions" :value="action.identifier">{{ action.label }}</option>
                 </select>
-                <button @click="bulkDo()" class="ns-crud-input-button h-8 px-3 outline-none rounded-full flex items-center justify-center"><slot name="bulk-go">{{ __( 'Apply' ) }}</slot></button>
+                <button @click="bulkDo()" class="ns-crud-input-button h-8 px-3 outline-hidden rounded-full flex items-center justify-center"><slot name="bulk-go">{{ __( 'Apply' ) }}</slot></button>
             </div>
             <div class="flex">
                 <div class="items-center flex text-primary mx-4">{{ resultInfo }}</div>

@@ -17,11 +17,13 @@
     </div>
 </template>
 <style scoped>
+@reference "&/scss/app.scss";
+
 .light .widget-placeholder {
-    @apply border-slate-600;
+    @apply border-gray-600;
 }
 .dark .widget-placeholder {
-    @apply border-slate-400;
+    @apply border-gray-400;
 }
 </style>
 <script lang="ts">

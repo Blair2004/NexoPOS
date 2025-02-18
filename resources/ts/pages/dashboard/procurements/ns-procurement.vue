@@ -765,9 +765,9 @@ export default {
                         :disabled="form.main.disabled"
                         type="text" 
                         :class="form.main.disabled ? '' : ''"
-                        class="flex-auto outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-none px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
-                    <button @click="reloadEntities()" class="outline-none px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
+                        class="flex-auto outline-hidden h-10 px-2">
+                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-hidden px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                    <button @click="reloadEntities()" class="outline-hidden px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
                 </div>
                 <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
@@ -823,7 +823,7 @@ export default {
                                             v-model="searchValue"
                                             type="text" 
                                             :placeholder="__( 'SKU, Barcode, Name' )"
-                                            class="flex-auto text-primary outline-none h-10 px-2">
+                                            class="flex-auto text-primary outline-hidden h-10 px-2">
                                     </div>
                                     <div class="h-0">
                                         <div class="shadow bg-floating-menu relative z-10">
@@ -869,8 +869,8 @@ export default {
                                                     </td> 
                                                     <td :key="key" v-if="column.type === 'text'" @click="triggerKeyboard( product.procurement, key, index )" class="text-primary border cursor-pointer">
                                                         <div class="flex justify-center">
-                                                            <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
-                                                            <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ product.procurement[ key ] }}</span>
+                                                            <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-hidden border-dashed py-1 border-b border-info-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
+                                                            <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-hidden border-dashed py-1 border-b border-info-primary text-sm">{{ product.procurement[ key ] }}</span>
                                                         </div>
                                                     </td>
                                                     <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-primary border">

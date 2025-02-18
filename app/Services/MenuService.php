@@ -452,10 +452,6 @@ class MenuService
                         'label' => __( 'Invoices' ),
                         'href' => ns()->url( '/dashboard/settings/invoices' ),
                     ],
-                    'workers' => [
-                        'label' => __( 'Workers' ),
-                        'href' => ns()->url( '/dashboard/settings/workers' ),
-                    ],
                     'reset' => [
                         'label' => __( 'Reset' ),
                         'href' => ns()->url( '/dashboard/settings/reset' ),

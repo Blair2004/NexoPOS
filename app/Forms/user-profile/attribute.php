@@ -11,10 +11,7 @@ return [
             'name' => 'theme',
             'value' => Auth::user()->attribute->theme ?? '',
             'type' => 'select',
-            'options' => Helper::kvToJsOptions( [
-                'dark' => __( 'Dark' ),
-                'light' => __( 'Light' ),
-            ] ),
+            'options' => Helper::kvToJsOptions( config( 'nexopos.themes' ) ),
             'description' => __( 'Define what is the theme that applies to the dashboard.' ),
         ], [
             'label' => __( 'Avatar' ),

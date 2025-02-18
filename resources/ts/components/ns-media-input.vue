@@ -31,7 +31,7 @@
                     :class="inputClass" class="form-input block w-full sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
                 <button 
                     @click="toggleMedia( field )"
-                    class="w-10 h-10 flex items-center justify-center border-l-2 outline-none">
+                    class="w-10 h-10 flex items-center justify-center border-l-2 outline-hidden">
                     <i class="las la-photo-video"></i>
                 </button>
             </div>

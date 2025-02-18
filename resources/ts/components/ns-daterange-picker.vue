@@ -127,7 +127,7 @@ export default {
                     <span class=""> {{ endDateFormatted || __( 'N/A' ) }}</span>
                 </div>
             </div>
-            <button class="px-3 outline-none font-bold bg-error-tertiary" @click="clearDate()">
+            <button class="px-3 outline-hidden font-bold bg-error-tertiary" @click="clearDate()">
                 <i class="las la-times"></i>
             </button>
         </div>

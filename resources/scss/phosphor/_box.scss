@@ -1,0 +1,40 @@
+.is-popup {
+    .ns-box {
+        @apply bg-box-background text-primary rounded-lg overflow-hidden;
+
+        .ns-box-header {
+            @apply border-box-edge text-primary
+        }
+
+        .ns-box-body {
+            @apply text-primary;
+        }
+
+        .ns-box-footer {
+            @apply border-box-edge bg-box-background;
+        }
+
+        h3 {
+            @apply text-primary;
+        }
+    }
+}
+.ns-box {
+    @apply bg-box-background text-primary;
+
+    .ns-box-header {
+        @apply border-box-edge text-primary
+    }
+
+    .ns-box-body {
+        @apply text-primary border-box-edge;
+    }
+
+    .ns-box-footer {
+        @apply border-box-edge bg-box-background;
+    }
+
+    h3 {
+        @apply text-primary;
+    }
+}

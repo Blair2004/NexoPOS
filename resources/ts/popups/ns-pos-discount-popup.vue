@@ -16,9 +16,9 @@
             </h1>
         </div>
         <div id="switch-mode" class="flex">
-            <button v-if="! popup.params.reference.disable_flat" @click="setPercentageType('flat')" :class="mode === 'flat' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Flat' ) }}</button>
+            <button v-if="! popup.params.reference.disable_flat" @click="setPercentageType('flat')" :class="mode === 'flat' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary'" class="outline-hidden w-1/2 py-2 flex items-center justify-center">{{ __( 'Flat' ) }}</button>
             <hr v-if="! popup.params.reference.disable_flat" class="border-r border-box-edge">
-            <button v-if="! popup.params.reference.disable_percentage" @click="setPercentageType('percentage')" :class="( mode === 'percentage' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary' ) + ' ' + ( ! popup.params.reference.disable_flat ? 'w-1/2' : 'w-full' )" class="outline-none py-2 flex items-center justify-center">{{ __( 'Percentage' ) }}</button>
+            <button v-if="! popup.params.reference.disable_percentage" @click="setPercentageType('percentage')" :class="( mode === 'percentage' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary' ) + ' ' + ( ! popup.params.reference.disable_flat ? 'w-1/2' : 'w-full' )" class="outline-hidden py-2 flex items-center justify-center">{{ __( 'Percentage' ) }}</button>
         </div>
         <ns-numpad :floating="true" @next="submitValue()" @changed="inputValue( $event )" :value="finalValue" limit="1000"></ns-numpad>
     </div>

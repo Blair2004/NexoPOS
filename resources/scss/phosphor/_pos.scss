@@ -1,0 +1,369 @@
+#loader {
+    @apply bg-surface;
+    p {
+        @apply text-primary;
+    }
+}
+
+#ns-pos-customer-select-popup {
+    .purchase-amount {
+        @apply text-success-primary;
+    }
+}
+
+#pos-container {
+    @apply bg-surface text-white;
+
+    #pos-cart {
+        #tools {
+            .switch-cart {
+                @apply bg-tab-active font-semibold text-primary;
+                > span.products-count {
+                    @apply bg-success-primary text-typography;
+                }
+            }
+
+            .switch-grid {
+                @apply bg-tab-inactive border-transparent text-secondary;
+            }
+        }
+
+        .cart-table {
+            @apply bg-tab-active;
+            #cart-toolbox {
+                @apply border-pos-button-edge;
+                > div {
+                    @apply border-pos-button-edge;
+
+                    hr {
+                        @apply border-pos-button-edge;
+                    }
+
+                    button {
+                        @apply bg-input-button border-pos-button-edge text-primary;
+                        &:hover {
+                            @apply bg-input-button-hover text-white;
+                        }
+                    }
+                }
+            }
+            #cart-table-header {
+                @apply text-primary;
+                > div {
+                    @apply border-pos-button-edge;
+                }
+            }
+            #cart-products-table {
+                a {
+                    @apply border-info-primary;
+
+                    &:hover {
+                        @apply text-info-primary;
+                    }
+                }
+
+                > div {
+                    @apply text-primary;
+
+                    > div {
+                        @apply border-pos-button-edge;
+                    }
+
+                    .product-item {
+                        > div {
+                            @apply border-pos-button-edge;
+
+                            .remove-product {
+                                @apply border-error-primary;   
+
+                                &:hover {
+                                    @apply text-error-primary;
+                                }
+                            }
+
+                            .price {
+                                &:hover {
+                                    @apply text-info-secondary;
+                                }
+                            }
+
+                            .wholesale-mode {
+                                @apply text-success-primary bg-transparent border-success-primary;
+                                &:hover {
+                                    @apply text-success-primary bg-transparent;
+                                }
+                            }
+
+                            .normal-mode {
+                                @apply border-info-primary;
+
+                                &:hover {
+                                    @apply text-info-primary;
+                                }
+                            }
+
+                            .product-controls {
+                                @apply text-primary;
+                            }
+                        }
+                    }
+
+                    .quantity-changer {
+                        @apply border-pos-button-edge;
+
+                        > span {
+                            @apply border-info-primary;   
+                        }
+
+                        &:hover {
+                            @apply bg-input-button-hover;
+                        }
+                    }
+
+                    .product-price {
+                        @apply border-pos-button-edge;
+                    }
+                }
+                .empty-cart {
+                    @apply border-pos-button-edge;
+                    h3 {
+                        @apply text-secondary;
+                    }
+                }
+            }
+
+            #cart-products-summary {
+                table {
+                    @apply text-primary;
+                    td {
+                        @apply border-pos-button-edge;
+                        
+                        a {
+                            @apply border-info-primary;
+
+                            &:hover {
+                                @apply text-info-primary;
+                            }
+                        }
+                    }
+
+                    .summary-line {
+                        @apply bg-success-primary text-typography;
+
+                        a {
+                            @apply border-white;
+
+                            &:hover {
+                                @apply text-typography;
+                            }
+                        }
+                    }
+                }
+            }
+
+            #cart-bottom-buttons {
+                @apply border-pos-button-edge; 
+
+                #pay-button {
+                    @apply bg-success-primary text-typography border-r border-success-primary;
+
+                    &:hover, &:active {
+                        @apply bg-success-secondary;
+                    }
+                }
+
+                #hold-button {
+                    @apply bg-info-secondary text-typography border-r border-info-secondary;
+
+                    &:hover, &:active {
+                        @apply bg-info-tertiary;
+                    }
+                }
+
+                #discount-button {
+                    @apply bg-box-background border-r border-pos-button-edge text-primary;
+
+                    &:hover, &:active {
+                        @apply bg-box-elevation-background;
+                    }
+                }
+
+                #void-button {
+                    @apply bg-error-primary text-typography border-pos-button-edge hover:bg-error-secondary;
+
+                    &:hover, &:active {
+                        @apply bg-error-secondary;
+                    }
+                }
+            }
+        }
+    }
+
+    #pos-grid {
+        .switch-cart {
+            @apply bg-tab-inactive border-transparent text-secondary;
+
+            .products-count {
+                @apply bg-success-primary text-typography;
+            }
+        }
+        .switch-grid {
+            @apply bg-tab-active text-primary;
+        }
+
+        #grid-container {
+            @apply bg-tab-active;
+
+            #grid-header {
+                @apply border-pos-button-edge text-primary;
+                > div {
+                    @apply border-pos-button-edge;
+                    button {
+                        @apply border-pos-button-edge;
+                        &.pos-button-clicked {
+                            @apply bg-box-background;
+                            box-shadow: inset 0 0 9px 2px #1e1e1e
+                        }
+                    }
+                    input {
+                        @apply bg-box-background;
+                    }
+                }
+            }
+
+            #grid-breadscrumb {
+                @apply border-pos-button-edge;
+
+                ul > li {
+                    @apply text-primary;
+                }
+            }
+
+            #grid-items {
+                @apply text-secondary;
+
+                .cell-item {
+                    @apply border-pos-button-edge;
+
+                    .cell-item-label {
+                        background:rgb(0 0 0 / 73%);
+                    }
+
+                    &:hover {
+                        @apply bg-box-background;
+                    }
+
+                    h3 {
+                        @apply text-primary;
+                    }
+
+                    i, span {
+                        @apply text-slate-400;
+                    }
+                }
+            }
+        }
+    }
+}
+
+#ns-pos-customers {
+    @apply bg-box-background;
+    .ns-header {
+        @apply border-box-edge;
+        h3 {
+            @apply text-primary;
+        }
+    }
+    .ns-body {
+        @apply bg-box-background;
+    }
+}
+
+#ns-order-type {
+    @apply bg-box-background;
+    h3 {
+        @apply text-primary;
+    }
+    div > div {
+        > i {
+            @apply text-error-primary;
+        }
+        div > p {
+            @apply text-primary;
+        }
+    }
+    div h4 {
+        @apply text-primary;
+    }
+}
+
+#ns-units-selector {
+    .overlay {
+        background:rgb(0 0 0 / 73%);
+    }
+}
+
+#ns-pos-cash-registers-popup {
+    div.alert {
+        @apply bg-error-primary;
+    }
+}
+
+#ns-payment-popup {
+    .ns-pos-screen {
+        @apply text-primary;
+    }
+    > div {
+        @apply bg-tab-inactive;
+        h3 {
+            @apply text-primary;
+        }
+        ul li{
+            @apply text-primary;
+            &.ns-payment-gateway.ns-visible, &.ns-payment-list.ns-visible {
+                @apply bg-tab-active;
+            }
+            &:hover {
+                @apply bg-tab-active;
+            }
+            span.ns-label {
+                @apply bg-success-primary text-white;
+            }
+        }
+        .ns-payment-wrapper {
+            @apply bg-tab-active;
+            ul li {
+                @apply bg-input-button text-primary;
+                button.error {
+                    @apply bg-error-tertiary text-white;
+                }
+                button.default {
+                    @apply bg-gray-600 text-white;
+                }
+            }
+        }
+        .ns-payment-buttons {
+            .ns-payment-type-button {
+                @apply text-white bg-info-primary;
+            }
+            .ns-submit-button {
+                @apply bg-success-primary text-white;
+            }
+            .ns-layaway-button {
+                @apply bg-warning-primary text-white;
+            }
+            .ns-payment-button {
+                @apply bg-input-button text-white;
+                .ns-label {
+                    @apply bg-success-primary text-white;
+                }
+            }
+        }
+        .ns-payment-list {
+            @apply border-t-tab-active;
+        }
+        .ns-payment-footer {
+            @apply bg-tab-inactive;
+        }
+    }
+}

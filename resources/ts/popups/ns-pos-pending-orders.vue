@@ -2,7 +2,7 @@
     <div class="flex flex-auto flex-col overflow-hidden">
         <div class="p-1">
             <div class="flex rounded border-2 input-group info">
-                <input @keyup.enter="searchOrder()" v-model="searchField" type="text" class="p-2 outline-none flex-auto">
+                <input @keyup.enter="searchOrder()" v-model="searchField" type="text" class="p-2 outline-hidden flex-auto">
                 <button @click="searchOrder()" class="w-16 md:w-24">
                     <i class="las la-search"></i>
                     <span class="mr-1 hidden md:visible">{{ __( 'Search' ) }}</span>
@@ -25,9 +25,9 @@
                     </div>
                     <div class="flex justify-end w-full mt-2">
                         <div class="flex rounded-lg overflow-hidden ns-buttons">
-                            <button @click="proceedOpenOrder( order )" class="info outline-none px-2 py-1"><i class="las la-lock-open"></i> {{ __( 'Open' ) }}</button>
-                            <button @click="previewOrder( order )" class="success outline-none px-2 py-1"><i class="las la-eye"></i> {{ __( 'Products' ) }}</button>
-                            <button @click="printOrder( order )" class="warning outline-none px-2 py-1"><i class="las la-print"></i> {{ __( 'Print' ) }}</button>
+                            <button @click="proceedOpenOrder( order )" class="info outline-hidden px-2 py-1"><i class="las la-lock-open"></i> {{ __( 'Open' ) }}</button>
+                            <button @click="previewOrder( order )" class="success outline-hidden px-2 py-1"><i class="las la-eye"></i> {{ __( 'Products' ) }}</button>
+                            <button @click="printOrder( order )" class="warning outline-hidden px-2 py-1"><i class="las la-print"></i> {{ __( 'Print' ) }}</button>
                         </div>
                     </div>
                 </div>

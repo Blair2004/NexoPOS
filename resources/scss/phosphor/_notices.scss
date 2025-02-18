@@ -1,0 +1,96 @@
+.ns-notice {
+    @apply text-white;
+    &
+    h1, h2, h3, h4, h5 {
+        @apply text-white;
+    }
+
+    p, span {
+        @apply text-white;
+    }
+
+    &.danger, &.warning, &.success, &.info, &.error {
+        h1, h2, h3, h4, h5 {
+            @apply text-white;
+        }
+    }
+
+    &.danger {
+        @apply border-danger-secondary bg-danger-primary;
+
+        p > a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.warning {
+        @apply border-warning-secondary bg-warning-primary;
+
+        p > a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.success {
+        @apply border-success-secondary bg-success-primary;
+
+        p > a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.error {
+        @apply border-error-tertiary bg-error-secondary text-primary;
+
+        p > a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.info {
+        @apply border-info-tertiary bg-info-secondary;
+
+        p > a {
+            @apply text-gray-200;
+            &:hover {
+                @apply underline;
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+}
+
+.ns-normal-text {
+    @apply text-primary;
+}

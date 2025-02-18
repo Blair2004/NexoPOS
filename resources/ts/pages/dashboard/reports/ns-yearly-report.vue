@@ -6,7 +6,7 @@
         </ns-notice>
         <div class="flex -mx-2" v-if="timezone !== ''">
             <div class="px-2">
-                <input type="text" v-model="year" placeholder="{{ __( 'Year' ) }}" class="outline-none rounded border-gray-400 border-2 focus:border-blue-400 p-2">
+                <input type="text" v-model="year" placeholder="{{ __( 'Year' ) }}" class="outline-hidden rounded border-gray-400 border-2 focus:border-blue-400 p-2">
             </div>
             <div class="px-2 flex">
                 <button @click="loadReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">

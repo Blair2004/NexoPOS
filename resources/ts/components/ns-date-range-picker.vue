@@ -78,7 +78,7 @@ export default {
                 {{ leading }}
                 </span>
             </div>
-            <button class="px-3 outline-none bg-error-secondary font-semibold text-white" @click="clearDate()">
+            <button class="px-3 outline-hidden bg-error-secondary font-semibold text-white" @click="clearDate()">
                 <i class="las la-times"></i>
             </button>
             <date-range-picker

@@ -7,7 +7,7 @@
                     <div :key="index" class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded bg-info-secondary text-white flex justify-between p-1 items-center">
                             <span class="pr-8">{{ option.label }}</span>
-                            <button @click="removeOption( option, $event )" class="rounded outline-none hover:bg-info-tertiary h-6 w-6 flex items-center justify-center">
+                            <button @click="removeOption( option, $event )" class="rounded outline-hidden hover:bg-info-tertiary h-6 w-6 flex items-center justify-center">
                                 <i class="las la-times"></i>
                             </button>
                         </div>
@@ -21,7 +21,7 @@
             <div class="h-0 z-10" style="margin-top: -5px;" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
                 <div class="ns-dropdown shadow border-2 rounded-b-md border-input-edge bg-input-background">
                     <div class="search border-b border-input-option-hover">
-                        <input @keypress.enter="selectAvailableOptionIfPossible()" v-model="search" class="p-2 w-full bg-transparent text-primary outline-none" placeholder="Search">
+                        <input @keypress.enter="selectAvailableOptionIfPossible()" v-model="search" class="p-2 w-full bg-transparent text-primary outline-hidden" placeholder="Search">
                     </div>
                     <div class="h-40 overflow-y-auto">
                         <div @click="addOption( option )" :key="index" v-for="(option, index) of _filtredOptions" :class="option.selected ? 'bg-info-secondary text-white' : 'text-primary'" class="option p-2 flex justify-between cursor-pointer hover:bg-info-tertiary hover:text-white">

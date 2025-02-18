@@ -9,7 +9,7 @@
         <div class="flex-auto overflow-hidden flex flex-col">
             <div class="p-2 border-b ns-box-body">
                 <div class="flex input-group info border-2 rounded overflow-hidden">
-                    <input @keyup.enter="search()" v-model="searchValue" ref="searchField" type="text" class="p-2  outline-none flex-auto text-primary">
+                    <input @keyup.enter="search()" v-model="searchValue" ref="searchField" type="text" class="p-2  outline-hidden flex-auto text-primary">
                     <button @click="search()" class="px-2">{{ __( 'Search' ) }}</button>
                 </div>
             </div>

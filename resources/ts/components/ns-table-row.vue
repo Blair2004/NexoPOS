@@ -5,7 +5,7 @@
         </td>
         <td v-if="prependOptions && showOptions" class="font-sans p-2">
             <div class=""> <!-- flex items-center justify-center -->
-                <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-none rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
+                <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-hidden rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
                 <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
                 <div class="relative">
                     <div v-if="row.$toggled" class="zoom-in-entrance border border-box-edge anim-duration-300 z-50 origin-bottom-right w-56 mt-2 absolute rounded-md shadow-lg ns-menu-wrapper">
@@ -47,7 +47,7 @@
         </td>
         <td v-if="!prependOptions && showOptions" class="font-sans p-2 flex flex-col items-center justify-center">
             <div class=""> <!-- flex items-center justify-center -->
-                <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-none rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
+                <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-hidden rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
                 <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
                 <div class="relative">
                     <div v-if="row.$toggled" class="zoom-in-entrance border border-box-edge anim-duration-300 z-50 origin-bottom-right -ml-28 w-56 mt-2 absolute rounded-md shadow-lg ns-menu-wrapper">

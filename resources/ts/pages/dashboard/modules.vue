@@ -20,7 +20,7 @@
                 </span>
                 <div class="px-2 w-auto">
                     <div class="input-group mb-2 shadow border-2 info rounded overflow-hidden">
-                        <input ref="searchField" :placeholder="searchPlaceholder" v-model="searchText" type="text" class="w-full md:w-60 outline-none py-1 px-2">
+                        <input ref="searchField" :placeholder="searchPlaceholder" v-model="searchText" type="text" class="w-full md:w-60 outline-hidden py-1 px-2">
                     </div>
                 </div>
             </div>

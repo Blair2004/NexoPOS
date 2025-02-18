@@ -26,6 +26,7 @@ export default {
 </script>
   
 <style scoped>
+@reference "&/scss/app.scss";
     .light .ns-drop-zone {
         @apply border-2 border-dashed border-slate-600
     }

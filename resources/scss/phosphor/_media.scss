@@ -1,0 +1,32 @@
+#ns-media {
+    .sidebar {
+        @apply bg-tab-active;
+        h3 {
+            @apply text-primary;
+        }
+        .sidebar-menus li {
+            @apply border-transparent;
+            &.active, &:hover {
+                @apply bg-box-elevation-background text-primary border-tab-active;
+            }
+        }
+    }
+    .content {
+        @apply bg-box-elevation-background;
+        #ns-grid {  
+            .ns-media-image-selected {
+                @apply ring-info-tertiary ring-opacity-90;
+            }
+        }
+        .ns-media-footer {
+            @apply bg-tab-active;
+        }
+
+        .ns-media-upload-item {
+            @apply bg-box-elevation-hover;
+        }
+        .ns-media-preview-panel {
+            @apply bg-tab-active;
+        }
+    }
+}

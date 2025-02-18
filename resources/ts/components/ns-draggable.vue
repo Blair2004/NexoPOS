@@ -132,6 +132,8 @@
   </script>
   
   <style>
+  @reference "&/scss/app.scss";
+
   .ns-draggable-item {
     user-select: none;
   }

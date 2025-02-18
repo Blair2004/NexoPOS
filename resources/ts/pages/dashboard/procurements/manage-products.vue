@@ -27,8 +27,8 @@
                         :disabled="form.main.disabled"
                         type="text"
                         :class="form.main.disabled ? '' : ''"
-                        class="flex-auto text-primary outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled" :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'bg-error-tertiary' : ''" @click="submit()" class="outline-none px-4 h-10 rounded-none"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                        class="flex-auto text-primary outline-hidden h-10 px-2">
+                    <button :disabled="form.main.disabled" :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'bg-error-tertiary' : ''" @click="submit()" class="outline-hidden px-4 h-10 rounded-none"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
                 <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-tertiary" v-bind:key="index" v-for="(error, index) of form.main.errors">
@@ -78,7 +78,7 @@
                                     <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                         <div class="rounded border border-box-elevation-edge bg-box-elevation-background flex justify-between p-2 items-center">
                                             <span>{{ __( 'Add Images' ) }}</span>
-                                            <button @click="addImage( variation )" class="outline-none rounded-full border flex items-center justify-center w-8 h-8 ns-inset-button info">
+                                            <button @click="addImage( variation )" class="outline-hidden rounded-full border flex items-center justify-center w-8 h-8 ns-inset-button info">
                                                 <i class="las la-plus-circle"></i>
                                             </button>
                                         </div>
