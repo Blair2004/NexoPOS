@@ -37,6 +37,7 @@ class ResetService
             'nexopos_transactions_histories',
             'nexopos_transactions_balance_days',
             'nexopos_transactions_balance_months',
+            'nexopos_transactions_actions_rules',
 
             'nexopos_medias',
             'nexopos_notifications',

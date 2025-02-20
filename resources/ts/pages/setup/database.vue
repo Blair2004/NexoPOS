@@ -10,6 +10,10 @@
                     <h3 class="font-bold text-lg">{{ __( 'Sqlite is selected as database driver' ) }}</h3>
                     <p>{{ __( 'Make sure Sqlite module is available for PHP. Your database will be located on the database directory.' ) }}</p>
                 </div>
+                <div v-if="isMariaDB">
+                    <h3 class="font-bold text-lg">{{ __( 'MariaDB is selected as database driver' ) }}</h3>
+                    <p>{{ __( 'Please provide the credentials to ensure NexoPOS can connect to the database.' ) }}</p>
+                </div>
             </div>
             <div class="md:-mx-4 md:flex">
                 <div class="md:px-4 md:w-1/2 w-full">
