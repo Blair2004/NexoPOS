@@ -2,7 +2,7 @@
 
 /**
  * Table Migration
-**/
+ **/
 
 use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;

@@ -214,7 +214,7 @@ class ReportService
 
     public function computeIncome( $previousReport, $todayReport )
     {
-        $revenuesAccounts   =   TransactionAccount::where( 'category_identifier', 'revenues' )->pluck( 'id' );
+        $revenuesAccounts = TransactionAccount::where( 'category_identifier', 'revenues' )->pluck( 'id' );
 
         $totalIncome = ActiveTransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -222,7 +222,7 @@ class ReportService
             ->whereIn( 'transaction_account_id', $revenuesAccounts )
             ->sum( 'value' );
 
-        $expensesAccounts   =   TransactionAccount::where( 'category_identifier', 'expenses' )->pluck( 'id' );
+        $expensesAccounts = TransactionAccount::where( 'category_identifier', 'expenses' )->pluck( 'id' );
 
         $totalExpenses = ActiveTransactionHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
