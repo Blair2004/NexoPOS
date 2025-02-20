@@ -968,7 +968,7 @@
     ]
   },
   "resources/ts/pages/setup/database.vue": {
-    "file": "assets/database-Cd0O-yL4.js",
+    "file": "assets/database-afAyKYDr.js",
     "name": "database",
     "src": "resources/ts/pages/setup/database.vue",
     "isDynamicEntry": true,
@@ -1072,7 +1072,7 @@
     ]
   },
   "resources/ts/setup.ts": {
-    "file": "assets/setup-CMxYqdSR.js",
+    "file": "assets/setup-DXLGIRfk.js",
     "name": "setup",
     "src": "resources/ts/setup.ts",
     "isEntry": true,

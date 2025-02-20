@@ -124,7 +124,7 @@ class ModulesController extends DashboardController
     {
         $result = $this->modules->upload( $request->file( 'module' ) );
 
-        if ( $request->acceptsJson() ) {
+        if ( $request->expectsJson() ) {
             return response()->json( $result );
         } else {
             /**

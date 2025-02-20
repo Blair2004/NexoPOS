@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\TransactionsHistoryAfterCreatedEvent;
 use App\Jobs\AccountingReflectionJob;
+use App\Services\ReportService;
 
 class TransactionsHistoryAfterCreatedEventListener
 {
@@ -12,7 +13,7 @@ class TransactionsHistoryAfterCreatedEventListener
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( public ReportService $reportService )
     {
         //
     }
@@ -25,5 +26,7 @@ class TransactionsHistoryAfterCreatedEventListener
         if ( ! $event->transactionHistory->is_reflection ) {
             AccountingReflectionJob::dispatch( $event->transactionHistory );
         }
+
+        $this->reportService->computeDayReport();
     }
 }

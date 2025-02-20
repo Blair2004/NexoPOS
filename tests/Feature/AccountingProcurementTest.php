@@ -19,7 +19,6 @@ class AccountingProcurementTest extends TestCase
         $response = $this->attemptCreateAnUnpaidProcurement();
         $procurement = Procurement::findOrFail( $response[ 'data' ][ 'procurement' ][ 'id' ] );
         $this->attemptTestAccountingForProcurement( $procurement );
-
         return $procurement;
     }
 

@@ -11,6 +11,7 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.7",
     "@vitejs/plugin-vue": "^5.2.1",
     "laravel-echo": "^1.17.1",
     "laravel-vite-plugin": "^1.2.0",
