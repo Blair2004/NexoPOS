@@ -85,7 +85,7 @@ class ExtractTranslation extends Command
         $finalArray = $this->extractLocalization( $files->flatten() );
         $finalArray = $this->flushTranslation( $finalArray, $filePath );
 
-        Storage::disk( 'ns' )->put( $filePath, json_encode( $finalArray ) );
+        Storage::disk( 'ns' )->put( $filePath, json_encode( $finalArray, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) );
 
         $this->newLine();
         $this->info( sprintf( __( 'Localization for %s extracted to %s' ), config( 'nexopos.languages' )[ $lang ], $filePath ) );
@@ -156,7 +156,7 @@ class ExtractTranslation extends Command
         $finalArray = $this->extractLocalization( $files );
         $finalArray = $this->flushTranslation( $finalArray, $filePath );
 
-        Storage::disk( 'ns' )->put( 'lang/' . $lang . '.json', json_encode( $finalArray ) );
+        Storage::disk( 'ns' )->put( 'lang/' . $lang . '.json', json_encode( $finalArray, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) );
 
         $this->newLine();
         $this->info( 'Extraction complete for language : ' . config( 'nexopos.languages' )[ $lang ] );
@@ -203,9 +203,15 @@ class ExtractTranslation extends Command
     private function extractLocalization( $files )
     {
         $supportedExtensions = [ 'vue', 'php', 'ts', 'js' ];
+        $excludedDirectories = [ 'resources/views/generate' ];
 
-        $filtered = collect( $files )->filter( function ( $file ) use ( $supportedExtensions ) {
+        $filtered = collect( $files )->filter( function ( $file ) use ( $supportedExtensions, $excludedDirectories ) {
             $info = pathinfo( $file );
+            foreach ( $excludedDirectories as $excludedDir ) {
+                if ( str_starts_with( $info['dirname'], $excludedDir ) ) {
+                    return false;
+                }
+            }
 
             return in_array( $info[ 'extension' ], $supportedExtensions );
         } );
@@ -213,15 +219,20 @@ class ExtractTranslation extends Command
         $exportable = [];
 
         /**
-         * we'll extract all the string that can be translated
+         * we'll extract all the strings that can be translated
          * and save them within an array.
          */
         $this->withProgressBar( $filtered, function ( $file ) use ( &$exportable ) {
             $fileContent = Storage::disk( 'ns' )->get( $file );
-            preg_match_all( '/__[m]?\(\s*(?(?=[\'"`](?:[\s\S]*?)[\'"`](?:,\s*(?:[^)]*))?)[\'"`]([\s\S]*?)[\'"`](?:,\s*(?:[^)]*))?|)\s*\)/', $fileContent, $output_array );
+            $contentWithoutCommentBlocks = preg_replace( '/(\/\*.*?\*\/)/is', ' ', $fileContent );
+            preg_match_all( '/__[m]?\(\s*([\'"`])(?<text>(?:\\\\\1|(?!\1)[\S\s])*)(\1)\s*(?:,\s*[\'"`]?(?<arg>\w*)[\'"`]?\s*)?\)/', $contentWithoutCommentBlocks, $output_array );
 
-            if ( isset( $output_array[1] ) ) {
-                foreach ( $output_array[1] as $string ) {
+            if ( isset( $output_array['text'] ) ) {
+                foreach ( $output_array['text'] as $i => $rawString ) {
+                    $delimiter = $output_array[1][$i];
+                    $fileExtension = pathinfo( $file, PATHINFO_EXTENSION );
+                    $rawString = str_replace( "\r", '', $rawString ); // remove \r if not explicitly encoded in string as escape sequence
+                    $string = $this->unescapeString( $rawString, $delimiter, $fileExtension );
                     $exportable[ $string ] = compact( 'file', 'string' );
                 }
             }
@@ -230,5 +241,38 @@ class ExtractTranslation extends Command
         return collect( $exportable )->mapWithKeys( function ( $exportable ) {
             return [ $exportable[ 'string' ] => $exportable[ 'string' ] ];
         } )->toArray();
+    }
+
+    private function unescapeString( string $string, string $delimiter, string $fileExt ): string
+    {
+        if ( $fileExt === 'php' ) {
+            if ( $delimiter === "'" ) {
+                // PHP single-quoted strings only handle \' and \\, for others the backslash is kept!
+                return str_replace( ['\\\\', "\'"], ['\\', "'"], $string );
+            } elseif ( $delimiter === '"' ) {
+                // PHP double-quoted string handle several escape sequences, for others the backslash is kept!
+                $string = str_replace( ['\\\\', "\'", '\n', '\r', '\t', '\v', '\e', '\f', '\$', '\"'], ['\\', "'", "\n", "\r", "\t", "\v", "\e", "\f", '$', '"'], $string );
+
+                // handle octal \777 and hex \xFF escapes; unicode escapes \u{....} are currently not implemented!
+                return $this->replaceHexEscapes( $this->replaceOctalEscapes( $string ) );
+            }
+        }
+
+        // JS removes the backslash for invalid/unknown escape sequences
+        return stripslashes( $string );
+    }
+
+    private function replaceOctalEscapes( $string ): string
+    {
+        return preg_replace_callback( '/\\\([0-7]{1,3})/', function ( $matches ) {
+            return chr( octdec( $matches[1] ) );
+        }, $string );
+    }
+
+    private function replaceHexEscapes( $string ): string
+    {
+        return preg_replace_callback( '/\x([0-9a-fA-F]{1,2})/', function ( $matches ) {
+            return chr( hexdec( $matches[1] ) );
+        }, $string );
     }
 }
