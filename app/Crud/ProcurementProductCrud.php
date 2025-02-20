@@ -429,7 +429,7 @@ class ProcurementProductCrud extends CrudService
     {
         return [
             'list' => ns()->url( 'dashboard/' . 'procurements/products' ),
-            'create' => 'javascript:void(0)', //ns()->url( 'dashboard/' . '/procurements/products/create' ),
+            'create' => 'javascript:void(0)', // ns()->url( 'dashboard/' . '/procurements/products/create' ),
             'edit' => ns()->url( 'dashboard/' . 'procurements/products/edit/' ),
             'post' => ns()->url( 'api/crud/' . 'ns.procurements-products' ),
             'put' => ns()->url( 'api/crud/' . 'ns.procurements-products/{id}' . '' ),

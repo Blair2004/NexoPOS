@@ -425,15 +425,21 @@ class CoreService
             );
         }
 
+        // we need to load the vite.config.js file
         $viteConfigFile = $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vite.config.js';
 
         if ( ! file_exists( $viteConfigFile ) ) {
-            throw new NotFoundException(
-                sprintf(
-                    __( 'The vite.config.js file for the module %s cannot be found.' ),
-                    $module[ 'name' ]
-                )
-            );
+            // we need to load the vite.config.mjs
+            $viteConfigFile = $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vite.config.mjs';
+
+            if ( ! file_exists( $viteConfigFile ) ) {
+                throw new NotFoundException(
+                    sprintf(
+                        __( 'The Vite configuration file for the module %s cannot be found.' ),
+                        $module[ 'name' ]
+                    )
+                );
+            }
         }
 
         $ds = DIRECTORY_SEPARATOR;

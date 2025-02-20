@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\support\Str;
 
@@ -164,7 +165,12 @@ class NotificationService
 
     public function deleteSingleNotification( $id )
     {
-        $notification = Notification::find( $id );
+        $notification = Notification::where( 'user_id', Auth::id() )->find( $id );
+
+        if ( ! $notification ) {
+            throw new Exception( __( 'The notification you tried to delete cannot be retrieved.' ) );
+        }
+
         $notification->delete();
     }
 

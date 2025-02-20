@@ -1391,25 +1391,25 @@ class TransactionService
             'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
         ] );
 
-        $cogsResponse = $this->createAccount( [
+        $operatingExpenses = $this->createAccount( [
             'name' => __( 'Operating Expenses' ),
             'category_identifier' => 'expenses',
             'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
         ] );
 
-        $cogsResponse = $this->createAccount( [
+        $RentExpenses = $this->createAccount( [
             'name' => __( 'Rent Expenses' ),
             'category_identifier' => 'expenses',
             'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
         ] );
 
-        $cogsResponse = $this->createAccount( [
+        $OtherExpenses = $this->createAccount( [
             'name' => __( 'Other Expenses' ),
             'category_identifier' => 'expenses',
             'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
         ] );
 
-        $cogsResponse = $this->createAccount( [
+        $salariesAndWages = $this->createAccount( [
             'name' => __( 'Salaries And Wages' ),
             'category_identifier' => 'expenses',
             'sub_category_id' => $directExpenseResponse[ 'data' ][ 'account' ]->id,
@@ -1437,6 +1437,14 @@ class TransactionService
         );
 
         $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_PROCUREMENT_PAID,
+            action: 'increase',
+            account_id: $expensesCash[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $procurementCashResponse[ 'data' ][ 'account' ]->id
+        );
+
+        $this->setTransactionActionRule(
             on: TransactionActionRule::RULE_PROCUREMENT_FROM_UNPAID_TO_PAID,
             action: 'decrease',
             account_id: $procurementPayableResponse[ 'data' ][ 'account' ]->id,
@@ -1452,23 +1460,31 @@ class TransactionService
             offset_account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id
         );
 
+        $this->setTransactionActionRule(
+            on: TransactionActionRule::RULE_ORDER_UNPAID,
+            action: 'increase',
+            account_id: $expensesCash[ 'data' ][ 'account' ]->id,
+            do: 'decrease',
+            offset_account_id: $inventoryResponse[ 'data' ][ 'account' ]->id
+        );
+
         /**
          * @todo: test missing
          */
         $this->setTransactionActionRule(
             on: TransactionActionRule::RULE_ORDER_FROM_UNPAID_TO_PAID,
             action: 'decrease',
-            account_id: $receivableResponse[ 'data' ][ 'account' ]->id,
+            account_id: $salesResponse[ 'data' ][ 'account' ]->id,
             do: 'increase',
-            offset_account_id: $salesResponse[ 'data' ][ 'account' ]->id
+            offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
             on: TransactionActionRule::RULE_ORDER_PAID,
             action: 'increase',
             account_id: $salesResponse[ 'data' ][ 'account' ]->id,
-            do: 'decrease',
-            offset_account_id: $receivableResponse[ 'data' ][ 'account' ]->id
+            do: 'increase',
+            offset_account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id
         );
 
         $this->setTransactionActionRule(
@@ -1489,8 +1505,8 @@ class TransactionService
 
         $this->setTransactionActionRule(
             on: TransactionActionRule::RULE_ORDER_PAID_VOIDED,
-            action: 'decrease',
-            account_id: $salesRevenuesResponse[ 'data' ][ 'account' ]->id,
+            action: 'increase',
+            account_id: $salesResponse[ 'data' ][ 'account' ]->id,
             do: 'decrease',
             offset_account_id: $salesResponse[ 'data' ][ 'account' ]->id
         );

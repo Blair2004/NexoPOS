@@ -4,7 +4,7 @@
  * NexoPOS Controller
  *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
