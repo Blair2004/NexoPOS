@@ -12,14 +12,14 @@
         <div class="overflow-y-auto flex flex-auto">
             <div class="flex p-2 flex-auto flex-col overflow-y-auto">
                 <div :data-order-id="order.id" class="border-b ns-box-body w-full py-2 ns-order-line" v-for="order of orders" :key="order.id">
-                    <h3 class="text-primary">{{ order.title || 'Untitled Order' }}</h3>
+                    <h3 class="text-font">{{ order.title || 'Untitled Order' }}</h3>
                     <div class="px-2">
                         <div class="flex flex-wrap -mx-4">
                             <div class="w-full md:w-1/2 px-2">
-                                <p v-for="(line,key) of columns.leftColumn" :key="key" class="text-sm text-primary"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
+                                <p v-for="(line,key) of columns.leftColumn" :key="key" class="text-sm text-font"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
                             </div>
                             <div class="w-full md:w-1/2 px-2">
-                                <p v-for="(line,key) of columns.rightColumn" :key="key" class="text-sm text-primary"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
+                                <p v-for="(line,key) of columns.rightColumn" :key="key" class="text-sm text-font"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
                             </div>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div v-if="orders.length === 0" class="h-full v-full items-center justify-center flex">
-                    <h3 class="text-semibold text-primary">{{ __( 'Nothing to display...' ) }}</h3>
+                    <h3 class="text-semibold text-font">{{ __( 'Nothing to display...' ) }}</h3>
                 </div>
             </div>
         </div>

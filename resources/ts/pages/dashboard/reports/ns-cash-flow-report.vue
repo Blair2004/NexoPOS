@@ -9,7 +9,7 @@
             </div>
             <div class="px-2">
                 <div class="ns-button">
-                    <button @click="loadReport()" class="rounded flex justify-between text-primary shadow py-1 items-center  px-2">
+                    <button @click="loadReport()" class="rounded flex justify-between text-fontcolor shadow py-1 items-center  px-2">
                         <i class="las la-sync-alt text-xl"></i>
                         <span class="pl-2">{{ __( 'Load' ) }}</span>
                     </button>
@@ -17,7 +17,7 @@
             </div>
             <div class="px-2">
                 <div class="ns-button">
-                    <button @click="printSaleReport()" class="rounded flex justify-between text-primary shadow py-1 items-center  px-2">
+                    <button @click="printSaleReport()" class="rounded flex justify-between text-fontcolor shadow py-1 items-center  px-2">
                         <i class="las la-print text-xl"></i>
                         <span class="pl-2">{{ __( 'Print' ) }}</span>
                     </button>
@@ -27,7 +27,7 @@
         <div id="report" class="anim-duration-500 fade-in-entrance">
             <div class="flex w-full">
                 <div class="my-4 flex justify-between w-full">
-                    <div class="text-primary">
+                    <div class="text-font">
                         <ul>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', startDateField.value ).replace( '{date2}', endDateField.value ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Sale By Payment' ) }}</li>

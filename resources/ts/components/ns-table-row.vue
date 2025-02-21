@@ -8,9 +8,9 @@
                 <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-hidden rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
                 <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
                 <div class="relative">
-                    <div v-if="row.$toggled" class="zoom-in-entrance border border-box-edge anim-duration-300 z-50 origin-bottom-right w-56 mt-2 absolute rounded-md shadow-lg ns-menu-wrapper">
+                    <div v-if="row.$toggled" class="zoom-in-entrance border border-box-edge overflow-hidden anim-duration-300 z-50 origin-top-left w-56 mt-2 absolute rounded-md shadow-lg ns-menu-wrapper">
                         <div class="rounded-md shadow-xs">
-                            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                            <div role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <template :key="index" v-for="(action,index) of row.$actions">
                                     <a 
                                         :href="action.url" 

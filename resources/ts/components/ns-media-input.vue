@@ -3,7 +3,7 @@
         <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
         <div :class="hasError ? 'has-error' : 'is-pristine'" class="mt-1 relative border-2 rounded-md focus:shadow-sm">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-primary sm:text-sm sm:leading-5">
+                <span class="text-fontcolor sm:text-sm sm:leading-5">
                 {{ leading }}
                 </span>
             </div>

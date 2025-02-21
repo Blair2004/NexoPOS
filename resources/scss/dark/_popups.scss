@@ -6,11 +6,11 @@
     }
 
     p {
-        @apply text-primary;
+        @apply text-font;
     }
 
     .action-buttons {
-        @apply border-box-edge text-primary;
+        @apply border-box-edge text-font;
 
         button:hover {
             @apply bg-info-secondary;

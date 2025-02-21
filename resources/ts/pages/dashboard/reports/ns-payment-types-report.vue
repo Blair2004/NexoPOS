@@ -8,13 +8,13 @@
                 <ns-field :field="endDateField"></ns-field>
             </div>
             <div class="px-2">
-                <button @click="loadReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
+                <button @click="loadReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-fontcolor px-2">
                     <i class="las la-sync-alt text-xl"></i>
                     <span class="pl-2">{{ __( 'Load' ) }}</span>
                 </button>
             </div>
             <div class="px-2">
-                <button @click="printSaleReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
+                <button @click="printSaleReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-fontcolor px-2">
                     <i class="las la-print text-xl"></i>
                     <span class="pl-2">{{ __( 'Print' ) }}</span>
                 </button>
@@ -38,21 +38,21 @@
             <div class="bg-box-background shadow rounded my-4">
                 <div class="border-b border-box-edge">
                     <table class="table ns-table w-full">
-                        <thead class="text-primary">
+                        <thead class="text-font">
                             <tr>
-                                <th class="text-primary border p-2 text-left">{{ __( 'Summary' ) }}</th>
-                                <th width="150" class="text-primary border p-2 text-right">{{ __( 'Total' ) }}</th>
+                                <th class="text-fontcolor border p-2 text-left">{{ __( 'Summary' ) }}</th>
+                                <th width="150" class="text-fontcolor border p-2 text-right">{{ __( 'Total' ) }}</th>
                             </tr>
                         </thead>
-                        <tbody class="text-primary">
+                        <tbody class="text-font">
                             <tr :key=index v-for="(summary,index) of report.summary" class="font-semibold">
                                 <td class="p-2 border border-box-edge">{{ summary.label }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( summary.total ) }}</td>
                             </tr>
                         </tbody>
-                        <tfoot class="text-primary font-semibold">
+                        <tfoot class="text-fontcolor font-semibold">
                             <tr>
-                                <td class="p-2 border border-box-edge text-primary">{{ __( 'Total' ) }}</td>
+                                <td class="p-2 border border-box-edge text-font">{{ __( 'Total' ) }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( report.total ) }}</td>
                             </tr>
                         </tfoot>

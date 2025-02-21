@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="p-2 ns-box-body">
-            <ns-notice color="info" class="py-2 p-4 text-center border text-primary rounded-lg">{{ __( 'Before submitting the payment, choose the payment type used for that order.' ) }}</ns-notice>
+            <ns-notice color="info" class="py-2 p-4 text-center border text-fontcolor rounded-lg">{{ __( 'Before submitting the payment, choose the payment type used for that order.' ) }}</ns-notice>
             <br>
             <ns-field :key="index" v-for="(field,index) of fields" :field="field"></ns-field>
         </div>

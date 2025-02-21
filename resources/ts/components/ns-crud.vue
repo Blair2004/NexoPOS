@@ -9,7 +9,7 @@
                     <div class="rounded-full p-1 ns-crud-input flex">
                         <input @keypress.enter="search()" v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-hidden px-2">
                         <button @click="search()" class="rounded-full w-8 h-8 outline-hidden ns-crud-input-button"><i class="las la-search"></i></button>
-                        <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-secondary outline-hidden hover:bg-error-tertiary"><i class="las la-times text-white"></i></button>
+                        <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 outline-hidden ns-crud-input-button error"><i class="las la-times"></i></button>
                     </div>
                 </div>
                 <div class="px-2 flex items-center justify-center">
@@ -58,7 +58,7 @@
                                 'width' : column.width || 'auto', 
                                 'max-width': column.maxWidth || 'auto', 
                                 'min-width': column.minWidth || 'auto' 
-                            }" class="cursor-pointer justify-betweenw-40 border text-left px-2 py-2">
+                            }" class="cursor-pointer justify-between w-40 border text-left px-2 py-2">
                                 <div class="w-full flex justify-between items-center">
                                     <span class="flex">{{ column.label }}</span>
                                     <span class="h-6 w-6 flex justify-center items-center">
@@ -100,7 +100,7 @@
                 <button @click="bulkDo()" class="ns-crud-input-button h-8 px-3 outline-hidden rounded-full flex items-center justify-center"><slot name="bulk-go">{{ __( 'Apply' ) }}</slot></button>
             </div>
             <div class="flex">
-                <div class="items-center flex text-primary mx-4">{{ resultInfo }}</div>
+                <div class="items-center flex text-fontcolor mx-4">{{ resultInfo }}</div>
                 <div id="pagination" class="flex items-center -mx-1">
                     <template v-if="result.current_page">
                         <a href="javascript:void(0)" @click="page=result.first_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border shadow">

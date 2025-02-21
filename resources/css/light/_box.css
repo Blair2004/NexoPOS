@@ -1,47 +1,47 @@
 .is-popup {
     .ns-box {
-        color: var(--primary);
+        @apply text-fontcolor;
         @apply rounded-lg overflow-hidden;
 
         .ns-box-header {
-            border: var(--border-box-edge);
-            color: var(--primary);
+            @apply border-box-edge;
+            @apply text-fontcolor;
         }
 
         .ns-box-body {
-            color: var(--primary);
+            @apply text-fontcolor;
         }
 
         .ns-box-footer {
-            border: var(--box-edge);
-            background: @apply bg-slate-400;
+            @apply border-box-edge;
+            @apply bg-slate-400;
         }
 
         div > h3 {
-            color: var(--primary);
+            @apply text-fontcolor;
         }
     }
 }
 .ns-box {
-    background: var(--box-background);
-    color: var(--primary);
+    @apply bg-box-background;
+    @apply text-fontcolor;
 
     .ns-box-header {
-        border: var(--box-edge);
-        color: var(--primary);
+        @apply border-box-edge;
+        @apply text-fontcolor;
     }
 
     .ns-box-body {
-        color: var(--primary);
-        border: var(--box-edge);
+        @apply text-fontcolor;
+        @apply border-box-edge;
     }
 
     .ns-box-footer {
-        border: var(--box-edge);
-        background: var(--box-background);
+        @apply border-box-edge;
+        @apply bg-box-background;
     }
 
     div > h3 {
-        color: var(--primary);
+        @apply text-fontcolor;
     }
 }

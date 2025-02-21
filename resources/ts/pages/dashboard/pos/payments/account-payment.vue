@@ -22,7 +22,7 @@
                     <span>{{ __( 'Current Balance' ) }} : </span>
                     <span>{{ nsCurrency( order.customer.account_amount ) }}</span>
                 </div>
-                <div id="change" class="col-span-2 h-16 flex justify-between items-center elevation-surface border text-primary text-xl md:text-3xl p-2">
+                <div id="change" class="col-span-2 h-16 flex justify-between items-center elevation-surface border text-fontcolor text-xl md:text-3xl p-2">
                     <span>{{ __( 'Screen' ) }} : </span>
                     <span>{{ nsCurrency( screenValue ) }}</span>
                 </div>
@@ -44,17 +44,17 @@
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
                         <div 
                             @click="increaseBy({ value : 100 })"
-                            class="elevation-surface border hoverable text-2xl text-primary h-16 flex items-center justify-center cursor-pointer">
+                            class="elevation-surface border hoverable text-2xl text-fontcolor h-16 flex items-center justify-center cursor-pointer">
                             <span>{{ nsCurrency( 100 ) }}</span>
                         </div>
                         <div 
                             @click="increaseBy({ value : 500 })"
-                            class="elevation-surface border hoverable text-2xl text-primary h-16 flex items-center justify-center cursor-pointer">
+                            class="elevation-surface border hoverable text-2xl text-fontcolor h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ nsCurrency( 500 ) }}</span>
                         </div>
                         <div 
                             @click="increaseBy({ value : 1000 })"
-                            class="elevation-surface border hoverable text-2xl text-primary h-16 flex items-center justify-center cursor-pointer">
+                            class="elevation-surface border hoverable text-2xl text-fontcolor h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ nsCurrency( 1000 ) }}</span>
                         </div>
                     </div>

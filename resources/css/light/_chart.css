@@ -7,10 +7,10 @@
         > div {
             @apply border-box-edge;
             span {
-                @apply text-primary;
+                @apply text-text-fontcolor;
             }
             h2 {
-                @apply text-primary;
+                @apply text-text-fontcolor;
             }
         }
     }
@@ -23,22 +23,22 @@
     .head, .title {
         @apply bg-box-background;
         h3, i, h4, p, span {
-            @apply text-typography;
+            @apply text-fontcolor;
         }
         .paid-order {
-            @apply bg-success-primary text-typography;
+            @apply bg-success-primary text-fontcolor;
         }
         .other-order {
-            @apply bg-box-background text-primary;
+            @apply bg-box-background text-text-fontcolor;
         }
         .single-order {
             @apply border-success-tertiary;
         }
         .paid-currency {
-            @apply text-typography;
+            @apply text-fontcolor;
         }
         .unpaid-currency {
-            @apply text-primary;
+            @apply text-text-fontcolor;
         }
     }
 }
@@ -46,10 +46,10 @@
 #ns-best-customers, #ns-best-cashiers {
     @apply bg-box-background;
     .head {
-        @apply bg-box-background border-box-edge text-primary;
+        @apply bg-box-background border-box-edge text-text-fontcolor;
     }
     .body {
-        @apply text-primary bg-box-background;
+        @apply text-text-fontcolor bg-box-background;
         .entry {
             @apply border-box-edge;
         }

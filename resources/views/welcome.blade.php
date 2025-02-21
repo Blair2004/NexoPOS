@@ -6,7 +6,7 @@
             <div class="flex justify-center items-center py-6">
                 <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="NexoPOS">
             </div>
-            <div class="ns-box rounded shadow w-full md:w-1/2 lg:w-1/3 overflow-hidden">
+            <div class="ns-box rounded shadow w-full md:w-1/4 lg:w-1/4 overflow-hidden">
                 <div id="section-header" class="ns-box-header p-4">
                     <p class="text-center b-8 text-sm">{{ __( "If you see this page, this means NexoPOS is correctly installed on your system. As this page is meant to be the frontend, NexoPOS doesn't have a frontend for the meantime. This page shows useful links that will take you to the important resources." ) }}</p>
                 </div>

@@ -1,6 +1,6 @@
 .ns-tab {
     .tab {
-        @apply border-tab-active-border text-primary;
+        @apply border-tab-active-border text-font;
         
         &.active {
             @apply bg-tab-active;

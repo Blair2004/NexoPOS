@@ -19,7 +19,7 @@
             </div>
             <div class="flex flex-col flex-auto overflow-hidden">
                 <div class="border-b ns-box-body">
-                    <h3 class="text-2xl flex justify-between py-2 text-primary">
+                    <h3 class="text-2xl flex justify-between py-2 text-font">
                         <span>{{ __( 'Instalments & Payments' ) }}</span>
                         <p>
                             <span class="text-sm">({{ nsCurrency( totalPayments ) }})</span>
@@ -43,13 +43,13 @@
                             </div>
                         </div>
                         <div class="flex items-center">
-                            <button @click="removeInstalment( instalment )" class="items-center flex justify-center h-8 w-8 rounded border text-primary ns-inset-button error">
+                            <button @click="removeInstalment( instalment )" class="items-center flex justify-center h-8 w-8 rounded border text-fontcolor ns-inset-button error">
                                 <i class="las la-times"></i>
                             </button>
                         </div>
                     </div>
                     <div class="my-2" v-if="order.instalments.length === 0">
-                        <p class="p-2 elevation-surface border text-primary text-center">{{ __( 'There is no instalment defined. Please set how many instalments are allowed for this order' ) }}</p>
+                        <p class="p-2 elevation-surface border text-fontcolor text-center">{{ __( 'There is no instalment defined. Please set how many instalments are allowed for this order' ) }}</p>
                     </div>
                 </div>
             </div>

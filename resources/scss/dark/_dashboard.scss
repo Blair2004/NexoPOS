@@ -38,21 +38,21 @@
 }
 
 .ns-toggle-button {
-    @apply border-box-edge text-primary;
+    @apply border-box-edge text-font;
     &:hover {
         @apply bg-tab-active border-transparent text-white;
     }
 }
 
 .ns-avatar { 
-    @apply text-primary border-box-edge;
+    @apply text-fontcolor border-box-edge;
 
     &:hover {
-        @apply bg-box-background text-primary border-transparent;
+        @apply bg-box-background text-fontcolor border-transparent;
     }
 
     &.toggled {
-        @apply bg-box-background text-primary border-transparent;
+        @apply bg-box-background text-fontcolor border-transparent;
     }
 }
 
@@ -80,10 +80,10 @@
         }
 
         &:hover {
-            @apply bg-box-background text-primary;
+            @apply bg-box-background text-font;
         }
 
-        @apply text-primary;
+        @apply text-font;
     }
 
     #notification-center > div > div {
@@ -91,7 +91,7 @@
     }
 
     .clear-all {
-        @apply text-primary;
+        @apply text-font;
 
         &:hover {
             @apply bg-input-button-hover text-typography;
@@ -103,7 +103,7 @@
             @apply text-secondary;
         }
         p {
-            @apply text-primary;
+            @apply text-font;
         }
 
         .date {

@@ -54,7 +54,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="cart-table-header" class="w-full text-primary font-semibold flex">
+                <div id="cart-table-header" class="w-full text-fontcolor font-semibold flex">
                     <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0">{{ __( 'Product' ) }}</div>
                     <div class="hidden lg:flex lg:w-1/6 p-2 border-b border-t-0">{{ __( 'Quantity' ) }}</div>
                     <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0">{{ __( 'Total' ) }}</div>
@@ -63,7 +63,7 @@
                     
                     <!-- Loop Procuts On Cart -->
 
-                    <div class="text-primary flex" v-if="products.length === 0">
+                    <div class="text-fontcolor flex" v-if="products.length === 0">
                         <div class="w-full text-center py-4 border-b">
                             <h3>{{ __( 'No products added...' ) }}</h3>
                         </div>

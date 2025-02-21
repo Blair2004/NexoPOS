@@ -1,7 +1,7 @@
 <template>
     <div class="ns-box shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
         <div class="flex-shrink-0 flex p-2 border-b ns-box-header justify-between items-center">
-            <h1 class="text-xl font-bold text-primary text-center">{{ __( 'Define Quantity' ) }}</h1>
+            <h1 class="text-xl font-bold text-fontcolor text-center">{{ __( 'Define Quantity' ) }}</h1>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>

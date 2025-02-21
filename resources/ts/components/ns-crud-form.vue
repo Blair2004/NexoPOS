@@ -248,7 +248,7 @@ export default {
             <ns-spinner />
         </div>
         <div class="box-header border-b border-box-edge box-border p-2 flex justify-between items-center" v-if="popup">
-            <h2 class="text-primary font-bold text-lg">{{ popup.params.title }}</h2>
+            <h2 class="text-fontcolor font-bold text-lg">{{ popup.params.title }}</h2>
             <div>
                 <ns-close-button @click="handleClose()"></ns-close-button>
             </div>
@@ -256,7 +256,7 @@ export default {
         <div v-if="Object.values( form ).length > 0" :class="popup ? 'p-2 overflow-y-auto' : ''">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center" v-if="form.main">
-                    <label for="title" class="font-bold my-2 text-primary">
+                    <label for="title" class="font-bold my-2 text-font">
                         <span v-if="form.main.name">{{ form.main.label }}</span>
                     </label>
                     <div for="title" class="text-sm my-2">
@@ -275,7 +275,7 @@ export default {
                             class="flex-auto outline-hidden h-10 px-2">
                         <button :disabled="form.main.disabled" :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : ''" @click="submit()" class="outline-hidden px-4 h-10 text-white">{{ __( 'Save' ) }}</button>
                     </div>
-                    <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                    <p class="text-xs text-fontcolor py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                     <p :key="index" class="text-xs py-1 text-error-tertiary" v-for="(error,index) of form.main.errors">
                         <span v-if="error.identifier=== 'required'"><slot name="error-required">{{ error.identifier }}</slot></span>
                         <span v-if="error.identifier=== 'invalid'"><slot name="error-invalid">{{ error.message }}</slot></span>

@@ -14,7 +14,7 @@
             <div id="invoice-header" class="flex -mx-2 flex-wrap">
                 <div class="w-full print:w-1/3 md:w-1/3 px-2">
                     <div class="p-2">
-                        <h3 class="font-semibold text-xl text-primary border-b border-info-primary py-2">{{ __( 'Store Details' ) }}</h3>
+                        <h3 class="font-semibold text-xl text-fontcolor border-b border-info-primary py-2">{{ __( 'Store Details' ) }}</h3>
                         <div class="details">
                             <ul class="my-1">
                                 <li class="flex justify-between text-secondary text-sm mb-1">
@@ -51,7 +51,7 @@
                 </div>
                 <div class="w-full print:w-1/3 md:w-1/3 px-2">
                     <div class="p-2">
-                        <h3 class="font-semibold text-xl text-primary border-b border-info-primary py-2">{{ __( 'Billing Details' ) }}</h3>
+                        <h3 class="font-semibold text-xl text-fontcolor border-b border-info-primary py-2">{{ __( 'Billing Details' ) }}</h3>
                         <div class="details">
                             <ul class="my-1">
                                 <li v-for="bill of billing" :key="bill.id" class="flex justify-between text-secondary text-sm mb-1">
@@ -64,7 +64,7 @@
                 </div>
                 <div class="w-full print:w-1/3 md:w-1/3 px-2">
                     <div class="p-2">
-                        <h3 class="font-semibold text-xl text-primary border-b border-info-primary py-2">{{ __( 'Shipping Details' ) }}</h3>
+                        <h3 class="font-semibold text-xl text-fontcolor border-b border-info-primary py-2">{{ __( 'Shipping Details' ) }}</h3>
                         <div class="details">
                             <ul class="my-1">
                                 <li v-for="ship of shipping" :key="ship.id" class="flex justify-between text-secondary text-sm mb-1">
@@ -91,19 +91,19 @@
                     <tbody>
                         <tr v-for="product of order.products" :key="product.id">
                             <td class="p-2 border">
-                                <h3 class="text-primary">{{ product.name }}</h3>
+                                <h3 class="text-font">{{ product.name }}</h3>
                                 <span class="text-sm text-secondary">{{ product.unit }}</span>
                             </td>
-                            <td class="p-2 border text-center text-primary">{{ nsCurrency( product.unit_price ) }}</td>
-                            <td class="p-2 border text-center text-primary">{{ product.quantity }}</td>
-                            <td class="p-2 border text-center text-primary">{{ nsCurrency( product.discount ) }}</td>
-                            <td class="p-2 border text-center text-primary">{{ nsCurrency( product.tax_value ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ nsCurrency( product.total_price ) }}</td>
+                            <td class="p-2 border text-center text-font">{{ nsCurrency( product.unit_price ) }}</td>
+                            <td class="p-2 border text-center text-font">{{ product.quantity }}</td>
+                            <td class="p-2 border text-center text-font">{{ nsCurrency( product.discount ) }}</td>
+                            <td class="p-2 border text-center text-font">{{ nsCurrency( product.tax_value ) }}</td>
+                            <td class="p-2 border text-right text-font">{{ nsCurrency( product.total_price ) }}</td>
                         </tr>
                     </tbody>
                     <tfoot class="font-semibold">
                         <tr>
-                            <td class="p-2 border text-center text-primary" colspan="2">
+                            <td class="p-2 border text-center text-font" colspan="2">
                                 <div class="flex justify-between" v-if="[ 'unpaid', 'partially_paid' ].includes( order.payment_status )">
                                     <span>
                                         {{ __( 'Expiration Date' ) }}
@@ -111,44 +111,44 @@
                                     <span>{{ order.final_payment_date }}</span>
                                 </div>
                             </td>
-                            <td class="p-2 border text-center text-primary" colspan="2"></td>
-                            <td class="p-2 border text-primary text-left">{{ __( 'Sub Total' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.subtotal ) }}</td>
+                            <td class="p-2 border text-center text-font" colspan="2"></td>
+                            <td class="p-2 border text-fontcolor text-left">{{ __( 'Sub Total' ) }}</td>
+                            <td class="p-2 border text-right text-font">{{ nsCurrency( order.subtotal ) }}</td>
                         </tr>
                         <tr v-if="order.discount > 0">
-                            <td class="p-2 border text-center text-primary" colspan="4"></td>
-                            <td class="p-2 border text-primary text-left">{{ __( 'Discount' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ nsCurrency( - order.discount ) }}</td>
+                            <td class="p-2 border text-center text-font" colspan="4"></td>
+                            <td class="p-2 border text-fontcolor text-left">{{ __( 'Discount' ) }}</td>
+                            <td class="p-2 border text-right text-font">{{ nsCurrency( - order.discount ) }}</td>
                         </tr>
                         <tr v-if="order.total_coupons > 0">
-                            <td class="p-2 border text-center text-primary" colspan="4"></td>
-                            <td class="p-2 border text-left text-primary">{{ __( 'Coupons' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ nsCurrency( - order.total_coupons ) }}</td>
+                            <td class="p-2 border text-center text-font" colspan="4"></td>
+                            <td class="p-2 border text-left text-font">{{ __( 'Coupons' ) }}</td>
+                            <td class="p-2 border text-right text-font">{{ nsCurrency( - order.total_coupons ) }}</td>
                         </tr>
                         <tr v-if="order.shipping > 0">
-                            <td class="p-2 border text-center text-primary" colspan="4"></td>
-                            <td class="p-2 border text-primary text-left">{{ __( 'Shipping' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.shipping ) }}</td>
+                            <td class="p-2 border text-center text-font" colspan="4"></td>
+                            <td class="p-2 border text-fontcolor text-left">{{ __( 'Shipping' ) }}</td>
+                            <td class="p-2 border text-right text-font">{{ nsCurrency( order.shipping ) }}</td>
                         </tr>
                         <tr :key="tax.id" v-for="tax of order.taxes">
-                            <td class="p-2 border text-center text-primary" colspan="4"></td>
-                            <td class="p-2 border text-primary text-left">{{ tax.tax_name }} &mdash; {{ order.tax_type === 'inclusive' ? __( 'Inclusive' ) : __( 'Exclusive' )  }}</td>
-                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.tax_value ) }}</td>
+                            <td class="p-2 border text-center text-font" colspan="4"></td>
+                            <td class="p-2 border text-fontcolor text-left">{{ tax.tax_name }} &mdash; {{ order.tax_type === 'inclusive' ? __( 'Inclusive' ) : __( 'Exclusive' )  }}</td>
+                            <td class="p-2 border text-right text-font">{{ nsCurrency( order.tax_value ) }}</td>
                         </tr>
                         <tr :key="tax.id" v-for="tax of order.taxes">
-                            <td class="p-2 border text-center text-primary" colspan="4"></td>
-                            <td class="p-2 border text-primary text-left">{{ tax.tax_name }} &mdash; {{ order.tax_type === 'inclusive' ? __( 'Inclusive' ) : __( 'Exclusive' )  }}</td>
-                            <td class="p-2 border text-right text-primary">{{ tax.tax_value | currency }}</td>
+                            <td class="p-2 border text-center text-font" colspan="4"></td>
+                            <td class="p-2 border text-fontcolor text-left">{{ tax.tax_name }} &mdash; {{ order.tax_type === 'inclusive' ? __( 'Inclusive' ) : __( 'Exclusive' )  }}</td>
+                            <td class="p-2 border text-right text-font">{{ tax.tax_value | currency }}</td>
                         </tr>
                         <tr>
-                            <td class="p-2 border text-center text-primary" colspan="4"></td>
-                            <td class="p-2 border text-primary text-left">{{ __( 'Total' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.total ) }}</td>
+                            <td class="p-2 border text-center text-font" colspan="4"></td>
+                            <td class="p-2 border text-fontcolor text-left">{{ __( 'Total' ) }}</td>
+                            <td class="p-2 border text-right text-font">{{ nsCurrency( order.total ) }}</td>
                         </tr>
                         <tr>
-                            <td class="p-2 border text-center text-primary" colspan="4"></td>
-                            <td class="p-2 border text-primary text-left">{{ __( 'Paid' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.tendered ) }}</td>
+                            <td class="p-2 border text-center text-font" colspan="4"></td>
+                            <td class="p-2 border text-fontcolor text-left">{{ __( 'Paid' ) }}</td>
+                            <td class="p-2 border text-right text-font">{{ nsCurrency( order.tendered ) }}</td>
                         </tr>
                         <tr v-if="[ 'partially_paid', 'unpaid' ].includes( order.payment_status )" class="error">
                             <td class="p-2 border text-center" colspan="4"></td>
@@ -156,9 +156,9 @@
                             <td class="p-2 border text-right">{{ nsCurrency( order.change ) }}</td>
                         </tr>
                         <tr v-else>
-                            <td class="p-2 border text-center text-primary" colspan="4"></td>
-                            <td class="p-2 border text-primary text-left">{{ __( 'Change' ) }}</td>
-                            <td class="p-2 border text-right text-primary">{{ nsCurrency( order.change ) }}</td>
+                            <td class="p-2 border text-center text-font" colspan="4"></td>
+                            <td class="p-2 border text-fontcolor text-left">{{ __( 'Change' ) }}</td>
+                            <td class="p-2 border text-right text-font">{{ nsCurrency( order.change ) }}</td>
                         </tr>
                     </tfoot>
                 </table>

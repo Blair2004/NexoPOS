@@ -11,6 +11,8 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.7",
+    "@tailwindcss/vite": "^4.0.7",
     "@vitejs/plugin-vue": "^5.2.1",
     "laravel-echo": "^1.17.1",
     "laravel-vite-plugin": "^1.2.0",
@@ -26,7 +28,6 @@
     "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@dicebear/avataaars": "^9.2.2",
     "@dicebear/core": "^9.2.2",
-    "@tailwindcss/vite": "^4.0.6",
     "@wordpress/hooks": "^4.15.0",
     "chart.js": "^4.4.7",
     "currency.js": "^2.0.4",

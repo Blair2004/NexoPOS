@@ -11,13 +11,13 @@
                 </ns-draggable>
             </ns-dropzone>
             <div v-if="hasUnusedWidgets" @click="openWidgetAdded( column )" class="widget-placeholder cursor-pointer border-2 border-dashed h-16 flex items-center justify-center">
-                <span class="text-sm text-primary" type="info">{{ __( 'Click here to add widgets' ) }}</span>
+                <span class="text-sm text-font" type="info">{{ __( 'Click here to add widgets' ) }}</span>
             </div>
         </div>
     </div>
 </template>
 <style scoped>
-@reference "&/scss/app.scss";
+@reference "&/css/app.css";
 
 .light .widget-placeholder {
     @apply border-gray-600;

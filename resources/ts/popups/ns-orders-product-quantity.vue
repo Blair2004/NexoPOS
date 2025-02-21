@@ -8,7 +8,7 @@
         </div>
         <div v-if="product" class="border-t border-b ns-box-body py-2 flex items-center justify-center text-2xl font-semibold">
             <span>{{ seeValue }}</span> 
-            <span class="text-primary text-sm">({{ availableQuantity }} {{ __( 'available' ) }})</span>
+            <span class="text-fontcolor text-sm">({{ availableQuantity }} {{ __( 'available' ) }})</span>
         </div>
         <div class="flex-auto overflow-y-auto p-2" v-if="product">
             <ns-numpad :value="product.quantity" @next="updateQuantity( $event )" @changed="setChangedValue( $event )"></ns-numpad>

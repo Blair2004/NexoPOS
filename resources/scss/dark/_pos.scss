@@ -1,7 +1,7 @@
 #loader {
     @apply bg-surface;
     p {
-        @apply text-primary;
+        @apply text-font;
     }
 }
 
@@ -17,7 +17,7 @@
     #pos-cart {
         #tools {
             .switch-cart {
-                @apply bg-tab-active font-semibold text-primary;
+                @apply bg-tab-active font-semibold text-font;
                 > span.products-count {
                     @apply bg-success-primary text-typography;
                 }
@@ -40,7 +40,7 @@
                     }
 
                     button {
-                        @apply bg-input-button border-pos-button-edge text-primary;
+                        @apply bg-input-button border-pos-button-edge text-font;
                         &:hover {
                             @apply bg-input-button-hover text-white;
                         }
@@ -48,7 +48,7 @@
                 }
             }
             #cart-table-header {
-                @apply text-primary;
+                @apply text-font;
                 > div {
                     @apply border-pos-button-edge;
                 }
@@ -63,7 +63,7 @@
                 }
 
                 > div {
-                    @apply text-primary;
+                    @apply text-font;
 
                     > div {
                         @apply border-pos-button-edge;
@@ -103,7 +103,7 @@
                             }
 
                             .product-controls {
-                                @apply text-primary;
+                                @apply text-font;
                             }
                         }
                     }
@@ -134,7 +134,7 @@
 
             #cart-products-summary {
                 table {
-                    @apply text-primary;
+                    @apply text-font;
                     td {
                         @apply border-pos-button-edge;
                         
@@ -181,7 +181,7 @@
                 }
 
                 #discount-button {
-                    @apply bg-box-background border-r border-pos-button-edge text-primary;
+                    @apply bg-box-background border-r border-pos-button-edge text-font;
 
                     &:hover, &:active {
                         @apply bg-box-elevation-background;
@@ -208,14 +208,14 @@
             }
         }
         .switch-grid {
-            @apply bg-tab-active text-primary;
+            @apply bg-tab-active text-font;
         }
 
         #grid-container {
             @apply bg-tab-active;
 
             #grid-header {
-                @apply border-pos-button-edge text-primary;
+                @apply border-pos-button-edge text-font;
                 > div {
                     @apply border-pos-button-edge;
                     button {
@@ -235,7 +235,7 @@
                 @apply border-pos-button-edge;
 
                 ul > li {
-                    @apply text-primary;
+                    @apply text-font;
                 }
             }
 
@@ -254,7 +254,7 @@
                     }
 
                     h3 {
-                        @apply text-primary;
+                        @apply text-font;
                     }
 
                     i, span {
@@ -271,7 +271,7 @@
     .ns-header {
         @apply border-box-edge;
         h3 {
-            @apply text-primary;
+            @apply text-font;
         }
     }
     .ns-body {
@@ -282,18 +282,18 @@
 #ns-order-type {
     @apply bg-box-background;
     h3 {
-        @apply text-primary;
+        @apply text-font;
     }
     div > div {
         > i {
             @apply text-error-primary;
         }
         div > p {
-            @apply text-primary;
+            @apply text-font;
         }
     }
     div h4 {
-        @apply text-primary;
+        @apply text-font;
     }
 }
 
@@ -311,15 +311,15 @@
 
 #ns-payment-popup {
     .ns-pos-screen {
-        @apply text-primary;
+        @apply text-font;
     }
     > div {
         @apply bg-tab-inactive;
         h3 {
-            @apply text-primary;
+            @apply text-font;
         }
         ul li{
-            @apply text-primary;
+            @apply text-font;
             &.ns-payment-gateway.ns-visible, &.ns-payment-list.ns-visible {
                 @apply bg-tab-active;
             }
@@ -333,7 +333,7 @@
         .ns-payment-wrapper {
             @apply bg-tab-active;
             ul li {
-                @apply bg-input-button text-primary;
+                @apply bg-input-button text-font;
                 button.error {
                     @apply bg-error-tertiary text-white;
                 }

@@ -21,7 +21,7 @@
                         <div class="w-full md:flex-auto p-2">
                             <h3 class="font-semibold mb-1">{{ order.code }}</h3>
                             <div>
-                                <ul class="flex -mx-1 text-sm text-primary">
+                                <ul class="flex -mx-1 text-sm text-font">
                                     <li class="px-1">{{ __( 'Total' ) }} : {{ nsCurrency( refund.total ) }}</li>
                                     <li class="px-1">{{ __( 'By' ) }} : {{ refund.author.username }}</li>
                                 </ul>
@@ -41,7 +41,7 @@
                     <div class="w-full md:flex-auto p-2">
                         <h3 class="font-semibold mb-1">{{ product.product.name }}</h3>
                         <div>
-                            <ul class="flex -mx-1 text-sm text-primary">
+                            <ul class="flex -mx-1 text-sm text-font">
                                 <li class="px-1">{{ __( 'Condition' ) }} : {{ product.condition }}</li>
                                 <li class="px-1">{{ __( 'Quantity' ) }} : {{ product.quantity }}</li>
                                 <li class="px-1">{{ __( 'Total' ) }} : {{ nsCurrency( product.total_price ) }}</li>

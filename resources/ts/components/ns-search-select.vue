@@ -5,7 +5,7 @@
             class="border-2 mt-1 relative shadow-sm mb-1 flex overflow-hidden">
             <div @click="! field.disabled && (showResults = ! showResults)" :class="( field.disabled ? 'bg-input-disabled' : 'bg-input-background' )" 
                 class="flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
-                <span class="text-primary text-sm">{{ selectedOptionLabel }}</span>
+                <span class="text-fontcolor text-sm">{{ selectedOptionLabel }}</span>
             </div>
             <div v-if="hasSelectedValues( field ) && ! field.disabled" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-error-tertiary hover:text-white border-l-2 border-input-edge">
                 <i class="las la-times"></i>
@@ -14,7 +14,7 @@
                 <i class="las la-plus"></i>
             </div>
             <div v-if="field.about" @click="triggerFieldAbout( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-input-button-hover border-l-2 border-input-edge">
-                <i class="las la-question-circle text-2xl text-primary"></i>
+                <i class="las la-question-circle text-2xl text-font"></i>
             </div>
         </div>
         <div class="relative" v-if="showResults">
@@ -24,7 +24,7 @@
                 </div>
                 <div class="h-60 overflow-y-auto">
                     <ul>
-                        <li @click="selectOption( option )" v-for="option of filtredOptions" class="py-1 px-2 hover:bg-info-primary cursor-pointer text-primary">{{ option.label }}</li>
+                        <li @click="selectOption( option )" v-for="option of filtredOptions" class="py-1 px-2 hover:bg-info-primary cursor-pointer text-font">{{ option.label }}</li>
                     </ul>
                 </div>
             </div>

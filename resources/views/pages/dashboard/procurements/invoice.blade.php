@@ -20,7 +20,7 @@
                 {{ sprintf( __( 'Date : %s' ), $procurement->updated_at ) }}
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 text-primary">
+        <div class="flex flex-wrap -mx-3 text-font">
             <div class="px-3 w-full print:w-1/2 md:w-1/2">
                 <h3 class="font-semibold text-xl border-b-2 border-blue-400 py-2 mb-2">Provider</h3>
                 <ul>

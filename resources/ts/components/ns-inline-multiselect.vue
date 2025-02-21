@@ -12,7 +12,7 @@
                 :id="field.name" :type="field.type" 
                 :class="inputClass" class="flex sm:text-sm sm:leading-5 p-1 flex-wrap" :placeholder="field.placeholder || ''">
                 <div v-for="option of field.value" class="rounded shadow bg-box-elevation-hover flex mr-1 mb-1 ">
-                    <div class="p-2 flex items-center text-primary">{{ optionsToKeyValue[ option ] }}</div>
+                    <div class="p-2 flex items-center text-font">{{ optionsToKeyValue[ option ] }}</div>
                     <div class="flex items-center justify-center px-2">
                         <div @click="removeOption( option )" class="cursor-pointer rounded-full bg-error-tertiary h-5 w-5 flex items-center justify-center">
                             <i class="las la-times-circle"></i>
@@ -31,7 +31,7 @@
                     <div class="h-0 absolute w-full z-10">
                         <div class="shadow bg-box-background absoluve bottom-0 w-full max-h-80 overflow-y-auto">
                             <ul>
-                                <li @click="addOption( suggestion )" v-for="suggestion of optionSuggestions" class="p-2 hover:bg-box-elevation-hover text-primary cursor-pointer">{{ suggestion.label }}</li>
+                                <li @click="addOption( suggestion )" v-for="suggestion of optionSuggestions" class="p-2 hover:bg-box-elevation-hover text-fontcolor cursor-pointer">{{ suggestion.label }}</li>
                             </ul>
                         </div>
                     </div>

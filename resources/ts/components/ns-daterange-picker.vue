@@ -111,15 +111,15 @@ export default {
 </script>
 <template>
     <div @click="handleDateRangeClick()" class="flex flex-auto flex-col mb-2 ns-daterange-picker">
-        <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block leading-5 font-medium"><slot></slot></label>
+        <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-font'" class="block leading-5 font-medium"><slot></slot></label>
         <div :class="hasError ? 'error' : ''" class="mt-1 relative flex input-group bg-input-background rounded overflow-hidden shadow  focus:shadow-sm">
             <div class="border border-input-edge rounded-tl rounded-bl flex-auto flex">
                 <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span class="text-primary sm:text-sm sm:leading-5">
+                    <span class="text-fontcolor sm:text-sm sm:leading-5">
                     {{ leading }}
                     </span>
                 </div>
-                <div class="flex flex-auto p-1 text-primary text-sm items-center cursor-pointer" @click="toggleRangeView()">
+                <div class="flex flex-auto p-1 text-fontcolor text-sm items-center cursor-pointer" @click="toggleRangeView()">
                     <span class="mr-1"><i class="las la-clock text-2xl"></i></span>
                     <span class="">{{ startDateFormatted || __( 'N/A' ) }}</span>
                     <span class="mx-2">&mdash;</span>

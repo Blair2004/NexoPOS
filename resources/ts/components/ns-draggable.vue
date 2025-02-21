@@ -132,7 +132,7 @@
   </script>
   
   <style>
-  @reference "&/scss/app.scss";
+  @reference "&/css/app.css";
 
   .ns-draggable-item {
     user-select: none;

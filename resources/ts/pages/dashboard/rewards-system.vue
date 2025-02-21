@@ -129,8 +129,8 @@ export default {
         <template v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-primary"><slot name="title">{{ __( 'No title Provided' ) }}</slot></label>
-                    <div for="title" class="text-sm my-2 text-primary">
+                    <label for="title" class="font-bold my-2 text-font"><slot name="title">{{ __( 'No title Provided' ) }}</slot></label>
+                    <div for="title" class="text-sm my-2 text-font">
                         <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error px-2 py-1">Return</a>
                     </div>
                 </div>
@@ -140,10 +140,10 @@ export default {
                         @change="formValidation.checkField( form.main )"
                         :disabled="form.main.disabled"
                         type="text"
-                        class="flex-auto text-primary outline-hidden h-10 px-2">
+                        class="flex-auto text-fontcolor outline-hidden h-10 px-2">
                     <button :disabled="form.main.disabled" @click="submit()" class="outline-hidden px-4 h-10 border-l border-tertiary"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
-                <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                <p class="text-xs text-fontcolor py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-tertiary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
@@ -158,7 +158,7 @@ export default {
                     </div>
                     <div class="ns-box rounded">
                         <div class="ns-body p-2 flex justify-between items-center my-3">
-                            <slot name="add"><span class="text-primary">{{ __( 'Add Rule' ) }}</span></slot>
+                            <slot name="add"><span class="text-font">{{ __( 'Add Rule' ) }}</span></slot>
                             <div class="ns-button info">
                                 <button @click="addRule()" class="rounded font-semibold flex items-center justify-center h-10 w-10">
                                     <i class="las la-plus"></i>

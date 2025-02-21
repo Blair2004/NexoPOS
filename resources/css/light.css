@@ -1,29 +1,17 @@
-@import "tailwindcss";
+@reference "./app.css";
+
 @import "./light/_breakpoints.css";
-@import "./light/_variables.css";
 @import "./light/_colors.css";
-
-@theme {
-    --color-box-background: #f9f9f9;
-    --border-box-edge: 1px solid #e5e5e5;
-}
-
-@utility text-primary {
-    @apply text-blue-300;
-}
-
-@utility border-box-edge {
-    border: 1px solid #e5e5e5;
-}
+@import "./light/_width.css";
 
 @import "./light/_box.css";
 /* @import "./light/_notices.css"; */
 /* @import "./light/_floating-notices.css"; */
-/* @import './light/_forms.css'; */
-/* @import './light/_crud.css'; */
-/* @import './light/_dashboard.css'; */
+@import './light/_forms.css';
+@import './light/_crud.css';
+@import './light/_dashboard.css';
 /* @import './light/_chart.css'; */
-/* @import './light/_menu.css'; */
+@import './light/_menu.css';
 /* @import './light/_popups.css'; */
 /* @import './light/_pos.css'; */
 /* @import './light/_ns-tab.css'; */

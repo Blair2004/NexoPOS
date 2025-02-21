@@ -52,8 +52,8 @@
                 </div>
 
                 <div v-if="! hasCategories && ! hasProducts && ! isLoading" class="h-full w-full flex flex-col items-center justify-center">
-                    <i class="las la-frown-open text-8xl text-primary"></i>
-                    <p class="w-1/2 md:w-2/3 text-center text-primary">
+                    <i class="las la-frown-open text-8xl text-font"></i>
+                    <p class="w-1/2 md:w-2/3 text-center text-font">
                         {{ __( 'Looks like there is either no products and no categories. How about creating those first to get started ?' ) }}
                     </p>
                     <br>

@@ -29,7 +29,7 @@
                         </div>
                         <div v-if="notifications.length === 0" class="h-full w-full flex items-center justify-center">
                             <div class="flex flex-col items-center">
-                                <i class="las la-laugh-wink text-5xl text-primary"></i>
+                                <i class="las la-laugh-wink text-5xl text-font"></i>
                                 <p class="text-secondary text-sm">{{ __( 'Nothing to care about !' ) }}</p>
                             </div>
                         </div>

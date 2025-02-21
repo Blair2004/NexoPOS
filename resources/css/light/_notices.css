@@ -2,11 +2,11 @@
     @apply text-white;
     &
     h1, h2, h3, h4, h5 {
-        @apply text-primary;
+        @apply text-fontcolor;
     }
 
     p, span {
-        @apply text-primary;
+        @apply text-fontcolor;
     }
 
     &.danger {
@@ -74,7 +74,7 @@
         }
 
         p {
-            @apply text-primary;
+            @apply text-fontcolor;
             a {
                 @apply text-error-tertiary;
                 &:hover {
@@ -96,7 +96,7 @@
         }
 
         p {
-            @apply text-primary;
+            @apply text-fontcolor;
             & > a {
                 @apply text-info-secondary;
                 &:hover {
@@ -112,5 +112,5 @@
 }
 
 .ns-normal-text {
-    @apply text-primary;
+    @apply text-fontcolor;
 }

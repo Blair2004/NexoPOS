@@ -13,7 +13,7 @@
                     </button>
                 </div>
             </div>
-            <div class="p-2 border-b ns-box-body flex justify-between text-primary">
+            <div class="p-2 border-b ns-box-body flex justify-between text-font">
                 <div class="input-group flex-auto border-2 rounded">
                     <input
                         ref="searchField" 
@@ -26,13 +26,13 @@
             </div>
             <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto ns-scrollbar">
                 <ul class="ns-vertical-menu">
-                    <li class="p-2 text-center text-primary" v-if="customers && customers.length === 0">
+                    <li class="p-2 text-center text-font" v-if="customers && customers.length === 0">
                         {{ __( 'No customer match your query...' ) }}
                     </li>
-                    <li @click="createCustomerWithMatch( searchCustomerValue )" class="p-2 cursor-pointer text-center text-primary" v-if="customers && customers.length === 0">
+                    <li @click="createCustomerWithMatch( searchCustomerValue )" class="p-2 cursor-pointer text-center text-font" v-if="customers && customers.length === 0">
                         <span class="border-b border-dashed border-info-primary">{{ __( 'Create a customer' ) }}</span>
                     </li>
-                    <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
+                    <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-fontcolor flex justify-between items-center">
                         <div class="flex flex-col">
                             <span>{{ customer.first_name }} {{ customer.last_name }}</span>
                             <small class="text-xs text-secondary" v-if="customer.group">{{ customer.group.name }}</small>

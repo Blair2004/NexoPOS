@@ -13,7 +13,7 @@
                     padding="p-2"
                     identifier="apply-coupon">
                     <div class="border-2 input-group info rounded flex">
-                        <input ref="coupon" @keyup.enter="loadCoupon()" v-model="couponCode" type="text" class="coupon-field w-full text-primary p-2 outline-hidden" :placeholder="placeHolder">
+                        <input ref="coupon" @keyup.enter="loadCoupon()" v-model="couponCode" type="text" class="coupon-field w-full text-fontcolor p-2 outline-hidden" :placeholder="placeHolder">
                         <button @click="loadCoupon()" class="px-3 py-2">{{ __( 'Load' ) }}</button>
                     </div>
                     <div class="pt-2">
@@ -80,7 +80,7 @@
                     <ul v-if="order">
                         <li v-for="( coupon, index) of order.coupons" :key="index" class="flex justify-between elevation-surface border items-center px-2 py-1">
                             <div class="flex-auto">
-                                <h3 class="font-semibold text-primary p-2 flex justify-between">
+                                <h3 class="font-semibold text-fontcolor p-2 flex justify-between">
                                     <span>{{ coupon.name }}</span>
                                     <span>{{ getDiscountValue( coupon ) }}</span>
                                 </h3>

@@ -15,8 +15,8 @@
         <template v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-primary">{{ form.main.label }}</label>
-                    <div for="title" class="text-sm my-2 text-primary">
+                    <label for="title" class="font-bold my-2 text-font">{{ form.main.label }}</label>
+                    <div for="title" class="text-sm my-2 text-font">
                         <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error hover:bg-error-tertiary  px-2 py-1">{{ __( 'Return' ) }}</a>
                     </div>
                 </div>
@@ -27,10 +27,10 @@
                         :disabled="form.main.disabled"
                         type="text"
                         :class="form.main.disabled ? '' : ''"
-                        class="flex-auto text-primary outline-hidden h-10 px-2">
+                        class="flex-auto text-fontcolor outline-hidden h-10 px-2">
                     <button :disabled="form.main.disabled" :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'bg-error-tertiary' : ''" @click="submit()" class="outline-hidden px-4 h-10 rounded-none"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
-                <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                <p class="text-xs text-fontcolor py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-tertiary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
@@ -41,7 +41,7 @@
                         <div id="card-header" class="flex flex-wrap justify-between ns-tab ml-4">
                             <div class="flex flex-wrap">
                                 <template v-for="( tab, index ) in variation.tabs">
-                                    <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-if="tab.visible" v-bind:key="index" class="tab cursor-pointer text-primary px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
+                                    <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-if="tab.visible" v-bind:key="index" class="tab cursor-pointer text-fontcolor px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
                                         <span class="block" :class="tab.errors && tab.errors.length > 0 ? 'mr-2' : ''">{{ tab.label }}</span>
                                         <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-error-secondary text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
                                     </div>
@@ -74,7 +74,7 @@
                                         </div>
                                     </template>
                                 </div>
-                                <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'images'">
+                                <div class="-mx-4 flex flex-wrap text-font" v-if="getActiveTabKey( variation.tabs ) === 'images'">
                                     <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                         <div class="rounded border border-box-elevation-edge bg-box-elevation-background flex justify-between p-2 items-center">
                                             <span>{{ __( 'Add Images' ) }}</span>
@@ -97,7 +97,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'groups'">
+                                <div class="-mx-4 flex flex-wrap text-font" v-if="getActiveTabKey( variation.tabs ) === 'groups'">
                                     <ns-product-group
                                         @update="setProducts( $event, variation.tabs )"
                                         :fields="getActiveTab( variation.tabs ).fields"></ns-product-group>
@@ -110,11 +110,11 @@
                                         <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
                                             <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
                                                 <div class="mb-2">
-                                                    <label class="font-medium text-primary">{{ field.label }}</label>
-                                                    <p class="py-1 text-sm text-primary">{{ field.description }}</p>
+                                                    <label class="font-medium text-font">{{ field.label }}</label>
+                                                    <p class="py-1 text-sm text-font">{{ field.description }}</p>
                                                 </div>
                                                 <div class="mb-2">
-                                                    <div @click="addUnitGroup( field, variation.tabs )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-primary cursor-pointer rounded-lg">
+                                                    <div @click="addUnitGroup( field, variation.tabs )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-fontcolor cursor-pointer rounded-lg">
                                                         <span class="rounded-full border-2 ns-inset-button info h-8 w-8 flex items-center justify-center">
                                                             <i class="las la-plus-circle"></i>
                                                         </span>
@@ -123,8 +123,8 @@
                                                 </div>
                                                 <ns-tabs @close="handleClosingTab( $event, field.groups )" v-if="field.groups.length > 0" @changeTab="variation.activeUnitTab = $event" :active="variation.activeUnitTab || 'tab-0'">
                                                     <ns-tabs-item :closable="group.closable" padding="p-2" v-for="(group,index) of field.groups" :identifier="'tab-' + ( index )" :label="group.label">
-                                                        <div class="shadow rounded overflow-hidden bg-box-elevation-background text-primary">
-                                                            <div class="border-b text-sm p-2 flex justify-between text-primary border-box-elevation-edge">
+                                                        <div class="shadow rounded overflow-hidden bg-box-elevation-background text-font">
+                                                            <div class="border-b text-sm p-2 flex justify-between text-fontcolor border-box-elevation-edge">
                                                                 <span>{{ __( 'Available Quantity' ) }}</span>
                                                                 <span>{{ getUnitQuantity( group.fields ) }}</span>
                                                             </div>
@@ -150,7 +150,7 @@
                                         <template v-if="unitLoadError && ! unitLoaded">
                                             <div class="px-4 w-full md:w-1/2 lg:w-2/3 flex flex-col justify-center items-center">
                                                 <i class="las la-frown text-7xl"></i>
-                                                <p class="w-full md:w-1/3 py-3 text-center text-sm text-primary">{{ __( 'We were not able to load the units. Make sure there are units attached on the unit group selected.' ) }}</p>
+                                                <p class="w-full md:w-1/3 py-3 text-center text-sm text-font">{{ __( 'We were not able to load the units. Make sure there are units attached on the unit group selected.' ) }}</p>
                                                 <p><span @click="createUnit( getActiveTab( variation.tabs ) )" class="cursor-pointer text-info-tertiary border-b border-dashed p-1">{{ __( 'Create Unit' ) }}</span></p>
                                             </div>
                                         </template>
@@ -158,7 +158,7 @@
                                     <template v-else>
                                         <div class="px-4 w-full md:w-1/2 lg:w-2/3 flex flex-col justify-center items-center">
                                             <i class="las la-frown text-7xl"></i>
-                                            <p class="w-full md:w-1/3 py-3 text-center text-sm text-primary">{{ __( 'Make sure to select a unit group before you proceed.' ) }}</p>
+                                            <p class="w-full md:w-1/3 py-3 text-center text-sm text-font">{{ __( 'Make sure to select a unit group before you proceed.' ) }}</p>
                                         </div>
                                     </template>
                                 </div>

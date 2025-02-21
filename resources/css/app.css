@@ -37,10 +37,6 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-button {
-    @apply rounded-none;
-}
-
 #editor {
     h1 {
         @apply text-5xl font-bold;

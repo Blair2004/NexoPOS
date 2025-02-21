@@ -5,7 +5,7 @@
                 <div>
                     <button @click="subMonth()" class="w-8 h-8 ns-inset-button border outline-hidden text-numpad-text rounded"><i class="las la-angle-left"></i></button>
                 </div>
-                <div class="flex flex-auto font-semibold text-primary justify-center">
+                <div class="flex flex-auto font-semibold text-fontcolor justify-center">
                     <span class="mr-2 cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
                     <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                 </div>
@@ -13,7 +13,7 @@
                     <button @click="addMonth()" class="w-8 h-8 ns-inset-button border outline-hidden text-numpad-text rounded"><i class="las la-angle-right"></i></button>
                 </div>
             </div>
-            <div class="h-32 flex grow-0 items-center justify-center text-primary p-4">
+            <div class="h-32 flex grow-0 items-center justify-center text-fontcolor p-4">
                 <div class="rounded input-group info border-2 flex overflow-hidden">
                     <button @click="subYear()" class="px-2 py-2">
                         <i class="las la-minus"></i>
@@ -37,7 +37,7 @@
                 <div>
                     <button @click="subYear()" class="w-8 h-8 ns-inset-button outline-hidden border rounded"><i class="las la-angle-left"></i></button>
                 </div>
-                <div class="flex flex-auto font-semibold text-primary justify-center">
+                <div class="flex flex-auto font-semibold text-fontcolor justify-center">
                     <span class="mr-2 border-b border-info-secondary border-dashed">{{ currentDay.format( 'MMM' ) }}</span>
                     <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                 </div>
@@ -45,7 +45,7 @@
                     <button @click="addYear()" class="w-8 h-8 ns-inset-button outline-hidden border rounded"><i class="las la-angle-right"></i></button>
                 </div>
             </div>
-            <div class="grid grid-flow-row grid-cols-3 grid-rows-1 gap-0 text-primary divide-x divide-y border-b border-box-background">
+            <div class="grid grid-flow-row grid-cols-3 grid-rows-1 gap-0 text-fontcolor divide-x divide-y border-b border-box-background">
                 <div :key="_index" v-for="( monthIndex, _index ) in months" class="h-8 flex justify-center items-center text-sm border-box-background">
                     <div class="w-full h-full">
                         <div :class="momentCopy.month( monthIndex ).format( 'MM' ) === currentDay.format( 'MM' ) ? 'bg-info-secondary text-white' : 'hover:bg-numpad-hover'" class="h-full w-full border-box-background flex items-center justify-center cursor-pointer" @click="setMonth( monthIndex )">
@@ -65,7 +65,7 @@
                 <div>
                     <button @click="subMonth()" class="w-8 h-8 ns-inset-button border rounded"><i class="las la-angle-left"></i></button>
                 </div>
-                <div class="flex flex-auto font-semibold text-primary justify-center">
+                <div class="flex flex-auto font-semibold text-fontcolor justify-center">
                     <span class="mr-2 cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
                     <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                 </div>
@@ -73,7 +73,7 @@
                     <button @click="addMonth()" class="w-8 h-8 ns-inset-button border rounded"><i class="las la-angle-right"></i></button>
                 </div>
             </div>
-            <div class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-primary divide-x divide-y">
+            <div class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-fontcolor divide-x divide-y">
                 <div class="md:h-10 h-8 flex justify-center items-center border-tab-table-th text-sm">{{ __( 'Sun' ) }}</div>
                 <div class="md:h-10 h-8 flex justify-center items-center border-tab-table-th text-sm">{{ __( 'Mon' ) }}</div>
                 <div class="md:h-10 h-8 flex justify-center items-center border-tab-table-th text-sm">{{ __( 'Tue' ) }}</div>
@@ -82,7 +82,7 @@
                 <div class="md:h-10 h-8 flex justify-center items-center border-tab-table-th text-sm">{{ __( 'Fri' ) }}</div>
                 <div class="md:h-10 h-8 flex justify-center items-center border-tab-table-th text-sm">{{ __( 'Sat' ) }}</div>
             </div>
-            <div v-for="(week, index) of calendar" :key="index" class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-primary divide-x divide-y">
+            <div v-for="(week, index) of calendar" :key="index" class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-fontcolor divide-x divide-y">
                 <div :key="_index" v-for="( dayOfWeek, _index) in daysOfWeek" class="md:h-10 h-8 flex justify-center items-center text-sm border-tab-table-th">
                     <template v-for="(day,_dayIndex) of week" class="h-full w-full">
                         <div :key="_dayIndex" v-if="day.dayOfWeek === dayOfWeek" :class="getDayClass({ day, _dayIndex, dayOfWeek, _index, currentDay })" class="h-full w-full flex items-center justify-center cursor-pointer" @click="selectDate( day )">
@@ -106,7 +106,7 @@
                 </div>
                 <div class="px-2">
                     <div class="rounded border-tab-table-th-edge flex items-center justify-center p-1 border" v-if="currentView === 'days'">
-                        <span class="pr-2 pl-1 text-primary">
+                        <span class="pr-2 pl-1 text-font">
                             <i class="las la-clock"></i>
                         </span>
                         <input placeholder="HH" ref="hours" @change="detectHoursChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input-background outline-hidden text-sm active:border-numpad-edge" v-model="hours" type="number">
@@ -168,7 +168,7 @@ export default {
             const classes =   [];
 
             if ( ( moment( this.date ).isSame( day.date, 'day' ) || this.isRangeEdge( day ) ) && ! this.isInvalidRange() ) {
-                classes.push( 'bg-info-secondary text-primary border-info-secondary text-white' );
+                classes.push( 'bg-info-secondary text-fontcolor border-info-secondary text-white' );
             } else {
                 classes.push( 'hover:bg-numpad-hover' );
             }

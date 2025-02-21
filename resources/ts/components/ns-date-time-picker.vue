@@ -1,8 +1,8 @@
 <template>
     <div class="picker mb-2">
-        <label v-if="field && field.label && field.label.length > 0" class="block leading-5 font-medium text-primary">{{ field.label }}</label>
+        <label v-if="field && field.label && field.label.length > 0" class="block leading-5 font-medium text-font">{{ field.label }}</label>
         <div class="ns-button">
-            <button @click="visible = !visible" :class="field && field.label && field.label.length > 0 ? 'mt-1 border border-input-edge' : ''" class="shadow rounded cursor-pointer w-full p-1 flex items-center text-primary">
+            <button @click="visible = !visible" :class="field && field.label && field.label.length > 0 ? 'mt-1 border border-input-edge' : ''" class="shadow rounded cursor-pointer w-full p-1 flex items-center text-font">
                 <i class="las la-clock text-xl"></i>
                 <span class="mx-1 text-sm" v-if="field">
                     <span v-if="! [ null, '', undefined ].includes( field.value )">{{ fieldDate.format( 'YYYY-MM-DD HH:mm' ) }}</span>

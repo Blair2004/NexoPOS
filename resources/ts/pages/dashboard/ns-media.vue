@@ -422,9 +422,9 @@ export default {
                 </div>
             </div>
             <div id="dropping-zone" @click="triggerManualUpload( $event )" :class="isDragging ? 'border-dashed border-2' : ''" class="flex flex-auto m-2 p-2 flex-col border-info-primary items-center justify-center">
-                <h3 class="cursor-pointer text-lg md:text-xl font-bold text-center text-primary mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
+                <h3 class="cursor-pointer text-lg md:text-xl font-bold text-center text-fontcolor mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
                 <input style="display:none" type="file" name="" multiple ref="files" id="">
-                <div class="rounded bg-box-background shadow w-full md:w-2/3 text-primary h-56 overflow-y-auto ns-scrollbar p-2">
+                <div class="rounded bg-box-background shadow w-full md:w-2/3 text-fontcolor h-56 overflow-y-auto ns-scrollbar p-2">
                     <ul v-if="files.length > 0">
                         <li v-for="(fileData, index) of files" :class="fileData.failed === false ? 'border-info-secondary' : 'border-error-secondary'" :key="index" class="p-2 mb-2 border-b-2 flex items-center justify-between">
                             <span>{{ fileData.file.name }}</span>

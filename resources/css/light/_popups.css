@@ -6,11 +6,11 @@
     }
 
     p {
-        @apply text-primary;
+        @apply text-fontcolor;
     }
 
     .action-buttons {
-        @apply border-box-edge text-primary;
+        @apply border-box-edge text-fontcolor;
 
         button:hover {
             @apply bg-info-tertiary text-white;
@@ -26,36 +26,36 @@
     background: rgb(0 0 0 / 40%);
 
     .elevation-surface {
-        @apply bg-box-elevation-background border-box-elevation-edge text-primary;
+        @apply bg-box-elevation-background border-box-elevation-edge text-fontcolor;
         &.hoverable:hover {
-            @apply bg-box-elevation-hover text-primary;
+            @apply bg-box-elevation-hover text-fontcolor;
         }
 
         &.success {
-            @apply bg-success-primary border-success-secondary text-primary;
+            @apply bg-success-primary border-success-secondary text-fontcolor;
             &.hoverable:hover {
-                @apply bg-success-secondary text-primary;
+                @apply bg-success-secondary text-fontcolor;
             }
         }
         
         &.error {
-            @apply bg-error-primary border-error-secondary text-primary;
+            @apply bg-error-primary border-error-secondary text-fontcolor;
             &.hoverable:hover {
-                @apply bg-error-secondary text-primary;
+                @apply bg-error-secondary text-fontcolor;
             }
         }
     
         &.info {
-            @apply bg-info-primary border-info-secondary text-primary;
+            @apply bg-info-primary border-info-secondary text-fontcolor;
             &.hoverable:hover {
-                @apply bg-info-secondary text-primary;
+                @apply bg-info-secondary text-fontcolor;
             }
         }
     
         &.warning {
-            @apply bg-warning-primary border-warning-secondary text-primary;
+            @apply bg-warning-primary border-warning-secondary text-fontcolor;
             &.hoverable:hover {
-                @apply bg-warning-secondary text-primary;
+                @apply bg-warning-secondary text-fontcolor;
             }
         }
     }

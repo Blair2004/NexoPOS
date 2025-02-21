@@ -33,12 +33,12 @@
         <div class="module-section flex-auto flex flex-wrap -mx-4">
             <div v-if="noModules && searchText.length === 0" class="p-4 flex-auto flex">
                 <div class="flex border-dashed border w-full border-primary h-32 flex-auto justify-center items-center">
-                    <div class="text-primary">{{ noModuleMessage }}</div>
+                    <div class="text-font">{{ noModuleMessage }}</div>
                 </div>
             </div>
             <div v-if="noModules && searchText.length > 0" class="p-4 flex-auto flex">
                 <div class="flex h-full flex-auto border-dashed border-2 border-box-edge bg-surface justify-center items-center">
-                    <h2 class="font-bold text-xl text-primary text-center">{{ __( 'No modules matches your search term.' ) }}</h2>
+                    <h2 class="font-bold text-xl text-fontcolor text-center">{{ __( 'No modules matches your search term.' ) }}</h2>
                 </div>
             </div>
             <div class="px-4 w-full md:w-1/2 lg:w-1/3 xl:1/4 py-4" :key="moduleNamespace" v-for="(moduleObject,moduleNamespace) of modules">

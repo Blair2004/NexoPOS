@@ -26,7 +26,7 @@
         }
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-font;
         }
     }
     
@@ -41,7 +41,7 @@
         }
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-font;
         }
     }
     
@@ -56,12 +56,12 @@
         }
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-font;
         }
     }
     
     &.error {
-        @apply border-error-tertiary bg-error-secondary text-primary;
+        @apply border-error-tertiary bg-error-secondary text-font;
 
         p > a {
             @apply text-gray-200;
@@ -71,7 +71,7 @@
         }
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-font;
         }
     }
     
@@ -86,11 +86,11 @@
         }
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-font;
         }
     }
 }
 
 .ns-normal-text {
-    @apply text-primary;
+    @apply text-font;
 }

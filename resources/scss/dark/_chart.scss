@@ -7,10 +7,10 @@
         & > div {
             @apply border-box-edge;
             span {
-                @apply text-primary;
+                @apply text-font;
             }
             h2 {
-                @apply text-primary;
+                @apply text-font;
             }
         }
     }
@@ -29,7 +29,7 @@
             @apply bg-success-primary text-typography;
         }
         .other-order {
-            @apply bg-box-background text-primary;
+            @apply bg-box-background text-font;
         }
         .single-order {
             @apply border-success-tertiary;
@@ -38,7 +38,7 @@
             @apply text-typography;
         }
         .unpaid-currency {
-            @apply text-primary;
+            @apply text-font;
         }
     }
 }
@@ -46,10 +46,10 @@
 #ns-best-customers, #ns-best-cashiers {
     @apply bg-box-background;
     .head {
-        @apply bg-box-background border-box-edge text-primary;
+        @apply bg-box-background border-box-edge text-font;
     }
     .body {
-        @apply text-primary bg-box-background;
+        @apply text-fontcolor bg-box-background;
         .entry {
             @apply border-box-edge;
         }

@@ -9,21 +9,24 @@
 }
 
 #dashboard-aside > div {
-    @apply bg-gray-900;
+    @apply bg-slate-900;
     .ns-aside-menu {
         @apply text-gray-200 hover:bg-gray-700;
         &.toggled {
-            @apply border-blue-800 bg-blue-800;
+            @apply border-primary bg-primary;
         }
         &.normal {
             @apply border-transparent bg-gray-900;
+            &:hover {
+                @apply bg-gray-800;
+            }
         }
         .notification-label {
             @apply bg-red-600 text-white;
         }
     }
     .ns-aside-submenu {
-        @apply border-blue-800 bg-gray-800 hover:bg-gray-700;
+        @apply border-primary bg-gray-800 hover:bg-gray-700;
         &.active {
             @apply text-white;
         }
@@ -38,21 +41,21 @@
 }
 
 .ns-toggle-button {
-    @apply border-input-edge text-primary;
+    @apply border-input-edge text-fontcolor;
     &:hover {
         @apply bg-tab-active border-transparent text-gray-700;
     }
 }
 
 .ns-avatar { 
-    @apply text-primary border-input-edge;
+    @apply text-fontcolor border-input-edge;
 
     &:hover {
-        @apply bg-box-background text-primary border-transparent;
+        @apply bg-box-background text-fontcolor border-transparent;
     }
 
     &.toggled {
-        @apply bg-box-background text-primary border-transparent;
+        @apply bg-box-background text-fontcolor border-transparent;
     }
 }
 
@@ -80,10 +83,10 @@
         }
 
         &:hover {
-            @apply bg-box-background text-primary;
+            @apply bg-box-background text-fontcolor;
         }
 
-        @apply text-primary;
+        @apply text-fontcolor;
     }
 
     #notification-center > div > div {
@@ -91,10 +94,10 @@
     }
 
     .clear-all {
-        @apply text-primary;
+        @apply text-fontcolor;
 
         &:hover {
-            @apply bg-input-button-hover text-typography;
+            @apply bg-input-button-hover text-fontcolor;
         }
     }
 
@@ -103,7 +106,7 @@
             @apply text-secondary;
         }
         p {
-            @apply text-primary;
+            @apply text-fontcolor;
         }
 
         .date {

@@ -171,7 +171,7 @@ export default {
                 <ns-spinner border="4" size="16"></ns-spinner>
             </div>
         </div>
-        <div class="grid grid-cols-2 text-primary">
+        <div class="grid grid-cols-2 text-font">
             <div @click="closeCashRegister( register )" class="border-r border-b py-4 ns-numpad-key info cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-sign-out-alt text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Close' ) }}</h3>

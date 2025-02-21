@@ -2,12 +2,12 @@
     .sidebar {
         @apply bg-tab-active;
         h3 {
-            @apply text-primary;
+            @apply text-fontcolor;
         }
         .sidebar-menus li {
             @apply border-transparent;
             &.active, &:hover {
-                @apply bg-surface text-primary border-tab-active;
+                @apply bg-surface text-fontcolor border-tab-active;
             }
         }
     }

@@ -2,13 +2,13 @@
     .ns-table {
         thead {
             th {
-                @apply bg-tab-table-th text-primary border-tab-table-th-edge;
+                @apply bg-tab-table-th text-fontcolor border-tab-table-th-edge;
             }
         }
         tbody {
-            @apply text-primary;
+            @apply text-font;
             td {
-                @apply border-tab-table-th-edge text-primary;
+                @apply border-tab-table-th-edge text-font;
             }
         }
     }
@@ -19,7 +19,7 @@
     thead {
         @apply border-table-th-edge;
         th {
-            @apply bg-table-th text-primary border-table-th-edge;
+            @apply bg-table-th text-fontcolor border-table-th-edge;
         }
         tr.error > th, tr.error td {
             @apply bg-error-tertiary text-white border-table-th-edge;
@@ -35,7 +35,7 @@
         }
     }
     tbody, tfoot {
-        @apply text-primary border-table-th-edge;
+        @apply text-fontcolor border-table-th-edge;
         td {
             @apply border-table-th-edge;
         }

@@ -1,7 +1,7 @@
 <template>
     <div class="shadow-xl ns-box w-6/7-screen md:w-4/7-screen lg:w-3/7-screen max-h-5/6-screen overflow-hidden flex flex-col">
         <div class="p-2 flex justify-between border-b items-center ns-box-header">
-            <span class="text-semibold text-primary">
+            <span class="text-semibold text-font">
                 {{ label }}
             </span>
             <div>
@@ -16,12 +16,12 @@
             <div class="overflow-y-auto">
                 <ul class="ns-vertical-menu">
                     <template v-if="type === 'select'">
-                        <li @click="select( option )" class="p-2 border-b border-box-edge text-primary cursor-pointer" v-for="option of filtredOptions" :key="option.value">
+                        <li @click="select( option )" class="p-2 border-b border-box-edge text-fontcolor cursor-pointer" v-for="option of filtredOptions" :key="option.value">
                             <span>{{ option.label }}</span>
                         </li>
                     </template>
                     <template v-if="type === 'multiselect'">
-                        <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-primary cursor-pointer flex justify-between" v-for="option of filtredOptions" :key="option.value">
+                        <li @click="toggle(option)" :class="isSelected( option ) ? 'active' : ''" class="p-2 border-b text-fontcolor cursor-pointer flex justify-between" v-for="option of filtredOptions" :key="option.value">
                             <span>{{ option.label }}</span>
                             <span v-if="isSelected( option )"><i class="las la-check"></i></span>
                         </li>

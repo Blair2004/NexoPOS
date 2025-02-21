@@ -12,23 +12,23 @@
         @apply bg-input-background border-input-edge;
 
         input, select {
-            @apply text-primary;
+            @apply text-fontcolor;
         }
+    }
+
+    th, td {
+        @apply border-table-th-edge text-fontcolor;
     }
     
     .ns-table-row {
         @apply border-table-th-edge;
-
-        td {
-            @apply border-table-th-edge text-typography;
-        }
 
         .ns-menu-wrapper > div {
             @apply bg-box-elevation-background;
         }
 
         .ns-action-button {
-            @apply text-secondary;
+            @apply text-fontcolor;
 
             &:hover {
                 @apply bg-info-tertiary text-white;
@@ -41,7 +41,11 @@
     }
 
     .ns-crud-button, .ns-crud-input-button {
-        @apply border-crud-button-edge bg-white text-primary;
+        @apply border-crud-button-edge bg-white text-fontcolor;
+
+        &.error, &.error:hover {
+            @apply bg-error-tertiary text-white;
+        }
 
         &.table-filters-enabled {
             @apply bg-info-tertiary text-white;
@@ -66,10 +70,10 @@
 
 #crud-form {
     .ns-crud-button, .ns-crud-input-button {
-        @apply border-crud-button-edge bg-transparent text-typography;
+        @apply border-crud-button-edge bg-transparent text-fontcolor;
 
         &.table-filters-enabled {
-            @apply bg-info-tertiary text-primary;
+            @apply bg-info-tertiary text-fontcolor;
         }
     
         &.table-filters-disabled {
@@ -77,14 +81,14 @@
         }
 
         &:hover {
-            @apply border-transparent bg-input-button-hover text-typography;
+            @apply border-transparent bg-input-button-hover text-fontcolor;
         }
     }
     .ns-crud-input {
         @apply bg-input-background border-input-background;
 
         input {
-            @apply text-primary bg-crud-button-edge;
+            @apply text-fontcolor bg-crud-button-edge;
         }
     }
 }

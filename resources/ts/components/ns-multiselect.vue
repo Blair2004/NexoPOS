@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col ns-multiselect">
-        <label :for="field.name" :class="hasError ? 'text-error-secondary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
+        <label :for="field.name" :class="hasError ? 'text-error-secondary' : 'text-font'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
             <div @click="togglePanel()" :class="field.disabled ? 'bg-input-disabled' : 'bg-input-background'" style="max-height: 150px;" class="overflow-y-auto flex select-preview justify-between rounded border-2 border-input-edge p-2 items-start">
                 <div class="flex -mx-1 -my-1 flex-wrap">
@@ -21,17 +21,17 @@
             <div class="h-0 z-10" style="margin-top: -5px;" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
                 <div class="ns-dropdown shadow border-2 rounded-b-md border-input-edge bg-input-background">
                     <div class="search border-b border-input-option-hover">
-                        <input @keypress.enter="selectAvailableOptionIfPossible()" v-model="search" class="p-2 w-full bg-transparent text-primary outline-hidden" placeholder="Search">
+                        <input @keypress.enter="selectAvailableOptionIfPossible()" v-model="search" class="p-2 w-full bg-transparent text-fontcolor outline-hidden" placeholder="Search">
                     </div>
                     <div class="h-40 overflow-y-auto">
-                        <div @click="addOption( option )" :key="index" v-for="(option, index) of _filtredOptions" :class="option.selected ? 'bg-info-secondary text-white' : 'text-primary'" class="option p-2 flex justify-between cursor-pointer hover:bg-info-tertiary hover:text-white">
+                        <div @click="addOption( option )" :key="index" v-for="(option, index) of _filtredOptions" :class="option.selected ? 'bg-info-secondary text-white' : 'text-font'" class="option p-2 flex justify-between cursor-pointer hover:bg-info-tertiary hover:text-white">
                             <span>{{ option.label }}</span>
                             <span>
                                 <i v-if="option.checked" class="las la-check"></i>
                             </span>
                         </div>
                     </div>
-                    <div v-if="_options.length === 0" class="p-2 text-center text-primary">{{ __( 'Nothing to display' ) }}</div>
+                    <div v-if="_options.length === 0" class="p-2 text-center text-font">{{ __( 'Nothing to display' ) }}</div>
                 </div>
             </div>
         </div>

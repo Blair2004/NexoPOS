@@ -22,7 +22,7 @@
                             <span>{{ tax.name }}</span>
                             <span>{{ nsCurrency( tax.tax_value ) }}</span>
                         </div>
-                        <div class="p-2 text-center text-primary" v-if="order.taxes.length === 0">{{ __( 'No tax is active' ) }}</div>
+                        <div class="p-2 text-center text-font" v-if="order.taxes.length === 0">{{ __( 'No tax is active' ) }}</div>
                     </div>
                 </ns-tabs-item>
                 <ns-tabs-item v-if="[ 'products_vat' ].includes( options.ns_pos_vat )" padding="0" :label="__( 'Product Taxes' )" identifier="product_taxes" :active="false">

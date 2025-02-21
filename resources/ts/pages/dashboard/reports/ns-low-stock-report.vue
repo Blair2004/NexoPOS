@@ -45,7 +45,7 @@
         <div id="low-stock-report" class="anim-duration-500 fade-in-entrance">
             <div class="flex w-full">
                 <div class="my-4 flex justify-between w-full">
-                    <div class="text-primary">
+                    <div class="text-font">
                         <ul>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : {reportTypeName}' ).replace( '{reportTypeName}', reportTypeName ) }}</li>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
             </div>
-            <div class="text-primary shadow rounded my-4">
+            <div class="text-fontcolor shadow rounded my-4">
                 <div class="ns-box">
                     <div class="ns-box-body" v-if="reportType === 'low_stock'">
                         <table class="table ns-table w-full">

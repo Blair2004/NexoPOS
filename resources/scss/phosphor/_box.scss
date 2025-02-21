@@ -1,13 +1,13 @@
 .is-popup {
     .ns-box {
-        @apply bg-box-background text-primary rounded-lg overflow-hidden;
+        @apply bg-box-background text-fontcolor rounded-lg overflow-hidden;
 
         .ns-box-header {
-            @apply border-box-edge text-primary
+            @apply border-box-edge text-font
         }
 
         .ns-box-body {
-            @apply text-primary;
+            @apply text-font;
         }
 
         .ns-box-footer {
@@ -15,19 +15,19 @@
         }
 
         h3 {
-            @apply text-primary;
+            @apply text-font;
         }
     }
 }
 .ns-box {
-    @apply bg-box-background text-primary;
+    @apply bg-box-background text-font;
 
     .ns-box-header {
-        @apply border-box-edge text-primary
+        @apply border-box-edge text-font
     }
 
     .ns-box-body {
-        @apply text-primary border-box-edge;
+        @apply text-fontcolor border-box-edge;
     }
 
     .ns-box-footer {
@@ -35,6 +35,6 @@
     }
 
     h3 {
-        @apply text-primary;
+        @apply text-font;
     }
 }
