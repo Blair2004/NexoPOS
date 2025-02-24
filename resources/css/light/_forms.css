@@ -3,9 +3,9 @@
 **/
 .ns-switch {
     button.selected {
-        @apply bg-info-tertiary text-white;
+        @apply bg-primary text-white;
         &:hover {
-            @apply bg-info-tertiary;
+            @apply bg-primary;
         }
     }
     button.unselected {
@@ -28,13 +28,26 @@
         }
     }
 
-    &.info {
-        @apply border-info-tertiary;
+    &.primary {
+        @apply border-primary;
         input {
             @apply bg-input-background text-fontcolor;
         }
         button {
-            @apply bg-info-tertiary text-white;
+            @apply bg-primary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+    
+    &.info {
+        @apply border-primary;
+        input {
+            @apply bg-input-background text-fontcolor;
+        }
+        button {
+            @apply bg-primary text-white;
             i, span {
                 @apply text-white;
             }
@@ -89,6 +102,18 @@
             &:hover {
                 @apply bg-input-option-hover text-white;
             }
+        }
+    }
+
+    .ns-select-results {
+        @apply bg-floating-menu;
+
+        input {
+            @apply bg-floating-menu w-full;
+        }
+
+        li:hover {
+            @apply bg-primary text-white;
         }
     }
 }
@@ -182,7 +207,7 @@
         }
     }
     p {
-        @apply text-secondary;
+        @apply text-fontcolor-soft;
     }
 }
 
@@ -256,10 +281,10 @@
     
     &.hover-info:hover, &.info {
         button, a {
-            @apply bg-info-tertiary text-white;
+            @apply bg-primary text-white;
 
             span.ns-label {
-                @apply bg-input-background text-info-tertiary;
+                @apply bg-input-background text-primary;
             }
         }
     }
@@ -305,10 +330,10 @@
         }
     }
     button.info, a.info {
-        @apply bg-info-tertiary text-white;
+        @apply bg-primary text-white;
 
         span.ns-label {
-            @apply bg-input-background text-info-tertiary;
+            @apply bg-input-background text-primary;
         }
     }
     .ns-disabled {
@@ -335,10 +360,10 @@
     .ns-inset-button {
         @apply border-input-edge text-fontcolor;
         &:hover, &.active {
-            @apply bg-info-tertiary text-white border-transparent;
+            @apply bg-primary text-white border-transparent;
         }
         &.info:hover, &.info.active {
-            @apply bg-info-tertiary text-white border-transparent;
+            @apply bg-primary text-white border-transparent;
         }
         &.success:hover, &.success.active {
             @apply bg-success-tertiary text-white border-transparent;
@@ -354,10 +379,10 @@
 .ns-inset-button {
     @apply border-input-edge text-fontcolor;
     &:hover, &.active {
-        @apply bg-info-tertiary text-white border-transparent;
+        @apply bg-primary text-white border-transparent;
     }
     &.info:hover, &.info.active {
-        @apply bg-info-tertiary text-white border-transparent;
+        @apply bg-primary text-white border-transparent;
     }
     &.success:hover, &.success.active {
         @apply bg-success-tertiary text-white border-transparent;
@@ -371,8 +396,38 @@
 }
 
 .ns-multiselect {
+    label {
+        @apply text-fontcolor;
+
+        &.error {
+            @apply text-error-secondary;
+        }
+    }
+    
+    .selected-pills {
+        @apply bg-primary text-white;
+    }
+
+    & > div > div {
+        @apply border-input-edge;
+
+        &.untoggled {
+            @apply rounded;
+        }
+        &.toggled {
+            @apply rounded-t;
+        }
+    }
+
     .ns-dropdown {
-        @apply bg-white;
+        @apply bg-floating-menu;
+
+        .search {
+            @apply bg-input-background border-input-edge;
+        }
+        .selected, .option:hover {
+            @apply bg-primary text-white;
+        }
     }
 }
 

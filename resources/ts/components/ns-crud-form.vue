@@ -264,7 +264,7 @@ export default {
                     </div>
                 </div>
                 <template v-if="form.main.name">
-                    <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'info'" class="input-group flex border-2 rounded overflow-hidden">
+                    <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'primary'" class="input-group flex border-2 rounded overflow-hidden">
                         <input v-model="form.main.value" 
                             @keydown.enter="submit()"
                             @keypress="formValidation.checkField( form.main )"

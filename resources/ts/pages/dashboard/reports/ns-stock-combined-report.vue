@@ -52,7 +52,7 @@
         <div id="combined-report">
             <div class="flex w-full mb-4">
                 <div class="flex justify-between w-full">
-                    <div class="text-secondary">
+                    <div class="text-fontcolor-soft">
                         <ul>
                             <li class="pb-1 border-b border-dashed" v-html="__( 'Date : {date}' ).replace( '{date}', moment( datePicker.value ).format( ns.date.format ) )"></li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Combined Products History' ) }}</li>

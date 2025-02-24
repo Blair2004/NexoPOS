@@ -100,14 +100,14 @@
 
     .notification-card {
         h1 {
-            @apply text-secondary;
+            @apply text-fontcolor-soft;
         }
         p {
             @apply text-font;
         }
 
         .date {
-            @apply text-secondary;
+            @apply text-fontcolor-soft;
         }
     
         @apply border-box-edge;

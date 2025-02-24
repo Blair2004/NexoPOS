@@ -18,7 +18,7 @@
                                 <i :class="fileIcons[ field.data.model.extension ] || fileIcons.unknown" class="las text-3xl"></i>
                             </div>
                         </template>
-                        <span class="text-xs text-secondary">{{ field.data.model.name }}</span>
+                        <span class="text-xs text-fontcolor-soft">{{ field.data.model.name }}</span>
                     </template>
                 </div>
                 <input 

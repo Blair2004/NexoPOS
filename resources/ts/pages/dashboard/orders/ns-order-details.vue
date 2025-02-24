@@ -3,14 +3,14 @@
         <div class="flex-auto">
             <div class="w-full mb-2 flex-wrap flex">
                 <div class="w-full mb-2 px-4">
-                    <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Payment Summary' ) }}</h3>
+                    <h3 class="font-semibold text-fontcolor-soft pb-2 border-b border-info-primary">{{ __( 'Payment Summary' ) }}</h3>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="elevation-surface border p-2 flex justify-between items-start">
                         <div>
                             <h4 class="text-semibold text-font">{{ __( 'Sub Total' ) }}</h4>
                         </div>
-                        <div class="font-semibold text-secondary">{{ nsCurrency( order.subtotal ) }}</div>
+                        <div class="font-semibold text-fontcolor-soft">{{ nsCurrency( order.subtotal ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -30,7 +30,7 @@
                         <div>
                             <span class="text-semibold text-font">{{ __( 'Shipping' ) }}</span>
                         </div>
-                        <div class="font-semibold text-secondary">{{ nsCurrency( order.shipping ) }}</div>
+                        <div class="font-semibold text-fontcolor-soft">{{ nsCurrency( order.shipping ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -80,7 +80,7 @@
 
         <div class="px-4 w-full md:w-1/2 lg:w-2/4 mb-2">
             <div class="mb-2">
-                <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Order Status' ) }}</h3>
+                <h3 class="font-semibold text-fontcolor-soft pb-2 border-b border-info-primary">{{ __( 'Order Status' ) }}</h3>
             </div>
             <div class="mb-2 p-2 flex justify-between items-start elevation-surface border">
                 <div>
@@ -88,7 +88,7 @@
                         <span>{{ __( 'Customer' ) }}</span>
                     </h4>
                 </div>
-                <div class="font-semibold text-secondary" v-if="order">
+                <div class="font-semibold text-fontcolor-soft" v-if="order">
                     <a class="border-b border-dashed border-info-primary" :href="systemUrls.customer_edit_url.replace( '#customer', order.customer.id )" target="_blank" rel="noopener noreferrer">{{ order.customer.first_name }} {{ order.customer.last_name }}</a>
                 </div>
             </div>
@@ -98,7 +98,7 @@
                         <span>{{ __( 'Type' ) }}</span>
                     </h4>
                 </div>
-                <div class="font-semibold text-secondary">{{ labels.getTypeLabel( order.type ) }}</div>
+                <div class="font-semibold text-fontcolor-soft">{{ labels.getTypeLabel( order.type ) }}</div>
             </div>
             <div class="mb-2 p-2 flex justify-between items-start elevation-surface border">
                 <div>
@@ -106,9 +106,9 @@
                         <span>{{ __( 'Delivery Status' ) }}</span>
                     </h4>
                 </div>
-                <div class="font-semibold text-secondary mt-2 md:mt-0 w-full md:w-auto">
+                <div class="font-semibold text-fontcolor-soft mt-2 md:mt-0 w-full md:w-auto">
                     <div class="w-full text-center">
-                        <span @click="showDeliverySelect = true" v-if="! showDeliverySelect" class="font-semibold text-secondary border-b border-info-primary cursor-pointer border-dashed">{{ labels.getDeliveryStatus( order.delivery_status ) }}</span>
+                        <span @click="showDeliverySelect = true" v-if="! showDeliverySelect" class="font-semibold text-fontcolor-soft border-b border-info-primary cursor-pointer border-dashed">{{ labels.getDeliveryStatus( order.delivery_status ) }}</span>
                     </div>
                     <div v-if="showDeliverySelect" class="flex-auto flex">
                         <div class="ns-select flex items-center justify-center">
@@ -132,7 +132,7 @@
                         <span>{{ __( 'Processing Status' ) }}</span>
                     </h4>
                 </div>
-                <div class="font-semibold text-secondary mt-2 md:mt-0 w-full md:w-auto">
+                <div class="font-semibold text-fontcolor-soft mt-2 md:mt-0 w-full md:w-auto">
                     <div class="w-full text-center">
                         <span @click="showProcessingSelect = true" v-if="! showProcessingSelect" class="border-b border-info-primary cursor-pointer border-dashed">{{ labels.getProcessingStatus( order.process_status ) }}</span>
                     </div>
@@ -158,24 +158,24 @@
                         <span>{{ __( 'Payment Status' ) }}</span>
                     </h4>
                 </div>
-                <div class="font-semibold text-secondary">{{ labels.getPaymentStatus( order.payment_status ) }}</div>
+                <div class="font-semibold text-fontcolor-soft">{{ labels.getPaymentStatus( order.payment_status ) }}</div>
             </div>
         </div>
 
         <div class="px-4 w-full md:w-1/2 lg:w-2/4 mb-2">
             <div class="mb-2">
-                <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Products' ) }}</h3>
+                <h3 class="font-semibold text-fontcolor-soft pb-2 border-b border-info-primary">{{ __( 'Products' ) }}</h3>
             </div>
             <div :key="product.id" v-for="product of order.products" class="p-2 flex justify-between items-start elevation-surface border mb-6">
                 <div>
                     <h4 class="text-semibold text-font">{{ product.name }} (x{{ product.quantity }})</h4>
-                    <p class="text-secondary text-sm">{{ product.unit.name || 'N/A' }}</p>
+                    <p class="text-fontcolor-soft text-sm">{{ product.unit.name || 'N/A' }}</p>
                 </div>
-                <div class="font-semibold text-secondary">{{ nsCurrency( product.total_price ) }}</div>
+                <div class="font-semibold text-fontcolor-soft">{{ nsCurrency( product.total_price ) }}</div>
             </div>
 
             <div class="mb-2">
-                <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary flex justify-between">
+                <h3 class="font-semibold text-fontcolor-soft pb-2 border-b border-info-primary flex justify-between">
                     <span>{{ __( 'Refunded Products' ) }}</span>
                     <a href="javascript:void(0)" @click="openRefunds()" class="border-b border-info-primary border-dashed">{{ __( 'All Refunds' ) }}</a>
                 </h3>
@@ -183,9 +183,9 @@
             <div :key="index" v-for="(product, index) of order.refunded_products" class="p-2 flex justify-between items-start elevation-surface border  mb-6">
                 <div>
                     <h4 class="text-semibold text-font">{{ product.order_product.name }} (x{{ product.quantity }})</h4>
-                    <p class="text-secondary text-sm">{{ product.unit.name || 'N/A' }} | <span class="rounded-full px-2" :class="product.condition === 'damaged' ? 'bg-error-tertiary text-white' : 'bg-info-tertiary text-white'">{{ product.condition }}</span></p>
+                    <p class="text-fontcolor-soft text-sm">{{ product.unit.name || 'N/A' }} | <span class="rounded-full px-2" :class="product.condition === 'damaged' ? 'bg-error-tertiary text-white' : 'bg-info-tertiary text-white'">{{ product.condition }}</span></p>
                 </div>
-                <div class="font-semibold text-secondary">{{ nsCurrency( product.total_price ) }}</div>
+                <div class="font-semibold text-fontcolor-soft">{{ nsCurrency( product.total_price ) }}</div>
             </div>
         </div>
     </div>

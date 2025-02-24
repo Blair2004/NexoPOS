@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="relative" v-if="showResults">
-            <div class="w-full overflow-hidden -top-[5px] border-r-2 border-l-2 border-t rounded-b-md border-b-2 border-input-edge bg-input-background shadow z-10 absolute">
+            <div class="w-full overflow-hidden -top-[5px] ns-select-results border-r-2 border-l-2 border-t rounded-b-md border-b-2 shadow z-10 absolute">
                 <div class="border-b border-input-edge border-dashed p-2">
                     <input @keypress.enter="selectFirstOption()" ref="searchInputField" v-model="searchField" type="text" :placeholder="__( 'Search result' )">
                 </div>

@@ -24,7 +24,7 @@
             }
 
             .switch-grid {
-                @apply bg-tab-inactive border-transparent text-secondary;
+                @apply bg-tab-inactive border-transparent text-fontcolor-soft;
             }
         }
 
@@ -126,7 +126,7 @@
                 .empty-cart {
                     @apply border-pos-button-edge;
                     h3 {
-                        @apply text-secondary;
+                        @apply text-fontcolor-soft;
                     }
                 }
             }
@@ -200,7 +200,7 @@
 
     #pos-grid {
         .switch-cart {
-            @apply bg-tab-inactive border-transparent text-secondary;
+            @apply bg-tab-inactive border-transparent text-fontcolor-soft;
 
             .products-count {
                 @apply bg-success-tertiary text-white;
@@ -239,7 +239,7 @@
             }
 
             #grid-items {
-                @apply text-secondary;
+                @apply text-fontcolor-soft;
 
                 .cell-item {
                     @apply border-pos-button-edge;
@@ -257,7 +257,7 @@
                     }
 
                     i, span {
-                        @apply text-secondary;
+                        @apply text-fontcolor-soft;
                     }
                 }
             }

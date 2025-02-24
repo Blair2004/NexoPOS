@@ -14,7 +14,7 @@ use App\Events\BeforeDashboardTitleEvent;
 
 <div class="page-inner-header mb-4 bg-info-tertiary">
     <h3 class="text-3xl text-primary font-bold">{!! $title ?? __( 'Unnamed Page' ) !!}</h3>
-    <p class="text-secondary">{{ $description ?? __( 'No description' ) }}</p>
+    <p class="text-fontcolor-soft">{{ $description ?? __( 'No description' ) }}</p>
 </div>
 @include( 'components.session-message' )
 

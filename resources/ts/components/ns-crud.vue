@@ -45,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <div class="flex p-2">
+        <div id="crud-table-body" class="flex p-2">
             <div class="overflow-x-auto flex-auto">
                 <table class="table ns-table w-full" v-if="Object.values( columns ).length > 0">
                     <thead>
@@ -107,7 +107,7 @@
                             <i class="las la-angle-double-left"></i>
                         </a>
                         <template v-for="(_paginationPage, index) of pagination">
-                            <a :key="index" v-if="page !== '...'" :class="page == _paginationPage ? 'bg-info-tertiary border-transparent text-white' : ''" @click="page=_paginationPage;refresh()" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border">{{ _paginationPage }}</a>
+                            <a :key="index" v-if="page !== '...'" :class="page == _paginationPage ? 'active' : ''" @click="page=_paginationPage;refresh()" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border">{{ _paginationPage }}</a>
                             <a :key="index" v-if="page === '...'" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border">...</a>
                         </template>
                         <a href="javascript:void(0)" @click="page=result.last_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border shadow">

@@ -7,9 +7,10 @@
             <div class=""> <!-- flex items-center justify-center -->
                 <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-hidden rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
                 <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
-                <div class="relative">
-                    <div v-if="row.$toggled" class="zoom-in-entrance border border-box-edge overflow-hidden anim-duration-300 z-50 origin-top-left w-56 mt-2 absolute rounded-md shadow-lg ns-menu-wrapper">
-                        <div class="rounded-md shadow-xs">
+                <div class="dropdown-holder">
+                    <!-- @todo: Move to decoupled component -->
+                    <div v-if="row.$toggled" class="zoom-in-entrance anim-duration-300 ns-menu-wrapper hidden z-50 origin-top-left mt-2">
+                        <div class="rounded-md">
                             <div role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <template :key="index" v-for="(action,index) of row.$actions">
                                     <a 
@@ -21,6 +22,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- @endtodo -->
                 </div>
             </div>
         </td>
@@ -49,10 +51,10 @@
             <div class=""> <!-- flex items-center justify-center -->
                 <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-hidden rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
                 <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
-                <div class="relative">
-                    <div v-if="row.$toggled" class="zoom-in-entrance border border-box-edge anim-duration-300 z-50 origin-bottom-right -ml-28 w-56 mt-2 absolute rounded-md shadow-lg ns-menu-wrapper">
-                        <div class="rounded-md shadow-xs">
-                            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                <div class="dropdown-holder">
+                    <div v-if="row.$toggled" class="zoom-in-entrance anim-duration-300 z-50 origin-bottom-right mt-2 -ml-31 w-56 absolute rounded-md shadow-lg ns-menu-wrapper">
+                        <div class="rounded-md">
+                            <div role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <template :key="index" v-for="(action,index) of row.$actions">
                                     <a 
                                         :href="action.url" 
@@ -114,21 +116,23 @@ export default {
 
             if ( this.row.$toggled ) {
                 setTimeout(() => {
-                    const dropdown                  =   this.$el.querySelectorAll( '.relative > .absolute' )[0];
-                    const parent                    =   this.$el.querySelectorAll( '.relative' )[0];
+                    const dropdown                  =   this.$el.querySelectorAll( '.dropdown-holder > .ns-menu-wrapper' )[0];
+                    const parent                    =   this.$el.querySelectorAll( '.dropdown-holder' )[0];
                     const offset                    =   this.getElementOffset( parent );
                     dropdown.style.top              =   offset.top + 'px';
                     dropdown.style.left             =   offset.left + 'px';
+
+                    dropdown.classList.remove( 'hidden' );
                     
                     if ( parent !== undefined ) {
-                        parent.classList.remove( 'relative' );
-                        parent.classList.add( 'dropdown-holder' );
+                        parent.classList.remove( 'off' );
+                        parent.classList.add( 'on' );
                     }
                 }, 100 );
             } else {
                 const parent                    =   this.$el.querySelectorAll( '.dropdown-holder' )[0];
-                parent.classList.remove( 'dropdown-holder' );
-                parent.classList.add( 'relative' );
+                parent.classList.remove( 'on' );
+                parent.classList.add( 'off' );
             }
         },
         handleChanged( event ) {

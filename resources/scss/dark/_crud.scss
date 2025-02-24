@@ -28,7 +28,7 @@
         }
 
         .ns-action-button {
-            @apply text-secondary;
+            @apply text-fontcolor-soft;
 
             &:hover {
                 @apply bg-info-secondary text-white;
@@ -48,7 +48,7 @@
         }
     
         &.table-filters-disabled {
-            @apply text-secondary border-crud-button-edge;
+            @apply text-fontcolor-soft border-crud-button-edge;
         }
 
         &:hover {
@@ -73,7 +73,7 @@
         }
     
         &.table-filters-disabled {
-            @apply text-secondary border-crud-button-edge;
+            @apply text-fontcolor-soft border-crud-button-edge;
         }
 
         &:hover {

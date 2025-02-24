@@ -35,7 +35,7 @@
         <div id="profit-report" class="anim-duration-500 fade-in-entrance">
             <div class="flex w-full">
                 <div class="my-4 flex justify-between w-full">
-                    <div class="text-secondary">
+                    <div class="text-fontcolor-soft">
                         <ul>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', startDateField.value ).replace( '{date2}', endDateField.value ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Profit Report' ) }}</li>

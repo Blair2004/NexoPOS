@@ -35,6 +35,9 @@ class Permission extends Model
         return self::where( 'namespace', $name )->first();
     }
 
+    /**
+     * @return Permission
+     */
     public static function withNamespaceOrNew( $name )
     {
         $instance = self::where( 'namespace', $name )->first();

@@ -4,5 +4,7 @@
     <version>{{ $module[ 'version' ] }}</version>
     <author>{{ $module[ 'author' ] }}</author>
     <name>{{ $module[ 'name' ] }}</name>
-    <description>{{ $module[ 'description' ] }}</description>
+    <description>
+        <locale lang="en">{{ $module[ 'description' ] }}</locale>
+    </description>
 </module>

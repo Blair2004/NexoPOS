@@ -38,6 +38,14 @@
 
 #dashboard-body {
     @apply bg-surface;
+
+    .page-inner-header {
+        h3 {
+            @apply text-fontcolor;
+        }
+
+        @apply text-fontcolor-soft;
+    }
 }
 
 .ns-toggle-button {
@@ -103,7 +111,7 @@
 
     .notification-card {
         h1 {
-            @apply text-secondary;
+            @apply text-fontcolor-soft;
         }
         p {
             @apply text-fontcolor;

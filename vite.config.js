@@ -65,10 +65,7 @@ export default ({ mode }) => {
                     'resources/scss/dark.scss',
                     'resources/scss/phosphor.scss',
                 ],
-                refresh: [ 
-                    'resources/views/**', 
-                    'resources/sass/**' 
-                ],
+                refresh: true,
             }),
             mkcert(),
             vuePlugin({

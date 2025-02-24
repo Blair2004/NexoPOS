@@ -17,31 +17,31 @@
                         <h3 class="font-semibold text-xl text-fontcolor border-b border-info-primary py-2">{{ __( 'Store Details' ) }}</h3>
                         <div class="details">
                             <ul class="my-1">
-                                <li class="flex justify-between text-secondary text-sm mb-1">
+                                <li class="flex justify-between text-fontcolor-soft text-sm mb-1">
                                     <span class="font-semibold">{{ __( 'Order Code' ) }}</span>
                                     <span>{{ order.code }}</span>
                                 </li>
-                                <li class="flex justify-between text-secondary text-sm mb-1">
+                                <li class="flex justify-between text-fontcolor-soft text-sm mb-1">
                                     <span class="font-semibold">{{ __( 'Cashier' ) }}</span>
                                     <span>{{ order.user.username }}</span>
                                 </li>
-                                <li class="flex justify-between text-secondary text-sm mb-1">
+                                <li class="flex justify-between text-fontcolor-soft text-sm mb-1">
                                     <span class="font-semibold">{{ __( 'Date' ) }}</span>
                                     <span>{{ order.created_at }}</span>
                                 </li>
-                                <li class="flex justify-between text-secondary text-sm mb-1">
+                                <li class="flex justify-between text-fontcolor-soft text-sm mb-1">
                                     <span class="font-semibold">{{ __( 'Customer' ) }}</span>
                                     <span>{{ order.customer.name }}</span>
                                 </li>
-                                <li class="flex justify-between text-secondary text-sm mb-1">
+                                <li class="flex justify-between text-fontcolor-soft text-sm mb-1">
                                     <span class="font-semibold">{{ __( 'Type' ) }}</span>
                                     <span>{{ order.type }}</span>
                                 </li>
-                                <li class="flex justify-between text-secondary text-sm mb-1">
+                                <li class="flex justify-between text-fontcolor-soft text-sm mb-1">
                                     <span class="font-semibold">{{ __( 'Payment Status' ) }}</span>
                                     <span>{{ order.paymentStatus }}</span>
                                 </li>
-                                <li v-if="order.type === 'delivery'" class="flex justify-between text-secondary text-sm mb-1">
+                                <li v-if="order.type === 'delivery'" class="flex justify-between text-fontcolor-soft text-sm mb-1">
                                     <span class="font-semibold">{{ __( 'Delivery Status' ) }}</span>
                                     <span>{{ order.deliveryStatus }}</span>
                                 </li>
@@ -54,7 +54,7 @@
                         <h3 class="font-semibold text-xl text-fontcolor border-b border-info-primary py-2">{{ __( 'Billing Details' ) }}</h3>
                         <div class="details">
                             <ul class="my-1">
-                                <li v-for="bill of billing" :key="bill.id" class="flex justify-between text-secondary text-sm mb-1">
+                                <li v-for="bill of billing" :key="bill.id" class="flex justify-between text-fontcolor-soft text-sm mb-1">
                                     <span class="font-semibold">{{ bill.label }}</span>
                                     <span>{{ order.billing_address[ bill.name ] || 'N/A' }}</span>
                                 </li>
@@ -67,7 +67,7 @@
                         <h3 class="font-semibold text-xl text-fontcolor border-b border-info-primary py-2">{{ __( 'Shipping Details' ) }}</h3>
                         <div class="details">
                             <ul class="my-1">
-                                <li v-for="ship of shipping" :key="ship.id" class="flex justify-between text-secondary text-sm mb-1">
+                                <li v-for="ship of shipping" :key="ship.id" class="flex justify-between text-fontcolor-soft text-sm mb-1">
                                     <span class="font-semibold">{{ ship.label }}</span>
                                     <span>{{ order.shipping_address[ ship.name ] || 'N/A' }}</span>
                                 </li>
@@ -78,7 +78,7 @@
             </div>
             <div class="table w-full my-4">
                 <table class="table ns-table w-full">
-                    <thead class="text-secondary">
+                    <thead class="text-fontcolor-soft">
                         <tr>
                             <th width="400" class="p-2 border">{{ __( 'Product' ) }}</th>
                             <th width="200" class="p-2 border">{{ __( 'Unit Price' ) }}</th>
@@ -92,7 +92,7 @@
                         <tr v-for="product of order.products" :key="product.id">
                             <td class="p-2 border">
                                 <h3 class="text-font">{{ product.name }}</h3>
-                                <span class="text-sm text-secondary">{{ product.unit }}</span>
+                                <span class="text-sm text-fontcolor-soft">{{ product.unit }}</span>
                             </td>
                             <td class="p-2 border text-center text-font">{{ nsCurrency( product.unit_price ) }}</td>
                             <td class="p-2 border text-center text-font">{{ product.quantity }}</td>

@@ -4,10 +4,9 @@
             <h2 class="text-xl md:text-2xl font-body text-center">{{ title }}</h2>
             <p class="py-4 text-sm md:text-base text-center">{{ message }}</p>
         </div>
-        <div class="action-buttons flex border-t">
-            <button class="flex-auto rounded-none w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( true )">{{ __( 'Yes' ) }}</button>
-            <hr class="border-r h-16">
-            <button class="flex-auto rounded-none w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( false )">{{ __( 'No' ) }}</button>
+        <div class="action-buttons flex justify-end border-t p-4">
+            <button class="rounded font-bold px-2 py-1 bg-primary h-10 flex items-center justify-center" @click="emitAction( true )">{{ __( 'Yes' ) }}</button>
+            <button class="rounded font-bold cancel px-2 py-1 h-10 flex items-center justify-center" @click="emitAction( false )">{{ __( 'No' ) }}</button>
         </div>
     </div>
 </template>

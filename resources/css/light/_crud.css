@@ -2,7 +2,7 @@
  * Crud
 **/
 #crud-table {
-    @apply bg-box-background;
+    @apply bg-box-background text-fontcolor;
 
     #crud-table-header {
         @apply border-box-edge;
@@ -23,15 +23,37 @@
     .ns-table-row {
         @apply border-table-th-edge;
 
-        .ns-menu-wrapper > div {
-            @apply bg-box-elevation-background;
+        .ns-menu-wrapper {
+            @apply absolute;
+            & > div {
+                @apply bg-box-elevation-background shadow w-56 shadow-lg;
+            }
+        }
+
+        .ns-action-button:first-child {
+            @apply border border-t-box-edge border-l-box-edge border-r-box-edge border-b-transparent rounded-t-lg;
+        }
+
+        .ns-action-button:last-child {
+            @apply border border-b-box-edge border-l-box-edge border-r-box-edge border-t-transparent rounded-b-lg;
+        }
+
+        .ns-action-button:not(:first-child):not(:last-child) {
+            @apply border border-t-transparent border-b-transparent border-r-box-edge border-l-box-edge;
+
+            &:hover {
+                @apply bg-primary text-white border-transparent;
+            }
+            &:focus {
+                @apply outline-hidden;
+            }
         }
 
         .ns-action-button {
             @apply text-fontcolor;
 
             &:hover {
-                @apply bg-info-tertiary text-white;
+                @apply bg-primary text-white border-transparent;
             }
 
             &:focus {
@@ -48,15 +70,15 @@
         }
 
         &.table-filters-enabled {
-            @apply bg-info-tertiary text-white;
+            @apply bg-primary text-white;
         }
     
         &.table-filters-disabled {
-            @apply text-secondary border-crud-button-edge;
+            @apply text-fontcolor-soft border-crud-button-edge;
         }
 
-        &:hover {
-            @apply border-transparent bg-info-tertiary text-white;
+        &:hover, &.active {
+            @apply border-transparent bg-primary text-white;
             i, span {
                 @apply text-white;
             }
@@ -73,11 +95,11 @@
         @apply border-crud-button-edge bg-transparent text-fontcolor;
 
         &.table-filters-enabled {
-            @apply bg-info-tertiary text-fontcolor;
+            @apply bg-primary text-fontcolor;
         }
     
         &.table-filters-disabled {
-            @apply text-secondary border-crud-button-edge;
+            @apply text-fontcolor-soft border-crud-button-edge;
         }
 
         &:hover {

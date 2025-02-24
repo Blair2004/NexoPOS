@@ -1,8 +1,8 @@
 @reference "./app.css";
 
-@import "./light/_breakpoints.css";
+/* @import "./light/_breakpoints.css"; */
 @import "./light/_colors.css";
-@import "./light/_width.css";
+/* @import "./light/_width.css"; */
 
 @import "./light/_box.css";
 /* @import "./light/_notices.css"; */
@@ -12,9 +12,9 @@
 @import './light/_dashboard.css';
 /* @import './light/_chart.css'; */
 @import './light/_menu.css';
-/* @import './light/_popups.css'; */
+@import './light/_popups.css';
 /* @import './light/_pos.css'; */
-/* @import './light/_ns-tab.css'; */
+@import './light/_ns-tab.css';
 /* @import './light/_typography.css'; */
 /* @import './light/_table.css'; */
 /* @import './light/_loader.css'; */

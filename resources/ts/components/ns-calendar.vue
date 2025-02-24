@@ -87,7 +87,7 @@
                     <template v-for="(day,_dayIndex) of week" class="h-full w-full">
                         <div :key="_dayIndex" v-if="day.dayOfWeek === dayOfWeek" :class="getDayClass({ day, _dayIndex, dayOfWeek, _index, currentDay })" class="h-full w-full flex items-center justify-center cursor-pointer" @click="selectDate( day )">
                             <span v-if="! day.isDifferentMonth">{{ day.date.format( 'DD' ) }}</span>
-                            <span v-if="day.isDifferentMonth" class="text-secondary">{{ day.date.format( 'DD' ) }}</span>
+                            <span v-if="day.isDifferentMonth" class="text-fontcolor-soft">{{ day.date.format( 'DD' ) }}</span>
                         </div>
                     </template>
                 </div>

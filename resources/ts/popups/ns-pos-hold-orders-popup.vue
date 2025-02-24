@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="p-2">
-                <p class="text-secondary">
+                <p class="text-fontcolor-soft">
                     {{ __( `The current order will be set on hold. You can retrieve this order from the pending order button. Providing a reference to it might help you to identify the order more quickly.` )}}
                 </p>
             </div>

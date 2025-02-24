@@ -11,7 +11,7 @@
     }
 }
 .ns-tab-item > div {
-    @apply border-tab-active-border bg-tab-active;
+    @apply border-box-edge bg-tab-active;
     .ns-tab-item-footer {
         @apply border-gray-400;
     }
