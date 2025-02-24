@@ -1,6 +1,6 @@
 
 <template>
-    <div class="form flex-auto" id="crud-form">
+    <div class="form flex-auto" id="product-form">
         <div v-if="Object.values( form ).length === 0 && hasLoaded" class="flex items-center h-full justify-center flex-auto">
             <ns-spinner/>
         </div>
@@ -20,7 +20,7 @@
                         <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error hover:bg-error-tertiary  px-2 py-1">{{ __( 'Return' ) }}</a>
                     </div>
                 </div>
-                <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-tertiary' : ''" class="input-group info flex border-2 rounded overflow-hidden">
+                <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-tertiary' : ''" class="input-group info flex border rounded overflow-hidden">
                     <input v-model="form.main.value"
                         @blur="formValidation.checkField( form.main )"
                         @change="formValidation.checkField( form.main )"
@@ -76,7 +76,7 @@
                                 </div>
                                 <div class="-mx-4 flex flex-wrap text-font" v-if="getActiveTabKey( variation.tabs ) === 'images'">
                                     <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
-                                        <div class="rounded border border-box-elevation-edge bg-box-elevation-background flex justify-between p-2 items-center">
+                                        <div class="rounded border custom-button flex justify-between p-2 items-center">
                                             <span>{{ __( 'Add Images' ) }}</span>
                                             <button @click="addImage( variation )" class="outline-hidden rounded-full border flex items-center justify-center w-8 h-8 ns-inset-button info">
                                                 <i class="las la-plus-circle"></i>
@@ -87,11 +87,11 @@
                                         :key="index" 
                                         v-for="( group, index ) of getActiveTab( variation.tabs ).groups" 
                                         class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3 mb-4">
-                                        <div class="rounded border border-box-elevation-edge flex flex-col overflow-hidden">
+                                        <div class="rounded border custom-button flex flex-col overflow-hidden">
                                             <div class="p-2">
                                                 <ns-field :key="index" v-for="(field, index) of group" :field="field"></ns-field>
                                             </div>
-                                            <div @click="removeImage( variation, group )" class="text-center py-2 border-t border-box-elevation-edge text-sm cursor-pointer">
+                                            <div @click="removeImage( variation, group )" class="text-center py-2 border-t custom-button text-sm cursor-pointer">
                                                 {{ __( 'Remove Image' ) }}
                                             </div>
                                         </div>
@@ -110,11 +110,11 @@
                                         <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
                                             <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
                                                 <div class="mb-2">
-                                                    <label class="font-medium text-font">{{ field.label }}</label>
-                                                    <p class="py-1 text-sm text-font">{{ field.description }}</p>
+                                                    <label class="font-medium">{{ field.label }}</label>
+                                                    <p class="py-1 text-sm">{{ field.description }}</p>
                                                 </div>
                                                 <div class="mb-2">
-                                                    <div @click="addUnitGroup( field, variation.tabs )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-fontcolor cursor-pointer rounded-lg">
+                                                    <div @click="addUnitGroup( field, variation.tabs )" class="custom-button border border-dashed p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-fontcolor cursor-pointer rounded-lg">
                                                         <span class="rounded-full border-2 ns-inset-button info h-8 w-8 flex items-center justify-center">
                                                             <i class="las la-plus-circle"></i>
                                                         </span>
@@ -123,8 +123,8 @@
                                                 </div>
                                                 <ns-tabs @close="handleClosingTab( $event, field.groups )" v-if="field.groups.length > 0" @changeTab="variation.activeUnitTab = $event" :active="variation.activeUnitTab || 'tab-0'">
                                                     <ns-tabs-item :closable="group.closable" padding="p-2" v-for="(group,index) of field.groups" :identifier="'tab-' + ( index )" :label="group.label">
-                                                        <div class="shadow rounded overflow-hidden bg-box-elevation-background text-font">
-                                                            <div class="border-b text-sm p-2 flex justify-between text-fontcolor border-box-elevation-edge">
+                                                        <div class="overflow-hidden">
+                                                            <div class="font-bold border-dashed border-input-edge border-b text-sm p-2 flex justify-between border-box-elevation-edge">
                                                                 <span>{{ __( 'Available Quantity' ) }}</span>
                                                                 <span>{{ getUnitQuantity( group.fields ) }}</span>
                                                             </div>

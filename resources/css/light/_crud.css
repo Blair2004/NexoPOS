@@ -18,10 +18,18 @@
 
     th, td {
         @apply border-table-th-edge text-fontcolor;
+
+        &:first-child {
+            @apply border-l-transparent;
+        }
+
+        &:last-child {
+            @apply border-r-transparent;
+        }
     }
     
     .ns-table-row {
-        @apply border-table-th-edge;
+        @apply border-table-th-edge border-l-transparent border-r-transparent;
 
         .ns-menu-wrapper {
             @apply absolute;

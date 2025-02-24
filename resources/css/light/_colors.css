@@ -20,7 +20,7 @@
     --color-button-active: rgb( 203 213 225 );
     
     /** Input */
-    --color-input-background: rgb( 229 231 235 );
+    --color-input-background: var( --color-gray-200 );
     --color-input-disabled: rgb( 156 163 175 );
     --color-input-button: rgb( 244 244 245 );
     --color-input-button-hover: rgb( 228 228 231 );
@@ -82,9 +82,9 @@
     --color-tertiary: rgb( 17 24 39 );
 
     /** Error */
-    --color-error-primary: rgb( 55 65 81 );
-    --color-error-secondary: rgb( 31 41 55 );
-    --color-error-tertiary: var( --color-red-500 );
+    --color-error-primary: var( --color-red-400 );
+    --color-error-secondary: var( --color-red-500);
+    --color-error-tertiary: var( --color-red-600 );
 
     /** Info */
     --color-info-primary: rgb( 191 219 254; 0.25 );

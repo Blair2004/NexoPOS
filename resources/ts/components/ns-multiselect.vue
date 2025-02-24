@@ -1,8 +1,8 @@
 <template>
-    <div class="flex flex-col ns-multiselect">
-        <label :for="field.name" :class="hasError ? 'error' : ''" class="block mb-1 leading-5 font-medium"><slot></slot></label>
+    <div class="flex flex-col ns-multiselect" :class="hasError ? 'has-error' : 'is-pristine'">
+        <label :for="field.name"  class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
-            <div @click="togglePanel()" :class="( field.disabled ? 'disabled' : '') + ' ' + ( showPanel ? 'toggled' : 'untoggled' )" style="max-height: 150px;" class="overflow-y-auto flex select-preview justify-between border-2 p-2 items-start">
+            <div @click="togglePanel()" :class="( field.disabled ? 'disabled' : '') + ' ' + ( showPanel ? 'toggled' : 'untoggled' )" style="max-height: 150px;" class="overflow-y-auto flex select-preview justify-between border p-2 items-start">
                 <div class="flex -mx-1 -my-1 flex-wrap">
                     <div :key="index" class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded selected-pills flex justify-between p-1 items-center">
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="h-0 z-10" style="margin-top: -2px; margin-bottom: 2px;" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
-                <div class="ns-dropdown shadow border-2 rounded-b-md">
+                <div class="ns-dropdown shadow border rounded-b-md">
                     <div class="search border-b border-input-option-hover">
                         <input @keypress.enter="selectAvailableOptionIfPossible()" v-model="search" class="p-2 w-full bg-transparent text-fontcolor outline-hidden" placeholder="Search">
                     </div>

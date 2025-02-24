@@ -1,7 +1,7 @@
 <template>
-    <div class="flex flex-auto flex-col mb-2">
-        <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-font'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-error-primary' : 'border-input-edge'" class="bg-input-background text-fontcolor-soft mt-1 relative border-2 rounded-md focus:shadow-sm">
+    <div class="flex flex-auto flex-col mb-2 ns-date" :class="hasError ? 'has-error' : 'is-pristine'">
+        <label :for="field.name" class="block leading-5 font-medium"><slot></slot></label>
+        <div class="text-fontcolor-soft mt-1 relative overflow-hidden border rounded-md focus:shadow-sm">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="sm:text-sm sm:leading-5">
                 {{ leading }}

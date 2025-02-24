@@ -1,6 +1,6 @@
 <template>
     <div id="crud-table" class="w-full rounded-lg" :class="mode !== 'light' ? 'shadow mb-8': ''">
-        <div id="crud-table-header" class="p-2 border-b flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
+        <div id="crud-table-header" class="p-2 flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
                 <div v-if="createUrl" class="px-2 flex items-center justify-center">
                     <a :href="createUrl || '#'" class="rounded-full ns-crud-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-hidden border"><i class="las la-plus"></i></a>
@@ -45,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <div id="crud-table-body" class="flex p-2">
+        <div id="crud-table-body" class="flex">
             <div class="overflow-x-auto flex-auto">
                 <table class="table ns-table w-full" v-if="Object.values( columns ).length > 0">
                     <thead>
@@ -91,7 +91,7 @@
                 </table>
             </div>
         </div>
-        <div class="p-2 flex border-t flex-col md:flex-row justify-between footer">
+        <div class="p-2 flex flex-col md:flex-row justify-between footer">
             <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full ns-crud-input p-1">
                 <select class="outline-hidden bg-transparent" v-model="bulkAction" id="grouped-actions">
                     <option class="bg-input-disabled" selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>

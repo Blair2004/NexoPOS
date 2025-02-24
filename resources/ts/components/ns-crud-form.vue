@@ -264,7 +264,7 @@ export default {
                     </div>
                 </div>
                 <template v-if="form.main.name">
-                    <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'primary'" class="input-group flex border-2 rounded overflow-hidden">
+                    <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'primary'" class="input-group flex border rounded overflow-hidden">
                         <input v-model="form.main.value" 
                             @keydown.enter="submit()"
                             @keypress="formValidation.checkField( form.main )"
@@ -286,7 +286,7 @@ export default {
                 <div class="header flex ml-4" style="margin-bottom: -1px;">
                     <div :key="identifier" v-for="( tab , identifier ) of form.tabs" 
                         @click="toggle( identifier )" 
-                        :class="tab.active ? 'active border border-b-transparent' : 'inactive border'" 
+                        :class="tab.active ? 'active border' : 'inactive border'" 
                         class="tab rounded-tl rounded-tr border px-3 py-2 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
                 </div>
                 <div class="ns-tab-item">

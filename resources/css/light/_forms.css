@@ -95,6 +95,13 @@
 }
 
 .ns-select {
+    .placeholder {
+        @apply bg-input-background;
+        span {
+            @apply text-fontcolor;
+        }
+    }
+
     select {
         @apply bg-input-background text-fontcolor;
         option {
@@ -105,51 +112,61 @@
         }
     }
 
+    div > button {
+        @apply hover:bg-input-button-hover border-input-edge;
+    }
+
     .ns-select-results {
-        @apply bg-floating-menu;
+        @apply bg-floating-menu border-input-edge text-fontcolor; 
+
+        .filter-input-wrapper {
+            @apply border-input-edge;
+        }
 
         input {
             @apply bg-floating-menu w-full;
         }
 
         li:hover {
-            @apply bg-primary text-white;
+            @apply bg-input-button-hover;
         }
     }
 }
 
 .ns-checkbox {
+    & > div {
+        @apply border-input-edge;
+    }
     &.checked > div {
-        @apply bg-primary text-white border-primary;
+        @apply bg-primary text-white border-transparent;
     }
 }
 
-.ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media, .ns-checkbox {
+.ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media, .ns-checkbox, .ns-date, .ns-ckeditor {
     [disabled] {
-        @apply bg-input-disabled border-input-edge text-primary;
+        @apply bg-input-disabled border-input-edge text-fontcolor;
     }
     
     .ns-enabled {
         @apply bg-transparent;
     }
 
-    label {
-        &.has-error {
-            @apply text-error-secondary;
+    &.has-error {
+        > label {
+            @apply text-error-tertiary;
         }
-    
-        &.is-pristine {
-            @apply text-fontcolor;
+
+        > div {
+            @apply border-error-primary;
         }
     }
 
-    div {
-        @apply border-input-edge;
-
-        &.has-error {
-            @apply border-error-secondary;
+    &.is-pristine {
+        > label {
+            @apply text-fontcolor;
         }
-        &.is-pristine {
+
+        > div {
             @apply border-input-edge;
         }
     }
@@ -174,7 +191,7 @@
     }
 
     p.ns-error {
-       @apply text-error-secondary; 
+       @apply text-error-tertiary; 
     }
 }
 
@@ -231,13 +248,16 @@
 
     button, a {
         @apply bg-input-button shadow rounded;
-    }
 
-    &:hover {
-        a, button {
+        &:hover {
             @apply bg-input-button-hover border-transparent;
         }
+
+        &:disabled {
+            @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+        }
     }
+
     
     &.hover-success:hover, &.success {
         button, a {
@@ -245,6 +265,10 @@
 
             span.ns-label {
                 @apply bg-input-background text-success-primary;
+            }
+
+            &:disabled {
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
             }
         }
     }
@@ -256,6 +280,10 @@
             span.ns-label {
                 @apply bg-input-background text-error-secondary;
             }
+
+            &:disabled {
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+            }
         }
     }
     
@@ -265,6 +293,10 @@
 
             span.ns-label {
                 @apply bg-input-background text-warning-secondary;
+            }
+
+            &:disabled {
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
             }
         }
     }
@@ -276,6 +308,10 @@
             span.ns-label {
                 @apply bg-surface text-fontcolor;
             }
+
+            &:disabled {
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+            }
         }
     }
     
@@ -284,16 +320,12 @@
             @apply bg-primary text-white;
 
             span.ns-label {
-                @apply bg-input-background text-primary;
+                @apply bg-input-background text-fontcolor;
             }
-        }
-    }
-    
-    &> button:disabled {
-        @apply bg-gray-400 shadow-none border border-input-edge cursor-not-allowed text-fontcolor;
 
-        span.ns-label {
-            @apply bg-input-background text-fontcolor;
+            &:disabled {
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+            }
         }
     }
 }
@@ -333,7 +365,7 @@
         @apply bg-primary text-white;
 
         span.ns-label {
-            @apply bg-input-background text-primary;
+            @apply bg-input-background text-fontcolor;
         }
     }
     .ns-disabled {
@@ -420,17 +452,71 @@
     }
 
     .ns-dropdown {
-        @apply bg-floating-menu;
+        @apply bg-floating-menu border-input-edge;
 
         .search {
             @apply bg-input-background border-input-edge;
         }
         .selected, .option:hover {
-            @apply bg-primary text-white;
+            @apply bg-input-button-hover;
         }
     }
 }
 
 .ns-daterange-picker .form-control.reportrange-text {
     @apply bg-input-background border-transparent;
+}
+
+.ns-select-audio {
+    label {
+        @apply text-fontcolor;
+
+        .has-error {
+            @apply text-error-secondary;
+        }
+    }
+
+    div {
+        button {
+            @apply border-input-edge;
+
+            &:hover {
+                @apply bg-primary border-primary text-white;
+            }
+        }
+
+        select {
+            @apply border-input-edge border border-l-transparent rounded-r;
+        }
+    }
+}
+
+.ns-inline-multiselect {
+    label {
+        @apply text-fontcolor;
+
+        .has-error {
+            @apply text-error-secondary;
+        }
+    }
+
+    > div {
+       @apply border-input-edge border bg-input-background; 
+
+       .selected-option {
+            @apply bg-primary text-white rounded shadow flex mr-1 justify-start h-8 mb-1;
+       }
+
+        input {
+            @apply outline-hidden;
+        }
+
+        .menu {
+            @apply bg-floating-menu;
+
+            li:hover {
+                @apply bg-input-button-hover;
+            }
+        }
+    }
 }

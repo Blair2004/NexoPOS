@@ -17,7 +17,7 @@
 .ns-table {
     @apply w-full;
     thead {
-        @apply border-table-th-edge;
+        @apply border-table-th-edge text-sm;
         th {
             @apply bg-table-th text-fontcolor border-table-th-edge;
         }
@@ -35,7 +35,7 @@
         }
     }
     tbody, tfoot {
-        @apply text-fontcolor border-table-th-edge;
+        @apply text-fontcolor border-table-th-edge text-sm;
         td {
             @apply border-table-th-edge;
         }

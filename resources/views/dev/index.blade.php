@@ -13,9 +13,11 @@
                 <ns-submenu to="/inputs/datetime">Date Time Picker</ns-submenu>
             </ns-menu>
             <ns-menu label="Input Controls">
+                <ns-submenu to="/inputs/input">Input</ns-submenu>
                 <ns-submenu to="/inputs/inline-multiselect">Inline Multiselect</ns-submenu>
                 <ns-submenu to="/inputs/multiselect">Multiselect</ns-submenu>
                 <ns-submenu to="/inputs/upload">Upload</ns-submenu>
+                <ns-submenu to="/inputs/ckeditor">Ckeditor</ns-submenu>
             </ns-menu>
             <ns-menu label="Size">
                 <ns-submenu to="/size">Size</ns-submenu>
