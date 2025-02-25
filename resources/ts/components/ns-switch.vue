@@ -48,9 +48,9 @@ export default {
 }
 </script>
 <template>
-    <div class="mb-2 ns-switch">
-        <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-            <div class="rounded-lg flex w-52 overflow-hidden shadow my-1" :class="hasError ? 'has-error' : ''">
+    <div class="mb-2 ns-switch" :class="hasError ? 'has-error' : 'is-pristine'">
+        <label :for="field.name"  class="block leading-5 font-medium"><slot></slot></label>
+            <div class="rounded-lg flex w-52 overflow-hidden shadow my-1">
                 <button 
                     :disabled="option.disabled" 
                     :key="key"

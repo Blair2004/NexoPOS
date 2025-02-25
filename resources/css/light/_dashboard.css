@@ -91,7 +91,7 @@
         }
 
         &:hover {
-            @apply bg-box-background text-fontcolor;
+            @apply bg-box-background text-fontcolor border-transparent
         }
 
         @apply text-fontcolor;
@@ -99,6 +99,10 @@
 
     #notification-center > div > div {
         @apply bg-box-background;
+    }
+
+    .counter {
+        @apply bg-info-tertiary text-white;
     }
 
     .clear-all {
@@ -111,10 +115,10 @@
 
     .notification-card {
         h1 {
-            @apply text-fontcolor-soft;
+            @apply text-fontcolor;
         }
         p {
-            @apply text-fontcolor;
+            @apply text-fontcolor-soft;
         }
 
         .date {

@@ -87,12 +87,12 @@
     --color-error-tertiary: var( --color-red-600 );
 
     /** Info */
-    --color-info-primary: rgb( 191 219 254; 0.25 );
+    --color-info-primary: var( --color-blue-100 );
     --color-info-secondary: rgb( 31 41 55 );
     --color-info-tertiary: rgb(24 83 217);
 
     /** Success */
-    --color-success-primary: rgb( 55 65 81 );
+    --color-success-primary: var( --color-green-200 );
     --color-success-secondary: rgb( 31 41 55 );
     --color-success-tertiary: var( --color-green-600 );
 

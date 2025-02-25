@@ -52,7 +52,7 @@
 @endif
 @if ( session()->has( 'infoMessage' ) )
     @if ( is_array( session()->get( 'infoMessage' ) ) )
-    <div class="flex border flex-col md:flex-row border-info-secondary bg-blue-100 rounded-lg mb-3">
+    <div class="flex border flex-col md:flex-row session-notice info rounded-lg mb-3">
         <div class="flex flex-row flex-auto">
             <div class="p-3 flex items-center justify-center">
                 <i class="las la-exclamation-circle text-2xl text-info-tertiary"></i>
@@ -66,7 +66,7 @@
         </div>
     </div>
     @else
-    <div class="flex border border-info-secondary bg-blue-100 rounded-lg mb-3">
+    <div class="flex border session-notice info rounded-lg mb-3">
         <div class="p-3">
             <i class="las la-exclamation-circle text-2xl text-info-tertiary"></i>
         </div>

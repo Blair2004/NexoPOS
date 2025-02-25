@@ -421,7 +421,7 @@ export default {
                     <ns-close-button @click="popupInstance.close()"></ns-close-button>
                 </div>
             </div>
-            <div id="dropping-zone" @click="triggerManualUpload( $event )" :class="isDragging ? 'border-dashed border-2' : ''" class="flex flex-auto m-2 p-2 flex-col border-info-primary items-center justify-center">
+            <div id="dropping-zone" @click="triggerManualUpload( $event )" :class="isDragging ? 'border-dashed border' : ''" class="flex flex-auto m-2 p-2 flex-col border-info-primary items-center justify-center">
                 <h3 class="cursor-pointer text-lg md:text-xl font-bold text-center text-fontcolor mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
                 <input style="display:none" type="file" name="" multiple ref="files" id="">
                 <div class="rounded bg-box-background shadow w-full md:w-2/3 text-fontcolor h-56 overflow-y-auto ns-scrollbar p-2">
@@ -448,7 +448,7 @@ export default {
             <div class="flex flex-auto overflow-hidden">
                 <div class="shadow ns-grid flex flex-auto flex-col">
                     <div class="p-2 border-b border-box-background">
-                        <div class="ns-input border-2 rounded border-input-edge bg-input-background flex">
+                        <div class="ns-input border rounded flex">
                             <input id="search" type="text" v-model="searchField" :placeholder="__( 'Search Medias' )" class="px-4 block w-full sm:text-sm sm:leading-5 h-10">
                             <div class="flex items-center justify-center w-20 p-1" v-if="searchField.length > 0">
                                 <button @click="searchField = ''" class="h-full w-full rounded-tr rounded-br overflow-hidden">{{ __( 'Cancel' ) }}</button>

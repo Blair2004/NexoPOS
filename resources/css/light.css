@@ -5,7 +5,7 @@
 /* @import "./light/_width.css"; */
 
 @import "./light/_box.css";
-/* @import "./light/_notices.css"; */
+@import "./light/_notices.css";
 /* @import "./light/_floating-notices.css"; */
 @import './light/_forms.css';
 @import './light/_crud.css';
@@ -20,5 +20,5 @@
 @import './light/_table.css';
 /* @import './light/_loader.css'; */
 /* @import './light/_numpad.css'; */
-/* @import './light/_media.css'; */
+@import './light/_media.css';
 /* @import './light/_link.css'; */

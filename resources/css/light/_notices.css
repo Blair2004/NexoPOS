@@ -1,6 +1,4 @@
 .ns-notice {
-    @apply text-white;
-    &
     h1, h2, h3, h4, h5 {
         @apply text-fontcolor;
     }
@@ -10,14 +8,14 @@
     }
 
     &.danger {
-        @apply border-danger-tertiary bg-danger-primary;
+        @apply border-error-tertiary bg-error-primary;
 
         h1, h2, h3, h4, h5 {
-            @apply text-danger-tertiary;
+            @apply text-error-tertiary;
         }
 
         p > a {
-            @apply text-danger-tertiary;
+            @apply text-error-tertiary;
             &:hover {
                 @apply underline;
             }
@@ -113,4 +111,10 @@
 
 .ns-normal-text {
     @apply text-fontcolor;
+}
+
+.session-notice {
+    &.info {
+        @apply bg-info-primary border-info-tertiary text-fontcolor; 
+    }
 }
