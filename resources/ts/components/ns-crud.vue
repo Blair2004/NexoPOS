@@ -50,15 +50,15 @@
                 <table class="table ns-table w-full" v-if="Object.values( columns ).length > 0">
                     <thead>
                         <tr>
-                            <th v-if="showCheckboxes" class="text-center px-2 border w-16 py-2">
-                                <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
+                            <th v-if="showCheckboxes" class="text-center p-1 border w-16 align-middle">
+                                <ns-checkbox class="inline-block" :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
-                            <th v-if="prependOptions && showOptions" class="text-left px-2 py-2 w-16 border"></th>
+                            <th v-if="prependOptions && showOptions" class="text-left p-1 w-16 border"></th>
                             <th :key="identifier" @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 
                                 'width' : column.width || 'auto', 
                                 'max-width': column.maxWidth || 'auto', 
                                 'min-width': column.minWidth || 'auto' 
-                            }" class="cursor-pointer justify-between w-40 border text-left px-2 py-2">
+                            }" class="cursor-pointer justify-between border text-left p-1">
                                 <div class="w-full flex justify-between items-center">
                                     <span class="flex">{{ column.label }}</span>
                                     <span class="h-6 w-6 flex justify-center items-center">
@@ -67,7 +67,7 @@
                                     </span>
                                 </div>
                             </th>
-                            <th v-if="!prependOptions && showOptions" class="text-left px-2 py-2 w-16 border"></th>
+                            <th v-if="!prependOptions && showOptions" class="text-left p-1 w-16 border"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,10 +97,10 @@
                     <option class="bg-input-disabled" selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
                     <option class="bg-input-disabled" :key="index" v-for="(action, index) of bulkActions" :value="action.identifier">{{ action.label }}</option>
                 </select>
-                <button @click="bulkDo()" class="ns-crud-input-button h-8 px-3 outline-hidden rounded-full flex items-center justify-center"><slot name="bulk-go">{{ __( 'Apply' ) }}</slot></button>
+                <button @click="bulkDo()" class="ns-crud-input-button h-8 px-3 text-sm outline-hidden rounded-full flex items-center justify-center"><slot name="bulk-go">{{ __( 'Apply' ) }}</slot></button>
             </div>
             <div class="flex">
-                <div class="items-center flex text-fontcolor mx-4">{{ resultInfo }}</div>
+                <div class="items-center flex text-fontcolor mx-4 text-sm">{{ resultInfo }}</div>
                 <div id="pagination" class="flex items-center -mx-1">
                     <template v-if="result.current_page">
                         <a href="javascript:void(0)" @click="page=result.first_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border shadow">

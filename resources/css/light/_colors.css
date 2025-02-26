@@ -1,8 +1,8 @@
 @theme {
     /** Typography */
     --color-typography: var( --color-gray-800 );
-    --color-fontcolor: var( --color-gray-800 );
-    --color-fontcolor-soft: var( --color-gray-600 );
+    --color-fontcolor: var( --color-gray-700 );
+    --color-fontcolor-soft: var( --color-gray-500 );
     --color-fontcolor-hard: rgb( 107 114 128 );
 
     /** Surfaces */
@@ -77,27 +77,27 @@
     --color-floating-menu-edge: rgb( 226 232 240 );
 
     /** Base Accent */
-    --color-primary: rgb( 55 65 81 );
-    --color-secondary: rgb( 31 41 55 );
-    --color-tertiary: rgb( 17 24 39 );
+    --color-primary: var( --color-teal-400 );
+    --color-secondary: var( --color-teal-500 );
+    --color-tertiary: var( --color-teal-600 );
 
     /** Error */
-    --color-error-primary: var( --color-red-400 );
-    --color-error-secondary: var( --color-red-500);
+    --color-error-primary: var( --color-red-200 );
+    --color-error-secondary: var( --color-red-400);
     --color-error-tertiary: var( --color-red-600 );
 
     /** Info */
-    --color-info-primary: var( --color-blue-100 );
-    --color-info-secondary: rgb( 31 41 55 );
-    --color-info-tertiary: rgb(24 83 217);
+    --color-info-primary: var( --color-blue-200 );
+    --color-info-secondary: var( --color-blue-400 );
+    --color-info-tertiary: var( --color-blue-600 );
 
     /** Success */
     --color-success-primary: var( --color-green-200 );
-    --color-success-secondary: rgb( 31 41 55 );
+    --color-success-secondary: var( --color-green-400);
     --color-success-tertiary: var( --color-green-600 );
 
     /** Warning */
-    --color-warning-primary: rgb( 55 65 81 );
-    --color-warning-secondary: rgb( 31 41 55 );
-    --color-warning-tertiary: rgb( 17 24 39 );
+    --color-warning-primary: var( --color-orange-200);
+    --color-warning-secondary: var( --color-orange-400);
+    --color-warning-tertiary: var( --color-orange-600);
 }

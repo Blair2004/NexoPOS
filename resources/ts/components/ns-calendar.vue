@@ -168,7 +168,7 @@ export default {
             const classes =   [];
 
             if ( ( moment( this.date ).isSame( day.date, 'day' ) || this.isRangeEdge( day ) ) && ! this.isInvalidRange() ) {
-                classes.push( 'bg-info-secondary text-fontcolor border-info-secondary text-white' );
+                classes.push( 'bg-secondary text-fontcolor border-secondary text-white' );
             } else {
                 classes.push( 'hover:bg-numpad-hover' );
             }
@@ -186,7 +186,7 @@ export default {
              * aren't part of the actual month.
              */
             if ( this.isInRange( day ) && ! this.isRangeEdge( day ) ) {
-                classes.push( 'bg-info-primary' );
+                classes.push( 'bg-primary' );
             }
             else if( day.isDifferentMonth && ! this.isRangeEdge( day ) ) {
                 classes.push( 'bg-tab-table-th' );

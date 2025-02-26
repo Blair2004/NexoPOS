@@ -13,7 +13,7 @@
     .ns-aside-menu {
         @apply text-gray-200 hover:bg-gray-700;
         &.toggled {
-            @apply border-primary bg-primary;
+            @apply border-secondary bg-secondary;
         }
         &.normal {
             @apply border-transparent bg-gray-900;
@@ -26,7 +26,7 @@
         }
     }
     .ns-aside-submenu {
-        @apply border-primary bg-gray-800 hover:bg-gray-700;
+        @apply border-secondary bg-gray-800 hover:bg-gray-700;
         &.active {
             @apply text-white;
         }
@@ -102,7 +102,7 @@
     }
 
     .counter {
-        @apply bg-info-tertiary text-white;
+        @apply bg-secondary text-white;
     }
 
     .clear-all {

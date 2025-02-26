@@ -23,9 +23,9 @@
                             <h4 class="text-lg">{{ token.name }}</h4>
                             <div>
                                 <ul>
-                                    <li><span class="text-xs text-tertiary">{{ __( 'Created' ) }}: {{ token.created_at }}</span></li>
-                                    <li><span class="text-xs text-tertiary">{{ __( 'Last Use' ) }}: {{ token.last_used_at || __( 'Never' ) }}</span></li>
-                                    <li><span class="text-xs text-tertiary">{{ __( 'Expires' ) }}: {{ token.expires_at || __( 'Never' ) }}</span></li>
+                                    <li><span class="text-xs text-secondary">{{ __( 'Created' ) }}: {{ token.created_at }}</span></li>
+                                    <li><span class="text-xs text-secondary">{{ __( 'Last Use' ) }}: {{ token.last_used_at || __( 'Never' ) }}</span></li>
+                                    <li><span class="text-xs text-secondary">{{ __( 'Expires' ) }}: {{ token.expires_at || __( 'Never' ) }}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -38,7 +38,7 @@
                     <ns-spinner></ns-spinner>
                 </div>
                 <div class="mt-2" v-if="! isLoading && tokens.length === 0">
-                    <div class="text-center text-tertiary text-sm my-4">
+                    <div class="text-center text-secondary text-sm my-4">
                         {{ __( 'You haven\'t yet generated any token for your account. Create one to get started.' ) }}
                     </div>
                 </div>

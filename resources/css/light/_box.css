@@ -14,7 +14,6 @@
 
         .ns-box-footer {
             @apply border-box-edge;
-            @apply bg-slate-400;
         }
 
         div > h3 {
@@ -23,7 +22,7 @@
     }
 }
 .ns-box {
-    @apply bg-box-background;
+    @apply bg-box-background border-box-edge;
     @apply text-fontcolor;
 
     .ns-box-header {

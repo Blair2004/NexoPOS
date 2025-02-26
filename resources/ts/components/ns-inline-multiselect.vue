@@ -1,7 +1,7 @@
 <template>
-    <div class="flex flex-col mb-2 flex-auto ns-inline-multiselect">
-        <label v-if="field.label && ( field.label.length > 0)" :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="( hasError ? 'has-error' : 'is-pristine' ) + ` ` + ( field.description || field.errors > 0 ? 'mb-2' : ''  )" class="mt-1 relative rounded-md focus:shadow-sm">
+    <div class="flex flex-col mb-2 flex-auto ns-inline-multiselect" :class="hasError ? 'has-error' : 'is-pristine'">
+        <label v-if="field.label && ( field.label.length > 0)" :for="field.name" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="( field.description || field.errors > 0 ? 'mb-2' : ''  )" class="mt-1 relative rounded-md focus:shadow-sm">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="leading sm:text-sm sm:leading-5">
                 {{ leading }}

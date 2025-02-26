@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-box shadow-lg w-6/7-screen md:w-3/7-screen lg:w-2/6-screen">
+    <div class="ns-box shadow-lg w-6/7-screen md:w-3/7-screen lg:w-1/3-screen">
         <div class="p-2 flex ns-box-header justify-between border-b items-center">
             <h3 class="font-semibold">{{ __( 'Hold Order' ) }}</h3>
             <div>

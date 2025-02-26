@@ -50,7 +50,7 @@
             @apply border border-t-transparent border-b-transparent border-r-box-edge border-l-box-edge;
 
             &:hover {
-                @apply bg-primary text-white border-transparent;
+                @apply bg-secondary text-white border-transparent;
             }
             &:focus {
                 @apply outline-hidden;
@@ -61,7 +61,7 @@
             @apply text-fontcolor;
 
             &:hover {
-                @apply bg-primary text-white border-transparent;
+                @apply bg-secondary text-white border-transparent;
             }
 
             &:focus {
@@ -78,7 +78,7 @@
         }
 
         &.table-filters-enabled {
-            @apply bg-primary text-white;
+            @apply bg-secondary text-white;
         }
     
         &.table-filters-disabled {
@@ -86,7 +86,7 @@
         }
 
         &:hover, &.active {
-            @apply border-transparent bg-primary text-white;
+            @apply border-transparent bg-secondary text-white;
             i, span {
                 @apply text-white;
             }
@@ -103,7 +103,7 @@
         @apply border-crud-button-edge bg-transparent text-fontcolor;
 
         &.table-filters-enabled {
-            @apply bg-primary text-fontcolor;
+            @apply bg-secondary text-fontcolor;
         }
     
         &.table-filters-disabled {

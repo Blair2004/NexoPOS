@@ -8,7 +8,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-        @apply bg-primary;
+        @apply bg-secondary;
     }
 }
 .is-popup {

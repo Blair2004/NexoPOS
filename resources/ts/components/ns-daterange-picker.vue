@@ -142,7 +142,7 @@ export default {
                         :selected-range="field.value"
                         @set="setDateRange( 'startDate', $event )" 
                         ></ns-calendar>
-                    <div class="flex-auto border-l border-r"></div>
+                    <div class="flex-auto border-input-edge border-l border-r"></div>
                     <ns-calendar 
                         class="md:w-1/2 w-full"
                         :range="[startDateFormatted,endDateFormatted]" 

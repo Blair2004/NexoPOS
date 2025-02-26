@@ -141,7 +141,7 @@ export default {
                         :disabled="form.main.disabled"
                         type="text"
                         class="flex-auto text-fontcolor outline-hidden h-10 px-2">
-                    <button :disabled="form.main.disabled" @click="submit()" class="outline-hidden px-4 h-10 border-l border-tertiary"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                    <button :disabled="form.main.disabled" @click="submit()" class="outline-hidden px-4 h-10 border-l border-secondary"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
                 <p class="text-xs text-fontcolor py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-tertiary" v-bind:key="index" v-for="(error, index) of form.main.errors">

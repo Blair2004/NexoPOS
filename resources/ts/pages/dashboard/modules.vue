@@ -32,7 +32,7 @@
         </div>
         <div class="module-section flex-auto flex flex-wrap -mx-4">
             <div v-if="noModules && searchText.length === 0" class="p-4 flex-auto flex">
-                <div class="flex border-dashed border w-full border-primary h-32 flex-auto justify-center items-center">
+                <div class="flex border-dashed border w-full border-secondary h-32 flex-auto justify-center items-center">
                     <div class="text-font">{{ noModuleMessage }}</div>
                 </div>
             </div>

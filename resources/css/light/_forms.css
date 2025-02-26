@@ -3,9 +3,9 @@
 **/
 .ns-switch {
     button.selected {
-        @apply bg-primary text-white;
+        @apply bg-secondary text-white;
         &:hover {
-            @apply bg-primary;
+            @apply bg-secondary;
         }
     }
     button.unselected {
@@ -29,12 +29,12 @@
     }
 
     &.primary {
-        @apply border-primary;
+        @apply border-secondary;
         input {
             @apply bg-input-background text-fontcolor;
         }
         button {
-            @apply bg-primary text-white;
+            @apply bg-secondary text-white;
             i, span {
                 @apply text-white;
             }
@@ -42,12 +42,12 @@
     }
     
     &.info {
-        @apply border-primary;
+        @apply border-secondary;
         input {
             @apply bg-input-background text-fontcolor;
         }
         button {
-            @apply bg-primary text-white;
+            @apply bg-secondary text-white;
             i, span {
                 @apply text-white;
             }
@@ -138,7 +138,7 @@
         @apply border-input-edge;
     }
     &.checked > div {
-        @apply bg-primary text-white border-transparent;
+        @apply bg-secondary text-white border-transparent;
     }
 }
 
@@ -317,7 +317,7 @@
     
     &.hover-info:hover, &.info {
         button, a {
-            @apply bg-primary text-white;
+            @apply bg-secondary text-white;
 
             span.ns-label {
                 @apply bg-input-background text-fontcolor;
@@ -362,7 +362,7 @@
         }
     }
     button.info, a.info {
-        @apply bg-primary text-white;
+        @apply bg-secondary text-white;
 
         span.ns-label {
             @apply bg-input-background text-fontcolor;
@@ -392,10 +392,10 @@
     .ns-inset-button {
         @apply border-input-edge text-fontcolor;
         &:hover, &.active {
-            @apply bg-primary text-white border-transparent;
+            @apply bg-secondary text-white border-transparent;
         }
         &.info:hover, &.info.active {
-            @apply bg-primary text-white border-transparent;
+            @apply bg-secondary text-white border-transparent;
         }
         &.success:hover, &.success.active {
             @apply bg-success-tertiary text-white border-transparent;
@@ -411,10 +411,10 @@
 .ns-inset-button {
     @apply border-input-edge text-fontcolor;
     &:hover, &.active {
-        @apply bg-primary text-white border-transparent;
+        @apply bg-secondary text-white border-transparent;
     }
     &.info:hover, &.info.active {
-        @apply bg-primary text-white border-transparent;
+        @apply bg-secondary text-white border-transparent;
     }
     &.success:hover, &.success.active {
         @apply bg-success-tertiary text-white border-transparent;
@@ -435,10 +435,15 @@
             @apply text-error-secondary;
         }
     }
-    
-    .selected-pills {
-        @apply bg-primary text-white;
+
+    .select-preview {
+        @apply bg-input-background;
+
+        .selected-pills {
+            @apply bg-secondary text-white;
+        }
     }
+    
 
     & > div > div {
         @apply border-input-edge;
@@ -481,7 +486,7 @@
             @apply border-input-edge;
 
             &:hover {
-                @apply bg-primary border-primary text-white;
+                @apply bg-secondary border-secondary text-white;
             }
         }
 
@@ -504,7 +509,7 @@
        @apply border-input-edge border bg-input-background; 
 
        .selected-option {
-            @apply bg-primary text-white rounded shadow flex mr-1 justify-start h-8 mb-1;
+            @apply bg-secondary text-white rounded shadow flex mr-1 justify-start h-8 mb-1;
        }
 
         input {

@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="flex ns-checkbox cursor-pointer mb-2" :class="(isChecked ? 'checked' : '') + ' ' + ( field?  (hasError ? 'has-error': 'is-pristine') : '' )" @click="toggleIt()">
-            <div class="w-6 h-6 flex border items-center justify-center cursor-pointer">
-                <i v-if="isChecked" class="las la-check"></i>   
+        <div class="ns-checkbox cursor-pointer" :class="(isChecked ? 'checked' : '') + ' ' + ( field?  (hasError ? 'has-error': 'is-pristine') : '' )" @click="toggleIt()">
+            <div class="w-5 h-5 flex border items-center justify-center cursor-pointer">
+                <i :class="isChecked ? 'visible' : 'invisible'" class="las la-check"></i>   
             </div>
             <label v-if="label" class="mx-2">{{ label }}</label>
             <label v-if="field" class="mx-2">{{ field.label }}</label>

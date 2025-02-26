@@ -1,11 +1,11 @@
 <template>
     <div id="confirm-popup" :class="size" class="rounded-lg overflow-hidden flex flex-col shadow-lg w-5/7-screen md:w-4/7-screen lg:w-2/7-screen">
         <div class="flex items-center justify-center flex-col flex-auto p-4">
-            <h2 class="text-xl md:text-2xl font-body text-center">{{ title }}</h2>
+            <h2 class="text-xl md:text-2xl text-center">{{ title }}</h2>
             <p class="py-4 text-sm md:text-base text-center">{{ message }}</p>
         </div>
         <div class="action-buttons flex justify-end border-t p-4">
-            <button class="rounded font-bold px-2 py-1 bg-primary h-10 flex items-center justify-center" @click="emitAction( true )">{{ __( 'Yes' ) }}</button>
+            <button class="rounded font-bold px-2 py-1 bg-secondary h-10 flex items-center justify-center" @click="emitAction( true )">{{ __( 'Yes' ) }}</button>
             <button class="rounded font-bold cancel px-2 py-1 h-10 flex items-center justify-center" @click="emitAction( false )">{{ __( 'No' ) }}</button>
         </div>
     </div>

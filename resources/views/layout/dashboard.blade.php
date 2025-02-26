@@ -33,7 +33,6 @@ if ( Auth::check() ) {
     @vite([
         'resources/scss/animations.scss',
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
-        'resources/css/app.css',
         'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.dashboard.header' )

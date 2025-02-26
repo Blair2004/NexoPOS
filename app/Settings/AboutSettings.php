@@ -35,7 +35,6 @@ class AboutSettings extends SettingsPage
                 __( 'Curl Enabled' ) => extension_loaded( 'curl' ),
                 __( 'Math Enabled' ) => extension_loaded( 'bcmath' ),
                 __( 'XML Enabled' ) => extension_loaded( 'xml' ),
-                __( 'XDebug Enabled' ) => extension_loaded( 'xdebug' ),
             ],
             'configurations' => [
                 __( 'File Upload Enabled' ) => ( (bool) ini_get( 'file_uploads' ) ) ? __( 'Yes' ) : __( 'No' ),
@@ -47,6 +46,7 @@ class AboutSettings extends SettingsPage
             'developpers' => [
                 __( 'User' ) => exec( 'whoami' ),
                 __( 'Path' ) => base_path(),
+                __( 'XDebug Enabled' ) => extension_loaded( 'xdebug' ) ? __( 'Yes' ) : __( 'No' ),
             ],
         ] );
     }

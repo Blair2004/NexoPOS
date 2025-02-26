@@ -2,18 +2,18 @@
     @apply bg-popup-surface;
 
     h2 {
-        @apply text-fontcolor-soft;
+        @apply text-fontcolor;
     }
 
     p {
-        @apply text-fontcolor;
+        @apply text-fontcolor-soft;
     }
 
     .action-buttons {
         @apply border-box-edge text-fontcolor;
 
         button {
-            @apply shadow ml-3 min-w-[100px] bg-primary text-white;
+            @apply shadow ml-3 min-w-[100px] bg-secondary text-white;
 
             &.cancel {
                 @apply bg-error-tertiary;
@@ -23,7 +23,7 @@
             }
 
             &:hover {
-                @apply bg-primary text-white ;
+                @apply bg-secondary text-white cursor-pointer;
             }
         }
 

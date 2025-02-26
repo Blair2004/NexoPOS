@@ -95,7 +95,7 @@
 
 .ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media, .ns-checkbox {
     [disabled] {
-        @apply bg-input-background border-input-edge text-tertiary;
+        @apply bg-input-background border-input-edge text-secondary;
     }
     
     .ns-enabled {

@@ -132,7 +132,7 @@
   </script>
   
   <style>
-  @reference "&/css/app.css";
+  @reference "&/css/light.css";
 
   .ns-draggable-item {
     user-select: none;

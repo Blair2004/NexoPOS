@@ -22,9 +22,9 @@ class ProductTypeCast implements CastsAttributes
         };
 
         $productTypes = Hook::filter( 'ns-products-type', [
-            'materialized' => __( 'Materialized Product' ),
-            'dematerialized' => __( 'Dematerialized Product' ),
-            'grouped' => __( 'Grouped Product' ),
+            'materialized' => __( 'Materialized' ),
+            'dematerialized' => __( 'Dematerialized' ),
+            'grouped' => __( 'Group' ),
         ] );
 
         if ( isset( $productTypes[ $value ] ) ) {
