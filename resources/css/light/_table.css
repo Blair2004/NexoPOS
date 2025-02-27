@@ -49,7 +49,7 @@
         }
     
         tr.success {
-            @apply bg-success-primary text-white;
+            @apply bg-green-300 text-white;
         }
     
         tr.warning {

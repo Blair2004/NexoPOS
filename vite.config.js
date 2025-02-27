@@ -62,7 +62,7 @@ export default ({ mode }) => {
 
                     // themes
                     'resources/css/light.css',
-                    'resources/scss/dark.scss',
+                    'resources/css/dark.css',
                     'resources/scss/phosphor.scss',
                 ],
                 refresh: true,

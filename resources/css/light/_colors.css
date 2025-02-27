@@ -42,10 +42,10 @@
     --color-pos-button-edge: rgb( 209 213 219 );
 
     /** Numpad */
-    --color-numpad-background: rgb( 107 114 128 );
+    --color-numpad-background: var( --color-gray-300 );
     --color-numpad-typography: rgb( 55 65 81 );
-    --color-numpad-edge: rgb( 209 213 219 );
-    --color-numpad-hover: rgb( 203 213 225 );
+    --color-numpad-edge: var( --color-gray-300 );
+    --color-numpad-hover: var( --color-gray-200 );
     --color-numpad-hover-edge: rgb( 209 213 219 );
 
     /** Option */
@@ -77,27 +77,32 @@
     --color-floating-menu-edge: rgb( 226 232 240 );
 
     /** Base Accent */
-    --color-primary: var( --color-teal-400 );
-    --color-secondary: var( --color-teal-500 );
-    --color-tertiary: var( --color-teal-600 );
+    --color-primary: var( --color-teal-500 );
+    --color-secondary: var( --color-teal-600 );
+    --color-tertiary: var( --color-teal-700 );
 
     /** Error */
-    --color-error-primary: var( --color-red-200 );
-    --color-error-secondary: var( --color-red-400);
+    --color-error-primary: var( --color-red-400 );
+    --color-error-secondary: var( --color-red-500 );
     --color-error-tertiary: var( --color-red-600 );
 
     /** Info */
-    --color-info-primary: var( --color-blue-200 );
-    --color-info-secondary: var( --color-blue-400 );
+    --color-info-primary: var( --color-blue-400 );
+    --color-info-secondary: var( --color-blue-500 );
     --color-info-tertiary: var( --color-blue-600 );
 
     /** Success */
-    --color-success-primary: var( --color-green-200 );
-    --color-success-secondary: var( --color-green-400);
+    --color-success-primary: var( --color-green-400 );
+    --color-success-secondary: var( --color-green-500);
     --color-success-tertiary: var( --color-green-600 );
 
     /** Warning */
     --color-warning-primary: var( --color-orange-200);
     --color-warning-secondary: var( --color-orange-400);
     --color-warning-tertiary: var( --color-orange-600);
+
+    /** Default **/
+    --color-default-primary: var( --color-gray-200 );
+    --color-default-secondary: var( --color-gray-300 );
+    --color-default-tertiary: var( --color-gray-400 );
 }

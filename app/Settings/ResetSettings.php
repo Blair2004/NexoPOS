@@ -6,8 +6,10 @@ use App\Classes\FormInput;
 use App\Classes\Hook;
 use App\Classes\Output;
 use App\Classes\SettingForm;
+use App\Events\RenderFooterEvent;
 use App\Services\Helper;
 use App\Services\SettingsPage;
+use Illuminate\Support\Facades\Event;
 
 class ResetSettings extends SettingsPage
 {
@@ -57,6 +59,8 @@ class ResetSettings extends SettingsPage
 
     public function beforeRenderForm()
     {
-        Hook::addAction( 'ns-dashboard-footer', fn( Output $output ) => $output->addView( 'pages.dashboard.settings.reset-footer' ) );
+        Event::listen( RenderFooterEvent::class, function( $event ) {
+            $event->output->addView( 'pages.dashboard.settings.reset-footer' );
+        });
     }
 }

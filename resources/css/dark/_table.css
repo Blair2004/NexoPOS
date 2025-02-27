@@ -1,0 +1,86 @@
+.ns-tab-item {
+    .ns-table {
+        thead {
+            th {
+                @apply text-fontcolor border-tab-table-th-edge;
+            }
+        }
+        tbody {
+            @apply text-fontcolor;
+            td {
+                @apply border-tab-table-th-edge text-fontcolor;
+            }
+        }
+    }
+}
+
+.ns-table {
+    @apply w-full;
+    thead {
+        @apply border-table-th-edge text-sm;
+        th {
+            @apply bg-table-th text-fontcolor border-table-th-edge;
+        }
+        tr.error > th, tr.error td {
+            @apply bg-error-tertiary text-white border-table-th-edge;
+        }
+        tr.success > th, tr.success td {
+            @apply bg-success-tertiary text-white border-table-th-edge;
+        }
+        tr.info > th, tr.info td {
+            @apply bg-info-tertiary text-white border-table-th-edge;
+        }
+        tr.warning > th, tr.warning td {
+            @apply bg-warning-tertiary text-white border-table-th-edge;
+        }
+    }
+    tbody, tfoot {
+        @apply text-fontcolor border-table-th-edge text-sm;
+        td {
+            @apply border-table-th-edge;
+        }
+
+        tr.info {
+            @apply bg-info-primary text-white;
+        }
+    
+        tr.error {
+            @apply bg-error-primary text-white;
+        }
+    
+        tr.success {
+            @apply bg-green-300 text-white;
+        }
+    
+        tr.warning {
+            @apply bg-warning-primary text-white;
+        }
+        
+        .ns-inset-button {
+            @apply border-gray-900;
+            &.active, &:hover {
+                @apply border-transparent;
+            }
+        }
+    }
+
+    td {
+        @apply border-table-th-edge text-fontcolor;
+    }
+
+    tr.info {
+        @apply bg-info-secondary text-white;
+    }
+
+    tr.error {
+        @apply bg-error-secondary text-white;
+    }
+
+    tr.success {
+        @apply bg-success-secondary text-white;
+    }
+
+    tr.warning {
+        @apply bg-warning-secondary text-white;
+    }
+}

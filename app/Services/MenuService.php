@@ -294,6 +294,7 @@ class MenuService
             'users' => [
                 'label' => __( 'Users' ),
                 'icon' => 'la-users',
+                'permissions'   =>  [ 'read.users', 'manage.profile', 'create.users' ],
                 'childrens' => [
                     'profile' => [
                         'label' => __( 'My Profile' ),

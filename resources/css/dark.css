@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@source "../../resources/";
+
+@import "./app.css";
+@import "./dark/_spacing.css";
+/* @import "./dark/_breakpoints.css"; */
+@import "./dark/_colors.css";
+/* @import "./dark/_width.css"; */
+
+@import "./dark/_box.css";
+@import "./dark/_notices.css";
+/* @import "./dark/_floating-notices.css"; */
+@import './dark/_forms.css';
+@import './dark/_crud.css';
+@import './dark/_dashboard.css';
+/* @import './dark/_chart.css'; */
+@import './dark/_menu.css';
+@import './dark/_popups.css';
+@import './dark/_pos.css';
+@import './dark/_ns-tab.css';
+@import './dark/_product.css';
+/* @import './dark/_typography.css'; */
+@import './dark/_table.css';
+/* @import './dark/_loader.css'; */
+@import './dark/_numpad.css';
+@import './dark/_media.css';
+/* @import './dark/_link.css'; */

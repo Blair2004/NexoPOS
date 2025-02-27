@@ -27,14 +27,13 @@ if ( Auth::check() ) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) !!}</title>
     @include( 'layout._header-injection' )
+    <!-- 'resources/scss/fonts.scss', -->
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
-        'resources/scss/grid.scss',
-        'resources/scss/fonts.scss',
+        'resources/css/grid.css',
+        
         'resources/scss/animations.scss',
-        'resources/scss/typography.scss',
-        'resources/scss/app.scss',
-        'resources/scss/' . $theme . '.scss'
+        'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.dashboard.header' )
     @include( 'layout._header-script' )
