@@ -56,7 +56,7 @@
 }
 
 .ns-avatar { 
-    @apply text-fontcolor border-input-edge;
+    @apply text-fontcolor border-[#333];
 
     &:hover {
         @apply bg-box-background text-fontcolor border-transparent;
@@ -87,7 +87,7 @@
             @apply bg-box-background;
         }
         &.panel-hidden {
-            @apply border-input-edge;
+            @apply border-[#333];
         }
 
         &:hover {

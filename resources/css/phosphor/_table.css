@@ -49,7 +49,7 @@
         }
     
         tr.success {
-            @apply bg-green-300 text-white;
+            @apply bg-success-secondary text-white;
         }
     
         tr.warning {
@@ -62,25 +62,5 @@
                 @apply border-transparent;
             }
         }
-    }
-
-    td {
-        @apply border-table-th-edge text-fontcolor;
-    }
-
-    tr.info {
-        @apply bg-info-secondary text-white;
-    }
-
-    tr.error {
-        @apply bg-error-secondary text-white;
-    }
-
-    tr.success {
-        @apply bg-success-secondary text-white;
-    }
-
-    tr.warning {
-        @apply bg-warning-secondary text-white;
     }
 }

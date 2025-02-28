@@ -1,0 +1,46 @@
+.is-popup {
+    .ns-box {
+        @apply text-fontcolor border-box-edge border;
+        @apply rounded-lg overflow-hidden;
+
+        .ns-box-header {
+            @apply border-box-edge;
+            @apply text-fontcolor;
+        }
+
+        .ns-box-body {
+            @apply text-fontcolor;
+        }
+
+        .ns-box-footer {
+            @apply border-box-edge;
+        }
+
+        div > h3 {
+            @apply text-fontcolor;
+        }
+    }
+}
+.ns-box {
+    @apply bg-box-background border-box-edge;
+    @apply text-fontcolor;
+
+    .ns-box-header {
+        @apply border-box-edge;
+        @apply text-fontcolor;
+    }
+
+    .ns-box-body {
+        @apply text-fontcolor;
+        @apply border-box-edge;
+    }
+
+    .ns-box-footer {
+        @apply border-box-edge;
+        @apply bg-box-background;
+    }
+
+    div > h3 {
+        @apply text-fontcolor;
+    }
+}

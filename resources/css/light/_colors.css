@@ -6,8 +6,13 @@
     --color-fontcolor-hard: rgb( 107 114 128 );
 
     /** Surfaces */
-    --color-box-background: rgb( 250 250 250 );
     --color-surface: rgb( 209 213 219 );
+    --color-aside-background: var( --color-zinc-900 );
+    --color-aside-color: var( --color-white );
+    --color-aside-menu-background: var( --color-zinc-900 );
+    --color-aside-menu-background-hover: var( --color-zinc-800 );
+    --color-aside-submenu-background: var( --color-zinc-800 );
+    --color-aside-submenu-background-hover: var( --color-zinc-700 );
     --color-soft-primary: rgb( 75 85 99 );
     --color-soft-secondary: rgb( 107 114 128 );
     --color-soft-tertiary: rgb( 156 163 175 );
@@ -27,9 +32,10 @@
     --color-input-button-active: rgb( 212 212 216 );
     --color-input-option-hover: rgb( 107 114 128 );
     --color-input-edge: var( --color-gray-400 );
-
+    
     /** Box */
     --color-box-edge: var(--color-gray-300);
+    --color-box-background: rgb( 250 250 250 );
     --color-box-elevation-background: rgb( 241 245 249 );
     --color-box-elevation-edge: rgb( 203 213 225 );
     --color-box-elevation-hover: rgb( 203 213 225 );

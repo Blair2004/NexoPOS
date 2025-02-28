@@ -54,7 +54,7 @@ export default ({ mode }) => {
                     'resources/ts/wizard.ts',
     
                     'resources/css/app.css',
-                    'resources/scss/grid.scss',
+                    'resources/css/grid.css',
                     'resources/scss/animations.scss',
                     'resources/scss/typography.scss',
                     'resources/scss/fonts.scss',
@@ -63,7 +63,7 @@ export default ({ mode }) => {
                     // themes
                     'resources/css/light.css',
                     'resources/css/dark.css',
-                    'resources/scss/phosphor.scss',
+                    'resources/css/phosphor.css',
                 ],
                 refresh: true,
             }),

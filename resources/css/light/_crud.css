@@ -98,7 +98,11 @@
     }
 }
 
-#crud-form {
+#crud-form, #product-form {
+    label[for="title"] {
+        @apply text-fontcolor;
+    }
+
     .ns-crud-button, .ns-crud-input-button {
         @apply border-crud-button-edge bg-transparent text-fontcolor;
 

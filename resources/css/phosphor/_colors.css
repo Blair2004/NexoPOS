@@ -6,13 +6,13 @@
     --color-fontcolor-hard: rgb( 107 114 128 );
 
     /** Surfaces */
-    --color-surface: var( --color-gray-900 );
-    --color-aside-background: var( --color-slate-950 );
-    --color-aside-color: var( --color-fontcolor );
-    --color-aside-menu-background: var( --color-slate-950 );
-    --color-aside-menu-background-hover: var( --color-slate-950 );
-    --color-aside-submenu-background: var( --color-slate-900 );
-    --color-aside-submenu-background-hover: var( --color-slate-800 );
+    --color-surface: #1a1a17;
+    --color-aside-background: #433e37;
+    --color-aside-color: #FFF;
+    --color-aside-menu-background: #433e37;
+    --color-aside-menu-background-hover: #433e37;
+    --color-aside-submenu-background: #555;
+    --color-aside-submenu-background-hover: #666;
     --color-soft-primary: rgb( 75 85 99 );
     --color-soft-secondary: rgb( 107 114 128 );
     --color-soft-tertiary: rgb( 156 163 175 );
@@ -25,27 +25,27 @@
     --color-button-active: rgb( 203 213 225 );
     
     /** Input */
-    --color-input-background: var( --color-gray-800 );
+    --color-input-background: #333;
     --color-input-disabled: rgb( 156 163 175 );
-    --color-input-button: var( --color-gray-600 );
-    --color-input-button-hover: var( --color-gray-600 );
-    --color-input-button-active: var( --color-gray-600 );
+    --color-input-button: #555;
+    --color-input-button-hover: #666;
+    --color-input-button-active: #555;
     --color-input-option-hover: rgb( 107 114 128 );
-    --color-input-edge: var( --color-gray-800 );
+    --color-input-edge: #222;
 
     /** Box */
-    --color-box-edge: var(--color-gray-700 );
-    --color-box-background: var( --color-gray-700 );
-    --color-box-elevation-background: var( --color-gray-600 );
-    --color-box-elevation-edge: var( --color-gray-700 );
+    --color-box-edge: #333;
+    --color-box-background: #433e37;
+    --color-box-elevation-background: #555;
+    --color-box-elevation-edge: #433e37;
     --color-box-elevation-hover: var( --color-gray-500 );
 
     /** CRUD */
-    --color-crud-button-edge: var( --color-gray-800 );
+    --color-crud-button-edge: #333;
     --color-crud-input-background: rgb( 209 213 219 );
 
     /** POS */
-    --color-pos-button-edge: rgb( 209 213 219 );
+    --color-pos-button-edge: #333;
 
     /** Numpad */
     --color-numpad-background: var( --color-gray-300 );
@@ -66,15 +66,15 @@
     --color-pre: rgb( 107 114 128 );
 
     /** Tabs */
-    --color-tab-active: var( --color-gray-700 );
-    --color-tab-active-border: var( --color-gray-700 );
-    --color-tab-inactive: var( --color-gray-800 );
-    --color-tab-table-th: var( --color-gray-800 );
-    --color-tab-table-th-edge: var( --color-gray-800 );
+    --color-tab-active: #433e37;
+    --color-tab-active-border: #333;
+    --color-tab-inactive: #333;
+    --color-tab-table-th: #333;
+    --color-tab-table-th-edge: #333;
 
     /** Table */
-    --color-table-th: var( --color-gray-600 );
-    --color-table-th-edge: var( --color-gray-800 );
+    --color-table-th: #555;
+    --color-table-th-edge: #333;
 
     /** Floating Menu */
     --color-floating-menu: var( --color-gray-600 );
@@ -83,9 +83,9 @@
     --color-floating-menu-edge: var( --color-gray-600 );
 
     /** Base Accent */
-    --color-primary: var( --color-teal-500 );
-    --color-secondary: var( --color-teal-600 );
-    --color-tertiary: var( --color-teal-700 );
+    --color-primary: #89895d;
+    --color-secondary: #89895d;
+    --color-tertiary: #89895d;
 
     /** Error */
     --color-error-primary: var( --color-red-400 );
@@ -98,8 +98,8 @@
     --color-info-tertiary: var( --color-blue-600 );
 
     /** Success */
-    --color-success-primary: var( --color-green-400 );
-    --color-success-secondary: var( --color-green-500);
+    --color-success-primary: #538d22;
+    --color-success-secondary: #245501;
     --color-success-tertiary: var( --color-green-600 );
 
     /** Warning */

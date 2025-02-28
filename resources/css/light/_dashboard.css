@@ -9,16 +9,16 @@
 }
 
 #dashboard-aside > div {
-    @apply bg-slate-900;
+    @apply bg-aside-background;
     .ns-aside-menu {
-        @apply text-gray-200 hover:bg-gray-700;
+        @apply text-aside-color hover:bg-aside-menu-background-hover;
         &.toggled {
             @apply border-secondary bg-secondary;
         }
         &.normal {
-            @apply border-transparent bg-gray-900;
+            @apply border-transparent bg-aside-menu-background;
             &:hover {
-                @apply bg-gray-800;
+                @apply bg-aside-menu-background-hover;
             }
         }
         .notification-label {
@@ -26,7 +26,7 @@
         }
     }
     .ns-aside-submenu {
-        @apply border-secondary bg-gray-800 hover:bg-gray-700;
+        @apply border-secondary bg-aside-submenu-background hover:bg-aside-submenu-background-hover;
         &.active {
             @apply text-white;
         }

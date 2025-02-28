@@ -14,7 +14,7 @@
     @apply border-box-edge bg-tab-active text-fontcolor;
     
     .ns-tab-item-footer {
-        @apply border-gray-600;
+        @apply border-[#333];
     }
 
     .ns-tab {
@@ -22,10 +22,10 @@
             @apply border-tab-active-border text-fontcolor border-b-transparent;
             
             &.active {
-                @apply bg-gray-600;
+                @apply bg-[#555];
             }
             &.inactive {
-                @apply bg-gray-700;
+                @apply bg-[#444];
             }
         }
     }

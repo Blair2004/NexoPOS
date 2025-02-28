@@ -20,11 +20,8 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     @include( 'layout._header-injection' )
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
-        'resources/scss/grid.scss',
-        'resources/scss/fonts.scss',
+        'resources/css/grid.css',
         'resources/scss/animations.scss',
-        'resources/scss/typography.scss',
-        'resources/css/app.css',
         'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.base.header' )

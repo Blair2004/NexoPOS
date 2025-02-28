@@ -20,7 +20,6 @@
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Comments' ) }}</span>
                                 </button>
                             </div>
-                            <hr class="h-10" style="width: 1px">
                             <div class="ns-button">
                                 <button @click="selectTaxGroup()" class="w-full h-10 px-3 outline-hidden flex items-center">
                                     <i class="las la-balance-scale-left"></i>
@@ -28,7 +27,6 @@
                                     <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-secondary text-white">{{ order.taxes.length }}</span>
                                 </button>
                             </div>
-                            <hr class="h-10" style="width: 1px">
                             <div class="ns-button">
                                 <button @click="selectCoupon()" class="w-full h-10 px-3 outline-hidden flex items-center">
                                     <i class="las la-tags"></i>
@@ -36,21 +34,18 @@
                                     <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-secondary text-white">{{ order.coupons.length }}</span>
                                 </button>
                             </div>
-                            <hr class="h-10" style="width: 1px">
                             <div class="ns-button">
                                 <button @click="defineOrderSettings()" class="w-full h-10 px-3 outline-hidden flex items-center">
                                     <i class="las la-tools"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Settings' ) }}</span>
                                 </button>
                             </div>
-                            <hr class="h-10" style="width: 1px">
                             <div class="ns-button" v-if="options.ns_pos_quick_product === 'yes'">
                                 <button @click="openAddQuickProduct()" class="w-full h-10 px-3 outline-hidden flex items-center">
                                     <i class="las la-plus"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Product' ) }}</span>
                                 </button>
                             </div>
-                            <hr class="h-10" style="width: 1px">
                         </div>
                     </div>
                 </div>

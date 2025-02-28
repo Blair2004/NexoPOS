@@ -4,7 +4,7 @@
     }
 
     p, span {
-        @apply text-white;
+        @apply text-fontcolor;
     }
 
     &.danger {

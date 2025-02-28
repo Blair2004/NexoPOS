@@ -62,7 +62,7 @@ class CrudInput
         );
     }
 
-    public static function hidden( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $errors = [] )
+    public static function hidden( $name, $label = '', $value = '', $validation = '', $description = '', $disabled = false, $errors = [] )
     {
         return self::text(
             label: $label,
