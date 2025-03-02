@@ -28,11 +28,13 @@ if ( Auth::check() ) {
     @include( 'layout._header-injection')
     <!-- 'resources/scss/typography.scss', -->
     <!-- 'resources/scss/grid.scss', -->
-    <!-- 'resources/scss/fonts.scss', -->
+    <!-- , -->
     <!-- , -->
     @vite([
-        'resources/scss/animations.scss',
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
+        'resources/css/animations.scss',
+        'resources/css/fonts.css',
+        'resources/css/typogrography.css',
         'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.dashboard.header' )

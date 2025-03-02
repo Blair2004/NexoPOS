@@ -29,8 +29,10 @@ if ( Auth::check() ) {
     @include( 'layout._header-injection' )
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
+        'resources/css/animations.css',
+        'resources/css/fonts.css',
+        'resources/css/typography.css',
         'resources/css/grid.css',
-        'resources/scss/animations.scss',
         'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.dashboard.header' )

@@ -10,12 +10,11 @@ $theme  =   ns()->option->get( 'ns_default_theme', 'light' );
     @include( 'layout._header-injection' )
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
-        'resources/scss/grid.scss',
-        'resources/scss/fonts.scss',
-        'resources/scss/animations.scss',
-        'resources/scss/typography.scss',
-        'resources/scss/app.scss',
-        'resources/scss/' . $theme . '.scss'
+        'resources/css/grid.css',
+        'resources/css/fonts.css',
+        'resources/css/animations.css',
+        'resources/css/typography.css',
+        'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.base.header' )
 </head>

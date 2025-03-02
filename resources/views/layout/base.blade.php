@@ -21,7 +21,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
         'resources/css/grid.css',
-        'resources/scss/animations.scss',
+        'resources/css/animations.css',
         'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.base.header' )
