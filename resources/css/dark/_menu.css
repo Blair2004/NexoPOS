@@ -4,7 +4,7 @@
     }
 
     &::-webkit-scrollbar-track {
-        @apply bg-white/50;
+        @apply bg-gray-950;
     }
 
     &::-webkit-scrollbar-thumb {
@@ -14,7 +14,7 @@
 .is-popup {
     .ns-scrollbar {
         &::-webkit-scrollbar-thumb {
-            @apply bg-red-600;
+            @apply bg-secondary;
         }
     }
 }

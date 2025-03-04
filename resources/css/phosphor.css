@@ -3,7 +3,7 @@
 @source "../../resources/";
 
 @import "./app.css";
-@import "./phosphor/_spacing.css";
+@import "./_shared/_spacing.css";
 /* @import "./phosphor/_breakpoints.css"; */
 @import "./phosphor/_colors.css";
 /* @import "./phosphor/_width.css"; */

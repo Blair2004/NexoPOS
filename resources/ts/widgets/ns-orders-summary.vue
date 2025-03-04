@@ -1,6 +1,6 @@
 <template>
-    <div id="ns-orders-summary" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
-        <div class="p-2 flex title items-center justify-between border-b">
+    <div id="ns-orders-summary" class="flex ns-box flex-auto flex-col shadow rounded-lg overflow-hidden">
+        <div class="p-2 flex title ns-box-header items-center justify-between border-b">
             <h3 class="font-semibold">{{ __( 'Recents Orders' ) }}</h3>
             <div>
                 <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>

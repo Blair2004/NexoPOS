@@ -77,6 +77,9 @@
     @apply border-blue-400;
 }
 
+.widget-placeholder {
+    @apply border-secondary text-fontcolor;
+}
 /**
  * Notifications Wrapper
 **/

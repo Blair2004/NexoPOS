@@ -407,7 +407,7 @@ export default {
 }
 </script>
 <template>
-    <div class="flex md:flex-row flex-col ns-box shadow-xl overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-6/7-screen' : 'w-full h-full'">
+    <div class="flex md:flex-row flex-col ns-box shadow-xl overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-[95vh]' : 'w-full h-full'">
         <div class="sidebar w-48 md:h-full flex-shrink-0">
             <h3 class="text-xl font-bold my-4 text-center">{{ __( 'Medias Manager' ) }}</h3>
             <ul class="sidebar-menus flex md:block mt-8">
@@ -462,7 +462,7 @@ export default {
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-1 lg:grid-cols-4">
                                 <div v-for="(resource, index) of response.data" :key="index" class="">
                                     <div>
-                                        <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected border-secondary ' : 'border-transparent'" class="border-4 aspect-square bg-gray-500 overflow-hidden flex items-center justify-center">
+                                        <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected border-secondary ' : 'border-transparent'" class="border-4 aspect-square bg-secondary/50 overflow-hidden flex items-center justify-center">
                                             <img v-if="isImage( resource )" class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name"/>
                                             <template v-if="! isImage( resource )" class="object-cover h-full" :alt="resource.name">
                                                 <div class="object-cover h-full flex items-center justify-center">

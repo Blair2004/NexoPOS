@@ -6,7 +6,7 @@
         :id="popup.hash"
         :focused="key === popups.length - 1"
         :class="defaultClass">
-        <div class="zoom-out-entrance popup-body" @click="preventPropagation( $event )">
+        <div class="zoom-in-entrance popup-body" @click="preventPropagation( $event )">
         <!-- @refresh="handleClose( popup, $event)"  -->
             <component @saved="handleSavedEvent( popup, $event )" :popup="popup" v-bind="popup.props || {}" :is="popup.component.value"></component>
         </div>    

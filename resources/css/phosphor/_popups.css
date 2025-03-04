@@ -16,9 +16,9 @@
             @apply shadow ml-3 min-w-[100px] bg-secondary text-white;
 
             &.cancel {
-                @apply bg-error-tertiary;
+                @apply bg-error-secondary;
                 &:hover {
-                    @apply bg-error-tertiary;
+                    @apply bg-error-secondary;
                 }
             }
 

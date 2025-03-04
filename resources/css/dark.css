@@ -3,7 +3,7 @@
 @source "../../resources/";
 
 @import "./app.css";
-@import "./dark/_spacing.css";
+@import "./_shared/_spacing.css";
 /* @import "./dark/_breakpoints.css"; */
 @import "./dark/_colors.css";
 /* @import "./dark/_width.css"; */

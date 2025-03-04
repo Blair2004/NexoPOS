@@ -18,7 +18,7 @@
     --color-soft-tertiary: rgb( 156 163 175 );
     --color-surface-soft: rgb( 229 231 235 );
     --color-surface-hard: rgb( 250 250 250 );
-    --color-popup-surface: var( --color-gray-800 );
+    --color-popup-surface: #333;
     
     /** Button */
     --color-button-hover: rgb( 203 213 225 );
@@ -26,7 +26,7 @@
     
     /** Input */
     --color-input-background: #333;
-    --color-input-disabled: rgb( 156 163 175 );
+    --color-input-disabled: #222;
     --color-input-button: #555;
     --color-input-button-hover: #666;
     --color-input-button-active: #555;
@@ -34,8 +34,8 @@
     --color-input-edge: #222;
 
     /** Box */
-    --color-box-edge: #333;
-    --color-box-background: #433e37;
+    --color-box-edge: #555;
+    --color-box-background: #333;
     --color-box-elevation-background: #555;
     --color-box-elevation-edge: #433e37;
     --color-box-elevation-hover: var( --color-gray-500 );
@@ -70,17 +70,17 @@
     --color-tab-active-border: #333;
     --color-tab-inactive: #333;
     --color-tab-table-th: #333;
-    --color-tab-table-th-edge: #333;
+    --color-tab-table-th-edge: #444;
 
     /** Table */
     --color-table-th: #555;
-    --color-table-th-edge: #333;
+    --color-table-th-edge: #555;
 
     /** Floating Menu */
-    --color-floating-menu: var( --color-gray-600 );
-    --color-floating-menu-hover: var( --color-gray-500 );
-    --color-floating-menu-selected: var( --color-gray-600 );
-    --color-floating-menu-edge: var( --color-gray-600 );
+    --color-floating-menu: #333;
+    --color-floating-menu-hover: #444;
+    --color-floating-menu-selected: #444;
+    --color-floating-menu-edge: #444;
 
     /** Base Accent */
     --color-primary: #89895d;

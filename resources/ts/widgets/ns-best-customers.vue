@@ -1,7 +1,7 @@
 <template>
-    <div id="ns-best-customers" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
+    <div id="ns-best-customers" class="ns-box flex flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="flex-auto">
-            <div class="head text-center flex justify-between items-center border-b w-full p-2">
+            <div class="ns-box-header text-center flex justify-between items-center border-b w-full p-2">
                 <h5>{{ __( 'Best Customers' ) }}</h5>
                 <div>
                     <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
@@ -15,8 +15,8 @@
                     <i class="las la-grin-beam-sweat text-6xl"></i>
                     <p class="text-sm">{{ __( 'Well.. nothing to show for the meantime' ) }}</p>
                 </div>
-                <table class="table w-full" v-if="customers.length > 0">
-                    <thead>
+                <table class="ns-table w-full" v-if="customers.length > 0">
+                    <tbody>
                         <tr v-for="customer of customers" :key="customer.id" class="entry border-b text-sm">
                             <th class="p-2"> 
                                 <div class="-mx-1 flex justify-start items-center">
@@ -32,7 +32,7 @@
                             </th>
                             <th class="flex justify-end amount p-2">{{ nsCurrency( customer.purchases_amount ) }}</th>
                         </tr>
-                    </thead>
+                    </tbody>
                 </table>
             </div>
         </div>

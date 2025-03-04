@@ -76,6 +76,30 @@
 .drag-over {
     @apply border-blue-400;
 }
+.widget-placeholder {
+    @apply border-secondary text-fontcolor;
+}
+.ns-drop-zone[hovered="true"] {
+    @apply outline-dashed outline-2 outline-secondary;
+}
+.intermediate-dropzone {
+    &[hovered="true"] {
+        margin-top: -15px;
+        padding-top: 15px;
+        &> div {
+            @apply py-4 h-5 bg-secondary mb-4;
+        }
+    }
+
+    &[hovered="false"] {
+        margin-top: -15px;
+        height: 15px;
+        
+        &> div {
+            @apply py-4 h-[0px] bg-transparent;
+        }
+    }
+}
 
 /**
  * Notifications Wrapper

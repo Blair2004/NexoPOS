@@ -32,7 +32,7 @@ if ( Auth::check() ) {
     <!-- , -->
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
-        'resources/css/animations.scss',
+        'resources/css/animations.css',
         'resources/css/fonts.css',
         'resources/css/typogrography.css',
         'resources/css/' . $theme . '.css'

@@ -2,30 +2,29 @@
     <div class="flex md:-mx-2 flex-wrap">
         <div class="w-full md:px-2 md:w-1/2 lg:w-1/3 xl:1/4" :column-name="column.name" v-for="(column,index) in columns" :key="column.name">
             <!-- v-for="widget in column.widets" -->
-            <ns-dropzone v-for="widget in column.widgets">
-                <ns-draggable 
-                    :component-name="widget[ 'component-name' ]"
-                    @drag-end="handleEndDragging( $event )"
-                    :widget="widget">
-                    <component @onRemove="handleRemoveWidget( widget, column )" :is="widget.component" :widget="widget"></component>
-                </ns-draggable>
-            </ns-dropzone>
+            <template v-for="(widget,key) in column.widgets">
+                <div :data-index="key" class="intermediate-dropzone anim-duration-500">
+                    <div></div>
+                </div>
+                <ns-dropzone>
+                    <ns-draggable 
+                        :component-name="widget[ 'component-name' ]"
+                        @drag-start="handleStartDragging( $event )"
+                        @drag-end="handleEndDragging( $event )"
+                        :widget="widget">
+                        <component @onRemove="handleRemoveWidget( widget, column )" :is="widget.component" :widget="widget"></component>
+                    </ns-draggable>
+                </ns-dropzone>
+            </template>
             <div v-if="hasUnusedWidgets" @click="openWidgetAdded( column )" class="widget-placeholder cursor-pointer border-2 border-dashed h-16 flex items-center justify-center">
-                <span class="text-sm text-font" type="info">{{ __( 'Click here to add widgets' ) }}</span>
+                <span class="text-sm text-font" type="info">{{ __( 'Drop widget / click to add' ) }}</span>
+            </div>
+            <div v-if="isDragging && ! hasUnusedWidgets !" class="widget-placeholder cursor-pointer border-2 border-dashed h-16 flex items-center justify-center">
+                <span class="text-sm text-font" type="info">{{ __( 'Drop the widget here' ) }}</span>
             </div>
         </div>
     </div>
 </template>
-<style scoped>
-@reference "&/css/app.css";
-
-.light .widget-placeholder {
-    @apply border-gray-600;
-}
-.dark .widget-placeholder {
-    @apply border-gray-400;
-}
-</style>
 <script lang="ts">
 import { shallowRef } from '@vue/reactivity';
 import { __ } from '~/libraries/lang';
@@ -49,6 +48,7 @@ export default {
             widgets: [],
             theme: ns.theme,
             dragged: null,
+            isDragging: false,
             columns: [],
         }
     },
@@ -72,28 +72,41 @@ export default {
             return column;
         });
 
-        setTimeout( () => {
-            // Select all elements whose parent has the class '.widget-placeholder'
-            var elements = document.querySelectorAll('.widget-placeholder');
-
-            document.addEventListener('mousemove', (event) => {
-                // Loop over all elements
-                for (var i = 0; i < elements.length; i++) {
-                    // Get the bounding rectangle of the current element
-                    var rect = elements[i].getBoundingClientRect();
-
-                    // Check if the mouse coordinates are within the bounding rectangle
-                    if (event.clientX >= rect.left && event.clientX <= rect.right &&
-                        event.clientY >= rect.top && event.clientY <= rect.bottom) {
-                        // The mouse is currently above the current element
-                        elements[i].setAttribute( 'hovered', 'true' );
-                        break;
-                    } else {
-                        elements[i].setAttribute( 'hovered', 'false' );
-                    }
+        document.addEventListener( 'mousemove', ( event ) => {
+            if ( this.isDragging === false ) {
+                return;
+            }
+            
+            const intermediateDropZones    =   document.querySelectorAll( '.intermediate-dropzone' );
+           
+            intermediateDropZones.forEach((dropZone,index) => {
+                const position = dropZone.getBoundingClientRect();
+                const { left, top, right, bottom } = position;
+                const { clientX, clientY } = event;
+    
+                if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
+                    dropZone.setAttribute( 'hovered', 'true' );
+                    dropZone.classList.add( 'slide-fade-entrance' );
+                } else {
+                    dropZone.setAttribute( 'hovered', 'false' );
+                    dropZone.classList.remove( 'slide-fade-entrance' );
                 }
             });
-        }, 10 );
+
+            const staticPlaceholder     =   document.querySelectorAll( '.widget-placeholder' );
+
+            staticPlaceholder.forEach((placeholder) => {
+                const position = placeholder.getBoundingClientRect();
+                const { left, top, right, bottom } = position;
+                const { clientX, clientY } = event;
+
+                if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
+                    placeholder.setAttribute( 'hovered', 'true' );
+                } else {
+                    placeholder.setAttribute( 'hovered', 'false' );
+                }
+            });
+        })
     },
     computed: {
         hasUnusedWidgets() {
@@ -107,8 +120,80 @@ export default {
     },
     methods: {
         __,
+        handleStartDragging( event ) {
+            this.isDragging     =   true;
+        },
         
         handleEndDragging( widget ) {
+            this.isDragging     =   false;
+            const hasPlaceholderHovered     =   document.querySelector( '.widget-placeholder[hovered="true"]' );
+            const hasIntermediateHovered    =   document.querySelector( '.intermediate-dropzone[hovered="true"]' );
+
+            if ( hasPlaceholderHovered ) {
+                this.processAppendingToColumn( widget );
+            } else if ( hasIntermediateHovered ) {
+                this.proceedMoveToSpecificLocation( widget, hasIntermediateHovered );
+            } else {
+                this.processRegularWidgetSwapping( widget );                
+            }
+
+            this.removeSpecialEffect();
+        },
+
+        removeSpecialEffect() {
+            // we'll remove the attribute style to all .ns-draggable-item
+            const draggableItems    =   document.querySelectorAll( '.ns-draggable-item' );
+            draggableItems.forEach( item => {
+                item.removeAttribute( 'style' );
+            });
+        },
+
+        proceedMoveToSpecificLocation( widget, hoveredIntermediate ) {
+            const hoveredIndex  =   hoveredIntermediate.getAttribute( 'data-index' );
+
+            const previousColumn    =   this.columns.filter( column => column.name === widget.column )[0];
+            const index             =   previousColumn.widgets.indexOf( widget );
+            previousColumn.widgets.splice( index, 1 );
+
+            const columnName    =   hoveredIntermediate.closest( '[column-name]' ).getAttribute( 'column-name' );
+            const hoveredColumn     =   this.columns.filter( column => column.name === columnName )[0];
+            
+            widget.position     =   hoveredIndex;
+            widget.column       =   hoveredColumn.name;
+
+            hoveredColumn.widgets.splice( hoveredIndex, 0, widget );
+
+            this.handleChange( hoveredColumn );
+            this.handleChange( previousColumn );
+
+            // we should close the overed intermediate dropzone
+            hoveredIntermediate.setAttribute( 'hovered', 'false' );
+        },
+
+        processAppendingToColumn( widget ) {
+            const hoveredZone   =   document.querySelector( '.widget-placeholder[hovered="true"]' );
+
+            if ( hoveredZone ) {
+                // let's remove the widget from the previous column
+                const previousColumn    =   this.columns.filter( column => column.name === widget.column )[0];
+                const index             =   previousColumn.widgets.indexOf( widget );
+                previousColumn.widgets.splice( index, 1 );
+
+                // let's add the widget to the new column
+                const columnName    =   hoveredZone.closest( '[column-name]' ).getAttribute( 'column-name' );
+                const column        =   this.columns.filter( column => column.name === columnName )[0];
+
+                widget.position     =   column.widgets.length;
+                widget.column       =   columnName;
+
+                column.widgets.push( widget );
+
+                this.handleChange( column );
+                this.handleChange( previousColumn );
+            }
+        },
+
+        processRegularWidgetSwapping( widget ) {
             const hoveredZone   =   document.querySelector( '.ns-drop-zone[hovered="true"]' );
 
             if ( hoveredZone ) {
@@ -126,6 +211,8 @@ export default {
                 const previousWidget            =   previousFilteredColumn[0].widgets.filter( __widget => {
                     return __widget[ 'component-name' ]  === previousWidgetElement.getAttribute( 'component-name' );
                 });
+
+                hoveredZone.setAttribute( 'hovered', 'false' );
 
                 /**
                  * If the previous widget is the same as the hovered widget, we don't need to do anything.
@@ -148,8 +235,6 @@ export default {
 
                 this.handleChange( hoveredFilteredColumn[0] );
                 this.handleChange( previousFilteredColumn[0] );
-
-                hoveredZone.setAttribute( 'hovered', 'false' );
             }
 
             const hoveredPlaceHolderZone    =   document.querySelector( '.widget-placeholder[hovered="true"]' );
@@ -203,7 +288,6 @@ export default {
                  */
                 const otherColumnUsedWidgets     =   this.columns.filter( _column => {
                     if ( _column.name !== column.name ) {
-                        console.log( _column.name );
                         return _column.widgets.length > 0;
                     }
                     return false;

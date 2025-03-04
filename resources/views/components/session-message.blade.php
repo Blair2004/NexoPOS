@@ -1,12 +1,12 @@
 @if ( session()->has( 'message' ) )
     @if ( is_array( session()->get( 'message' ) ) )
-    <div class="flex border flex-col md:flex-row border-success-secondary bg-success-primary rounded-lg mb-3">
+    <div class="flex border flex-col md:flex-row border-success-tertiary bg-success-secondary rounded-lg mb-3">
         <div class="flex flex-row flex-auto">
             <div class="p-3 flex items-center justify-center">
                 <i class="lar la-check-circle text-2xl text-success-tertiary"></i>
             </div>
             <div class="flex-auto items-center flex p-3 pl-0">
-                <p class="text-success-tertiary py-1">{!! session()->get( 'message' )[ 'message' ] ?? __( 'Invalid Error Message' ) !!}</p>
+                <p class="text-white py-1">{!! session()->get( 'message' )[ 'message' ] ?? __( 'Invalid Error Message' ) !!}</p>
             </div>
         </div>
         <div class="flex w-full md:w-28 justify-end md:justify-center md:items-center">
