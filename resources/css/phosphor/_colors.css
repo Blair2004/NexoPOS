@@ -11,8 +11,8 @@
     --color-aside-color: #FFF;
     --color-aside-menu-background: #433e37;
     --color-aside-menu-background-hover: #433e37;
-    --color-aside-submenu-background: #555;
-    --color-aside-submenu-background-hover: #666;
+    --color-aside-submenu-background: #444;
+    --color-aside-submenu-background-hover: #555;
     --color-soft-primary: rgb( 75 85 99 );
     --color-soft-secondary: rgb( 107 114 128 );
     --color-soft-tertiary: rgb( 156 163 175 );
@@ -34,8 +34,8 @@
     --color-input-edge: #222;
 
     /** Box */
-    --color-box-edge: #555;
-    --color-box-background: #333;
+    --color-box-edge: #222;
+    --color-box-background: #433e37;
     --color-box-elevation-background: #555;
     --color-box-elevation-edge: #433e37;
     --color-box-elevation-hover: var( --color-gray-500 );
@@ -45,13 +45,13 @@
     --color-crud-input-background: rgb( 209 213 219 );
 
     /** POS */
-    --color-pos-button-edge: #333;
+    --color-pos-button-edge: #222;
 
     /** Numpad */
     --color-numpad-background: var( --color-gray-300 );
     --color-numpad-typography: rgb( 55 65 81 );
-    --color-numpad-edge: var( --color-gray-300 );
-    --color-numpad-hover: var( --color-gray-200 );
+    --color-numpad-edge: #333;
+    --color-numpad-hover: var( --color-secondary );
     --color-numpad-hover-edge: rgb( 209 213 219 );
 
     /** Option */
@@ -66,9 +66,9 @@
     --color-pre: rgb( 107 114 128 );
 
     /** Tabs */
-    --color-tab-active: #433e37;
+    --color-tab-active: #5b5246;
     --color-tab-active-border: #333;
-    --color-tab-inactive: #333;
+    --color-tab-inactive: #433e37;
     --color-tab-table-th: #333;
     --color-tab-table-th-edge: #444;
 

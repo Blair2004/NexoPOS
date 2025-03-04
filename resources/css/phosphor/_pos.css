@@ -60,7 +60,7 @@
                     @apply border-info-tertiary;
 
                     &:hover {
-                        @apply text-info-tertiary;
+                        @apply text-info-primary
                     }
                 }
 
@@ -85,7 +85,7 @@
 
                             .price {
                                 &:hover {
-                                    @apply text-info-secondary;
+                                    @apply text-info-primary;
                                 }
                             }
 
@@ -144,7 +144,7 @@
                             @apply border-info-tertiary;
 
                             &:hover {
-                                @apply text-info-tertiary;
+                                @apply text-info-primary;
                             }
                         }
                     }
@@ -206,7 +206,7 @@
             @apply bg-tab-inactive border-transparent text-fontcolor-soft;
 
             .products-count {
-                @apply bg-success-tertiary text-white;
+                @apply bg-success-secondary text-white;
             }
         }
         .switch-grid {
@@ -228,7 +228,7 @@
                         }
                     }
                     input {
-                        @apply bg-box-background;
+                        @apply bg-input-background;
                     }
                 }
             }

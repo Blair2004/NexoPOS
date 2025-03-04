@@ -22,11 +22,14 @@
             @apply border-tab-active-border text-fontcolor border-b-transparent;
             
             &.active {
-                @apply bg-[#555];
+                @apply bg-[#6d5e4c];
             }
             &.inactive {
-                @apply bg-[#444];
+                @apply bg-tab-active mb-[1px];
             }
+        }
+        .ns-tab-item > div {
+            @apply bg-[#6d5e4c];
         }
     }
 

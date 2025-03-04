@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import "./typography.css";
+
 html,
 body {
     height: 100%;

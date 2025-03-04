@@ -31,7 +31,6 @@ if ( Auth::check() ) {
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
         'resources/css/animations.css',
         'resources/css/fonts.css',
-        'resources/css/typography.css',
         'resources/css/grid.css',
         'resources/css/' . $theme . '.css'
     ])
