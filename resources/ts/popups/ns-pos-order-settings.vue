@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-lg flex flex-col ns-box w-95vw h-95vh md:w-3/5-screen md:h-3/5-screen lg:w-2/5-screen">
+    <div class="shadow-lg flex flex-col ns-box w-95vw h-95vh md:w-3/5-screen md:h-[60vh] lg:w-2/5-screen">
         <div class="p-2 border-b ns-box-header items-center flex justify-between">
             <h3 class="text-semibold">{{ __( 'Order Settings' ) }}</h3>
             <div>

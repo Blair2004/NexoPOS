@@ -3,7 +3,7 @@
     @apply text-fontcolor border-numpad-edge;
 
     &:hover {
-        @apply bg-secondary border-tertiary;
+        @apply bg-secondary border-tertiary text-white;
     }
     &.error:hover, &.error.active {
         @apply text-white bg-error-secondary border-error-secondary;

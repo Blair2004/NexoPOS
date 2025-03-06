@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-box w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-6/7-screen md:h-4/5-screen shadow-lg flex flex-col overflow-hidden">
+    <div class="ns-box w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-[85vh] md:h-[80vh] shadow-lg flex flex-col overflow-hidden">
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3 class="font-bold text-font">{{ __( 'Shipping & Billing' ) }}</h3>
             <div class="tools">

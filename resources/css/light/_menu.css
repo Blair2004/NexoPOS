@@ -14,7 +14,7 @@
 .is-popup {
     .ns-scrollbar {
         &::-webkit-scrollbar-thumb {
-            @apply bg-red-600;
+            @apply bg-secondary;
         }
     }
 }

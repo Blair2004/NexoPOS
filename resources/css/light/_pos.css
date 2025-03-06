@@ -41,7 +41,10 @@
 
                     .ns-button {
                         button {
-                            @apply bg-gray-200;
+                            @apply bg-white border-r border-pos-button-edge rounded-none cursor-pointer;
+                            &:hover {
+                                @apply bg-input-button-hover;
+                            }
                         }
                     }
                 }
@@ -54,10 +57,10 @@
             }
             #cart-products-table {
                 a {
-                    @apply border-info-tertiary;
+                    @apply border-secondary;
 
                     &:hover {
-                        @apply text-info-tertiary;
+                        @apply text-secondary;
                     }
                 }
 
@@ -82,7 +85,7 @@
 
                             .price {
                                 &:hover {
-                                    @apply text-info-secondary;
+                                    @apply text-secondary;
                                 }
                             }
 
@@ -94,10 +97,10 @@
                             }
 
                             .normal-mode {
-                                @apply border-info-primary;
+                                @apply border-secondary;
 
                                 &:hover {
-                                    @apply text-info-primary;
+                                    @apply text-secondary;
                                 }
                             }
 
@@ -111,7 +114,7 @@
                         @apply border-pos-button-edge;
 
                         > span {
-                            @apply border-info-primary;   
+                            @apply border-secondary;   
                         }
 
                         &:hover {
@@ -138,10 +141,10 @@
                         @apply border-pos-button-edge;
                         
                         a {
-                            @apply border-info-tertiary;
+                            @apply border-secondary;
 
                             &:hover {
-                                @apply text-info-tertiary;
+                                @apply text-secondary;
                             }
                         }
                     }
@@ -175,7 +178,7 @@
                     @apply bg-info-secondary border-r border-info-secondary;
 
                     &:hover, &:active {
-                        @apply bg-info-tertiary;
+                        @apply bg-secondary;
                     }
                 }
 
@@ -355,7 +358,7 @@
         }
         .ns-payment-buttons {
             .ns-payment-type-button {
-                @apply text-white bg-info-tertiary;
+                @apply text-white bg-secondary;
             }
             .ns-submit-button {
                 @apply bg-success-tertiary text-white;

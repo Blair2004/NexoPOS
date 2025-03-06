@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 .ns-heading-1 {
     @apply mb-4 text-5xl;
 }

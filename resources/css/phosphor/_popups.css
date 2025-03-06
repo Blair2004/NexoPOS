@@ -1,5 +1,5 @@
 #alert-popup, #confirm-popup, #prompt-popup {
-    @apply bg-popup-surface;
+    @apply bg-popup-surface border-box-edge border;
 
     h2 {
         @apply text-fontcolor;
@@ -10,20 +10,20 @@
     }
 
     .action-buttons {
-        @apply border-box-edge text-fontcolor;
+        @apply border-box-edge text-fontcolor p-2;
 
         button {
-            @apply shadow ml-3 min-w-[100px] bg-secondary text-white;
+            @apply shadow ml-3 bg-secondary text-white rounded h-[30px] min-w-[100px];
 
             &.cancel {
-                @apply bg-error-secondary;
+                @apply bg-default-secondary text-slate-600;
                 &:hover {
-                    @apply bg-error-secondary;
+                    @apply bg-default-tertiary text-slate-800;
                 }
             }
 
             &:hover {
-                @apply bg-secondary text-white cursor-pointer;
+                @apply bg-tertiary text-white cursor-pointer;
             }
         }
 

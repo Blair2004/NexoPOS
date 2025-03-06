@@ -90,11 +90,11 @@
         @apply border-info-tertiary bg-info-primary;
 
         h1, h2, h3, h4, h5 {
-            @apply text-info-tertiary;
+            @apply text-white;
         }
 
         p {
-            @apply text-fontcolor;
+            @apply text-white;
             & > a {
                 @apply text-info-secondary;
                 &:hover {

@@ -13,7 +13,6 @@ $theme  =   ns()->option->get( 'ns_default_theme', 'light' );
         'resources/css/grid.css',
         'resources/css/fonts.css',
         'resources/css/animations.css',
-        'resources/css/typography.css',
         'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.base.header' )

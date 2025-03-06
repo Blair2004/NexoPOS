@@ -10,10 +10,9 @@
                 <input ref="input" @keypress.enter="emitAction( true )" v-if="type === 'input'" v-model="input" class="w-full border-2 p-2"/>
             </div>
         </div>
-        <div class="flex border-t action-buttons">
-            <button class="flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( true )">{{ __( 'Ok' ) }}</button>
-            <hr class="border-r">
-            <button class="flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="reject( false )">{{ __( 'Cancel' ) }}</button>
+        <div class="flex justify-end border-t action-buttons">
+            <button class="flex items-center justify-center uppercase" @click="emitAction( true )">{{ __( 'Ok' ) }}</button>
+            <button class="cancel flex items-center justify-center uppercase" @click="reject( false )">{{ __( 'Cancel' ) }}</button>
         </div>
     </div>
 </template>
@@ -39,6 +38,14 @@ export default {
         this.title    =   this.popup.params.title;
         this.message  =   this.popup.params.message;
         this.type     =   this.popup.params.type;
+
+        /**
+         * We need to look for any textarea or input field and focus on it
+         */
+        setTimeout( () => {
+            this.$el.querySelector( 'textarea' )?.focus();
+            this.$el.querySelector( 'input' )?.select();
+        }, 100 );
     },
     methods: {
         __,

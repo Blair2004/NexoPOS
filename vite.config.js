@@ -56,7 +56,6 @@ export default ({ mode }) => {
                     'resources/css/app.css',
                     'resources/css/grid.css',
                     'resources/css/animations.css',
-                    'resources/css/typography.css',
                     'resources/css/fonts.css',
                     'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
 

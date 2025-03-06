@@ -1,4 +1,4 @@
-@reference './light.css';
+@import "tailwindcss";
 
 .ns-grid {
     @apply flex md:flex-row flex-col;

@@ -22,7 +22,7 @@
     position: relative;
     height: 2px;
     width: 100%;
-    @apply bg-info-primary;
+    @apply bg-secondary;
     animation-name: loader-animation;
     animation-duration: 3s;
     animation-iteration-count: infinite;

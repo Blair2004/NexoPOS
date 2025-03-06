@@ -292,7 +292,7 @@ export default {
                 <div class="ns-tab-item">
                     <div class="border p-4 rounded">
                         <!-- We can't display both fields and component at the same time. The component has the priority over fields -->
-                        <div class="-mx-4 flex flex-wrap" v-if="activeTabFields.length > 0 && ! activeTab.component">
+                        <div class="-mx-4 flex flex-wrap" v-if="( activeTabFields && activeTabFields.length ) > 0 && ! activeTab.component">
                             <div :key="`${activeTabIdentifier}-${key}`" :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,key) of activeTabFields">
                                 <ns-field @saved="handleSaved( $event, activeTabIdentifier, field )" @blur="formValidation.checkField( field )" @change="formValidation.checkField( field ) && handleFieldChange( field, activeTabFields )" :field="field"/>
                             </div>

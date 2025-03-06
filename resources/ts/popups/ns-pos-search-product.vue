@@ -1,5 +1,5 @@
 <template>
-    <div id="product-search" class="ns-box shadow-lg w-95vw h-95vh md:h-3/5-screen md:w-half flex flex-col overflow-hidden">
+    <div id="product-search" class="ns-box shadow-lg w-95vw h-95vh md:h-[60vh] md:w-half flex flex-col overflow-hidden">
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3 class="text-font">{{ __( 'Search Product' ) }}</h3>
             <div>

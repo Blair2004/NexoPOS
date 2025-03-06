@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-lg h-95vh md:h-5/6-screen lg:h-5/6-screen w-95vw md:w-2/3-screen lg:w-3/6-screen ns-box flex flex-col">
+    <div class="shadow-lg h-95vh md:h-[60vh] lg:h-[60vh] w-95vw md:w-2/3-screen lg:w-3/6-screen ns-box flex flex-col">
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3 class="font-semibold">{{ __( 'Layaway Parameters' ) }}</h3>
             <div>

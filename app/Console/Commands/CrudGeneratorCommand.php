@@ -255,7 +255,7 @@ class CrudGeneratorCommand extends Command
                     __( 'The CRUD resource "%s" for the module "%s" has been generated at "%s"' ),
                     $this->crudDetails[ 'resource_name' ],
                     $module[ 'name' ],
-                    $fileName
+                    'modules' . DIRECTORY_SEPARATOR . $fileName
                 ) );
             }
         } else {

@@ -142,7 +142,7 @@ class CrudInput
         );
     }
 
-    public static function multiselect( $label, $name, $value, $options, $validation = '', $description = '', $disabled = false )
+    public static function multiselect( $label, $name, $options, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::select(
             label: $label,
