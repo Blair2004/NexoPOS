@@ -78,14 +78,14 @@
 
     /** Floating Menu */
     --color-floating-menu: #333;
-    --color-floating-menu-hover: #444;
-    --color-floating-menu-selected: #444;
+    --color-floating-menu-hover: #555;
+    --color-floating-menu-selected: #555;
     --color-floating-menu-edge: #444;
 
     /** Base Accent */
-    --color-primary: #89895d;
+    --color-primary: #9F9F5E;
     --color-secondary: #89895d;
-    --color-tertiary: #89895d;
+    --color-tertiary: #6F6F51;
 
     /** Error */
     --color-error-primary: var( --color-red-400 );

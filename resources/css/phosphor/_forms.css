@@ -244,7 +244,7 @@
  * Buttons
 **/
 .ns-button {
-    @apply text-fontcolor;
+    @apply text-fontcolor cursor-pointer;
 
     button, a {
         @apply bg-input-button shadow rounded;
@@ -303,14 +303,14 @@
     
     &.hover-default:hover, &.default {
         button, a {
-            @apply bg-input-button text-fontcolor;
+            @apply bg-secondary text-fontcolor;
 
             span.ns-label {
                 @apply bg-surface text-fontcolor;
             }
 
             &:disabled {
-                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+                @apply bg-tertiary text-fontcolor/50 shadow-none border-input-edge cursor-not-allowed text-fontcolor;
             }
         }
     }

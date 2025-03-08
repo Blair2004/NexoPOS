@@ -4,11 +4,11 @@
     }
 
     p, span {
-        @apply text-fontcolor;
+        @apply text-white;
     }
 
     &.danger {
-        @apply border-error-tertiary bg-error-primary;
+        @apply border-error-tertiary bg-error-secondary border;
 
         h1, h2, h3, h4, h5 {
             @apply text-error-tertiary;
@@ -27,7 +27,7 @@
     }
     
     &.warning {
-        @apply border-warning-tertiary bg-warning-primary;
+        @apply border-warning-tertiary bg-warning-secondary border;
 
         h1, h2, h3, h4, h5 {
             @apply text-warning-tertiary;
@@ -46,7 +46,7 @@
     }
     
     &.success {
-        @apply border-success-tertiary bg-success-primary;
+        @apply border-success-tertiary bg-success-secondary border;
 
         h1, h2, h3, h4, h5 {
             @apply text-success-tertiary;
@@ -65,19 +65,16 @@
     }
     
     &.error {
-        @apply border-error-secondary bg-error-primary text-white;
+        @apply border-error-secondary bg-error-secondary border;
 
         h1, h2, h3, h4, h5 {
             @apply text-error-tertiary;
         }
 
-        p {
-            @apply text-white;
-            a {
-                @apply text-error-tertiary;
-                &:hover {
-                    @apply underline;
-                }
+        p > a {
+            @apply text-error-tertiary;
+            &:hover {
+                @apply underline;
             }
         }
     

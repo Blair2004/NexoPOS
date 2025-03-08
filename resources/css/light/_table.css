@@ -40,22 +40,24 @@
             @apply border-table-th-edge;
         }
 
-        tr.info {
-            @apply bg-info-primary text-white;
-        }
-    
-        tr.error {
-            @apply bg-error-primary text-white;
-        }
-    
-        tr.success {
-            @apply bg-green-300 text-white;
-        }
-    
-        tr.warning {
-            @apply bg-warning-primary text-white;
-        }
+        tr {
+            @apply border-table-th-edge;
+            &.info {
+                @apply bg-info-primary text-white;
+            }
         
+            &.error {
+                @apply bg-error-primary text-white;
+            }
+        
+            &.success {
+                @apply bg-green-300 text-white;
+            }
+        
+            &.warning {
+                @apply bg-warning-primary text-white;
+            }
+        }
         .ns-inset-button {
             @apply border-gray-300;
             &.active, &:hover {

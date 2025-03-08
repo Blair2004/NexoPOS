@@ -12,7 +12,7 @@
         <div class="overflow-y-auto flex flex-auto">
             <div class="flex p-2 flex-auto flex-col overflow-y-auto">
                 <div :data-order-id="order.id" class="border-b ns-box-body w-full py-2 ns-order-line" v-for="order of orders" :key="order.id">
-                    <h3 class="text-font">{{ order.title || 'Untitled Order' }}</h3>
+                    <h3 class="text-fontcolor">{{ order.title || 'Untitled Order' }}</h3>
                     <div class="px-2">
                         <div class="flex flex-wrap -mx-4">
                             <div class="w-full md:w-1/2 px-2">

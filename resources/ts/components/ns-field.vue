@@ -141,6 +141,11 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-daterange-picker>
+        <ns-date-time-picker @blur="$emit('blur', field)" @change="changeTouchedState(field, $event)" :field="field"
+            v-if="isDateTimePicker">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-date-time-picker>
         <ns-select-audio @blur="$emit('blur', field)" @change="changeTouchedState(field, $event)" :field="field"
             v-if="isSelectAudio">
             <template v-slot>{{ field.label }}</template>

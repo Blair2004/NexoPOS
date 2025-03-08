@@ -41,7 +41,7 @@
                         </template>
                     </div>
                     <div>
-                        <ns-button :disabled="isSubmitting" @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
+                        <ns-button :disabled="isSubmitting" @click="submitForm()"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
                     </div>
                 </div>
             </div>

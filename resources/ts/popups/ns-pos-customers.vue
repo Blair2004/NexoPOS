@@ -88,12 +88,12 @@
                                                 <div class="flex-auto overflow-y-auto">
                                                     <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-font">
+                                                            <tr class="text-fontcolor">
                                                                 <th colspan="3" width="150" class="p-2 border font-semibold">{{ __( 'Order' ) }}</th>
                                                                 <th width="50" class="p-2 border font-semibold">{{ __( 'Options' ) }}</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-font">
+                                                        <tbody class="text-fontcolor">
                                                             <tr v-if="orders.length === 0">
                                                                 <td class="border p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
                                                             </tr>
@@ -139,11 +139,11 @@
                                                 <div class="flex-auto overflow-y-auto">
                                                     <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-font">
+                                                            <tr class="text-fontcolor">
                                                                 <th colspan="3" width="150" class="p-2 border font-semibold">{{ __( 'Transaction' ) }}</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-font">
+                                                        <tbody class="text-fontcolor">
                                                             <tr v-if="walletHistories.length === 0">
                                                                 <td class="border p-2 text-center" colspan="3">{{ __( 'No History...' ) }}</td>
                                                             </tr>
@@ -180,7 +180,7 @@
                                                 <div class="flex-auto overflow-y-auto">
                                                     <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-font">
+                                                            <tr class="text-fontcolor">
                                                                 <th width="150" class="p-2 border font-semibold">{{ __( 'Name' ) }}</th>
                                                                 <th class="p-2 border font-semibold">{{ __( 'Type' ) }}</th>
                                                                 <th class="p-2 border font-semibold"></th>
@@ -230,7 +230,7 @@
                                                 <div class="flex-auto overflow-y-auto">
                                                     <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-font">
+                                                            <tr class="text-fontcolor">
                                                                 <th width="150" class="p-2 border font-semibold">{{ __( 'Name' ) }}</th>
                                                                 <th class="p-2 border font-semibold">{{ __( 'Points' ) }}</th>
                                                                 <th class="p-2 border font-semibold">{{ __( 'Target' ) }}</th>

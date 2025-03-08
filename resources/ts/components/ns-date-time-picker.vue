@@ -4,14 +4,14 @@
         <div class="ns-button">
             <button @click="visible = !visible" :class="field && field.label && field.label.length > 0 ? 'mt-1 border border-input-edge' : ''" class="shadow rounded cursor-pointer w-full p-1 flex items-center text-font">
                 <i class="las la-clock text-xl"></i>
-                <span class="mx-1 text-sm" v-if="field">
+                <template class="mx-1 text-sm" v-if="field">
                     <span v-if="! [ null, '', undefined ].includes( field.value )">{{ fieldDate.format( 'YYYY-MM-DD HH:mm' ) }}</span>
                     <span v-if="[ null, '', undefined ].includes( field.value )">N/A</span>
-                </span>
-                <span class="mx-1 text-sm" v-if="date">
+                </template>
+                <template class="mx-1 text-sm" v-if="date">
                     <span v-if="! [ null, '', undefined ].includes( date )">{{ fieldDate.format( 'YYYY-MM-DD HH:mm' ) }}</span>
                     <span v-if="[ null, '', undefined ].includes( date )">N/A</span>
-                </span>
+                </template>
             </button>
         </div>
         <p class="text-sm text-fontcolor-soft py-1" v-if="field">{{ field.description }}</p>

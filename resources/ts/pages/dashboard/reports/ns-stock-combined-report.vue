@@ -65,31 +65,31 @@
                 </div>
             </div>
             <div class="box bg-box-background">
-                <div class="box-body text-font">
-                    <table class="min-w-fit w-full table-auto">
+                <div class="box-body text-fontcolor">
+                    <table class="min-w-fit ns-table w-full table-auto">
                         <thead class="text-sm">
                             <tr class="font-bold">
-                                <td class="border p-2 w-1/3">{{ __( 'Name' ) }}</td>
-                                <td class="border p-2">
+                                <th class="border p-2 w-1/3">{{ __( 'Name' ) }}</th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Initial Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Ini. Qty' ) }}</span>
-                                </td>
-                                <td class="border p-2">
+                                </th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Added Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Add. Qty' ) }}</span>
-                                </td>
-                                <td class="border p-2">
+                                </th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Sold Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Sold Qty' ) }}</span>
-                                </td>
-                                <td class="border p-2">
+                                </th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Defective Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Defec. Qty' ) }}</span>
-                                </td>
-                                <td class="border p-2">
+                                </th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Final Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Final Qty' ) }}</span>
-                                </td>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="text-xs">

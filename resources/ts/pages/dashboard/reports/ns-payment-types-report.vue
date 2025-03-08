@@ -38,13 +38,13 @@
             <div class="bg-box-background shadow rounded my-4">
                 <div class="border-b border-box-edge">
                     <table class="table ns-table w-full">
-                        <thead class="text-font">
+                        <thead class="text-fontcolor">
                             <tr>
                                 <th class="text-fontcolor border p-2 text-left">{{ __( 'Summary' ) }}</th>
                                 <th width="150" class="text-fontcolor border p-2 text-right">{{ __( 'Total' ) }}</th>
                             </tr>
                         </thead>
-                        <tbody class="text-font">
+                        <tbody class="text-fontcolor">
                             <tr :key=index v-for="(summary,index) of report.summary" class="font-semibold">
                                 <td class="p-2 border border-box-edge">{{ summary.label }}</td>
                                 <td class="p-2 border text-right">{{ nsCurrency( summary.total ) }}</td>
@@ -77,10 +77,12 @@ export default {
         return {
             startDateField: {
                 type: 'datetimepicker',
+                name: 'start_date',
                 value: moment( ns.date.current ).startOf( 'day' ).format( 'YYYY-MM-DD HH:mm:ss' ),
             },
             endDateField: {
                 type: 'datetimepicker',
+                name: 'end_date',
                 value: moment( ns.date.current ).endOf( 'day' ).format( 'YYYY-MM-DD HH:mm:ss' ),
             },
             report: [],

@@ -158,7 +158,7 @@ export default {
                     </div>
                     <div class="ns-box rounded">
                         <div class="ns-body p-2 flex justify-between items-center my-3">
-                            <slot name="add"><span class="text-font">{{ __( 'Add Rule' ) }}</span></slot>
+                            <slot name="add"><span class="text-fontcolor">{{ __( 'Add Rule' ) }}</span></slot>
                             <div class="ns-button info">
                                 <button @click="addRule()" class="rounded font-semibold flex items-center justify-center h-10 w-10">
                                     <i class="las la-plus"></i>

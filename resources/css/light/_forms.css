@@ -303,28 +303,28 @@
     
     &.hover-default:hover, &.default {
         button, a {
-            @apply bg-input-button text-fontcolor;
+            @apply bg-secondary text-white;
 
             span.ns-label {
                 @apply bg-surface text-fontcolor;
             }
 
             &:disabled {
-                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+                @apply bg-tertiary text-white/50 shadow-none border-input-edge cursor-not-allowed text-fontcolor;
             }
         }
     }
     
     &.hover-info:hover, &.info {
         button, a {
-            @apply bg-secondary text-white;
+            @apply bg-info-secondary text-white;
 
             span.ns-label {
                 @apply bg-input-background text-fontcolor;
             }
 
             &:disabled {
-                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+                @apply bg-info-secondary/80 text-fontcolor-hard/50 shadow-none border-input-edge cursor-not-allowed text-fontcolor;
             }
         }
     }

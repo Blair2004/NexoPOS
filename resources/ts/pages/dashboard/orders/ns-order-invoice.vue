@@ -91,7 +91,7 @@
                     <tbody>
                         <tr v-for="product of order.products" :key="product.id">
                             <td class="p-2 border">
-                                <h3 class="text-font">{{ product.name }}</h3>
+                                <h3 class="text-fontcolor">{{ product.name }}</h3>
                                 <span class="text-sm text-fontcolor-soft">{{ product.unit }}</span>
                             </td>
                             <td class="p-2 border text-center text-font">{{ nsCurrency( product.unit_price ) }}</td>

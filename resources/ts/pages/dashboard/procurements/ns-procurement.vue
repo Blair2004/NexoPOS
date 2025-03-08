@@ -889,7 +889,7 @@ export default {
                                                     </td>
                                                 </template>
                                             </tr>
-                                            <tr class="text-font">
+                                            <tr class="text-fontcolor">
                                                 <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'tax_value' )"></td>
                                                 <td class="p-2 border">{{ nsCurrency( totalTaxValues ) }}</td>
                                                 <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'total_purchase_price' ) - ( Object.keys( form.columns ).indexOf( 'tax_value' ) + 1 )"></td>
