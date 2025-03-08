@@ -66,9 +66,9 @@
     --color-pre: rgb( 107 114 128 );
 
     /** Tabs */
-    --color-tab-active: #5b5246;
+    --color-tab-active: #433e37;
     --color-tab-active-border: #333;
-    --color-tab-inactive: #433e37;
+    --color-tab-inactive: #39352f;
     --color-tab-table-th: #333;
     --color-tab-table-th-edge: #444;
 

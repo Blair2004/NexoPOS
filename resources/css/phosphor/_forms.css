@@ -303,7 +303,7 @@
     
     &.hover-default:hover, &.default {
         button, a {
-            @apply bg-secondary text-fontcolor;
+            @apply bg-secondary text-white;
 
             span.ns-label {
                 @apply bg-surface text-fontcolor;

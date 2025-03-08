@@ -10,7 +10,7 @@
 
 @import "./phosphor/_box.css";
 @import "./phosphor/_notices.css";
-/* @import "./phosphor/_floating-notices.css"; */
+@import "./phosphor/_floating-notices.css";
 @import './phosphor/_forms.css';
 @import './phosphor/_crud.css';
 @import './phosphor/_dashboard.css';
