@@ -40,12 +40,14 @@ class SettingsListener
             TestWorkerJob::dispatch( $notification_id )
                 ->delay( now() );
 
-            $this->notificationService->create( [
-                'title' => __( 'Workers Aren\'t Running' ),
-                'description' => __( 'The workers has been enabled, but it looks like NexoPOS can\'t run workers. This usually happen if supervisor is not configured correctly.' ),
-                'url' => 'https://laravel.com/docs/8.x/queues#supervisor-configuration',
-                'identifier' => $notification_id,
-            ] )->dispatchForGroup( Role::namespace( 'admin' ) );
+            $this->notificationService->create(
+                title: __( 'Workers Disabled' ),
+                description: __( 'The workers has been disabled. You can enable them by going to the settings.' ),
+                identifier: $notification_id,
+                url: route( 'ns.settings.workers' ),
+            )->dispatchForGroup(
+                [ Role::namespace( 'admin' ) ]
+            );
         }
     }
 }

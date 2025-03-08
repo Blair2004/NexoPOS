@@ -2606,12 +2606,15 @@ class OrdersService
              */
             $notificationService = app()->make( NotificationService::class );
 
-            $notificationService->create( [
-                'title' => __( 'Unpaid Orders Turned Due' ),
-                'identifier' => $notificationID,
-                'url' => ns()->route( 'ns.dashboard.orders' ),
-                'description' => sprintf( __( '%s order(s) either unpaid or partially paid has turned due. This occurs if none has been completed before the expected payment date.' ), $orders->count() ),
-            ] )->dispatchForGroup( [
+            $notificationService->create(
+                title: __( 'Unpaid Orders Turned Due' ),
+                identifier: $notificationID,
+                url: ns()->route( 'ns.dashboard.orders' ),
+                description: sprintf(
+                    __( '%s order(s) either unpaid or partially paid has turned due. This occurs if none has been completed before the expected payment date.' ),
+                    $orders->count()
+                )
+            )->dispatchForGroup( [
                 Role::namespace( 'admin' ),
                 Role::namespace( 'nexopos.store.administrator' ),
             ] );

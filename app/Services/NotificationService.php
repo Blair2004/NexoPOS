@@ -26,15 +26,13 @@ class NotificationService
 
     private $notification;
 
+    private array $actions;
+
     /**
      * @param array $config [ 'title', 'url', 'identifier', 'source', 'dismissable', 'description' ]
      */
-    public function create( string|array $title, string $description = '', string $url = '#', ?string $identifier = null, string $source = 'system', bool $dismissable = true )
+    public function create( string $title, string $description = '', string $url = '#', ?string $identifier = null, string $source = 'system', bool $dismissable = true, array $actions = [] )
     {
-        if ( is_array( $title ) ) {
-            extract( $title );
-        }
-
         if ( $description && $title ) {
             $this->title = $title;
             $this->url = $url ?: '#';
@@ -42,6 +40,7 @@ class NotificationService
             $this->source = $source ?? 'system';
             $this->dismissable = $dismissable ?? true;
             $this->description = $description;
+            $this->actions = $actions;
 
             return $this;
         }
@@ -124,6 +123,7 @@ class NotificationService
             $this->notification->source = $this->source;
             $this->notification->url = $this->url;
             $this->notification->identifier = $this->identifier;
+            $this->notification->actions    =   $this->actions;
             $this->notification->save();
         } else {
             $this->notification->title = $this->title;
@@ -131,6 +131,7 @@ class NotificationService
             $this->notification->dismissable = $this->dismissable;
             $this->notification->source = $this->source;
             $this->notification->url = $this->url;
+            $this->notification->actions    =   $this->actions;
             $this->notification->save();
         }
     }

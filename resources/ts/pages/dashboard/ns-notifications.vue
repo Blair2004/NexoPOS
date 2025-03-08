@@ -16,14 +16,21 @@
                     </div>
                     <div class="overflow-y-auto flex flex-col flex-auto">
                         <div :key="notification.id" v-for="notification of notifications" class="notification-card notice border-b">
-                            <div class="p-2 cursor-pointer" @click="triggerLink( notification )">
+                            <div class="p-2" :class="notification.actions === null ? 'cursor-pointer' : ''" @click="triggerLink( notification )">
                                 <div class="flex items-center justify-between">
                                     <h1 class="font-semibold">{{ notification.title }}</h1>
                                     <ns-close-button @click="closeNotice( $event, notification )"></ns-close-button>
                                 </div>
                                 <p class="py-1 text-sm">{{ notification.description }}</p>
-                                <div class="flex justify-end">
-                                    <span class="text-xs date">{{ timespan( notification.updated_at ) }}</span>
+                                <div class="flex justify-between">
+                                    <div class="-mx-1 flex">
+                                        <div class="ns-button info px-1" v-for="action of notification.actions">
+                                            <button @click="executeAsync( action, notification )" class="text-xs cursor-pointer px-2 py-1">{{ action.label }}</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs date">{{ timespan( notification.updated_at ) }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -49,9 +56,13 @@ import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import nsCloseButton from '~/components/ns-close-button.vue';
 import { nsNumberAbbreviate } from '~/filters/currency';
 import { timespan } from '~/libraries/timespan';
+import NsButton from '~/components/ns-button.vue';
+import { nsConfirmPopup } from '~/components/components';
+import { StatusResponse } from '~/status-response';
 
 declare const Echo;
 declare const ns;
+declare const Popup;
 
 export default {
     name: 'ns-notifications',
@@ -64,7 +75,8 @@ export default {
         }
     },
     components: {
-        nsCloseButton
+        nsCloseButton,
+        NsButton,
     },
     mounted() {
         document.addEventListener( 'click', this.checkClickedItem );
@@ -103,6 +115,35 @@ export default {
         __,
         timespan,
         nsNumberAbbreviate,
+        executeAsync( action, notification ) {
+            Popup.show( nsConfirmPopup, {
+                title: __( 'Confirm Your Action' ),
+                message: action.message || __( 'Are you sure you want to perform this action ?' ),
+                onAction: ( hasConfirmed ) => {
+                    if ( hasConfirmed ) {
+                        const verb =   action.data !== undefined ? 'get' : 'post';
+
+                        /**
+                         * We'll keep the reference of the notification
+                         * so that after the Async operation, the notification
+                         * are pulled from the server.
+                         */
+                        action.url.search( '/\?/' ) === -1 ? action.url += `?notification_id=${notification.id}` : action.url += `&notification_id=${notification.id}`;
+
+                        nsHttpClient[ verb ]( action.url, action.data )
+                            .subscribe({
+                                next: (result: StatusResponse ) => {
+                                    nsSnackBar.success( result.message ).subscribe();
+                                    this.loadNotifications();
+                                },
+                                error: (error) => {
+                                    nsSnackBar.error( error.message ).subscribe();
+                                }
+                            })
+                    }
+                }
+            })
+        },
         pushNotificationIfNew( notification ) {
             const exists     =   this.notifications.filter( _notification => _notification.id === notification.id ).length > 0;
 
@@ -156,7 +197,7 @@ export default {
         },
 
         triggerLink( notification ) {
-            if ( notification.url !== 'url' ) {
+            if ( notification.url !== 'url' && notification.actions === null ) {
                 return window.open( notification.url, '_blank' );
             }
         },

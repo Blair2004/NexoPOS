@@ -26,7 +26,8 @@ class DoctorCommand extends Command
         {--set-unit-visibility=}
         {--products=}
         {--fix-duplicate-options}
-        {--fix-products-cogs}';
+        {--fix-products-cogs}
+        {--purge-orphan-migrations}';
 
     /**
      * The console command description.
@@ -105,6 +106,10 @@ class DoctorCommand extends Command
                 products: $this->option( 'products' ),
                 visibility: $this->option( 'set-unit-visibility' )
             );
+        }
+
+        if ( $this->option( 'purge-orphan-migrations' ) ) {
+            return $doctorService->purgeRemovedMigrations();
         }
 
         if ( $this->option( 'fix-orders-products' ) ) {

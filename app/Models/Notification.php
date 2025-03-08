@@ -33,6 +33,23 @@ class Notification extends NsModel
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    /**
+     * We saving, we want to make sure the "actions" property is actually a json and not an array. 
+     * We also want to make sure while retreiving, the JSON is converted to an array.
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving( function ( $notification ) {
+            $notification->actions = json_encode( $notification->actions );
+        } );
+
+        static::retrieved( function ( $notification ) {
+            $notification->actions = json_decode( $notification->actions, true );
+        } );
+    }
+
     public function user()
     {
         return $this->belongsTo( User::class );

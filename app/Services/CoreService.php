@@ -332,13 +332,13 @@ class CoreService
                 ns()->option->set( 'ns_has_symbolic_links_missing_notifications', true );
 
                 $notification = app()->make( NotificationService::class );
-                $notification->create( [
-                    'title' => __( 'Symbolic Links Missing' ),
-                    'identifier' => NotificationsEnum::NSSYMBOLICLINKSMISSING,
-                    'source' => 'system',
-                    'url' => 'https://my.nexopos.com/en/documentation/troubleshooting/broken-media-images?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
-                    'description' => __( 'The Symbolic Links to the public directory is missing. Your medias might be broken and not display.' ),
-                ] )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+                $notification->create(
+                    title: __( 'Symbolic Links Missing' ),
+                    identifier: NotificationsEnum::NSSYMBOLICLINKSMISSING,
+                    source: 'system',
+                    url: 'https://my.nexopos.com/en/documentation/troubleshooting/broken-media-images?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
+                    description: __( 'The Symbolic Links to the public directory is missing. Your medias might be broken and not display.' ),
+                )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
             }
         } else {
             /**
@@ -358,13 +358,13 @@ class CoreService
     private function emitCronMisconfigurationNotification(): void
     {
         $notification = app()->make( NotificationService::class );
-        $notification->create( [
-            'title' => __( 'Cron Disabled' ),
-            'identifier' => NotificationsEnum::NSCRONDISABLED,
-            'source' => 'system',
-            'url' => 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
-            'description' => __( "Cron jobs aren't configured correctly on NexoPOS. This might restrict necessary features. Click here to learn how to fix it." ),
-        ] )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+        $notification->create(
+            title: __( 'Cron Disabled' ),
+            identifier: NotificationsEnum::NSCRONDISABLED,
+            source: 'system',
+            url: 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
+            description: __( "Cron jobs aren't configured correctly on NexoPOS. This might restrict necessary features. Click here to learn how to fix it." ),
+        )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
     }
 
     /**
@@ -374,13 +374,13 @@ class CoreService
     private function emitNotificationForTaskSchedulingMisconfigured(): void
     {
         $notification = app()->make( NotificationService::class );
-        $notification->create( [
-            'title' => __( 'Task Scheduling Disabled' ),
-            'identifier' => NotificationsEnum::NSWORKERDISABLED,
-            'source' => 'system',
-            'url' => 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
-            'description' => __( 'NexoPOS is unable to schedule background tasks. This might restrict necessary features. Click here to learn how to fix it.' ),
-        ] )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
+        $notification->create(
+            title: __( 'Task Scheduling Disabled' ),
+            identifier: NotificationsEnum::NSWORKERDISABLED,
+            source: 'system',
+            url: 'https://my.nexopos.com/en/documentation/troubleshooting/workers-or-async-requests-disabled?utm_source=nexopos&utm_campaign=warning&utm_medium=app',
+            description: __( 'NexoPOS is unable to schedule background tasks. This might restrict necessary features. Click here to learn how to fix it.' ),
+        )->dispatchForGroup( Role::namespace( Role::ADMIN ) );
     }
 
     /**

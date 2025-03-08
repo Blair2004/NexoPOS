@@ -967,12 +967,12 @@ class ProcurementService
         } );
 
         if ( $procurements->count() ) {
-            ns()->notification->create( [
-                'title' => __( 'Procurement Automatically Stocked' ),
-                'identifier' => 'ns-warn-auto-procurement',
-                'url' => url( '/dashboard/procurements' ),
-                'description' => sprintf( __( '%s procurement(s) has recently been automatically procured.' ), $procurements->count() ),
-            ] )->dispatchForGroup( [
+            ns()->notification->create(
+                title: __( 'Procurement Automatically Stocked' ),
+                identifier: 'ns-warn-auto-procurement',
+                url: url( '/dashboard/procurements' ),
+                description: sprintf( __( '%s procurement(s) has recently been automatically procured.' ), $procurements->count() ),
+            )->dispatchForGroup( [
                 Role::namespace( 'admin' ),
                 Role::namespace( 'nexopos.store.administrator' ),
             ] );

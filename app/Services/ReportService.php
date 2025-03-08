@@ -187,18 +187,21 @@ class ReportService
                 ];
             }
 
+            $message = __( 'A stock operation has recently been detected, however NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
+
             /**
              * @todo make sure outgoing link takes to relevant article
              *
              * @var NotificationService
              */
-            $message = __( 'A stock operation has recently been detected, however NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
             $notification = app()->make( NotificationService::class );
-            $notification->create( [
-                'title' => __( 'Untracked Stock Operation' ),
-                'description' => $message,
-                'url' => 'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
-            ] )->dispatchForGroup( Role::namespace( 'admin' ) );
+            $notification->create(
+                title: __( 'Untracked Stock Operation' ),
+                description: $message,
+                url: 'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
+            )->dispatchForGroup(
+                [ Role::namespace( 'admin' ) ]
+            );
 
             return [
                 'status' => 'error',
@@ -374,19 +377,15 @@ class ReportService
 
     public function notifyIncorrectDashboardReport()
     {
-        /**
-         * @todo make sure outgoing link takes to relevant article
-         *
-         * @var NotificationService
-         */
         $message = __( 'A stock operation has recently been detected, however NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
-
-        $notification = app()->make( NotificationService::class );
-        $notification->create( [
-            'title' => __( 'Untracked Stock Operation' ),
-            'description' => $message,
-            'url' => 'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
-        ] )->dispatchForGroup( Role::namespace( 'admin' ) );
+        
+        ns()->notification->create(
+            title: __( 'Untracked Stock Operation' ),
+            description: $message,
+            url: 'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation',
+        )->dispatchForGroup(
+            [ Role::namespace( 'admin' ) ]
+        );
 
         return [
             'status' => 'error',

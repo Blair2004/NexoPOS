@@ -32,6 +32,7 @@ return new class extends Migration
                 $table->string( 'url' )->default( '#' );
                 $table->string( 'source' )->default( 'system' );
                 $table->boolean( 'dismissable' )->default( true );
+                $table->json( 'actions' )->nullable();
                 $table->timestamps();
             } );
         }

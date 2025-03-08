@@ -505,15 +505,15 @@ class CustomerService
                  * @var NotificationService
                  */
                 $notify = app()->make( NotificationService::class );
-                $notify->create( [
-                    'title' => __( 'Issuing Coupon Failed' ),
-                    'description' => sprintf(
+                $notify->create(
+                    title: __( 'Issuing Coupon Failed' ),
+                    description: sprintf(
                         __( 'Unable to apply a coupon attached to the reward "%s". It looks like the coupon no more exists.' ),
                         $reward->name
                     ),
-                    'identifier' => 'coupon-issuing-issue-' . $reward->id,
-                    'url' => ns()->route( 'ns.dashboard.rewards-edit', [ 'reward' => $reward->id ] ),
-                ] )->dispatchForGroupNamespaces( [ 'admin', 'nexopos.store.administrator' ] );
+                    identifier: 'coupon-issuing-issue-' . $reward->id,
+                    url: ns()->route( 'ns.dashboard.rewards-edit', [ 'reward' => $reward->id ] ),
+                )->dispatchForGroupNamespaces( [ 'admin', 'nexopos.store.administrator' ] );
             }
         }
     }
