@@ -6,8 +6,8 @@
                     <button @click="subMonth()" class="w-8 h-8 ns-inset-button border outline-hidden text-numpad-text rounded"><i class="las la-angle-left"></i></button>
                 </div>
                 <div class="flex flex-auto font-semibold text-fontcolor justify-center">
-                    <span class="mr-2 cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
-                    <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
+                    <span class="mr-2 cursor-pointer border-b border-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
+                    <span class="cursor-pointer border-b border-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                 </div>
                 <div>
                     <button @click="addMonth()" class="w-8 h-8 ns-inset-button border outline-hidden text-numpad-text rounded"><i class="las la-angle-right"></i></button>
@@ -38,8 +38,8 @@
                     <button @click="subYear()" class="w-8 h-8 ns-inset-button outline-hidden border rounded"><i class="las la-angle-left"></i></button>
                 </div>
                 <div class="flex flex-auto font-semibold text-fontcolor justify-center">
-                    <span class="mr-2 border-b border-info-secondary border-dashed">{{ currentDay.format( 'MMM' ) }}</span>
-                    <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
+                    <span class="mr-2 border-b border-secondary border-dashed">{{ currentDay.format( 'MMM' ) }}</span>
+                    <span class="cursor-pointer border-b border-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                 </div>
                 <div>
                     <button @click="addYear()" class="w-8 h-8 ns-inset-button outline-hidden border rounded"><i class="las la-angle-right"></i></button>
@@ -48,7 +48,7 @@
             <div class="grid grid-flow-row grid-cols-3 grid-rows-1 gap-0 text-fontcolor divide-x divide-y border-b border-box-background">
                 <div :key="_index" v-for="( monthIndex, _index ) in months" class="h-8 flex justify-center items-center text-sm border-box-background">
                     <div class="w-full h-full">
-                        <div :class="momentCopy.month( monthIndex ).format( 'MM' ) === currentDay.format( 'MM' ) ? 'bg-info-secondary text-white' : 'hover:bg-numpad-hover'" class="h-full w-full border-box-background flex items-center justify-center cursor-pointer" @click="setMonth( monthIndex )">
+                        <div :class="momentCopy.month( monthIndex ).format( 'MM' ) === currentDay.format( 'MM' ) ? 'bg-secondary text-white' : 'hover:bg-numpad-hover'" class="h-full w-full border-box-background flex items-center justify-center cursor-pointer" @click="setMonth( monthIndex )">
                             {{ momentCopy.format( 'MMM' ) }}
                         </div>
                     </div>
@@ -66,8 +66,8 @@
                     <button @click="subMonth()" class="w-8 h-8 ns-inset-button border rounded"><i class="las la-angle-left"></i></button>
                 </div>
                 <div class="flex flex-auto font-semibold text-fontcolor justify-center">
-                    <span class="mr-2 cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
-                    <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
+                    <span class="mr-2 cursor-pointer border-b border-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
+                    <span class="cursor-pointer border-b border-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                 </div>
                 <div>
                     <button @click="addMonth()" class="w-8 h-8 ns-inset-button border rounded"><i class="las la-angle-right"></i></button>
