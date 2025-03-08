@@ -6,7 +6,7 @@
             <span class="rounded-full text-6xl w-24 h-24 flex items-center justify-center bg-white shadow text-purple-500 mb-4"><i class="las la-frown"></i></span>
             <h1 class="text-white text-3xl lg:text-5xl font-bold text-center">{!! $title ?? __( '404 Error' ) !!}</h1>
             <div class="rounded-lg p-4 bg-white my-4 md:w-1/2 shadow">
-                <div class="p-4 text-primary text-center text-sm">
+                <div class="p-4 text-fontcolor text-center text-sm">
                     {{ __( 'We\'re unable to locate the page you\'re searching for. This page was moved, deleted or simply invalid. You can start by giving another shot clicking on "Try Again". If the issue persist, uses the bellow output to receive support.' ) }}
                 </div>
                 <p class="md:w-auto w-95vw bg-gray-700 text-gray-100 lg:text-lg text-center p-4 my-2">{!! $message !!}</p>

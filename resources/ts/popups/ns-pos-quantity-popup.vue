@@ -1,11 +1,11 @@
 <template>
-    <div class="ns-box shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-2/5-screen xl:w-2/5-screen relative">
+    <div class="ns-box shadow min-h-[40vh] w-3/4-screen md:w-3/5-screen lg:w-2/5-screen xl:w-2/5-screen relative">
         <div id="loading-overlay" v-if="isLoading" style="background:rgb(202 202 202 / 49%)" class="flex w-full h-full absolute top-O left-0 items-center justify-center">
             <ns-spinner></ns-spinner>
         </div>
         <div class="flex-shrink-0 flex justify-between items-center p-2 border-b ns-box-header">
             <div>
-                <h1 class="text-xl font-bold text-primary text-center">{{ __( 'Define Quantity' ) }}</h1>
+                <h1 class="text-xl font-bold text-fontcolor text-center">{{ __( 'Define Quantity' ) }}</h1>
             </div>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>

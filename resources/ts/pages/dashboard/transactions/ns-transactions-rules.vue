@@ -1,5 +1,5 @@
 <template>
-    <div v-for="(rule, index) of rules" :key="index" class="rounded shadow text-primary overflow-hidden bg-box-background flex mb-2">
+    <div v-for="(rule, index) of rules" :key="index" class="rounded shadow text-fontcolor overflow-hidden bg-box-background flex mb-2">
         <div class="flex">
             <div @click="setRuleAction( rule, 'on' )" class="hover:bg-numpad-hover cursor-pointer p-2 pr-4">
                 {{ __( 'On : {action}' ).replace( '{action}', getActionName( rule.on ) ) }}
@@ -30,15 +30,15 @@
             </div>
         </div>
         <div class="flex flex-auto justify-end">
-            <div @click="saveRule( rule )" class="p-2 border-l-box-edge border-l hover:bg-info-secondary hover:border-info-secondary cursor-pointer text-primary">
+            <div @click="saveRule( rule )" class="p-2 border-l-box-edge border-l hover:bg-info-secondary hover:border-info-secondary cursor-pointer text-font">
                 <i class="las la-save"></i> {{  __( 'Save' ) }}
             </div>
-            <div @click="deleteRule( rule )" class="p-2 border-l-box-edge border-l hover:bg-error-secondary hover:border-error-secondary cursor-pointer text-primary">
+            <div @click="deleteRule( rule )" class="p-2 border-l-box-edge border-l hover:bg-error-secondary hover:border-error-secondary cursor-pointer text-font">
                 <i class="lar la-times-circle"></i>
             </div>
         </div>
     </div>
-    <div @click="addNewRule()" class="rounded bg-box-background p-2 cursor-pointer text-primary flex text-center justify-center">
+    <div @click="addNewRule()" class="rounded bg-box-background p-2 cursor-pointer text-fontcolor flex text-center justify-center">
         <span><i class="las la-plus"></i> {{ __( 'Create a new rule' ) }}</span>
     </div>
 </template>

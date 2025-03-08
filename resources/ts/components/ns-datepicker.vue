@@ -1,7 +1,7 @@
 <template>
     <div class="picker">
         <div class="ns-button">
-            <button @click="visible = !visible" class="rounded cursor-pointer border border-input-edge shadow w-full px-1 py-1 flex items-center text-primary">
+            <button @click="visible = !visible" class="rounded cursor-pointer border shadow w-full px-1 py-1 flex items-center text-font">
                 <i class="las la-clock text-2xl"></i>
                 <span class="mx-1 text-sm">
                     <span>{{ label || __( 'Date' ) }} : </span>

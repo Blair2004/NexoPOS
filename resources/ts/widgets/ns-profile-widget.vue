@@ -1,7 +1,7 @@
 <template>
-    <div id="ns-best-cashiers" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
+    <div id="ns-profile" class="flex ns-box flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="flex-auto">
-            <div class="head text-center border-b w-full flex justify-between items-center p-2">
+            <div class="head text-center ns-box-header border-b w-full flex justify-between items-center p-2">
                 <h5>{{ __( 'Profile' ) }}</h5>
                 <div class="flex -mx-1">
                     <div class="px-1">
@@ -14,11 +14,11 @@
             </div>
             <div class="body">
                 <div class="h-40 flex items-center justify-center">
-                    <div class="rounded-full border-4 border-gray-400 bg-white shadow-lg overflow-hidden">
+                    <div class="rounded-full border-4 border-secondary bg-white shadow-lg overflow-hidden">
                         <ns-avatar-image  :size="32" :url="user.attributes.avatar_link" :name="user.username"></ns-avatar-image>
                     </div>
                 </div>
-                <div class="border-t border-box-edge">
+                <div class="border-t ns-box-body">
                     <ul>
                         <li v-for="(detail, key) of profileDetails" :key="key" class="border-b border-box-edge p-2 flex justify-between">
                             <span>{{ detail.label }}</span>

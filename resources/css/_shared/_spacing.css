@@ -1,0 +1,26 @@
+@theme {
+    --spacing-95vh: 95vh;
+    --spacing-half: 50vw;
+    --spacing-1/3-screen: 33.333333vw;
+    --spacing-1/4-screen: 25vw;
+    --spacing-1/5-screen: 20vw;
+    --spacing-1/6-screen: 16.666667vw;
+    --spacing-1/7-screen: 14.285714vw;
+    --spacing-1/12-screen: 8.333333vw;
+    --spacing-2/3-screen: 66.666667vw;
+    --spacing-2/5-screen: 40vw;
+    --spacing-2/7-screen: 28.571429vw;
+    --spacing-3/4-screen: 75vw;
+    --spacing-3/5-screen: 60vw;
+    --spacing-3/7-screen: 42.857143vw;
+    --spacing-4/5-screen: 80vw;
+    --spacing-4/7-screen: 57.142857vw;
+    --spacing-5/6-screen: 83.333333vw;
+    --spacing-5/7-screen: 71.428571vw;
+    --spacing-6/7-screen: 85.714286vw;
+    --spacing-72: 18rem;
+    --spacing-84: 21rem;
+    --spacing-96: 24rem;
+    --spacing-108: 27rem;
+    --spacing-120: 30rem;
+}

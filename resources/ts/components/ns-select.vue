@@ -1,7 +1,7 @@
 <template>
-    <div class="flex flex-col flex-auto ns-select">
-        <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'has-error' : 'is-pristine'" class="border-2 mt-1 relative rounded-md shadow-sm mb-1 overflow-hidden">
+    <div class="flex flex-col flex-auto ns-select" :class="hasError ? 'has-error' : 'is-pristine'" >
+        <label :for="field.name" class="block leading-5 font-medium"><slot></slot></label>
+        <div class="border mt-1 relative rounded-md shadow-sm mb-1 overflow-hidden">
             <select 
                 :disabled="field.disabled ? field.disabled : false" 
                 :name="field.name" v-model="field.value" 

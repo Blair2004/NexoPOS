@@ -746,8 +746,8 @@ export default {
         <template v-if="form.main">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-primary">{{ form.main.label || __( 'No title is provided' ) }}</label>
-                    <div for="title" class="text-sm my-2 -mx-1 flex text-primary">
+                    <label for="title" class="font-bold my-2 text-font">{{ form.main.label || __( 'No title is provided' ) }}</label>
+                    <div for="title" class="text-sm my-2 -mx-1 flex text-font">
                         <div class="px-1" @click="showInfo = !showInfo">
                             <span v-if="!showInfo" class="cursor-pointer rounded-full ns-inset-button border px-2 py-1">{{ __( 'Show Details' ) }}</span>
                             <span v-if="showInfo" class="cursor-pointer rounded-full ns-inset-button border px-2 py-1">{{ __( 'Hide Details' ) }}</span>
@@ -765,11 +765,11 @@ export default {
                         :disabled="form.main.disabled"
                         type="text" 
                         :class="form.main.disabled ? '' : ''"
-                        class="flex-auto outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-none px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
-                    <button @click="reloadEntities()" class="outline-none px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
+                        class="flex-auto outline-hidden h-10 px-2">
+                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-hidden px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                    <button @click="reloadEntities()" class="outline-hidden px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
                 </div>
-                <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                <p class="text-xs text-fontcolor py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
@@ -796,10 +796,10 @@ export default {
                 <div class="px-4 w-full">
                     <div id="tabbed-card" class="ns-tab">
                         <div id="card-header" class="flex flex-wrap">
-                            <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg flex rounded-tr-lg text-primary">
+                            <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg flex rounded-tr-lg text-font">
                                 {{ tab.label }}
                                 <template v-if="tab.identifier === 'products'">
-                                    <div class="ml-2 rounded-full bg-info-tertiary text-primary h-6 min-w-6 flex items-center justify-center">
+                                    <div class="ml-2 rounded-full bg-info-tertiary text-fontcolor h-6 min-w-6 flex items-center justify-center">
                                         {{ form.products.length }}
                                     </div>
                                 </template>
@@ -823,14 +823,14 @@ export default {
                                             v-model="searchValue"
                                             type="text" 
                                             :placeholder="__( 'SKU, Barcode, Name' )"
-                                            class="flex-auto text-primary outline-none h-10 px-2">
+                                            class="flex-auto text-fontcolor outline-hidden h-10 px-2">
                                     </div>
                                     <div class="h-0">
                                         <div class="shadow bg-floating-menu relative z-10">
-                                            <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b hover:bg-floating-menu-hover border-floating-menu-edge p-2 text-primary">
-                                                <span class="block font-bold text-primary">{{ product.name }}</span>
+                                            <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b hover:bg-floating-menu-hover border-floating-menu-edge p-2 text-font">
+                                                <span class="block font-bold text-font">{{ product.name }}</span>
                                                 <span class="block text-sm text-priamry">{{ __( 'SKU' ) }} : {{ product.sku }}</span>
-                                                <span class="block text-sm text-primary">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
+                                                <span class="block text-sm text-font">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
                                             </div>
                                         </div>
                                     </div>
@@ -839,13 +839,13 @@ export default {
                                     <table class="w-full ns-table">
                                         <thead>
                                             <tr>
-                                                <td v-for="( column, key ) of form.columns" width="200" :key="key" class="text-primary p-2 border">{{ column.label }}</td>
+                                                <td v-for="( column, key ) of form.columns" width="200" :key="key" class="text-fontcolor p-2 border">{{ column.label }}</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'error border-2 border-error-primary' : ''">
                                                 <template v-for="( column, key ) of form.columns">                                                                                                       
-                                                    <td :key="key" v-if="column.type === 'name'" width="500" class="p-2 text-primary border">
+                                                    <td :key="key" v-if="column.type === 'name'" width="500" class="p-2 text-fontcolor border">
                                                         <span class="">{{ product.name }}</span>
                                                         <div class="flex">
                                                             <div class="flex md:flex-row flex-col md:-mx-1">
@@ -867,13 +867,13 @@ export default {
                                                             </div>
                                                         </div>
                                                     </td> 
-                                                    <td :key="key" v-if="column.type === 'text'" @click="triggerKeyboard( product.procurement, key, index )" class="text-primary border cursor-pointer">
+                                                    <td :key="key" v-if="column.type === 'text'" @click="triggerKeyboard( product.procurement, key, index )" class="text-fontcolor border cursor-pointer">
                                                         <div class="flex justify-center">
-                                                            <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
-                                                            <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ product.procurement[ key ] }}</span>
+                                                            <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-hidden border-dashed py-1 border-b border-info-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
+                                                            <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-hidden border-dashed py-1 border-b border-info-primary text-sm">{{ product.procurement[ key ] }}</span>
                                                         </div>
                                                     </td>
-                                                    <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-primary border">
+                                                    <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-fontcolor border">
                                                         <div class="flex items-start">
                                                             <div class="input-group rounded border-2">
                                                                 <select @change="updateLine( index )" v-model="product.procurement[ key ]" class="p-2">
@@ -882,14 +882,14 @@ export default {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td :key="key" v-if="column.type === 'currency'" class="p-2 text-primary border">
+                                                    <td :key="key" v-if="column.type === 'currency'" class="p-2 text-fontcolor border">
                                                         <div class="flex items-start flex-col justify-end">
-                                                            <span class="text-sm text-primary">{{ nsCurrency( product.procurement[ key ] ) }}</span>
+                                                            <span class="text-sm text-font">{{ nsCurrency( product.procurement[ key ] ) }}</span>
                                                         </div>
                                                     </td>
                                                 </template>
                                             </tr>
-                                            <tr class="text-primary">
+                                            <tr class="text-fontcolor">
                                                 <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'tax_value' )"></td>
                                                 <td class="p-2 border">{{ nsCurrency( totalTaxValues ) }}</td>
                                                 <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'total_purchase_price' ) - ( Object.keys( form.columns ).indexOf( 'tax_value' ) + 1 )"></td>

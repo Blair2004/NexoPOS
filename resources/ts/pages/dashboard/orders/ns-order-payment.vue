@@ -41,7 +41,7 @@
                 </div>
             </div>
             <div v-if="order.payment_status === 'paid'" class="flex items-center justify-center h-full">
-                <h3 class="text-primary font-semibold">{{ __( 'No payment possible for paid order.' ) }}</h3>
+                <h3 class="text-fontcolor font-semibold">{{ __( 'No payment possible for paid order.' ) }}</h3>
             </div>
         </div>
         <div class="px-2 w-full mb-4 md:w-1/2">

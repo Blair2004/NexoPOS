@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-box shadow-lg w-95vw h-95vh md:w-3/5-screen md:h-5/6-screen flex flex-col">
+    <div class="ns-box shadow-lg w-95vw h-95vh md:w-3/5-screen md:h-[83-vh] flex flex-col">
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3>{{ __( 'Search Filters' ) }}</h3>
             <div>

@@ -1,0 +1,36 @@
+.ns-tab {
+    .tab {
+        @apply border-tab-active-border text-fontcolor border-b-transparent;
+        
+        &.active {
+            @apply bg-tab-active;
+        }
+        &.inactive {
+            @apply bg-tab-inactive;
+        }
+    }
+}
+.ns-tab-item > div {
+    @apply border-box-edge bg-tab-active text-fontcolor;
+    
+    .ns-tab-item-footer {
+        @apply border-gray-600;
+    }
+
+    .ns-tab {
+        .tab {
+            @apply border-tab-active-border text-fontcolor border-b-transparent;
+            
+            &.active {
+                @apply bg-gray-600;
+            }
+            &.inactive {
+                @apply bg-gray-700;
+            }
+        }
+    }
+
+    .ns-tab-item > div {
+        @apply bg-box-elevation-background;
+    }
+}

@@ -67,7 +67,7 @@ export class Popup {
 
         const body                          =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
         this.parentWrapper.style.filter     =   'blur(4px)';
-        body.style.filter                   =   'blur(6px)';
+        body.style.filter                   =   'grayscale(1) blur(1px)';
         
         let popups              =   [];
         const currentState      =   <{ popups: {}[]}>nsState.state.getValue();

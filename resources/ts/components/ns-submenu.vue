@@ -21,12 +21,12 @@ export default {
     <div>
         <li class="submenu">
             <template v-if="href">
-                <a :class="active ? 'font-bold active' : 'normal'" :href="href" class="py-2 border-l-8 px-3 block ns-aside-submenu">
+                <a :class="active ? 'font-bold active' : 'normal'" :href="href" class="py-2 border-l-4 px-4 block ns-aside-submenu">
                     <slot></slot>
                 </a>
             </template>
             <template v-else-if="to">
-                <a :class="active ? 'font-bold active' : 'normal'" @click="goTo( to, $event )" :href="to" class="py-2 border-l-8 px-3 block ns-aside-submenu">
+                <a :class="active ? 'font-bold active' : 'normal'" @click="goTo( to, $event )" :href="to" class="py-2 border-l-4 px-4 block ns-aside-submenu">
                     <slot></slot>
                 </a>
             </template>

@@ -1,7 +1,7 @@
 <template>
     <div class="shadow-lg w-6/7-screen lg:w-3/5-screen ns-box overflow-hidden flex flex-col">
         <template v-if="unitQuantities.length > 0">
-            <div class="p-2 border-b ns-box-header text-primary text-center font-medium flex justify-between items-center">
+            <div class="p-2 border-b ns-box-header text-fontcolor text-center font-medium flex justify-between items-center">
                 <div>
                     {{ __( 'Unit Conversion : {product}' ).replace( '{product}', product.name ) }}
                 </div>

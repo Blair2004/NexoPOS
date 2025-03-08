@@ -184,7 +184,7 @@ class CustomerCrud extends CrudService
         $query->join( 'nexopos_users_roles_relations', 'nexopos_users.id', '=', 'nexopos_users_roles_relations.user_id' );
         $query->join( 'nexopos_roles', 'nexopos_roles.id', '=', 'nexopos_users_roles_relations.role_id' );
         $query->where( 'nexopos_roles.namespace', Role::STORECUSTOMER );
-        $query->orderBy( 'updated_at', 'desc' );
+        $query->orderBy( 'id', 'desc' );
     }
 
     /**
@@ -483,13 +483,10 @@ class CustomerCrud extends CrudService
         return CrudTable::columns(
             CrudTable::column(
                 label: __( 'First Name' ),
-                identifier: 'first_name',
-                attributes: CrudTable::attributes(
-                    CrudTable::attribute( __( 'Group' ), 'group_name' ),
-                    CrudTable::attribute( __( 'Gender' ), 'gender' ),
-                )
+                identifier: 'first_name'
             ),
             CrudTable::column( __( 'Last name' ), 'last_name' ),
+            CrudTable::column( __( 'Group' ), 'group_name' ),
             CrudTable::column( __( 'Phone' ), 'phone' ),
             CrudTable::column( __( 'Email' ), 'email' ),
             CrudTable::column( __( 'Account Credit' ), 'account_amount' ),

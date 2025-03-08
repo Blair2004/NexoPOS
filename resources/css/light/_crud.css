@@ -1,0 +1,128 @@
+/**
+ * Crud
+**/
+#crud-table {
+    @apply bg-box-background text-fontcolor;
+
+    #crud-table-header {
+        @apply border-box-edge;
+    }
+
+    .ns-crud-input {
+        @apply bg-input-background border-input-edge;
+
+        input, select {
+            @apply text-fontcolor;
+        }
+    }
+
+    th, td {
+        @apply border-table-th-edge text-fontcolor;
+
+        &:first-child {
+            @apply border-l-transparent;
+        }
+
+        &:last-child {
+            @apply border-r-transparent;
+        }
+    }
+    
+    .ns-table-row {
+        @apply border-table-th-edge border-l-transparent border-r-transparent;
+
+        .ns-menu-wrapper {
+            @apply absolute;
+            & > div {
+                @apply bg-box-elevation-background shadow w-56 shadow-lg;
+            }
+        }
+
+        .ns-action-button:first-child {
+            @apply border border-t-box-edge border-l-box-edge border-r-box-edge border-b-transparent rounded-t-lg;
+        }
+
+        .ns-action-button:last-child {
+            @apply border border-b-box-edge border-l-box-edge border-r-box-edge border-t-transparent rounded-b-lg;
+        }
+
+        .ns-action-button:not(:first-child):not(:last-child) {
+            @apply border border-t-transparent border-b-transparent border-r-box-edge border-l-box-edge;
+
+            &:hover {
+                @apply bg-secondary text-white border-transparent;
+            }
+            &:focus {
+                @apply outline-hidden;
+            }
+        }
+
+        .ns-action-button {
+            @apply text-fontcolor;
+
+            &:hover {
+                @apply bg-secondary text-white border-transparent;
+            }
+
+            &:focus {
+                @apply outline-hidden;
+            }
+        }
+    }
+
+    .ns-crud-button, .ns-crud-input-button {
+        @apply border-crud-button-edge bg-white text-fontcolor;
+
+        &.error, &.error:hover {
+            @apply bg-error-tertiary text-white;
+        }
+
+        &.table-filters-enabled {
+            @apply bg-secondary text-white;
+        }
+    
+        &.table-filters-disabled {
+            @apply text-fontcolor-soft border-crud-button-edge;
+        }
+
+        &:hover, &.active {
+            @apply border-transparent bg-secondary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+
+    .footer {
+        @apply border-box-edge;
+    }
+}
+
+#crud-form, #product-form {
+    label[for="title"] {
+        @apply text-fontcolor;
+    }
+
+    .ns-crud-button, .ns-crud-input-button {
+        @apply border-crud-button-edge bg-transparent text-fontcolor;
+
+        &.table-filters-enabled {
+            @apply bg-secondary text-fontcolor;
+        }
+    
+        &.table-filters-disabled {
+            @apply text-fontcolor-soft border-crud-button-edge;
+        }
+
+        &:hover {
+            @apply border-transparent bg-input-button-hover text-fontcolor;
+        }
+    }
+    .ns-crud-input {
+        @apply bg-input-background border-input-background;
+
+        input {
+            @apply text-fontcolor bg-crud-button-edge;
+        }
+    }
+}

@@ -1,0 +1,383 @@
+#loader {
+    @apply bg-surface;
+    p {
+        @apply text-fontcolor;
+    }
+}
+
+#ns-pos-customer-select-popup {
+    .purchase-amount {
+        @apply text-fontcolor;
+    }
+}
+
+#pos-container {
+    @apply bg-surface text-white;
+
+    #pos-cart {
+        #tools {
+            .switch-cart {
+                @apply bg-tab-active font-semibold text-fontcolor;
+                > span.products-count {
+                    @apply bg-success-primary text-fontcolor;
+                }
+            }
+
+            .switch-grid {
+                @apply bg-tab-inactive border-transparent text-fontcolor-soft;
+            }
+        }
+
+        .cart-table {
+            @apply bg-tab-active;
+            #cart-toolbox {
+                @apply border-pos-button-edge;
+                > div {
+                    @apply border-pos-button-edge;
+
+                    hr {
+                        @apply bg-pos-button-edge;
+                    }
+
+                    .ns-button {
+                        button {
+                            @apply bg-white border-r border-pos-button-edge rounded-none cursor-pointer;
+                            &:hover {
+                                @apply bg-input-button-hover;
+                            }
+                        }
+                    }
+                }
+            }
+            #cart-table-header {
+                @apply text-fontcolor;
+                > div {
+                    @apply border-pos-button-edge;
+                }
+            }
+            #cart-products-table {
+                a {
+                    @apply border-secondary;
+
+                    &:hover {
+                        @apply text-secondary;
+                    }
+                }
+
+                > div {
+                    @apply text-fontcolor;
+
+                    > div {
+                        @apply border-pos-button-edge;
+                    }
+
+                    .product-item {
+                        > div {
+                            @apply border-pos-button-edge;
+
+                            .remove-product {
+                                @apply border-error-primary;   
+
+                                &:hover {
+                                    @apply text-error-primary;
+                                }
+                            }
+
+                            .price {
+                                &:hover {
+                                    @apply text-secondary;
+                                }
+                            }
+
+                            .wholesale-mode {
+                                @apply text-success-primary bg-transparent border-success-primary;
+                                &:hover {
+                                    @apply text-success-primary bg-transparent;
+                                }
+                            }
+
+                            .normal-mode {
+                                @apply border-secondary;
+
+                                &:hover {
+                                    @apply text-secondary;
+                                }
+                            }
+
+                            .product-controls {
+                                @apply text-fontcolor;
+                            }
+                        }
+                    }
+
+                    .quantity-changer {
+                        @apply border-pos-button-edge;
+
+                        > span {
+                            @apply border-secondary;   
+                        }
+
+                        &:hover {
+                            @apply bg-input-button-hover;
+                        }
+                    }
+
+                    .product-price {
+                        @apply border-pos-button-edge;
+                    }
+                }
+                .empty-cart {
+                    @apply border-pos-button-edge;
+                    h3 {
+                        @apply text-fontcolor-soft;
+                    }
+                }
+            }
+
+            #cart-products-summary {
+                table {
+                    @apply text-fontcolor;
+                    td {
+                        @apply border-pos-button-edge;
+                        
+                        a {
+                            @apply border-secondary;
+
+                            &:hover {
+                                @apply text-secondary;
+                            }
+                        }
+                    }
+
+                    .summary-line {
+                        @apply bg-success-primary text-fontcolor;
+
+                        a {
+                            @apply border-white;
+
+                            &:hover {
+                                @apply text-white;
+                            }
+                        }
+                    }
+                }
+            }
+
+            #cart-bottom-buttons {
+                @apply border-pos-button-edge text-white; 
+
+                #pay-button {
+                    @apply bg-success-secondary border-r border-success-secondary;
+
+                    &:hover, &:active {
+                        @apply bg-success-tertiary/80;
+                    }
+                }
+
+                #hold-button {
+                    @apply bg-info-secondary border-r border-info-secondary;
+
+                    &:hover, &:active {
+                        @apply bg-secondary;
+                    }
+                }
+
+                #discount-button {
+                    @apply bg-box-background border-r text-fontcolor border-pos-button-edge;
+
+                    &:hover, &:active {
+                        @apply bg-input-button-active;
+                    }
+                }
+
+                #void-button {
+                    @apply bg-error-primary border-pos-button-edge hover:bg-error-secondary;
+
+                    &:hover, &:active {
+                        @apply bg-error-secondary;
+                    }
+                }
+            }
+        }
+    }
+
+    #pos-grid {
+        .switch-cart {
+            @apply bg-tab-inactive border-transparent text-fontcolor-soft;
+
+            .products-count {
+                @apply bg-success-tertiary text-white;
+            }
+        }
+        .switch-grid {
+            @apply bg-tab-active text-fontcolor;
+        }
+
+        #grid-container {
+            @apply bg-tab-active;
+
+            #grid-header {
+                @apply border-pos-button-edge text-fontcolor;
+                > div {
+                    @apply border-pos-button-edge;
+                    button {
+                        @apply border-pos-button-edge;
+                        &.pos-button-clicked {
+                            @apply bg-input-disabled;
+                            box-shadow: inset 0px 0px 5px 0px #303131;
+                        }
+                    }
+                    input {
+                        @apply bg-box-background;
+                    }
+                }
+            }
+
+            #grid-breadscrumb {
+                @apply border-pos-button-edge;
+
+                ul > li {
+                    @apply text-fontcolor;
+                }
+            }
+
+            #grid-items {
+                @apply text-fontcolor-soft;
+
+                .cell-item {
+                    @apply border-pos-button-edge;
+
+                    .cell-item-label {
+                        background:rgb(250 250 250 / 73%);
+                    }
+
+                    &:hover {
+                        @apply bg-box-background;
+                    }
+
+                    h3 {
+                        @apply text-fontcolor;
+                    }
+
+                    i, span {
+                        @apply text-fontcolor-soft;
+                    }
+                }
+            }
+        }
+    }
+}
+
+#ns-pos-customers {
+    @apply bg-box-background;
+    .ns-header {
+        @apply border-box-edge;
+        h3 {
+            @apply text-fontcolor;
+        }
+    }
+    .ns-tab-cards {
+        h3, h2 {
+            @apply text-white;
+        }
+    }
+    .ns-body {
+        @apply bg-box-background;
+    }
+}
+
+#ns-order-type {
+    @apply bg-box-background;
+    h3 {
+        @apply text-fontcolor;
+    }
+    div > div {
+        > i {
+            @apply text-error-primary;
+        }
+        div > p {
+            @apply text-fontcolor;
+        }
+    }
+    .ns-box-body > div {
+        &:hover h4 {
+            @apply text-white;
+        }
+        h4 {
+            @apply text-fontcolor   
+        }
+    }
+    div {
+    }
+}
+
+#ns-units-selector {
+    .overlay {
+        background:rgb(250 250 250 / 73%);
+    }
+}
+
+#ns-pos-cash-registers-popup {
+    div.alert {
+        @apply bg-error-secondary;
+    }
+}
+
+#ns-payment-popup {
+    .ns-pos-screen {
+        @apply text-fontcolor;
+    }
+    > div {
+        @apply bg-tab-active-border;
+        h3 {
+            @apply text-fontcolor;
+        }
+        ul li{
+            @apply text-fontcolor;
+            &.ns-payment-gateway.ns-visible, &.ns-payment-list.ns-visible {
+                @apply bg-tab-active;
+            }
+            &:hover {
+                @apply bg-tab-active;
+            }
+            span.ns-label {
+                @apply bg-success-tertiary text-white;
+            }
+        }
+        .ns-payment-wrapper {
+            @apply bg-tab-active;
+            ul li {
+                @apply bg-tab-active-border text-fontcolor;
+                button.error {
+                    @apply bg-error-tertiary text-white;
+                }
+                button.default {
+                    @apply bg-gray-700 text-white;
+                }
+            }
+        }
+        .ns-payment-buttons {
+            .ns-payment-type-button {
+                @apply text-white bg-secondary;
+            }
+            .ns-submit-button {
+                @apply bg-success-tertiary text-white;
+            }
+            .ns-layaway-button {
+                @apply bg-warning-tertiary text-white;
+            }
+            .ns-payment-button {
+                @apply bg-gray-200 text-fontcolor;
+                .ns-label {
+                    @apply bg-success-tertiary text-white;
+                }
+            }
+        }
+        .ns-payment-list {
+            @apply border-t-tab-active;
+        }
+        .ns-payment-footer {
+            @apply bg-tab-active-border;
+        }
+    }
+}

@@ -6,31 +6,31 @@
         </ns-notice>
         <div class="flex -mx-2" v-if="timezone !== ''">
             <div class="px-2">
-                <input type="text" v-model="year" placeholder="{{ __( 'Year' ) }}" class="outline-none rounded border-gray-400 border-2 focus:border-blue-400 p-2">
+                <input type="text" v-model="year" :placeholder="__( 'Year' )" class="outline-hidden text-fontcolor rounded border-input-edge bg-input-background border p-2">
             </div>
             <div class="px-2 flex">
-                <button @click="loadReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
+                <ns-button @click="loadReport()">
                     <i class="las la-sync-alt text-xl"></i>
                     <span class="pl-2">{{ __( 'Load' ) }}</span>
-                </button>
+                </ns-button>
             </div>
             <div class="px-2 flex">
-                <button @click="printSaleReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
+                <ns-button @click="printSaleReport()">
                     <i class="las la-print text-xl"></i>
                     <span class="pl-2">{{ __( 'Print' ) }}</span>
-                </button>
+                </ns-button>
             </div>
             <div class="px-2 flex">
-                <button @click="recomputeForSpecificYear()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
+                <ns-button @click="recomputeForSpecificYear()">
                     <i class="las la-sync-alt text-xl"></i>
                     <span class="pl-2">{{ __( 'Recompute' ) }}</span>
-                </button>
+                </ns-button>
             </div>
         </div>
         <div id="annual-report" class="anim-duration-500 fade-in-entrance" v-if="timezone !== ''">
             <div class="flex w-full">
                 <div class="my-4 flex justify-between w-full">
-                    <div class="text-secondary">
+                    <div class="text-fontcolor-soft">
                         <ul>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Date : {date}' ).replace( '{date}', ns.date.current ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Yearly Report' ) }}</li>

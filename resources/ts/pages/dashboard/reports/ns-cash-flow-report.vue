@@ -9,7 +9,7 @@
             </div>
             <div class="px-2">
                 <div class="ns-button">
-                    <button @click="loadReport()" class="rounded flex justify-between text-primary shadow py-1 items-center  px-2">
+                    <button @click="loadReport()" class="rounded flex justify-between text-fontcolor shadow py-1 items-center  px-2">
                         <i class="las la-sync-alt text-xl"></i>
                         <span class="pl-2">{{ __( 'Load' ) }}</span>
                     </button>
@@ -17,7 +17,7 @@
             </div>
             <div class="px-2">
                 <div class="ns-button">
-                    <button @click="printSaleReport()" class="rounded flex justify-between text-primary shadow py-1 items-center  px-2">
+                    <button @click="printSaleReport()" class="rounded flex justify-between text-fontcolor shadow py-1 items-center  px-2">
                         <i class="las la-print text-xl"></i>
                         <span class="pl-2">{{ __( 'Print' ) }}</span>
                     </button>
@@ -27,7 +27,7 @@
         <div id="report" class="anim-duration-500 fade-in-entrance">
             <div class="flex w-full">
                 <div class="my-4 flex justify-between w-full">
-                    <div class="text-primary">
+                    <div class="text-fontcolor">
                         <ul>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', startDateField.value ).replace( '{date2}', endDateField.value ) }}</li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Sale By Payment' ) }}</li>
@@ -54,13 +54,13 @@
                                 <template v-for="( account, name ) in report.accounts" :key="name">
                                     <tr>
                                         <td class="p-2 bg-box-elevation-background border"><i class="las la-arrow-right"></i> <strong>{{ account.name }}</strong></td>
-                                        <td class="p-2 border border-error-secondary bg-error-primary text-right">{{ nsCurrency( account.debits ) }}</td>
-                                        <td class="p-2 border text-right border-success-secondary bg-success-primary">{{ nsCurrency( account.credits ) }}</td>
+                                        <td class="p-2 border text-white border-error-secondary bg-error-primary text-right">{{ nsCurrency( account.debits ) }}</td>
+                                        <td class="p-2 border text-white text-right border-success-secondary bg-success-primary">{{ nsCurrency( account.credits ) }}</td>
                                     </tr>
                                     <tr v-for="(transaction, key) of account.transactions" :key="key">
                                         <td class="p-2 border"><span class="ml-4">{{ transaction.name }}</span></td>
-                                        <td class="p-2 border border-error-secondary bg-error-primary text-right">{{ nsCurrency( transaction.debits ) }}</td>
-                                        <td class="p-2 border text-right border-success-secondary bg-success-primary">{{ nsCurrency( transaction.credits ) }}</td>
+                                        <td class="p-2 border text-white border-error-secondary bg-error-primary text-right">{{ nsCurrency( transaction.debits ) }}</td>
+                                        <td class="p-2 border text-white text-right border-success-secondary bg-success-primary">{{ nsCurrency( transaction.credits ) }}</td>
                                     </tr>
                                 </template>
                             </tbody>

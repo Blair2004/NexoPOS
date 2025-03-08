@@ -9,7 +9,7 @@
             </div>
             <div class="px-2" v-if="selectedCustomer">
                 <div class="ns-button">
-                    <button @click="handleSelectedCustomer( selectedCustomer )" class="rounded flex justify-between text-primary shadow py-1 items-center  px-2">
+                    <button @click="handleSelectedCustomer( selectedCustomer )" class="rounded flex justify-between text-fontcolor shadow py-1 items-center  px-2">
                         <i class="las la-sync-alt text-xl"></i>
                         <span class="pl-2">{{ __( 'Load' ) }}</span>
                     </button>
@@ -17,7 +17,7 @@
             </div>
             <div class="px-2">
                 <div class="ns-button">
-                    <button @click="printSaleReport()" class="rounded flex justify-between text-primary shadow py-1 items-center  px-2">
+                    <button @click="printSaleReport()" class="rounded flex justify-between text-fontcolor shadow py-1 items-center  px-2">
                         <i class="las la-print text-xl"></i>
                         <span class="pl-2">{{ __( 'Print' ) }}</span>
                     </button>
@@ -36,7 +36,7 @@
         <div id="report" class="anim-duration-500 fade-in-entrance">
             <div class="flex w-full">
                 <div class="my-4 flex justify-between w-full">
-                    <div class="text-primary">
+                    <div class="text-fontcolor">
                         <ul>
                             <li class="pb-1 border-b border-dashed border-box-edge">{{ __( 'Range : {date1} &mdash; {date2}' ).replace( '{date1}', this.startDateField.value ).replace( '{date2}', this.endDateField.value ) }}</li>
                             <li class="pb-1 border-b border-dashed border-box-edge">{{ __( 'Document : Customer Statement' ) }}</li>
@@ -56,7 +56,7 @@
                     </div>
                     <div class="border-b ns-box-body">
                         <table class="table ns-table w-full">
-                            <tbody class="text-primary">
+                            <tbody class="text-fontcolor">
                                 <tr class="">
                                     <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-box-edge text-white print:text-black">{{ __( 'Total Purchases' ) }}</td>
                                     <td class="p-2 border text-right border-box-edge">{{ nsCurrency( report.purchases_amount ) }}</td>
@@ -96,7 +96,7 @@
                                     <th class="p-2 border text-right">{{ __( 'Total' ) }}</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-primary">
+                            <tbody class="text-fontcolor">
                                 <tr class="" v-for="order of report.orders" :key="order.id">
                                     <td width="200" class="font-semibold p-2 border text-left">{{ order.code }}</td>
                                     <td class="p-2 border text-right">{{ nsCurrency( order.total ) }}</td>

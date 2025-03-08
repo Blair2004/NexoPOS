@@ -1,5 +1,5 @@
 <template>
-    <button :class="type ? type : buttonClass " class="ns-inset-button rounded-full h-8 w-8 border items-center justify-center">
+    <button :class="type ? type : buttonClass" class="ns-inset-button rounded-full h-6 min-w-[1.5rem] border border-input-edge items-center justify-center">
         <i :class="className" class="las"></i>
     </button>
 </template>

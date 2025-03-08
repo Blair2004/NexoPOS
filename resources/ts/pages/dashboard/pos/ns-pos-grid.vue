@@ -12,16 +12,16 @@
         <div id="grid-container" class="rounded shadow  overflow-hidden flex-auto flex flex-col">
             <div id="grid-header" class="p-2 border-b ">
                 <div class="border rounded flex  overflow-hidden">
-                    <button :title="__( 'Search for products.' )" @click="openSearchPopup()" class="w-10 h-10 border-r  outline-none">
+                    <button :title="__( 'Search for products.' )" @click="openSearchPopup()" class="w-10 h-10 border-r  outline-hidden">
                         <i class="las la-search"></i>
                     </button>
-                    <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.ns_pos_items_merge ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
+                    <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.ns_pos_items_merge ? 'pos-button-clicked' : ''" class="outline-hidden w-10 h-10 border-r ">
                         <i class="las la-compress-arrows-alt"></i>
                     </button>
-                    <button :title="__( 'Toggle auto focus.' )" @click="options.ns_pos_force_autofocus = ! options.ns_pos_force_autofocus" :class="options.ns_pos_force_autofocus ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
+                    <button :title="__( 'Toggle auto focus.' )" @click="options.ns_pos_force_autofocus = ! options.ns_pos_force_autofocus" :class="options.ns_pos_force_autofocus ? 'pos-button-clicked' : ''" class="outline-hidden w-10 h-10 border-r ">
                         <i class="las la-barcode"></i>
                     </button>
-                    <input ref="search" v-model="barcode" type="text" class="flex-auto outline-none px-2 ">
+                    <input ref="search" v-model="barcode" type="text" class="flex-auto outline-hidden px-2 ">
                 </div>
             </div>
             <div style="height: 0px">
@@ -52,8 +52,8 @@
                 </div>
 
                 <div v-if="! hasCategories && ! hasProducts && ! isLoading" class="h-full w-full flex flex-col items-center justify-center">
-                    <i class="las la-frown-open text-8xl text-primary"></i>
-                    <p class="w-1/2 md:w-2/3 text-center text-primary">
+                    <i class="las la-frown-open text-8xl text-font"></i>
+                    <p class="w-1/2 md:w-2/3 text-center text-font">
                         {{ __( 'Looks like there is either no products and no categories. How about creating those first to get started ?' ) }}
                     </p>
                     <br>

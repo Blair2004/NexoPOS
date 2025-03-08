@@ -7,7 +7,7 @@
                 </div>
                 <div class="px-2">
                     <div class="ns-button">
-                        <button @click="loadReport()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                        <button @click="loadReport()" class="rounded flex justify-between shadow py-1 items-center text-fontcolor px-2">
                             <i class="las la-sync-alt text-xl"></i>
                             <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
@@ -15,7 +15,7 @@
                 </div>
                 <div class="px-2">
                     <div class="ns-button">
-                        <button @click="printSaleReport()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                        <button @click="printSaleReport()" class="rounded flex justify-between shadow py-1 items-center text-fontcolor px-2">
                             <i class="las la-print text-xl"></i>
                             <span class="pl-2">{{ __( 'Print' ) }}</span>
                         </button>
@@ -25,7 +25,7 @@
             <div class="px-2 flex -mx-2">
                 <div class="px-2">
                     <div class="ns-button">
-                        <button @click="selectCategories()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                        <button @click="selectCategories()" class="rounded flex justify-between shadow py-1 items-center text-fontcolor px-2">
                             <i class="las la-filter text-xl"></i>
                             <span class="pl-2">{{ __( 'Categories' ) }}: {{ categoriesNames || __( 'All Categories' ) }}</span>
                         </button>
@@ -33,7 +33,7 @@
                 </div>
                 <div class="px-2">
                     <div class="ns-button">
-                        <button @click="selectUnits()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                        <button @click="selectUnits()" class="rounded flex justify-between shadow py-1 items-center text-fontcolor px-2">
                             <i class="las la-filter text-xl"></i>
                             <span class="pl-2">{{ __( 'Units' ) }}: {{ unitsNames || __( 'All Units' ) }}</span>
                         </button>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="px-2">
                     <div class="ns-button">
-                        <button @click="generateReport()" class="rounded flex justify-between shadow py-1 items-center text-primary px-2">
+                        <button @click="generateReport()" class="rounded flex justify-between shadow py-1 items-center text-fontcolor px-2">
                             <i class="las la-sync-alt"></i>
                             <span class="pl-2">{{ __( 'Generate Report' ) }}</span>
                         </button>
@@ -52,7 +52,7 @@
         <div id="combined-report">
             <div class="flex w-full mb-4">
                 <div class="flex justify-between w-full">
-                    <div class="text-secondary">
+                    <div class="text-fontcolor-soft">
                         <ul>
                             <li class="pb-1 border-b border-dashed" v-html="__( 'Date : {date}' ).replace( '{date}', moment( datePicker.value ).format( ns.date.format ) )"></li>
                             <li class="pb-1 border-b border-dashed">{{ __( 'Document : Combined Products History' ) }}</li>
@@ -65,31 +65,31 @@
                 </div>
             </div>
             <div class="box bg-box-background">
-                <div class="box-body text-primary">
-                    <table class="min-w-fit w-full table-auto">
+                <div class="box-body text-fontcolor">
+                    <table class="min-w-fit ns-table w-full table-auto">
                         <thead class="text-sm">
                             <tr class="font-bold">
-                                <td class="border p-2 w-1/3">{{ __( 'Name' ) }}</td>
-                                <td class="border p-2">
+                                <th class="border p-2 w-1/3">{{ __( 'Name' ) }}</th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Initial Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Ini. Qty' ) }}</span>
-                                </td>
-                                <td class="border p-2">
+                                </th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Added Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Add. Qty' ) }}</span>
-                                </td>
-                                <td class="border p-2">
+                                </th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Sold Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Sold Qty' ) }}</span>
-                                </td>
-                                <td class="border p-2">
+                                </th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Defective Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Defec. Qty' ) }}</span>
-                                </td>
-                                <td class="border p-2">
+                                </th>
+                                <th class="border p-2">
                                     <span class="hidden md:inline-block">{{ __( 'Final Quantity' ) }}</span>
                                     <span class="inline-block md:hidden">{{ __( 'Final Qty' ) }}</span>
-                                </td>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="text-xs">

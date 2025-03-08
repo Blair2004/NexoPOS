@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-lg ns-box w-95vw md:w-3/6-screen lg:w-2/6-screen">
+    <div class="shadow-lg ns-box w-95vw md:w-3/6-screen lg:w-1/3-screen">
         <div class="border-b ns-box-header p-2 flex justify-between items-center">
             <h3 class="font-bold">{{ __( 'Load Coupon' ) }}</h3>
             <div>
@@ -13,7 +13,7 @@
                     padding="p-2"
                     identifier="apply-coupon">
                     <div class="border-2 input-group info rounded flex">
-                        <input ref="coupon" @keyup.enter="loadCoupon()" v-model="couponCode" type="text" class="coupon-field w-full text-primary p-2 outline-none" :placeholder="placeHolder">
+                        <input ref="coupon" @keyup.enter="loadCoupon()" v-model="couponCode" type="text" class="coupon-field w-full text-fontcolor p-2 outline-hidden" :placeholder="placeHolder">
                         <button @click="loadCoupon()" class="px-3 py-2">{{ __( 'Load' ) }}</button>
                     </div>
                     <div class="pt-2">
@@ -22,7 +22,7 @@
                         </ns-notice>
                     </div>
                     <div class="pt-2 flex" v-if="order && order.customer_id === undefined">
-                        <button @click="selectCustomer()"  class="w-full border p-2 outline-none ns-numpad-key info cursor-pointer text-center">{{ __( 'Click here to choose a customer.' ) }}</button>
+                        <button @click="selectCustomer()"  class="w-full border p-2 outline-hidden ns-numpad-key info cursor-pointer text-center">{{ __( 'Click here to choose a customer.' ) }}</button>
                     </div>
                     <div class="pt-2" v-if="order && order.customer_id !== undefined">
                         <ns-notice color="success">
@@ -80,7 +80,7 @@
                     <ul v-if="order">
                         <li v-for="( coupon, index) of order.coupons" :key="index" class="flex justify-between elevation-surface border items-center px-2 py-1">
                             <div class="flex-auto">
-                                <h3 class="font-semibold text-primary p-2 flex justify-between">
+                                <h3 class="font-semibold text-fontcolor p-2 flex justify-between">
                                     <span>{{ coupon.name }}</span>
                                     <span>{{ getDiscountValue( coupon ) }}</span>
                                 </h3>

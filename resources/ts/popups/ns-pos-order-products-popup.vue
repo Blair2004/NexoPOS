@@ -44,8 +44,8 @@ export default {
 }
 </script>
 <template>
-    <div class="shadow-lg ns-box w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
-        <div class="p-2 flex justify-between text-primary items-center border-b ns-box-header">
+    <div class="shadow-lg ns-box w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-[70vh] flex flex-col overflow-hidden">
+        <div class="p-2 flex justify-between text-fontcolor items-center border-b ns-box-header">
             <h3 class="font-semibold">{{ __( 'Products' ) }} &mdash; {{ order.code }} <span v-if="order.title">({{ order.title }})</span></h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
@@ -60,11 +60,11 @@ export default {
             <template v-if="! isLoading">
                 <div class="item" v-for="product of products" :key="product.id">
                     <div class="flex-col border-b border-info-primary py-2">
-                        <div class="title font-semibold text-primary flex justify-between">
+                        <div class="title font-semibold text-fontcolor flex justify-between">
                             <span>{{ product.name }} (x{{ product.quantity }})</span>
                             <span>{{ nsCurrency( price ) }}</span>
                         </div>
-                        <div class="text-sm text-primary">
+                        <div class="text-sm text-font">
                             <ul>
                                 <li>{{ __( 'Unit' ) }} : {{ product.unit.name }}</li>
                             </ul>

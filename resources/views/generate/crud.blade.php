@@ -166,15 +166,15 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     public function getLabels(): array
     {
         return CrudTable::labels(
-            list_title:  {{ '__' }}( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
-            list_description:  {{ '__' }}( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
-            no_entry:  {{ '__' }}( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
-            create_new:  {{ '__' }}( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            create_title:  {{ '__' }}( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            create_description:  {{ '__' }}( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
-            edit_title:  {{ '__' }}( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            edit_description:  {{ '__' }}( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
-            back_to_list:  {{ '__' }}( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
+            list_title:  {{ isset( $module ) ? '__m' : '__' }}( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
+            list_description:  {{ isset( $module ) ? '__m' : '__' }}( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
+            no_entry:  {{ isset( $module ) ? '__m' : '__' }}( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
+            create_new:  {{ isset( $module ) ? '__m' : '__' }}( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
+            create_title:  {{ isset( $module ) ? '__m' : '__' }}( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
+            create_description:  {{ isset( $module ) ? '__m' : '__' }}( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
+            edit_title:  {{ isset( $module ) ? '__m' : '__' }}( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
+            edit_description:  {{ isset( $module ) ? '__m' : '__' }}( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
+            back_to_list:  {{ isset( $module ) ? '__m' : '__' }}( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
         );
     }
 
@@ -183,25 +183,25 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * @param {{ trim( $lastClassName ) }} $entry
      * @return array
      */
-    public function getForm( {{ trim( $lastClassName ) }} $entry = null ): array
+    public function getForm( {{ trim( $lastClassName ) }} | null $entry = null ): array
     {
         return CrudForm::form(
             main: CrudInput::text(
-                label: {{ '__' }}( 'Name' ),
+                label: {{ isset( $module ) ? '__m' : '__' }}( 'Name'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
                 name: 'name',
                 validation: 'required',
-                description: {{ '__' }}( 'Provide a name to the resource.' ),
+                description: {{ isset( $module ) ? '__m' : '__' }}( 'Provide a name to the resource.'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
             ),
             tabs: CrudForm::tabs(
                 CrudForm::tab(
                     identifier: 'general',
-                    label: {{ '__' }}( 'General' ),
+                    label: {{ isset( $module ) ? '__m' : '__' }}( 'General'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
                     fields: CrudForm::fields(
                         @foreach( $Schema::getColumnListing( $table_name ) as $column )CrudInput::text(
-                            label: {{ '__' }}( '{{ ucwords( $column ) }}' ),
+                            label: {{ isset( $module ) ? '__m' : '__' }}( '{{ ucwords( $column ) }}'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
                             name: '{{ $column }}',
                             validation: 'required',
-                            description: {{ '__' }}( 'Provide a name to the resource.' ),
+                            description: {{ isset( $module ) ? '__m' : '__' }}( 'Provide a name to the resource.'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
                         ),
                         @endforeach
                     )
@@ -259,6 +259,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     {
         switch( $param ) {
             case 'model' : return $this->model ; break;
+            default : return null; break;
         }
     }
 
@@ -295,7 +296,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
              *
              *  return response([
              *      'status'    =>  'danger',
-             *      'message'   =>  {{ '__' }}( 'You\re not allowed to do that.' )
+             *      'message'   =>  {{ isset( $module ) ? '__m' : '__' }}( 'You\re not allowed to do that.'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
              *  ], 403 );
             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
@@ -315,7 +316,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             @foreach( $Schema::getColumnListing( $table_name ) as $column )
             CrudTable::column(
                 identifier: '{{ $column }}',
-                label: {{ '__' }}( '{{ ucwords( $column ) }}' ),
+                label: {{ isset( $module ) ? '__m' : '__' }}( '{{ ucwords( $column ) }}'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
             ),
             @endforeach
         );
@@ -331,17 +332,17 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
          */
         $entry->action( 
             identifier: 'edit',
-            label: {{ '__' }}( 'Edit' ),
+            label: {{ isset( $module ) ? '__m' : '__' }}( 'Edit'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
             url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
         );
         
         $entry->action( 
             identifier: 'delete',
-            label: {{ '__' }}( 'Delete' ),
+            label: {{ isset( $module ) ? '__m' : '__' }}( 'Delete'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
             type: 'DELETE',
             url: ns()->url( '/api/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
             confirm: [
-                'message'  =>  {{ '__' }}( 'Would you like to delete this ?' ),
+                'message'  =>  {{ isset( $module ) ? '__m' : '__' }}( 'Would you like to delete this ?'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
             ]
         );
         
@@ -412,7 +413,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  {{ '__' }}( 'Delete Selected Entries' ),
+                'label'         =>  {{ isset( $module ) ? '__m' : '__' }}( 'Delete Selected Entries'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace

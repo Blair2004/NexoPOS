@@ -1,0 +1,120 @@
+.ns-notice {
+    h1, h2, h3, h4, h5 {
+        @apply text-white;
+    }
+
+    p, span {
+        @apply text-fontcolor;
+    }
+
+    &.danger {
+        @apply border-error-tertiary bg-error-primary;
+
+        h1, h2, h3, h4, h5 {
+            @apply text-error-tertiary;
+        }
+
+        p > a {
+            @apply text-error-tertiary;
+            &:hover {
+                @apply underline;
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-white;
+        }
+    }
+    
+    &.warning {
+        @apply border-warning-tertiary bg-warning-primary;
+
+        h1, h2, h3, h4, h5 {
+            @apply text-warning-tertiary;
+        }
+
+        p > a {
+            @apply text-warning-tertiary;
+            &:hover {
+                @apply underline;
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-white;
+        }
+    }
+    
+    &.success {
+        @apply border-success-tertiary bg-success-primary;
+
+        h1, h2, h3, h4, h5 {
+            @apply text-success-tertiary;
+        }
+
+        p > a {
+            @apply text-success-tertiary;
+            &:hover {
+                @apply underline;
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-white;
+        }
+    }
+    
+    &.error {
+        @apply border-error-tertiary bg-error-secondary text-white;
+
+        h1, h2, h3, h4, h5 {
+            @apply text-error-tertiary;
+        }
+
+        p {
+            @apply text-white;
+            a {
+                @apply text-error-tertiary;
+                &:hover {
+                    @apply underline;
+                }
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-white;
+        }
+    }
+    
+    &.info {
+        @apply border-info-tertiary bg-info-secondary;
+
+        h1, h2, h3, h4, h5 {
+            @apply text-white;
+        }
+
+        p {
+            @apply text-fontcolor;
+            & > a {
+                @apply text-info-secondary;
+                &:hover {
+                    @apply underline;
+                }
+            }
+        }
+    
+        pre {
+            @apply bg-pre text-white;
+        }
+    }
+}
+
+.ns-normal-text {
+    @apply text-fontcolor;
+}
+
+.session-notice {
+    &.info {
+        @apply bg-info-primary border-info-tertiary text-fontcolor; 
+    }
+}

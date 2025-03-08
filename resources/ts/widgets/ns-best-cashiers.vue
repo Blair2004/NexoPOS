@@ -1,14 +1,14 @@
 <template>
-    <div id="ns-best-cashiers" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
+    <div id="ns-best-cashiers" class="ns-box flex flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="flex-auto">
-            <div class="head text-center border-b w-full flex justify-between items-center p-2">
+            <div class="ns-box-header text-center border-b w-full flex justify-between items-center p-2">
                 <h5>{{ __( 'Best Cashiers' ) }}</h5>
                 <div>
                     <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
                 </div>
             </div>
             <div class="body">
-                <table class="table w-full" v-if="cashiers.length > 0">
+                <table class="ns-table w-full" v-if="cashiers.length > 0">
                     <thead>
                         <tr v-for="cashier of cashiers" :key="cashier.id" class="entry border-b text-sm">
                             <th class="p-2">
@@ -45,7 +45,7 @@
 import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
 export default {
-    name: 'ns-best-customers',
+    name: 'ns-best-cashiers',
     data() {
         return {
             subscription: null,

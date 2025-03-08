@@ -1,9 +1,9 @@
 <template>
-    <div class="flex flex-col mb-2 flex-auto ns-media">
-        <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'has-error' : 'is-pristine'" class="mt-1 relative border-2 rounded-md focus:shadow-sm">
+    <div class="flex flex-col mb-2 flex-auto ns-media" :class="hasError ? 'has-error' : 'is-pristine'">
+        <label :for="field.name" class="block leading-5 font-medium"><slot></slot></label>
+        <div class="mt-1 relative border rounded-md focus:shadow-sm">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-primary sm:text-sm sm:leading-5">
+                <span class="text-fontcolor sm:text-sm sm:leading-5">
                 {{ leading }}
                 </span>
             </div>
@@ -18,7 +18,7 @@
                                 <i :class="fileIcons[ field.data.model.extension ] || fileIcons.unknown" class="las text-3xl"></i>
                             </div>
                         </template>
-                        <span class="text-xs text-secondary">{{ field.data.model.name }}</span>
+                        <span class="text-xs text-fontcolor-soft">{{ field.data.model.name }}</span>
                     </template>
                 </div>
                 <input 
@@ -31,7 +31,7 @@
                     :class="inputClass" class="form-input block w-full sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
                 <button 
                     @click="toggleMedia( field )"
-                    class="w-10 h-10 flex items-center justify-center border-l-2 outline-none">
+                    class="w-10 h-10 flex items-center justify-center border-l outline-hidden">
                     <i class="las la-photo-video"></i>
                 </button>
             </div>
@@ -54,7 +54,7 @@ export default {
             return false;
         },
         disabledClass() {
-            return this.field.disabled ? 'ns-disabled cursor-not-allowed' : 'ns-enabled';
+            return this.field.disabled ? 'ns-disabled cursor-not-allowed' : '';
         },
         inputClass() {
             return this.disabledClass + ' ' + this.leadClass

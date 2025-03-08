@@ -1,0 +1,73 @@
+#alert-popup, #confirm-popup, #prompt-popup {
+    @apply bg-popup-surface border-box-edge border;
+
+    h2 {
+        @apply text-fontcolor;
+    }
+
+    p {
+        @apply text-fontcolor-soft;
+    }
+
+    .action-buttons {
+        @apply border-box-edge text-fontcolor p-2;
+
+        button {
+            @apply shadow ml-3 bg-secondary text-white rounded h-[30px] min-w-[100px];
+
+            &.cancel {
+                @apply bg-default-secondary text-slate-600;
+                &:hover {
+                    @apply bg-default-tertiary text-slate-800;
+                }
+            }
+
+            &:hover {
+                @apply bg-tertiary text-white cursor-pointer;
+            }
+        }
+
+        hr {
+            @apply border-box-edge;
+        }
+    }
+}
+
+.is-popup {
+    background: rgb(0 0 0 / 40%);
+
+    .elevation-surface {
+        @apply bg-box-elevation-background border-box-elevation-edge text-fontcolor;
+        &.hoverable:hover {
+            @apply bg-box-elevation-hover text-fontcolor;
+        }
+
+        &.success {
+            @apply bg-success-primary border-success-secondary text-fontcolor;
+            &.hoverable:hover {
+                @apply bg-success-secondary text-white;
+            }
+        }
+        
+        &.error {
+            @apply bg-error-primary border-error-secondary text-fontcolor;
+            &.hoverable:hover {
+                @apply bg-error-secondary text-white;
+            }
+        }
+    
+        &.info {
+            @apply bg-info-primary border-info-secondary text-fontcolor;
+            &.hoverable:hover {
+                @apply bg-info-secondary text-white;
+            }
+        }
+    
+        &.warning {
+            @apply bg-warning-primary border-warning-secondary text-fontcolor;
+            &.hoverable:hover {
+                @apply bg-warning-secondary text-white;
+            }
+        }
+    }
+}

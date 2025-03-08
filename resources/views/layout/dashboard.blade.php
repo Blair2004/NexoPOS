@@ -20,7 +20,7 @@ if ( Auth::check() ) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en" class="{{ $theme }}">
+<html lang="en" data-theme="{{ $theme }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,12 +28,9 @@ if ( Auth::check() ) {
     @include( 'layout._header-injection')
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
-        'resources/scss/grid.scss',
-        'resources/scss/fonts.scss',
-        'resources/scss/animations.scss',
-        'resources/scss/typography.scss',
-        'resources/scss/app.scss',
-        'resources/scss/' . $theme . '.scss'
+        'resources/css/animations.css',
+        'resources/css/fonts.css',
+        'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.dashboard.header' )
     @include( 'layout._header-script' )
@@ -52,7 +49,7 @@ if ( Auth::check() ) {
                             <h1 class="font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-200 to-indigo-400 text-3xl">NexoPOS</h1>
                             @endif
                         </div>
-                        <ul>
+                        <ul id="aside-menu">
                             @foreach( $menus->getMenus() as $identifier => $menu )
                                 <ns-menu identifier="{{ $identifier }}" toggled="{{ $menu[ 'toggled' ] ?? '' }}" label="{{ @$menu[ 'label' ] }}" icon="{{ @$menu[ 'icon' ] }}" href="{{ @$menu[ 'href' ] }}" notification="{{ isset( $menu[ 'notification' ] ) ? $menu[ 'notification' ] : 0 }}" id="menu-{{ $identifier }}">
                                     @if ( isset( $menu[ 'childrens' ] ) )

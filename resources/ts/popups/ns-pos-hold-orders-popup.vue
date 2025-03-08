@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-box shadow-lg w-6/7-screen md:w-3/7-screen lg:w-2/6-screen">
+    <div class="ns-box shadow-lg w-6/7-screen md:w-3/7-screen lg:w-1/3-screen">
         <div class="p-2 flex ns-box-header justify-between border-b items-center">
             <h3 class="font-semibold">{{ __( 'Hold Order' ) }}</h3>
             <div>
@@ -8,15 +8,15 @@
         </div>
         <div class="flex-auto ns-box-body">
             <div class="border-b h-16 flex items-center justify-center">
-                <span class="text-5xl text-primary">{{ nsCurrency( order.total ) }}</span>
+                <span class="text-5xl text-font">{{ nsCurrency( order.total ) }}</span>
             </div>
             <div class="p-2">
                 <div class="input-group border-2 info">
-                    <input @keyup.enter="submitHold()" v-model="title" ref="reference" type="text" :placeholder="__( 'Order Reference' )" class="outline-none rounded border-2 p-2 w-full">
+                    <input @keyup.enter="submitHold()" v-model="title" ref="reference" type="text" :placeholder="__( 'Order Reference' )" class="outline-hidden rounded border-2 p-2 w-full">
                 </div>
             </div>
             <div class="p-2">
-                <p class="text-secondary">
+                <p class="text-fontcolor-soft">
                     {{ __( `The current order will be set on hold. You can retrieve this order from the pending order button. Providing a reference to it might help you to identify the order more quickly.` )}}
                 </p>
             </div>

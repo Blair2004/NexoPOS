@@ -1,7 +1,7 @@
 <template>
-    <div class="ns-box w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-6/7-screen md:h-4/5-screen shadow-lg flex flex-col overflow-hidden">
+    <div class="ns-box w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-[85vh] md:h-[80vh] shadow-lg flex flex-col overflow-hidden">
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
-            <h3 class="font-bold text-primary">{{ __( 'Shipping & Billing' ) }}</h3>
+            <h3 class="font-bold text-font">{{ __( 'Shipping & Billing' ) }}</h3>
             <div class="tools">
                 <button @click="closePopup()" class="ns-close-button rounded-full h-8 w-8 border items-center justify-center">
                     <i class="las la-times"></i>
@@ -11,7 +11,7 @@
         <div class="flex-auto ns-box-body p-2 overflow-y-auto ns-tab">
             <div id="tabs-container">
                 <div class="header flex" style="margin-bottom: -1px;">
-                    <div :key="identifier" v-for="( tab , identifier ) of tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 active' : 'inactive'" class="tab rounded-tl rounded-tr border tab  px-3 py-2 text-primary cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+                    <div :key="identifier" v-for="( tab , identifier ) of tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 active' : 'inactive'" class="tab rounded-tl rounded-tr border tab  px-3 py-2 text-fontcolor cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
                 </div>
                 <div class="border ns-tab-item">
                     <div class="px-4">

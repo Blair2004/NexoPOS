@@ -1,7 +1,7 @@
 <template>
-    <div class="flex flex-col mb-2 flex-auto ns-input">
-        <label v-if="field.label && ( field.label.length > 0)" :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="( hasError ? 'has-error' : 'is-pristine' ) + ` ` + ( field.description || field.errors > 0 ? 'mb-2' : ''  )" class="mt-1 relative border-2 rounded-md focus:shadow-sm">
+    <div class="flex flex-col mb-2 flex-auto ns-inline-multiselect" :class="hasError ? 'has-error' : 'is-pristine'">
+        <label v-if="field.label && ( field.label.length > 0)" :for="field.name" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="( field.description || field.errors > 0 ? 'mb-2' : ''  )" class="mt-1 relative rounded-md focus:shadow-sm">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="leading sm:text-sm sm:leading-5">
                 {{ leading }}
@@ -11,10 +11,10 @@
                 :disabled="field.disabled" 
                 :id="field.name" :type="field.type" 
                 :class="inputClass" class="flex sm:text-sm sm:leading-5 p-1 flex-wrap" :placeholder="field.placeholder || ''">
-                <div v-for="option of field.value" class="rounded shadow bg-box-elevation-hover flex mr-1 mb-1 ">
-                    <div class="p-2 flex items-center text-primary">{{ optionsToKeyValue[ option ] }}</div>
-                    <div class="flex items-center justify-center px-2">
-                        <div @click="removeOption( option )" class="cursor-pointer rounded-full bg-error-tertiary h-5 w-5 flex items-center justify-center">
+                <div v-for="option of field.value" class="selected-option">
+                    <div class="flex items-center justify-center text-font">{{ optionsToKeyValue[ option ] }}</div>
+                    <div class="flex items-center justify-center px-1">
+                        <div @click="removeOption( option )" class="cursor-pointer rounded-full h-5 w-5 flex items-center justify-center">
                             <i class="las la-times-circle"></i>
                         </div>
                     </div>
@@ -29,9 +29,9 @@
                         class="w-auto p-2 border-b border-dashed bg-transparent" 
                         :placeholder="field.placeholder || 'Start searching here...'">
                     <div class="h-0 absolute w-full z-10">
-                        <div class="shadow bg-box-background absoluve bottom-0 w-full max-h-80 overflow-y-auto">
+                        <div class="shadow menu absoluve bottom-0 w-full max-h-80 overflow-y-auto">
                             <ul>
-                                <li @click="addOption( suggestion )" v-for="suggestion of optionSuggestions" class="p-2 hover:bg-box-elevation-hover text-primary cursor-pointer">{{ suggestion.label }}</li>
+                                <li @click="addOption( suggestion )" v-for="suggestion of optionSuggestions" class="p-2 hover:bg-box-elevation-hover text-fontcolor cursor-pointer">{{ suggestion.label }}</li>
                             </ul>
                         </div>
                     </div>

@@ -407,7 +407,7 @@ export default {
 }
 </script>
 <template>
-    <div class="flex md:flex-row flex-col ns-box shadow-xl overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-6/7-screen' : 'w-full h-full'">
+    <div class="flex md:flex-row flex-col ns-box shadow-xl overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-[95vh]' : 'w-full h-full'">
         <div class="sidebar w-48 md:h-full flex-shrink-0">
             <h3 class="text-xl font-bold my-4 text-center">{{ __( 'Medias Manager' ) }}</h3>
             <ul class="sidebar-menus flex md:block mt-8">
@@ -421,19 +421,21 @@ export default {
                     <ns-close-button @click="popupInstance.close()"></ns-close-button>
                 </div>
             </div>
-            <div id="dropping-zone" @click="triggerManualUpload( $event )" :class="isDragging ? 'border-dashed border-2' : ''" class="flex flex-auto m-2 p-2 flex-col border-info-primary items-center justify-center">
-                <h3 class="cursor-pointer text-lg md:text-xl font-bold text-center text-primary mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
+            <div id="dropping-zone" @click="triggerManualUpload( $event )" :class="isDragging ? 'border-dashed border' : ''" class="flex flex-auto m-2 p-2 flex-col border-info-primary items-center justify-center">
+                <h3 class="cursor-pointer font-bold text-center text-fontcolor mb-4">{{ __( 'Click here or drop your files to upload.' ) }}</h3>
                 <input style="display:none" type="file" name="" multiple ref="files" id="">
-                <div class="rounded bg-box-background shadow w-full md:w-2/3 text-primary h-56 overflow-y-auto ns-scrollbar p-2">
-                    <ul v-if="files.length > 0">
-                        <li v-for="(fileData, index) of files" :class="fileData.failed === false ? 'border-info-secondary' : 'border-error-secondary'" :key="index" class="p-2 mb-2 border-b-2 flex items-center justify-between">
-                            <span>{{ fileData.file.name }}</span>
-                            <span v-if="fileData.failed === false" class="rounded bg-info-primary flex items-center justify-center text-xs p-2">{{ fileData.progress }}%</span>
-                            <div @click="openError( fileData )" v-if="fileData.failed === true" class="rounded bg-error-primary hover:bg-error-secondary hover:text-white flex items-center justify-center text-xs p-2 cursor-pointer"><i class="las la-eye"></i> <span class="ml-2">{{ __( 'See Error' ) }}</span></div>
-                        </li>
-                    </ul>
-                    <div v-if="files.length === 0" class="h-full w-full items-center justify-center flex text-center text-soft-tertiary">
-                        {{ __( 'Your uploaded files will displays here.' ) }}
+                <div class="rounded ns-box rounded-lg shadow w-full md:w-2/3 text-fontcolor p-2">
+                    <div class="h-56 overflow-y-auto ns-scrollbar">
+                        <ul v-if="files.length > 0">
+                            <li v-for="(fileData, index) of files" :class="fileData.failed === false ? 'border-info-secondary' : 'border-error-secondary'" :key="index" class="p-2 mb-2 border-b-2 flex items-center justify-between">
+                                <span>{{ fileData.file.name }}</span>
+                                <span v-if="fileData.failed === false" class="rounded bg-info-primary flex items-center justify-center text-xs p-2">{{ fileData.progress }}%</span>
+                                <div @click="openError( fileData )" v-if="fileData.failed === true" class="rounded bg-error-primary hover:bg-error-secondary hover:text-white flex items-center justify-center text-xs p-2 cursor-pointer"><i class="las la-eye"></i> <span class="ml-2">{{ __( 'See Error' ) }}</span></div>
+                            </li>
+                        </ul>
+                        <div v-if="files.length === 0" class="h-full w-full items-center justify-center flex text-center text-soft-tertiary">
+                            {{ __( 'Your uploaded files will displays here.' ) }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -447,8 +449,8 @@ export default {
             </div>
             <div class="flex flex-auto overflow-hidden">
                 <div class="shadow ns-grid flex flex-auto flex-col">
-                    <div class="p-2 border-b border-box-background">
-                        <div class="ns-input border-2 rounded border-input-edge bg-input-background flex">
+                    <div class="p-2 border-b border-input-edge">
+                        <div class="ns-input border border-input-edge overflow-hidden rounded flex">
                             <input id="search" type="text" v-model="searchField" :placeholder="__( 'Search Medias' )" class="px-4 block w-full sm:text-sm sm:leading-5 h-10">
                             <div class="flex items-center justify-center w-20 p-1" v-if="searchField.length > 0">
                                 <button @click="searchField = ''" class="h-full w-full rounded-tr rounded-br overflow-hidden">{{ __( 'Cancel' ) }}</button>
@@ -460,7 +462,7 @@ export default {
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-1 lg:grid-cols-4">
                                 <div v-for="(resource, index) of response.data" :key="index" class="">
                                     <div>
-                                        <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected ring-4' : ''" class="aspect-square bg-gray-500 overflow-hidden flex items-center justify-center">
+                                        <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected border-secondary ' : 'border-transparent'" class="border-4 aspect-square bg-secondary/50 overflow-hidden flex items-center justify-center">
                                             <img v-if="isImage( resource )" class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name"/>
                                             <template v-if="! isImage( resource )" class="object-cover h-full" :alt="resource.name">
                                                 <div class="object-cover h-full flex items-center justify-center">
@@ -500,7 +502,7 @@ export default {
                     </div>
                 </div>
             </div>
-            <div class="py-2 pr-2 flex ns-media-footer flex-shrink-0 justify-between">
+            <div class="py-2 pr-2 flex ns-media-footer text-sm flex-shrink-0 justify-between">
                 <div class="flex -mx-2 flex-shrink-0">
                     <div class="px-2" v-if="bulkSelect">
                         <div class="ns-button shadow rounded overflow-hidden info">
@@ -539,7 +541,7 @@ export default {
                             <div class="ns-button" :class="response.current_page === 1 ? 'disabled cursor-not-allowed' : 'info'">
                                 <button :disabled="response.current_page === 1" @click="loadGallery( response.current_page - 1 )" class="p-2">{{ __( 'Previous' ) }}</button>
                             </div>
-                            <hr class="border-r border-gray-700">
+                            <hr class="border-r mx-1 border-gray-700">
                             <div class="ns-button" :class="response.current_page === response.last_page ? 'disabled cursor-not-allowed' : 'info'">
                                 <button :disabled="response.current_page === response.last_page" @click="loadGallery( response.current_page + 1 )" class="p-2">{{ __( 'Next' ) }}</button>
                             </div>

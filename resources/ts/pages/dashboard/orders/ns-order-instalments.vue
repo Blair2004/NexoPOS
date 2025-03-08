@@ -3,10 +3,10 @@
         <div class="flex flex-auto">
             <div class="w-full mb-2 flex-wrap">
                 <div class="w-full mb-2 px-4">
-                    <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Instalments' ) }}</h3>
+                    <h3 class="font-semibold text-fontcolor-soft pb-2 border-b border-info-primary">{{ __( 'Instalments' ) }}</h3>
                 </div>
                 <div class="px-4">
-                    <ul class="border-table-th-edge border-t text-primary">
+                    <ul class="border-table-th-edge border-t text-font">
                         <li :class="instalment.paid ? 'success' : 'info'"
                             class="border-b border-l flex justify-between elevation-surface"
                             :key="instalment.id"

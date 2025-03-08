@@ -1,30 +1,30 @@
 <template>
-    <div class="flex flex-col flex-auto ns-select" v-if="field">
-        <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="( hasError ? 'has-error' : 'is-pristine' ) + ' ' + ( field.disabled ? 'cursor-not-allowed' : 'cursor-default' ) + ' ' + ( showResults ? 'rounded-t-md' : 'rounded-md')" 
-            class="border-2 mt-1 relative shadow-sm mb-1 flex overflow-hidden">
-            <div @click="! field.disabled && (showResults = ! showResults)" :class="( field.disabled ? 'bg-input-disabled' : 'bg-input-background' )" 
-                class="flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
-                <span class="text-primary text-sm">{{ selectedOptionLabel }}</span>
+    <div class="flex flex-col flex-auto ns-select" v-if="field" :class="( hasError ? 'has-error' : 'is-pristine' )" :disabled="field.disabled">
+        <label :for="field.name" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="( field.disabled ? 'cursor-not-allowed' : 'cursor-default' ) + ' ' + ( showResults ? 'rounded-t-md' : 'rounded-md')" 
+            class="border mt-1 relative shadow-sm mb-1 flex overflow-hidden">
+            <div @click="! field.disabled && (showResults = ! showResults)"
+                class="placeholder flex-auto h-10 sm:leading-5 py-2 px-4 flex items-center">
+                <span class="text-fontcolor text-sm">{{ selectedOptionLabel }}</span>
             </div>
-            <div v-if="hasSelectedValues( field ) && ! field.disabled" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-error-tertiary hover:text-white border-l-2 border-input-edge">
+            <button v-if="hasSelectedValues( field ) && ! field.disabled" @click="resetSelectedInput( field )" class="flex items-center justify-center w-10 border-l hover:cursor-pointer hover:bg-error-tertiary hover:text-white border-input-edge">
                 <i class="las la-times"></i>
-            </div>
-            <div v-if="field.component && ! field.disabled" @click="triggerDynamicComponent( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-input-button-hover border-l-2 border-input-edge">
+            </button>
+            <button v-if="field.component && ! field.disabled" @click="triggerDynamicComponent( field )" class="flex items-center justify-center w-10 hover:cursor-pointer border-l">
                 <i class="las la-plus"></i>
-            </div>
-            <div v-if="field.about" @click="triggerFieldAbout( field )" class="flex items-center justify-center w-10 hover:cursor-pointer hover:bg-input-button-hover border-l-2 border-input-edge">
-                <i class="las la-question-circle text-2xl text-primary"></i>
-            </div>
+            </button>
+            <button v-if="field.about" @click="triggerFieldAbout( field )" class="flex items-center justify-center w-10 hover:cursor-pointer border-l">
+                <i class="las la-question-circle text-2xl text-font"></i>
+            </button>
         </div>
         <div class="relative" v-if="showResults">
-            <div class="w-full overflow-hidden -top-[5px] border-r-2 border-l-2 border-t rounded-b-md border-b-2 border-input-edge bg-input-background shadow z-10 absolute">
-                <div class="border-b border-input-edge border-dashed p-2">
+            <div class="w-full overflow-hidden -top-[5px] ns-select-results border rounded-b-md shadow z-10 absolute">
+                <div class="border-b border-dashed p-2 filter-input-wrapper">
                     <input @keypress.enter="selectFirstOption()" ref="searchInputField" v-model="searchField" type="text" :placeholder="__( 'Search result' )">
                 </div>
                 <div class="h-60 overflow-y-auto">
                     <ul>
-                        <li @click="selectOption( option )" v-for="option of filtredOptions" class="py-1 px-2 hover:bg-info-primary cursor-pointer text-primary">{{ option.label }}</li>
+                        <li @click="selectOption( option )" v-for="option of filtredOptions" class="py-1 px-2 hover:bg-info-primary cursor-pointer text-font">{{ option.label }}</li>
                     </ul>
                 </div>
             </div>

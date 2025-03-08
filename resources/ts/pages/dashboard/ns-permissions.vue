@@ -1,7 +1,7 @@
 <template>
     <div id="permission-wrapper">
         <div class="my-2">
-            <input ref="search" v-model="searchText" type="text" :placeholder="__( 'Press &quot;/&quot; to search permissions' )" class="border-2 p-2 w-full outline-none bg-input-background border-input-edge text-primary">
+            <input ref="search" v-model="searchText" type="text" :placeholder="__( 'Press &quot;/&quot; to search permissions' )" class="border-2 p-2 w-full outline-hidden bg-input-background border-input-edge text-font">
         </div>
         <div class="rounded shadow ns-box flex">
             <div id="permissions" class="w- bg-gray-800 flex-shrink-0">

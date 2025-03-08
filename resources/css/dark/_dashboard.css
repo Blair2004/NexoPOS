@@ -1,0 +1,153 @@
+#main-container, #page-container {
+    @apply bg-surface;
+}
+
+.card-widget {
+    h1, h2, h3, h4, h5, h6, i {
+        @apply text-white;
+    }
+}
+
+#dashboard-aside > div {
+    @apply bg-aside-background;
+    .ns-aside-menu {
+        @apply text-aside-color hover:bg-aside-menu-background-hover;
+        &.toggled {
+            @apply border-secondary bg-secondary;
+        }
+        &.normal {
+            @apply border-transparent bg-aside-menu-background;
+            &:hover {
+                @apply bg-aside-menu-background-hover;
+            }
+        }
+        .notification-label {
+            @apply bg-red-600 text-white;
+        }
+    }
+    .ns-aside-submenu {
+        @apply border-secondary bg-aside-submenu-background hover:bg-aside-submenu-background-hover;
+        &.active {
+            @apply text-white;
+        }
+        &.normal {
+            @apply text-gray-100;
+        }
+    }
+}
+
+#dashboard-body {
+    @apply bg-surface;
+
+    .page-inner-header {
+        h3 {
+            @apply text-fontcolor;
+        }
+
+        @apply text-fontcolor-soft;
+    }
+}
+
+.ns-toggle-button {
+    @apply border-input-edge text-fontcolor;
+    &:hover {
+        @apply bg-tab-active border-transparent text-gray-700;
+    }
+}
+
+.ns-avatar { 
+    @apply text-fontcolor border-input-edge;
+
+    &:hover {
+        @apply bg-box-background text-fontcolor border-transparent;
+    }
+
+    &.toggled {
+        @apply bg-box-background text-fontcolor border-transparent;
+    }
+}
+
+.pending-drag {
+    @apply border-transparent;
+}
+.awaiting-drop {
+    @apply border-gray-400;
+}
+.drag-over {
+    @apply border-blue-400;
+}
+.widget-placeholder {
+    @apply border-secondary text-fontcolor;
+}
+.ns-drop-zone[hovered="true"] {
+    @apply outline-dashed outline-2 outline-secondary;
+}
+.intermediate-dropzone {
+    &[hovered="true"] {
+        margin-top: -15px;
+        padding-top: 15px;
+        &> div {
+            @apply py-4 h-5 bg-secondary mb-4;
+        }
+    }
+
+    &[hovered="false"] {
+        margin-top: -15px;
+        height: 15px;
+        
+        &> div {
+            @apply py-4 h-[0px] bg-transparent;
+        }
+    }
+}
+/**
+ * Notifications Wrapper
+**/
+
+#notificaton-wrapper {
+    #notification-button {
+        &.panel-visible {
+            @apply bg-box-background;
+        }
+        &.panel-hidden {
+            @apply border-input-edge;
+        }
+
+        &:hover {
+            @apply bg-box-background text-fontcolor border-transparent
+        }
+
+        @apply text-fontcolor;
+    }
+
+    #notification-center > div > div {
+        @apply bg-box-background;
+    }
+
+    .counter {
+        @apply bg-secondary text-white;
+    }
+
+    .clear-all {
+        @apply text-fontcolor;
+
+        &:hover {
+            @apply bg-input-button-hover text-fontcolor;
+        }
+    }
+
+    .notification-card {
+        h1 {
+            @apply text-fontcolor;
+        }
+        p {
+            @apply text-fontcolor-soft;
+        }
+
+        .date {
+            @apply text-gray-400;
+        }
+    
+        @apply border-box-edge;
+    }
+}

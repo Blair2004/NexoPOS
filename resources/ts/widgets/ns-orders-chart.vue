@@ -6,11 +6,11 @@
                 <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
             </div>
         </div>
-        <div class="p-2">
+        <div class="p-2 ns-box-body border-b">
             <Bar v-if="report" id="chart" :options="chartOptions" :data="chartData"/>
         </div>
         <div class="foot -mx-4 flex flex-wrap">
-            <div class="flex w-full lg:w-full border-b">
+            <div class="flex w-full lg:w-full py-1 border-b ns-box-body">
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Weekly Sales' ) }}</span>
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeeklySales, 'abbreviate' ) }}</h2>
@@ -20,7 +20,7 @@
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeekTaxes, 'abbreviate' ) }}</h2>
                 </div>
             </div>
-            <div class="flex w-full lg:w-full">
+            <div class="flex w-full lg:w-full py-1">
                 <div class="px-4 w-full lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Net Income' ) }}</span>
                     <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeekIncome, 'abbreviate' ) }}</h2>

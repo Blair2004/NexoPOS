@@ -35,15 +35,13 @@ export default {
 }
 </script>
 <template>
-    <div class="flex flex-col flex-auto">
-        <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-error-primary' : 'border-input-edge'" class="border-2 mt-1 flex relative overflow-hidden rounded-md shadow-sm mb-1 form-input">
-            <div @click="playSelectedSound()" class="border-r-2 border-input-edge flex-auto flex items-center justify-center hover:bg-info-tertiary hover:text-white">
-                <button class="w-10 flex item-center justify-center">
-                    <i class="las la-play text-2xl"></i>
-                </button>
-            </div>
-            <select :disabled="field.disabled ? field.disabled : false" @change="$emit( 'change', $event )" :name="field.name" v-model="field.value" :class="inputClass" class="text-primary block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10 outline-none">
+    <div class="flex flex-col flex-auto ns-select-audio">
+        <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="hasError ? 'error' : ''" class="mt-1 flex relative mb-1 form-input">
+            <button @click="playSelectedSound()" class="rounded-l border w-12 flex-auto flex items-center justify-center">
+                <i class="las la-play text-2xl"></i>
+            </button>
+            <select :disabled="field.disabled ? field.disabled : false" @change="$emit( 'change', $event )" :name="field.name" v-model="field.value" :class="inputClass" class="text-fontcolor block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10 outline-hidden">
                 <option :key="index" :value="option.value" v-for="(option,index) of field.options" class="py-2">{{ option.label }}</option>
             </select>
         </div>

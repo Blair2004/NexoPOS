@@ -6,6 +6,8 @@ import mkcert from 'vite-plugin-mkcert';
 import { resolve } from 'path';
 // import path from 'path';
 import vuePlugin from '@vitejs/plugin-vue';
+import tailwindcss from "@tailwindcss/vite";
+
 
 export default ({ mode }) => {
     process.env = {...process.env, ...loadEnv(mode, process.cwd())};
@@ -33,6 +35,7 @@ export default ({ mode }) => {
             ]
         },
         plugins: [
+            tailwindcss(),
             laravel({
                 input: [
                     'resources/ts/bootstrap.ts',
@@ -50,22 +53,20 @@ export default ({ mode }) => {
                     'resources/ts/widgets.ts',
                     'resources/ts/wizard.ts',
     
-                    'resources/scss/app.scss',
-                    'resources/scss/light.scss',
-                    'resources/scss/dark.scss',
-                    'resources/scss/grid.scss',
-                    'resources/scss/animations.scss',
-                    'resources/scss/typography.scss',
-                    'resources/scss/fonts.scss',
+                    'resources/css/app.css',
+                    'resources/css/grid.css',
+                    'resources/css/animations.css',
+                    'resources/css/fonts.css',
                     'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
+
+                    // themes
+                    'resources/css/light.css',
+                    'resources/css/dark.css',
+                    'resources/css/phosphor.css',
                 ],
-                refresh: [ 
-                    'resources/views/**', 
-                    'resources/sass/**' 
-                ],
+                refresh: true,
             }),
             mkcert(),
-        //     esmifyPlugin(),
             vuePlugin({
                 template: {
                     transformAssetUrls: {

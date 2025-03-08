@@ -6,7 +6,7 @@
                     :key="tab.identifier" 
                     v-for="( tab , identifier ) of childrens" 
                     @click="toggle( tab )" 
-                    :class="active === tab.identifier ? 'border-b-0 active z-10' : 'border inactive'" 
+                    :class="active === tab.identifier ? 'border-b-0 active z-10' : 'inactive'" 
                     class="tab rounded-tl rounded-tr border px-2 py-1 cursor-pointer flex items-center" 
                     style="margin-right: -1px">
                         <span>{{ tab.label }}</span>

@@ -3,7 +3,7 @@
         <div id="notification-button" @click="visible = !visible" :class="visible ? 'panel-visible border-0 shadow-lg' : 'border panel-hidden'" class="hover:shadow-lg hover:border-opacity-0 rounded-full h-12 w-12 cursor-pointer font-bold text-2xl justify-center items-center flex">
             <div class="relative float-right" v-if="notifications.length > 0">
                 <div class="absolute -ml-6 -mt-8">
-                    <div class="bg-info-tertiary text-white w-8 h-8 rounded-full text-xs flex items-center justify-center">{{ nsNumberAbbreviate( notifications.length, 'abbreviate' ) }}</div>
+                    <div class="counter w-8 h-8 rounded-full text-xs flex items-center justify-center">{{ nsNumberAbbreviate( notifications.length, 'abbreviate' ) }}</div>
                 </div>
             </div>
             <i class="las la-bell"></i>
@@ -29,8 +29,8 @@
                         </div>
                         <div v-if="notifications.length === 0" class="h-full w-full flex items-center justify-center">
                             <div class="flex flex-col items-center">
-                                <i class="las la-laugh-wink text-5xl text-primary"></i>
-                                <p class="text-secondary text-sm">{{ __( 'Nothing to care about !' ) }}</p>
+                                <i class="las la-laugh-wink text-5xl text-font"></i>
+                                <p class="text-fontcolor-soft text-sm">{{ __( 'Nothing to care about !' ) }}</p>
                             </div>
                         </div>
                     </div>

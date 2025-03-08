@@ -1,0 +1,114 @@
+@theme {
+    /** Typography */
+    --color-typography: var( --color-gray-800 );
+    --color-fontcolor: var( --color-gray-300 );
+    --color-fontcolor-soft: var( --color-gray-400 );
+    --color-fontcolor-hard: rgb( 107 114 128 );
+
+    /** Surfaces */
+    --color-surface: #1a1a17;
+    --color-aside-background: #433e37;
+    --color-aside-color: #FFF;
+    --color-aside-menu-background: #433e37;
+    --color-aside-menu-background-hover: #433e37;
+    --color-aside-submenu-background: #444;
+    --color-aside-submenu-background-hover: #555;
+    --color-soft-primary: rgb( 75 85 99 );
+    --color-soft-secondary: rgb( 107 114 128 );
+    --color-soft-tertiary: rgb( 156 163 175 );
+    --color-surface-soft: rgb( 229 231 235 );
+    --color-surface-hard: rgb( 250 250 250 );
+    --color-popup-surface: #433e37;
+    
+    /** Button */
+    --color-button-hover: rgb( 203 213 225 );
+    --color-button-active: rgb( 203 213 225 );
+    
+    /** Input */
+    --color-input-background: #333;
+    --color-input-disabled: #222;
+    --color-input-button: #555;
+    --color-input-button-hover: #666;
+    --color-input-button-active: #555;
+    --color-input-option-hover: rgb( 107 114 128 );
+    --color-input-edge: #222;
+
+    /** Box */
+    --color-box-edge: #222;
+    --color-box-background: #433e37;
+    --color-box-elevation-background: #555;
+    --color-box-elevation-edge: #433e37;
+    --color-box-elevation-hover: var( --color-gray-500 );
+
+    /** CRUD */
+    --color-crud-button-edge: #333;
+    --color-crud-input-background: rgb( 209 213 219 );
+
+    /** POS */
+    --color-pos-button-edge: #222;
+
+    /** Numpad */
+    --color-numpad-background: var( --color-gray-300 );
+    --color-numpad-typography: rgb( 55 65 81 );
+    --color-numpad-edge: #333;
+    --color-numpad-hover: var( --color-secondary );
+    --color-numpad-hover-edge: rgb( 209 213 219 );
+
+    /** Option */
+    --color-option-hover: rgb( 107 114 128 );
+
+    /** Scroll */
+    --color-scroll-thumb: rgb( 55 65 81 );
+    --color-scroll-track: rgb( 0 0 0 );
+    --color-scroll-popup-thumb: rgb( 55 65 81 );
+
+    /** Pre */
+    --color-pre: rgb( 107 114 128 );
+
+    /** Tabs */
+    --color-tab-active: #433e37;
+    --color-tab-active-border: #333;
+    --color-tab-inactive: #39352f;
+    --color-tab-table-th: #333;
+    --color-tab-table-th-edge: #444;
+
+    /** Table */
+    --color-table-th: #555;
+    --color-table-th-edge: #555;
+
+    /** Floating Menu */
+    --color-floating-menu: #333;
+    --color-floating-menu-hover: #555;
+    --color-floating-menu-selected: #555;
+    --color-floating-menu-edge: #444;
+
+    /** Base Accent */
+    --color-primary: #9F9F5E;
+    --color-secondary: #89895d;
+    --color-tertiary: #6F6F51;
+
+    /** Error */
+    --color-error-primary: var( --color-red-400 );
+    --color-error-secondary: var( --color-red-500 );
+    --color-error-tertiary: var( --color-red-600 );
+
+    /** Info */
+    --color-info-primary: var( --color-blue-400 );
+    --color-info-secondary: var( --color-blue-500 );
+    --color-info-tertiary: var( --color-blue-600 );
+
+    /** Success */
+    --color-success-primary: #538d22;
+    --color-success-secondary: #245501;
+    --color-success-tertiary: var( --color-green-600 );
+
+    /** Warning */
+    --color-warning-primary: var( --color-orange-200);
+    --color-warning-secondary: var( --color-orange-400);
+    --color-warning-tertiary: var( --color-orange-600);
+
+    /** Default **/
+    --color-default-primary: var( --color-gray-200 );
+    --color-default-secondary: var( --color-gray-300 );
+    --color-default-tertiary: var( --color-gray-400 );
+}

@@ -18,7 +18,7 @@
                         <template v-slot:title>{{ __( 'Customer Name' ) }}</template>
                         <template v-slot:save>{{ __( 'Save Customer' ) }}</template>
                     </ns-crud-form>
-                    <div v-if="! userCan( 'nexopos.create.customers' )" class="h-full flex-col w-full flex items-center justify-center text-primary">
+                    <div v-if="! userCan( 'nexopos.create.customers' )" class="h-full flex-col w-full flex items-center justify-center text-font">
                         <i class="lar la-hand-paper ns-icon text-6xl"></i>
                         <h3 class="font-medium text-2xl">{{ __( 'Not Authorized' ) }}</h3>
                         <p>{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
@@ -82,18 +82,18 @@
                                         </div>
                                         <template  v-if="! isLoadingOrders">
                                             <div class="py-2 w-full">
-                                                <h2 class="font-semibold text-primary">{{ __( 'Last Purchases' ) }}</h2>
+                                                <h2 class="font-semibold text-font">{{ __( 'Last Purchases' ) }}</h2>
                                             </div>
                                             <div class="flex-auto flex-col flex overflow-hidden">
                                                 <div class="flex-auto overflow-y-auto">
                                                     <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-primary">
+                                                            <tr class="text-fontcolor">
                                                                 <th colspan="3" width="150" class="p-2 border font-semibold">{{ __( 'Order' ) }}</th>
                                                                 <th width="50" class="p-2 border font-semibold">{{ __( 'Options' ) }}</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-primary">
+                                                        <tbody class="text-fontcolor">
                                                             <tr v-if="orders.length === 0">
                                                                 <td class="border p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
                                                             </tr>
@@ -133,17 +133,17 @@
                                         </div>
                                         <template v-if="! isLoadingHistory">
                                             <div class="py-2 w-full">
-                                                <h2 class="font-semibold text-primary">{{ __( 'Wallet History' ) }}</h2>
+                                                <h2 class="font-semibold text-font">{{ __( 'Wallet History' ) }}</h2>
                                             </div>
                                             <div class="flex-auto flex-col flex overflow-hidden">
                                                 <div class="flex-auto overflow-y-auto">
                                                     <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-primary">
+                                                            <tr class="text-fontcolor">
                                                                 <th colspan="3" width="150" class="p-2 border font-semibold">{{ __( 'Transaction' ) }}</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-primary">
+                                                        <tbody class="text-fontcolor">
                                                             <tr v-if="walletHistories.length === 0">
                                                                 <td class="border p-2 text-center" colspan="3">{{ __( 'No History...' ) }}</td>
                                                             </tr>
@@ -174,19 +174,19 @@
                                         </div>
                                         <template v-if="! isLoadingCoupons">
                                             <div class="py-2 w-full">
-                                                <h2 class="font-semibold text-primary">{{ __( 'Coupons' ) }}</h2>
+                                                <h2 class="font-semibold text-font">{{ __( 'Coupons' ) }}</h2>
                                             </div>
                                             <div class="flex-auto flex-col flex overflow-hidden">
                                                 <div class="flex-auto overflow-y-auto">
                                                     <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-primary">
+                                                            <tr class="text-fontcolor">
                                                                 <th width="150" class="p-2 border font-semibold">{{ __( 'Name' ) }}</th>
                                                                 <th class="p-2 border font-semibold">{{ __( 'Type' ) }}</th>
                                                                 <th class="p-2 border font-semibold"></th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-primary text-sm">
+                                                        <tbody class="text-fontcolor text-sm">
                                                             <tr v-if="coupons.length === 0">
                                                                 <td class="border p-2 text-center" colspan="4">{{ __( 'No coupons for the selected customer...' ) }}</td>
                                                             </tr>
@@ -195,8 +195,8 @@
                                                                     <h3>{{ coupon.name }}</h3>
                                                                     <div class="">
                                                                         <ul class="-mx-2 flex">
-                                                                            <li class="text-xs text-primary px-2">{{ __( 'Usage :' ) }} {{ coupon.usage }}/{{ coupon.limit_usage }}</li>
-                                                                            <li class="text-xs text-primary px-2">{{ __( 'Code :' ) }} {{ coupon.code }}</li>
+                                                                            <li class="text-xs text-fontcolor px-2">{{ __( 'Usage :' ) }} {{ coupon.usage }}/{{ coupon.limit_usage }}</li>
+                                                                            <li class="text-xs text-fontcolor px-2">{{ __( 'Code :' ) }} {{ coupon.code }}</li>
                                                                         </ul>
                                                                     </div>
                                                                 </td>
@@ -224,19 +224,19 @@
                                         </div>
                                         <template v-if="! isLoadingRewards">
                                             <div class="py-2 w-full">
-                                                <h2 class="font-semibold text-primary">{{ __( 'Rewards' ) }}</h2>
+                                                <h2 class="font-semibold text-font">{{ __( 'Rewards' ) }}</h2>
                                             </div>
                                             <div class="flex-auto flex-col flex overflow-hidden">
                                                 <div class="flex-auto overflow-y-auto">
                                                     <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-primary">
+                                                            <tr class="text-fontcolor">
                                                                 <th width="150" class="p-2 border font-semibold">{{ __( 'Name' ) }}</th>
                                                                 <th class="p-2 border font-semibold">{{ __( 'Points' ) }}</th>
                                                                 <th class="p-2 border font-semibold">{{ __( 'Target' ) }}</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-primary text-sm" v-if="rewardsResponse.data">
+                                                        <tbody class="text-fontcolor text-sm" v-if="rewardsResponse.data">
                                                             <tr v-if="rewardsResponse.data.length === 0">
                                                                 <td class="border p-2 text-center" colspan="4">{{ __( 'No rewards available the selected customer...' ) }}</td>
                                                             </tr>

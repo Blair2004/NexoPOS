@@ -11,6 +11,8 @@ import InlineMultiselect from '~/dev/inline-multiselect.vue';
 import Inputs from '~/dev/inputs.vue';
 import Multiselect from '~/dev/multiselect.vue';
 import Upload from '~/dev/upload.vue';
+import Ckeditor from '~/dev/ckeditor.vue';
+import Input from '~/dev/input.vue';
 
 const routes    =   [{
     path: '/',
@@ -22,6 +24,9 @@ const routes    =   [{
         {
             path: 'date',
             component: Date,
+        },{
+            path: 'input',
+            component: Input,
         }, {
             path: 'daterange',
             component:  DateRange,
@@ -37,6 +42,9 @@ const routes    =   [{
         }, {
             path: 'upload',
             component: Upload,
+        }, {
+            path: 'ckeditor',
+            component: Ckeditor,
         }
     ]   
 }];

@@ -15,6 +15,7 @@ use App\Crud\OrderCrud;
 use App\Crud\OrderInstalmentCrud;
 use App\Crud\PaymentTypeCrud;
 use App\Events\OrderAfterPrintedEvent;
+use App\Events\RenderFooterEvent;
 use App\Exceptions\NotAllowedException;
 use App\Fields\OrderPaymentFields;
 use App\Http\Controllers\DashboardController;
@@ -28,6 +29,7 @@ use App\Services\DateService;
 use App\Services\Options;
 use App\Services\OrdersService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\View;
 
 class OrdersController extends DashboardController
@@ -157,11 +159,9 @@ class OrdersController extends DashboardController
          * let's inject the necessary dependency
          * for being able to manage orders.
          */
-        Hook::addAction(
-            'ns-dashboard-footer',
-            fn( Output $output ) => $output
-                ->addView( 'pages.dashboard.orders.footer' )
-        );
+        Event::listen( RenderFooterEvent::class, function( RenderFooterEvent $event ) {
+            $event->output->addView( 'pages.dashboard.orders.footer' );
+        } );
 
         return View::make( 'pages.dashboard.orders.pos', [
             'title' => sprintf(

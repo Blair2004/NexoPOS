@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-lg w-95vw h-95vh md:w-3/5-screen md:h-3/5-screen ns-box flex flex-col overflow-hidden">
+    <div class="shadow-lg w-95vw h-95vh md:w-3/5-screen md:h-[60vh] ns-box flex flex-col overflow-hidden">
         <div class="border-b p-2 flex items-center justify-between ns-box-header">
             <h3>{{ __( 'Order Refunds' ) }}</h3>
             <div class="flex">
@@ -14,14 +14,14 @@
                 </div>
                 <div class="flex h-full w-full items-center flex-col justify-center" v-if="loaded && refunds.length === 0">
                     <i class="las la-laugh-wink text-5xl"></i>
-                    <p class="md:w-80 text-sm text-secondary text-center">{{ __( 'No refunds made so far. Good news right?' ) }}</p>
+                    <p class="md:w-80 text-sm text-fontcolor-soft text-center">{{ __( 'No refunds made so far. Good news right?' ) }}</p>
                 </div>
                 <template v-if="loaded && refunds.length > 0">
                     <div class="border-b border-box-edge flex flex-col md:flex-row" :key="refund.id" v-for="refund of refunds">
                         <div class="w-full md:flex-auto p-2">
                             <h3 class="font-semibold mb-1">{{ order.code }}</h3>
                             <div>
-                                <ul class="flex -mx-1 text-sm text-primary">
+                                <ul class="flex -mx-1 text-sm text-font">
                                     <li class="px-1">{{ __( 'Total' ) }} : {{ nsCurrency( refund.total ) }}</li>
                                     <li class="px-1">{{ __( 'By' ) }} : {{ refund.author.username }}</li>
                                 </ul>
@@ -41,7 +41,7 @@
                     <div class="w-full md:flex-auto p-2">
                         <h3 class="font-semibold mb-1">{{ product.product.name }}</h3>
                         <div>
-                            <ul class="flex -mx-1 text-sm text-primary">
+                            <ul class="flex -mx-1 text-sm text-font">
                                 <li class="px-1">{{ __( 'Condition' ) }} : {{ product.condition }}</li>
                                 <li class="px-1">{{ __( 'Quantity' ) }} : {{ product.quantity }}</li>
                                 <li class="px-1">{{ __( 'Total' ) }} : {{ nsCurrency( product.total_price ) }}</li>

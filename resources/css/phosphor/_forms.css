@@ -1,0 +1,527 @@
+/**
+ * Fields Light
+**/
+.ns-switch {
+    button.selected {
+        @apply bg-secondary text-white;
+        &:hover {
+            @apply bg-secondary;
+        }
+    }
+    button.unselected {
+        @apply bg-gray-500 text-fontcolor;
+    }
+} 
+
+.input-group {
+    @apply border-input-edge;
+    input, select {
+        @apply bg-crud-button-edge text-fontcolor;
+    }
+    button {
+        @apply bg-input-disabled text-white outline-hidden;
+        i, span {
+            @apply text-white;
+        }
+        .disabled {
+            @apply bg-input-edge;
+        }
+    }
+
+    &.primary {
+        @apply border-secondary;
+        input {
+            @apply bg-input-background text-fontcolor;
+        }
+        button {
+            @apply bg-secondary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+    
+    &.info {
+        @apply border-secondary;
+        input {
+            @apply bg-input-background text-fontcolor;
+        }
+        button {
+            @apply bg-secondary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+
+    &.error {
+        @apply border-error-secondary;
+        input {
+            @apply bg-input-background text-fontcolor;
+        }
+        button {
+            @apply bg-error-secondary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+
+    &.warning {
+        @apply border-error-primary;
+        input {
+            @apply bg-input-background text-fontcolor;
+        }
+        button {
+            @apply bg-error-primary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+    
+    &.success {
+        @apply border-success-primary;
+        input {
+            @apply bg-input-background text-fontcolor;
+        }
+        button {
+            @apply bg-success-primary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+}
+
+.ns-select {
+    .placeholder {
+        @apply bg-input-background;
+        span {
+            @apply text-fontcolor;
+        }
+    }
+
+    select {
+        @apply bg-input-background text-fontcolor;
+        option {
+            @apply bg-input-background;
+            &:hover {
+                @apply bg-input-option-hover text-white;
+            }
+        }
+    }
+
+    div > button {
+        @apply hover:bg-input-button-hover border-input-edge;
+    }
+
+    .ns-select-results {
+        @apply bg-floating-menu border-input-edge text-fontcolor; 
+
+        .filter-input-wrapper {
+            @apply border-input-edge;
+        }
+
+        input {
+            @apply bg-floating-menu w-full;
+        }
+
+        li:hover {
+            @apply bg-floating-menu-hover;
+        }
+    }
+}
+
+.ns-checkbox {
+    & > div {
+        @apply border-input-edge;
+    }
+    &.checked > div {
+        @apply bg-secondary text-white border-transparent;
+    }
+}
+
+.ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media, .ns-checkbox, .ns-date, .ns-ckeditor {
+    [disabled] {
+        @apply bg-input-disabled border-input-edge text-fontcolor;
+    }
+    
+    .ns-enabled {
+        @apply bg-transparent;
+    }
+
+    &.has-error {
+        > label {
+            @apply text-error-secondary;
+        }
+
+        > div {
+            @apply border-error-primary;
+        }
+    }
+
+    &.is-pristine {
+        > label {
+            @apply text-fontcolor;
+        }
+
+        > div {
+            @apply border-input-edge;
+        }
+    }
+
+    .leading {
+        @apply text-fontcolor;
+    }
+
+    input, textarea {
+        @apply text-fontcolor outline-hidden bg-input-background border-input-edge;
+    }
+
+    button {
+        @apply border-input-edge text-fontcolor;
+        &:hover {
+            @apply bg-input-button-hover;
+        }
+    }
+
+    p.ns-description {
+        @apply text-fontcolor;
+    }
+
+    p.ns-error {
+       @apply text-error-secondary; 
+    }
+}
+
+/**
+ * Forms
+**/
+.form-input {
+    @apply outline-0;
+    
+    *[disabled] {
+        @apply bg-input-disabled;
+    }
+
+    label {
+        @apply text-fontcolor;
+    }
+    select {
+        @apply bg-input-background text-fontcolor;
+        option {
+            @apply bg-input-background;
+            &:hover {
+                @apply bg-input-option-hover;
+            }
+        } 
+    }
+    input {
+        @apply border-input-edge bg-input-background rounded;
+        &[disabled] {
+            @apply bg-input-disabled;
+        }
+    }
+    p {
+        @apply text-fontcolor-soft;
+    }
+}
+
+.form-input-invalid {
+    label {
+        @apply text-error-secondary;
+    }
+    input {
+        @apply border-error-primary bg-error-secondary rounded;
+    }
+    p {
+        @apply text-error-secondary;
+    }
+}
+
+/**
+ * Buttons
+**/
+.ns-button {
+    @apply text-fontcolor cursor-pointer;
+
+    button, a {
+        @apply bg-input-button shadow rounded;
+
+        &:hover {
+            @apply bg-input-button-hover border-transparent;
+        }
+
+        &:disabled {
+            @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+        }
+    }
+
+    
+    &.hover-success:hover, &.success {
+        button, a {
+            @apply bg-success-secondary text-white;
+
+            span.ns-label {
+                @apply bg-input-background text-success-primary;
+            }
+
+            &:disabled {
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+            }
+        }
+    }
+    
+    &.hover-error:hover, &.error {
+        button, a {
+            @apply bg-error-secondary text-white;
+
+            span.ns-label {
+                @apply bg-input-background text-error-secondary;
+            }
+
+            &:disabled {
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+            }
+        }
+    }
+    
+    &.hover-warning:hover, &.warning {
+        button, a {
+            @apply bg-warning-tertiary text-white;
+
+            span.ns-label {
+                @apply bg-input-background text-warning-secondary;
+            }
+
+            &:disabled {
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+            }
+        }
+    }
+    
+    &.hover-default:hover, &.default {
+        button, a {
+            @apply bg-secondary text-white;
+
+            span.ns-label {
+                @apply bg-surface text-fontcolor;
+            }
+
+            &:disabled {
+                @apply bg-tertiary text-fontcolor/50 shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+            }
+        }
+    }
+    
+    &.hover-info:hover, &.info {
+        button, a {
+            @apply bg-secondary text-white;
+
+            span.ns-label {
+                @apply bg-input-background text-fontcolor;
+            }
+
+            &:disabled {
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+            }
+        }
+    }
+}
+
+.ns-buttons {
+    @apply shadow;
+    
+    button.success, a.success {
+        @apply bg-success-tertiary text-white;
+
+        span.ns-label {
+            @apply bg-input-background text-success-tertiary;
+        }
+    }
+    button.error, a.error {
+        @apply bg-error-secondary text-white;
+
+        span.ns-label {
+            @apply bg-input-background text-error-secondary;
+        }
+    }
+    button.warning, a.warning {
+        @apply bg-warning-tertiary text-white;
+
+        span.ns-label {
+            @apply bg-input-background text-warning-secondary;
+        }
+    }
+    button.default, a.default {
+        @apply bg-input-background text-input-disabled;
+
+        span.ns-label {
+            @apply bg-surface text-white;
+        }
+    }
+    button.info, a.info {
+        @apply bg-secondary text-white;
+
+        span.ns-label {
+            @apply bg-input-background text-fontcolor;
+        }
+    }
+    .ns-disabled {
+        @apply bg-input-background border border-input-edge cursor-not-allowed text-fontcolor;
+
+        span.ns-label {
+            @apply bg-input-background text-fontcolor;
+        }
+    }
+}
+
+.ns-close-button {
+    @apply border-input-edge text-fontcolor;
+
+    &:hover {
+        @apply bg-error-secondary border-transparent text-white;
+        > i {
+            @apply text-white;
+        }
+    }
+}
+
+.ns-floating-panel {
+    .ns-inset-button {
+        @apply border-input-edge text-fontcolor;
+        &:hover, &.active {
+            @apply bg-secondary text-white border-transparent;
+        }
+        &.info:hover, &.info.active {
+            @apply bg-secondary text-white border-transparent;
+        }
+        &.success:hover, &.success.active {
+            @apply bg-success-secondary text-white border-transparent;
+        }
+        &.warning:hover, &.warning.active {
+            @apply bg-warning-secondary text-white border-transparent;
+        }
+        &.error:hover, &.error.active  {
+            @apply bg-error-secondary text-white border-transparent;
+        }
+    }
+}
+.ns-inset-button {
+    @apply border-input-edge text-fontcolor;
+    &:hover, &.active {
+        @apply bg-secondary text-white border-transparent;
+    }
+    &.info:hover, &.info.active {
+        @apply bg-secondary text-white border-transparent;
+    }
+    &.success:hover, &.success.active {
+        @apply bg-success-secondary text-white border-transparent;
+    }
+    &.warning:hover, &.warning.active {
+        @apply bg-warning-secondary text-white border-transparent;
+    }
+    &.error:hover, &.error.active  {
+        @apply bg-error-secondary text-white border-transparent;
+    }
+}
+
+.ns-multiselect {
+    label {
+        @apply text-fontcolor;
+
+        &.error {
+            @apply text-error-secondary;
+        }
+    }
+
+    .select-preview {
+        @apply bg-input-background;
+
+        .selected-pills {
+            @apply bg-secondary text-white;
+        }
+    }
+    
+
+    & > div > div {
+        @apply border-input-edge;
+
+        &.untoggled {
+            @apply rounded;
+        }
+        &.toggled {
+            @apply rounded-t;
+        }
+    }
+
+    .ns-dropdown {
+        @apply bg-floating-menu border-input-edge;
+
+        .search {
+            @apply bg-input-background border-input-edge;
+        }
+        .selected, .option:hover {
+            @apply bg-input-button-hover;
+        }
+    }
+}
+
+.ns-daterange-picker .form-control.reportrange-text {
+    @apply bg-input-background border-transparent;
+}
+
+.ns-select-audio {
+    label {
+        @apply text-fontcolor;
+
+        .has-error {
+            @apply text-error-secondary;
+        }
+    }
+
+    div {
+        button {
+            @apply border-input-edge;
+
+            &:hover {
+                @apply bg-secondary border-secondary text-white;
+            }
+        }
+
+        select {
+            @apply border-input-edge border border-l-transparent rounded-r;
+        }
+    }
+}
+
+.ns-inline-multiselect {
+    label {
+        @apply text-fontcolor;
+
+        .has-error {
+            @apply text-error-secondary;
+        }
+    }
+
+    > div {
+       @apply border-input-edge border bg-input-background; 
+
+       .selected-option {
+            @apply bg-secondary text-white rounded shadow flex mr-1 justify-start h-8 mb-1;
+       }
+
+        input {
+            @apply outline-hidden;
+        }
+
+        .menu {
+            @apply bg-floating-menu;
+
+            li:hover {
+                @apply bg-input-button-hover;
+            }
+        }
+    }
+}

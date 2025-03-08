@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-box shadow-lg w-95vw md:w-4/6-screen lg:w-half overflow-hidden">
+    <div class="ns-box shadow-lg w-95vw md:w-2/3-screen lg:w-half overflow-hidden">
         <div id="header" class="p-2 flex justify-between items-center ns-box-header">
             <h3 class="font-bold">{{ __( 'Register History' ) }}</h3>
             <div>
@@ -26,7 +26,7 @@
                     <div class="p-2 flex-auto">
                         <div>{{ history.description || __( 'Not Provided' ) }}</div>
                         <div class="flex md:-mx-1">
-                            <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Type' ) }}</strong>: {{ history.label }}</div>
+                            <div class="px-1 text-xs text-fontcolor-soft"><strong>{{ __( 'Type' ) }}</strong>: {{ history.label }}</div>
                         </div>
                     </div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
@@ -43,8 +43,8 @@
                     <div class="p-2 flex-auto">
                         <div>{{ history.description || __( 'Not Provided' ) }}</div>
                         <div class="flex md:-mx-1">
-                            <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Type' ) }}</strong>: {{ history.label }}</div>
-                            <div class="px-1 text-xs text-secondary"><strong>{{ __( 'Account' ) }}</strong>: {{ history.account_name }}</div>
+                            <div class="px-1 text-xs text-fontcolor-soft"><strong>{{ __( 'Type' ) }}</strong>: {{ history.label }}</div>
+                            <div class="px-1 text-xs text-fontcolor-soft"><strong>{{ __( 'Account' ) }}</strong>: {{ history.account_name }}</div>
                         </div>
                     </div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>

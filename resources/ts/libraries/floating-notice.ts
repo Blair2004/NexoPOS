@@ -6,7 +6,8 @@
      * define a single notice action.
      */
     export interface FloatingNoticeSingleAction {
-        label: string
+        label: string,
+        className?: string,
         onClick?: ( instance: FloatingAction ) => void
     }
 
@@ -147,7 +148,7 @@
                 for( let key in options.actions ) {
                     const buttonsWrapper        =   floatingNotice.querySelector( '.buttons-wrapper' );
                     const buttonDom             =   ( new DOMParser ).parseFromString( `
-                    <div class="ns-button default ml-2">
+                    <div class="ns-button ${options.actions[ key ].className || 'default' } ml-2">
                         <button class="px-2 py-1 shadow rounded uppercase ${buttonThemeClass}">${options.actions[ key ].label}</button>
                     </div>
                     `, 'text/html' ).firstElementChild;

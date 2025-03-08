@@ -20,7 +20,7 @@
                 </span>
                 <div class="px-2 w-auto">
                     <div class="input-group mb-2 shadow border-2 info rounded overflow-hidden">
-                        <input ref="searchField" :placeholder="searchPlaceholder" v-model="searchText" type="text" class="w-full md:w-60 outline-none py-1 px-2">
+                        <input ref="searchField" :placeholder="searchPlaceholder" v-model="searchText" type="text" class="w-full md:w-60 outline-hidden py-1 px-2">
                     </div>
                 </div>
             </div>
@@ -32,13 +32,13 @@
         </div>
         <div class="module-section flex-auto flex flex-wrap -mx-4">
             <div v-if="noModules && searchText.length === 0" class="p-4 flex-auto flex">
-                <div class="flex border-dashed border w-full border-primary h-32 flex-auto justify-center items-center">
-                    <div class="text-primary">{{ noModuleMessage }}</div>
+                <div class="flex border-dashed border w-full border-secondary h-32 flex-auto justify-center items-center">
+                    <div class="text-fontcolor">{{ noModuleMessage }}</div>
                 </div>
             </div>
             <div v-if="noModules && searchText.length > 0" class="p-4 flex-auto flex">
                 <div class="flex h-full flex-auto border-dashed border-2 border-box-edge bg-surface justify-center items-center">
-                    <h2 class="font-bold text-xl text-primary text-center">{{ __( 'No modules matches your search term.' ) }}</h2>
+                    <h2 class="font-bold text-xl text-fontcolor text-center">{{ __( 'No modules matches your search term.' ) }}</h2>
                 </div>
             </div>
             <div class="px-4 w-full md:w-1/2 lg:w-1/3 xl:1/4 py-4" :key="moduleNamespace" v-for="(moduleObject,moduleNamespace) of modules">

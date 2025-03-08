@@ -10,7 +10,6 @@ import nsConfirmPopup       from  '~/popups/ns-pos-confirm-popup.vue';
 import nsCrud               from  './ns-crud.vue';
 import nsCrudForm           from  './ns-crud-form.vue';
 import nsDate               from  './ns-date.vue';
-import nsDateRangePicker    from  './ns-date-range-picker.vue';
 import nsDateTimePicker     from  './ns-date-time-picker.vue';
 import nsDatepicker         from  './ns-datepicker.vue';
 import nsDaterangePicker    from  './ns-daterange-picker.vue';

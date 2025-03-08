@@ -1,7 +1,7 @@
 <template>
     <div class="w-6/7-screen md:w-4/7-screen lg:w-3/7-screen flex flex-col shadow-lg bg-popup-surface">
         <div class="flex flex-col">
-            <div class="h-24 font-bold text-4xl text-primary flex justify-center items-center">
+            <div class="h-24 font-bold text-4xl text-fontcolor flex justify-center items-center">
                 {{ display }}
             </div>
             <ns-numpad-plus 

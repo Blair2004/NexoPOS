@@ -62,7 +62,7 @@ class CrudInput
         );
     }
 
-    public static function hidden( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $errors = [] )
+    public static function hidden( $name, $label = '', $value = '', $validation = '', $description = '', $disabled = false, $errors = [] )
     {
         return self::text(
             label: $label,
@@ -142,7 +142,7 @@ class CrudInput
         );
     }
 
-    public static function multiselect( $label, $name, $value, $options, $validation = '', $description = '', $disabled = false )
+    public static function multiselect( $label, $name, $options, $value = '', $validation = '', $description = '', $disabled = false )
     {
         return self::select(
             label: $label,

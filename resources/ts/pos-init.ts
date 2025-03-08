@@ -309,6 +309,7 @@ export class POS {
                                     {
                                         actions: {
                                             readMore: {
+                                                className: 'info',
                                                 label: __( 'Read More' ),
                                                 onClick: ( instance ) => {
                                                     instance.close();

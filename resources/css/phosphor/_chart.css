@@ -1,0 +1,57 @@
+#ns-orders-chart {
+    .head {
+        @apply bg-box-background;
+    }
+    .foot {
+        @apply bg-box-background; 
+        > div {
+            @apply border-box-edge;
+            span {
+                @apply text-text-fontcolor;
+            }
+            h2 {
+                @apply text-text-fontcolor;
+            }
+        }
+    }
+}
+
+#ns-orders-summary {
+    .title {
+        @apply border-box-edge;
+    }
+    .head, .title {
+        @apply bg-box-background;
+        h3, i, h4, p, span {
+            @apply text-fontcolor;
+        }
+        .paid-order {
+            @apply bg-success-primary text-fontcolor;
+        }
+        .other-order {
+            @apply bg-box-background text-text-fontcolor;
+        }
+        .single-order {
+            @apply border-success-tertiary;
+        }
+        .paid-currency {
+            @apply text-fontcolor;
+        }
+        .unpaid-currency {
+            @apply text-text-fontcolor;
+        }
+    }
+}
+
+#ns-best-customers, #ns-best-cashiers {
+    @apply bg-box-background;
+    .head {
+        @apply bg-box-background border-box-edge text-text-fontcolor;
+    }
+    .body {
+        @apply text-text-fontcolor bg-box-background;
+        .entry {
+            @apply border-box-edge;
+        }
+    }
+}

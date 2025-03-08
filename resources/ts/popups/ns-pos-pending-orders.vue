@@ -2,7 +2,7 @@
     <div class="flex flex-auto flex-col overflow-hidden">
         <div class="p-1">
             <div class="flex rounded border-2 input-group info">
-                <input @keyup.enter="searchOrder()" v-model="searchField" type="text" class="p-2 outline-none flex-auto">
+                <input @keyup.enter="searchOrder()" v-model="searchField" type="text" class="p-2 outline-hidden flex-auto">
                 <button @click="searchOrder()" class="w-16 md:w-24">
                     <i class="las la-search"></i>
                     <span class="mr-1 hidden md:visible">{{ __( 'Search' ) }}</span>
@@ -12,27 +12,27 @@
         <div class="overflow-y-auto flex flex-auto">
             <div class="flex p-2 flex-auto flex-col overflow-y-auto">
                 <div :data-order-id="order.id" class="border-b ns-box-body w-full py-2 ns-order-line" v-for="order of orders" :key="order.id">
-                    <h3 class="text-primary">{{ order.title || 'Untitled Order' }}</h3>
+                    <h3 class="text-fontcolor">{{ order.title || 'Untitled Order' }}</h3>
                     <div class="px-2">
                         <div class="flex flex-wrap -mx-4">
                             <div class="w-full md:w-1/2 px-2">
-                                <p v-for="(line,key) of columns.leftColumn" :key="key" class="text-sm text-primary"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
+                                <p v-for="(line,key) of columns.leftColumn" :key="key" class="text-sm text-font"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
                             </div>
                             <div class="w-full md:w-1/2 px-2">
-                                <p v-for="(line,key) of columns.rightColumn" :key="key" class="text-sm text-primary"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
+                                <p v-for="(line,key) of columns.rightColumn" :key="key" class="text-sm text-font"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
                             </div>
                         </div>
                     </div>
                     <div class="flex justify-end w-full mt-2">
                         <div class="flex rounded-lg overflow-hidden ns-buttons">
-                            <button @click="proceedOpenOrder( order )" class="info outline-none px-2 py-1"><i class="las la-lock-open"></i> {{ __( 'Open' ) }}</button>
-                            <button @click="previewOrder( order )" class="success outline-none px-2 py-1"><i class="las la-eye"></i> {{ __( 'Products' ) }}</button>
-                            <button @click="printOrder( order )" class="warning outline-none px-2 py-1"><i class="las la-print"></i> {{ __( 'Print' ) }}</button>
+                            <button @click="proceedOpenOrder( order )" class="info outline-hidden px-2 py-1"><i class="las la-lock-open"></i> {{ __( 'Open' ) }}</button>
+                            <button @click="previewOrder( order )" class="success outline-hidden px-2 py-1"><i class="las la-eye"></i> {{ __( 'Products' ) }}</button>
+                            <button @click="printOrder( order )" class="warning outline-hidden px-2 py-1"><i class="las la-print"></i> {{ __( 'Print' ) }}</button>
                         </div>
                     </div>
                 </div>
                 <div v-if="orders.length === 0" class="h-full v-full items-center justify-center flex">
-                    <h3 class="text-semibold text-primary">{{ __( 'Nothing to display...' ) }}</h3>
+                    <h3 class="text-semibold text-font">{{ __( 'Nothing to display...' ) }}</h3>
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 <template>
-    <div class="shadow-lg ns-box w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
-        <div class="p-2 flex justify-between text-primary items-center ns-box-header border-b">
+    <div class="shadow-lg ns-box w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-[75vh] flex flex-col overflow-hidden">
+        <div class="p-2 flex justify-between text-fontcolor items-center ns-box-header border-b">
             <h3 class="font-semibold">{{ __( 'Orders' ) }}</h3>
             <div>
                 <ns-close-button @click="popup.close()"></ns-close-button>

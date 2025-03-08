@@ -19,6 +19,8 @@ export default {
             field: {
                 label: 'Date',
                 name: 'range',
+                type: 'date',
+                validation: 'required',
                 description: 'a date range picker',
                 value: {
                     startDate: moment().clone().subtract( 1, 'week' ).format(),
@@ -38,7 +40,7 @@ export default {
         <ns-tabs-item identifier="general" label="General">
         </ns-tabs-item>
         <ns-tabs-item identifier="demo" label="Demo">
-            <ns-datepicker @set="date = $event" :date="date"></ns-datepicker>
+            <ns-field :field="field"/>
         </ns-tabs-item>
     </ns-tabs>
 </template>

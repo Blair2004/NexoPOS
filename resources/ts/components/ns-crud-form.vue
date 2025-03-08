@@ -248,7 +248,7 @@ export default {
             <ns-spinner />
         </div>
         <div class="box-header border-b border-box-edge box-border p-2 flex justify-between items-center" v-if="popup">
-            <h2 class="text-primary font-bold text-lg">{{ popup.params.title }}</h2>
+            <h2 class="text-fontcolor font-bold text-lg">{{ popup.params.title }}</h2>
             <div>
                 <ns-close-button @click="handleClose()"></ns-close-button>
             </div>
@@ -256,7 +256,7 @@ export default {
         <div v-if="Object.values( form ).length > 0" :class="popup ? 'p-2 overflow-y-auto' : ''">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center" v-if="form.main">
-                    <label for="title" class="font-bold my-2 text-primary">
+                    <label for="title" class="font-bold my-2">
                         <span v-if="form.main.name">{{ form.main.label }}</span>
                     </label>
                     <div for="title" class="text-sm my-2">
@@ -264,7 +264,7 @@ export default {
                     </div>
                 </div>
                 <template v-if="form.main.name">
-                    <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'info'" class="input-group flex border-2 rounded overflow-hidden">
+                    <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'primary'" class="input-group flex border rounded overflow-hidden">
                         <input v-model="form.main.value" 
                             @keydown.enter="submit()"
                             @keypress="formValidation.checkField( form.main )"
@@ -272,11 +272,11 @@ export default {
                             @change="formValidation.checkField( form.main )" 
                             :disabled="form.main.disabled"
                             type="text" 
-                            class="flex-auto outline-none h-10 px-2">
-                        <button :disabled="form.main.disabled" :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : ''" @click="submit()" class="outline-none px-4 h-10 text-white">{{ __( 'Save' ) }}</button>
+                            class="flex-auto outline-hidden h-10 px-2">
+                        <button :disabled="form.main.disabled" :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : ''" @click="submit()" class="outline-hidden px-4 h-10 text-white">{{ __( 'Save' ) }}</button>
                     </div>
-                    <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
-                    <p :key="index" class="text-xs py-1 text-error-tertiary" v-for="(error,index) of form.main.errors">
+                    <p class="text-xs text-fontcolor py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                    <p :key="index" class="text-xs py-1 text-error-secondary" v-for="(error,index) of form.main.errors">
                         <span v-if="error.identifier=== 'required'"><slot name="error-required">{{ error.identifier }}</slot></span>
                         <span v-if="error.identifier=== 'invalid'"><slot name="error-invalid">{{ error.message }}</slot></span>
                     </p>
@@ -286,13 +286,13 @@ export default {
                 <div class="header flex ml-4" style="margin-bottom: -1px;">
                     <div :key="identifier" v-for="( tab , identifier ) of form.tabs" 
                         @click="toggle( identifier )" 
-                        :class="tab.active ? 'active border border-b-transparent' : 'inactive border'" 
+                        :class="tab.active ? 'active border' : 'inactive border'" 
                         class="tab rounded-tl rounded-tr border px-3 py-2 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
                 </div>
                 <div class="ns-tab-item">
                     <div class="border p-4 rounded">
                         <!-- We can't display both fields and component at the same time. The component has the priority over fields -->
-                        <div class="-mx-4 flex flex-wrap" v-if="activeTabFields.length > 0 && ! activeTab.component">
+                        <div class="-mx-4 flex flex-wrap" v-if="( activeTabFields && activeTabFields.length ) > 0 && ! activeTab.component">
                             <div :key="`${activeTabIdentifier}-${key}`" :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,key) of activeTabFields">
                                 <ns-field @saved="handleSaved( $event, activeTabIdentifier, field )" @blur="formValidation.checkField( field )" @change="formValidation.checkField( field ) && handleFieldChange( field, activeTabFields )" :field="field"/>
                             </div>
@@ -311,7 +311,7 @@ export default {
                         </div>
                         <div class="flex justify-end" v-if="! form.main.name">
                             <div class="ns-button" :class="form.main.disabled ? 'default' : ( form.main.errors.length > 0 ? 'error' : 'info' )">
-                                <button :disabled="form.main.disabled" @click="submit()" class="outline-none px-4 h-10 border-l">{{ __( 'Save' ) }}</button>
+                                <button :disabled="form.main.disabled" @click="submit()" class="outline-hidden px-4 h-10 border-l">{{ __( 'Save' ) }}</button>
                             </div>
                         </div>
                     </div>

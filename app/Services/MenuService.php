@@ -294,6 +294,7 @@ class MenuService
             'users' => [
                 'label' => __( 'Users' ),
                 'icon' => 'la-users',
+                'permissions'   =>  [ 'read.users', 'manage.profile', 'create.users' ],
                 'childrens' => [
                     'profile' => [
                         'label' => __( 'My Profile' ),
@@ -451,10 +452,6 @@ class MenuService
                     'invoices' => [
                         'label' => __( 'Invoices' ),
                         'href' => ns()->url( '/dashboard/settings/invoices' ),
-                    ],
-                    'workers' => [
-                        'label' => __( 'Workers' ),
-                        'href' => ns()->url( '/dashboard/settings/workers' ),
                     ],
                     'reset' => [
                         'label' => __( 'Reset' ),

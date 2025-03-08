@@ -1,6 +1,5 @@
 import { BehaviorSubject, forkJoin } from "rxjs";
 
-import { map } from "rxjs/operators";
 import { nsHttpClient } from "./bootstrap";
 
 export class Dashboard {

@@ -1,5 +1,5 @@
 <template>
-    <div id="ns-order-type" class="h-full w-4/5-screen md:w-2/5-screen lg:w-2/5-screen xl:w-2/6-screen ns-box">
+    <div id="ns-order-type" class="h-full w-4/5-screen md:w-2/5-screen lg:w-2/5-screen xl:w-1/3-screen ns-box">
         <div id="header" class="h-16 flex justify-center items-center">
             <h3 class="font-bold">{{ __( 'Define The Order Type' ) }}</h3>
         </div>
@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="ns-box-body grid grid-flow-row grid-cols-2 grid-rows-2" v-if="Object.values( types ).length > 0">
-            <div @click="select( type.identifier )" :key="type.identifier" v-for="type of types" :class="type.selected ? 'active' : ''" class="ns-numpad-key info h-56 flex items-center justify-center flex-col cursor-pointer border">
+            <div @click="select( type.identifier )" :key="type.identifier" v-for="type of types" :class="type.selected ? 'active' : ''" class="ns-numpad-key h-56 flex items-center justify-center flex-col cursor-pointer border">
                 <img :src="type.icon" alt="" class="w-32 h-32">
                 <h4 class="font-semibold text-xl my-2">{{ type.label }}</h4>
             </div>

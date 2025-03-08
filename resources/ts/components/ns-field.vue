@@ -1,5 +1,4 @@
 <script lang="ts">
-import { default as nsDateRangePicker } from './ns-date-range-picker.vue';
 import { default as nsDateTimePicker } from './ns-date-time-picker.vue';
 import { default as nsSwitch } from './ns-switch.vue';
 export default {
@@ -13,7 +12,6 @@ export default {
         // ...
     },
     components: {
-        nsDateRangePicker,
         nsDateTimePicker,
         nsSwitch,
     },
@@ -119,11 +117,6 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-input>
-        <ns-date-time-picker @blur="$emit('blur', field)" @change="changeTouchedState(field, $event)" :field="field"
-            v-if="isDateTimePicker">
-            <template v-slot>{{ field.label }}</template>
-            <template v-slot:description><span v-html="field.description || ''"></span></template>
-        </ns-date-time-picker>
         <ns-date @blur="$emit('blur', field)" @change="changeTouchedState(field, $event)" :field="field"
             v-if="isDateField">
             <template v-slot>{{ field.label }}</template>
@@ -148,6 +141,11 @@ export default {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-daterange-picker>
+        <ns-date-time-picker @blur="$emit('blur', field)" @change="changeTouchedState(field, $event)" :field="field"
+            v-if="isDateTimePicker">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-date-time-picker>
         <ns-select-audio @blur="$emit('blur', field)" @change="changeTouchedState(field, $event)" :field="field"
             v-if="isSelectAudio">
             <template v-slot>{{ field.label }}</template>

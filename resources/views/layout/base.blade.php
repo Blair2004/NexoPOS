@@ -12,7 +12,7 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
 
 @inject( 'dateService', 'App\Services\DateService' )
 <!DOCTYPE html>
-<html lang="en" class="{{ $theme }}">
+<html lang="en" data-theme="{{ $theme }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,12 +20,9 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     @include( 'layout._header-injection' )
     @vite([
         'resources/scss/line-awesome/1.3.0/scss/line-awesome.scss',
-        'resources/scss/grid.scss',
-        'resources/scss/fonts.scss',
-        'resources/scss/animations.scss',
-        'resources/scss/typography.scss',
-        'resources/scss/app.scss',
-        'resources/scss/' . $theme . '.scss'
+        'resources/css/grid.css',
+        'resources/css/animations.css',
+        'resources/css/' . $theme . '.css'
     ])
     @yield( 'layout.base.header' )
     @include( 'layout._header-script' )

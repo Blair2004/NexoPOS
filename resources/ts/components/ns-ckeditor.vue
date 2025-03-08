@@ -36,11 +36,11 @@ export default {
 }
 </script>
 <template>
-    <div class="flex flex-col mb-2 flex-auto">
-        <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'has-error' : 'is-pristine'" class="mt-1 relative rounded-md focus:shadow-sm mb-1">
+    <div class="flex flex-col mb-2 flex-auto ns-ckeditor" :class="hasError ? 'has-error' : 'is-pristine'">
+        <label :for="field.name" class="block leading-5 font-medium"><slot></slot></label>
+        <div class="mt-1 relative rounded-md focus:shadow-sm mb-1">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-secondary sm:text-sm sm:leading-5">
+                <span class="text-fontcolor-soft sm:text-sm sm:leading-5">
                 {{ leading }}
                 </span>
             </div>
