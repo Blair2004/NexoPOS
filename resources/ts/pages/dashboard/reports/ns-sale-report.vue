@@ -495,14 +495,14 @@ export default {
 
         loadReport() {
             if ( this.startDate === null || this.endDate ===null ) {
-                return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) );
             }
 
             const startMoment   =   moment( this.startDate );
             const endMoment     =   moment( this.endDate );
 
             if ( endMoment.isBefore( startMoment ) ) {
-                return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) );
             }
 
             this.isLoading  =   true;
@@ -520,7 +520,7 @@ export default {
                 }, 
                 error : ( error ) => {
                     this.isLoading  =   false;
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 }
             });
         },

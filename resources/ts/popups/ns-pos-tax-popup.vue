@@ -133,7 +133,7 @@ export default {
 
         saveTax() {
             if ( ! this.validation.validateFields( this.group_fields ) ) {
-                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) );
             }
 
             const fields    =   this.validation.extractFields( this.group_fields );

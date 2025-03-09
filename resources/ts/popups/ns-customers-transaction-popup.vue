@@ -65,13 +65,13 @@ export default {
                 .subscribe({
                     next: result => {
                         this.isSubmiting    =   false;
-                        nsSnackBar.success( result.message ).subscribe();
+                        nsSnackBar.success( result.message );
                         this.popup.params.resolve( result );
                         this.popup.close();
                     },
                     error: ( error ) => {
                         this.isSubmiting    =   false;
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                         this.popup.params.reject( error );
                     }
                 })

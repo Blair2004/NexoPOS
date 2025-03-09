@@ -110,12 +110,12 @@ export default {
                         }
 
                         if ( this.products.length === 0 ) {
-                            return nsSnackBar.info( __( 'No result to result match the search value provided.' ) ).subscribe();
+                            return nsSnackBar.info( __( 'No result to result match the search value provided.' ) );
                         }
                     },
                     error: ( error ) => {
                         this.isLoading  =   false;
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                     } 
                 })
         }

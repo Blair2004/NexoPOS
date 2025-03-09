@@ -93,7 +93,7 @@ export default {
                     
                     if ( result.length === 0 ) {
                         this.popup.close();
-                        return nsSnackBar.error( __( 'This product doesn\'t have any unit defined for selling. Make sure to mark at least one unit as visible.' ) ).subscribe();
+                        return nsSnackBar.error( __( 'This product doesn\'t have any unit defined for selling. Make sure to mark at least one unit as visible.' ) );
                     }
 
                     this.unitsQuantities  =   result;
@@ -115,7 +115,7 @@ export default {
          */
         selectUnit( unitQuantity ) {
             if ( unitQuantity.unit === null ) {
-                nsSnackBar.error( __( 'The unit attached to this product is missing or not assigned. Please review the "Unit" tab for this product.' ) ).subscribe();
+                nsSnackBar.error( __( 'The unit attached to this product is missing or not assigned. Please review the "Unit" tab for this product.' ) );
 
                 return this.popup.close();
             }

@@ -317,7 +317,7 @@ export default {
                         },
                         error: ( error ) => {
                             this.barcode     =   '';
-                            nsSnackBar.error( error.message ).subscribe();
+                            nsSnackBar.error( error.message );
                         }
                     })
             }
@@ -351,7 +351,7 @@ export default {
                     },
                     error: ( error ) => {
                         this.isLoading  =   false;
-                        return nsSnackBar.error( __( 'An unexpected error occurred.' ) ).subscribe();
+                        return nsSnackBar.error( __( 'An unexpected error occurred.' ) );
                     }
                 });
         },

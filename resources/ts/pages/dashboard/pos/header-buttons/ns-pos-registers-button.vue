@@ -40,7 +40,7 @@ export default {
                 } 
             } catch( error ) {
                 if ( Object.keys( error ).length > 0 ) {
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 }
             }
         },

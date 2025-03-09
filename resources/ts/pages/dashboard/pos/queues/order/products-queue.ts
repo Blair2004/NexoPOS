@@ -9,7 +9,7 @@ export class ProductsQueue implements Queue {
     run() {
         return new Promise( ( resolve, reject ) => {
             if ( this.order.products.length === 0 ) {
-                nsSnackBar.error( __( 'You need to provide some products before proceeding.' ) ).subscribe();
+                nsSnackBar.error( __( 'You need to provide some products before proceeding.' ) );
                 return reject( false );
             }
 

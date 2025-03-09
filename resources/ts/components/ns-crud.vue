@@ -382,7 +382,7 @@ export default {
                 this.showSelectedEntries    =   f.showSelectedEntries;
                 this.refresh();
             }, ( error ) => {
-                nsSnackBar.error( error.message, 'OK', { duration: false }).subscribe();
+                nsSnackBar.error( error.message, 'OK', { duration: false });
             });
         },
         cancelSearch() {
@@ -402,7 +402,7 @@ export default {
         },
         sort( identifier ) {
             if ( this.columns[ identifier ].$sort === false ) {
-                return nsSnackBar.error( __( 'Sorting is explicitely disabled on this column' ) ).subscribe();
+                return nsSnackBar.error( __( 'Sorting is explicitely disabled on this column' ) );
             }
 
             for ( let key in this.columns ) {
@@ -445,7 +445,7 @@ export default {
                             entries: this.selectedEntries.map( r => r.$id )
                         }).subscribe({
                             next: (result: HttpStatusResponse ) => {
-                                nsSnackBar.info( result.message ).subscribe();
+                                nsSnackBar.info( result.message );
                                 this.selectedEntries    =   [];
                                 this.refresh();
                             },
@@ -514,7 +514,7 @@ export default {
                 this.page       =   f.current_page;
             }, ( error ) => {
                 this.isRefreshing   =   false;
-                nsSnackBar.error( error.message ).subscribe();
+                nsSnackBar.error( error.message );
             });
         }
     },

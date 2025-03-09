@@ -57,7 +57,7 @@ export default {
                                 }
                             },
                             error: error => {
-                                nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) ).subscribe();
+                                nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) );
                             }
                         })
                 }
@@ -361,7 +361,7 @@ export default {
                     } else if ( result.length > 1 ) {
                         this.searchResult   =   result;
                     } else {
-                        nsSnackBar.error( __( 'No result match your query.' ) ).subscribe();
+                        nsSnackBar.error( __( 'No result match your query.' ) );
                     }
                 })
         },

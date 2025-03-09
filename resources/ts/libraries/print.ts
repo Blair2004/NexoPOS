@@ -64,9 +64,9 @@ export default class Print {
         });
 
         result.promise().then( result => {
-            nsSnackBar.success( result.message ).subscribe();
+            nsSnackBar.success( result.message );
         }).catch( exception => {
-            nsSnackBar.error( exception.message || __( `An error unexpected occured while printing.` ) ).subscribe();
+            nsSnackBar.error( exception.message || __( `An error unexpected occured while printing.` ) );
         })    
     }
 }

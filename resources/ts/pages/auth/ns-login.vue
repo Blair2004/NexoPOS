@@ -59,7 +59,7 @@ export default {
                 setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
             },
             error: ( error ) => {
-                nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ), __( 'OK' ), { duration: 0 }).subscribe();
+                nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ), __( 'OK' ), { duration: 0 });
             }
         });
     },
@@ -69,7 +69,7 @@ export default {
             const isValid   =   this.validation.validateFields( this.fields );
 
             if ( ! isValid ) {
-                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) );
             }
 
             this.validation.disableFields( this.fields );
@@ -96,7 +96,7 @@ export default {
                             this.validation.triggerFieldsErrors( this.fields, error.data );
                         }
 
-                    nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) ).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) );
                     }
                 })
             }

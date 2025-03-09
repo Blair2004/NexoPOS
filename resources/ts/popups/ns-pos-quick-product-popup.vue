@@ -53,7 +53,7 @@ export default {
             const valid =   this.validation.validateFields( fields );
 
             if ( ! valid ) {
-                return nsSnackBar.error( __( 'Unable to proceed. The form is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed. The form is not valid.' ) );
             }
 
             let product       =   this.validation.extractFields( fields );

@@ -159,7 +159,7 @@ export default {
                     this.products     =   products;
                 },
                 error: ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 }
             });
         },
@@ -179,9 +179,9 @@ export default {
                     })
                 });
 
-                nsSnackBar.success( response.message ).subscribe();
+                nsSnackBar.success( response.message );
             } catch( response ) {
-                nsSnackBar.error( response.message ).subscribe();
+                nsSnackBar.error( response.message );
             }
         },
         async selectCategories() {
@@ -192,7 +192,7 @@ export default {
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {
-                    return nsSnackBar.error( __( 'An error has occured while loading the categories' ) ).subscribe();
+                    return nsSnackBar.error( __( 'An error has occured while loading the categories' ) );
                 }
             }
         },
@@ -204,7 +204,7 @@ export default {
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {
-                    return nsSnackBar.error( __( 'An error has occured while loading the units' ) ).subscribe();
+                    return nsSnackBar.error( __( 'An error has occured while loading the units' ) );
                 }
             }
         },

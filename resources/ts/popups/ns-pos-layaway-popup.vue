@@ -244,13 +244,13 @@ export default {
         },
         updateOrder() {
             if ( this.order.instalments.length === 0 ) {
-                return nsSnackBar.error( __( 'Please provide instalments before proceeding.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Please provide instalments before proceeding.' ) );
             }
 
             this.fields.forEach( field => this.formValidation.validateField( field ) );
 
             if ( ! this.formValidation.fieldsValid( this.fields ) ) {
-                return nsSnackBar.error( __( 'Unable to process, the form is not valid' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to process, the form is not valid' ) );
             }
 
             this.$forceUpdate();
@@ -267,15 +267,15 @@ export default {
                 .reduce( (before, after) => parseFloat( before ) + parseFloat( after ) ) );
 
             if ( instalments.filter( instalment => instalment.date === undefined || instalment.date === '' ).length > 0 ) {
-                return nsSnackBar.error( __( 'One or more instalments has an invalid date.' ) ).subscribe();
+                return nsSnackBar.error( __( 'One or more instalments has an invalid date.' ) );
             }
 
             if ( instalments.filter( instalment => ! ( instalment.amount > 0 ) ).length > 0 ) {
-                return nsSnackBar.error( __( 'One or more instalments has an invalid amount.' ) ).subscribe();
+                return nsSnackBar.error( __( 'One or more instalments has an invalid amount.' ) );
             }
 
             if ( instalments.filter( instalment => moment( instalment.date ).isBefore( ns.date.moment.startOf( 'day' ) ) ).length > 0 ) {
-                return nsSnackBar.error( __( 'One or more instalments has a date prior to the current date.' ) ).subscribe();
+                return nsSnackBar.error( __( 'One or more instalments has a date prior to the current date.' ) );
             }
 
             const instalmentsForToday   =   instalments.filter( instalment => moment( instalment.date ).isSame( ns.date.moment.startOf( 'day' ), 'day' ) );
@@ -287,11 +287,11 @@ export default {
             });
 
             if ( totalPaidToday < this.expectedPayment ) {
-                return nsSnackBar.error( __( 'The payment to be made today is less than what is expected.' ) ).subscribe();
+                return nsSnackBar.error( __( 'The payment to be made today is less than what is expected.' ) );
             }
 
             if ( totalInstalments < nsRawCurrency( this.order.total ) ) {
-                return nsSnackBar.error( __( 'Total instalments must be equal to the order total.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Total instalments must be equal to the order total.' ) );
             }
 
             instalments.sort( ( before, after ) => {

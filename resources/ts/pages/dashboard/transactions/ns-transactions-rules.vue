@@ -75,7 +75,7 @@ export default {
                 this.rules  =   response[2];
             },
             error: error => {
-                nsSnackBar.error( error.message ).subscribe();
+                nsSnackBar.error( error.message );
             }
         })
     },
@@ -98,7 +98,7 @@ export default {
         },
         async setRuleAction( rule, field ) {
             if ( this.actions.length === 0 ) {
-                return nsSnackBar.error( __( 'No actions available' ).subscribe() );
+                return nsSnackBar.error( __( 'No actions available' ) );
             }
 
             try {
@@ -133,7 +133,7 @@ export default {
                         }
                     },
                     error: error => {
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                     }
                 });
         },

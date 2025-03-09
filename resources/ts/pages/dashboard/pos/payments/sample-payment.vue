@@ -161,7 +161,7 @@ export default {
                     }
                 });
             } else {
-                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) );
             }
         },
         makeFullPayment() {

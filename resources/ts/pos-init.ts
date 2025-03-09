@@ -429,7 +429,7 @@ export class POS {
                     ]);
                 } catch (exception) {
                     reject( exception );
-                    nsSnackBar.error(exception.message).subscribe();
+                    nsSnackBar.error(exception.message);
                 }
             }
 
@@ -531,13 +531,13 @@ export class POS {
             return this.computePaid();
         }
 
-        return nsSnackBar.error('Invalid amount.').subscribe();
+        return nsSnackBar.error('Invalid amount.');
     }
 
     removePayment(payment: Payment) {
 
         if (payment.id !== undefined) {
-            return nsSnackBar.error( __( 'Unable to delete a payment attached to the order.' ) ).subscribe();
+            return nsSnackBar.error( __( 'Unable to delete a payment attached to the order.' ) );
         }
 
         const order = this._order.getValue();
@@ -986,7 +986,7 @@ export class POS {
                         return resolve( quantities );
                     }
                 } catch( exception ) {
-                    return nsSnackBar.error( __( 'An error has occurred while computing the product.' ) ).subscribe();
+                    return nsSnackBar.error( __( 'An error has occurred while computing the product.' ) );
                 }
             }
             
@@ -1372,7 +1372,7 @@ export class POS {
             order = response['data'].order;
         } catch (exception) {
             if (exception !== false && exception.message !== undefined) {
-                nsSnackBar.error(exception.message || __('An unexpected error has occurred while fecthing taxes.'), __('OKAY'), { duration: 0 }).subscribe();
+                nsSnackBar.error(exception.message || __('An unexpected error has occurred while fecthing taxes.'), __('OKAY'), { duration: 0 });
             }
         }
 
@@ -1913,11 +1913,11 @@ export class POS {
                             nsHttpClient.delete(`/api/orders/${order.id}`)
                                 .subscribe({
                                     next: (result: any) => {
-                                        nsSnackBar.success(result.message).subscribe();
+                                        nsSnackBar.success(result.message);
                                         this.reset();
                                     },
                                     error: (error) => {
-                                        return nsSnackBar.error(error.message).subscribe();
+                                        return nsSnackBar.error(error.message);
                                     }
                                 });
                         }
@@ -1932,11 +1932,11 @@ export class POS {
                             nsHttpClient.post(`/api/orders/${order.id}/void`, { reason })
                                 .subscribe({
                                     next: (result: any) => {
-                                        nsSnackBar.success(result.message).subscribe();
+                                        nsSnackBar.success(result.message);
                                         this.reset();
                                     },
                                     error: (error) => {
-                                        return nsSnackBar.error(error.message).subscribe();
+                                        return nsSnackBar.error(error.message);
                                     }
                                 })
                         }
@@ -1944,7 +1944,7 @@ export class POS {
                 });
             }
         } else {
-            nsSnackBar.error( __( 'Unable to void an unpaid order.' )).subscribe();
+            nsSnackBar.error( __( 'Unable to void an unpaid order.' ));
         }
     }
 

@@ -27,7 +27,7 @@ export default {
         __,
         async holdOrder() {
             if ( this.order.payment_status !== 'hold' && this.order.payments.length > 0 ) {
-                return nsSnackBar.error( __( 'Unable to hold an order which payment status has been updated already.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to hold an order which payment status has been updated already.' ) );
             }
 
             const queues    =   nsHooks.applyFilters( 'ns-hold-queue', [
@@ -69,11 +69,11 @@ export default {
                     POS.submitOrder().then( result => {
                         popup.close();
                         // @todo add a print snipped here
-                        nsSnackBar.success( result.message ).subscribe();
+                        nsSnackBar.success( result.message );
                     }, ( error ) => {
                         popup.close();
                         // @todo add a print snipped here
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                     });
                 }).catch( exception => {
                     console.log( exception );

@@ -111,7 +111,7 @@ export default {
         __,
         async submitConvertion() {
             if ( this.unitPair.from.quantity === 0 ) {
-                return nsSnackBar.error( __( 'The quantity should be greater than 0' ) ).subscribe();
+                return nsSnackBar.error( __( 'The quantity should be greater than 0' ) );
             }
 
             if ( Math.floor( this.unitPair.to.quantity ) === 0 ) {
@@ -232,7 +232,7 @@ export default {
              */
             if ( quantity > this.unitPair.from.unitQuantity.quantity ) {
                 quantity    =   this.unitPair.from.unitQuantity.quantity;
-                nsSnackBar.info( __( 'The quantity has been set to the maximum available' ) ).subscribe();
+                nsSnackBar.info( __( 'The quantity has been set to the maximum available' ) );
             }
 
             this.unitPair.from.quantity    =   parseFloat( quantity );

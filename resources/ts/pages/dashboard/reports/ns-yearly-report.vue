@@ -216,9 +216,9 @@ export default {
                         nsHttpClient.post( `/api/reports/compute/yearly`, {
                             year: this.year
                         }).subscribe( result => {
-                            nsSnackBar.success( result.message ).subscribe();
+                            nsSnackBar.success( result.message );
                         }, ( error ) => {
-                            nsSnackBar.success( error.message || __( 'An unexpected error has occurred.' ) ).subscribe();
+                            nsSnackBar.success( error.message || __( 'An unexpected error has occurred.' ) );
                         })
                     }
                 }

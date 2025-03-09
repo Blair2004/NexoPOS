@@ -200,7 +200,7 @@ export default {
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {
-                    return nsSnackBar.error( __( 'An error has occured while loading the categories' ) ).subscribe();
+                    return nsSnackBar.error( __( 'An error has occured while loading the categories' ) );
                 }
             }
         },
@@ -212,21 +212,21 @@ export default {
                 this.loadReport();
             } catch (error) {
                 if ( error !== false ) {
-                    return nsSnackBar.error( __( 'An error has occured while loading the units' ) ).subscribe();
+                    return nsSnackBar.error( __( 'An error has occured while loading the units' ) );
                 }
             }
         },
 
         loadReport() {
             if ( this.startDateField.value === null || this.endDateField.value ===null ) {
-                return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) );
             }
 
             const startMoment   =   moment( this.startDateField.value );
             const endMoment     =   moment( this.endDateField.value );
 
             if ( endMoment.isBefore( startMoment ) ) {
-                return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) );
             }
 
             nsHttpClient.post( '/api/reports/profit-report', { 
@@ -239,7 +239,7 @@ export default {
                     this.products     =   products;
                 },
                 error: ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 }
             });
         },

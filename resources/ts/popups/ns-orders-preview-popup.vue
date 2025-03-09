@@ -89,12 +89,12 @@ export default {
                         nsHttpClient.delete( `/api/orders/${this.order.id}` )
                             .subscribe({
                                 next: result => {
-                                    nsSnackBar.success( result.message ).subscribe();
+                                    nsSnackBar.success( result.message );
                                     this.refreshCrudTable();
                                     this.closePopup(true);
                                 },
                                 error:  error => {
-                                    nsSnackBar.error( error.message ).subscribe();
+                                    nsSnackBar.error( error.message );
                                 }
                             })
                     }
@@ -114,12 +114,12 @@ export default {
                                 nsHttpClient.post( `/api/orders/${this.order.id}/void`, { reason })
                                     .subscribe({
                                         next: result => {
-                                            nsSnackBar.success( result.message ).subscribe();
+                                            nsSnackBar.success( result.message );
                                             this.refreshCrudTable();
                                             this.closePopup(true);
                                         },
                                         error:  error => {
-                                            nsSnackBar.error( error.message ).subscribe();
+                                            nsSnackBar.error( error.message );
                                         }
                                     })
                             }

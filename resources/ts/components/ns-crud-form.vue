@@ -107,7 +107,7 @@ export default {
                             if ( this.submitMethod && this.submitMethod.toLowerCase() === 'post' && this.links.list !== false ) {
                                 return document.location   =   result.data.editUrl || this.links.list;
                             } else {
-                                nsSnackBar.info( result.message, __( 'Okay' ), { duration: 3000 }).subscribe();
+                                nsSnackBar.info( result.message, __( 'Okay' ), { duration: 3000 });
                             }
 
                             this.$emit( 'saved', result );
@@ -155,7 +155,7 @@ export default {
                         },
                         error: ( error ) => {
                             reject( error )
-                            nsSnackBar.error( error.message, __( 'Okay' ), { duration: 0 }).subscribe();
+                            nsSnackBar.error( error.message, __( 'Okay' ), { duration: 0 });
                         }
                     });
             });

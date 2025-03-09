@@ -150,11 +150,11 @@ export default {
                         })
                         .subscribe({
                             next: result => {
-                                nsSnackBar.success( result.message ).subscribe();
+                                nsSnackBar.success( result.message );
                                 this.loadGallery();
                             },
                             error: error => {
-                                nsSnackBar.error( error.message ).subscribe();
+                                nsSnackBar.error( error.message );
                             }
                         });
                     }
@@ -352,11 +352,11 @@ export default {
             }).subscribe({
                 next: result => {
                     selectedResource.fileEdit   =   false;
-                    nsSnackBar.success( result.message, 'OK' ).subscribe();
+                    nsSnackBar.success( result.message, 'OK' );
                 },
                 error: error => {
                     selectedResource.fileEdit   =   false;
-                    nsSnackBar.success( error.message || __( 'An unexpected error occured.' ), 'OK' ).subscribe();
+                    nsSnackBar.success( error.message || __( 'An unexpected error occured.' ), 'OK' );
                 }
             });
         },

@@ -12,11 +12,11 @@ export default {
         __,
         openDiscountPopup( reference, type, productIndex = null ) {
             if ( ! this.settings.products_discount && type === 'product' ) {
-                return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) ).subscribe();
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) );
             }
 
             if ( ! this.settings.cart_discount && type === 'cart' ) {
-                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) );
             }
 
             Popup.show( nsPosDiscountPopupVue, { 

@@ -93,7 +93,7 @@ export default {
                     this.fields     =   result;
                 }, ( error ) => {
                     this.loaded     =   true;
-                    return nsSnackBar.error( error.message, __( 'OKAY' ), { duration : false }).subscribe();
+                    return nsSnackBar.error( error.message, __( 'OKAY' ), { duration : false });
                 });            
         },
         submit( amount ) {
@@ -113,7 +113,7 @@ export default {
             }
 
             if ( this.validation.validateFields( this.fields ) === false ) {
-                return nsSnackBar.error( __( 'Please fill all required fields' )).subscribe();
+                return nsSnackBar.error( __( 'Please fill all required fields' ));
             }
 
             this.isSubmitting    =   true;
@@ -128,11 +128,11 @@ export default {
                     next: result => {
                         this.popup.params.resolve( result );
                         this.popup.close();
-                        nsSnackBar.success( result.message ).subscribe();
+                        nsSnackBar.success( result.message );
                         this.isSubmitting    =   false;
                     }, 
                     error: ( error ) => {
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                         this.isSubmitting    =   false;
                     }
                 });

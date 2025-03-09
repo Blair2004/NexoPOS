@@ -156,15 +156,15 @@ export default {
 
         proceedPayment() {
             if ( this.selectedPaymentGateway === false ) {
-                return nsSnackBar.error( __( 'Please select a payment gateway before proceeding.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Please select a payment gateway before proceeding.' ) );
             }
 
             if ( this.total === 0 ) {
-                return nsSnackBar.error( __( 'There is nothing to refund.' ) ).subscribe();
+                return nsSnackBar.error( __( 'There is nothing to refund.' ) );
             }
 
             if ( this.screen === 0 ) {
-                return nsSnackBar.error( __( 'Please provide a valid payment amount.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Please provide a valid payment amount.' ) );
             }
 
             Popup.show( nsPosConfirmPopupVue, {
@@ -205,11 +205,11 @@ export default {
 
                         this.print.process( result.data.orderRefund.id, 'refund' );
                         
-                        nsSnackBar.success( result.message ).subscribe();
+                        nsSnackBar.success( result.message );
                     },
                     error: (error) => {
                         this.isSubmitting   =   false;
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                     }
                 })
         },
@@ -218,7 +218,7 @@ export default {
             this.formValidation.validateFields( this.selectFields );
 
             if ( ! this.formValidation.fieldsValid( this.selectFields ) ) {
-                return nsSnackBar.error( __( 'Please select a product before proceeding.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Please select a product before proceeding.' ) );
             }
 
             const fields                =   this.formValidation.extractFields( this.selectFields );
@@ -231,12 +231,12 @@ export default {
                     .reduce( ( before, after ) => before + after );
 
                 if ( totalUsedQuantity === currentProduct[0].quantity ) {
-                    return nsSnackBar.error( __( 'Not enough quantity to proceed.' ) ).subscribe();
+                    return nsSnackBar.error( __( 'Not enough quantity to proceed.' ) );
                 }
             }
 
             if ( currentProduct[0].quantity === 0 ) {
-                return nsSnackBar.error( __( 'Not enough quantity to proceed.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Not enough quantity to proceed.' ) );
             }
 
             const product    =   { ...currentProduct[0], ...{
@@ -304,7 +304,7 @@ export default {
                 this.selectedPaymentGatewayLabel   =   this.paymentField[0].options
                     .filter( option => option.value === this.selectedPaymentGateway )[0].label;
             } catch( exception ) {
-                nsSnackBar.error( __( 'An error has occured while seleting the payment gateway.' ) ).subscribe();
+                nsSnackBar.error( __( 'An error has occured while seleting the payment gateway.' ) );
             }
         },
 

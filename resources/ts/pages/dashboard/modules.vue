@@ -197,19 +197,19 @@ export default {
             nsHttpClient.put( url )
                 .subscribe({
                     next: async result => {
-                        nsSnackBar.success( result.message ).subscribe();
+                        nsSnackBar.success( result.message );
 
                         this.loadModules().subscribe({
                             next: result => {
                                 document.location.reload();
                             },
                             error: ( error ) => {
-                                nsSnackBar.error( error.message ).subscribe();
+                                nsSnackBar.error( error.message );
                             }
                         });
                     },
                     error: ( error ) => {
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                     }
                 });
         },
@@ -218,18 +218,18 @@ export default {
             nsHttpClient.put( url )
                 .subscribe({
                     next: result => {
-                        nsSnackBar.success( result.message ).subscribe();
+                        nsSnackBar.success( result.message );
                         this.loadModules().subscribe({
                             next: result => {
                                 document.location.reload();
                             },
                             error: ( error ) => {
-                                nsSnackBar.error( error.message ).subscribe();
+                                nsSnackBar.error( error.message );
                             }
                         })
                     },
                     error: ( error ) => {
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                     }
                 });
         },
@@ -258,7 +258,7 @@ export default {
                             })
                         },
                         error: ( error ) => {
-                            nsSnackBar.error( error.message, null, { duration: 5000 }).subscribe();
+                            nsSnackBar.error( error.message, null, { duration: 5000 });
                         }
                     })
             }

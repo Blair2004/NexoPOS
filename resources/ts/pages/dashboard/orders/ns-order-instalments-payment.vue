@@ -70,7 +70,7 @@ export default {
                     this.submitPayment();
                 },
                 error: error => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) );
                 }
             })
         },
@@ -88,7 +88,7 @@ export default {
                         this.popupResolver( true );
                         this.print.exec( result.data.payment.id, 'payment' );
 
-                        nsSnackBar.success( result.message ).subscribe();
+                        nsSnackBar.success( result.message );
                     },
                     error: error => {
                         if ( error.status === 'error' ) {
@@ -103,7 +103,7 @@ export default {
                             });
                         }
 
-                        nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
+                        nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) );
                     }
                 })
         }

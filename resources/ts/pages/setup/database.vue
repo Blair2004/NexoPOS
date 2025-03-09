@@ -102,14 +102,14 @@ export default {
                         this.formValidation.enableFields( this.secondPartFields );
 
                         nsRouter.push( 'configuration' );
-                        nsSnackBar.success( result.message, __( 'OKAY' ), { duration: 5000 }).subscribe();
+                        nsSnackBar.success( result.message, __( 'OKAY' ), { duration: 5000 });
                     },
                     error => {
                         this.formValidation.enableFields( this.firstPartFields );
                         this.formValidation.enableFields( this.secondPartFields );
                         this.isLoading   =  false;
 
-                        nsSnackBar.error( error.message, __( 'OKAY' ) ).subscribe();
+                        nsSnackBar.error( error.message, __( 'OKAY' ) );
                     }
                 );
             }

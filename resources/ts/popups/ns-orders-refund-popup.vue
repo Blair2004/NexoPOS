@@ -93,7 +93,7 @@ export default {
                     this.loaded     =   true;
                     this.refunds    =   order.refunds;
                 }, ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 })
         },
 

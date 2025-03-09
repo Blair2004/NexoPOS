@@ -53,7 +53,7 @@ export default {
 
         updateQuantity( quantity ) {
             if ( quantity > this.availableQuantity ) {
-                return nsSnackBar.error( 'Unable to proceed as the quantity provided is exceed the available quantity.' ).subscribe();
+                return nsSnackBar.error( 'Unable to proceed as the quantity provided is exceed the available quantity.' );
             }
 
             this.product.quantity   =   parseFloat( quantity );

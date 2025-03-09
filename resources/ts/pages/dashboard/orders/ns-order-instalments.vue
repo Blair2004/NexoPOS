@@ -136,7 +136,7 @@ export default {
         },
         showReceipt( instalment ) {
             if ( instalment.payment_id === null ) {
-                return nsSnackBar.error( __( 'This instalment doesn\'t have any payment attached.' ) ).subscribe();
+                return nsSnackBar.error( __( 'This instalment doesn\'t have any payment attached.' ) );
             }
 
             this.print.process( instalment.payment_id, 'payment' );
@@ -158,10 +158,10 @@ export default {
                             .subscribe({
                                 next: result => {
                                     this.loadInstalments();
-                                    nsSnackBar.success( result.message ).subscribe();
+                                    nsSnackBar.success( result.message );
                                 },
                                 error: error => {
-                                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
+                                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) );
                                 }
                             })
                     }
@@ -179,10 +179,10 @@ export default {
                                 next: result => {
                                     const index     =   this.instalments.indexOf( instalment );
                                     this.instalments.splice( index, 1 );
-                                    nsSnackBar.success( result.message ).subscribe();
+                                    nsSnackBar.success( result.message );
                                 },
                                 error: error => {
-                                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
+                                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) );
                                 }
                             })
                     }
@@ -225,10 +225,10 @@ export default {
                         nsHttpClient.put( `/api/orders/${this.order.id}/instalments/${instalment.id}`, { instalment })
                             .subscribe({
                                 next: result => {
-                                    nsSnackBar.success( result.message ).subscribe();
+                                    nsSnackBar.success( result.message );
                                 },
                                 error: error => {
-                                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) ).subscribe();
+                                    nsSnackBar.error( error.message || __( 'An unexpected error has occurred' ) );
                                 }
                             })
                     }

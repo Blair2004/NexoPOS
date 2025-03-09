@@ -396,7 +396,7 @@ export default {
                 this.reload();
 
             } catch( exception ) {
-                nsSnackBar.error( __( 'An error occurred while opening the order options' ) ).subscribe();
+                nsSnackBar.error( __( 'An error occurred while opening the order options' ) );
             }
         },
 
@@ -548,7 +548,7 @@ export default {
         },
 
         handleSavedCustomer( response ) {
-            nsSnackBar.success( response.message ).subscribe();
+            nsSnackBar.success( response.message );
             POS.selectCustomer( response.data.entry );
             this.popup.close();
         }

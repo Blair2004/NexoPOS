@@ -481,11 +481,11 @@ export default {
 
         async changeProductPrice( product ) {
             if ( ! this.settings.edit_purchase_price ) {
-                return nsSnackBar.error( __( `You don't have the right to edit the purchase price.` ) ).subscribe();
+                return nsSnackBar.error( __( `You don't have the right to edit the purchase price.` ) );
             }
 
             if ( product.product_type === 'dynamic' ) {
-                return nsSnackBar.error( __( 'Dynamic product can\'t have their price updated.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Dynamic product can\'t have their price updated.' ) );
             }
 
             if ( this.settings.unit_price_editable ) {
@@ -514,15 +514,15 @@ export default {
                     POS.recomputeProducts( POS.products.getValue() );
                     POS.refreshCart();
 
-                    return nsSnackBar.success( __( 'The product price has been updated.' ) ).subscribe();
+                    return nsSnackBar.success( __( 'The product price has been updated.' ) );
                 } catch( exception ) {
                     if ( exception !== false ) {
-                        nsSnackBar.error( exception ).subscribe();
+                        nsSnackBar.error( exception );
                         throw exception;
                     }
                 }
             } else {
-                return nsSnackBar.error( __( 'The editable price feature is disabled.' ) ).subscribe();
+                return nsSnackBar.error( __( 'The editable price feature is disabled.' ) );
             }
         },
 
@@ -538,7 +538,7 @@ export default {
 
         async defineOrderSettings() {
             if ( ! this.settings.edit_settings ) {
-                return nsSnackBar.error( __( 'You\'re not allowed to edit the order settings.' ) ).subscribe();
+                return nsSnackBar.error( __( 'You\'re not allowed to edit the order settings.' ) );
             }
 
             try {
@@ -568,7 +568,7 @@ export default {
                 POS.order.next( order );
             } catch( exception ) {
                 if ( exception !== false ) {
-                    nsSnackBar.error( exception.message ).subscribe();
+                    nsSnackBar.error( exception.message );
                 }
             }
         },
@@ -602,11 +602,11 @@ export default {
 
         async openDiscountPopup( reference, type, index = null ) {
             if ( ! this.settings.products_discount && type === 'product' ) {
-                return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) ).subscribe();
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) );
             }
 
             if ( ! this.settings.cart_discount && type === 'cart' ) {
-                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) );
             }
 
             if ( type === 'product' ) {
@@ -626,7 +626,7 @@ export default {
                              * the amount doesn't exceed the total_price of the product.
                              */
                             if ( response.discount_type === 'flat' && response.discount > reference.total_price ) {
-                                return nsSnackBar.error( __( 'The discount amount can\'t exceed the total price of the product.' ) ).subscribe();
+                                return nsSnackBar.error( __( 'The discount amount can\'t exceed the total price of the product.' ) );
                             }
                             
                             
@@ -647,7 +647,7 @@ export default {
 
         toggleMode( product, index ) {
             if ( ! this.options.ns_pos_allow_wholesale_price ) {
-                return nsSnackBar.error( __( 'Unable to change the price mode. This feature has been disabled.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to change the price mode. This feature has been disabled.' ) );
             }
 
             if ( product.mode === 'normal' ) {

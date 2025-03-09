@@ -308,10 +308,10 @@ export default {
                 .subscribe({
                     next: coupon => {
                         this.coupon     =   coupon;
-                        nsSnackBar.success( __( 'The coupon has been loaded.' ) ).subscribe()
+                        nsSnackBar.success( __( 'The coupon has been loaded.' ) )
                     },
                     error : error => {
-                        nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ) ).subscribe()
+                        nsSnackBar.error( error.message || __( 'An unexpected error occurred.' ) )
                     }
                 });
         }

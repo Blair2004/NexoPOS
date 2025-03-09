@@ -29,7 +29,7 @@ export class Cashier {
         nsHttpClient.get( '/api/reports/cashier-report?refresh=true' )
             .subscribe( result => {
                 this._mysales.next( result );
-                nsSnackBar.success( __  ( 'The report has been refreshed.' ), __( 'OK' ) ).subscribe();
+                nsSnackBar.success( __  ( 'The report has been refreshed.' ), __( 'OK' ) );
             })
     }
 

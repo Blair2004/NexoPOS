@@ -141,7 +141,7 @@ export default {
                     })
                 })
             } catch( exception ) {
-                nsSnackBar.error( exception.message || __( 'An unexpected error occured while saving the order as unpaid.' ) ).subscribe();
+                nsSnackBar.error( exception.message || __( 'An unexpected error occured while saving the order as unpaid.' ) );
                 console.log( exception );
                 // ...
             }
@@ -170,12 +170,12 @@ export default {
 
                 popup.close();
                 this.popup.close();
-                nsSnackBar.success( result.message ).subscribe();
+                nsSnackBar.success( result.message );
                 POS.printOrderReceipt( result.data.order, 'silent' );
             } catch( exception ) {
                 popup.close();
                 // show error message
-                nsSnackBar.error( exception.message || __( 'An error occured while saving the order as unpaid.' ) ).subscribe();
+                nsSnackBar.error( exception.message || __( 'An error occured while saving the order as unpaid.' ) );
             }
         },
         getPaymentLabel( payment ) {
@@ -198,7 +198,7 @@ export default {
                     // close spinner
                     popup.close();
 
-                    nsSnackBar.success( result.message ).subscribe();
+                    nsSnackBar.success( result.message );
 
                     POS.printOrderReceipt( result.data.order, 'silent' );
     
@@ -209,13 +209,13 @@ export default {
                     popup.close();
     
                     // show error message
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 });
             } catch( exception ) {
                 popup.close();
     
                 // show error message
-                nsSnackBar.error( exception.message || __( 'An unexpected error occured while submitting the order.' ) ).subscribe();
+                nsSnackBar.error( exception.message || __( 'An unexpected error occured while submitting the order.' ) );
                 console.log( exception );
             }
         }

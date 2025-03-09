@@ -60,7 +60,7 @@ export default {
             const isValid   =   this.validation.validateFields( this.fields );            
 
             if ( ! isValid ) {
-                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) );
             }
 
             this.validation.disableFields( this.fields );
@@ -71,14 +71,14 @@ export default {
                         'X-XSRF-TOKEN'  : this.xXsrfToken
                     }
                 }).subscribe( (result) => {
-                    nsSnackBar.success( result.message ).subscribe();
+                    nsSnackBar.success( result.message );
                     setTimeout( () => {
                         document.location   =   result.data.redirectTo;
                     }, 1500 );
                 }, ( error ) => {
                     this.validation.triggerFieldsErrors( this.fields, error );
                     this.validation.enableFields( this.fields );
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 })
             }
         }

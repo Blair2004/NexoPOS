@@ -59,7 +59,7 @@ export default {
                 return this.close();
             }
 
-            nsSnackBar.error( __( 'The form is not valid.' ) ).subscribe();
+            nsSnackBar.error( __( 'The form is not valid.' ) );
         },
 
         loadFields() {

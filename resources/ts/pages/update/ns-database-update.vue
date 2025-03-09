@@ -73,7 +73,7 @@ export default {
                     this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
                     this.proceedUpdate()
                 } catch( e ) {
-                    nsSnackBar.error( e.message ).subscribe();
+                    nsSnackBar.error( e.message );
                 }
             })
     },
@@ -102,7 +102,7 @@ export default {
                     this.error              =   true;
                     this.lastErrorMessage   =   exception.message || __( 'An unexpected error occurred' );
 
-                    return nsSnackBar.error( exception.message ).subscribe();
+                    return nsSnackBar.error( exception.message );
                 }
             }
 
@@ -133,7 +133,7 @@ export default {
                         this.error              =   true;
                         this.lastErrorMessage   =   exception.message || __( 'An unexpected error occurred' );
 
-                        return nsSnackBar.error( exception.message ).subscribe();
+                        return nsSnackBar.error( exception.message );
                     }
                 }
             }

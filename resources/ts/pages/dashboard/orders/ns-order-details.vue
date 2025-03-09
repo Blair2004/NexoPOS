@@ -228,10 +228,10 @@ export default {
                         }).subscribe({
                             next: result => {
                                 this.showProcessingSelect   =   false;
-                                nsSnackBar.success( result.message ).subscribe();
+                                nsSnackBar.success( result.message );
                             },
                             error: ( error ) => {
-                                nsSnackBar.error( error.message || __( 'Unexpected error occurred.' ) ).subscribe();
+                                nsSnackBar.error( error.message || __( 'Unexpected error occurred.' ) );
                             }
                         })
                     }
@@ -261,10 +261,10 @@ export default {
                         }).subscribe({
                             next: result => {
                                 this.showDeliverySelect     =   false;
-                                nsSnackBar.success( result.message ).subscribe();
+                                nsSnackBar.success( result.message );
                             },
                             error: ( error ) => {
-                                nsSnackBar.error( error.message || __( 'Unexpected error occurred.' ) ).subscribe();
+                                nsSnackBar.error( error.message || __( 'Unexpected error occurred.' ) );
                             }
                         })
                     }

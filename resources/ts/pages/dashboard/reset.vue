@@ -38,7 +38,7 @@ export default {
 
             if ( ! this.validation.validateFields( this.fields ) ) {
                 this.$forceUpdate();
-                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe(); 
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ); 
             }
 
             const fields   =   this.validation.getValue( this.fields );
@@ -47,10 +47,10 @@ export default {
                 nsHttpClient.post( '/api/reset', fields )
                     .subscribe({
                         next: result => {
-                            nsSnackBar.success( result.message ).subscribe();
+                            nsSnackBar.success( result.message );
                         },
                         error: error => {
-                            nsSnackBar.error( error.message ).subscribe();
+                            nsSnackBar.error( error.message );
                         }
                     })
             }
@@ -62,7 +62,7 @@ export default {
                         this.fields     =   this.validation.createFields( fields );
                     },
                     error: error => {
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                     }
                 })
         }

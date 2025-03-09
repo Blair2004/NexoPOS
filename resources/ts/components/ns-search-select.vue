@@ -178,7 +178,7 @@ export default {
                 const component =   nsExtraComponents[ field.component ] || nsComponents[ field.component];
 
                 if ( component === undefined ) {
-                    nsSnackBar.error( __( `The component ${field.component} cannot be loaded. Make sure it's injected on nsExtraComponents object.` ) ).subscribe();
+                    nsSnackBar.error( __( `The component ${field.component} cannot be loaded. Make sure it's injected on nsExtraComponents object.` ) );
                 }
 
                 const result = await new Promise( ( resolve, reject ) => {

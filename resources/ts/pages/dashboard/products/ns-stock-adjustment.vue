@@ -39,12 +39,12 @@ export default {
                                 }
                             } else {
                                 this.closeSearch();
-                                return nsSnackBar.error( __( 'Looks like no valid products matched the searched term.' ) ).subscribe();
+                                return nsSnackBar.error( __( 'Looks like no valid products matched the searched term.' ) );
                             }
                         } else if ( result.from === 'procurements' ) {
                             if ( result.product === null ) {
                                 this.closeSearch();
-                                return nsSnackBar.error( __( 'Looks like no valid products matched the searched term.' ) ).subscribe();
+                                return nsSnackBar.error( __( 'Looks like no valid products matched the searched term.' ) );
                             } else {
                                 this.addProductToList( result.product );
                             }
@@ -59,7 +59,7 @@ export default {
 
             if ( exists.length > 0 ) {
                 this.closeSearch();
-                return nsSnackBar.error( __( 'The product already exists on the table.' ) ).subscribe();
+                return nsSnackBar.error( __( 'The product already exists on the table.' ) );
             }
 
             const action = this.actions.filter( action => action.value === 'deleted' );
@@ -118,7 +118,7 @@ export default {
                         this.products.unshift( suggestion );
                         this.clearSearch();
                     } else {
-                        return nsSnackBar.error( __( `This product doesn't have any stock to adjust.` ) ).subscribe();
+                        return nsSnackBar.error( __( `This product doesn't have any stock to adjust.` ) );
                     }
 
                     if ( suggestion.accurate_tracking === 1 ) {
@@ -162,9 +162,9 @@ export default {
                  */
                 if ( ! [ 'added', 'set' ].includes( product.adjust_action ) ) {
                     if ( product.accurate_tracking !== undefined && result.quantity > product.available_quantity ) {
-                        return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) ).subscribe();
+                        return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) );
                     } else if ( result.quantity > product.adjust_unit.quantity ) {
-                        return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) ).subscribe();
+                        return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) );
                     }
                 }
 
@@ -175,7 +175,7 @@ export default {
         },
         proceedStockAdjustment() {
             if ( this.products.length === 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed as the table is empty.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed as the table is empty.' ) );
             }
 
             Popup.show( nsPosConfirmPopupVue, { 
@@ -185,10 +185,10 @@ export default {
                     if ( action ) {
                         nsHttpClient.post( '/api/products/adjustments', { products: this.products })
                             .subscribe( result => {
-                                nsSnackBar.success( result.message ).subscribe();
+                                nsSnackBar.success( result.message );
                                 this.products       =   [];
                             }, error => {
-                                nsSnackBar.error( error.message ).subscribe();
+                                nsSnackBar.error( error.message );
                             });
                     }
                 }
@@ -240,7 +240,7 @@ export default {
                     .filter( __product => __product.adjust_unit.unit.id === result.unit.id && __product.adjust_unit.product_id === result.product_id ).length > 0;
 
                 if ( exists ) {
-                    return nsSnackBar.error( __( 'A similar product with the same unit already exists.' ) ).subscribe();
+                    return nsSnackBar.error( __( 'A similar product with the same unit already exists.' ) );
                 }
                 
                 product.adjust_unit    =   result;

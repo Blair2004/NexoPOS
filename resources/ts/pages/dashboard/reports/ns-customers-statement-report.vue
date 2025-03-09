@@ -170,7 +170,7 @@ export default {
                     this.report     =   report;
                 },
                 error: error => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error occured' ) ).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error occured' ) );
                 }
             })
         }

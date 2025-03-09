@@ -121,7 +121,7 @@ export default {
             if ( this.customers.length === 1 ) {
                 return this.selectCustomer( this.customers[0] );
             }
-            nsSnackBar.info( __( 'Too many results.' ) ).subscribe();
+            nsSnackBar.info( __( 'Too many results.' ) );
         },
 
         openCustomerHistory( customer, event ) {

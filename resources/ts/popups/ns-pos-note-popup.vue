@@ -74,7 +74,7 @@ export default {
                 const errors    =   this.validation.validateFieldsErrors( this.fields );
                 this.validation.triggerFieldsErrors( this.fields, errors );
                 this.$forceUpdate();
-                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) );
             }
 
             return this.popupResolver( this.validation.extractFields( this.fields ) );

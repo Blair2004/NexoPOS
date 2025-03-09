@@ -314,7 +314,7 @@ export default {
                     this.side === 'left' && 
                     moment( this.selectedRange.endDate ).isValid() && 
                     calendar.date.isAfter( this.selectedRange.endDate ) ) {
-                    nsSnackBar.error( __( 'The left range will be invalid.' ) ).subscribe();
+                    nsSnackBar.error( __( 'The left range will be invalid.' ) );
                     return false;
                 }
 
@@ -327,7 +327,7 @@ export default {
                     this.side === 'right' && 
                     moment( this.selectedRange.startDate ).isValid() && 
                     calendar.date.isBefore( this.selectedRange.startDate ) ) {
-                    nsSnackBar.error( __( 'The right range will be invalid.' ) ).subscribe();
+                    nsSnackBar.error( __( 'The right range will be invalid.' ) );
                     return false;
                 }
 

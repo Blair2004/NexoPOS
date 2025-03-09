@@ -162,15 +162,15 @@ export default {
                 if ( result.data && result.data.results ) {
                     result.data.results.forEach( response => {
                         if ( response.status === 'error' ) {
-                            nsSnackBar.error( response.message ).subscribe();
+                            nsSnackBar.error( response.message );
                         } else {
-                            nsSnackBar.success( response.message ).subscribe();
+                            nsSnackBar.success( response.message );
                         }
                     });
                 }
 
                 nsHooks.doAction( 'ns-settings-saved', { result, instance: this });
-                nsSnackBar.success( result.message ).subscribe();
+                nsSnackBar.success( result.message );
 
             } catch( error ) {
                 this.validation.enableForm( this.form );
@@ -253,7 +253,7 @@ export default {
                         nsHooks.doAction( 'ns-settings-change-tab', { tab : this.activeTab, instance: this, identifier: activeTabIdentifier });
                     },
                     error : error => {
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                         reject( error );
                     }
                 });

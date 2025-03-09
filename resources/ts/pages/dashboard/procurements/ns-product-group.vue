@@ -261,7 +261,7 @@ export default {
                     this.results    =   results;
                 },
                 error: error => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error occurred' ), __( 'Ok' ), { duration: 3000 }).subscribe();
+                    nsSnackBar.error( error.message || __( 'An unexpected error occurred' ), __( 'Ok' ), { duration: 3000 });
                 }
             })
         }

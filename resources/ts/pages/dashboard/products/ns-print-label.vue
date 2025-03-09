@@ -297,7 +297,7 @@ export default defineComponent({
                 .subscribe( result => {
                     this.resultSuggestions      =   result;
                 }, ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 })
         },
 

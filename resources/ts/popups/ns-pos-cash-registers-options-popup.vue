@@ -40,7 +40,7 @@ export default {
                     this.popup.close();
                 }, 500 );
                 
-                return nsSnackBar.error( __( 'The register is not yet loaded.' ) ).subscribe();
+                return nsSnackBar.error( __( 'The register is not yet loaded.' ) );
             }
 
             nsHttpClient.get( `/api/cash-registers/${this.settings.register.id}` )

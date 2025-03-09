@@ -74,7 +74,7 @@ export default {
         __,
         createToken() {
             if ( ! this.validation.validateFields( this.fields ) ) {
-                return nsSnackBar.error( __( 'Unable to proceed, the form is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed, the form is not valid.' ) );
             }
 
             nsHttpClient.post( `/api/users/create-token`, this.validation.extractFields( this.fields ) )
@@ -100,10 +100,10 @@ export default {
                             .subscribe({
                                 next: result => {
                                     this.loadTokens();
-                                    nsSnackBar.success( result.message ).subscribe();
+                                    nsSnackBar.success( result.message );
                                 },
                                 error: error => {
-                                    nsSnackBar.error( error.message || 'An unexpected error occured.' ).subscribe();
+                                    nsSnackBar.error( error.message || 'An unexpected error occured.' );
                                 }
                             })
                     }
@@ -119,7 +119,7 @@ export default {
                         this.tokens     =   tokens;
                     },
                     error: error => {
-                        nsSnackBar.error( 'Unable to load the token. An unexpected error occured.' ).subscribe();
+                        nsSnackBar.error( 'Unable to load the token. An unexpected error occured.' );
                     }
                 })
         }

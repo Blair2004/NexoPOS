@@ -28,11 +28,11 @@ export default {
         resetDefaultAccounting() {
             nsHttpClient.get( '/api/transactions-accounts/reset-defaults' ).subscribe({
                 next: result => {
-                    nsSnackBar.success( result.message ).subscribe();
+                    nsSnackBar.success( result.message );
                     this.parent.loadSettingsForm();
                 },
                 error: error => {
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 }
             })
         }

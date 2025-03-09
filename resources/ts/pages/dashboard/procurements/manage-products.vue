@@ -359,7 +359,7 @@ export default {
             const group     =   groups[ realIndex ];
 
             if ( group === undefined ) {
-                return nsSnackBar.error( __( 'Unable to proceed, the group you\'re trying to delete doesn\'t exist. This might be a serious issue, please contact the support.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed, the group you\'re trying to delete doesn\'t exist. This might be a serious issue, please contact the support.' ) );
             }
 
             this.removeUnitPriceGroup( group, groups );
@@ -405,10 +405,10 @@ export default {
                                 next: (result: { status: string, message: string }) => {
                                     const index     =   groups.indexOf( group );
                                     groups.splice( index, 1 );
-                                    nsSnackBar.success( result.message ).subscribe();
+                                    nsSnackBar.success( result.message );
                                 }, 
                                 error: ( error ) => {
-                                    nsSnackbar.error( error.message ).subscribe();
+                                    nsSnackBar.error( error.message );
                                 }
                             });
                     }
@@ -422,7 +422,7 @@ export default {
          */
         addUnitGroup( field, tabs ) {
             if ( field.options.length === 0 ) {
-                return nsSnackBar.error( __( 'Please select at least one unit group before you proceed.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Please select at least one unit group before you proceed.' ) );
             }                
 
             if( field.options.length > field.groups.length ) {
@@ -439,7 +439,7 @@ export default {
                 }, 1);
 
             } else {
-                nsSnackBar.error( __( 'There shoulnd\'t be more option than there are units.' ) ).subscribe();
+                nsSnackBar.error( __( 'There shoulnd\'t be more option than there are units.' ) );
             }
         },
 
@@ -543,7 +543,7 @@ export default {
             }).filter( v => v.length > 0 );
 
             if ( validity.length > 0 || Object.values( this.form.main.errors ).length > 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) );
             }
 
             /**
@@ -557,7 +557,7 @@ export default {
             })
 
             if ( images[0] && images[0].length > 1 ) {
-                return nsSnackBar.error( __( 'Unable to proceed, more than one product is set as featured' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed, more than one product is set as featured' ) );
             }
 
             const validation        =   [];
@@ -573,12 +573,12 @@ export default {
             });
 
             if ( validation.length === 0 ) {
-                return nsSnackBar.error( __( 'Either Selling or Purchase unit isn\'t defined. Unable to proceed.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Either Selling or Purchase unit isn\'t defined. Unable to proceed.' ) );
             }
 
             if ( validation.filter( v => v === false ).length > 0 ) {
                 this.$forceUpdate();
-                return nsSnackBar.error( __( 'Unable to proceed as one of the unit group field is invalid' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed as one of the unit group field is invalid' ) );
             }
 
             /**
@@ -624,7 +624,7 @@ export default {
                         if ( this.submitMethod === 'POST' && this.returnUrl !== false ) {
                             return document.location   =   result.data.editUrl || this.returnUrl;
                         } else {
-                            nsSnackBar.info( result.message, __( 'Okay' ), { duration: 3000 }).subscribe();
+                            nsSnackBar.info( result.message, __( 'Okay' ), { duration: 3000 });
                         }
 
                         this.$emit( 'saved' );
@@ -806,7 +806,7 @@ export default {
                     });
                 })
 
-                nsSnackBar.success( result.message ).subscribe();
+                nsSnackBar.success( result.message );
 
                 this.loadAvailableUnits( activeTab, { name: 'unit_group', value: this.getActiveTab( this.form.variations[0].tabs).unit_group_id } );
             } catch( exception ) {

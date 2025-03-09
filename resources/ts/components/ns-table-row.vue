@@ -153,7 +153,7 @@ export default {
                                     this.$emit( 'reload', this.row );
                                 }, ( response ) => {
                                     this.toggleMenu();
-                                    nsSnackBar.error( response.message ).subscribe();
+                                    nsSnackBar.error( response.message );
                                 })
                         }
                     }
@@ -188,7 +188,7 @@ export default {
                         Popup.show( component, { resolve, reject, row, action });
                     });
                 } else {
-                    return nsSnackBar.error( __( `Unable to load the component "${action.component}". Make sure the component is registered to "nsExtraComponents".` ) ).subscribe();
+                    return nsSnackBar.error( __( `Unable to load the component "${action.component}". Make sure the component is registered to "nsExtraComponents".` ) );
                 }
             } else {
                 this.triggerAsync( action );

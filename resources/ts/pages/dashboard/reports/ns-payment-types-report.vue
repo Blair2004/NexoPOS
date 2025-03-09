@@ -113,14 +113,14 @@ export default {
 
         loadReport() {
             if ( this.startDateField.value === null || this.endDateField.value ===null ) {
-                return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) );
             }
 
             const startMoment   =   moment( this.startDateField.value );
             const endMoment     =   moment( this.endDateField.value );
 
             if ( endMoment.isBefore( startMoment ) ) {
-                return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) );
             }
 
             nsHttpClient.post( '/api/reports/payment-types', { 
@@ -131,7 +131,7 @@ export default {
                     this.report     =   report;
                 },
                 error: ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
+                    nsSnackBar.error( error.message );
                 }
             });
         },

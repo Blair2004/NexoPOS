@@ -133,11 +133,11 @@ export default {
                         nsHttpClient[ verb ]( action.url, action.data )
                             .subscribe({
                                 next: (result: StatusResponse ) => {
-                                    nsSnackBar.success( result.message ).subscribe();
+                                    nsSnackBar.success( result.message );
                                     this.loadNotifications();
                                 },
                                 error: (error) => {
-                                    nsSnackBar.error( error.message ).subscribe();
+                                    nsSnackBar.error( error.message );
                                 }
                             })
                     }
@@ -167,7 +167,7 @@ export default {
                     if ( action ) {
                         nsHttpClient.delete( `/api/notifications/all` )
                             .subscribe( result => {
-                                nsSnackBar.success( result.message ).subscribe();
+                                nsSnackBar.success( result.message );
                             })
                     }
                 }

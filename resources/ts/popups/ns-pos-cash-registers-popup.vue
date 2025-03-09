@@ -43,7 +43,7 @@ export default {
 
         async selectRegister( register ) {
             if ( register.status !== 'closed' ) {
-                return nsSnackBar.error( __( 'Unable to open this register. Only closed register can be opened.' ) ).subscribe();
+                return nsSnackBar.error( __( 'Unable to open this register. Only closed register can be opened.' ) );
             }
 
             try {
@@ -70,7 +70,7 @@ export default {
                     },
                     error: ( error ) => {
                         this.priorVerification  =   true;
-                        nsSnackBar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message );
                         this.loadRegisters();
                     }
                 });
