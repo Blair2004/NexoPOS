@@ -16,18 +16,15 @@ export class SnackBar {
     }
 
     show( message, label, options: SnackBarOptions = { duration: 3000, type : 'info' }) {
-        return new Observable( observer => {
-            const { buttonNode, textNode, snackWrapper, sampleSnack }        =   this.__createSnack({ message, label, type : options.type });
+        const { buttonNode, textNode, snackWrapper, sampleSnack }        =   this.__createSnack({ message, label, type : options.type });
 
-            buttonNode.addEventListener( 'click', ( event ) => {
-                observer.next( buttonNode );
-                observer.complete();
-                sampleSnack.remove();
-            });
-
-            this.__startTimer( options.duration, sampleSnack );
+        buttonNode.addEventListener( 'click', ( event ) => {
+            sampleSnack.remove();
         });
+
+        this.__startTimer( options.duration, sampleSnack );
     }
+
 
     error( message, label = null, options: SnackBarOptions = { duration: 3000, type : 'error' }) {
         return this.show( message, label, {...options, ...{ type : 'error' } } );
