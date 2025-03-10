@@ -19,6 +19,11 @@ class AsideMenu
         ];
     }
 
+    public static function wrapper( ...$menus )
+    {
+        return array_merge( ...$menus );
+    }
+
     public static function subMenu( string $label, string $identifier, string $href = '', $icon = 'la la-star', $permissions = [] )
     {
         return [

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Events\NotificationCreatedEvent;
-use App\Events\NotificationDeletedEvent;
 use App\Events\NotificationUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
@@ -25,7 +24,6 @@ class Notification extends NsModel
     protected $dispatchesEvents = [
         'created' => NotificationCreatedEvent::class,
         'updated' => NotificationUpdatedEvent::class,
-        'deleted' => NotificationDeletedEvent::class,
     ];
 
     protected $casts = [

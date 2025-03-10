@@ -1,21 +1,20 @@
 <template>
-    <div>
-        <div class="ns-checkbox cursor-pointer" :class="(isChecked ? 'checked' : '') + ' ' + ( field?  (hasError ? 'has-error': 'is-pristine') : '' )" @click="toggleIt()">
-            <div class="w-5 h-5 flex border items-center justify-center cursor-pointer">
-                <i :class="isChecked ? 'visible' : 'invisible'" class="las la-check"></i>   
-            </div>
-            <label v-if="label" class="mx-2">{{ label }}</label>
-            <label v-if="field" class="mx-2">{{ field.label }}</label>
+    <div class="ns-checkbox cursor-pointer" :class="(isChecked ? 'checked' : '') + ' ' + ( field?  (hasError ? 'has-error': 'is-pristine') : '' )" @click="toggleIt()">
+        <div class="w-5 h-5 flex border items-center justify-center cursor-pointer">
+            <i :class="isChecked ? 'visible' : 'invisible'" class="las la-check"></i>   
         </div>
-        <ns-field-description v-if="field" :field="field"></ns-field-description>
+        <label v-if="label" class="mx-2">{{ label }}</label>
+        <label v-if="field && field.label" class="mx-2">{{ field.label }}</label>
     </div>
+    <ns-field-description v-if="field && field.description" :field="field"></ns-field-description>
 </template>
 <script>
 export default {
     data: () => {
         return {}
     },
-    props: [ 'checked', 'field', 'label' ],
+    emits: [ 'change' ],
+    props: [ 'checked', 'field', 'label', 'class' ],
     computed: {
         isChecked() {
             return this.field ? this.field.value : this.checked;

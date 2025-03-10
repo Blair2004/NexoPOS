@@ -35,20 +35,11 @@ class MenusFilter
         }
 
         if ( ns()->option->get( 'ns_orders_allow_unpaid' ) === 'yes' && isset( $menus[ 'orders' ] ) ) {
-            $menus = array_insert_after( $menus, 'orders', [
-                'orders' => [
-                    'label' => __( 'Orders' ),
-                    'icon' => 'la-list-ol',
-                    'childrens' => array_merge(
-                        $menus[ 'orders' ][ 'childrens' ], [
-                            'instalments' => [
-                                'label' => __( 'Instalments' ),
-                                'permissions' => [ 'nexopos.read.orders-instalments' ],
-                                'href' => ns()->route( 'ns.dashboard.orders-instalments' ),
-                            ],
-                        ] ),
-                ],
-            ] );
+            $menus[ 'orders' ][ 'childrens' ][ 'instalments' ] = [
+                'label' => __( 'Instalments' ),
+                'permissions' => [ 'nexopos.read.orders-instalments' ],
+                'href' => ns()->route( 'ns.dashboard.orders-instalments' ),
+            ];
         }
 
         return $menus;

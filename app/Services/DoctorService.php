@@ -10,6 +10,7 @@ use App\Models\Migration;
 use App\Models\Option;
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\Permission;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
 use App\Models\TransactionHistory;
@@ -109,6 +110,14 @@ class DoctorService
                 $role->name = $rolesLabels[ $roleNamespace ][ 'name' ];
                 $role->locked = true;
                 $role->save();
+            }
+            
+            /**
+             * We'll restore the permissions for the admin role
+             */
+            if ( $role->namespace === Role::ADMIN ) {
+                $permissions = Permission::get( 'namespace' )->toArray();
+                $role->addPermissions( $permissions );
             }
         }
     }

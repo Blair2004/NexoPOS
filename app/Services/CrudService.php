@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Casts\DateCast;
+use App\Classes\CrudScope;
 use App\Classes\Output;
 use App\Events\CrudActionEvent;
 use App\Events\CrudHookEvent;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use ReflectionClass;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class CrudService
@@ -804,6 +806,27 @@ class CrudService
         }
 
         /**
+         * We're introducing attribute support
+         * for scoped queries.
+         */
+        $reflection     =   new ReflectionClass( get_called_class() );
+        $attributes     =   $reflection->getAttributes( CrudScope::class );
+
+        foreach( $attributes as $attribute ) {
+            $instance   =   $attribute->newInstance();
+            $scopeInstance  =   new $instance->class;
+
+            if ( method_exists( $scopeInstance, 'apply' ) ) {
+                $scopeInstance->apply( $query, new ($this->getModel()) );
+            } else {
+                throw new Exception( sprintf(
+                    'The class "%s" must have a method "apply" to be used as a scope.',
+                    $instance->class
+                ) );
+            }
+        }
+
+        /**
          * try to run the where in statement
          */
         if ( $this->whereIn ) {
@@ -1174,9 +1197,9 @@ class CrudService
             'description' => $labels['list_description'],
 
             /**
-             * This create the src URL using the "namespace".
+             * This create the src URL using the "IDENTIIFER".
              */
-            'src' => ns()->url( '/api/crud/' . $instance->namespace ),
+            'src' => ns()->url( '/api/crud/' . $instance::IDENTIFIER ),
 
             /**
              * This pull the creation link. That link should takes the user
@@ -1203,6 +1226,14 @@ class CrudService
      */
     public static function form( $entry = null, array $config = [], string $title = '', string $description = '', string $src = '', string $returnUrl = '', string $submitUrl = '', string $submitMethod = '', array $queryParams = [] ): ContractView
     {
+        /**
+         * We should check if the user is allowed to either create or update
+         * a resource. If not, we'll throw an exception.
+         */
+        $calledClass = get_called_class();
+        $instance = new $calledClass;
+        $instance->allowedTo( $entry === null ? 'create' : 'update' );
+
         /**
          * in case the default way of proceeding is not defined
          * we'll proceed by using the named arguments.

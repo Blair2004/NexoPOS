@@ -84,15 +84,13 @@ export default {
             const validation  = this.formValidation.validateForm( this.form );
 
             if ( validation.length > 0 ) {
-                return nsSnackBar.error( __( 'The form is not valid. Double check it or refer to the error dislayed above.' ), __( 'Close' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'The form is not valid. Double check it or refer to the error dislayed above.' ), __( 'Close' ) );
             }
 
             this.formValidation.disableForm( this.form );
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( __( 'No submit URL was provided' ), __( 'Okay' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'No submit URL was provided' ), __( 'Okay' ) );
             }
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.appendQueryParamas( this.submitUrl ), this.formValidation.extractForm( this.form ) )
@@ -117,7 +115,7 @@ export default {
                 }, ( error ) => {
                     nsSnackBar.error( error.message, undefined, {
                         duration: 5000
-                    }).subscribe();
+                    });
                     
                     if ( error.data !== undefined ) {
                         this.formValidation.triggerError( this.form, error.data );

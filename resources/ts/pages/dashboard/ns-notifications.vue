@@ -166,7 +166,7 @@ export default {
                 onAction: ( action ) => {
                     if ( action ) {
                         nsHttpClient.delete( `/api/notifications/all` )
-                            .subscribe( result => {
+                            .subscribe( ( result: StatusResponse ) => {
                                 nsSnackBar.success( result.message );
                             })
                     }

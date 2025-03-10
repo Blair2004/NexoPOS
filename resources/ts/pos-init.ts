@@ -458,7 +458,6 @@ export class POS {
             if (_coupon.code === coupon.code) {
                 const message = __('This coupon is already added to the cart');
                 nsSnackBar.error(message)
-                    .subscribe();
                 throw message;
             }
         })
@@ -672,8 +671,7 @@ export class POS {
         });
 
         if ( taxGroup.taxes.length === 0 ) {
-            nsSnackBar.error( __( 'The selected tax group doesn\'t have any assigned sub taxes. This might cause wrong figures.' ), __( 'Proceed' ), { duration: false })
-                .subscribe();
+            nsSnackBar.error( __( 'The selected tax group doesn\'t have any assigned sub taxes. This might cause wrong figures.' ), __( 'Proceed' ), { duration: false });
 
             return;
         }
@@ -1271,8 +1269,7 @@ export class POS {
                     .replace('%s', coupon.name),
                 __('Okay'), {
                 duration: 6000
-            }
-            ).subscribe();
+            });
 
             this.removeCoupon(coupon);
         });
@@ -1351,8 +1348,7 @@ export class POS {
          */
         if (order.discount > order.subtotal && order.total_coupons === 0) {
             order.discount = order.subtotal;
-            nsSnackBar.info( __( 'The discount has been set to the cart subtotal.' ))
-                .subscribe();
+            nsSnackBar.info( __( 'The discount has been set to the cart subtotal.' ));
         }
 
         /**
