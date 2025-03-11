@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-class CrudForm
+class CrudForm extends Form
 {
     public static function form( $main, $tabs )
     {
@@ -28,11 +28,6 @@ class CrudForm
     public static function tab( string $identifier, string $label, array $fields = [], array $notices = [], string $component = '', array $footer = [], ?callable $show = null )
     {
         return compact( 'label', 'fields', 'identifier', 'component', 'notices', 'footer', 'show' );
-    }
-
-    public static function fields( ...$args )
-    {
-        return collect( $args )->filter()->toArray();
     }
 
     public static function tabFooter( $extraComponents = [] )

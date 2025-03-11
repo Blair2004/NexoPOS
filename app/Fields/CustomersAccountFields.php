@@ -7,7 +7,16 @@ use App\Services\Helper;
 
 class CustomersAccountFields extends FieldsService
 {
-    protected static $identifier = 'ns.customers-account';
+    /**
+     * The unique identifier of the form
+    **/
+    const IDENTIFIER = 'ns.customers-account';
+
+    /**
+     * Will ensure the fields are automatically 
+     * loaded
+    **/
+    const AUTOLOAD = true;
 
     public function get()
     {

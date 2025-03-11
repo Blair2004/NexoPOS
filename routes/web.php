@@ -82,7 +82,7 @@ Route::get( 'wizard', function() {
                     FormInput::text(
                         label: 'Name',
                         name: 'name',
-                        value: 'NexoPOS 4'
+                        value: 'NexoPOS'
                     )
                 )
             )

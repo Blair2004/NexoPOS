@@ -51,8 +51,9 @@ $dateService    =   app()->make( DateService::class );
          */
         window.ns.user              =   <?php echo json_encode( ns()->getUserDetails() );?>;
         window.ns.user.attributes   =   <?php echo json_encode( Auth::user()->attribute->first() );?>;
-        window.ns.cssFiles          =   <?php echo json_encode( ns()->simplifyManifest() );?>;
         @endauth
+        
+        window.ns.cssFiles          =   <?php echo json_encode( ns()->simplifyManifest() );?>;
 
         /**
          * We'll store here the file mime types

@@ -13,7 +13,7 @@ use App\Services\Helper;
 
 class DirectTransactionFields extends FieldsService
 {
-    protected static $identifier = Transaction::TYPE_DIRECT;
+    const IDENTIFIER = Transaction::TYPE_DIRECT;
 
     public function __construct( ?Transaction $transaction = null )
     {

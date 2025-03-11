@@ -8,7 +8,16 @@ use App\Services\Helper;
 
 class RefundProductFields extends FieldsService
 {
-    protected static $identifier = 'ns.refund-product';
+    /**
+     * The unique identifier of the form
+    **/
+    const IDENTIFIER = 'ns.refund-product';
+
+    /**
+     * Will ensure the fields are automatically 
+     * loaded
+    **/
+    const AUTOLOAD = true;
 
     public function get()
     {

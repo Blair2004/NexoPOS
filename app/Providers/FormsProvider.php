@@ -26,6 +26,7 @@ use App\Fields\UnitsGroupsFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
+use App\Services\ModulesService;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -64,75 +65,49 @@ class FormsProvider extends ServiceProvider
             return $class;
         }, 10, 2 );
 
-        Hook::addFilter( 'ns.fields', function ( $class, $identifier ) {
-            switch ( $class ) {
-                case AuthLoginFields::getIdentifier():
-                    return new AuthLoginFields;
-                    break;
-                case PasswordLostFields::getIdentifier():
-                    return new PasswordLostFields;
-                    break;
-                case NewPasswordFields::getIdentifier():
-                    return new NewPasswordFields;
-                    break;
-                case AuthRegisterFields::getIdentifier():
-                    return new AuthRegisterFields;
-                    break;
-                case CustomersAccountFields::getIdentifier():
-                    return new CustomersAccountFields;
-                    break;
-                case LayawayFields::getIdentifier():
-                    return new LayawayFields;
-                    break;
-                case RefundProductFields::getIdentifier():
-                    return new RefundProductFields;
-                    break;
-                case CashRegisterOpeningFields::getIdentifier():
-                    return new CashRegisterOpeningFields;
-                    break;
-                case CashRegisterClosingFields::getIdentifier():
-                    return new CashRegisterClosingFields;
-                    break;
-                case CashRegisterCashingFields::getIdentifier():
-                    return new CashRegisterCashingFields;
-                    break;
-                case CashRegisterCashoutFields::getIdentifier():
-                    return new CashRegisterCashoutFields;
-                    break;
-                case PosOrderSettingsFields::getIdentifier():
-                    return new PosOrderSettingsFields;
-                    break;
-                case OrderPaymentFields::getIdentifier():
-                    return new OrderPaymentFields;
-                    break;
-                case ProcurementFields::getIdentifier():
-                    return new ProcurementFields;
-                    break;
-                case UnitsFields::getIdentifier():
-                    return new UnitsFields;
-                    break;
-                case DirectTransactionFields::getIdentifier():
-                    return new DirectTransactionFields;
-                    break;
-                case ReccurringTransactionFields::getIdentifier():
-                    return new ReccurringTransactionFields;
-                    break;
-                case EntityTransactionFields::getIdentifier():
-                    return new EntityTransactionFields;
-                    break;
-                case ScheduledTransactionFields::getIdentifier():
-                    return new ScheduledTransactionFields;
-                    break;
-                case UnitsGroupsFields::getIdentifier():
-                    return new UnitsGroupsFields;
-                    break;
-                case ResetFields::getIdentifier():
-                    return new ResetFields;
-                    break;
-                default:
-                    return $class;
-                    break;
+        /**
+         * We'll scan the fields directory
+         * and autoload the fields that has "AUTOLOAD" constant
+         * set to true
+         */
+        $this->autoloadFields(
+            path: app_path( 'Fields' ),
+            classRoot: 'App\\Fields\\'
+        );
+        
+        /**
+         * Now for all the modules that are enabled we'll make sure
+         * to load their fields if they are set to be autoloaded
+         * @var ModulesService
+         */
+        $moduleService = app()->make( ModulesService::class );
+
+        $moduleService->getEnabledAndAutoloadedModules()->each( function ( object $module ) use ( $moduleService ) {
+            $this->autoloadFields(
+                path: $module->path . DIRECTORY_SEPARATOR . 'Fields',
+                classRoot: $module->namespace . '\\Fields\\'
+            );
+        } );
+    }
+
+    private function autoloadFields( $path, $classRoot )
+    {
+        $fields = scandir( $path );
+
+        foreach( $fields as $field ) {
+            if ( in_array( $field, [ '.', '..' ] ) ) {
+                continue;
             }
-        }, 10, 2 );
+
+            $field = str_replace( '.php', '', $field );
+            $field = $classRoot . $field;
+
+            if ( class_exists( $field ) && $field::AUTOLOAD ) {
+                Hook::addFilter( 'ns.fields', function ( $fields ) use ( $field ) {
+                    $fields[ $field::IDENTIFIER ] = new $field;
+                    return $fields;
+                } );
+            }
+        }
     }
 }

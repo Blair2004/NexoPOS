@@ -7,7 +7,16 @@ use App\Services\FieldsService;
 
 class ProcurementFields extends FieldsService
 {
-    protected static $identifier = 'ns.procurement-fields';
+    /**
+     * The unique identifier of the form
+    **/
+    const IDENTIFIER = 'ns.procurement-fields';
+
+    /**
+     * Will ensure the fields are automatically 
+     * loaded
+    **/
+    const AUTOLOAD = true;
 
     public function get( ?Procurement $model = null )
     {

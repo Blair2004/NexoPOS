@@ -15,7 +15,7 @@ use App\Services\Helper;
 
 class EntityTransactionFields extends FieldsService
 {
-    protected static $identifier = Transaction::TYPE_ENTITY;
+    const IDENTIFIER = Transaction::TYPE_ENTITY;
 
     public function __construct( ?Transaction $transaction = null )
     {

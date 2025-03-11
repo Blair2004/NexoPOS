@@ -8,7 +8,16 @@ use App\Services\FieldsService;
 
 class CashRegisterClosingFields extends FieldsService
 {
-    protected static $identifier = 'ns.cash-registers-closing';
+    /**
+     * The unique identifier of the form
+    **/
+    const IDENTIFIER = 'ns.cash-registers-closing';
+
+    /**
+     * Will ensure the fields are automatically 
+     * loaded
+    **/
+    const AUTOLOAD = true;
 
     public function get()
     {

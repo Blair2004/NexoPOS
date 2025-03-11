@@ -13,7 +13,7 @@ use App\Services\Helper;
 
 class ReccurringTransactionFields extends FieldsService
 {
-    protected static $identifier = Transaction::TYPE_RECURRING;
+    const IDENTIFIER = Transaction::TYPE_RECURRING;
 
     public function __construct( ?Transaction $transaction = null )
     {

@@ -10,7 +10,16 @@ use App\Services\Helper;
 
 class OrderPaymentFields extends FieldsService
 {
-    protected static $identifier = 'ns.order-payments';
+    /**
+     * The unique identifier of the form
+    **/
+    const IDENTIFIER = 'ns.order-payments';
+
+    /**
+     * Will ensure the fields are automatically 
+     * loaded
+    **/
+    const AUTOLOAD = true;
 
     public function __construct()
     {

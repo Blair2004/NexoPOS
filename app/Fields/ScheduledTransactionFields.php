@@ -13,7 +13,7 @@ use App\Services\Helper;
 
 class ScheduledTransactionFields extends FieldsService
 {
-    protected static $identifier = Transaction::TYPE_SCHEDULED;
+    const IDENTIFIER = Transaction::TYPE_SCHEDULED;
 
     public function __construct( ?Transaction $transaction = null )
     {

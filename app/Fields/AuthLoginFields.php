@@ -7,7 +7,16 @@ use App\Services\FieldsService;
 
 class AuthLoginFields extends FieldsService
 {
-    protected static $identifier = 'ns.login';
+    /**
+     * The unique identifier of the form
+    **/
+    const IDENTIFIER = 'ns.login';
+
+    /**
+     * Will ensure the fields are automatically 
+     * loaded
+    **/
+    const AUTOLOAD = true;
 
     public function get()
     {

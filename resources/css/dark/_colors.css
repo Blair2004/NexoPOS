@@ -7,10 +7,10 @@
 
     /** Surfaces */
     --color-surface: var( --color-gray-900 );
-    --color-aside-background: var( --color-gray-950 );
+    --color-aside-background: var( --color-gray-900 );
     --color-aside-color: var( --color-fontcolor );
-    --color-aside-menu-background: var( --color-gray-950 );
-    --color-aside-menu-background-hover: var( --color-gray-950 );
+    --color-aside-menu-background: var( --color-gray-900 );
+    --color-aside-menu-background-hover: var( --color-gray-900 );
     --color-aside-submenu-background: var( --color-gray-800 );
     --color-aside-submenu-background-hover: var( --color-gray-700 );
     --color-soft-primary: rgb( 75 85 99 );

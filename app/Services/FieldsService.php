@@ -17,13 +17,8 @@ class FieldsService
             return get_called_class()::$identifier;
         }
 
-        /**
-         * @todo set as a migration measure.
-         * identifier must be set statically to avoid any
-         * field build while just retreiving the identifier.
-         */
-        if ( isset( ( new self )->identifier ) ) {
-            return get_called_class()::$identifier;
+        if ( get_called_class()::IDENTIFIER ) {
+            return get_called_class()::IDENTIFIER;
         }
     }
 }

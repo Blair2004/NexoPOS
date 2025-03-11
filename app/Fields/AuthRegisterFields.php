@@ -7,7 +7,16 @@ use App\Services\FieldsService;
 
 class AuthRegisterFields extends FieldsService
 {
-    protected static $identifier = 'ns.register';
+    /**
+     * The unique identifier of the form
+    **/
+    const IDENTIFIER = 'ns.register';
+
+    /**
+     * Will ensure the fields are automatically 
+     * loaded
+    **/
+    const AUTOLOAD = true;
 
     public function get()
     {

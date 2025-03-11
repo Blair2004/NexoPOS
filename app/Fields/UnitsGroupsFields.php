@@ -7,7 +7,16 @@ use App\Services\FieldsService;
 
 class UnitsGroupsFields extends FieldsService
 {
-    protected static $identifier = 'ns.units-group-fields';
+    /**
+     * The unique identifier of the form
+    **/
+    const IDENTIFIER = 'ns.units-group-fields';
+
+    /**
+     * Will ensure the fields are automatically 
+     * loaded
+    **/
+    const AUTOLOAD = true;
 
     public function get( ?UnitGroup $model = null )
     {

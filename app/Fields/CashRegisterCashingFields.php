@@ -10,7 +10,16 @@ use App\Services\Helper;
 
 class CashRegisterCashingFields extends FieldsService
 {
-    protected static $identifier = 'ns.cash-registers-cashing';
+    /**
+     * The unique identifier of the form
+    **/
+    const IDENTIFIER = 'ns.cash-registers-cashing';
+
+    /**
+     * Will ensure the fields are automatically 
+     * loaded
+    **/
+    const AUTOLOAD = true;
 
     public function get()
     {
