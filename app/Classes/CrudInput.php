@@ -4,9 +4,9 @@ namespace App\Classes;
 
 class CrudInput
 {
-    public static function text( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'text', $errors = [] )
+    public static function text( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $type = 'text', $errors = [], $data = [] )
     {
-        return compact( 'label', 'name', 'value', 'validation', 'description', 'disabled', 'type', 'errors' );
+        return compact( 'label', 'name', 'value', 'validation', 'description', 'disabled', 'type', 'errors', 'data' );
     }
 
     public static function password( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
@@ -116,7 +116,7 @@ class CrudInput
         return compact( 'url', 'watch', 'data' );
     }
 
-    public static function textarea( $label, $name, $value = '', $validation = '', $description = '', $disabled = false )
+    public static function textarea( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $data = [] )
     {
         return self::text(
             label: $label,
@@ -125,7 +125,8 @@ class CrudInput
             description: $description,
             disabled: $disabled,
             type: 'textarea',
-            value: $value
+            value: $value,
+            data: $data
         );
     }
 

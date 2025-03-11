@@ -28,6 +28,7 @@ use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
 use App\Services\ModulesService;
 use Illuminate\Support\ServiceProvider;
+use ReflectionClass;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class FormsProvider extends ServiceProvider
@@ -82,10 +83,11 @@ class FormsProvider extends ServiceProvider
          */
         $moduleService = app()->make( ModulesService::class );
 
-        $moduleService->getEnabledAndAutoloadedModules()->each( function ( object $module ) use ( $moduleService ) {
+        $moduleService->getEnabledAndAutoloadedModules()->each( function ( $module ) use ( $moduleService ) {
+            $module = ( object ) $module;
             $this->autoloadFields(
                 path: $module->path . DIRECTORY_SEPARATOR . 'Fields',
-                classRoot: $module->namespace . '\\Fields\\'
+                classRoot: 'Modules\\' . $module->namespace . '\\Fields\\'
             );
         } );
     }
@@ -102,11 +104,16 @@ class FormsProvider extends ServiceProvider
             $field = str_replace( '.php', '', $field );
             $field = $classRoot . $field;
 
-            if ( class_exists( $field ) && $field::AUTOLOAD ) {
-                Hook::addFilter( 'ns.fields', function ( $fields ) use ( $field ) {
-                    $fields[ $field::IDENTIFIER ] = new $field;
-                    return $fields;
-                } );
+            $reflection     =   new ReflectionClass( $field );
+
+            if ( class_exists( $field ) && $reflection->hasConstant( 'AUTOLOAD' ) && $field::AUTOLOAD && $reflection->hasConstant( 'IDENTIFIER' ) ) {
+                Hook::addFilter( 'ns.fields', function ( $identifier ) use ( $field ) {
+                    if ( $identifier === $field::IDENTIFIER ) {
+                        return new $field;
+                    }
+
+                    return $identifier;
+                });
             }
         }
     }
