@@ -55,12 +55,12 @@
     }
 
     &.error {
-        @apply border-error-tertiary;
+        @apply border-error-secondary;
         input {
             @apply bg-input-background text-fontcolor;
         }
         button {
-            @apply bg-error-tertiary text-white;
+            @apply bg-error-secondary text-white;
             i, span {
                 @apply text-white;
             }
@@ -153,7 +153,7 @@
 
     &.has-error {
         > label {
-            @apply text-error-tertiary;
+            @apply text-error-secondary;
         }
 
         > div {
@@ -191,7 +191,7 @@
     }
 
     p.ns-error {
-       @apply text-error-tertiary; 
+       @apply text-error-secondary; 
     }
 }
 
@@ -261,7 +261,7 @@
     
     &.hover-success:hover, &.success {
         button, a {
-            @apply bg-success-tertiary text-white;
+            @apply bg-success-secondary text-white;
 
             span.ns-label {
                 @apply bg-input-background text-success-primary;
@@ -289,7 +289,7 @@
     
     &.hover-warning:hover, &.warning {
         button, a {
-            @apply bg-warning-tertiary text-white;
+            @apply bg-warning-secondary text-white;
 
             span.ns-label {
                 @apply bg-input-background text-warning-secondary;
@@ -334,10 +334,10 @@
     @apply shadow;
     
     button.success, a.success {
-        @apply bg-success-tertiary text-white;
+        @apply bg-success-secondary text-white;
 
         span.ns-label {
-            @apply bg-input-background text-success-tertiary;
+            @apply bg-input-background text-success-secondary;
         }
     }
     button.error, a.error {
@@ -348,7 +348,7 @@
         }
     }
     button.warning, a.warning {
-        @apply bg-warning-tertiary text-white;
+        @apply bg-warning-secondary text-white;
 
         span.ns-label {
             @apply bg-input-background text-warning-secondary;

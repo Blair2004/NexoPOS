@@ -98,6 +98,7 @@ class ModuleDetailsCommand extends Command
             [ __( 'Views' ), $module[ 'views-path' ] ],
             [ __( 'Api File' ), $module[ 'api-file' ] ],
             [ __( 'Migrations' ), collect( $module[ 'all-migrations' ] ?? [] )->join( "\n" ) ],
+            [ __( 'PSR4 Complaint' ), $module[ 'psr-4-compliance' ] ? __( 'Yes' ) : __( 'No' ) ]
         ];
 
         return $this->table( [

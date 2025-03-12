@@ -82,7 +82,7 @@
         }
     
         &.table-filters-disabled {
-            @apply text-fontcolor-soft border-crud-button-edge;
+            @apply text-fontcolor border-crud-button-edge;
         }
 
         &:hover, &.active {

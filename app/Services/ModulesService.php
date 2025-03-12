@@ -261,7 +261,7 @@ class ModulesService
 
                     foreach ( $files as $file ) {
                         $info = pathinfo( $file );
-                        $_config = include_once base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file;
+                        $_config = require_once base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file;
                         $final[ $config[ 'namespace' ] ] = [];
                         $final[ $config[ 'namespace' ] ][ $info[ 'filename' ] ] = $_config;
                         $moduleConfig = Arr::dot( $final );
@@ -492,8 +492,10 @@ class ModulesService
          * After the complicance check, we'll autoload
          * the composer vendor if the module has an autoload file.
          */
-        if ( is_file( $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) ) {
-            include_once $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        $autoloadPath   =   $module[ 'path' ] . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+        if ( is_file( $autoloadPath ) ) {
+            require_once $autoloadPath;
         }
 
         /**

@@ -407,7 +407,7 @@ export default {
 }
 </script>
 <template>
-    <div class="flex md:flex-row flex-col ns-box shadow-xl overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-[95vh]' : 'w-full h-full'">
+    <div class="flex md:flex-row flex-col ns-box shadow-xl overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-[95vh]' : 'm-4 w-auto h-full rounded-lg'">
         <div class="sidebar w-48 md:h-full flex-shrink-0">
             <h3 class="text-xl font-bold my-4 text-center">{{ __( 'Medias Manager' ) }}</h3>
             <ul class="sidebar-menus flex md:block mt-8">
@@ -458,8 +458,8 @@ export default {
                         </div>
                     </div>
                     <div class="flex flex-auto overflow-hidden">
-                        <div class="p-2 overflow-y-auto ns-scrollbar">
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-1 lg:grid-cols-4">
+                        <div class="p-2 flex-auto overflow-y-auto ns-scrollbar">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-1 lg:grid-cols-4 xl:grid-cols-5">
                                 <div v-for="(resource, index) of response.data" :key="index" class="">
                                     <div>
                                         <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected border-secondary ' : 'border-transparent'" class="border-4 aspect-square bg-secondary/50 overflow-hidden flex items-center justify-center">

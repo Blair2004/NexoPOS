@@ -106,10 +106,7 @@ class GeneralSettings extends SettingsPage
                 FormInput::select(
                     name: 'ns_default_theme',
                     value: ns()->option->get( 'ns_default_theme' ),
-                    options: Helper::kvToJsOptions( [
-                        'dark' => __( 'Dark' ),
-                        'light' => __( 'Light' ),
-                    ] ),
+                    options: Helper::kvToJsOptions( config( 'nexopos.themes' ) ),
                     label: __( 'Theme' ),
                     description: __( 'Define the default theme.' ),
                 ),

@@ -186,7 +186,7 @@ export default {
              * aren't part of the actual month.
              */
             if ( this.isInRange( day ) && ! this.isRangeEdge( day ) ) {
-                classes.push( 'bg-primary' );
+                classes.push( 'bg-tertiary' );
             }
             else if( day.isDifferentMonth && ! this.isRangeEdge( day ) ) {
                 classes.push( 'bg-tab-table-th' );

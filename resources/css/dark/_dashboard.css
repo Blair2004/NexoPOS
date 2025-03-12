@@ -22,7 +22,7 @@
             }
         }
         .notification-label {
-            @apply bg-red-600 text-white;
+            @apply bg-error-secondary text-white;
         }
     }
     .ns-aside-submenu {
