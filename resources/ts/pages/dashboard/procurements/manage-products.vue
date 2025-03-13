@@ -172,7 +172,7 @@
 </template>
 <script lang="ts">
 import FormValidation from '~/libraries/form-validation'
-import { nsSnackBar, nsHttpClient, nsHooks } from '~/bootstrap';
+import { nsSnackBar, nsHttpClient } from '~/bootstrap';
 import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
 import { __ } from '~/libraries/lang';
 import nsProductGroup from './ns-product-group.vue';
@@ -181,7 +181,7 @@ import { reactive } from "vue";
 import NsCrudForm from '~/components/ns-crud-form.vue';
 import { StatusResponse } from '~/status-response';
 
-declare const Popup, nsSnackbar, nsComponents;
+declare const Popup, nsSnackbar, nsComponents, nsHooks;
 
 export default {
     components: {
@@ -393,7 +393,7 @@ export default {
         confirmUnitQuantityDeletion({ group, groups }) {
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Your Attention Is Required' ),
-                size: 'w-3/4-screen h-2/5-screen',
+                size: 'w-3/4-screen h-[40vh]',
                 message: __( 'The current unit you\'re about to delete has a reference on the database and it might have already procured stock. Deleting that reference will remove procured stock. Would you proceed ?' ),
                 onAction: ( action ) => {
                     if ( action ) {

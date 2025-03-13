@@ -24,7 +24,7 @@
                         class="outline-hidden w-full p-2">
                 </div>
             </div>
-            <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto ns-scrollbar">
+            <div class="h-[60vh] xl:h-[60vh] overflow-y-auto ns-scrollbar">
                 <ul class="ns-vertical-menu">
                     <li class="p-2 text-center text-font" v-if="customers && customers.length === 0">
                         {{ __( 'No customer match your query...' ) }}

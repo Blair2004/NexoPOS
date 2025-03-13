@@ -36,6 +36,11 @@
     }
     tbody, tfoot {
         @apply text-fontcolor border-table-th-edge text-sm;
+
+        tr {
+            @apply border-table-th-edge;
+        }
+
         td {
             @apply border-table-th-edge;
         }

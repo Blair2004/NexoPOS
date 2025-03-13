@@ -39,9 +39,10 @@
     </div>
 </template>
 <script lang="ts">
-import { nsHooks } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
 import popupCloser from '~/libraries/popup-closer';
+
+declare const nsHooks;
 
 export default {
     props: [ 'orders' ],

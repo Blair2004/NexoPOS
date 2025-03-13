@@ -13,7 +13,6 @@ import {
 
 import { NsHotPress }       from './libraries/ns-hotpress';
 import VueHtmlToPaper from './libraries/html-printer';
-import { nsHooks } from './bootstrap';
 
 const nsRewardsSystem               =   defineAsyncComponent( () => import( '~/pages/dashboard/rewards-system.vue' ) );
 const nsCreateCoupons               =   defineAsyncComponent( () => import( './pages/dashboard/create-coupons.vue' ) );
@@ -45,6 +44,7 @@ const nsTransactionsRules           =   defineAsyncComponent( () => import( './p
 
 declare const window;
 declare let nsExtraComponents;   
+declare const nsHooks;
 
 const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ]; 

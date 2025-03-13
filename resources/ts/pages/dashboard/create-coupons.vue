@@ -147,7 +147,7 @@ export default {
             <ns-spinner/>
         </div>
         <template v-if="Object.values( form ).length > 0">
-            <div :class="popup ? 'bg-box-background w-95vw md:w-2/3-screen h-3/4-screen overflow-y-auto p-4' : ''">
+            <div :class="popup ? 'bg-box-background w-95vw md:w-2/3-screen h-[80vh] overflow-y-auto p-4' : ''">
                 <div class="flex flex-col">
                     <div class="flex justify-between items-center">
                         <label for="title" class="font-bold my-2 text-font">{{ submitMethod.toLowerCase() === 'post' ? labels.create_title : labels.edit_title }}</label>

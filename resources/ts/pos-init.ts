@@ -8,7 +8,7 @@ import { BehaviorSubject } from "rxjs";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
 import { Order } from "./interfaces/order";
-import { nsHooks, nsHttpClient, nsNotice, nsSnackBar } from "./bootstrap";
+import { nsHttpClient, nsNotice, nsSnackBar } from "./bootstrap";
 import { PaymentType } from "./interfaces/payment-type";
 import { Payment } from "./interfaces/payment";
 import { Responsive } from "./libraries/responsive";
@@ -51,6 +51,7 @@ const nsPosCashRegister         = (<any>window).nsPosCashRegister = defineAsyncC
 declare const systemOptions;
 declare const systemUrls;
 declare const nsEvent;
+declare const nsHooks;
 
 export class POS {
     private _cartButtons: BehaviorSubject<{ [key: string]: any }>;

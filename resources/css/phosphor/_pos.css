@@ -228,7 +228,7 @@
                         }
                     }
                     input {
-                        @apply bg-input-background;
+                        @apply bg-box-background;
                     }
                 }
             }

@@ -16,7 +16,7 @@ body {
 [v-cloak] > * { display:none }
 
 .loader {
-    border-top-color: #3498db !important;
+    border-top-color: var( --color-primary ) !important;
     &.slow {
         -webkit-animation: spinner 1.5s linear infinite;
         animation: spinner 1.5s linear infinite;

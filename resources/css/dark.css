@@ -10,7 +10,7 @@
 
 @import "./dark/_box.css";
 @import "./dark/_notices.css";
-/* @import "./dark/_floating-notices.css"; */
+@import "./dark/_floating-notices.css";
 @import './dark/_forms.css';
 @import './dark/_crud.css';
 @import './dark/_dashboard.css';

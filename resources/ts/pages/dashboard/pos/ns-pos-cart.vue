@@ -291,7 +291,7 @@
     </div>
 </template>
 <script lang="ts">
-import { nsHooks, nsSnackBar } from '~/bootstrap';
+import { nsSnackBar } from '~/bootstrap';
 import { Popup } from '~/libraries/popup';
 import { nsCurrency } from '~/filters/currency';
 import { __ } from '~/libraries/lang';
@@ -316,7 +316,7 @@ import nsPosOrderSettingsVue from '~/popups/ns-pos-order-settings.vue';
 import nsPosProductPricePopupVue from '~/popups/ns-pos-product-price-popup.vue';
 import nsPosQuickProductPopupVue from '~/popups/ns-pos-quick-product-popup.vue';
 
-declare const POS, nsShortcuts, nsHotPress;
+declare const POS, nsShortcuts, nsHotPress, nsHooks;
 
 import { ref, markRaw } from '@vue/reactivity';
 import { Order } from '~/interfaces/order';

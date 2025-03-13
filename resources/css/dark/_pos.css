@@ -41,7 +41,10 @@
 
                     .ns-button {
                         button {
-                            @apply bg-gray-200;
+                            @apply bg-input-button border-pos-button-edge rounded-none border-r;
+                            &:hover {
+                                @apply bg-input-button-hover;
+                            }
                         }
                     }
                 }
@@ -245,7 +248,7 @@
                     @apply border-pos-button-edge;
 
                     .cell-item-label {
-                        background:rgb(250 250 250 / 73%);
+                        background:rgb(0 0 0 / 73%);
                     }
 
                     &:hover {
@@ -310,7 +313,7 @@
 
 #ns-units-selector {
     .overlay {
-        background:rgb(250 250 250 / 73%);
+        background:rgb(0 0 0 / 73%);
     }
 }
 

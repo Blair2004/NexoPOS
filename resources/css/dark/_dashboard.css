@@ -49,14 +49,14 @@
 }
 
 .ns-toggle-button {
-    @apply border-input-edge text-fontcolor;
+    @apply border-gray-700 text-fontcolor;
     &:hover {
-        @apply bg-tab-active border-transparent text-gray-700;
+        @apply bg-tab-active border-transparent text-white;
     }
 }
 
 .ns-avatar { 
-    @apply text-fontcolor border-input-edge;
+    @apply text-fontcolor border-gray-700;
 
     &:hover {
         @apply bg-box-background text-fontcolor border-transparent;
@@ -110,7 +110,7 @@
             @apply bg-box-background;
         }
         &.panel-hidden {
-            @apply border-input-edge;
+            @apply border-gray-700;
         }
 
         &:hover {

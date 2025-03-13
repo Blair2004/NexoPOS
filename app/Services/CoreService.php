@@ -457,7 +457,7 @@ class CoreService
         $assets = collect( [] );
         $errors = [];
 
-        $buildFolderName = last( explode( $ds, $buildDirectory ) );
+        $buildFolderName = last( preg_split( '/[\/\\\\]/', $buildDirectory ) );
 
         foreach ( $possiblePaths as $manifestPath ) {
             if ( ! file_exists( $manifestPath ) ) {

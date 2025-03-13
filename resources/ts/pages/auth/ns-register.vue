@@ -23,11 +23,14 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 import FormValidation from '~/libraries/form-validation';
-import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { forkJoin } from 'rxjs';
 import { __ } from '~/libraries/lang';
+import { StatusResponse } from '~/status-response';
+
+declare const nsHooks;
 
 export default {
     name: 'ns-register',
@@ -70,16 +73,18 @@ export default {
                     headers: {
                         'X-XSRF-TOKEN'  : this.xXsrfToken
                     }
-                }).subscribe( (result) => {
-                    nsSnackBar.success( result.message );
-                    setTimeout( () => {
-                        document.location   =   result.data.redirectTo;
-                    }, 1500 );
-                }, ( error ) => {
-                    this.validation.triggerFieldsErrors( this.fields, error );
-                    this.validation.enableFields( this.fields );
-                    nsSnackBar.error( error.message );
-                })
+                }).subscribe({
+                        next:  (result: StatusResponse ) => {
+                        nsSnackBar.success( result.message );
+                        setTimeout( () => {
+                            document.location   =   result.data.redirectTo;
+                        }, 1500 );
+                    }, error: (error) => {
+                        this.validation.triggerFieldsErrors( this.fields, error );
+                        this.validation.enableFields( this.fields );
+                        nsSnackBar.error( error.message );
+                    }
+                });
             }
         }
     }
