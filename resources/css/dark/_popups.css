@@ -43,30 +43,30 @@
         }
 
         &.success {
-            @apply bg-success-primary border-success-secondary text-fontcolor;
+            @apply bg-success-primary border-success-secondary text-white;
             &.hoverable:hover {
-                @apply bg-success-secondary text-fontcolor;
+                @apply bg-success-secondary text-white;
             }
         }
         
         &.error {
-            @apply bg-error-primary border-error-secondary text-fontcolor;
+            @apply bg-error-primary border-error-secondary text-white;
             &.hoverable:hover {
-                @apply bg-error-secondary text-fontcolor;
+                @apply bg-error-secondary text-white;
             }
         }
     
         &.info {
-            @apply bg-info-primary border-info-secondary text-fontcolor;
+            @apply bg-info-primary border-info-secondary text-white;
             &.hoverable:hover {
-                @apply bg-info-secondary text-fontcolor;
+                @apply bg-info-secondary text-white;
             }
         }
     
         &.warning {
-            @apply bg-warning-primary border-warning-secondary text-fontcolor;
+            @apply bg-warning-secondary border-warning-secondary text-white;
             &.hoverable:hover {
-                @apply bg-warning-secondary text-fontcolor;
+                @apply bg-warning-secondary text-white;
             }
         }
     }

@@ -37,6 +37,7 @@ return new class extends Migration
         include_once dirname( __FILE__ ) . '/../../permissions/store-admin-role.php';
         include_once dirname( __FILE__ ) . '/../../permissions/store-cashier-role.php';
         include_once dirname( __FILE__ ) . '/../../permissions/store-customer-role.php';
+        include_once dirname( __FILE__ ) . '/../../permissions/driver-role.php';
     }
 
     /**

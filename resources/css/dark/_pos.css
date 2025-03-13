@@ -57,10 +57,10 @@
             }
             #cart-products-table {
                 a {
-                    @apply border-info-tertiary;
+                    @apply border-secondary;
 
                     &:hover {
-                        @apply text-info-tertiary;
+                        @apply text-secondary;
                     }
                 }
 
@@ -137,14 +137,23 @@
             #cart-products-summary {
                 table {
                     @apply text-fontcolor;
+                    tr.success {
+                        td {
+                            @apply bg-success-primary text-white;
+
+                            a:hover {
+                                @apply text-tertiary;
+                            }
+                        }
+                    }
                     td {
                         @apply border-pos-button-edge;
                         
                         a {
-                            @apply border-info-tertiary;
+                            @apply border-secondary;
 
                             &:hover {
-                                @apply text-info-tertiary;
+                                @apply text-secondary;
                             }
                         }
                     }
@@ -328,7 +337,7 @@
         @apply text-fontcolor;
     }
     > div {
-        @apply bg-tab-active-border;
+        @apply bg-gray-800;
         h3 {
             @apply text-fontcolor;
         }
@@ -377,7 +386,7 @@
             @apply border-t-tab-active;
         }
         .ns-payment-footer {
-            @apply bg-tab-active-border;
+            @apply bg-gray-800;
         }
     }
 }

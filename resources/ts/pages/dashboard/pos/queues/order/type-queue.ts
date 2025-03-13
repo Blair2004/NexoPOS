@@ -14,5 +14,3 @@ export class TypeQueue implements Queue {
         });
     }
 }
-
-(<any>window).TypeQueue    =   TypeQueue;

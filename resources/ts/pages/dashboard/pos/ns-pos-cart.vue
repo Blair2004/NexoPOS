@@ -124,30 +124,6 @@
                                     <td width="200" class="border p-2 text-right">{{ nsCurrency( order.products_tax_value ) }}</td>
                                 </tr>
                             </template>
-                            <!-- <template v-if="options.ns_pos_price_with_tax === 'no'">
-                                <tr>
-                                    <td width="200" class="border p-2" colspan="2">
-                                        <span class="py-1">{{  __( 'Product Taxes' ) }}</span>
-                                    </td>
-                                    <td width="200" class="border p-2 text-right">{{ nsCurrency( order.products_tax_value ) }}</td>
-                                </tr>
-                                <tr>
-                                    <td width="200" class="border p-2">
-                                        <a @click="selectCustomer()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Customer' ) }}: {{ customerName }}</a>
-                                    </td>
-                                    <td width="200" class="border p-2">{{ __( 'Sub Total' ) }}</td>
-                                    <td width="200" class="border p-2 text-right">{{ nsCurrency( order.subtotal ) }}</td>
-                                </tr>
-                            </template>
-                            <template v-else>
-                                <tr>
-                                    <td width="200" class="border p-2">
-                                        <a @click="selectCustomer()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Customer' ) }}: {{ customerName }}</a>
-                                    </td>
-                                    <td width="200" class="border p-2">{{ __( 'Sub Total' ) }}</td>
-                                    <td width="200" class="border p-2 text-right">{{ nsCurrency( order.subtotal ) }}</td>
-                                </tr>
-                            </template> -->
                             <tr>
                                 <td width="200" class="border p-2">
                                     <a @click="selectCustomer()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Customer' ) }}: {{ customerName }}</a>
@@ -191,18 +167,6 @@
                                 <template v-else>
                                     <td width="200" class="border p-2"></td>
                                 </template>
-                                <!-- <td width="200" class="border p-2">
-                                    <template v-if="options.ns_pos_vat !== 'disabled'">
-                                        <template v-if="order && options.ns_pos_tax_type === 'exclusive'">
-                                            <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.tax_value + order.products_tax_value ) }}</a>
-                                            <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
-                                        </template>
-                                        <template v-else-if="order && options.ns_pos_tax_type === 'inclusive'">
-                                            <a v-if="options.ns_pos_price_with_tax === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax Included' ) }}: {{ nsCurrency( order.tax_value + ( order.products_tax_value ) ) }}</a>
-                                            <a v-else-if="options.ns_pos_price_with_tax === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Tax' ) }}: {{ nsCurrency( order.tax_value ) }}</a>
-                                        </template>
-                                    </template>
-                                </td> -->
                                 <td width="200" class="border p-2">{{ __( 'Total' ) }}</td>
                                 <td width="200" class="border p-2 text-right">{{ nsCurrency( order.total ) }}</td>
                             </tr>

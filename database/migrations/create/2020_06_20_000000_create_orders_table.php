@@ -55,6 +55,7 @@ return new class extends Migration
                 $table->string( 'uuid' )->nullable();
                 $table->integer( 'register_id' )->nullable();
                 $table->text( 'voidance_reason' )->nullable();
+                $table->integer( 'driver_id' )->nullable();
                 $table->timestamps();
             } );
         }

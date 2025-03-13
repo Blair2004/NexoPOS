@@ -36,7 +36,7 @@
     /** Box */
     --color-box-edge: var(--color-gray-800 );
     --color-box-background: var( --color-gray-700 );
-    --color-box-elevation-background: var( --color-gray-600 );
+    --color-box-elevation-background: var( --color-gray-500 );
     --color-box-elevation-edge: var( --color-gray-700 );
     --color-box-elevation-hover: var( --color-gray-500 );
 

@@ -28,6 +28,8 @@ import nsPosLoadingPopupVue from "./popups/ns-pos-loading-popup.vue";
 import { nsAlertPopup, nsConfirmPopup, nsPromptPopup } from "./components/components";
 import nsPosShippingPopup from "./popups/ns-pos-shipping-popup.vue";
 import nsLayawayPopup from "./popups/ns-pos-layaway-popup.vue";
+import delivery from "./pages/dashboard/pos/queues/order-type/delivery";
+import driver from "./pages/dashboard/pos/queues/order-type/driver";
 
 /**
  * these are dynamic component
@@ -235,19 +237,8 @@ export class POS {
         this._selectedPaymentType = new BehaviorSubject<PaymentType>(null);
         this._cartButtons = new BehaviorSubject<{ [key: string]: any }>({})
         this._orderTypeProcessQueue = [
-            {
-                identifier: 'handle.delivery-order',
-                promise: (selectedType: OrderType) => new Promise<StatusResponse>((resolve, reject) => {
-                    if ( selectedType && selectedType.identifier === 'delivery') {
-                        return Popup.show(nsPosShippingPopup, { resolve, reject });
-                    }
-
-                    return resolve({
-                        status: 'success',
-                        message: 'Proceed'
-                    });
-                })
-            }
+            delivery,
+            driver
         ];
 
         this.initialQueue.push(() => new Promise((resolve, reject) => {

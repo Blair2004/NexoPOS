@@ -7,8 +7,10 @@
         }
         tbody {
             @apply text-fontcolor;
-            td {
-                @apply border-tab-table-th-edge text-fontcolor;
+            tr:not([class]) {
+                td {
+                    @apply border-tab-table-th-edge text-fontcolor;
+                }
             }
         }
     }
@@ -54,7 +56,7 @@
         }
     
         tr.success {
-            @apply bg-green-300 text-white;
+            @apply bg-success-secondary text-white;
         }
     
         tr.warning {

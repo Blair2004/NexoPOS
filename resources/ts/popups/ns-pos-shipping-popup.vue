@@ -9,12 +9,16 @@
             </div>
         </div>
         <div class="flex-auto ns-box-body p-2 overflow-y-auto ns-tab">
+            <ns-notice v-if="order!= null && !order.customer" class="mb-2">
+                <template #title>{{  __( 'No customer is selected' ) }}</template>
+                <template #description>{{ __( 'Please select a customer before proceeding' ) }}</template>
+            </ns-notice>
             <div id="tabs-container">
                 <div class="header flex" style="margin-bottom: -1px;">
                     <div :key="identifier" v-for="( tab , identifier ) of tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 active' : 'inactive'" class="tab rounded-tl rounded-tr border tab  px-3 py-2 text-fontcolor cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
                 </div>
-                <div class="border ns-tab-item">
-                    <div class="px-4">
+                <div class="ns-tab-item">
+                    <div class="px-4 border">
                         <div class="-mx-4 flex flex-wrap">
                             <div :key="index" :class="'p-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,index) of activeTabFields">
                                 <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>
@@ -36,6 +40,7 @@
 import resolveIfQueued from "~/libraries/popup-resolver";
 import FormValidation from '~/libraries/form-validation';
 import popupCloser from "~/libraries/popup-closer";
+import { nsSnackBar } from "~/bootstrap";
 
 // declare const __, POS, nsHttpClient;
 
@@ -80,7 +85,7 @@ export default {
     },
     watch: {
         useBillingInfo( value ) {
-            if ( value === 1 ) {
+            if ( value === 1 && this.order.customer ) {
                 this.tabs.billing.fields.forEach( field => {
                     if ( field.name !== '_use_customer_billing' ) {
                         field.value     =   this.order.customer.billing ? this.order.customer.billing[ field.name ] : field.value;
@@ -89,7 +94,7 @@ export default {
             }
         },
         useShippingInfo( value ) {
-            if ( value === 1 ) {
+            if ( value === 1 && this.order.customer ) {
                 this.tabs.shipping.fields.forEach( field => {
                     if ( field.name !== '_use_customer_shipping' ) {
                         field.value     =   this.order.customer.shipping ? this.order.customer.shipping[ field.name ] : field.value;

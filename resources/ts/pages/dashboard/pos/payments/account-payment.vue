@@ -2,27 +2,27 @@
     <div class="h-full w-full py-2">
         <div class="px-2 pb-2" v-if="order">
             <div class="grid grid-cols-2 gap-2">
-                <div id="details" class="h-16 flex justify-between items-center elevation-surface border info text-xl md:text-3xl p-2">
+                <div id="details" class="h-16 flex justify-between items-center text-white elevation-surface border info text-xl md:text-3xl p-2">
                     <span>{{ __( 'Total' ) }} : </span>
                     <span>{{ nsCurrency( order.total ) }}</span>
                 </div>
-                <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center elevation-surface error border text-xl md:text-3xl p-2">
+                <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center text-white elevation-surface error border text-xl md:text-3xl p-2">
                     <span>{{ __( 'Discount' ) }} : </span>
                     <span>{{ nsCurrency( order.discount ) }}</span>
                 </div>
-                <div id="paid" class="h-16 flex justify-between items-center elevation-surface success border text-xl md:text-3xl p-2">
+                <div id="paid" class="h-16 flex justify-between items-center text-white elevation-surface success border text-xl md:text-3xl p-2">
                     <span>{{ __( 'Paid' ) }} : </span>
                     <span>{{ nsCurrency( order.tendered ) }}</span>
                 </div>
-                <div id="change" class="h-16 flex justify-between items-center elevation-surface warning border text-xl md:text-3xl p-2">
+                <div id="change" class="h-16 flex justify-between items-center text-white elevation-surface warning border text-xl md:text-3xl p-2">
                     <span>{{ __( 'Change' ) }} : </span>
                     <span>{{ nsCurrency( order.change ) }}</span>
                 </div>
-                <div id="change" class="col-span-2 h-16 flex justify-between items-center elevation-surface border success text-xl md:text-3xl p-2">
+                <div id="current-balance" class="col-span-2 h-16 flex justify-between items-center text-white elevation-surface border success text-xl md:text-3xl p-2">
                     <span>{{ __( 'Current Balance' ) }} : </span>
                     <span>{{ nsCurrency( order.customer.account_amount ) }}</span>
                 </div>
-                <div id="change" class="col-span-2 h-16 flex justify-between items-center elevation-surface border text-fontcolor text-xl md:text-3xl p-2">
+                <div id="screen" class="col-span-2 h-16 flex justify-between items-center text-white! elevation-surface border text-xl md:text-3xl p-2">
                     <span>{{ __( 'Screen' ) }} : </span>
                     <span>{{ nsCurrency( screenValue ) }}</span>
                 </div>
