@@ -64,8 +64,7 @@ export default {
                 return this.popup.close();
             }
 
-            return nsSnackBar.error( __( 'Unable to proceed. The form is not valid.' ) )
-                .subscribe();
+            return nsSnackBar.error( __( 'Unable to proceed. The form is not valid.' ) );
         }
     },
     mounted() {

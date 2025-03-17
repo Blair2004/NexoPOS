@@ -20,27 +20,23 @@ export default {
         __,
         submit() {
             if ( this.form.rules.length === 0 ) {
-                return nsSnackBar.error( __( 'No rules has been provided.' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'No rules has been provided.' ) );
             }
 
             if ( this.form.rules.filter( rule => {
                 return rule.filter( field => ! ( field.value >= 0 ) && field.type !== 'hidden' ).length > 0;
             }).length > 0 ) {
-                return nsSnackBar.error( __( 'No valid run were provided.' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'No valid run were provided.' ) );
             }
 
             if ( this.formValidation.validateForm( this.form ).length > 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed, the form is invalid.' ), __( 'OK' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed, the form is invalid.' ), __( 'OK' ) );
             }
 
             this.formValidation.disableForm( this.form );
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( __( 'Unable to proceed, no valid submit URL is defined.' ), __( 'OK' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed, no valid submit URL is defined.' ), __( 'OK' ) );
             }
 
             const data  =   {

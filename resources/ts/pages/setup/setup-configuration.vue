@@ -59,8 +59,7 @@ export default {
                         this.processing     =   false;
                         this.form.enableFields( this.fields );
                         this.form.triggerFieldsErrors( this.fields, error.data );
-                        nsSnackBar.error( error.message, 'OK' )
-                            .subscribe();
+                        nsSnackBar.error( error.message, 'OK' );
                     }
                 });
         },
@@ -112,8 +111,7 @@ export default {
                     },
                     error: error => {
                         nsRouter.push( '/database' );
-                        nsSnackBar.error( 'You need to define database settings', 'OKAY', { duration: 3000 })
-                            .subscribe();
+                        nsSnackBar.error( 'You need to define database settings', 'OKAY', { duration: 3000 });
                     }
                 })
         }

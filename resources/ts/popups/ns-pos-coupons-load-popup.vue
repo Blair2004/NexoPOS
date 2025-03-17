@@ -189,8 +189,7 @@ export default {
                     ! ns.date.moment.isAfter( this.coupon.valid_hours_start ) && 
                     this.coupon.valid_hours_start.length > 0
                 ) {
-                    return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) )
-                        .subscribe();
+                    return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) );
                 }
 
                 if ( 
@@ -198,8 +197,7 @@ export default {
                     ! ns.date.moment.isBefore( this.coupon.valid_hours_end ) &&
                     this.coupon.valid_hours_end.length > 0 
                 ) {
-                    return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) )
-                        .subscribe();
+                    return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) );
                 }
 
                 const requiredProducts      =   this.coupon.products;
@@ -209,8 +207,7 @@ export default {
                 ) {
                     const productIds    =   requiredProducts.map( p => p.product_id );
                     if ( this.order.products.filter( p => productIds.includes( p.product_id ) ).length === 0 ) {
-                        return nsSnackBar.error( __( 'This coupon requires products that aren\'t available on the cart at the moment.' ) )
-                            .subscribe();
+                        return nsSnackBar.error( __( 'This coupon requires products that aren\'t available on the cart at the moment.' ) );
                     }
                 }
 
@@ -221,8 +218,7 @@ export default {
                 ) {
                     const categoriesIds    =   requiredCategories.map( p => p.category_id );
                     if ( this.order.products.filter( p => categoriesIds.includes( p.$original().category_id ) ).length === 0 ) {
-                        return nsSnackBar.error( __( 'This coupon requires products that belongs to specific categories that aren\'t included at the moment.' ).replace( '%s', ) )
-                            .subscribe();
+                        return nsSnackBar.error( __( 'This coupon requires products that belongs to specific categories that aren\'t included at the moment.' ).replace( '%s', ) );
                     }
                 }
 
@@ -250,8 +246,7 @@ export default {
                     this.popupResolver( finalCoupon );
                 }, 500 );
 
-                nsSnackBar.success( __( 'The coupon has applied to the cart.' ) )
-                    .subscribe();
+                nsSnackBar.success( __( 'The coupon has applied to the cart.' ) );
 
             } catch( exception ) {
                 // unable to push the coupon

@@ -450,18 +450,15 @@ export default {
                                 this.refresh();
                             },
                             error: ( error ) => {
-                                nsSnackBar.error( error.message )
-                                    .subscribe();
+                                nsSnackBar.error( error.message );
                             }
                         })
                     }
                 } else {
-                    return nsSnackBar.error( __( 'No selection has been made.' ) )
-                        .subscribe();
+                    return nsSnackBar.error( __( 'No selection has been made.' ) );
                 }
             } else {
-                return nsSnackBar.error( __( 'No action has been selected.' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'No action has been selected.' ) );
             }
 
         },

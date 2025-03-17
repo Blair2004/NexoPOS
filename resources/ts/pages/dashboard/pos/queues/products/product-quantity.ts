@@ -56,8 +56,7 @@ export class ProductQuantityPromise {
                             ( holdQuantity )
                         )
                     ) {
-                        return nsSnackBar.error( __( 'Unable to add the product, there is not enough stock. Remaining %s' ).replace( '%s', ( data.$quantities().quantity - holdQuantity ).toString() ) )
-                            .subscribe();
+                        return nsSnackBar.error( __( 'Unable to add the product, there is not enough stock. Remaining %s' ).replace( '%s', ( data.$quantities().quantity - holdQuantity ).toString() ) );
                     }
                 }
 

@@ -125,8 +125,7 @@ export default {
         },
         async submitForm() {
             if ( this.validation.validateForm( this.form ).length > 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) );
             }
             
             this.validation.disableForm( this.form );
@@ -179,8 +178,7 @@ export default {
                 nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
 
                 if ( error.message ) {
-                    nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) )
-                        .subscribe();
+                    nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) );
                 }
             }                
         },

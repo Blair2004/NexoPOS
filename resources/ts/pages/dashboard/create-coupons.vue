@@ -53,13 +53,11 @@ export default {
         },
         submit() {
             if ( this.formValidation.validateForm( this.form ).length > 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.'), __( 'Okay' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.'), __( 'Okay' ) );
             }
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( __( 'No submit URL was provided' ), __( 'Okay' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'No submit URL was provided' ), __( 'Okay' ) );
             }
 
             this.formValidation.disableForm( this.form );

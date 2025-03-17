@@ -94,13 +94,11 @@ export default {
             const payments  =   this.order.payments;
 
             if ( value <= 0 ) {
-                return nsSnackBar.error( __( 'Please provide a valid payment amount.' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Please provide a valid payment amount.' ) );
             }
 
             if ( payments.filter( p => p.identifier === 'account-payment' ).length > 0 ) {
-                return nsSnackBar.error( __( 'The customer account can only be used once per order. Consider deleting the previously used payment.' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'The customer account can only be used once per order. Consider deleting the previously used payment.' ) );
             }
 
             if ( value > this.order.customer.account_amount ) {
@@ -126,8 +124,7 @@ export default {
             const payments  =   this.order.payments;
 
             if ( payments.filter( p => p.identifier === 'account-payment' ).length > 0 ) {
-                return nsSnackBar.error( __( 'The customer account can only be used once per order. Consider deleting the previously used payment.' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'The customer account can only be used once per order. Consider deleting the previously used payment.' ) );
             }
 
             this.proceedAddingPayment( this.order.total );

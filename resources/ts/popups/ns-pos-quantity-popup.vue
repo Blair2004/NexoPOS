@@ -86,8 +86,7 @@ export default {
             const { product, data }         =   this.popup.params;
 
             if ( quantity === 0 ) {
-                return nsSnackBar.error( __( 'Please provide a quantity' ) )
-                    .subscribe();
+                return nsSnackBar.error( __( 'Please provide a quantity' ) );
             }
 
             /**
@@ -122,8 +121,7 @@ export default {
                         ( holdQuantity )
                     )
                 ) {
-                    return nsSnackBar.error( __( 'Unable to add the product, there is not enough stock. Remaining %s' ).replace( '%s', ( data.$quantities().quantity - holdQuantity ) ) )
-                        .subscribe();
+                    return nsSnackBar.error( __( 'Unable to add the product, there is not enough stock. Remaining %s' ).replace( '%s', ( data.$quantities().quantity - holdQuantity ) ) );
                 }
             }
 

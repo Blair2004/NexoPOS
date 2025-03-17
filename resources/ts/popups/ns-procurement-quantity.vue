@@ -88,8 +88,7 @@ export default {
                 const quantity                  =   parseFloat( this.finalValue );
 
                 if ( quantity === 0 ) {
-                    return nsSnackBar.error( __( 'Please provide a quantity' ) )
-                        .subscribe();
+                    return nsSnackBar.error( __( 'Please provide a quantity' ) );
                 }
 
                 this.resolve({ quantity });
