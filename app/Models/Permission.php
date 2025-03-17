@@ -50,7 +50,14 @@ class Permission extends Model
 
     public function roles()
     {
-        return $this->belongsToMany( Role::class, 'nexopos_role_permission' );
+        return $this->hasManyThrough(
+            Role::class,
+            RolePermission::class,
+            'permission_id',
+            'id',
+            'id',
+            'role_id',
+        );
     }
 
     /**

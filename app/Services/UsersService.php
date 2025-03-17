@@ -54,17 +54,19 @@ class UsersService
     {
         $validation_required = ns()->option->get( 'ns_registration_validated', 'yes' ) === 'yes' ? true : false;
         $registration_role = ns()->option->get( 'ns_registration_role', false );
-        $defaultRole = Role::namespace( Role::USER )->first();
         $assignedRole = Role::find( $registration_role );
-        $roleToUse = $registration_role === false ? $defaultRole : $assignedRole;
-
-        if ( ! $defaultRole instanceof Role ) {
-            throw new NotFoundException( __( 'The system role "Users" can be retrieved.' ) );
-        }
 
         if ( ! $assignedRole instanceof Role ) {
             throw new NotFoundException( __( 'The default role that must be assigned to new users cannot be retrieved.' ) );
         }
+
+        if ( ! empty( $attributes[ 'roles' ] ) ) {
+            $countRoles = Role::whereIn( 'id', $attributes[ 'roles' ] )->count();
+
+            if ( $countRoles !== count( $attributes[ 'roles' ] ) ) {
+                throw new NotFoundException( __( 'One or more roles could not be found.' ) );
+            }
+        } 
 
         collect( [
             'username' => fn() => User::where( 'username', $attributes[ 'username' ] ),

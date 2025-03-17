@@ -148,8 +148,7 @@ export default {
                         if ( confirm ) {
                             nsHttpClient[ action.type.toLowerCase() ]( action.url )
                                 .subscribe( response => {
-                                    nsSnackBar.success( response.message )
-                                        .subscribe();
+                                    nsSnackBar.success( response.message );
                                     this.$emit( 'reload', this.row );
                                 }, ( response ) => {
                                     this.toggleMenu();

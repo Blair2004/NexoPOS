@@ -83,15 +83,6 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    /**
-     * Permission for a specific user
-     *
-     * @var array
-     */
-    protected static $permissions = [];
-
-    private $storedPermissions = [];
-
     public function __construct( $attributes = [] )
     {
         parent::__construct( $attributes );
@@ -177,5 +168,20 @@ class User extends Authenticatable
         $options = new UserOptions( $this->id );
 
         return $options->get( $option, $default );
+    }
+
+    /**
+     * Check if a user has permissions to do a specific action.
+     * Note that for each user, it will load the permissions and perform the check.
+     */
+    public function allowedTo( $permission )
+    {
+        return $this
+            ->roles()
+            ->with("permissions")
+            ->whereHas("permissions", function ($query) use ( $permission ) {
+                $query->whereIn("namespace", ["create.users"]);
+            })
+            ->count() > 0;
     }
 }
