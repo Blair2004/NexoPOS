@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-checkbox cursor-pointer" :class="(isChecked ? 'checked' : '') + ' ' + ( field?  (hasError ? 'has-error': 'is-pristine') : '' )" @click="toggleIt()">
+    <div class="ns-checkbox cursor-pointer" :class="(isChecked ? 'checked' : '') + ' ' + ( field?  (hasError ? 'has-error': 'is-pristine') : 'flex justify-center items-center' )" @click="toggleIt()">
         <div class="w-5 h-5 flex border items-center justify-center cursor-pointer">
             <i :class="isChecked ? 'visible' : 'invisible'" class="las la-check"></i>   
         </div>

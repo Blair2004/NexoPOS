@@ -52,3 +52,4 @@ $admin->addPermissions( Permission::includes( '.units' )->get()->map( fn( $permi
 $admin->addPermissions( Permission::includes( '.manage-payments-types' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $admin->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $admin->addPermissions( Permission::includes( '-widget' )->get()->map( fn( $permission ) => $permission->namespace ) );
+$admin->addPermissions( Permission::includes( '.drivers' )->get()->map( fn( $permission ) => $permission->namespace ) );

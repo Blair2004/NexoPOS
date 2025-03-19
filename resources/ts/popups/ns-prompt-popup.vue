@@ -10,9 +10,9 @@
                 <input ref="input" @keypress.enter="emitAction( true )" v-if="type === 'input'" v-model="input" class="w-full border-2 p-2"/>
             </div>
         </div>
-        <div class="flex justify-end border-t action-buttons">
-            <button class="flex items-center justify-center uppercase" @click="emitAction( true )">{{ __( 'Ok' ) }}</button>
-            <button class="cancel flex items-center justify-center uppercase" @click="reject( false )">{{ __( 'Cancel' ) }}</button>
+        <div class="flex justify-end border-t action-buttons p-3">
+            <button class="h-8 text-sm rounded-md flex items-center justify-center uppercase" @click="emitAction( true )">{{ __( 'Ok' ) }}</button>
+            <button class="h-8 text-sm rounded-md cancel flex items-center justify-center uppercase" @click="reject( false )">{{ __( 'Cancel' ) }}</button>
         </div>
     </div>
 </template>

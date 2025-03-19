@@ -52,7 +52,7 @@ class SettingsCommand extends Command
             $module = $moduleService->get( $moduleNamespace );
 
             if ( $module ) {
-                $filePath = 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Forms' . DIRECTORY_SEPARATOR . $fileName . '.php';
+                $filePath = 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Settings' . DIRECTORY_SEPARATOR . $fileName . '.php';
 
                 $this->putFile(
                     filePath: $filePath,
@@ -91,7 +91,7 @@ class SettingsCommand extends Command
 
         Storage::disk( 'ns' )->put(
             $filePath,
-            view( 'generate.form', $data )
+            view( 'generate.settings', $data )
         );
 
         $this->info( sprintf(

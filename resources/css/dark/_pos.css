@@ -356,7 +356,7 @@
         .ns-payment-wrapper {
             @apply bg-tab-active;
             ul li {
-                @apply bg-tab-active-border text-fontcolor;
+                @apply bg-gray-600 text-fontcolor rounded-md shadow;
                 button.error {
                     @apply bg-error-tertiary text-white;
                 }

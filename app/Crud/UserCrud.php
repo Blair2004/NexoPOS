@@ -729,17 +729,13 @@ class UserCrud extends CrudService
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+
+            $this->allowedTo( 'delete' );
+
             $status = [
                 'success' => 0,
                 'error' => 0,
             ];
-
-            /**
-             * @temp
-             */
-            if ( Auth::user()->role->namespace !== 'admin' ) {
-                throw new Exception( __( 'Access Denied' ) );
-            }
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity = $this->model::find( $id );

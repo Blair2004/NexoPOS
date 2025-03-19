@@ -18,7 +18,7 @@
                 v-for="order of orders"
                 :key="order.id"
                 :class="order.payment_status === 'paid' ? 'paid-order' : 'other-order'"
-                class="border-b single-order p-2 flex justify-between">
+                class="border-b p-2 flex justify-between">
                 <div>
                     <h3 class="text-lg font-semibold">{{ __( 'Order' ) }} : {{ order.code }}</h3>
                     <div class="flex -mx-2">

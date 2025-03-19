@@ -10,7 +10,7 @@ $driverRole->locked = true;
 $driverRole->description = __( 'Has a control over orders delivery.' );
 $driverRole->save();
 
-$driverRole->addPermissions( Permission::includes( 'delivery.order' )->get()->map( fn( $permission ) => $permission->namespace ) );
+$driverRole->addPermissions( Permission::includes( 'deliver.orders' )->get()->map( fn( $permission ) => $permission->namespace ) );
 $driverRole->addPermissions([
     'manage.profile',
     'read.dashboard',

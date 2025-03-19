@@ -29,7 +29,7 @@
             @apply bg-success-primary text-fontcolor;
         }
         .other-order {
-            @apply bg-box-background text-text-fontcolor;
+            @apply bg-box-background text-text-fontcolor border-box-edge;
         }
         .single-order {
             @apply border-success-tertiary;
