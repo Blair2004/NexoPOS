@@ -1,6 +1,7 @@
 <?php
 namespace App\Crud;
 
+use App\Casts\DriverStatusCast;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -9,11 +10,14 @@ use App\Classes\CrudTable;
 use App\Classes\CrudInput;
 use App\Classes\CrudForm;
 use App\Classes\CrudScope;
+use App\Classes\Output;
 use App\Exceptions\NotAllowedException;
 use TorMorten\Eventy\Facades\Events as Hook;
 use App\Models\Driver;
 use App\Models\Scopes\DriverScope;
 use App\Services\Helper;
+use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 #[ CrudScope( DriverScope::class ) ]
 class DriverCrud extends CrudService
@@ -80,7 +84,8 @@ class DriverCrud extends CrudService
      * @param array
      */
     public $relations   =  [
-            ];
+        [ 'nexopos_users as author', 'author.id', '=', 'nexopos_users.author' ]
+    ];
 
     /**
      * all tabs mentionned on the tabs relations
@@ -105,7 +110,9 @@ class DriverCrud extends CrudService
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick = [];
+    public $pick = [
+        'author'    =>  [ 'username' ]
+    ];
 
     /**
      * Define where statement
@@ -153,6 +160,15 @@ class DriverCrud extends CrudService
     ];
 
     /**
+     * We're defining the default status cast for the 
+     * user. Note that "status" is provided on the "hook" method belong. 
+     * It's not an internal column for the driver table.
+     */
+    protected $casts    =   [
+        'status'    =>  DriverStatusCast::class
+    ];
+
+    /**
      * Return the label used for the crud object.
     **/
     public function getLabels(): array
@@ -168,6 +184,11 @@ class DriverCrud extends CrudService
             edit_description:  __( 'Modify  Driver.' ),
             back_to_list:  __( 'Return to Drivers' ),
         );
+    }
+
+    public function hook( $builder ): void
+    {
+        // ...
     }
 
     /**
@@ -205,11 +226,13 @@ class DriverCrud extends CrudService
                         CrudInput::password(
                             label: __( 'Password' ),
                             name: 'password',
+                            validation: 'required',
                             description: __( 'Set the driver password.' ),
                         ),
                         CrudInput::password(
                             label: __( 'Confirm password' ),
                             name: 'password',
+                            validation: 'same:password',
                             description: __( 'Confirm the driver password.' ),
                         ),
                         CrudInput::text(
@@ -260,6 +283,8 @@ class DriverCrud extends CrudService
      */
     public function filterPostInputs( $inputs ): array
     {
+        $inputs[ 'author' ] = Auth::id();
+
         return $inputs;
     }
 
@@ -270,6 +295,8 @@ class DriverCrud extends CrudService
      */
     public function filterPutInputs( array $inputs, Driver $entry )
     {
+        $inputs[ 'author' ] = Auth::id();
+        
         return $inputs;
     }
 
@@ -365,11 +392,11 @@ class DriverCrud extends CrudService
                 label: __( 'Email' ),
             ),
             CrudTable::column(
-                identifier: 'active',
-                label: __( 'Active' ),
+                identifier: 'status',
+                label: __( 'Status' ),
             ),
             CrudTable::column(
-                identifier: 'author',
+                identifier: 'author_username',
                 label: __( 'Author' ),
             ),
             CrudTable::column(
@@ -377,6 +404,11 @@ class DriverCrud extends CrudService
                 label: __( 'Created_at' ),
             ),
         );
+    }
+
+    public function getTableFooter(Output $output)
+    {
+        $output->addView( 'pages.dashboard.drivers.footer' );
     }
 
     /**
@@ -391,6 +423,18 @@ class DriverCrud extends CrudService
             identifier: 'edit',
             label: __( 'Edit' ),
             url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        );
+
+        $entry->action(
+            identifier: 'assigned-orders',
+            label: __( 'See Assigned Orders' ),
+            url: ns()->url( '/dashboard/' . $this->slug . '/orders/' . $entry->id )
+        );
+
+        $entry->action(
+            identifier: 'change-status',
+            label: __( 'Change Status' ),
+            type: 'POPUP',
         );
         
         $entry->action( 

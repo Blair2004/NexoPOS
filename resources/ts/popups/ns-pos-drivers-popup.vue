@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="ns-box-body flex-auto">
-
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
         </div>
         <div class="ns-box-footer p-2 border-t flex justify-end">
             <ns-button @click="proceed()" type="info">{{ __( 'Skip' ) }}</ns-button>
@@ -26,6 +26,19 @@ export default {
         __,
         popupResolver,
         popupCloser,
+        loadAvailableDrivers() {
+            nsHttpClient.get( '/api/drivers/available' )
+                .subscribe({
+                    next: drivers => {
+                        this.drivers    =   drivers;
+                    }
+                })
+        }
+    },
+    data() {
+        return {
+            drivers: [],
+        }
     },
     mounted() {
         this.popupCloser();

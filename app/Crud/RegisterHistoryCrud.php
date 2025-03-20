@@ -405,11 +405,9 @@ class RegisterHistoryCrud extends CrudService
         ];
     }
 
-    public function getTableFooter( Output $output ): Output
+    public function getTableFooter( Output $output )
     {
         $output->addView( 'pages.dashboard.cash-registers.history.footer' );
-
-        return $output;
     }
 
     /**

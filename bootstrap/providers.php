@@ -9,6 +9,7 @@ return [
     App\Providers\FormsProvider::class,
     App\Providers\LocalizationServiceProvider::class,
     App\Providers\ModulesServiceProvider::class,
+    App\Providers\RouteServiceProvider::class,
     App\Providers\SettingsPageProvider::class,
     App\Providers\TelescopeServiceProvider::class,
     App\Providers\WidgetsServiceProvider::class,

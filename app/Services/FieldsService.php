@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 
-class FieldsService
+abstract class FieldsService
 {
     protected $fields = [];
 
@@ -13,6 +13,10 @@ class FieldsService
         return $this->fields;
     }
 
+    /**
+     * The unique identifier of the form
+     * @return string
+     */
     public static function getIdentifier(): string
     {
         if ( isset( get_called_class()::$identifier ) ) {
@@ -24,6 +28,11 @@ class FieldsService
         }
     }
 
+    /**
+     * Validate the request input againts the current defined fields.
+     * @param Request $request
+     * @return array validated input
+     */
     public function validate( Request $request )
     {
         $fields   =   $this->get();

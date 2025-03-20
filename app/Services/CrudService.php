@@ -1447,8 +1447,8 @@ class CrudService
         return [];
     }
 
-    public function getTableFooter( Output $output ): Output
+    public function getTableFooter( Output $output )
     {
-        return $output;
+        // ...
     }
 }

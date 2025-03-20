@@ -47,6 +47,11 @@ class Role extends NsRootModel
      */
     const USER = 'user';
 
+    /**
+     * We're introducing driver role
+     */
+    const DRIVER = 'driver';
+
     protected $cats = [
         'locked' => 'boolean',
     ];

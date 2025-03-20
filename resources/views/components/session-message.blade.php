@@ -16,10 +16,10 @@
     @else
     <div class="flex border border-success-secondary bg-success-primary rounded-lg mb-3">
         <div class="p-3">
-            <i class="lar la-check-circle text-2xl text-success-tertiary"></i>
+            <i class="lar la-check-circle text-2xl text-white"></i>
         </div>
         <div class="flex-auto items-center flex">
-            <p class="text-success-tertiary py-1">{!! session()->get( 'message' ) !!}</p>
+            <p class="text-white py-1">{!! session()->get( 'message' ) !!}</p>
         </div>
     </div>
     @endif

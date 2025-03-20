@@ -282,7 +282,7 @@
             }
 
             &:disabled {
-                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed;
             }
         }
     }
@@ -303,14 +303,14 @@
     
     &.hover-default:hover, &.default {
         button, a {
-            @apply bg-secondary text-white;
+            @apply bg-white text-fontcolor-hard;
 
             span.ns-label {
-                @apply bg-surface text-fontcolor;
+                @apply bg-surface text-fontcolor-hard;
             }
 
             &:disabled {
-                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed;
+                @apply bg-gray-200 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed;
             }
         }
     }

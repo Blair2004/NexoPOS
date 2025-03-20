@@ -23,6 +23,15 @@ use App\Events\RenderCrudTableFooterEvent;
     @parent
 <?php
 $output     =   new Output;
+
+/**
+ * We might actually check if the instance has a "getTableFooter" methods
+ * If it's the case, we might additionnally call that method.
+ */
+if ( method_exists( $instance, 'getTableFooter' ) ) {
+    $instance->getTableFooter( $output );
+}
+
 RenderCrudTableFooterEvent::dispatch( $output, $instance );
 echo $output;
 ?>

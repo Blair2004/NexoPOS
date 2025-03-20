@@ -76,6 +76,7 @@ import { __ } from '~/libraries/lang';
 import NsPosConfirmPopup from "~/popups/ns-pos-confirm-popup.vue";
 
 declare const nsEvent;
+declare const Popup;
 
 export default {
     props: [
