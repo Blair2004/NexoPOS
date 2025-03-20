@@ -200,7 +200,7 @@ class CrudInput
         );
     }
 
-    public static function media( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $errors = [] )
+    public static function media( $label, $name, $value = '', $validation = '', $description = '', $disabled = false, $errors = [], $data = [ 'type' => 'url' ] )
     {
         return self::text(
             label: $label,
@@ -210,7 +210,8 @@ class CrudInput
             disabled: $disabled,
             type: 'media',
             value: $value,
-            errors: $errors
+            errors: $errors,
+            data: $data
         );
     }
 
