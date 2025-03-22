@@ -141,7 +141,7 @@ class UserProfileForm extends SettingsPage
     /**
      * Saves address for the logged user.
      */
-    public function processAddresses( Request $request ): array
+    public function processAddresses( Request $request )
     {
         /**
          * @var CustomerService $customerService
@@ -154,27 +154,32 @@ class UserProfileForm extends SettingsPage
         $billing = $request->input( 'billing' );
         $shipping = $request->input( 'shipping' );
 
-        $currentBilling = CustomerAddress::from( Auth::id(), 'billing' )->firstOrNew();
-        $currentShipping = CustomerAddress::from( Auth::id(), 'shipping' )->firstOrNew();
+        if ( ! empty( $billing ) || ! empty( $shipping ) ) {
+            $currentBilling = CustomerAddress::from( Auth::id(), 'billing' )->firstOrNew();
+            $currentShipping = CustomerAddress::from( Auth::id(), 'shipping' )->firstOrNew();
+    
+            foreach ( $validFields as $field ) {
+                $currentBilling->$field = $billing[ $field ];
+                $currentShipping->$field = $shipping[ $field ];
+            }
+    
+            $currentBilling->customer_id = Auth::id();
+            $currentBilling->type = 'billing';
+            $currentBilling->author = Auth::id();
+            $currentBilling->save();
+    
+            $currentShipping->customer_id = Auth::id();
+            $currentShipping->type = 'shipping';
+            $currentShipping->author = Auth::id();
+            $currentShipping->save();
 
-        foreach ( $validFields as $field ) {
-            $currentBilling->$field = $billing[ $field ];
-            $currentShipping->$field = $shipping[ $field ];
+            return JsonResponse::success(
+                message: __( 'The addresses have been successfully updated.' )
+            );
         }
 
-        $currentBilling->customer_id = Auth::id();
-        $currentBilling->type = 'billing';
-        $currentBilling->author = Auth::id();
-        $currentBilling->save();
-
-        $currentShipping->customer_id = Auth::id();
-        $currentShipping->type = 'shipping';
-        $currentShipping->author = Auth::id();
-        $currentShipping->save();
-
-        return [
-            'status' => 'success',
-            'message' => __( 'The addresses were successfully updated.' ),
-        ];
+        return JsonResponse::info(
+            message: __( 'The addresses were not updated.' )
+        );
     }
 }

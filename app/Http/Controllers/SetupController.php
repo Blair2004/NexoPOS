@@ -55,14 +55,14 @@ class SetupController extends Controller
                  */
                 $this->setup->updateAppURL();
 
-                return JsonResponse::success( [
-                    'message' => __( 'The database connection has been successfully established.' ),
-                ] );
+                return JsonResponse::success(
+                    message: __( 'The database connection has been successfully established.' )
+                );
             }
         } catch ( \Exception $e ) {
-            return JsonResponse::error( [
-                'message' => $e->getMessage(),
-            ] );
+            return JsonResponse::error(
+                message: $e->getMessage()
+            );
         }
     }
 }
