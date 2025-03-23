@@ -29,10 +29,10 @@ class CrudEditEntitiesTest extends TestCase
             ->each( function ( $class ) {
                 $object = new $class;
 
-                if ( ! empty( $object->getNamespace() ) ) {
+                if ( ! empty( $object->getIdentifier() ) ) {
                     $response = $this
                         ->withSession( $this->app[ 'session' ]->all() )
-                        ->json( 'GET', '/api/crud/' . $object->getNamespace() . '/form-config' );
+                        ->json( 'GET', '/api/crud/' . $object->getIdentifier() . '/form-config' );
 
                     $response->assertOk();
                 }

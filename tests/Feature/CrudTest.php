@@ -76,7 +76,7 @@ class CrudTest extends TestCase
                 }
 
                 if ( isset( $config[ 'slug' ] ) ) {
-                    $slug = str_replace( '{namespace}', $object->getNamespace(), $config[ 'slug' ] );
+                    $slug = str_replace( '{namespace}', $object->getIdentifier(), $config[ 'slug' ] );
 
                     /**
                      * In case we have an {id} on the slug

@@ -43,6 +43,8 @@ class ModulesService
 
     const CACHE_MIGRATION_LABEL = 'module-migration-';
 
+    private $composer = [];
+
     public function __construct()
     {
         if ( Helper::installed() ) {
@@ -61,6 +63,17 @@ class ModulesService
         if ( ! is_dir( base_path( 'modules' ) ) ) {
             Storage::disk( 'ns' )->makeDirectory( 'modules' );
         }
+
+        /**
+         * As module might load composer, we need to store current composer
+         * configuration and restore them after having loaded all modules.
+         */
+        $this->composer     =   [
+            '_composer_bin_dir' =>  $GLOBALS[ '_composer_bin_dir' ] ?? null,
+            '_composer_autoload_path' => $GLOBALS[ '_composer_autoload_path' ] ?? null,
+            '_composer_bin_dir' => $GLOBALS[ '_composer_bin_dir' ] ?? null,
+            '__composer_autoload_files' => $GLOBALS[ '__composer_autoload_files' ] ?? null,
+        ];
     }
 
     /**
@@ -99,6 +112,17 @@ class ModulesService
             } );
         } else {
             $this->__init( $dir );
+        }
+
+        /**
+         * When all module are loaded, we should revert all composer
+         * configuration that might be changed by the modules.
+         */
+        foreach( $this->composer as $key => $value ) {
+            // there is no need to set null value as a global variable
+            if ( $value !== null ) {
+                $GLOBALS[ $key ] = $value;
+            }
         }
     }
 

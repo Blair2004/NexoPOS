@@ -9,6 +9,7 @@
     </testsuite>
   </testsuites>
   <php>
+    <env name="APP_BASE_PATH" value="."/>
     <server name="APP_ENV" value="TESTING"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
     <server name="CACHE_DRIVER" value="array"/>

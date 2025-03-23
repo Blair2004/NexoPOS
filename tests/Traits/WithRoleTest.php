@@ -18,7 +18,7 @@ trait WithRoleTest
             Role::USER,
         ] )->first();
 
-        $response = $this->submitRequest( ( new RolesCrud )->getNamespace(), [
+        $response = $this->submitRequest( ( new RolesCrud )->getIdentifier(), [
             'name' => $role->name,
             'general' => [
                 'namespace' => $role->namespace,
@@ -40,7 +40,7 @@ trait WithRoleTest
             Role::USER,
         ] )->first();
 
-        $this->submitRequest( ( new RolesCrud )->getNamespace() . '/' . $role->id, [
+        $this->submitRequest( ( new RolesCrud )->getIdentifier() . '/' . $role->id, [
             'name' => $role->name,
             'general' => [
                 'namespace' => $role->namespace,
@@ -62,7 +62,7 @@ trait WithRoleTest
             Role::USER,
         ] )->first();
 
-        $response = $this->submitRequest( ( new RolesCrud )->getNamespace() . '/' . $role->id, [], 'DELETE' );
+        $response = $this->submitRequest( ( new RolesCrud )->getIdentifier() . '/' . $role->id, [], 'DELETE' );
 
         /**
          * A system role can't be deleted
