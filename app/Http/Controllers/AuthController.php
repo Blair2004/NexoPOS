@@ -88,7 +88,7 @@ class AuthController extends Controller
          */
         UserAfterActivationSuccessfulEvent::dispatch( $user );
 
-        return redirect( ns()->route( 'ns.login' ) )->with( 'message', __( 'Your account is now activate.' ) );
+        return redirect( ns()->route( 'ns.login' ) )->with( 'message', __( 'Your account is now activated.' ) );
     }
 
     public function passwordLost()
