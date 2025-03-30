@@ -66,8 +66,8 @@
                         </template>
                     </div>
                     <div class="ns-box-footer border-t p-2 flex justify-between">
-                        <ns-button :disabled="moduleObject.autoloaded || moduleObject[ 'psr-4-compliance' ] === false" v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">{{ __( 'Enable' ) }}</ns-button>
-                        <ns-button :disabled="moduleObject.autoloaded || moduleObject[ 'psr-4-compliance' ] === false" v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">{{ __( 'Disable' ) }}</ns-button>
+                        <ns-button :disabled="moduleObject.autoloaded || moduleObject[ 'psr-4-compliance' ] === false" v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="default">{{ __( 'Enable' ) }}</ns-button>
+                        <ns-button :disabled="moduleObject.autoloaded || moduleObject[ 'psr-4-compliance' ] === false" v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="warning">{{ __( 'Disable' ) }}</ns-button>
                         <div class="flex -mx-1">
                             <div class="px-1 flex -mx-1">
                                 <div class="px-1 flex">

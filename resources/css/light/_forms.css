@@ -324,7 +324,7 @@
             }
 
             &:disabled {
-                @apply bg-info-secondary/80 text-fontcolor-hard/50 shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+                @apply bg-info-secondary/80 text-gray-600 shadow-none border-input-edge cursor-not-allowed;
             }
         }
     }

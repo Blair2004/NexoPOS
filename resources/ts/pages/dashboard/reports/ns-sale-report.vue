@@ -63,35 +63,35 @@
                                 <table class="table ns-table w-full">
                                     <tbody class="text-fontcolor">
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white">{{ __( 'Sub Total' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left info text-white">{{ __( 'Sub Total' ) }}</td>
                                             <td class="p-2 border text-right border-info-primary">{{ nsCurrency( summary.subtotal ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Sales Discounts' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left error text-white">{{ __( 'Sales Discounts' ) }}</td>
                                             <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.sales_discounts ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Sales Taxes' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left error text-white">{{ __( 'Sales Taxes' ) }}</td>
                                             <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.sales_taxes ) }}</td>
                                         </tr>
                                         <tr class="" v-if="summary.product_taxes > 0">
-                                            <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Product Taxes' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left error text-white">{{ __( 'Product Taxes' ) }}</td>
                                             <td class="p-2 border text-right border-error-primary">{{ nsCurrency( summary.product_taxes ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white">{{ __( 'Shipping' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left info text-white">{{ __( 'Shipping' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.shipping ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-success-secondary text-white">{{ __( 'Total' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left success text-white">{{ __( 'Total' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.total ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-success-secondary text-white">{{ __( 'Cost Of Goods' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left success text-white">{{ __( 'Cost Of Goods' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.total_purchase_price ) }}</td>
                                         </tr>
                                         <tr class="">
-                                            <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-success-secondary text-white">{{ __( 'Profit' ) }}</td>
+                                            <td width="200" class="font-semibold p-2 border text-left success text-white">{{ __( 'Profit' ) }}</td>
                                             <td class="p-2 border text-right border-success-primary">{{ nsCurrency( summary.profit ) }}</td>
                                         </tr>
                                     </tbody>

@@ -36,11 +36,26 @@
             @apply bg-warning-tertiary text-white border-table-th-edge;
         }
     }
-    tbody, tfoot {
+        tbody, tfoot {
         @apply text-fontcolor border-table-th-edge text-sm;
 
         tr {
             @apply border-table-th-edge;
+            td {
+                @apply border-table-th-edge;
+                &.info {
+                    @apply border-info-secondary bg-info-primary text-white;
+                }
+                &.error {
+                    @apply border-error-secondary bg-error-primary text-white;
+                }
+                &.success {
+                    @apply border-success-secondary bg-success-primary text-white;
+                }
+                &.warning {
+                    @apply border-warning-secondary bg-warning-primary text-white;
+                }
+            }
         }
 
         td {

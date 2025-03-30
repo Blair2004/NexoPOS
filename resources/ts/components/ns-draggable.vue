@@ -31,6 +31,14 @@
         let initialY = 0;
     
         const startDrag = (e) => {
+            // widget must include a ".widget-handle" class to be draggable
+            // we'll then check if the clicked element is a child of class ".widget-handle"
+            const widgetHandle = e.target.closest('.widget-handle');
+            
+            if (widgetHandle === null) {
+                return;
+            }
+            
             const wrapper   =   e.srcElement.closest( '.ns-draggable-item' );
             const position  =   wrapper.getBoundingClientRect();
             
@@ -66,6 +74,8 @@
                 return;
             }
 
+            console.log({ e })
+
             const dragGhost = draggedElement.value.dom.closest( '.ns-drop-zone' ).querySelector( '.ns-ghost' );
             const firstChild = dragGhost.querySelector( 'div' );
 
@@ -80,8 +90,8 @@
 
             dragGhost.style.display = 'block';
             dragGhost.style.transform = `translate(${initialX}px, ${initialY}px)`;   
-            dragGhost.style.cursor = 'grabbing';
             dragGhost.classList.add( 'z-10' );
+            dragGhost.classList.add( 'widget-grabbed' );
 
             const dropZones = document.querySelectorAll('.ns-drop-zone');
             dropZones.forEach((dropZone) => {

@@ -2,7 +2,7 @@
 import { default as nsDateTimePicker } from './ns-date-time-picker.vue';
 import { default as nsSwitch } from './ns-switch.vue';
 export default {
-    emits: ['blur', 'change', 'saved', 'keypress'],
+    emits: ['blur', 'change', 'saved', 'keypress', 'keyup' ],
     data: () => {
         return {
             formSubjectSubscription: null,
@@ -112,7 +112,7 @@ export default {
         <input type="hidden" :name="field.name" :value="field.value" />
     </template>
     <div class="flex flex-auto mb-2" v-if="!isHiddenField">
-        <ns-input @keypress="changeTouchedState(field, $event)" @change="changeTouchedState(field, $event)"
+        <ns-input @keyup="$emit( 'keyup', $event )" @keypress="changeTouchedState(field, $event)" @change="changeTouchedState(field, $event)"
             :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

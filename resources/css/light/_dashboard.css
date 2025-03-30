@@ -80,6 +80,14 @@
 .widget-placeholder {
     @apply border-secondary text-fontcolor;
 }
+.widget-handle {
+    @apply cursor-grab;
+}
+.ns-ghost.widget-grabbed {
+    .widget-handle  {
+        @apply cursor-grabbing;
+    }
+}
 .ns-drop-zone[hovered="true"] {
     @apply outline-dashed outline-2 outline-secondary;
 }

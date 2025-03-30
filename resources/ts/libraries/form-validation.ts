@@ -260,38 +260,44 @@ export default class FormValidation {
         return formValue;
     }
 
-    detectValidationRules( validation ) {
-        const execRule  =   ( rule ) => {
-            const minRule 			=	/(min)\:([0-9])+/g;
-            const sometimesRule     =	/(sometimes)/g;
-            const maxRule 			=	/(max)\:([0-9])+/g;
-            const sameRule          =   /(same):(\w+)/g;
-            const diffRule          =   /(different):(\w+)/g;
+    detectValidationRules(validation) {
+        const execRule = (rule) => {
+            const minRule = /(min):([0-9]+)/;
+            const maxRule = /(max):([0-9]+)/;
+            const sameRule = /(same):(\w+)/;
+            const diffRule = /(different):(\w+)/;
+            const sometimesRule = /(sometimes)/;
+            const regexRule = /(regex):(.+)$/; // Update regex parsing
+    
             let result;
-
-            if ([ 'email', 'required' ].includes( rule ) ) {
-                return {
-                    identifier : rule
-                };
-            } else if ( rule.length > 0 ) {
-                result = minRule.exec( rule ) || maxRule.exec( rule ) || sameRule.exec( rule ) || diffRule.exec( rule ) || sometimesRule.exec( rule );
-
-                if ( result !== null ) {
+    
+            if (['email', 'required'].includes(rule)) {
+                return { identifier: rule };
+            } else if (rule.length > 0) {
+                result =
+                    minRule.exec(rule) ||
+                    maxRule.exec(rule) ||
+                    sameRule.exec(rule) ||
+                    diffRule.exec(rule) ||
+                    sometimesRule.exec(rule) ||
+                    regexRule.exec(rule);
+    
+                if (result !== null) {
                     return {
-                        identifier : result[1],
+                        identifier: result[1],
                         value: result[2]
-                    }
+                    };
                 }
-            } 
+            }
         };
-
-        if ( Array.isArray( validation ) ) {
-            return validation.filter( r => typeof r === 'string' )
-                .map( execRule );
+    
+        if (Array.isArray(validation)) {
+            return validation.filter(r => typeof r === 'string').map(execRule);
         } else {
-            return validation.split( '|' ).map( execRule );
+            return validation.split('|').map(execRule);
         }
     }
+    
 
     /**
      * Will trigger an error on the form
@@ -389,30 +395,45 @@ export default class FormValidation {
         });
     }
 
-    fieldPassCheck( field, rule, fields ) {
-        if ( rule !== undefined ) {
-            const rules     =   {
-                required: ( field, rule ) => field.value === undefined || field.value === null || field.value.length === 0,
-                email: ( field, rule ) => field.value.length > 0 && ! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test( field.value ),
-                same: ( field, rule ) => {
-                    const similar = fields.filter( field => field.name === rule.value )
-                    return similar.length === 1 && ( [ 'string', 'number' ].includes( typeof field.value ) && field.value.length > 0 && similar[0].value !== field.value );
+    fieldPassCheck(field, rule, fields) {
+        if (rule !== undefined) {
+            const rules = {
+                required: (field, rule) =>
+                    field.value === undefined || field.value === null || field.value.length === 0,
+    
+                email: (field, rule) =>
+                    field.value.length > 0 && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(field.value),
+    
+                same: (field, rule) => {
+                    const similar = fields.find(f => f.name === rule.value);
+                    return similar && field.value !== similar.value;
                 },
-                different: ( field, rule ) => {
-                    const similar = fields.filter( field => field.name === rule.value )
-                    return similar.length === 1 && ( [ 'string', 'number' ].includes( typeof field.value ) && field.value.length > 0 && similar[0].value === field.value );
+    
+                different: (field, rule) => {
+                    const similar = fields.find(f => f.name === rule.value);
+                    return similar && field.value === similar.value;
                 },
-                min: ( field, rule ) => field.value && field.value.length < parseInt( rule.value ),
-                max: ( field, rule ) => field.value && field.value.length > parseInt( rule.value )
-            }
-
-            const ruleValidated   =   rules[ rule.identifier ];
-
-            if ( typeof ruleValidated === 'function' ) {
-                if ( ruleValidated( field, rule ) === false ) {
-                    return this.unTrackError( field, rule );                    
+    
+                min: (field, rule) =>
+                    field.value && field.value.length < parseInt(rule.value),
+    
+                max: (field, rule) =>
+                    field.value && field.value.length > parseInt(rule.value),
+    
+                regex: (field, rule) => {
+                    console.log({ field, rule })
+                    const pattern = new RegExp(rule.value);
+                    return !pattern.test(field.value || '');
+                }
+            };
+    
+            const ruleValidated = rules[rule.identifier];
+    
+            if (typeof ruleValidated === 'function') {
+                if (ruleValidated(field, rule) === false) {
+                    return this.unTrackError(field, rule);
                 } else {
-                    return this.trackError( field, rule, fields );
+                    return this.trackError(field, rule, fields);
                 }
             }
     
