@@ -208,7 +208,7 @@ export default class FormValidation {
              * when the rule "sometimes" is defined. The field will be processed only if there is a value provided.
              */
             if ( ruleNames.includes( 'sometimes' ) ) {
-                if ( field.value !== undefined && field.value.length > 0 ) {
+                if ( ! [ undefined, null ].includes( field.value ) && field.value.length > 0 ) {
                     rules.forEach( rule => {
                         this.fieldPassCheck( field, rule, fields );
                     });

@@ -1046,6 +1046,7 @@ class ModulesService
              * We revert all migrations made by the modules.
              */
             $this->revertMigrations( $module );
+            $this->dropModuleMigration( $module ); 
 
             /**
              * Delete module from filesystem.
@@ -1117,6 +1118,12 @@ class ModulesService
                 $this->__runSingleFile( 'down', $module[ 'namespace' ], $file );
             }
         }
+    }
+
+    public function dropModuleMigration( array $module )
+    {
+        ModuleMigration::where( 'namespace', $module[ 'namespace' ] )
+            ->delete();
     }
 
     /**

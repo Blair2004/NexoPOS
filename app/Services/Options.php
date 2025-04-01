@@ -7,7 +7,7 @@ use App\Models\PaymentType;
 
 class Options
 {
-    private $rawOptions = [];
+    protected $rawOptions = [];
 
     public string $tableName;
 

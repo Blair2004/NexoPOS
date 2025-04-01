@@ -19,16 +19,35 @@ class UserOptions extends Options
         return Option::where( 'user_id', $this->user_id );
     }
 
-    public function beforeSave( $option )
+    /**
+     * Set Option
+     *
+     * @param string key
+     * @param any value
+     * @param bool force set
+     * @return void
+     **/
+    public function set( $key, $value, $expiration = null )
     {
-        $option->user_id = $this->user_id;
+        if ( isset( $this->rawOptions[ $key ] ) ) {
+            $this->rawOptions[ $key ]->value = $value;
+            $this->rawOptions[ $key ]->expire_on = $expiration;
 
-        /**
-         * sanitizing input to remove
-         * all script tags
-         */
-        $option->value = strip_tags( $option->value );
+            $this->encodeOptionValue( $this->rawOptions[ $key ], $value );
 
-        return $option;
+            $this->rawOptions[ $key ]->save();
+        } else {
+            $option = new Option;
+            $option->key = trim( strtolower( $key ) );
+            $option->array = false;
+            $option->value = $value;
+            $option->user_id = $this->user_id;
+            $option->expire_on = $expiration;
+
+            $this->encodeOptionValue( $option, $value );
+
+            $option->save();
+            $this->rawOptions[ $key ] = $option;
+        }
     }
 }
