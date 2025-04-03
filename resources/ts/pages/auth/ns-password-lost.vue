@@ -1,25 +1,22 @@
 <template>
-    <div class="bg-white rounded shadow overflow-hidden transition-all duration-100">
-        <div class="p-3 -my-2">
-            <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0">
-                <ns-field :key="index" v-for="(field, index) of fields" :field="field"></ns-field>
-            </div>
-        </div>
+    <div class="ns-box rounded shadow overflow-hidden transition-all duration-100">
         <div class="flex items-center justify-center py-10" v-if="fields.length === 0">
             <ns-spinner border="4" size="16"></ns-spinner>
         </div>
-        <div class="flex w-full items-center justify-center py-4">
-            <a href="/sign-in" class="hover:underline text-blue-600 text-sm">{{ __( 'Remember Your Password ?' ) }}</a>
+        <div class="p-3">
+            <div class="fade-in-entrance anim-duration-300" v-if="fields.length > 0">
+                <ns-field :key="index" v-for="(field, index) of fields" :field="field"></ns-field>
+            </div>
+            <div class="flex w-full items-center justify-center py-2">
+                <a href="/sign-in" class="hover:underline text-blue-600 text-sm">{{ __( 'Remember Your Password ?' ) }}</a>
+            </div>
         </div>
-        <div class="flex justify-between items-center bg-gray-200 p-3">
+        <div class="flex ns-box-footer justify-end items-center border-t p-3">
             <div>
                 <ns-button @click="requestRecovery()" class="justify-between" type="info">
                     <ns-spinner class="mr-2" v-if="isSubitting" size="6" border="2"></ns-spinner>
                     <span>{{ __( 'Submit' ) }}</span>
                 </ns-button>
-            </div>
-            <div>
-                <ns-link :href="'/sign-up'" type="success">{{ __( 'Register' ) }}</ns-link>
             </div>
         </div>
     </div>
