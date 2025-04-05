@@ -7,6 +7,7 @@ use App\Classes\CrudScope;
 use App\Classes\Output;
 use App\Events\CrudActionEvent;
 use App\Events\CrudHookEvent;
+use App\Events\CrudReflectionInitialized;
 use App\Exceptions\NotAllowedException;
 use App\Traits\NsForms;
 use Carbon\Carbon;
@@ -202,6 +203,8 @@ class CrudService
         'value' => 'id',
     ];
 
+    private $reflection;
+
     /**
      * Construct Parent
      */
@@ -219,6 +222,18 @@ class CrudService
          */
         $this->bulkDeleteSuccessMessage = __( '%s entries has been deleted' );
         $this->bulkDeleteDangerMessage = __( '%s entries has not been deleted' );
+
+        /**
+         * We're introducing attribute support
+         * for scoped queries.
+         */
+        $this->reflection     =   new ReflectionClass( get_called_class() );
+
+        /**
+         * We're adding a way for module to 
+         * support custom class attributes.
+         */
+        CrudReflectionInitialized::dispatch( $this->reflection );
     }
 
     /**
@@ -806,11 +821,9 @@ class CrudService
         }
 
         /**
-         * We're introducing attribute support
-         * for scoped queries.
+         * This section will explicitely add support to CrudScope.
          */
-        $reflection     =   new ReflectionClass( get_called_class() );
-        $attributes     =   $reflection->getAttributes( CrudScope::class );
+        $attributes     =   $this->reflection->getAttributes( CrudScope::class );
 
         foreach( $attributes as $attribute ) {
             $instance   =   $attribute->newInstance();

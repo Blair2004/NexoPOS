@@ -45,7 +45,6 @@ export default ({ mode }) => {
                     'resources/ts/pos-init.ts',
                     'resources/ts/setup.ts',
                     'resources/ts/update.ts',
-                    'resources/ts/dashboard.ts',
                     'resources/ts/cashier.ts',
                     'resources/ts/lang-loader.ts',
                     'resources/ts/dev.ts',

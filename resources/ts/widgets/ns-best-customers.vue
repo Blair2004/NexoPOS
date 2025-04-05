@@ -45,15 +45,25 @@ import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 export default {
     mounted() {
         this.hasLoaded      =   false;
-        this.subscription   =   Dashboard.bestCustomers.subscribe( customers => {
-            this.hasLoaded  =   true;
-            this.customers  =   customers;
-        });
+        this.loadReport();
     },
     methods: {
         __,
         nsCurrency,
         nsRawCurrency,
+        loadReport() {
+            nsHttpClient.get( '/api/dashboard/best-customers' )
+                .subscribe({
+                    next: (customers) => {
+                        this.hasLoaded  =   true;
+                        this.customers  =   customers;
+                    },
+                    error: (error) => {
+                        this.hasLoaded  =   true;
+                        this.customers  =   [];
+                    }
+                })
+        }
     },
     data() {
         return {
@@ -62,8 +72,5 @@ export default {
             hasLoaded: false,
         }
     },
-    unmounted() {
-        this.subscription.unsubscribe();
-    }
 }
 </script>

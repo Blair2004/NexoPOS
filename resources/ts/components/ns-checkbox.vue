@@ -1,12 +1,14 @@
 <template>
-    <div class="ns-checkbox cursor-pointer" :class="(isChecked ? 'checked' : '') + ' ' + ( field?  (hasError ? 'has-error': 'is-pristine') : 'flex justify-center items-center' )" @click="toggleIt()">
-        <div class="w-5 h-5 flex border items-center justify-center cursor-pointer">
-            <i :class="isChecked ? 'visible' : 'invisible'" class="las la-check"></i>   
+    <div :class="field ? 'flex flex-col' : ''">
+        <div class="ns-checkbox cursor-pointer flex" :class="(isChecked ? 'checked' : '') + ' ' + ( field?  (hasError ? 'has-error': 'is-pristine') : 'justify-center items-center' )" @click="toggleIt()">
+            <div class="w-5 h-5 flex border items-center justify-center cursor-pointer">
+                <i :class="isChecked ? 'visible' : 'invisible'" class="las la-check"></i>   
+            </div>
+            <label v-if="label" class="mx-2">{{ label }}</label>
+            <label v-if="field && field.label" class="mx-2">{{ field.label }}</label>
         </div>
-        <label v-if="label" class="mx-2">{{ label }}</label>
-        <label v-if="field && field.label" class="mx-2">{{ field.label }}</label>
+        <ns-field-description v-if="field && field.description" :field="field"></ns-field-description>
     </div>
-    <ns-field-description v-if="field && field.description" :field="field"></ns-field-description>
 </template>
 <script>
 export default {

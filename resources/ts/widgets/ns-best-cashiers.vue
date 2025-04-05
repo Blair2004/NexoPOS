@@ -54,18 +54,25 @@ export default {
         }
     },
     mounted() {
-        this.hasLoaded      =   false;
-        this.subscription    =   Dashboard.bestCashiers.subscribe( cashiers => {
-            this.hasLoaded  =   true;
-            this.cashiers   =   cashiers;
-        });
+        this.loadReport();
     },
     methods: {
         __,
         nsCurrency,
+        loadReport() {
+            this.hasLoaded      =   false;
+            nsHttpClient.get( '/api/dashboard/best-cashiers' )
+                .subscribe({
+                    next: (cashiers) => {
+                        this.hasLoaded  =   true;
+                        this.cashiers   =   cashiers;
+                    },
+                    error: (error) => {
+                        this.hasLoaded  =   true;
+                        this.cashiers   =   [];
+                    }
+                })
+        }
     },
-    unmounted() {
-        this.subscription.unsubscribe();
-    }
 }
 </script>

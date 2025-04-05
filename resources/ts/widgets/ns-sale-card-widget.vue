@@ -28,6 +28,17 @@ export default {
     methods: {
         __,
         nsCurrency,
+        loadReport() {
+            nsHttpClient.get( '/api/dashboard/day' )
+                .subscribe({
+                    next: report => {
+                        this.report     =   report;
+                    },
+                    error: error => {
+                        this.report     =   {};
+                    }
+                })
+        }
     },
     data() {
         return {
@@ -35,9 +46,7 @@ export default {
         }
     },
     mounted() {
-        Dashboard.day.subscribe( result => {
-            this.report     =   result;
-        });
+        this.loadReport();
     }
 }
 </script>

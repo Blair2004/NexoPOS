@@ -91,66 +91,72 @@ export default {
         __,
         nsCurrency, 
         nsRawCurrency,
+        loadReport() {
+            nsHttpClient.get( '/api/dashboard/weeks' )
+                .subscribe({
+                    next: data => {
+                        if ( data.result !== undefined ) {
+                            this.chartOptions.xaxis.categories  =   data.result.map( r => r.label );
+                            this.report             =   data;
+                            this.totalWeeklySales   =   0;
+                            this.totalWeekIncome    =   0;
+                            this.totalWeekExpenses  =   0;
+                            this.totalWeekTaxes     =   0;
+            
+                            this.report.result.forEach( ( result, index ) => {
+                                /**
+                                 * current week
+                                 */
+                                if ( result.current !== undefined ) {
+                                    const sales     =   result.current.entries.map( dashboardDay => dashboardDay.day_paid_orders );
+                                    let total       =   0;
+            
+                                    if ( sales.length > 0 ) {
+                                        total       =   sales.reduce( ( b, a ) => b + a );
+                                    }
+            
+                                    /**
+                                     * this compute the week expenses
+                                     * and taxes for the current week
+                                     */
+                                    this.totalWeekExpenses  +=  result.current.entries.map( dashboardDay => parseFloat( dashboardDay.day_expenses ) ).reduce( ( b, a ) => b + a );
+                                    this.totalWeekTaxes     +=  result.current.entries.map( dashboardDay => parseFloat( dashboardDay.day_taxes ) ).reduce( ( b, a ) => b + a );
+                                    this.totalWeekIncome    +=  result.current.entries.map( dashboardDay => parseFloat( dashboardDay.day_income ) ).reduce( ( b, a ) => b + a );
+            
+                                    this.series[ 0 ].data.push( total );
+                                    
+                                } else {
+                                    this.series[ 0 ].data.push(0);
+                                }
+            
+                                /**
+                                 * previous week
+                                 */
+                                if ( result.previous !== undefined ) {
+                                    const sales     =   result.previous.entries.map( dashboardDay => dashboardDay.day_paid_orders );
+                                    let total       =   0;
+            
+                                    if ( sales.length > 0 ) {
+                                        total       =   sales.reduce( ( b, a ) => b + a );
+                                    }
+            
+                                    this.series[ 1 ].data.push( total );
+                                } else {
+                                    this.series[ 1 ].data.push(0);
+                                }
+                            });
+            
+                            this.totalWeeklySales   =   this.series[0].data.reduce( ( b, a ) => b + a );
+            
+                            this.chartData.labels   =   this.report.result.map( r => r.label );
+                            this.chartData.datasets =   this.series;
+                        }
+                    }
+                })
+        }
     },
     mounted() {
-        this.reportSubscription     =   Dashboard.weeksSummary.subscribe( data => {
-            if ( data.result !== undefined ) {
-                this.chartOptions.xaxis.categories  =   data.result.map( r => r.label );
-                this.report             =   data;
-                this.totalWeeklySales   =   0;
-                this.totalWeekIncome    =   0;
-                this.totalWeekExpenses  =   0;
-                this.totalWeekTaxes     =   0;
-
-                this.report.result.forEach( ( result, index ) => {
-                    /**
-                     * current week
-                     */
-                    if ( result.current !== undefined ) {
-                        const sales     =   result.current.entries.map( dashboardDay => dashboardDay.day_paid_orders );
-                        let total       =   0;
-
-                        if ( sales.length > 0 ) {
-                            total       =   sales.reduce( ( b, a ) => b + a );
-                        }
-
-                        /**
-                         * this compute the week expenses
-                         * and taxes for the current week
-                         */
-                        this.totalWeekExpenses  +=  result.current.entries.map( dashboardDay => parseFloat( dashboardDay.day_expenses ) ).reduce( ( b, a ) => b + a );
-                        this.totalWeekTaxes     +=  result.current.entries.map( dashboardDay => parseFloat( dashboardDay.day_taxes ) ).reduce( ( b, a ) => b + a );
-                        this.totalWeekIncome    +=  result.current.entries.map( dashboardDay => parseFloat( dashboardDay.day_income ) ).reduce( ( b, a ) => b + a );
-
-                        this.series[ 0 ].data.push( total );
-                        
-                    } else {
-                        this.series[ 0 ].data.push(0);
-                    }
-
-                    /**
-                     * previous week
-                     */
-                    if ( result.previous !== undefined ) {
-                        const sales     =   result.previous.entries.map( dashboardDay => dashboardDay.day_paid_orders );
-                        let total       =   0;
-
-                        if ( sales.length > 0 ) {
-                            total       =   sales.reduce( ( b, a ) => b + a );
-                        }
-
-                        this.series[ 1 ].data.push( total );
-                    } else {
-                        this.series[ 1 ].data.push(0);
-                    }
-                });
-
-                this.totalWeeklySales   =   this.series[0].data.reduce( ( b, a ) => b + a );
-
-                this.chartData.labels   =   this.report.result.map( r => r.label );
-                this.chartData.datasets =   this.series;
-            }
-        });
+        this.loadReport();
     }
 }
 </script>

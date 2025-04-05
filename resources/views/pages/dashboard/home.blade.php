@@ -13,5 +13,4 @@ use App\Classes\Output;
 
 @section( 'layout.dashboard.footer.inject' )
     @vite([ 'resources/ts/widgets.ts' ])
-    @vite([ 'resources/ts/dashboard.ts' ])
 @endsection

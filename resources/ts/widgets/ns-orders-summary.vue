@@ -59,13 +59,26 @@ export default {
         }
     },
     mounted() {
-        this.hasLoaded      =   false;
-        this.subscription   =   Dashboard.recentOrders.subscribe( orders => {
-            this.hasLoaded  =   true;
-            this.orders     =   orders;
-        });
+        this.loadReport();
     },
-    methods: { __, nsCurrency },
+    methods: { 
+        __, 
+        nsCurrency,
+        loadReport() {
+            this.hasLoaded      =   false;
+            nsHttpClient.get( '/api/dashboard/recent-orders' )
+                .subscribe({
+                    next: orders => {
+                        this.orders     =   orders;
+                        this.hasLoaded  = true;
+                    },
+                    error: error => {
+                        this.orders     =   [];
+                        this.hasLoaded  =   true;
+                    }
+                })
+        }
+    },
     unmounted() {
         this.subscription.unsubscribe();
     }
