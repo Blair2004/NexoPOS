@@ -1490,20 +1490,20 @@ class OrdersService
     {
         $now = Carbon::parse( $order->created_at );
         $today = $now->toDateString();
-        $count = DB::table( 'nexopos_orders_count' )
+        $count = DB::table( Hook::filter( 'ns-model-table', 'nexopos_orders_count' ) )
             ->where( 'date', $today )
             ->value( 'count' );
 
         if ( $count === null ) {
             $count = 1;
-            DB::table( 'nexopos_orders_count' )
+            DB::table( Hook::filter( 'ns-model-table', 'nexopos_orders_count' ) )
                 ->insert( [
                     'date' => $today,
                     'count' => $count,
                 ] );
         }
 
-        DB::table( 'nexopos_orders_count' )
+        DB::table( Hook::filter( 'ns-model-table', 'nexopos_orders_count' ) )
             ->where( 'date', $today )
             ->increment( 'count' );
 
