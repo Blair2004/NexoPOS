@@ -176,6 +176,7 @@ class OrdersController extends DashboardController
                 'ns_pos_printing_document' => ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
                 'ns_orders_allow_partial' => ns()->option->get( 'ns_orders_allow_partial', 'no' ),
                 'ns_orders_allow_unpaid' => ns()->option->get( 'ns_orders_allow_unpaid', 'no' ),
+                'ns_orders_force_driver_selection' => ns()->option->get( 'ns_orders_force_driver_selection', 'no' ),
                 'ns_pos_order_types' => ns()->option->get( 'ns_pos_order_types', [] ),
                 'ns_pos_order_sms' => ns()->option->get( 'ns_pos_order_sms', 'no' ),
                 'ns_pos_sound_enabled' => ns()->option->get( 'ns_pos_sound_enabled', 'yes' ),

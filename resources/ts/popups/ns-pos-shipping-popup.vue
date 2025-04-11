@@ -110,6 +110,13 @@ export default {
         resolveIfQueued,
 
         submitInformations() {
+            const errors = this.formValidation.validateForm({ tabs: this.tabs });
+
+            if ( errors.length > 0 ) {
+                nsSnackBar.error( __( 'Please correct the errors in the form' ) );
+                return;
+            }
+
             const form  =   this.formValidation.extractForm({ tabs : this.tabs });
 
             /**
@@ -160,7 +167,9 @@ export default {
                     for( let index in tabs ) {
                         if ( index === 'general' ) {
                             tabs[ index ].fields.forEach( field => {
-                                field.value     =   this.order[ field.name ] || '';
+                                field.value     =   this.order[ field.name ] || (
+                                    /\d/.test( field.value ) || field.value.length > 0 ? field.value : ''
+                                );
                             });
                         } else {
                             tabs[ index ].fields.forEach( field => {

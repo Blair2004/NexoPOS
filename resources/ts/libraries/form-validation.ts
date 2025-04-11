@@ -204,6 +204,8 @@ export default class FormValidation {
             const rules     =   this.detectValidationRules( field.validation ).filter( rule => rule != undefined );
             const ruleNames =   rules.map( rule => rule.identifier );
 
+            console.log({ ruleNames })
+
             /**
              * when the rule "sometimes" is defined. The field will be processed only if there is a value provided.
              */
@@ -268,6 +270,7 @@ export default class FormValidation {
             const diffRule = /(different):(\w+)/;
             const sometimesRule = /(sometimes)/;
             const regexRule = /(regex):(.+?)(?=\||$)/; // Update regex parsing
+            const number = /(number)/;
     
             let result;
     
@@ -280,7 +283,8 @@ export default class FormValidation {
                     sameRule.exec(rule) ||
                     diffRule.exec(rule) ||
                     sometimesRule.exec(rule) ||
-                    regexRule.exec(rule);
+                    regexRule.exec(rule) ||
+                    number.exec( rule );
     
                 if (result !== null) {
                     return {
@@ -395,6 +399,14 @@ export default class FormValidation {
         });
     }
 
+    /**
+     * This methods defines a set of rules that must returns "true" to 
+     * indicate the field check was not successful.
+     * @param field field object
+     * @param rule define rule
+     * @param fields sibling fields
+     * @returns any
+     */
     fieldPassCheck(field, rule, fields) {
         if (rule !== undefined) {
             const rules = {
@@ -421,9 +433,12 @@ export default class FormValidation {
                     field.value && field.value.length > parseInt(rule.value),
     
                 regex: (field, rule) => {
-                    console.log({ field, rule })
                     const pattern = new RegExp(rule.value);
                     return !pattern.test(field.value || '');
+                },
+
+                number: ( field, rule ) => {
+                    return !/^[0-9]+$/.test( field.value )
                 }
             };
     

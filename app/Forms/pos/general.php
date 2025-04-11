@@ -1,23 +1,28 @@
 <?php
 
+use App\Classes\SettingForm;
 use App\Services\Helper;
+use App\Classes\FormInput;
 
-return [
-    'label' => __( 'General Shipping' ),
-    'fields' => [
-        [
-            'type' => 'select',
-            'name' => 'shipping_type',
-            'label' => __( 'Shipping Type' ),
-            'options' => Helper::kvToJsOptions( [
+return SettingForm::tab(
+    identifier: 'general',
+    label: __( 'General Shipping' ),
+    fields: SettingForm::fields(
+        FormInput::select(
+            name: 'shipping_type',
+            label: __( 'Shipping Type' ),
+            options: Helper::kvToJsOptions([
                 'flat' => __( 'Flat' ),
-            ] ),
-            'description' => __( 'Define how the shipping is calculated.' ),
-        ], [
-            'type' => 'number',
-            'label' => __( 'Shipping Fees' ),
-            'name' => 'shipping',
-            'description' => __( 'Define shipping fees.' ),
-        ],
-    ],
-];
+            ]),
+            value: 'flat',
+            description: __( 'Define how the shipping is calculated.' ),
+        ),
+        FormInput::text(
+            name: 'shipping',
+            label: __( 'Shipping Fees' ),
+            description: __( 'Define shipping fees.' ),
+            value: 0,
+            validation: 'number',
+        )
+    )
+);

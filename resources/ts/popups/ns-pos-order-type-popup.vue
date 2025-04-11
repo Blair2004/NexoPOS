@@ -78,14 +78,9 @@ export default {
              * that are registered within 
              * the orderType queue
              */
-            try {
-                const result    =   await POS.triggerOrderTypeSelection( selectedType );
-                POS.types.next( this.types );
-                this.resolveIfQueued( selectedType );
-            } catch( exception ) {
-                throw exception;
-                // ...
-            }
+            const result    =   await POS.triggerOrderTypeSelection( selectedType );
+            POS.types.next( this.types );
+            this.resolveIfQueued( selectedType );
         }
     }
 }

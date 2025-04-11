@@ -13,11 +13,13 @@ class POSAddressesForm extends SettingsPage
     public function __construct()
     {
         $this->form = [
-            'tabs' => [
-                'general' => include ( dirname( __FILE__ ) . '/pos/general.php' ),
-                'billing' => include ( dirname( __FILE__ ) . '/pos/billing.php' ),
-                'shipping' => include ( dirname( __FILE__ ) . '/pos/shipping.php' ),
-            ],
+            'tabs' => collect([
+                include( dirname( __FILE__ ) . '/pos/general.php' ),
+                include( dirname( __FILE__ ) . '/pos/billing.php' ),
+                include( dirname( __FILE__ ) . '/pos/shipping.php' ),
+            ])->mapWithKeys( fn( $tab ) => [
+                $tab[ 'identifier' ] => $tab,
+            ])->toArray(),
         ];
     }
 }

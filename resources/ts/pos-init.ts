@@ -3,6 +3,7 @@ import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/produc
 import { CustomerQueue } from "./pages/dashboard/pos/queues/order/customer-queue";
 import { PaymentQueue } from "./pages/dashboard/pos/queues/order/payment-queue";
 import { ProductsQueue } from "./pages/dashboard/pos/queues/order/products-queue";
+import { DriverQueue } from "./pages/dashboard/pos/queues/order/driver-queue";
 import { TypeQueue } from "./pages/dashboard/pos/queues/order/type-queue";
 import { BehaviorSubject } from "rxjs";
 import { Customer } from "./interfaces/customer";
@@ -1851,6 +1852,7 @@ export class POS {
             ProductsQueue,
             CustomerQueue,
             TypeQueue,
+            DriverQueue,
             PaymentQueue
         ]);
 
@@ -1937,9 +1939,27 @@ export class POS {
     }
 
     async triggerOrderTypeSelection(selectedType) {
+        const results    =   [];
+
         for (let i = 0; i < this.orderTypeQueue.length; i++) {
-            const result = await this.orderTypeQueue[i].promise(selectedType);
+            results.push( await this.orderTypeQueue[i].promise(selectedType) );
         }
+
+        /**
+         * Now that all queues has been resolved
+         * we can safely update the order object.
+         */
+        const order = this.order.getValue();
+
+        results.forEach( result => {
+            for( let key in result ) {
+                if ( result[key] !== undefined ) {
+                    order[key] = result[key];
+                }
+            }
+        });
+
+        this.order.next(order);
     }
 
     set(key, value) {

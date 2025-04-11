@@ -2,17 +2,19 @@
 
 use App\Crud\CustomerCrud;
 use App\Services\Helper;
+use App\Classes\FormInput;
+use App\Classes\SettingForm;
 
-return [
-    'label' => __( 'Billing Address' ),
-    'fields' => [
-        [
-            'type' => 'switch',
-            'name' => '_use_customer_billing',
-            'label' => __( 'Use Customer Billing' ),
-            'options' => Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
-            'description' => __( 'Define whether the customer billing information should be used.' ),
-        ],
+return SettingForm::tab(
+    identifier: 'billing',
+    label: __( 'Billing Address' ),
+    fields: SettingForm::fields(
+        FormInput::switch(
+            label: __( 'Use Customer Shipping' ),
+            options: Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' )]),
+            name: '_use_customer_billing',
+            description: __( 'Define whether the customer billing information should be used.' ),
+        ),
         ...( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
-    ],
-];
+    )
+);

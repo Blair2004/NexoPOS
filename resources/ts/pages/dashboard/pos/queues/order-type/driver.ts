@@ -12,7 +12,10 @@ export default {
 
         return resolve({
             status: 'success',
-            message: 'Proceed'
+            message: 'Proceed',
+            data: { 
+                driver_id: null
+            }
         });
     })
 }
