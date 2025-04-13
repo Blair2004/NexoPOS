@@ -53,7 +53,13 @@ export default {
                 }
             }
             return {};
-        }
+        },
+        extractedForm() {
+            return this.formValidation.extractForm( this.form );
+        },
+        extractedFormLabels() {
+            return this.formValidation.extractFormLabels( this.form );
+        },
     },
     methods: {
         __,
@@ -266,9 +272,9 @@ export default {
                     <div :class="form.main.disabled ? 'disabled' : form.main.errors.length > 0 ? 'error' : 'primary'" class="input-group flex border rounded overflow-hidden">
                         <input v-model="form.main.value" 
                             @keydown.enter="submit()"
-                            @keypress="formValidation.checkField( form.main )"
-                            @blur="formValidation.checkField( form.main )" 
-                            @change="formValidation.checkField( form.main )" 
+                            @keypress="formValidation.checkField( form.main, extractedForm, extractedFormLabels )"
+                            @blur="formValidation.checkField( form.main, extractedForm, extractedFormLabels )" 
+                            @change="formValidation.checkField( form.main, extractedForm, extractedFormLabels )" 
                             :disabled="form.main.disabled"
                             type="text" 
                             class="flex-auto outline-hidden h-10 px-2">
@@ -293,7 +299,7 @@ export default {
                         <!-- We can't display both fields and component at the same time. The component has the priority over fields -->
                         <div class="-mx-4 flex flex-wrap" v-if="( activeTabFields && activeTabFields.length ) > 0 && ! activeTab.component">
                             <div :key="`${activeTabIdentifier}-${key}`" :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,key) of activeTabFields">
-                                <ns-field @saved="handleSaved( $event, activeTabIdentifier, field )" @blur="formValidation.checkField( field )" @change="formValidation.checkField( field ) && handleFieldChange( field, activeTabFields )" :field="field"/>
+                                <ns-field @saved="handleSaved( $event, activeTabIdentifier, field )" @blur="formValidation.checkField( field, extractedForm, extractedFormLabels )" @keyup="formValidation.checkField( field, extractedForm, extractedFormLabels ) && handleFieldChange( field, activeTabFields )" :field="field"/>
                             </div>
                         </div>
                         <div class="-mx-4 flex flex-wrap" v-if="activeTab && activeTab.component">

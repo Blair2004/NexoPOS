@@ -3,6 +3,7 @@ import { shallowRef } from "vue";
 declare const nsExtraComponents;
 
 export default class FormValidation {
+    // @todo check usage. Seems unused
     validateFields( fields ) {
         return fields.map( field => {
             this.checkField( field, fields, { touchField: false } );
@@ -10,9 +11,12 @@ export default class FormValidation {
         }).filter( f => f === false ).length === 0;
     }
 
-    validateFieldsErrors( fields ) {
+    validateFieldsErrors( fields, form ) {
+        const extractedFields = this.extractForm( form );
+        const labels         = this.extractFormLabels( form );
+
         return fields.map( field => {
-            this.checkField( field, fields, { touchField: false });
+            this.checkField( field, extractedFields, labels, { touchField: false });
             return field.errors;
         }).flat();
     }
@@ -36,7 +40,7 @@ export default class FormValidation {
              * we'll make a check on theses
              */
             if ( form.tabs[ key ].fields ) {
-                const validErrors       =   this.validateFieldsErrors( form.tabs[ key ].fields );
+                const validErrors       =   this.validateFieldsErrors( form.tabs[ key ].fields, form );
                 
                 if ( validErrors.length > 0 ) {
                     tabsInvalidity.push(
@@ -196,7 +200,7 @@ export default class FormValidation {
         return form;
     }
 
-    checkField( field, fields = [], options = {
+    checkField( field, form = {}, labels = {}, options = {
         touchField: true
     } ) {
         if ( field.validation !== undefined ) {
@@ -204,20 +208,18 @@ export default class FormValidation {
             const rules     =   this.detectValidationRules( field.validation ).filter( rule => rule != undefined );
             const ruleNames =   rules.map( rule => rule.identifier );
 
-            console.log({ ruleNames })
-
             /**
              * when the rule "sometimes" is defined. The field will be processed only if there is a value provided.
              */
             if ( ruleNames.includes( 'sometimes' ) ) {
                 if ( ! [ undefined, null ].includes( field.value ) && field.value.length > 0 ) {
                     rules.forEach( rule => {
-                        this.fieldPassCheck( field, rule, fields );
+                        this.fieldPassCheck( field, rule, form, labels );
                     });
                 }
             } else {
                 rules.forEach( rule => {
-                    this.fieldPassCheck( field, rule, fields );
+                    this.fieldPassCheck( field, rule, form, labels );
                 });
             }
         }
@@ -262,12 +264,36 @@ export default class FormValidation {
         return formValue;
     }
 
+    extractFormLabels( form ) {
+        let formValue  =   {};
+        if ( form.main ) {
+            formValue[ form.main.name ]     =   form.main.label;
+        }
+        if ( form.tabs ) {
+            for( let tab in form.tabs ) {
+                if ( formValue[ tab ] === undefined ) {
+                    formValue[ tab ]    =   {};
+                }
+                formValue[ tab ]   =   this.extractFieldsLabels( form.tabs[ tab ].fields );
+            }
+        }
+        return formValue;
+    }
+
+    extractFieldsLabels( fields, formValue = {} ) {
+        fields.forEach( field => {
+            formValue[ field.name ]  =   field.label;
+        });
+
+        return formValue;
+    }
+
     detectValidationRules(validation) {
         const execRule = (rule) => {
             const minRule = /(min):([0-9]+)/;
             const maxRule = /(max):([0-9]+)/;
-            const sameRule = /(same):(\w+)/;
-            const diffRule = /(different):(\w+)/;
+            const sameRule = /(same):([^|]+)/;
+            const diffRule = /(different):([^|]+)/;
             const sometimesRule = /(sometimes)/;
             const regexRule = /(regex):(.+?)(?=\||$)/; // Update regex parsing
             const number = /(number)/;
@@ -381,13 +407,14 @@ export default class FormValidation {
         }
     }
 
-    trackError( field, rule, fields ) {
+    trackError( field, rule, form, labels ) {
         field.errors.push({
             identifier: rule.identifier,
             invalid: true,
             name: field.name,
             rule,
-            fields
+            form,
+            labels,
         })
     }
 
@@ -404,10 +431,10 @@ export default class FormValidation {
      * indicate the field check was not successful.
      * @param field field object
      * @param rule define rule
-     * @param fields sibling fields
+     * @param form sibling fields
      * @returns any
      */
-    fieldPassCheck(field, rule, fields) {
+    fieldPassCheck(field, rule, form, labels ) {
         if (rule !== undefined) {
             const rules = {
                 required: (field, rule) =>
@@ -417,17 +444,18 @@ export default class FormValidation {
                     field.value.length > 0 && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(field.value),
     
                 same: (field, rule) => {
-                    const similar = fields.find(f => f.name === rule.value);
-                    return similar && field.value !== similar.value;
+                    const similar = this.getValueByDotNotation( form, rule.value );
+                    return similar && field.value !== similar;
                 },
     
                 different: (field, rule) => {
-                    const similar = fields.find(f => f.name === rule.value);
-                    return similar && field.value === similar.value;
+                    const similar = this.getValueByDotNotation( form, rule.value );
+                    return similar && field.value === similar;
                 },
     
-                min: (field, rule) =>
-                    field.value && field.value.length < parseInt(rule.value),
+                min: (field, rule) => {
+                    return field.value && field.value.length < parseInt(rule.value);
+                },
     
                 max: (field, rule) =>
                     field.value && field.value.length > parseInt(rule.value),
@@ -448,11 +476,26 @@ export default class FormValidation {
                 if (ruleValidated(field, rule) === false) {
                     return this.unTrackError(field, rule);
                 } else {
-                    return this.trackError(field, rule, fields);
+                    return this.trackError(field, rule, form, labels );
                 }
             }
     
             return field;
         }
+    }
+
+    /**
+     * Get a value from an object using dot notation.
+     * @param {Object} obj - The object to search.
+     * @param {string} path - The dot notation path to the value.
+     * @returns {any} - The value at the specified path, or undefined if not found.
+     */
+    getValueByDotNotation(obj, path) {
+        return path.split('.').reduce((acc, key) => {
+            if (acc && typeof acc === 'object') {
+                return acc[key];
+            }
+            return undefined;
+        }, obj);
     }
 }

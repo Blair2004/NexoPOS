@@ -53,7 +53,7 @@ export default {
             });
         },
         loadAvailableDrivers() {
-            nsHttpClient.get( '/api/drivers/available' )
+            nsHttpClient.get( '/api/drivers' )
                 .subscribe({
                     next: drivers => {
                         this.drivers    =   drivers;
