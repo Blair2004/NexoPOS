@@ -3,10 +3,12 @@ import { shallowRef } from "vue";
 declare const nsExtraComponents;
 
 export default class FormValidation {
-    // @todo check usage. Seems unused
     validateFields( fields ) {
+        const extractedFields = this.extractFields( fields );
+        const labels         = this.extractFieldsLabels( fields );
+        
         return fields.map( field => {
-            this.checkField( field, fields, { touchField: false } );
+            this.checkField( field, extractedFields, labels, { touchField: false } );
             return field.errors ? field.errors.length === 0 : 0;
         }).filter( f => f === false ).length === 0;
     }
@@ -441,7 +443,7 @@ export default class FormValidation {
                     field.value === undefined || field.value === null || field.value.length === 0,
     
                 email: (field, rule) =>
-                    field.value.length > 0 && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(field.value),
+                    field.value !== undefined && field.value.length > 0 && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(field.value),
     
                 same: (field, rule) => {
                     const similar = this.getValueByDotNotation( form, rule.value );

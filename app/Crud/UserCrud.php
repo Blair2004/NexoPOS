@@ -778,7 +778,7 @@ class UserCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label' => __( 'Delete Selected Groups' ),
+                'label' => __( 'Delete Selected Users' ),
                 'identifier' => 'delete_selected',
                 'url' => ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' => $this->namespace,

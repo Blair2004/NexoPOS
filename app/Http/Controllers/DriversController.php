@@ -56,4 +56,9 @@ class DriversController extends Controller
     {
         return $this->driverService->getByStatus( $status );
     }
+
+    public function getDrivers()
+    {
+        return Driver::with([ 'billing', 'shipping', 'attribute', 'status' ])->get();
+    }
 }

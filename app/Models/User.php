@@ -3,7 +3,10 @@
 namespace App\Models;
 
 use App\Classes\Model;
+use App\Events\UserAfterCreatedEvent;
+use App\Events\UserAfterUpdatedEvent;
 use App\Services\UserOptions;
+use App\Traits\NsCustomerAddress;
 use App\Traits\NsDependable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -32,12 +35,18 @@ class User extends Authenticatable
     use HasApiTokens,
         HasFactory,
         Notifiable,
-        NsDependable;
+        NsDependable,
+        NsCustomerAddress;
 
     protected $table = 'nexopos_users';
 
     protected $casts = [
         'active' => 'boolean',
+    ];
+    
+    protected $dispatchesEvents     = [
+        'created' => UserAfterCreatedEvent::class,
+        'updated' => UserAfterUpdatedEvent::class,
     ];
 
     /**
@@ -104,7 +113,7 @@ class User extends Authenticatable
     {
         return $this->hasOne( UserAttribute::class, 'user_id', 'id' );
     }
-
+    
     /**
      * Relation with roles
      **/
@@ -173,6 +182,7 @@ class User extends Authenticatable
     /**
      * Check if a user has permissions to do a specific action.
      * Note that for each user, it will load the permissions and perform the check.
+     * @deprecated ?
      */
     public function allowedTo( $permission )
     {
@@ -180,8 +190,13 @@ class User extends Authenticatable
             ->roles()
             ->with("permissions")
             ->whereHas("permissions", function ($query) use ( $permission ) {
-                $query->whereIn("namespace", ["create.users"]);
+                $query->whereIn("namespace", $permission );
             })
             ->count() > 0;
+    }
+
+    public function hasRoles( array $roles )
+    {
+        return $this->roles()->whereIn( 'namespace', $roles )->count() > 0;
     }
 }

@@ -11,11 +11,14 @@ use App\Classes\CrudInput;
 use App\Classes\CrudForm;
 use App\Classes\CrudScope;
 use App\Classes\Output;
+use App\Events\UserAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
 use TorMorten\Eventy\Facades\Events as Hook;
 use App\Models\Driver;
+use App\Models\Role;
 use App\Models\Scopes\DriverScope;
 use App\Services\Helper;
+use App\Services\UsersService;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -232,7 +235,7 @@ class DriverCrud extends CrudService
                         CrudInput::password(
                             label: __( 'Confirm password' ),
                             name: 'password',
-                            validation: 'same:password',
+                            validation: 'same:general.password',
                             description: __( 'Confirm the driver password.' ),
                         ),
                         CrudInput::text(
@@ -317,6 +320,13 @@ class DriverCrud extends CrudService
      */
     public function afterPost( array $request, Driver $entry ): array
     {
+        $userService    =   app()->make( UsersService::class );
+        $userService->createAttribute( $entry );
+        $userService->setUserRole( 
+            user: $entry,
+            roles: [ Role::namespace( Role::DRIVER )->id ]
+        );
+        
         return $request;
     }
 

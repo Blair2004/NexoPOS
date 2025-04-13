@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Classes\Model as ClassesModel;
 use App\Events\CustomerModelBootedEvent;
+use App\Traits\NsCustomerAddress;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,7 +29,7 @@ use Illuminate\Support\Facades\DB;
  */
 class Customer extends UserScope
 {
-    use HasFactory;
+    use HasFactory, NsCustomerAddress;
 
     protected $table = 'nexopos_' . 'users';
 
@@ -100,33 +101,6 @@ class Customer extends UserScope
     {
         return $this->hasMany(
             related: Order::class,
-            foreignKey: 'customer_id',
-            localKey: 'id'
-        );
-    }
-
-    public function addresses()
-    {
-        return $this->hasMany(
-            related: CustomerAddress::class,
-            foreignKey: 'customer_id',
-            localKey: 'id'
-        );
-    }
-
-    public function billing()
-    {
-        return $this->hasOne(
-            related: CustomerBillingAddress::class,
-            foreignKey: 'customer_id',
-            localKey: 'id'
-        );
-    }
-
-    public function shipping()
-    {
-        return $this->hasOne(
-            related: CustomerShippingAddress::class,
             foreignKey: 'customer_id',
             localKey: 'id'
         );

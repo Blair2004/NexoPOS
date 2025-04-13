@@ -3,10 +3,14 @@ import { Popup } from "~/libraries/popup";
 import { StatusResponse } from "~/status-response";
 import nsDriversPopup from "~/popups/ns-pos-drivers-popup.vue";
 
+declare const POS: any;
+
 export default {
     identifier: 'handle.delivery-order',
     promise: (selectedType: OrderType) => new Promise<StatusResponse>((resolve, reject) => {
-        if ( selectedType && selectedType.identifier === 'delivery') {            
+        const options =     POS.options.getValue();
+
+        if ( selectedType && selectedType.identifier === 'delivery' && options.ns_drivers_enabled) {            
             return Popup.show( nsDriversPopup, { resolve, reject });
         }
 

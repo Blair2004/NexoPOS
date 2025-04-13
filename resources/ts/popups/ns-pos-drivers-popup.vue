@@ -9,13 +9,17 @@
             </div>
         </div>
         <div class="ns-box-body flex-auto">
-            <div class="p-2">
-                <ns-notice>
-                    <template #title>{{  __( 'No Available Driver' ) }}</template>
-                    <template #description>{{ __( 'There is no available driver. would youb like to assign it to a busy driver ?' ) }}</template>
-                </ns-notice>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                <div v-for="( driver, index ) in drivers" :key="index" class="flex flex-col items-center justify-center p-2 ns-numpad-key">
+                    <ns-avatar-image 
+                    :name="driver.username"
+                    :size="24"
+                    :url="driver.attribute ? driver.attribute.avatar_link : '/images/user.png'"></ns-avatar-image>
+                    <h2 class="text-lg font-bold text-fontcolor" v-if="driver.billing.first_name || driver.billing.last_name">{{ driver.billing.first_name }} {{ driver.billing.last_name }}</h2>
+                    <h2 class="text-lg font-bold text-fontcolor" v-else>{{ driver.username }}</h2>
+                    <p class="text-sm text-gray-500">{{ driver }}</p>
+                </div>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
         </div>
         <div class="ns-box-footer p-2 border-t flex justify-end" v-if="options.ns_orders_force_driver_selection === 'no'">
             <ns-button @click="proceed()" type="info">{{ __( 'Skip' ) }}</ns-button>
