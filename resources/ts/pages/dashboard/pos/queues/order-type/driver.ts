@@ -9,9 +9,10 @@ export default {
     identifier: 'handle.delivery-order',
     promise: (selectedType: OrderType) => new Promise<StatusResponse>((resolve, reject) => {
         const options =     POS.options.getValue();
+        const order = POS.order.getValue();
 
         if ( selectedType && selectedType.identifier === 'delivery' && options.ns_drivers_enabled) {            
-            return Popup.show( nsDriversPopup, { resolve, reject });
+            return Popup.show( nsDriversPopup, { resolve, reject, order });
         }
 
         return resolve({

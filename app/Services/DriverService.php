@@ -38,7 +38,7 @@ class DriverService
 
     public function getByStatus( $status )
     {
-        return Driver::whereHas( 'status', function( $query ) use ( $status ) {
+        return Driver::with([ 'billing', 'shipping', 'attribute' ])->whereHas( 'status', function( $query ) use ( $status ) {
             $query->where( 'status', $status );
         })->get();
     }

@@ -22,7 +22,7 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'account' )->default( 0 );
-                $table->integer( 'sub_category_id' )->nullable();
+                $table->foreignId('sub_category_id')->nullable()->constrained()->onDelete('cascade');
                 $table->string( 'category_identifier' )->nullable();
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );

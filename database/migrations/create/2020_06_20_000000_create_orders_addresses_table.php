@@ -20,7 +20,7 @@ return new class extends Migration
         if ( ! Schema::hasTable( 'nexopos_orders_addresses' ) ) {
             Schema::createIfMissing( 'nexopos_orders_addresses', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
-                $table->integer( 'order_id' );
+                $table->foreignId('order_id')->constrained()->onDelete('cascade');
                 $table->string( 'type' ); // either "billing" or "shipping"
                 $table->string( 'first_name' )->nullable();
                 $table->string( 'last_name' )->nullable();

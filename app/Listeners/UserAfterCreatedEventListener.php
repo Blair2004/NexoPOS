@@ -24,14 +24,6 @@ class UserAfterCreatedEventListener
      */
     public function handle( UserAfterCreatedEvent $event ): void
     {
-        if ( $event->user->hasRoles([ Role::DRIVER ]) ) {
-            // when a driver is created, his status
-            // is set to offline by default
-
-            $this->driverService->changeStatus(
-                driver: $event->user,
-                status: Driver::STATUS_OFFLINE
-            );
-        }
+        // ...
     }
 }

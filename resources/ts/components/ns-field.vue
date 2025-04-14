@@ -111,7 +111,7 @@ export default {
     <template v-if="isHiddenField">
         <input type="hidden" :name="field.name" :value="field.value" />
     </template>
-    <div class="flex flex-auto mb-2" v-if="!isHiddenField">
+    <div class="flex flex-auto" :class="field.label ? 'mb-2': ''" v-if="!isHiddenField">
         <ns-input @keyup="$emit( 'keyup', $event )" @keypress="changeTouchedState(field, $event)" @change="changeTouchedState(field, $event)"
             :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>

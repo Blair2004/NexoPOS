@@ -2,6 +2,16 @@
 export default {
     data: () => {
         return {
+            sizeMapping: {
+                52: 'w-52',
+                64: 'w-64',
+                72: 'w-72',
+                80: 'w-80',
+                96: 'w-96',
+                128: 'w-128',
+                144: 'w-144',
+                160: 'w-160',
+            }
         }
     },
     name: 'ns-switch',
@@ -44,13 +54,13 @@ export default {
             this.$emit( 'change', option.value );
         }
     },
-    props: [ 'placeholder', 'leading', 'type', 'field' ],
+    props: [ 'placeholder', 'leading', 'type', 'field', 'size' ],
 }
 </script>
 <template>
-    <div class="mb-2 ns-switch" :class="hasError ? 'has-error' : 'is-pristine'">
-        <label :for="field.name"  class="block leading-5 font-medium"><slot></slot></label>
-            <div class="rounded-lg flex w-52 overflow-hidden shadow my-1">
+    <div class="ns-switch" :class="(hasError ? 'has-error' : 'is-pristine') + ' ' + ( field.label ? 'mb-2' : '' )">
+        <label v-if="field.label" :for="field.name"  class="block leading-5 font-medium"><slot></slot></label>
+            <div :class="sizeMapping[ size ] || 'w-52'" class="rounded-lg flex overflow-hidden shadow my-1">
                 <button 
                     :disabled="option.disabled" 
                     :key="key"

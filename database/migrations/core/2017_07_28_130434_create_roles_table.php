@@ -29,7 +29,7 @@ return new class extends Migration
                 $table->string( 'name' )->unique();
                 $table->string( 'namespace' )->unique();
                 $table->text( 'description' )->nullable();
-                $table->integer( 'reward_system_id' )->nullable();
+                $table->foreignId('reward_system_id')->nullable()->constrained()->onDelete('cascade');
                 $table->float( 'minimal_credit_payment' )->default( 0 );
                 $table->integer( 'author' )->nullable(); // when provided match the user id
                 $table->boolean( 'locked' )->default( true ); // means the role can be edited from the frontend.
@@ -40,8 +40,8 @@ return new class extends Migration
         // Permissions Relation with Roles
         if ( ! Schema::hasTable( 'nexopos_role_permission' ) ) {
             Schema::create( 'nexopos_role_permission', function ( Blueprint $table ) {
-                $table->integer( 'permission_id' );
-                $table->integer( 'role_id' );
+                $table->foreignId('permission_id')->constrained()->onDelete('cascade');
+                $table->foreignId('role_id')->constrained()->onDelete('cascade');
                 $table->primary( [ 'permission_id', 'role_id' ] );
             } );
         }

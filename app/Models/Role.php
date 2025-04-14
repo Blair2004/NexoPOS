@@ -50,7 +50,7 @@ class Role extends NsRootModel
     /**
      * We're introducing driver role
      */
-    const DRIVER = 'driver';
+    const DRIVER = 'nexopos.driver';
 
     protected $cats = [
         'locked' => 'boolean',

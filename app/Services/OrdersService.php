@@ -24,6 +24,7 @@ use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
+use App\Models\Driver;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderAddress;
@@ -1573,6 +1574,14 @@ class OrdersService
         $order->code = $order->code ?: ''; // to avoid generating a new code
         $order->tendered = $this->currencyService->define( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() )->toFloat();
 
+        /**
+         * The driver is only defined when
+         * the order is a delivery order.
+         */
+        if ( $order->type === 'delivery' ) {
+            $order->driver_id = $fields[ 'driver_id' ] ?? null;
+        }
+
         if ( $order->code === '' ) {
             $order->code = $this->generateOrderCode( $order ); // to avoid generating a new code
         }
@@ -2047,6 +2056,15 @@ class OrdersService
             }
 
             $order->products;
+            
+            /**
+             * If the order is assigned to the driver, while loading the order
+             * we'll make sure to load the driver name.
+             */
+            if ( $order->driver_id ) {
+                $driver = Driver::with([ 'billing' ])->find( $order->driver_id );
+                $order->driver_name = ($driver->billing?->first_name || $driver->billing?->last_name) ? $driver->billing?->first_name . ' ' . $driver->billing?->last_name : $driver->username;
+            }
 
             OrderAfterLoadedEvent::dispatch( $order );
 

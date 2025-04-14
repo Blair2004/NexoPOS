@@ -59,6 +59,6 @@ class DriversController extends Controller
 
     public function getDrivers()
     {
-        return Driver::with([ 'billing', 'shipping', 'attribute', 'status' ])->get();
+        return Driver::with([ 'billing', 'shipping', 'attribute' ])->get();
     }
 }

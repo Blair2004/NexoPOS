@@ -2,7 +2,7 @@
     
     @apply text-fontcolor border-numpad-edge;
 
-    &:hover {
+    &:hover, &.active {
         @apply bg-secondary border-tertiary text-white;
     }
     &.error:hover, &.error.active {
