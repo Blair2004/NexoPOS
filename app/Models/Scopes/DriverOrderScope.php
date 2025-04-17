@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models\Scopes;
+
+use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class DriverOrderScope implements Scope
+{
+    /**
+     * Apply the scope to a given Eloquent query builder.
+     */
+    public function apply(Builder | QueryBuilder $builder, Model $model): void
+    {
+        $builder->where( 'driver_id', Auth::id() );
+    }
+}
