@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean( 'paid_on_delivery' )->default(false);
             $table->foreignId('order_id')->constrained('nexopos_orders')->cascadeOnDelete();
             $table->foreignId('driver_id')->constrained('nexopos_users')->cascadeOnDelete();
+            $table->datetime('delivered_at')->nullable();
             $table->timestamps();
         });
     }
