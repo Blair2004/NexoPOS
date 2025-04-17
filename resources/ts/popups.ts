@@ -13,6 +13,7 @@ import nsProductPreview from '~/popups/ns-products-preview.vue';
 import nsPromptPopup from '~/popups/ns-prompt-popup.vue';
 import nsSelectPopup from '~/popups/ns-select-popup.vue';
 import nsDriversStatusPopup from './popups/ns-drivers-status-popup.vue';
+import NsDriversOrdersPopup from './popups/ns-drivers-orders-popup.vue';
 
 const popups    =   { 
     nsOrderPreview,
@@ -26,6 +27,7 @@ const popups    =   {
     nsSelectPopup,
     nsPOSLoadingPopup,
     nsDriversStatusPopup,
+    NsDriversOrdersPopup,
 };
 
 for( let index in popups ) {

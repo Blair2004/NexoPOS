@@ -111,7 +111,7 @@ class CrudGeneratorCommand extends Command
         if ( $name !== 'Q' && ! empty( $name ) ) {
             $this->crudDetails[ 'route_name' ] = $name;
 
-            return $this->askNamespace();
+            return $this->askIdentifier();
         } elseif ( $name == 'Q' ) {
             return;
         }
@@ -125,11 +125,11 @@ class CrudGeneratorCommand extends Command
      *
      * @return void
      */
-    public function askNamespace()
+    public function askIdentifier()
     {
-        $name = $this->ask( __( 'What is the namespace of the CRUD Resource. eg: system.users ? [Q] to quit.' ) );
+        $name = $this->ask( __( 'What is the identifier of the CRUD Resource. eg: system.users ? [Q] to quit.' ) );
         if ( $name !== 'Q' && ! empty( $name ) ) {
-            $this->crudDetails[ 'namespace' ] = $name;
+            $this->crudDetails[ 'identifier' ] = $name;
 
             return $this->askFullModelName();
         } elseif ( $name == 'Q' ) {
@@ -137,7 +137,7 @@ class CrudGeneratorCommand extends Command
         }
         $this->error( __( 'Please provide a valid value.' ) );
 
-        return $this->askNamespace();
+        return $this->askIdentifier();
     }
 
     /**

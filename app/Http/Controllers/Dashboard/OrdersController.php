@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Classes\Hook;
 use App\Classes\Output;
 use App\Crud\CustomerCrud;
+use App\Crud\DriverOrderCrud;
 use App\Crud\OrderCrud;
 use App\Crud\OrderInstalmentCrud;
 use App\Crud\PaymentTypeCrud;
@@ -414,5 +415,10 @@ class OrdersController extends DashboardController
     public function getOrderRefunds( Request $request, Order $order )
     {
         return $this->ordersService->getOrderRefunds( $order );
+    }
+
+    public function listAssignatedOrders()
+    {
+        return DriverOrderCrud::table();
     }
 }

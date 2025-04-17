@@ -84,28 +84,28 @@ class CrudController extends DashboardController
      *
      * @return void
      */
-    public function crudPost( string $namespace, CrudPostRequest $request )
+    public function crudPost( string $identifier, CrudPostRequest $request )
     {
         $service = new CrudService;
-        $inputs = $request->getPlainData( $namespace );
+        $inputs = $request->getPlainData( $identifier );
 
-        return $service->submitRequest( $namespace, $inputs );
+        return $service->submitRequest( $identifier, $inputs );
     }
 
     /**
      * Dashboard CRUD PUT
      * receive and treat a PUT request for CRUD resource
      *
-     * @param  string $namespace
+     * @param  string $identifier
      * @param  int    $id        primary key
      * @return void
      */
-    public function crudPut( $namespace, $id, CrudPutRequest $request )
+    public function crudPut( $identifier, $id, CrudPutRequest $request )
     {
         $service = new CrudService;
-        $inputs = $request->getPlainData( $namespace );
+        $inputs = $request->getPlainData( $identifier );
 
-        return $service->submitRequest( $namespace, $inputs, $id );
+        return $service->submitRequest( $identifier, $inputs, $id );
     }
 
     /**
@@ -113,9 +113,9 @@ class CrudController extends DashboardController
      *
      * @return array of results
      */
-    public function crudList( string $namespace )
+    public function crudList( string $identifier )
     {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
 
         /**
          * In case nothing handle this crud
@@ -136,12 +136,12 @@ class CrudController extends DashboardController
     /**
      * CRUD Bulk Action
      *
-     * @param string namespace
+     * @param string identifier
      * @return void
      */
-    public function crudBulkActions( string $namespace, Request $request )
+    public function crudBulkActions( string $identifier, Request $request )
     {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
 
         /**
          * In case nothing handle this crud
@@ -185,12 +185,12 @@ class CrudController extends DashboardController
     /**
      * Crud GET
      *
-     * @param string resource namespace
+     * @param string resource identifier
      * @return CRUD Response
      */
-    public function crudGet( string $namespace, Request $request )
+    public function crudGet( string $identifier, Request $request )
     {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
 
         /**
          * Let's check it the resource has a method to retrieve an item
@@ -208,14 +208,14 @@ class CrudController extends DashboardController
     }
 
     /**
-     * get column for a specific namespace
+     * get column for a specific identifier
      *
-     * @param string CRUD resource namespace
+     * @param string CRUD resource identifier
      * @return TableConfig
      */
-    public function getColumns( string $namespace )
+    public function getColumns( string $identifier )
     {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
         $resource = new $crudClass;
         $resource->allowedTo( 'read' );
 
@@ -264,13 +264,13 @@ class CrudController extends DashboardController
     /**
      * get create form config
      *
-     * @param namespace
+     * @param identifier
      * @return array | AsyncResponse
      */
-    public function getFormConfig( string $namespace, $id = null )
+    public function getFormConfig( string $identifier, $id = null )
     {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
-        $resource = new $crudClass( compact( 'namespace', 'id' ) );
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
+        $resource = new $crudClass( compact( 'identifier', 'id' ) );
 
         if ( $resource instanceof CrudService ) {
             return $resource->getFormConfig(
@@ -287,12 +287,12 @@ class CrudController extends DashboardController
     /**
      * Export the entries as a CSV file
      *
-     * @param  string $namespace
+     * @param  string $identifier
      * @return array  $response
      */
-    public function exportCrud( $namespace, Request $request )
+    public function exportCrud( $identifier, Request $request )
     {
-        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
+        $crudClass = Hook::filter( 'ns-crud-resource', $identifier );
 
         $resource = new $crudClass;
         $spreadsheet = new Spreadsheet;

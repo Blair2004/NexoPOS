@@ -38,7 +38,7 @@ class MenuService
                 label: __( 'Orders' ),
                 icon: 'la-list-ol',
                 identifier: 'orders',
-                permissions: [ 'nexopos.read.orders' ],
+                permissions: [ 'nexopos.read.orders', 'nexopos.deliver.orders' ],
                 childrens: AsideMenu::childrens(
                     AsideMenu::subMenu(
                         label: __( 'Orders List' ),
@@ -51,6 +51,12 @@ class MenuService
                         identifier: 'payment-type',
                         permissions: [ 'nexopos.manage-payments-types' ],
                         href: ns()->url( '/dashboard/orders/payments-types' )
+                    ),
+                    AsideMenu::subMenu(
+                        label: __( 'Assignated Orders' ),
+                        identifier: 'assignated-orders',
+                        permissions: [ 'nexopos.deliver.orders' ],
+                        href: ns()->url( '/dashboard/orders/assignated' )
                     )
                 ),
             ),

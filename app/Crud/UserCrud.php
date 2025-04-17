@@ -665,6 +665,7 @@ class UserCrud extends CrudService
         $entry->action(
             identifier: 'edit_customers_group',
             label: __( 'Edit' ),
+            permissions: [ 'update.users' ],
             url: ns()->url( 'dashboard/users/edit/' . $entry->id ),
         );
 

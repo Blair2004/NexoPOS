@@ -1318,11 +1318,6 @@ class CrudService
             'instance' =>  $instance,
 
             /**
-             * provide the current crud namespace
-             */
-            'namespace' => $instance::IDENTIFIER,
-
-            /**
              * We'll return here the select attribute that will
              * be used to automatically popuplate "options" entry of select and search-select field
              */

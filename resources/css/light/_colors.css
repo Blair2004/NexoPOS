@@ -93,13 +93,13 @@
     --color-error-tertiary: var( --color-red-600 );
 
     /** Info */
-    --color-info-primary: var( --color-blue-400 );
+    --color-info-primary: var( --color-blue-200 );
     --color-info-secondary: var( --color-blue-500 );
     --color-info-tertiary: var( --color-blue-600 );
 
     /** Success */
-    --color-success-primary: var( --color-green-400 );
-    --color-success-secondary: var( --color-green-500);
+    --color-success-primary: var( --color-green-200 );
+    --color-success-secondary: var( --color-green-400);
     --color-success-tertiary: var( --color-green-600 );
 
     /** Warning */

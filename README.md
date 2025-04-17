@@ -122,3 +122,5 @@ The resources that are sold are the products. The product UI has been simplified
 ### Settings Components
 Configure how NexoPOS works. From the settings, you can configure various sections of your application including the currency, the POS features, the orders, and much more.
 ![image](https://user-images.githubusercontent.com/5265663/159092979-267841bc-531d-4a27-b35f-902866fa742a.png)
+
+6-99-302-183

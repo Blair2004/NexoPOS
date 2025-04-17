@@ -22,7 +22,7 @@
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
-                <div :key="history.id" v-if="[ 'register-cash-in' ].includes( history.action )"  class="flex border-b elevation-surface success">
+                <div :key="history.id" v-if="[ 'register-cash-in' ].includes( history.action )"  class="flex border-b elevation-surface">
                     <div class="p-2 flex-auto">
                         <div>{{ history.description || __( 'Not Provided' ) }}</div>
                         <div class="flex md:-mx-1">
@@ -52,7 +52,7 @@
             </template>
         </div>
         <div class="summary border-t border-box-edge">
-            <div class="flex border-b elevation-surface" :class="summary.color" v-for="summary of cashRegisterReport.summary">
+            <div class="flex border-b border-box-edge" :class="summary.color" v-for="summary of cashRegisterReport.summary">
                 <div class="p-2 flex-auto">{{ summary.label }}</div>
                 <div class="flex-auto text-right p-2">{{ nsCurrency( summary.value ) }}</div>
             </div>

@@ -432,7 +432,8 @@ class DriverCrud extends CrudService
         $entry->action( 
             identifier: 'edit',
             label: __( 'Edit' ),
-            url: ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+            permissions:  [ 'update.users' ],
+            url: ns()->url( '/dashboard/users/edit/' . $entry->id )
         );
 
         $entry->action(
@@ -451,6 +452,7 @@ class DriverCrud extends CrudService
             identifier: 'delete',
             label: __( 'Delete' ),
             type: 'DELETE',
+            permissions:  [ 'delete.users' ],
             url: ns()->url( '/api/crud/ns.drivers/' . $entry->id ),
             confirm: [
                 'message'  =>  __( 'Would you like to delete this ?' ),

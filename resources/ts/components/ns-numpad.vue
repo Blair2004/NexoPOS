@@ -1,16 +1,17 @@
 <template>
-    <div id="numpad" class="grid grid-flow-row divide-x divide-y border-r border-b border-numpad-edge grid-cols-3 grid-rows-3">
+    <div id="numpad" class="grid grid-flow-row divide-x-1 divide-y-1 border-t border-l border-numpad-edge grid-cols-3 grid-rows-3">
         <div 
             @click="inputValue( key )"
             :key="index"
             v-for="(key,index) of keys" 
-            :class="index === 0 ? 'border-l border-t' : ''"
+            :class="index === keys.length - 1 ? 'border-r border-b' : ''"
             class="select-none ns-numpad-key h-24 font-bold flex items-center justify-center cursor-pointer">
             <span v-if="key.value !== undefined">{{ key.value }}</span>
             <i v-if="key.icon" class="las" :class="key.icon"></i>
         </div>
         <slot name="numpad-footer"></slot>
     </div>
+    <!-- :class="index === 0 ? 'border-l border-t' : ''" -->
 </template>
 <script lang="ts">
 import { __ } from '~/libraries/lang';

@@ -389,7 +389,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             return $status;
         }
 
-        return Hook::filter( $this->namespace . '-catch-action', false, $request );
+        return Hook::filter( self::IDENTIFIER . '-catch-action', false, $request );
     }
 
     /**
@@ -411,12 +411,12 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     **/
     public function getBulkActions(): array
     {
-        return Hook::filter( $this->namespace . '-bulk', [
+        return Hook::filter( self::IDENTIFIER . '-bulk', [
             [
                 'label'         =>  {{ isset( $module ) ? '__m' : '__' }}( 'Delete Selected Entries'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
+                    'namespace' =>  self::IDENTIFIER
                 ])
             ]
         ]);

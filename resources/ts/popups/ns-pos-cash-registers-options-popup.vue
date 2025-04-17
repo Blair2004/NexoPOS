@@ -157,11 +157,11 @@ export default {
             </div>
         </div>
         <div v-if="register.total_sale_amount !== undefined && register.balance !== undefined">
-            <div class="h-16 text-3xl elevation-surface info flex items-center justify-between px-3">
+            <div class="h-16 text-3xl bg-info-primary info flex items-center justify-between px-3">
                 <span class="">{{ __( 'Sales' ) }}</span>
                 <span class="font-bold">{{ nsCurrency( register.total_sale_amount ) }}</span>
             </div>
-            <div class="h-16 text-3xl elevation-surface success flex items-center justify-between px-3">
+            <div class="h-16 text-3xl bg-success-primary success flex items-center justify-between px-3">
                 <span class="">{{ __( 'Balance' ) }}</span>
                 <span class="font-bold">{{ nsCurrency( register.balance ) }}</span>
             </div>

@@ -11,7 +11,7 @@
                         <span>{{ __( 'Balance' ) }} </span>
                         <span>{{ nsCurrency( register.balance ) }}</span>
                     </div>
-                    <div class="mb-2 p-3 elevation-surface success border font-bold text-right flex justify-between">
+                    <div class="mb-2 p-3 bg-success-primary border-success-tertiary border font-bold text-right flex justify-between">
                         <span>{{ __( 'Input' ) }}</span>
                         <span>{{ nsCurrency( amount ) }}</span>
                     </div>
