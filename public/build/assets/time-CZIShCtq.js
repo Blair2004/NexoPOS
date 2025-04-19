@@ -1,5 +1,1 @@
-<<<<<<<< HEAD:public/build/assets/time-CZIShCtq.js
 import{h as e}from"./bootstrap-BvuHheHc.js";ns.date.moment=e(ns.date.current);ns.date.interval=setInterval(()=>{ns.date.moment.add(1,"seconds"),ns.date.current=e(ns.date.current).add(1,"seconds").format("YYYY-MM-DD HH:mm:ss")},1e3);ns.date.getNowString=()=>{const t=Date.parse(new Date().toLocaleString("en-US",{timeZone:ns.date.timeZone}));return e(t).format("YYYY-MM-DD HH:mm:ss")};ns.date.getMoment=()=>{const t=Date.parse(new Date().toLocaleString("en-US",{timeZone:ns.date.timeZone}));return e(t)};
-========
-import{h as e}from"./bootstrap-CCX-nbs4.js";ns.date.moment=e(ns.date.current);ns.date.interval=setInterval(()=>{ns.date.moment.add(1,"seconds"),ns.date.current=e(ns.date.current).add(1,"seconds").format("YYYY-MM-DD HH:mm:ss")},1e3);ns.date.getNowString=()=>{const t=Date.parse(new Date().toLocaleString("en-US",{timeZone:ns.date.timeZone}));return e(t).format("YYYY-MM-DD HH:mm:ss")};ns.date.getMoment=()=>{const t=Date.parse(new Date().toLocaleString("en-US",{timeZone:ns.date.timeZone}));return e(t)};
->>>>>>>> 27435282 (Changelog:):public/build/assets/time-DlAgFBdt.js
