@@ -14,11 +14,11 @@ export default class FormValidation {
     }
 
     validateFieldsErrors( fields, form ) {
-        const extractedFields = this.extractForm( form );
+        const extractedForm = this.extractForm( form );
         const labels         = this.extractFormLabels( form );
 
         return fields.map( field => {
-            this.checkField( field, extractedFields, labels, { touchField: false });
+            this.checkField( field, extractedForm, labels, { touchField: false });
             return field.errors;
         }).flat();
     }
