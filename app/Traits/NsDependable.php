@@ -101,4 +101,13 @@ trait NsDependable
          */
         return parent::delete();
     }
+
+    /**
+     * Used to create a custom filter name for mutating
+     * certain model methods values.
+     */
+    protected static function method( string $name )
+    {
+        return self::class . '@' . $name;
+    }
 }
