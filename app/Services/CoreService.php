@@ -29,6 +29,8 @@ class CoreService
 
     public $storeID;
 
+    public Options $rootOption;
+
     /**
      * @var \Modules\NsMultiStore\Services\StoresService
      */

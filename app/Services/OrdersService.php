@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Cache;
 use App\Classes\Currency;
 use App\Classes\Hook;
 use App\Events\DueOrdersEvent;
@@ -49,7 +50,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use stdClass;

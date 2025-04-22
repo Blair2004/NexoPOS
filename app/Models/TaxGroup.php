@@ -21,12 +21,12 @@ class TaxGroup extends NsModel
     public function setDependencies()
     {
         return [
-            Product::class  =>  Model::dependant(
+            Product::class => Model::dependant(
                 local_name: 'name',
                 local_index: 'id',
                 foreign_name: 'tax_group_id',
                 foreign_index: 'id',
-            )
+            ),
         ];
     }
 

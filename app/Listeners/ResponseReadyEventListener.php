@@ -2,9 +2,9 @@
 
 namespace App\Listeners;
 
+use App\Classes\Cache;
 use App\Events\ResponseReadyEvent;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class ResponseReadyEventListener
 {

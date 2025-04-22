@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Classes\Cache;
 use Illuminate\Console\Events\CommandFinished;
-use Illuminate\Support\Facades\Cache;
 
 class CommandFinishedListener
 {

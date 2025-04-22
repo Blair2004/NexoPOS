@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\Classes\Cache;
 use App\Classes\CrudForm;
 use App\Classes\FormInput;
 use App\Exceptions\NotAllowedException;
@@ -11,7 +12,6 @@ use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Helper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use TorMorten\Eventy\Facades\Events as Hook;
 

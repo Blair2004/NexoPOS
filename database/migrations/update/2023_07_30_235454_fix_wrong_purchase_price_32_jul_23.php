@@ -1,11 +1,11 @@
 <?php
 
+use App\Classes\Cache;
 use App\Classes\Currency;
 use App\Models\OrderProduct;
 use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Cache;
 
 return new class extends Migration
 {
