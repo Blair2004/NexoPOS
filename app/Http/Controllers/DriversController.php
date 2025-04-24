@@ -61,4 +61,9 @@ class DriversController extends Controller
     {
         return Driver::with([ 'billing', 'shipping', 'attribute' ])->get();
     }
+
+    public function updateOrder( Order $order )
+    {
+        
+    }
 }

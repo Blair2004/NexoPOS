@@ -21,6 +21,7 @@ use App\Services\Helper;
 use App\Services\UsersService;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 #[ CrudScope( DriverScope::class ) ]
 class DriverCrud extends CrudService
@@ -288,6 +289,10 @@ class DriverCrud extends CrudService
     {
         $inputs[ 'author' ] = Auth::id();
 
+        if ( $inputs[ 'password' ] ) {
+            $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
+        }
+
         return $inputs;
     }
 
@@ -299,6 +304,10 @@ class DriverCrud extends CrudService
     public function filterPutInputs( array $inputs, Driver $entry )
     {
         $inputs[ 'author' ] = Auth::id();
+
+        if ( $inputs[ 'password' ] ) {
+            $inputs[ 'password' ] = Hash::make( $inputs[ 'password' ] );
+        }
         
         return $inputs;
     }

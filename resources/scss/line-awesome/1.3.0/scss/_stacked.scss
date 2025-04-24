@@ -1,3 +1,5 @@
+@use "./_variables.scss" as *;
+
 .#{$la-css-prefix}-stack {
   display: inline-block;
   height: 2em;

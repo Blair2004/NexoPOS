@@ -15,7 +15,7 @@ class MigrateForgetCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'migrate:forget {module?} {--file=} {--down}';
+    protected $signature = 'migrate:forget {--file=} {--down}';
 
     /**
      * The console command description.
@@ -27,7 +27,7 @@ class MigrateForgetCommand extends Command
     /**
      * Module service
      *
-     * @var ModulesService
+     * @var ModulesServie
      */
     private $moduleService;
 
@@ -51,49 +51,75 @@ class MigrateForgetCommand extends Command
      */
     public function handle()
     {
-        $module = $this->moduleService->get( $this->argument( 'module' ) );
+        $fileOption = $this->option('file');
+        $downOption = $this->option('down');
 
-        if ( $module !== null && $this->argument( 'module' ) !== null ) {
-            if ( ! in_array( $this->option( 'file' ), $module[ 'all-migrations' ] ) ) {
-                if ( $this->option( 'down' ) ) {
-                    $this->moduleService->revertMigrations( $module );
-                }
+        if (!$fileOption) {
+            // List available migrations ordered by the most recent first
+            $migrations = Migration::orderBy('id', 'desc')->get();
 
-                ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
-                    ->delete();
-            } else {
-                if ( $this->option( 'down' ) ) {
-                    $migrations = ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
-                        ->get()
-                        ->map( fn( $migration ) => $migration->file )
-                        ->toArray();
-
-                    $this->moduleService->revertMigrations( $module, $migrations );
-                }
-
-                ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
-                    ->where( 'file', $this->option( 'file' ) )
-                    ->delete();
+            if ($migrations->isEmpty()) {
+                return $this->info(__('No migrations found.'));
             }
 
-            Artisan::call( 'cache:clear' );
+            $choices = $migrations->pluck('migration')->toArray();
+            $selectedMigration = $this->choice(__('Select a migration to delete:'), $choices);
 
-            return $this->info(
-                sprintf(
-                    __( 'The migration file has been successfully forgotten for the module %s.' ),
-                    $module[ 'name' ]
-                )
-            );
-        } else {
-            $deleted = Migration::where( 'migration', $this->option( 'file' ) )->delete();
-            Artisan::call( 'cache:clear' );
+            if ($downOption) {
+                // Execute the "down" method of the migration
+                $migrationFilePath = database_path('migrations/' . $selectedMigration . '.php');
 
-            return $this->info(
-                sprintf(
-                    __( '%s migration(s) has been deleted.' ),
-                    $deleted
-                )
-            );
+                if (!file_exists($migrationFilePath)) {
+                    return $this->error(__('Migration file not found: ') . $migrationFilePath);
+                }
+
+                require_once $migrationFilePath;
+
+                $className = $this->getMigrationClassName($selectedMigration);
+
+                if (!class_exists($className)) {
+                    return $this->error(__('Migration class not found: ') . $className);
+                }
+
+                $migrationInstance = new $className();
+
+                if (!method_exists($migrationInstance, 'down')) {
+                    return $this->error(__('The "down" method does not exist in the migration class.'));
+                }
+
+                $migrationInstance->down();
+                $this->info(__('The "down" method has been executed.'));
+            }
+
+            // Delete the selected migration
+            Migration::where('migration', $selectedMigration)->delete();
+            Artisan::call('cache:clear');
+
+            return $this->info(__('Migration deleted: ') . $selectedMigration);
         }
+
+        // Handle the case where --file option is provided
+        $deleted = Migration::where('migration', $fileOption)->delete();
+        Artisan::call('cache:clear');
+
+        return $this->info(
+            sprintf(
+                __('%s migration(s) has been deleted.'),
+                $deleted
+            )
+        );
+    }
+
+    /**
+     * Get the class name of a migration from its file name.
+     *
+     * @param string $fileName
+     * @return string
+     */
+    private function getMigrationClassName(string $fileName): string
+    {
+        return collect(explode('_', $fileName))
+            ->map(fn($part) => ucfirst($part))
+            ->implode('');
     }
 }

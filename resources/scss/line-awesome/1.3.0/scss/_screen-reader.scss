@@ -1,2 +1,5 @@
-.sr-only { @include sr-only(); }
-.sr-only-focusable { @include sr-only-focusable(); }
+@use "./_variables.scss" as *;
+@use "./_mixins.scss" as mixings;
+
+.sr-only { @include mixings.sr-only(); }
+.sr-only-focusable { @include mixings.sr-only-focusable(); }

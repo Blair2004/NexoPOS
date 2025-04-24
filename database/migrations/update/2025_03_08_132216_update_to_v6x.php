@@ -34,6 +34,15 @@ return new class extends Migration
          */
         $admin = Role::where( 'namespace', 'admin' )->first();
         $admin->addPermissions( Permission::includes( '.drivers' )->get()->map( fn( $permission ) => $permission->namespace ) );
+
+        /**
+         * We'll update the orders table to add the "driver_id"
+         */
+        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_orders', 'driver_id' ) ) {
+                $table->integer( 'driver_id' )->nullable();
+            }
+        } );
     }
 
     /**

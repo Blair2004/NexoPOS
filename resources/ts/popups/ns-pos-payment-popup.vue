@@ -13,6 +13,7 @@ import nsSelectPopupVue from './ns-select-popup.vue';
 import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 import { ref } from 'vue';
 import { nsConfirmPopup } from '~/components/components';
+import { HttpStatusResponse } from '~/interfaces/http-status-response';
 
 declare const POS, nsHooks, nsCloseButton, nsButton, shallowRef;
 
@@ -129,54 +130,47 @@ export default {
         },
         // no payment is necessary here so we'll proceed
         async submiAsUnpaid() {
-            let confirmResponse;
-            try {
-                confirmResponse = await new Promise( ( resolve ) => {
-                    const response = Popup.show( nsConfirmPopup, {
-                        title: __( 'Save As Unpaid' ),
-                        message: __( 'Are you sure you want to save this order as unpaid?' ),
-                        onAction: ( action ) => {
-                            resolve(action)
+            return new Promise( ( resolve, reject ) => {
+                Popup.show( nsConfirmPopup, {
+                    title: __( 'Save As Unpaid' ),
+                    message: __( 'Are you sure you want to save this order as unpaid?' ),
+                    onAction: async ( action ) => {
+                        if ( action ) {
+                            let order = POS.order.getValue();
+                            order.payment_status = 'unpaid';
+                            order.payments = [];
+
+                            POS.order.next( order );
+                            POS.refreshCart();
+
+                            // During the process it might be handing to display a loading popup
+                            const loadingPopup = Popup.show( nsPosLoadingPopupVue );
+                            
+                            // We'll not attempt to submit the order.
+                            try {
+                                const submitPromise: HttpStatusResponse = await new Promise( ( resolve, reject ) => {
+                                    POS.proceedSubmitting( order, resolve, reject );
+                                });
+
+                                // If the code reach here, the operation was successful. Let's display a message.
+                                nsSnackBar.success( submitPromise.message );
+
+                                // If the order is likely to be printed, we'll trigger the print method.
+                                POS.printOrderReceipt( submitPromise.data.order, 'silent' );
+
+                                // the loading popup is still open, so we'll close it.
+                                loadingPopup.close();
+
+                                // From here we should have finish. There we'll close the popup.
+                                this.popup.close();
+                            } catch ( exception ) {
+                                loadingPopup.close();
+                                nsSnackBar.error( exception.message || __( 'An error occured while saving the order as unpaid.' ) );
+                            }
                         }
-                    })
+                    }
                 })
-            } catch( exception ) {
-                nsSnackBar.error( exception.message || __( 'An unexpected error occured while saving the order as unpaid.' ) );
-                console.log( exception );
-                // ...
-            }
-
-            /**
-             * The use hasn't confirmed the action
-             * so we'll return false
-             */
-            if ( ! confirmResponse ) {
-                return false;
-            }
-
-            const popup     =   Popup.show( nsPosLoadingPopupVue );
-            
-            try {
-
-                /**
-                 * if there is any payment defined
-                 * we might need to remove that and refresh the order
-                 */
-                POS.order.next({ ...POS.order.getValue(), payments: [] });
-                POS.refreshCart();
-                const result: { message: string, data: any } = await new Promise( ( resolve, reject ) => {
-                    POS.proceedSubmitting( POS.order.getValue(), resolve, reject );
-                });
-
-                popup.close();
-                this.popup.close();
-                nsSnackBar.success( result.message );
-                POS.printOrderReceipt( result.data.order, 'silent' );
-            } catch( exception ) {
-                popup.close();
-                // show error message
-                nsSnackBar.error( exception.message || __( 'An error occured while saving the order as unpaid.' ) );
-            }
+            });
         },
         getPaymentLabel( payment ) {
             const foundPayment = this.paymentsType.filter( p => p.identifier === payment.identifier )[0];

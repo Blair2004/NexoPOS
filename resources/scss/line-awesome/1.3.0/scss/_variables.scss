@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "sass:string";
 
 $la-font-path: "../fonts" !default;
 $la-font-size-base: 14px !default;
@@ -9,7 +10,7 @@ $la-version: 1.3.0 !default;
 $la-li-width: math.div(20em, 14) !default;
 
 @function la-content( $la-var ) {
-  @return unquote("\"#{ $la-var }\"");
+  @return string.unquote("\"#{ $la-var }\"");
 }
 
 $la-css-prefix: la;

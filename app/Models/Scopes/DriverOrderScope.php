@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Order;
 
 class DriverOrderScope implements Scope
 {
@@ -16,6 +17,7 @@ class DriverOrderScope implements Scope
      */
     public function apply(Builder | QueryBuilder $builder, Model $model): void
     {
+        $builder->whereIn( 'payment_status', [ Order::PAYMENT_PAID, Order::PAYMENT_UNPAID, Order::PAYMENT_PARTIALLY  ] );
         $builder->where( 'driver_id', Auth::id() );
     }
 }

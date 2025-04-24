@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\DB;
+use App\Models\Role;
 
 class DriverScope implements Scope
 {
@@ -30,6 +31,6 @@ class DriverScope implements Scope
         
         $builder->join( 'nexopos_users_roles_relations', 'nexopos_users_roles_relations.user_id', '=', 'nexopos_users.id' )
             ->join( 'nexopos_roles', 'nexopos_roles.id', '=', 'nexopos_users_roles_relations.role_id' )
-            ->where( 'nexopos_roles.name', 'driver' );
+            ->where( 'nexopos_roles.namespace', Role::DRIVER );
     }
 }

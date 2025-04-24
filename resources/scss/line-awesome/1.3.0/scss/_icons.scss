@@ -1,3 +1,5 @@
+@use "./_variables.scss" as *;
+
 .#{$la-css-prefix}-500px:before { content: la-content($la-500px); }
 .#{$la-css-prefix}-accessible-icon:before { content: la-content($la-accessible-icon); }
 .#{$la-css-prefix}-accusoft:before { content: la-content($la-accusoft); }

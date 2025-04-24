@@ -77,6 +77,7 @@ class DriverOrderCrud extends CrudService
         'total' => CurrencyCast::class,
         'tax_value' => CurrencyCast::class,
         'discount' => CurrencyCast::class,
+        'change' => CurrencyCast::class,
         'shipping'  => CurrencyCast::class,
         'delivery_status' => OrderDeliveryCast::class,
         'process_status' => OrderProcessCast::class,
@@ -581,12 +582,12 @@ class DriverOrderCrud extends CrudService
                 label: __('Shipping'),
             ),
             CrudTable::column(
-                identifier: 'shipping_rate',
-                label: __('Shipping Rate'),
-            ),
-            CrudTable::column(
                 identifier: 'total',
                 label: __('Total'),
+            ),
+            CrudTable::column(
+                identifier: 'change',
+                label: __('Due'),
             ),
             CrudTable::column(
                 identifier: 'created_at',
@@ -600,8 +601,12 @@ class DriverOrderCrud extends CrudService
      */
     public function setActions(CrudEntry $entry): CrudEntry
     {
+        if ( $entry->getRawValue( 'change' ) < 0 ) {
+            $entry->change = ns()->currency->define( abs( $entry->getRawValue( 'change' ) ) )->format();
+        }
+
         $entry->action(
-            label: __( 'Change Delivery State' ),
+            label: __( 'Deliver Order' ),
             identifier: 'change-delivery-status',
             permissions: [ 'nexopos.deliver.orders' ],
             type: 'POPUP'

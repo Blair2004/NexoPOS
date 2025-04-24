@@ -30,7 +30,7 @@ class UserRoleRelationAfterCreatedEventListener
             // is set to offline by default
 
             $this->driverService->changeStatus(
-                driver: Driver::find( $event->userRoleRelation->user->id ),
+                driver: Driver::find( $event->userRoleRelation->user_id ),
                 status: Driver::STATUS_OFFLINE
             );
         }

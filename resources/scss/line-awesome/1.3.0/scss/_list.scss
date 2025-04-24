@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "./_variables.scss" as *;
 
 .#{$la-css-prefix}-ul {
   padding-left: 0;
