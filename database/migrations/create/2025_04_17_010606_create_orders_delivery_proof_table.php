@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text( 'note' )->nullable();
             $table->string('delivery_proof')->nullable();
             $table->boolean( 'paid_on_delivery' )->default(false);
-            $table->foreignId('order_id');
-            $table->foreignId('driver_id');
+            $table->integer('order_id');
+            $table->integer('driver_id');
             $table->datetime('delivered_at')->nullable();
             $table->timestamps();
         });

@@ -33,26 +33,26 @@ return new class extends Migration
 
         Schema::createIfMissing( 'nexopos_coupons_products', function ( Blueprint $table ) {
             $table->id();
-            $table->foreignId('coupon_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->integer('coupon_id');
+            $table->integer('product_id');
         } );
 
         Schema::createIfMissing( 'nexopos_coupons_categories', function ( Blueprint $table ) {
             $table->id();
-            $table->foreignId('coupon_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->integer('coupon_id');
+            $table->integer('category_id');
         } );
 
         Schema::createIfMissing( 'nexopos_coupons_customers', function ( Blueprint $table ) {
             $table->id();
-            $table->foreignId('coupon_id')->constrained()->onDelete('cascade');
-            $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->integer('coupon_id');
+            $table->integer('customer_id');
         } );
 
         Schema::createIfMissing( 'nexopos_coupons_customers_groups', function ( Blueprint $table ) {
             $table->id();
-            $table->foreignId('coupon_id')->constrained()->onDelete('cascade');
-            $table->foreignId('group_id')->constrained()->onDelete('cascade');
+            $table->integer('coupon_id');
+            $table->integer('group_id');
         } );
     }
 

@@ -20,7 +20,7 @@ return new class extends Migration
         if ( ! Schema::hasTable( 'nexopos_customers_addresses' ) ) {
             Schema::createIfMissing( 'nexopos_customers_addresses', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
-                $table->foreignId( 'customer_id' )->constrained()->onDelete( 'cascade' );
+                $table->integer( 'customer_id' );
                 $table->string( 'type' ); // either "billing" | "shipping"
                 $table->string( 'email' )->nullable();
                 $table->string( 'first_name' )->nullable();
@@ -41,8 +41,8 @@ return new class extends Migration
         if ( ! Schema::hasTable( 'nexopos_customers_account_history' ) ) {
             Schema::createIfMissing( 'nexopos_customers_account_history', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
-                $table->foreignId( 'customer_id' )->constrained()->onDelete( 'cascade' );
-                $table->foreignId( 'order_id' )->constrained()->onDelete( 'cascade' );
+                $table->integer( 'customer_id' );
+                $table->integer( 'order_id' );
                 $table->float( 'previous_amount' )->default( 0 );
                 $table->float( 'amount' )->default( 0 );
                 $table->float( 'next_amount' )->default( 0 );
