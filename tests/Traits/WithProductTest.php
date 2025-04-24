@@ -160,7 +160,7 @@ trait WithProductTest
         $newCategoryRefreshed = $newCategory->fresh();
 
         $this->assertGreaterThan(
-            expected: $newCategory->total_items,
+            minimum: $newCategory->total_items,
             actual: $newCategoryRefreshed->total_items,
             message: sprintf(
                 'The new category "total_items" has\nt properly been updated. %s was expected, we have %s currently defined.',
@@ -170,7 +170,7 @@ trait WithProductTest
         );
 
         $this->assertGreaterThan(
-            expected: $oldCategoryRefreshed->total_items,
+            minimum: $oldCategoryRefreshed->total_items,
             actual: $oldCategory->total_items,
             message: sprintf(
                 'The old category "total_items" has\nt properly been updated. %s was expected, we have %s currently defined.',

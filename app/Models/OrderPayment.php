@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Classes\Cache;
 use App\Events\OrderPaymentAfterCreatedEvent;
 use App\Events\OrderPaymentAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int    $id

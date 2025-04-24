@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Classes\Cache;
 use App\Events\CrudAfterDeleteEvent;
 use App\Events\CrudBeforeExportEvent;
 use App\Exceptions\NotAllowedException;
@@ -16,7 +17,6 @@ use App\Http\Requests\CrudPutRequest;
 use App\Services\CrudService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

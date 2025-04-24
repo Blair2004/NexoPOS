@@ -18,6 +18,18 @@ class TaxGroup extends NsModel
 
     protected $table = 'nexopos_' . 'taxes_groups';
 
+    public function setDependencies()
+    {
+        return [
+            Product::class => Model::dependant(
+                local_name: 'name',
+                local_index: 'id',
+                foreign_name: 'tax_group_id',
+                foreign_index: 'id',
+            ),
+        ];
+    }
+
     /**
      * define the relationship
      *

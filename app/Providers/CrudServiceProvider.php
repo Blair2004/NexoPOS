@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
+use App\Classes\Cache;
 use App\Services\ModulesService;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;

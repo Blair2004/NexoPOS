@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Cache;
 use App\Classes\Hook;
 use App\Events\ProcurementAfterCreateEvent;
 use App\Events\ProcurementAfterDeleteProductEvent;
@@ -26,7 +27,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use stdClass;
 
 class ProcurementService
