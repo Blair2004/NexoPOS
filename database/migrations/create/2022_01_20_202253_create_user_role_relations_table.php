@@ -40,7 +40,10 @@ return new class extends Migration
                 User::where( 'role_id', $role->id )
                     ->get()
                     ->each( function ( $user ) use ( $role ) {
-                        $relation = new UserRoleRelation;
+                        $relation = UserRoleRelation::where( 'user_id', $user->id )
+                            ->where( 'role_id', $role->id )
+                            ->firstOrNew();
+                            
                         $relation->user_id = $user->id;
                         $relation->role_id = $role->id;
                         $relation->save();
