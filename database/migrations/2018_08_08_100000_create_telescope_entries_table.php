@@ -47,7 +47,8 @@ return new class extends Migration
 
             $table->foreign( 'entry_uuid' )
                 ->references( 'uuid' )
-                ->on( 'telescope_entries' );
+                ->on( 'telescope_entries' )
+                ->onDelete( 'cascade' );
         } );
 
         $schema->create( 'telescope_monitoring', function ( Blueprint $table ) {
