@@ -10,7 +10,13 @@ abstract class FieldsService
 
     public function get()
     {
-        return $this->fields;
+        // Filter fields to include only those with 'show' set to true
+        return array_filter($this->fields, function ($field) {
+            if (isset($field['show']) && is_callable($field['show'])) {
+                return $field['show']();
+            }
+            return true; // Default to true if 'show' is not set
+        });
     }
 
     /**

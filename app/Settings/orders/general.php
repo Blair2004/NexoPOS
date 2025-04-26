@@ -70,16 +70,6 @@ return SettingForm::tabs(
                 description: __( 'Quotations will get deleted after they defined they has reached.' ),
                 options: $expirationOptions,
             ),
-            FormInput::switch(
-                label: __( 'Force Driver Selection' ),
-                name: 'ns_orders_force_driver_selection',
-                value: ns()->option->get( 'ns_orders_force_driver_selection' ),
-                description: __( 'Will force the user to select a driver for delivery order.' ),
-                options: Helper::kvToJsOptions( [
-                    'yes' => __( 'Yes' ),
-                    'no' => __( 'No' ),
-                ] ),
-            ),
         )
     )
 );

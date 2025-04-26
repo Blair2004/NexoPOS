@@ -48,6 +48,12 @@ export default class FormValidation {
                     tabsInvalidity.push(
                         validErrors
                     );
+
+                    /**
+                     * This will add a notification on the tab
+                     * to indicate the user that there are errors
+                     */
+                    form.tabs[ key ].errors.push( ...validErrors );
                 }
 
                 globalErrors.push( tabsInvalidity.flat() );
@@ -447,7 +453,7 @@ export default class FormValidation {
     
                 same: (field, rule) => {
                     const similar = this.getValueByDotNotation( form, rule.value );
-                    return similar && field.value !== similar;
+                    return `${similar}`.length > 0 && field.value !== similar;
                 },
     
                 different: (field, rule) => {

@@ -17,7 +17,15 @@ class SettingsPage
     protected string $view;
 
     /**
-     * returns the defined form
+     * Retrieves the form configuration, filtering tabs and fields based on their visibility.
+     *
+     * This method iterates over the tabs and fields in the form configuration. For each tab and field:
+     * - If the 'show' key is set and is a callable, it evaluates the callable to determine visibility.
+     * - If the 'show' key is not set, it defaults to true, making the tab or field visible.
+     *
+     * The filtered form configuration is then passed through a hook for further customization.
+     *
+     * @return array The filtered form configuration.
      */
     public function getForm(): array
     {
@@ -38,6 +46,14 @@ class SettingsPage
                         if ( ! isset( $tab[ 'fields' ] ) ) {
                             $tab[ 'fields' ] = [];
                         }
+
+                        $tab['fields'] = collect($tab['fields'])->filter(function ($field) {
+                            if (isset($field['show']) && is_callable($field['show'])) {
+                                return $field['show']();
+                            }
+
+                            return true;
+                        })->toArray();
 
                         return [ $key => $tab ];
                     } ),

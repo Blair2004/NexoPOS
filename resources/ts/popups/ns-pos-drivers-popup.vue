@@ -26,7 +26,7 @@
                 <ns-switch @change="loadDrivers( $event )" size="72" :field="field" v-for="field of fields"></ns-switch>
             </div>
             <div>
-                <ns-button v-if="options.ns_orders_force_driver_selection === 'no'" @click="proceed()" type="info">{{ __( 'Skip' ) }}</ns-button>
+                <ns-button v-if="options.ns_drivers_force_selection === 'no'" @click="proceed()" type="info">{{ __( 'Skip' ) }}</ns-button>
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@ export default {
         popupResolver,
         popupCloser,
         closePopup() {
-            if ( this.options.ns_orders_force_driver_selection === 'yes' ) {
+            if ( this.options.ns_drivers_force_selection === 'yes' ) {
                 this.popup.params.reject( false );
                 this.popup.close();
             } else {

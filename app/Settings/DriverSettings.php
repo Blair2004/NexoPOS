@@ -40,7 +40,18 @@ class DriverSettings extends SettingsPage
                             value: ns()->option->get( 'ns_drivers_enabled', 'no' ),
                             description: __( 'Enable or disable the driver feature.' ),
                             options: Helper::kvToJsOptions( [ 'yes' => __( 'Yes' ), 'no' => __( 'No' ) ] )
-                        )
+                        ),
+                        FormInput::switch(
+                            label: __( 'Force Driver Selection' ),
+                            name: 'ns_drivers_force_selection',
+                            value: ns()->option->get( 'ns_drivers_force_selection' ),
+                            description: __( 'Will force the user to select a driver for delivery order.' ),
+                            show: ns()->option->get( 'ns_drivers_enabled', 'no' ) === 'yes',
+                            options: Helper::kvToJsOptions( [
+                                'yes' => __( 'Yes' ),
+                                'no' => __( 'No' ),
+                            ] ),
+                        ),
                     )
                 )
             )

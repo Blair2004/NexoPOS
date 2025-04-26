@@ -12,7 +12,7 @@ export class DriverQueue implements Queue {
             const options = POS.options.getValue();
 
             if (
-                options.ns_orders_force_driver_selection === 'yes' && 
+                options.ns_drivers_force_selection === 'yes' && 
                 this.order.type && this.order.type.identifier === 'delivery' &&
                 [ null, undefined ].includes( this.order.driver )
             ) {

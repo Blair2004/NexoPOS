@@ -124,7 +124,9 @@ export default {
             }
         },
         async submitForm() {
-            if ( this.validation.validateForm( this.form ).length > 0 ) {
+            const validation = this.validation.validateForm( this.form );
+            if ( validation.length > 0 ) {
+                console.log( validation );
                 return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) );
             }
             
