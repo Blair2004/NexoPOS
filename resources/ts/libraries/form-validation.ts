@@ -303,7 +303,7 @@ export default class FormValidation {
             const sameRule = /(same):([^|]+)/;
             const diffRule = /(different):([^|]+)/;
             const sometimesRule = /(sometimes)/;
-            const regexRule = /(regex):(.+?)(?=\||$)/; // Update regex parsing
+            const regexRule = /(regex):\/(.+?)\/(?=\||$)/; // Update regex parsing
             const number = /(number)/;
     
             let result;

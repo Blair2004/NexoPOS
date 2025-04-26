@@ -6,7 +6,7 @@
                 <i class="lar la-check-circle text-2xl text-success-tertiary"></i>
             </div>
             <div class="flex-auto items-center flex p-3 pl-0">
-                <p class="text-white py-1">{!! session()->get( 'message' )[ 'message' ] ?? __( 'Invalid Error Message' ) !!}</p>
+                <p class="text-fontcolor py-1">{!! session()->get( 'message' )[ 'message' ] ?? __( 'Invalid Error Message' ) !!}</p>
             </div>
         </div>
         <div class="flex w-full md:w-28 justify-end md:justify-center md:items-center">
@@ -16,10 +16,10 @@
     @else
     <div class="flex border border-success-secondary bg-success-primary rounded-lg mb-3">
         <div class="p-3">
-            <i class="lar la-check-circle text-2xl text-white"></i>
+            <i class="lar la-check-circle text-2xl text-fontcolor"></i>
         </div>
         <div class="flex-auto items-center flex">
-            <p class="text-white py-1">{!! session()->get( 'message' ) !!}</p>
+            <p class="text-fontcolor py-1">{!! session()->get( 'message' ) !!}</p>
         </div>
     </div>
     @endif

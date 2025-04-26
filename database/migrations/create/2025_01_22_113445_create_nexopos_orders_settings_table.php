@@ -14,7 +14,7 @@ return new class extends Migration
         if ( ! Schema::hasTable( 'nexopos_orders_settings' ) ) {
             Schema::create( 'nexopos_orders_settings', function ( Blueprint $table ) {
                 $table->id();
-                $table->integer('order_id');
+                $table->integer( 'order_id' );
                 $table->string( 'key' );
                 $table->text( 'value' )->nullable();
                 $table->timestamps();
