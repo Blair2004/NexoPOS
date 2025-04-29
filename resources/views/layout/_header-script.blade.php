@@ -50,7 +50,7 @@ $dateService    =   app()->make( DateService::class );
          * logged user. The password might be displayed on an encrypted form.
          */
         window.ns.user              =   <?php echo json_encode( ns()->getUserDetails() );?>;
-        window.ns.user.attributes   =   <?php echo json_encode( Auth::user()->attribute->first() );?>;
+        window.ns.user.attributes   =   <?php echo json_encode( Auth::user()->attribute );?>;
         @endauth
         
         window.ns.cssFiles          =   <?php echo json_encode( ns()->simplifyManifest() );?>;

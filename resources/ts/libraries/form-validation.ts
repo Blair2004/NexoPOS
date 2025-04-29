@@ -36,6 +36,7 @@ export default class FormValidation {
              * Only tabs having fields can be verified.
              */
             const tabsInvalidity    =   [];
+            form.tabs[ key ].errors =   [];
 
             /**
              * if the tabs has some fields

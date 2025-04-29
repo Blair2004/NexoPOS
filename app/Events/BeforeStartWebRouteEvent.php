@@ -6,6 +6,9 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @todo refactoring to a more clear name is needed
+ */
 class BeforeStartWebRouteEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;

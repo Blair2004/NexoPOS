@@ -1,5 +1,5 @@
 <template>
-    <div :class="sizeSet[currentSize]">
+    <div :class="sizeSet[currentSize] + ' flex items-center justify-center'">
         <img v-if="url !== '' && url !== null" :src="url" class="overflow-hidden rounded-full" :alt="name" srcset="">
         <div :class="sizeSet[currentSize]" v-html="svg" v-if="url === '' || url === null"></div>
     </div>
