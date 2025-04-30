@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\CrudEntry;
 use App\Classes\CrudTable;
-use App\Classes\CrudInput;
+use App\Classes\FormInput;
 use App\Classes\CrudForm;
 use App\Classes\CrudScope;
 use App\Exceptions\NotAllowedException;
@@ -199,7 +199,7 @@ class DriverOrderCrud extends CrudService
     public function getForm(Order | null $entry = null): array
     {
         return CrudForm::form(
-            main: CrudInput::text(
+            main: FormInput::text(
                 label: __('Name'),
                 name: 'name',
                 validation: 'required',
@@ -210,235 +210,235 @@ class DriverOrderCrud extends CrudService
                     identifier: 'general',
                     label: __('General'),
                     fields: CrudForm::fields(
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Id'),
                             name: 'id',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Description'),
                             name: 'description',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Code'),
                             name: 'code',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Title'),
                             name: 'title',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Type'),
                             name: 'type',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Payment_status'),
                             name: 'payment_status',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Process_status'),
                             name: 'process_status',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Delivery_status'),
                             name: 'delivery_status',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Discount'),
                             name: 'discount',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Discount_type'),
                             name: 'discount_type',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Support_instalments'),
                             name: 'support_instalments',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Discount_percentage'),
                             name: 'discount_percentage',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Shipping'),
                             name: 'shipping',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Shipping_rate'),
                             name: 'shipping_rate',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Shipping_type'),
                             name: 'shipping_type',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Total_without_tax'),
                             name: 'total_without_tax',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Subtotal'),
                             name: 'subtotal',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Total_with_tax'),
                             name: 'total_with_tax',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Total_coupons'),
                             name: 'total_coupons',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Total_cogs'),
                             name: 'total_cogs',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Total'),
                             name: 'total',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Tax_value'),
                             name: 'tax_value',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Products_tax_value'),
                             name: 'products_tax_value',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Tax_group_id'),
                             name: 'tax_group_id',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Tax_type'),
                             name: 'tax_type',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Tendered'),
                             name: 'tendered',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Change'),
                             name: 'change',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Final_payment_date'),
                             name: 'final_payment_date',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Total_instalments'),
                             name: 'total_instalments',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Customer_id'),
                             name: 'customer_id',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Note'),
                             name: 'note',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Note_visibility'),
                             name: 'note_visibility',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Author'),
                             name: 'author',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Uuid'),
                             name: 'uuid',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Register_id'),
                             name: 'register_id',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Voidance_reason'),
                             name: 'voidance_reason',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Driver_id'),
                             name: 'driver_id',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Created_at'),
                             name: 'created_at',
                             validation: 'required',
                             description: __('Provide a name to the resource.'),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __('Updated_at'),
                             name: 'updated_at',
                             validation: 'required',

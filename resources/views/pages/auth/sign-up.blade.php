@@ -2,6 +2,7 @@
 
 use App\Classes\Output;
 use App\Classes\Hook;
+use App\Events\RenderSignUpFooterEvent;
 ?>
 
 @extends( 'layout.base' )
@@ -26,6 +27,6 @@ use App\Classes\Hook;
 
 @section( 'layout.base.footer' )
     @parent
-    {!! Hook::filter( 'ns-register-footer', new Output ) !!}
+    {!! Output::dispatch( RenderSignUpFooterEvent::class ) !!}
     @vite([ 'resources/ts/auth.ts' ])
 @endsection

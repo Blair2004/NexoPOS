@@ -255,6 +255,7 @@ class ModulesService
                 $config[ 'providers' ] = $this->getAllValidFiles( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' ) );
                 $config[ 'actions' ] = $this->getAllValidFiles( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Actions' ) );
                 $config[ 'filters' ] = $this->getAllValidFiles( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Filters' ) );
+                $config[ 'config-files' ] = $this->getAllValidFiles( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Config' ) );
                 $config[ 'commands' ] = collect( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands' ) )
                     ->mapWithKeys( function ( $file ) {
                         $className = str_replace(
@@ -530,6 +531,18 @@ class ModulesService
 
         // add view namespace
         View::addNamespace( ucwords( $module[ 'namespace' ] ), $module[ 'views-path' ] );
+
+        // we'll try to load all configuration files that are available on this module
+        // and make sure to load them on global object.
+        foreach( $module[ 'config-files' ] as $file ) {
+            $config     =   include( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
+            $config     =   Arr::dot( $config );
+            $config     =   collect( $config )->mapWithKeys( function ( $value, $key ) use ( $module ) {
+                return [ 'modules.' . $module[ 'namespace' ] . '.' . $key => $value ];
+            } );
+            $config     =   $config->toArray();
+            config( $config );
+        }
     }
 
     /**

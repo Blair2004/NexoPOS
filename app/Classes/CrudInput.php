@@ -2,7 +2,10 @@
 
 namespace App\Classes;
 
-class CrudInput extends Input
+/**
+ * @deprecated
+ */
+class CrudInput extends FormInput
 {
     // ...
 }

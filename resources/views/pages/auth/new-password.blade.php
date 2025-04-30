@@ -1,6 +1,9 @@
 <?php
 use App\Classes\Hook;
 use App\Classes\Output;
+use App\Events\RenderBeforeNewPasswordFormEvent;
+use App\Events\RenderAfterNewPasswordFormEvent;
+use App\Events\RenderNewPasswordFooterEvent;
 ?>
 
 @extends( 'layout.base' )
@@ -12,9 +15,9 @@ use App\Classes\Output;
                 <div class="flex justify-center items-center py-6">
                     <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="NexoPOS">
                 </div>
-                {!! Hook::filter( 'ns.before-new-password-form', new Output ) !!}
+                {!! Output::dispatch( RenderBeforeNewPasswordFormEvent::class ) !!}
                 @include( '/common/auth/new-password-form' )
-                {!! Hook::filter( 'ns.after-new-password-form', new Output ) !!}
+                {!! Output::dispatch( RenderAfterNewPasswordFormEvent::class ) !!}
             </div>
         </div>
     </div>
@@ -22,6 +25,6 @@ use App\Classes\Output;
 
 @section( 'layout.base.footer' )
     @parent
-    {!! Hook::filter( 'ns-new-password-footer', new Output ) !!}
+    {!! Output::dispatch( RenderNewPasswordFooterEvent::class ) !!}
     @vite([ 'resources/ts/auth.ts' ])
 @endsection

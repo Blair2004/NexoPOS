@@ -6,11 +6,7 @@ use App\Events\AfterDashboardTitleEvent;
 use App\Events\BeforeDashboardTitleEvent;
 
 ?>
-<?php
-    $output     =   new Output;
-    BeforeDashboardTitleEvent::dispatch( $output );
-    echo $output;
-?>
+<?php echo Output::dispatch( BeforeDashboardTitleEvent::class ); ?>
 
 <div class="page-inner-header mb-4">
     <h3 class="text-3xl text-fontcolor font-bold">{!! $title ?? __( 'Unnamed Page' ) !!}</h3>
@@ -18,8 +14,4 @@ use App\Events\BeforeDashboardTitleEvent;
 </div>
 @include( 'components.session-message' )
 
-<?php
-    $output     =   new Output;
-    AfterDashboardTitleEvent::dispatch( $output );
-    echo $output;
-?>
+<?php echo Output::dispatch( AfterDashboardTitleEvent::class ); ?>

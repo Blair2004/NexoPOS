@@ -5,14 +5,6 @@ use App\Classes\Output;
 use App\Events\AfterLoginFieldsEvent;
 use App\Events\BeforeLoginFieldsEvent;
 use App\Events\RenderLoginFooterEvent;
-
-$beforeForm             =   new Output;
-$afterForm              =   new Output;
-$renderLoginFooterEvent =   new Output;
-
-BeforeLoginFieldsEvent::dispatch( $beforeForm );
-AfterLoginFieldsEvent::dispatch( $afterForm );
-RenderLoginFooterEvent::dispatch( $renderLoginFooterEvent );
 ?>
 @extends( 'layout.base' )
 
@@ -28,9 +20,9 @@ RenderLoginFooterEvent::dispatch( $renderLoginFooterEvent );
                     @endif
                 </div>
                 <x-session-message></x-session-message>
-                {!! $beforeForm !!}
+                {!! Output::dispatch( BeforeLoginFieldsEvent::class ) !!}
                 @include( '/common/auth/sign-in-form' )
-                {!! $afterForm !!}
+                {!! Output::dispatch( AfterLoginFieldsEvent::class ) !!}
             </div>
         </div>
     </div>
@@ -38,6 +30,6 @@ RenderLoginFooterEvent::dispatch( $renderLoginFooterEvent );
 
 @section( 'layout.base.footer' )
     @parent
-    {!! $renderLoginFooterEvent !!}
+    {!! Output::dispatch( RenderLoginFooterEvent::class ) !!}
     @vite([ 'resources/ts/auth.ts' ])
 @endsection

@@ -3,11 +3,7 @@
 use App\Classes\Output;
 use App\Events\RenderHeaderEvent;
 
-$output     =   new Output;
-
-RenderHeaderEvent::dispatch( 
-    $output, 
-    request()->route()->getName()
+echo Output::dispatch( 
+    RenderHeaderEvent::class, 
+    request()->route()->getName() 
 );
-
-echo $output;

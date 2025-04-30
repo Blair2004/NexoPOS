@@ -1,6 +1,9 @@
 <?php
 use App\Classes\Hook;
 use App\Classes\Output;
+use App\Events\RenderBeforePasswordRecoveryFormEvent;
+use App\Events\RenderAfterPasswordRecoveryFormEvent;
+use App\Events\RenderPasswordLostFooterEvent;
 ?>
 
 @extends( 'layout.base' )
@@ -12,9 +15,9 @@ use App\Classes\Output;
                 <div class="flex justify-center items-center py-6">
                     <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="NexoPOS">
                 </div>
-                {!! Hook::filter( 'ns.before-password-recovery-form', new Output ) !!}
+                {!! Output::dispatch( RenderBeforePasswordRecoveryFormEvent::class ); !!}
                 @include( '/common/auth/password-recovery-form' )
-                {!! Hook::filter( 'ns.after-password-recovery-form', new Output ) !!}
+                {!! Output::dispatch( RenderAfterPasswordRecoveryFormEvent::class ); !!}
             </div>
         </div>
     </div>
@@ -22,6 +25,6 @@ use App\Classes\Output;
 
 @section( 'layout.base.footer' )
     @parent
-    {!! Hook::filter( 'ns-password-recovery-footer', new Output ) !!}
+    {!! Output::dispatch( RenderPasswordLostFooterEvent::class ); !!}
     @vite([ 'resources/ts/auth.ts' ])
 @endsection

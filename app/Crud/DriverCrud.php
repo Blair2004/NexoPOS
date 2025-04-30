@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\CrudEntry;
 use App\Classes\CrudTable;
-use App\Classes\CrudInput;
+use App\Classes\FormInput;
 use App\Classes\CrudForm;
 use App\Classes\CrudScope;
 use App\Classes\Output;
@@ -203,7 +203,7 @@ class DriverCrud extends CrudService
     public function getForm( Driver | null $entry = null ): array
     {
         return CrudForm::form(
-            main: CrudInput::text(
+            main: FormInput::text(
                 label: __( 'Username' ),
                 name: 'username',
                 validation: 'required',
@@ -214,42 +214,42 @@ class DriverCrud extends CrudService
                     identifier: 'general',
                     label: __( 'General' ),
                     fields: CrudForm::fields(
-                        CrudInput::switch(
+                        FormInput::switch(
                             label: __( 'Active' ),
                             options: Helper::kvToJsOptions( [ __( 'No' ), __( 'Yes' ) ] ),
                             name: 'active',
                             validation: 'required',
                             description: __( 'Set wether the driver is active or not.' ),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __( 'Email' ),
                             name: 'email',
                             validation: 'required',
                             description: __( 'Provide the driver\'s email' )
                         ),
-                        CrudInput::password(
+                        FormInput::password(
                             label: __( 'Password' ),
                             name: 'password',
                             validation: 'required',
                             description: __( 'Set the driver password.' ),
                         ),
-                        CrudInput::password(
+                        FormInput::password(
                             label: __( 'Confirm password' ),
                             name: 'password',
                             validation: 'same:general.password',
                             description: __( 'Confirm the driver password.' ),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __( 'First Name' ),
                             name: 'first_name',
                             description: __( 'Set the driver first name.' ),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __( 'Last Name' ),
                             name: 'last_name',
                             description: __( 'Set the driver last name.' ),
                         ),
-                        CrudInput::select(
+                        FormInput::select(
                             label: __( 'Gender' ),
                             name: 'gender',
                             options: Helper::kvToJsOptions([
@@ -259,17 +259,17 @@ class DriverCrud extends CrudService
                             ]),
                             description: __( 'Provide the driver\'s gender.' ),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __( 'Phone' ),
                             name: 'phone',
                             description: __( 'Set the driver phone number.' ),
                         ),
-                        CrudInput::text(
+                        FormInput::text(
                             label: __( 'Pobox' ),
                             name: 'pobox',
                             description: __( 'Set the driver PO Box.' ),
                         ),
-                        CrudInput::date(
+                        FormInput::date(
                             label: __( 'Birth_date' ),
                             name: 'birth_date',
                             description: __( 'Set the driver birth date.' ),

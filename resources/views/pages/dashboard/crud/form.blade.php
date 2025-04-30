@@ -26,9 +26,5 @@ use App\Events\RenderCrudFormFooterEvent;
 
 @section( 'layout.dashboard.footer' )
     @parent
-    <?php
-    $output     =   new Output;
-    RenderCrudFormFooterEvent::dispatch( $output, $instance );
-    echo $output;
-    ?>
+    <?php echo Output::dispatch( RenderCrudFormFooterEvent::class, $instance ); ?>
 @endsection

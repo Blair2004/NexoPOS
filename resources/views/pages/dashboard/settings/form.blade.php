@@ -24,9 +24,5 @@ use App\Events\RenderSettingsFooterEvent;
 
 @section( 'layout.dashboard.footer' )
     @parent
-    <?php
-    $output     =   new Output;
-    RenderSettingsFooterEvent::dispatch( $output, $instance );
-    echo $output;
-    ?>
+    <?php echo Output::dispatch( RenderSettingsFooterEvent::class, $instance );?>
 @endsection

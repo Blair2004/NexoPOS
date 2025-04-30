@@ -1,6 +1,7 @@
 <?php
 use App\Classes\Hook;
 use App\Classes\Output;
+use App\Events\RenderProfileFooterEvent;
 ?>
 @extends( 'layout.dashboard' )
 
@@ -21,5 +22,5 @@ use App\Classes\Output;
 
 @section( 'layout.dashboard.footer' )
     @parent
-    {!! ( string ) Hook::filter( 'ns-profile-footer', new Output ) !!}
+    <?php echo Output::dispatch( RenderProfileFooterEvent::class ); ?>
 @endsection
