@@ -427,7 +427,7 @@ class CoreService
             );
         }
 
-        $viteConfigFile = $module[ 'path' ] . DIRECTORY_SEPARATOR . 'vite.config.js';
+        $viteConfigFile = $module[ 'path' ] . 'vite.config.js';
 
         if ( ! file_exists( $viteConfigFile ) ) {
             throw new NotFoundException(
@@ -438,70 +438,116 @@ class CoreService
             );
         }
 
-        $ds = DIRECTORY_SEPARATOR;
-
         /**
          * let's read the outDir value from the vite.config.js file
          */
         $viteConfig = file_get_contents( $viteConfigFile );
 
-        if ( preg_match( '/outDir:\s*[\'"](.+?)[\'"]/', $viteConfig, $matches ) ) {
-            $buildDirectory = $matches[1]; // Return the matched outDir value
-        } else {
-            $buildDirectory = 'Public' . $ds . 'build'; // Default build directory
-        }
-
-        $possiblePaths = [
-            rtrim( $module['path'], $ds ) . $ds . $buildDirectory . $ds . '.vite' . $ds . 'manifest.json',
-            rtrim( $module['path'], $ds ) . $ds . $buildDirectory . $ds . 'manifest.json',
-        ];
-
         $assets = collect( [] );
         $errors = [];
 
-        $buildFolderName = last( preg_split( '/[\/\\\\]/', $buildDirectory ) );
+        /**
+         * We need to define the location of the hot file. We'll start by checking if the vite.config.js file
+         * includes a hotFile variable. The location is it's value.
+         */
+        if ( preg_match( '/hotFile:\s*[\'"](.+?)[\'"]/', $viteConfig, $matches ) ) {
+            $hotFilePath = $matches[1]; // Return the matched hotFile value
+        } else {
+            $hotFilePath = 'Public' . DIRECTORY_SEPARATOR . 'hot';
+        }
 
-        foreach ( $possiblePaths as $manifestPath ) {
-            if ( ! file_exists( $manifestPath ) ) {
-                $errors[] = $manifestPath;
+        /**
+         * If the hot file is not a file. When we'll load the assets directly from the
+         * manifest.json file.
+         */
+        if ( file_exists( $module[ 'path' ] . $hotFilePath ) ) {
+            $url    =   file_get_contents( $module[ 'path' ] . $hotFilePath );
+            $pathinfo   =   pathinfo( $fileName );
 
-                continue;
-            }
-
-            $manifestArray = json_decode( file_get_contents( $manifestPath ), true );
-
-            if ( ! isset( $manifestArray[ $fileName ] ) ) {
+            if ( in_array( $pathinfo[ 'extension' ], [ 'js', 'ts', 'tsx', 'jsx' ] ) ) {
+                $assets->prepend( '<script type="module" src="' . $url . '/' . $fileName . '"></script>' );
+            } else if ( in_array( $pathinfo[ 'extension'], [ 'css', 'scss' ] ) ) {
+                $assets->push( '<link rel="stylesheet" href="' . $url . '/' . $fileName . '"/>' );
+            } else {
                 throw new NotFoundException(
                     sprintf(
-                        __( 'the requested file "%s" can\'t be located inside the manifest.json for the module %s.' ),
-                        $fileName,
-                        $module[ 'name' ]
+                        __( 'The requested file %s is not a valid asset.' ),
+                        $fileName
                     )
                 );
             }
+        } else {
 
-            /**
-             * checks if a css file is declared as well
-             */
-            $jsUrl = asset( 'modules/' . strtolower( $moduleId ) . '/' . $buildFolderName . '/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
+            $ds = DIRECTORY_SEPARATOR;
+    
+            if ( preg_match( '/outDir:\s*[\'"](.+?)[\'"]/', $viteConfig, $matches ) ) {
+                $buildDirectory = $matches[1]; // Return the matched outDir value
+            } else {
+                $buildDirectory = 'Public' . $ds . 'build'; // Default build directory
+            }
+    
+            $possiblePaths = [
+                rtrim( $module['path'], $ds ) . $ds . $buildDirectory . $ds . '.vite' . $ds . 'manifest.json',
+                rtrim( $module['path'], $ds ) . $ds . $buildDirectory . $ds . 'manifest.json',
+            ];
+    
+            $buildFolderName = last( preg_split( '/[\/\\\\]/', $buildDirectory ) );
+    
+            foreach ( $possiblePaths as $manifestPath ) {
+                if ( ! file_exists( $manifestPath ) ) {
+                    $errors[] = $manifestPath;
+    
+                    continue;
+                }
+    
+                $manifestArray = json_decode( file_get_contents( $manifestPath ), true );
+    
+                if ( ! isset( $manifestArray[ $fileName ] ) ) {
+                    throw new NotFoundException(
+                        sprintf(
+                            __( 'the requested file "%s" can\'t be located inside the manifest.json for the module %s.' ),
+                            $fileName,
+                            $module[ 'name' ]
+                        )
+                    );
+                }
+    
+                /**
+                 * checks if a css file is declared as well
+                 */
+                $assetURL = asset( 'modules/' . strtolower( $moduleId ) . '/' . $buildFolderName . '/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
+    
+                if ( ! empty( $manifestArray[ $fileName ][ 'css' ] ) ) {
+                    $assets = collect( $manifestArray[ $fileName ][ 'css' ] )->map( function ( $url ) use ( $moduleId, $buildFolderName ) {
+                        return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/' . $buildFolderName . '/' . $url ) . '"/>';
+                    } );
+                }
 
-            if ( ! empty( $manifestArray[ $fileName ][ 'css' ] ) ) {
-                $assets = collect( $manifestArray[ $fileName ][ 'css' ] )->map( function ( $url ) use ( $moduleId, $buildFolderName ) {
-                    return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/' . $buildFolderName . '/' . $url ) . '"/>';
-                } );
+                $pathinfo   =   pathinfo( $assetURL );
+
+                if ( in_array( $pathinfo[ 'extension' ], [ 'js', 'ts', 'tsx', 'jsx' ] ) ) {
+                    $assets->prepend( '<script type="module" src="' . $assetURL . '"></script>' );
+                } else if ( in_array( $pathinfo[ 'extension'], [ 'css', 'scss' ] ) ) {
+                    $assets->push( '<link rel="stylesheet" href="' . $assetURL . '"/>' );
+                } else {
+                    throw new NotFoundException(
+                        sprintf(
+                            __( 'The requested file %s is not a valid asset.' ),
+                            $fileName
+                        )
+                    );
+                }
             }
 
-            $assets->prepend( '<script type="module" src="' . $jsUrl . '"></script>' );
-        }
-
-        if ( count( $errors ) === count( $possiblePaths ) ) {
-            throw new NotFoundException(
-                sprintf(
-                    __( 'The manifest file for the module %s wasn\'t found on all possible directories: %s.' ),
-                    $module[ 'name' ],
-                    collect( $errors )->join( ', ' ),
-                )
-            );
+            if ( count( $errors ) === count( $possiblePaths ) ) {
+                throw new NotFoundException(
+                    sprintf(
+                        __( 'The manifest file for the module %s wasn\'t found on all possible directories: %s.' ),
+                        $module[ 'name' ],
+                        collect( $errors )->join( ', ' ),
+                    )
+                );
+            }
         }
 
         return $assets->flatten()->join( '' );
