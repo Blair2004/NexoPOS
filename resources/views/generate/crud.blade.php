@@ -43,16 +43,10 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     protected $slug = '{{ strtolower( trim( $route_name ) ) }}';
 
     /**
-     * Define namespace
-     * @param string
-     */
-    protected $namespace = '{{ strtolower( trim( $namespace ) ) }}';
-
-    /**
      * To be able to autoload the class, we need to define
      * the identifier on a constant.
      */
-    const IDENTIFIER = '{{ strtolower( trim( $namespace ) ) }}';
+    const IDENTIFIER = '{{ strtolower( trim( $identifier ) ) }}';
 
     /**
      * Model Used
@@ -287,9 +281,9 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * This triggers actions that will be executed ebfore
      * the crud entry is deleted.
      */
-    public function beforeDelete( $namespace, $id, $model ): void
+    public function beforeDelete( $identifier, $id, $model ): void
     {
-        if ( $namespace == '{{ strtolower( trim( $namespace ) ) }}' ) {
+        if ( $identifier == self::IDENTIFIER ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -340,7 +334,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             identifier: 'delete',
             label: {{ isset( $module ) ? '__m' : '__' }}( 'Delete'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
             type: 'DELETE',
-            url: ns()->url( '/api/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
+            url: ns()->url( '/api/crud/' . self::IDENTIFIER . $entry->id ),
             confirm: [
                 'message'  =>  {{ isset( $module ) ? '__m' : '__' }}( 'Would you like to delete this ?'{!! isset( $module ) ? ', \'' . $module[ 'namespace' ] . '\'' : "" !!} ),
             ]
@@ -401,8 +395,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             list:  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
             create:  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
             edit:  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
-            post:  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
-            put:  ns()->url( 'api/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
+            post:  ns()->url( 'api/crud/' . self::IDENTIFIER ),
+            put:  ns()->url( 'api/crud/' . self::IDENTIFIER . '/{id}' . '' ),
         );
     }
 

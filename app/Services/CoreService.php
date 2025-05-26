@@ -73,9 +73,14 @@ class CoreService
      * Returns a filtred URL to which
      * apply the filter "ns-url" hook.
      */
-    public function url( ?string $url = null ): string
+    public function url( ?string $url = null, $params = [] ): string
     {
-        return url( Hook::filter( 'ns-url', $url ) );
+        $url = url( Hook::filter( 'ns-url', $url ) );
+
+        return preg_replace_callback('/\{(\w+)\}/', function ($matches) use ($params) {
+            $key = $matches[1];
+            return isset($params[$key]) ? $params[$key] : $matches[0];
+        }, $url );
     }
 
     /**

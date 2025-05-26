@@ -1,0 +1,58 @@
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  fonts-droid-fallback fonts-noto-mono fonts-urw-base35 ghostscript gsfonts
+  imagemagick-6-common libavahi-client3 libavahi-common-data libavahi-common3
+  libcups2 libfftw3-double3 libgs9 libgs9-common libidn12 libijs-0.35
+  libjbig2dec0 liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-6
+  libmagickwand-6.q16-6 libopenjp2-7 libpaper-utils libpaper1 libwebpdemux2
+  libwebpmux3 libxmlrpc-epi0 poppler-data
+Suggested packages:
+  fonts-noto fonts-freefont-otf | fonts-freefont-ttf fonts-texgyre
+  ghostscript-x cups-common libfftw3-bin libfftw3-dev liblcms2-utils
+  libmagickcore-6.q16-6-extra poppler-utils fonts-japanese-mincho
+  | fonts-ipafont-mincho fonts-japanese-gothic | fonts-ipafont-gothic
+  fonts-arphic-ukai fonts-arphic-uming fonts-nanum
+The following NEW packages will be installed:
+  fonts-droid-fallback fonts-noto-mono fonts-urw-base35 ghostscript gsfonts
+  imagemagick-6-common libavahi-client3 libavahi-common-data libavahi-common3
+  libcups2 libfftw3-double3 libgs9 libgs9-common libidn12 libijs-0.35
+  libjbig2dec0 liblcms2-2 liblqr-1-0 libltdl7 libmagickcore-6.q16-6
+  libmagickwand-6.q16-6 libopenjp2-7 libpaper-utils libpaper1 libwebpdemux2
+  libwebpmux3 libxmlrpc-epi0 php8.2-imagick php8.2-xmlrpc poppler-data
+0 upgraded, 30 newly installed, 0 to remove and 110 not upgraded.
+Need to get 23.7 MB of archives.
+After this operation, 82.0 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu jammy/main amd64 fonts-droid-fallback all 1:6.0.1r16-1.1build1 [1805 kB]
+Err:2 https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy/main amd64 php8.2-imagick amd64 3.7.0-9+ubuntu22.04.1+deb.sury.org+1
+  404  Not Found [IP: 185.125.190.80 443]
+Get:3 https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy/main amd64 php8.2-xmlrpc amd64 3:1.0.0~rc3-10+ubuntu22.04.1+deb.sury.org+1 [17.1 kB]
+Get:4 http://archive.ubuntu.com/ubuntu jammy/main amd64 libfftw3-double3 amd64 3.3.8-2ubuntu8 [770 kB]
+Get:5 http://archive.ubuntu.com/ubuntu jammy/main amd64 liblcms2-2 amd64 2.12~rc1-2build2 [159 kB]
+Get:6 http://archive.ubuntu.com/ubuntu jammy/universe amd64 liblqr-1-0 amd64 0.4.2-2.1 [27.7 kB]
+Get:7 http://archive.ubuntu.com/ubuntu jammy/main amd64 libltdl7 amd64 2.4.6-15build2 [39.6 kB]
+Get:8 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libopenjp2-7 amd64 2.4.0-6ubuntu0.3 [158 kB]
+Get:9 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libwebpdemux2 amd64 1.2.2-2ubuntu0.22.04.2 [9964 B]
+Get:10 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libwebpmux3 amd64 1.2.2-2ubuntu0.22.04.2 [20.5 kB]
+Get:11 http://archive.ubuntu.com/ubuntu jammy-updates/universe amd64 imagemagick-6-common all 8:6.9.11.60+dfsg-1.3ubuntu0.22.04.5 [64.3 kB]
+Get:12 http://archive.ubuntu.com/ubuntu jammy-updates/universe amd64 libmagickcore-6.q16-6 amd64 8:6.9.11.60+dfsg-1.3ubuntu0.22.04.5 [1795 kB]
+Get:13 http://archive.ubuntu.com/ubuntu jammy-updates/universe amd64 libmagickwand-6.q16-6 amd64 8:6.9.11.60+dfsg-1.3ubuntu0.22.04.5 [328 kB]
+Get:14 http://archive.ubuntu.com/ubuntu jammy/universe amd64 libxmlrpc-epi0 amd64 0.54.2-1.2 [30.5 kB]
+Get:15 http://archive.ubuntu.com/ubuntu jammy/main amd64 poppler-data all 0.4.11-1 [2171 kB]
+Get:16 http://archive.ubuntu.com/ubuntu jammy/main amd64 fonts-noto-mono all 20201225-1build1 [397 kB]
+Get:17 http://archive.ubuntu.com/ubuntu jammy/main amd64 fonts-urw-base35 all 20200910-1 [6367 kB]
+Get:18 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libgs9-common all 9.55.0~dfsg1-0ubuntu5.11 [753 kB]
+Get:19 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libavahi-common-data amd64 0.8-5ubuntu5.2 [23.8 kB]
+Get:20 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libavahi-common3 amd64 0.8-5ubuntu5.2 [23.9 kB]
+Get:21 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libavahi-client3 amd64 0.8-5ubuntu5.2 [28.0 kB]
+Get:22 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libcups2 amd64 2.4.1op1-1ubuntu4.11 [263 kB]
+Get:23 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libidn12 amd64 1.38-4ubuntu1 [60.0 kB]
+Get:24 http://archive.ubuntu.com/ubuntu jammy/main amd64 libijs-0.35 amd64 0.35-15build2 [16.5 kB]
+Get:25 http://archive.ubuntu.com/ubuntu jammy/main amd64 libjbig2dec0 amd64 0.19-3build2 [64.7 kB]
+Get:26 http://archive.ubuntu.com/ubuntu jammy/main amd64 libpaper1 amd64 1.1.28build2 [13.8 kB]
+Get:27 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libgs9 amd64 9.55.0~dfsg1-0ubuntu5.11 [5031 kB]
+Get:28 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 ghostscript amd64 9.55.0~dfsg1-0ubuntu5.11 [49.4 kB]
+Get:29 http://archive.ubuntu.com/ubuntu jammy/universe amd64 gsfonts all 1:8.11+urwcyr1.0.7~pre44-4.5 [3120 kB]
+Get:30 http://archive.ubuntu.com/ubuntu jammy/main amd64 libpaper-utils amd64 1.1.28build2 [8674 B]
+Fetched 23.6 MB in 7s (3345 kB/s)
