@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Cache;
 use App\Classes\Currency;
 use App\Classes\Hook;
 use App\Events\DueOrdersEvent;
@@ -49,7 +50,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use stdClass;
@@ -1490,20 +1490,20 @@ class OrdersService
     {
         $now = Carbon::parse( $order->created_at );
         $today = $now->toDateString();
-        $count = DB::table( 'nexopos_orders_count' )
+        $count = DB::table( Hook::filter( 'ns-model-table', 'nexopos_orders_count' ) )
             ->where( 'date', $today )
             ->value( 'count' );
 
         if ( $count === null ) {
             $count = 1;
-            DB::table( 'nexopos_orders_count' )
+            DB::table( Hook::filter( 'ns-model-table', 'nexopos_orders_count' ) )
                 ->insert( [
                     'date' => $today,
                     'count' => $count,
                 ] );
         }
 
-        DB::table( 'nexopos_orders_count' )
+        DB::table( Hook::filter( 'ns-model-table', 'nexopos_orders_count' ) )
             ->where( 'date', $today )
             ->increment( 'count' );
 

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Classes\Cache;
 use App\Classes\XMLParser;
 use App\Events\ModulesAfterDisabledEvent;
 use App\Events\ModulesAfterEnabledEvent;
@@ -22,7 +23,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;

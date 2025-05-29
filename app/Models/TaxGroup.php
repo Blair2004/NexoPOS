@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Classes\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int            $id
@@ -17,6 +17,18 @@ class TaxGroup extends NsModel
     use HasFactory;
 
     protected $table = 'nexopos_' . 'taxes_groups';
+
+    public function setDependencies()
+    {
+        return [
+            Product::class => Model::dependant(
+                local_name: 'name',
+                local_index: 'id',
+                foreign_name: 'tax_group_id',
+                foreign_index: 'id',
+            ),
+        ];
+    }
 
     /**
      * define the relationship
