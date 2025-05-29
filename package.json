@@ -13,7 +13,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.7",
     "@vitejs/plugin-vue": "^5.2.1",
-    "laravel-echo": "^1.17.1",
+    "laravel-echo": "^2.1.4",
     "laravel-vite-plugin": "^1.2.0",
     "pusher-js": "^8.4.0-rc2",
     "sass": "^1.83.4",
