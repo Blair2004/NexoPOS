@@ -541,6 +541,7 @@ class ModulesService
                 return [ 'modules.' . $module[ 'namespace' ] . '.' . $key => $value ];
             } );
             $config     =   $config->toArray();
+            
             config( $config );
         }
     }

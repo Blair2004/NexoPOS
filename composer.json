@@ -12,9 +12,11 @@
     "require": {
         "php": "^8.2.0",
         "brianium/paratest": "^7.1",
+        "brick/math": "^0.12.0",
         "dekor/php-array-table": "^2.0",
         "doctrine/dbal": "^3.0",
         "fakerphp/faker": "^1.12",
+        "gumlet/php-image-resize": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^12.0",
         "laravel/reverb": "@beta",
@@ -30,8 +32,7 @@
         "symfony/http-client": "^7.0",
         "symfony/mailgun-mailer": "^7.0",
         "tormjens/eventy": "^0.8",
-        "vlucas/phpdotenv": "^5.6",
-        "ns/core": "*"
+        "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
         "laravel/pint": "^1.1.1",
@@ -40,15 +41,6 @@
         "phpunit/phpunit": "^11.5.3",
         "spatie/laravel-ignition": "^2.0"
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../ns",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
@@ -75,7 +67,7 @@
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
