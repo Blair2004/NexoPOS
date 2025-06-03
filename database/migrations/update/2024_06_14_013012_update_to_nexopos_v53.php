@@ -42,7 +42,10 @@ return new class extends Migration
         } );
 
         $cashPaymentType = PaymentType::where( 'identifier', OrderPayment::PAYMENT_CASH )->first();
-        ns()->option->set( 'ns_pos_registers_default_change_payment_type', $cashPaymentType->id );
+        if ( $cashPaymentType ) {
+            ns()->option->set( 'ns_pos_registers_default_change_payment_type', $cashPaymentType->id );
+        }
+
 
         if ( ! defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
             define( 'NEXO_CREATE_PERMISSIONS', true );
