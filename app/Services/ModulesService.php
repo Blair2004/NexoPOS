@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Classes\Cache;
 use App\Classes\XMLParser;
 use App\Events\ModulesAfterDisabledEvent;
 use App\Events\ModulesAfterEnabledEvent;
@@ -23,6 +22,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -206,6 +206,7 @@ class ModulesService
                  */
                 if ( Helper::installed() ) {
                     $modules = $this->options->get( 'enabled_modules', [] );
+                    $modules = collect( array_merge( $modules, $this->autoloadedNamespace ) )->unique()->toArray();
                     $config[ 'enabled' ] = in_array( $config[ 'namespace' ], (array) $modules ) ? true : false;
                 }
 
@@ -1228,6 +1229,7 @@ class ModulesService
              * enabled.
              */
             $enabledModules = $this->options->get( 'enabled_modules', [] );
+            $enabledModules = collect( array_merge( $enabledModules, $this->autoloadedNamespace ) )->unique()->toArray();
 
             ModulesBeforeEnabledEvent::dispatch( $module );
 
@@ -1347,7 +1349,7 @@ class ModulesService
     {
         $this->checkManagementStatus();
 
-        // check if module exists
+        // check if the module exists
         if ( $module = $this->get( $namespace ) ) {
             if ( $module[ 'autoloaded' ] ) {
                 throw new NotAllowedException( sprintf( __( 'The module "%s" is autoloaded and cannot be disabled.' ), $module[ 'name' ] ) );
