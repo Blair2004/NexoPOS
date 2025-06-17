@@ -2,8 +2,13 @@
     <div id="ns-orders-chart" class="flex flex-auto flex-col shadow ns-box rounded-lg overflow-hidden">
         <div class="p-2 flex ns-box-header items-center justify-between border-b">
             <h3 class="font-semibold">{{ __( 'Recents Orders' ) }}</h3>
-            <div>
-                <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+            <div class="flex justify-between">
+                <div class="px-1">
+                    <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
+                </div>
+                <div class="px-1">
+                    <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+                </div>
             </div>
         </div>
         <div class="p-2 ns-box-body border-b">

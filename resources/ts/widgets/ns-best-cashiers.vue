@@ -3,8 +3,13 @@
         <div class="flex-auto">
             <div class="ns-box-header text-center border-b w-full flex justify-between items-center p-2">
                 <h5>{{ __( 'Best Cashiers' ) }}</h5>
-                <div>
-                    <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+                <div class="flex justify-between">
+                    <div class="px-1">
+                        <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
+                    </div>
+                    <div class="px-1">
+                        <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+                    </div>
                 </div>
             </div>
             <div class="body">

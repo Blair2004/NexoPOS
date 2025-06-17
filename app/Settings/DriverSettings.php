@@ -28,7 +28,7 @@ class DriverSettings extends SettingsPage
          */
         $this->form     =   SettingForm::form(
             title: __( 'Settings' ),
-            description: __( 'No description has been provided.' ),
+            description: __( 'Configure the driver feature.' ),
             tabs: SettingForm::tabs(
                 SettingForm::tab(
                     label: __( 'General Settings' ),

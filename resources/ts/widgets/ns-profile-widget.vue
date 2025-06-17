@@ -5,6 +5,9 @@
                 <h5>{{ __( 'Profile' ) }}</h5>
                 <div class="flex -mx-1">
                     <div class="px-1">
+                        <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
+                    </div>
+                    <div class="px-1">
                         <ns-icon-button class-name="la-sync-alt" @click="loadUserProfileWidget(true)"></ns-icon-button>
                     </div>
                     <div class="px-1">

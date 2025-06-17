@@ -9,7 +9,11 @@
             </div>
         </div>
         <div class="ns-box-body flex-auto overflow-y-auto">
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div v-if="drivers.length === 0" class="flex flex-col items-center justify-center h-full">
+                <i class="lar la-meh text-4xl"></i>
+                <h2 class="text-lg font-bold">{{ __( 'No Drivers Found' ) }}</h2>
+            </div>
+            <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 <div @click="assignDriver( driver )" v-for="( driver, index ) in drivers" :key="index" :class="order?.driver_id === driver.id ? 'active': ''" class="flex flex-col items-center justify-center p-2 ns-numpad-key">
                     <ns-avatar-image 
                     :name="driver.username"

@@ -1,11 +1,13 @@
 <template>
-    <div class="flex card-widget flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-indigo-400 to-indigo-600 px-3 py-5">
+    <div class="flex card-widget widget-handle flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-indigo-400 to-indigo-600 px-3 py-5">
         <div class="flex flex-row md:flex-col flex-auto">
             <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
                 <div class="flex justify-between w-full items-center">
                     <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Expenses' ) }}</h6>
-                    <div>
-                        <ns-close-button class="border-gray-400" @click="$emit( 'onRemove' )"></ns-close-button>
+                    <div class="flex justify-between">
+                        <div class="px-1">
+                            <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+                        </div>
                     </div>
                 </div>
                 <h3 class="text-2xl font-black">

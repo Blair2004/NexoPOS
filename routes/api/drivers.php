@@ -7,3 +7,4 @@ Route::post( '/drivers/{driver}/status', [ DriversController::class, 'changeStat
 Route::get( '/drivers/{status}', [ DriversController::class, 'getDriverByStatus' ]);
 Route::put( '/drivers/orders/{order}', [ DriversController::class, 'updateOrder' ]);
 Route::get( '/drivers', [ DriversController::class, 'getDrivers' ]);
+Route::get('/drivers/{driver}/latest-deliveries', [ DriversController::class, 'latestDeliveries' ]);

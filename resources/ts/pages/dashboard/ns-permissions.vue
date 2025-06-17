@@ -33,10 +33,10 @@
         </div>
         <div class="rounded shadow ns-box flex">
             <div id="permissions" class="w-54 bg-gray-800 flex-shrink-0">
-                <div class="h-[50px] pl-[10px] border-b border-gray-700 text-fontcolor flex justify-between items-center">
+                <div class="h-[50px] pl-[10px] border-b border-gray-700 flex justify-between items-center">
                     <span>{{ __( 'Permissions' ) }}</span>
                 </div>
-                <div :key="permission.id" v-for="permission of filteredPermissions" class="w-54 h-[40px] flex items-center pl-[10px] border-b border-table-th-edge text-fontcolor">
+                <div :key="permission.id" v-for="permission of filteredPermissions" class="w-54 h-[40px] flex items-center pl-[10px] border-b border-gray-700">
                     <a @click="copyPermisson( permission.namespace )" href="javascript:void(0)" :title="permission.namespace">
                         <span class="text-xs">{{ permission.name }}</span>
                     </a>
@@ -45,7 +45,7 @@
             <div class="flex flex-auto overflow-hidden">
                 <div class="overflow-y-auto">
                     <div class="text-gray-700 flex h-[50px]">
-                        <div v-for="role of visibleRoles" :key="role.id" class="w-32 shrink-0 items-center border-b justify-center flex flex-col role text-xs border-r border-table-th-edge text-fontcolor">
+                        <div v-for="role of visibleRoles" :key="role.id" class="w-32 shrink-0 items-center border-b border-box-edge justify-center flex flex-col role text-xs border-r border-table-th-edge text-fontcolor">
                             <p class="mx-1 text-center"><span>{{ role.name }}</span></p>
                             <span class="mx-1"><ns-checkbox @change="selectAllPermissions( role )" :field="role.field"></ns-checkbox></span>
                         </div>

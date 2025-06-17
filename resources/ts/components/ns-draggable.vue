@@ -74,8 +74,6 @@
                 return;
             }
 
-            console.log({ e })
-
             const dragGhost = draggedElement.value.dom.closest( '.ns-drop-zone' ).querySelector( '.ns-ghost' );
             const firstChild = dragGhost.querySelector( 'div' );
 

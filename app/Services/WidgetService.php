@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\UserWidget;
 use App\Widgets\BestCashiersWidget;
 use App\Widgets\BestCustomersWidget;
+use App\Widgets\DriversWidget;
+use App\Widgets\DriverLatestPendingDeliveries;
 use App\Widgets\ExpenseCardWidget;
 use App\Widgets\IncompleteSaleCardWidget;
 use App\Widgets\OrdersChartWidget;
@@ -65,6 +67,8 @@ class WidgetService
             OrdersChartWidget::class,
             OrdersSummaryWidget::class,
             BestCashiersWidget::class,
+            DriversWidget::class, // Register the new DriversWidget
+            DriverLatestPendingDeliveries::class, // Register the new widget
         ] );
     }
 

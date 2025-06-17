@@ -2,8 +2,13 @@
     <div id="ns-orders-summary" class="flex ns-box flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="p-2 flex title ns-box-header items-center justify-between border-b">
             <h3 class="font-semibold">{{ __( 'Recents Orders' ) }}</h3>
-            <div>
-                <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+            <div class="flex justify-between">
+                <div class="px-1">
+                    <ns-icon-button class="widget-handle" className="la-expand-arrows-alt"></ns-icon-button>
+                </div>
+                <div class="px-1">
+                    <ns-close-button @click="$emit( 'onRemove' )"></ns-close-button>
+                </div>
             </div>
         </div>
         <div class="head flex-auto flex-col flex h-64 overflow-y-auto ns-scrollbar">
@@ -54,7 +59,6 @@ export default {
     data() {
         return {
             orders: [],
-            subscription: null,
             hasLoaded: false,
         }
     },
@@ -79,8 +83,5 @@ export default {
                 })
         }
     },
-    unmounted() {
-        this.subscription.unsubscribe();
-    }
 }
 </script>
