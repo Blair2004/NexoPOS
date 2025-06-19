@@ -633,7 +633,7 @@ export default {
                 }, ( error ) => {
                     nsSnackBar.error( error.message, undefined, {
                         duration: 5000
-                    }).subscribe();
+                    });
 
                     this.formValidation.enableForm( this.form );
 

@@ -454,12 +454,14 @@ export default class FormValidation {
     
                 same: (field, rule) => {
                     const similar = this.getValueByDotNotation( form, rule.value );
-                    return `${similar}`.length > 0 && field.value !== similar;
+                    const ruleHasWildcard = rule.value.includes('*'); 
+                    return ( ! ruleHasWildcard && `${similar}`.length > 0 && field.value !== similar );
                 },
     
                 different: (field, rule) => {
                     const similar = this.getValueByDotNotation( form, rule.value );
-                    return similar && field.value === similar;
+                    const ruleHasWildcard = rule.value.includes('*'); 
+                    return ! ruleHasWildcard && similar && field.value === similar;
                 },
     
                 min: (field, rule) => {
