@@ -7,6 +7,13 @@
                     component: event.value.component
                 });
             }
+
+            if ( event.identifier === 'ns-table-row-action' && event.value.action.identifier === 'delivery-options' ) {
+                Popup.show( NsDriversOrdersOptionsPopup, {
+                    order: event.value.row,
+                    component: event.value.component
+                });
+            }
         })
-    })
+    });
 </script>

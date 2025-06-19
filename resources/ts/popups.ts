@@ -14,6 +14,7 @@ import nsPromptPopup from '~/popups/ns-prompt-popup.vue';
 import nsSelectPopup from '~/popups/ns-select-popup.vue';
 import nsDriversStatusPopup from './popups/ns-drivers-status-popup.vue';
 import NsDriversOrdersPopup from './popups/ns-drivers-orders-popup.vue';
+import NsDriversOrdersOptionsPopup from './popups/ns-drivers-orders-options-popup.vue';
 
 const popups    =   { 
     nsOrderPreview,
@@ -28,6 +29,7 @@ const popups    =   {
     nsPOSLoadingPopup,
     nsDriversStatusPopup,
     NsDriversOrdersPopup,
+    NsDriversOrdersOptionsPopup, // Register the new popup
 };
 
 for( let index in popups ) {

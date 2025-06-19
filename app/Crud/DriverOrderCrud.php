@@ -606,6 +606,13 @@ class DriverOrderCrud extends CrudService
         }
 
         $entry->action(
+            label: __( 'Options' ),
+            identifier: 'delivery-options',
+            permissions: [ 'nexopos.deliver.orders' ],
+            type: 'POPUP',
+        );
+
+        $entry->action(
             label: __( 'Deliver Order' ),
             identifier: 'change-delivery-status',
             permissions: [ 'nexopos.deliver.orders' ],
