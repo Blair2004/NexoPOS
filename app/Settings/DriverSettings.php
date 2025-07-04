@@ -52,6 +52,31 @@ class DriverSettings extends SettingsPage
                                 'no' => __( 'No' ),
                             ] ),
                         ),
+                        FormInput::select(
+                            label: __( 'Driver Payment Type' ),
+                            name: 'ns_drivers_payment_type',
+                            value: ns()->option->get( 'ns_drivers_payment_type', 'fixed' ),
+                            description: __( 'Choose how drivers are paid for deliveries.' ),
+                            show: ns()->option->get( 'ns_drivers_enabled', 'no' ) === 'yes',
+                            options: Helper::kvToJsOptions( [
+                                'fixed' => __( 'Fixed Rate' ),
+                                'percentage' => __( 'Percentage of Delivery Fee' ),
+                            ] ),
+                        ),
+                        FormInput::number(
+                            label: __( 'Fixed Payment Rate' ),
+                            name: 'ns_drivers_fixed_rate',
+                            value: ns()->option->get( 'ns_drivers_fixed_rate', '0' ),
+                            description: __( 'Fixed amount paid to drivers per delivery.' ),
+                            show: ns()->option->get( 'ns_drivers_enabled', 'no' ) === 'yes' && ns()->option->get( 'ns_drivers_payment_type', 'fixed' ) === 'fixed',
+                        ),
+                        FormInput::number(
+                            label: __( 'Percentage Rate' ),
+                            name: 'ns_drivers_percentage_rate',
+                            value: ns()->option->get( 'ns_drivers_percentage_rate', '10' ),
+                            description: __( 'Percentage of delivery fee paid to drivers (0-100).' ),
+                            show: ns()->option->get( 'ns_drivers_enabled', 'no' ) === 'yes' && ns()->option->get( 'ns_drivers_payment_type', 'fixed' ) === 'percentage',
+                        ),
                     )
                 )
             )

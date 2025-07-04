@@ -3,9 +3,9 @@ namespace App\Widgets;
 
 use App\Services\WidgetService;
 
-class DriverLatestPendingDeliveries extends WidgetService
+class DriversDeliveryWidget extends WidgetService
 {
-    protected $vueComponent = 'DriverLatestPendingDeliveries';
+    protected $vueComponent = 'DriversDeliveryWidget';
 
     public function __construct()
     {

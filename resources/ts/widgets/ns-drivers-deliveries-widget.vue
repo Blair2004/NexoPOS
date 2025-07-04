@@ -37,7 +37,7 @@
 declare const __, nsHttpClient, ns;
 import { ref, onMounted, toRefs } from 'vue';
 export default {
-    name: 'DriverLatestPendingDeliveries',
+    name: 'DriversDeliveryWidget',
     props: {
         driverId: {
             type: [String, Number],

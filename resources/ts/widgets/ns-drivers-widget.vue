@@ -25,10 +25,28 @@
 </template>
 <script lang="ts">
 declare const __;
+declare const nsHttpClient;
+
 export default {
     name: 'DriversWidgetComponent',
     methods: {
         __,
+        loadDriverStats() {
+            nsHttpClient.get( '/api/driers/stats' )
+                .subscrib({
+                    next: (response) => {
+                        // Handle the response data
+                        console.log(response.data);
+                    },
+                    error: (error) => {
+                        // Handle the error
+                        console.error('Error fetching driver stats:', error);
+                    }
+                })
+        }
+    },
+    mounted() {
+
     }
 }
 </script>

@@ -7,8 +7,6 @@ class RenderFooterEventListener
 {
     public function handle(RenderFooterEvent $event)
     {
-        if ($event->routeName === 'ns.dashboard.home') {
-            $event->output->addView('widgets.drivers-widget');
-        }
+        // ...
     }
 }

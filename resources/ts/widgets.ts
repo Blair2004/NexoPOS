@@ -9,4 +9,4 @@ window[ 'nsSaleCardWidget' ]                =   defineAsyncComponent( () => impo
 window[ 'nsIncompleteSaleCardWidget' ]      =   defineAsyncComponent( () => import( './widgets/ns-incomplete-sale-card-widget.vue' ) );
 window[ 'nsExpenseCardWidget' ]             =   defineAsyncComponent( () => import( './widgets/ns-transaction-card-widget.vue' ) );
 window['DriversWidgetComponent']             =   defineAsyncComponent( () => import( './widgets/ns-drivers-widget.vue' ) );
-window['DriverLatestPendingDeliveries']      =   defineAsyncComponent( () => import( './widgets/ns-driver-latest-pending-deliveries.vue' ) );
+window['DriversDeliveryWidget']      =   defineAsyncComponent( () => import( './widgets/ns-drivers-deliveries-widget.vue' ) );

@@ -8,7 +8,7 @@ use App\Models\UserWidget;
 use App\Widgets\BestCashiersWidget;
 use App\Widgets\BestCustomersWidget;
 use App\Widgets\DriversWidget;
-use App\Widgets\DriverLatestPendingDeliveries;
+use App\Widgets\DriversDeliveryWidget;
 use App\Widgets\ExpenseCardWidget;
 use App\Widgets\IncompleteSaleCardWidget;
 use App\Widgets\OrdersChartWidget;
@@ -68,7 +68,7 @@ class WidgetService
             OrdersSummaryWidget::class,
             BestCashiersWidget::class,
             DriversWidget::class, // Register the new DriversWidget
-            DriverLatestPendingDeliveries::class, // Register the new widget
+            DriversDeliveryWidget::class, // Register the new widget
         ] );
     }
 
@@ -257,7 +257,10 @@ class WidgetService
                         ->where( 'column', $columnName )
                         ->orderBy( 'position' )
                         ->get()
-                        ->filter( fn( $widget ) => Gate::allows( ( new $widget->class_name )->getPermission() ) )
+                        ->filter( function( $widget ) {
+                            $class = $widget->class_name;
+                            return class_exists( $class ) && Gate::allows( ( new $class )->getPermission() );
+                        })
                         ->values(),
                 ];
             } )->toArray();
