@@ -205,6 +205,16 @@ class Order extends NsModel
         return $this->hasOne( OrderBillingAddress::class );
     }
 
+    public function driver()
+    {
+        return $this->belongsTo( Driver::class, 'driver_id' );
+    }
+
+    public function driverEarning()
+    {
+        return $this->hasOne( DriverEarning::class, 'order_id' );
+    }
+
     public function order_addresses()
     {
         return $this->hasMany( OrderAddress::class );

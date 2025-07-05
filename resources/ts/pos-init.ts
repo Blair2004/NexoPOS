@@ -239,7 +239,7 @@ export class POS {
         this._cartButtons = new BehaviorSubject<{ [key: string]: any }>({})
         this._orderTypeProcessQueue = [
             delivery,
-            driver
+            // driver this might not be needed as it's already on the general queue.
         ];
 
         this.initialQueue.push(() => new Promise((resolve, reject) => {
@@ -368,10 +368,15 @@ export class POS {
 
     public getSalePrice(item) {
         let price = 0;
-        if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
+
+        if ( this.options.getValue().ns_pos_vat === 'disabled' ) {
             price = nsRawCurrency( item.sale_price_with_tax );
         } else {
-            price = nsRawCurrency( item.sale_price_without_tax );
+            if ( this.options.getValue().ns_pos_price_with_tax === 'yes' ) {
+                price = nsRawCurrency( item.sale_price_with_tax );
+            } else {
+                price = nsRawCurrency( item.sale_price_without_tax );
+            }
         }
 
         return nsHooks.applyFilters( 'ns-pos-product-sale-price', price, item );
@@ -704,7 +709,7 @@ export class POS {
         order.products = products;
         order.total_products = products.length;
 
-        if ([ 'products_vat' ].includes(posVat) || options.ns_pos_price_with_tax === 'no' ) {
+        if ([ 'products_vat' ].includes(posVat) ) {
             const totalTaxValue =  products.map((product: OrderProduct) => {
                 return product.total_tax_value;
             });
@@ -1729,6 +1734,8 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.sale_price_edit );
 
+        console.log({ result })
+
         quantities.sale_price_without_tax   =   result.price_without_tax;
         quantities.sale_price_with_tax      =   result.price_with_tax;
         quantities.sale_price_tax           =   result.tax_value;
@@ -1764,6 +1771,7 @@ export class POS {
     }
 
     computeProduct(product: OrderProduct) {
+        
         /**
          * determining what is the 
          * real sale price
@@ -1805,8 +1813,12 @@ export class POS {
         let result    =   this.computeTaxForGroup( 
             math.chain( unitPrice ).done(), 
             tax_group, 
-            this.options.getValue().ns_pos_price_with_tax === 'yes' ? 'inclusive' : 'exclusive'
+            product.tax_type
         );
+        
+        // this.options.getValue().ns_pos_price_with_tax === 'yes' ? 'inclusive' : 'exclusive'
+
+        console.log({ result, product })
 
         product.tax_value           =   result.tax_value;
         product.total_tax_value     =   product.tax_value * product.quantity;

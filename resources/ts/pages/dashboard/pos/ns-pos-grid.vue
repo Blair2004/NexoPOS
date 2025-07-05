@@ -3,7 +3,7 @@
         <div id="tools" class="flex pl-2" v-if="visibleSection === 'grid'">
             <div @click="switchTo( 'cart' )" class="switch-cart flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 border-t border-r border-l">
                 <span>{{ __( 'Cart' ) }}</span>
-                <span v-if="order" class="products-count flex items-center justify-center text-sm rounded-full h-6 w-6 ml-1">{{ order.products.length }}</span>
+                <span v-if="order" class="products-count flex items-center justify-center text-sm rounded-full h-6 w-6 ml-1">{{ cartProducts.length }}</span>
             </div>
             <div @click="switchTo( 'grid' )" class="switch-grid cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 font-semibold">
                 {{ __( 'Products' ) }}
@@ -71,12 +71,17 @@
                         <div class="w-full absolute z-10 -bottom-10">
                             <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
                                 <h3 class="text-sm text-center w-full">{{ product.name }}</h3>
-                                <template v-if="options.ns_pos_gross_price_used === 'yes'">
+                                <template v-if="options.ns_pos_vat === 'disabled'">
+                                    <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
+                                        {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
+                                    </span>
+                                </template>
+                                <template v-else-if="options.ns_pos_gross_price_used === 'yes'">
                                     <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
                                         {{ nsCurrency( product.unit_quantities[0].sale_price_without_tax ) }}
                                     </span>
                                 </template>
-                                <template v-if="options.ns_pos_gross_price_used === 'no'">
+                                <template v-else-if="options.ns_pos_gross_price_used === 'no'">
                                     <span class="text-sm" v-if="product.unit_quantities && product.unit_quantities.length === 1">
                                         {{ nsCurrency( product.unit_quantities[0].sale_price_with_tax ) }}
                                     </span>
@@ -102,6 +107,8 @@ export default {
         return {
             items: Array.from({length: 1000}, (_, index) => ({ data: '#' + index })),
             products: [],
+            cartProductsSubscribe: null,
+            cartProducts: [],
             categories: [],
             breadcrumbs: [],
             barcode: '',
@@ -176,7 +183,12 @@ export default {
             this.$forceUpdate();
         });
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
-            this.visibleSection         =   section;
+            this.visibleSection      =   section;
+            this.$forceUpdate();
+        });
+
+        this.cartProductsSubscribe  =   POS.products.subscribe( products => {
+            this.cartProducts              =   products;
             this.$forceUpdate();
         });
 
@@ -230,6 +242,7 @@ export default {
         this.visibleSectionSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
         this.optionsSubscriber.unsubscribe();
+        this.cartProductsSubscribe.unsubscribe();
 
         clearInterval( this.interval );
 

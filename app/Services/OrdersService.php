@@ -1163,14 +1163,18 @@ class OrdersService
 
             $this->computeOrderProduct( $orderProduct, $product );
 
-            if ( ns()->option->get( 'ns_pos_price_with_tax' ) === 'no' ) {
-                $subTotal = $this->currencyService->define( $subTotal )
-                    ->additionateBy( $orderProduct->total_price_with_tax )
-                    ->get();
+            if ( ns()->option->get( 'ns_pos_vat' ) === 'disabled' ) {
+
             } else {
-                $subTotal = $this->currencyService->define( $subTotal )
-                    ->additionateBy( $orderProduct->total_price )
-                    ->get();
+                if ( ns()->option->get( 'ns_pos_price_with_tax' ) === 'no' ) {
+                    $subTotal = $this->currencyService->define( $subTotal )
+                        ->additionateBy( $orderProduct->total_price_with_tax )
+                        ->get();
+                } else {
+                    $subTotal = $this->currencyService->define( $subTotal )
+                        ->additionateBy( $orderProduct->total_price )
+                        ->get();
+                }
             }
 
             return $orderProduct;

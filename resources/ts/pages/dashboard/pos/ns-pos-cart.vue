@@ -3,7 +3,7 @@
         <div id="tools" class="flex pl-2 ns-tab" v-if="visibleSection === 'cart'">
             <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 font-semibold active tab">
                 <span>{{ __( 'Cart' ) }}</span>
-                <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ order.products.length }}</span>
+                <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ products.length }}</span>
             </div>
             <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 border-t border-r border-l inactive tab">
                 {{ __( 'Products' ) }}
@@ -116,7 +116,7 @@
                 <div id="cart-products-summary" class="flex">
                     <table class="table ns-table w-full text-sm " v-if="visibleSection === 'both'">
                         <tbody>
-                            <template v-if="options.ns_pos_price_with_tax === 'no'">
+                            <template v-if="options.ns_pos_price_with_tax === 'no' && options.ns_pos_vat !== 'disabled'">
                                 <tr>
                                     <td width="200" class="border p-2" colspan="2">
                                         <span class="py-1">{{  __( 'Product Taxes' ) }}</span>
