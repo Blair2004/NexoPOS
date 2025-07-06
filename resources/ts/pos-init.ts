@@ -1681,9 +1681,10 @@ export class POS {
         const originalProduct   =   product.$original();
         const taxGroup          =   originalProduct.tax_group;
 
-        let price_without_tax   =   this.getProductUnitPrice( product.mode, product.$quantities() );
+        let price_without_tax   =   price;
         let tax_value           =   0;
-        let price_with_tax      =   this.getProductUnitPrice( product.mode, product.$quantities() );
+        let price_with_tax      =   price;
+        let total_tax_value     =   0;
 
         if ( taxGroup !== undefined && taxGroup !== null && taxGroup.taxes !== undefined ) {
 
@@ -1698,21 +1699,40 @@ export class POS {
                     .reduce( ( b, a ) => b + a );
             }
 
-            switch( originalProduct.tax_type ) {
-                case 'inclusive':
-                    price_without_tax   =   this.getPriceWithoutTax( price, summarizedRates, originalProduct.tax_type );
-                    price_with_tax      =   price;
-                    tax_value           =   this.getVatValue( math.chain( price_with_tax ).multiply( product.quantity ).subtract( product.discount ).done(), summarizedRates, originalProduct.tax_type );
-                break;
-                case 'exclusive':
-                    price_without_tax   =   price;
-                    price_with_tax      =   this.getPriceWithTax( price, summarizedRates, originalProduct.tax_type );
-                    tax_value           =   this.getVatValue( math.chain( price_without_tax ).multiply( product.quantity ).subtract( product.discount ).done(), summarizedRates, originalProduct.tax_type );
-                break;
-            }
+            /**
+             * CORRECTED TAX CALCULATION:
+             * Calculate tax on the line total after discount, 
+             * then derive per-unit values for consistency
+             */
+            
+            // Calculate line subtotal (unit price × quantity)
+            const lineSubtotal = math.chain( price ).multiply( product.quantity ).done();
+            
+            // Calculate line total after discount
+            const lineAfterDiscount = math.chain( lineSubtotal ).subtract( product.discount ).done();
+            
+            // Compute tax on the discounted line total
+            let result = this.computeTaxForGroup( 
+                lineAfterDiscount, 
+                taxGroup, 
+                originalProduct.tax_type
+            );
+
+            // Store total tax value
+            total_tax_value = result.tax_value;
+            
+            // Derive per-unit values for consistency with existing system
+            tax_value = math.chain( total_tax_value ).divide( product.quantity ).done();
+            price_with_tax = math.chain( result.price_with_tax ).divide( product.quantity ).done();
+            price_without_tax = math.chain( result.price_without_tax ).divide( product.quantity ).done();
         }
-        
-        return { price_without_tax, tax_value, price_with_tax };
+
+        return { 
+            price_without_tax, 
+            tax_value,  // per-unit tax value
+            price_with_tax,
+            total_tax_value  // total tax value for the line
+        };
     }
 
     computeCustomProductTax( product: OrderProduct ) {
@@ -1722,6 +1742,10 @@ export class POS {
         quantities.custom_price_without_tax =   result.price_without_tax;
         quantities.custom_price_with_tax =   result.price_with_tax;
         quantities.custom_price_tax =   result.tax_value;
+
+        // Also set the total tax value on the product
+        product.tax_value = result.tax_value;
+        product.total_tax_value = result.total_tax_value;
 
         product.$quantities     =   () => {
             return <ProductUnitQuantity>quantities
@@ -1740,6 +1764,10 @@ export class POS {
         quantities.sale_price_with_tax      =   result.price_with_tax;
         quantities.sale_price_tax           =   result.tax_value;
 
+        // Also set the total tax value on the product
+        product.tax_value = result.tax_value;
+        product.total_tax_value = result.total_tax_value;
+
         product.$quantities     =   () => {
             return <ProductUnitQuantity>quantities
         }
@@ -1754,6 +1782,10 @@ export class POS {
         quantities.wholesale_price_without_tax  =   result.price_without_tax;
         quantities.wholesale_price_with_tax     =   result.price_with_tax;
         quantities.wholesale_price_tax          =   result.tax_value;
+
+        // Also set the total tax value on the product
+        product.tax_value = result.tax_value;
+        product.total_tax_value = result.total_tax_value;
 
         product.$quantities     =   () => {
             return <ProductUnitQuantity>quantities
@@ -1801,31 +1833,82 @@ export class POS {
         let unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
         
         product.total_price =   math.chain( unitPrice ).multiply( product.quantity ).subtract( product.discount ).done();
-        product.total_tax_value = math.chain( product.tax_value ).multiply( product.quantity ).done();
+        
+        // Ensure total_tax_value is set (fallback for old computation paths)
+        if ( product.total_tax_value === undefined ) {
+            product.total_tax_value = math.chain( product.tax_value ).multiply( product.quantity ).done();
+        }
+
+        // Also set total prices for consistency
+        if ( product.price_with_tax !== undefined && product.price_without_tax !== undefined ) {
+            product.total_price_with_tax = math.chain( product.price_with_tax ).multiply( product.quantity ).done();
+            product.total_price_without_tax = math.chain( product.price_without_tax ).multiply( product.quantity ).done();
+        }
 
         nsHooks.doAction('ns-after-product-computed', product);
     }
 
     computeProductTaxValue( product ) {  
         const tax_group = product.$original().tax_group;
-        const unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
+        let unitPrice;
 
-        let result    =   this.computeTaxForGroup( 
-            math.chain( unitPrice ).done(), 
+        /**
+         * If we're dealing the normal price. We need to make sure the price
+         * from which we'll compute the tax is always the price with tax.
+         */
+        if ( product.mode === 'normal' ) {
+            if ( product.tax_type === 'inclusive' ) {
+                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().sale_price_with_tax, product );
+            } else {
+                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().sale_price_without_tax, product );
+            }
+        } else if ( product.mode === 'wholesale' ) {
+            if ( product.tax_type === 'inclusive' ) {
+                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().wholesale_price_with_tax, product );
+            } else {
+                unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.$quantities().wholesale_price_without_tax, product );
+            }
+        } else {
+            unitPrice = nsHooks.applyFilters( 'ns-pos-product-unit-price', product.unit_price, product );
+        }
+        
+        /**
+         * CORRECTED TAX CALCULATION:
+         * Tax should be calculated on the line total after discount
+         * This is the standard real-world approach for tax computation
+         */
+        
+        // Calculate line subtotal (unit price × quantity)
+        const lineSubtotal = math.chain( unitPrice ).multiply( product.quantity ).done();
+        
+        // Calculate line total after discount
+        const lineAfterDiscount = math.chain( lineSubtotal ).subtract( product.discount ).done();
+        
+        // Compute tax on the discounted line total
+        let result = this.computeTaxForGroup( 
+            lineAfterDiscount, 
             tax_group, 
             product.tax_type
         );
+
+        console.log({ 
+            result, 
+            unitPrice, 
+            lineSubtotal, 
+            discount: product.discount, 
+            lineAfterDiscount,
+            method: 'tax_after_discount' 
+        });
+
+        // For tax calculated on line total, we need to derive per-unit values
+        product.tax_value = math.chain( result.tax_value ).divide( product.quantity ).done();
+        product.total_tax_value = result.tax_value;
+        product.price_with_tax = math.chain( result.price_with_tax ).divide( product.quantity ).done();
+        product.price_without_tax = math.chain( result.price_without_tax ).divide( product.quantity ).done();
         
-        // this.options.getValue().ns_pos_price_with_tax === 'yes' ? 'inclusive' : 'exclusive'
-
-        console.log({ result, product })
-
-        product.tax_value           =   result.tax_value;
-        product.total_tax_value     =   product.tax_value * product.quantity;
-        product.price_with_tax      =   result.price_with_tax;
-        product.price_without_tax   =   result.price_without_tax;
-        product.total_price_with_tax    =   math.chain( result.price_with_tax ).multiply( product.quantity ).subtract( product.discount ).done();
-        product.total_price_without_tax =   math.chain( result.price_without_tax ).multiply( product.quantity ).subtract( product.discount ).done();
+        // Total prices are already correctly calculated since tax was computed on the final amount
+        product.total_price_with_tax = result.price_with_tax;
+        product.total_price_without_tax = result.price_without_tax;
     }
 
     computeTaxForGroup( price, tax_group, tax_type ) {
@@ -1833,6 +1916,17 @@ export class POS {
         let price_with_tax      =   0;
         let price_without_tax   =   0;
         let taxes               =   [];
+        
+        // Handle edge case where price is zero or negative after discount
+        if (price <= 0) {
+            return {
+                ...tax_group,
+                taxes: [],
+                tax_value: 0,
+                price_with_tax: 0,
+                price_without_tax: 0
+            };
+        }
         
         if ( tax_group ) {
             taxes     =   tax_group.taxes.map( tax => {
@@ -1848,6 +1942,10 @@ export class POS {
             tax_value           =   this.getVatValue( price, rate, tax_type );            
             price_without_tax   =   this.getPriceWithoutTax( price, rate, tax_type );
             price_with_tax      =   this.getPriceWithTax( price, rate, tax_type );
+        } else {
+            // No taxes defined, price remains unchanged
+            price_with_tax = price;
+            price_without_tax = price;
         }
 
         return {

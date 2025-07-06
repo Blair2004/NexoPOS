@@ -3,6 +3,8 @@ use App\Models\Order;
 use App\Classes\Hook;
 use Illuminate\Support\Facades\View;
 
+$price_with_tax     =   $order->settings?->where( 'key', 'ns_pos_price_with_tax' )->first()?->value;
+$pos_vat          =   $order->settings?->where( 'key', 'ns_pos_vat' )->first()?->value;
 ?>
 <div class="w-full h-full">
     <div class="w-full md:w-1/2 lg:w-1/3 shadow-lg bg-white p-2 mx-auto">
@@ -43,11 +45,18 @@ use Illuminate\Support\Facades\View;
                     @endforeach
                 </tbody>
                 <tbody>
-                    @if( $order->settings?->where( 'key', 'ns_pos_price_with_tax' )->first()?->value === 'no' )
-                    <tr>
-                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Product Taxes' ) }}</td>
-                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->products_tax_value ) }}</td>
-                    </tr>
+                    @if( $pos_vat === 'products_vat' )
+                        @if( $price_with_tax === 'no' )
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Product Taxes' ) }}</td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->products_tax_value ) }}</td>
+                        </tr>
+                        @else
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Product Taxes (Included)' ) }}</td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->products_tax_value ) }}</td>
+                        </tr>
+                        @endif
                     @endif
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Sub Total' ) }}</td>

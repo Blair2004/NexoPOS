@@ -2973,7 +2973,6 @@ class OrdersService
     public function changeDeliveryStatus( Order $order, $status )
     {
         if ( ! in_array( $status, [
-            Order::DELIVERY_COMPLETED,
             Order::DELIVERY_DELIVERED,
             Order::DELIVERY_FAILED,
             Order::DELIVERY_ONGOING,

@@ -105,9 +105,6 @@ class Order extends NsModel
 
     const DELIVERY_FAILED = 'error';
 
-    // @todo check if it's still useful
-    const DELIVERY_COMPLETED = 'completed';
-
     const DELIVERY_DELIVERED = 'delivered';
 
     public $casts = [
@@ -223,6 +220,11 @@ class Order extends NsModel
     public function settings()
     {
         return $this->hasMany( OrderSetting::class, 'order_id' );
+    }
+
+    public function deliveryProof()
+    {
+        return $this->hasOne( OrderDeliveryProof::class, 'order_id' );
     }
 
     public function scopeFrom( $query, $range_starts )

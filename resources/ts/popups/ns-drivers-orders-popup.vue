@@ -40,25 +40,34 @@ export default {
             Popup.show( nsConfirmPopup, {
                 title: __( 'Are you sure?' ),
                 message: __( 'Are you sure you want to update the order?' ),
-                onAction: () => {
-                    nsHttpClient.post( `/api/drivers/order/${this.order.id}`, { order: this.order } )
-                        .subscribe({
-                            next: ( response ) => {
-                                this.loaded = true;
-                                nsSnackBar.success( __( 'Order updated successfully' ) );
-                                this.popupResolver( false );
-                            },
-                            error: ( error ) => {
-                                this.loaded = true;
-                                nsSnackBar.error( error.message )
-                            }
-                        })
+                onAction: ( action ) => {
+                    if ( action ) {
+                        if ( this.validation.validateFields( this.fields ) === false ) {
+                            nsSnackBar.error( __( 'The form is invalid. Please double-check it and try again.' ) );
+                            return;
+                        }
+
+                        const fields = this.validation.extractFields( this.fields );
+
+                        nsHttpClient.put( `/api/drivers/orders/${this.order.id}`, fields )
+                            .subscribe({
+                                next: ( response ) => {
+                                    this.loaded = true;
+                                    nsSnackBar.success( __( 'Order updated successfully' ) );
+                                    this.popupResolver( false );
+                                },
+                                error: ( error ) => {
+                                    this.loaded = true;
+                                    nsSnackBar.error( error.message )
+                                }
+                            })
+                    }
                 }
             })
         },
         loadFields() {
             this.loaded = false;
-            nsHttpClient.get( '/api/fields/ns.order-delivery-proof' )
+            nsHttpClient.get( '/api/fields/ns.order-delivery-proof/' + this.order.id                                        )
                 .subscribe({
                     next: ( fields ) => {
                         this.loaded = true;

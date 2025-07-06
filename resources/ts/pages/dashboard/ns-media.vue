@@ -64,10 +64,14 @@ export default {
          * from a popup
          */
         this.popupCloser();
-        
-        const gallery   =   this.pages.filter( p => p.name === 'gallery' )[0];
-
-        this.select( gallery );
+        const gallery = this.pages.filter(p => p.name === 'gallery')[0];
+        this.select(gallery);
+        // Add paste event listener for clipboard image upload
+        window.addEventListener('paste', this.handlePasteUpload);
+    },
+    beforeDestroy() {
+        // Remove paste event listener
+        window.removeEventListener('paste', this.handlePasteUpload);
     },
     watch: {
         searchField() {
@@ -75,16 +79,6 @@ export default {
             this.searchFieldDebounce    =   setTimeout( () => {
                 this.loadGallery(1);
             }, 500 );
-        },
-        files: {
-            handler() {
-                /**
-                 * as long as there are file that aren't 
-                 * yet uploaded. We'll trigger the "active" status.
-                 */
-                this.uploadFiles();
-            },
-            deep: true
         }
     },
     computed: {
@@ -217,17 +211,30 @@ export default {
                             next: result => {
                                 fileData.uploaded   =   true;
                                 fileData.progress   =   100;
-
+                                nsSnackBar.success( 
+                                    result.message || __( 'File uploaded successfully.' ),
+                                    __( 'OK' )
+                                );
+                                this.loadGallery(); // Refresh gallery to show new file
                                 resolve( result );
                             },
                             error: error => {
                                 uploadableFiles[i].failed   =   true;
                                 uploadableFiles[i].error    =   error;
+                                nsSnackBar.error( 
+                                    error.message || __( 'Failed to upload file.' ),
+                                    __( 'OK' )
+                                );
+                                reject( error );
                             }
                         })
                     })
                 } catch( exception ) {
                     fileData.failed     =   true;
+                    nsSnackBar.error( 
+                        __( 'An unexpected error occurred during file upload.' ),
+                        __( 'OK' )
+                    );
                 }
             }
         },
@@ -296,11 +303,23 @@ export default {
          * @param FileList files
          */
         processFiles( files ) {
+            console.log({ files })
             const arrayFiles    =   Array.from( files );
             const valid         =   arrayFiles.filter( file => {
                 console.log( this );
                 return Object.values( window.ns.medias.mimes ).includes( file.type );
             });
+
+            const invalidFiles = arrayFiles.length - valid.length;
+            
+            if (invalidFiles > 0) {
+                nsSnackBar.error(
+                    invalidFiles === 1 
+                        ? __( '1 file was rejected due to invalid file type.' )
+                        : __( '%s files were rejected due to invalid file type.' ).replace('%s', invalidFiles.toString()),
+                    __( 'OK' )
+                );
+            }
 
             valid.forEach( file => {
                 this.files.unshift({
@@ -310,6 +329,16 @@ export default {
                     progress: 0
                 });
             });
+            
+            // Call uploadFiles only once after adding new files
+            if (valid.length > 0) {
+                this.uploadFiles();
+            } else if (arrayFiles.length > 0 && valid.length === 0) {
+                nsSnackBar.error(
+                    __( 'No valid files selected. Please select supported file types.' ),
+                    __( 'OK' )
+                );
+            }
         },
 
         /**
@@ -341,10 +370,19 @@ export default {
             page = page === null ? this.queryPage : page;
             this.queryPage  =   page;
             nsHttpClient.get( `/api/medias?page=${page}&user_id=${this.user_id}${this.searchField.length > 0 ? `&search=${this.searchField}` : `` }` )
-                .subscribe( result => {
-                    // define default selection status
-                    result.data.forEach( resource => resource.selected = false );
-                    this.response  =   result;
+                .subscribe({
+                    next: result => {
+                        // define default selection status
+                        result.data.forEach( resource => resource.selected = false );
+                        this.response  =   result;
+                    },
+                    error: error => {
+                        nsSnackBar.error( 
+                            error.message || __( 'An error occurred while loading the media gallery.' ), 
+                            __( 'OK' ) 
+                        );
+                        console.error('Media gallery loading error:', error);
+                    }
                 })
         },
 
@@ -404,12 +442,54 @@ export default {
         isImage( media ) {
             const imageExtensions   =   Object.keys( ns.medias.imageMimes );
             return imageExtensions.includes( media.extension );
-        }
+        },
+
+        handlePasteUpload(e: ClipboardEvent) {
+            // Only handle if upload tab is active
+            if (this.currentPage.name !== 'upload') return;
+            if (!e.clipboardData) return;
+            
+            try {
+                const items = e.clipboardData.items;
+                let hasValidFile = false;
+                
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    if (item.kind === 'file' && item.type.startsWith('image/')) {
+                        const file = item.getAsFile();
+                        if (file) {
+                            hasValidFile = true;
+                            this.files.unshift({
+                                file,
+                                uploaded: false,
+                                failed: false,
+                                progress: 0
+                            });
+                        }
+                    }
+                }
+                
+                if (hasValidFile) {
+                    this.uploadFiles();
+                } else {
+                    nsSnackBar.error( 
+                        __( 'No valid image found in clipboard.' ),
+                        __( 'OK' )
+                    );
+                }
+            } catch (error) {
+                nsSnackBar.error( 
+                    __( 'Error processing clipboard content.' ),
+                    __( 'OK' )
+                );
+                console.error('Clipboard paste error:', error);
+            }
+        },
     }
 }
 </script>
 <template>
-    <div class="flex md:flex-row flex-col ns-box shadow-xl overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-[95vh]' : 'm-4 w-auto h-full rounded-lg'">
+    <div class="flex md:flex-row flex-col ns-box overflow-hidden" id="ns-media" :class="isPopup ? 'w-6/7-screen h-[95vh] shadow-xl' : 'm-4 w-auto h-full rounded-lg'">
         <div class="sidebar w-48 md:h-full flex-shrink-0">
             <h3 class="text-xl font-bold my-4 text-center">{{ __( 'Medias Manager' ) }}</h3>
             <ul class="sidebar-menus flex md:block mt-8">
@@ -450,7 +530,7 @@ export default {
                 </div>
             </div>
             <div class="flex flex-auto overflow-hidden">
-                <div class="shadow ns-grid flex flex-auto flex-col">
+                <div class="shadow flex-auto flex flex-col">
                     <div class="p-2 border-b border-input-edge">
                         <div class="ns-input border border-input-edge overflow-hidden rounded flex">
                             <input id="search" type="text" v-model="searchField" :placeholder="__( 'Search Medias' )" class="px-4 block w-full sm:text-sm sm:leading-5 h-10">
@@ -460,9 +540,9 @@ export default {
                         </div>
                     </div>
                     <div class="flex flex-auto overflow-hidden">
-                        <div class="p-2 flex-auto overflow-y-auto ns-scrollbar">
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-1 lg:grid-cols-4 xl:grid-cols-5">
-                                <div v-for="(resource, index) of response.data" :key="index" class="">
+                        <div v-if="response.data.length > 0" class="p-2 flex-auto overflow-y-auto ns-scrollbar">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-1 lg:grid-cols-4 xl:grid-cols-6">
+                                <div v-for="(resource, index) of response.data" :key="index">
                                     <div>
                                         <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected border-secondary ' : 'border-transparent'" class="border-4 aspect-square bg-secondary/50 overflow-hidden flex items-center justify-center">
                                             <img v-if="isImage( resource )" class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name"/>

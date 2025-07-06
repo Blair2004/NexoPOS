@@ -77,8 +77,8 @@ class DriversController extends Controller
         return response()->json($deliveries);
     }
 
-    public function updateOrder( Order $order )
+    public function updateOrder( Order $order, Request $request )
     {
-        
+        // ...
     }
 }

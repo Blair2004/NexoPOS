@@ -116,10 +116,11 @@
                 <div id="cart-products-summary" class="flex">
                     <table class="table ns-table w-full text-sm " v-if="visibleSection === 'both'">
                         <tbody>
-                            <template v-if="options.ns_pos_price_with_tax === 'no' && options.ns_pos_vat !== 'disabled'">
+                            <template v-if="[ 'products_vat' ].includes( options.ns_pos_vat )">
                                 <tr>
                                     <td width="200" class="border p-2" colspan="2">
-                                        <span class="py-1">{{  __( 'Product Taxes' ) }}</span>
+                                        <span v-if="options.ns_pos_price_with_tax === 'yes'" class="py-1">{{  __( 'Product Taxes (included)' ) }}</span>
+                                        <span v-else class="py-1">{{  __( 'Product Taxes' ) }}</span>
                                     </td>
                                     <td width="200" class="border p-2 text-right">{{ nsCurrency( order.products_tax_value ) }}</td>
                                 </tr>
@@ -176,6 +177,15 @@
                     </table>
                     <table class="table ns-table w-full text-sm" v-if="visibleSection === 'cart'">
                         <tbody>
+                            <template v-if="[ 'products_vat' ].includes( options.ns_pos_vat )">
+                                <tr>
+                                    <td width="200" class="border p-2">
+                                        <span v-if="options.ns_pos_price_with_tax === 'yes'" class="py-1">{{  __( 'Product Taxes (included)' ) }}</span>
+                                        <span v-else class="py-1">{{  __( 'Product Taxes' ) }}</span>
+                                    </td>
+                                    <td width="200" class="border p-2 text-right">{{ nsCurrency( order.products_tax_value ) }}</td>
+                                </tr>
+                            </template>
                             <tr>
                                 <td width="200" class="border p-2">
                                     <a @click="selectCustomer()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Customer' ) }}: {{ customerName }}</a>

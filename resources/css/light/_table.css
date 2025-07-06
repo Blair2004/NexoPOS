@@ -45,7 +45,7 @@
                 @apply border-error-secondary bg-error-primary text-white;
             }
             &.success {
-                @apply border-success-secondary bg-success-primary text-white;
+                @apply border-success-secondary bg-success-primary/70 text-white;
             }
             &.warning {
                 @apply border-warning-secondary bg-warning-primary text-white;
@@ -63,7 +63,7 @@
             }
         
             &.success {
-                @apply bg-green-300 text-white;
+                @apply bg-success-primary text-white;
             }
         
             &.warning {

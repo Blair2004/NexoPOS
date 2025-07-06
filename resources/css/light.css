@@ -10,11 +10,11 @@
 
 @import "./light/_box.css";
 @import "./light/_notices.css";
-/* @import "./light/_floating-notices.css"; */
+@import "./light/_floating-notices.css";
 @import './light/_forms.css';
 @import './light/_crud.css';
 @import './light/_dashboard.css';
-/* @import './light/_chart.css'; */
+@import './light/_chart.css';
 @import './light/_menu.css';
 @import './light/_popups.css';
 @import './light/_pos.css';
