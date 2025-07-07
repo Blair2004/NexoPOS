@@ -15,6 +15,7 @@ import nsSelectPopup from '~/popups/ns-select-popup.vue';
 import nsDriversStatusPopup from './popups/ns-drivers-status-popup.vue';
 import NsDriversOrdersPopup from './popups/ns-drivers-orders-popup.vue';
 import NsDriversOrdersOptionsPopup from './popups/ns-drivers-orders-options-popup.vue';
+import NsDriverManageDeliveryPopup from './popups/ns-driver-manage-delivery-popup.vue';
 
 const popups    =   { 
     nsOrderPreview,
@@ -29,7 +30,8 @@ const popups    =   {
     nsPOSLoadingPopup,
     nsDriversStatusPopup,
     NsDriversOrdersPopup,
-    NsDriversOrdersOptionsPopup, // Register the new popup
+    NsDriversOrdersOptionsPopup,
+    NsDriverManageDeliveryPopup,
 };
 
 for( let index in popups ) {

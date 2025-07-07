@@ -9,6 +9,7 @@ use App\Widgets\BestCashiersWidget;
 use App\Widgets\BestCustomersWidget;
 use App\Widgets\DriversWidget;
 use App\Widgets\DriversDeliveryWidget;
+use App\Widgets\DriverEarningsWidget;
 use App\Widgets\ExpenseCardWidget;
 use App\Widgets\IncompleteSaleCardWidget;
 use App\Widgets\OrdersChartWidget;
@@ -69,6 +70,7 @@ class WidgetService
             BestCashiersWidget::class,
             DriversWidget::class, // Register the new DriversWidget
             DriversDeliveryWidget::class, // Register the new widget
+            DriverEarningsWidget::class, // Register driver earnings widget
         ] );
     }
 

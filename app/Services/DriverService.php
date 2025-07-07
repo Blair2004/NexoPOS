@@ -1,13 +1,20 @@
 <?php
 namespace App\Services;
 
-use App\Classes\JsonResponse;
-use App\Enums\DriverStatusEnum;
+use App\Events\OrderAfterUpdatedDeliveryStatus;
 use App\Models\Driver;
 use App\Models\DriverEarning;
 use App\Models\DriverStatus;
 use App\Models\Order;
+use App\Models\OrderDeliveryProof;
+use App\Models\OrderPayment;
+use App\Models\PaymentType;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class DriverService
 {
@@ -15,9 +22,8 @@ class DriverService
      * Will change the driver status
      * @param Driver $driver
      * @param $status
-     * @return JsonResponse
      */
-    public function changeStatus( Driver $driver, $status )
+    public function changeStatus( Driver $driver, $status ): array
     {
         $driverStatus   =   $driver->status()->first();
 
@@ -33,10 +39,14 @@ class DriverService
         $driverStatus->status = $status;
         $driverStatus->save();
 
-        return JsonResponse::success(
-            message: __( 'The driver status has been updated.' ),
-            data: compact( 'driver', 'driverStatus' )
-        );
+        return [
+            'status' => 'success',
+            'message' => __('Driver status has been changed successfully.'),
+            'data' => [
+                'driver' => $driver->fresh(),
+                'status' => $driverStatus->status,
+            ]
+        ];
     }
 
     public function getByStatus( $status )
@@ -112,16 +122,20 @@ class DriverService
     /**
      * Calculate total earnings for a driver in a date range.
      */
-    public function calculateDriverEarnings( Driver $driver, ?string $startDate = null, ?string $endDate = null): array
+    public function calculateDriverEarnings( Driver $driver, $startDate = null, $endDate = null): array
     {
         $query = DriverEarning::forDriver($driver);
 
         if ($startDate) {
-            $query->where('delivery_date', '>=', $startDate);
+            // Convert to string if it's a Carbon instance
+            $startDateString = $startDate instanceof Carbon ? $startDate->toDateTimeString() : $startDate;
+            $query->where('delivery_date', '>=', $startDateString);
         }
 
         if ($endDate) {
-            $query->where('delivery_date', '<=', $endDate);
+            // Convert to string if it's a Carbon instance
+            $endDateString = $endDate instanceof Carbon ? $endDate->toDateTimeString() : $endDate;
+            $query->where('delivery_date', '<=', $endDateString);
         }
 
         $earnings = $query->get();
@@ -175,5 +189,278 @@ class DriverService
             'all_time' => $allTimeEarnings,
             'status' => $driver->status?->status ?? Driver::STATUS_OFFLINE,
         ];
+    }
+
+    /**
+     * Update order delivery status and handle payments
+     *
+     * @param Order $order
+     * @param array $data
+     * @throws Exception
+     */
+    public function updateOrder(Order $order, array $data): array
+    {
+        try {
+            return DB::transaction(function () use ($order, $data) {
+                // Validate required fields
+                $this->validateOrderUpdateData($data);
+
+                // Handle optional payment method validation
+                $paymentType = null;
+                if (!empty($data['payment_method'])) {
+                    $paymentType = PaymentType::where('identifier', $data['payment_method'])->first();
+                    if (!$paymentType) {
+                        throw new Exception(__('Invalid payment method provided.'));
+                    }
+                }
+
+                // Create or update delivery proof record
+                $deliveryProof = OrderDeliveryProof::updateOrCreate(
+                    [
+                        'order_id' => $order->id,
+                        'driver_id' => $data['driver_id'] ?? $order->driver_id
+                    ],
+                    [
+                        'is_delivered' => (bool) $data['is_delivered'],
+                        'delivery_proof' => $data['delivery_proof'],
+                        'note' => $data['note'],
+                        'paid_on_delivery' => $order->payment_status === Order::PAYMENT_PAID ? true : (isset($data['paid_on_delivery']) ? (bool) $data['paid_on_delivery'] : false),
+                    ]
+                );
+
+                // Handle order status and payment updates
+                $this->handleOrderStatusUpdate($order, $data, $paymentType);
+
+                // Process commission if order is delivered
+                if ((bool) $data['is_delivered'] && $order->delivery_status === Order::DELIVERY_ONGOING) {
+                    $this->processDeliveryCompletion($order, $data['driver_id'] ?? $order->driver_id);
+                }
+
+                return [
+                    'status' => 'success',
+                    'message' => __('Order delivery status has been updated successfully.'),
+                    'data' => [
+                        'order' => $order->fresh(),
+                        'delivery_proof' => $deliveryProof,
+                        'payment_type' => $paymentType ? $paymentType->identifier : null,
+                        'driver_id' => $data['driver_id'] ?? $order->driver_id,
+                    ]
+                ];
+            });
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Validate order update data
+     *
+     * @param array $data
+     * @throws Exception
+     */
+    protected function validateOrderUpdateData(array $data): void
+    {
+        $required = ['is_delivered', 'delivery_proof', 'note'];
+        
+        foreach ($required as $field) {
+            if (!isset($data[$field])) {
+                throw new Exception(__("The field :field is required.", ['field' => $field]));
+            }
+        }
+
+        // Validate boolean fields
+        if (!in_array($data['is_delivered'], [0, 1, '0', '1', true, false])) {
+            throw new Exception(__('The is_delivered field must be 0 or 1.'));
+        }
+
+        if (isset($data['paid_on_delivery']) && !in_array($data['paid_on_delivery'], [0, 1, '0', '1', true, false])) {
+            throw new Exception(__('The paid_on_delivery field must be 0 or 1.'));
+        }
+    }
+
+    /**
+     * Handle order status and payment updates
+     *
+     * @param Order $order
+     * @param array $data
+     * @param PaymentType|null $paymentType
+     * @throws Exception
+     */
+    protected function handleOrderStatusUpdate(Order $order, array $data, ?PaymentType $paymentType): void
+    {
+        $isDelivered = (bool) $data['is_delivered'];
+        $paidOnDelivery = isset($data['paid_on_delivery']) ? (bool) $data['paid_on_delivery'] : null;
+
+        // Update order delivery status
+        if ($isDelivered) {
+            $order->delivery_status = Order::DELIVERY_DELIVERED;
+        } else {
+            $order->delivery_status = Order::DELIVERY_FAILED;
+        }
+
+        // Handle payment method update
+        if (!empty($data['payment_method'])) {
+            // You might need to update order payment method here based on your order structure
+            // This could be stored in order metas or a specific field
+        }
+
+        // Handle paid_on_delivery logic
+        if ($paidOnDelivery !== null) {
+            if ($paidOnDelivery && $isDelivered) {
+                // Create payment entry for delivered order
+                $this->createDeliveryPayment($order, $paymentType);
+            } elseif (!$paidOnDelivery) {
+                // Mark delivery as failed if payment was not received
+                $order->delivery_status = Order::DELIVERY_FAILED;
+            }
+        }
+
+        $order->save();
+    }
+
+    /**
+     * Create payment entry for delivery
+     *
+     * @param Order $order
+     * @param PaymentType|null $paymentType
+     * @throws Exception
+     */
+    protected function createDeliveryPayment(Order $order, ?PaymentType $paymentType): void
+    {
+        // Calculate due amount
+        $dueAmount = $order->total - $order->tendered;
+
+        if ($dueAmount > 0) {
+            $payment = new OrderPayment();
+            $payment->order_id = $order->id;
+            $payment->value = $dueAmount;
+            $payment->author = Auth::id() ?? $order->author;
+            $payment->identifier = $paymentType ? $paymentType->identifier : OrderPayment::PAYMENT_CASH;
+            $payment->uuid = Str::uuid()->toString();
+            $payment->save();
+
+            // Update order tendered amount
+            $order->tendered += $dueAmount;
+            
+            // Update payment status if fully paid
+            if ($order->tendered >= $order->total) {
+                $order->payment_status = Order::PAYMENT_PAID;
+            }
+        }
+    }
+
+    /**
+     * Process delivery completion and commission
+     *
+     * @param Order $order
+     * @param int $driverId
+     */
+    protected function processDeliveryCompletion(Order $order, int $driverId): void
+    {
+        try {
+            // Create driver earning for the delivery
+            $this->createEarningForDelivery($order, $driverId);
+        } catch (Exception $e) {
+            // Log the error but don't fail the entire operation
+            Log::warning('Failed to create driver earning: ' . $e->getMessage(), [
+                'order_id' => $order->id,
+                'driver_id' => $driverId
+            ]);
+        }
+    }
+
+    /**
+     * Start a delivery by changing status from pending to ongoing
+     *
+     * @param Order $order
+     * @param int $driverId
+     * @throws Exception
+     */
+    public function startDelivery(Order $order, int $driverId): array
+    {
+        try {
+            return DB::transaction(function () use ($order, $driverId) {
+                // Validate that this is a delivery order with pending status
+                if ($order->type !== Order::TYPE_DELIVERY) {
+                    throw new Exception(__('This is not a delivery order.'));
+                }
+
+                if ($order->delivery_status !== Order::DELIVERY_PENDING) {
+                    throw new Exception(__('This delivery is not in pending status.'));
+                }
+
+                if ($order->driver_id !== $driverId) {
+                    throw new Exception(__('You are not assigned to this delivery.'));
+                }
+
+                // Update delivery status to ongoing
+                $order->delivery_status = Order::DELIVERY_ONGOING;
+                $order->save();
+
+                // Dispatch event for delivery status change
+                event(new OrderAfterUpdatedDeliveryStatus($order));
+
+                return [
+                    'status' => 'success',
+                    'message' => __('Delivery has been started successfully.'),
+                    'data' => [
+                        'order' => $order->fresh(),
+                    ]
+                ];
+            });
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Reject a delivery by unassigning driver and keeping status as pending
+     *
+     * @param Order $order
+     * @param int $driverId
+     * @return array
+     * @throws Exception
+     */
+    public function rejectDelivery(Order $order, int $driverId): array
+    {
+        try {
+            return DB::transaction(function () use ($order, $driverId) {
+                // Validate that this is a delivery order with pending status
+                if ($order->type !== Order::TYPE_DELIVERY) {
+                    throw new Exception(__('This is not a delivery order.'));
+                }
+
+                if ($order->delivery_status !== Order::DELIVERY_PENDING) {
+                    throw new Exception(__('This delivery is not in pending status.'));
+                }
+
+                if ($order->driver_id !== $driverId) {
+                    throw new Exception(__('You are not assigned to this delivery.'));
+                }
+
+                // Unassign driver and keep delivery status as pending
+                $order->driver_id = null;
+                $order->save();
+
+                return [
+                    'status' => 'success',
+                    'message' => __('Delivery has been rejected successfully.'),
+                    'data' => [
+                        'order' => $order->fresh(),
+                    ]
+                ];
+            });
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
     }
 }

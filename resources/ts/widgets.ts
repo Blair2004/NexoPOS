@@ -10,3 +10,4 @@ window[ 'nsIncompleteSaleCardWidget' ]      =   defineAsyncComponent( () => impo
 window[ 'nsExpenseCardWidget' ]             =   defineAsyncComponent( () => import( './widgets/ns-transaction-card-widget.vue' ) );
 window['DriversWidgetComponent']             =   defineAsyncComponent( () => import( './widgets/ns-drivers-widget.vue' ) );
 window['DriversDeliveryWidget']      =   defineAsyncComponent( () => import( './widgets/ns-drivers-deliveries-widget.vue' ) );
+window['DriverEarningsWidgetComponent']     =   defineAsyncComponent( () => import( './widgets/ns-driver-earnings-widget.vue' ) );

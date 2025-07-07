@@ -5,8 +5,10 @@ namespace App\Listeners;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Models\Order;
 use App\Services\CashRegistersService;
+use App\Services\DriverService;
 use App\Services\OrdersService;
 use App\Services\TransactionService;
+use Illuminate\Support\Facades\Log;
 
 class OrderAfterPaymentStatusChangedEventListener
 {
@@ -16,7 +18,8 @@ class OrderAfterPaymentStatusChangedEventListener
     public function __construct(
         public TransactionService $transactionService,
         public OrdersService $ordersService,
-        public CashRegistersService $cashRegistersService
+        public CashRegistersService $cashRegistersService,
+        public DriverService $driverService
     ) {
         //
     }
@@ -101,6 +104,43 @@ class OrderAfterPaymentStatusChangedEventListener
         ) {
             $this->transactionService->handleUnpaidToVoidSaleTransaction( $event->order );
             $this->ordersService->returnVoidProducts( $event->order );
+        }
+
+        /**
+         * Handle driver commission when order moves from ongoing to delivered
+         */
+        $this->handleDriverCommission($event);
+    }
+
+    /**
+     * Handle driver commission for delivery completion
+     *
+     * @param OrderAfterPaymentStatusChangedEvent $event
+     */
+    protected function handleDriverCommission(OrderAfterPaymentStatusChangedEvent $event): void
+    {
+        $order = $event->order;
+        
+        // Check if this is a delivery order with a driver
+        if (!$order->driver_id || $order->type !== Order::TYPE_DELIVERY) {
+            return;
+        }
+
+        // Check if order moves to paid status and is marked as delivered
+        if (
+            $order->delivery_status === Order::DELIVERY_DELIVERED &&
+            $event->new === Order::PAYMENT_PAID &&
+            in_array($event->previous, [Order::PAYMENT_UNPAID, Order::PAYMENT_PARTIALLY])
+        ) {
+            try {
+                $this->driverService->createEarningForDelivery($order, $order->driver_id);
+            } catch (\Exception $e) {
+                // Log the error but don't fail the payment process
+                Log::warning('Failed to create driver commission: ' . $e->getMessage(), [
+                    'order_id' => $order->id,
+                    'driver_id' => $order->driver_id
+                ]);
+            }
         }
     }
 }

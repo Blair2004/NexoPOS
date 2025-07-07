@@ -18,6 +18,7 @@ class DriverOrderScope implements Scope
     public function apply(Builder | QueryBuilder $builder, Model $model): void
     {
         $builder->whereIn( 'payment_status', [ Order::PAYMENT_PAID, Order::PAYMENT_UNPAID, Order::PAYMENT_PARTIALLY  ] );
+        $builder->whereIn( 'delivery_status', [ Order::DELIVERY_PENDING, Order::DELIVERY_ONGOING, Order::DELIVERY_DELIVERED ]);
         $builder->where( 'driver_id', Auth::id() );
     }
 }

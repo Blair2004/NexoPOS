@@ -179,15 +179,15 @@ class DriverOrderCrud extends CrudService
     public function getLabels(): array
     {
         return CrudTable::labels(
-            list_title: __('DriverOrders List'),
-            list_description: __('Display all driverorders.'),
-            no_entry: __('No driverorders has been registered'),
-            create_new: __('Add a new driverorder'),
-            create_title: __('Create a new driverorder'),
-            create_description: __('Register a new driverorder and save it.'),
-            edit_title: __('Edit driverorder'),
-            edit_description: __('Modify  Driverorder.'),
-            back_to_list: __('Return to DriverOrders'),
+            list_title: __('Assigned Orders'),
+            list_description: __('Display orders assigned to your account.'),
+            no_entry: __('No orders has been registered'),
+            create_new: __('Add a new order'),
+            create_title: __('Create a new order'),
+            create_description: __('Register a new order and save it.'),
+            edit_title: __('Edit order'),
+            edit_description: __('Modify order.'),
+            back_to_list: __('Return to orders'),
         );
     }
 
@@ -605,6 +605,7 @@ class DriverOrderCrud extends CrudService
             $entry->change = ns()->currency->define( abs( $entry->getRawValue( 'change' ) ) )->format();
         }
 
+        // Always show options for viewing order details
         $entry->action(
             label: __( 'Options' ),
             identifier: 'delivery-options',
@@ -612,12 +613,28 @@ class DriverOrderCrud extends CrudService
             type: 'POPUP',
         );
 
-        $entry->action(
-            label: __( 'Deliver Order' ),
-            identifier: 'change-delivery-status',
-            permissions: [ 'nexopos.deliver.orders' ],
-            type: 'POPUP'
-        );
+        // Get the raw delivery status
+        $deliveryStatus = $entry->getRawValue( 'delivery_status' );
+
+        // Show Start/Reject buttons for pending orders
+        if ( $deliveryStatus === Order::DELIVERY_PENDING ) {
+            $entry->action(
+                label: __( 'Manage Delivery' ),
+                identifier: 'manage-delivery',
+                permissions: [ 'nexopos.deliver.orders' ],
+                type: 'POPUP'
+            );
+        }
+
+        // Show Deliver Order button only for ongoing deliveries
+        if ( $deliveryStatus === Order::DELIVERY_ONGOING ) {
+            $entry->action(
+                label: __( 'Deliver Order' ),
+                identifier: 'change-delivery-status',
+                permissions: [ 'nexopos.deliver.orders' ],
+                type: 'POPUP'
+            );
+        }
 
         return $entry;
     }

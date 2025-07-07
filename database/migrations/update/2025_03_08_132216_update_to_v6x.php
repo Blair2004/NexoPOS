@@ -53,5 +53,11 @@ return new class extends Migration
         Schema::table( 'nexopos_notifications', function ( Blueprint $table ) {
             $table->dropColumn( 'actions' );
         } );
+
+        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_orders', 'driver_id' ) ) {
+                $table->dropColumn( 'driver_id' );
+            }
+        } );
     }
 };
