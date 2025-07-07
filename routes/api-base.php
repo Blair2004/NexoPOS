@@ -37,7 +37,6 @@ Route::middleware( [
         include dirname( __FILE__ ) . '/api/forms.php';
         include dirname( __FILE__ ) . '/api/units.php';
         include dirname( __FILE__ ) . '/api/users.php';
-        include dirname( __FILE__ ) . '/api/drivers.php';
     } );
 } );
 

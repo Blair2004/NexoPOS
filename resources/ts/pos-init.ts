@@ -3,7 +3,6 @@ import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/produc
 import { CustomerQueue } from "./pages/dashboard/pos/queues/order/customer-queue";
 import { PaymentQueue } from "./pages/dashboard/pos/queues/order/payment-queue";
 import { ProductsQueue } from "./pages/dashboard/pos/queues/order/products-queue";
-import { DriverQueue } from "./pages/dashboard/pos/queues/order/driver-queue";
 import { TypeQueue } from "./pages/dashboard/pos/queues/order/type-queue";
 import { BehaviorSubject } from "rxjs";
 import { Customer } from "./interfaces/customer";
@@ -30,7 +29,6 @@ import { nsAlertPopup, nsConfirmPopup, nsPromptPopup } from "./components/compon
 import nsPosShippingPopup from "./popups/ns-pos-shipping-popup.vue";
 import nsLayawayPopup from "./popups/ns-pos-layaway-popup.vue";
 import delivery from "./pages/dashboard/pos/queues/order-type/delivery";
-import driver from "./pages/dashboard/pos/queues/order-type/driver";
 
 /**
  * these are dynamic component
@@ -239,7 +237,6 @@ export class POS {
         this._cartButtons = new BehaviorSubject<{ [key: string]: any }>({})
         this._orderTypeProcessQueue = [
             delivery,
-            // driver this might not be needed as it's already on the general queue.
         ];
 
         this.initialQueue.push(() => new Promise((resolve, reject) => {
@@ -1962,7 +1959,6 @@ export class POS {
             ProductsQueue,
             CustomerQueue,
             TypeQueue,
-            DriverQueue,
             PaymentQueue
         ]);
 

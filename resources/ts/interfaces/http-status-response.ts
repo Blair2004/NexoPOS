@@ -1,5 +1,5 @@
 export interface HttpStatusResponse {
-    type: string;
+    status: 'success' | 'error' | 'warning' | 'info';
     message: string;
     data?: {
         [key:string] : any

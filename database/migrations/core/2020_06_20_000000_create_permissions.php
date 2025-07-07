@@ -109,7 +109,6 @@ return new class extends Migration
         include_once dirname( __FILE__ ) . '/../../permissions/payments-types.php';
         include_once dirname( __FILE__ ) . '/../../permissions/pos.php';
         include_once dirname( __FILE__ ) . '/../../permissions/widgets.php';
-        include_once dirname( __FILE__ ) . '/../../permissions/drivers-permissions.php';
     }
 
     /**

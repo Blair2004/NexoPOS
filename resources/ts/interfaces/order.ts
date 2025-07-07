@@ -77,6 +77,4 @@ export interface Order {
     shipping_type: 'flat' | 'percentage';
     subtotal: number;
     title: string;
-    driver_id: number | null;
-    driver_name: string | null;
 }

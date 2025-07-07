@@ -28,7 +28,7 @@
     "include": [
         "./resources/ts/**/*.ts",
         "./resources/ts/**/*.js",
-        "./resources/ts/**/*.vue",
+        "./resources/ts/**/*.vue", "modules/NsDelivery/Resources/ts/driver.ts", "modules/NsDelivery/Resources/ts/driver-queue.ts",
     ],
     "exclude": [
         "node_modules"

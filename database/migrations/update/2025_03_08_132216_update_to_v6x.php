@@ -23,26 +23,6 @@ return new class extends Migration
                 $table->json( 'actions' )->nullable();
             }
         } );
-
-        define( 'NEXO_CREATE_PERMISSIONS', true );
-
-        include_once dirname( __FILE__ ) . '/../../permissions/drivers-permissions.php';
-        include_once dirname( __FILE__ ) . '/../../permissions/driver-role.php';
-
-        /**
-         * we'll manually add the permission "drivers" to the administrator
-         */
-        $admin = Role::where( 'namespace', 'admin' )->first();
-        $admin->addPermissions( Permission::includes( '.drivers' )->get()->map( fn( $permission ) => $permission->namespace ) );
-
-        /**
-         * We'll update the orders table to add the "driver_id"
-         */
-        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_orders', 'driver_id' ) ) {
-                $table->integer( 'driver_id' )->nullable();
-            }
-        } );
     }
 
     /**
@@ -52,12 +32,6 @@ return new class extends Migration
     {
         Schema::table( 'nexopos_notifications', function ( Blueprint $table ) {
             $table->dropColumn( 'actions' );
-        } );
-
-        Schema::table( 'nexopos_orders', function ( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_orders', 'driver_id' ) ) {
-                $table->dropColumn( 'driver_id' );
-            }
         } );
     }
 };

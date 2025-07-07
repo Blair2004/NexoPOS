@@ -177,7 +177,6 @@ class OrdersController extends DashboardController
                 'ns_pos_printing_document' => ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
                 'ns_orders_allow_partial' => ns()->option->get( 'ns_orders_allow_partial', 'no' ),
                 'ns_orders_allow_unpaid' => ns()->option->get( 'ns_orders_allow_unpaid', 'no' ),
-                'ns_drivers_force_selection' => ns()->option->get( 'ns_drivers_force_selection', 'no' ),
                 'ns_pos_order_types' => ns()->option->get( 'ns_pos_order_types', [] ),
                 'ns_pos_order_sms' => ns()->option->get( 'ns_pos_order_sms', 'no' ),
                 'ns_pos_sound_enabled' => ns()->option->get( 'ns_pos_sound_enabled', 'yes' ),
@@ -201,7 +200,6 @@ class OrdersController extends DashboardController
                 'ns_pos_allow_wholesale_price' => ns()->option->get( 'ns_pos_allow_wholesale_price', 'no' ) === 'yes' ? true : false,
                 'ns_pos_allow_decimal_quantities' => ns()->option->get( 'ns_pos_allow_decimal_quantities', 'no' ) === 'yes' ? true : false,
                 'ns_pos_force_autofocus' => ns()->option->get( 'ns_pos_force_autofocus', 'no' ) === 'yes' ? true : false,
-                'ns_drivers_enabled' => ns()->option->get( 'ns_drivers_enabled', 'no' ) === 'yes' ? true : false,
             ] ),
             'urls' => [
                 'sale_printing_url' => Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
@@ -415,10 +413,5 @@ class OrdersController extends DashboardController
     public function getOrderRefunds( Request $request, Order $order )
     {
         return $this->ordersService->getOrderRefunds( $order );
-    }
-
-    public function listAssignatedOrders()
-    {
-        return DriverOrderCrud::table();
     }
 }

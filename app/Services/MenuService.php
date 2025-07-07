@@ -371,27 +371,6 @@ class MenuService
                 ),
             ),
             AsideMenu::menu(
-                label: __( 'Drivers' ),
-                icon: 'la-user-tag',
-                identifier: 'drivers',
-                permissions: [ 'nexopos.create.drivers' ],
-                show: ns()->option->get( 'ns_drivers_enabled' ) === 'yes',
-                childrens: AsideMenu::childrens(
-                    AsideMenu::subMenu(
-                        label: __( 'List' ),
-                        identifier: 'list',
-                        permissions: [ 'nexopos.read.drivers' ],
-                        href: ns()->url( '/dashboard/drivers' )
-                    ),
-                    AsideMenu::subMenu(
-                        label: __( 'Create Driver' ),
-                        identifier: 'create',
-                        permissions: [ 'nexopos.create.drivers' ],
-                        href: ns()->url( '/dashboard/drivers/create' )
-                    )
-                )
-            ),
-            AsideMenu::menu(
                 label: __( 'Roles' ),
                 icon: 'la-shield-alt',
                 identifier: 'roles',
@@ -532,11 +511,6 @@ class MenuService
                         label: __( 'POS' ),
                         identifier: 'pos',
                         href: ns()->url( '/dashboard/settings/pos' )
-                    ),
-                    AsideMenu::subMenu(
-                        label: __( 'Drivers' ),
-                        identifier: 'drivers',
-                        href: ns()->url( '/dashboard/settings/drivers' )
                     ),
                     AsideMenu::subMenu(
                         label: __( 'Customers' ),
