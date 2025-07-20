@@ -31,11 +31,21 @@ class UsersController extends DashboardController
         // ...
     }
 
+    /**
+     * List all users
+     *
+     * @return View
+     */
     public function listUsers()
     {
         return UserCrud::table();
     }
 
+    /**
+     * Create a new user
+     *
+     * @return View
+     */
     public function createUser()
     {
         ns()->restrict( [ 'create.users' ] );
@@ -43,6 +53,12 @@ class UsersController extends DashboardController
         return UserCrud::form();
     }
 
+    /**
+     * Edit a user
+     *
+     * @param User $user
+     * @return View
+     */
     public function editUser( User $user )
     {
         ns()->restrict( [ 'update.users' ] );
@@ -54,6 +70,12 @@ class UsersController extends DashboardController
         return UserCrud::form( $user );
     }
 
+    /**
+     * Returns a list of users
+     *
+     * @param User $user
+     * @return array
+     */
     public function getUsers( User $user )
     {
         ns()->restrict( [ 'read.users' ] );
@@ -169,11 +191,24 @@ class UsersController extends DashboardController
         return RolesCrud::form( $role );
     }
 
+    /**
+     * Create a new role
+     *
+     * @param Role $role
+     * @return View
+     */
     public function createRole( Role $role )
     {
         return RolesCrud::form();
     }
 
+    /**
+     * Clone a role
+     *
+     * @param Role $role
+     * @return Role
+     * @throws Exception
+     */
     public function cloneRole( Role $role )
     {
         ns()->restrict( [ 'create.roles' ] );
@@ -181,11 +216,24 @@ class UsersController extends DashboardController
         return $this->usersService->cloneRole( $role );
     }
 
+    /**
+     * Configure widgets on areas
+     *
+     * @param Request $request
+     * @return array
+     */
     public function configureWidgets( Request $request )
     {
         return $this->usersService->storeWidgetsOnAreas( $request->only( [ 'column' ] ) );
     }
 
+    /**
+     * Create a new API token for the user
+     *
+     * @param Request $request
+     * @return string
+     * @throws Exception
+     */
     public function createToken( Request $request )
     {
         $validation = Validator::make( $request->all(), [
@@ -199,30 +247,74 @@ class UsersController extends DashboardController
         return $this->usersService->createToken( $request->input( 'name' ) );
     }
 
+    /**
+     * Get all tokens for the current user
+     *
+     * @return array
+     */
     public function getTokens()
     {
         return $this->usersService->getTokens();
     }
 
+    /**
+     * Delete a token by its ID
+     *
+     * @param int $tokenId
+     * @return bool
+     */
     public function deleteToken( $tokenId )
     {
         return $this->usersService->deleteToken( $tokenId );
     }
 
+    /**
+     * Check if the user has a specific permission
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function checkPermission( Request $request )
     {
-        $result = $this->usersService->checkPermission( $request->input( 'permission' ) );
+        return $this->usersService->requestAccess( 
+            $request->input( 'permission' ) 
+        );
+    }
 
-        if ( $result ) {
-            return response()->json( [
-                'status' => 'success',
-                'message' => __( 'The permission is granted' ),
-            ] );
-        } else {
-            return response()->json( [
-                'status' => 'error',
-                'message' => __( 'The permission is denied' ),
-            ], 403 );
-        }
+    /**
+     * Get the current user
+     *
+     * @param Request $request
+     * @return User
+     */
+    public function getUser( Request $request )
+    {
+        $request->user()->load([
+            'attribute',
+            'roles',
+        ]);
+
+        return $request->user();
+    }
+
+    /**
+     * Get the permissions of the current user
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function getUserPermissions( Request $request )
+    {
+        $user = $request->user();
+        $user->load( 'roles.permissions' );
+
+        return $user->roles->flatMap( function ( $role ) {
+            return $role->permissions->map( function ( $permission ) {
+                return [
+                    'namespace' => $permission->namespace,
+                    'name' => $permission->name,
+                ];
+            });
+        } )->unique( 'namespace' )->values()->all();
     }
 }

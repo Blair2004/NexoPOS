@@ -154,7 +154,7 @@
                             </tr>
                             <tr v-if="order.type && order.type.identifier === 'delivery'">
                                 <td width="200" class="border p-2">
-                                    <a @click="openDriverPopup()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Driver' ) }}: {{ order.driver_name || __( 'Not Selected') }}</a>
+                                    <!--  -->
                                 </td>
                                 <td width="200" class="border p-2">
                                     <a @click="openShippingPopup()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Shipping' ) }}</a>
@@ -221,7 +221,7 @@
                             </tr>
                             <tr v-if="order.type && order.type.identifier === 'delivery'">
                                 <td width="200" class="border p-2">
-                                    <a @click="openDriverPopup()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Driver' ) }}: {{ order.driver_name || __( 'Not Selected') }}</a>
+                                    <!--  -->
                                 </td>
                                 <td width="200" class="border p-2">
                                     <a @click="openShippingPopup()" class="cursor-pointer outline-hidden border-dashed py-1 border-b border-secondary text-sm">{{ __( 'Shipping' ) }}</a>
@@ -299,7 +299,7 @@ declare const POS, nsShortcuts, nsHotPress, nsHooks;
 import { ref, markRaw } from '@vue/reactivity';
 import { Order } from '~/interfaces/order';
 import { defineAsyncComponent, Ref } from 'vue';
-import NsPosDriversPopup from '~/popups/ns-pos-drivers-popup.vue';
+import ActionPermissions from '~/libraries/action-permissions';
 
 export default {
     name: 'ns-pos-cart',
@@ -458,23 +458,6 @@ export default {
             return 0;
         },
 
-        async openDriverPopup() {
-            try {
-                const driverData: { driver_id: number, driver_name: string } = await new Promise( ( resolve, reject ) => {
-                    Popup.show( NsPosDriversPopup, { resolve, reject, order: this.order })
-                });
-
-                if ( driverData.driver_id ) {
-                    this.order.driver_id = driverData.driver_id;
-                    this.order.driver_name = driverData.driver_name;
-                    POS.order.next( this.order );
-                }
-
-            } catch( exception ) {
-                // we're probably closing the popup.
-            }
-        },
-
         async changeProductPrice( product ) {
             if ( ! this.settings.edit_purchase_price ) {
                 return nsSnackBar.error( __( `You don't have the right to edit the purchase price.` ) );
@@ -608,6 +591,8 @@ export default {
             if ( type === 'product' ) {
                 reference.disable_flat = true;
             }
+
+            ActionPermissions.canProceed( type === 'product' ? 'nexopos.cart.product-discount' : 'nexopos.cart.discount' );
 
             try {
                 const promise   =   await new Promise( ( resolve, reject ) => {

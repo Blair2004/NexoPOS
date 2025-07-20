@@ -3,6 +3,8 @@
 use App\Http\Controllers\Dashboard\UsersController;
 use Illuminate\Support\Facades\Route;
 
+Route::get( '/user', [ UsersController::class, 'getUser' ] );
+Route::get( '/user/permissions', [ UsersController::class, 'getUserPermissions' ] );
 Route::get( '/users/roles', [ UsersController::class, 'getRoles' ] );
 Route::get( '/users', [ UsersController::class, 'getUsers' ] );
 Route::put( '/users/roles', [ UsersController::class, 'updateRole' ] );

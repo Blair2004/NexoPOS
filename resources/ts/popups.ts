@@ -25,11 +25,6 @@ const popups    =   {
     nsOrdersRefund,
     nsSelectPopup,
     nsPOSLoadingPopup,
-    nsDriversStatusPopup,
-    nsDriversOrdersPopup,
-    nsDriversOrdersOptionsPopup,
-    nsDriverManageDeliveryPopup,
-    nsDeliveryDetailsPopup,
 };
 
 for( let index in popups ) {

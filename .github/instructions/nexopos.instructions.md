@@ -70,3 +70,26 @@ classes automatically using PSR-4 autoloading. Each module can have its own stru
 - **Settings**: Contains settings classes for the module.
 - **Widgets**: Contains widget classes used in the module.
 
+## "database" directory
+The database directory contains the database-related files for NexoPOS. It includes:
+
+- **migrations**: Contains database migration files that define the structure of the database tables.
+- **seeders**: Contains database seeders that populate the database with initial data.
+- **factories**: Contains model factories that define how to generate fake data for testing purposes.
+- **json**: we might store there any demo json file. that can be used for seending.
+- **permission**: Contains permission files that define the permissions for the application.
+
+### Regarding "migrations" directory
+That folder has 3 subfolders:
+ 
+- **core**: Contains the core migrations that define the basic structure of the NexoPOS database.
+- **create**: Contains migrations that create new tables in the database.
+- **update**: Contains migrations that update existing tables in the database.
+
+At the root of the directory, we might also have some laravel (or laravel packages) migration that are necessary to be executed.
+
+## Additional Instructions
+.github/instructions/nexopos-widgets.instructions.md
+.github/instructions/nexopos-permissions.instructions.md
+.github/instructions/nexopos-localization.instructions.md
+.github/instructions/nexopos-forminput.instructions.md

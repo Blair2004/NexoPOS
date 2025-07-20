@@ -51,6 +51,7 @@ export class Popup {
 
     open( component, params = {}, config = {} ) {
         this.popupBody       =   document.createElement( 'div' );
+        console.log({ component})
 
         if ( typeof component === 'function' ) {
             try {
@@ -86,12 +87,18 @@ export class Popup {
             component.props     =   [];
         }
 
-        if ( component.props !== undefined ) {
+        // components.props must be an array
+        if ( component.props !== undefined && Array.isArray( component.props ) ) {
             props     =   Object.keys( params ).filter( param => component.props.includes( param ) ).reduce( ( props, param ) => {
                 props[ param ]  =   params[ param ];
                 return props;
             }, {});
-        }
+        } else if ( component.props !== undefined && typeof component.props === 'object' ) {
+            props     =   Object.keys( params ).filter( param => Object.keys( component.props ).includes( param ) ).reduce( ( props, param ) => {
+                props[ param ]  =   params[ param ];
+                return props;
+            }, {});
+        } 
         
         const popup     =   {
             hash: `popup-${this.hash()}-${this.hash()}`,

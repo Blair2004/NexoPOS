@@ -23,6 +23,46 @@ return new class extends Migration
                 $table->json( 'actions' )->nullable();
             }
         } );
+
+        /**
+         * Create POS action permissions for v6.x
+         */
+        if ( ! defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
+            define( 'NEXO_CREATE_PERMISSIONS', true );
+        }
+
+        // Create POS cart action permissions
+        $posCartPermissions = [
+            'nexopos.cart.product-discount' => __( 'Cart: Change Product Discount' ),
+            'nexopos.cart.product-price' => __( 'Cart: Edit Product Price' ),
+            'nexopos.cart.product-wholesale-price' => __( 'Cart: Use Wholesale Price' ),
+            'nexopos.cart.product-delete' => __( 'Cart: Product Delete' ),
+            'nexopos.cart.settings' => __( 'Cart: Change Settings' ),
+            'nexopos.cart.taxes' => __( 'Cart: Set Taxes' ),
+            'nexopos.cart.comments' => __( 'Cart: Add Comments' ),
+            'nexopos.cart.order-type' => __( 'Cart: Change Order Type' ),
+            'nexopos.cart.coupons' => __( 'Cart: Apply Coupons' ),
+            'nexopos.cart.products' => __( 'Cart: Create Quick Product' ),
+            'nexopos.cart.void' => __( 'Cart: Void Order' ),
+            'nexopos.cart.discount' => __( 'Cart: Apply Discount' ),
+            'nexopos.cart.hold' => __( 'Cart: Hold Order' ),
+        ];
+
+        foreach ( $posCartPermissions as $namespace => $name ) {
+            $permission = Permission::firstOrNew( [ 'namespace' => $namespace ] );
+            $permission->name = $name;
+            $permission->namespace = $namespace;
+            $permission->description = sprintf( __( 'Allow access to %s feature in POS cart.' ), strtolower( $name ) );
+            $permission->save();
+        }
+
+        /**
+         * Assign new permissions to admin role
+         */
+        $admin = Role::namespace( 'admin' );
+        if ( $admin instanceof Role ) {
+            $admin->addPermissions( array_keys( $posCartPermissions ) );
+        }
     }
 
     /**

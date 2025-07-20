@@ -4,19 +4,34 @@
         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Discount' ) }}</span>
     </div>
 </template>
-<script>
+<script lang="ts">
 import nsPosDiscountPopupVue from '~/popups/ns-pos-discount-popup.vue';
+import nsPosPermissionsPopup from '~/popups/ns-pos-permissions-popup.vue';
+import ActionPermission from '~/libraries/action-permissions';
+declare const nsSnackBar, Popup;
+
 export default {
     props: [ 'order', 'settings' ],
     methods: {
         __,
-        openDiscountPopup( reference, type, productIndex = null ) {
+        async openDiscountPopup( reference, type, productIndex = null ) {
             if ( ! this.settings.products_discount && type === 'product' ) {
                 return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) );
             }
 
             if ( ! this.settings.cart_discount && type === 'cart' ) {
                 return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) );
+            }
+
+            const permissionMapping = {
+                product: 'nexopos.cart.product-discount',
+                cart: 'nexopos.cart.discount'
+            }
+
+            try {
+                await ActionPermission.canProceed( permissionMapping[type] );
+            } catch ( error ) {
+                return nsSnackBar.error( __( `Your action were'nt granted.` ) );
             }
 
             Popup.show( nsPosDiscountPopupVue, { 
