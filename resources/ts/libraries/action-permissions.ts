@@ -24,7 +24,6 @@ export default class ActionPermissions {
                             error: ( error ) => {
                                 if ( error.type && [ 'permission_denied', 'permission_pending' ].includes( error.type ) ) {
                                     Popup.show( NsPosPermissionsPopup, {
-                                        featureName: 'foo',
                                         permission: permission,
                                         access_id: error.data.access.id,
                                         resolve,

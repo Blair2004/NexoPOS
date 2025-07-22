@@ -15,6 +15,6 @@ class PermissionController extends DashboardController
 {
     public function getSinglePermission( string $namespace )
     {
-        return Permission::where( 'namespace', $namespace )->first();
+        return Permission::where( 'namespace', $namespace )->firstOrFail();
     }
 }

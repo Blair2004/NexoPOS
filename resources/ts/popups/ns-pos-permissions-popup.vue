@@ -65,7 +65,7 @@ declare const nsHttpClient, nsSnackBar, __, popupCloser, popupResolver;
 
 export default defineComponent({
     name: 'NsPosPermissionsPopup',
-    props: [ 'permission', 'popup', 'access_id' ],
+    props: [ 'permission', 'popup', 'access_id', 'reject', 'resolve' ],
     emits: ['close', 'granted'],
     setup(props, { emit }) {
         const isLoading = ref(false)
@@ -107,26 +107,34 @@ export default defineComponent({
 
         const close = () => {
             props.popup.close();
+            props.reject( false );
         }
 
+        
         const checkPermissionStatus = async () => {
-            return new Promise( ( resolve, reject ) => {
-                nsHttpClient.get(`/api/user/access/${props.access_id}`)
-                    .subscribe({
-                        next: (response) => {
-                            if (response.satus === 'granted') {
-                                props.popup.close( true );
-                                resolve(response.permissions);
-                            } else {
-                                console.log('Permission not granted yet, will check again...');
+            try {
+                const result = new Promise( ( resolve, reject ) => {
+                    nsHttpClient.get(`/api/user/access/${props.access_id}`)
+                        .subscribe({
+                            next: (response) => {
+                                if (response.satus === 'granted') {
+                                    resolve(response.permissions);
+                                } else {
+                                    console.log('Permission not granted yet, will check again...');
+                                }
+                            },
+                            error: (error) => {
+                                reject( false );
                             }
-                        },
-                        error: (error) => {
-                            props.popup.close( false );
-                            reject(error);
-                        }
-                    });
-            })
+                        });
+                });
+                
+                props.popup.close();
+                props.resolve( true );
+            } catch( exception ) {
+                console.error('Failed to check permission status:', exception);
+                close();
+            }
         }
 
         onUnmounted(() => {
@@ -145,13 +153,13 @@ export default defineComponent({
             // Poll for permission status (for QR code scanning)
             pollInterval = window.setInterval(checkPermissionStatus, 2000)
 
-            nsHttpClient.get( `/api/permissions/${props.permission}` )
+            nsHttpClient.get( `/api/permissions/${props.permission}a` )
                 .subscribe({
                     next: permission => {
                         permissionData.value = permission;
                     },
                     error: error => {
-                        props.popup.close( false );
+                        close();
                         nsSnackBar.error(__('Failed to load permission data'));
                     }
                 })
