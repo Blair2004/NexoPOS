@@ -317,4 +317,9 @@ class UsersController extends DashboardController
             });
         } )->unique( 'namespace' )->values()->all();
     }
+
+    public function approveAccess( Request $request, $id )
+    {
+        
+    }
 }
