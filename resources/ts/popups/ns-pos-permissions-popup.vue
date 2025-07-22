@@ -153,7 +153,7 @@ export default defineComponent({
             // Poll for permission status (for QR code scanning)
             pollInterval = window.setInterval(checkPermissionStatus, 2000)
 
-            nsHttpClient.get( `/api/permissions/${props.permission}a` )
+            nsHttpClient.get( `/api/permissions/${props.permission}` )
                 .subscribe({
                     next: permission => {
                         permissionData.value = permission;
