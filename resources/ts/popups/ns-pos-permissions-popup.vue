@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, nextTick, onDestroyed } from 'vue'
+import { defineComponent, ref, onMounted, nextTick, onUnmounted } from 'vue'
 import QRCode from 'qrcode'
 
 declare const nsHttpClient, nsSnackBar, __, popupCloser, popupResolver;
@@ -129,7 +129,12 @@ export default defineComponent({
             })
         }
 
-        // onDestroyed
+        onUnmounted(() => {
+            if (pollInterval) {
+                console.log('Clearing permission status polling interval');
+                clearInterval(pollInterval);
+            }
+        });
 
         let pollInterval: number | null = null
 
@@ -151,13 +156,6 @@ export default defineComponent({
                     }
                 })
         })
-
-        const onUnmounted = () => {
-            if (pollInterval) {
-                console.log('Clearing permission status polling interval');
-                clearInterval(pollInterval)
-            }
-        }
 
         return {
             isLoading,
