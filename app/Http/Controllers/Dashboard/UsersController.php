@@ -333,6 +333,9 @@ class UsersController extends DashboardController
              * let's check if the permission has not yet expired.
              */
             if ( $access->expired_at && now()->greaterThan( $access->expired_at ) ) {
+                $access->status = PermissionAccess::EXPIRED;
+                $access->save();
+
                 throw new NotFoundException( __( 'The requested permission access has expired.' ) );
             }
 
@@ -364,6 +367,9 @@ class UsersController extends DashboardController
          * Check if the permission has not yet expired.
          */
         if ( $access->expired_at && now()->greaterThan( $access->expired_at ) ) {
+            $access->status = PermissionAccess::EXPIRED;
+            $access->save();
+
             throw new NotFoundException( __( 'The requested permission access has expired.' ) );
         }
 
