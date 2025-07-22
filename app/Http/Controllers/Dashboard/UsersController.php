@@ -10,8 +10,10 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\RolesCrud;
 use App\Crud\UserCrud;
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use App\Models\Permission;
+use App\Models\PermissionAccess;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\DateService;
@@ -320,6 +322,61 @@ class UsersController extends DashboardController
 
     public function approveAccess( Request $request, $id )
     {
-        
+        $access = PermissionAccess::find( $id );
+
+        /**
+         * We'll proceed only if the permission is valid.
+         */
+        if ( $access instanceof PermissionAccess ) {
+
+            /**
+             * let's check if the permission has not yet expired.
+             */
+            if ( $access->expired_at && now()->greaterThan( $access->expired_at ) ) {
+                throw new NotFoundException( __( 'The requested permission access has expired.' ) );
+            }
+
+            if ( ns()->allowedTo( $access->permission ) ) {
+                $access->status = PermissionAccess::GRANTED;
+                $access->granter_id = Auth::id();
+                $access->save();
+
+                return [
+                    'status' => 'success',
+                    'message' => __( 'The permission access has been granted.' ),
+                    'data' => compact( 'access' )
+                ];
+            }
+        }
+
+        throw new NotFoundException( __( 'The requested permission access is not found.' ) );
+    }
+
+    public function getAccess( Request $request, $id )
+    {
+        $access = PermissionAccess::find( $id );
+
+        if ( ! $access instanceof PermissionAccess ) {
+            throw new NotFoundException( __( 'The requested permission access is not found.' ) );
+        }
+
+        /**
+         * Check if the permission has not yet expired.
+         */
+        if ( $access->expired_at && now()->greaterThan( $access->expired_at ) ) {
+            throw new NotFoundException( __( 'The requested permission access has expired.' ) );
+        }
+
+        /**
+         * check if the user has access to this permission.
+         */
+        if ( $access->requester_id !== Auth::id() ) {
+            throw new NotFoundException( __( 'You do not have access to this permission.' ) );
+        }
+
+        return [
+            'status' => 'success',
+            'data' => compact( 'access' )
+        ];
     }
 }

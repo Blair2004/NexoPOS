@@ -75,26 +75,34 @@ export default defineComponent({
         const permissionData = ref({});
 
         const generateQRCode = async () => {
-            try {                
-                qrCodeData.value = JSON.stringify({
-                    permission: props.permission,
-                    access_id: props.access_id,
-                });
-                
-                if (qrCanvas.value) {
-                    await QRCode.toCanvas(qrCanvas.value, qrCodeData.value, {
-                        width: 240,
-                        margin: 1,
-                        color: {
-                            dark: '#1f2937',
-                            light: '#ffffff'
-                        }
-                    })
-                    qrCodeGenerated.value = true
+            return new Promise( async ( resolve, reject ) => {
+                try {                
+                    qrCodeData.value = JSON.stringify({
+                        permission: props.permission,
+                        access_id: props.access_id,
+                    });
+                    
+                    if (qrCanvas.value) {
+                        const result = await QRCode.toCanvas(qrCanvas.value, qrCodeData.value, {
+                            width: 240,
+                            margin: 1,
+                            color: {
+                                dark: '#1f2937',
+                                light: '#ffffff'
+                            }
+                        })
+                        qrCodeGenerated.value = true;
+
+                        console.log({ result })
+
+                        resolve(true);
+                    }
+                } catch (error) {
+                    console.error('Failed to generate QR code:', error)
+                    nsSnackBar.error(__('Failed to generate QR code'));
+                    reject(error);
                 }
-            } catch (error) {
-                console.error('Failed to generate QR code:', error)
-            }
+            })
         }
 
         const close = () => {
@@ -122,7 +130,7 @@ export default defineComponent({
             // Poll for permission status (for QR code scanning)
             pollInterval = window.setInterval(checkPermissionStatus, 2000)
 
-            nsHttpClient.get( `/api/permissions/${props.permission}` )
+            nsHttpClient.get( `/api/user/access/${props.access_id}` )
                 .subscribe({
                     next: permission => {
                         permissionData.value = permission;
