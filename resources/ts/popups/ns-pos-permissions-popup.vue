@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, nextTick } from 'vue'
+import { defineComponent, ref, onMounted, nextTick, onDestroyed } from 'vue'
 import QRCode from 'qrcode'
 
 declare const nsHttpClient, nsSnackBar, __, popupCloser, popupResolver;
@@ -110,27 +110,37 @@ export default defineComponent({
         }
 
         const checkPermissionStatus = async () => {
-            try {
-                const response = await nsHttpClient.get(`/api/users/permissions/`)
-                if (response.status === 'granted') {
-                    emit('granted', response.data)
-                    close()
-                }
-            } catch (error) {
-                // Permission not granted yet, continue polling
-            }
+            return new Promise( ( resolve, reject ) => {
+                nsHttpClient.get(`/api/user/access/${props.access_id}`)
+                    .subscribe({
+                        next: (response) => {
+                            if (response.satus === 'granted') {
+                                props.popup.close( true );
+                                resolve(response.permissions);
+                            } else {
+                                console.log('Permission not granted yet, will check again...');
+                            }
+                        },
+                        error: (error) => {
+                            props.popup.close( false );
+                            reject(error);
+                        }
+                    });
+            })
         }
+
+        // onDestroyed
 
         let pollInterval: number | null = null
 
         onMounted(async () => {
             await nextTick()
             await generateQRCode()
-            
+
             // Poll for permission status (for QR code scanning)
             pollInterval = window.setInterval(checkPermissionStatus, 2000)
 
-            nsHttpClient.get( `/api/user/access/${props.access_id}` )
+            nsHttpClient.get( `/api/permissions/${props.permission}` )
                 .subscribe({
                     next: permission => {
                         permissionData.value = permission;
@@ -144,6 +154,7 @@ export default defineComponent({
 
         const onUnmounted = () => {
             if (pollInterval) {
+                console.log('Clearing permission status polling interval');
                 clearInterval(pollInterval)
             }
         }

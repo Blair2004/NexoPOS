@@ -11,8 +11,6 @@ export default class ActionPermissions {
             const options = POS.options.getValue();
             const actionPermissionEnabled = options.ns_pos_action_permission_enabled === 'yes';
 
-            console.log({ actionPermissionEnabled, permission });
-
             if ( actionPermissionEnabled ) {
                 const restrictedPermissions = options.ns_pos_action_permission_restricted_features;
                 const permissionDuration = options.ns_pos_action_permission_duration;
@@ -21,7 +19,7 @@ export default class ActionPermissions {
                     nsHttpClient.post( `/api/users/check-permission/`, { permission })
                         .subscribe({
                             next: ( response ) => {
-
+                                resolve( true );
                             },
                             error: ( error ) => {
                                 if ( error.type && [ 'permission_denied', 'permission_pending' ].includes( error.type ) ) {
