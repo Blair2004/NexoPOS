@@ -2,7 +2,7 @@
 import NsPosPermissionsPopup from "~/popups/ns-pos-permissions-popup.vue";
 NsPosPermissionsPopup
 
-declare const POS, nsHttpClient, Popup;
+declare const POS, nsHttpClient, Popup, nsSnackBar;
 
 export default class ActionPermissions {
     static async canProceed( permission )
@@ -29,6 +29,10 @@ export default class ActionPermissions {
                                         resolve,
                                         reject,
                                     } )
+                                }
+
+                                if ( error.type === 'permission_cooldown' ) {
+                                    nsSnackBar.error( error.message );
                                 }
                             },
                         })
