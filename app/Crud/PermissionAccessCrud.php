@@ -70,7 +70,12 @@ class PermissionAccessCrud extends CrudService
      *
      * @param array
      */
-    public $relations   =  [];
+    public $relations   =  [
+        'leftJoin' => [
+            [ 'nexopos_users as requester', 'requester.id', '=', 'nexopos_permissions_access.requester_id' ],
+            [ 'nexopos_users as granter', 'granter.id', '=', 'nexopos_permissions_access.granter_id' ],
+        ]
+    ];
 
     /**
      * all tabs mentionned on the tabs relations
@@ -95,7 +100,10 @@ class PermissionAccessCrud extends CrudService
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick = [];
+    public $pick = [
+        'requester' => ['username'],
+        'granter' => ['username'],
+    ];
 
     /**
      * Define where statement
@@ -278,16 +286,12 @@ class PermissionAccessCrud extends CrudService
     {
         return CrudTable::columns(
             CrudTable::column(
-                identifier: 'id',
-                label: __('Id'),
+                identifier: 'requester_username',
+                label: __('Requester'),
             ),
             CrudTable::column(
-                identifier: 'requester_id',
-                label: __('Requester_id'),
-            ),
-            CrudTable::column(
-                identifier: 'granter_id',
-                label: __('Granter_id'),
+                identifier: 'granter_username',
+                label: __('Granter'),
             ),
             CrudTable::column(
                 identifier: 'permission',
@@ -307,7 +311,7 @@ class PermissionAccessCrud extends CrudService
             ),
             CrudTable::column(
                 identifier: 'created_at',
-                label: __('Created_at'),
+                label: __('Requested At'),
             ),
             CrudTable::column(
                 identifier: 'updated_at',
