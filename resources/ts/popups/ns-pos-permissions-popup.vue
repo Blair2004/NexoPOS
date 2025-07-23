@@ -113,11 +113,11 @@ export default defineComponent({
         
         const checkPermissionStatus = async () => {
             try {
-                const result = new Promise( ( resolve, reject ) => {
+                const result = await new Promise( ( resolve, reject ) => {
                     nsHttpClient.get(`/api/user/access/${props.access_id}`)
                         .subscribe({
                             next: (response) => {
-                                if (response.satus === 'granted') {
+                                if (response.status === 'granted') {
                                     resolve(response.permissions);
                                 } else {
                                     console.log('Permission not granted yet, will check again...');
