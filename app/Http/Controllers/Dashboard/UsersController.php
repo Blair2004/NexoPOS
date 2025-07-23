@@ -355,6 +355,26 @@ class UsersController extends DashboardController
         throw new NotFoundException( __( 'The requested permission access is not found.' ) );
     }
 
+    public function markAccessAsUsed( Request $request, PermissionAccess $access )
+    {
+        /**
+         * check if the user has access to this permission.
+         */
+        if ( $access->requester_id !== Auth::id() ) {
+            throw new NotFoundException( __( 'You do not have access to this permission.' ) );
+        }
+
+        $access->status = PermissionAccess::USED;
+        $access->used_at = now();
+        $access->save();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The permission access has been marked as used.' ),
+            'data' => compact( 'access' )
+        ];
+    }
+
     public function getAccess( Request $request, $id )
     {
         $access = PermissionAccess::find( $id );

@@ -118,7 +118,15 @@ export default defineComponent({
                         .subscribe({
                             next: (response) => {
                                 if (response.status === 'granted') {
-                                    resolve(true);
+                                    nsHttpClient.post( `/api/access/${props.access_id}/use` )
+                                        .subscribe({
+                                            next: () => {
+                                                resolve(true);
+                                            },
+                                            error: (error) => {
+                                                reject( false );
+                                            }
+                                        });
                                 } else {
                                     console.log('Permission not granted yet, will check again...');
                                 }

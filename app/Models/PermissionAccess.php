@@ -49,4 +49,5 @@ class PermissionAccess extends NsModel
      *
      * @param string
      */
+    const USED = 'used';
 }
