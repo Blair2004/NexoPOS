@@ -118,7 +118,7 @@ export default defineComponent({
                         .subscribe({
                             next: (response) => {
                                 if (response.status === 'granted') {
-                                    nsHttpClient.post( `/api/access/${props.access_id}/use` )
+                                    nsHttpClient.post( `/api/user/access/${props.access_id}/use` )
                                         .subscribe({
                                             next: () => {
                                                 resolve(true);
