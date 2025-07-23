@@ -365,7 +365,6 @@ class UsersController extends DashboardController
         }
 
         $access->status = PermissionAccess::USED;
-        $access->used_at = now();
         $access->save();
 
         return [
