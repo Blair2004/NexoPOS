@@ -380,9 +380,6 @@ class UsersController extends DashboardController
             throw new NotFoundException( __( 'You do not have access to this permission.' ) );
         }
 
-        return [
-            'status' => 'success',
-            'data' => compact( 'access' )
-        ];
+        return $access;
     }
 }
