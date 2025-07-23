@@ -322,7 +322,7 @@ class UsersController extends DashboardController
 
     public function approveAccess( Request $request, $id )
     {
-        $access = PermissionAccess::find( $id );
+        $access = PermissionAccess::with( 'permission' )->find( $id );
 
         /**
          * We'll proceed only if the permission is valid.
@@ -350,6 +350,13 @@ class UsersController extends DashboardController
                     'data' => compact( 'access' )
                 ];
             }
+
+            throw new NotFoundException( 
+                sprintf(
+                    __( 'You do not have access to this permission %s.' ), 
+                    $access->perm->name 
+                )
+            );
         }
 
         throw new NotFoundException( __( 'The requested permission access is not found.' ) );

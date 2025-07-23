@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Permission;
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,6 +24,31 @@ return new class extends Migration
                 $table->datetime( 'expired_at' )->nullable();
                 $table->timestamps();
             });
+        }
+
+        /**
+         * Create permissions for permission access management
+         */
+        if ( ! defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
+            define( 'NEXO_CREATE_PERMISSIONS', true );
+        }
+
+        // Create CRUD permissions for permission access
+        $permissions = [];
+        foreach ( [ 'create', 'read', 'update', 'delete' ] as $crud ) {
+            $permission = Permission::firstOrNew( [ 'namespace' => $crud . '.permissions-access' ] );
+            $permission->name = ucwords( $crud ) . ' ' . __( 'Permission Access' );
+            $permission->namespace = $crud . '.permissions-access';
+            $permission->description = sprintf( __( 'Can %s permission access records' ), $crud );
+            $permission->save();
+            
+            $permissions[] = $permission->namespace;
+        }
+
+        // Assign permissions to admin role
+        $admin = Role::firstOrNew( [ 'namespace' => Role::ADMIN ] );
+        if ( $admin->exists ) {
+            $admin->addPermissions( $permissions );
         }
     }
 
