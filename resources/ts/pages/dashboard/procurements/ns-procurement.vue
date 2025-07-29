@@ -2,7 +2,6 @@
 import FormValidation from '~/libraries/form-validation';
 import { BehaviorSubject, forkJoin } from "rxjs";
 import { nsSnackBar, nsHttpClient, nsNotice } from '~/bootstrap';
-import nsManageProducts from '~/pages/dashboard/procurements/manage-products.vue';
 import Tax from "~/libraries/tax";
 import nsProcurementProductOptionsVue from '~/popups/ns-procurement-product-options.vue';
 import { __ } from '~/libraries/lang';
@@ -21,7 +20,7 @@ export default {
     mounted() {
         this.reloadEntities();
 
-        this.shouldPreventAccidentlRefreshSubscriber    =   this.shouldPreventAccidentalRefresh.subscribe({ 
+        this.shouldPreventAccidentalRefreshSubscriber    =   this.shouldPreventAccidentalRefresh.subscribe({ 
             next: value => {
                 if ( value ){
                     window.addEventListener( 'beforeunload', this.addAccidentalCloseListener );
@@ -68,7 +67,7 @@ export default {
     },
     computed: {
         activeTab() {
-            return this.validTabs.filter( tab => tab.active ).length > 0 ? this.validTabs.filter( tab => tab.active )[0] : false;
+            return this.validTabs.find(tab => tab.active) || false;
         },
     },
     data() {
@@ -105,17 +104,6 @@ export default {
             form: <any>{},
 
             /**
-             * Reference to the nsSnackBar object
-             */
-            nsSnackBar,
-
-            /**
-             * Is the array that contains the various 
-             * procurement informations
-             */
-            fields: [],
-
-            /**
              * Is the array that contains the result
              * from the search.
              */
@@ -131,11 +119,6 @@ export default {
              * product using the search bar
              */
             debounceSearch: null,
-
-            /**
-             * A reference to the nsHttpClient object
-             */
-            nsHttpClient,
 
             /**
              * Must contain the 
@@ -170,7 +153,7 @@ export default {
              * load of the page when products are added
              */
             shouldPreventAccidentalRefresh: new BehaviorSubject( false ),
-            shouldPreventAccidentlRefreshSubscriber: null,
+            shouldPreventAccidentalRefreshSubscriber: null,
 
             /**
              * Determine if we should show the info box
@@ -198,9 +181,7 @@ export default {
             }
         }
     },
-    components: {
-        nsManageProducts
-    },
+    components: {},
     props: [ 'submitMethod', 'submitUrl', 'returnUrl', 'src', 'rules' ],
     methods: {
         __,
@@ -257,20 +238,13 @@ export default {
         },
         
         computeTotal() {
+            this.totalTaxValues = this.form.products.length > 0 
+                ? this.form.products.reduce((sum, p) => sum + p.procurement.tax_value, 0)
+                : 0;
 
-            this.totalTaxValues = 0;
-
-            if ( this.form.products.length > 0 ) {
-                this.totalTaxValues = this.form.products.map( p => p.procurement.tax_value )
-                    .reduce( ( b, a ) => b + a );
-            }
-
-            this.totalPurchasePrice     =   0;
-
-            if ( this.form.products.length > 0 ) {
-                this.totalPurchasePrice     =   this.form.products.map( p => parseFloat( p.procurement.total_purchase_price ) )
-                    .reduce( ( b, a ) => b + a );
-            }
+            this.totalPurchasePrice = this.form.products.length > 0 
+                ? this.form.products.reduce((sum, p) => sum + parseFloat(p.procurement.total_purchase_price), 0)
+                : 0;
         },
 
         /**
@@ -281,7 +255,7 @@ export default {
          */
         updateLine( index ) {
             const product   =   this.form.products[ index ];
-            const taxGroup  =   this.taxes.filter( taxGroup => taxGroup.id === product.procurement.tax_group_id );
+            const taxGroup  =   this.taxes.find( taxGroup => taxGroup.id === product.procurement.tax_group_id );
 
             if ( parseFloat( product.procurement.purchase_price_edit ) > 0 && parseFloat( product.procurement.quantity ) > 0 ) {
 
@@ -289,8 +263,8 @@ export default {
                  * if some tax group is provided
                  * then let's compute all the grouped taxes
                  */
-                if ( taxGroup.length > 0 ) {
-                    const totalTaxes    =   taxGroup[0].taxes.map( tax => {
+                if ( taxGroup ) {
+                    const totalTaxes    =   taxGroup.taxes.map( tax => {
                         return Tax.getTaxValue(
                             product.procurement.tax_type,
                             product.procurement.purchase_price_edit,
@@ -322,17 +296,16 @@ export default {
             } 
 
             this.computeTotal();
-            this.$forceUpdate();
         },
 
         fetchLastPurchasePrice( index ) {
             const product   =   this.form.products[ index ];
-            const unit      =   product.unit_quantities.filter( unitQuantity => {
-                return product.procurement.unit_id === unitQuantity.unit_id;
-            });
+            const unit      =   product.unit_quantities.find( unitQuantity => 
+                product.procurement.unit_id === unitQuantity.unit_id
+            );
 
-            if ( unit.length > 0 ) {
-                product.procurement.purchase_price_edit      =   ( unit[0].last_purchase_price || 0 );
+            if ( unit ) {
+                product.procurement.purchase_price_edit      =   ( unit.last_purchase_price || 0 );
             }
 
             this.updateLine( index );
@@ -377,22 +350,19 @@ export default {
             
             forkJoin([
                 nsHttpClient.get( '/api/categories' ),
-                nsHttpClient.get( '/api/products' ),
                 nsHttpClient.get( this.src ),
                 nsHttpClient.get( '/api/taxes/groups' ),
             ]).subscribe( (result: any[]) => {
                 this.reloading      =   false;
-                this.categories     =   result[0];
-                this.products       =   result[1];
-                this.taxes          =   result[3];
+                this.taxes          =   result[2];
 
                 if ( this.form.general ) {
-                    result[2].tabs.general.fieds.forEach( (field,index) => {
+                    result[2].tabs.general.fields.forEach( (field,index) => {
                         field.value     =   this.form.tabs.general.fields[ index ].value || '';
                     });
                 } 
 
-                this.form           =   Object.assign( JSON.parse( JSON.stringify( result[2] ) ), this.form );
+                this.form           =   Object.assign( JSON.parse( JSON.stringify( result[1] ) ), this.form );
                 this.form           =   this.formValidation.createForm( this.form );
 
                 /**
@@ -402,7 +372,7 @@ export default {
                 if ( this.form.tabs ) {
                     this.form.tabs.general.fields.forEach( (field, index) => {
                         if ( field.options ) {
-                            field.options   =   result[2].tabs.general.fields[ index ].options;
+                            field.options   =   result[1].tabs.general.fields[ index ].options;
                         }
                     });
                 }
@@ -445,11 +415,8 @@ export default {
             })
         },
         setTabActive( tab ) {
-            this.validTabs.forEach( tab => tab.active = false );
-            this.$forceUpdate();
-            this.$nextTick().then( () => {
-                tab.active  =   true;
-            });
+            this.validTabs.forEach( t => t.active = false );
+            tab.active  =   true;
         },
         addProductList( product ) {
 
@@ -574,11 +541,7 @@ export default {
         },
         deleteProduct( index ) {
             this.form.products.splice( index, 1 );
-            this.$forceUpdate();
-        },
-        handleGlobalChange( event ) {
-            this.globallyChecked    =   event;
-            this.rows.forEach( r => r.$checked = event );
+            this.computeTotal();
         },
 
         setProductOptions( index ) {
@@ -625,9 +588,9 @@ export default {
                  * unit. This will avoid having the conversion unit be the same
                  * as the procured unit.
                  */
-                const selectedUnitQuantity  =   product.unit_quantities.filter( unitQuantity => parseInt( unitQuantity.unit_id ) === +unitID );
+                const selectedUnitQuantity  =   product.unit_quantities.find( unitQuantity => parseInt( unitQuantity.unit_id ) === +unitID );
                 
-                product.procurement.convert_unit_id         =   selectedUnitQuantity[0].convert_unit_id || undefined;
+                product.procurement.convert_unit_id         =   selectedUnitQuantity?.convert_unit_id || undefined;
                 product.procurement.convert_unit_label      =   await new Promise( ( resolve, reject ) => {
                     if ( product.procurement.convert_unit_id !== undefined ) {
                         nsHttpClient.get( `/api/units/${product.procurement.convert_unit_id}` )
@@ -697,35 +660,21 @@ export default {
 
         getSelectedTax( index ) {
             const product   =   this.form.products[ index ];
-            const select    =   this.taxes.filter( tax => {
-                if ( product.procurement.tax_group_id && product.procurement.tax_group_id === tax.id ) {
-                    return true;
-                }
-                return false;
-            });
+            const select    =   this.taxes.find( tax => 
+                product.procurement.tax_group_id && product.procurement.tax_group_id === tax.id
+            );
 
-            if ( select.length === 1 ) {
-                return select[0].name;
-            }
-
-            return __( 'N/A' );
+            return select ? select.name : __( 'N/A' );
         },
 
         getSelectedUnit( index ) {
             const product   =   this.form.products[ index ];
             const units     =   product.unit_quantities.map( unitQuantity => unitQuantity.unit );
-            const select    =   units.filter( unit => {
-                if ( product.procurement.unit_id !== undefined ) {
-                    return unit.id === product.procurement.unit_id
-                }
-                return false;
-            });
+            const select    =   units.find( unit => 
+                product.procurement.unit_id !== undefined && unit.id === product.procurement.unit_id
+            );
 
-            if ( select.length === 1 ) {
-                return select[0].name;
-            }
-
-            return __( 'N/A' );
+            return select ? select.name : __( 'N/A' );
         },
 
         handleSavedEvent( event, field ) {
