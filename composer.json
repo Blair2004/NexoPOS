@@ -26,7 +26,7 @@
         "nikic/php-parser": "^5.0",
         "phpoffice/phpspreadsheet": "^4.0",
         "picqer/php-barcode-generator": "^3.2",
-        "predis/predis": "^2.3",
+        "predis/predis": "^3.1",
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-db-snapshots": "^2.2",
         "symfony/http-client": "^7.0",
