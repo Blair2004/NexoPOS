@@ -1512,29 +1512,29 @@
         },
         {
             "name": "gumlet/php-image-resize",
-            "version": "2.0.4",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gumlet/php-image-resize.git",
-                "reference": "54165d97ebc3d4fc188761166b78e6702f605f59"
+                "reference": "73915788742c30de4fdb8e54b25cd03a085a4459"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gumlet/php-image-resize/zipball/54165d97ebc3d4fc188761166b78e6702f605f59",
-                "reference": "54165d97ebc3d4fc188761166b78e6702f605f59",
+                "url": "https://api.github.com/repos/gumlet/php-image-resize/zipball/73915788742c30de4fdb8e54b25cd03a085a4459",
+                "reference": "73915788742c30de4fdb8e54b25cd03a085a4459",
                 "shasum": ""
             },
             "require": {
                 "ext-fileinfo": "*",
                 "ext-gd": "*",
-                "php": ">=5.6.0"
+                "php": ">=8.1.0"
             },
             "require-dev": {
                 "apigen/apigen": "^4.1",
                 "ext-exif": "*",
                 "ext-gd": "*",
                 "php-coveralls/php-coveralls": "^2.1",
-                "phpunit/phpunit": "^8.5"
+                "phpunit/phpunit": "^10.0"
             },
             "suggest": {
                 "ext-exif": "Auto-rotate jpeg files"
@@ -1565,9 +1565,9 @@
             ],
             "support": {
                 "issues": "https://github.com/gumlet/php-image-resize/issues",
-                "source": "https://github.com/gumlet/php-image-resize/tree/2.0.4"
+                "source": "https://github.com/gumlet/php-image-resize/tree/2.1.0"
             },
-            "time": "2023-10-11T14:16:03+00:00"
+            "time": "2025-04-23T19:36:05+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
