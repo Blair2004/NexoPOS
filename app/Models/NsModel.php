@@ -132,12 +132,12 @@ abstract class NsModel extends NsRootModel
                 return is_string( $value ) || is_numeric( $value ) || is_bool( $value );
             } );
 
-            /** 
+            /**
              * We need to apply casting to the current attributes
              */
             $castable = $this->getCasts();
 
-            $currentAttributes = collect( $currentAttributes )->mapWithKeys( function ( $value, $key ) use ( $castable ){
+            $currentAttributes = collect( $currentAttributes )->mapWithKeys( function ( $value, $key ) use ( $castable ) {
                 return [ $key => in_array( $key, array_keys( $castable ), true ) ? $this->castAttribute( $key, $value ) : $value ];
             } )->toArray();
 
@@ -156,8 +156,6 @@ abstract class NsModel extends NsRootModel
             }
         }
     }
-
-
 
     /**
      * Get the event map for the model.

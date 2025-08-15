@@ -6,9 +6,7 @@ class JsonResponse
 {
     /**
      * Returns a success response.
-     * 
-     * @param $data
-     * @param string $message
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function success( string $message, array $data = [] )
@@ -22,9 +20,7 @@ class JsonResponse
 
     /**
      * Returns an error response.
-     * 
-     * @param string $message
-     * @param $data
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function error( string $message, array $data = [] )
@@ -38,9 +34,7 @@ class JsonResponse
 
     /**
      * Returns an infos response.
-     * 
-     * @param string $message
-     * @param $data
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public static function info( string $message, array $data = [] )

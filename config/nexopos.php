@@ -64,8 +64,8 @@ return [
      * --------------------------------------------------------------------
      */
     'themes' => [
-        'dark'  =>  'Dark',
-        'light' =>  'Light',
+        'dark' => 'Dark',
+        'light' => 'Light',
         'phosphor' => 'Phosphor',
     ],
 

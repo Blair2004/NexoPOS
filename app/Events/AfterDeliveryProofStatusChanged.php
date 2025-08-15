@@ -3,11 +3,8 @@
 namespace App\Events;
 
 use App\Models\OrderDeliveryProof;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -21,7 +18,7 @@ class AfterDeliveryProofStatusChanged
     public function __construct( public OrderDeliveryProof $orderDeliveryProof, public $previous, public $new )
     {
         //
-    } 
+    }
 
     /**
      * Get the channels the event should broadcast on.
@@ -31,7 +28,7 @@ class AfterDeliveryProofStatusChanged
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel( 'channel-name' ),
         ];
     }
 }

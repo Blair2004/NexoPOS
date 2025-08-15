@@ -4,12 +4,11 @@
  * NexoPOS Controller
  *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
 use App\Classes\Hook;
-use App\Classes\Output;
 use App\Crud\ProductCrud;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;

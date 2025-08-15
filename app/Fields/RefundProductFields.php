@@ -10,13 +10,13 @@ class RefundProductFields extends FieldsService
 {
     /**
      * The unique identifier of the form
-    **/
+     **/
     const IDENTIFIER = 'ns.refund-product';
 
     /**
-     * Will ensure the fields are automatically 
+     * Will ensure the fields are automatically
      * loaded
-    **/
+     **/
     const AUTOLOAD = true;
 
     public function get()

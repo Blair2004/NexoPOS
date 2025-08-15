@@ -17,6 +17,11 @@ class EntityTransactionFields extends FieldsService
 {
     const IDENTIFIER = Transaction::TYPE_ENTITY;
 
+    /**
+     * Ensures the fields are automatically detected.
+     */
+    const AUTOLOAD = true;
+
     public function __construct( ?Transaction $transaction = null )
     {
         $allowedExpenseCategories = ns()->option->get( 'ns_accounting_expenses_accounts', [] );

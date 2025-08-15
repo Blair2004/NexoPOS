@@ -14,7 +14,7 @@ class Cache extends CoreCache
     /**
      * Check if a key exists in the cache.
      *
-     * @param string $key
+     * @param  string $key
      * @return bool
      */
     public static function has( $key )
@@ -27,7 +27,7 @@ class Cache extends CoreCache
     /**
      * Check if a key is missing from the cache.
      *
-     * @param string $key
+     * @param  string $key
      * @return bool
      */
     public static function missing( $key )
@@ -40,8 +40,8 @@ class Cache extends CoreCache
     /**
      * Retrieve a value from the cache.
      *
-     * @param string $key
-     * @param mixed $default
+     * @param  string $key
+     * @param  mixed  $default
      * @return mixed
      */
     public static function get( $key, $default = null )
@@ -54,8 +54,8 @@ class Cache extends CoreCache
     /**
      * Retrieve multiple values from the cache.
      *
-     * @param array $keys
-     * @param mixed $default
+     * @param  array $keys
+     * @param  mixed $default
      * @return array
      */
     public static function getMultiple( $keys, $default = null )
@@ -68,8 +68,8 @@ class Cache extends CoreCache
     /**
      * Retrieve and delete a value from the cache.
      *
-     * @param string $key
-     * @param mixed $default
+     * @param  string $key
+     * @param  mixed  $default
      * @return mixed
      */
     public static function pull( $key, $default = null )
@@ -82,16 +82,16 @@ class Cache extends CoreCache
     /**
      * Store a value in the cache for a given time-to-live (TTL).
      *
-     * @param string $key
-     * @param mixed $value
-     * @param int|null $ttl
+     * @param  string   $key
+     * @param  mixed    $value
+     * @param  int|null $ttl
      * @return bool
      */
     public static function put( $key, $value, $ttl = null )
     {
         $key = self::applyPrefix( $key );
 
-        return parent::put  ( $key, $value, $ttl );
+        return parent::put( $key, $value, $ttl );
     }
 
     public static function set( $key, $value, $ttl = null )
@@ -104,8 +104,7 @@ class Cache extends CoreCache
     /**
      * Store multiple key-value pairs in the cache for a given time-to-live (TTL).
      *
-     * @param array $values
-     * @param int|null $ttl
+     * @param  int|null $ttl
      * @return bool
      */
     public static function putMany( array $values, $ttl = null )
@@ -121,8 +120,8 @@ class Cache extends CoreCache
     /**
      * Store multiple key-value pairs in the cache indefinitely.
      *
-     * @param array $values
-     * @param int|null $ttl
+     * @param  array    $values
+     * @param  int|null $ttl
      * @return bool
      */
     public static function setMultiple( $values, $ttl = null )
@@ -138,9 +137,9 @@ class Cache extends CoreCache
     /**
      * Add a value to the cache if it does not already exist.
      *
-     * @param string $key
-     * @param mixed $value
-     * @param int|null $ttl
+     * @param  string   $key
+     * @param  mixed    $value
+     * @param  int|null $ttl
      * @return bool
      */
     public static function add( $key, $value, $ttl = null )
@@ -153,8 +152,8 @@ class Cache extends CoreCache
     /**
      * Increment a value in the cache.
      *
-     * @param string $key
-     * @param int $value
+     * @param  string   $key
+     * @param  int      $value
      * @return int|bool
      */
     public static function increment( $key, $value = 1 )
@@ -167,8 +166,8 @@ class Cache extends CoreCache
     /**
      * Decrement a value in the cache.
      *
-     * @param string $key
-     * @param int $value
+     * @param  string   $key
+     * @param  int      $value
      * @return int|bool
      */
     public static function decrement( $key, $value = 1 )
@@ -181,8 +180,8 @@ class Cache extends CoreCache
     /**
      * Store a value in the cache indefinitely.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string $key
+     * @param  mixed  $value
      * @return bool
      */
     public static function forever( $key, $value )
@@ -195,9 +194,9 @@ class Cache extends CoreCache
     /**
      * Remember a value in the cache for a given time-to-live (TTL).
      *
-     * @param string $key
-     * @param int $ttl
-     * @param callable $callback
+     * @param  string   $key
+     * @param  int      $ttl
+     * @param  callable $callback
      * @return mixed
      */
     public static function remember( $key, $ttl, $callback )
@@ -210,8 +209,8 @@ class Cache extends CoreCache
     /**
      * Remember a value in the cache indefinitely.
      *
-     * @param string $key
-     * @param callable $callback
+     * @param  string   $key
+     * @param  callable $callback
      * @return mixed
      */
     public static function rememberForever( $key, $callback )
@@ -224,7 +223,7 @@ class Cache extends CoreCache
     /**
      * Forget a value in the cache.
      *
-     * @param string $key
+     * @param  string $key
      * @return bool
      */
     public static function forget( $key )
@@ -237,7 +236,7 @@ class Cache extends CoreCache
     /**
      * Delete a value from the cache.
      *
-     * @param string $key
+     * @param  string $key
      * @return bool
      */
     public static function delete( $key )
@@ -250,7 +249,7 @@ class Cache extends CoreCache
     /**
      * Delete multiple values from the cache.
      *
-     * @param array $keys
+     * @param  array $keys
      * @return bool
      */
     public static function deleteMultiple( $keys )

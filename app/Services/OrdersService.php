@@ -2060,14 +2060,14 @@ class OrdersService
             }
 
             $order->products;
-            
+
             /**
              * If the order is assigned to the driver, while loading the order
              * we'll make sure to load the driver name.
              */
             if ( $order->driver_id ) {
-                $driver = Driver::with([ 'billing' ])->find( $order->driver_id );
-                $order->driver_name = ($driver->billing?->first_name || $driver->billing?->last_name) ? $driver->billing?->first_name . ' ' . $driver->billing?->last_name : $driver->username;
+                $driver = Driver::with( [ 'billing' ] )->find( $order->driver_id );
+                $order->driver_name = ( $driver->billing?->first_name || $driver->billing?->last_name ) ? $driver->billing?->first_name . ' ' . $driver->billing?->last_name : $driver->username;
             }
 
             OrderAfterLoadedEvent::dispatch( $order );

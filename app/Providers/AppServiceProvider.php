@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use App\Classes\Config as ClassesConfig;
 use App\Classes\Hook;
-use App\Repository\ConfigRepository;
 use App\Events\ModulesBootedEvent;
+use App\Facades\Config;
 use App\Models\Order;
 use App\Models\OrderProductRefund;
 use App\Services\BarcodeService;
@@ -38,9 +39,6 @@ use App\Services\UserOptions;
 use App\Services\UsersService;
 use App\Services\Validation;
 use App\Services\WidgetService;
-use App\Classes\Cache;
-use App\Classes\Config as ClassesConfig;
-use App\Facades\Config;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Auth;
@@ -246,8 +244,8 @@ class AppServiceProvider extends ServiceProvider
         } );
 
         $this->app->singleton( Config::class, function () {
-            return new ClassesConfig();
-        });
+            return new ClassesConfig;
+        } );
 
         /**
          * When the module has started,

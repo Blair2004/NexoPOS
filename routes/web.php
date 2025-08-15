@@ -69,7 +69,7 @@ if ( env( 'APP_DEBUG' ) ) {
     include dirname( __FILE__ ) . '/debug.php';
 }
 
-Route::get( 'wizard', function() {
+Route::get( 'wizard', function () {
     $wizard = new WizardService(
         title: 'Example',
         description: 'This is an example of how to use the wizard service',
@@ -90,4 +90,4 @@ Route::get( 'wizard', function() {
     );
 
     return $wizard->render();
-});
+} );

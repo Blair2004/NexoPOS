@@ -12,7 +12,7 @@ class UserRoleRelationAfterUpdatedEvent
 
     public $userRoleRelation;
 
-    public function __construct(UserRoleRelation $userRoleRelation)
+    public function __construct( UserRoleRelation $userRoleRelation )
     {
         $this->userRoleRelation = $userRoleRelation;
     }

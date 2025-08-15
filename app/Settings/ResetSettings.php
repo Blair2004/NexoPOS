@@ -4,7 +4,6 @@ namespace App\Settings;
 
 use App\Classes\FormInput;
 use App\Classes\Hook;
-use App\Classes\Output;
 use App\Classes\SettingForm;
 use App\Events\RenderFooterEvent;
 use App\Services\Helper;
@@ -59,8 +58,8 @@ class ResetSettings extends SettingsPage
 
     public function beforeRenderForm()
     {
-        Event::listen( RenderFooterEvent::class, function( $event ) {
+        Event::listen( RenderFooterEvent::class, function ( $event ) {
             $event->output->addView( 'pages.dashboard.settings.reset-footer' );
-        });
+        } );
     }
 }

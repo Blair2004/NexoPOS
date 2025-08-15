@@ -12,23 +12,23 @@ class AdminApprovalMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
-    public function handle(Request $request, Closure $next, $permission ): Response
+    public function handle( Request $request, Closure $next, $permission ): Response
     {
         $approvalSessionKey = 'approval_' . $permission;
-        $approvedUrl = Session::get($approvalSessionKey);
+        $approvedUrl = Session::get( $approvalSessionKey );
 
         // Check if approval exists and matches this request URL
-        if ($approvedUrl && $approvedUrl === $request->fullUrl()) {
-            return $next($request);
+        if ( $approvedUrl && $approvedUrl === $request->fullUrl() ) {
+            return $next( $request );
         }
 
         // Block request and send required info
-        return response()->json([
+        return response()->json( [
             'message' => __( 'You need to get approval for this action.' ),
-            'approval_url' => route('approval.verify', ['permission' => $permission]),
-            'url' => $request->fullUrl()
-        ], 403);
+            'approval_url' => route( 'approval.verify', ['permission' => $permission] ),
+            'url' => $request->fullUrl(),
+        ], 403 );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Crud;
 
+use App\BulkEditor\ProductCrudBulkConfig;
 use App\Casts\ProductTypeCast;
 use App\Classes\CrudForm;
 use App\Classes\FormInput;
@@ -17,9 +18,7 @@ use App\Services\Helper;
 use App\Services\TaxService;
 use Illuminate\Http\Request;
 use Modules\BulkEditor\Classes\BulkEditor;
-use Modules\BulkEditor\Services\ConfigurationService;
 use TorMorten\Eventy\Facades\Events as Hook;
-use App\BulkEditor\ProductCrudBulkConfig;
 
 #[ BulkEditor( config: ProductCrudBulkConfig::class ) ]
 class ProductCrud extends CrudService

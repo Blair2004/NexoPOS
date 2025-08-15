@@ -6,7 +6,6 @@ use App\Classes\Currency;
 use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerShippingAddress;
-use App\Models\Migration;
 use App\Models\Option;
 use App\Models\Order;
 use App\Models\OrderProduct;
@@ -111,7 +110,7 @@ class DoctorService
                 $role->locked = true;
                 $role->save();
             }
-            
+
             /**
              * We'll restore the permissions for the admin role
              */
@@ -329,15 +328,16 @@ class DoctorService
     /**
      * Purge removed migrations from the database
      * and keep only the existing ones
+     *
      * @return string
      */
     public function purgeRemovedMigrations()
     {
-        $existingMigrationFiles     =   Storage::disk( 'ns' )->allFiles( 'database/migrations' );
-        $filesNames     =   collect( $existingMigrationFiles )->map( fn( $file ) => pathinfo( $file )[ 'filename' ] );
+        $existingMigrationFiles = Storage::disk( 'ns' )->allFiles( 'database/migrations' );
+        $filesNames = collect( $existingMigrationFiles )->map( fn( $file ) => pathinfo( $file )[ 'filename' ] );
 
-        $query  =   DB::table( 'migrations' )->whereNotIn( 'migration', $filesNames );
-        $total  =   $query->count();
+        $query = DB::table( 'migrations' )->whereNotIn( 'migration', $filesNames );
+        $total = $query->count();
         $query->delete();
 
         return $this->command->info( __( '%s migrations were purged' ), $total );

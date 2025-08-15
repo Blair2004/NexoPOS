@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\FormInput;
 use App\Classes\SettingForm;
 use App\Services\Helper;
-use App\Classes\FormInput;
 
 return SettingForm::tab(
     identifier: 'general',
@@ -11,9 +11,9 @@ return SettingForm::tab(
         FormInput::select(
             name: 'shipping_type',
             label: __( 'Shipping Type' ),
-            options: Helper::kvToJsOptions([
+            options: Helper::kvToJsOptions( [
                 'flat' => __( 'Flat' ),
-            ]),
+            ] ),
             value: 'flat',
             description: __( 'Define how the shipping is calculated.' ),
         ),

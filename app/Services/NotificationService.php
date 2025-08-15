@@ -124,7 +124,7 @@ class NotificationService
             $this->notification->source = $this->source;
             $this->notification->url = $this->url;
             $this->notification->identifier = $this->identifier;
-            $this->notification->actions    =   $this->actions;
+            $this->notification->actions = $this->actions;
             $this->notification->save();
         } else {
             $this->notification->title = $this->title;
@@ -132,7 +132,7 @@ class NotificationService
             $this->notification->dismissable = $this->dismissable;
             $this->notification->source = $this->source;
             $this->notification->url = $this->url;
-            $this->notification->actions    =   $this->actions;
+            $this->notification->actions = $this->actions;
             $this->notification->save();
         }
     }

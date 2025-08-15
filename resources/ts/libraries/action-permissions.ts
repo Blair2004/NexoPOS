@@ -16,7 +16,7 @@ export default class ActionPermissions {
                 const permissionDuration = options.ns_pos_action_permission_duration;
 
                 if ( restrictedPermissions.includes( permission ) ) {
-                    nsHttpClient.post( `/api/users/check-permission/`, { permission })
+                    return nsHttpClient.post( `/api/users/check-permission/`, { permission })
                         .subscribe({
                             next: ( response ) => {
                                 resolve( true );
@@ -37,7 +37,9 @@ export default class ActionPermissions {
                             },
                         })
                 }
-            }
+            } 
+
+            resolve( true );
         })
     }
 }

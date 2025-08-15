@@ -1,14 +1,15 @@
 <?php
+
 namespace App\Models;
 
 /**
  * PermissionAccess Model
  *
- * @property int $requester_id
- * @property int $granter_id
- * @property string $status
- * @property string $permission
- * @property string|null $url
+ * @property int                             $requester_id
+ * @property int                             $granter_id
+ * @property string                          $status
+ * @property string                          $permission
+ * @property string|null                     $url
  * @property \Illuminate\Support\Carbon|null $approved_at
  * @property \Illuminate\Support\Carbon|null $expired_at
  */

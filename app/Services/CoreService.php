@@ -77,9 +77,10 @@ class CoreService
     {
         $url = url( Hook::filter( 'ns-url', $url ) );
 
-        return preg_replace_callback('/\{(\w+)\}/', function ($matches) use ($params) {
+        return preg_replace_callback( '/\{(\w+)\}/', function ( $matches ) use ( $params ) {
             $key = $matches[1];
-            return isset($params[$key]) ? $params[$key] : $matches[0];
+
+            return isset( $params[$key] ) ? $params[$key] : $matches[0];
         }, $url );
     }
 
@@ -466,12 +467,12 @@ class CoreService
          * manifest.json file.
          */
         if ( file_exists( $module[ 'path' ] . $hotFilePath ) ) {
-            $url    =   file_get_contents( $module[ 'path' ] . $hotFilePath );
-            $pathinfo   =   pathinfo( $fileName );
+            $url = file_get_contents( $module[ 'path' ] . $hotFilePath );
+            $pathinfo = pathinfo( $fileName );
 
             if ( in_array( $pathinfo[ 'extension' ], [ 'js', 'ts', 'tsx', 'jsx' ] ) ) {
                 $assets->prepend( '<script type="module" src="' . $url . '/' . $fileName . '"></script>' );
-            } else if ( in_array( $pathinfo[ 'extension'], [ 'css', 'scss' ] ) ) {
+            } elseif ( in_array( $pathinfo[ 'extension'], [ 'css', 'scss' ] ) ) {
                 $assets->push( '<link rel="stylesheet" href="' . $url . '/' . $fileName . '"/>' );
             } else {
                 throw new NotFoundException(
@@ -484,29 +485,29 @@ class CoreService
         } else {
 
             $ds = DIRECTORY_SEPARATOR;
-    
+
             if ( preg_match( '/outDir:\s*[\'"](.+?)[\'"]/', $viteConfig, $matches ) ) {
                 $buildDirectory = $matches[1]; // Return the matched outDir value
             } else {
                 $buildDirectory = 'Public' . $ds . 'build'; // Default build directory
             }
-    
+
             $possiblePaths = [
                 rtrim( $module['path'], $ds ) . $ds . $buildDirectory . $ds . '.vite' . $ds . 'manifest.json',
                 rtrim( $module['path'], $ds ) . $ds . $buildDirectory . $ds . 'manifest.json',
             ];
-    
+
             $buildFolderName = last( preg_split( '/[\/\\\\]/', $buildDirectory ) );
-    
+
             foreach ( $possiblePaths as $manifestPath ) {
                 if ( ! file_exists( $manifestPath ) ) {
                     $errors[] = $manifestPath;
-    
+
                     continue;
                 }
-    
+
                 $manifestArray = json_decode( file_get_contents( $manifestPath ), true );
-    
+
                 if ( ! isset( $manifestArray[ $fileName ] ) ) {
                     throw new NotFoundException(
                         sprintf(
@@ -516,23 +517,23 @@ class CoreService
                         )
                     );
                 }
-    
+
                 /**
                  * checks if a css file is declared as well
                  */
                 $assetURL = asset( 'modules/' . strtolower( $moduleId ) . '/' . $buildFolderName . '/' . $manifestArray[ $fileName ][ 'file' ] ) ?? null;
-    
+
                 if ( ! empty( $manifestArray[ $fileName ][ 'css' ] ) ) {
                     $assets = collect( $manifestArray[ $fileName ][ 'css' ] )->map( function ( $url ) use ( $moduleId, $buildFolderName ) {
                         return '<link rel="stylesheet" href="' . asset( 'modules/' . strtolower( $moduleId ) . '/' . $buildFolderName . '/' . $url ) . '"/>';
                     } );
                 }
 
-                $pathinfo   =   pathinfo( $assetURL );
+                $pathinfo = pathinfo( $assetURL );
 
                 if ( in_array( $pathinfo[ 'extension' ], [ 'js', 'ts', 'tsx', 'jsx' ] ) ) {
                     $assets->prepend( '<script type="module" src="' . $assetURL . '"></script>' );
-                } else if ( in_array( $pathinfo[ 'extension'], [ 'css', 'scss' ] ) ) {
+                } elseif ( in_array( $pathinfo[ 'extension'], [ 'css', 'scss' ] ) ) {
                     $assets->push( '<link rel="stylesheet" href="' . $assetURL . '"/>' );
                 } else {
                     throw new NotFoundException(

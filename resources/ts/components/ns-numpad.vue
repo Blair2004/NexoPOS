@@ -63,6 +63,7 @@ export default {
         // will trigger if any state changes occurs on nsState
         this.popupSubscription  =   nsState.subscribe( state => {
             setTimeout( () => {
+                console.log( this );
                 const isInPopup     =   this.$el.closest('.is-popup');
                 this.numpadKeyboardWorking = ( isInPopup && isInPopup.getAttribute('focused') === 'true' );
             }, 100 );

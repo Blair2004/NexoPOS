@@ -97,7 +97,7 @@ class CrudController extends DashboardController
      * receive and treat a PUT request for CRUD resource
      *
      * @param  string $identifier
-     * @param  int    $id        primary key
+     * @param  int    $id         primary key
      * @return void
      */
     public function crudPut( $identifier, $id, CrudPutRequest $request )

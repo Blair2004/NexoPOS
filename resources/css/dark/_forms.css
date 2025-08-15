@@ -254,11 +254,25 @@
         }
 
         &:disabled {
-            @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+            @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed;
         }
     }
 
     
+    &.hover-primary:hover, &.primary {
+        button, a {
+            @apply bg-primary text-white;
+
+            span.ns-label {
+                @apply bg-input-background text-primary;
+            }
+
+            &:disabled {
+                @apply bg-primary text-secondary shadow-none border-input-edge cursor-not-allowed;
+            }
+        }
+    }
+
     &.hover-success:hover, &.success {
         button, a {
             @apply bg-success-secondary text-white;
@@ -268,7 +282,7 @@
             }
 
             &:disabled {
-                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed text-fontcolor;
+                @apply bg-gray-600 text-fontcolor-hard shadow-none border-input-edge cursor-not-allowed;
             }
         }
     }

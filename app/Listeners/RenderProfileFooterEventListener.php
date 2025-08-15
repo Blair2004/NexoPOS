@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\RenderProfileFooterEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class RenderProfileFooterEventListener
 {
@@ -19,7 +17,7 @@ class RenderProfileFooterEventListener
     /**
      * Handle the event.
      */
-    public function handle(RenderProfileFooterEvent $event): void
+    public function handle( RenderProfileFooterEvent $event ): void
     {
         //
     }

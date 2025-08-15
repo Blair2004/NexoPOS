@@ -378,7 +378,7 @@ class ReportService
     public function notifyIncorrectDashboardReport()
     {
         $message = __( 'A stock operation has recently been detected, however NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
-        
+
         ns()->notification->create(
             title: __( 'Untracked Stock Operation' ),
             description: $message,

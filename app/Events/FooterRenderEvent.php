@@ -3,11 +3,8 @@
 namespace App\Events;
 
 use App\Classes\Output;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -18,7 +15,7 @@ class FooterRenderEvent
     /**
      * Create a new event instance.
      */
-    public function __construct( public Output $output, public string | null $class = null, public mixed $instance = null )
+    public function __construct( public Output $output, public ?string $class = null, public mixed $instance = null )
     {
         //
     }
@@ -31,7 +28,7 @@ class FooterRenderEvent
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel( 'channel-name' ),
         ];
     }
 }

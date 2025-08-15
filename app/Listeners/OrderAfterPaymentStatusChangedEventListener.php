@@ -7,7 +7,6 @@ use App\Models\Order;
 use App\Services\CashRegistersService;
 use App\Services\OrdersService;
 use App\Services\TransactionService;
-use Illuminate\Support\Facades\Log;
 
 class OrderAfterPaymentStatusChangedEventListener
 {

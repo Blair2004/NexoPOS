@@ -8,8 +8,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Classes\Hook;
-use App\Classes\Output;
 use App\Models\Customer;
 use App\Models\DashboardDay;
 use App\Models\Order;

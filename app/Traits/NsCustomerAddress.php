@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Traits;
 
 use App\Models\CustomerAddress;

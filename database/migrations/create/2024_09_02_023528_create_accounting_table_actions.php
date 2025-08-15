@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string( 'on' );
             $table->enum( 'action', [ 'increase', 'decrease' ] );
-            $table->integer('account_id');
+            $table->integer( 'account_id' );
             $table->enum( 'do', [ 'increase', 'decrease'] );
-            $table->integer('offset_account_id');
+            $table->integer( 'offset_account_id' );
             $table->boolean( 'locked' )->default( false );
             $table->timestamps();
         } );

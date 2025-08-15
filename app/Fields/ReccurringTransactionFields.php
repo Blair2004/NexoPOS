@@ -15,6 +15,11 @@ class ReccurringTransactionFields extends FieldsService
 {
     const IDENTIFIER = Transaction::TYPE_RECURRING;
 
+    /**
+     * Ensures the fields are automatically loaded.
+     */
+    const AUTOLOAD = true;
+
     public function __construct( ?Transaction $transaction = null )
     {
         $allowedExpenseCategories = ns()->option->get( 'ns_accounting_expenses_accounts', [] );

@@ -12,13 +12,13 @@ class OrderPaymentFields extends FieldsService
 {
     /**
      * The unique identifier of the form
-    **/
+     **/
     const IDENTIFIER = 'ns.order-payments';
 
     /**
-     * Will ensure the fields are automatically 
+     * Will ensure the fields are automatically
      * loaded
-    **/
+     **/
     const AUTOLOAD = true;
 
     public function __construct()

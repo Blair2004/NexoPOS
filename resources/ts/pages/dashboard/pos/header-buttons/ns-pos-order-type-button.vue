@@ -2,12 +2,18 @@
 import { Popup } from '~/libraries/popup';
 import nsPosOrderTypePopupVue from '~/popups/ns-pos-order-type-popup.vue';
 import { __ } from '~/libraries/lang';
+import ActionPermissions from '~/libraries/action-permissions';
 
 export default {
     name: 'ns-pos-delivery-button',
     methods: {
         __,
         openOrderTypeSelection() {
+            /**
+             * We'll check if the user can change the order type.
+             */
+            ActionPermissions.canProceed( 'nexopos.cart.order-type' );
+
             Popup.show( nsPosOrderTypePopupVue );
         }
     },

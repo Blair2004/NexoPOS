@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Classes;
 
 #[\Attribute( \Attribute::TARGET_CLASS )]

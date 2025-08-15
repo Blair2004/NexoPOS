@@ -38,6 +38,7 @@ class FieldsTest extends TestCase
             $result = collect( json_decode( $response->getContent() ) );
 
             if ( $result->filter( fn( $field ) => isset( $field->name ) )->count() !== $result->count() ) {
+                dump( $result );
                 $this->assertTrue(
                     $result->filter( fn( $field ) => isset( $field->name ) )->count() === $result->count(),
                     sprintf( 'Some fields aren\'t corretly defined for the class %s.', $class )

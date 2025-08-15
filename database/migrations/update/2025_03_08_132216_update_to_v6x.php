@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Artisan::call( 'ns:doctor', [
             '--purge-orphan-migrations' => true,
-        ]);
+        ] );
 
         Schema::table( 'nexopos_notifications', function ( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_notifications', 'actions' ) ) {
@@ -63,6 +63,14 @@ return new class extends Migration
         if ( $admin instanceof Role ) {
             $admin->addPermissions( array_keys( $posCartPermissions ) );
         }
+
+        /**
+         * We'll make the column "order_id" optional on the table
+         * `nexopos_customers_account_history`.
+         */
+        Schema::table( 'nexopos_customers_account_history', function ( Blueprint $table ) {
+            $table->integer( 'order_id' )->nullable()->change();
+        } );
     }
 
     /**

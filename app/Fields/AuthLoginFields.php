@@ -9,13 +9,12 @@ class AuthLoginFields extends FieldsService
 {
     /**
      * The unique identifier of the form
-    **/
+     **/
     const IDENTIFIER = 'ns.login';
 
     /**
-     * Will ensure the fields are automatically 
-     * loaded
-    **/
+     * Will ensure the fields are automatically loaded
+     **/
     const AUTOLOAD = true;
 
     public function get()

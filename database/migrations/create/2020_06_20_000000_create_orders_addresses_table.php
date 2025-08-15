@@ -2,7 +2,7 @@
 
 /**
  * Table Migration
-**/
+ **/
 
 use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
@@ -20,7 +20,7 @@ return new class extends Migration
         if ( ! Schema::hasTable( 'nexopos_orders_addresses' ) ) {
             Schema::createIfMissing( 'nexopos_orders_addresses', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
-                $table->integer('order_id');
+                $table->integer( 'order_id' );
                 $table->string( 'type' ); // either "billing" or "shipping"
                 $table->string( 'first_name' )->nullable();
                 $table->string( 'last_name' )->nullable();

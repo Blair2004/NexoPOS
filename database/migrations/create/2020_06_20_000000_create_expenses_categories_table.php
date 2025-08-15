@@ -2,7 +2,7 @@
 
 /**
  * Table Migration
-**/
+ **/
 
 use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
@@ -22,7 +22,7 @@ return new class extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'account' )->default( 0 );
-                $table->integer('sub_category_id')->nullable();
+                $table->integer( 'sub_category_id' )->nullable();
                 $table->string( 'category_identifier' )->nullable();
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );

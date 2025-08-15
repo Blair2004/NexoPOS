@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Casts\DateCast;
-use App\Classes\CrudScope;
 use App\Classes\Cache;
+use App\Classes\CrudScope;
 use App\Classes\Output;
 use App\Events\CrudActionEvent;
 use App\Events\CrudHookEvent;
@@ -227,10 +227,10 @@ class CrudService
          * We're introducing attribute support
          * for scoped queries.
          */
-        $this->reflection     =   new ReflectionClass( get_called_class() );
+        $this->reflection = new ReflectionClass( get_called_class() );
 
         /**
-         * We're adding a way for module to 
+         * We're adding a way for module to
          * support custom class attributes.
          */
         CrudReflectionInitialized::dispatch( $this->reflection );
@@ -239,9 +239,9 @@ class CrudService
     /**
      * Shorthand for preparing and submitting crud request
      *
-     * @param  array  $inputs
-     * @param  mixed  $id
-     * @return array  as a crud response
+     * @param  array $inputs
+     * @param  mixed $id
+     * @return array as a crud response
      */
     public function submitPreparedRequest( $inputs, $id = null ): array
     {
@@ -439,7 +439,6 @@ class CrudService
 
     /**
      * This methods returns the Crud table configuration.
-     * @return array
      */
     public function getCrudConfig(): array
     {
@@ -823,14 +822,14 @@ class CrudService
         /**
          * This section will explicitely add support to CrudScope.
          */
-        $attributes     =   $this->reflection->getAttributes( CrudScope::class );
+        $attributes = $this->reflection->getAttributes( CrudScope::class );
 
-        foreach( $attributes as $attribute ) {
-            $instance   =   $attribute->newInstance();
-            $scopeInstance  =   new $instance->class;
+        foreach ( $attributes as $attribute ) {
+            $instance = $attribute->newInstance();
+            $scopeInstance = new $instance->class;
 
             if ( method_exists( $scopeInstance, 'apply' ) ) {
-                $scopeInstance->apply( $query, new ($this->getModel()) );
+                $scopeInstance->apply( $query, new ( $this->getModel() ) );
             } else {
                 throw new Exception( sprintf(
                     'The class "%s" must have a method "apply" to be used as a scope.',
@@ -1093,7 +1092,6 @@ class CrudService
 
     /**
      * Get crud instance
-     *
      */
     public function getCrudInstance( string $identifier ): CrudService
     {
@@ -1315,7 +1313,7 @@ class CrudService
             /**
              * We might additionnaly pass the instance itself
              */
-            'instance' =>  $instance,
+            'instance' => $instance,
 
             /**
              * We'll return here the select attribute that will

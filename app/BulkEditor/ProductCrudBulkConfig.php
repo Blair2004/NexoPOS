@@ -1,21 +1,22 @@
 <?php
+
 namespace App\BulkEditor;
 
-use App\Services\Helper;
 use App\Classes\CrudForm;
 use App\Classes\FormInput;
+use App\Crud\ProductCrud;
 use App\Models\ProductCategory;
-use Modules\BulkEditor\Services\ConfigurationService;
+use App\Services\Helper;
 use Modules\BulkEditor\Classes\BulkEditor;
 use Modules\BulkEditor\Contracts\BulkEditorConfiguration;
-use App\Crud\ProductCrud;
+use Modules\BulkEditor\Services\ConfigurationService;
 
 class ProductCrudBulkConfig implements BulkEditorConfiguration
 {
     public function setup( ConfigurationService $configuration ): void
     {
-        $configuration->register( 
-            class: ProductCrud::class, 
+        $configuration->register(
+            class: ProductCrud::class,
             configuration: BulkEditor::configuration(
                 fields: CrudForm::fields(
                     FormInput::select(

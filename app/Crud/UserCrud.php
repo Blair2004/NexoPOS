@@ -21,7 +21,6 @@ use App\Services\Helper;
 use App\Services\Options;
 use App\Services\UsersService;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Classes;
 
 /**
@@ -13,15 +14,15 @@ class Config
     /**
      * Retrieve a configuration value.
      *
-     * @param string $key The configuration key, optionally in "namespace::path" format.
-     * @param mixed|null $default The default value to return if the key does not exist.
-     * @return mixed The configuration value or the default value.
+     * @param  string     $key     The configuration key, optionally in "namespace::path" format.
+     * @param  mixed|null $default The default value to return if the key does not exist.
+     * @return mixed      The configuration value or the default value.
      */
     public function get( string $key, $default = null )
     {
         if ( is_string( $key ) && str_contains( $key, '::' ) ) {
             [ $namespace, $path ] = explode( '::', $key, 2 );
-            $key                  = "modules.{$namespace}.{$path}";
+            $key = "modules.{$namespace}.{$path}";
         }
 
         return config( $key, $default );
@@ -30,15 +31,15 @@ class Config
     /**
      * Set a configuration value.
      *
-     * @param string $key The configuration key, optionally in "namespace::path" format.
-     * @param mixed $value The value to set for the configuration key.
-     * @return bool True if the configuration was set successfully, false otherwise.
+     * @param  string $key   The configuration key, optionally in "namespace::path" format.
+     * @param  mixed  $value The value to set for the configuration key.
+     * @return bool   True if the configuration was set successfully, false otherwise.
      */
     public function set( string $key, $value ): bool
     {
         if ( is_string( $key ) && str_contains( $key, '::' ) ) {
             [ $namespace, $path ] = explode( '::', $key, 2 );
-            $key                  = "modules.{$namespace}.{$path}";
+            $key = "modules.{$namespace}.{$path}";
         }
 
         return config( $key, $value );
@@ -47,14 +48,14 @@ class Config
     /**
      * Check if a configuration key exists.
      *
-     * @param string $key The configuration key, optionally in "namespace::path" format.
-     * @return bool True if the configuration key exists, false otherwise.
+     * @param  string $key The configuration key, optionally in "namespace::path" format.
+     * @return bool   True if the configuration key exists, false otherwise.
      */
     public function has( string $key ): bool
     {
         if ( is_string( $key ) && str_contains( $key, '::' ) ) {
             [ $namespace, $path ] = explode( '::', $key, 2 );
-            $key                  = "modules.{$namespace}.{$path}";
+            $key = "modules.{$namespace}.{$path}";
         }
 
         return config()->has( $key );
@@ -74,7 +75,6 @@ class Config
      * Set multiple configuration values.
      *
      * @param array $config An associative array of configuration keys and values.
-     * @return void
      */
     public function setAll( array $config ): void
     {
@@ -84,14 +84,14 @@ class Config
     /**
      * Remove a configuration key.
      *
-     * @param string $key The configuration key, optionally in "namespace::path" format.
-     * @return bool True if the configuration key was removed successfully, false otherwise.
+     * @param  string $key The configuration key, optionally in "namespace::path" format.
+     * @return bool   True if the configuration key was removed successfully, false otherwise.
      */
     public function forget( string $key ): bool
     {
         if ( is_string( $key ) && str_contains( $key, '::' ) ) {
             [ $namespace, $path ] = explode( '::', $key, 2 );
-            $key                  = "modules.{$namespace}.{$path}";
+            $key = "modules.{$namespace}.{$path}";
         }
 
         return config()->forget( $key );
@@ -99,8 +99,6 @@ class Config
 
     /**
      * Clear all configuration values.
-     *
-     * @return void
      */
     public function clear(): void
     {

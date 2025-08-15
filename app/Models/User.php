@@ -35,16 +35,16 @@ class User extends Authenticatable
     use HasApiTokens,
         HasFactory,
         Notifiable,
-        NsDependable,
-        NsCustomerAddress;
+        NsCustomerAddress,
+        NsDependable;
 
     protected $table = 'nexopos_users';
 
     protected $casts = [
         'active' => 'boolean',
     ];
-    
-    protected $dispatchesEvents     = [
+
+    protected $dispatchesEvents = [
         'created' => UserAfterCreatedEvent::class,
         'updated' => UserAfterUpdatedEvent::class,
     ];
@@ -113,7 +113,7 @@ class User extends Authenticatable
     {
         return $this->hasOne( UserAttribute::class, 'user_id', 'id' );
     }
-    
+
     /**
      * Relation with roles
      **/
@@ -182,16 +182,17 @@ class User extends Authenticatable
     /**
      * Check if a user has permissions to do a specific action.
      * Note that for each user, it will load the permissions and perform the check.
+     *
      * @deprecated ?
      */
     public function allowedTo( $permission )
     {
         return $this
             ->roles()
-            ->with("permissions")
-            ->whereHas("permissions", function ($query) use ( $permission ) {
-                $query->whereIn("namespace", $permission );
-            })
+            ->with( 'permissions' )
+            ->whereHas( 'permissions', function ( $query ) use ( $permission ) {
+                $query->whereIn( 'namespace', $permission );
+            } )
             ->count() > 0;
     }
 

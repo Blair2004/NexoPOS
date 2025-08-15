@@ -64,7 +64,7 @@ class WidgetService
             ProfileWidget::class,
             OrdersChartWidget::class,
             OrdersSummaryWidget::class,
-            BestCashiersWidget::class
+            BestCashiersWidget::class,
         ] );
     }
 
@@ -253,10 +253,11 @@ class WidgetService
                         ->where( 'column', $columnName )
                         ->orderBy( 'position' )
                         ->get()
-                        ->filter( function( $widget ) {
+                        ->filter( function ( $widget ) {
                             $class = $widget->class_name;
+
                             return class_exists( $class ) && Gate::allows( ( new $class )->getPermission() );
-                        })
+                        } )
                         ->values(),
                 ];
             } )->toArray();

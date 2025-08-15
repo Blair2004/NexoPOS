@@ -22,7 +22,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -68,8 +67,8 @@ class ModulesService
          * As module might load composer, we need to store current composer
          * configuration and restore them after having loaded all modules.
          */
-        $this->composer     =   [
-            '_composer_bin_dir' =>  $GLOBALS[ '_composer_bin_dir' ] ?? null,
+        $this->composer = [
+            '_composer_bin_dir' => $GLOBALS[ '_composer_bin_dir' ] ?? null,
             '_composer_autoload_path' => $GLOBALS[ '_composer_autoload_path' ] ?? null,
             '_composer_bin_dir' => $GLOBALS[ '_composer_bin_dir' ] ?? null,
             '__composer_autoload_files' => $GLOBALS[ '__composer_autoload_files' ] ?? null,
@@ -118,7 +117,7 @@ class ModulesService
          * When all module are loaded, we should revert all composer
          * configuration that might be changed by the modules.
          */
-        foreach( $this->composer as $key => $value ) {
+        foreach ( $this->composer as $key => $value ) {
             // there is no need to set null value as a global variable
             if ( $value !== null ) {
                 $GLOBALS[ $key ] = $value;
@@ -186,16 +185,33 @@ class ModulesService
             }
 
             // We'll check if the the product description has localization tags. If it's the case
-            // based on the current locale we'll load the right description otherwise fallback on "english" or says the description 
+            // based on the current locale we'll load the right description otherwise fallback on "en" (for English) or says the description
             // has an invalid format
 
-            $locales    =   $xmlElement->children()->description->xpath( 'locale' );
+            $locales = $xmlElement->children()->description?->xpath( 'locale' ) ?? [];
 
             if ( count( $locales ) > 0 ) {
-                $config[ 'description' ]  =  collect( $locales )->mapWithKeys( function( $locale ) {
+                $config[ 'description' ] = collect( $locales )->mapWithKeys( function ( $locale ) {
                     $locale = (array) $locale;
+
                     return [ $locale[ '@attributes' ][ 'lang' ] => $locale[ 0 ] ];
-                });
+                } );
+            } else {
+                // Fallback: if there is a <description> element without <locale> children, treat its text as English.
+                $descriptionNode = $xmlElement->children()->description ?? null;
+                if ( $descriptionNode instanceof \SimpleXMLElement ) {
+                    $rawDescription = trim( (string) $descriptionNode );
+                    if ( $rawDescription !== '' ) {
+                        // Ensure description is an array and assign to 'en'.
+                        if ( ! isset( $config[ 'description' ] ) || ! is_array( $config[ 'description' ] ) ) {
+                            $config[ 'description' ] = [];
+                        }
+                        // Don't overwrite if already defined.
+                        if ( ! isset( $config[ 'description' ][ 'en' ] ) ) {
+                            $config[ 'description' ][ 'en' ] = $rawDescription;
+                        }
+                    }
+                }
             }
 
             $config[ 'requires' ] = collect( $xmlElement->children()->requires->xpath( '//dependency' ) )->mapWithKeys( function ( $module ) {
@@ -517,7 +533,7 @@ class ModulesService
          * After the complicance check, we'll autoload
          * the composer vendor if the module has an autoload file.
          */
-        $autoloadPath   =   $module[ 'path' ] . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        $autoloadPath = $module[ 'path' ] . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
         if ( is_file( $autoloadPath ) ) {
             require_once $autoloadPath;
@@ -534,14 +550,14 @@ class ModulesService
 
         // we'll try to load all configuration files that are available on this module
         // and make sure to load them on global object.
-        foreach( $module[ 'config-files' ] as $file ) {
-            $config     =   include( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
-            $config     =   Arr::dot( $config );
-            $config     =   collect( $config )->mapWithKeys( function ( $value, $key ) use ( $module ) {
+        foreach ( $module[ 'config-files' ] as $file ) {
+            $config = include base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file;
+            $config = Arr::dot( $config );
+            $config = collect( $config )->mapWithKeys( function ( $value, $key ) use ( $module ) {
                 return [ 'modules.' . $module[ 'namespace' ] . '.' . $key => $value ];
             } );
-            $config     =   $config->toArray();
-            
+            $config = $config->toArray();
+
             config( $config );
         }
     }
@@ -658,6 +674,8 @@ class ModulesService
                 return $module;
             }
         }
+
+        return null; // explicit fallback when no module matches
     }
 
     /**
@@ -761,6 +779,8 @@ class ModulesService
                 'module' => $module,
             ];
         }
+
+        return []; // explicit fallback if module not found
     }
 
     /**
@@ -1084,7 +1104,7 @@ class ModulesService
              * We revert all migrations made by the modules.
              */
             $this->revertMigrations( $module );
-            $this->dropModuleMigration( $module ); 
+            $this->dropModuleMigration( $module );
 
             /**
              * Delete module from filesystem.
@@ -1765,6 +1785,8 @@ class ModulesService
                     'name' => $config[ 'namespace' ] . 'Event',
                 ] );
                 break;
+            default:
+                throw new \InvalidArgumentException( 'Unsupported stream content type: ' . $content );
         }
     }
 }

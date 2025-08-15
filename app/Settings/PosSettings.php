@@ -25,7 +25,7 @@ class PosSettings extends SettingsPage
         ] );
 
         if ( ns()->option->get( 'ns_pos_action_permission_enabled' ) ) {
-            $posSettingsTabs['actions'] = include ( dirname( __FILE__ ) . '/pos/actions.php' );
+            $posSettingsTabs['actions'] = include dirname( __FILE__ ) . '/pos/actions.php';
         }
 
         $this->form = [

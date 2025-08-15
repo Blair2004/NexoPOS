@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\Order;
-use App\Models\Role;
 use App\Services\DateService;
 use App\Services\NotificationService;
 use App\Services\Options;
@@ -78,10 +77,10 @@ class ClearHoldOrdersJob implements ShouldQueue
                     __( '%s order(s) has recently been deleted as they have expired.' ),
                     $deleted->count()
                 ),
-            )->dispatchForGroup([
-                    'admin',
-                    'nexopos.store.administrator',
-            ]);
+            )->dispatchForGroup( [
+                'admin',
+                'nexopos.store.administrator',
+            ] );
         }
     }
 }

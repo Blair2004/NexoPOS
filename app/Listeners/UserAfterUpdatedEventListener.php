@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\UserAfterUpdatedEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class UserAfterUpdatedEventListener
 {
@@ -19,7 +17,7 @@ class UserAfterUpdatedEventListener
     /**
      * Handle the event.
      */
-    public function handle(UserAfterUpdatedEvent $event): void
+    public function handle( UserAfterUpdatedEvent $event ): void
     {
         //
     }

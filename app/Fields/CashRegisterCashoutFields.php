@@ -4,21 +4,18 @@ namespace App\Fields;
 
 use App\Classes\FormInput;
 use App\Classes\Hook;
-use App\Models\TransactionAccount;
 use App\Services\FieldsService;
-use App\Services\Helper;
 
 class CashRegisterCashoutFields extends FieldsService
 {
     /**
      * The unique identifier of the form
-    **/
+     **/
     const IDENTIFIER = 'ns.cash-registers-cashout';
 
     /**
-     * Will ensure the fields are automatically 
-     * loaded
-    **/
+     * Will ensure the fields are automatically loaded
+     **/
     const AUTOLOAD = true;
 
     public function get()

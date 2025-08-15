@@ -42,7 +42,7 @@ class Permission extends Model
     {
         $instance = self::where( 'namespace', $name )->first();
 
-        $newSelf   =   $instance ?: new self;
+        $newSelf = $instance ?: new self;
         $newSelf->namespace = $name;
 
         return $instance instanceof self ? $instance : $newSelf;

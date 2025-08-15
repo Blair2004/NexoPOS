@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\View;
@@ -9,7 +10,7 @@ class WizardService
     {
         // ...
     }
-    
+
     public function render()
     {
         return View::make( 'components.wizard.body' );

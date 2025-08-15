@@ -157,17 +157,17 @@ class UserProfileForm extends SettingsPage
         if ( ! empty( $billing ) || ! empty( $shipping ) ) {
             $currentBilling = CustomerAddress::from( Auth::id(), 'billing' )->firstOrNew();
             $currentShipping = CustomerAddress::from( Auth::id(), 'shipping' )->firstOrNew();
-    
+
             foreach ( $validFields as $field ) {
                 $currentBilling->$field = $billing[ $field ];
                 $currentShipping->$field = $shipping[ $field ];
             }
-    
+
             $currentBilling->customer_id = Auth::id();
             $currentBilling->type = 'billing';
             $currentBilling->author = Auth::id();
             $currentBilling->save();
-    
+
             $currentShipping->customer_id = Auth::id();
             $currentShipping->type = 'shipping';
             $currentShipping->author = Auth::id();

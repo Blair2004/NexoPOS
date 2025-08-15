@@ -58,7 +58,6 @@ class UsersController extends DashboardController
     /**
      * Edit a user
      *
-     * @param User $user
      * @return View
      */
     public function editUser( User $user )
@@ -75,7 +74,6 @@ class UsersController extends DashboardController
     /**
      * Returns a list of users
      *
-     * @param User $user
      * @return array
      */
     public function getUsers( User $user )
@@ -196,7 +194,6 @@ class UsersController extends DashboardController
     /**
      * Create a new role
      *
-     * @param Role $role
      * @return View
      */
     public function createRole( Role $role )
@@ -207,8 +204,8 @@ class UsersController extends DashboardController
     /**
      * Clone a role
      *
-     * @param Role $role
      * @return Role
+     *
      * @throws Exception
      */
     public function cloneRole( Role $role )
@@ -221,7 +218,6 @@ class UsersController extends DashboardController
     /**
      * Configure widgets on areas
      *
-     * @param Request $request
      * @return array
      */
     public function configureWidgets( Request $request )
@@ -232,8 +228,8 @@ class UsersController extends DashboardController
     /**
      * Create a new API token for the user
      *
-     * @param Request $request
      * @return string
+     *
      * @throws Exception
      */
     public function createToken( Request $request )
@@ -262,7 +258,7 @@ class UsersController extends DashboardController
     /**
      * Delete a token by its ID
      *
-     * @param int $tokenId
+     * @param  int  $tokenId
      * @return bool
      */
     public function deleteToken( $tokenId )
@@ -273,28 +269,26 @@ class UsersController extends DashboardController
     /**
      * Check if the user has a specific permission
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function checkPermission( Request $request )
     {
-        return $this->usersService->requestAccess( 
-            $request->input( 'permission' ) 
+        return $this->usersService->requestAccess(
+            $request->input( 'permission' )
         );
     }
 
     /**
      * Get the current user
      *
-     * @param Request $request
      * @return User
      */
     public function getUser( Request $request )
     {
-        $request->user()->load([
+        $request->user()->load( [
             'attribute',
             'roles',
-        ]);
+        ] );
 
         return $request->user();
     }
@@ -302,7 +296,6 @@ class UsersController extends DashboardController
     /**
      * Get the permissions of the current user
      *
-     * @param Request $request
      * @return array
      */
     public function getUserPermissions( Request $request )
@@ -316,7 +309,7 @@ class UsersController extends DashboardController
                     'namespace' => $permission->namespace,
                     'name' => $permission->name,
                 ];
-            });
+            } );
         } )->unique( 'namespace' )->values()->all();
     }
 
@@ -347,14 +340,14 @@ class UsersController extends DashboardController
                 return [
                     'status' => 'success',
                     'message' => __( 'The permission access has been granted.' ),
-                    'data' => compact( 'access' )
+                    'data' => compact( 'access' ),
                 ];
             }
 
-            throw new NotFoundException( 
+            throw new NotFoundException(
                 sprintf(
-                    __( 'You do not have access to this permission %s.' ), 
-                    $access->perm->name 
+                    __( 'You do not have access to this permission %s.' ),
+                    $access->perm->name
                 )
             );
         }
@@ -377,7 +370,7 @@ class UsersController extends DashboardController
         return [
             'status' => 'success',
             'message' => __( 'The permission access has been marked as used.' ),
-            'data' => compact( 'access' )
+            'data' => compact( 'access' ),
         ];
     }
 

@@ -2,7 +2,7 @@
 
 /**
  * Table Migration
-**/
+ **/
 use App\Models\Role;
 use App\Services\Options;
 use Illuminate\Database\Migrations\Migration;

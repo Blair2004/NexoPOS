@@ -21,9 +21,9 @@ class Output
     /**
      * Creates a view instance and adds it to the output array.
      *
-     * @param string $view The name of the view.
-     * @param array $options Optional parameters to pass to the view.
-     * @return $this Returns the current instance for method chaining.
+     * @param  string $view    The name of the view.
+     * @param  array  $options Optional parameters to pass to the view.
+     * @return $this  Returns the current instance for method chaining.
      */
     public function addView( $view, $options = [] )
     {
@@ -65,7 +65,7 @@ class Output
     /**
      * Dispatches a class and forwards additional arguments to its dispatch method.
      *
-     * @param string $class The class name to dispatch.
+     * @param  string $class The class name to dispatch.
      * @return Output The output instance containing the result of the dispatch.
      */
     public static function dispatch( string $class ): Output
@@ -79,7 +79,7 @@ class Output
 
         // We'll make sure to forward the arguments to the class
         $class::dispatch( $output, ...$args );
-        
+
         return $output;
     }
 }

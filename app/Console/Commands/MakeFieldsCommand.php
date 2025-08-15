@@ -31,10 +31,8 @@ class MakeFieldsCommand extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param Filesystem $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct( Filesystem $files )
     {
         parent::__construct();
 
@@ -48,23 +46,24 @@ class MakeFieldsCommand extends Command
      */
     public function handle()
     {
-        $className = $this->argument('class');
-        $identifier = $this->argument('identifier');
-        $path = app_path("Fields/{$className}.php");
-        $force = $this->option('force');
+        $className = $this->argument( 'class' );
+        $identifier = $this->argument( 'identifier' );
+        $path = app_path( "Fields/{$className}.php" );
+        $force = $this->option( 'force' );
 
-        if ($this->files->exists($path) && !$force) {
-            $this->error("The class {$className} already exists! Use --force to overwrite.");
+        if ( $this->files->exists( $path ) && ! $force ) {
+            $this->error( "The class {$className} already exists! Use --force to overwrite." );
+
             return 1;
         }
 
         $stub = $this->getStub();
-        $stub = str_replace(['DummyClass', 'DummyIdentifier'], [$className, $identifier], $stub);
+        $stub = str_replace( ['DummyClass', 'DummyIdentifier'], [$className, $identifier], $stub );
 
         $relativePath = "app/Fields/{$className}.php";
-        $this->files->put($path, $stub);
+        $this->files->put( $path, $stub );
 
-        $this->info("Field class {$className} created successfully at {$relativePath}.");
+        $this->info( "Field class {$className} created successfully at {$relativePath}." );
 
         return 0;
     }
@@ -76,6 +75,6 @@ class MakeFieldsCommand extends Command
      */
     protected function getStub()
     {
-        return View::file(resource_path('views/generate/field.blade.php'))->render();
+        return View::file( resource_path( 'views/generate/field.blade.php' ) )->render();
     }
 }

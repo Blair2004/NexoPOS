@@ -7,9 +7,9 @@ class Notice
     /**
      * Generates an informational notice with a title and description.
      *
-     * @param string $title The title of the notice.
-     * @param string $description The description of the notice.
-     * @return array An associative array containing the title, description, and color of the notice.
+     * @param  string $title       The title of the notice.
+     * @param  string $description The description of the notice.
+     * @return array  An associative array containing the title, description, and color of the notice.
      */
     public static function info( $title, $description )
     {
@@ -21,9 +21,9 @@ class Notice
     /**
      * Generates a warning notice with a title and description.
      *
-     * @param string $title The title of the notice.
-     * @param string $description The description of the notice.
-     * @return array An associative array containing the title, description, and color of the notice.
+     * @param  string $title       The title of the notice.
+     * @param  string $description The description of the notice.
+     * @return array  An associative array containing the title, description, and color of the notice.
      */
     public static function warning( $title, $description )
     {
@@ -35,9 +35,9 @@ class Notice
     /**
      * Generates an error notice with a title and description.
      *
-     * @param string $title The title of the notice.
-     * @param string $description The description of the notice.
-     * @return array An associative array containing the title, description, and color of the notice.
+     * @param  string $title       The title of the notice.
+     * @param  string $description The description of the notice.
+     * @return array  An associative array containing the title, description, and color of the notice.
      */
     public static function error( $title, $description )
     {
@@ -49,9 +49,9 @@ class Notice
     /**
      * Generates a success notice with a title and description.
      *
-     * @param string $title The title of the notice.
-     * @param string $description The description of the notice.
-     * @return array An associative array containing the title, description, and color of the notice.
+     * @param  string $title       The title of the notice.
+     * @param  string $description The description of the notice.
+     * @return array  An associative array containing the title, description, and color of the notice.
      */
     public static function success( $title, $description )
     {

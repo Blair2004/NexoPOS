@@ -17,7 +17,7 @@
         </div>
         <div class="flex justify-end items-center border-t ns-box-footer p-3">
             <div>
-                <ns-button :disabled="isSubitting" @click="signIn()" class="justify-between" type="info">
+                <ns-button :disabled="isSubitting" @click="signIn()" class="justify-between" type="primary">
                     <ns-spinner class="mr-2" v-if="isSubitting" size="6"></ns-spinner>
                     <span>{{ __( 'Sign In' ) }}</span>
                 </ns-button>

@@ -9,9 +9,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Classes\Hook;
-use App\Classes\Output;
 use App\Crud\CustomerCrud;
-use App\Crud\DriverOrderCrud;
 use App\Crud\OrderCrud;
 use App\Crud\OrderInstalmentCrud;
 use App\Crud\PaymentTypeCrud;
@@ -160,7 +158,7 @@ class OrdersController extends DashboardController
          * let's inject the necessary dependency
          * for being able to manage orders.
          */
-        Event::listen( RenderFooterEvent::class, function( RenderFooterEvent $event ) {
+        Event::listen( RenderFooterEvent::class, function ( RenderFooterEvent $event ) {
             $event->output->addView( 'pages.dashboard.orders.footer' );
         } );
 

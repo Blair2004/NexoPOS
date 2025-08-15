@@ -32,7 +32,7 @@ class Notification extends NsModel
     ];
 
     /**
-     * We saving, we want to make sure the "actions" property is actually a json and not an array. 
+     * We saving, we want to make sure the "actions" property is actually a json and not an array.
      * We also want to make sure while retreiving, the JSON is converted to an array.
      */
     public static function boot()

@@ -436,16 +436,19 @@ export default {
             return 'border-gray-500 bg-gray-400 text-white hover:bg-gray-500';
         },
 
-        openAddQuickProduct() {
-            const promise   =   new Promise( ( resolve, reject ) => {
-                Popup.show( nsPosQuickProductPopupVue, { resolve, reject })
-            });
-
-            promise.then( _ => {
+        async openAddQuickProduct() {
+            /**
+             * We'll check if the user has the right to add a quick product.
+             */
+            await ActionPermissions.canProceed( 'nexopos.cart.products' );
+            
+            try {
+                const promise   =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsPosQuickProductPopupVue, { resolve, reject })
+                });
+            } catch( exception ) {
                 // ...
-            }).catch( _ => {
-                // ...
-            })
+            }
         },
 
         summarizeCoupons() {
@@ -459,9 +462,9 @@ export default {
         },
 
         async changeProductPrice( product ) {
-            if ( ! this.settings.edit_purchase_price ) {
-                return nsSnackBar.error( __( `You don't have the right to edit the purchase price.` ) );
-            }
+            // if ( ! this.settings.edit_purchase_price ) {
+            //     return nsSnackBar.error( __( `You don't have the right to edit the purchase price.` ) );
+            // }
 
             if ( product.product_type === 'dynamic' ) {
                 return nsSnackBar.error( __( 'Dynamic product can\'t have their price updated.' ) );
@@ -469,6 +472,12 @@ export default {
 
             if ( this.settings.unit_price_editable ) {
                 try {
+                    /**
+                     * We'll check if the user has the right to edit a 
+                     * purchase price of a product.
+                     */
+                    await ActionPermissions.canProceed( 'nexopos.cart.product-price' );
+
                     const newPrice  =   await new Promise( ( resolve, reject ) => {
                         return Popup.show( nsPosProductPricePopupVue, { product: Object.assign({}, product ), resolve, reject })
                     });
@@ -506,12 +515,17 @@ export default {
         },
 
         async selectCoupon() {
+            /**
+             * We'll check if the user has the right to manage coupons.
+             */
+            await ActionPermissions.canProceed( 'nexopos.cart.coupons' );
+
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsPosCouponsLoadPopupVue, { resolve, reject })
                 })
             } catch( exception ) {
-                
+                // something happened
             }
         },
 
@@ -519,6 +533,11 @@ export default {
             if ( ! this.settings.edit_settings ) {
                 return nsSnackBar.error( __( 'You\'re not allowed to edit the order settings.' ) );
             }
+
+            /**
+             * We'll check if the user has the right to define order settings.
+             */
+            await ActionPermissions.canProceed( 'defineOrderSettings' );
 
             try {
                 const response  =   await new Promise<{}>( ( resolve, reject) => {
@@ -536,6 +555,11 @@ export default {
         },
 
         async openNotePopup() {
+            /**
+             * We'll ensure the user has the right to add comments to an order.
+             */
+            await ActionPermissions.canProceed( 'nexopos.cart.comments' );
+            
             try {
                 const response  =   await new Promise<{}>( ( resolve, reject ) => {
                     const note              =   this.order.note;
@@ -553,6 +577,11 @@ export default {
         },
 
         async selectTaxGroup( activeTab = 'settings' ) {
+            /**
+             * We'll check if the user has the right to manage taxes.
+             */
+            await ActionPermissions.canProceed( 'nexopos.cart.taxes' );
+
             try {
                 const response              =   await new Promise<{}>( ( resolve, reject ) => {
                     const taxes             =   this.order.taxes;
@@ -592,7 +621,7 @@ export default {
                 reference.disable_flat = true;
             }
 
-            ActionPermissions.canProceed( type === 'product' ? 'nexopos.cart.product-discount' : 'nexopos.cart.discount' );
+            await ActionPermissions.canProceed( type === 'product' ? 'nexopos.cart.product-discount' : 'nexopos.cart.discount' );
 
             try {
                 const promise   =   await new Promise( ( resolve, reject ) => {
@@ -626,12 +655,18 @@ export default {
             }
         },
 
-        toggleMode( product, index ) {
+        async toggleMode( product, index ) {
             if ( ! this.options.ns_pos_allow_wholesale_price ) {
                 return nsSnackBar.error( __( 'Unable to change the price mode. This feature has been disabled.' ) );
             }
 
             if ( product.mode === 'normal' ) {
+                /**
+                 * We restrict the usage of the wholesale-price
+                 * behind a permission defined on ActionPermissions.
+                 */
+                await ActionPermissions.canProceed( 'nexopos.cart.product-wholesale-price' );
+
                 Popup.show( PosConfirmPopup, {
                     title: __( 'Enable WholeSale Price' ),
                     message: __( 'Would you like to switch to wholesale price ?' ),
@@ -653,7 +688,12 @@ export default {
                 });
             }
         },
-        removeUsingIndex( index ) {
+        async removeUsingIndex( index ) {
+            /**
+             * We need to check if the user has the right to delete a product.
+             */
+            await ActionPermissions.canProceed( 'nexopos.cart.product-delete' );
+
             Popup.show( PosConfirmPopup, {
                 title: __( 'Confirm Your Action' ),
                 message: __( 'Would you like to delete this product ?' ),

@@ -67,7 +67,7 @@ class UsersService
             if ( $countRoles !== count( $attributes[ 'roles' ] ) ) {
                 throw new NotFoundException( __( 'One or more roles could not be found.' ) );
             }
-        } 
+        }
 
         collect( [
             'username' => fn() => User::where( 'username', $attributes[ 'username' ] ),
@@ -387,7 +387,6 @@ class UsersService
             ->where( 'expired_at', '>=', now() )
             ->first();
 
-
         if ( ! ns()->allowedTo( $permission ) || ! $approvedTemporaryPermission instanceof PermissionAccess ) {
             $duration = ns()->option->get( 'ns_pos_action_permission_duration', 5 );
             $cooldown = ns()->option->get( 'ns_pos_action_permission_cooldown_features', 10 );
@@ -398,10 +397,10 @@ class UsersService
              * If the cool down is greater than 0, that means we should check if the user
              * didn't had any approved request created in the last minutes (based on the cooldown).
              */
-            if ( ( int ) $cooldown > 0 ) {
+            if ( (int) $cooldown > 0 ) {
                 $recentApproved = PermissionAccess::where( 'permission', $permission )
                     ->where( 'requester_id', Auth::id() )
-                    ->where( 'permission', $permission ) 
+                    ->where( 'permission', $permission )
                     ->where( 'status', PermissionAccess::GRANTED )
                     ->where( 'updated_at', '>=', now()->subMinutes( $cooldown ) )
                     ->first();
@@ -413,12 +412,12 @@ class UsersService
                 if ( $recentApproved instanceof PermissionAccess ) {
                     $waitTime = (int) $cooldown - now()->diffInMinutes( $recentApproved->updated_at );
 
-                    return response()->json([
-                        'message' => sprintf( 
+                    return response()->json( [
+                        'message' => sprintf(
                             __( 'You need to wait %s minutes before requesting this permission again.' ),
                             $waitTime
                         ),
-                        'type' => 'permission_cooldown'
+                        'type' => 'permission_cooldown',
                     ], 403 );
                 }
             }
@@ -434,16 +433,16 @@ class UsersService
                 ->first();
 
             if ( $pendingRequest instanceof PermissionAccess ) {
-                return response()->json([
+                return response()->json( [
                     'message' => __( 'You already have a pending permission request for this action.' ),
                     'type' => 'permission_pending',
                     'data' => [
                         'permission' => $permission,
                         'access' => $pendingRequest,
-                    ]
-                ], 403);
+                    ],
+                ], 403 );
             }
-            
+
             $access = new PermissionAccess;
             $access->requester_id = Auth::id();
             $access->granter_id = 0; // 0 means no granter yet
@@ -452,14 +451,14 @@ class UsersService
             $access->expired_at = now()->addMinutes( $duration );
             $access->save();
 
-            return response()->json([
+            return response()->json( [
                 'message' => __( 'You do not have permission to perform this action.' ),
                 'type' => 'permission_denied',
                 'data' => [
                     'permission' => $permission,
                     'access' => $access,
-                ]
-            ], 403);
+                ],
+            ], 403 );
         }
 
         /**
@@ -472,23 +471,23 @@ class UsersService
                 $approvedTemporaryPermission->status = PermissionAccess::EXPIRED;
                 $approvedTemporaryPermission->save();
 
-                return response()->json([
+                return response()->json( [
                     'message' => __( 'Your permission has expired.' ),
                     'type' => 'permission_expired',
                     'data' => [
                         'permission' => $permission,
                         'access' => $approvedTemporaryPermission,
-                    ]
-                ], 403);
+                    ],
+                ], 403 );
             }
         }
 
-        return response()->json([
+        return response()->json( [
             'message' => __( 'You have permission to perform this action.' ),
             'type' => 'success',
             'data' => [
                 'permission' => $permission,
-            ]
-        ], 200);
+            ],
+        ], 200 );
     }
 }

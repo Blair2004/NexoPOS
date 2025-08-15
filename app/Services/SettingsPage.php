@@ -47,13 +47,13 @@ class SettingsPage
                             $tab[ 'fields' ] = [];
                         }
 
-                        $tab['fields'] = collect($tab['fields'])->filter(function ($field) {
-                            if (isset($field['show']) && is_callable($field['show'])) {
+                        $tab['fields'] = collect( $tab['fields'] )->filter( function ( $field ) {
+                            if ( isset( $field['show'] ) && is_callable( $field['show'] ) ) {
                                 return $field['show']();
                             }
 
                             return true;
-                        })->toArray();
+                        } )->toArray();
 
                         return [ $key => $tab ];
                     } ),
@@ -124,7 +124,7 @@ class SettingsPage
             'identifier' => $settings->getIdentifier(),
 
             /**
-             * We now pass the instance so it can be captured by modules on the footer. 
+             * We now pass the instance so it can be captured by modules on the footer.
              * This is usefull to add settings specific behavior.
              */
             'instance' => $settings,

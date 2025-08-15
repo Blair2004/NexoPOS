@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         if ( ! Schema::hasTable( 'nexopos_permissions_access' ) ) {
-            Schema::create('nexopos_permissions_access', function (Blueprint $table) {
+            Schema::create( 'nexopos_permissions_access', function ( Blueprint $table ) {
                 $table->id();
                 $table->integer( 'requester_id' )->unsigned()->index();
                 $table->integer( 'granter_id' )->unsigned()->index();
@@ -23,7 +23,7 @@ return new class extends Migration
                 $table->enum( 'status', [ 'granted', 'denied', 'pending', 'expired', 'used' ] )->default( 'pending' );
                 $table->datetime( 'expired_at' )->nullable();
                 $table->timestamps();
-            });
+            } );
         }
 
         /**
@@ -41,7 +41,7 @@ return new class extends Migration
             $permission->namespace = $crud . '.permissions-access';
             $permission->description = sprintf( __( 'Can %s permission access records' ), $crud );
             $permission->save();
-            
+
             $permissions[] = $permission->namespace;
         }
 
@@ -57,6 +57,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nexopos_permissions_access');
+        Schema::dropIfExists( 'nexopos_permissions_access' );
     }
 };

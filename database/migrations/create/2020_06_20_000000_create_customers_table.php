@@ -2,7 +2,7 @@
 
 /**
  * Table Migration
-**/
+ **/
 
 use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
@@ -42,7 +42,7 @@ return new class extends Migration
             Schema::createIfMissing( 'nexopos_customers_account_history', function ( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'customer_id' );
-                $table->integer( 'order_id' );
+                $table->integer( 'order_id' )->nullable();
                 $table->float( 'previous_amount' )->default( 0 );
                 $table->float( 'amount' )->default( 0 );
                 $table->float( 'next_amount' )->default( 0 );

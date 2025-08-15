@@ -23,6 +23,6 @@ class PermissionController extends DashboardController
     {
         return Permission::where( 'status', 'granted' )
             ->where( 'granter_id', Auth::id() )
-            ->paginate(10);
+            ->paginate( 10 );
     }
 }

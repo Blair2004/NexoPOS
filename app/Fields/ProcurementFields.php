@@ -9,13 +9,13 @@ class ProcurementFields extends FieldsService
 {
     /**
      * The unique identifier of the form
-    **/
+     **/
     const IDENTIFIER = 'ns.procurement-fields';
 
     /**
-     * Will ensure the fields are automatically 
+     * Will ensure the fields are automatically
      * loaded
-    **/
+     **/
     const AUTOLOAD = true;
 
     public function get( ?Procurement $model = null )
