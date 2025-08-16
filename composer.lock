@@ -4840,16 +4840,16 @@
         },
         {
             "name": "picqer/php-barcode-generator",
-            "version": "v3.2.1",
+            "version": "v3.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/picqer/php-barcode-generator.git",
-                "reference": "c99ca79268eea35a0b3e1d4db341bc154d23592f"
+                "reference": "fbb1de7454fcc8600133818bc1103abeb86479a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/picqer/php-barcode-generator/zipball/c99ca79268eea35a0b3e1d4db341bc154d23592f",
-                "reference": "c99ca79268eea35a0b3e1d4db341bc154d23592f",
+                "url": "https://api.github.com/repos/picqer/php-barcode-generator/zipball/fbb1de7454fcc8600133818bc1103abeb86479a4",
+                "reference": "fbb1de7454fcc8600133818bc1103abeb86479a4",
                 "shasum": ""
             },
             "require": {
@@ -4915,9 +4915,9 @@
             ],
             "support": {
                 "issues": "https://github.com/picqer/php-barcode-generator/issues",
-                "source": "https://github.com/picqer/php-barcode-generator/tree/v3.2.1"
+                "source": "https://github.com/picqer/php-barcode-generator/tree/v3.2.3"
             },
-            "time": "2025-04-14T15:08:25+00:00"
+            "time": "2025-07-29T07:15:20+00:00"
         },
         {
             "name": "predis/predis",
@@ -11257,6 +11257,6 @@
     "platform": {
         "php": "^8.2.0"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
