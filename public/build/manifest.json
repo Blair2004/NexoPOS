@@ -161,12 +161,12 @@
     "src": "resources/css/animations.css"
   },
   "resources/css/app.css": {
-    "file": "assets/app-a32bdf9e.css",
+    "file": "assets/app-130c0258.css",
     "isEntry": true,
     "src": "resources/css/app.css"
   },
   "resources/css/dark.css": {
-    "file": "assets/dark-5f436d66.css",
+    "file": "assets/dark-4a00c809.css",
     "isEntry": true,
     "src": "resources/css/dark.css"
   },
@@ -176,17 +176,17 @@
     "src": "resources/css/fonts.css"
   },
   "resources/css/grid.css": {
-    "file": "assets/grid-b4634d0a.css",
+    "file": "assets/grid-3d18fc4f.css",
     "isEntry": true,
     "src": "resources/css/grid.css"
   },
   "resources/css/light.css": {
-    "file": "assets/light-895a27c3.css",
+    "file": "assets/light-e535a216.css",
     "isEntry": true,
     "src": "resources/css/light.css"
   },
   "resources/css/phosphor.css": {
-    "file": "assets/phosphor-f205fa7c.css",
+    "file": "assets/phosphor-94823307.css",
     "isEntry": true,
     "src": "resources/css/phosphor.css"
   },
@@ -310,7 +310,7 @@
       "resources/ts/pages/dashboard/transactions/ns-transactions-rules.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ],
-    "file": "assets/app-07251293.js",
+    "file": "assets/app-51264643.js",
     "imports": [
       "_preload-helper-a4192956.js",
       "_time-583d4bf1.js",
@@ -738,10 +738,9 @@
     "src": "resources/ts/pages/dashboard/procurements/ns-procurement-invoice.vue"
   },
   "resources/ts/pages/dashboard/procurements/ns-procurement.vue": {
-    "file": "assets/ns-procurement-cbaee0d6.js",
+    "file": "assets/ns-procurement-14123d7f.js",
     "imports": [
       "resources/ts/bootstrap.ts",
-      "resources/ts/pages/dashboard/procurements/manage-products.vue",
       "_lang-15e8d12f.js",
       "__plugin-vue_export-helper-c27b6911.js",
       "_runtime-core.esm-bundler-04c3f2ec.js",
