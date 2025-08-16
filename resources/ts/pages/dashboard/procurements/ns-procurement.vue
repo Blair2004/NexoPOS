@@ -2,7 +2,6 @@
 import FormValidation from '~/libraries/form-validation';
 import { BehaviorSubject, forkJoin } from "rxjs";
 import { nsSnackBar, nsHttpClient, nsNotice } from '~/bootstrap';
-import nsManageProducts from '~/pages/dashboard/procurements/manage-products.vue';
 import Tax from "~/libraries/tax";
 import nsProcurementProductOptionsVue from '~/popups/ns-procurement-product-options.vue';
 import { __ } from '~/libraries/lang';
@@ -21,7 +20,7 @@ export default {
     mounted() {
         this.reloadEntities();
 
-        this.shouldPreventAccidentlRefreshSubscriber    =   this.shouldPreventAccidentalRefresh.subscribe({ 
+        this.shouldPreventAccidentalRefreshSubscriber    =   this.shouldPreventAccidentalRefresh.subscribe({ 
             next: value => {
                 if ( value ){
                     window.addEventListener( 'beforeunload', this.addAccidentalCloseListener );
@@ -57,7 +56,7 @@ export default {
                                 }
                             },
                             error: error => {
-                                nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) );
+                                nsSnackBar.error( error.message || __( 'An error occured while preloading the procurement.' ) ).subscribe();
                             }
                         })
                 }
@@ -68,7 +67,7 @@ export default {
     },
     computed: {
         activeTab() {
-            return this.validTabs.filter( tab => tab.active ).length > 0 ? this.validTabs.filter( tab => tab.active )[0] : false;
+            return this.validTabs.find(tab => tab.active) || false;
         },
     },
     data() {
@@ -105,17 +104,6 @@ export default {
             form: <any>{},
 
             /**
-             * Reference to the nsSnackBar object
-             */
-            nsSnackBar,
-
-            /**
-             * Is the array that contains the various 
-             * procurement informations
-             */
-            fields: [],
-
-            /**
              * Is the array that contains the result
              * from the search.
              */
@@ -131,11 +119,6 @@ export default {
              * product using the search bar
              */
             debounceSearch: null,
-
-            /**
-             * A reference to the nsHttpClient object
-             */
-            nsHttpClient,
 
             /**
              * Must contain the 
@@ -170,7 +153,7 @@ export default {
              * load of the page when products are added
              */
             shouldPreventAccidentalRefresh: new BehaviorSubject( false ),
-            shouldPreventAccidentlRefreshSubscriber: null,
+            shouldPreventAccidentalRefreshSubscriber: null,
 
             /**
              * Determine if we should show the info box
@@ -198,9 +181,7 @@ export default {
             }
         }
     },
-    components: {
-        nsManageProducts
-    },
+    components: {},
     props: [ 'submitMethod', 'submitUrl', 'returnUrl', 'src', 'rules' ],
     methods: {
         __,
@@ -257,20 +238,13 @@ export default {
         },
         
         computeTotal() {
+            this.totalTaxValues = this.form.products.length > 0 
+                ? this.form.products.reduce((sum, p) => sum + p.procurement.tax_value, 0)
+                : 0;
 
-            this.totalTaxValues = 0;
-
-            if ( this.form.products.length > 0 ) {
-                this.totalTaxValues = this.form.products.map( p => p.procurement.tax_value )
-                    .reduce( ( b, a ) => b + a );
-            }
-
-            this.totalPurchasePrice     =   0;
-
-            if ( this.form.products.length > 0 ) {
-                this.totalPurchasePrice     =   this.form.products.map( p => parseFloat( p.procurement.total_purchase_price ) )
-                    .reduce( ( b, a ) => b + a );
-            }
+            this.totalPurchasePrice = this.form.products.length > 0 
+                ? this.form.products.reduce((sum, p) => sum + parseFloat(p.procurement.total_purchase_price), 0)
+                : 0;
         },
 
         /**
@@ -281,7 +255,7 @@ export default {
          */
         updateLine( index ) {
             const product   =   this.form.products[ index ];
-            const taxGroup  =   this.taxes.filter( taxGroup => taxGroup.id === product.procurement.tax_group_id );
+            const taxGroup  =   this.taxes.find( taxGroup => taxGroup.id === product.procurement.tax_group_id );
 
             if ( parseFloat( product.procurement.purchase_price_edit ) > 0 && parseFloat( product.procurement.quantity ) > 0 ) {
 
@@ -289,8 +263,8 @@ export default {
                  * if some tax group is provided
                  * then let's compute all the grouped taxes
                  */
-                if ( taxGroup.length > 0 ) {
-                    const totalTaxes    =   taxGroup[0].taxes.map( tax => {
+                if ( taxGroup ) {
+                    const totalTaxes    =   taxGroup.taxes.map( tax => {
                         return Tax.getTaxValue(
                             product.procurement.tax_type,
                             product.procurement.purchase_price_edit,
@@ -322,17 +296,16 @@ export default {
             } 
 
             this.computeTotal();
-            this.$forceUpdate();
         },
 
         fetchLastPurchasePrice( index ) {
             const product   =   this.form.products[ index ];
-            const unit      =   product.unit_quantities.filter( unitQuantity => {
-                return product.procurement.unit_id === unitQuantity.unit_id;
-            });
+            const unit      =   product.unit_quantities.find( unitQuantity => 
+                product.procurement.unit_id === unitQuantity.unit_id
+            );
 
-            if ( unit.length > 0 ) {
-                product.procurement.purchase_price_edit      =   ( unit[0].last_purchase_price || 0 );
+            if ( unit ) {
+                product.procurement.purchase_price_edit      =   ( unit.last_purchase_price || 0 );
             }
 
             this.updateLine( index );
@@ -361,7 +334,7 @@ export default {
                     } else if ( result.length > 1 ) {
                         this.searchResult   =   result;
                     } else {
-                        nsSnackBar.error( __( 'No result match your query.' ) );
+                        nsSnackBar.error( __( 'No result match your query.' ) ).subscribe();
                     }
                 })
         },
@@ -377,22 +350,19 @@ export default {
             
             forkJoin([
                 nsHttpClient.get( '/api/categories' ),
-                nsHttpClient.get( '/api/products' ),
                 nsHttpClient.get( this.src ),
                 nsHttpClient.get( '/api/taxes/groups' ),
             ]).subscribe( (result: any[]) => {
                 this.reloading      =   false;
-                this.categories     =   result[0];
-                this.products       =   result[1];
-                this.taxes          =   result[3];
+                this.taxes          =   result[2];
 
                 if ( this.form.general ) {
-                    result[2].tabs.general.fieds.forEach( (field,index) => {
+                    result[2].tabs.general.fields.forEach( (field,index) => {
                         field.value     =   this.form.tabs.general.fields[ index ].value || '';
                     });
                 } 
 
-                this.form           =   Object.assign( JSON.parse( JSON.stringify( result[2] ) ), this.form );
+                this.form           =   Object.assign( JSON.parse( JSON.stringify( result[1] ) ), this.form );
                 this.form           =   this.formValidation.createForm( this.form );
 
                 /**
@@ -402,7 +372,7 @@ export default {
                 if ( this.form.tabs ) {
                     this.form.tabs.general.fields.forEach( (field, index) => {
                         if ( field.options ) {
-                            field.options   =   result[2].tabs.general.fields[ index ].options;
+                            field.options   =   result[1].tabs.general.fields[ index ].options;
                         }
                     });
                 }
@@ -445,16 +415,14 @@ export default {
             })
         },
         setTabActive( tab ) {
-            this.validTabs.forEach( tab => tab.active = false );
-            this.$forceUpdate();
-            this.$nextTick().then( () => {
-                tab.active  =   true;
-            });
+            this.validTabs.forEach( t => t.active = false );
+            tab.active  =   true;
         },
         addProductList( product ) {
 
             if ( product.unit_quantities === undefined ) {
-                return nsSnackBar.error( __( 'Unable to add product which doesn\'t unit quantities defined.' ) );
+                return nsSnackBar.error( __( 'Unable to add product which doesn\'t unit quantities defined.' ) )
+                    .subscribe();
             }
 
             /**
@@ -498,7 +466,8 @@ export default {
         submit() {
 
             if ( this.form.products.length === 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed, no product were provided.' ), __( 'OK' ) );
+                return nsSnackBar.error( __( 'Unable to proceed, no product were provided.' ), __( 'OK' ) )
+                    .subscribe();
             }
 
             this.form.products.forEach( (product: any) => {
@@ -514,7 +483,8 @@ export default {
             const invalidProducts   =   this.form.products.filter( product => product.procurement.$invalid );
 
             if ( invalidProducts.length > 0 ) {
-                return nsSnackBar.error( __( 'Unable to proceed, one or more product has incorrect values.' ), __( 'OK' ) );
+                return nsSnackBar.error( __( 'Unable to proceed, one or more product has incorrect values.' ), __( 'OK' ) )
+                    .subscribe();
             }
 
             if ( this.formValidation.validateForm( this.form ).length > 0 ) {
@@ -524,11 +494,13 @@ export default {
                  */
                 this.setTabActive( this.activeTab );
 
-                return nsSnackBar.error( __( 'Unable to proceed, the procurement form is not valid.' ), __( 'OK' ) );
+                return nsSnackBar.error( __( 'Unable to proceed, the procurement form is not valid.' ), __( 'OK' ) )
+                    .subscribe();
             }
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( __( 'Unable to submit, no valid submit URL were provided.' ), __( 'OK' ) );
+                return nsSnackBar.error( __( 'Unable to submit, no valid submit URL were provided.' ), __( 'OK' ) )
+                    .subscribe();
             }
 
             this.formValidation.disableForm( this.form );
@@ -569,11 +541,7 @@ export default {
         },
         deleteProduct( index ) {
             this.form.products.splice( index, 1 );
-            this.$forceUpdate();
-        },
-        handleGlobalChange( event ) {
-            this.globallyChecked    =   event;
-            this.rows.forEach( r => r.$checked = event );
+            this.computeTotal();
         },
 
         setProductOptions( index ) {
@@ -620,9 +588,9 @@ export default {
                  * unit. This will avoid having the conversion unit be the same
                  * as the procured unit.
                  */
-                const selectedUnitQuantity  =   product.unit_quantities.filter( unitQuantity => parseInt( unitQuantity.unit_id ) === +unitID );
+                const selectedUnitQuantity  =   product.unit_quantities.find( unitQuantity => parseInt( unitQuantity.unit_id ) === +unitID );
                 
-                product.procurement.convert_unit_id         =   selectedUnitQuantity[0].convert_unit_id || undefined;
+                product.procurement.convert_unit_id         =   selectedUnitQuantity?.convert_unit_id || undefined;
                 product.procurement.convert_unit_label      =   await new Promise( ( resolve, reject ) => {
                     if ( product.procurement.convert_unit_id !== undefined ) {
                         nsHttpClient.get( `/api/units/${product.procurement.convert_unit_id}` )
@@ -692,35 +660,21 @@ export default {
 
         getSelectedTax( index ) {
             const product   =   this.form.products[ index ];
-            const select    =   this.taxes.filter( tax => {
-                if ( product.procurement.tax_group_id && product.procurement.tax_group_id === tax.id ) {
-                    return true;
-                }
-                return false;
-            });
+            const select    =   this.taxes.find( tax => 
+                product.procurement.tax_group_id && product.procurement.tax_group_id === tax.id
+            );
 
-            if ( select.length === 1 ) {
-                return select[0].name;
-            }
-
-            return __( 'N/A' );
+            return select ? select.name : __( 'N/A' );
         },
 
         getSelectedUnit( index ) {
             const product   =   this.form.products[ index ];
             const units     =   product.unit_quantities.map( unitQuantity => unitQuantity.unit );
-            const select    =   units.filter( unit => {
-                if ( product.procurement.unit_id !== undefined ) {
-                    return unit.id === product.procurement.unit_id
-                }
-                return false;
-            });
+            const select    =   units.find( unit => 
+                product.procurement.unit_id !== undefined && unit.id === product.procurement.unit_id
+            );
 
-            if ( select.length === 1 ) {
-                return select[0].name;
-            }
-
-            return __( 'N/A' );
+            return select ? select.name : __( 'N/A' );
         },
 
         handleSavedEvent( event, field ) {
@@ -741,8 +695,8 @@ export default {
         <template v-if="form.main">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-font">{{ form.main.label || __( 'No title is provided' ) }}</label>
-                    <div for="title" class="text-sm my-2 -mx-1 flex text-font">
+                    <label for="title" class="font-bold my-2 text-primary">{{ form.main.label || __( 'No title is provided' ) }}</label>
+                    <div for="title" class="text-sm my-2 -mx-1 flex text-primary">
                         <div class="px-1" @click="showInfo = !showInfo">
                             <span v-if="!showInfo" class="cursor-pointer rounded-full ns-inset-button border px-2 py-1">{{ __( 'Show Details' ) }}</span>
                             <span v-if="showInfo" class="cursor-pointer rounded-full ns-inset-button border px-2 py-1">{{ __( 'Hide Details' ) }}</span>
@@ -760,11 +714,11 @@ export default {
                         :disabled="form.main.disabled"
                         type="text" 
                         :class="form.main.disabled ? '' : ''"
-                        class="flex-auto outline-hidden h-10 px-2">
-                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-hidden px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
-                    <button @click="reloadEntities()" class="outline-hidden px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
+                        class="flex-auto outline-none h-10 px-2">
+                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-none px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                    <button @click="reloadEntities()" class="outline-none px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
                 </div>
-                <p class="text-xs text-fontcolor py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
@@ -791,10 +745,10 @@ export default {
                 <div class="px-4 w-full">
                     <div id="tabbed-card" class="ns-tab">
                         <div id="card-header" class="flex flex-wrap">
-                            <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg flex rounded-tr-lg text-font">
+                            <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg flex rounded-tr-lg text-primary">
                                 {{ tab.label }}
                                 <template v-if="tab.identifier === 'products'">
-                                    <div class="ml-2 rounded-full bg-info-tertiary text-fontcolor h-6 min-w-6 flex items-center justify-center">
+                                    <div class="ml-2 rounded-full bg-info-tertiary text-primary h-6 min-w-6 flex items-center justify-center">
                                         {{ form.products.length }}
                                     </div>
                                 </template>
@@ -818,14 +772,14 @@ export default {
                                             v-model="searchValue"
                                             type="text" 
                                             :placeholder="__( 'SKU, Barcode, Name' )"
-                                            class="flex-auto text-fontcolor outline-hidden h-10 px-2">
+                                            class="flex-auto text-primary outline-none h-10 px-2">
                                     </div>
                                     <div class="h-0">
                                         <div class="shadow bg-floating-menu relative z-10">
-                                            <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b hover:bg-floating-menu-hover border-floating-menu-edge p-2 text-font">
-                                                <span class="block font-bold text-font">{{ product.name }}</span>
+                                            <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b hover:bg-floating-menu-hover border-floating-menu-edge p-2 text-primary">
+                                                <span class="block font-bold text-primary">{{ product.name }}</span>
                                                 <span class="block text-sm text-priamry">{{ __( 'SKU' ) }} : {{ product.sku }}</span>
-                                                <span class="block text-sm text-font">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
+                                                <span class="block text-sm text-primary">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
                                             </div>
                                         </div>
                                     </div>
@@ -834,13 +788,13 @@ export default {
                                     <table class="w-full ns-table">
                                         <thead>
                                             <tr>
-                                                <td v-for="( column, key ) of form.columns" width="200" :key="key" class="text-fontcolor p-2 border">{{ column.label }}</td>
+                                                <td v-for="( column, key ) of form.columns" width="200" :key="key" class="text-primary p-2 border">{{ column.label }}</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'error border-2 border-error-primary' : ''">
                                                 <template v-for="( column, key ) of form.columns">                                                                                                       
-                                                    <td :key="key" v-if="column.type === 'name'" width="500" class="p-2 text-fontcolor border">
+                                                    <td :key="key" v-if="column.type === 'name'" width="500" class="p-2 text-primary border">
                                                         <span class="">{{ product.name }}</span>
                                                         <div class="flex">
                                                             <div class="flex md:flex-row flex-col md:-mx-1">
@@ -862,13 +816,13 @@ export default {
                                                             </div>
                                                         </div>
                                                     </td> 
-                                                    <td :key="key" v-if="column.type === 'text'" @click="triggerKeyboard( product.procurement, key, index )" class="text-fontcolor border cursor-pointer">
+                                                    <td :key="key" v-if="column.type === 'text'" @click="triggerKeyboard( product.procurement, key, index )" class="text-primary border cursor-pointer">
                                                         <div class="flex justify-center">
-                                                            <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-hidden border-dashed py-1 border-b border-info-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
-                                                            <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-hidden border-dashed py-1 border-b border-info-primary text-sm">{{ product.procurement[ key ] }}</span>
+                                                            <span v-if="[ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ nsCurrency(product.procurement[ key ]) }}</span>
+                                                            <span v-if="! [ 'purchase_price_edit' ].includes( <any>key )" class="outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ product.procurement[ key ] }}</span>
                                                         </div>
                                                     </td>
-                                                    <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-fontcolor border">
+                                                    <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-primary border">
                                                         <div class="flex items-start">
                                                             <div class="input-group rounded border-2">
                                                                 <select @change="updateLine( index )" v-model="product.procurement[ key ]" class="p-2">
@@ -877,14 +831,14 @@ export default {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td :key="key" v-if="column.type === 'currency'" class="p-2 text-fontcolor border">
+                                                    <td :key="key" v-if="column.type === 'currency'" class="p-2 text-primary border">
                                                         <div class="flex items-start flex-col justify-end">
-                                                            <span class="text-sm text-font">{{ nsCurrency( product.procurement[ key ] ) }}</span>
+                                                            <span class="text-sm text-primary">{{ nsCurrency( product.procurement[ key ] ) }}</span>
                                                         </div>
                                                     </td>
                                                 </template>
                                             </tr>
-                                            <tr class="text-fontcolor">
+                                            <tr class="text-primary">
                                                 <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'tax_value' )"></td>
                                                 <td class="p-2 border">{{ nsCurrency( totalTaxValues ) }}</td>
                                                 <td class="p-2 border" :colspan="Object.keys( form.columns ).indexOf( 'total_purchase_price' ) - ( Object.keys( form.columns ).indexOf( 'tax_value' ) + 1 )"></td>
