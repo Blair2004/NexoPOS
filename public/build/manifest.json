@@ -310,7 +310,7 @@
       "resources/ts/pages/dashboard/transactions/ns-transactions-rules.vue",
       "resources/ts/pages/dashboard/profile/ns-token.vue"
     ],
-    "file": "assets/app-8cb72996.js",
+    "file": "assets/app-07251293.js",
     "imports": [
       "_preload-helper-a4192956.js",
       "_time-583d4bf1.js",
@@ -490,7 +490,7 @@
     "src": "resources/ts/pages/dashboard/home/ns-dashboard.vue"
   },
   "resources/ts/pages/dashboard/modules.vue": {
-    "file": "assets/modules-83cb7a13.js",
+    "file": "assets/modules-d356c67b.js",
     "imports": [
       "resources/ts/bootstrap.ts",
       "_lang-15e8d12f.js",
