@@ -125,7 +125,7 @@ class FormsProvider extends ServiceProvider
                      */
                     Hook::addFilter( 'ns.fields', function ( $identifier, $resource = null ) use ( $field, $params ) {
                         if ( $identifier === $field::IDENTIFIER ) {
-                            $resolved = collect( $params )->each( function( $param ) use ( $resource, $field ) {
+                            $resolved = collect( $params )->map( function( $param ) use ( $resource, $field ) {
                                 $isBuiltin = $param[ 'isBuiltin' ];
         
                                 /**
@@ -137,7 +137,10 @@ class FormsProvider extends ServiceProvider
                                         $model = $param[ 'type' ];
                                         $instance = $model::find( $resource );
         
-                                        if ( ! $instance instanceof $model ) {
+                                        /**
+                                         * if the param is not optional, we must have a valid instance.
+                                         */
+                                        if ( ! $instance instanceof $model && ! $param[ 'isOptional' ] ) {
                                             throw new Exception( sprintf(
                                                 __( 'Unable to resolve the dependency %s (%s) for the class %s' ),
                                                 $resource,
@@ -151,7 +154,9 @@ class FormsProvider extends ServiceProvider
                                         return app()->make( $param[ 'type' ] );
                                     }
                                 }
-                            });
+
+                                return false;
+                            })->filter();
 
                             /**
                              * If no dependencies were resolved, we can create a new instance

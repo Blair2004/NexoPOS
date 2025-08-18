@@ -329,7 +329,7 @@ trait WithCustomerTest
          * Creating a first customer
          */
         $email = $faker->email;
-        $firstName = $faker->firstName;
+        $firstName = $faker->firstName . Str::random( 5 );
         $lastName = $faker->lastName;
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
